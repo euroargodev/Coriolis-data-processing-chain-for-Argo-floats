@@ -43,7 +43,7 @@ global g_decArgo_virtualBuff;
 for idFile = 1:length(a_fileName)
    
    % move the next file into the buffer directory
-   add_to_list(a_fileName{idFile}, 'buffer');
+   add_to_list_ir_sbd(a_fileName{idFile}, 'buffer');
    remove_from_list_ir_sbd(a_fileName{idFile}, 'spool', 0, 1);
 
    % extract the attachement

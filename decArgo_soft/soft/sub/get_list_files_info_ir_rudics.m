@@ -47,7 +47,7 @@ global g_decArgo_archiveDirectory;
 
 
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
-   fprintf('BUFF_ERROR: Float #%d: add_to_list: unknown list name (''%s'')\n', ...
+   fprintf('BUFF_ERROR: Float #%d: get_list_files_info_ir_rudics: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
    return;
 end

@@ -283,7 +283,7 @@ if (~a_floatDmFlag)
             end
             
             if (g_decArgo_virtualBuff)
-               add_to_list(mailFileName, 'spool');
+               add_to_list_ir_sbd(mailFileName, 'spool');
             else
                move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
             end
@@ -354,7 +354,7 @@ if (~a_floatDmFlag)
                end
                
                if (g_decArgo_virtualBuff)
-                  add_to_list(mailFileName, 'spool');
+                  add_to_list_ir_sbd(mailFileName, 'spool');
                else
                   move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
                end
@@ -392,7 +392,7 @@ if (~a_floatDmFlag)
                
                % move the next file into the buffer directory
                if (g_decArgo_virtualBuff)
-                  add_to_list(mailFileNameList{idFileList(idF)}, 'buffer');
+                  add_to_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer');
                   remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 0);
                else
                   move_files_ir_sbd(mailFileNameList(idFileList(idF)), ...
@@ -492,7 +492,7 @@ if (~a_floatDmFlag)
          
          % move the next file into the buffer directory
          if (g_decArgo_virtualBuff)
-            add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
+            add_to_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer');
             remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 0);
          else
             move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);

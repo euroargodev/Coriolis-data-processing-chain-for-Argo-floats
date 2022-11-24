@@ -280,7 +280,7 @@ if (~a_floatDmFlag)
                end
                
                if (g_decArgo_virtualBuff)
-                  add_to_list(sbdCyFileName, 'spool');
+                  add_to_list_ir_rudics(sbdCyFileName, 'spool');
                else
                   move_files_ir_rudics({sbdCyFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0);
                end
@@ -344,7 +344,7 @@ if (~a_floatDmFlag)
                end
                
                if (g_decArgo_virtualBuff)
-                  add_to_list(sbdFileName, 'spool');
+                  add_to_list_ir_rudics(sbdFileName, 'spool');
                else
                   move_files_ir_rudics({sbdFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0);
                end
@@ -379,7 +379,7 @@ if (~a_floatDmFlag)
                
                % move the next file into the buffer directory
                if (g_decArgo_virtualBuff)
-                  add_to_list(sbdFileNameList{idFileList(idF)}, 'buffer');
+                  add_to_list_ir_rudics(sbdFileNameList{idFileList(idF)}, 'buffer');
                   remove_from_list_ir_rudics(sbdFileNameList{idFileList(idF)}, 'spool', 0);
                else
                   move_files_ir_rudics(sbdFileNameList(idFileList(idF)), ...
@@ -473,7 +473,7 @@ if (~a_floatDmFlag)
          
          % move the next file into the buffer directory
          if (g_decArgo_virtualBuff)
-            add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
+            add_to_list_ir_rudics(tabAllFileNames{idSpoolFile}, 'buffer');
             remove_from_list_ir_rudics(tabAllFileNames{idSpoolFile}, 'spool', 0);
          else
             move_files_ir_rudics(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0);

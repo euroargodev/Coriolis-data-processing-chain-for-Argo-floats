@@ -256,7 +256,7 @@ if (~g_decArgo_realtimeFlag)
          end
       end
       
-      add_to_list(mailFileName, 'spool');
+      add_to_list_ir_sbd(mailFileName, 'spool');
       nbFiles = nbFiles + 1;
    end
    
@@ -307,7 +307,7 @@ else
             end
          end
          
-         add_to_list(mailFileName, 'spool');
+         add_to_list_ir_sbd(mailFileName, 'spool');
          nbFiles = nbFiles + 1;
       end
       
@@ -346,7 +346,7 @@ ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirector
 %       for idF = 1:length(idFileList)
 %
 %          % move the next file into the buffer directory
-%          add_to_list(mailFileNameList{idFileList(idF)}, 'buffer');
+%          add_to_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer');
 %          remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 1);
 %
 %          % extract the attachement
@@ -402,7 +402,7 @@ cycleNumberListToIgnore = [];
 for idSpoolFile = 1:length(tabAllFileNames)
    
    % move the next file into the buffer directory
-   add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
+   add_to_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer');
    remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 1);
    
    % extract the attachement
