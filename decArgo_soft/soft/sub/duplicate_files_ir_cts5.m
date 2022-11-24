@@ -82,7 +82,7 @@ for idFile = 1:length(a_listFileNames)
          if (~isempty(fileExist))
             % update existing file
             move_file([a_outputDir '/' fileExist.name], g_decArgo_updatedDirectory);
-            copy_file(filePathName, filePathNameOut);
+            copy_file(fileNameIn, filePathNameOut);
             o_nbFiles = o_nbFiles + 1;
             %             fprintf('%s => copy (update of %s)\n', fileNameOut,fileExist.name);
          else
