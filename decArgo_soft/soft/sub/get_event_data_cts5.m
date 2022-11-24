@@ -256,21 +256,23 @@ if (~isempty(g_decArgo_useaTechData))
    for idF = 1:size(g_decArgo_useaTechData, 1)
       apmtTechData = g_decArgo_useaTechData{idF, 4};
       if (isfield(apmtTechData, 'GPS'))
-         gpsData = apmtTechData.GPS;
-         juldUtc = gpsData.data{1};
-         clockOffset = gpsData.data{4};
-         if (isempty(techClockOffset))
-            techClockOffset = get_clock_offset_cts5_init_struct;
+         if (~any(strfind(g_decArgo_useaTechData{idF, 3}, '_autotest_'))) % clock drift reported by autotest files may be corrupted (Ex: 3e82_058_autotest_00001.txt)
+            gpsData = apmtTechData.GPS;
+            juldUtc = gpsData.data{1};
+            clockOffset = gpsData.data{4};
+            if (isempty(techClockOffset))
+               techClockOffset = get_clock_offset_cts5_init_struct;
+            end
+            techClockOffset.cycleNum = [techClockOffset.cycleNum g_decArgo_useaTechData{idF, 1}];
+            techClockOffset.patternNum = [techClockOffset.patternNum g_decArgo_useaTechData{idF, 2}];
+            techClockOffset.juldUtc = [techClockOffset.juldUtc juldUtc];
+            techClockOffset.juldFloat = [techClockOffset.juldFloat juldUtc + clockOffset/86400];
+            % it has been checked that clock offset should be computed from the
+            % dates (instead of directly using transmitted clockOffset of TECH data)
+            techClockOffset.clockOffset = [techClockOffset.clockOffset ...
+               gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc + clockOffset/86400)) - ...
+               gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc))];
          end
-         techClockOffset.cycleNum = [techClockOffset.cycleNum g_decArgo_useaTechData{idF, 1}];
-         techClockOffset.patternNum = [techClockOffset.patternNum g_decArgo_useaTechData{idF, 2}];
-         techClockOffset.juldUtc = [techClockOffset.juldUtc juldUtc];
-         techClockOffset.juldFloat = [techClockOffset.juldFloat juldUtc + clockOffset/86400];
-         % it has been checked that clock offset should be computed from the
-         % dates (instead of directly using transmitted clockOffset of TECH data) 
-         techClockOffset.clockOffset = [techClockOffset.clockOffset ...
-            gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc + clockOffset/86400)) - ...
-            gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc))];
       end
    end
 end
@@ -599,8 +601,8 @@ switch (a_decoderId)
       [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate);
    case {124, 125}
       [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate);
-   case {126, 127, 128}
-      [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate);
+   case {126, 127, 128, 129}
+      [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate);
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
@@ -1005,7 +1007,7 @@ return
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate)
+%  [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
@@ -1022,7 +1024,7 @@ return
 % RELEASES :
 %   09/02/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate)
+function [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -1041,11 +1043,11 @@ global g_decArgo_eventUsedList;
 
 
 % initialize event list
-init_event_lists_126_127_128;
+init_event_lists_126_127_128_129;
 evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_event_data_126_127_128: File not found: %s\n', a_inputFilePathName);
+   fprintf('ERROR: decode_event_data_126_127_128_129: File not found: %s\n', a_inputFilePathName);
    return
 end
 
@@ -2665,7 +2667,7 @@ return
 % Init event type list and event used list.
 %
 % SYNTAX :
-%  init_event_lists_126_127_128
+%  init_event_lists_126_127_128_129
 %
 % INPUT PARAMETERS :
 %
@@ -2679,7 +2681,7 @@ return
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function init_event_lists_126_127_128
+function init_event_lists_126_127_128_129
 
 % variable to store event numbers and types
 global g_decArgo_eventNumTypeList;

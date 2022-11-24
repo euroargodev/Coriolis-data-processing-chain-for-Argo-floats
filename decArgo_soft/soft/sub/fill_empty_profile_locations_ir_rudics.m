@@ -184,6 +184,16 @@ if (any(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
       profPosQc(startId+1:stopId-1) = g_decArgo_qcStrInterpolated;
    end
 
+   % remove not located profiles
+   % dates can be inconsistent (Ex: 6901473 #523) and the interpolation may fail
+   idDel = find(isnan(profLon));
+   profJuld(idDel) = [];
+   profJuldLoc(idDel) = [];
+   profLon(idDel) = [];
+   profLat(idDel) = [];
+   profPosSystem(idDel) = [];
+   profPosQc(idDel) = [];
+
    % Loop 6: extrapolate existing locations
    profList = find(isnan(profJuldLoc));
    if (~isempty(profList))
