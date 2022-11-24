@@ -119,9 +119,9 @@ for idL = 1:size(cyclePatternNumFloat, 1)
    cyNum = cyclePatternNumFloat(idL, 1);
    ptnNum = cyclePatternNumFloat(idL, 2);
    
-   %    if ((cyNum == 107) && (ptnNum == 1))
-   %        a=1
-   %    end
+%       if ((cyNum == 107) && (ptnNum == 1))
+%           a=1
+%       end
 
    if (ptnNum == 0)
       idF = find(cycNumAutotest == cyNum);

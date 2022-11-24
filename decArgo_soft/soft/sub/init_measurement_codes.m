@@ -62,19 +62,19 @@ global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
-global g_MC_NearSurfaceSeriesOfMeas;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
-global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
-global g_MC_SurfaceDoMeasAfterAirBladderInflation;
-global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSingleMeas;
-global g_MC_InAirSeriesOfMeas;
+
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 % global time status
 global g_JULD_STATUS_fill_value;
@@ -138,19 +138,19 @@ g_MC_ContinuousProfileStartOrStop = 599; % for TRAJ_AUX of Apex APF11 iridium fl
 g_MC_AET = 600;
 g_MC_AET_Float = 602;
 g_MC_SpyAtSurface = 689;
-g_MC_NearSurfaceSeriesOfMeas = 690;
 g_MC_TST = 700;
 g_MC_TST_Float = 701;
 g_MC_FMT = 702;
 g_MC_Surface = 703;
 g_MC_LMT = 704;
-g_MC_SurfaceDoMeasBeforeAirBladderInflation = 710;
-g_MC_SurfaceDoMeasAfterAirBladderInflation = 711;
-g_MC_SingleMeasToTET = 799;
 g_MC_TET = 800;
 g_MC_Grounded = 901;
-g_MC_InAirSingleMeas = 1099;
-g_MC_InAirSeriesOfMeas = 1090;
+
+g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST = 690;
+g_MC_InAirSingleMeasRelativeToTST = 699;
+g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST = 710;
+g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST = 711;
+g_MC_InAirSingleMeasRelativeToTET = 799;
 
 % status values
 g_JULD_STATUS_fill_value = ' ';

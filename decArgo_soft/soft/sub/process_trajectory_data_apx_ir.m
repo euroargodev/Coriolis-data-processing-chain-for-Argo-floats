@@ -84,11 +84,14 @@ global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_AscProf;
 global g_MC_AET;
-global g_MC_NearSurfaceSeriesOfMeas;
 global g_MC_TST;
 global g_MC_Surface;
 global g_MC_TET;
-global g_MC_InAirSeriesOfMeas;
+
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_2;
@@ -879,14 +882,14 @@ if (~isempty(a_nearSurfData))
    
    for idM = 1:length(nearSurfData.dates)
       [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_NearSurfaceSeriesOfMeas, ...
+         g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST, ...
          nearSurfData.dates(idM), ...
          nearSurfData.datesAdj(idM), ...
          g_JULD_STATUS_2);
       if (isempty(measStruct))
          % not dated information
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_NearSurfaceSeriesOfMeas;
+         measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
       end
       measStruct.paramList = nearSurfData.paramList;
       measStruct.paramData = nearSurfData.data(idM, :);
@@ -922,14 +925,14 @@ if (~isempty(a_surfDataLog))
          % store surface meas
          for idM = 1:length(a_surfDataLog.dates)
             [measStruct, ~] = create_one_meas_float_time_bis( ...
-               g_MC_InAirSeriesOfMeas, ...
+               g_MC_InAirSingleMeasRelativeToTST, ...
                a_surfDataLog.dates(idM), ...
                a_surfDataLog.datesAdj(idM), ...
                g_JULD_STATUS_2);
             if (isempty(measStruct))
                % not dated information
                measStruct = get_traj_one_meas_init_struct();
-               measStruct.measCode = g_MC_InAirSeriesOfMeas;
+               measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
             end
             measStruct.paramList = a_surfDataLog.paramList;
             measStruct.paramData = a_surfDataLog.data(idM, :);
@@ -969,7 +972,7 @@ if (~isempty(a_surfDataLog))
          
          % remove existing surface meas (from 'msg' file)
          if (~isempty(o_tabTrajNMeas(idCyNMeas).tabMeas))
-            idIASOM = find([o_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InAirSeriesOfMeas);
+            idIASOM = find([o_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InAirSingleMeasRelativeToTST);
             if (~isempty(idIASOM))
                idNoDate = find(cellfun(@isempty, {o_tabTrajNMeas(idCyNMeas).tabMeas(idIASOM).juld}));
                o_tabTrajNMeas(idCyNMeas).tabMeas(idIASOM(idNoDate)) = [];
@@ -979,14 +982,14 @@ if (~isempty(a_surfDataLog))
          % store surface meas
          for idM = 1:length(a_surfDataLog.dates)
             [measStruct, ~] = create_one_meas_float_time_bis( ...
-               g_MC_InAirSeriesOfMeas, ...
+               g_MC_InAirSingleMeasRelativeToTST, ...
                a_surfDataLog.dates(idM), ...
                a_surfDataLog.datesAdj(idM), ...
                g_JULD_STATUS_2);
             if (isempty(measStruct))
                % not dated information
                measStruct = get_traj_one_meas_init_struct();
-               measStruct.measCode = g_MC_InAirSeriesOfMeas;
+               measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
             end
             measStruct.paramList = a_surfDataLog.paramList;
             measStruct.paramData = a_surfDataLog.data(idM, :);
@@ -1001,14 +1004,14 @@ if (~isempty(a_surfDataLog))
       % store surface meas
       for idM = 1:length(a_surfDataLog.dates)
          [measStruct, ~] = create_one_meas_float_time_bis( ...
-            g_MC_InAirSeriesOfMeas, ...
+            g_MC_InAirSingleMeasRelativeToTST, ...
             a_surfDataLog.dates(idM), ...
             a_surfDataLog.datesAdj(idM), ...
             g_JULD_STATUS_2);
          if (isempty(measStruct))
             % not dated information
             measStruct = get_traj_one_meas_init_struct();
-            measStruct.measCode = g_MC_InAirSeriesOfMeas;
+            measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
          end
          measStruct.paramList = a_surfDataLog.paramList;
          measStruct.paramData = a_surfDataLog.data(idM, :);
@@ -1027,7 +1030,7 @@ if (~isempty(a_surfDataMsg))
       surfDataMsg = a_surfDataMsg{idS};
       
       measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_InAirSeriesOfMeas;
+      measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
       measStruct.paramList = surfDataMsg.paramList;
       measStruct.paramData = surfDataMsg.data;
       measStruct.paramDataAdj = surfDataMsg.dataAdj;
@@ -1052,14 +1055,14 @@ if (~isempty(a_surfDataBladderDeflated))
    
    for idM = 1:length(surfDataBladderDeflated.dates)
       [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_InAirSeriesOfMeas, ...
+         g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
          surfDataBladderDeflated.dates(idM), ...
          surfDataBladderDeflated.datesAdj(idM), ...
          g_JULD_STATUS_2);
       if (isempty(measStruct))
          % not dated information
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       measStruct.paramList = surfDataBladderDeflated.paramList;
       measStruct.paramData = surfDataBladderDeflated.data(idM, :);
@@ -1095,14 +1098,14 @@ if (~isempty(a_surfDataBladderInflated))
    
    for idM = 1:length(surfDataBladderInflated.dates)
       [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_InAirSeriesOfMeas, ...
+         g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
          surfDataBladderInflated.dates(idM), ...
          surfDataBladderInflated.datesAdj(idM), ...
          g_JULD_STATUS_2);
       if (isempty(measStruct))
          % not dated information
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       measStruct.paramList = surfDataBladderInflated.paramList;
       measStruct.paramData = surfDataBladderInflated.data(idM, :);

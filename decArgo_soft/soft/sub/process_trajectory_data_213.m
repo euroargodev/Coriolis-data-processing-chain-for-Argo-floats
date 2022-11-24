@@ -17,9 +17,9 @@
 %    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
 %    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, ...
 %    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
-%    a_nearSurfC1PhaseDoxy, a_nearSurfC2PhaseDoxy, a_nearSurfTempDoxy, a_nearSurfDoxy, ...
+%    a_nearSurfC1PhaseDoxy, a_nearSurfC2PhaseDoxy, a_nearSurfTempDoxy, a_nearSurfPpoxDoxy, ...
 %    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-%    a_inAirC1PhaseDoxy, a_inAirC2PhaseDoxy, a_inAirTempDoxy, a_inAirDoxy, ...
+%    a_inAirC1PhaseDoxy, a_inAirC2PhaseDoxy, a_inAirTempDoxy, a_inAirPpoxDoxy, ...
 %    a_evAct, a_pumpAct, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -62,7 +62,7 @@
 %   a_nearSurfC1PhaseDoxy    : "near surface" profile C1PHASE_DOXY
 %   a_nearSurfC2PhaseDoxy    : "near surface" profile C2PHASE_DOXY
 %   a_nearSurfTempDoxy       : "near surface" profile TEMP_DOXY
-%   a_nearSurfDoxy           : "near surface" profile DOXY
+%   a_nearSurfPpoxDoxy       : "near surface" profile PPOX_DOXY
 %   a_inAirDate              : "in air" profile dates
 %   a_inAirTransDate         : "in air" profile transmitted date flags
 %   a_inAirPres              : "in air" profile PRES
@@ -71,7 +71,7 @@
 %   a_inAirC1PhaseDoxy       : "in air" profile C1PHASE_DOXY
 %   a_inAirC2PhaseDoxy       : "in air" profile C2PHASE_DOXY
 %   a_inAirTempDoxy          : "in air" profile TEMP_DOXY
-%   a_inAirDoxy              : "in air" profile DOXY
+%   a_inAirPpoxDoxy          : "in air" profile PPOX_DOXY
 %   a_evAct                  : decoded hydraulic (EV) data
 %   a_pumpAct                : decoded hydraulic (pump) data
 %   a_decoderId              : float decoder Id
@@ -104,9 +104,9 @@ function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_
    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, ...
    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
-   a_nearSurfC1PhaseDoxy, a_nearSurfC2PhaseDoxy, a_nearSurfTempDoxy, a_nearSurfDoxy, ...
+   a_nearSurfC1PhaseDoxy, a_nearSurfC2PhaseDoxy, a_nearSurfTempDoxy, a_nearSurfPpoxDoxy, ...
    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-   a_inAirC1PhaseDoxy, a_inAirC2PhaseDoxy, a_inAirTempDoxy, a_inAirDoxy, ...
+   a_inAirC1PhaseDoxy, a_inAirC2PhaseDoxy, a_inAirTempDoxy, a_inAirPpoxDoxy, ...
    a_evAct, a_pumpAct, a_decoderId)
 
 % output parameters initialization
@@ -153,7 +153,8 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -241,24 +242,7 @@ if (~isempty(a_inAirDate))
    paramC1PhaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
    paramC2PhaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
    paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-   paramDoxy = get_netcdf_param_attributes('DOXY');
-   
-   inAirDoxy = a_inAirDoxy;
-   % if inAirDoxy is empty, this means that the optode is mounted on an
-   % additional stick and thus we compute PPOX_DOXY for IN AIR mesurements
-   if (isempty(inAirDoxy))
-      
-      % compute PPOX_DOXY from C1PHASE_DOXY and C2PHASE_DOXY using the Stern-Volmer equation
-      inAirDoxy = ...
-         compute_PPOX_DOXY_201_203_206_209_213_to_216( ...
-         a_inAirC1PhaseDoxy, a_inAirC2PhaseDoxy, a_inAirTempDoxy, ...
-         g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
-         a_inAirPres, a_inAirTemp, ...
-         g_decArgo_presDef, g_decArgo_tempDef, ...
-         g_decArgo_doxyDef);
-      
-      paramDoxy = get_netcdf_param_attributes('PPOX_DOXY');
-   end
+   paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
    
    % convert decoder default values to netCDF fill values
    a_inAirPres(find(a_inAirPres == g_decArgo_presDef)) = paramPres.fillValue;
@@ -267,7 +251,7 @@ if (~isempty(a_inAirDate))
    a_inAirC1PhaseDoxy(find(a_inAirC1PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC1PhaseDoxy.fillValue;
    a_inAirC2PhaseDoxy(find(a_inAirC2PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC2PhaseDoxy.fillValue;
    a_inAirTempDoxy(find(a_inAirTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
-   inAirDoxy(find(inAirDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
+   a_inAirPpoxDoxy(find(a_inAirPpoxDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
    
    for idMeas = 1:length(a_inAirPres)
       
@@ -277,18 +261,18 @@ if (~isempty(a_inAirDate))
          else
             measTimeStatus = g_JULD_STATUS_2;
          end
-         measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, a_inAirDate(idMeas), measTimeStatus, floatClockDrift);
+         measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, a_inAirDate(idMeas), measTimeStatus, floatClockDrift);
       else
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       
       % add parameter variables to the structure
-      measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
+      measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramPpoxDoxy];
       
       % add parameter data to the structure
       measStruct.paramData = [a_inAirPres(idMeas) a_inAirTemp(idMeas) a_inAirSal(idMeas) ...
-         a_inAirC1PhaseDoxy(idMeas) a_inAirC2PhaseDoxy(idMeas) a_inAirTempDoxy(idMeas) inAirDoxy(idMeas)];
+         a_inAirC1PhaseDoxy(idMeas) a_inAirC2PhaseDoxy(idMeas) a_inAirTempDoxy(idMeas) a_inAirPpoxDoxy(idMeas)];
       
       tabMeasStructInAir = [tabMeasStructInAir; measStruct];
    end
@@ -593,26 +577,8 @@ if (a_deepCycle == 1)
       paramC1PhaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
       paramC2PhaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
       paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-      paramDoxy = get_netcdf_param_attributes('DOXY');
       paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
-      
-      % if the optode is mounted on an additional stick, we compute PPOX_DOXY
-      % for NEAR SURFACE mesurements
-      nearSurfPpoxDoxy = [];
-      [configNames, configValues] = get_float_config_ir_sbd(a_cycleNum);
-      optodeInAirMeasFlag = get_config_value('CONFIG_PX04_', configNames, configValues);
-      if (optodeInAirMeasFlag == 1)
-         
-         % compute PPOX_DOXY from C1PHASE_DOXY and C2PHASE_DOXY using the Stern-Volmer equation
-         nearSurfPpoxDoxy = ...
-            compute_PPOX_DOXY_201_203_206_209_213_to_216( ...
-            a_nearSurfC1PhaseDoxy, a_nearSurfC2PhaseDoxy, a_nearSurfTempDoxy, ...
-            g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
-            a_nearSurfPres, a_nearSurfTemp, ...
-            g_decArgo_presDef, g_decArgo_tempDef, ...
-            g_decArgo_doxyDef);
-      end
-      
+            
       % convert decoder default values to netCDF fill values
       a_nearSurfPres(find(a_nearSurfPres == g_decArgo_presDef)) = paramPres.fillValue;
       a_nearSurfTemp(find(a_nearSurfTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
@@ -620,8 +586,7 @@ if (a_deepCycle == 1)
       a_nearSurfC1PhaseDoxy(find(a_nearSurfC1PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC1PhaseDoxy.fillValue;
       a_nearSurfC2PhaseDoxy(find(a_nearSurfC2PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC2PhaseDoxy.fillValue;
       a_nearSurfTempDoxy(find(a_nearSurfTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
-      a_nearSurfDoxy(find(a_nearSurfDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
-      nearSurfPpoxDoxy(find(nearSurfPpoxDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
+      a_nearSurfPpoxDoxy(find(a_nearSurfPpoxDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
       
       for idMeas = 1:length(a_nearSurfPres)
          
@@ -631,28 +596,19 @@ if (a_deepCycle == 1)
             else
                measTimeStatus = g_JULD_STATUS_2;
             end
-            measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, a_nearSurfDate(idMeas), measTimeStatus, floatClockDrift);
+            measStruct = create_one_meas_float_time(g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, a_nearSurfDate(idMeas), measTimeStatus, floatClockDrift);
          else
             measStruct = get_traj_one_meas_init_struct();
-            measStruct.measCode = g_MC_InAirSeriesOfMeas;
+            measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
          end
          
          % add parameter variables to the structure
-         if (isempty(nearSurfPpoxDoxy))
-            measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
-         else
-            measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy paramPpoxDoxy];
-         end
-
+         measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramPpoxDoxy];
+         
          % add parameter data to the structure
-         if (isempty(nearSurfPpoxDoxy))
-            measStruct.paramData = [a_nearSurfPres(idMeas) a_nearSurfTemp(idMeas) a_nearSurfSal(idMeas) ...
-               a_nearSurfC1PhaseDoxy(idMeas) a_nearSurfC2PhaseDoxy(idMeas) a_nearSurfTempDoxy(idMeas) a_nearSurfDoxy(idMeas)];
-         else
-            measStruct.paramData = [a_nearSurfPres(idMeas) a_nearSurfTemp(idMeas) a_nearSurfSal(idMeas) ...
-               a_nearSurfC1PhaseDoxy(idMeas) a_nearSurfC2PhaseDoxy(idMeas) a_nearSurfTempDoxy(idMeas) a_nearSurfDoxy(idMeas) nearSurfPpoxDoxy(idMeas)];
-         end
-
+         measStruct.paramData = [a_nearSurfPres(idMeas) a_nearSurfTemp(idMeas) a_nearSurfSal(idMeas) ...
+            a_nearSurfC1PhaseDoxy(idMeas) a_nearSurfC2PhaseDoxy(idMeas) a_nearSurfTempDoxy(idMeas) a_nearSurfPpoxDoxy(idMeas)];
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
    end

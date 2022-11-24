@@ -10,21 +10,29 @@
 %         - should be provided as pairs ('param_name','param_value')
 %         - 'param_name' value is not case sensitive
 %   mandatory parameters:
-%      floatCProfFileName  : input c PROF file path name
-%      floatBProfFileName  : input b PROF file path name
-%      floatMetaFileName   : input META file path name
-%      floatCTrajFileName  : input c TRAJ file path name
-%      floatBTrajFileName  : input b TRAJ file path name
-%      createMultiProfFlag : should be set to '1' to create multi-profile file,
-%                            to '0' otherwise
-%      outputDirName       : output directory name
+%      createOnlyMultiProfFlag : should be set to '1' to create multi-profile
+%                                file, to '0' otherwise
+%      if createOnlyMultiProfFlag is set to '0' the mandatory parameters
+%      are:
+%         floatCProfFileName  : input c PROF file path name
+%         floatBProfFileName  : input b PROF file path name
+%         floatMetaFileName   : input META file path name
+%         floatCTrajFileName  : input c TRAJ file path name
+%         floatBTrajFileName  : input b TRAJ file path name
+%         createMultiProfFlag : should be set to '1' to create multi-profile
+%                               file, to '0' otherwise
+%         outputDirName       : output directory name
+%      if createOnlyMultiProfFlag is set to '1' the mandatory parameters
+%      are:
+%         floatWmo      : WMO number of concerned float
+%         outputDirName : output directory name
 %   optional parameters:
-%      outputLogDirName     : LOG file directory name
-%      xmlReportDirName     : XML file directory name
-%      xmlReportFileName    : XML file name
-%      monoProfRefFileName  : M mono-profile reference file path name
-%      multiProfRefFileName : M multi-profile reference file path name
-%      tmpDirName           : base name of the temporary directory
+%      outputLogDirName        : LOG file directory name
+%      xmlReportDirName        : XML file directory name
+%      xmlReportFileName       : XML file name
+%      monoProfRefFileName     : M mono-profile reference file path name
+%      multiProfRefFileName    : M multi-profile reference file path name
+%      tmpDirName              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -39,6 +47,7 @@
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
+%   09/25/2018 - RNU - V 1.3: added input parameters 'createOnlyMultiProfFlag' and 'floatWmo'
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile_rt(varargin)
 
@@ -72,6 +81,8 @@ else
 end
 
 % input parameters
+global g_cocm_createOnlyMultiProfFlag;
+global g_cocm_floatWmo;
 global g_cocm_floatCProfFileName;
 global g_cocm_floatBProfFileName;
 global g_cocm_floatMetaFileName;
@@ -102,7 +113,7 @@ g_cocm_reportData.outputMMultiProfFile = [];
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.2';
+g_cocm_ncCreateMergedProfileVersion = '1.3';
 
 % current float and cycle identification
 global g_cocm_floatNum;
@@ -166,27 +177,32 @@ try
       g_cocm_reportData.inputBTrajFile = g_cocm_floatBTrajFileName;
       
       % set float, cycle an direction
-      [~, cProfFileName, ~] = fileparts(g_cocm_floatCProfFileName);
-      idF = strfind(cProfFileName, '_');
-      g_cocm_floatNum = str2double(cProfFileName(2:idF-1));
-      if (cProfFileName(end) == 'D')
-         g_cocm_cycleDir = 'D';
-         cProfFileName(end) = [];
+      if (g_cocm_createOnlyMultiProfFlag == '0')
+         [~, cProfFileName, ~] = fileparts(g_cocm_floatCProfFileName);
+         idF = strfind(cProfFileName, '_');
+         g_cocm_floatNum = str2double(cProfFileName(2:idF-1));
+         if (cProfFileName(end) == 'D')
+            g_cocm_cycleDir = 'D';
+            cProfFileName(end) = [];
+         else
+            g_cocm_cycleDir = '';
+         end
+         g_cocm_cycleNum = str2double(cProfFileName(idF+1:end));
       else
-         g_cocm_cycleDir = '';
+         g_cocm_floatNum = str2double(g_cocm_floatWmo);
       end
-      g_cocm_cycleNum = str2double(cProfFileName(idF+1:end));
       
       % generate M-PROF file
       nc_create_merged_profile_(...
+         str2num(g_cocm_createOnlyMultiProfFlag), ...
          g_cocm_floatCProfFileName, ...
          g_cocm_floatBProfFileName, ...
          g_cocm_floatMetaFileName, ...
          g_cocm_floatCTrajFileName, ...
          g_cocm_floatBTrajFileName, ...
+         str2num(g_cocm_createMultiProfFlag), ...
          [], [], ...
          g_cocm_outputDirName, ...
-         str2num(g_cocm_createMultiProfFlag), ...
          g_cocm_monoProfRefFile, g_cocm_multiProfRefFile, ...
          g_cocm_tmpDirName);
    end
@@ -293,6 +309,8 @@ o_inputError = 0;
 o_logLines = [];
 
 % input parameters
+global g_cocm_createOnlyMultiProfFlag;
+global g_cocm_floatWmo;
 global g_cocm_floatCProfFileName;
 global g_cocm_floatBProfFileName;
 global g_cocm_floatMetaFileName;
@@ -308,6 +326,7 @@ global g_cocm_outputXmlReportFileName;
 global g_cocm_tmpDirName;
 
 
+g_cocm_floatWmo = '';
 g_cocm_floatCProfFileName = '';
 g_cocm_floatBProfFileName = '';
 g_cocm_floatMetaFileName = '';
@@ -359,6 +378,10 @@ if (~isempty(a_varargin))
             g_cocm_multiProfRefFile = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'tmpDirName'))
             g_cocm_tmpDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'createOnlyMultiProfFlag'))
+            g_cocm_createOnlyMultiProfFlag = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'floatWmo'))
+            g_cocm_floatWmo = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
          end
@@ -367,74 +390,147 @@ if (~isempty(a_varargin))
 end
 
 % check that mandatory parameters are provided
-if (isempty(g_cocm_floatCProfFileName))
-   o_logLines{end+1} = sprintf('ERROR: ''floatCProfFileName'' input parameter is mandatory\n');
+if (isempty(g_cocm_createOnlyMultiProfFlag))
+   o_logLines{end+1} = sprintf('ERROR: ''createOnlyMultiProfFlag'' input parameter is mandatory\n');
    o_inputError = 1;
    return;
 end
-if (isempty(g_cocm_floatBProfFileName))
-   o_logLines{end+1} = sprintf('ERROR: ''floatBProfFileName'' input parameter is mandatory\n');
-   o_inputError = 1;
-   return;
-end
-if (isempty(g_cocm_floatMetaFileName))
-   o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory\n');
-   o_inputError = 1;
-   return;
-end
-if (isempty(g_cocm_floatCTrajFileName))
-   o_logLines{end+1} = sprintf('ERROR: ''floatCTrajFileName'' input parameter is mandatory\n');
-   o_inputError = 1;
-   return;
-end
-if (isempty(g_cocm_floatBTrajFileName))
-   o_logLines{end+1} = sprintf('ERROR: ''floatBTrajFileName'' input parameter is mandatory\n');
-   o_inputError = 1;
-   return;
-end
-if (isempty(g_cocm_createMultiProfFlag))
-   o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory\n');
-   o_inputError = 1;
-   return;
-end
-if (isempty(g_cocm_outputDirName))
-   o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory\n');
+if ((length(g_cocm_createOnlyMultiProfFlag) ~= 1) || ...
+      ((g_cocm_createOnlyMultiProfFlag ~= '0') && (g_cocm_createOnlyMultiProfFlag ~= '1')))
+   o_logLines{end+1} = sprintf('ERROR: Inconsistent ''createOnlyMultiProfFlag'' value (%s) (expected ''0'' or ''1'')\n', g_cocm_outputDirName);
    o_inputError = 1;
    return;
 end
 
-% check parameters
-if ~(exist(g_cocm_floatCProfFileName, 'file') == 2)
-   o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatCProfFileName);
-   o_inputError = 1;
-   return;
+if (g_cocm_createOnlyMultiProfFlag == '0')
+   
+   % check that mandatory parameters are provided
+   if (isempty(g_cocm_floatCProfFileName))
+      o_logLines{end+1} = sprintf('ERROR: ''floatCProfFileName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_floatBProfFileName))
+      o_logLines{end+1} = sprintf('ERROR: ''floatBProfFileName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_floatMetaFileName))
+      o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_floatCTrajFileName))
+      o_logLines{end+1} = sprintf('ERROR: ''floatCTrajFileName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_floatBTrajFileName))
+      o_logLines{end+1} = sprintf('ERROR: ''floatBTrajFileName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_createMultiProfFlag))
+      o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_outputDirName))
+      o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+
+   % check input parameters
+   if ~(exist(g_cocm_floatCProfFileName, 'file') == 2)
+      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatCProfFileName);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist(g_cocm_floatBProfFileName, 'file') == 2)
+      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBProfFileName);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist(g_cocm_floatMetaFileName, 'file') == 2)
+      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatMetaFileName);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist(g_cocm_floatCTrajFileName, 'file') == 2)
+      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatCTrajFileName);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist(g_cocm_floatBTrajFileName, 'file') == 2)
+      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBTrajFileName);
+      o_inputError = 1;
+      return;
+   end
+   if ((length(g_cocm_createMultiProfFlag) ~= 1) || ...
+         ((g_cocm_createMultiProfFlag ~= '0') && (g_cocm_createMultiProfFlag ~= '1')))
+      o_logLines{end+1} = sprintf('ERROR: Inconsistent ''createMultiProfFlag'' value (%s) (expected ''0'' or ''1'')\n', g_cocm_createMultiProfFlag);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist(g_cocm_outputDirName, 'dir') == 7)
+      o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocm_outputDirName);
+      o_inputError = 1;
+      return;
+   end
+   
+   if (~isempty(g_cocm_floatWmo))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatWmo'') => ignored\n');
+   end
+   
+else
+   
+   % check that mandatory parameters are provided
+   if (isempty(g_cocm_floatWmo))
+      o_logLines{end+1} = sprintf('ERROR: ''floatWmo'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   if (isempty(g_cocm_outputDirName))
+      o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory\n');
+      o_inputError = 1;
+      return;
+   end
+   
+   % check input parameters
+   if ~(exist(g_cocm_outputDirName, 'dir') == 7)
+      o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocm_outputDirName);
+      o_inputError = 1;
+      return;
+   end
+   if ~(exist([g_cocm_outputDirName '/' g_cocm_floatWmo], 'dir') == 7)
+      o_logLines{end+1} = sprintf('ERROR: Float output directory not found: %s\n', [g_cocm_outputDirName '/' g_cocm_floatWmo]);
+      o_inputError = 1;
+      return;
+   end
+   
+   if (~isempty(g_cocm_floatCProfFileName))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCProfFileName'') => ignored\n');
+   end
+   if (~isempty(g_cocm_floatBProfFileName))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBProfFileName'') => ignored\n');
+   end
+   if (~isempty(g_cocm_floatMetaFileName))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatMetaFileName'') => ignored\n');
+   end
+   if (~isempty(g_cocm_floatCTrajFileName))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCTrajFileName'') => ignored\n');
+   end
+   if (~isempty(g_cocm_floatBTrajFileName))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBTrajFileName'') => ignored\n');
+   end
+   if (~isempty(g_cocm_createMultiProfFlag))
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''createMultiProfFlag'') => ignored\n');
+   end
+   
 end
-if ~(exist(g_cocm_floatBProfFileName, 'file') == 2)
-   o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBProfFileName);
-   o_inputError = 1;
-   return;
-end
-if ~(exist(g_cocm_floatMetaFileName, 'file') == 2)
-   o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatMetaFileName);
-   o_inputError = 1;
-   return;
-end
-if ~(exist(g_cocm_floatCTrajFileName, 'file') == 2)
-   o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatCTrajFileName);
-   o_inputError = 1;
-   return;
-end
-if ~(exist(g_cocm_floatBTrajFileName, 'file') == 2)
-   o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBTrajFileName);
-   o_inputError = 1;
-   return;
-end
-if ((length(g_cocm_createMultiProfFlag) ~= 1) || ...
-      ((g_cocm_createMultiProfFlag ~= '0') && (g_cocm_createMultiProfFlag ~= '1')))
-   o_logLines{end+1} = sprintf('ERROR: Inconsistent ''createMultiProfFlag'' value (%s) (expected ''0'' or ''1'')\n', g_cocm_outputDirName);
-   o_inputError = 1;
-   return;
-end
+
+% check input not-mandatory parameters
 if ~(exist(g_cocm_monoProfRefFile, 'file') == 2)
    o_logLines{end+1} = sprintf('ERROR: Input mono-profile reference file not found: %s\n', g_cocm_monoProfRefFile);
    o_inputError = 1;
@@ -442,11 +538,6 @@ if ~(exist(g_cocm_monoProfRefFile, 'file') == 2)
 end
 if ~(exist(g_cocm_multiProfRefFile, 'file') == 2)
    o_logLines{end+1} = sprintf('ERROR: Input multi-profile reference file not found: %s\n', g_cocm_multiProfRefFile);
-   o_inputError = 1;
-   return;
-end
-if ~(exist(g_cocm_outputDirName, 'dir') == 7)
-   o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocm_outputDirName);
    o_inputError = 1;
    return;
 end
@@ -467,19 +558,24 @@ if ~(exist(g_cocm_tmpDirName, 'dir') == 7)
 end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
-o_logLines{end+1} = sprintf('floatCProfFileName   : %s\n', g_cocm_floatCProfFileName);
-o_logLines{end+1} = sprintf('floatBProfFileName   : %s\n', g_cocm_floatBProfFileName);
-o_logLines{end+1} = sprintf('floatMetaFileName    : %s\n', g_cocm_floatMetaFileName);
-o_logLines{end+1} = sprintf('floatCTrajFileName   : %s\n', g_cocm_floatCTrajFileName);
-o_logLines{end+1} = sprintf('floatBTrajFileName   : %s\n', g_cocm_floatBTrajFileName);
-o_logLines{end+1} = sprintf('createMultiProfFlag  : %s\n', g_cocm_createMultiProfFlag);
-o_logLines{end+1} = sprintf('outputDirName        : %s\n', g_cocm_outputDirName);
-o_logLines{end+1} = sprintf('outputLogDirName     : %s\n', g_cocm_outputLogDirName);
-o_logLines{end+1} = sprintf('xmlReportDirName     : %s\n', g_cocm_outputXmlReportDirName);
-o_logLines{end+1} = sprintf('xmlReportFileName    : %s\n', g_cocm_outputXmlReportFileName);
-o_logLines{end+1} = sprintf('monoProfRefFileName  : %s\n', g_cocm_monoProfRefFile);
-o_logLines{end+1} = sprintf('multiProfRefFileName : %s\n', g_cocm_multiProfRefFile);
-o_logLines{end+1} = sprintf('tmpDirName           : %s\n', g_cocm_tmpDirName);
+o_logLines{end+1} = sprintf('createOnlyMultiProfFlag : %s\n', g_cocm_createOnlyMultiProfFlag);
+if (g_cocm_createOnlyMultiProfFlag == '0')
+   o_logLines{end+1} = sprintf('floatCProfFileName      : %s\n', g_cocm_floatCProfFileName);
+   o_logLines{end+1} = sprintf('floatBProfFileName      : %s\n', g_cocm_floatBProfFileName);
+   o_logLines{end+1} = sprintf('floatMetaFileName       : %s\n', g_cocm_floatMetaFileName);
+   o_logLines{end+1} = sprintf('floatCTrajFileName      : %s\n', g_cocm_floatCTrajFileName);
+   o_logLines{end+1} = sprintf('floatBTrajFileName      : %s\n', g_cocm_floatBTrajFileName);
+   o_logLines{end+1} = sprintf('createMultiProfFlag     : %s\n', g_cocm_createMultiProfFlag);
+else
+   o_logLines{end+1} = sprintf('floatWmo                : %s\n', g_cocm_floatWmo);
+end
+o_logLines{end+1} = sprintf('outputDirName           : %s\n', g_cocm_outputDirName);
+o_logLines{end+1} = sprintf('outputLogDirName        : %s\n', g_cocm_outputLogDirName);
+o_logLines{end+1} = sprintf('xmlReportDirName        : %s\n', g_cocm_outputXmlReportDirName);
+o_logLines{end+1} = sprintf('xmlReportFileName       : %s\n', g_cocm_outputXmlReportFileName);
+o_logLines{end+1} = sprintf('monoProfRefFileName     : %s\n', g_cocm_monoProfRefFile);
+o_logLines{end+1} = sprintf('multiProfRefFileName    : %s\n', g_cocm_multiProfRefFile);
+o_logLines{end+1} = sprintf('tmpDirName              : %s\n', g_cocm_tmpDirName);
 o_logLines{end+1} = sprintf('\n');
 
 return;
@@ -526,25 +622,35 @@ docRootNode = docNode.getDocumentElement;
 % list of input files
 newChild = docNode.createElement('input_files');
 
-newChildBis = docNode.createElement('input_c_prof_file');
-newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputCProfFile));
-newChild.appendChild(newChildBis);
+if (~isempty(g_cocm_reportData.inputCProfFile))
+   newChildBis = docNode.createElement('input_c_prof_file');
+   newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputCProfFile));
+   newChild.appendChild(newChildBis);
+end
 
-newChildBis = docNode.createElement('input_b_prof_file');
-newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputBProfFile));
-newChild.appendChild(newChildBis);
+if (~isempty(g_cocm_reportData.inputBProfFile))
+   newChildBis = docNode.createElement('input_b_prof_file');
+   newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputBProfFile));
+   newChild.appendChild(newChildBis);
+end
 
-newChildBis = docNode.createElement('input_meta_file');
-newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputMetaFile));
-newChild.appendChild(newChildBis);
+if (~isempty(g_cocm_reportData.inputMetaFile))
+   newChildBis = docNode.createElement('input_meta_file');
+   newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputMetaFile));
+   newChild.appendChild(newChildBis);
+end
 
-newChildBis = docNode.createElement('input_c_traj_file');
-newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputCTrajFile));
-newChild.appendChild(newChildBis);
+if (~isempty(g_cocm_reportData.inputCTrajFile))
+   newChildBis = docNode.createElement('input_c_traj_file');
+   newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputCTrajFile));
+   newChild.appendChild(newChildBis);
+end
 
-newChildBis = docNode.createElement('input_b_traj_file');
-newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputBTrajFile));
-newChild.appendChild(newChildBis);
+if (~isempty(g_cocm_reportData.inputBTrajFile))
+   newChildBis = docNode.createElement('input_b_traj_file');
+   newChildBis.appendChild(docNode.createTextNode(g_cocm_reportData.inputBTrajFile));
+   newChild.appendChild(newChildBis);
+end
 
 docRootNode.appendChild(newChild);
 

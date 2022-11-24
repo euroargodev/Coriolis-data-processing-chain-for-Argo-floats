@@ -38,9 +38,9 @@ for idProf = 1:length(a_tabProfiles)
          if (profile.sensorNumber == 0)
             % CTD profile
             profile.primarySamplingProfileFlag = 1;
-         elseif (profile.sensorNumber == 1)
-            % DOXY profile
-            profile.primarySamplingProfileFlag = 0;
+            %          elseif (profile.sensorNumber == 1)
+            %             % DOXY profile
+            %             profile.primarySamplingProfileFlag = 0;
          end
          tabProfiles = [tabProfiles profile];
       end
@@ -114,9 +114,9 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       if (primaryProfile.sensorNumber == 0)
          % CTD profile
          primaryProfile.primarySamplingProfileFlag = 1;
-      elseif (primaryProfile.sensorNumber == 1)
-         % DOXY profile
-         primaryProfile.primarySamplingProfileFlag = 0;
+         %       elseif (primaryProfile.sensorNumber == 1)
+         %          % DOXY profile
+         %          primaryProfile.primarySamplingProfileFlag = 0;
       end
       primaryProfile.vertSamplingScheme = primaryProfile.vertSamplingScheme{1};      
       primaryProfile.data = primaryProfile.data(1:idLevPrimary(end), :);
@@ -137,11 +137,11 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       if (nearSurfaceProfile.sensorNumber == 0)
          % CTD profile
          nearSurfaceProfile.primarySamplingProfileFlag = 2;
-      elseif (nearSurfaceProfile.sensorNumber == 1)
-         % DOXY profile
-         nearSurfaceProfile.primarySamplingProfileFlag = 0;
+         %       elseif (nearSurfaceProfile.sensorNumber == 1)
+         %          % DOXY profile
+         %          nearSurfaceProfile.primarySamplingProfileFlag = 0;
       end
-      nearSurfaceProfile.vertSamplingScheme = nearSurfaceProfile.vertSamplingScheme{2};      
+      nearSurfaceProfile.vertSamplingScheme = nearSurfaceProfile.vertSamplingScheme{2};
       nearSurfaceProfile.data = nearSurfaceProfile.data(idLevNearSurface(1):end, :);
       if (~isempty(nearSurfaceProfile.dataQc))
          nearSurfaceProfile.dataQc = nearSurfaceProfile.dataQc(idLevNearSurface(1):end, :);
@@ -160,9 +160,9 @@ else
    if (a_tabProfile.sensorNumber == 0)
       % CTD profile
       a_tabProfile.primarySamplingProfileFlag = 1;
-   elseif (a_tabProfile.sensorNumber == 1)
-      % DOXY profile
-      a_tabProfile.primarySamplingProfileFlag = 0;
+      %    elseif (a_tabProfile.sensorNumber == 1)
+      %       % DOXY profile
+      %       a_tabProfile.primarySamplingProfileFlag = 0;
    end
    a_tabProfile.vertSamplingScheme = a_tabProfile.vertSamplingScheme{1};
    

@@ -29,11 +29,16 @@ global g_decArgo_ncDateDef;
 global g_MC_CycleStart;
 global g_MC_DST;
 global g_MC_AET;
-global g_MC_NearSurfaceSeriesOfMeas;
 global g_MC_TST;
 global g_MC_Surface;
 global g_MC_TET;
-global g_MC_InAirSeriesOfMeas;
+
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTET;
+
 
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDuration;
@@ -42,7 +47,13 @@ MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
 
 % set cycle number of mail files according to TRAJ N_MEASUREMENT data
 surfMcList1 = [g_MC_CycleStart g_MC_DST];
-surfMcList2 = [g_MC_AET g_MC_NearSurfaceSeriesOfMeas g_MC_TST g_MC_Surface g_MC_TET g_MC_InAirSeriesOfMeas];
+surfMcList2 = [g_MC_AET ...
+   g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST ...
+   g_MC_InAirSingleMeasRelativeToTST ...
+   g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+   g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+   g_MC_InAirSingleMeasRelativeToTET ...
+   g_MC_TST g_MC_Surface g_MC_TET];
 trajCyNumList = unique([a_tabTrajNMeas.cycleNumber]);
 for idCy = 1:length(trajCyNumList)
    cyNum = trajCyNumList(idCy);

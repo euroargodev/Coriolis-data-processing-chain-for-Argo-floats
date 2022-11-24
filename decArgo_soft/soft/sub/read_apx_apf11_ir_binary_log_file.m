@@ -112,10 +112,6 @@ while (1)
          end
          
       else
-%          if (recId == 40)
-%             a=1
-%          end
-         
          
          % check decoding information VS data length consistency
          if (5+sum([decStruct.tabBytes]) ~= recLength)

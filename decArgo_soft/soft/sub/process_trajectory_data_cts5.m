@@ -108,10 +108,10 @@ global g_MC_AET;
 global g_MC_SpyAtSurface;
 global g_MC_TST;
 global g_MC_Surface;
-global g_MC_SingleMeasToTET;
+global g_MC_InAirSingleMeasRelativeToTET;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_2;
@@ -855,7 +855,7 @@ for idCyc = 1:length(cycleNumList)
                   
       % IN AIR measurements
       idPackData  = find( ...
-         (a_tabTrajIndex(:, 1) == g_MC_InAirSeriesOfMeas) & ...
+         (a_tabTrajIndex(:, 1) == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum) & ...
          (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
@@ -867,7 +867,7 @@ for idCyc = 1:length(cycleNumList)
          
          measDataTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
          for idM = 1:length(dates)
-            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_InAirSeriesOfMeas, ...
+            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
                dates(idM), datesAdj(idM), g_JULD_STATUS_2);
             measStruct.paramList = a_tabTrajData{id}{:}.paramList;
             measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
@@ -932,13 +932,13 @@ for idCyc = 1:length(cycleNumList)
       
       % surface temperature
       idPackTech  = find( ...
-         (a_tabTrajIndex(:, 1) == g_MC_SingleMeasToTET) & ...
+         (a_tabTrajIndex(:, 1) == g_MC_InAirSingleMeasRelativeToTET) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum) & ...
          (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
       if (~isempty(idPackTech))
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_SingleMeasToTET;
+         measStruct.measCode = g_MC_InAirSingleMeasRelativeToTET;
          for idP = 1:length(idPackTech)
             measStruct.paramList = [measStruct.paramList ...
                get_netcdf_param_attributes(a_tabTrajData{idPackTech(idP)}{:}.paramName)];

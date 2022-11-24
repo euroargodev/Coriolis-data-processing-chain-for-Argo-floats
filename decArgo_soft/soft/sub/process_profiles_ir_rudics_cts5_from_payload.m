@@ -578,40 +578,50 @@ for idP = 1:length(payloadProfiles)
    profStruct.outputCycleNumber = g_decArgo_cycleNum;
    profStruct.sensorNumber = payloadProfile.sensorNumDecArgo;
    profStruct.payloadSensorNumber = payloadProfile.sensorNum;
-   if (profStruct.sensorNumber == 1)
-      profStruct.primarySamplingProfileFlag = -1;
-   end
+   %    if (profStruct.sensorNumber == 1)
+   %       profStruct.primarySamplingProfileFlag = -1;
+   %    end
    
+   % The following code is removed (set as comment) to be compliant with the
+   % following decision:
+   % From "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017, Hamburg"
+   % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+   % If oxygen data follow the same vertical sampling scheme(s) as CTD data, they
+   % are stored in the same N_PROF(s) as the TEMP and PSAL data.
+   % If oxygen data follow an independent vertical sampling scheme, their data are
+   % not split into two, a profile and near-surface sampling, but put into one
+   % single vertical sampling scheme (N_PROF>1).
+
    % set the CTD cut-off pressure (for DOXY profile only, to be consistent with
    % what is done for PTSO floats)
-   if (profStruct.sensorNumber == 1)
-      if (profStruct.phaseNumber == g_decArgo_phaseAscProf)
-         if (~isempty(a_presCutOffProf))
-            % use the sub surface point transmitted in the CTD data
-            profStruct.presCutOffProf = a_presCutOffProf;
-            profStruct.subSurfMeasReceived = 1;
-         else
-            % get the pressure cut-off for CTD ascending profile (from the
-            % configuration)
-            configPresCutOffProf = config_get_value_ir_rudics_cts5(g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, 'CONFIG_APMT_SENSOR_01_P54');
-            if (~isempty(configPresCutOffProf) && ~isnan(configPresCutOffProf))
-               profStruct.presCutOffProf = configPresCutOffProf;
-               
-               fprintf('DEC_WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in apmt data => value retrieved from the configuration\n', ...
-                  g_decArgo_floatNum, ...
-                  g_decArgo_cycleNum, ...
-                  g_decArgo_cycleNumFloat, ...
-                  g_decArgo_patternNumFloat);
-            else
-               fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in the configuration => CTD profile not split\n', ...
-                  g_decArgo_floatNum, ...
-                  g_decArgo_cycleNum, ...
-                  g_decArgo_cycleNumFloat, ...
-                  g_decArgo_patternNumFloat);
-            end
-         end
-      end
-   end
+   %    if (profStruct.sensorNumber == 1)
+   %       if (profStruct.phaseNumber == g_decArgo_phaseAscProf)
+   %          if (~isempty(a_presCutOffProf))
+   %             % use the sub surface point transmitted in the CTD data
+   %             profStruct.presCutOffProf = a_presCutOffProf;
+   %             profStruct.subSurfMeasReceived = 1;
+   %          else
+   %             % get the pressure cut-off for CTD ascending profile (from the
+   %             % configuration)
+   %             configPresCutOffProf = config_get_value_ir_rudics_cts5(g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, 'CONFIG_APMT_SENSOR_01_P54');
+   %             if (~isempty(configPresCutOffProf) && ~isnan(configPresCutOffProf))
+   %                profStruct.presCutOffProf = configPresCutOffProf;
+   %
+   %                fprintf('DEC_WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in apmt data => value retrieved from the configuration\n', ...
+   %                   g_decArgo_floatNum, ...
+   %                   g_decArgo_cycleNum, ...
+   %                   g_decArgo_cycleNumFloat, ...
+   %                   g_decArgo_patternNumFloat);
+   %             else
+   %                fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in the configuration => CTD profile not split\n', ...
+   %                   g_decArgo_floatNum, ...
+   %                   g_decArgo_cycleNum, ...
+   %                   g_decArgo_cycleNumFloat, ...
+   %                   g_decArgo_patternNumFloat);
+   %             end
+   %          end
+   %       end
+   %    end
    
    % store data measurements
    data = payloadProfile.data;

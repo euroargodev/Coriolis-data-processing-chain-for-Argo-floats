@@ -56,6 +56,9 @@ global g_decArgo_qcStrNoQc;
 % global default values
 global g_decArgo_qcDef;
 
+% decoder version
+global g_decArgo_decoderVersion;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -210,6 +213,7 @@ netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
 netcdf.putAtt(fCdf, globalVarId, 'references', ' ');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
+netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
 
 % create general information variables
 platformNumberVarId = netcdf.defVar(fCdf, 'PLATFORM_NUMBER', 'NC_CHAR', string8DimId);

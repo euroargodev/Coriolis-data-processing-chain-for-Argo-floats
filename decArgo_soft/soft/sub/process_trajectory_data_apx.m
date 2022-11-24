@@ -59,7 +59,7 @@ global g_MC_MaxPresInDriftAtPark;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_Surface;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 % global time status
 global g_JULD_STATUS_4;
@@ -67,6 +67,7 @@ global g_JULD_STATUS_4;
 % RPP status
 global g_RPP_STATUS_2;
 global g_RPP_STATUS_4;
+global g_RPP_STATUS_5;
 
 % default values
 global g_decArgo_presDef;
@@ -227,6 +228,15 @@ elseif (ismember(a_decoderId, [1021 1022])) % mean PTS is not provided for these
          measStruct.paramList = get_netcdf_param_attributes('PRES');
          measStruct.paramData = (a_trajData(idMinMeas).value + a_trajData(idMaxMeas).value)/2;
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         
+         % add adjusted RPP to the N_CYCLE data
+         paramDataAdj = measStruct.paramData;
+         idCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == a_cycleNum);
+         if (~isempty(idCycleStruct))
+            paramDataAdj = compute_adjusted_pres(paramDataAdj, a_presOffsetData.presOffset(idCycleStruct));
+         end
+         trajNCycleStruct.repParkPres = paramDataAdj;
+         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_5;
       end
    end
 else
@@ -305,7 +315,7 @@ if (~isempty(a_surfData))
          % create a new measurement
          measStruct = get_traj_one_meas_init_struct();
          measStruct.sensorNumber = 1000; % so that it will be stored in TRAJ_AUX file
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSingleMeasRelativeToTET;
          measStruct.paramList = a_surfData.paramList([idPres idBlueRef idNtuRef]);
          measStruct.paramData = a_surfData.data(idMeas, [idPres idBlueRef idNtuRef]);
          if (~isempty(a_surfData.dataAdj))
@@ -315,7 +325,7 @@ if (~isempty(a_surfData))
          
          % clean the current measurement
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSingleMeasRelativeToTET;
          measStruct.paramList = a_surfData.paramList;
          measStruct.paramList([idBlueRef idNtuRef]) = [];
          measStruct.paramData = a_surfData.data(idMeas, :);
@@ -330,7 +340,7 @@ if (~isempty(a_surfData))
       
       for idMeas = 1:size(a_surfData.data, 1)
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSingleMeasRelativeToTET;
          measStruct.paramList = a_surfData.paramList;
          measStruct.paramData = a_surfData.data(idMeas, :);
          if (~isempty(a_surfData.dataAdj))

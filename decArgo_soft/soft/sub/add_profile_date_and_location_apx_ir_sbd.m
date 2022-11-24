@@ -36,8 +36,8 @@ global g_decArgo_dateDef;
 global g_decArgo_floatNum;
 
 % global measurement codes
-global g_MC_NearSurfaceSeriesOfMeas;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
 
 % QC flag values (char)
 global g_decArgo_qcStrInterpolated;
@@ -69,7 +69,7 @@ for idP = 1:length(o_tabProfiles)
                if (~isempty(a_tabTrajNMeas(idCyNMeas).tabMeas))
                   
                   % choice #2 - last near surface measurement date (Navis only)
-                  idNSSOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_NearSurfaceSeriesOfMeas);
+                  idNSSOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST);
                   if (~isempty(idNSSOM))
                      nearSurfMeasdates = [a_tabTrajNMeas(idCyNMeas).tabMeas(idNSSOM).juld];
                      if (~isempty(nearSurfMeasdates))
@@ -79,7 +79,7 @@ for idP = 1:length(o_tabProfiles)
                   
                   % choice #3 - first surface measurement date
                   if (prof.date == g_decArgo_dateDef)
-                     idIASOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InAirSeriesOfMeas);
+                     idIASOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InAirSingleMeasRelativeToTST);
                      if (~isempty(idIASOM))
                         surfMeasdates = [a_tabTrajNMeas(idCyNMeas).tabMeas(idIASOM).juld];
                         if (~isempty(surfMeasdates))

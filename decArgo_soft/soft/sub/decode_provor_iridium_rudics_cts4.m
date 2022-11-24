@@ -160,6 +160,15 @@ global g_decArgo_bufferKo;
 % verbose mode flag
 VERBOSE_MODE_BUFF = 1;
 
+% to check timeouted buffer contents
+global g_decArgo_needFullBufferInfo;
+if (~isempty(g_decArgo_outputCsvFileId))
+   PRINT_INFO_ON_NOT_COMPLETED_BUFFER = 1;
+else
+   PRINT_INFO_ON_NOT_COMPLETED_BUFFER = 0;
+end
+g_decArgo_needFullBufferInfo = PRINT_INFO_ON_NOT_COMPLETED_BUFFER;
+
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDuration;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
@@ -594,6 +603,14 @@ if (~a_floatDmFlag)
                   length(tabOldFileNames));
             end
             
+            if (PRINT_INFO_ON_NOT_COMPLETED_BUFFER)
+               % check buffer contents with 'old' files contents
+               if (a_decoderId ~= 111)
+                  check_buffer_ir_rudics_cts4_105_to_110_112( ...
+                     tabOldFileNames, tabOldFileDates, a_floatDmFlag);
+               end
+            end
+            
             g_decArgo_bufferKo = 1;
             [tabProfiles, ...
                tabTrajNMeas, tabTrajNCycle, ...
@@ -759,7 +776,7 @@ if (~a_floatDmFlag)
             
             if ((okToProcess == 1) || ...
                   ((g_decArgo_realtimeFlag == 0) && (idSpoolFile == length(tabAllFileDates))))
-                              
+               
                % process the 'new' files
                if (VERBOSE_MODE_BUFF == 1)
                   if ((okToProcess == 1) || (idSpoolFile < length(tabAllFileDates)))
@@ -770,6 +787,17 @@ if (~a_floatDmFlag)
                      fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files\n', ...
                         g_decArgo_floatNum, ...
                         length(tabNewFileNames));
+                     
+                     if (PRINT_INFO_ON_NOT_COMPLETED_BUFFER)
+                        if ((okToProcess == 0) && (idSpoolFile == length(tabAllFileDates)))
+                           % check buffer contents with 'old' files contents
+                           if (a_decoderId ~= 111)
+                              check_buffer_ir_rudics_cts4_105_to_110_112( ...
+                                 tabNewFileNames, tabNewFileDates, a_floatDmFlag);
+                           end
+                        end
+                     end
+                     
                   end
                   for idM = 1:size(cycleProfToProcess, 1)
                      cycle = cycleProfToProcess(idM, 1);

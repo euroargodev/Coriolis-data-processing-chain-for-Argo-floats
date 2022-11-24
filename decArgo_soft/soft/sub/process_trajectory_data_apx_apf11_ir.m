@@ -66,10 +66,11 @@ global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_TST;
 global g_MC_Surface;
-global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
-global g_MC_SurfaceDoMeasAfterAirBladderInflation;
 global g_MC_TET;
 global g_MC_Grounded;
+
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_2;
@@ -531,9 +532,9 @@ for idML = 1:length(measList)
       if (doDataFlag)
          if (~isempty(bladderInflationStartDate))
             if ((idPhase <= length(phaseDates)) && (phaseDates(idPhase) == bladderInflationStartDate))
-               measCode = g_MC_SurfaceDoMeasBeforeAirBladderInflation;
+               measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
             elseif ((idPhase > 1) && (phaseDates(idPhase-1) == bladderInflationStartDate))
-               measCode = g_MC_SurfaceDoMeasAfterAirBladderInflation;
+               measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
             end
          end
       end

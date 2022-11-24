@@ -232,6 +232,9 @@ for idMes = 1:size(tabSensors, 1)
       otherwise
          fprintf('WARNING: Nothing done yet for packet type #%d\n', ...
             packType);
+         cycleNum = '';
+         profNum = '';
+         phaseNum = '';
    end
    
    %    fprintf('Type %d ycle #%d prof #%d phase %d\n', ...

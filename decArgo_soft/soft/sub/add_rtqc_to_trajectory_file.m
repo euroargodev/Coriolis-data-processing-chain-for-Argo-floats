@@ -74,6 +74,16 @@
 %                             parameter values are set to FillValue in the
 %                             appropriate file).
 %                             - add RTQC test #62 for BBP
+%   09/18/2018 - RNU - V 2.2: - to retrieve "Near Surface" and "In Air"
+%                             measurements use:
+%                             g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST
+%                             g_MC_InAirSingleMeasRelativeToTST
+%                             g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST
+%                             g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST
+%                             g_MC_InAirSingleMeasRelativeToTET
+%                             instead of:
+%                             g_MC_InAirSingleMeas
+%                             g_MC_InAirSeriesOfMeas
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -98,8 +108,11 @@ global g_decArgo_qcStrInterpolated;  % '8'
 global g_decArgo_qcStrMissing;       % '9'
 
 % global measurement codes
-global g_MC_InAirSingleMeas;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 % temporary trajectory data
 global g_rtqc_trajData;
@@ -109,7 +122,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.1';
+g_decArgo_addRtqcToTrajVersion = '2.2';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1350,8 +1363,11 @@ if (testFlagList(21) == 1)
          paramFillValue = ncTrajParamXFillValueList{idPsal};
          idMeas = find( ...
             (data ~= paramFillValue) & ...
-            ((measurementCode == g_MC_InAirSingleMeas) | ...
-            (measurementCode == g_MC_InAirSeriesOfMeas)));
+            ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+            (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
          
          % apply the test
          dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
@@ -1413,8 +1429,11 @@ if (testFlagList(22) == 1)
             paramFillValue = ncTrajParamXFillValueList{idTemp};
             idMeas = find( ...
                (data ~= paramFillValue) & ...
-               ((measurementCode == g_MC_InAirSingleMeas) | ...
-               (measurementCode == g_MC_InAirSeriesOfMeas)));
+               ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+               (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
             
             % apply the test
             dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
@@ -1518,7 +1537,6 @@ if (testFlagList(57) == 1)
    % list of parameters concerned by this test
    test57ParameterList = [ ...
       {'PPOX_DOXY'} ...
-      {'PPOX_DOXY2'} ...
       ];
    
    % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
@@ -1572,8 +1590,11 @@ if (testFlagList(57) == 1)
                      paramFillValue = ncTrajParamXFillValueList{idParam};
                      idMeas = find( ...
                         (data ~= paramFillValue) & ...
-                        ((measurementCode == g_MC_InAirSingleMeas) | ...
-                        (measurementCode == g_MC_InAirSeriesOfMeas)));
+                        ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
+                        (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+                        (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+                        (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+                        (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
                      
                      % apply the test
                      dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrBad);

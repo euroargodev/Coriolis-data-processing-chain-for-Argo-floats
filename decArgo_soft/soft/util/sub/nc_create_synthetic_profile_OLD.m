@@ -3,23 +3,19 @@
 %
 % SYNTAX :
 %  nc_create_synthetic_profile_( ...
-%    a_createOnlyMultiProfFlag, ...
 %    a_cProfFileName, a_bProfFileName, a_metaFileName, ...
-%    a_createMultiProfFlag, ...
-%    a_outputDir, ...
-%    a_monoProfRefFile, a_multiProfRefFile, ...
+%    a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
 %    a_tmpDir)
 %
 % INPUT PARAMETERS :
-%   a_createOnlyMultiProfFlag : generate only S multi-profile file flag
-%   a_cProfFileName           : input C prof file path name
-%   a_bProfFileName           : input B prof file path name
-%   a_metaFileName            : input meta file path name
-%   a_createMultiProfFlag     : generate S multi-prof flag
-%   a_outputDir               : output S prof file directory
-%   a_monoProfRefFile         : netCDF synthetic mono-profile file schema
-%   a_multiProfRefFile        : netCDF synthetic multi-profile file schema
-%   a_tmpDir                  : base name of the temporary directory
+%   a_cProfFileName       : input C prof file path name
+%   a_bProfFileName       : input B prof file path name
+%   a_metaFileName        : input meta file path name
+%   a_outputDir           : output S prof file directory
+%   a_createMultiProfFlag : generate S multi-prof flag
+%   a_monoProfRefFile     : netCDF synthetic mono-profile file schema
+%   a_multiProfRefFile    : netCDF synthetic multi-profile file schema
+%   a_tmpDir              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -32,11 +28,8 @@
 %   06/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_( ...
-   a_createOnlyMultiProfFlag, ...
    a_cProfFileName, a_bProfFileName, a_metaFileName, ...
-   a_createMultiProfFlag, ...
-   a_outputDir, ...
-   a_monoProfRefFile, a_multiProfRefFile, ...
+   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
    a_tmpDir)
 
 % current float and cycle identification
@@ -62,31 +55,28 @@ end
 % create the temporary directory
 mkdir(tmpDirName);
 
-if (a_createOnlyMultiProfFlag == 0)
-   
-   % create output file directory
-   outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
-   if ~(exist(outputFloatDirName, 'dir') == 7)
-      mkdir(outputFloatDirName);
-   end
-   
-   % retrieve PROF data
-   profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName);
-   
-   % process PROF data
-   syntProfDataStruct = [];
-   if (~isempty(profDataStruct))
-      syntProfDataStruct = process_prof_data(profDataStruct, a_cProfFileName, a_bProfFileName, a_metaFileName);
-   end
-   
-   % create S-PROF file
-   if (~isempty(syntProfDataStruct))
-      create_synthetic_mono_profile_file(g_cocs_floatNum, syntProfDataStruct, tmpDirName, a_outputDir, a_monoProfRefFile);
-   end
+% create output file directory
+outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
+if ~(exist(outputFloatDirName, 'dir') == 7)
+   mkdir(outputFloatDirName);
+end
+
+% retrieve PROF data
+profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName);
+
+% process PROF data
+syntProfDataStruct = [];
+if (~isempty(profDataStruct))
+   syntProfDataStruct = process_prof_data(profDataStruct, a_cProfFileName, a_bProfFileName, a_metaFileName);
+end
+
+% create S-PROF file
+if (~isempty(syntProfDataStruct))
+   create_synthetic_mono_profile_file(g_cocs_floatNum, syntProfDataStruct, tmpDirName, a_outputDir, a_monoProfRefFile);
 end
 
 % create multi S-PROF file
-if ((a_createOnlyMultiProfFlag == 1) || (a_createMultiProfFlag == 1))
+if (a_createMultiProfFlag == 1)
    
    % retrieve S-PROF data
    syntProfAllDataStruct = get_all_synthetic_prof_data(a_outputDir);

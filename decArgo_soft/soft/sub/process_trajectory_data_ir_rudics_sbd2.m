@@ -142,7 +142,6 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -866,36 +865,6 @@ for idCyc = 1:length(cycleNumList)
             measStruct = create_one_meas_float_time(g_MC_AET, a_tabTrajData{idPackTech}.ascentEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
-            % IN AIR measurements
-            
-            idPackData  = find( ...
-               (a_tabTrajIndex(:, 1) == 2) & ...
-               (a_tabTrajIndex(:, 2) == cycleNum) & ...
-               (a_tabTrajIndex(:, 3) == profNum));
-            
-            for idMeas = 1:length(idPackData)
-               id = idPackData(idMeas);
-               dates = a_tabTrajData{id}.dates;
-               dateFillValue = a_tabTrajData{id}.dateList.fillValue;
-               data = a_tabTrajData{id}.data;
-
-               for idM = 1:length(dates)
-                  if (dates(idM) ~= dateFillValue)
-                     measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, dates(idM), g_JULD_STATUS_2, 0);
-                  else
-                     measStruct = get_traj_one_meas_init_struct();
-                     measStruct.measCode = g_MC_InAirSeriesOfMeas;
-                  end
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramNumberWithSubLevels = a_tabTrajData{id}.paramNumberWithSubLevels;
-                  measStruct.paramNumberOfSubLevels = a_tabTrajData{id}.paramNumberOfSubLevels;
-                  measStruct.paramData = data(idM, :);
-                  measStruct.cyclePhase = a_tabTrajData{id}.phaseNumber;
-                  measStruct.sensorNumber = a_tabTrajData{id}.sensorNumber;
-                  trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-               end
-            end
                         
             % transmission start time
             if (~isempty(a_tabTrajData{idPackTech}.transStartDate))

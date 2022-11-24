@@ -3,25 +3,20 @@
 %
 % SYNTAX :
 %  [o_metaDataStruct, o_trajDataStruct] = nc_create_merged_profile_( ...
-%    a_createOnlyMultiProfFlag, ...
-%    a_cProfFileName, a_bProfFileName, a_metaFileName, a_cTrajFileName, a_bTrajFileName, ...
-%    a_createMultiProfFlag, ...
-%    a_metaDataStruct, a_trajDataStruct, ...
-%    a_outputDir, ...
-%    a_monoProfRefFile, a_multiProfRefFile, ...
-%    a_tmpDir)
+%    a_cProfFileName, a_bProfFileName, ...
+%    a_metaFileName, a_cTrajFileName, a_bTrajFileName, a_metaDataStruct, a_trajDataStruct, ...
+%    a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
 %
 % INPUT PARAMETERS :
-%   a_createOnlyMultiProfFlag : generate only M multi-profile file flag
 %   a_cProfFileName       : input C prof file path name
 %   a_bProfFileName       : input B prof file path name
 %   a_metaFileName        : input meta file path name
 %   a_cTrajFileName       : input C traj file path name
 %   a_bTrajFileName       : input B traj file path name
-%   a_createMultiProfFlag : generate M multi-profile file flag
 %   a_metaDataStruct      : input meta-data
 %   a_trajDataStruct      : input traj data
 %   a_outputDir           : output M prof file directory
+%   a_createMultiProfFlag : generate M multi-profile file flag
 %   a_monoProfRefFile     : netCDF merged mono-profile file schema
 %   a_multiProfRefFile    : netCDF merged multi-profile file schema
 %   a_tmpDir              : base name of the temporary directory
@@ -39,14 +34,11 @@
 %   06/12/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_metaDataStruct, o_trajDataStruct] = nc_create_merged_profile_( ...
-   a_createOnlyMultiProfFlag, ...
-   a_cProfFileName, a_bProfFileName, a_metaFileName, a_cTrajFileName, a_bTrajFileName, ...
-   a_createMultiProfFlag, ...
-   a_metaDataStruct, a_trajDataStruct, ...
-   a_outputDir, ...
-   a_monoProfRefFile, a_multiProfRefFile, ...
-   a_tmpDir)     
-      
+   a_cProfFileName, a_bProfFileName, ...
+   a_metaFileName, a_cTrajFileName, a_bTrajFileName, a_metaDataStruct, a_trajDataStruct, ...
+   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
+   a_tmpDir)
+
 % output parameters initialization
 o_metaDataStruct = a_metaDataStruct;
 o_trajDataStruct = a_trajDataStruct;
@@ -74,41 +66,38 @@ end
 % create the temporary directory
 mkdir(tmpDirName);
 
-if (a_createOnlyMultiProfFlag == 0)
-   
-   % create output file directory
-   outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
-   if ~(exist(outputFloatDirName, 'dir') == 7)
-      mkdir(outputFloatDirName);
-   end
-   
-   % retrieve META data
-   if (isempty(o_metaDataStruct))
-      o_metaDataStruct = get_meta_data(a_metaFileName);
-   end
-   
-   % retrieve TRAJ data
-   if (isempty(o_trajDataStruct))
-      o_trajDataStruct = get_traj_data(a_cTrajFileName, a_bTrajFileName);
-   end
-   
-   % retrieve PROF data
-   profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName, o_metaDataStruct);
-   
-   % process PROF data
-   mergedProfDataStruct = [];
-   if (~isempty(profDataStruct))
-      mergedProfDataStruct = process_prof_data(profDataStruct, o_trajDataStruct, o_metaDataStruct);
-   end
-   
-   % create M-PROF file
-   if (~isempty(mergedProfDataStruct))
-      create_merged_mono_profile_file(g_cocm_floatNum, mergedProfDataStruct, tmpDirName, a_outputDir, a_monoProfRefFile);
-   end
+% create output file directory
+outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
+if ~(exist(outputFloatDirName, 'dir') == 7)
+   mkdir(outputFloatDirName);
+end
+
+% retrieve META data
+if (isempty(o_metaDataStruct))
+   o_metaDataStruct = get_meta_data(a_metaFileName);
+end
+
+% retrieve TRAJ data
+if (isempty(o_trajDataStruct))
+   o_trajDataStruct = get_traj_data(a_cTrajFileName, a_bTrajFileName);
+end
+
+% retrieve PROF data
+profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName, o_metaDataStruct);
+
+% process PROF data
+mergedProfDataStruct = [];
+if (~isempty(profDataStruct))
+   mergedProfDataStruct = process_prof_data(profDataStruct, o_trajDataStruct, o_metaDataStruct);
+end
+
+% create M-PROF file
+if (~isempty(mergedProfDataStruct))
+   create_merged_mono_profile_file(g_cocm_floatNum, mergedProfDataStruct, tmpDirName, a_outputDir, a_monoProfRefFile);
 end
 
 % create multi M-PROF file
-if ((a_createOnlyMultiProfFlag == 1) || (a_createMultiProfFlag == 1))
+if (a_createMultiProfFlag == 1)
    
    % retrieve M-PROF data
    mergedProfAllDataStruct = get_all_merged_prof_data(a_outputDir);
@@ -1242,7 +1231,7 @@ o_mergedProfData = [];
 % global measurement codes
 global g_MC_DescProf;
 global g_MC_AscProf;
-global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_NearSurfaceSeriesOfMeas;
 
 % QC flag values (char)
 global g_decArgo_qcStrDef;
@@ -1655,7 +1644,7 @@ if (~isempty(a_trajData))
       if (strcmp(a_metaData.dataCentre, 'IF') && strcmp(a_metaData.platformType, 'NAVIS_A'))
          % for NAVIS floats near surface measurements are stored in the PROF and
          % in the TRAJ files
-         profMeasCodeList = [profMeasCodeList g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST];
+         profMeasCodeList = [profMeasCodeList g_MC_NearSurfaceSeriesOfMeas];
       end
    end
    

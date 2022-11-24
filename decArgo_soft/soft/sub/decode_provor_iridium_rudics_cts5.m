@@ -891,6 +891,10 @@ for typeNum = typeOrderList
       fileNamesForType = fileNames(idFileForType);
       for idFile = 1:length(fileNamesForType)
          
+         %          if ((g_decArgo_cycleNumFloat == 28) && (g_decArgo_patternNumFloat == 1))
+         %             a=1
+         %          end
+         
          % manage split files
          [~, fileName, fileExtension] = fileparts(fileNamesForType{idFile});
          fileNameInfo = manage_split_files({g_decArgo_archiveDirectory}, ...

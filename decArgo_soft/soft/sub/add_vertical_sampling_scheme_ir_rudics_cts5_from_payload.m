@@ -257,34 +257,34 @@ for idP = 1:length(a_tabProfiles)
             
             a_tabProfiles(idP).vertSamplingScheme = vssTextSecondary;
             
-         else
-            
-            % primary sampling
-            if (~isempty(text1List))
-               descriptionPrimary = [sprintf('%s;', text1List{1:end-1}) sprintf('%s', text1List{end})];
-            end
-            if (discretePrimaryFlag == nbPrimaryFlag)
-               vssTextPrimary = [vssTextPrimary ' discrete [' descriptionPrimary ']'];
-            elseif (averagedPrimaryFlag == nbPrimaryFlag)
-               vssTextPrimary = [vssTextPrimary ' averaged [' descriptionPrimary ']'];
-            else
-               vssTextPrimary = [vssTextPrimary ' mixed [' descriptionPrimary ']'];
-            end
-
-            % near-surface sampling
-            if (~isempty(text2List))
-               descriptionNearSurface = [sprintf('%s;', text2List{1:end-1}) sprintf('%s', text2List{end})];
-            end
-            if (discreteNearSurfaceFlag == nbNearSurfaceFlag)
-               vssTextNearSurface = [vssTextNearSurface ' discrete, unpumped [' descriptionNearSurface ']'];
-            elseif (averagedNearSurfaceFlag == nbNearSurfaceFlag)
-               vssTextNearSurface = [vssTextNearSurface ' averaged, unpumped [' descriptionNearSurface ']'];
-            else
-               vssTextNearSurface = [vssTextNearSurface ' mixed, unpumped [' descriptionNearSurface ']'];
-            end
-            
-            vssTextSecondaryOptode  = regexprep(vssTextPrimary, 'Primary sampling:', 'Secondary sampling:'); % the profile is cut but it is a secondary one
-            a_tabProfiles(idP).vertSamplingScheme = [{vssTextSecondaryOptode} {vssTextNearSurface}];
+            %          else
+            %
+            %             % primary sampling
+            %             if (~isempty(text1List))
+            %                descriptionPrimary = [sprintf('%s;', text1List{1:end-1}) sprintf('%s', text1List{end})];
+            %             end
+            %             if (discretePrimaryFlag == nbPrimaryFlag)
+            %                vssTextPrimary = [vssTextPrimary ' discrete [' descriptionPrimary ']'];
+            %             elseif (averagedPrimaryFlag == nbPrimaryFlag)
+            %                vssTextPrimary = [vssTextPrimary ' averaged [' descriptionPrimary ']'];
+            %             else
+            %                vssTextPrimary = [vssTextPrimary ' mixed [' descriptionPrimary ']'];
+            %             end
+            %
+            %             % near-surface sampling
+            %             if (~isempty(text2List))
+            %                descriptionNearSurface = [sprintf('%s;', text2List{1:end-1}) sprintf('%s', text2List{end})];
+            %             end
+            %             if (discreteNearSurfaceFlag == nbNearSurfaceFlag)
+            %                vssTextNearSurface = [vssTextNearSurface ' discrete, unpumped [' descriptionNearSurface ']'];
+            %             elseif (averagedNearSurfaceFlag == nbNearSurfaceFlag)
+            %                vssTextNearSurface = [vssTextNearSurface ' averaged, unpumped [' descriptionNearSurface ']'];
+            %             else
+            %                vssTextNearSurface = [vssTextNearSurface ' mixed, unpumped [' descriptionNearSurface ']'];
+            %             end
+            %
+            %             vssTextSecondaryOptode  = regexprep(vssTextPrimary, 'Primary sampling:', 'Secondary sampling:'); % the profile is cut but it is a secondary one
+            %             a_tabProfiles(idP).vertSamplingScheme = [{vssTextSecondaryOptode} {vssTextNearSurface}];
          end
          
       else

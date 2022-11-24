@@ -124,6 +124,9 @@
 %                             (g_rtqc_trajData.juldAdj) should be done with
 %                             an epsilon difference (due to adjustment
 %                             processing)
+%   09/24/2018 - RNU - V 3.6: TEST 63 (CHLA specific test): CHLA_ADJUSTED_QC
+%                             previously set by TEST 15 (grey list test)
+%                             are used to set final value of CHLA_ADJUSTED_QC
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -155,7 +158,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.5';
+g_decArgo_addRtqcToProfileVersion = '3.6';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -3802,6 +3805,8 @@ if (testFlagList(63) == 1)
                profFluoChlaQc = fluoChlaDataQc(idProf, :);
                profChla = chlaData(idProf, :);
                profChlaQc = chlaDataQc(idProf, :);
+               profChlaAdj = chlaDataAdj(idProf, :);
+               profChlaAdjQc = chlaDataAdjQc(idProf, :);
                
                if (~isempty(find(profFluoChla ~= fluoChlaDataFillValue, 1)))
                   
@@ -3966,6 +3971,7 @@ if (testFlagList(63) == 1)
                         profPresFluoChla, profPresFluoChlaQc, presDataFillValue, ...
                         profFluoChla, profFluoChlaQc, fluoChlaDataFillValue, ...
                         profChla, profChlaQc, chlaDataFillValue, ...
+                        profChlaAdj, profChlaAdjQc, chlaDataAdjFillValue, ...
                         darkChla, scaleChla, lastDarkChla, ...
                         profPres, profPresQc, presDataFillValue, ...
                         profTemp, profTempQc, tempDataFillValue, ...

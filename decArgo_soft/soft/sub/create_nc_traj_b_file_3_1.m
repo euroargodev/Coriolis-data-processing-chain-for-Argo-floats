@@ -334,6 +334,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
    netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
    netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
    netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectory');
+   netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
    
    resGlobalComment = get_global_comment_on_resolution(a_decoderId);
    if (~isempty(resGlobalComment))

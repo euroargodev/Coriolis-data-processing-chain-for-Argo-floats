@@ -20,7 +20,7 @@
 function concat_apex_apf11_ir_float_files
 
 % directory of the float files
-DIR_FLOAT_FILE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\CHECK_DECODING\WORK\';
+DIR_FLOAT_FILE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SBD\CHECK_DECODING\WORK\';
 
 % internal path (to choose Argo or Teledyne decoding)
 INTERNAL_PATH = '\ARGO\FLOAT_FILES\ASCII\'; % to use Argo decoding

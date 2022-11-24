@@ -28,7 +28,7 @@ o_tabTechNMeas = [];
 global g_decArgo_cycleNum;
 
 % global measurement codes
-global g_MC_SingleMeasToTET;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 % global time status
 global g_JULD_STATUS_4;
@@ -53,7 +53,7 @@ a_techSeries.value = a_techSeries.value(idSort);
 for idM = 1:length(a_techSeries.time);
    
    [measStruct, ~] = create_one_meas_float_time_bis( ...
-      g_MC_SingleMeasToTET, ...
+      g_MC_InAirSingleMeasRelativeToTET, ...
       a_techSeries.time(idM), ...
       a_techSeries.time(idM), ...
       g_JULD_STATUS_4);

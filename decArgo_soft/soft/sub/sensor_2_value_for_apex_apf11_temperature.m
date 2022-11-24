@@ -20,6 +20,11 @@
 % ------------------------------------------------------------------------------
 function [o_value] = sensor_2_value_for_apex_apf11_temperature(a_sensorValue)
 
-o_value = a_sensorValue/1000;
+if (a_sensorValue > 32767)
+   o_value = (65535 - a_sensorValue)*(-1);
+else
+   o_value = a_sensorValue;
+end
+o_value = o_value/1000;
 
 return

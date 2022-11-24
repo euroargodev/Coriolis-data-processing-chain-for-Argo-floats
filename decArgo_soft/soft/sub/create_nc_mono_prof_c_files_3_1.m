@@ -537,6 +537,7 @@ for idProf = 1:length(tabProfiles)
          netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
          netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
          netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+         netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
          
          % create misc variables
          dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);

@@ -285,11 +285,11 @@ global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
-global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSingleMeas;
-global g_MC_InAirSeriesOfMeas;
+
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 
 % plot the current float
@@ -588,7 +588,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    end
    
    % series of measurements
-   idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf g_MC_InAirSeriesOfMeas g_MC_Surface g_MC_Grounded]));
+   idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf ...
+      g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+      g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+      g_MC_Surface g_MC_Grounded]));
+
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
    
    g_NTCT_Surface1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
@@ -651,12 +655,12 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          g_NTCT_AscProf_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_AscProf_pres(idC, 1:length(idF)) = pres(idF);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_InAirSeriesOfMeas));
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST));
       if (~isempty(idF))
          g_NTCT_InAirSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_InAirSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TST-10));
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST));
       if (~isempty(idF))
          g_NTCT_NearSurfaceSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_NearSurfaceSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);

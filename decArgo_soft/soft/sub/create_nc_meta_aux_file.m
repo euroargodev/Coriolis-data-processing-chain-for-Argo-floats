@@ -59,6 +59,9 @@ global g_decArgo_outputNcConfParamLabel;
 % output NetCDF configuration parameter descriptions
 global g_decArgo_outputNcConfParamDescription;
 
+% decoder version
+global g_decArgo_decoderVersion;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -210,6 +213,7 @@ netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
 netcdf.putAtt(fCdf, globalVarId, 'references', ' ');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
+netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
 
 % general information on the meta-data file
 dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string32DimId);

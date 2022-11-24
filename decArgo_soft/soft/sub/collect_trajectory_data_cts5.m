@@ -42,7 +42,7 @@ global g_MC_DriftAtPark;
 global g_MC_AscProfDeepestBin;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -448,7 +448,7 @@ for idSurf = 1:length(a_tabSurf)
    surfMeasStruct.sensorNumber = surf.sensorNumber;
 
    o_tabTrajIndex = [o_tabTrajIndex;
-      g_MC_InAirSeriesOfMeas  surf.cycleNumber surf.profileNumber surf.phaseNumber];
+      g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST  surf.cycleNumber surf.profileNumber surf.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{surfMeasStruct}}];
 end
 

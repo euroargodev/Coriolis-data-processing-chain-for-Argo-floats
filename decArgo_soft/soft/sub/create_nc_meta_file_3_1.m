@@ -59,6 +59,9 @@ global g_decArgo_outputNcParamId;
 global g_decArgo_outputNcParamLabel;
 global g_decArgo_outputNcParamDescription;
 
+% decoder version
+global g_decArgo_decoderVersion;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -1525,6 +1528,7 @@ netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
 netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
+netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
 
 % general information on the meta-data file
 dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);

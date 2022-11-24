@@ -79,7 +79,11 @@ global g_decArgo_janFirst1950InMatlab;
 % arrays to store rough information on received data
 global g_decArgo_0TypeReceivedData;
 global g_decArgo_250TypeReceivedData;
+global g_decArgo_251TypeReceivedData;
+global g_decArgo_252TypeReceivedData;
 global g_decArgo_253TypeReceivedData;
+global g_decArgo_254TypeReceivedData;
+global g_decArgo_255TypeReceivedData;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
@@ -93,6 +97,9 @@ global g_decArgo_koSensorState;
 
 % sensor list
 global g_decArgo_sensorList;
+
+% to check timeouted buffer contents
+global g_decArgo_needFullBufferInfo;
 
 
 % output parameters initialization
@@ -1935,6 +1942,14 @@ if (~isempty(a_tabSensors))
          case 251
             % sensor parameter
             
+            if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+               if (isempty(g_decArgo_251TypeReceivedData))
+                  g_decArgo_251TypeReceivedData = 1;
+               else
+                  g_decArgo_251TypeReceivedData = g_decArgo_251TypeReceivedData + 1;
+               end
+            end
+            
             if ((a_procLevel == 0) || (a_procLevel == 1))
                continue;
             end
@@ -1996,6 +2011,36 @@ if (~isempty(a_tabSensors))
             
          case 252
             % float pressure data
+            
+            if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+               % message data frame
+               msgData = tabSensors(idMes, 2:end);
+               
+               % first item bit number
+               firstBit = 1;
+               % item bit lengths
+               tabNbBits = [16 repmat([4 4 8 8 16], 1, 27) 16];
+               % get item bits
+               values = get_bits(firstBit, tabNbBits, msgData);
+               
+               % decode and store data values
+               cycleNum = values(1);
+               
+               for idBin = 1:27
+                  profNum = values(5*(idBin-1)+3);
+                  phaseNum = values(5*(idBin-1)+2);
+                  pumpOrEv = values(5*(idBin-1)+4);
+                  actPres = values(5*(idBin-1)+5);
+                  time = values(5*(idBin-1)+6);
+                  
+                  if ((profNum == 0) && (phaseNum == 0) && (pumpOrEv == 0) && (actPres == 0) && (time == 0))
+                     continue;
+                  end
+                  
+                  g_decArgo_252TypeReceivedData = [g_decArgo_252TypeReceivedData; ...
+                     cycleNum profNum phaseNum];
+               end
+            end
             
             if ((a_procLevel == 0) || (a_procLevel == 2))
                continue;
@@ -2120,6 +2165,21 @@ if (~isempty(a_tabSensors))
          case 254
             % float prog technical data
             
+            if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+               % message data frame
+               msgData = tabSensors(idMes, 2:end);
+               
+               % first item bit number
+               firstBit = 1;
+               % item bit lengths
+               tabNbBits = [repmat([8], 1, 6) 16 8 repmat([16], 1, 28) 592];
+               % get item bits
+               values = get_bits(firstBit, tabNbBits, msgData);
+               
+               g_decArgo_254TypeReceivedData = [g_decArgo_254TypeReceivedData; ...
+                  values(7) values(8)];
+            end
+            
             if ((a_procLevel == 0) || (a_procLevel == 1))
                continue;
             end
@@ -2162,6 +2222,23 @@ if (~isempty(a_tabSensors))
          case 255
             % float prog param data
             
+            if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+               % message data frame
+               msgData = tabSensors(idMes, 2:end);
+               
+               % first item bit number
+               firstBit = 1;
+               % item bit lengths
+               tabNbBits = [repmat([8], 1, 6) 16 8 8 16 8 repmat([16 8 8 8], 1, 5) ...
+                  8 16 8 repmat([8 8 16 16 8], 1, 10) 216];
+               
+               % get item bits
+               values = get_bits(firstBit, tabNbBits, msgData);
+               
+               g_decArgo_255TypeReceivedData = [g_decArgo_255TypeReceivedData; ...
+                  values(7) values(8)];
+            end
+
             if ((a_procLevel == 0) || (a_procLevel == 1))
                continue;
             end

@@ -38,6 +38,7 @@ global g_NTD_COMPUTE_BOUNDARIES;
 % top directory of NetCDF files to plot
 g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_rem_for_rtqc\';
+g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
 
 % directory to store pdf output
 g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

@@ -835,7 +835,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       
       % compute PPOX_DOXY
-      surfDoxy = compute_PPOX_DOXY_1006_1008_1014_1016( ...
+      surfPpoxDoxy = compute_PPOX_DOXY_1006_1008_1014_1016( ...
          surfBPhaseDoxy, surfTempDoxy, ...
          g_decArgo_bPhaseDoxyDef, g_decArgo_tempDoxyDef, ...
          surfPres, ...
@@ -846,7 +846,7 @@ for idL = 1:size(a_sensorData, 1)
       surfPres(find(surfPres == g_decArgo_presDef)) = paramPres.fillValue;
       surfBPhaseDoxy(find(surfBPhaseDoxy == g_decArgo_bPhaseDoxyDef)) = paramBPhaseDoxy.fillValue;
       surfTempDoxy(find(surfTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
-      surfDoxy(find(surfDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
+      surfPpoxDoxy(find(surfPpoxDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
       
       % store surface data
       o_surfData = get_apx_profile_data_init_struct;
@@ -855,7 +855,7 @@ for idL = 1:size(a_sensorData, 1)
       o_surfData.paramList = [paramPres paramBPhaseDoxy paramTempDoxy paramPpoxDoxy];
       
       % add parameter data to the data structure
-      o_surfData.data = [surfPres surfBPhaseDoxy surfTempDoxy surfDoxy];
+      o_surfData.data = [surfPres surfBPhaseDoxy surfTempDoxy surfPpoxDoxy];
       
       % add parameter data redundancy to the profile structure
       o_surfData.dataRed = ones(size(o_surfData.data));      

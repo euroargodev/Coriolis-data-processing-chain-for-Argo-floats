@@ -488,7 +488,7 @@ global g_MC_MaxPresInDescToProf;
 global g_MC_AST;
 global g_MC_AET;
 global g_MC_Surface;
-global g_MC_SingleMeasToTET;
+global g_MC_InAirSingleMeasRelativeToTET;
 global g_MC_Grounded;
 
 % list of expected sections
@@ -541,7 +541,7 @@ externalTemp.id{end+1} = 1;
 externalTemp.name{end+1} = 'external temperature (air) (degC)';
 externalTemp.fmt{end+1} = '%g';
 externalTemp.traj{end+1} = get_cts5_traj_data_init_struct(...
-   g_MC_SingleMeasToTET, 'TEMP', ...
+   g_MC_InAirSingleMeasRelativeToTET, 'TEMP', ...
    'External temperature (air) (degC)');
 
 o_techInfoStruct.SYSTEM = [];
@@ -1561,7 +1561,7 @@ global g_MC_AST;
 global g_MC_AET;
 global g_MC_SpyAtSurface;
 global g_MC_Surface;
-global g_MC_SingleMeasToTET;
+global g_MC_InAirSingleMeasRelativeToTET;
 global g_MC_Grounded;
 
 % list of expected sections
@@ -1614,7 +1614,7 @@ externalTemp.id{end+1} = 1;
 externalTemp.name{end+1} = 'external temperature (air) (degC)';
 externalTemp.fmt{end+1} = '%g';
 externalTemp.traj{end+1} = get_cts5_traj_data_init_struct(...
-   g_MC_SingleMeasToTET, 'TEMP', ...
+   g_MC_InAirSingleMeasRelativeToTET, 'TEMP', ...
    'External temperature (air) (degC)');
 
 externalPres = init_basic_struct;
@@ -1624,7 +1624,7 @@ externalPres.id{end+1} = 1;
 externalPres.name{end+1} = 'external pressure (air) (dbar)';
 externalPres.fmt{end+1} = '%g';
 externalPres.traj{end+1} = get_cts5_traj_data_init_struct(...
-   g_MC_SingleMeasToTET, 'PRES', ...
+   g_MC_InAirSingleMeasRelativeToTET, 'PRES', ...
    'External pressure (air) (dbar)');
 
 o_techInfoStruct.SYSTEM = [];

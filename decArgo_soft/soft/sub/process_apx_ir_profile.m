@@ -39,6 +39,7 @@ end
 profLrStruct = [];
 profHrStruct = [];
 profHrAuxStruct = [];
+profNsStruct = [];
 
 if (~isempty(a_profLrData))
    
@@ -154,37 +155,6 @@ if (~isempty(a_profHrData))
    
 end
 
-if (~isempty(profLrStruct) && ~isempty(profHrStruct))
-   
-   % merge HR and LR profiles to the primary sampling one
-   [profMergedStruct, profLrStruct, profMergedHrAuxStruct] = ...
-      merge_profile_LR_HR(profLrStruct, profHrStruct, profHrAuxStruct);
-   
-   o_ncProfile = [o_ncProfile profMergedStruct profMergedHrAuxStruct profLrStruct];
-
-elseif (~isempty(profLrStruct))
-   
-   % add vertical sampling scheme
-   profLrStruct.vertSamplingScheme = 'Primary sampling: discrete [low resolution profile]';
-   profLrStruct.primarySamplingProfileFlag = 1;
-      
-   o_ncProfile = [o_ncProfile profLrStruct];
-   
-elseif (~isempty(profHrStruct))
-   
-   % add vertical sampling scheme
-   profHrStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
-   profHrStruct.primarySamplingProfileFlag = 1;
-   
-   if (~isempty(profHrAuxStruct))
-      profHrAuxStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
-      profHrAuxStruct.primarySamplingProfileFlag = 1;
-   end
-   
-   o_ncProfile = [o_ncProfile profHrStruct profHrAuxStruct];
-   
-end
-
 if (~isempty(a_nearSurfData))
    
    % the same set of NS data is transmitted at each transmission session => we
@@ -252,10 +222,67 @@ if (~isempty(a_nearSurfData))
       end      
    end   
    
+   % remove 'PPOX_DOXY' data (not needed in PROF file)
+   idPpoxDoxy = find(strcmp({profNsStruct.paramList.name}, 'PPOX_DOXY') == 1);
+   if (~isempty(idPpoxDoxy))
+      profNsStruct.paramList(idPpoxDoxy) = [];
+      profNsStruct.data(:, idPpoxDoxy) = [];
+      if (~isempty(profNsStruct.dataAdj))
+         profNsStruct.dataAdj(:, idPpoxDoxy) = [];
+      end
+   end
+   
    profNsStruct = squeeze_profile_data(profNsStruct);
    
-   o_ncProfile = [o_ncProfile profNsStruct];
+end
+
+% create the final profiles
+if (~isempty(profLrStruct) && ~isempty(profHrStruct))
    
+   % merge HR and LR profiles to the primary sampling one
+   [profMergedStruct, profLrStruct, profMergedHrAuxStruct, profNsSetFlag] = ...
+      merge_profile_LR_HR(profLrStruct, profHrStruct, profHrAuxStruct, profNsStruct);
+   
+   o_ncProfile = [o_ncProfile profMergedStruct profMergedHrAuxStruct profLrStruct];
+   
+   if (profNsSetFlag == 0)
+      % add the NS profile as a secondary one
+      if (~isempty(profNsStruct))
+         o_ncProfile = [o_ncProfile profNsStruct];
+      end
+   end
+
+elseif (~isempty(profLrStruct))
+   
+   % add vertical sampling scheme
+   profLrStruct.vertSamplingScheme = 'Primary sampling: discrete [low resolution profile]';
+   profLrStruct.primarySamplingProfileFlag = 1;
+      
+   o_ncProfile = [o_ncProfile profLrStruct];
+   
+   % add the NS profile as a secondary one
+   if (~isempty(profNsStruct))
+      o_ncProfile = [o_ncProfile profNsStruct];
+   end
+   
+elseif (~isempty(profHrStruct))
+   
+   % add vertical sampling scheme
+   profHrStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
+   profHrStruct.primarySamplingProfileFlag = 1;
+   
+   if (~isempty(profHrAuxStruct))
+      profHrAuxStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
+      profHrAuxStruct.primarySamplingProfileFlag = 1;
+   end
+   
+   o_ncProfile = [o_ncProfile profHrStruct profHrAuxStruct];
+   
+   % add the NS profile as a secondary one
+   if (~isempty(profNsStruct))
+      o_ncProfile = [o_ncProfile profNsStruct];
+   end
+
 end
 
 return;
@@ -264,18 +291,21 @@ return;
 % Merge HR and LR profiles to create the primary sampling one.
 %
 % SYNTAX :
-%  [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct] = ...
-%    merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct)
+%  [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct, o_profNsSetFlag] = ...
+%    merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct, a_profNsStruct)
 %
 % INPUT PARAMETERS :
 %   a_profLrStruct    : input LR profile
 %   a_profHrStruct    : input HR profile
 %   a_profHrAuxStruct : input HR AUX profile
+%   a_profNsStruct    : input NS profile
 %
 % OUTPUT PARAMETERS :
 %   o_profMergedStruct      : output merged profile
 %   o_profLrStruct          : output LR profile
 %   o_profMergedHrAuxStruct : output merged HR AUX profile
+%   o_profNsSetFlag         : set to 1 if NS profile has been concatenated
+%                             to LR one
 %
 % EXAMPLES :
 %
@@ -285,13 +315,14 @@ return;
 % RELEASES :
 %   10/02/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct] = ...
-   merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct)
+function [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct, o_profNsSetFlag] = ...
+   merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct, a_profNsStruct)
 
 % output parameters initialization
 o_profMergedStruct = [];
 o_profLrStruct = [];
 o_profMergedHrAuxStruct = [];
+o_profNsSetFlag = 0;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -299,6 +330,92 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+
+% if HR profile has additionnal parameters (this is the case for BGC floats),
+% the LR profile is stored in the PROF file (as a secondary profile)
+% moreover the NS profile is concatenated to the LR profile
+if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct.paramList.name}))) && ...
+      isempty(setdiff(sort({a_profHrStruct.paramList.name}), sort({a_profLrStruct.paramList.name}))))
+   
+   if (isempty(a_profNsStruct))
+      
+      % store the sampled LR profile
+      o_profLrStruct = a_profLrStruct;
+      o_profLrStruct.vertSamplingScheme = 'Secondary sampling: discrete [low resolution profile]';
+      o_profLrStruct.primarySamplingProfileFlag = 0;
+   else
+      
+      % concatenate the NS and LR profiles in a secondary sampling profile
+      idPresLr = find(strcmp('PRES', {a_profLrStruct.paramList.name}));
+      idPresNs = find(strcmp('PRES', {a_profNsStruct.paramList.name}));
+      if (~isempty(idPresLr) && ~isempty(idPresNs))
+         presLr = a_profLrStruct.data(:, idPresLr);
+         presLr = presLr(presLr ~= a_profLrStruct.paramList(idPresLr).fillValue);
+         presNr = a_profNsStruct.data(:, idPresNs);
+         presNr = presNr(presNr ~= a_profLrStruct.paramList(idPresNs).fillValue);
+         if (min(presLr) > max(presNr))
+            
+            % concatenate NS and LR profiles
+            concatProf = a_profLrStruct;
+            
+            % parameter list of concatenated profiles
+            concatParamNameList = unique([{a_profLrStruct.paramList.name}, {a_profNsStruct.paramList.name}], 'stable');
+            concatParamlist = [];
+            concatParamFillValue = [];
+            for idP = 1:length(concatParamNameList)
+               idF = find(strcmp(concatParamNameList{idP}, {a_profLrStruct.paramList.name}));
+               if (~isempty(idF))
+                  concatParamlist = [concatParamlist a_profLrStruct.paramList(idF)];
+                  concatParamFillValue = [concatParamFillValue a_profLrStruct.paramList(idF).fillValue];
+               else
+                  idF = find(strcmp(concatParamNameList{idP}, {a_profNsStruct.paramList.name}));
+                  concatParamlist = [concatParamlist a_profNsStruct.paramList(idF)];
+                  concatParamFillValue = [concatParamFillValue a_profNsStruct.paramList(idF).fillValue];
+               end
+            end
+            concatProf.paramList = concatParamlist;
+            concatProf.data = repmat(concatParamFillValue, size(a_profLrStruct.data, 1)+size(a_profNsStruct.data, 1), 1);
+            concatProf.dataAdj = concatProf.data;
+            
+            % concatenate profile data
+            paramListIdLr = [];
+            for idP = 1:length(a_profLrStruct.paramList)
+               idF = find(strcmp(a_profLrStruct.paramList(idP).name, concatParamNameList));
+               if (~isempty(idF))
+                  paramListIdLr = [paramListIdLr idF];
+               end
+            end
+            concatProf.data(1:size(a_profLrStruct.data, 1), paramListIdLr) = a_profLrStruct.data;
+            if (~isempty(a_profLrStruct.dataAdj))
+               concatProf.dataAdj(1:size(a_profLrStruct.dataAdj, 1), paramListIdLr) = a_profLrStruct.dataAdj;
+            end
+            
+            paramListIdNs = [];
+            for idP = 1:length(a_profNsStruct.paramList)
+               idF = find(strcmp(a_profNsStruct.paramList(idP).name, concatParamNameList));
+               if (~isempty(idF))
+                  paramListIdNs = [paramListIdNs idF];
+               end
+            end
+            concatProf.data(end-(size(a_profNsStruct.data, 1)-1):end, paramListIdNs) = a_profNsStruct.data;
+            if (~isempty(a_profNsStruct.dataAdj))
+               concatProf.dataAdj(end-(size(a_profNsStruct.data, 1)-1):end, paramListIdNs) = a_profNsStruct.dataAdj;
+            end
+            
+            % set the vertical sampling scheme of the concatenated profile
+            concatProf.vertSamplingScheme = ...
+               sprintf('Secondary sampling: discrete [low resolution profile for PRES >= %g dbar; near surface data for PRES <= %g dbar]', ...
+               min(presLr), max(presNr));
+            concatProf.primarySamplingProfileFlag = 0;
+            
+            o_profLrStruct = concatProf;
+            o_profNsSetFlag = 1;
+         end
+      end
+   end
+end
+
+% merge HR and LR profiles in a primary sampling profile
 
 % retrieve the list of common parameters
 mergedParamList = [];
@@ -311,14 +428,6 @@ for idP = 1:length(a_profHrStruct.paramList)
       paramListIdHr = [paramListIdHr idP];
       paramListIdLr = [paramListIdLr idF];
    end
-end
-
-% if HR profile has additionnal parameters (this is the case for BGC floats),
-% the LR profile is store in the PROF file (as a secondary profile)
-if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct.paramList.name}))) && ...
-      isempty(setdiff(sort({a_profHrStruct.paramList.name}), sort({a_profLrStruct.paramList.name}))))
-   o_profLrStruct = a_profLrStruct;
-   o_profLrStruct.vertSamplingScheme = 'Secondary sampling: discrete [low resolution profile]';
 end
 
 idPresHr = find(strcmp('PRES', {a_profHrStruct.paramList.name}));
@@ -380,12 +489,8 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
       end
    end
    
-   % initialize a NetCDF profile structure and fill it with merged profile data
-   o_profMergedStruct = get_profile_init_struct(a_profLrStruct.cycleNumber, -1, -1, -1);
-   o_profMergedStruct.sensorNumber = 0;
-   
-   % positioning system
-   o_profMergedStruct.posSystem = 'GPS';
+   % create the concatenated profile
+   o_profMergedStruct = a_profLrStruct;
    
    % add parameter variables to the profile structure
    o_profMergedStruct.paramList = mergedParamList;
@@ -393,12 +498,6 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
    % add parameter data to the profile structure
    o_profMergedStruct.data = mergedData;
    o_profMergedStruct.dataAdj = mergedDataAdj;
-   
-   % add press offset data to the profile structure
-   o_profMergedStruct.presOffset = a_profLrStruct.presOffset;
-   
-   % add configuration mission number
-   o_profMergedStruct.configMissionNumber = a_profLrStruct.configMissionNumber;
    
    % create vertical sampling scheme
    if (~isempty(idFLastLrDeep) && ~isempty(idFFistLrShallow))

@@ -135,7 +135,8 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSeriesOfMeas;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -231,10 +232,10 @@ if (~isempty(a_inAirDate))
          else
             measTimeStatus = g_JULD_STATUS_2;
          end
-         measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, a_inAirDate(idMeas), measTimeStatus, floatClockDrift);
+         measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, a_inAirDate(idMeas), measTimeStatus, floatClockDrift);
       else
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       
       % add parameter variables to the structure
@@ -543,10 +544,10 @@ if (a_deepCycle == 1)
             else
                measTimeStatus = g_JULD_STATUS_2;
             end
-            measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, a_nearSurfDate(idMeas), measTimeStatus, floatClockDrift);
+            measStruct = create_one_meas_float_time(g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, a_nearSurfDate(idMeas), measTimeStatus, floatClockDrift);
          else
             measStruct = get_traj_one_meas_init_struct();
-            measStruct.measCode = g_MC_InAirSeriesOfMeas;
+            measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
          end
          
          % add parameter variables to the structure

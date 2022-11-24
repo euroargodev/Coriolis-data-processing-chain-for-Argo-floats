@@ -55,16 +55,17 @@ if (~isempty(a_tabTech))
       end
       
       % GPS data (consider only 'valid' GPS locations)
-      if (a_tabTech(idPos, 77) == 1)
-         gpsLocCycleNum = [gpsLocCycleNum; a_tabTech(idPos, 4)];
-         gpsLocProfNum = [gpsLocProfNum; a_tabTech(idPos, 5)];
-         gpsLocPhase = [gpsLocPhase; a_tabTech(idPos, 8)];
-         gpsLocDate = [gpsLocDate; a_tabTech(idPos, 1)];
-         gpsLocLon = [gpsLocLon; a_tabTech(idPos, 88)];
-         gpsLocLat = [gpsLocLat; a_tabTech(idPos, 89)];
-         gpsLocQc = [gpsLocQc; zeros(length(idPos), 1)];
-         gpsLocAccuracy = [gpsLocAccuracy; repmat('G', length(idPos), 1)];
-         gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos, 90)];
+      idValidFix = find(a_tabTech(idPos, 77) == 1);
+      for idP = 1:length(idValidFix)
+         gpsLocCycleNum = [gpsLocCycleNum; a_tabTech(idPos(idValidFix(idP)), 4)];
+         gpsLocProfNum = [gpsLocProfNum; a_tabTech(idPos(idValidFix(idP)), 5)];
+         gpsLocPhase = [gpsLocPhase; a_tabTech(idPos(idValidFix(idP)), 8)];
+         gpsLocDate = [gpsLocDate; a_tabTech(idPos(idValidFix(idP)), 1)];
+         gpsLocLon = [gpsLocLon; a_tabTech(idPos(idValidFix(idP)), 88)];
+         gpsLocLat = [gpsLocLat; a_tabTech(idPos(idValidFix(idP)), 89)];
+         gpsLocQc = [gpsLocQc; zeros(length(idPos(idValidFix(idP))), 1)];
+         gpsLocAccuracy = [gpsLocAccuracy; repmat('G', length(idPos(idValidFix(idP))), 1)];
+         gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos(idValidFix(idP)), 90)];
          
          % JAMSTEC QC NOT USED (BECAUSE SOME SURFACE DRIFT PHASES HAVE NO GPS
          % FIX)

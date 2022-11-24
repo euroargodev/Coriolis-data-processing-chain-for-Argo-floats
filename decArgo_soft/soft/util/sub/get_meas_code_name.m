@@ -65,19 +65,19 @@ global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
-global g_MC_NearSurfaceSeriesOfMeas;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
-global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
-global g_MC_SurfaceDoMeasAfterAirBladderInflation;
-global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSingleMeas;
-global g_MC_InAirSeriesOfMeas;
+
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 
 switch (a_measCode)
@@ -205,15 +205,6 @@ switch (a_measCode)
    case g_MC_SpyAtSurface
       o_measCodeName = sprintf('%03d: SURF_FINAL_PUMP_START', a_measCode);
 
-   case g_MC_NearSurfaceSeriesOfMeas
-      o_measCodeName = sprintf('%03d: NEAR_SURFACE_SERIES_OF_MEAS', a_measCode);
-      
-   case g_MC_InAirSingleMeas
-      o_measCodeName = sprintf('%03d: IN_AIR_SINGLE_MEAS', a_measCode);
-
-   case g_MC_InAirSeriesOfMeas
-      o_measCodeName = sprintf('%03d: IN_AIR_SERIES_OF_MEAS', a_measCode);
-
    case g_MC_TST
       o_measCodeName = sprintf('%03d: TRANSMISSION_START', a_measCode);
 
@@ -229,25 +220,31 @@ switch (a_measCode)
    case g_MC_LMT
       o_measCodeName = sprintf('%03d: LAST_MESSAGE', a_measCode);
       
-   case g_MC_SurfaceDoMeasBeforeAirBladderInflation
-      o_measCodeName = sprintf('%03d: SURF_DO_BEFORE_BLADDER_INFLATION', a_measCode);
-
-   case g_MC_SurfaceDoMeasAfterAirBladderInflation
-      o_measCodeName = sprintf('%03d: SURF_DO_AFTER_BLADDER_INFLATION', a_measCode);
-
-   case g_MC_SingleMeasToTET
-      o_measCodeName = sprintf('%03d: SURFACE_SINGLE_MEAS', a_measCode);
-
    case g_MC_TET
       o_measCodeName = sprintf('%03d: TRANSMISSION_END', a_measCode);
 
    case g_MC_Grounded
       o_measCodeName = sprintf('%03d: GROUNDED', a_measCode);
    
+   case g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST % 690
+      o_measCodeName = sprintf('%03d: SHALLOW_SURF_MEAS', a_measCode);
+
+   case g_MC_InAirSingleMeasRelativeToTST %699
+      o_measCodeName = sprintf('%03d: SINGLE_MEAS_TO_TST', a_measCode);
+      
+   case g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST % 710
+      o_measCodeName = sprintf('%03d: IN_WATER_SURF_MEAS', a_measCode);
+
+   case g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST % 711
+      o_measCodeName = sprintf('%03d: IN_AIR_SURF_MEAS', a_measCode);
+
+   case g_MC_InAirSingleMeasRelativeToTET %799
+      o_measCodeName = sprintf('%03d: SINGLE_MEAS_TO_TET', a_measCode);
+      
    case {g_MC_DET-11, g_MC_PST-11, g_MC_PET-11, g_MC_DDET-11, g_MC_AST-11, g_MC_AET-11}
       o_measCodeName = sprintf('%03d: BUOYANCY_ACTION', a_measCode);
       
-   case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_AST-10, g_MC_AET-10, g_MC_TST-10}
+   case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_AST-10, g_MC_AET-10}
       o_measCodeName = sprintf('%03d: SERIES_OF_MEAS', a_measCode);
       
    otherwise

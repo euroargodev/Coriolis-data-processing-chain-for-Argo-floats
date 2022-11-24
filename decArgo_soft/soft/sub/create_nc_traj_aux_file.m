@@ -295,6 +295,7 @@ if (nbMeasParam > 0)
    netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
    netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
    netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryCoriolisAux');
+   netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
    
    resGlobalComment = get_global_comment_on_resolution(a_decoderId);
    if (~isempty(resGlobalComment))

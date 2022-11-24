@@ -127,7 +127,6 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -515,31 +514,36 @@ if (a_deepCycle == 1)
    % IN AIR MEASUREMENTS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   for idProf = 1:length(a_tabProfiles)
-      profile = a_tabProfiles(idProf);
-      if ((profile.direction == 'A') && any(strfind(profile.vertSamplingScheme, 'unpumped')))
-         
-         [inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, profile);
-         
-         if (~isempty(inAirMeasProfile))
-            
-            inAirMeasDates = inAirMeasProfile.dates;
-            dateFillValue = inAirMeasProfile.dateList.fillValue;
-            
-            for idMeas = 1:length(inAirMeasDates)
-               if (inAirMeasDates(idMeas) ~= dateFillValue)
-                  measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
-               else
-                  measStruct = get_traj_one_meas_init_struct();
-                  measStruct.measCode = g_MC_InAirSeriesOfMeas;
-               end
-               measStruct.paramList = inAirMeasProfile.paramList;
-               measStruct.paramData = inAirMeasProfile.data(idMeas, :);
-               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-            end
-         end
-      end
-   end   
+   % the unpumped part of the profile should not be duplicated in the TRAJ file
+   % anymore (whatever the value of CONFIG_OptodeMeasurementsInAir_LOGICAL is)
+   % see specification in "NOTE ON “NEAR SURFACE” AND “IN AIR” DATA PROCESSING IN
+   % THE CORIOLIS MATLAB DECODER" (V1.0 dated 29/06/2018)
+   
+   %    for idProf = 1:length(a_tabProfiles)
+   %       profile = a_tabProfiles(idProf);
+   %       if ((profile.direction == 'A') && any(strfind(profile.vertSamplingScheme, 'unpumped')))
+   %
+   %          [inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, profile);
+   %
+   %          if (~isempty(inAirMeasProfile))
+   %
+   %             inAirMeasDates = inAirMeasProfile.dates;
+   %             dateFillValue = inAirMeasProfile.dateList.fillValue;
+   %
+   %             for idMeas = 1:length(inAirMeasDates)
+   %                if (inAirMeasDates(idMeas) ~= dateFillValue)
+   %                   measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
+   %                else
+   %                   measStruct = get_traj_one_meas_init_struct();
+   %                   measStruct.measCode = g_MC_InAirSeriesOfMeas;
+   %                end
+   %                measStruct.paramList = inAirMeasProfile.paramList;
+   %                measStruct.paramData = inAirMeasProfile.data(idMeas, :);
+   %                trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   %             end
+   %          end
+   %       end
+   %    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % HYDRAULIC ACTIONS

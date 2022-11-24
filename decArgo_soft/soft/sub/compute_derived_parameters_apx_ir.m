@@ -299,7 +299,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -359,7 +359,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -437,7 +437,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -506,7 +506,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -587,7 +587,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -657,7 +657,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -793,7 +793,7 @@ switch (a_decoderId)
                   
                   % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                   % Hamburg"
-                  % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+                  % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                   % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                   % the calculation for the adjustment must involve the parameter itself
                   % (e.g., with an offset or slope). If a different parameter used for
@@ -862,7 +862,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -993,7 +993,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -1062,7 +1062,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -1185,7 +1185,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -1248,7 +1248,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -1321,7 +1321,7 @@ switch (a_decoderId)
                
                % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                % Hamburg"
-               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
                % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
                % the calculation for the adjustment must involve the parameter itself
                % (e.g., with an offset or slope). If a different parameter used for
@@ -1384,7 +1384,7 @@ switch (a_decoderId)
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -1482,7 +1482,7 @@ if (iscell(o_outputData))
          
          % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
          % Hamburg"
-         % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+         % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
          % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
          % the calculation for the adjustment must involve the parameter itself
          % (e.g., with an offset or slope). If a different parameter used for
@@ -1532,7 +1532,7 @@ else
       
       % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
       % Hamburg"
-      % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+      % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
       % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
       % the calculation for the adjustment must involve the parameter itself
       % (e.g., with an offset or slope). If a different parameter used for
@@ -1648,7 +1648,7 @@ if (iscell(o_outputData))
             
             % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
             % Hamburg"
-            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
             % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
             % the calculation for the adjustment must involve the parameter itself
             % (e.g., with an offset or slope). If a different parameter used for
@@ -1725,7 +1725,7 @@ else
          
          % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
          % Hamburg"
-         % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+         % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
          % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
          % the calculation for the adjustment must involve the parameter itself
          % (e.g., with an offset or slope). If a different parameter used for
