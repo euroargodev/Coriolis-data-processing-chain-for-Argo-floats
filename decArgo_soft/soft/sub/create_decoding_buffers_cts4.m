@@ -437,6 +437,14 @@ if (ismember(g_decArgo_floatNum, ...
          tabDelayed(idVectorPres) = tabDelayed(idBase);
          tabCompleted(idVectorPres) = tabCompleted(idBase);
 
+         idBase = find((tabCyNumRaw == 31) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 3100));
+         tabRank(idVectorPres) = tabRank(idBase);
+         tabCyNum(idVectorPres) = tabCyNum(idBase);
+         tabDone(idVectorPres) = tabDone(idBase);
+         tabDelayed(idVectorPres) = tabDelayed(idBase);
+         tabCompleted(idVectorPres) = tabCompleted(idBase);
+
       case 3902121
          % during cycle (330, 0) the float transmitted again OCR raw data of
          % cycles (311, 0) to (329, 0)

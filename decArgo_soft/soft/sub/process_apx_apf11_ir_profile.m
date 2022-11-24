@@ -222,11 +222,12 @@ for idS = 0:7
             end
             clear outputData
          end
-         
+
          % Ice ascent profiles
          if (~isempty(o_cycleTimeData.iceAscentStartDateSci(idC)) && ...
                ~isempty(o_cycleTimeData.iceAscentEndDateSci(idC)) && ...
                any((inputData.dates >= o_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= o_cycleTimeData.iceAscentEndDateSci(idC))))
+
             outputData = inputData;
             idProfMeas = find(((inputData.dates >=  o_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= o_cycleTimeData.iceAscentEndDateSci(idC))));
             outputData.data = outputData.data(idProfMeas, :);
@@ -1358,7 +1359,9 @@ if (~isempty(profIceCtdPt) || ...
          % add parameter variables to the profile structure
          profIceStruct.paramList = profIceData.paramList;
          profIceStruct.paramDataMode = profIceData.paramDataMode;
-         
+         profIceStruct.paramNumberWithSubLevels = profIceData.paramNumberWithSubLevels;
+         profIceStruct.paramNumberOfSubLevels = profIceData.paramNumberOfSubLevels;
+
          % add parameter data to the profile structure
          profIceStruct.data = profIceData.data;
          profIceStruct.dataAdj = profIceData.dataAdj;
@@ -1381,6 +1384,9 @@ if (~isempty(profIceCtdPt) || ...
                   mtimeData = ones(size(profIceData.data, 1), 1)*paramMtime.fillValue;
                end
                profIceStruct.paramList = [paramMtime profIceStruct.paramList];
+               if (~isempty(profIceStruct.paramNumberWithSubLevels))
+                  profIceStruct.paramNumberWithSubLevels = profIceStruct.paramNumberWithSubLevels + 1;
+               end
                if (~isempty(profIceStruct.paramDataMode))
                   profIceStruct.paramDataMode = [' ' profIceStruct.paramDataMode];
                end
@@ -1409,7 +1415,7 @@ if (~isempty(profIceCtdPt) || ...
          profIceStruct.primarySamplingProfileFlag = 0;
          
          % add bounce information
-         if (profIce{idP, 1} == max(profIce{:, 1}))
+         if (profIce{idP, 1} == max([profIce{:, 1}]))
             profIceStruct.bounceFlag = 'BE';
          else
             profIceStruct.bounceFlag = 'B';
