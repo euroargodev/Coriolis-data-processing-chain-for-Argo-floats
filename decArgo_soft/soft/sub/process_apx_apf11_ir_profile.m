@@ -909,6 +909,19 @@ if (~isempty(profCtdCpHStruct))
          minMax = [{minP} {maxP}];
          description = create_vss_description_apx_apf11_ir(a_cycleNum, 'PH', 'PTSH', minMax);
          dataTypeStr = 'mixed';
+      else
+         
+         idPresCtdCpH = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES'), 1);
+         [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
+         profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
+         if (~isempty(profCtdCpHStruct.dataAdj))
+            profCtdCpHStruct.dataAdj = profCtdCpHStruct.dataAdj(idSort, :);
+         end
+         
+         % get detailed description of the VSS
+         minMax = [{''} {''}];
+         description = create_vss_description_apx_apf11_ir(a_cycleNum, 'PH', '', minMax);
+         dataTypeStr = 'averaged';
       end
    elseif (~isempty(profCtdPtsStruct))
       idPresCtdPts = find(strcmp({profCtdPtsStruct.paramList.name}, 'PRES'), 1);
@@ -975,8 +988,28 @@ if (~isempty(profCtdCpHStruct))
          minMax = [{minP} {maxP}];
          description = create_vss_description_apx_apf11_ir(a_cycleNum, 'PH', 'PTS', minMax);
          dataTypeStr = 'mixed';
+      else
+         
+         idPresCtdCpH = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES'), 1);
+         [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
+         profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
+         if (~isempty(profCtdCpHStruct.dataAdj))
+            profCtdCpHStruct.dataAdj = profCtdCpHStruct.dataAdj(idSort, :);
+         end
+         
+         % get detailed description of the VSS
+         minMax = [{''} {''}];
+         description = create_vss_description_apx_apf11_ir(a_cycleNum, 'PH', '', minMax);
+         dataTypeStr = 'averaged';
       end
    else
+      
+      idPresCtdCpH = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES'), 1);
+      [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
+      profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
+      if (~isempty(profCtdCpHStruct.dataAdj))
+         profCtdCpHStruct.dataAdj = profCtdCpHStruct.dataAdj(idSort, :);
+      end
       
       % get detailed description of the VSS
       minMax = [{''} {''}];

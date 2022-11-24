@@ -228,7 +228,22 @@ nbFloatFiles = 0;
 for idFile = 1:length(cycleFileNameList)
    
    floatFileName = [g_decArgo_archiveDirectory cycleFileNameList{idFile}];
-   gunzip(floatFileName, g_decArgo_archiveFloatFilesDirectory);
+   fileInfo = dir(floatFileName);
+   if (fileInfo(1).bytes == 0)
+      fprintf('ERROR: Float #%d: Empty file: %s - ignored\n', ...
+         g_decArgo_floatNum, ...
+         floatFileName);
+      continue
+   end
+   try
+      gunzip(floatFileName, g_decArgo_archiveFloatFilesDirectory);
+   catch infos
+      fprintf('ERROR: Float #%d: Failed while uncompressing file: %s (%s) - ignored\n', ...
+         g_decArgo_floatNum, ...
+         floatFileName, ...
+         infos.message);
+      continue
+   end
    
    nbFloatFiles = nbFloatFiles + 1;
    

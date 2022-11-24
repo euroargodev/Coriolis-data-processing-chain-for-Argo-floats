@@ -212,7 +212,19 @@ end
 gzFiles = dir([a_outputDirName '*.gz']);
 for iFile = 1:length(gzFiles)
    gzFilePathName = [a_outputDirName gzFiles(iFile).name];
-   gunzip(gzFilePathName);
+   if (gzFiles(iFile).bytes == 0)
+      fprintf('ERROR: Empty file: %s - ignored\n', ...
+         gzFilePathName);
+      delete(gzFilePathName);
+      continue
+   end
+   try
+      gunzip(gzFilePathName);
+   catch infos
+      fprintf('ERROR: Failed while uncompressing file: %s (%s) - ignored\n', ...
+         gzFilePathName, ...
+         infos.message);
+   end
    delete(gzFilePathName);
 end
 

@@ -1155,32 +1155,25 @@ switch (packType)
       % first item bit number
       firstBit = 1;
       % item bit lengths
-      tabNbBits = [repmat([16 8 8 8 8 8 8 8 16 16 16], 1, 9) 32];
+      tabNbBits = [16 repmat([8 8 8 8 8 8 8 16 16 16], 1, 10) 56];
       % get item bits
       values = get_bits(firstBit, tabNbBits, msgData);
       
       % decode and store data values
-      for idBin = 1:9
-         cycleNum = values(11*(idBin-1)+1);
-         profNum = values(11*(idBin-1)+2);
-         phaseNum = values(11*(idBin-1)+3);
-         day = values(11*(idBin-1)+4);
-         month = values(11*(idBin-1)+5);
-         year = values(11*(idBin-1)+6);
-         hour = values(11*(idBin-1)+7);
-         minute = values(11*(idBin-1)+8);
-         grdPres = values(11*(idBin-1)+9);
-         setPoint = values(11*(idBin-1)+10);
-         intVacuum = values(11*(idBin-1)+11);
+      cycleNum = values(1);
+      for idBin = 1:10
+         profNum = values(10*(idBin-1)+2);
+         phaseNum = values(10*(idBin-1)+3);
+         day = values(10*(idBin-1)+4);
+         month = values(10*(idBin-1)+5);
+         year = values(10*(idBin-1)+6);
+         hour = values(10*(idBin-1)+7);
+         minute = values(10*(idBin-1)+8);
+         grdPres = values(10*(idBin-1)+9);
+         setPoint = values(10*(idBin-1)+10);
+         intVacuum = values(10*(idBin-1)+11);
          
-         % specific
-         if (g_decArgo_floatNum == 6903579)
-            if ((cycleNum == 7) && (profNum == 25))
-               continue
-            end
-         end
-         
-         if ((cycleNum == 0) && (profNum == 0) && (phaseNum == 0) && ...
+         if ((profNum == 0) && (phaseNum == 0) && ...
                (day == 0) && (month == 0) && (year == 0) && ...
                (hour == 0) && (minute == 0) && ...
                (grdPres == 0) && (setPoint == 0) && (intVacuum == 0))
