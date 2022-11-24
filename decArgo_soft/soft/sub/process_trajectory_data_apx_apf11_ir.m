@@ -171,6 +171,9 @@ paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
 paramNbSampleIceDetect = get_netcdf_param_attributes('NB_SAMPLE_ICE_DETECTION');
 paramRafosCorStartFlag = get_netcdf_param_attributes('RAFOS_CORRELATION_START_FLAG');
 
+
+preludeStartDate = a_cycleTimeData.preludeStartDateSys;
+activatedPressure = a_cycleTimeData.activatedPressure;
 descentStartDate = a_cycleTimeData.descentStartDateSci;
 descentStartAdjDate = a_cycleTimeData.descentStartAdjDateSci;
 descentStartPres = a_cycleTimeData.descentStartPresSci;
@@ -545,6 +548,12 @@ if (~isempty(transStartDate))
    phaseDates = [phaseDates transStartDate];
    phaseMeasCode = [phaseMeasCode g_MC_TST];
 end
+if ((a_cycleNum == 0) && isempty(phaseDates))
+   if (~isempty(preludeStartDate) && ~isempty(activatedPressure))
+      phaseDates = [phaseDates preludeStartDate];
+      phaseMeasCode = [phaseMeasCode g_MC_DET];
+   end
+end
 [phaseDates, idSort] = sort(phaseDates);
 phaseMeasCode = phaseMeasCode(idSort);
 
@@ -638,6 +647,12 @@ if (~isempty(phaseDates))
       end
       
       for idPhase = 1:length(phaseDates)+1
+         if ((a_cycleNum == 0) && ~isempty(preludeStartDate) && ~isempty(activatedPressure))
+            if (idPhase == length(phaseDates)+1)
+               break % case of activated pressure
+            end
+         end
+
          if (idPhase <= length(phaseDates))
             if (idPhase > 1)
                idData = find((profData.dates > phaseDates(idPhase-1)) & ...
@@ -654,7 +669,7 @@ if (~isempty(phaseDates))
             idData = find(profData.dates > phaseDates(idPhase-1))';
             measCode = g_MC_TET - 10;
          end
-         
+
          if (doDataFlag)
             if (~isempty(bladderInflationStartDate))
                if ((idPhase <= length(phaseDates)) && (phaseDates(idPhase) == bladderInflationStartDate))
@@ -1447,7 +1462,7 @@ if (~isempty(rafosCorStartDate))
          if (~isempty(rafosCorStartPres))
             measStructAux.paramList = [paramPres paramRafosCorStartFlag];
             measStructAux.paramData = [rafosCorStartPres(idC) 1];
-            if (~isempty(rafosCorStartAdjPres(idC)))
+            if (~isempty(rafosCorStartAdjPres) && ~isempty(rafosCorStartAdjPres(idC)))
                measStructAux.paramDataAdj = [rafosCorStartAdjPres(idC) -1];
                measStructAux.paramDataMode = 'A ';
             end

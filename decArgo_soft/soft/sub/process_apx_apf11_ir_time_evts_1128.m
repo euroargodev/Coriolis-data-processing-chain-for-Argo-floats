@@ -174,4 +174,20 @@ if (~isempty(lastTime))
    end
 end
 
+% from 'IDLE' events
+PATTERN_ACTIVATED_PRESSURE_START = 'pressure activated @';
+PATTERN_ACTIVATED_PRESSURE_END = 'dbar';
+
+events = a_events(find(strcmp({a_events.functionName}, 'IDLE')));
+for idEv = 1:length(events)
+   evt = events(idEv);
+   dataStr = evt.message;
+   if (any(strfind(dataStr, PATTERN_ACTIVATED_PRESSURE_START)))
+      idF1 = strfind(dataStr, PATTERN_ACTIVATED_PRESSURE_START);
+      idF2 = strfind(dataStr, PATTERN_ACTIVATED_PRESSURE_END);
+      activatedPressure = str2double(dataStr(idF1+length(PATTERN_ACTIVATED_PRESSURE_START)+1:idF2-1));
+      o_cycleTimeData.activatedPressure = activatedPressure;
+   end
+end
+
 return

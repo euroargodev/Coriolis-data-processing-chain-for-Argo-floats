@@ -67,7 +67,7 @@ else
    SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\float_sensor_list.txt';
 
    % meta-data file exported from Coriolis data base
-   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\CTS4_6.14_with_2BB_6904134_DBexport.txt';
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS4_5906868.txt';
 
    % directory to store the log and csv files
    DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -331,7 +331,7 @@ switch a_inputSensorName
       o_sensorMaker = [{'SBE'} {'SBE'} {'SBE'}];
       o_sensorModel = [{'SBE41CP'} {'SBE41CP'} {'SBE41CP'}];
       for idS = 1:length(o_sensorName)
-         [sensorModel] = get_sensor_model('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorModel] = get_sensor_model(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorModel))
             if (~strcmp(sensorModel, o_sensorModel{idS}))
                fprintf('INFO: DB SENSOR_MODEL (''%s'') not replaced by default one (''%s'')\n', ...
@@ -341,7 +341,7 @@ switch a_inputSensorName
          end
       end
       for idS = 1:length(o_sensorMaker)
-         [sensorMaker] = get_sensor_maker('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorMaker] = get_sensor_maker(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorMaker))
             if (~strcmp(sensorMaker, o_sensorMaker{idS}))
                fprintf('INFO: DB SENSOR_Maker (''%s'') not replaced by default one (''%s'')\n', ...

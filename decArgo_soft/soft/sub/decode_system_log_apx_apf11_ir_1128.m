@@ -178,7 +178,8 @@ for idFile = 1:length(a_systemLogFileList)
    % timing events
    idEvts = find(strcmp({events.functionName}, 'mission_state') | ...
       strcmp({events.functionName}, 'AIR') | ...
-      strcmp({events.functionName}, 'COMMS'));
+      strcmp({events.functionName}, 'COMMS') | ...
+      strcmp({events.functionName}, 'IDLE'));
    if (~isempty(idEvts))
       [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1128(events(idEvts), o_cycleTimeData);
       if (~isempty(o_cycleTimeData) && ~isempty(o_cycleTimeData.descentStartDateSys))

@@ -21,7 +21,7 @@
 function generate_csv_meta_cts5(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
 
@@ -311,7 +311,7 @@ switch a_inputSensorName
       o_sensorMaker = [{'SBE'} {'SBE'} {'SBE'}];
       o_sensorModel = [{'SBE41CP'} {'SBE41CP'} {'SBE41CP'}];
       for idS = 1:length(o_sensorName)
-         [sensorModel] = get_sensor_model('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorModel] = get_sensor_model(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorModel))
             if (~strcmp(sensorModel, o_sensorModel{idS}))
                fprintf('INFO: DB SENSOR_MODEL (''%s'') not replaced by default one (''%s'')\n', ...
@@ -321,7 +321,7 @@ switch a_inputSensorName
          end
       end
       for idS = 1:length(o_sensorMaker)
-         [sensorMaker] = get_sensor_maker('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorMaker] = get_sensor_maker(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorMaker))
             if (~strcmp(sensorMaker, o_sensorMaker{idS}))
                fprintf('INFO: DB SENSOR_Maker (''%s'') not replaced by default one (''%s'')\n', ...

@@ -33,6 +33,7 @@ FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_7900586_7900587.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_apex_meta.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_6904113.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\db_export_APF11_Rafos_20220408.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
@@ -261,7 +262,7 @@ switch a_inputSensorName
       o_sensorMaker = [{'SBE'} {'SBE'} {'SBE'}];
       o_sensorModel = [{'SBE41CP'} {'SBE41CP'} {'SBE41CP'}];
       for idS = 1:length(o_sensorName)
-         [sensorModel] = get_sensor_model('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorModel] = get_sensor_model(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorModel))
             if (~strcmp(sensorModel, o_sensorModel{idS}))
                fprintf('INFO: DB SENSOR_MODEL (''%s'') not replaced by default one (''%s'')\n', ...
@@ -271,7 +272,7 @@ switch a_inputSensorName
          end
       end
       for idS = 1:length(o_sensorMaker)
-         [sensorMaker] = get_sensor_maker('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         [sensorMaker] = get_sensor_maker(o_sensorName{idS}, a_floatNum, a_metaWmoList, a_metaData);
          if (~isempty(sensorMaker))
             if (~strcmp(sensorMaker, o_sensorMaker{idS}))
                fprintf('INFO: DB SENSOR_Maker (''%s'') not replaced by default one (''%s'')\n', ...
