@@ -46,7 +46,7 @@ global g_decArgo_realtimeFlag;
 NB_SESSION_MAX = 3;
 
 % specific
-if (ismember(g_decArgo_floatNum, [3902104]))
+if (ismember(g_decArgo_floatNum, [3902104 7900510]))
    switch g_decArgo_floatNum
       case 3902104
          % the float transmitted cycle #51 twice
@@ -57,6 +57,10 @@ if (ismember(g_decArgo_floatNum, [3902104]))
          a_decodedData(idPackType4).expNbAsc = 0;
          idDel = find(([a_decodedData.fileDate] >= gregorian_2_julian_dec_argo('2018/09/10 09:44:45')) & ...
             ([a_decodedData.fileDate] <= gregorian_2_julian_dec_argo('2018/09/10 09:46:50')));
+         a_decodedData(idDel) = [];
+      case 7900510
+         % the float transmitted twice packets types 0, 4 and 5 of cycle #27
+         idDel = find([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2019/09/08 06:03:48'));
          a_decodedData(idDel) = [];
    end
 end
