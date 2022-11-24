@@ -1,35 +1,28 @@
-% % ------------------------------------------------------------------------------
-% % Convert NetCDF profile file contents in CSV format.
-% %
-% % SYNTAX :
-% %   nc_synthetic_prof_adj_2_csv or nc_synthetic_prof_adj_2_csv(6900189, 7900118)
-% %
-% % INPUT PARAMETERS :
-% %   varargin : WMO number of floats to process
-% %
-% % OUTPUT PARAMETERS :
-% %
-% % EXAMPLES :
-% %
-% % SEE ALSO :
-% % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% % ------------------------------------------------------------------------------
-% % RELEASES :
-% %   01/08/2015 - RNU - creation
-% % ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Convert NetCDF synthetic profile file contents in CSV format.
+%
+% SYNTAX :
+%   nc_synthetic_prof_adj_2_csv or nc_synthetic_prof_adj_2_csv(6900189, 7900118)
+%
+% INPUT PARAMETERS :
+%   varargin : WMO number of floats to process
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   08/15/2018 - RNU - creation
+% ------------------------------------------------------------------------------
 function nc_synthetic_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_param_adj_error\coriolis\';
 
 % default list of floats to convert
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
@@ -85,8 +78,8 @@ for idFloat = 1:nbFloats
    
    if (exist(ncFileDirRef, 'dir') == 7)
       
-      % convert multi-profile c file
-      profFileName = sprintf('S%d_prof.nc', floatNum);
+      % convert multi-profile file
+      profFileName = sprintf('%d_Sprof.nc', floatNum);
       profFilePathName = [ncFileDirRef profFileName];
       
       if (exist(profFilePathName, 'file') == 2)
@@ -165,7 +158,7 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   05/27/2014 - RNU - creation
+%   08/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function nc_synthetic_prof_adj_2_csv_file(a_inputPathFileName, a_outputPathFileName, ...
    a_floatNum, a_comparisonFlag)
@@ -327,14 +320,6 @@ else
       varName, inputFileName);
 end
 
-% varName = 'DATA_MODE';
-% if (var_is_present_dec_argo(fCdf, varName))
-%    varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-%    dataMode = varValue;
-% else
-%    fprintf('WARNING: Variable %s is missing in file %s\n', ...
-%       varName, inputFileName);
-% end
 varName = 'PARAMETER_DATA_MODE';
 if (var_is_present_dec_argo(fCdf, varName))
    varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
@@ -430,7 +415,11 @@ for id = 1:size(stationParameters, 3)
    for id2 = 1:size(stationParameters, 2)
       paramName = strtrim(stationParameters(:, id2, id)');
       if (~isempty(paramName))
-         paramList = [paramList {paramName} {[paramName '_ADJUSTED']}];
+         if (~strcmp(paramName, 'PRES'))
+            paramList = [paramList {paramName} {[paramName '_dPRES']} {[paramName '_ADJUSTED']}];
+         else
+            paramList = [paramList {paramName} {[paramName '_ADJUSTED']}];
+         end
       end
    end
 end
@@ -460,8 +449,12 @@ for idParam = 1:length(paramList)
       paramFormat = [paramFormat {varFormat}];
       varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramName), '_FillValue');
       paramFillValue = [paramFillValue {varFillValue}];
-      varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
-      paramDataQc = [paramDataQc {varQcValue}];
+      if ((length(paramName) < 7) || ~strcmp(paramName(end-5:end), '_dPRES'))
+         varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
+         paramDataQc = [paramDataQc {varQcValue}];
+      else
+         paramDataQc = [paramDataQc {repmat(' ', size(varValue))}];
+      end
    else
       fprintf('WARNING: Variable %s is missing in file %s\n', ...
          paramName, inputFileName);
@@ -492,9 +485,6 @@ for idP = 1:nProf
    fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
       a_floatNum, cycleNumber(idP), idP, ...
       direction(idP));
-   %    fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
-   %       a_floatNum, cycleNumber(idP), idP, ...
-   %       dataMode(idP));
    fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
       a_floatNum, cycleNumber(idP), idP, ...
       parameterDataMode(:, idP)');
@@ -539,8 +529,21 @@ for idP = 1:nProf
             paramName, inputFileName);
       end
       
+      % PARAM_dPRES
+      if (~strcmp(parameterName, 'PRES'))
+         paramName = [parameterName '_dPRES'];
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            fprintf(fidOut, '; %s', ...
+               paramName);
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+      end
+      
       % PARAM_ADJUSTED
-      paramName = [paramName '_ADJUSTED'];
+      paramName = [parameterName '_ADJUSTED'];
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          fprintf(fidOut, '; %s; QC', ...
@@ -565,11 +568,20 @@ for idP = 1:nProf
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          profileParamQcTmp = profileParamQc{idF};
-         if (~isempty(profileParamQcTmp))
-            fprintf(fidOut, '%c; ; ; ; ', ...
-               profileParamQcTmp(idP));
+         if (~strcmp(parameterName, 'PRES'))
+            if (~isempty(profileParamQcTmp))
+               fprintf(fidOut, '%c; ; ; ; ; ', ...
+                  profileParamQcTmp(idP));
+            else
+               fprintf(fidOut, '; ; ; ; ; ');
+            end
          else
-            fprintf(fidOut, '; ; ; ; ');
+            if (~isempty(profileParamQcTmp))
+               fprintf(fidOut, '%c; ; ; ; ', ...
+                  profileParamQcTmp(idP));
+            else
+               fprintf(fidOut, '; ; ; ; ');
+            end
          end
       else
          fprintf('ERROR: Variable %s is missing in file %s\n', ...
@@ -610,10 +622,26 @@ for idP = 1:nProf
             paramName, inputFileName);
       end
       
+      % PARAM_dPRES
+      if (~strcmp(parameterName, 'PRES'))
+         paramInfo = get_netcdf_param_attributes(parameterName);
+         paramName = [parameterName '_dPRES'];
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            dataTmp = paramData{idF};
+            data = [data double(dataTmp(:, idP))];
+            dataFillValue = [dataFillValue paramFillValue{idF}];
+            format = [format '; ' paramFormat{idF}];
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+      end
+      
       % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
+      paramInfo = get_netcdf_param_attributes(parameterName);
       if (paramInfo.adjAllowed == 1)
-         paramName = [paramName '_ADJUSTED'];
+         paramName = [parameterName '_ADJUSTED'];
          idF = find(strcmp(paramList, paramName) == 1, 1);
          if (~isempty(idF))
             dataTmp = paramData{idF};

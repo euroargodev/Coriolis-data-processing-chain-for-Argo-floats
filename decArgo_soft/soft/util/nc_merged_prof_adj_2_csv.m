@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Convert NetCDF profile file contents in CSV format.
+% Convert NetCDF merged profile file contents in CSV format.
 %
 % SYNTAX :
 %   nc_merged_prof_adj_2_csv or nc_merged_prof_adj_2_csv(6900189, 7900118)
@@ -15,21 +15,14 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   01/08/2015 - RNU - creation
+%   08/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function nc_merged_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_param_adj_error\coriolis\';
 
 % default list of floats to convert
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
@@ -86,7 +79,7 @@ for idFloat = 1:nbFloats
    if (exist(ncFileDirRef, 'dir') == 7)
       
       % convert multi-profile c file
-      profFileName = sprintf('M%d_prof.nc', floatNum);
+      profFileName = sprintf('%d_Mprof.nc', floatNum);
       profFilePathName = [ncFileDirRef profFileName];
       
       if (exist(profFilePathName, 'file') == 2)
@@ -145,7 +138,7 @@ diary off;
 return;
 
 % ------------------------------------------------------------------------------
-% Convert one NetCDF profile file contents in CSV format.
+% Convert one NetCDF merged profile file contents in CSV format.
 %
 % SYNTAX :
 %  nc_merged_prof_adj_2_csv_file(a_inputPathFileName, a_outputPathFileName, ...
@@ -165,7 +158,7 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   05/27/2014 - RNU - creation
+%   08/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function nc_merged_prof_adj_2_csv_file(a_inputPathFileName, a_outputPathFileName, ...
    a_floatNum, a_comparisonFlag)
@@ -327,14 +320,6 @@ else
       varName, inputFileName);
 end
 
-% varName = 'DATA_MODE';
-% if (var_is_present_dec_argo(fCdf, varName))
-%    varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-%    dataMode = varValue;
-% else
-%    fprintf('WARNING: Variable %s is missing in file %s\n', ...
-%       varName, inputFileName);
-% end
 varName = 'PARAMETER_DATA_MODE';
 if (var_is_present_dec_argo(fCdf, varName))
    varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
@@ -436,8 +421,6 @@ for id = 1:size(stationParameters, 3)
 end
 paramList = unique(paramList, 'stable');
 
-% samplingCode = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'SAMPLING_CODE'));
-
 paramData = [];
 paramDataQc = [];
 paramFormat = [];
@@ -494,9 +477,6 @@ for idP = 1:nProf
    fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
       a_floatNum, cycleNumber(idP), idP, ...
       direction(idP));
-   %    fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
-   %       a_floatNum, cycleNumber(idP), idP, ...
-   %       dataMode(idP));
    fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
       a_floatNum, cycleNumber(idP), idP, ...
       parameterDataMode(:, idP)');
@@ -522,8 +502,6 @@ for idP = 1:nProf
       a_floatNum, cycleNumber(idP), idP, ...
       strtrim(positioningSystem(:, idP)'));
    
-   %    fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS; SAMPLING_CODE', ...
-   %       a_floatNum, cycleNumber(idP), idP);
    fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS', ...
       a_floatNum, cycleNumber(idP), idP);
    for idParam = 1:nParam
@@ -647,21 +625,12 @@ for idP = 1:nProf
          fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
             a_floatNum, cycleNumber(idP), idP, idLev);
          if (strcmp(paramList{1}, 'JULD_LEVEL'))
-            %             fprintf(fidOut, ['; %d' format], ...
-            %                samplingCode(idLev, idP), ...
-            %                julian_2_gregorian_dec_argo(data(idLev, 1)), data(idLev, 2), ...
-            %                julian_2_gregorian_dec_argo(data(idLev, 3)), data(idLev, 4), ...
-            %                data(idLev, 5:end));
-            fprintf(fidOut, ['' format], ...
+            fprintf(fidOut, format, ...
                julian_2_gregorian_dec_argo(data(idLev, 1)), data(idLev, 2), ...
                julian_2_gregorian_dec_argo(data(idLev, 3)), data(idLev, 4), ...
                data(idLev, 5:end));
          else
-            %             fprintf(fidOut, ['; %d' format], ...
-            %                samplingCode(idLev, idP), ...
-            %                data(idLev, :));
-            fprintf(fidOut, ['' format], ...
-               samplingCode(idLev, idP), ...
+            fprintf(fidOut, format, ...
                data(idLev, :));
          end
          fprintf(fidOut, '\n');

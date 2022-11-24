@@ -1,4 +1,4 @@
-netcdf ArgoSProf_V1.0 {
+netcdf ArgoV2MergedProf_V1.0 {
 dimensions:
 	DATE_TIME = 14 ;
 	STRING256 = 256 ;
