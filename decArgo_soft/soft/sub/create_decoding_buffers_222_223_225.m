@@ -171,9 +171,9 @@ end
 
 % the base pachet of the session (packet type 0 4 5) may have been delayed
 % (Ex: float 6902814 #12)
-% => add new session when delay between transmissions exceeds 1 day
+% => add new session when delay between transmissions exceeds 0.5 day
 ONE_DAY = 1;
-idTransDelay = find(tabDiffDate > ONE_DAY);
+idTransDelay = find(tabDiffDate > ONE_DAY/2);
 for idT = 1:length(idTransDelay)
    if (tabSession(idTransDelay(idT)-1) == tabSession(idTransDelay(idT)))
       tabSession(idTransDelay(idT):end) = tabSession(idTransDelay(idT):end) + 1;
@@ -392,7 +392,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6904068, 6900791, 6903064, 6904067, 6904068, 6903800]))
+      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -482,6 +482,14 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByDate(id) = -1;
          tabSession(id) = -1;
          tabSessionDeep(id) = -1;
+      case 6904072
+         % cycle #21 data are separated
+         id = find((tabCyNum == 21) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 21) = tabRank(id);
+         tabRankByCycle(tabCyNum == 21) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 21) = tabRankByDate(id);   
+         tabDeep(tabCyNum == 21) = 1;   
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
@@ -570,8 +578,8 @@ end
 % assign cycle number to Iridium mail files
 
 % 1- generate a new table of sessions only based on times (one new session if no
-% transmission during more than one day)
-idTransDelay = find(tabDiffDate > ONE_DAY);
+% transmission during more than 0.5 day)
+idTransDelay = find(tabDiffDate > ONE_DAY/2);
 tabSessionBis = nan(size(tabDate));
 sessionNum = 1;
 start = 1;

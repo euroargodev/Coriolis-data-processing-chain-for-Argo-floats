@@ -202,9 +202,9 @@ end
 
 % the base packet of the session (packet type 0 4 5) may have been delayed
 % (Ex: float 6902814 #12)
-% => add new session when delay between transmissions exceeds 1 day
+% => add new session when delay between transmissions exceeds 0.5 day
 ONE_DAY = 1;
-idTransDelay = find(tabDiffDate > ONE_DAY);
+idTransDelay = find(tabDiffDate > ONE_DAY/2);
 for idT = 1:length(idTransDelay)
    if (tabSession(idTransDelay(idT)-1) == tabSession(idTransDelay(idT)))
       tabSession(idTransDelay(idT):end) = tabSession(idTransDelay(idT):end) + 1;
@@ -505,7 +505,7 @@ for sesNum = sessionList
    if (~isempty(idForSession))
       cyNumList = unique(tabCyNum(idForSession));
       for cyNum = cyNumList
-         
+
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
@@ -591,7 +591,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771]))
+      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -656,6 +656,26 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
+      case 7900543
+         % cycle #42 data are separated
+         id = find((tabCyNum == 42) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 42) = tabRank(id);
+         tabRankByCycle(tabCyNum == 42) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 42) = tabRankByDate(id);   
+         tabDeep(tabCyNum == 42) = 1;   
+         % cycle #59 data are separated
+         id = find((tabCyNum == 59) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 59) = tabRank(id);
+         tabRankByCycle(tabCyNum == 59) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 59) = tabRankByDate(id);   
+         % cycle #62 data are separated
+         id = find((tabCyNum == 62) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 62) = tabRank(id);
+         tabRankByCycle(tabCyNum == 62) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 62) = tabRankByDate(id);   
    end
 end
 
@@ -727,8 +747,8 @@ end
 % assign cycle number to Iridium mail files
 
 % 1- generate a new table of sessions only based on times (one new session if no
-% transmission during more than one day)
-idTransDelay = find(tabDiffDate > ONE_DAY);
+% transmission during more than 0.5 day)
+idTransDelay = find(tabDiffDate > ONE_DAY/2);
 tabSessionBis = nan(size(tabDate));
 sessionNum = 1;
 start = 1;
