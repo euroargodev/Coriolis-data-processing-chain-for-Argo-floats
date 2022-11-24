@@ -619,6 +619,11 @@ if (isempty(g_decArgo_outputCsvFileId))
          cyNum = tabCyclesToProcessAgain(idL, 1);
          profNum = tabCyclesToProcessAgain(idL, 2);
          
+         g_decArgo_cycleNumFloat = cyNum;
+         g_decArgo_cycleNumFloatStr = num2str(cyNum);
+         g_decArgo_patternNumFloat = profNum;
+         g_decArgo_patternNumFloatStr = num2str(profNum);
+         
          % reprocess profile data
          idFProfPayload = find(([o_tabProfiles.cycleNumber] == cyNum) & ...
             ([o_tabProfiles.profileNumber] == profNum) & ...
