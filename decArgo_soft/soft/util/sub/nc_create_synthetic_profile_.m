@@ -20,6 +20,7 @@
 %   a_monoProfRefFile         : netCDF synthetic mono-profile file schema
 %   a_multiProfRefFile        : netCDF synthetic multi-profile file schema
 %   a_tmpDir                  : base name of the temporary directory
+%   a_bgcFloatFlag            : 1 if it is a BGC float, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -37,7 +38,7 @@ function nc_create_synthetic_profile_( ...
    a_createMultiProfFlag, ...
    a_outputDir, ...
    a_monoProfRefFile, a_multiProfRefFile, ...
-   a_tmpDir)
+   a_tmpDir, a_bgcFloatFlag)
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -76,7 +77,8 @@ if (a_createOnlyMultiProfFlag == 0)
    % process PROF data
    syntProfDataStruct = [];
    if (~isempty(profDataStruct))
-      syntProfDataStruct = process_prof_data(profDataStruct, a_cProfFileName, a_bProfFileName, a_metaFileName);
+      syntProfDataStruct = process_prof_data(profDataStruct, ...
+         a_cProfFileName, a_bProfFileName, a_metaFileName, a_bgcFloatFlag);
    end
    
    % create S-PROF file
@@ -133,27 +135,27 @@ global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
 
+onlyCFileFlag = 0;
+onlyBFileFlag = 0;
+if (isempty(a_cProfFileName))
+   onlyBFileFlag = 1;
+end
+if (isempty(a_bProfFileName))
+   onlyCFileFlag = 1;
+end
+
 % retrieve PROF data from C and B files
 profDataTabC = [];
 profDataTabB = [];
 for idType= 1:2
    if (idType == 1)
       profFilePathName = a_cProfFileName;
-      if ~(exist(profFilePathName, 'file') == 2)
-         fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
-            g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
-         return
-      end
    else
-      if (isempty(a_bProfFileName))
-         break
-      end
       profFilePathName = a_bProfFileName;
-      if ~(exist(profFilePathName, 'file') == 2)
-         fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
-            g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
-         return
-      end
+   end
+   
+   if (isempty(profFilePathName))
+      continue
    end
    
    % retrieve information from PROF file
@@ -304,7 +306,7 @@ for idType= 1:2
       
       profParameterList = parameterList{idProf};
       profData.paramList = profParameterList;
-      if (idType == 2)
+      if ((idType == 2) && (onlyBFileFlag == 0))
          idPres = find(strcmp('PRES', profData.paramList) == 1, 1);
          profData.paramList(idPres) = [];
       end
@@ -322,32 +324,36 @@ for idType= 1:2
          if (strcmp(paramName, 'PRES'))
             profData.presData = paramData(idProf, :)';
          end
-         if ((idType == 2) && strcmp(paramName, 'PRES'))
+         if ((idType == 2) && strcmp(paramName, 'PRES') && (onlyBFileFlag == 0))
             continue
          end
-         if (idType == 1)
-            profData.paramDataMode = [profData.paramDataMode dataMode(idProf)];
-         else
-            % find N_PARAM index of the current parameter
-            nParamId = [];
-            for idParamNc = 1:nParam
-               stationParametersParamName = deblank(stationParameters(:, idParamNc, idProf)');
-               if (strcmp(paramName, stationParametersParamName))
-                  nParamId = idParamNc;
-                  break
+         if (onlyBFileFlag == 0)
+            if (idType == 1)
+               profData.paramDataMode = [profData.paramDataMode dataMode(idProf)];
+            else
+               % find N_PARAM index of the current parameter
+               nParamId = [];
+               for idParamNc = 1:nParam
+                  stationParametersParamName = deblank(stationParameters(:, idParamNc, idProf)');
+                  if (strcmp(paramName, stationParametersParamName))
+                     nParamId = idParamNc;
+                     break
+                  end
+               end
+               if (~isempty(deblank(parameterDataMode)))
+                  profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
+               elseif (dataMode(idProf) == 'R')
+                  %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => set to ''R'' (as DATA_MODE = ''R'')\n', ...
+                  %                   g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
+                  profData.paramDataMode = [profData.paramDataMode 'R'];
+               else
+                  fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
+                     g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
+                  return
                end
             end
-            if (~isempty(deblank(parameterDataMode)))
-               profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
-            elseif (dataMode(idProf) == 'R')
-               %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => set to ''R'' (as DATA_MODE = ''R'')\n', ...
-               %                   g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
-               profData.paramDataMode = [profData.paramDataMode 'R'];
-            else
-               fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
-                  g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
-               return
-            end
+         else
+            profData.paramDataMode = [profData.paramDataMode dataMode(idProf)];
          end
          
          % manage SCIENTIFIC_CALIB_* information
@@ -401,66 +407,74 @@ end
 
 % concatenate C and B data
 profDataTab = [];
-for idProfC = 1:length(profDataTabC)
-   profData = profDataTabC(idProfC);
-   for idProfB = 1:length(profDataTabB)
-      if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
-         fprintf('WARNING: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) => files ignored\n', ...
-            g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
-            length(profData.presData), ...
-            length(profDataTabB(idProfB).presData));
-         return
-      end
-      if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
-         profDataB = profDataTabB(idProfB);
-         profData.paramList = [profData.paramList profDataB.paramList];
-         profData.paramSensorList = [profData.paramSensorList profDataB.paramSensorList];
-         profData.paramDataMode = [profData.paramDataMode profDataB.paramDataMode];
-         % N_CALIB of C and B files are not necessarily the same
-         nCalibC = 0;
-         if (~isempty(profData.scientificCalibEquation))
-            nCalibC = length(profData.scientificCalibEquation{1});
+if (~isempty(profDataTabC) && ~isempty(profDataTabB))
+   for idProfC = 1:length(profDataTabC)
+      profData = profDataTabC(idProfC);
+      for idProfB = 1:length(profDataTabB)
+         if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
+            fprintf('WARNING: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) => files ignored\n', ...
+               g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
+               length(profData.presData), ...
+               length(profDataTabB(idProfB).presData));
+            return
          end
-         nCalibB = 0;
-         if (~isempty(profDataB.scientificCalibEquation))
-            nCalibB = length(profDataB.scientificCalibEquation{1});
-         end
-         if (nCalibC > nCalibB)
-            for idParam = 1:length(profDataB.scientificCalibEquation)
-               profDataB.scientificCalibEquation{idParam} = ...
-                  cat(2, profDataB.scientificCalibEquation{idParam}, cell(1, nCalibC-nCalibB));
-               profDataB.scientificCalibCoefficient{idParam} = ...
-                  cat(2, profDataB.scientificCalibCoefficient{idParam}, cell(1, nCalibC-nCalibB));
-               profDataB.scientificCalibComment{idParam} = ...
-                  cat(2, profDataB.scientificCalibComment{idParam}, cell(1, nCalibC-nCalibB));
-               profDataB.scientificCalibDate{idParam} = ...
-                  cat(2, profDataB.scientificCalibDate{idParam}, cell(1, nCalibC-nCalibB));
+         if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
+            profDataB = profDataTabB(idProfB);
+            profData.paramList = [profData.paramList profDataB.paramList];
+            profData.paramSensorList = [profData.paramSensorList profDataB.paramSensorList];
+            profData.paramDataMode = [profData.paramDataMode profDataB.paramDataMode];
+            % N_CALIB of C and B files are not necessarily the same
+            nCalibC = 0;
+            if (~isempty(profData.scientificCalibEquation))
+               nCalibC = length(profData.scientificCalibEquation{1});
             end
-         else
-            for idParam = 1:length(profData.scientificCalibEquation)
-               profData.scientificCalibEquation{idParam} = ...
-                  cat(2, profData.scientificCalibEquation{idParam}, cell(1, nCalibB-nCalibC));
-               profData.scientificCalibCoefficient{idParam} = ...
-                  cat(2, profData.scientificCalibCoefficient{idParam}, cell(1, nCalibB-nCalibC));
-               profData.scientificCalibComment{idParam} = ...
-                  cat(2, profData.scientificCalibComment{idParam}, cell(1, nCalibB-nCalibC));
-               profData.scientificCalibDate{idParam} = ...
-                  cat(2, profData.scientificCalibDate{idParam}, cell(1, nCalibB-nCalibC));
+            nCalibB = 0;
+            if (~isempty(profDataB.scientificCalibEquation))
+               nCalibB = length(profDataB.scientificCalibEquation{1});
             end
+            if (nCalibC > nCalibB)
+               for idParam = 1:length(profDataB.scientificCalibEquation)
+                  profDataB.scientificCalibEquation{idParam} = ...
+                     cat(2, profDataB.scientificCalibEquation{idParam}, cell(1, nCalibC-nCalibB));
+                  profDataB.scientificCalibCoefficient{idParam} = ...
+                     cat(2, profDataB.scientificCalibCoefficient{idParam}, cell(1, nCalibC-nCalibB));
+                  profDataB.scientificCalibComment{idParam} = ...
+                     cat(2, profDataB.scientificCalibComment{idParam}, cell(1, nCalibC-nCalibB));
+                  profDataB.scientificCalibDate{idParam} = ...
+                     cat(2, profDataB.scientificCalibDate{idParam}, cell(1, nCalibC-nCalibB));
+               end
+            else
+               for idParam = 1:length(profData.scientificCalibEquation)
+                  profData.scientificCalibEquation{idParam} = ...
+                     cat(2, profData.scientificCalibEquation{idParam}, cell(1, nCalibB-nCalibC));
+                  profData.scientificCalibCoefficient{idParam} = ...
+                     cat(2, profData.scientificCalibCoefficient{idParam}, cell(1, nCalibB-nCalibC));
+                  profData.scientificCalibComment{idParam} = ...
+                     cat(2, profData.scientificCalibComment{idParam}, cell(1, nCalibB-nCalibC));
+                  profData.scientificCalibDate{idParam} = ...
+                     cat(2, profData.scientificCalibDate{idParam}, cell(1, nCalibB-nCalibC));
+               end
+            end
+            profData.scientificCalibEquation = [profData.scientificCalibEquation profDataB.scientificCalibEquation];
+            profData.scientificCalibCoefficient = [profData.scientificCalibCoefficient profDataB.scientificCalibCoefficient];
+            profData.scientificCalibComment = [profData.scientificCalibComment profDataB.scientificCalibComment];
+            profData.scientificCalibDate = [profData.scientificCalibDate profDataB.scientificCalibDate];
+            profDataTabB(idProfB) = [];
+            break
          end
-         profData.scientificCalibEquation = [profData.scientificCalibEquation profDataB.scientificCalibEquation];
-         profData.scientificCalibCoefficient = [profData.scientificCalibCoefficient profDataB.scientificCalibCoefficient];
-         profData.scientificCalibComment = [profData.scientificCalibComment profDataB.scientificCalibComment];
-         profData.scientificCalibDate = [profData.scientificCalibDate profDataB.scientificCalibDate];
-         profDataTabB(idProfB) = [];
-         break
       end
+      profDataTab = [profDataTab profData];
    end
-   profDataTab = [profDataTab profData];
-end
-if (~isempty(profDataTabB))
-   fprintf('WARNING: Float #%d Cycle #%d%c: %d B profiles are not used\n', ...
-      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, length(profDataTabB));
+   
+   if (~isempty(profDataTabB))
+      fprintf('WARNING: Float #%d Cycle #%d%c: %d B profiles are not used\n', ...
+         g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, length(profDataTabB));
+   end
+   
+elseif (~isempty(profDataTabC))
+   profDataTab = profDataTabC;
+elseif (~isempty(profDataTabB))
+   profDataTab = profDataTabB;
 end
 
 % output parameter
@@ -720,13 +734,14 @@ return
 %
 % SYNTAX :
 %  [o_syntProfData] = process_prof_data(a_profData, ...
-%    a_cProfFileName, a_bProfFileName, a_metaFileName)
+%    a_cProfFileName, a_bProfFileName, a_metaFileName, a_bgcFloatFlag)
 %
 % INPUT PARAMETERS :
 %   a_profData      : data retrieved from PROF file(s)
 %   a_cProfFileName : input C prof file path name
 %   a_bProfFileName : input B prof file path name
 %   a_metaFileName  : input meta file path name
+%   a_bgcFloatFlag  : 1 if it is a BGC float, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %   o_syntProfData : synthetic profile data
@@ -740,7 +755,7 @@ return
 %   06/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_syntProfData] = process_prof_data(a_profData, ...
-   a_cProfFileName, a_bProfFileName, a_metaFileName)
+   a_cProfFileName, a_bProfFileName, a_metaFileName, a_bgcFloatFlag)
 
 % output parameters initialization
 o_syntProfData = [];
@@ -918,7 +933,8 @@ try
    syntProfData = ARGO_simplified_profile( ...
       'cfilepath', a_cProfFileName, ...
       'bfilepath', a_bProfFileName, ...
-      'metafilepath', a_metaFileName);
+      'metafilepath', a_metaFileName, ...
+      'bgcFloatFlag', a_bgcFloatFlag);
 catch error
    [~, bProfFileName, bProfFileExt] = fileparts(a_bProfFileName);
    fprintf('ERROR: Float #%d Cycle #%d%c: the synthetic profile data processing failed (ARGO_simplified_profile fonction on file %s)\n', ...
@@ -969,7 +985,7 @@ for idParam = 1:length(paramList)
    
    paramNameQc = [paramName '_QC'];
    dataQc = syntProfData.(paramNameQc).value;
-   idOk = find(~isnan(data));
+   idOk = find(~isnan(dataQc));
    paramDataQc(idOk, idParam) = num2str(dataQc(idOk));
    
    paramNameDPres = [paramName '_dPRES'];
@@ -984,7 +1000,7 @@ for idParam = 1:length(paramList)
    
    paramNameAdjQc = [paramName '_ADJUSTED_QC'];
    dataQc = syntProfData.(paramNameAdjQc).value;
-   idOk = find(~isnan(data));
+   idOk = find(~isnan(dataQc));
    paramDataAdjustedQc(idOk, idParam) = num2str(dataQc(idOk));
    
    paramNameAdjErr = [paramName '_ADJUSTED_ERROR'];
@@ -1012,6 +1028,7 @@ scientificCalibDate = cell(1, length(paramList));
 % collect data
 for idProf = 1:length(a_profData)
    profData = a_profData(idProf);
+   profParamList = profData.paramList;
    
    % we don't known how to manage different information from different inital
    % profiles for a same parameter => we keep only the information from the
@@ -1021,10 +1038,13 @@ for idProf = 1:length(a_profData)
    sciCalibComment = profData.scientificCalibComment;
    sciCalibDate = profData.scientificCalibDate;
    for idP = 1:length(sciCalibEquation)
-      scientificCalibEquationParam = scientificCalibEquation{idP};
-      scientificCalibCoefficientParam = scientificCalibCoefficient{idP};
-      scientificCalibCommentParam = scientificCalibComment{idP};
-      scientificCalibDateParam = scientificCalibDate{idP};
+      
+      idParam = find(strcmp(paramList, profParamList{idP}), 1);
+      
+      scientificCalibEquationParam = scientificCalibEquation{idParam};
+      scientificCalibCoefficientParam = scientificCalibCoefficient{idParam};
+      scientificCalibCommentParam = scientificCalibComment{idParam};
+      scientificCalibDateParam = scientificCalibDate{idParam};
       
       sciCalibEquationParam = sciCalibEquation{idP};
       sciCalibCoefficientParam = sciCalibCoefficient{idP};
@@ -1051,10 +1071,10 @@ for idProf = 1:length(a_profData)
             scientificCalibCommentParam(1:length(tmpEquationParam)) = tmpCommentParam;
             scientificCalibDateParam(1:length(tmpEquationParam)) = tmpDateParam;
             
-            scientificCalibEquation{idP} = scientificCalibEquationParam;
-            scientificCalibCoefficient{idP} = scientificCalibEquationParam;
-            scientificCalibComment{idP} = scientificCalibEquationParam;
-            scientificCalibDate{idP} = scientificCalibEquationParam;
+            scientificCalibEquation{idParam} = scientificCalibEquationParam;
+            scientificCalibCoefficient{idParam} = scientificCalibEquationParam;
+            scientificCalibComment{idParam} = scientificCalibEquationParam;
+            scientificCalibDate{idParam} = scientificCalibEquationParam;
          end
          
          % checke if the array need to be updated
@@ -1076,10 +1096,10 @@ for idProf = 1:length(a_profData)
       end
       
       if (updatedFlag)
-         scientificCalibEquation{idP} = scientificCalibEquationParam;
-         scientificCalibCoefficient{idP} = scientificCalibCoefficientParam;
-         scientificCalibComment{idP} = scientificCalibCommentParam;
-         scientificCalibDate{idP} = scientificCalibDateParam;
+         scientificCalibEquation{idParam} = scientificCalibEquationParam;
+         scientificCalibCoefficient{idParam} = scientificCalibCoefficientParam;
+         scientificCalibComment{idParam} = scientificCalibCommentParam;
+         scientificCalibDate{idParam} = scientificCalibDateParam;
       end
    end
 end

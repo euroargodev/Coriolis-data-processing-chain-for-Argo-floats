@@ -34,16 +34,20 @@
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 %   09/25/2018 - RNU - V 1.3: added input parameters 'floatWmo', 'inputDirName'
 %                             and 'outputDirName'
-%   02/27/2019 - RNU - V 1.4: includes version 18.02.2019 for ARGO_simplified_profile
+%   02/27/2019 - RNU - V 1.4: includes version 18.02.2019 of ARGO_simplified_profile
 %   04/15/2019 - RNU - V 1.6: correction of previous version (set to 1.6
 %                             instead of 1.5 so that nc_create_synthetic_profile_rt
 %                             and nc_create_synthetic_profile_rt share the same
-%                             version number
+%                             version number)
 %   07/08/2019 - RNU - V 1.7: for NetCDF-4 files, use 'defVarFill' function
 %                             instead of 'putAtt' to define the fill Value of a
 %                             variable
 %   04/22/2020 - RNU - V 1.8: added a CSV output file that recall the
 %                             INFO/WARNING/ERROR messages of the log file
+%   07/06/2020 - RNU - V 1.9: includes version 30.06.2020 of ARGO_simplified_profile
+%                             this new version generates S-PROF file (possibly
+%                             empty) even when 'c' PROF or 'b' PROF file is
+%                             missing
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -98,7 +102,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.8 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.9 (version 30.06.2020 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -277,11 +281,6 @@ global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
 
-% consider float only if B prof files exist
-if (isempty(dir([a_floatDir '/profiles/' sprintf('B*%d*.nc', g_cocs_floatNum)])))
-   return
-end
-
 floatWmoStr = num2str(g_cocs_floatNum);
 
 % META data file
@@ -295,9 +294,13 @@ end
 profileDir = [a_floatDir '/profiles'];
 files = dir([profileDir '/' '*' floatWmoStr '_' '*.nc']);
 cyNumList = [];
+bgcFloatFlag = 0;
 for idFile = 1:length(files)
    fileName = files(idFile).name;
-   if ((fileName(1) == 'D') || (fileName(1) == 'R'))
+   if (fileName(1) == 'B')
+      bgcFloatFlag = 1;
+   end
+   if (ismember(fileName(1), 'DRB'))
       idF = strfind(fileName, floatWmoStr);
       cyNumStr = fileName(idF+length(floatWmoStr)+1:end-3);
       if (cyNumStr(end) == 'D')
@@ -340,22 +343,20 @@ for idCy = 1:length(cyNumList)
          bProfFileName = [profileDir '/' sprintf('BR%d_%03d%c.nc', g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir)];
       end
       
-      if (~isempty(cProfFileName))
-         if (~isempty(bProfFileName))
-            
-            fprintf('   %02d/%02d: Float #%d Cycle #%d%c\n', ...
-               idCy, length(cyNumList), g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
-            
-            % generate S-PROF file
-            nc_create_synthetic_profile_( ...
-               0, ...
-               cProfFileName, bProfFileName, metaFileName, ...
-               createMultiProfFlag, ...
-               a_outputDir, ...
-               a_monoProfRefFile, a_multiProfRefFile, ...
-               a_tmpDir);
+      if (~isempty(cProfFileName) || ~isempty(bProfFileName))
          
-         end
+         fprintf('   %02d/%02d: Float #%d Cycle #%d%c\n', ...
+            idCy, length(cyNumList), g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+         
+         % generate S-PROF file
+         nc_create_synthetic_profile_( ...
+            0, ...
+            cProfFileName, bProfFileName, metaFileName, ...
+            createMultiProfFlag, ...
+            a_outputDir, ...
+            a_monoProfRefFile, a_multiProfRefFile, ...
+            a_tmpDir, bgcFloatFlag);
+         
       end
    end
 end
