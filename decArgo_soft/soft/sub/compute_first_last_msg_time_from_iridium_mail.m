@@ -27,10 +27,37 @@ function [o_firstMsgTime, o_lastMsgTime] = ...
 % default values
 global g_decArgo_dateDef;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % output parameters initialization
 o_firstMsgTime = g_decArgo_dateDef;
 o_lastMsgTime = g_decArgo_dateDef;
 
+
+% specific
+if (g_decArgo_floatNum == 6903256)
+   if (a_cycleNumber == 4)
+      return
+   elseif (a_cycleNumber == 6)
+      idFCyNum = find(([a_iridiumMailData.cycleNumber] == a_cycleNumber) | ...
+         ([a_iridiumMailData.cycleNumber] == 4));
+      if (~isempty(idFCyNum))
+         idFCyNum(end) = [];
+         timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+         o_firstMsgTime = min(timeList);
+         o_lastMsgTime = max(timeList);
+      end
+      return
+   elseif (a_cycleNumber == 11)
+      idFCyNum = find([a_iridiumMailData.cycleNumber] == 4);
+      if (~isempty(idFCyNum))
+         timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+         o_firstMsgTime = max(timeList);
+         o_lastMsgTime = max(timeList);
+      end
+   end
+end
 
 % process the contents of the Iridium mail associated to the current cycle
 idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);

@@ -266,11 +266,18 @@ for sesNum = sessionList
       idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
       
       % specific
-      if (g_decArgo_floatNum == 3901963)
-         % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
-         % are not the first transmitted SBD
-         if (ismember(cyNum, [13 24 25]))
-            idStop = [];
+      if (ismember(g_decArgo_floatNum, [3901963 6903256]))
+         if (g_decArgo_floatNum == 3901963)
+            % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
+            % are not the first transmitted SBD
+            if (ismember(cyNum, [13 24 25]))
+               idStop = [];
+            end
+         end
+         if (g_decArgo_floatNum == 6903256)
+            if (cyNum == 6)
+               idStop = [];
+            end
          end
       end
       
