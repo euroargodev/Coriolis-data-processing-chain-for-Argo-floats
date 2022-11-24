@@ -1,4 +1,4 @@
-% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------'
 % Update meta-data stored in the json file.
 %
 % SYNTAX :
@@ -1156,7 +1156,7 @@ switch (a_paramName)
    case {'PRES_MED'}
       o_param = 'PRES_MED';
       o_paramSensor = 'CTD_PRES';
-      o_paramUnits = '';
+      o_paramUnits = 'decibar';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -1166,7 +1166,7 @@ switch (a_paramName)
    case {'TEMP_STD'}
       o_param = 'TEMP_STD';
       o_paramSensor = 'CTD_TEMP';
-      o_paramUnits = '';
+      o_paramUnits = 'degree_Celsius';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -1176,7 +1176,7 @@ switch (a_paramName)
    case {'TEMP_MED'}
       o_param = 'TEMP_MED';
       o_paramSensor = 'CTD_TEMP';
-      o_paramUnits = '';
+      o_paramUnits = 'degree_Celsius';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -1186,7 +1186,7 @@ switch (a_paramName)
    case {'PSAL_STD'}
       o_param = 'PSAL_STD';
       o_paramSensor = 'CTD_CNDC';
-      o_paramUnits = '';
+      o_paramUnits = 'psu';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -1196,7 +1196,7 @@ switch (a_paramName)
    case {'PSAL_MED'}
       o_param = 'PSAL_MED';
       o_paramSensor = 'CTD_CNDC';
-      o_paramUnits = '';
+      o_paramUnits = 'psu';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3515,7 +3515,7 @@ switch (a_paramName)
    case {'TEMP_DOXY_STD'}
       o_param = 'TEMP_DOXY_STD';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degC';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3525,7 +3525,7 @@ switch (a_paramName)
    case {'TEMP_DOXY_MED'}
       o_param = 'TEMP_DOXY_MED';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degC';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3535,7 +3535,7 @@ switch (a_paramName)
    case {'C1PHASE_DOXY_STD'}
       o_param = 'C1PHASE_DOXY_STD';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3545,7 +3545,7 @@ switch (a_paramName)
    case {'C1PHASE_DOXY_MED'}
       o_param = 'C1PHASE_DOXY_MED';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3555,7 +3555,7 @@ switch (a_paramName)
    case {'C2PHASE_DOXY_STD'}
       o_param = 'C2PHASE_DOXY_STD';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3565,7 +3565,7 @@ switch (a_paramName)
    case {'C2PHASE_DOXY_MED'}
       o_param = 'C2PHASE_DOXY_MED';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3575,7 +3575,7 @@ switch (a_paramName)
    case {'DPHASE_DOXY_STD'}
       o_param = 'DPHASE_DOXY_STD';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -3585,7 +3585,7 @@ switch (a_paramName)
    case {'DPHASE_DOXY_MED'}
       o_param = 'DPHASE_DOXY_MED';
       o_paramSensor = 'OPTODE_DOXY';
-      o_paramUnits = '';
+      o_paramUnits = 'degree';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4049,7 +4049,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE380_STD'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
       o_paramSensor = 'RADIOMETER_DOWN_IRR380';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4059,7 +4059,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE380_MED'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
       o_paramSensor = 'RADIOMETER_DOWN_IRR380';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4069,7 +4069,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE412_STD'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
       o_paramSensor = 'RADIOMETER_DOWN_IRR412';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4079,7 +4079,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE412_MED'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
       o_paramSensor = 'RADIOMETER_DOWN_IRR412';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4089,7 +4089,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE490_STD'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
       o_paramSensor = 'RADIOMETER_DOWN_IRR490';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4099,7 +4099,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_IRRADIANCE490_MED'}
       o_param = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
       o_paramSensor = 'RADIOMETER_DOWN_IRR490';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4109,7 +4109,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_PAR_STD'}
       o_param = 'RAW_DOWNWELLING_PAR_STD';
       o_paramSensor = 'RADIOMETER_PAR';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4119,7 +4119,7 @@ switch (a_paramName)
    case {'RAW_DOWNWELLING_PAR_MED'}
       o_param = 'RAW_DOWNWELLING_PAR_MED';
       o_paramSensor = 'RADIOMETER_PAR';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4517,7 +4517,7 @@ switch (a_paramName)
    case {'BETA_BACKSCATTERING532_STD'}
       o_param = 'BETA_BACKSCATTERING532_STD';
       o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4527,7 +4527,7 @@ switch (a_paramName)
    case {'BETA_BACKSCATTERING532_MED'}
       o_param = 'BETA_BACKSCATTERING532_MED';
       o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4537,7 +4537,7 @@ switch (a_paramName)
    case {'BETA_BACKSCATTERING700_STD'}
       o_param = 'BETA_BACKSCATTERING700_STD';
       o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4547,7 +4547,7 @@ switch (a_paramName)
    case {'BETA_BACKSCATTERING700_MED'}
       o_param = 'BETA_BACKSCATTERING700_MED';
       o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4876,21 +4876,21 @@ switch (a_decoderId)
          case {'FLUORESCENCE_VOLTAGE_CHLA'}
             o_param = 'FLUORESCENCE_VOLTAGE_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA2';
-            o_paramUnits = '';
+            o_paramUnits = 'volt';
             o_paramAccuracy = '';
             o_paramResolution = '';
-            o_preCalibEq = '';
-            o_preCalibCoef = '';
+            o_preCalibEq = 'n/a';
+            o_preCalibCoef = 'n/a';
             o_preCalibComment = '';
             
          case {'CHLA2'}
             o_param = 'CHLA2';
             o_paramSensor = 'FLUOROMETER_CHLA2';
-            o_paramUnits = '';
+            o_paramUnits = 'mg/m3';
             o_paramAccuracy = '';
             o_paramResolution = '';
-            o_preCalibEq = '';
-            o_preCalibCoef = '';
+            o_preCalibEq = 'n/a';
+            o_preCalibCoef = 'n/a';
             o_preCalibComment = '';
             
       end
@@ -4960,7 +4960,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_CHLA_STD'}
       o_param = 'FLUORESCENCE_CHLA_STD';
       o_paramSensor = 'FLUOROMETER_CHLA';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4970,7 +4970,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_CHLA_MED'}
       o_param = 'FLUORESCENCE_CHLA_MED';
       o_paramSensor = 'FLUOROMETER_CHLA';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4980,7 +4980,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_VOLTAGE_CHLA_STD'}
       o_param = 'FLUORESCENCE_VOLTAGE_CHLA_STD';
       o_paramSensor = 'FLUOROMETER_CHLA';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -4990,7 +4990,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_VOLTAGE_CHLA_MED'}
       o_param = 'FLUORESCENCE_VOLTAGE_CHLA_MED';
       o_paramSensor = 'FLUOROMETER_CHLA';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -5169,7 +5169,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_CDOM_STD'}
       o_param = 'FLUORESCENCE_CDOM_STD';
       o_paramSensor = 'FLUOROMETER_CDOM';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -5179,7 +5179,7 @@ switch (a_paramName)
    case {'FLUORESCENCE_CDOM_MED'}
       o_param = 'FLUORESCENCE_CDOM_MED';
       o_paramSensor = 'FLUOROMETER_CDOM';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6296,7 +6296,7 @@ switch (a_paramName)
    case {'VRS_PH_STD'}
       o_param = 'VRS_PH_STD';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6306,7 +6306,7 @@ switch (a_paramName)
    case {'VRS_PH_MED'}
       o_param = 'VRS_PH_MED';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6316,7 +6316,7 @@ switch (a_paramName)
    case {'VK_PH_STD'}
       o_param = 'VK_PH_STD';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6326,7 +6326,7 @@ switch (a_paramName)
    case {'VK_PH_MED'}
       o_param = 'VK_PH_MED';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6336,7 +6336,7 @@ switch (a_paramName)
    case {'IK_PH_STD'}
       o_param = 'IK_PH_STD';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'nanoampere';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6346,7 +6346,7 @@ switch (a_paramName)
    case {'IK_PH_MED'}
       o_param = 'IK_PH_MED';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'nanoampere';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6356,7 +6356,7 @@ switch (a_paramName)
    case {'IB_PH_STD'}
       o_param = 'IB_PH_STD';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'nanoampere';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6366,7 +6366,7 @@ switch (a_paramName)
    case {'IB_PH_MED'}
       o_param = 'IB_PH_MED';
       o_paramSensor = 'TRANSISTOR_PH';
-      o_paramUnits = '';
+      o_paramUnits = 'nanoampere';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6482,27 +6482,27 @@ switch (a_paramName)
    case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'}
       o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'CP660'}
       o_param = 'CP660';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'm-1';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD'}
       o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6512,7 +6512,7 @@ switch (a_paramName)
    case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED'}
       o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6522,7 +6522,7 @@ switch (a_paramName)
    case {'CP660_STD'}
       o_param = 'CP660_STD';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'm-1';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6532,7 +6532,7 @@ switch (a_paramName)
    case {'CP660_MED'}
       o_param = 'CP660_MED';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
-      o_paramUnits = '';
+      o_paramUnits = 'm-1';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6660,47 +6660,47 @@ switch (a_paramName)
    case {'SIDE_SCATTERING_TURBIDITY'}
       o_param = 'SIDE_SCATTERING_TURBIDITY';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'TURBIDITY'}
       o_param = 'TURBIDITY';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY';
-      o_paramUnits = '';
+      o_paramUnits = 'ntu';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'VOLTAGE_TURBIDITY'}
       o_param = 'VOLTAGE_TURBIDITY';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'TURBIDITY2'}
       o_param = 'TURBIDITY2';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
-      o_paramUnits = '';
+      o_paramUnits = 'ntu';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = '';
-      o_preCalibCoef = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
    case {'SIDE_SCATTERING_TURBIDITY_STD'}
       o_param = 'SIDE_SCATTERING_TURBIDITY_STD';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6710,7 +6710,7 @@ switch (a_paramName)
    case {'SIDE_SCATTERING_TURBIDITY_MED'}
       o_param = 'SIDE_SCATTERING_TURBIDITY_MED';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY';
-      o_paramUnits = '';
+      o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6720,7 +6720,7 @@ switch (a_paramName)
    case {'VOLTAGE_TURBIDITY_STD'}
       o_param = 'VOLTAGE_TURBIDITY_STD';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
@@ -6730,7 +6730,7 @@ switch (a_paramName)
    case {'VOLTAGE_TURBIDITY_MED'}
       o_param = 'VOLTAGE_TURBIDITY_MED';
       o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
-      o_paramUnits = '';
+      o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
       o_preCalibEq = 'n/a';
