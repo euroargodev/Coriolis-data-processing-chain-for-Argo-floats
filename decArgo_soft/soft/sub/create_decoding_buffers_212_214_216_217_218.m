@@ -616,7 +616,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
       6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522, ...
-      6902989, 6903774, 3901644, 6903010]))
+      6902989, 6903774, 3901644, 6903010, 6902938]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -945,7 +945,18 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(idDataKo) = tabRankByCycle(idRank60);
          tabRankByDate(idDataKo) = tabRankByDate(idRank60);
          idSecondIs = find((tabCyNum == 60) & (tabPackType == 0), 1, 'last');
-         tabDeep(tabRank == tabRank(idSecondIs)) = 0;            
+         tabDeep(tabRank == tabRank(idSecondIs)) = 0;  
+      case 6902938
+         % cycle #133 data are delayed and scrambled
+         id = find(tabCyNum == 133);
+         tabCompleted(id) = 1;
+         idF0 = find((tabCyNum == 133) & (tabPackType == 0));
+         idF4 = find((tabCyNum == 133) & (tabPackType == 4));
+         idF5 = find((tabCyNum == 133) & (tabPackType == 5));
+         id2 = setdiff(id, [idF0(end) idF4(end) idF5(end)]);
+         tabRank(id2) = tabRank(id2(1));
+         tabRankByCycle(id2) = tabRankByCycle(id2(1));
+         tabDeep([idF0(end) idF4(end) idF5(end)]) = 0;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
