@@ -595,7 +595,8 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, 6900790, 6901880]))
+      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
+      6900790, 6901880, 6903229]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -696,7 +697,15 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = find((tabCyNum == 101) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF101(1));
          tabRankByCycle(id) = tabRankByCycle(idF101(1));
-         tabRankByDate(id) = tabRankByDate(idF101(1));   
+         tabRankByDate(id) = tabRankByDate(idF101(1)); 
+      case 6903229
+         % cycle #120 in 2 sessions
+         idRef120 = find((tabCyNum == 120) & (tabBase == 1));
+         idRef120 = idRef120(1);
+         idF120 = find(tabCyNum == 120);
+         tabRank(idF120) = tabRank(idRef120);
+         tabRankByCycle(idF120) = tabRankByCycle(idRef120);
+         tabRankByDate(idF120) = tabRankByDate(idRef120); 
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS

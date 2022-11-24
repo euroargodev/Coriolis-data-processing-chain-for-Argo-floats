@@ -392,7 +392,8 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, 6903059]))
+      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, ...
+      6903059, 6903109]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -530,6 +531,19 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
+      case 6903109
+         % cycle #5 deep cycle data AND secodn Iridium session data delyed
+         idRef = find((tabCyNum == 5) & (tabBase == 1));
+         idSet1 = find(tabCyNum == 5);
+         idSet2 = find((tabCyNum == 5) & ((tabPackType == 0) | (tabPackType == 4)));
+         idSet2 = idSet2(end-1:end);
+         idSet1 = setdiff(idSet1, idSet2);
+         tabRank(idSet1) = tabRank(idRef);
+         tabRankByCycle(idSet1) = tabRankByCycle(idRef);
+         tabRankByDate(idSet1) = tabRankByDate(idRef);
+         tabSession(idSet1) = tabSession(idRef);
+         tabSessionDeep(idSet1) = tabSessionDeep(idRef);
+         tabDeep(idSet2) = 0;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
