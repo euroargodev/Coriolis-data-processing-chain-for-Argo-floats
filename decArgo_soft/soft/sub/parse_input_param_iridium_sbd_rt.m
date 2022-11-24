@@ -158,6 +158,9 @@ if (~isempty(rsyncLogPathFile))
 end
 if (allRsyncLogFlag == 1)
    [ryncLogList] = get_rsync_log_dir_file_names_ir_sbd(g_decArgo_dirInputRsyncLog);
+   if (isempty(ryncLogList))
+      fprintf('INFO: Float #%d: no rsync log file\n', floatWmo);
+   end
 end
 
 % filter the ryncLogList file names according to rsync log files already processed
