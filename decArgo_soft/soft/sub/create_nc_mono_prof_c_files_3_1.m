@@ -169,6 +169,7 @@ for idProf = 1:length(tabProfiles)
       cycleNumber = profile.cycleNumber;
       profileNumber = profile.profileNumber;
       outputCycleNumber = profile.outputCycleNumber;
+
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
@@ -179,6 +180,7 @@ for idProf = 1:length(tabProfiles)
          (profInfo(:, 1) == outputCycleNumber) & ...
          (profInfo(:, 2) == direction) & ...
          (profInfo(:, 4) == 0));
+      profInfo(idProfInFile, 4) = 1;
       nbProfToStore = length(idProfInFile);
 
       % put the primary sampling profile on top of the list
@@ -311,7 +313,7 @@ for idProf = 1:length(tabProfiles)
 
                if (g_decArgo_realtimeFlag == 1)
 
-                  fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: no strategy to generate or not profile NetCDF files - generating all profile fles\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: no strategy to generate or not profile NetCDF files - generating all profile files\n', ...
                      g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber);
                end
             end
@@ -331,17 +333,34 @@ for idProf = 1:length(tabProfiles)
             if (exist(ncPathFileName, 'file') == 2)
 
                % retrieve profile location of the nc file
-               [ncProfLocStr, ncProfQc] = get_nc_profile_location(ncPathFileName);
+               [ncJuldLoc, ncLat, ncLon, ncPosQc, ncPosSystem] = get_nc_profile_location(ncPathFileName);
 
-               % compare profile location
-               prof = tabProfiles(idProfInFile(1));
-               profLocStr = sprintf('%s %.3f %.3f %s', ...
-                  julian_2_gregorian_dec_argo(prof.locationDate), ...
-                  prof.locationLat, prof.locationLon, prof.posSystem);
-               if ((((ncProfQc == '8') && (prof.locationQc ~= '8')) || ...
-                     ((ncProfQc ~= '8') && (prof.locationQc == '8'))) || ...
-                     ~strcmp(profLocStr, ncProfLocStr))
-                  generate = 1;
+               for idP = 1:nbProfToStore
+
+                  % get nc profile location
+                  profPos = idP+profShiftIfNoPrimary;
+                  juldLoc = ncJuldLoc(profPos);
+                  latitude = ncLat(profPos);
+                  longitude = ncLon(profPos);
+                  positionQc = ncPosQc(profPos);
+                  positioningSystem = ncPosSystem{profPos};
+
+                  ncProfLocStr = sprintf('%s %.3f %.3f %s', ...
+                     julian_2_gregorian_dec_argo(juldLoc), ...
+                     latitude, longitude, positioningSystem);
+
+                  % compare profile location
+                  prof = tabProfiles(idProfInFile(idP));
+                  profLocStr = sprintf('%s %.3f %.3f %s', ...
+                     julian_2_gregorian_dec_argo(prof.locationDate), ...
+                     prof.locationLat, prof.locationLon, prof.posSystem);
+
+                  if ((((positionQc == '8') && (prof.locationQc ~= '8')) || ...
+                        ((positionQc ~= '8') && (prof.locationQc == '8'))) || ...
+                        ~strcmp(profLocStr, ncProfLocStr))
+                     generate = 1;
+                     break
+                  end
                end
             end
          end
@@ -1434,7 +1453,6 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, historyDateVarId, ...
                fliplr([currentHistoId profPos 0]), fliplr([1 1 length(value)]), value');
 
-            profInfo(idProfInFile(idP), 4) = 1;
          end
 
          % process calibration information

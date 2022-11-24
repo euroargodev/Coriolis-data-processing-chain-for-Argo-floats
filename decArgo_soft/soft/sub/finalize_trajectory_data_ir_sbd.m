@@ -535,15 +535,15 @@ end
 if (~isempty(tabMeasAll))
    idFirst = find([tabMeasAll.measCode] == g_MC_FMT);
    if (~isempty(idFirst))
-      tabMeasAll(idFirst(1)).juld = min([tabMeasAll(idFirst).juld]);
-      tabMeasAll(idFirst(1)).juldAdj = min([tabMeasAll(idFirst).juldAdj]);
+      [~, idMin] = min([tabMeasAll(idFirst).juld]);
+      tabMeasAll(idFirst(1)) = tabMeasAll(idFirst(idMin));
       tabMeasAll(idFirst(2:end)) = [];
    end
 
    idLast = find([tabMeasAll.measCode] == g_MC_LMT);
    if (~isempty(idLast))
-      tabMeasAll(idLast(end)).juld = max([tabMeasAll(idLast).juld]);
-      tabMeasAll(idLast(end)).juldAdj = max([tabMeasAll(idLast).juldAdj]);
+      [~, idMax] = max([tabMeasAll(idLast).juld]);
+      tabMeasAll(idLast(end)) = tabMeasAll(idLast(idMax));
       tabMeasAll(idLast(1:end-1)) = [];
    end
 

@@ -63,11 +63,6 @@ if (isempty(a_clockOffsetData.cycleNum))
    return
 end
 
-if (isempty(a_parkDate) && isempty(a_descProfDate) && isempty(a_ascProfDate) && ...
-      isempty(a_nearSurfDate) && isempty(a_inAirDate) && isempty(a_evAct) && isempty(a_pumpAct))
-   return
-end
-
 % compute the clock offset to be used for the current cycle times
 cycleClockOffset = get_clock_offset_value_prv_ir(a_clockOffsetData, o_cycleTimeData);
 

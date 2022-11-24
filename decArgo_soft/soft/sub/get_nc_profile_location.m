@@ -2,14 +2,18 @@
 % Retrieve information on profile location of a nc mono-profile file.
 %
 % SYNTAX :
-%  [o_ncProfLocStr, o_ncProfQc] = get_nc_profile_location(a_ncPathFileName)
+%  [o_juldLoc, o_lat, o_lon, o_posQc, o_posSystem] = get_nc_profile_location(a_ncPathFileName)
 % 
 % INPUT PARAMETERS :
 %   a_ncPathFileName : nc mono-profile file path name
+%   a_profPos        : position of the profile in the file
 % 
 % OUTPUT PARAMETERS :
-%   o_ncProfLocStr : information on profile location
-%   o_ncProfQc     : position QC of profile location
+%   o_juldLoc   : positions JulD
+%   o_lat       : positions latitudes
+%   o_lon       : positions logitudes
+%   o_posQc     : positions QC
+%   o_posSystem : positions positioning systems
 % 
 % EXAMPLES :
 % 
@@ -19,11 +23,14 @@
 % RELEASES :
 %   09/07/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncProfLocStr, o_ncProfQc] = get_nc_profile_location(a_ncPathFileName)
+function [o_juldLoc, o_lat, o_lon, o_posQc, o_posSystem] = get_nc_profile_location(a_ncPathFileName)
 
 % output parameters initialization
-o_ncProfLocStr = [];
-o_ncProfQc = [];
+o_juldLoc = [];
+o_lat = [];
+o_lon = [];
+o_posQc = [];
+o_posSystem = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
@@ -38,32 +45,21 @@ if (exist(a_ncPathFileName, 'file') == 2)
             
    % retrieve information from PROF netCDF file
    [profData] = get_data_from_nc_file(a_ncPathFileName, wantedProfVars);
-            
+
    idVal = find(strcmp('JULD_LOCATION', profData) == 1);
-   juldLocation = profData{idVal+1};
-   juldLocation = unique(juldLocation);
+   o_juldLoc = profData{idVal+1};
    idVal = find(strcmp('LATITUDE', profData) == 1);
-   latitude = profData{idVal+1};
-   latitude = unique(latitude);
+   o_lat = profData{idVal+1};
    idVal = find(strcmp('LONGITUDE', profData) == 1);
-   longitude = profData{idVal+1};
-   longitude = unique(longitude);
+   o_lon = profData{idVal+1};
    idVal = find(strcmp('POSITION_QC', profData) == 1);
-   positionQc = profData{idVal+1};
-   positionQc = unique(positionQc);
+   o_posQc = profData{idVal+1};
    idVal = find(strcmp('POSITIONING_SYSTEM', profData) == 1);
    posSystem = profData{idVal+1};
+   o_posSystem = [];
    for idPs = 1:size(posSystem, 2)
-      positioningSystem = strtrim(posSystem(:, idPs)');
-      if (~isempty(positioningSystem))
-         break
-      end
+      o_posSystem{end+1} = strtrim(posSystem(:, idPs)');
    end
-
-   o_ncProfLocStr = sprintf('%s %.3f %.3f %s', ...
-   julian_2_gregorian_dec_argo(juldLocation), ...
-   latitude, longitude, positioningSystem);
-   o_ncProfQc = positionQc;
 end
 
 return

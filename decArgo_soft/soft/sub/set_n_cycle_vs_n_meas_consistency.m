@@ -126,7 +126,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
       juldStatusFinal = [];
       for idNMeas = 1:length(idFNMeas)
          trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));
-         trajNMeas.tabMeas([trajNMeas.tabMeas.sensorNumber] > 100) = []; % bounce cycles have theri DST, DET, AST and AET stored in TRAJ_AUX
+         trajNMeas.tabMeas([trajNMeas.tabMeas.sensorNumber] > 100) = []; % bounce cycles have their DST, DET, AST and AET stored in TRAJ_AUX
          if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == measCode))
             idF = find([trajNMeas.tabMeas.measCode] == measCode);
             if (length(idF) == 1)
@@ -156,19 +156,6 @@ for idNCy = 1:length(o_tabTrajNCycle)
                      idF2 = find([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef);
                      juld = trajNMeas.tabMeas(idF(idF2(1))).juld;
                      juldStatus = trajNMeas.tabMeas(idF(1)).juldStatus;
-                  else
-                     juld = g_decArgo_ncDateDef;
-                     juldStatus = g_JULD_STATUS_fill_value;
-                  end
-               elseif (measCode == g_MC_TST)
-                  if (any([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef))
-                     idF2 = find([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef);
-                     juld = trajNMeas.tabMeas(idF(idF2(end))).juldAdj;
-                     juldStatus = trajNMeas.tabMeas(idF(end)).juldAdjStatus;
-                  elseif (any([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef))
-                     idF2 = find([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef);
-                     juld = trajNMeas.tabMeas(idF(idF2(end))).juld;
-                     juldStatus = trajNMeas.tabMeas(idF(end)).juldStatus;
                   else
                      juld = g_decArgo_ncDateDef;
                      juldStatus = g_JULD_STATUS_fill_value;
