@@ -57,7 +57,7 @@ if (~isempty(a_parkPres))
    
    if (~isempty(a_parkC1PhaseDoxy) && ~isempty(a_parkPhaseDelayDoxy))
 
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); DOXY (micromol/kg); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (°C); DOXY2 (micromol/kg)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (degC); DOXY (micromol/kg); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (degC); DOXY2 (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_parkDate)
@@ -83,7 +83,7 @@ if (~isempty(a_parkPres))
       
    elseif (~isempty(a_parkC1PhaseDoxy))
       
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); DOXY (micromol/kg)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (degC); DOXY (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_parkDate)
@@ -108,7 +108,7 @@ if (~isempty(a_parkPres))
       
    elseif (~isempty(a_parkPhaseDelayDoxy))
       
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (°C); DOXY2 (micromol/kg)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (degC); DOXY2 (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_parkDate)
@@ -133,7 +133,7 @@ if (~isempty(a_parkPres))
       
    else
       
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Drift; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_parkDate)

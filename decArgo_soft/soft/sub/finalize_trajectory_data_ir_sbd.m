@@ -106,7 +106,7 @@ if (~isempty(g_decArgo_iridiumMailData))
       % First Message Time
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], [], 1);
+         g_decArgo_argosLonDef, [], [], [], [], 0);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -115,7 +115,7 @@ if (~isempty(g_decArgo_iridiumMailData))
       % Last Message Time
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], [], 1);
+         g_decArgo_argosLonDef, [], [], [], [], 0);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;

@@ -192,6 +192,50 @@ switch (a_decoderId)
          finalConfigValue(idDel, :) = [];
       end
       
+   case {224}
+            
+      if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+         
+         % when ice mode is activated
+         
+         % if ice detection is used for at least one cycle, set ice float mandatory
+         % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
+               finalConfigValue(idPos2, :) = 4095;
+            end
+         end
+         
+         % when ice detection is used, replace TC19 by IC10
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_TC19_') == 1, 1);
+         idPos3 = find(strcmp(finalConfigName, 'CONFIG_IC10_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            idF = find(iceUsed ~= 0);
+            finalConfigValue(idPos2, idF) = finalConfigValue(idPos3, idF);
+            finalConfigValue(idPos3, :) = nan;
+         end
+      else
+         
+         % when ice mode is not activated
+         
+         % remove ice configuration parameters from final configuration
+         idDel = [];
+         for id = 0:15
+            name = sprintf('CONFIG_IC%02d_', id);
+            idPos = find(strcmp(finalConfigName, name) == 1, 1);
+            if (~isempty(idPos))
+               idDel = [idDel; idPos];
+            end
+         end
+         finalConfigName(idDel) = [];
+         finalConfigValue(idDel, :) = [];
+      end
+      
    case {219, 220}
       
       % nothing for Arvor-C floats

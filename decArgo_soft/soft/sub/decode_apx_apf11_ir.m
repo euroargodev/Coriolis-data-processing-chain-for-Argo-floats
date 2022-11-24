@@ -154,7 +154,7 @@ if (~isempty(a_systemLogFileList))
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1127} % 2.12.2.R
+      case {1127} % 2.12.2.1.R
          
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...
@@ -178,7 +178,7 @@ if (~isempty(a_systemLogFileList))
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1122} % 2.13.1.R
+      case {1122} % 2.13.1.R & 2.13.1.1.R
          
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...

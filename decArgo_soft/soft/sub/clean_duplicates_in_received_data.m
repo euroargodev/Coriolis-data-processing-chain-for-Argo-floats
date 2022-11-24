@@ -91,7 +91,7 @@ function [o_packetName] = get_packet_name(a_packType, a_decoderId)
 o_packetName = '';
 
 switch (a_decoderId)
-   case {212, 222, 214, 217}
+   case {212, 222, 214, 217, 223}
       switch (a_packType)
          case 0
             o_packetName = 'one technical packet #1';

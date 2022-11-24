@@ -49,7 +49,7 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
-   case {205, 204, 210, 211, 212, 222, 223}
+   case {205, 204, 210, 211, 212, 222, 223, 224}
       % ARVOR Iridium
       o_platformFamily = 'FLOAT';
       

@@ -64,6 +64,7 @@ g_cocs_netCDF4FlagForMultiProf = 1;
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_pb_S-prof.txt';
 % FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files

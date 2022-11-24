@@ -54,9 +54,11 @@ gpsLocAccuracy = g_decArgo_gpsData{8};
 if ((size(g_decArgo_gpsData, 1) == 1) && (length(g_decArgo_gpsData) == 9))
    gpsLocNbSat = -1;
    gpsLocTimeToFix = -1;
+   gpsLocReceivedCyNum = gpsLocCycleNum;
 else
    gpsLocNbSat = g_decArgo_gpsData{10};
    gpsLocTimeToFix = g_decArgo_gpsData{11};
+   gpsLocReceivedCyNum = g_decArgo_gpsData{12};
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,6 +112,7 @@ if (a_cycleNum > 0)
       gpsLocAccuracy = [gpsLocAccuracy; 'G'];
       gpsLocNbSat = [gpsLocNbSat; gpsDataAllPrev(idP, 5)];
       gpsLocTimeToFix = [gpsLocTimeToFix; gpsDataAllPrev(idP, 6)];
+      gpsLocReceivedCyNum = [gpsLocReceivedCyNum; a_cycleNum];
    end
    
    if (~isempty(gpsDataAllPrev))
@@ -200,6 +203,7 @@ for idP = 1:size(gpsDataAllCur, 1)
    gpsLocAccuracy = [gpsLocAccuracy; 'G'];
    gpsLocNbSat = [gpsLocNbSat; gpsDataAllCur(idP, 5)];
    gpsLocTimeToFix = [gpsLocTimeToFix; gpsDataAllCur(idP, 6)];
+   gpsLocReceivedCyNum = [gpsLocReceivedCyNum; a_cycleNum];
 end
 
 if (~isempty(gpsDataAllCur))
@@ -244,6 +248,7 @@ gpsLocQc = gpsLocQc(idSort);
 gpsLocAccuracy = gpsLocAccuracy(idSort);
 gpsLocNbSat = gpsLocNbSat(idSort);
 gpsLocTimeToFix = gpsLocTimeToFix(idSort);
+gpsLocReceivedCyNum = gpsLocReceivedCyNum(idSort);
 
 % update GPS data global variable
 g_decArgo_gpsData{1} = gpsLocCycleNum;
@@ -254,5 +259,6 @@ g_decArgo_gpsData{7} = gpsLocQc;
 g_decArgo_gpsData{8} = gpsLocAccuracy;
 g_decArgo_gpsData{10} = gpsLocNbSat;
 g_decArgo_gpsData{11} = gpsLocTimeToFix;
+g_decArgo_gpsData{12} = gpsLocReceivedCyNum;
 
 return

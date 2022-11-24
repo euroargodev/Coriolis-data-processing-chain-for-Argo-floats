@@ -33,7 +33,7 @@ function generate_json_decoder_tech_labels()
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_122.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_124.csv';
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_126.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_126.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
@@ -51,7 +51,7 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_219.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_221.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_222.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_222.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_224.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
@@ -75,7 +75,7 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1110.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1314.csv';
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2002.csv';
@@ -218,6 +218,8 @@ else
          decIdList = [221];
       case {222}
          decIdList = [222, 223];
+      case {224}
+         decIdList = [224];
          
       case {301}
          decIdList = [301];

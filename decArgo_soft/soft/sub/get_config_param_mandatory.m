@@ -63,13 +63,14 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217, 223}
+   case {210, 211, 212, 222, 213, 214, 217, 223, 224}
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
       % Arvor-ARN-DO-Ice Iridium 5.48
+      % Arvor-ARN-Ice RBR Iridium 5.49
       o_configParamName = [ ...
          {'CONFIG_CycleTime_hours'}; ...
          {'CONFIG_ParkPressure_dbar'}; ...

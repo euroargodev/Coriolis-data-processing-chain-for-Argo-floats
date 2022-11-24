@@ -35,7 +35,7 @@ global g_decArgo_decoderIdListMtime;
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
    105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
-   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, ...
+   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
    1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, 1123, 1124, 1125, 1126, 1127, ...
@@ -669,6 +669,9 @@ o_preCalibEq = '';
 o_preCalibCoef = '';
 o_preCalibComment = '';
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeIridiumRbr;
+
 % current float WMO number
 global g_decArgo_floatNum;
 
@@ -679,11 +682,34 @@ switch (a_paramName)
       o_param = 'PRES';
       o_paramSensor = 'CTD_PRES';
       o_paramUnits = 'decibar';
-      o_paramAccuracy = '2.4';
-      o_paramResolution = '0.1';
+      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         o_paramAccuracy = '2.4';
+         o_paramResolution = '0.1';
+      else
+         o_paramAccuracy = '1';
+         o_paramResolution = '0.02';
+      end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
+      
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         if (isfield(o_metaData, 'PRES_PARAMETER_ACCURACY') && ~isempty(o_metaData.PRES_PARAMETER_ACCURACY))
+            o_paramAccuracy = o_metaData.PRES_PARAMETER_ACCURACY;
+         end
+         if (isfield(o_metaData, 'PRES_PARAMETER_RESOLUTION') && ~isempty(o_metaData.PRES_PARAMETER_RESOLUTION))
+            o_paramResolution = o_metaData.PRES_PARAMETER_RESOLUTION;
+         end
+         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = o_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = o_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = o_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT;
+         end
+      end
       
       switch (a_decoderId)
          case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
@@ -735,11 +761,34 @@ switch (a_paramName)
       o_param = 'TEMP';
       o_paramSensor = 'CTD_TEMP';
       o_paramUnits = 'degree_Celsius';
-      o_paramAccuracy = '0.002';
-      o_paramResolution = '0.001';
+      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         o_paramAccuracy = '0.002';
+         o_paramResolution = '0.001';
+      else
+         o_paramAccuracy = '0.002';
+         o_paramResolution = '0.00005';
+      end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
+      
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         if (isfield(o_metaData, 'TEMP_PARAMETER_ACCURACY') && ~isempty(o_metaData.TEMP_PARAMETER_ACCURACY))
+            o_paramAccuracy = o_metaData.TEMP_PARAMETER_ACCURACY;
+         end
+         if (isfield(o_metaData, 'TEMP_PARAMETER_RESOLUTION') && ~isempty(o_metaData.TEMP_PARAMETER_RESOLUTION))
+            o_paramResolution = o_metaData.TEMP_PARAMETER_RESOLUTION;
+         end
+         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = o_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = o_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = o_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT;
+         end
+      end
       
       switch (a_decoderId)
          case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
@@ -775,11 +824,34 @@ switch (a_paramName)
       o_param = 'PSAL';
       o_paramSensor = 'CTD_PSAL';
       o_paramUnits = 'psu';
-      o_paramAccuracy = '0.005';
-      o_paramResolution = '0.001';
+      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         o_paramAccuracy = '0.005';
+         o_paramResolution = '0.001';
+      else
+         o_paramAccuracy = '0.003';
+         o_paramResolution = '0.001';
+      end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
+      
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+         if (isfield(o_metaData, 'PSAL_PARAMETER_ACCURACY') && ~isempty(o_metaData.PSAL_PARAMETER_ACCURACY))
+            o_paramAccuracy = o_metaData.PSAL_PARAMETER_ACCURACY;
+         end
+         if (isfield(o_metaData, 'PSAL_PARAMETER_RESOLUTION') && ~isempty(o_metaData.PSAL_PARAMETER_RESOLUTION))
+            o_paramResolution = o_metaData.PSAL_PARAMETER_RESOLUTION;
+         end
+         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = o_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = o_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = o_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT;
+         end
+      end
       
       switch (a_decoderId)
          case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}

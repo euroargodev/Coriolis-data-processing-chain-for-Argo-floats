@@ -6,11 +6,12 @@
 %  generate_json_float_meta_prv_ir_sbd_rt(varargin)
 %
 % INPUT PARAMETERS :
-%   'floatMetaFileName' : meta-data file exported from Coriolis data base
-%   'floatListFileName' : list of concerned floats
-%   'outputJsonDirName' : directory of individual json float meta-data files
-%   'outputLogDirName'  : directory of log files
-%   'xmlReportDirName'  : directory of xml files
+%   'floatMetaFileName'  : meta-data file exported from Coriolis data base
+%   'floatListFileName'  : list of concerned floats
+%   'rbrMetaDataDirName' : directory of RBR meta-data files
+%   'outputJsonDirName'  : directory of individual json float meta-data files
+%   'outputLogDirName'   : directory of log files
+%   'xmlReportDirName'   : directory of xml files
 %
 % OUTPUT PARAMETERS :
 %
@@ -28,6 +29,7 @@ function generate_json_float_meta_prv_ir_sbd_rt(varargin)
 % input parameters
 global g_cogj_floatMetaFileName;
 global g_cogj_floatListFileName;
+global g_cogj_rbrMetaDataDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
@@ -76,6 +78,7 @@ try
       generate_json_float_meta_prv_ir_sbd_(...
          g_cogj_floatMetaFileName, ...
          g_cogj_floatListFileName, ...
+         g_cogj_rbrMetaDataDirName, ...
          g_cogj_outputJsonDirName);
    end
    
@@ -181,12 +184,14 @@ o_logLines = [];
 
 global g_cogj_floatMetaFileName;
 global g_cogj_floatListFileName;
+global g_cogj_rbrMetaDataDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
 
 g_cogj_floatMetaFileName = [];
 g_cogj_floatListFileName = [];
+g_cogj_rbrMetaDataDirName = [];
 g_cogj_outputJsonDirName = [];
 g_cogj_outputLogDirName = [];
 g_cogj_xmlReportDirName = [];
@@ -213,6 +218,8 @@ if (~isempty(a_varargin))
             g_cogj_floatMetaFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'floatListFileName'))
             g_cogj_floatListFileName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'rbrMetaDataDirName'))
+            g_cogj_rbrMetaDataDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputJsonDirName'))
             g_cogj_outputJsonDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputLogDirName'))
@@ -256,6 +263,7 @@ end
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('floatMetaFileName: %s\n', g_cogj_floatMetaFileName);
 o_logLines{end+1} = sprintf('floatListFileName: %s\n', g_cogj_floatListFileName);
+o_logLines{end+1} = sprintf('rbrMetaDataDirName: %s\n', g_cogj_rbrMetaDataDirName);
 o_logLines{end+1} = sprintf('outputJsonDirName: %s\n', g_cogj_outputJsonDirName);
 o_logLines{end+1} = sprintf('outputLogDirName: %s\n', g_cogj_outputLogDirName);
 o_logLines{end+1} = sprintf('xmlReportDirName: %s\n', g_cogj_xmlReportDirName);

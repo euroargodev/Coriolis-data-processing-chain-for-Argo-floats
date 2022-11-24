@@ -61,7 +61,7 @@ if (~isempty(a_nearSurfDate))
       g_decArgo_floatNum, g_decArgo_cycleNum);
    
    if (isempty(a_nearSurfC1PhaseDoxy))
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; NearSurf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; NearSurf; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_nearSurfPres)
@@ -83,7 +83,7 @@ if (~isempty(a_nearSurfDate))
             a_nearSurfPres(idMes), a_nearSurfTemp(idMes), a_nearSurfSal(idMes));
       end
    else
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; NearSurf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); PPOX_DOXY (millibar)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; NearSurf; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (degC); PPOX_DOXY (millibar)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_nearSurfPres)
@@ -113,7 +113,7 @@ if (~isempty(a_inAirDate))
       g_decArgo_floatNum, g_decArgo_cycleNum);
    
    if (isempty(a_inAirC1PhaseDoxy))
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; InAir; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; InAir; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_inAirPres)
@@ -135,7 +135,7 @@ if (~isempty(a_inAirDate))
             a_inAirPres(idMes), a_inAirTemp(idMes), a_inAirSal(idMes));
       end
    else
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; InAir; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); PPOX_DOXY (millibar)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; InAir; Description; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (degC); PPOX_DOXY (millibar)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_inAirPres)

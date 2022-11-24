@@ -28,12 +28,16 @@ FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\calib_error_method_v2.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_Arvor_bad_decId_20201012.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_RBR_6903075_6903076.txt';
 
 % list of concerned floats
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.66.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_5.46_5.74.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_rbr_5.49.txt';
 
+% directory of RBR CTD metadata files
+RBR_META_DATA_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_WITH_RBR\RBR_META_DATA_FILES\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -55,6 +59,7 @@ fprintf('Log file: %s\n', logFileName);
 generate_json_float_meta_prv_ir_sbd_(...
    FLOAT_META_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
+   RBR_META_DATA_DIR_NAME, ...
    OUTPUT_DIR_NAME);
 
 diary off;

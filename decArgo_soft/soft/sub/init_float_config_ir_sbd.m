@@ -123,6 +123,13 @@ switch (a_decoderId)
       
       init_float_config_prv_ir_sbd_222_223(a_launchDate, a_decoderId);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {224}
+      % Arvor-ARN-Ice RBR Iridium 5.49
+      
+      init_float_config_prv_ir_sbd_224(a_launchDate, a_decoderId);
+      
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
       
    case {2001, 2002, 2003} % Nova, Dova

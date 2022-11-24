@@ -1046,11 +1046,12 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {222, 223}
+   case {222, 223, 224}
       
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
-      
+      % Arvor-ARN-Ice RBR Iridium 5.49
+
       % select Argo and Auxiliary configuration information
       staticConfigName = a_structConfig.STATIC_NC.NAMES;
       staticConfigValue = a_structConfig.STATIC_NC.VALUES;

@@ -59,21 +59,22 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\ARVORC_dbExport.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_7900562.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6903268_DBexport.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\5900A05_DBexport.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_ApexRudics_Norway_APF11_2.13.1.R_from_vb_20200528.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.12.3.R_7900566.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_6903552.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6903268_DBexport.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\5900A05_DBexport.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_ApexRudics_Norway_APF11_2.13.1.R_from_vb_20200528.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.12.3.R_7900566.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_6903552.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_RBR_6903075_6903076.txt';
 
 % list of concerned floats
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_SBD.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_RUDICS.txt';
-floatListFileName = '';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_SBD.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_RUDICS.txt';
+% floatListFileName = '';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_rbr_5.49.txt';
 
 % directory to store the log and csv file
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

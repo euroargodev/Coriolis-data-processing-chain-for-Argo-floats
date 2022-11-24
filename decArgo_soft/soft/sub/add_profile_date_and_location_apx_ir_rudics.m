@@ -48,6 +48,10 @@ a_gpsLocDate = a_gpsData{4};
 a_gpsLocLon = a_gpsData{5};
 a_gpsLocLat = a_gpsData{6};
 a_gpsLocQc = a_gpsData{7};
+a_gpsLocReceivedCyNum = [];
+if (length(a_gpsData) > 11)
+   a_gpsLocReceivedCyNum = a_gpsData{12};
+end
 
 % process all the profiles of the list
 for idP = 1:length(o_tabProfiles)
@@ -132,6 +136,17 @@ for idP = 1:length(o_tabProfiles)
       idPosToUse = find((a_gpsLocCycleNum == prof.cycleNumber) & (a_gpsLocQc == 1));
       
       if (~isempty(idPosToUse))
+         % set the profile updated flag if no GPS fix has been received during
+         % the current cycle (used to detect when a profile needs to be updated
+         % in GENERATE_NC_MONO_PROF = 2 mode)
+         if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+            if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
+               if (prof.cycleNumber == max(a_gpsLocCycleNum))
+                  prof.updated = 1;
+               end
+            end
+         end
+         
          % a GPS fix exists
          [~, idMin] = min(a_gpsLocDate(idPosToUse));
          idPosToUse = idPosToUse(idMin);
@@ -139,6 +154,7 @@ for idP = 1:length(o_tabProfiles)
          prof.locationLon = a_gpsLocLon(idPosToUse);
          prof.locationLat = a_gpsLocLat(idPosToUse);
          prof.locationQc = num2str(a_gpsLocQc(idPosToUse));
+         
       else
          % no GPS fix exists
          

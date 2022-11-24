@@ -220,6 +220,32 @@ if (ismember(g_decArgo_floatNum, ...
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
          
+         % cycle 118 to 121 are transmitted together
+         tabBase(35408) = 1;
+         tabSession(35408:end) = tabSession(35408:end) + 1;
+         tabDeep(35408:35707) = 1;
+
+         tabBase(35718) = 1;
+         tabSession(35718:end) = tabSession(35718:end) + 1;
+         tabDeep(35718:36008) = 1;
+
+         tabBase(36019) = 1;
+         tabSession(36019:end) = tabSession(36019:end) + 1;
+         tabDeep(36019:36313) = 1;
+      
+         % FMT/LMT are erroneous in such case
+         for id = 35109:36018
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+         
+         % three following cycle numbers are set only to avoid unused packets in
+         % the log file (these packet are not used because we don't know the
+         % reference date used in a "surface waiting period" phase to date a
+         % buoyancy action)
+         tabDone(35399:35400) = 1;
+         tabDone(35709:35710) = 1;
+         tabDone(36010:36011) = 1;
+         
       case 2902239
          startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
          stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');

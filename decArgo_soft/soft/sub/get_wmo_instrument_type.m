@@ -30,35 +30,42 @@ global g_decArgo_floatNum;
 switch (a_decoderId)
    
    case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213, 214}
-      % Provor, Seabird conductivity sensor
+      % PROVOR SBE
       o_wmoInstType = '841';
       
    case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 222, 217, 223}
-      % Arvor, Seabird conductivity sensor
+      % ARVOR SBE
       o_wmoInstType = '844';
       
+   case {224}
+      % ARVOR RBR
+      % TEMPORARY-START
+      o_wmoInstType = '878'; % good value but not updated yet in the checker
+      o_wmoInstType = '844';
+      % TEMPORARY-END
+      
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301}
-      % PROVOR_III float
+      % PROVOR_III SBE
       o_wmoInstType = '836';
       
    case {121, 122, 123, 124, 125}
-      % PROVOR_IV float
+      % PROVOR_IV SBE
       o_wmoInstType = '835';
       
    case {126}
-      % PROVOR_V float
+      % PROVOR_V SBE
       o_wmoInstType = '834';
       
    case {201, 202, 203, 215, 216, 218, 221}
-      % Arvor-D float
+      % ARVOR_D SBE
       o_wmoInstType = '838';
       
    case {219, 220}
-      % ARVOR-C Iridium
+      % ARVOR_C SBE
       o_wmoInstType = '837';
       
    case {302, 303}
-      % Arvor-C float
+      % ARVOR_C SBE
       o_wmoInstType = '837';
       
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
@@ -68,23 +75,19 @@ switch (a_decoderId)
          1314, ...
          1121, 1122, 1123, 1124, 1125, 1126, 1127, ...
          1321, 1322, 1323}
-      % Webb Research, Seabird sensor
+      % APEX SBE
       o_wmoInstType = '846';
       
    case {1201}
-      % Navis-A Float
+      % NAVIS_A SBE
       o_wmoInstType = '863';
       
    case {2001, 2002, 2003}
-      % Nova & Dova float
+      % NOVA/DOVA SBE
       o_wmoInstType = '865';
       
-      %    case {2002}
-      %       % Dova float
-      %       o_wmoInstType = '869';
-      
    case {3001}
-      % Profiling Float, NEMO, SBE conductivity sensor
+      % NEMO SBE
       o_wmoInstType = '860';
       
    otherwise

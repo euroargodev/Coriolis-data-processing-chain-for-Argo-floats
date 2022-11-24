@@ -48,7 +48,7 @@ if (~isempty(a_ascProfPres))
       g_decArgo_floatNum, g_decArgo_cycleNum);
 
    if (isempty(a_ascProfC1PhaseDoxy))
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; Float time; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; Float time; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_ascProfPres)
@@ -70,7 +70,7 @@ if (~isempty(a_ascProfPres))
             a_ascProfPres(idMes), a_ascProfTemp(idMes), a_ascProfSal(idMes));
       end
    else
-      fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; Float time; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); DOXY (micromol/kg)\n', ...
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; Float time; UTC time; PRES (dbar); TEMP (degC); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (degC); DOXY (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       for idMes = 1:length(a_ascProfPres)

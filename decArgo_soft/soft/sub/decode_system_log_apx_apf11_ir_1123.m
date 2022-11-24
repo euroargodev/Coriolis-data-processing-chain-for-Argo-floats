@@ -306,7 +306,10 @@ for idFile = 1:length(a_systemLogFileList)
 end
 
 if (~isempty(o_gpsData))
-   o_gpsData = [ones(size(o_gpsData, 1), 1)*g_decArgo_cycleNum o_gpsData];
+   % first column cycle number of the fix, lats column cycle number of the fix
+   % reception (used to detect when a profile needs to be updated in
+   % GENERATE_NC_MONO_PROF = 2 mode)
+   o_gpsData = [ones(size(o_gpsData, 1), 1)*g_decArgo_cycleNum o_gpsData ones(size(o_gpsData, 1), 1)*g_decArgo_cycleNum];
    if (~isempty(descentStartTime))
       idPrevCy = find(o_gpsData(:, 2) < descentStartTime);
       o_gpsData(idPrevCy, 1) = g_decArgo_cycleNum - 1;
