@@ -185,7 +185,7 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -212,6 +212,14 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963]))
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+      case 6903265
+         % surface message types [0 4 5] of cycles 100 to 110 were
+         % transmitted in the same session #102, we must separate them by
+         % assigning them to distinct sessions
+         idS = find((tabSession == 102) & (ismember(tabCyNum, 100:110)) & (tabPackType == 0));
+         for id = idS
+            tabSession(id:end) = tabSession(id:end) + 1;
+         end
    end
 end
 

@@ -185,8 +185,8 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
-floatRudicsId = init_float_config_apx_ir(a_decoderId);
-if (isempty(g_decArgo_floatConfig))
+[floatRudicsId, stopFlag] = init_float_config_apx_ir(a_decoderId);
+if (stopFlag)
    return
 end
 

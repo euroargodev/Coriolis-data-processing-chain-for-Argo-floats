@@ -22,7 +22,7 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -37,6 +37,9 @@ o_tabProfiles = [];
 o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabTechNMeas = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 % float configuration
 global g_decArgo_floatConfig;
@@ -107,6 +110,21 @@ for idC = 1:length(idEol)
       outputCycleNumberList(idEol(idC)) = cyPrev+1;
    end
 end
+% specific
+% assign remaining unassigned cycle numbers (after a study of each float
+% case)
+if (ismember(g_decArgo_floatNum, [6902896]))
+   outputCycleNumberList = [a_tabTrajNMeas.outputCycleNumber];
+   idEol = find((outputCycleNumberList == -1));
+   idEol = idEol(find(idEol > 1));
+   for idC = 1:length(idEol)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      if (g_decArgo_floatNum == 6902896)
+         a_tabTrajNMeas(idEol(idC)).outputCycleNumber = cyPrev;
+         outputCycleNumberList(idEol(idC)) = cyPrev;
+      end
+   end
+end
 
 % add the configuration number and the output cycle number of the N_CYCLE
 % measurements
@@ -159,6 +177,21 @@ for idC = 1:length(idEol)
       outputCycleNumberList(idEol(idC)) = cyPrev+1;
    end
 end
+% specific
+% assign remaining unassigned cycle numbers (after a study of each float
+% case)
+if (ismember(g_decArgo_floatNum, [6902896]))
+   outputCycleNumberList = [a_tabTrajNCycle.outputCycleNumber];
+   idEol = find((outputCycleNumberList == -1));
+   idEol = idEol(find(idEol > 1));
+   for idC = 1:length(idEol)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      if (g_decArgo_floatNum == 6902896)
+         a_tabTrajNCycle(idEol(idC)).outputCycleNumber = cyPrev;
+         outputCycleNumberList(idEol(idC)) = cyPrev;
+      end
+   end
+end
 
 % add the output cycle number of the N_MEASUREMENT technical measurements
 for idNCy = 1:length(a_tabTechNMeas)
@@ -196,6 +229,21 @@ if (~isempty(a_tabTechNMeas))
       if (~any(outputCycleNumberList == cyPrev+1))
          a_tabTechNMeas(idEol(idC)).outputCycleNumber = cyPrev+1;
          outputCycleNumberList(idEol(idC)) = cyPrev+1;
+      end
+   end
+end
+% specific
+% assign remaining unassigned cycle numbers (after a study of each float
+% case)
+if (ismember(g_decArgo_floatNum, [6902896]))
+   outputCycleNumberList = [a_tabTechNMeas.outputCycleNumber];
+   idEol = find((outputCycleNumberList == -1));
+   idEol = idEol(find(idEol > 1));
+   for idC = 1:length(idEol)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      if (g_decArgo_floatNum == 6902896)
+         a_tabTechNMeas(idEol(idC)).outputCycleNumber = cyPrev;
+         outputCycleNumberList(idEol(idC)) = cyPrev;
       end
    end
 end

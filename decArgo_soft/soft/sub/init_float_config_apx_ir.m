@@ -3,12 +3,14 @@
 % information.
 %
 % SYNTAX :
-%  init_float_config_apx_ir(a_decoderId)
+%  [o_floatRudicsId, o_stopFlag] = init_float_config_apx_ir(a_decoderId)
 %
 % INPUT PARAMETERS :
 %    a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
+%   o_floatRudicsId : float Rudics Id
+%   o_stopFlag      : stop flag (when meta.json file is not found)
 %
 % EXAMPLES :
 %
@@ -18,10 +20,11 @@
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_floatRudicsId] = init_float_config_apx_ir(a_decoderId)
+function [o_floatRudicsId, o_stopFlag] = init_float_config_apx_ir(a_decoderId)
 
 % output parameters initialization
 o_floatRudicsId = [];
+o_stopFlag = 0;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -48,6 +51,7 @@ global g_decArgo_jsonMetaData;
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
 
 if ~(exist(jsonInputFileName, 'file') == 2)
+   o_stopFlag = 1;
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
    return
 end

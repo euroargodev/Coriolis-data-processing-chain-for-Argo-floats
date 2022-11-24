@@ -226,6 +226,10 @@ for idNCy = 1:length(a_tabTrajNCycle)
       if (a_tabTrajNCycle(idNCy).outputCycleNumber > 0) % we don't assign any configuration to cycle #0 data
          a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
       end
+   else
+      if (a_tabTrajNCycle(idNCy).cycleNumber == 0) && (a_tabTrajNCycle(idNCy).profileNumber == 0)
+         a_tabTrajNCycle(idNCy).outputCycleNumber = 0;
+      end
    end
 end
 

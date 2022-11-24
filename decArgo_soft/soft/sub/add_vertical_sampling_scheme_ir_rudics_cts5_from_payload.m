@@ -61,179 +61,182 @@ for idP = 1:length(a_tabProfiles)
          profPres = get_config_value(sprintf('CONFIG_APMT_PATTERN_%02d_P02', ...
             g_decArgo_patternNumFloat), configNames, configValues);
          
-         % number of depth zones
-         nbDepthZones = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P00_VP06', ...
-            prof.payloadSensorNumber), configNames, configValues);
-         
-         % depth zone information
-         depthZoneStartPres = ones(nbDepthZones, 1)*-1;
-         depthZoneStopPres = ones(nbDepthZones, 1)*-1;
-         depthZoneSampPeriod = ones(nbDepthZones, 1)*-1;
-         depthZoneNbSubSamp = ones(nbDepthZones, 1)*-1;
-         depthZoneSubSampType = ones(nbDepthZones, 1)*-1;
-         depthZoneSubSampRate = ones(nbDepthZones, 1)*-1;
-         for idDz = 1:nbDepthZones
-            depthZoneStartPres(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P01_VP06_%d', ...
-               prof.payloadSensorNumber, idDz), configNames, configValues);
-            depthZoneStopPres(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P02_VP06_%d', ...
-               prof.payloadSensorNumber, idDz), configNames, configValues);
-            depthZoneSampPeriod(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P03_VP06_%d', ...
-               prof.payloadSensorNumber, idDz), configNames, configValues);
+         if (~isempty(profPres))
             
-            depthZoneNbSubSamp(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P06_VP06_%d', ...
-               prof.payloadSensorNumber, idDz), configNames, configValues);
-            if (depthZoneNbSubSamp(idDz) == 1)
-               depthZoneSubSampType(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P07_VP06_%d_1', ...
+            % number of depth zones
+            nbDepthZones = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P00_VP06', ...
+               prof.payloadSensorNumber), configNames, configValues);
+            
+            % depth zone information
+            depthZoneStartPres = ones(nbDepthZones, 1)*-1;
+            depthZoneStopPres = ones(nbDepthZones, 1)*-1;
+            depthZoneSampPeriod = ones(nbDepthZones, 1)*-1;
+            depthZoneNbSubSamp = ones(nbDepthZones, 1)*-1;
+            depthZoneSubSampType = ones(nbDepthZones, 1)*-1;
+            depthZoneSubSampRate = ones(nbDepthZones, 1)*-1;
+            for idDz = 1:nbDepthZones
+               depthZoneStartPres(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P01_VP06_%d', ...
                   prof.payloadSensorNumber, idDz), configNames, configValues);
-               depthZoneSubSampRate(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P08_VP06_%d_1', ...
+               depthZoneStopPres(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P02_VP06_%d', ...
                   prof.payloadSensorNumber, idDz), configNames, configValues);
-            end
-         end
-         
-         % sort depth zones
-         [depthZoneStartPres, idSort] = sort(depthZoneStartPres, 'descend');
-         depthZoneStopPres = depthZoneStopPres(idSort);
-         depthZoneSampPeriod = depthZoneSampPeriod(idSort);
-         depthZoneNbSubSamp = depthZoneNbSubSamp(idSort);
-         depthZoneSubSampType = depthZoneSubSampType(idSort);
-         depthZoneSubSampRate = depthZoneSubSampRate(idSort);
-                  
-         text1List = [];
-         text2List = [];
-         nbSecondaryFlag = 0;
-         discreteSecondaryFlag = 0;
-         averagedSecondaryFlag = 0;
-         nbPrimaryFlag = 0;
-         discretePrimaryFlag = 0;
-         averagedPrimaryFlag = 0;
-         nbNearSurfaceFlag = 0;
-         discreteNearSurfaceFlag = 0;
-         averagedNearSurfaceFlag = 0;
-         for idDz = 1:nbDepthZones
-            
-            text1 = [];
-            text2 = [];
-            
-            dzStartPres = depthZoneStartPres(idDz);
-            dzStopPres = depthZoneStopPres(idDz);
-            dzSampPeriod = depthZoneSampPeriod(idDz);
-            dzNbSubSamp = depthZoneNbSubSamp(idDz);
-            dzSubSampType = depthZoneSubSampType(idDz);
-            dzSubSampRate = depthZoneSubSampRate(idDz);
-            
-            if (profPres > dzStartPres)
+               depthZoneSampPeriod(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P03_VP06_%d', ...
+                  prof.payloadSensorNumber, idDz), configNames, configValues);
                
-               if (prof.primarySamplingProfileFlag == 0)
-                                    
-                  % secondary sampling
-                  [text1, ...
-                     nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag] = ...
-                     create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
-                     dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                     nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag);
-               else
+               depthZoneNbSubSamp(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P06_VP06_%d', ...
+                  prof.payloadSensorNumber, idDz), configNames, configValues);
+               if (depthZoneNbSubSamp(idDz) == 1)
+                  depthZoneSubSampType(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P07_VP06_%d_1', ...
+                     prof.payloadSensorNumber, idDz), configNames, configValues);
+                  depthZoneSubSampRate(idDz) = get_config_value(sprintf('CONFIG_PAYLOAD_USED_SENSOR_%02d_P08_VP06_%d_1', ...
+                     prof.payloadSensorNumber, idDz), configNames, configValues);
+               end
+            end
+            
+            % sort depth zones
+            [depthZoneStartPres, idSort] = sort(depthZoneStartPres, 'descend');
+            depthZoneStopPres = depthZoneStopPres(idSort);
+            depthZoneSampPeriod = depthZoneSampPeriod(idSort);
+            depthZoneNbSubSamp = depthZoneNbSubSamp(idSort);
+            depthZoneSubSampType = depthZoneSubSampType(idSort);
+            depthZoneSubSampRate = depthZoneSubSampRate(idSort);
+            
+            text1List = [];
+            text2List = [];
+            nbSecondaryFlag = 0;
+            discreteSecondaryFlag = 0;
+            averagedSecondaryFlag = 0;
+            nbPrimaryFlag = 0;
+            discretePrimaryFlag = 0;
+            averagedPrimaryFlag = 0;
+            nbNearSurfaceFlag = 0;
+            discreteNearSurfaceFlag = 0;
+            averagedNearSurfaceFlag = 0;
+            for idDz = 1:nbDepthZones
+               
+               text1 = [];
+               text2 = [];
+               
+               dzStartPres = depthZoneStartPres(idDz);
+               dzStopPres = depthZoneStopPres(idDz);
+               dzSampPeriod = depthZoneSampPeriod(idDz);
+               dzNbSubSamp = depthZoneNbSubSamp(idDz);
+               dzSubSampType = depthZoneSubSampType(idDz);
+               dzSubSampRate = depthZoneSubSampRate(idDz);
+               
+               if (profPres > dzStartPres)
                   
-                  % primary & near surface sampling
-                  if (prof.presCutOffProf ~= g_decArgo_presDef)
+                  if (prof.primarySamplingProfileFlag == 0)
                      
-                     if (prof.presCutOffProf < dzStopPres)
+                     % secondary sampling
+                     [text1, ...
+                        nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag] = ...
+                        create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
+                        dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                        nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag);
+                  else
+                     
+                     % primary & near surface sampling
+                     if (prof.presCutOffProf ~= g_decArgo_presDef)
                         
-                        % primary sampling
-                        [text1, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
-                           create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
-
-                     elseif (prof.presCutOffProf > dzStartPres)
+                        if (prof.presCutOffProf < dzStopPres)
+                           
+                           % primary sampling
+                           [text1, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
+                              create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
+                           
+                        elseif (prof.presCutOffProf > dzStartPres)
+                           
+                           % near surface sampling
+                           [text2, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
+                              create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
+                           
+                        elseif ((prof.presCutOffProf < dzStartPres) && (prof.presCutOffProf > dzStopPres))
+                           
+                           % primary sampling
+                           [text1, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
+                              create_text(dzStartPres, prof.presCutOffProf, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
+                           
+                           % near surface sampling
+                           [text2, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
+                              create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
+                           
+                        end
+                     end
+                  end
+                  
+               elseif ((profPres < dzStartPres) && (profPres > dzStopPres))
+                  
+                  if (prof.primarySamplingProfileFlag == 0)
+                     
+                     % secondary sampling
+                     [text1, ...
+                        nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag] = ...
+                        create_text(profPres, dzStopPres, dzSampPeriod, ...
+                        dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                        nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag);
+                     
+                  else
+                     
+                     % primary & near surface sampling
+                     if (prof.presCutOffProf ~= g_decArgo_presDef)
                         
-                        % near surface sampling
-                        [text2, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
-                           create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
-
-                     elseif ((prof.presCutOffProf < dzStartPres) && (prof.presCutOffProf > dzStopPres))
-                        
-                        % primary sampling
-                        [text1, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
-                           create_text(dzStartPres, prof.presCutOffProf, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
-                        
-                        % near surface sampling
-                        [text2, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
-                           create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
-
+                        if (prof.presCutOffProf < dzStopPres)
+                           
+                           % primary sampling
+                           [text1, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
+                              create_text(profPres, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
+                           
+                        elseif (prof.presCutOffProf > dzStartPres)
+                           
+                           % near surface sampling
+                           [text2, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
+                              create_text(profPres, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
+                           
+                        elseif ((prof.presCutOffProf < dzStartPres) && (prof.presCutOffProf > dzStopPres))
+                           
+                           % primary sampling
+                           [text1, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
+                              create_text(profPres, prof.presCutOffProf, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
+                           
+                           % near surface sampling
+                           [text2, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
+                              create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...
+                              dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
+                              nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
+                           
+                        end
                      end
                   end
                end
                
-            elseif ((profPres < dzStartPres) && (profPres > dzStopPres))
-               
-               if (prof.primarySamplingProfileFlag == 0)
-                                    
-                  % secondary sampling
-                  [text1, ...
-                     nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag] = ...
-                     create_text(profPres, dzStopPres, dzSampPeriod, ...
-                     dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                     nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag);
-                  
-               else
-                  
-                  % primary & near surface sampling
-                  if (prof.presCutOffProf ~= g_decArgo_presDef)
-                     
-                     if (prof.presCutOffProf < dzStopPres)
-                        
-                        % primary sampling
-                        [text1, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
-                           create_text(profPres, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
-
-                     elseif (prof.presCutOffProf > dzStartPres)
-                        
-                        % near surface sampling
-                        [text2, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
-                           create_text(profPres, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
-
-                     elseif ((prof.presCutOffProf < dzStartPres) && (prof.presCutOffProf > dzStopPres))
-                        
-                        % primary sampling
-                        [text1, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag] = ...
-                           create_text(profPres, prof.presCutOffProf, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
-                        
-                        % near surface sampling
-                        [text2, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
-                           create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...
-                           dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
-                           nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag);
-
-                     end
-                  end
+               if (~isempty(text1))
+                  text1List{end+1} = text1;
                end
-            end
-            
-            if (~isempty(text1))
-               text1List{end+1} = text1;
-            end
-            if (~isempty(text2))
-               text2List{end+1} = text2;
+               if (~isempty(text2))
+                  text2List{end+1} = text2;
+               end
             end
          end
          
@@ -243,16 +246,21 @@ for idP = 1:length(a_tabProfiles)
          if (prof.primarySamplingProfileFlag == 0)
             
             % secondary sampling
-            if (~isempty(text1List))
-               descriptionSecondary = [sprintf('%s;', text1List{1:end-1}) sprintf('%s', text1List{end})];
-            end
-
-            if (discreteSecondaryFlag == nbSecondaryFlag)
-               vssTextSecondary = [vssTextSecondary ' discrete [' descriptionSecondary ']'];
-            elseif (averagedSecondaryFlag == nbSecondaryFlag)
-               vssTextSecondary = [vssTextSecondary ' averaged [' descriptionSecondary ']'];
+            if (~isempty(profPres))
+               if (~isempty(text1List))
+                  descriptionSecondary = [sprintf('%s;', text1List{1:end-1}) sprintf('%s', text1List{end})];
+               end
+               
+               if (discreteSecondaryFlag == nbSecondaryFlag)
+                  vssTextSecondary = [vssTextSecondary ' discrete [' descriptionSecondary ']'];
+               elseif (averagedSecondaryFlag == nbSecondaryFlag)
+                  vssTextSecondary = [vssTextSecondary ' averaged [' descriptionSecondary ']'];
+               else
+                  vssTextSecondary = [vssTextSecondary ' mixed [' descriptionSecondary ']'];
+               end
             else
-               vssTextSecondary = [vssTextSecondary ' mixed [' descriptionSecondary ']'];
+               % no configuration information for the current profile
+               vssTextSecondary = [vssTextSecondary ' averaged [unknown configuration]'];
             end
             
             a_tabProfiles(idP).vertSamplingScheme = vssTextSecondary;
