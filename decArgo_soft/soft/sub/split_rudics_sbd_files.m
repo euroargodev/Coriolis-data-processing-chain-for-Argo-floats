@@ -54,7 +54,7 @@ for idFile = 1:length(sbdFiles)
       if (any(sbdData(idZ:end) ~= 0))
          fprintf('ERROR: Inconsistent data in file : %s\n', ...
             sbdFilePathName);
-         continue;
+         continue
       end
       sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
    elseif (strcmp(sbdFileName(end-3:end), '.bin'))
@@ -78,4 +78,4 @@ for idFile = 1:length(sbdFiles)
    end
 end
 
-return;
+return

@@ -53,7 +53,7 @@ global g_decArgo_archiveSbdDirectory;
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
    fprintf('BUFF_ERROR: Float #%d: add_to_list: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
-   return;
+   return
 end
 
 % check the files of the directory
@@ -80,7 +80,7 @@ for idFile = 1:length(list)
 end
 
 if (isempty(o_fileName))
-   return;
+   return
 end
 
 % chronologically sort the files
@@ -111,4 +111,4 @@ if (~isempty(a_floatLaunchDate))
    end
 end
 
-return;
+return

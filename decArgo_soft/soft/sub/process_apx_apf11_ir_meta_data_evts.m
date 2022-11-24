@@ -93,7 +93,7 @@ for idEv = 1:length(events)
 end
 
 if (isempty(o_metaData))
-   return;
+   return
 end
 
 % finalize meta-data
@@ -247,7 +247,7 @@ if (~isempty(idF1))
    o_metaData(idF1).techParamValue = ['PTHA2=' o_metaData(idF1).techParamValue];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve meta-data information from event label.
@@ -953,4 +953,4 @@ if (~isempty(idF))
 
 end
 
-return;
+return

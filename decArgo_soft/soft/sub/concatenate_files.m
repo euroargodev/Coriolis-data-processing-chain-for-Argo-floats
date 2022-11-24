@@ -29,7 +29,7 @@ if ~(exist(a_baseFile, 'file') == 2)
    % if the base file does not exist copy the new file
    if (copy_file(a_newFile, a_baseFile) == 0)
       o_ok = 0;
-      return;
+      return
    end
 else
    
@@ -38,7 +38,7 @@ else
    if (fidBase == -1)
       fprintf('ERROR: Unable to open file: %s\n', a_baseFile);
       o_ok = 0;
-      return;
+      return
    end
    baseFileContents = textscan(fidBase, '%s');
    fclose(fidBase);
@@ -47,7 +47,7 @@ else
    if (fidNew == -1)
       fprintf('ERROR: Unable to open file: %s\n', a_newFile);
       o_ok = 0;
-      return;
+      return
    end
    newFileContents = textscan(fidNew, '%s');
    fclose(fidNew);
@@ -59,14 +59,14 @@ else
       if ((length(baseFileContents) >= idL) && (length(newFileContents) >= idL))
          if (strcmp(baseFileContents{idL}, newFileContents{idL}) == 0)
             compRes = 2;
-            break;
+            break
          end
       elseif (length(baseFileContents) >= idL)
          compRes = 3;
-         break;
+         break
       elseif (length(newFileContents) >= idL)
          compRes = 4;
-         break;
+         break
       end
    end
 
@@ -87,7 +87,7 @@ else
       
       if (copy_file(a_newFile, a_baseFile) == 0)
          o_ok = 0;
-         return;
+         return
       end
    
    elseif (compRes == 2)
@@ -98,20 +98,20 @@ else
       if (fidBase == -1)
          fprintf('ERROR: Unable to open file: %s\n', a_baseFile);
          o_ok = 0;
-         return;
+         return
       end
       
       fidNew = fopen(a_newFile, 'r');
       if (fidNew == -1)
          fprintf('ERROR: Unable to open file: %s\n', a_newFile);
          o_ok = 0;
-         return;
+         return
       end
       
       while (1)
          line = fgetl(fidNew);
          if (line == -1)
-            break;
+            break
          end
          
          fprintf(fidBase, '%s\n', line);
@@ -122,4 +122,4 @@ else
    end
 end
 
-return;
+return

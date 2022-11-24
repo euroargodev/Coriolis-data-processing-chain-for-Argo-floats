@@ -32,7 +32,7 @@ outputFileName = [a_dirName '/' a_fileName];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create output file: %s\n', outputFileName);
-   return;
+   return
 end
 
 nbLines = 1;
@@ -55,4 +55,4 @@ end
 
 fclose(fidOut);
 
-return;
+return

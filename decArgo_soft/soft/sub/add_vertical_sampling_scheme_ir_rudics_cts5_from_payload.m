@@ -42,7 +42,7 @@ for idP = 1:length(a_tabProfiles)
          
          vssText = 'Secondary sampling: discrete [CTD measurements concurrent with SUNA measurements, just slightly offset in time]';
          a_tabProfiles(idP).vertSamplingScheme = vssText;
-         continue;
+         continue
       end
    end  
    
@@ -389,7 +389,7 @@ end
 
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get a config value from a given configuration.
@@ -422,7 +422,7 @@ o_configValue = [];
 idPos = find(strcmp(a_configName, a_configNames) == 1, 1);
 o_configValue = a_configValues(idPos);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create text of a detailed description part of the VSS and report flags.
@@ -523,4 +523,4 @@ else
    end
 end
 
-return;
+return

@@ -29,7 +29,7 @@ o_profInfo = [];
 WOA_FILE_NAME = 'woa13_all_n00_01.nc';
 if ~(exist(WOA_FILE_NAME, 'file') == 2)
    fprintf('ERROR: World Ocean Atlas 2013 file not found in the Matlab path: %s => NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
-   return;
+   return
 end
 
 % retrieve data from WOA file
@@ -59,7 +59,7 @@ woaFillValue = get_att_from_name('n_an', '_FillValue', woaDataAtt);
 
 if (length(woaTime) ~= 1)
    fprintf('ERROR: Time is expected to be unique in World Ocean Atlas 2013 file: %s => NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
-   return;
+   return
 end
 
 % for idProf = 1:size(a_profInfo, 1)
@@ -132,7 +132,7 @@ end
 % update output parameters
 o_profInfo = a_profInfo;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -165,7 +165,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -201,7 +201,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve attributes from NetCDF file
@@ -221,7 +221,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get attribute data from variable name and attribute in a
@@ -256,4 +256,4 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{3*idVal};
 end
 
-return;
+return

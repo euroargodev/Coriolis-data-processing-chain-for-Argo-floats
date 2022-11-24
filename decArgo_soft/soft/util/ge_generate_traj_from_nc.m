@@ -54,17 +54,22 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 
 % répertoire des fichiers NetCDF
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 
 % répertoire de production des fichier KML
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 % répertoire de stockage des répertoires temporaires
 DIR_TMP_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_TMP_FILES = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 
 % convertion des dates julienes 1950 en dates grégoriennes
@@ -75,7 +80,7 @@ if (nargin == 0)
    % les flotteurs pris en compte sont ceux d'une liste prédéfinie
    if (~exist(FLOAT_LIST_FILE_NAME, 'file'))
       fprintf('Fichier introuvable: %s\n', FLOAT_LIST_FILE_NAME);
-      return;
+      return
    end
 
    fprintf('Flotteurs de la liste: %s\n', FLOAT_LIST_FILE_NAME);
@@ -92,7 +97,7 @@ if (~exist(tmpDirName, 'dir'))
    mkdir(tmpDirName);
 else
    fprintf('Répertoire temporaire (%s) existe déjà: STOP\n', tmpDirName);
-   return;
+   return
 end
 
 % fichiers temporaires de stockage
@@ -115,7 +120,7 @@ outputFileName = [DIR_OUTPUT_KML_FILES kmlFileName];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Impossible de créer le fichier %s\n', outputFileName);
-   return;
+   return
 end
 
 % écriture de l'entête du fichier kml
@@ -170,7 +175,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de meta-données (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          metaFileName, metaFileFormatVersion);
-      return;
+      return
    end   
    
    metaStruct = [];
@@ -223,7 +228,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de trajectoire (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);
-      return;
+      return
    end
    
    idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
@@ -426,7 +431,7 @@ for idFloat = 1:nbFloats
    fidOutTmp = fopen([outputTempLaunchFileName floatNumStr '.tmp'], 'wt');
    if (fidOutTmp == -1)
       fprintf('Impossible de créer le fichier %s\n', outputTempLaunchFileName);
-      return;
+      return
    end
    fprintf(fidOutTmp, '%s', kmlStrLaunch);
    fclose(fidOutTmp);
@@ -435,7 +440,7 @@ for idFloat = 1:nbFloats
       fidOutTmp = fopen([outputTempLocFileName floatNumStr '.tmp'], 'wt');
       if (fidOutTmp == -1)
          fprintf('Impossible de créer le fichier %s\n', outputTempLocFileName);
-         return;
+         return
       end
       fprintf(fidOutTmp, '%s', kmlStrLoc);
       fclose(fidOutTmp);
@@ -444,7 +449,7 @@ for idFloat = 1:nbFloats
    fidOutTmp = fopen([outputTempTrajFileName floatNumStr '.tmp'], 'wt');
    if (fidOutTmp == -1)
       fprintf('Impossible de créer le fichier %s\n', outputTempTrajFileName);
-      return;
+      return
    end
    fprintf(fidOutTmp, '%s', kmlStrTraj);
    fclose(fidOutTmp);
@@ -462,12 +467,12 @@ for idFloat = 1:nbFloats
    fidOutTmp = fopen(outputTempFileName, 'r');
    if (fidOutTmp == -1)
       fprintf('Impossible de créer le fichier %s\n', outputTempFileName);
-      return;
+      return
    end
    while 1
       line = fgetl(fidOutTmp);
       if (~ischar(line))
-         break;
+         break
       end
       fprintf(fidOut, '%s\n', line);
    end
@@ -490,12 +495,12 @@ if (ARGOS_LOC == 1)
       fidOutTmp = fopen(outputTempFileName, 'r');
       if (fidOutTmp == -1)
          fprintf('Impossible de créer le fichier %s\n', outputTempFileName);
-         return;
+         return
       end
       while 1
          line = fgetl(fidOutTmp);
          if (~ischar(line))
-            break;
+            break
          end
          fprintf(fidOut, '%s\n', line);
       end
@@ -518,12 +523,12 @@ for idFloat = 1:nbFloats
    fidOutTmp = fopen(outputTempFileName, 'r');
    if (fidOutTmp == -1)
       fprintf('Impossible de créer le fichier %s\n', outputTempFileName);
-      return;
+      return
    end
    while 1
       line = fgetl(fidOutTmp);
       if (~ischar(line))
-         break;
+         break
       end
       fprintf(fidOut, '%s\n', line);
    end
@@ -550,4 +555,4 @@ zip([DIR_OUTPUT_KML_FILES kmzFileName], [DIR_OUTPUT_KML_FILES kmlFileName]);
 delete([DIR_OUTPUT_KML_FILES kmlFileName]);
 move_file([DIR_OUTPUT_KML_FILES kmzFileName '.zip '], [DIR_OUTPUT_KML_FILES kmzFileName]);
 
-return;
+return

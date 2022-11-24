@@ -54,7 +54,7 @@ for idFile = 1:length(dirFiles)
 end
 
 if (isempty(o_fileName))
-   return;
+   return
 end
 
 % chronologically sort the files
@@ -85,4 +85,4 @@ if (~isempty(a_floatLaunchDate))
    end
 end
 
-return;
+return

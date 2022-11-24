@@ -111,7 +111,7 @@ end
 if (floatParam(42) ~= 1)
 
    % check cycle number VS PT16
-   if (mod(floatParam(8), floatParam(42)) == 0)
+   if (mod(floatParam(8)-1, floatParam(42)) == 0) % TO BE CONFIRMED BY NKE (not same rule as for NS&IA alternate meas.)
       % profile pressure is PT17
       idPos = find(strcmp(configNames, 'CONFIG_PM09') == 1, 1);
       if (~isempty(idPos))
@@ -160,4 +160,4 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = [g_decArgo_floatConfig.DYNAMIC_TMP.VA
 
 % create_csv_to_print_config_ir_sbd('updateConfig_', 0, g_decArgo_floatConfig);
 
-return;
+return

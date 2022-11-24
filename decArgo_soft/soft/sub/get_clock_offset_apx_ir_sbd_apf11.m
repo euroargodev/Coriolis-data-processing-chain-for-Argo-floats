@@ -43,7 +43,7 @@ o_cycleList = get_float_cycle_list_iridium_sbd_apx_apf11(a_floatNum, a_floatImei
 floatIriDirName = g_decArgo_archiveFloatFilesDirectory;
 if ~(exist(floatIriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', floatIriDirName);
-   return;
+   return
 end
 
 % retrieve system_log file names
@@ -68,7 +68,7 @@ for idFile = 1:length(logFileList)
    [error, events] = read_apx_apf11_ir_system_log_file(logFilePathName, 0);
    if (error == 1)
       fprintf('ERROR: Error in file: %s => ignored\n', logFilePathName);
-      return;
+      return
    end
    
    idEvts = find(strcmp({events.functionName}, 'GPS'));
@@ -82,4 +82,4 @@ end
 o_clockOffset.clockOffsetJuldUtc = tabJuldUtc;
 o_clockOffset.clockOffsetValue = [tabRtcOffset(idSort).clockOffsetValue];
 
-return;
+return

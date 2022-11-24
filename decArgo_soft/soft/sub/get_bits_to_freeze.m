@@ -101,4 +101,4 @@ end
 % output data
 o_bitsToFreeze = bitsToFreeze;
 
-return;
+return

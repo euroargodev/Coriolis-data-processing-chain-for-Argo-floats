@@ -30,7 +30,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_dataAck))
-   return;
+   return
 end
 
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; Cmd; ACKNOWLEDGMENT PACKET CONTENTS\n', ...
@@ -50,4 +50,4 @@ for idP = 1:size(a_dataAck, 1)
       sprintf('%s_%02d', param, data(2)), data(3), data(4));
 end
 
-return;
+return

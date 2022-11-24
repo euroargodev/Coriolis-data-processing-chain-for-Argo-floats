@@ -30,4 +30,4 @@ else
    o_valueStr = sprintf('%d', a_valueNum);
 end
 
-return;
+return

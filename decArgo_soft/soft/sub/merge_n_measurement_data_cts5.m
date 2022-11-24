@@ -36,4 +36,4 @@ o_tabTrajNMeas.tabMeas(idDel) = [];
 % add new measurement codes
 o_tabTrajNMeas.tabMeas = [o_tabTrajNMeas.tabMeas; o_tabTrajNMeasAdd.tabMeas];
 
-return;
+return

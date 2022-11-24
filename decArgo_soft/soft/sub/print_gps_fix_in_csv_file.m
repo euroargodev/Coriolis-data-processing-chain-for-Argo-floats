@@ -32,7 +32,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_gpsData))
-   return;
+   return
 end
 
 cycleNumber = g_decArgo_cycleNum;
@@ -53,4 +53,4 @@ for idF = 1:length(a_gpsData)
       a_gpsData{idF}.gpsFixAcqTime);
 end
 
-return;
+return

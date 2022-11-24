@@ -80,14 +80,14 @@ for idFile = 1:nbEventFiles
    
    if ~(exist(filePathName, 'file') == 2)
       fprintf('DEC_ERROR: File not found: %s\n', filePathName);
-      return;
+      return
    end
    
    % decode file contents
    ok = decode_event_data(filePathName, a_launchDate, a_decoderId);
    if (~ok)
       o_ok = ok;
-      return;
+      return
    end
 end
 
@@ -134,7 +134,7 @@ for idL = 1:size(cyclePatternNumFloat, 1)
       idFC = find(cyNumList == cyNum);
       idFP = find(ptnNumList == ptnNum);
       if (isempty(idFC) || isempty(idFP))
-         continue;
+         continue
       end
       idFCycle = idFCy(idFC);
       idFPattern = idFPtn(idFP);
@@ -217,7 +217,7 @@ end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode and store CTS5 events of a given system file.
@@ -254,10 +254,10 @@ switch (a_decoderId)
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode and store CTS5 events of a given system file.
@@ -304,14 +304,14 @@ evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: decode_event_data_121_2_123: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = fread(fId);
 fclose(fId);
@@ -330,7 +330,7 @@ while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
-      break;
+      break
    else
       
       rawData = get_bits(curBit, [8 32], data);
@@ -354,7 +354,7 @@ while ((curBit-1)/8 < lastByteNum)
          if (~ok)
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
-            return;
+            return
          end
          
          % BE CAREFUL: the RTC could be erroneously set
@@ -437,14 +437,14 @@ while ((curBit-1)/8 < lastByteNum)
       else
          fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         return;
+         return
       end
    end
 end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode and store CTS5 events of a given system file.
@@ -491,14 +491,14 @@ evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: decode_event_data_124: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = fread(fId);
 fclose(fId);
@@ -517,7 +517,7 @@ while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
-      break;
+      break
    else
       
       rawData = get_bits(curBit, [8 32], data);
@@ -541,7 +541,7 @@ while ((curBit-1)/8 < lastByteNum)
          if (~ok)
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
-            return;
+            return
          end
          
          % BE CAREFUL: the RTC could be erroneously set
@@ -624,14 +624,14 @@ while ((curBit-1)/8 < lastByteNum)
       else
          fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         return;
+         return
       end
    end
 end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode (or only read without storing it) one CTS5 event.
@@ -695,7 +695,7 @@ if (length(idF) == 1)
    bitPattern = bitList{idF, 2};
 else
    fprintf('ERROR: bit pattern not defined for event data type #%d\n', a_evtDataType);
-   return;
+   return
 end
 
 switch (a_evtDataType)
@@ -919,12 +919,12 @@ switch (a_evtDataType)
       end
    otherwise
       fprintf('ERROR: unexpected event data type (%d)\n', a_evtDataType);
-      return;
+      return
 end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode (or only read without storing it) one CTS5 event.
@@ -989,7 +989,7 @@ if (length(idF) == 1)
    bitPattern = bitList{idF, 2};
 else
    fprintf('ERROR: bit pattern not defined for event data type #%d\n', a_evtDataType);
-   return;
+   return
 end
 
 switch (a_evtDataType)
@@ -1226,12 +1226,12 @@ switch (a_evtDataType)
       end
    otherwise
       fprintf('ERROR: unexpected event data type (%d)\n', a_evtDataType);
-      return;
+      return
 end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Init event type list and event used list.
@@ -1508,7 +1508,7 @@ g_decArgo_eventNumTypeList = [ ...
 
 g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 126 127 141 197 198 204];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Init event type list and event used list.
@@ -1823,4 +1823,4 @@ g_decArgo_eventNumTypeList = [ ...
 
 g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 126 127 141 197 198 204];
 
-return;
+return

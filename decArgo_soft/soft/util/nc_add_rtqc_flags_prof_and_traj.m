@@ -166,7 +166,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -457,7 +457,7 @@ for idFloat = 1:nbFloats
             
             monoProfInputFileName = ncInputFiles(idFile).name;
             if (monoProfInputFileName(1) == 'B')
-               continue;
+               continue
             end
             monoProfInputFilePathName = [ncInputFileDir '/' monoProfInputFileName];
             monoProfOutputFilePathName = '';
@@ -479,7 +479,7 @@ for idFloat = 1:nbFloats
             fprintf('\n');
             nbFiles = nbFiles - 1;
             if (nbFiles == 0)
-               break;
+               break
             end
          end
       else
@@ -510,7 +510,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve from a list if a test has to be performed
@@ -546,4 +546,4 @@ if (~isempty(testId))
    o_testToPerform = a_testToPerformList{testId+1};
 end
 
-return;
+return

@@ -148,6 +148,8 @@ global g_decArgo_virtualBuff;
 % global g_decArgo_nbBuffToProcess;
 % g_decArgo_nbBuffToProcess = 5;
 
+% float configuration
+global g_decArgo_floatConfig;
 
 % verbose mode flag
 VERBOSE_MODE_BUFF = 1;
@@ -164,6 +166,7 @@ g_decArgo_needFullBufferInfo = PRINT_INFO_ON_NOT_COMPLETED_BUFFER;
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDurationIrSbd2;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDurationIrSbd2/24;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -240,6 +243,9 @@ end
 
 % initialize float parameter configuration
 init_float_config_prv_ir_sbd2(a_launchDate, a_decoderId);
+if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+   return
+end
 
 % add launch position and time in the TRAJ NetCDF file
 if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
@@ -258,7 +264,7 @@ if (~a_floatDmFlag)
       o_tabNcTechIndex = [];
       o_tabNcTechVal = [];
       o_structConfig = [];
-      return;
+      return
       
    else
       
@@ -523,7 +529,7 @@ if (~a_floatDmFlag)
                move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
             end
             if (idSpoolFile < length(tabAllFileNames))
-               continue;
+               continue
             end
          end
          
@@ -815,7 +821,7 @@ else
       o_tabNcTechIndex = [];
       o_tabNcTechVal = [];
       o_structConfig = [];
-      return;
+      return
       
    else
       
@@ -1016,7 +1022,7 @@ if (g_decArgo_virtualBuff)
    rmdir(g_decArgo_archiveSbdDirectory, 's');
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode one set of Iridium SBD files.
@@ -1106,7 +1112,7 @@ global g_decArgo_virtualBuff;
 
 % no data to process
 if (isempty(a_mailFileNameList))
-   return;
+   return
 end
 
 % read the SBD file data
@@ -1554,4 +1560,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

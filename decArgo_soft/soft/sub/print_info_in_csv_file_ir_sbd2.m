@@ -102,12 +102,12 @@ if (~isempty(a_cyProfPhaseList))
                      end
                   end
                   if (~isempty(idDel))
-                     break;
+                     break
                   end
                end
             end
             if (~isempty(idDel))
-               break;
+               break
             end
          end
       end
@@ -200,4 +200,4 @@ if (~isempty(a_cyProfPhaseList))
    end
 end
 
-return;
+return

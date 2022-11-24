@@ -51,7 +51,7 @@ for idItem = 1:length(a_itemList)
       dimLevList = a_dimLevlist(a_idForWmo(idF));
       for idL = 1:length(dimLevList)
          idLev = find(dimLevListAll == dimLevList(idL));
-         val{idLev, 1} = char(a_metaData(a_idForWmo(idF(idL)), 4));
+         val{idLev, 1} = a_metaData{a_idForWmo(idF(idL)), 4};
       end
       for idL = 1:length(dimLevListAll)
          if (isempty(val{idL, 1}))
@@ -86,9 +86,9 @@ end
 %    [unused idSort] = sort(dimLev);
 %    val = cell(length(dimLev), 1);
 %    for id = 1:length(dimLev)
-%       val{id, 1} = char(a_metaData(a_idForWmo(idF(idSort(id))), 4));
+%       val{id, 1} = a_metaData{a_idForWmo(idF(idSort(id))), 4};
 %    end
 %    o_metaStruct = setfield(o_metaStruct, a_item, val);
 % end
 
-return;
+return

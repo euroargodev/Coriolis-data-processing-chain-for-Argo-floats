@@ -76,7 +76,7 @@ try
          % floats to process come from floatListFileName
          if ~(exist(floatListFileName, 'file') == 2)
             fprintf('ERROR: File not found: %s\n', floatListFileName);
-            return;
+            return
          end
          
          fprintf('Floats from list: %s\n', floatListFileName);
@@ -197,7 +197,7 @@ xmlwrite(xmlFileName, g_couf_xmlReportDOMNode);
 %    edit(xmlFileName);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process one NetCDF file.
@@ -312,7 +312,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
             [status, message, messageid] = movefile(fileToUpdate, a_ncPathFileName);
             if (status ~= 1)
                fprintf('ERROR: cannot move file to update (%s) to replace input file (%s)\n', fileToUpdate, a_ncPathFileName);
-               return;
+               return
             end
             
             % store the information for the XML report
@@ -332,7 +332,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update one NetCDF file.
@@ -369,7 +369,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'WRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % update attribute value
@@ -499,7 +499,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
       [status, message, messageid] = movefile(a_ncPathFileName, tmpPathFileName);
       if (status ~= 1)
          fprintf('ERROR: cannot move file (%s) to (%s)\n', a_ncPathFileName, tmpPathFileName);
-         return;
+         return
       end
       
       % retrieve file schema from updated file
@@ -523,7 +523,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
       fCdf = netcdf.open(a_ncPathFileName, 'WRITE');
       if (isempty(fCdf))
          fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-         return;
+         return
       end
       
       % retrieve the creation date of the updated file
@@ -579,7 +579,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    o_ok = 1;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve Matlab variable (definition and contents) from a NetCDF file.
@@ -614,7 +614,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -634,7 +634,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -684,7 +684,7 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize XML report.
@@ -736,7 +736,7 @@ docRootNode.appendChild(newChild);
 
 g_couf_xmlReportDOMNode = docNode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Finalize the XML report.
@@ -822,7 +822,7 @@ if (~isempty(infoMsg))
    
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
-      textNode = char(infoMsg(idMsg));
+      textNode = infoMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -832,7 +832,7 @@ if (~isempty(warningMsg))
    
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
-      textNode = char(warningMsg(idMsg));
+      textNode = warningMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -842,7 +842,7 @@ if (~isempty(errorMsg))
    
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
-      textNode = char(errorMsg(idMsg));
+      textNode = errorMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -881,7 +881,7 @@ newChild = docNode.createElement('status');
 newChild.appendChild(docNode.createTextNode(o_status));
 docRootNode.appendChild(newChild);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve INFO, WARNING and ERROR messages from the log file.
@@ -934,7 +934,7 @@ if (~isempty(a_logFileName))
    if (fId == -1)
       errorLine = sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
       o_errorMsg = [o_errorMsg {errorLine}];
-      return;
+      return
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
@@ -945,34 +945,34 @@ if (~isempty(a_logFileName))
       idLine = 1;
       while (1)
          line = fileContents{idLine};
-         if (strncmp(upper(line), 'INFO:', length('INFO:')))
+         if (strncmpi(line, 'INFO:', length('INFO:')))
             o_decInfoMsg = [o_decInfoMsg {strtrim(line(length('INFO:')+1:end))}];
-         elseif (strncmp(upper(line), 'WARNING:', length('WARNING:')))
+         elseif (strncmpi(line, 'WARNING:', length('WARNING:')))
             o_decWarningMsg = [o_decWarningMsg {strtrim(line(length('WARNING:')+1:end))}];
-         elseif (strncmp(upper(line), 'ERROR:', length('ERROR:')))
+         elseif (strncmpi(line, 'ERROR:', length('ERROR:')))
             o_decErrorMsg = [o_decErrorMsg {strtrim(line(length('ERROR:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTQC_INFO:', length('RTQC_INFO:')))
+         elseif (strncmpi(line, 'RTQC_INFO:', length('RTQC_INFO:')))
             o_rtQcInfoMsg = [o_rtQcInfoMsg {strtrim(line(length('RTQC_INFO:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTQC_WARNING:', length('RTQC_WARNING:')))
+         elseif (strncmpi(line, 'RTQC_WARNING:', length('RTQC_WARNING:')))
             o_rtQcWarningMsg = [o_rtQcWarningMsg {strtrim(line(length('RTQC_WARNING:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTQC_ERROR:', length('RTQC_ERROR:')))
+         elseif (strncmpi(line, 'RTQC_ERROR:', length('RTQC_ERROR:')))
             o_rtQcErrorMsg = [o_rtQcErrorMsg {strtrim(line(length('RTQC_ERROR:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTADJ_INFO:', length('RTADJ_INFO:')))
+         elseif (strncmpi(line, 'RTADJ_INFO:', length('RTADJ_INFO:')))
             o_rtAdjInfoMsg = [o_rtAdjInfoMsg {strtrim(line(length('RTADJ_INFO:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTADJ_WARNING:', length('RTADJ_WARNING:')))
+         elseif (strncmpi(line, 'RTADJ_WARNING:', length('RTADJ_WARNING:')))
             o_rtAdjWarningMsg = [o_rtAdjWarningMsg {strtrim(line(length('RTADJ_WARNING:')+1:end))}];
-         elseif (strncmp(upper(line), 'RTADJ_ERROR:', length('RTADJ_ERROR:')))
+         elseif (strncmpi(line, 'RTADJ_ERROR:', length('RTADJ_ERROR:')))
             o_rtAdjErrorMsg = [o_rtAdjErrorMsg {strtrim(line(length('RTADJ_ERROR:')+1:end))}];
          end
          idLine = idLine + 1;
          if (idLine > length(fileContents))
-            break;
+            break
          end
       end
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Duration format.
@@ -1022,4 +1022,4 @@ else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
 
-return;
+return

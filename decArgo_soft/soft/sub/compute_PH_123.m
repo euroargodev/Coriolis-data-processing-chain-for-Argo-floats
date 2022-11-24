@@ -56,7 +56,7 @@ global g_decArgo_calibInfo;
 
 
 if (isempty(a_VRS_PH))
-   return;
+   return
 end
 
 % get calibration information
@@ -66,14 +66,14 @@ if (isempty(g_decArgo_calibInfo))
       a_profTransPh.cycleNumber, ...
       a_profTransPh.profileNumber, ...
       a_profTransPh.direction);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH'))
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: TRANSISTOR_PH sensor calibration information is missing => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value in ''%c'' profile of TRANSISTOR_PH sensor\n', ...
       g_decArgo_floatNum, ...
       a_profTransPh.cycleNumber, ...
       a_profTransPh.profileNumber, ...
       a_profTransPh.direction);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
       (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
       (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
@@ -94,7 +94,7 @@ else
       a_profTransPh.cycleNumber, ...
       a_profTransPh.profileNumber, ...
       a_profTransPh.direction);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -126,4 +126,4 @@ if (~isempty(idNoDef))
 
 end
 
-return;
+return

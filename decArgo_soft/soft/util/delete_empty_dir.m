@@ -58,4 +58,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

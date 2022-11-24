@@ -42,12 +42,10 @@ a_floatPresTime = a_floatPres{3};
 
 % packet type 252
 dataCyProfPhaseList = a_cyProfPhaseList(a_cyProfPhaseIndexList, :);
-cyleList = unique(dataCyProfPhaseList(:, 3));
-profList = unique(dataCyProfPhaseList(:, 4));
-phaseList = unique(dataCyProfPhaseList(:, 5));
+cycleList = unique(dataCyProfPhaseList(:, 3));
 
-if (~isempty(cyleList))
-   if (length(cyleList) > 1)
+if (~isempty(cycleList))
+   if (length(cycleList) > 1)
       fprintf('WARNING: Float #%d Cycle #%d: more than one cycle data in the float pressure data SBD files\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    end
@@ -61,32 +59,29 @@ for id = 1:length(a_cyProfPhaseIndexList)
 end
 
 % print the float pressure data
-for idCy = 1:length(cyleList)
-   cycleNum = cyleList(idCy);
-   for idProf = 1:length(profList)
-      profNum = profList(idProf);
-      for idPhase = 1:length(phaseList)
-         phaseNum = phaseList(idPhase);
-
-         idPack = find((a_floatPresPumpOrEv(dataIndexList, 1) == cycleNum) & ...
-            (a_floatPresPumpOrEv(dataIndexList, 2) == profNum) & ...
-            (a_floatPresPumpOrEv(dataIndexList, 3) == phaseNum));
+cycleProfPhaseList = unique(dataCyProfPhaseList(:, 3:5), 'rows');
+for idCyPrPh = 1:size(cycleProfPhaseList, 1)
+   cycleNum = cycleProfPhaseList(idCyPrPh, 1);
+   profNum = cycleProfPhaseList(idCyPrPh, 2);
+   phaseNum = cycleProfPhaseList(idCyPrPh, 3);
+   
+   idPack = find((a_floatPresPumpOrEv(dataIndexList, 1) == cycleNum) & ...
+      (a_floatPresPumpOrEv(dataIndexList, 2) == profNum) & ...
+      (a_floatPresPumpOrEv(dataIndexList, 3) == phaseNum));
+   
+   if (~isempty(idPack))
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; Tech float pres; Pum(1)/Ev(0); Pres (bar); Rel. time (min)\n', ...
+         g_decArgo_floatNum, cycleNum, profNum, get_phase_name(phaseNum));
+      
+      for id = 1:length(idPack)
+         idP = dataIndexList(idPack(id));
          
-         if (~isempty(idPack))
-            fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; Tech float pres; Pum(1)/Ev(0); Pres (bar); Rel. time (min)\n', ...
-               g_decArgo_floatNum, cycleNum, profNum, get_phase_name(phaseNum));
-
-            for id = 1:length(idPack)
-               idP = dataIndexList(idPack(id));
-
-               fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; Tech float pres; %d; %d; %d\n', ...
-                  g_decArgo_floatNum, cycleNum, profNum, get_phase_name(phaseNum), ...
-                  a_floatPresPumpOrEv(idP, 4), a_floatPresActPres(idP, 4), a_floatPresTime(idP, 4));
-
-            end
-         end
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; Tech float pres; %d; %d; %d\n', ...
+            g_decArgo_floatNum, cycleNum, profNum, get_phase_name(phaseNum), ...
+            a_floatPresPumpOrEv(idP, 4), a_floatPresActPres(idP, 4), a_floatPresTime(idP, 4));
+         
       end
    end
 end
 
-return;
+return

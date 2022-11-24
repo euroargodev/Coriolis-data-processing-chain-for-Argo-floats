@@ -101,7 +101,7 @@ if (~isempty(a_dataSEAPOINT))
 end
 
 if (isempty(a_cyProfPhaseList))
-   return;
+   return
 end
 
 % consider only sensor data
@@ -115,7 +115,7 @@ for idDataType = 1:length(dataTypeList)
    
    % the stDev & median data are associated with mean data
    if (ismember(dataType, [1 4 7 16 38 41]))
-      continue;
+      continue
    end
    
    prof = [];
@@ -192,4 +192,4 @@ for idDataType = 1:length(dataTypeList)
    end
 end
 
-return;
+return

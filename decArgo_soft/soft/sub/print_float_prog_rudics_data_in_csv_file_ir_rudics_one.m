@@ -58,4 +58,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; rudics param; PI 7 - Send SB
    g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
    a_floatProgRudics(a_dataIndex, 8));
    
-return;
+return

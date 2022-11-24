@@ -57,7 +57,7 @@ for idCyc = 1:length(uCycleNum)
    cycleNum = uCycleNum(idCyc);
    
    if (cycleNum < 0)
-      continue;
+      continue
    end
    
    idData = find(cycleNumList == cycleNum);
@@ -98,7 +98,7 @@ for idCyc = 1:length(uCycleNum)
    cycleNum = uCycleNum(idCyc);
    
    if (cycleNum < 0)
-      continue;
+      continue
    end
    
    idData = find(cycleNumList == cycleNum);
@@ -152,7 +152,7 @@ uCycleNum = sort(unique(cycleNumList));
 for idCyc = 1:length(uCycleNum)
    cycleNum = uCycleNum(idCyc);
    if (cycleNum < 0)
-      continue;
+      continue
    end
    
    idData = find(cycleNumList == cycleNum);
@@ -195,7 +195,7 @@ end
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge CTS5 N_MEASUREMENT records.
@@ -247,7 +247,7 @@ end
 % store output data
 o_tabTrajNMeas = a_tabTrajNMeas;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge CTS5 N_CYCLE records.
@@ -310,4 +310,4 @@ end
 % store output data
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-return;
+return

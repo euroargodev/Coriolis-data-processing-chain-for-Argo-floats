@@ -70,7 +70,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -107,7 +107,7 @@ dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
 [ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
 if (ok == 0)
    fprintf('ERROR: In step1 => exit\n');
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ copy_file(dirOutStep1, dirOutStep2);
 [ok] = delete_double_argos_split_bis(dirOutStep2);
 if (ok == 0)
    fprintf('ERROR: In step2 => exit\n');
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,7 @@ dirOutStep3 = [DIR_OUTPUT '/STEP3/'];
 [ok] = create_argos_cycle_files_bis(floatList, dirOutStep2, dirOutStep3);
 if (ok == 0)
    fprintf('ERROR: In step3 => exit\n');
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +139,7 @@ dirOutStep4 = [DIR_OUTPUT '/STEP4/'];
 [ok] = co_cls_correct_argos_raw_file_bis(dirOutStep3, dirOutStep4);
 if (ok == 0)
    fprintf('ERROR: In step4 => exit\n');
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +154,7 @@ copy_file(dirOutStep4, [dirOutStep5 '/IN/']);
 [ok] = move_and_rename_prv_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
 if (ok == 0)
    fprintf('ERROR: In step5 => exit\n');
-   return;
+   return
 end
 rmdir([dirOutStep5 '/IN/'], 's');
 
@@ -163,7 +163,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Split Argos cycle files (one file for each satellite pass).
@@ -190,7 +190,7 @@ o_ok = 1;
 
 if (nargin ~= 3)
    o_ok = 0;
-   return;
+   return
 end
 
 % floats to process
@@ -200,7 +200,7 @@ floatList = varargin{1};
 DIR_INPUT_ARGOS_FILES = varargin{2};
 DIR_OUTPUT_ARGOS_FILES = varargin{3};
 
-% number of cyle files to process per run
+% number of cycle files to process per run
 NB_FILES_PER_RUN = 10000;
 
 % mode processing flags
@@ -244,7 +244,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    argosIdList = [argosIdList; floatArgosId];
@@ -321,7 +321,7 @@ while (~stop)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Find and delete identical split files (one file for each satellite pass)
@@ -348,7 +348,7 @@ o_ok = 1;
 
 if (nargin ~= 1)
    o_ok = 0;
-   return;
+   return
 end
 
 % input and output directory
@@ -411,7 +411,7 @@ for idDir = 1:nbDirs
                         fid1 = fopen(fileName1, 'r');
                         if (fid1 == -1)
                            fprintf('ERROR: Unable to open file: %s\n', fileName1);
-                           return;
+                           return
                         end
                         file1Contents = textscan(fid1, '%s');
                         fclose(fid1);
@@ -420,7 +420,7 @@ for idDir = 1:nbDirs
                         fid2 = fopen(fileName2, 'r');
                         if (fid2 == -1)
                            fprintf('ERROR: Unable to open file: %s\n', fileName2);
-                           return;
+                           return
                         end
                         file2Contents = textscan(fid2, '%s');
                         fclose(fid2);
@@ -432,14 +432,14 @@ for idDir = 1:nbDirs
                            if ((length(file1Contents) >= idL) && (length(file2Contents) >= idL))
                               if (strcmp(file1Contents{idL}, file2Contents{idL}) == 0)
                                  compRes = 2;
-                                 break;
+                                 break
                               end
                            elseif (length(file1Contents) >= idL)
                               compRes = 3;
-                              break;
+                              break
                            elseif (length(file2Contents) >= idL)
                               compRes = 4;
-                              break;
+                              break
                            end
                         end
 
@@ -449,25 +449,25 @@ for idDir = 1:nbDirs
                            fprintf('INFO: Files %s and %s are identical => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
-                           break;
+                           break
                         elseif (compRes == 3)
 
                            % new file contents is included in base file
                            fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
-                           break;
+                           break
                         elseif (compRes == 4)
 
                            % base file contents is included in new file
                            fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id2).name, dFiles(id1).name, dFiles(id1).name);
                            delete(fileName1);
                            deleted = 1;
-                           break;
+                           break
                         end
                      end
                      if (deleted == 1)
-                        break;
+                        break
                      end
                   end
 
@@ -483,7 +483,7 @@ for idDir = 1:nbDirs
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % For a given list of floats, process the associated Argos split files (one
@@ -514,7 +514,7 @@ o_ok = 1;
 
 if (nargin ~= 3)
    o_ok = 0;
-   return;
+   return
 end
 
 % float to process
@@ -571,7 +571,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    argosIdListAll(idFloat) = floatArgosId;
@@ -603,7 +603,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    
@@ -615,7 +615,7 @@ for idFloat = 1:nbFloats
    dirInputFloat = [DIR_INPUT_ARGOS_FILES '/' sprintf('%06d', floatArgosId) '/'];
    if (~isdir(dirInputFloat))
       fprintf('WARNING: No Argos data for float #%d\n', floatNum);
-      continue;
+      continue
    end
       
    % collect dates in the Argos files of the float
@@ -691,7 +691,7 @@ for idFloat = 1:nbFloats
          fIdIn = fopen(argosFileNames{idFile}, 'r');
          if (fIdIn == -1)
             fprintf('Error while opening file : %s\n', argosFileNames{idFile});
-            return;
+            return
          end
 
          text = [];
@@ -717,7 +717,7 @@ for idFloat = 1:nbFloats
                      fIdOut = fopen(fileNameList{fileNum}, 'a');
                      if (fIdOut == -1)
                         fprintf('ERROR: Unable to open file: %s\n', fileNameList{fileNum});
-                        return;
+                        return
                      end
 
                      for id = 1:length(text)
@@ -735,12 +735,12 @@ for idFloat = 1:nbFloats
                   end
                end
 
-               break;
+               break
             end
 
             % empty line
             if (strcmp(deblank(line), ''))
-               continue;
+               continue
             end
 
             % look for satellite pass header
@@ -762,7 +762,7 @@ for idFloat = 1:nbFloats
                      fIdOut = fopen(fileNameList{fileNum}, 'a');
                      if (fIdOut == -1)
                         fprintf('ERROR: Unable to open file: %s\n', fileNameList{fileNum});
-                        return;
+                        return
                      end
 
                      for id = 1:length(text)
@@ -829,7 +829,7 @@ for idFloat = 1:nbFloats
    argosIdOccList(idFloatArgosIdOcc) = argosIdOccList(idFloatArgosIdOcc) - 1;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Correction of the Argos HEX data.
@@ -856,7 +856,7 @@ o_ok = 1;
 
 if (nargin ~= 2)
    o_ok = 0;
-   return;
+   return
 end
 
 % input directory(ies) to process
@@ -907,7 +907,7 @@ for idName = 1:length(tabInputDirName)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Correction of the Argos HEX files of a given directory.
@@ -946,7 +946,7 @@ for idFic = 1:nbFiles
       fIdIn = fopen(filePathName, 'r');
       if (fIdIn == -1)
          fprintf('Error while opening file : %s\n', filePathName);
-         return;
+         return
       end
       
       % first step: looking for satellite pass header and storing the number of
@@ -961,7 +961,7 @@ for idFic = 1:nbFiles
             if (startLine ~= -1)
                tabNbLinesToReadCor = [tabNbLinesToReadCor; lineNum-startLine+1];
             end
-            break;
+            break
          end
          lineNum = lineNum + 1;
          
@@ -999,7 +999,7 @@ for idFic = 1:nbFiles
             fIdIn = fopen(filePathName, 'r');
             if (fIdIn == -1)
                fprintf('Error while opening file : %s\n', filePathName);
-               return;
+               return
             end
             
             % output file
@@ -1007,7 +1007,7 @@ for idFic = 1:nbFiles
             fIdOut = fopen(outputFileName, 'wt');
             if (fIdOut == -1)
                fprintf('Error while creating file : %s\n', outputFileName);
-               return;
+               return
             end
             
             lineNum = 0;
@@ -1017,7 +1017,7 @@ for idFic = 1:nbFiles
                while (nbLinesToCopy > 0)
                   line = fgetl(fIdIn);
                   if (line == -1)
-                     break;
+                     break
                   end
                   lineNum = lineNum + 1;
                   
@@ -1075,7 +1075,7 @@ for idFic = 1:nbFiles
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % For a given list of floats, process the associated Argos cycle files by:
@@ -1104,7 +1104,7 @@ o_ok = 1;
 
 if (nargin ~= 3)
    o_ok = 0;
-   return;
+   return
 end
 
 % float to process
@@ -1183,7 +1183,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    floatEndDate = listEndDate(idF);
@@ -1214,7 +1214,7 @@ for idFloat = 1:nbFloats
                      julian_2_gregorian_dec_argo(floatEndDate));
                   g_decArgo_inputArgosFile = argosFilePathName;
                   move_argos_input_file(floatArgosId, fileDate, floatNum, [], 'UUU');
-                  continue;
+                  continue
                end
             end
 
@@ -1244,7 +1244,7 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process one Argos cycle file by:
@@ -1328,14 +1328,14 @@ if (isempty(argosDataDate))
    fprintf('INFO: File (%s) contains no Argos messages => file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
-   return;
+   return
 elseif (length(unique(argosDataDate)) < NB_MSG_MIN)
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'GGG');
    fprintf('INFO: File (%s) contains only ghost messages => file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
-   return;
+   return
 end
 
 % find the cycle number
@@ -1347,7 +1347,7 @@ if (isempty(launchDate))
    fprintf('ERROR: Unable to compute cycle number because of missing meta-data => file stored without cycle number (i.e. not decoded)\n');
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
-   return;
+   return
 end
 
 % estimate the cycle number
@@ -1465,7 +1465,7 @@ if (lastArgosMsgDate > launchDate)
                fprintf('ERROR: Float #%d: Cannot determine cycle number for file: %s\n', ...
                   a_floatNum, subFileNameList{idFile});
                cycleNumber = [];
-               break;
+               break
             end
          end
          
@@ -1580,7 +1580,7 @@ else
    fprintf('INFO: Last date of input file (%s) is before float launch date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
       julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
       julian_2_gregorian_dec_argo(launchDate));
-   return;
+   return
 end
 
 % create the name of the input file and move it to the approriate directory
@@ -1625,4 +1625,4 @@ if (~isempty(cycleNumber))
    end
 end
 
-return;
+return

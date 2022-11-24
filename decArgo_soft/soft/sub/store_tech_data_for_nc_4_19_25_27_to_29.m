@@ -223,4 +223,4 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
    g_decArgo_cycleNum 616];
 g_decArgo_outputNcParamValue{end+1} = optodeStatusOut;
 
-return;
+return

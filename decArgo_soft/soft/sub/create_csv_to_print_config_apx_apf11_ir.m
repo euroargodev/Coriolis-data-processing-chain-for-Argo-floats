@@ -35,7 +35,7 @@ outputFileName = [g_decArgo_dirOutputCsvFile '/float_config_' a_comment num2str(
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-   return;
+   return
 end
 
 % print the full configuration
@@ -116,4 +116,4 @@ end
 
 fclose(fidOut);
 
-return;
+return

@@ -77,14 +77,14 @@ end
 
 if ~(exist(a_msgFileName, 'file') == 2)
    fprintf('ERROR: %sFile not found: %s\n', errorHeader, a_msgFileName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_msgFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: %sUnable to open file: %s\n', errorHeader, a_msgFileName);
-   return;
+   return
 end
 
 CONFIG_DATA_START = '$ Mission configuration for';
@@ -128,13 +128,13 @@ while 1
       if (endFlag ~= 1)
          %          fprintf('WARNING: End of file without ''<EOT>'' in file: %s\n', a_msgFileName);
       end
-      break;
+      break
    end
    
    lineNum = lineNum + 1;
    line = strtrim(line);
    if (isempty(line))
-      continue;
+      continue
    end
    
    if (any(strfind(line, CONFIG_DATA_START)))
@@ -359,16 +359,16 @@ while 1
       o_configDataStr{end+1} = line;
    elseif (driftMeasData == 1)
       o_driftMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (profInfo == 1)
       o_profInfoDataStr{end+1} = line;
-      continue;
+      continue
    elseif (lowResMeasData == 1)
       o_profLowResMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (highResMeasData == 1)
       o_profHighResMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (fixData == 1)
       if (flushMultipleData == 1)
          if (~isempty(gpsFixDataStr) || ~isempty(engineeringDataStr))
@@ -381,16 +381,16 @@ while 1
          flushMultipleData = 0;
       end
       gpsFixDataStr{end+1} = line;
-      continue;
+      continue
    elseif (engineeringData == 1)
       engineeringDataStr{end+1} = line;
-      continue;
+      continue
    else
       if (~strcmp(line, CONFIG_DATA_END))
          if (VERBOSE == 1)
             fprintf('PARSE_INFO: %sLine #%d : ''%s'' ignored in file: %s\n', errorHeader, lineNum, line, a_msgFileName);
          end
-         continue;
+         continue
       end
    end
 end
@@ -402,7 +402,7 @@ if (~isempty(gpsFixDataStr) || ~isempty(engineeringDataStr))
    o_engineeringDataStr{end+1} = engineeringDataStr;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the number of columns of Apex Irdium Sbd Low Resolution data.
@@ -457,7 +457,7 @@ switch (a_decoderId)
    otherwise
       fprintf('DEC_WARNING: %sNothing done yet in get_low_resolution_data_nb_col for decoderId #%d\n', ...
          errorHeader, a_decoderId);
-      return;
+      return
 end
 
-return;
+return

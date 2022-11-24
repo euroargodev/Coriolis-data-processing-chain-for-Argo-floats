@@ -34,4 +34,4 @@ o_coefAttValues(idDef) = ones(length(idDef), 1)*g_decArgo_coefAttDef;
 idNoDef = find(a_coefAttCounts ~= g_decArgo_coefAttCountsDef);
 o_coefAttValues(idNoDef) = o_coefAttValues(idNoDef)/1000;
 
-return;
+return

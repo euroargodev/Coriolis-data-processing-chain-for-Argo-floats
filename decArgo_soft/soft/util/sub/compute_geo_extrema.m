@@ -144,4 +144,4 @@ else
    fprintf('compute_geo_extrema: cannot use the optimization of the drawing window\n');
 end
 
-return;
+return

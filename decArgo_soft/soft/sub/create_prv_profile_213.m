@@ -111,7 +111,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
@@ -135,7 +135,7 @@ for type = [8 10 11 12]
                   (data(idMeas+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
                   (data(idMeas+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
                   (data(idMeas+7*7) == g_decArgo_tempDoxyDef))
-               break;
+               break
             end
             if (ismember(type, [11 12]))
                date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
@@ -198,4 +198,4 @@ o_ascProfC1PhaseDoxy = o_ascProfC1PhaseDoxy(idSorted);
 o_ascProfC2PhaseDoxy = o_ascProfC2PhaseDoxy(idSorted);
 o_ascProfTempDoxy = o_ascProfTempDoxy(idSorted);
 
-return;
+return

@@ -58,7 +58,7 @@ for idFile = 1:length(a_listFileNames)
       if (~isempty(strfind(fileName, fileTypeList{idType, 1})) && ...
             strcmp(fileExtension, fileTypeList{idType, 2}))
          ok = 1;
-         break;
+         break
       end
    end
    
@@ -154,4 +154,4 @@ switch(a_floatNum)
       move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
 end
 
-return;
+return

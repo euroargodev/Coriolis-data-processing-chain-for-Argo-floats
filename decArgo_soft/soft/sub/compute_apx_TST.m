@@ -45,13 +45,13 @@ switch (a_decoderId)
       % 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810
       msgNumOfBlockNum = 1;
             
-   case {1021, 1022} % 2.8.0, 2.10.4
+   case {1021, 1022} % 2.8.0.A, 2.10.4.A
       msgNumOfBlockNum = 10;
       
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in compute_apx_TST for decoderId #%d\n', ...
          a_decoderId);
-      return;
+      return
 end
 
 % collect information
@@ -97,7 +97,7 @@ end
 % compute TST
 [o_tst1, o_tst2] = compute_TST(tabDates, tabMsgBlockNum, a_timeDataConfig, a_decoderId);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute APEX TST using 2 methods: the TWR one and the 'improved' one.
@@ -209,7 +209,7 @@ if (~isempty(tabTsd2))
    o_tst2 = tabTsd2;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute one APEX TST.
@@ -242,4 +242,4 @@ blockTransTime = deltaDate/deltaNum;
 
 o_tranStartDate = a_date2 - (a_num2-1)*blockTransTime;
 
-return;
+return

@@ -65,9 +65,6 @@ global g_decArgo_calibInfo;
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
@@ -158,7 +155,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_floatConfig = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -176,7 +173,15 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
       idPos = find(strcmp(jConfNames{id}, configNames2) == 1, 1);
       if (~isempty(idPos))
          if (~isempty(jConfValues{id}))
-            configValues2(idPos) = str2num(jConfValues{id});
+            [value, status] = str2num(jConfValues{id});
+            if ((length(value) == 1) && (status == 1))
+               configValues2(idPos) = value;
+            else
+               fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+                  g_decArgo_floatNum, ...
+                  jConfNames{id});
+               return
+            end
          end
       else
          idPos = find(strcmp(jConfNames{id}, configNames1) == 1, 1);
@@ -234,13 +239,13 @@ if (~isnan(configValues2(idF1)))
                confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                idFCyclePeriod = find(strcmp(confName, configNames2) == 1, 1);
                configValues2(idFPV03) = configValues2(idFCyclePeriod);
-               break;
+               break
             end
          else
             confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
             idFCyclePeriod = find(strcmp(confName, configNames2) == 1, 1);
             configValues2(idFPV03) = configValues2(idFCyclePeriod);
-            break;
+            break
          end
       end
    end
@@ -267,7 +272,7 @@ if (~isempty(idPC0113))
             zoneThreshold = configValues2(idPos);
             if (configPC014 <= zoneThreshold)
                depthZoneNum = id;
-               break;
+               break
             end
          end
       end
@@ -383,7 +388,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:5
@@ -392,7 +397,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -401,7 +406,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -410,7 +415,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+15) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -419,7 +424,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(4, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -428,7 +433,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(5, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                               
@@ -447,7 +452,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:6
@@ -456,7 +461,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -474,7 +479,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:5
@@ -483,7 +488,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -492,7 +497,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -501,7 +506,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+15) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -510,7 +515,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(4, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -519,7 +524,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(5, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:1
@@ -528,7 +533,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(6, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                
@@ -555,21 +560,21 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   fieldName = ['E_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabENitrate = [tabENitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   fieldName = ['E_SWA_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   if (a_decoderId == 110)
                      fieldName = ['E_BISULFIDE_' num2str(id)];
@@ -577,7 +582,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                         tabEBisulfide = [tabEBisulfide calibData.(fieldName)];
                      else
                         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                        return;
+                        return
                      end
                   end
                   fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
@@ -585,7 +590,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
@@ -604,4 +609,4 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
    end
 end
 
-return;
+return

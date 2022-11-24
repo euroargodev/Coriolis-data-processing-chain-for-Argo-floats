@@ -5,12 +5,12 @@
 %  [o_tabProfiles, o_tabDrift, o_tabSurf, ...
 %    o_tabProfilesRaw, o_tabDriftRaw, o_tabSurfRaw] = ...
 %    process_profiles_ir_rudics_cts5_from_payload( ...
-%    a_payloadData, a_timedata, a_gpsData, ...
+%    a_payloadData, a_timeDataAll, a_gpsData, ...
 %    a_presCutOffProf, a_tabProfileCtd, a_timeInformation)
 %
 % INPUT PARAMETERS :
 %   a_payloadData     : payload data
-%   a_timedata        : decoded time data
+%   a_timeDataAll     : decoded time data (of all previous cycles)
 %   a_gpsData         : GPS data
 %   a_presCutOffProf  : CTD profile cut-off pressure
 %   a_tabProfileCtd   : CTD data
@@ -35,7 +35,7 @@
 function [o_tabProfiles, o_tabDrift, o_tabSurf, ...
    o_tabProfilesRaw, o_tabDriftRaw, o_tabSurfRaw] = ...
    process_profiles_ir_rudics_cts5_from_payload( ...
-   a_payloadData, a_timedata, a_gpsData, ...
+   a_payloadData, a_timeDataAll, a_gpsData, ...
    a_presCutOffProf, a_tabProfileCtd, a_timeInformation)
 
 % output parameters initialization
@@ -83,12 +83,11 @@ global g_decArgo_sensorList;
 % data to their correct cycle)
 global g_decArgo_trajDataFromApmtTech;
 
-
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
 if (isempty(a_payloadData))
-   return;
+   return
 end
 
 % if the float has a SUNA, we will also retrieve the floatPixelBegin and
@@ -542,7 +541,7 @@ for idP = 1:length(payloadProfiles)
          if (any((rawDataDates >= a_tabProfileCtd(idProfCtd).minMeasDate) & ...
                (rawDataDates <= a_tabProfileCtd(idProfCtd).maxMeasDate)))
             payloadProfile.phaseNum = a_tabProfileCtd(idProfCtd).phaseNumber;
-            break;
+            break
          end
       end
       
@@ -552,7 +551,7 @@ for idP = 1:length(payloadProfiles)
             if (any((rawDataDates >= profStructAll(idProfPayload).minMeasDate) & ...
                   (rawDataDates <= profStructAll(idProfPayload).maxMeasDate)))
                payloadProfile.phaseNum = profStructAll(idProfPayload).phaseNumber;
-               break;
+               break
             end
          end
       end
@@ -569,7 +568,7 @@ for idP = 1:length(payloadProfiles)
             g_decArgo_cycleNumFloat, ...
             g_decArgo_patternNumFloat, ...
             payloadProfile.sensorNumDecArgo);
-         continue;
+         continue
       end
    end
       
@@ -717,8 +716,22 @@ for idP = 1:length(payloadProfiles)
             profStruct(idProf).posSystem = 'GPS';
             
             % profile date and location information
-            [profStruct(idProf)] = add_profile_date_and_location_ir_rudics_cts5( ...
-               profStruct(idProf), a_timedata, a_gpsData);
+            
+            % look for the time data set to use (remember that some payload
+            % profiles may have been affected to a previous cycle)
+            idF = find( ...
+               (cell2mat(a_timeDataAll(:, 1)) == profStruct(idProf).cycleNumber) & ...
+               (cell2mat(a_timeDataAll(:, 2)) == profStruct(idProf).profileNumber));
+            if (~isempty(idF))
+               timeData = a_timeDataAll{idF, 3};
+               [profStruct(idProf)] = add_profile_date_and_location_ir_rudics_cts5( ...
+                  profStruct(idProf), timeData, a_gpsData);
+            else
+               fprintf('DEC_ERROR: Float #%d Cycle #%d: Unable to retrieve time information to date and locate sensor #%d profile => profile not dated\n', ...
+                  g_decArgo_floatNum, ...
+                  profStruct(idProf).outputCycleNumber, ...
+                  profStruct(idProf).sensorNumber);
+            end
             
             if (~ismember(idP, rawDataId))
                o_tabProfiles = [o_tabProfiles profStruct(idProf)];
@@ -747,7 +760,7 @@ for idP = 1:length(payloadProfiles)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check that payload measurement times correspond to the current cycle and
@@ -823,7 +836,7 @@ if (~isempty(idF))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Determine the phase of 'raw' data from their measurement timings.
@@ -906,7 +919,7 @@ for idL = 1:size(a_timeInformation, 1)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Split the SUNA profile in 2, one with SUNA measurements and one with CTD
@@ -968,7 +981,7 @@ if (a_tabProfiles.sensorNumber == 6)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create main cycle timings from APMT traj information.
@@ -1023,7 +1036,7 @@ for idL = 1:size(a_allTrajDataFromApmtTech, 1)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve time associated to a given measurement code.
@@ -1057,4 +1070,4 @@ if (~isempty(idTime))
    o_time = a_timeTab(idTime);
 end
 
-return;
+return

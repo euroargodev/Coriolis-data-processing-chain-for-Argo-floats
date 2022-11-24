@@ -35,4 +35,4 @@ o_tabDate = a_tabDate;
 idNoDef = find(a_tabDate ~= g_decArgo_dateDef);
 o_tabDate(idNoDef) = a_tabDate(idNoDef) - floatClockDrift;
 
-return;
+return

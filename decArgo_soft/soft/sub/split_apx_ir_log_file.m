@@ -25,14 +25,14 @@ function split_apx_ir_log_file(a_inputFilePathName, a_outputFilePathName, a_firs
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the input file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 lineNum = 0;
@@ -41,7 +41,7 @@ while (1)
    line = fgetl(fId);
    
    if (line == -1)
-      break;
+      break
    end
    
    lineNum = lineNum + 1;
@@ -50,7 +50,7 @@ while (1)
          lines{end+1} = line;
       end
       if (lineNum >= a_lastLine)
-         break;
+         break
       end
    else
       if (lineNum >= a_firstLine)
@@ -65,11 +65,11 @@ fclose(fId);
 fIdOut = fopen(a_outputFilePathName, 'wt');
 if (fIdOut == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_outputFilePathName);
-   return;
+   return
 end
 
 fprintf(fIdOut, '%s\n', lines{:});
 
 fclose(fIdOut);
 
-return;
+return

@@ -31,11 +31,11 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_gpsData))
-   return;
+   return
 end
 
 if (a_cycleNumber < 0)
-   return;
+   return
 end
 
 % unpack  GPS data
@@ -68,4 +68,4 @@ if (~isempty(idForCy))
    end
 end
 
-return;
+return

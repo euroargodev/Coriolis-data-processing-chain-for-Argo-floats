@@ -37,13 +37,13 @@ diary(logFile);
 % read DB meta file
 if ~(exist(dbMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', dbMetaFileName);
-   return;
+   return
 end
 
 fId = fopen(dbMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dbMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -59,7 +59,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('%s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -76,7 +76,7 @@ dimLevelList = sscanf(S, '%f*');
 % load ANDRO meta file
 if ~(exist(androMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', androMetaFileName);
-   return;
+   return
 end
 
 data = load(androMetaFileName);
@@ -102,28 +102,28 @@ for idF = 1:length(androFloats)
    idRepRate = find(techParamIdList(idForWmo) == 419);
    if (length(idRepRate) ~= nbMis)
       fprintf('ERROR: length(REPETITION_RATE)\n');
-      continue;
+      continue
    end
    
    % CYCLE_TIME
    idCyTime = find(techParamIdList(idForWmo) == 420);
    if (length(idCyTime) ~= nbMis)
       fprintf('ERROR: length(CYCLE_TIME)\n');
-      continue;
+      continue
    end
 
    % PARKING_PRESSURE
    idParkPres = find(techParamIdList(idForWmo) == 425);
    if (length(idParkPres) ~= nbMis)
       fprintf('ERROR: length(PARKING_PRESSURE)\n');
-      continue;
+      continue
    end
 
    % DEEPEST_PRESSURE
    idProfPres = find(techParamIdList(idForWmo) == 426);
    if (length(idProfPres) ~= nbMis)
       fprintf('ERROR: length(DEEPEST_PRESSURE)\n');
-      continue;
+      continue
    end
    
    for idMis = 1:nbMis
@@ -132,7 +132,7 @@ for idF = 1:length(androFloats)
       bRepRate = str2num(metaData{idForWmo(idRepRate(id)), 4});
       if (aRepRate ~= bRepRate)
          fprintf('ERROR: REPETITION_RATE\n');
-         continue;
+         continue
       end
       
       aCyTime = androCycleTime(idForFloat(idMis));
@@ -140,7 +140,7 @@ for idF = 1:length(androFloats)
       bCyTime = str2num(metaData{idForWmo(idCyTime(id)), 4});
       if (aCyTime ~= bCyTime)
          fprintf('ERROR: CYCLE_TIME\n');
-         continue;
+         continue
       end
 
       aParkPres = androParkPres(idForFloat(idMis));
@@ -148,7 +148,7 @@ for idF = 1:length(androFloats)
       bParkPres = str2num(metaData{idForWmo(idParkPres(id)), 4});
       if (aParkPres ~= bParkPres)
          fprintf('ERROR: PARKING_PRESSURE\n');
-         continue;
+         continue
       end
       
       aProfPres = androProfPres(idForFloat(idMis));
@@ -156,7 +156,7 @@ for idF = 1:length(androFloats)
       bProfPres = str2num(metaData{idForWmo(idProfPres(id)), 4});
       if (aProfPres ~= bProfPres)
          fprintf('ERROR: DEEPEST_PRESSURE\n');
-         continue;
+         continue
       end
    end
 end
@@ -165,4 +165,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

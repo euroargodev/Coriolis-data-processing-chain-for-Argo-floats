@@ -60,7 +60,7 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
       fId = fopen(txtFilePathName, 'r');
       if (fId == -1)
          fprintf('ERROR: Error while opening CSV file: %s\n', txtFilePathName);
-         return;
+         return
       end
       
       % read the CSV file
@@ -107,7 +107,7 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
          fIdOut = fopen(outputFilePathName, 'wt');
          if (fIdOut == -1)
             fprintf('ERROR: Error while creating file : %s\n', outputFilePathName);
-            return;
+            return
          end
          
          if (str2num(msgSize) ~= length(dataHex)/2)
@@ -163,7 +163,7 @@ if (0) % TO RETRIEVE IMEI VS FLOAT_SN
       fId = fopen(txtFilePathName, 'r');
       if (fId == -1)
          fprintf('ERROR: Error while opening CSV file: %s\n', txtFilePathName);
-         return;
+         return
       end
       
       % read the CSV file
@@ -195,4 +195,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

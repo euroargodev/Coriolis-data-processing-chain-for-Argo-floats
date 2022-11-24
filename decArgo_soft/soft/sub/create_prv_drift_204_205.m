@@ -44,7 +44,7 @@ global g_decArgo_salDef;
 
 
 if (isempty(a_dataCTD))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -65,7 +65,7 @@ for idP = 1:length(idDrift)
             data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
             data(idMeas+1+15) = 0;
          else
-            break;
+            break
          end
       end
       
@@ -84,4 +84,4 @@ o_parkPres = o_parkPres(idSorted);
 o_parkTemp = o_parkTemp(idSorted);
 o_parkSal = o_parkSal(idSorted);
 
-return;
+return

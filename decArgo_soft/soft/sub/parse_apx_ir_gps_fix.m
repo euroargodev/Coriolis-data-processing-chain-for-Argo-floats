@@ -60,7 +60,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
    
    gpsFixDataStr = a_gpsFixDataStr{idGpsFix};
    if (isempty(gpsFixDataStr))
-      continue;
+      continue
    end
    for idFix = 1:length(gpsFixDataStr)
       
@@ -70,7 +70,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# GPS fix obtained in %d seconds.');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
-            continue;
+            continue
          end
          
          gpsLocAcqTime = val;
@@ -81,7 +81,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Fix: %f %f %d/%d/%d %d %d');
          if (~isempty(errmsg) || (count ~= 7))
             fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
-            continue;
+            continue
          end
          
          timeStr = sprintf('%06d', val(6));
@@ -97,7 +97,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# Attempt to get GPS fix failed after %ds.');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
-            continue;
+            continue
          end
          
          o_gpsLocFailedAcqTime{end+1} = val;
@@ -108,7 +108,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# Ice evasion initiated at P=%fdbars.');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
-            continue;
+            continue
          end
          
          o_gpsLocFailedIce{end+1} = val;
@@ -139,4 +139,4 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
    end
 end
 
-return;
+return

@@ -40,7 +40,7 @@ idConf = find(g_decArgo_floatConfig.NUMBER == configMissionNumber);
 if (isempty(idConf))
    fprintf('WARNING: Float #%d Cycle #%d: config #%d is missing\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, configMissionNumber);
-   return;
+   return
 end
 configNames = g_decArgo_floatConfig.NAMES;
 configValues = g_decArgo_floatConfig.VALUES(:, idConf);
@@ -55,4 +55,4 @@ if (~isempty(idPos) && ~isempty(configValues(idPos)) && ~isnan(configValues(idPo
    end
 end
 
-return;
+return

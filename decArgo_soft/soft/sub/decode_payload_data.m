@@ -28,14 +28,14 @@ o_emptyPayloadData = 1;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: decode_payload_data: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = fread(fId)';
 fclose(fId);
@@ -55,7 +55,7 @@ o_payloadData = decode_data(o_payloadData);
 % finalize payload data
 [o_payloadData, o_emptyPayloadData] = finalize_payload_data(o_payloadData);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse input payload data.
@@ -125,7 +125,7 @@ while(~isempty(data))
             data(1:idF3+length(ptn3)-1) = [];
          else
             fprintf('ERROR: Inconsistent payload data => ignored\n');
-            return;
+            return
          end
       elseif ((length(data) >= length(ptn7)) && (strcmp(char(data(1:length(ptn7))), ptn7)))
          % '<!--'
@@ -150,7 +150,7 @@ while(~isempty(data))
             data(1:idF8+length(ptn8)-1) = [];
          else
             fprintf('ERROR: Inconsistent payload data => ignored\n');
-            return;
+            return
          end
       elseif ((length(data) >= length(ptn4)) && (strcmp(char(data(1:length(ptn4))), ptn4)))
          % '</'
@@ -173,7 +173,7 @@ while(~isempty(data))
             textData = '';
          else
             fprintf('ERROR: Inconsistent payload data => ignored\n');
-            return;
+            return
          end
       elseif ((length(data) >= length(ptn1)) && (strcmp(char(data(1:length(ptn1))), ptn1)))
          % '<'
@@ -257,11 +257,11 @@ for idT = 1:length(idTagEnd)
             payloadData{idTagEnd(idT), 5} = '';
          else
             fprintf('WARNING: Inconsistent payload data => ignored\n');
-            return;
+            return
          end
       else
          fprintf('WARNING: Inconsistent payload data => ignored\n');
-         return;
+         return
       end
    end
 end
@@ -292,14 +292,14 @@ for idL = 1:size(payloadData, 1)
          payloadData{idL, 4} = data;
       else
          fprintf('ERROR: Inconsistent payload data => ignored\n');
-         return;
+         return
       end
    end
 end
 
 o_payloadData = payloadData;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode payload data.
@@ -327,7 +327,7 @@ function [o_payloadData] = decode_data(a_payloadData)
 o_payloadData = [];
 
 if (isempty(a_payloadData))
-   return;
+   return
 end
 
 % decode sensor data
@@ -363,22 +363,22 @@ for idL = 1:length(idData)
                payloadData{idD, 5} = {paramList {data}};
             else
                fprintf('ERROR: Inconsistent payload data\n');
-               return;
+               return
             end
          else
             fprintf('ERROR: Inconsistent payload data\n');
-            return;
+            return
          end
       else
          fprintf('ERROR: Inconsistent payload data\n');
-         return;
+         return
       end
    end
 end
 
 o_payloadData = payloadData;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode payload sensor data.
@@ -409,7 +409,7 @@ o_sensorData = [];
 % check data consistency
 if (rem(size(a_sensorData, 2), a_nbCol*4) ~= 0)
    fprintf('ERROR: Inconsistent payload data\n');
-   return;
+   return
 end
 
 % decode sensor data
@@ -421,7 +421,7 @@ rawData(find(rawData == inf('single'))) = nan;
 
 o_sensorData = reshape(rawData, a_nbCol, length(rawData)/a_nbCol)';
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode payload data.
@@ -451,7 +451,7 @@ o_payloadData = [];
 o_emptyPayloadData = 1;
 
 if (isempty(a_payloadData))
-   return;
+   return
 end
 
 ignoredItems = [ ...
@@ -526,4 +526,4 @@ end
 
 o_payloadData = payloadData;
 
-return;
+return

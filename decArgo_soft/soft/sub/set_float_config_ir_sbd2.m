@@ -104,7 +104,7 @@ switch (a_decoderId)
                         configName = tmpConfNames{id};
                         if (isempty(strfind(configName, 'CONFIG_PC_')))
                            if (updateNowPtPvPm == 0)
-                              continue;
+                              continue
                            end
                         end
                         idPos = find(strcmp(configName, configNames) == 1, 1);
@@ -151,13 +151,13 @@ switch (a_decoderId)
                                     confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                                     idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                                     currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                                    break;
+                                    break
                                  end
                               else
                                  confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                                  idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                                  currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                                 break;
+                                 break
                               end
                            end
                         end
@@ -297,7 +297,7 @@ switch (a_decoderId)
                         configName = tmpConfNames{id};
                         if (isempty(strfind(configName, 'CONFIG_PC_')))
                            if (updateNowPtPvPm == 0)
-                              continue;
+                              continue
                            end
                         end
                         idPos = find(strcmp(configName, configNames) == 1, 1);
@@ -344,13 +344,13 @@ switch (a_decoderId)
                                     confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                                     idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                                     currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                                    break;
+                                    break
                                  end
                               else
                                  confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                                  idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                                  currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                                 break;
+                                 break
                               end
                            end
                         end
@@ -377,7 +377,7 @@ switch (a_decoderId)
                                  zoneThreshold = currentConfig(idPos);
                                  if (configPC014 <= zoneThreshold)
                                     depthZoneNum = id;
-                                    break;
+                                    break
                                  end
                               end
                            end
@@ -461,4 +461,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

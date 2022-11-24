@@ -2,13 +2,12 @@
 % Duplicate a list of files from a directory to another one.
 %
 % SYNTAX :
-%  [o_ok] = duplicate_files_ir_cts4(a_listFileNames, a_inputDir, a_outputDir, a_floatDecId)
+%  [o_ok] = duplicate_files_ir_cts4(a_listFileNames, a_inputDir, a_outputDir)
 %
 % INPUT PARAMETERS :
 %   a_listFileNames : names of the files to duplicate
 %   a_inputDir      : input directory
 %   a_outputDir     : output directory
-%   a_floatDecId    : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_ok : copy operation report flag (1 if ok, 0 otherwise)
@@ -21,7 +20,7 @@
 % RELEASES :
 %   09/18/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = duplicate_files_ir_cts4(a_listFileNames, a_inputDir, a_outputDir, a_floatDecId)
+function [o_ok] = duplicate_files_ir_cts4(a_listFileNames, a_inputDir, a_outputDir)
 
 % output parameters initialization
 o_ok = 1;
@@ -33,8 +32,8 @@ for idFile = 1:length(a_listFileNames)
    fileNamOut = [a_outputDir '/' fileName];
    if (copy_file(fileNameIn, fileNamOut) == 0)
       o_ok = 0;
-      return;
+      return
    end
 end
 
-return;
+return

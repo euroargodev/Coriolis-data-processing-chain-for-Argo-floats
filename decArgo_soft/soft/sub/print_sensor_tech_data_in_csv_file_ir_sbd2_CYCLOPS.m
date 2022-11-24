@@ -131,4 +131,4 @@ for id = 1:length(idPack)
       a_sensorTechCYCLOPSOpenDrainOutputState(idP, 3));
 end
 
-return;
+return

@@ -30,7 +30,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 if (size(a_tabTech, 1) > 1)
@@ -249,4 +249,4 @@ elseif (size(a_tabTech, 1) == 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 74));
 end
 
-return;
+return

@@ -45,7 +45,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatwmo'))
@@ -57,7 +57,7 @@ if (~isempty(a_varargin))
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
-               return;
+               return
             end
          else
             fprintf('WARNING: unexpected input argument (%s) => ignored\n', a_varargin{id});
@@ -70,7 +70,7 @@ end
 if (isempty(floatWmo))
    fprintf('ERROR: ''floatwmo'' input param is mandatory => exit\n');
    o_inputError = 1;
-   return;
+   return
 end
 
 % retrieve float IMEI number
@@ -83,7 +83,7 @@ end
 if (isempty(floatImei))
    fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
-   return;
+   return
 end
 g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatImei '/'];
 
@@ -93,7 +93,7 @@ if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
    o_inputError = 1;
    return;
 end
-   
+
 % get archive directory
 checkRsyncLog = 0;
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatImei '_' num2str(floatWmo) '/'];
@@ -122,4 +122,4 @@ g_decArgo_rsyncFloatSbdFileList = tabFloatMailFiles;
 % output data
 o_floatList = unique(g_decArgo_rsyncFloatWmoList);
 
-return;
+return

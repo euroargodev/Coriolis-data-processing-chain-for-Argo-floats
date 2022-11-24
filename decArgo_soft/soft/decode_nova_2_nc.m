@@ -48,7 +48,7 @@ if (nargin == 0)
    % float list is given in configuration file
    if ~(exist(g_decArgo_floatListFileName, 'file') == 2)
       fprintf('ERROR: Float file list not found: %s\n', g_decArgo_floatListFileName);
-      return;
+      return
    end
 
    floatList = load(g_decArgo_floatListFileName);
@@ -76,4 +76,4 @@ decode_nova(floatList);
 
 diary off;
 
-return;
+return

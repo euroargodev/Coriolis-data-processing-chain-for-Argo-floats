@@ -32,10 +32,10 @@ if (var_is_present_dec_argo(a_ncId, a_varName))
       attName = netcdf.inqAttName(a_ncId, netcdf.inqVarID(a_ncId, a_varName), idAtt);
       if (strcmp(attName, a_attName))
          o_present = 1;
-         break;
+         break
       end
    end
    
 end
 
-return;
+return

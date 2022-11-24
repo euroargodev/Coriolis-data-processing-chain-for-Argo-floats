@@ -52,7 +52,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -77,7 +77,7 @@ diary(logFile);
 outputFileName = [DIR_LOG_CSV_FILE '/' 'db_collect_data_for_vss' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Line; WMO; Nb thresholds; ' ...
    'Threshol #1; Threshol #2; Thickness #1; Thickness #2; Thickness #3; Nb prof'];
@@ -92,13 +92,13 @@ fprintf(fidOut, '%s\n', header);
 % read meta file
 if ~(exist(floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', floatMetaFileName);
-   return;
+   return
 end
 
 fId = fopen(floatMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', floatMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -114,7 +114,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('%s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -126,7 +126,7 @@ floatList = unique(wmoList);
 
 if ~(exist(floatListFileName, 'file') == 2)
    fprintf('File not found: %s\n', floatListFileName);
-   return;
+   return
 end
 refFloatList = load(floatListFileName);
 
@@ -149,7 +149,7 @@ for idFloat = 1:nbFloats
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => exit\n', floatNum);
-      return;
+      return
    end
    floatDecId = listDecId(idF);
    
@@ -161,7 +161,7 @@ for idFloat = 1:nbFloats
          nbThreshold = 2;
       otherwise
          fprintf('WARNING: Nothing done yet for decoderId #%d\n', floatDecId);
-         continue;
+         continue
    end
 
    % meta-data of the current float
@@ -269,4 +269,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

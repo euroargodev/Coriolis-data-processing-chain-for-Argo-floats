@@ -44,12 +44,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'OCR'))
    fprintf('WARNING: Float #%d Cycle #%d: OCR sensor calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.OCR, 'A0PAR')) && ...
       (isfield(g_decArgo_calibInfo.OCR, 'A1PAR')) && ...
       (isfield(g_decArgo_calibInfo.OCR, 'LmPAR')))
@@ -60,7 +60,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent OCR sensor calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % compute output data
@@ -68,4 +68,4 @@ idNoDef = find(a_RAW_DOWNWELLING_PAR ~= a_RAW_DOWNWELLING_PAR_fill_value);
 o_DOWNWELLING_PAR(idNoDef) = ...
    a1PAR*(a_RAW_DOWNWELLING_PAR(idNoDef) - a0PAR)*lmPAR;
 
-return;
+return

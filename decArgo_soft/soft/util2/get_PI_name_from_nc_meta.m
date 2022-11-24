@@ -42,7 +42,7 @@ if (nargin == 0)
    % floats to process come from FLOAT_LIST_FILE_NAME
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -68,7 +68,7 @@ outputFileName = [DIR_LOG_CSV_FILE '/get_PI_name_from_nc_meta' name '_' datestr(
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Erreur ouverture fichier: %s\n', outputFileName);
-   return;
+   return
 end
 
 header = ['Wmo; PI name; Profile type; Nb RT prof.; Nb DM prof.'];
@@ -137,4 +137,4 @@ diary off;
 
 fclose(fidOut);
 
-return;
+return

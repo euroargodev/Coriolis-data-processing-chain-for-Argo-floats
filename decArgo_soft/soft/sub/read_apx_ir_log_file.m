@@ -55,7 +55,7 @@ switch (a_decoderId)
    otherwise
       fprintf('DEC_WARNING: %sNothing done yet in read_apx_ir_log_file for decoderId #%d\n', ...
          errorHeader, a_decoderId);
-      return;
+      return
 end
 
-return;
+return

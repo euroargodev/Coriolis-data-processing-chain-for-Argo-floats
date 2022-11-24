@@ -22,7 +22,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabTrajIndex, o_tabTrajData] = collect_profile_trajectory_data_cts5( ...
    a_tabProfiles)
-               
+
 % output parameters initialization
 o_tabTrajIndex = [];
 o_tabTrajData = [];
@@ -54,7 +54,7 @@ for idProf = 1:length(a_tabProfiles)
    else
       measCode = g_MC_DescProf;
    end
-
+   
    datedMeasStruct = get_dated_meas_init_struct(profile.cycleNumber, ...
       profile.profileNumber, profile.phaseNumber);
    
@@ -65,7 +65,7 @@ for idProf = 1:length(a_tabProfiles)
    
    dates = profile.dates;
    idDated = find(dates ~= paramJuld.fillValue);
-
+   
    datedMeasStruct.dates = profile.dates(idDated);
    datedMeasStruct.datesAdj = profile.datesAdj(idDated);
    datedMeasStruct.data = profile.data(idDated, :);
@@ -90,68 +90,63 @@ for idProf = 1:length(a_tabProfiles)
          subOffset = profile.paramNumberOfSubLevels;
          offset = sum(idSub) - length(idSub);
       end
-            
+      
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
       end
-
+      
       pres = profile.data(:, idPres+offset);
-      [unused, idMax] = max(pres);
-
+      [~, idMax] = max(pres);
+      
       profInfo = [profInfo;
          profile.cycleNumber profile.profileNumber direction max(pres) idMax idProf];
    end
 end
 
 if (~isempty(profInfo))
-   uCycle = sort(unique(profInfo(:, 1)));
-   uProf = sort(unique(profInfo(:, 2)));
-   uDir = sort(unique(profInfo(:, 3)));
-   for idC = 1:length(uCycle)
-      cyNum = uCycle(idC);
-      for idP = 1:length(uProf)
-         profNum = uProf(idP);
-         for idD = 1:length(uDir)
-            dirNum = uDir(idD);
-            if (dirNum == 2)
-               measCode = g_MC_AscProfDeepestBin;
-            else
-               measCode = g_MC_DescProfDeepestBin;
-            end
-   
-            idProf = find((profInfo(:, 1) == cyNum) & ...
-               (profInfo(:, 2) == profNum) & ...
-               (profInfo(:, 3) == dirNum));
-            if (~isempty(idProf))
-               [unused, idMax] = max(profInfo(idProf, 4));
-               idProfMax = idProf(idMax);
-               
-               profile = a_tabProfiles(profInfo(idProfMax, 6));
-               
-               datedMeasStruct = get_dated_meas_init_struct(cyNum, ...
-                  profNum, profile.phaseNumber);
-               
-               datedMeasStruct.paramList = profile.paramList;
-               datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
-               datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
-               datedMeasStruct.dateList = profile.dateList;
-               
-               datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
-               datedMeasStruct.datesAdj = profile.datesAdj(profInfo(idProfMax, 5));
-               datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
-               datedMeasStruct.sensorNumber = profile.sensorNumber;
-               
-               o_tabTrajIndex = [o_tabTrajIndex;
-                  measCode  cyNum profNum profile.phaseNumber];
-               o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
-            end
-         end
+   cycleProfDirList = unique(profInfo(:, 1:3), 'rows');
+   for idCyPrDir = 1:size(cycleProfDirList, 1)
+      cyNum = cycleProfDirList(idCyPrDir, 1);
+      profNum = cycleProfDirList(idCyPrDir, 2);
+      dirNum = cycleProfDirList(idCyPrDir, 3);
+      
+      if (dirNum == 2)
+         measCode = g_MC_AscProfDeepestBin;
+      else
+         measCode = g_MC_DescProfDeepestBin;
+      end
+      
+      idProf = find((profInfo(:, 1) == cyNum) & ...
+         (profInfo(:, 2) == profNum) & ...
+         (profInfo(:, 3) == dirNum));
+      if (~isempty(idProf))
+         [~, idMax] = max(profInfo(idProf, 4));
+         idProfMax = idProf(idMax);
+         
+         profile = a_tabProfiles(profInfo(idProfMax, 6));
+         
+         datedMeasStruct = get_dated_meas_init_struct(cyNum, ...
+            profNum, profile.phaseNumber);
+         
+         datedMeasStruct.paramList = profile.paramList;
+         datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
+         datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
+         datedMeasStruct.dateList = profile.dateList;
+         
+         datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
+         datedMeasStruct.datesAdj = profile.datesAdj(profInfo(idProfMax, 5));
+         datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
+         datedMeasStruct.sensorNumber = profile.sensorNumber;
+         
+         o_tabTrajIndex = [o_tabTrajIndex;
+            measCode  cyNum profNum profile.phaseNumber];
+         o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
       end
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store dated measurements.
@@ -169,7 +164,7 @@ return;
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -191,4 +186,4 @@ o_datedMeasStruct = struct( ...
    'datesAdj', '', ...
    'sensorNumber', -1);
 
-return;
+return

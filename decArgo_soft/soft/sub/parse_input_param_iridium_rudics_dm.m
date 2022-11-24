@@ -45,7 +45,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatwmo'))
@@ -57,7 +57,7 @@ if (~isempty(a_varargin))
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
-               return;
+               return
             end
          else
             fprintf('WARNING: unexpected input argument (%s) => ignored\n', a_varargin{id});
@@ -70,14 +70,14 @@ end
 if (isempty(floatWmo))
    fprintf('ERROR: ''floatwmo'' input param is mandatory => exit\n');
    o_inputError = 1;
-   return;
+   return
 end
 
 % check the corresponding directories and files
 if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
    fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
    o_inputError = 1;
-   return;
+   return
 end
 
 % retrieve float login name
@@ -90,7 +90,7 @@ end
 if (isempty(floatLoginName))
    fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
-   return;
+   return
 end
 
 % set directory of float rsync log files
@@ -129,4 +129,4 @@ else
    o_floatList = floatWmo;
 end
 
-return;
+return

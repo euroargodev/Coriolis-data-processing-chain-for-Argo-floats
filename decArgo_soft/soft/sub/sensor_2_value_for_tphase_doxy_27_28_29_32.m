@@ -35,4 +35,4 @@ idNoDef = find((a_tPhaseDoxyCounts ~= g_decArgo_tPhaseDoxyCountsDef) & ...
    (a_tPhaseDoxyCounts ~= 8191)); % 8191 is the transmitted value when the Optade is Ko
 o_tPhaseDoxyValues(idNoDef) = o_tPhaseDoxyValues(idNoDef)*0.008 + 10;
 
-return;
+return

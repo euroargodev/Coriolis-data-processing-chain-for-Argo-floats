@@ -78,7 +78,7 @@ for idProf = 1:length(a_tabProfiles)
             end
             
             if (prevLocDate ~= g_decArgo_dateDef)
-               break;
+               break
             end
          end
       end
@@ -119,7 +119,7 @@ for idProf = 1:length(a_tabProfiles)
                end
                
                if (nextLocDate ~= g_decArgo_dateDef)
-                  break;
+                  break
                end
             end
          end
@@ -150,4 +150,4 @@ end
 % output data
 o_tabProfiles = a_tabProfiles;
 
-return;
+return

@@ -34,7 +34,7 @@ floatList = load(floatListFileName);
 outputDirName = [inputDirName '/selected/'];
 if (exist(outputDirName, 'dir') == 7)
    fprintf('Le répertoire %s existe déjà, arrêt du programme\n', outputDirName);
-   return;
+   return
 else
    mkdir(outputDirName);
 end
@@ -56,4 +56,4 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return

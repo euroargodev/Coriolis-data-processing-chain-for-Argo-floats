@@ -54,7 +54,7 @@ global g_decArgo_doxy_202_204_204_pCoef3;
 
 % 07/07/2011 C.Lagadec/J.P.Rannou (needed on Linux platform?)
 if isempty(a_tPhaseDoxyValues)
-   return;
+   return
 end
 
 o_doxyValues = ones(length(a_tPhaseDoxyValues), 1)*g_decArgo_doxyDef;
@@ -107,4 +107,4 @@ if (~isempty(idNoDef))
    o_doxyValues(idNoDef) = oxyValues;
 end
 
-return;
+return

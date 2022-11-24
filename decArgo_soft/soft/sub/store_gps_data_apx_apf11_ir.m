@@ -41,7 +41,7 @@ global g_decArgo_gpsData;
 
 
 if (isempty(a_gpsDataSci) && isempty(a_gpsDataSys))
-   return;
+   return
 end
 
 % unpack  GPS data
@@ -260,4 +260,4 @@ g_decArgo_gpsData{8} = gpsLocAccuracy;
 g_decArgo_gpsData{10} = gpsLocNbSat;
 g_decArgo_gpsData{11} = gpsLocTimeToFix;
 
-return;
+return

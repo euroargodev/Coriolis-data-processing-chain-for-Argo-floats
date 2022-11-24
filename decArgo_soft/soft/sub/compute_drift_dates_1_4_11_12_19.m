@@ -54,7 +54,7 @@ lastDriftMesDate = firstDriftMesDate + (nbDriftMes-1)*driftSampPeriodDay;
 o_parkDateHour = round([firstDriftMesDate*24:a_driftSamplingPeriod:lastDriftMesDate*24]);
 
 % try to fit transmitted data in theoretical array
-[unused, idSort] = sort(a_msgDates);
+[~, idSort] = sort(a_msgDates);
 filled = zeros(length(o_parkDateHour), 1);
 for id = 1:size(a_tabDrifCTD, 1)
    idMsg = idSort(id);
@@ -70,7 +70,7 @@ for id = 1:size(a_tabDrifCTD, 1)
          fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          o_parkDateHour = [];
-         return;
+         return
       end
 
       for idMeas = 1:a_msgNbMeas(idMsg)-1
@@ -82,7 +82,7 @@ for id = 1:size(a_tabDrifCTD, 1)
                fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                o_parkDateHour = [];
-               return;
+               return
             end
          else
             if (length(filled) > 1)
@@ -95,13 +95,13 @@ for id = 1:size(a_tabDrifCTD, 1)
                         g_decArgo_floatNum, g_decArgo_cycleNum);
                   end
                   o_parkDateHour = [];
-                  return;
+                  return
                end
             else
                fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                o_parkDateHour = [];
-               return;
+               return
             end
          end
       end
@@ -125,12 +125,12 @@ for id = 1:size(a_tabDrifCTD, 1)
       newParkDateHour = round([firstMesDate:a_driftSamplingPeriod:lastMesDate]);
 
       %       idDay = find(fix(o_parkDateHour/24) == fix(firstMesDate/24));
-      %       [unused, idMin] = min(abs(o_parkDateHour(idDay)-firstMesDate));
+      %       [~, idMin] = min(abs(o_parkDateHour(idDay)-firstMesDate));
       %       idMin = idDay(idMin);
       %       if (filled(idMin) == 1)
-      %          [unused, idMin] = min(abs(o_parkDateHour-firstMesDate));
+      %          [~, idMin] = min(abs(o_parkDateHour-firstMesDate));
       %       end
-      [unused, idMin] = min(abs(o_parkDateHour-firstMesDate));
+      [~, idMin] = min(abs(o_parkDateHour-firstMesDate));
       prevLength = length(o_parkDateHour);
       if (~isempty(idMin))
          o_parkDateHour(idMin:idMin+length(newParkDateHour)-1) = newParkDateHour;
@@ -146,7 +146,7 @@ for id = 1:size(a_tabDrifCTD, 1)
             fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum);
             o_parkDateHour = [];
-            return;
+            return
          end
 
          for idMeas = 1:a_msgNbMeas(idMsg)-1
@@ -158,7 +158,7 @@ for id = 1:size(a_tabDrifCTD, 1)
                   fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                      g_decArgo_floatNum, g_decArgo_cycleNum);
                   o_parkDateHour = [];
-                  return;
+                  return
                end
             else
                if (length(filled) > 1)
@@ -171,13 +171,13 @@ for id = 1:size(a_tabDrifCTD, 1)
                            g_decArgo_floatNum, g_decArgo_cycleNum);
                      end
                      o_parkDateHour = [];
-                     return;
+                     return
                   end
                else
                   fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                      g_decArgo_floatNum, g_decArgo_cycleNum);
                   o_parkDateHour = [];
-                  return;
+                  return
                end
             end
          end
@@ -196,7 +196,7 @@ for id = 1:size(a_tabDrifCTD, 1)
                fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                o_parkDateHour = [];
-               return;
+               return
             end
 
             for idMeas = 1:a_msgNbMeas(idMsg)-1
@@ -208,7 +208,7 @@ for id = 1:size(a_tabDrifCTD, 1)
                      fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum);
                      o_parkDateHour = [];
-                     return;
+                     return
                   end
                else
                   if (length(filled) > 1)
@@ -221,13 +221,13 @@ for id = 1:size(a_tabDrifCTD, 1)
                               g_decArgo_floatNum, g_decArgo_cycleNum);
                         end
                         o_parkDateHour = [];
-                        return;
+                        return
                      end
                   else
                      fprintf('DEC_ERROR: Float #%d Cycle #%d: this should never happen!\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum);
                      o_parkDateHour = [];
-                     return;
+                     return
                   end
                end
             end
@@ -236,4 +236,4 @@ for id = 1:size(a_tabDrifCTD, 1)
    end
 end
 
-return;
+return

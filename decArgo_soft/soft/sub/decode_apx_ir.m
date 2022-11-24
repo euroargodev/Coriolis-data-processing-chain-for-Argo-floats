@@ -125,4 +125,4 @@ if ((a_decoderId == 1201) && ~isempty(sbe63ParseIssueDataLog))
    [o_driftData, o_profLrData] = insert_nvs_sbe63_parse_issue_data(o_driftData, o_profLrData, sbe63ParseIssueDataLog);
 end
 
-return;
+return

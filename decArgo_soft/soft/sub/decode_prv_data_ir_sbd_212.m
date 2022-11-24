@@ -52,8 +52,9 @@ decodedData.packType = packType;
 % decode packet data
 
 switch (packType)
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
    case 0
       % technical packet #1
       
@@ -91,7 +92,7 @@ switch (packType)
       
       % pressure sensor offset
       tabTech1(47) = twos_complement_dec_argo(tabTech1(47), 8)/10;
-
+      
       % compute GPS location
       if (tabTech1(56) == 0)
          signLat = 1;
@@ -140,18 +141,21 @@ switch (packType)
       tabTech2 = get_bits(firstBit, tabNbBits, msgData);
       
       cycleNum = tabTech2(1);
-            
-      % BE CAREFUL
-      % there is an issue with grounding day when the grounding occured
-      % during the descent to profile depth phase (i.e. phase #5)
-      % => the decoded value should be 256 - transmitted value
-      if ((tabTech2(21) > 0) && (tabTech2(25) == 5))
-         tabTech2(23) = 256 - tabTech2(23);
-      end
-      if ((tabTech2(21) > 1) && (tabTech2(30) == 5))
-         tabTech2(28) = 256 - tabTech2(28);
-      end
       
+      % BE CAREFUL (updated 01/23/2019 from NKE information)
+      % there is an issue with the transmitted grounding day:
+      % - when it occured during phase #2 (buoyancy reduction) it is the
+      % absolute float day
+      % - for all other phases, the days is relative to the beginning of the
+      % current cycle and the decoded value should be:
+      % mod(256 - transmitted value, 0)
+      if ((tabTech2(21) > 0) && (tabTech2(25) ~= 2))
+         tabTech2(23) = mod(256 - tabTech2(23), 256);
+      end
+      if ((tabTech2(21) > 1) && (tabTech2(30) ~= 2))
+         tabTech2(28) = mod(256 - tabTech2(28), 256);
+      end
+            
       % compute last reset date
       floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
       

@@ -58,7 +58,7 @@ if (~isempty(a_tabTech))
       % no GPS fix in the TECH message
       if ((a_tabTech(idTech, 39+ID_OFFSET) == 0) && ...
             (a_tabTech(idTech, 40+ID_OFFSET) == 0))
-         return;
+         return
       end
 
       % unpack the GPS data
@@ -126,4 +126,4 @@ if (~isempty(a_tabTech))
    end
 end
 
-return;
+return

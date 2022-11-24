@@ -98,7 +98,7 @@ if (~isempty(g_decArgo_iridiumMailData))
          configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
          if (~isempty(configMissionNumber))
             trajNCycleStruct.configMissionNumber = configMissionNumber;
-            break;
+            break
          end
          cyNum = cyNum - 1;
       end      
@@ -223,7 +223,7 @@ else
       idFCy = find(g_decArgo_cycleNumListForIce == cycleNum-1);
       if (~isempty(idFCy))
          if (g_decArgo_cycleNumListIceDetected(idFCy) == 1)
-            continue;
+            continue
          end
       end
       
@@ -348,7 +348,7 @@ for idCy = 1:length(tabCyNum)
    if (cycleNum == -1)
       % cycle number = -1 is used to store launch location and date only (no
       % need to add all the expected MCs)
-      continue;
+      continue
    end
    
    if (cycleNum == 0)
@@ -392,7 +392,7 @@ end
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge N_CYCLE structure data: merge juldFirstMessage, juldFirstLocation,
@@ -466,4 +466,4 @@ a_tabTrajNCycle(1).juldLastMessage = max(tabDate);
 % output data
 o_tabTrajNCycle = a_tabTrajNCycle(1);
 
-return;
+return

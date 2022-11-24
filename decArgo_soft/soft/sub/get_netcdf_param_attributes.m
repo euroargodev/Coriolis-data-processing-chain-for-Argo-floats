@@ -52,4 +52,4 @@ function [o_attributeStruct] = get_netcdf_param_attributes(a_paramName)
 % 
 % end
 
-return;
+return

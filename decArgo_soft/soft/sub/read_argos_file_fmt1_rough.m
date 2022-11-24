@@ -35,13 +35,13 @@ o_argosDataDate = [];
 
 if ~(exist(a_fileName, 'file') == 2)
    fprintf('ERROR: Argos file not found: %s\n', a_fileName);
-   return;
+   return
 end
 
 fId = fopen(a_fileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Error while opening Argos file: %s\n', a_fileName);
-   return;
+   return
 end
 
 % read Argos file
@@ -50,12 +50,12 @@ while (1)
    line = fgetl(fId);
    lineNum = lineNum + 1;
    if (line == -1)
-      break;
+      break
    end
 
    % empty line
    if (strcmp(deblank(line), ''))
-      continue;
+      continue
    end
 
    % look for satellite pass header
@@ -98,4 +98,4 @@ fclose(fId);
 o_argosLocDate = sort(unique(o_argosLocDate));
 o_argosDataDate = sort(unique(o_argosDataDate));
 
-return;
+return

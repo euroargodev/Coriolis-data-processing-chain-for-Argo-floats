@@ -105,7 +105,7 @@ for idFloat = 1:nbFloats
       idF = find(listWmoNum == floatNum, 1);
       if (isempty(idF))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
       
       floatArgosId = char(listArgosId(idF));
@@ -132,7 +132,7 @@ for idFloat = 1:nbFloats
       
       if (isempty(floatArgosId))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
    end
    
@@ -141,7 +141,7 @@ for idFloat = 1:nbFloats
    % check that it is an APEX float
    if ~((floatDecId > 1000) && (floatDecId < 2000))
       fprintf('ERROR: Float #%d is not an Apex float => not decoded\n', floatNum);
-      continue;
+      continue
    end
    
    % read the NetCDF TECH parameter names
@@ -334,4 +334,4 @@ if (g_decArgo_bddUpdateCsvFileId ~= -1)
    fclose(g_decArgo_bddUpdateCsvFileId);
 end
 
-return;
+return

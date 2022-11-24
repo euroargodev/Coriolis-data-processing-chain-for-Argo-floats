@@ -51,7 +51,7 @@ if ((nargin < 3) || (nargin > 4))
    fprintf('   shift_cycle_number_of_argos_cycle_files(WMO, cycle_number_offset, start_cycle, end_cycle) => shift (by cycle_number_offset) cycle number of Argos cycle files of float #WMO from start_cycle to end_cycle or\n');
    fprintf('   shift_cycle_number_of_argos_cycle_files(WMO, cycle_number_offset, start_cycle)            => shift (by cycle_number_offset) cycle number of Argos cycle files of float #WMO from start_cycle to the last cycle\n');
    fprintf('aborted ...\n');
-   return;
+   return
 else
    lastCycle = [];
 
@@ -64,14 +64,14 @@ else
    
    if (offsetCycle == 0)
       fprintf('cycle_number_offset is set to 0! => nothing to do\n');
-      return;
+      return
    end
 
    if (~isempty(lastCycle))
       if (firstCycle > lastCycle)
          fprintf('Start and end cycles should be consistently ordered!\n');
          fprintf('aborted ...\n');
-         return;
+         return
       end
    end
    
@@ -92,7 +92,7 @@ end
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
    fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
-   return;
+   return
 end
 
 % get floats information
@@ -105,7 +105,7 @@ end
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
    fprintf('ERROR: No information on float #%d => exit\n', floatNum);
-   return;
+   return
 end
 floatArgosId = str2num(listArgosId{idF});
 
@@ -156,7 +156,7 @@ else
    % shifted cycle number should be >= 0
    if (~isempty(find(argosFileCycle + offsetCycle < 0, 1)))
       fprintf('WARNING: This shift will create Argos cycle file with negative cycle number => exit\n');
-      return;
+      return
    end
    
    % check that we can shift the cycles
@@ -164,7 +164,7 @@ else
    for idCy = 1:length(newCy)
       if (~isempty(find(allArgosFileCycle == newCy(idCy), 1)))
          fprintf('WARNING: An Argos cycle file already exists for cycle #%d => exit\n', newCy(idCy));
-         return;
+         return
       end
    end
    
@@ -207,4 +207,4 @@ end
 
 fprintf('done\n');
 
-return;
+return

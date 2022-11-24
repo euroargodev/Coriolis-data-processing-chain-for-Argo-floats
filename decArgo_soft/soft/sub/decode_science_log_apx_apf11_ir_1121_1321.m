@@ -50,7 +50,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_scienceLogFileList))
-   return;
+   return
 end
 
 if (length(a_scienceLogFileList) > 1)
@@ -100,7 +100,7 @@ for idFile = 1:length(a_scienceLogFileList)
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sciFilePathName);
-      return;
+      return
    end
    
    % remove CTD_P measurements with FillValue = -999 for PRES
@@ -154,7 +154,7 @@ for idFile = 1:length(a_scienceLogFileList)
                            if (isempty([idF{:}]))
                               fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                                  g_decArgo_floatNum, g_decArgo_cycleNum, 'Message', msgData, sciFilePathName);
-                              continue;
+                              continue
                            end
                         end
                      end
@@ -361,4 +361,4 @@ if (~isempty(o_profCtdP))
    end
 end
 
-return;
+return

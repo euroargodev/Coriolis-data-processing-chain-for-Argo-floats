@@ -66,4 +66,4 @@ o_timeStruct = struct( ...
    'transEndAdjDate', [] ... % of the previous cycle !
    );
 
-return;
+return

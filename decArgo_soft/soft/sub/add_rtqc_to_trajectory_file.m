@@ -86,6 +86,11 @@
 %                             g_MC_InAirSeriesOfMeas
 %   11/06/2018 - RNU - V 2.3: TEST #6 (Global range test) updated for
 %                             PH_IN_SITU_TOTAL parameter
+%   02/12/2019 - RNU - V 2.4: TEST #20 (Questionable Argos position test)
+%                             modified so that only 'good' locations (with QC =
+%                             1) are used in the 'previous locations set' when
+%                             processing the next cycle (see cycle #48 of float
+%                             6903183).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -124,7 +129,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.3';
+g_decArgo_addRtqcToTrajVersion = '2.4';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -160,7 +165,7 @@ MEDITERRANEAN_SEA_REGION = [[30 40 -5 40]; ...
 if ~(exist(a_ncTrajInputFilePathName, 'file') == 2)
    fprintf('RTQC_ERROR: Float #%d: No input trajectory nc file to perform RTQC (%s)\n', ...
       a_floatNum, a_ncTrajInputFilePathName);
-   return;
+   return
 end
 ncTrajInputFilePathName = a_ncTrajInputFilePathName;
 
@@ -325,7 +330,7 @@ end
 % check if any test has to be performed
 if (isempty(find(testFlagList == 1, 1)))
    fprintf('RTQC_INFO: Float #%d: No RTQC test to perform\n', a_floatNum);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -837,6 +842,7 @@ if (testFlagList(20) == 1)
    cyNumPrev = -1;
    for idCy = 1:length(uCycleNumber)
       cyNum = uCycleNumber(idCy);
+      
       idMeasForCy = find(cycleNumber == cyNum);
       idNoDef = find((juld(idMeasForCy) ~= paramJuld.fillValue) & ...
          (latitude(idMeasForCy) ~= paramLat.fillValue) & ...
@@ -863,10 +869,21 @@ if (testFlagList(20) == 1)
             positionAccuracy(idMeasForCy(idNoDef)), ...
             lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
          
-         cyNumPrev = cyNum;
-         [lastLocDate, idLast] = max(juld(idMeasForCy(idNoDef)));
-         lastLocLon = longitude(idMeasForCy(idNoDef(idLast)));
-         lastLocLat = latitude(idMeasForCy(idNoDef(idLast)));
+         % keep only 'good' positions for the next cycle
+         if (any(positionQc(idMeasForCy(idNoDef)) == g_decArgo_qcStrGood))
+            cyNumPrev = cyNum;
+            allPosDate = juld(idMeasForCy(idNoDef));
+            allPosLon = longitude(idMeasForCy(idNoDef));
+            allPosLat= latitude(idMeasForCy(idNoDef));
+            allPosQc = positionQc(idMeasForCy(idNoDef));
+            idKeep = find(allPosQc == g_decArgo_qcStrGood);
+            keepPosDate = allPosDate(idKeep);
+            keepPosLon = allPosLon(idKeep);
+            keepPosLat= allPosLat(idKeep);
+            [lastLocDate, idLast] = max(keepPosDate);
+            lastLocLon = keepPosLon(idLast);
+            lastLocLat = keepPosLat(idLast);
+         end
          
          if (any((positionQc(idMeasForCy(idNoDef)) == g_decArgo_qcStrCorrectable) | ...
                (positionQc(idMeasForCy(idNoDef)) == g_decArgo_qcStrBad)))
@@ -934,7 +951,7 @@ if (a_partialRtqcFlag == 1)
    end
    
    clear variables;
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1727,7 +1744,7 @@ end
 
 if (a_update_file_flag == 0)
    clear variables;
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1819,7 +1836,7 @@ remove_directory(DIR_TMP_FILE);
 % clear data from workspace
 clear variables;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update NetCDF files after RTQC has been performed.
@@ -1870,7 +1887,7 @@ global g_JULD_STATUS_fill_value;
 [ok] = update_n_history_dim_in_traj_file(a_cTrajFileName, 2);
 if (ok == 0)
    fprintf('RTQC_ERROR: Unable to update the N_HISTORY dimension of the NetCDF file: %s\n', a_cTrajFileName);
-   return;
+   return
 end
 
 % modify the N_HISTORY dimension of the B traj file
@@ -1880,7 +1897,7 @@ if (~isempty(a_bTrajFileName))
    
    if (ok == 0)
       fprintf('RTQC_ERROR: Unable to update the N_HISTORY dimension of the NetCDF file: %s\n', a_cTrajFileName);
-      return;
+      return
    end
 end
 
@@ -1895,7 +1912,7 @@ for idFile = 1:2
    else
       % b file update
       if (isempty(a_bTrajFileName))
-         continue;
+         continue
       end
       fileName = a_bTrajFileName;
    end
@@ -1938,7 +1955,7 @@ for idFile = 1:2
    fCdf = netcdf.open(fileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('RTQC_ERROR: Unable to open NetCDF file: %s\n', fileName);
-      return;
+      return
    end
    
    % update <PARAM>_QC values
@@ -2086,7 +2103,7 @@ end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {name}/{data} list.
@@ -2119,7 +2136,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{idVal+1};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a location is in a given region (defined by a list of rectangles).
@@ -2152,10 +2169,10 @@ for idR = 1:length(a_region)
    region = a_region(idR, :);
    if ((a_lat >= region(1)) && (a_lat <= region(2)) && (a_lon >= region(3)) && (a_lon <= region(4)));
       o_inRegionFlag = 1;
-      return;
+      return
    end
 end
 
 o_inRegionFlag = 0;
 
-return;
+return

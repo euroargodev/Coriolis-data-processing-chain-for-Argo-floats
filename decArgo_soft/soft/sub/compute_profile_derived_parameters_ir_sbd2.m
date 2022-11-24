@@ -163,7 +163,7 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the FLBB sensor.
@@ -335,7 +335,7 @@ end
 a_profFlbb.derived = 1;
 o_profFlbb = a_profFlbb;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the FLNTU sensor.
@@ -432,7 +432,7 @@ end
 a_profFlntu.derived = 1;
 o_profFlntu = a_profFlntu;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the CYCLOPS sensor.
@@ -500,7 +500,7 @@ end
 a_profCyc.derived = 1;
 o_profCyc = a_profCyc;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the SEAPOINT sensor.
@@ -568,7 +568,7 @@ end
 a_profStm.derived = 1;
 o_profStm = a_profStm;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute BBP from the data provided by the FLBB sensor.
@@ -681,7 +681,7 @@ else
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OPTODE sensor.
@@ -866,7 +866,7 @@ end
 a_profOptode.derived = 1;
 o_profOptode = a_profOptode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -993,7 +993,7 @@ else
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -1116,4 +1116,4 @@ else
    
 end
 
-return;
+return

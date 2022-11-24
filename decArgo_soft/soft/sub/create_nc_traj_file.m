@@ -50,7 +50,7 @@ global g_decArgo_generateNcFlag;
 
 % no data to save
 if (isempty(a_tabTrajNMeas) && isempty(a_tabTrajNCycle))
-   return;
+   return
 end
 
 if (g_decArgo_floatTransType == 1)
@@ -103,7 +103,7 @@ if (g_decArgo_floatTransType == 1)
                
                idF = find(g_decArgo_existingArgosFileSystemDate >= ncFileUpdateDate, 1);
                if (isempty(idF))
-                  return;
+                  return
                end
             end
          end
@@ -131,7 +131,7 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
       
       if (exist(ncPathFileName, 'file') == 2)
          % the file is not updated if it already exists
-         return;
+         return
       end
    end
    
@@ -140,4 +140,4 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
 end
 
-return;
+return

@@ -39,7 +39,7 @@ if (nargin == 0)
    % floats to process come from FLOAT_LIST_FILE_NAME
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -65,7 +65,7 @@ outputFileName = [DIR_LOG_CSV_FILE '/get_meta_data_from_nc' name '_' datestr(now
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Erreur ouverture fichier: %s\n', outputFileName);
-   return;
+   return
 end
 
 header = [';;', ...
@@ -111,7 +111,7 @@ for idFloat = 1:nbFloats
    
    if (isempty(platformNumberMeta))
       fprintf('Flotteur #%d exclu car pas de fichier meta.nc\n', floatNum);
-      continue;
+      continue
    end
    
    launchDateStr = '';
@@ -191,4 +191,4 @@ diary off;
 
 fclose(fidOut);
 
-return;
+return

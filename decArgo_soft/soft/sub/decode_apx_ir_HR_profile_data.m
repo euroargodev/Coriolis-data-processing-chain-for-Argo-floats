@@ -36,7 +36,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_profHighResMeasDataStr))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -63,10 +63,10 @@ switch (a_decoderId)
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode HR profile of APEX Iridium Rudics data.
@@ -136,7 +136,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                dataStr);
-            continue;
+            continue
          end
          o_profHrInfo.Sbe41cpSN = val(1);
          o_profHrInfo.ProfNbSample = val(2);
@@ -146,7 +146,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum, ...
             dataStr);
-         continue;
+         continue
       end
    else
       nbReplic = 1;
@@ -245,7 +245,7 @@ if (~isempty(profHrPres))
    o_profHrData.data = flipud(o_profHrData.data);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode HR profile of APEX Iridium Rudics data.
@@ -313,7 +313,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                dataStr);
-            continue;
+            continue
          end
          o_profHrInfo.Sbe41cpSN = val(1);
          o_profHrInfo.ProfNbSample = val(2);
@@ -323,7 +323,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum, ...
             dataStr);
-         continue;
+         continue
       end
    else
       nbReplic = 1;
@@ -409,7 +409,7 @@ if (~isempty(profHrPres))
    o_profHrData.data = flipud(o_profHrData.data);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode HR profile of Navis data.
@@ -477,7 +477,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                dataStr);
-            continue;
+            continue
          end
          o_profHrInfo.Sbe41cpSN = val(1);
          o_profHrInfo.ProfNbSample = val(2);
@@ -487,7 +487,7 @@ for idL = 1:length(a_profHighResMeasDataStr)
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum, ...
             dataStr);
-         continue;
+         continue
       end
    else
       nbReplic = 1;
@@ -573,4 +573,4 @@ if (~isempty(profHrPres))
    o_profHrData.data = flipud(o_profHrData.data);
 end
 
-return;
+return

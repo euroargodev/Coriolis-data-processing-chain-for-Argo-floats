@@ -28,7 +28,7 @@ o_configValues = [];
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: get_payload_config: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % read payload configuration file
@@ -37,7 +37,7 @@ payloadConfig = read_payload_config(a_inputFilePathName);
 % format payload config data
 [o_configNames, o_configValues] = format_payload_config(payloadConfig);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Format payload configuration data.
@@ -612,7 +612,7 @@ for idP = 1:length(o_configNames)
    idFUs = strfind(configName, '_');
    if (strncmp(configName, 'CONFIG_PAYLOAD_SENSOR_', length('CONFIG_PAYLOAD_SENSOR_')))
       if (length(idFUs) == 5)
-         continue; % P09 is not duplicated
+         continue % P09 is not duplicated
       elseif (length(idFUs) == 6)
          configName = configName(1:idFUs(end)-1);
       else
@@ -620,7 +620,7 @@ for idP = 1:length(o_configNames)
       end
    else
       if (length(idFUs) == 3)
-         continue; % number of ascent phases are not duplicated
+         continue % number of ascent phases are not duplicated
       else
          configName = configName(1:idFUs(end)-1);
       end
@@ -633,4 +633,4 @@ o_configValues = cat(2, o_configValues, nan(1, size(configNames, 2)));
 
 % voir = cat(2, o_configNames', num2cell(o_configValues'));
 
-return;
+return

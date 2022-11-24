@@ -83,4 +83,4 @@ for idL = 1:length(a_miscInfo)
    fprintf(g_decArgo_outputCsvFileId, format, data{:});
 end
 
-return;
+return

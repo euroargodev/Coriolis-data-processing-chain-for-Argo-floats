@@ -32,4 +32,4 @@ create_nc_mono_prof_b_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
 
 fprintf('... NetCDF MONO-PROFILE files created\n');
 
-return;
+return

@@ -168,7 +168,7 @@ if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -231,7 +231,7 @@ for idFloat = 1:nbFloats
       DIR_INPUT_RT_NC_FILES);
    if (isempty(cutOffPresVal))
       fprintf('ERROR: Unable to compute PCutOff, DM files not converted for float #%d\n', floatNum);
-      continue;
+      continue
    end
    
    dmInFloatPath = [DIR_INPUT_DM_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
@@ -265,7 +265,7 @@ for idFloat = 1:nbFloats
          if (exist(rtInBFilePathName, 'file') == 2)
             bFileFlag = 1;
             %             fprintf('INFO: B file => exit\n');
-            %             continue;
+            %             continue
          end
          
          % update the file
@@ -288,7 +288,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert a given DM NetCDF mono-profie files from format version V2.2, V2.3 or V3.0
@@ -377,7 +377,7 @@ if ((strcmp(inputFileFormatVersionStr, '3.0') == 0) && ...
    [~, fileName, fileExt] = fileparts(a_inputDmFileName);
    fprintf('ERROR: Input DM file (%s) is expected to be of 2.2 or 2.3 or 3.0 format version (but FORMAT_VERSION = %s)', ...
       [fileName fileExt], inputFileFormatVersionStr);
-   return;
+   return
 end
 inputFileFormatVersion = str2num(inputFileFormatVersionStr);
 
@@ -790,7 +790,7 @@ for idFile = 1:nbOutputFiles
    fCdf = netcdf.open(outputFileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF output c file: %s\n', outputFileName);
-      return;
+      return
    end
    
    netcdf.reDef(fCdf);
@@ -829,7 +829,7 @@ for idFile = 1:nbOutputFiles
          idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
          varValue = inputRtData{2*idVal};
          if (isempty(varValue))
-            continue;
+            continue
          end
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
       else
@@ -853,7 +853,7 @@ for idFile = 1:nbOutputFiles
          idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
          varValue = inputDmData{2*idVal};
          if (isempty(varValue))
-            continue;
+            continue
          end
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
       else
@@ -913,7 +913,7 @@ for idFile = 1:nbOutputFiles
       if ((primaryProfInRtInput == 0) && (primaryProfInOutput == 1))
          fprintf('ERROR: File %s no primary in RT input but exists in DM output => exit. We must create a new VSS for output primary profile\n', ...
             [fileName fileExt]);
-         return;
+         return
       else
          fprintf('INFO: File %s no primary in DM output but exists in RT input => RT data are ignored\n', ...
             [fileName fileExt]);
@@ -936,7 +936,7 @@ for idFile = 1:nbOutputFiles
          idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
          varValue = inputRtData{2*idVal};
          if (isempty(varValue))
-            continue;
+            continue
          end
          
          for idProf = 1:nProfDimOutput
@@ -1137,7 +1137,7 @@ for idFile = 1:nbOutputFiles
       varNameOut = varNameIn;
       
       if (strcmp(varNameOut, 'PARAMETER'))
-         continue;
+         continue
       end
       
       if ((inputFileFormatVersion == 2.2) || ...
@@ -1151,7 +1151,7 @@ for idFile = 1:nbOutputFiles
          idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
          varValue = inputDmData{2*idVal};
          if (isempty(varValue))
-            continue;
+            continue
          end
          
          for idProf = 1:nProfDimOutput
@@ -1200,11 +1200,11 @@ for idFile = 1:nbOutputFiles
                            paramStruct = get_netcdf_param_attributes_3_1(param);
                            if (idFile == 1)
                               if (paramStruct.paramType ~= 'c')
-                                 continue;
+                                 continue
                               end
                            else
                               if (paramStruct.paramType == 'c')
-                                 continue;
+                                 continue
                               end
                            end
                         end
@@ -1365,18 +1365,18 @@ for idFile = 1:nbOutputFiles
          paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
          if (idFile == 1)
             if (paramStruct.paramType ~= 'c')
-               continue;
+               continue
             end
          else
             if (paramStruct.paramType == 'c')
-               continue;
+               continue
             end
          end
       end
       
       if (~isempty(find(strcmp(paramNamePrefix, inputDmMissingParamList) ==1, 1)))
          % this parameter desn't exist in DM input file
-         continue;
+         continue
       end
       
       for idS = 1:length(sufixList)
@@ -1385,13 +1385,13 @@ for idFile = 1:nbOutputFiles
          
          if (idFile == 2)
             if (strcmp(paramNamePrefix, 'PRES')  && (idS > 1))
-               continue;
+               continue
             end
          end
                   
          paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
          if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
-            continue;
+            continue
          end
          
          if (var_is_present(fCdf, varNameOut))
@@ -1399,12 +1399,12 @@ for idFile = 1:nbOutputFiles
             if (~isempty(idVal))
                varValue = inputDmData{2*idVal};
                if (isempty(varValue))
-                  continue;
+                  continue
                end
             else
                fprintf('WARNING: Variable %s not present in DM input file\n', ...
                   varNameOut);
-               continue;
+               continue
             end
             
             % input DM data correction #1
@@ -1765,7 +1765,7 @@ for idFile = 1:nbOutputFiles
                      molarDoxy(idLev) = molarDoxyInputBMeas(idF, idProf);
                   else
                      ok = 0;
-                     break;
+                     break
                   end
                end
             end
@@ -1919,7 +1919,7 @@ end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY values.
@@ -1967,10 +1967,10 @@ if (length(floatInfoFileNames) == 1)
    floatInfoFileName = [a_jsonFloatInfoDirName '/' floatInfoFileNames(1).name];
 elseif (isempty(floatInfoFileNames))
    fprintf('ERROR: Float information file not found for float #%d\n', a_floatNum);
-   return;
+   return
 else
    fprintf('ERROR: Multiple float information files for float #%d\n', a_floatNum);
-   return;
+   return
 end
 
 % read information file
@@ -1985,14 +1985,14 @@ if (floatDecId == -1)
    
    fprintf('WARNING: Float #%d (FLOAT_TYPE:%s, Coriolis version: %s not enough information to compute DOXY\n', ...
       a_floatNum, floatType, floatDecVersion);
-   return;
+   return
 end
 
 % retrieve the name of the JSON float meta-data file
 floatMetaDataFileName = [a_jsonFloatMetaDirName '/' sprintf('%d_meta.json', a_floatNum)];
 if ~(exist(floatMetaDataFileName, 'file') == 2)
    fprintf('ERROR: Json meta-data file not found: %s\n', floatMetaDataFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -2017,7 +2017,7 @@ if ((floatDecId == 4) || (floatDecId == 19))
       fprintf('WARNING: Float #%d: DOXY calibration coefficients are missing in the Json meta-data file: %s\n', ...
          a_floatNum, ...
          a_jsonFloatMetaDirName);
-      return;
+      return
    end
    
    % current float WMO number
@@ -2041,7 +2041,7 @@ else
       a_floatNum, floatDecId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute the profile cut-off pressure of an Argos float and retrieve the
@@ -2084,10 +2084,10 @@ if (length(floatInfoFileNames) == 1)
 elseif (isempty(floatInfoFileNames))
    fprintf('ERROR: Float information file not found for float #%d\n', a_floatNum);
    o_cutOffPresVal = -1;
-   return;
+   return
 else
    fprintf('ERROR: Multiple float information files for float #%d\n', a_floatNum);
-   return;
+   return
 end
 
 % read information file
@@ -2120,7 +2120,7 @@ else
       floatMetaDataFileName = [a_jsonFloatMetaDirName '/' sprintf('%d_meta.json', a_floatNum)];
       if ~(exist(floatMetaDataFileName, 'file') == 2)
          fprintf('ERROR: Json meta-data file not found: %s\n', floatMetaDataFileName);
-         return;
+         return
       end
       
       % read meta-data file
@@ -2238,7 +2238,7 @@ else
                   if (strcmp(strtrim(techParamName(idForCy(id), :)), 'PRES_LastAscentPumpedRawSample_dbar'))
                      o_cutOffPresVal(end+1) = str2num(techParamValue(idForCy(id), :));
                      o_cutOffPresCy(end+1) = idCycle;
-                     continue;
+                     continue
                   end
                end
             end
@@ -2250,7 +2250,7 @@ else
    end  
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -2300,7 +2300,7 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a variable (defined by its name) is present in a NetCDF file.
@@ -2333,8 +2333,8 @@ for idVar = 0:nbVars-1
    [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
    if (strcmp(varName, a_varName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return

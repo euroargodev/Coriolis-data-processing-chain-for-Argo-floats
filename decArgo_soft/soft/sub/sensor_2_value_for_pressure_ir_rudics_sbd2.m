@@ -43,7 +43,7 @@ switch (a_decoderId)
       idNoDef = find(a_presCounts ~= g_decArgo_presCountsDef);
       o_presValues(idNoDef) = o_presValues(idNoDef)/10;
 
-   case {111}
+   case {111, 113}
       
       % convert counts to values
       o_presValues = a_presCounts;
@@ -58,4 +58,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

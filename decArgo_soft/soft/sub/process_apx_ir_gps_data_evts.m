@@ -68,7 +68,7 @@ gpsLocFailedAcqTime = [];
 for idEv = 1:length(a_events)
    dataStr = a_events(idEv).info;
    if (isempty(dataStr))
-      continue;
+      continue
    end
    %    fprintf('''%s''\n', dataStr);
    
@@ -82,7 +82,7 @@ for idEv = 1:length(a_events)
          [val, count, errmsg, nextIndex] = sscanf(gpsData1{2}, 'Profile %d GPS fix obtained in %d seconds.');
          if (~isempty(errmsg) || (count ~= 2))
             fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, gpsData1{2});
-            continue;
+            continue
          end
          gpscycleNum = val(1);
          gpsLocAcqTime = val(2);
@@ -90,7 +90,7 @@ for idEv = 1:length(a_events)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Fix: %f %f %d/%d/%d %d %d');
          if (~isempty(errmsg) || (count ~= 7))
             fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          
          timeStr = sprintf('%06d', val(6));
@@ -118,7 +118,7 @@ for idEv = 1:length(a_events)
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS fix not acquired after %ds; power-cycling the GPS.');
       if (~isempty(errmsg) || (count ~= 1))
          fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       
       gpsLocFailedAcqTime{end+1} = val;
@@ -130,7 +130,7 @@ for idEv = 1:length(a_events)
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS fix-acquisition failed after %ds.  Apf9 RTC skew check by-passed.');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
       end
       
@@ -140,7 +140,7 @@ for idEv = 1:length(a_events)
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
          fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
 end
@@ -148,4 +148,4 @@ end
 % store GPS misc information
 o_gpsInfo.FailedAcqTime = gpsLocFailedAcqTime;
 
-return;
+return

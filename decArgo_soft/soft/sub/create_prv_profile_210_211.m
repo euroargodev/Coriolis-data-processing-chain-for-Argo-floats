@@ -77,7 +77,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_dataCTD))
-   return;
+   return
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
@@ -98,7 +98,7 @@ for type = [1 3 13 14]
             if ((data(idMeas+15*2) == g_decArgo_presDef) && ...
                   (data(idMeas+15*3) == g_decArgo_tempDef) && ...
                   (data(idMeas+15*4) == g_decArgo_salDef))
-               break;
+               break
             end
             if (type > 3)
                date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
@@ -143,4 +143,4 @@ o_ascProfDate = o_ascProfDate(idSorted);
 o_ascProfTemp = o_ascProfTemp(idSorted);
 o_ascProfSal = o_ascProfSal(idSorted);
 
-return;
+return

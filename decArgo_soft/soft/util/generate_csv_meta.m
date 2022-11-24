@@ -36,10 +36,11 @@ function generate_csv_meta(varargin)
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_DeepIce_5.65_20180201.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export-3902101_Arvor-Ir-Do_5.46_from_VB_20180216.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export-3902101_Arvor-Ir-Do_5.46_from_VB_20180216.txt';
+dataBaseFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
 
 % directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -66,7 +67,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -92,7 +93,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE'];
 fprintf(fidOut, '%s\n', header);
@@ -108,7 +109,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -122,7 +123,7 @@ metaWmoList = metaData(:, 1);
 % for id = 1:length(metaWmoList)
 %    if (isempty(str2num(metaWmoList{id})))
 %       fprintf('%s is not a valid WMO number\n', metaWmoList{id});
-%       return;
+%       return
 %    end
 % end
 S = sprintf('%s*', metaWmoList{:});
@@ -139,7 +140,7 @@ for idFloat = 1:nbFloats
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    
@@ -158,7 +159,7 @@ for idFloat = 1:nbFloats
    % get the list of sensors for this float
    [sensorList] = get_sensor_list_cts4(floatDecId);
    if (isempty(sensorList))
-      continue;
+      continue
    end
    
    % sensor information
@@ -199,7 +200,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
@@ -216,7 +217,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -252,7 +253,7 @@ else
       o_platformFamily);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -288,7 +289,7 @@ else
       o_platformType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -324,7 +325,7 @@ else
       o_wmoInstType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorList] = get_sensor_list_cts4(a_decId)
@@ -350,7 +351,7 @@ switch a_decId
       fprintf('ERROR: Unknown sensor list for decId #%d => nothing done for this float\n', a_decId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel, o_sensorSn] = ...
@@ -412,7 +413,7 @@ end
 [o_sensorMaker, o_sensorModel, o_sensorSn] = ...
    get_sensor_data(o_sensorName, ifEmptySensorMakerList, ifEmptySensorModelList, a_floatNum, a_metaWmoList, a_metaData);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorMaker, o_sensorModel, o_sensorSn] = ...
@@ -477,7 +478,7 @@ for idC = 1:length(o_sensorName)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramName, o_paramDimLevel, o_paramSensor, ...
@@ -619,7 +620,7 @@ o_predCalibEquation = o_predCalibEquation';
 o_predCalibCoefficient = o_predCalibCoefficient';
 o_predCalibComment = o_predCalibComment';
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramAccuracy, o_paramResolution, ...
@@ -706,5 +707,5 @@ if (~isempty(idF1))
    end
 end
 
-return;
+return
 

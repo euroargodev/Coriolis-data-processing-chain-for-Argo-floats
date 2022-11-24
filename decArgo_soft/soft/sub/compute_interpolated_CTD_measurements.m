@@ -30,7 +30,7 @@ o_ctdIntData = [];
 
 
 if (isempty(a_ctdMeasData))
-   return;
+   return
 end
 
 paramPres = get_netcdf_param_attributes('PRES');
@@ -126,4 +126,4 @@ elseif ((length(idNoDefInput) == 1) && (length(a_presData) == 1) && ...
 
 end
 
-return;
+return

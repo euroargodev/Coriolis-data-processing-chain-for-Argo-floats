@@ -93,7 +93,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -139,7 +139,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    floatEndDate = listEndDate(idF);
@@ -170,7 +170,7 @@ for idFloat = 1:nbFloats
                      julian_2_gregorian_dec_argo(floatEndDate));
                   g_decArgo_inputArgosFile = argosFilePathName;
                   move_argos_input_file(floatArgosId, fileDate, floatNum, [], 'UUU');
-                  continue;
+                  continue
                end
             end
 
@@ -205,7 +205,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process one Argos cycle file by:
@@ -289,14 +289,14 @@ if (isempty(argosDataDate))
    fprintf('INFO: File (%s) contains no Argos messages => file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
-   return;
+   return
 elseif (length(unique(argosDataDate)) < NB_MSG_MIN)
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'GGG');
    fprintf('INFO: File (%s) contains only ghost messages => file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
-   return;
+   return
 end
 
 % find the cycle number
@@ -308,7 +308,7 @@ if (isempty(launchDate))
    fprintf('ERROR: Unable to compute cycle number because of missing meta-data => file stored without cycle number (i.e. not decoded)\n');
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
-   return;
+   return
 end
 
 % estimate the cycle number
@@ -426,7 +426,7 @@ if (lastArgosMsgDate > launchDate)
                fprintf('ERROR: Float #%d: Cannot determine cycle number for file: %s\n', ...
                   a_floatNum, subFileNameList{idFile});
                cycleNumber = [];
-               break;
+               break
             end
          end
          
@@ -542,7 +542,7 @@ else
    fprintf('INFO: Last date of input file (%s) is before float launch date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
       julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
       julian_2_gregorian_dec_argo(launchDate));
-   return;
+   return
 end
 
 % create the name of the input file and move it to the approriate directory
@@ -587,4 +587,4 @@ if (~isempty(cycleNumber))
    end
 end
 
-return;
+return

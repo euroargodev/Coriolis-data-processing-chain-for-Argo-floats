@@ -32,7 +32,7 @@ global g_decArgo_bufFileList;
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
    fprintf('BUFF_ERROR: Float #%d: add_to_list_ir_sbd: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
-   return;
+   return
 end
 
 if (strcmp(a_listName, 'spool'))
@@ -42,4 +42,4 @@ elseif (strcmp(a_listName, 'buffer'))
    g_decArgo_bufFileList{end+1} = a_fileName;
 end
 
-return;
+return

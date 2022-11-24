@@ -96,7 +96,7 @@ for idBufFile = 1:length(a_sbdFileNameList)
          fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
             g_decArgo_floatNum, ...
             sbdFilePathName);
-         continue;
+         continue
       end
       sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
    elseif (strcmp(sbdFileName(end-3:end), '.bin'))
@@ -144,4 +144,4 @@ g_decArgo_255TypeReceivedData = [];
 g_decArgo_253PacketPhaseReceived = [];
 g_decArgo_receivedDataPhase = [];
 
-return;
+return

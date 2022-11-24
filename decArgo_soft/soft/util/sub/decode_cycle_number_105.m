@@ -56,7 +56,7 @@ for idMes = 1:size(tabSensors, 1)
          
          uMsgdata = unique(msgData);
          if ((length(uMsgdata) == 1) && (uMsgdata == 0))
-            continue;
+            continue
          end
          
          % first item bit number
@@ -173,4 +173,4 @@ for idMes = 1:size(tabSensors, 1)
 
 end
 
-return;
+return

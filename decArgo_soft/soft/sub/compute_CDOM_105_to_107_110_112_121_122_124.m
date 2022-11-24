@@ -42,12 +42,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'ECO3'))
    fprintf('WARNING: Float #%d Cycle #%d: ECO3 sensor calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactCDOM')) && ...
       (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM')))
    scaleFactCDOM = double(g_decArgo_calibInfo.ECO3.ScaleFactCDOM);
@@ -59,7 +59,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % compute output data
@@ -67,4 +67,4 @@ idNoDef = find(a_FLUORESCENCE_CDOM ~= a_FLUORESCENCE_CDOM_fill_value);
 o_CDOM(idNoDef) = ...
    ((a_FLUORESCENCE_CDOM(idNoDef) - darkCountCDOM)*scaleFactCDOM);
 
-return;
+return

@@ -76,4 +76,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; Param; MC22: Grouding switch pressur
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; Param; MC24: Optode type (0: none, 1: 4330, 2: 3830); %d\n', ...
    g_decArgo_floatNum, g_decArgo_cycleNum, a_tabParam(25));
 
-return;
+return

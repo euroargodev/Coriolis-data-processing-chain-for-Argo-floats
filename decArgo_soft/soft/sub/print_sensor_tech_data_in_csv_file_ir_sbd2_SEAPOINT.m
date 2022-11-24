@@ -131,4 +131,4 @@ for id = 1:length(idPack)
       a_sensorTechSEAPOINTOpenDrainOutputState(idP, 3));
 end
 
-return;
+return

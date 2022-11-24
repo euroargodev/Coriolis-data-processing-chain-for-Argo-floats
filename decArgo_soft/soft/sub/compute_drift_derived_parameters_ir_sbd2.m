@@ -158,7 +158,7 @@ end
 % update output parameters
 o_tabDrift = a_tabDrift;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the FLBB sensor.
@@ -308,7 +308,7 @@ end
 a_driftFlbb.derived = 1;
 o_driftFlbb = a_driftFlbb;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the FLNTU sensor.
@@ -405,7 +405,7 @@ end
 a_driftFlntu.derived = 1;
 o_driftFlntu = a_driftFlntu;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the CYCLOPS sensor.
@@ -473,7 +473,7 @@ end
 a_driftCyc.derived = 1;
 o_driftCyc = a_driftCyc;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the SEAPOINT sensor.
@@ -541,7 +541,7 @@ end
 a_driftStm.derived = 1;
 o_driftStm = a_driftStm;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute BBP from the data provided by the FLBB sensor.
@@ -620,7 +620,7 @@ if (~isempty(ctdLinkData))
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OPTODE sensor.
@@ -807,7 +807,7 @@ end
 a_driftOptode.derived = 1;
 o_driftOptode = a_driftOptode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -901,7 +901,7 @@ if (~isempty(ctdLinkData))
    end
 end
                
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -991,4 +991,4 @@ if (~isempty(ctdLinkData))
    end
 end
                
-return;
+return

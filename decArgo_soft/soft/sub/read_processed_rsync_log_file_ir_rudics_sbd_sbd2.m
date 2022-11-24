@@ -32,16 +32,16 @@ logFileName = sprintf('processed_rsync_log_%d.txt', a_floatNum);
 logFilePathName = [g_decArgo_historyDirectory '/' logFileName];
 
 if ~(exist(logFilePathName, 'file') == 2)
-   return;
+   return
 else
    fId = fopen(logFilePathName, 'r');
    if (fId == -1)
       fprintf('ERROR: Unable to open file: %s\n', logFilePathName);
-      return;
+      return
    end
    o_processedLogFiles = textscan(fId, '%s');
    o_processedLogFiles = o_processedLogFiles{:};
    fclose(fId);
 end
 
-return;
+return

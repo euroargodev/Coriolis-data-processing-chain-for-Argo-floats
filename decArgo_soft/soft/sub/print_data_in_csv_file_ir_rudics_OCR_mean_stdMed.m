@@ -196,7 +196,7 @@ else
                else
                   fprintf('WARNING: Float #%d Cycle #%d: cannot fit OCR standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
-                  continue;
+                  continue
                end
             end
             data(idOk, 8:15) = dataStdMed(idL, 2:9);
@@ -236,4 +236,4 @@ else
    end
 end
 
-return;
+return

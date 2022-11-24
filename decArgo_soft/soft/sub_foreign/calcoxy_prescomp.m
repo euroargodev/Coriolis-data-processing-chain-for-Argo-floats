@@ -29,4 +29,4 @@ function [o_oxygenPrescomp] = calcoxy_prescomp(a_oxygen, a_pres, a_temp, ...
 % pressure compensation correction
 o_oxygenPrescomp = a_oxygen .* (1 + ((a_pCoef2 .* a_temp) + a_pCoef3) .* a_pres/1000);
 
-return;
+return

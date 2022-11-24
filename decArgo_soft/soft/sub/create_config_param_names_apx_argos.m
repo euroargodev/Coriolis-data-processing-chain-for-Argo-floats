@@ -270,7 +270,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1021} % 2.8.0
+   case {1021} % 2.8.0.A
       
       configIds = [ ...
          {'DIR'}, ...
@@ -333,7 +333,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1022} % 2.10.4
+   case {1022} % 2.10.4.A
       
       configIds = [ ...
          {'DIR'}, ...
@@ -412,4 +412,4 @@ end
 o_decArgoConfParamNames = decConfNames;
 o_ncConfParamNames = ncConfNames;
 
-return;
+return

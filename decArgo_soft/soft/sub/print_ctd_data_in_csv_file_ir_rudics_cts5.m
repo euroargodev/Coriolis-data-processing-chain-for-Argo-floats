@@ -31,7 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_ctdData))
-   return;
+   return
 end
 
 fileTypeStr = 'Data_apmt';
@@ -100,4 +100,4 @@ for idP = 1:length(a_ctdData)
    end
 end
 
-return;
+return

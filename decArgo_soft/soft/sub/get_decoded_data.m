@@ -152,15 +152,36 @@ switch (a_decoderId)
                o_evAct = [o_evAct; decData{1}{:}];
                o_pumpAct = [o_pumpAct; decData{2}{:}];
                g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbHydraulicPacketsReceived + 1;
-
-            otherwise
-               fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d of decoderId #%d\n', ...
-                  g_decArgo_floatNum, ...
-                  a_decDataTab(idSbd).packType, a_decoderId);
-               return
          end
       end
       
+      % BE CAREFUL (updated 01/23/2019 from NKE information)
+      % there is an issue with the transmitted grounding day:
+      % - when it occured during phase #2 (buoyancy reduction) it is the
+      % absolute float day
+      % - for all other phases, the days is relative to the beginning of the
+      % current cycle and the decoded value should be:
+      % mod(256 - transmitted value, 0)
+      %
+      % => we will set grounding day of phase #2 in relative day
+      if (~isempty(o_tabTech2))
+         if (any(o_tabTech2(:, 26) == 2) || any(o_tabTech2(:, 31) == 2))
+            if (~isempty(o_tabTech1))
+               cycleStartDateDay = o_tabTech1(1, 9);
+               for idT2 = 1:size(o_tabTech2, 1)
+                  tech2 = o_tabTech2(idT2, :);
+                  if ((tech2(22) > 0) && (tech2(26) == 2))
+                     tech2(24) = tech2(24) - cycleStartDateDay;
+                  end
+                  if ((tech2(22) > 1) && (tech2(31) == 2))
+                     tech2(29) = tech2(29) - cycleStartDateDay;
+                  end
+                  o_tabTech2(idT2, :) = tech2;
+               end
+            end
+         end
+      end
+		  
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {214, 217}
       % Provor-ARN-DO-Ice Iridium 5.75
@@ -269,12 +290,33 @@ switch (a_decoderId)
                o_evAct = [o_evAct; decData{1}{:}];
                o_pumpAct = [o_pumpAct; decData{2}{:}];
                g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbHydraulicPacketsReceived + 1;
-
-            otherwise
-               fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d of decoderId #%d\n', ...
-                  g_decArgo_floatNum, ...
-                  a_decDataTab(idSbd).packType, a_decoderId);
-               return
+         end
+      end
+      
+      % BE CAREFUL (updated 01/23/2019 from NKE information)
+      % there is an issue with the transmitted grounding day:
+      % - when it occured during phase #2 (buoyancy reduction) it is the
+      % absolute float day
+      % - for all other phases, the days is relative to the beginning of the
+      % current cycle and the decoded value should be:
+      % mod(256 - transmitted value, 0)
+      %
+      % => we will set grounding day of phase #2 in relative day
+      if (~isempty(o_tabTech2))
+         if (any(o_tabTech2(:, 26) == 2) || any(o_tabTech2(:, 31) == 2))
+            if (~isempty(o_tabTech1))
+               cycleStartDateDay = o_tabTech1(1, 9);
+               for idT2 = 1:size(o_tabTech2, 1)
+                  tech2 = o_tabTech2(idT2, :);
+                  if ((tech2(22) > 0) && (tech2(26) == 2))
+                     tech2(24) = tech2(24) - cycleStartDateDay;
+                  end
+                  if ((tech2(22) > 1) && (tech2(31) == 2))
+                     tech2(29) = tech2(29) - cycleStartDateDay;
+                  end
+                  o_tabTech2(idT2, :) = tech2;
+               end
+            end
          end
       end
       
@@ -373,12 +415,6 @@ switch (a_decoderId)
                % pump packet
                o_pumpAct = [o_pumpAct; a_decDataTab(idSbd).decData{:}];
                g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbHydraulicPacketsReceived + 1;
-               
-            otherwise
-               fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d of decoderId #%d\n', ...
-                  g_decArgo_floatNum, ...
-                  a_decDataTab(idSbd).packType, a_decoderId);
-               return
          end
       end
       

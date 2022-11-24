@@ -48,14 +48,14 @@ SORT_PARAM = 1;
 % check the NetCDF file
 if ~(exist(a_inputPathFileName, 'file') == 2)
    fprintf('File not found : %s\n', a_inputPathFileName);
-   return;
+   return
 end
 
 % open NetCDF file
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_inputPathFileName);
-   return;
+   return
 end
 
 formatVersion = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))';
@@ -78,7 +78,7 @@ else
    % dimensions
    nParam = [];
    if (dim_is_present_dec_argo(fCdf, 'N_PARAM'))
-      [unused, nParam] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_PARAM'));
+      [~, nParam] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_PARAM'));
    end
    
    % misc
@@ -152,7 +152,7 @@ else
    for idParam = 1:nParam
       parameterName = strtrim(trajectoryParameters(:, idParam)');
       if (isempty(parameterName))
-         continue;
+         continue
       end
       
       for idS = 1:length(sufixList)
@@ -161,7 +161,7 @@ else
          
          if ((idS == 1) || ((idS > 1) && (var_is_present_dec_argo(fCdf, paramName))))
             if (any(strcmp(paramName, paramNameList)))
-               continue;
+               continue
             end
             paramNameList = [paramNameList {paramName}];
             paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramName), 'C_format');
@@ -634,4 +634,4 @@ end
 
 netcdf.close(fCdf);
 
-return;
+return

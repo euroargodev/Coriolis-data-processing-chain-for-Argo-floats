@@ -56,7 +56,7 @@ for id = 1:5
    info = [];
    if (id > a_floatProgParam(a_dataIndex, 4))
       info = 'DO NOT CONSIDER';
-      break;
+      break
    end
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; float prog param; PV%d - Cycle duration #%d (hour); %d; %s\n', ...
       g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
@@ -87,7 +87,7 @@ for id = 1:10
    info = [];
    if (id > a_floatProgParam(a_dataIndex, 27))
       info = 'DO NOT CONSIDER';
-      break;
+      break
    end
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; float prog param; PM%d - Day of profile #%d surfacing (mission day); %d; %s\n', ...
       g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
@@ -116,4 +116,4 @@ for id = 1:10
       info);
 end
    
-return;
+return

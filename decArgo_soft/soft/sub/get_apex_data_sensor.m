@@ -73,7 +73,7 @@ global g_decArgo_generateNcTech;
 
 if ~(exist(a_argosPathFileName, 'file') == 2)
    fprintf('ERROR: Argos file not found: %s\n', a_argosPathFileName);
-   return;
+   return
 end
 
 % read Argos file
@@ -144,7 +144,7 @@ for idNum = 1:length(msgNums)
             
             % don't take NULL data message into account
             if (unique(currentData) == 0)
-               continue;
+               continue
             end
             
             % compute the redundancy of the messages
@@ -156,7 +156,7 @@ for idNum = 1:length(msgNums)
                   tabOcc(idData) = tabOcc(idData) + 1;
                   tabId{idData} = [tabId{idData} idForNumCrcOk(id)];
                   ok = 1;
-                  break;
+                  break
                end
             end
             
@@ -228,7 +228,7 @@ for idNum = 1:length(msgNums)
                   o_sensorDate = [o_sensorDate; o_argosDataDate(idForNum(id))];
                   o_argosDataUsed{end+1} = [];
                   nbMesCrcOk = nbMesCrcOk + 1;
-                  break;
+                  break
                end
             end
          end
@@ -320,4 +320,4 @@ if (g_decArgo_generateNcTech ~= 0)
    
 end
 
-return;
+return

@@ -44,7 +44,7 @@ for idFile = 1:nbFiles
    filePathName = filePathNames{idFile};
 
    fprintf('%03d/%03d %s\n', idFile, nbFiles, filePathName);
-   %    continue;
+   %    continue
 
    if (exist(filePathName, 'file') == 2)
 
@@ -52,7 +52,7 @@ for idFile = 1:nbFiles
       fIdIn = fopen(filePathName, 'r');
       if (fIdIn == -1)
          fprintf('Error while opening file : %s\n', filePathName);
-         return;
+         return
       end
 
       clear text;
@@ -100,7 +100,7 @@ for idFile = 1:nbFiles
                fIdOut = fopen(outputFilePathName, 'wt');
                if (fIdOut == -1)
                   fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-                  return;
+                  return
                end
 
                for id = 1:length(text)
@@ -111,12 +111,12 @@ for idFile = 1:nbFiles
 
             end
 
-            break;
+            break
          end
 
          % empty line
          if (strcmp(deblank(line), ''))
-            continue;
+            continue
          end
 
          if (line(1) == '>')
@@ -219,7 +219,7 @@ for idFile = 1:nbFiles
                fIdOut = fopen(outputFilePathName, 'wt');
                if (fIdOut == -1)
                   fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-                  return;
+                  return
                end
 
                for id = 1:length(text)
@@ -317,4 +317,4 @@ for idFile = 1:nbFiles
    end
 end
 
-return;
+return

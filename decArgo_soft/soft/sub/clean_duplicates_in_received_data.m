@@ -43,7 +43,7 @@ if ((size(rawData, 1) ~= size(unique(rawData, 'rows'), 1)))
       end
       if (length(idEq) > 1)
          % packet type
-         packType = rawData(idEq(1), 1);
+         packType = o_decDataTab(idEq(1)).decData{:}(1);
          packetName = get_packet_name(packType, a_decoderId);
          
          if (length(idEq) == 2)

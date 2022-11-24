@@ -120,7 +120,7 @@ if (~isempty(o_tabTrajNMeas))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve MC measurements order assigned to a give decoder Id.
@@ -460,7 +460,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];     
    
-   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
       % Provor CTS4 & Arvor CM
       o_mcOrderList = [ ...
          g_MC_Launch ...
@@ -640,4 +640,4 @@ end
 
 o_mcOrderList = unique(o_mcOrderList, 'stable');
 
-return;
+return

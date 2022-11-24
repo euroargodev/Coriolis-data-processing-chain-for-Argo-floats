@@ -124,4 +124,4 @@ switch (a_dataTypeNumber)
       o_dataTypeName = 'UNKNOWN data type';
 end
 
-return;
+return

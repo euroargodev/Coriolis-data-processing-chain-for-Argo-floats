@@ -20,74 +20,74 @@
 function generate_json_decoder_tech_labels()
 
 % file information on technical labels for a given decoder
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_12.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_19.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_4.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_30.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_31.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_32.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_12.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_19.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_4.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_30.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_31.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_32.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_105.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_111.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_122.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_124.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_105.csv';
+decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_111.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_122.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_124.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_205.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_209.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_301.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_302.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_210.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_213.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_212.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_214.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_215.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_216.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_205.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_209.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_301.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_302.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_210.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_213.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_212.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_214.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_215.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_216.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1003.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1004.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1007.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1009.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1010.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1011.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1012.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1013.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1014.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1015.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1016.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1021.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1003.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1004.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1007.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1009.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1010.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1011.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1012.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1013.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1014.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1015.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1016.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1021.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1101.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1102.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1103.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1105.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1110.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1201.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1314.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1101.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1102.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1103.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1105.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1110.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1201.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1314.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2001.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2002.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2003.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2001.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2002.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2003.csv';
 
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_3001.csv';
+% decoderTechLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_techParamNames\_tech_param_name_3001.csv';
 
 
 if ~(exist(decoderTechLabelsFileName, 'file') == 2)
    fprintf('ERROR: Technical information file not found: %s\n', decoderTechLabelsFileName);
-   return;
+   return
 end
 
 % read tech info file
 fId = fopen(decoderTechLabelsFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', decoderTechLabelsFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', ';');
 fileContents = fileContents{:};
@@ -106,7 +106,7 @@ for idF = 1:length(outputFileList)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create json output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    fprintf(fidOut, '{\n');
@@ -138,7 +138,7 @@ for idF = 1:length(outputFileList)
    fclose(fidOut);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_outputFileList] = create_output_files(a_inputFilePathName)
@@ -174,11 +174,11 @@ else
       case {105}
          decIdList = [105, 106, 107, 109, 110, 112];
       case {111}
-         decIdList = [111];
+         decIdList = [111, 113];
       case {121}
          decIdList = [121];
       case {122}
-         decIdList = [122 123];
+         decIdList = [122, 123];
       case {124}
          decIdList = [124];
 
@@ -197,7 +197,7 @@ else
       case {213}
          decIdList = [213];
       case {214}
-         decIdList = [214 217];
+         decIdList = [214, 217];
       case {215}
          decIdList = [215];
       case {216}
@@ -206,12 +206,12 @@ else
       case {301}
          decIdList = [301];
       case {302}
-         decIdList = [302 303];
+         decIdList = [302, 303];
          
       case {1001}
-         decIdList = [1001 1005];
+         decIdList = [1001, 1005];
       case {1002}
-         decIdList = [1002 1006 1008];
+         decIdList = [1002, 1006, 1008];
       case {1003}
          decIdList = [1003];
       case {1004}
@@ -235,24 +235,24 @@ else
       case {1016}
          decIdList = [1016];
       case {1021}
-         decIdList = [1021 1022];
+         decIdList = [1021, 1022];
          
       case {1101}
          decIdList = [1101];
       case {1102}
-         decIdList = [1102 1108 1109 1113];
+         decIdList = [1102, 1108, 1109, 1113];
       case {1103}
-         decIdList = [1103 1104 1106 1107];
+         decIdList = [1103, 1104, 1106, 1107];
       case {1105}
-         decIdList = [1105 1111];
+         decIdList = [1105, 1111];
       case {1110}
-         decIdList = [1110 1112];
+         decIdList = [1110, 1112];
          
       case {1314}
          decIdList = [1314];
          
       case {1321}
-         decIdList = [1121 1321 1322];
+         decIdList = [1121, 1321, 1322];
 
       case {1201}
          decIdList = [1201];
@@ -276,4 +276,4 @@ else
    end
 end
 
-return;
+return

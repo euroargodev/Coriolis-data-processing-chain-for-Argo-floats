@@ -37,48 +37,50 @@ global g_cogj_reportData;
 
 
 % check inputs
-fprintf('Generating json meta-data files from input file: %s\n', a_floatMetaFileName);
+fprintf('Generating json meta-data files from input file: \n FLOAT_META_FILE_NAME = %s\n', a_floatMetaFileName);
 
 if ~(exist(a_floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', a_floatMetaFileName);
-   return;
+   return
 end
 
-fprintf('Generating json meta-data files for floats of the list: %s\n', a_floatListFileName);
+fprintf('Generating json meta-data files for floats of the list: \n FLOAT_LIST_FILE_NAME = %s\n', a_floatListFileName);
 
 if ~(exist(a_floatListFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_floatListFileName);
-   return;
+   return
 end
 
-fprintf('Calibration file used: %s\n', a_calibFileName);
+fprintf('Calibration coefficient file: \n CALIB_FILE_NAME = %s\n', a_calibFileName);
 
 if ~(exist(a_calibFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_calibFileName);
-   return;
+   return
 end
 
-fprintf('Directory of float configuration files used: %s\n', a_configDirName);
+fprintf('Directory of float launch configuration files used: \n CONFIG_DIR_NAME = %s\n', a_configDirName);
 
 if ~(exist(a_configDirName, 'dir') == 7)
    fprintf('ERROR: Directory not found: %s\n', a_configDirName);
-   return;
+   return
 end
 
+fprintf('Output directory of json meta-data files: \n OUTPUT_DIR_NAME = %s\n', a_outputDirName);
+
 % lists of mandatory meta-data
+% FLOAT_SERIAL_NO and SENSOR_SERIAL_NO should not be in the following list
+% (only the database can set these mandatory values to 'n/a')
 mandatoryList1 = [ ...
    {'BATTERY_TYPE'} ...
    {'CONTROLLER_BOARD_SERIAL_NO_PRIMARY'} ...
    {'CONTROLLER_BOARD_TYPE_PRIMARY'} ...
    {'DAC_FORMAT_ID'} ...
    {'FIRMWARE_VERSION'} ...
-   {'FLOAT_SERIAL_NO'} ...
    {'MANUAL_VERSION'} ...
    {'PI_NAME'} ...
    {'PREDEPLOYMENT_CALIB_COEFFICIENT'} ...
    {'PREDEPLOYMENT_CALIB_EQUATION'} ...
    {'PTT'} ...
-   {'SENSOR_SERIAL_NO'} ...
    {'PARAMETER_UNITS'} ...
    {'PARAMETER_SENSOR'} ...
    {'STANDARD_FORMAT_ID'} ...
@@ -95,7 +97,7 @@ mandatoryList2 = [ ...
 fId = fopen(a_floatMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_floatMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -109,7 +111,7 @@ metaData = reshape(fileContents, 5, size(fileContents, 1)/5)';
 fId = fopen(a_calibFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_calibFileName);
-   return;
+   return
 end
 calibData = textscan(fId, '%s');
 calibData = calibData{:};
@@ -128,7 +130,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('%s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -153,25 +155,25 @@ end
 % process floats
 for idFloat = 1:length(floatList)
    
-   fprintf('%2d/%2d\n', idFloat, length(floatList));
-   fprintf('%d\n', floatList(idFloat));
-   wmoNumber = floatList(idFloat);
+   skipFloat = 0;
+   floatNum = floatList(idFloat);
+   fprintf('%2d/%2d %d\n', idFloat, length(floatList), floatNum);
    
    % initialize the structure to be filled
    metaStruct = get_meta_init_struct();
    
-   metaStruct.PLATFORM_NUMBER = num2str(floatList(idFloat));
+   metaStruct.PLATFORM_NUMBER = num2str(floatNum);
    metaStruct.ARGO_USER_MANUAL_VERSION = '3.1';
    
    % direct conversion data
-   idForWmo = find(wmoList == floatList(idFloat));
+   idForWmo = find(wmoList == floatNum);
    for idBSN = 1:length(metaBddStructNames)
-      metaBddStructField = char(metaBddStructNames(idBSN));
+      metaBddStructField = metaBddStructNames{idBSN};
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
          if (~isempty(idF))
-            metaStruct.(metaBddStructField) = char(metaData(idForWmo(idF), 4));
+            metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
             if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'n/a';
@@ -179,35 +181,28 @@ for idFloat = 1:length(floatList)
             elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
             end
+            if (strcmp(metaBddStructField, 'FLOAT_SERIAL_NO'))
+               fprintf('ERROR: Float #%d: FLOAT_SERIAL_NO (''%s'') is mandatory => no json file generated\n', ...
+                  floatNum, metaBddStructValue);
+               skipFloat = 1;
+            end
          end
       end
    end
-      
-   % IMEI / PTT specific processing
-   if (~isempty(metaStruct.IMEI))
-      if (length(metaStruct.IMEI) ~= 15)
-         fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s''); 15 digits expected\n', ...
-            floatList(idFloat), metaStruct.IMEI);
-      else
-         if (~strcmp(metaStruct.PTT, 'n/a'))
-            if (length(metaStruct.PTT) ~= 6)
-               fprintf('ERROR: Float #%d: inconsistent PTT number (''%s''); 6 digits expected\n', ...
-                  floatList(idFloat), metaStruct.PTT);
-            else
-               if (~strcmp(metaStruct.IMEI(end-6:end-1), metaStruct.PTT))
-                  fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s'') VS PTT number (''%s'')\n', ...
-                     floatList(idFloat), metaStruct.IMEI, metaStruct.PTT);
-               end
-            end
-         else
-            metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
-            fprintf('INFO: Float #%d: PTT number (''%s'') set from IMEI number (''%s'')\n', ...
-               floatList(idFloat), metaStruct.PTT, metaStruct.IMEI);
-         end
-      end
-   elseif (~strcmp(metaStruct.PTT, 'n/a'))
-      fprintf('WARNING: Float #%d: PTT number (''%s'') is set but IMEI number is unknown\n', ...
-         floatList(idFloat), metaStruct.PTT);
+   
+   % retrieve DAC_FORMAT_ID
+   dacFormatId = metaStruct.DAC_FORMAT_ID;
+   if (isempty(dacFormatId))
+      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+         floatNum);
+      continue
+   end
+
+   % check if the float version is concerned by this tool
+   if (~ismember(dacFormatId, [{'5.31'} {'5.32'}]))
+      fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
+         floatNum, dacFormatId);
+      continue
    end
    
    % multi dim data
@@ -237,6 +232,18 @@ for idFloat = 1:length(floatList)
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
 
+   % check that SENSOR_SERIAL_NO is set
+   for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
+      if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
+         fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
+            floatNum, ...
+            metaStruct.SENSOR{idS}, ...
+            metaStruct.SENSOR_MODEL{idS}, ...
+            metaStruct.SENSOR_MAKER{idS});
+         skipFloat = 1;
+      end
+   end
+   
    itemList = [ ...
       {'PARAMETER'} ...
       {'PARAMETER_SENSOR'} ...
@@ -263,16 +270,43 @@ for idFloat = 1:length(floatList)
       itemList, ...
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
+
+   % IMEI / PTT specific processing
+   if (~isempty(metaStruct.IMEI))
+      if (length(metaStruct.IMEI) ~= 15)
+         fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s''); 15 digits expected\n', ...
+            floatNum, metaStruct.IMEI);
+      else
+         if (~strcmp(metaStruct.PTT, 'n/a'))
+            if (length(metaStruct.PTT) ~= 6)
+               fprintf('ERROR: Float #%d: inconsistent PTT number (''%s''); 6 digits expected\n', ...
+                  floatNum, metaStruct.PTT);
+            else
+               if (~strcmp(metaStruct.IMEI(end-6:end-1), metaStruct.PTT))
+                  fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s'') VS PTT number (''%s'')\n', ...
+                     floatNum, metaStruct.IMEI, metaStruct.PTT);
+               end
+            end
+         else
+            metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+            fprintf('INFO: Float #%d: PTT number (''%s'') set from IMEI number (''%s'')\n', ...
+               floatNum, metaStruct.PTT, metaStruct.IMEI);
+         end
+      end
+   elseif (~strcmp(metaStruct.PTT, 'n/a'))
+      fprintf('WARNING: Float #%d: PTT number (''%s'') is set but IMEI number is unknown\n', ...
+         floatNum, metaStruct.PTT);
+   end
    
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
-   sensorList = get_sensor_list_cts4(wmoNumber);
+   sensorList = get_sensor_list_cts4(floatNum);
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
    
    % add the calibration coefficients for FLBB/FLNTU/CYCLOPS/SEAPOINT sensor (coming from the
    % calibFileName)
-   idF = find(strcmp(calibData(:, 1), num2str(wmoNumber)) == 1);
+   idF = find(strcmp(calibData(:, 1), num2str(floatNum)) == 1);
    dataStruct = [];
    for id = 1:length(idF)
       fieldName1 = calibData{idF(id), 2};
@@ -282,14 +316,6 @@ for idFloat = 1:length(floatList)
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
    
-   % retrieve DAC_FORMAT_ID
-   dacFormatId = metaStruct.DAC_FORMAT_ID;
-   if (isempty(dacFormatId))
-      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
-         floatList(idFloat));
-      continue;
-   end
-
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
@@ -297,9 +323,9 @@ for idFloat = 1:length(floatList)
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1));
          calibDataDb = [];
          for id = 1:length(idF)
-            calibName = char(metaData(idForWmo(idF(id)), 5));
+            calibName = metaData{idForWmo(idF(id)), 5};
             fieldName = ['CCoef' calibName(end-1:end)];
-            calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
          end
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
@@ -450,13 +476,13 @@ for idFloat = 1:length(floatList)
             [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
             if ((statusSlope == 0) || (statusValue == 0))
                fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
-                  floatList(idFloat), coefStrOri);
-               return;
+                  floatNum, coefStrOri);
+               return
             end
          else
             fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
-               floatList(idFloat), coefStrOri);
-            return;
+               floatNum, coefStrOri);
+            return
          end
       end
       rtOffsetDate = [];
@@ -474,16 +500,20 @@ for idFloat = 1:length(floatList)
       metaStruct.RT_OFFSET = rtOffsetData;
    end
    
+   if (skipFloat)
+      continue
+   end
+   
    % create the directory of json output files
    if ~(exist(a_outputDirName, 'dir') == 7)
       mkdir(a_outputDirName);
    end
    
    % create json output file
-   outputFileName = [a_outputDirName '/' sprintf('%d_meta.json', floatList(idFloat))];
+   outputFileName = [a_outputDirName '/' sprintf('%d_meta.json', floatNum)];
    ok = generate_json_file(outputFileName, metaStruct);
    if (~ok)
-      return;
+      return
    end
    g_cogj_reportData{end+1} = outputFileName;
 
@@ -491,7 +521,7 @@ end
 
 diary off;
 
-return;
+return
 
 
 % ------------------------------------------------------------------------------
@@ -533,10 +563,10 @@ idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName) == 1);
 if (~isempty(idF))
    
    a_configParamNames = {a_confName};
-   a_configParamValues = {char(a_metaData(a_idForWmo(idF), 4))};
+   a_configParamValues = a_metaData(a_idForWmo(idF), 4);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the list of BDD variables associated to float meta-data.
@@ -617,4 +647,4 @@ o_metaStruct = struct( ...
    'SENSOR_MOUNTED_ON_FLOAT', '', ...
    'CALIBRATION_COEFFICIENT', '');
 
-return;
+return

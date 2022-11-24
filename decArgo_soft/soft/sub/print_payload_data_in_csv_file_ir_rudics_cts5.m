@@ -31,7 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_payloadData))
-   return;
+   return
 end
 
 tabDataFormat = {';%g' ';%d'};
@@ -267,4 +267,4 @@ for idLev1B = 1:length(idLev1BeginSort)
    end
 end
 
-return;
+return

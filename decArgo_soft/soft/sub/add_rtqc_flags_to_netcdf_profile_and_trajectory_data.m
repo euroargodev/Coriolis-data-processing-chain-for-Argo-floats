@@ -62,7 +62,7 @@ global g_rtqc_trajData;
 % check if nc files are to be processed
 if (isempty(a_reportStruct))
    fprintf('RTQC_INFO: No file to process RTQC on\n');
-   return;
+   return
 end
 
 % create the list of tests to perform
@@ -314,10 +314,10 @@ for idFile = 1:length(reportMonoProfFile)
    filePathName = reportMonoProfFile{idFile};
    [filePath, fileName, fileExt] = fileparts(filePathName);
    if (fileName(1) == 'B')
-      continue;
+      continue
    end
    if (any(strfind(fileName, '_aux')))
-      continue;
+      continue
    end
    monoProfPath = filePath;
    monoProfList{end+1} = [fileName fileExt];
@@ -387,7 +387,7 @@ if (~isempty(trajFilePathName))
       testToPerformList, testMetaData, 0, 1, 1);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve from a list if a test has to be performed
@@ -423,4 +423,4 @@ if (~isempty(testId))
    o_testToPerform = a_testToPerformList{testId+1};
 end
 
-return;
+return

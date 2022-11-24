@@ -46,7 +46,7 @@ header3 = '; TRAJ FORMAT_VERSION; TRAJ PLATFORM_TYPE; NB_CYCLE; CYCLE_NUMBER_MAX
 outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_select_float_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 
 fprintf(fidOut, '%s\n', header1);
@@ -69,13 +69,13 @@ for idDir = 1:length(dacDir)
    % use the following lines to select/exclude DACs to be processed
    %    if (strcmp(dacDirName, 'doc') || ...
    %          strcmp(dacDirName, 'aoml'))
-   %       continue;
+   %       continue
    %    end
    %    if (~strcmp(dacDirName, 'aoml'))
-   %       continue;
+   %       continue
    %    end
    if (strcmp(dacDirName, 'doc'))
-      continue;
+      continue
    end
    
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
@@ -202,7 +202,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -237,7 +237,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -289,8 +289,8 @@ for idVar= 0:nbVars-1
    [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
    if (strcmp(varName, a_varName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return

@@ -65,4 +65,4 @@ if (~isempty(a_clockOffsetData.clockOffsetCycleNum))
    end
 end
 
-return;
+return

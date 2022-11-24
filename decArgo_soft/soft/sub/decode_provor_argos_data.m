@@ -85,6 +85,9 @@ global g_decArgo_presDef;
 global g_decArgo_configDone;
 g_decArgo_configDone = 0;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % inits for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -94,6 +97,11 @@ end
 
 % initialize float configuration
 init_float_config_prv_argos(a_decoderId);
+if (~ismember(a_decoderId, [30 32]))
+   if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+      return
+   end
+end
 
 % inits for output NetCDF file
 decArgoConfParamNames = [];
@@ -159,7 +167,7 @@ for idCy = 1:length(a_cycleList)
    if (isempty(argosPathFileName))
       fprintf('INFO: Float #%d Cycle #%d: not processed according to float end date restriction\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
-      continue;
+      continue
    end
    
    % read the Argos file and select the data
@@ -1277,4 +1285,4 @@ if (isempty(g_decArgo_outputCsvFileId))
    
 end
 
-return;
+return

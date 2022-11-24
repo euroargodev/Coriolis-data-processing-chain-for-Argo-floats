@@ -34,4 +34,4 @@ o_tempDoxyValues(idDef) = ones(length(idDef), 1)*g_decArgo_tempDoxyDef;
 idNoDef = find(a_tempDoxyCounts ~= g_decArgo_tempDoxyCountsDef);
 o_tempDoxyValues(idNoDef) = o_tempDoxyValues(idNoDef)*0.001 - 5;
 
-return;
+return

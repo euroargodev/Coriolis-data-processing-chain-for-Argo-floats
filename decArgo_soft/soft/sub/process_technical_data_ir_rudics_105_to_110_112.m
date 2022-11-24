@@ -48,7 +48,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_cyProfPhaseList))
-   return;
+   return
 end
 
 % consecutive identical packet types are processed together
@@ -121,4 +121,4 @@ for id = 1:length(tabStart)
    
 end
 
-return;
+return

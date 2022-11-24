@@ -6,7 +6,6 @@
 %    create_config_param_names_ir_rudics_cts4(a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %    o_decArgoConfParamNames : internal configuration parameter names
@@ -18,7 +17,7 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   09/15/2013 - RNU - creation
+%   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_decArgoConfParamNames, o_ncConfParamNames] = ...
    create_config_param_names_ir_rudics_cts4(a_decoderId)
@@ -37,9 +36,9 @@ switch (a_decoderId)
       
       [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts4_105_to_110_112;
 
-   case {111}
+   case {111, 113}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts4_111;
+      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts4_111_113;
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in create_config_param_names_ir_rudics_cts4 for decoderId #%d\n', ...
@@ -47,4 +46,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

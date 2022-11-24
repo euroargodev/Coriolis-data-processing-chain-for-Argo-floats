@@ -51,4 +51,4 @@ if (~isempty(idPos))
    o_driftSampPeriod = configValue(idPos, idConf)/1440;
 end
 
-return;
+return

@@ -34,7 +34,7 @@ o_ncParamDescription = [];
 jsonInputFileName = [a_ncTechParamListDir '/' sprintf('_tech_param_name_%d.json', a_decoderId)];
 if ~(exist(jsonInputFileName, 'file') == 2)
    fprintf('ERROR: Technical parameter information file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read tech parameters file
@@ -43,7 +43,7 @@ techData = loadjson(jsonInputFileName);
 apexApf11IrDecoderIdList = [1121 1321 1322];
 techDataFieldNames = fieldnames(techData);
 for idField = 1:length(techDataFieldNames)
-   techItemData = getfield(techData, char(techDataFieldNames(idField)));
+   techItemData = techData.(techDataFieldNames{idField});
    
    o_ncParamIds(idField) = str2num(techItemData.TECH_PARAM_DEC_ID);
    o_ncParamNames{idField} = techItemData.TECH_PARAM_NAME;
@@ -67,4 +67,4 @@ end
 o_ncParamIds = o_ncParamIds(idSort);
 o_ncParamDescription = o_ncParamDescription(idSort);
 
-return;
+return

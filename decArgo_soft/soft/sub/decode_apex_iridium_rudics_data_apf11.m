@@ -249,7 +249,7 @@ for idCy = 1:length(a_cycleList)
    
    % decode the files of the current cycle
    if (ismember(a_decoderId, [1121]))
-      % 2.10.4 & 2.11.3
+      % 2.10.4.R & 2.11.3.R
          
       [miscInfoSci, miscInfoSys, ...
          metaData, missionCfg, sampleCfg, ...
@@ -472,4 +472,4 @@ if (isempty(g_decArgo_outputCsvFileId))
    
 end
 
-return;
+return

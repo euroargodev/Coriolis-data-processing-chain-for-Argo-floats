@@ -1065,7 +1065,7 @@ o_techInfoStruct.ALARM{end+1} = alarmEOL;
 o_techInfoStruct.ALARM{end+1} = alarmRescue;
 o_techInfoStruct.ALARM{end+1} = alarmFeedback;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store information on each item of a section.
@@ -1105,7 +1105,7 @@ o_newStruct.time = []; % to store collected time information
 o_newStruct.traj = []; % to store collected information for the TRAJ nc file
 o_newStruct.meta = []; % to store collected information for the META (and META_AUX) nc file
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store technical information.
@@ -1140,7 +1140,7 @@ o_dataStruct = struct( ...
    'source', 'T' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store trajectory information.
@@ -1177,7 +1177,7 @@ o_dataStruct = struct( ...
    'source', 'T' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store meta-data information.
@@ -1210,7 +1210,7 @@ o_dataStruct = struct( ...
    'source', 'T' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store time information.
@@ -1245,4 +1245,4 @@ o_dataStruct = struct( ...
    'source', 'T' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return

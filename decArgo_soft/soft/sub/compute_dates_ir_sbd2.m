@@ -45,9 +45,9 @@ if (driftSampPeriod ~= -1)
       if (o_date(id) ~= g_decArgo_dateDef)
          o_date(id+1) = o_date(id) + driftSampPeriod;
       else
-         break;
+         break
       end
    end
 end
 
-return;
+return

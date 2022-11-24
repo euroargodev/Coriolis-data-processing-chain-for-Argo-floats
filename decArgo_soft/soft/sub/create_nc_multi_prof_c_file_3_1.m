@@ -65,7 +65,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % delete Auxiliary profiles (we do not create an AUX multi prof file)
@@ -74,7 +74,7 @@ a_tabProfiles(find(sensorNumList > 100)) = [];
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % assign time resolution for each float transmission type
@@ -225,7 +225,7 @@ if (nbProfParam > 0)
    fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-      return;
+      return
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1319,4 +1319,4 @@ if (nbProfParam > 0)
    fprintf('... NetCDF MULTI-PROFILE c file created\n');
 end
 
-return;
+return

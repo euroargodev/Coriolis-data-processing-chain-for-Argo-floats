@@ -76,7 +76,7 @@ for iFile = 1:length(sbdFiles)
       currentData.dataRaw = [currentData.dataRaw {sbdData'}];
    else
       fprintf('ERROR: Anomaly in file : %s\n', asciiFilePathName);
-      continue;
+      continue
    end
    
    % retrieve MOMSN number from SBD file name
@@ -119,7 +119,7 @@ if (length([dataList.asciiFileName]) ~= length(unique([dataList.asciiFileName]))
             idToDel = setdiff(idF, idF(idMax));
             dataList(idToDel) = [];
             nbDel = nbDel + length(idToDel);
-            break;
+            break
          end
       end
    end
@@ -136,7 +136,7 @@ for iFile = 1:length(dataList)
    fIdOut = fopen(asciiFilePathName, 'wt');
    if (fIdOut == -1)
       fprintf('ERROR: Error while creating file : %s\n', asciiFilePathName);
-      return;
+      return
    end
    
    data = dataList(iFile).data;
@@ -149,4 +149,4 @@ end
 
 o_nbAsciiFiles = length(dataList);
 
-return;
+return

@@ -17,13 +17,14 @@
 %    o_secondGroundingDate, o_secondGroundingPres, ...
 %    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
 %    o_iceDetected] = ...
-%    compute_prv_dates_216(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
+%    compute_prv_dates_216(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay)
 %
 % INPUT PARAMETERS :
-%   a_tabTech1  : decoded data of technical msg #1
-%   a_tabTech2  : decoded data of technical msg #2
-%   a_deepCycle : deep cycle flag
-%   a_refDay    : reference day
+%   a_tabTech1            : decoded data of technical msg #1
+%   a_tabTech2            : decoded data of technical msg #2
+%   a_deepCycle           : deep cycle flag
+%   a_iceDelayedCycleFlag : Ice delayed cycle flag
+%   a_refDay              : reference day
 %
 % OUTPUT PARAMETERS :
 %   o_cycleStartDate           : cycle start date
@@ -72,7 +73,7 @@ function [o_cycleStartDate, ...
    o_secondGroundingDate, o_secondGroundingPres, ...
    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
    o_iceDetected] = ...
-   compute_prv_dates_216(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
+   compute_prv_dates_216(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay)
 
 % output parameters initialization
 o_cycleStartDate = [];
@@ -115,11 +116,14 @@ global g_decArgo_cycleNumListIceDetected;
 % date of last ICE detection
 global g_decArgo_lastDetectionDate;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 % maximum descent speed (in cm/s)
 MAX_DESC_SPEED = 20;
 
 
-if (a_deepCycle == 1)
+if ((a_deepCycle == 1) || (a_iceDelayedCycleFlag == 1))
    idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
    if (isempty(idFCy))
       idFCy = length(g_decArgo_cycleNumListForIce) + 1;
@@ -129,7 +133,7 @@ if (a_deepCycle == 1)
 end
 
 if (isempty(a_tabTech1) && isempty(a_tabTech2))
-   return;
+   return
 end
 
 % ice detection determination
@@ -160,15 +164,34 @@ if (~isempty(id1) && ~isempty(id2))
       o_iceDetected = 1;
    end
    
-   % retrieve the IC0 configuration parameter
+   % retrieve the PG0 configuration parameter
    if (o_iceDetected == -1)
-      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
-      if (~isempty(pg0Value))
-         if (gpsDate < g_decArgo_lastDetectionDate + pg0Value)
-            o_iceDetected = 2;
-         else
-            o_iceDetected = 0;
+      if (a_deepCycle == 1)
+         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+         pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
+         if (~isempty(pg0Value))
+            if (gpsDate < g_decArgo_lastDetectionDate + pg0Value)
+               o_iceDetected = 2;
+            else
+               o_iceDetected = 0;
+            end
+         end
+      elseif (a_iceDelayedCycleFlag == 1) % there is no configuration for such cycle, look for the previous one
+         cyNum = g_decArgo_cycleNum - 1;
+         while (cyNum >= 0)
+            if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
+               [configNames, configValues] = get_float_config_ir_sbd(cyNum);
+               break
+            end
+            cyNum = cyNum - 1;
+         end
+         pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
+         if (~isempty(pg0Value))
+            if (gpsDate < g_decArgo_lastDetectionDate + pg0Value)
+               o_iceDetected = 2;
+            else
+               o_iceDetected = 0;
+            end
          end
       end
    end
@@ -511,4 +534,4 @@ if (print == 1)
    end
 end
 
-return;
+return

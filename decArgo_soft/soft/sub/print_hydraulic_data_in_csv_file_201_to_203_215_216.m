@@ -55,7 +55,7 @@ if (~isempty(a_evAct))
             evPres = [evPres; data(idPoint+15)];
             evDur = [evDur; data(idPoint+15*2)];
          else
-            break;
+            break
          end
       end
    end
@@ -95,7 +95,7 @@ if (~isempty(a_pumpAct))
             pumpPres = [pumpPres; data(idPoint+15)];
             pumpDur = [pumpDur; data(idPoint+15*2)];
          else
-            break;
+            break
          end
       end
    end
@@ -119,4 +119,4 @@ if (~isempty(a_pumpAct))
    end
 end
 
-return;
+return

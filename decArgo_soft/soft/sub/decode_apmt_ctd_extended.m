@@ -90,7 +90,7 @@ while (currentByte <= a_lastByteNum)
          if (strcmp(char(a_data(currentByte:currentByte+length(phaseName)-1))', phaseName))
             newPhaseNum = idPhase;
             currentByte = currentByte + length(phaseName);
-            break;
+            break
          end
       end
    end
@@ -102,7 +102,7 @@ while (currentByte <= a_lastByteNum)
          if (strcmp(char(a_data(currentByte:currentByte+length(treatName)-1))', treatName))
             newTreatNum = idTreat;
             currentByte = currentByte + length(treatName);
-            break;
+            break
          end
       end
    end
@@ -242,7 +242,7 @@ while (currentByte <= a_lastByteNum)
       currentByte = currentByte + nbBytes;
    else
       fprintf('ERROR\n');
-      break;
+      break
    end
 end
 
@@ -266,4 +266,4 @@ end
 
 o_ctdData = dataStruct;
 
-return;
+return

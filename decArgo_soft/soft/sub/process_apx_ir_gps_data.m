@@ -36,7 +36,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_gpsFixDataStr))
-   return;
+   return
 end
 
 % parse msg file information
@@ -89,4 +89,4 @@ if (~isempty(gpsLocFailedIce))
    end
 end
 
-return;
+return

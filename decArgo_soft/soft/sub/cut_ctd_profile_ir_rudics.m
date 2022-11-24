@@ -60,7 +60,7 @@ end
 % update output parameters
 o_cutProfiles = tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Cut a CTD profile at the cut-off pressure of the CTD pump.
@@ -117,7 +117,7 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       for id = 1:length(idStop)
          if (presMeas(idStop(id)+id) ~= paramPres.fillValue)
             idLevPrimary = idLevPrimary(1:idStop(id));
-            break;
+            break
          end
       end
    end
@@ -213,4 +213,4 @@ else
    o_cutProfiles = a_tabProfile;
 end
 
-return;
+return

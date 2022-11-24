@@ -51,7 +51,7 @@ if (g_decArgo_floatTransType == 1)
       if (exist(ncPathFileName, 'file') == 2)
          
          % the file is not updated if it already exists
-         return;
+         return
       end
    end
       
@@ -75,7 +75,7 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
       
       if (exist(ncPathFileName, 'file') == 2)
          % the file is not updated if it already exists
-         return;
+         return
       end
    end
             
@@ -83,4 +83,4 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
 end
 
-return;
+return

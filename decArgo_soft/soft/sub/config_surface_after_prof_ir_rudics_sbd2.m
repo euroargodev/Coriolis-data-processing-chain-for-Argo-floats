@@ -41,7 +41,7 @@ usedConfNum = g_decArgo_floatConfig.USE.CONFIG;
 % float surfaced
 if (a_profNum < 0)
    o_surface = 1;
-   return;
+   return
 end
 
 % find the id of the concerned configuration
@@ -49,7 +49,7 @@ idUsedConf = find((usedCy == a_cycleNum) & (usedProf == a_profNum));
 if (isempty(idUsedConf))
    % the configuration does not exist (no data received yet)
    o_surface = -1;
-   return;
+   return
 end
 idConf = find(configNum == usedConfNum(idUsedConf));
 
@@ -75,4 +75,4 @@ end
 
 o_surface = surface;
 
-return;
+return

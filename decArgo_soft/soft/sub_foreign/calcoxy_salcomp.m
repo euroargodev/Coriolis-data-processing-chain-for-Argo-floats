@@ -35,4 +35,4 @@ a = (1013.25 - pH2O(a_temp, a_sPreset))./(1013.25 - pH2O(a_temp, a_psal));
 ts = log((298.15 - a_temp)./(273.15 + a_temp));
 o_oxygenSalcomp = a_oxygen .* a .* exp(((a_psal-a_sRef).*(a_b0 + (a_b1.*ts) + (a_b2.*ts.^2)+(a_b3.*ts.^3))) + (a_c0.*(a_psal.^2 - a_sRef.^2)));
 
-return;
+return

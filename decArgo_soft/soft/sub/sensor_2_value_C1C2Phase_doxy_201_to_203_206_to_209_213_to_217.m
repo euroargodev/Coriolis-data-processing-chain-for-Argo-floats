@@ -35,4 +35,4 @@ o_c1C2PhaseDoxyValues(idDef) = ones(length(idDef), 1)*g_decArgo_c1C2PhaseDoxyDef
 idNoDef = find(a_c1C2PhaseDoxyCounts ~= g_decArgo_c1C2PhaseDoxyCountsDef);
 o_c1C2PhaseDoxyValues(idNoDef) = (o_c1C2PhaseDoxyValues(idNoDef)-20000)*2/1000;
 
-return;
+return

@@ -21,13 +21,13 @@
 function generate_csv_meta_remocean(varargin)
 
 % calibration coefficients decoded from data
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % show mode state decoded from data
-showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\ShowMode\show_mode.txt';
+showModeFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\ShowMode\show_mode.txt';
 
 % SUNA output pixel numbers decoded from data
-outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+outputPixelFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
@@ -39,9 +39,12 @@ outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloat
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_lot2_from_VB_20180319.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_BioIndia_6.11_from_VB_20180319.txt';
 dataBaseFileName = 'C:\Users\jprannou\Desktop\TEMP\new_rem_meta.txt';
+dataBaseFileName = 'F:\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\6903240_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\new_rem_meta_6903249_6903250.txt';
 
 % directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -71,7 +74,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -97,7 +100,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta_remocean' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE'];
 fprintf(fidOut, '%s\n', header);
@@ -112,7 +115,7 @@ fprintf(fidOut, '%s\n', header);
 fId = fopen(calibFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', calibFileName);
-   return;
+   return
 end
 calibData = textscan(fId, '%s');
 calibData = calibData{:};
@@ -124,7 +127,7 @@ calibData = reshape(calibData, 4, size(calibData, 1)/4)';
 fId = fopen(showModeFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', showModeFileName);
-   return;
+   return
 end
 showModeData = textscan(fId, '%s');
 showModeData = showModeData{:};
@@ -136,7 +139,7 @@ showModeData = reshape(showModeData, 3, size(showModeData, 1)/3)';
 fId = fopen(outputPixelFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', outputPixelFileName);
-   return;
+   return
 end
 outputPixelData = textscan(fId, '%s');
 outputPixelData = outputPixelData{:};
@@ -149,7 +152,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -163,7 +166,7 @@ metaWmoList = metaData(:, 1);
 % for id = 1:length(metaWmoList)
 %    if (isempty(str2num(metaWmoList{id})))
 %       fprintf('%s is not a valid WMO number\n', metaWmoList{id});
-%       return;
+%       return
 %    end
 % end
 S = sprintf('%s*', metaWmoList{:});
@@ -179,14 +182,14 @@ for idFloat = 1:nbFloats
    % get the list of sensors for this float
    [sensorList] = get_sensor_list_cts4(floatNum);
    if (isempty(sensorList))
-      continue;
+      continue
    end
    
    % find decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    
@@ -274,7 +277,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel] = get_sensor_info(a_inputSensorName, a_decId, a_floatNum, a_metaWmoList, a_metaData)
@@ -309,7 +312,7 @@ switch a_inputSensorName
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110, 111}
+         case {105, 106, 107, 110, 111, 113}
             o_sensorName = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'} {'FLUOROMETER_CDOM'}];
             o_sensorDimLevel = [301 302 303];
             o_sensorMaker = [{'WETLABS'} {'WETLABS'} {'WETLABS'}];
@@ -365,7 +368,7 @@ switch a_inputSensorName
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_techParId, o_techParDimLev, o_techParCode, o_techParValue] = ...
@@ -420,7 +423,7 @@ for idSensor = 1:length(a_sensorList)
          
       case 'ECO3'
          switch a_decId
-            case {105, 106, 107, 110, 111}
+            case {105, 106, 107, 110, 111, 113}
                codeList = [ ...
                   {'ECO_BETA_ANGLE'}; ...
                   {'ECO_BETA_BANDWIDTH'}; ...
@@ -652,7 +655,7 @@ for idSensor = 1:length(a_sensorList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_techParId, o_techParDimLev, o_techParCode, o_techParValue] = ...
@@ -694,7 +697,7 @@ for idC = 1:length(a_codeList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorSn] = get_sensor_sn(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
@@ -720,7 +723,7 @@ else
       a_sensorName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorModel] = get_sensor_model(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
@@ -746,7 +749,7 @@ else
       a_sensorName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
@@ -763,7 +766,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_optodeInAir] = get_optode_in_air(a_floatNum, a_metaWmoList, a_metaData)
@@ -785,7 +788,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -821,7 +824,7 @@ else
       o_platformFamily);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -857,7 +860,7 @@ else
       o_platformType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -893,7 +896,7 @@ else
       o_wmoInstType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramName, o_paramDimLevel, o_paramSensor, ...
@@ -923,7 +926,7 @@ switch a_inputSensorName
       
    case 'OPTODE'
       switch a_decId
-         case {106, 107, 108, 109, 110, 111, 301}
+         case {106, 107, 108, 109, 110, 111, 113, 301}
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} ...
                ];
@@ -973,7 +976,7 @@ switch a_inputSensorName
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110, 111}
+         case {105, 106, 107, 110, 111, 113}
             o_paramName = [ ...
                {'FLUORESCENCE_CHLA'} {'BETA_BACKSCATTERING700'} {'FLUORESCENCE_CDOM'} ...
                {'CHLA'} {'BBP700'} {'CDOM'} ...
@@ -1059,7 +1062,7 @@ switch a_inputSensorName
                   {'count'} ...
                   {'micromole/kg'} ...
                   ];
-            case {110}
+            case {110, 113}
                o_paramName = [ ...
                   {'TEMP_NITRATE'} ...
                   {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
@@ -1162,7 +1165,7 @@ end
 o_paramAccuracy = o_paramAccuracy';
 o_paramResolution = o_paramResolution';
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramAccuracy, o_paramResolution] = ...
@@ -1228,7 +1231,7 @@ if (~isempty(idF1))
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_calibEquation, o_calibCoef, o_calibComment] = get_calib_info(a_parameterName, a_floatNum, a_decId, a_calibData)
@@ -1310,7 +1313,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110, 111}
+         case {105, 106, 107, 108, 109, 110, 111, 113}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
             
@@ -1352,7 +1355,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110, 111}
+         case {105, 106, 107, 108, 109, 110, 111, 113}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');
@@ -1540,7 +1543,7 @@ switch a_parameterName
       fprintf('ERROR: No calib information for parameter %s of float #%d\n', a_parameterName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_coefVal] = get_calib_coef(a_calibData, a_floatNum, a_sensorName, a_coefName)
@@ -1556,7 +1559,7 @@ else
    fprintf('ERROR: Calib coef %s is missing for float #%d\n', a_coefName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_vectorShowMode, o_sensorShowMode] = get_show_mode(a_showModeData, a_floatNum)
@@ -1580,7 +1583,7 @@ else
    fprintf('ERROR: Sensor show mode is missing for float #%d\n', a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_pixelBegin, o_pixelEnd] = get_output_pixel(a_outputPixelData, a_floatNum)
@@ -1604,7 +1607,7 @@ else
    fprintf('ERROR: SUNA output pixel end number is missing for float #%d\n', a_floatNum);
 end
 
-return;
+return
 
 % % ------------------------------------------------------------------------------
 % function [o_sensorSn] = get_sensor_sn(a_sensorSnData, a_floatNum, a_sensorName)
@@ -1619,4 +1622,4 @@ return;
 %    fprintf('ERROR: Sensor number is missing for sensor %s of float #%d\n', a_sensorName, a_floatNum);
 % end
 %
-% return;
+% return

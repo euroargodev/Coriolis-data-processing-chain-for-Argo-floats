@@ -86,4 +86,4 @@ if (size(a_tabCoef, 1) == 6)
    o_molarDoxy = a_tabCoef(6,1) + a_tabCoef(6,2)*o_molarDoxy;
 end
 
-return;
+return

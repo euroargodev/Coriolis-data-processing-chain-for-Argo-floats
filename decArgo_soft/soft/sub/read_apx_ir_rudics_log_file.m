@@ -31,14 +31,14 @@ global g_decArgo_janFirst1950InMatlab;
 
 if ~(exist(a_logFileName, 'file') == 2)
    fprintf('ERROR: File not found: %s\n', a_logFileName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_logFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_logFileName);
-   return;
+   return
 end
 
 END = '<EOT>';
@@ -54,13 +54,13 @@ while 1
       if (endFlag ~= 1)
          %          fprintf('WARNING: End of file without ''<EOT>'' in file: %s\n', a_logFileName);
       end
-      break;
+      break
    end
    
    lineNum = lineNum + 1;
    line = strtrim(line);
    if (isempty(line))
-      continue;
+      continue
    end
    
    if (any(strfind(line, END)))
@@ -138,4 +138,4 @@ if (isempty(o_events))
    o_error = 1;
 end
 
-return;
+return

@@ -78,7 +78,7 @@ global g_decArgo_generateNcTech;
 
 % no drift message received
 if (isempty(a_tabDrifCTDO))
-   return;
+   return
 end
 
 % add and offset of 3 minutes to technical dates (given in tenths of an
@@ -155,7 +155,7 @@ o_parkRawDoxy = ones(nbMeasTot, 1)*g_decArgo_tPhaseDoxyCountsDef;
 
 % fill drift measurement arrays
 idCurMes = 1;
-[unused, idSort] = sort(msgDates);
+[~, idSort] = sort(msgDates);
 for id = 1:size(a_tabDrifCTDO, 1)
    idMsg = idSort(id);
    msgOcc = a_tabDrifCTDO(idMsg, 1);
@@ -237,4 +237,4 @@ if (g_decArgo_generateNcTech ~= 0)
    g_decArgo_outputNcParamValue{end+1} = sum(msgNbMeas);
 end
 
-return;
+return

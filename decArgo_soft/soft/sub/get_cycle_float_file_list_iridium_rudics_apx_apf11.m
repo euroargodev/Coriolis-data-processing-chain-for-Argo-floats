@@ -40,7 +40,7 @@ global g_decArgo_janFirst1950InMatlab;
 iriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatRudicsId '_' num2str(a_floatNum) '/archive/'];
 if ~(exist(iriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', iriDirName);
-   return;
+   return
 end
 
 fileNameList = [];
@@ -64,4 +64,4 @@ end
 
 o_fileList = fileNameList;
 
-return;
+return

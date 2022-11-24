@@ -71,5 +71,5 @@ if (~isempty(idPrevCycle))
    o_lastMsgDate = a_floatSurfData.cycleData(idPrevCycle).lastMsgTime;
 end
 
-return;
+return
 

@@ -80,10 +80,10 @@ if (~isempty(a_floatNum))
       floatInfoFileName = [g_decArgo_dirInputJsonFloatDecodingParametersFile '/' floatInfoFileNames(1).name];
    elseif (isempty(floatInfoFileNames))
       fprintf('WARNING: Float information file not found for float #%d\n', a_floatNum);
-      return;
+      return
    else
       fprintf('ERROR: Multiple float information files for float #%d\n', a_floatNum);
-      return;
+      return
    end
    
 elseif (~isempty(a_floatArgosId))
@@ -92,12 +92,12 @@ elseif (~isempty(a_floatArgosId))
       floatInfoFileName = [g_decArgo_dirInputJsonFloatDecodingParametersFile '/' floatInfoFileNames(1).name];
    elseif (isempty(floatInfoFileNames))
       fprintf('WARNING: Float information file not found for Argos Id #%d\n', a_floatArgosId);
-      return;
+      return
    else
       for idF = 1: length(floatInfoFileNames)
          if (~isempty(strfind(floatInfoFileNames(idF).name, 'WWWWWWW_')))
             fprintf('ERROR: Conflict between one JSON info file (%s) and the other ones => clean the set of JSON info files for this float\n', floatInfoFileNames(idF).name);
-            return;
+            return
          end
       end
       % read Argos file
@@ -107,7 +107,7 @@ elseif (~isempty(a_floatArgosId))
       
       if (isempty(lastArgosMsgDate))
          fprintf('WARNING: Input Argos file (%s) is empty => cannot choose between possible WMO numbers\n', g_decArgo_inputArgosFile);
-         return;
+         return
       end
       
       % collect launch dates of possible json files
@@ -125,7 +125,7 @@ elseif (~isempty(a_floatArgosId))
          
          if (sum(isfield(fileContents, expectedFields)) ~= length(expectedFields))
             fprintf('ERROR: Missing data in float information file: %s\n', filePathName);
-            return;
+            return
          end
          
          floatLaunchDateStr = getfield(fileContents, 'LAUNCH_DATE');
@@ -145,7 +145,7 @@ elseif (~isempty(a_floatArgosId))
       if (~isempty(idF))
          idFloat = idF(end);
       else
-         [unused, idMin] = min(launchDate);
+         [~, idMin] = min(launchDate);
          idFloat = idMin;
       end
       
@@ -195,7 +195,7 @@ else
    
    if (sum(isfield(fileContents, expectedFields)) ~= length(expectedFields))
       fprintf('ERROR: Missing data in float information file: %s\n', floatInfoFileName);
-      return;
+      return
    end
    
    o_floatNum = str2num(getfield(fileContents, 'WMO'));
@@ -226,4 +226,4 @@ else
    o_floatDmFlag = str2num(getfield(fileContents, 'DM_FLAG'));
 end
 
-return;
+return

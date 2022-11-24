@@ -35,7 +35,7 @@ global g_decArgo_dateDef;
 
 
 if (isempty(a_dataHydrau))
-   return;
+   return
 end
 
 if (~isempty(a_floatClockDrift))
@@ -80,4 +80,4 @@ for idH = 1:size(a_dataHydrau, 1)
    end
 end
 
-return;
+return

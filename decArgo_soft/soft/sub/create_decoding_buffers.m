@@ -454,6 +454,10 @@ tabDeepCell = num2cell(tabDeep);
 [o_decodedData.deep] = deal(tabDeepCell{:});
 tabResetFlagCell = num2cell(tabResetFlag);
 [o_decodedData.reset] = deal(tabResetFlagCell{:});
+tabIceDelayed = zeros(size(tabDelayed)); % needed because we can have Ice delayed cycles without measurements (i.e. considered as 'surface' cycles) cf. 6902910
+tabIceDelayed(find(tabDelayed == 1)) = 1;
+tabIceDelayedCell = num2cell(tabIceDelayed);
+[o_decodedData.iceDelayed] = deal(tabIceDelayedCell{:});
 
 if (~isempty(g_decArgo_outputCsvFileId))
    if (1)

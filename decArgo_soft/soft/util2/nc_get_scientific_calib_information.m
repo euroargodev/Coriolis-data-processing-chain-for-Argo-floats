@@ -37,7 +37,7 @@ if (nargin == 0)
       % floats to process come from FLOATS_LIST
       if ~(exist(FLOATS_LIST, 'file') == 2)
          fprintf('File not found: %s\n', FLOATS_LIST);
-         return;
+         return
       end
       
       fprintf('Floats from list: %s\n', FLOATS_LIST);
@@ -87,7 +87,7 @@ for idDir = 1:length(dacDir)
    dacDirName = dacDir(idDir).name;
    
    if (~strcmp(dacDirName, 'coriolis'))
-      continue;
+      continue
    end
    
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
@@ -102,12 +102,12 @@ for idDir = 1:length(dacDir)
          floatDirName = floatDir(idDir2).name;
          if (~isempty(floatList))
             if (~ismember(str2double(floatDirName), floatList))
-               continue;
+               continue
             end
          end
          
 %          if (~strcmp(floatDirName, '1900379'))
-%             continue;
+%             continue
 %          end
          
          floatDirPathName = [dacDirPathName '/' floatDirName];
@@ -128,7 +128,7 @@ for idDir = 1:length(dacDir)
                   %                   end
                   
                   if (profFileName(1) == 'M')
-                     continue;
+                     continue
                   end
                   profFilePathName = [floatProfDirPathName '/' profFileName];
                   if (exist(profFilePathName, 'file') == 2)
@@ -251,10 +251,10 @@ for idDir = 1:length(dacDir)
             end
             
             % create the CSV output file
-            outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv']
+            outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv'];
             fidOut = fopen(outputFileName, 'wt');
             if (fidOut == -1)
-               return;
+               return
             end
             fprintf(fidOut, '%s ', header1);
             fprintf(fidOut, ';%s ', header2{:});
@@ -360,7 +360,7 @@ for idDir = 1:length(dacDir)
          outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv']
          fidOut = fopen(outputFileName, 'wt');
          if (fidOut == -1)
-            return;
+            return
          end
          fprintf(fidOut, '%s ', header1);
          fprintf(fidOut, ';%s ', header2{:});
@@ -453,7 +453,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -488,7 +488,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -509,7 +509,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -542,4 +542,4 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return

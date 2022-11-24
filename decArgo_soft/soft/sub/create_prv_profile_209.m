@@ -80,7 +80,7 @@ global g_decArgo_phaseDelayDoxyDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 optodeType = unique(a_dataCTDO(:, end));
@@ -99,7 +99,7 @@ switch (optodeType)
                   if ((data(idMeas+1+15*2) == g_decArgo_presDef) && ...
                         (data(idMeas+1+15*3) == g_decArgo_tempDef) && ...
                         (data(idMeas+1+15*4) == g_decArgo_salDef))
-                     break;
+                     break
                   end
                end
                
@@ -134,7 +134,7 @@ switch (optodeType)
                         (data(idMeas+1+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
                         (data(idMeas+1+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
                         (data(idMeas+1+7*7) == g_decArgo_tempDoxyDef))
-                     break;
+                     break
                   end
                end
                
@@ -174,7 +174,7 @@ switch (optodeType)
                         (data(idMeas+1+9*4) == g_decArgo_salDef) && ...
                         (data(idMeas+1+9*5) == g_decArgo_phaseDelayDoxyDef) && ...
                         (data(idMeas+1+9*6) == g_decArgo_tempDoxyDef))
-                     break;
+                     break
                   end
                end
                
@@ -215,7 +215,7 @@ switch (optodeType)
                         (data(idMeas+1+5*7) == g_decArgo_tempDoxyDef) && ...
                         (data(idMeas+1+5*8) == g_decArgo_phaseDelayDoxyDef) && ...
                         (data(idMeas+1+5*9) == g_decArgo_tempDoxyDef))
-                     break;
+                     break
                   end
                end
                
@@ -277,4 +277,4 @@ if (~isempty(o_ascProfPhaseDelayDoxy))
    o_ascProfTempDoxySbe = o_ascProfTempDoxySbe(idSorted);
 end
 
-return;
+return

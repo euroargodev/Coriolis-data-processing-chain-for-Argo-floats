@@ -90,7 +90,7 @@ PRINT_FROZEN_BYTES = 0;
 
 
 if (isempty(a_sensorData))
-   return;
+   return
 end
 
 % information on hydrographic data storage
@@ -1259,7 +1259,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) |
                      if (length(presMark) < nbPresMark)
                         presMark = [presMark; decData(idL)];
                      else
-                        break;
+                        break
                      end
                   else
                      % we store all data that may content P marks
@@ -1340,4 +1340,4 @@ if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) |
    end
 end
 
-return;
+return

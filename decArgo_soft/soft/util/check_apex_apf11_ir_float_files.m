@@ -55,7 +55,7 @@ diary(logFile);
 % create working directory
 if (exist(DIR_WORK, 'dir') == 7)
    fprintf('Directory already exists: %s => exit\n', DIR_WORK);
-   return;
+   return
 else
    mkdir(DIR_WORK);
 end
@@ -76,7 +76,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(FLOAT_LIST_FILE_NAME, 'file') == 2)
       fprintf('File not found: %s\n', FLOAT_LIST_FILE_NAME);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', FLOAT_LIST_FILE_NAME);
@@ -92,7 +92,7 @@ end
    listLaunchDate, listLaunchLon, listLaunchLat, ...
    listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
 if (isempty(numWmo))
-   return;
+   return
 end
 
 nbFloats = length(floatList);
@@ -106,7 +106,7 @@ for idFloat = 1:nbFloats
    imei = find_login_name(floatNum, numWmo, loginName);
    if (isempty(imei))
       fprintf('Unable to find IMEI number for float #%d => float ignored\n', floatNum);
-      continue;
+      continue
    end
    
    % float output directory
@@ -313,4 +313,4 @@ end
 
 diary off;
 
-return;
+return

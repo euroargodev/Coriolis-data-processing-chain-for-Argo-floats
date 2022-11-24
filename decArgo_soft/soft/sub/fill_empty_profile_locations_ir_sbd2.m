@@ -52,7 +52,7 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Try to add the profile missing location using interpolated surface locations.
@@ -166,7 +166,7 @@ end
 % output data
 o_profStruct = a_profStruct;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Add date to not already dated profiles (due to missing float tech msg #253),
@@ -218,7 +218,7 @@ if (a_profStruct.direction == 'A')
    for id = 1:length(idF)
       if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
          juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
-         break;
+         break
       end
    end
    if (~isempty(juldFirstMessage))
@@ -238,7 +238,7 @@ else
       for id = 1:length(idF)
          if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
             juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
-            break;
+            break
          end
       end
       if (~isempty(juldFirstMessage))
@@ -264,7 +264,7 @@ else
             for id = 1:length(idF2)
                if (~isempty(a_tabTrajNCycle(idF2(id)).juldLastMessage))
                   juldLastMessage = a_tabTrajNCycle(idF2(id)).juldLastMessage;
-                  break;
+                  break
                end
             end
             if (~isempty(juldLastMessage))
@@ -307,4 +307,4 @@ end
 % output data
 o_profStruct = a_profStruct;
 
-return;
+return

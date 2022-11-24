@@ -59,13 +59,13 @@ for id = 1:length(a_fileName)
 
    if ~(exist(fileName, 'file') == 2)
       fprintf('ERROR: Argos file not found: %s\n', fileName);
-      return;
+      return
    end
 
    fId = fopen(fileName, 'r');
    if (fId == -1)
       fprintf('ERROR: Error while opening Argos file: %s\n', fileName);
-      return;
+      return
    end
 
    % parse Argos file contents
@@ -74,19 +74,19 @@ for id = 1:length(a_fileName)
       line = fgetl(fId);
       lineNum = lineNum + 1;
       if (line == -1)
-         break;
+         break
       end
 
       % empty line
       if (strcmp(deblank(line), ''))
-         continue;
+         continue
       end
 
       % look for satellite pass header
       [val, count, errmsg, nextindex] = sscanf(line, '%d %d %d %d %c %c %d-%d-%d %d:%d:%d %f %f %f %d');
       if (~isempty(errmsg) || (count < 5) || (val(2) ~= a_argosId))
          fprintf('ERROR: Error in line #%d: %s (file %s)\n', lineNum, line, fileName);
-         break;
+         break
       end
       satellite = char(val(5));
       o_satLine = line;
@@ -114,7 +114,7 @@ for id = 1:length(a_fileName)
          lineNum = lineNum + 1;
          if (line == -1)
             fprintf('ERROR: Unexpected error in line #%d (file %s)\n', lineNum, fileName);
-            break;
+            break
          end
 
          % look for message header
@@ -259,7 +259,7 @@ while (~isempty(tabDate))
             end
          end
          if (length(idSelect) > 1)
-            [unused, idMax] = max(argosDataOcc(idSelect));
+            [~, idMax] = max(argosDataOcc(idSelect));
             idSelect(idMax) = [];
             idDel = [idDel; idSelect];
          end
@@ -301,7 +301,7 @@ while (~isempty(tabDate))
    idEq = find(o_argosDataDate == tabDate(1));
    if (length(idEq) > 1)
 
-      [unused, idSorted] = sort(argosDataSat(idEq));
+      [~, idSorted] = sort(argosDataSat(idEq));
       o_argosDataDate(idEq) = o_argosDataDate(idEq(idSorted));
       o_argosDataData(idEq, :) = o_argosDataData(idEq(idSorted), :);
       o_floatMsgLines(idEq) = o_floatMsgLines(idEq(idSorted));
@@ -312,7 +312,7 @@ while (~isempty(tabDate))
    tabDate(1) = [];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Select Argos locations to delete (only one location is preserved for a given
@@ -355,7 +355,7 @@ for id = 1:length(uSatellite)
       idEqQc = find(posQc == posQc(idSortedPosQc(1)));
       if (length(idEqQc) > 1)
          % select satellite pass according to the amount of received data
-         [unused, idSortedPos] = sort(nbLines(idEqQc), 'descend');
+         [~, idSortedPos] = sort(nbLines(idEqQc), 'descend');
          select = [select; idEqSat(idEqQc(idSortedPos(1)))];
       else
          select = [select; idEqSat(idEqQc)];
@@ -367,7 +367,7 @@ end
 
 o_notSelected = setdiff([1:length(a_posQc)], select);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Sort Argos locations according to their classes.
@@ -397,11 +397,11 @@ o_idSorted = [];
 idGps = find(a_posQc == 'G');
 a_posQc(idGps) = ones(1, length(idGps))*4;
 idDigit = find(isstrprop(a_posQc, 'digit') == 1);
-[unused, idSorted] = sort(a_posQc(idDigit), 'descend');
+[~, idSorted] = sort(a_posQc(idDigit), 'descend');
 o_idSorted = idDigit(idSorted);
 idLetter = setdiff([1:length(a_posQc)], idDigit);
-[unused, idSorted] = sort(a_posQc(idLetter));
+[~, idSorted] = sort(a_posQc(idLetter));
 o_idSorted = [o_idSorted idLetter(idSorted)];
 
-return;
+return
 

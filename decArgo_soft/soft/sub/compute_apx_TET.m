@@ -153,7 +153,7 @@ if (o_timeData.configParam.downTimeEndProvidedFlag)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Estimate UP_TIME configuration parameter value.
@@ -199,7 +199,7 @@ idDated = find((tabTet ~= g_decArgo_dateDef) & (downTimeEnd ~= g_decArgo_dateDef
 [o_timeData.configParam.upTime, ~] = select_a_value(round((tabTet(idDated)-downTimeEnd(idDated))*24));
 o_timeData.configParam.downTime = o_timeData.configParam.cycleTime - o_timeData.configParam.upTime;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Estimate TET from LMTs (and estimate the RTC clock drift if possible).
@@ -254,7 +254,7 @@ lastMsgTime = [o_timeData.cycleTime(idUsed).lastMsgTime];
 cycleTimes = ones(max(cycleNumber), 1)*cycleTime;
 
 if (isempty(cycleNumber))
-   return;
+   return
 end
 
 % estimate TET from the max envelope of the LMTs (without clock drift estimation)
@@ -312,7 +312,7 @@ if (length(cycleNumber) >= NB_CYCLE_MIN)
                   % convex envelope
                   idStart = idCheck;
                   stop = 0;
-                  break;
+                  break
                end
             end
          end
@@ -397,7 +397,7 @@ if (length(cycleNumber) >= NB_CYCLE_MIN)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute durations between cycles.
@@ -438,4 +438,4 @@ end
 
 o_duration = o_duration/24;
 
-return;
+return

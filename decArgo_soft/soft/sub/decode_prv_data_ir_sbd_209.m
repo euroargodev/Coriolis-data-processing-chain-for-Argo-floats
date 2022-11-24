@@ -120,7 +120,7 @@ for idMes = 1:size(a_tabData, 1)
          g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(33);
          g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(34);
          if (a_procLevel == 0)
-            continue;
+            continue
          end
                   
          % some pressures are given in bars
@@ -149,7 +149,7 @@ for idMes = 1:size(a_tabData, 1)
          else
             g_decArgo_cycleNum = floatCycleNumber - g_decArgo_cycleNumShift + 1;
          end
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
      
          % pressure sensor offset
          tabTech(49) = twos_complement_dec_argo(tabTech(49), 8)/10;
@@ -195,7 +195,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % deduce optode type information from received data
@@ -523,7 +523,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -565,7 +565,7 @@ if (a_procLevel > 0)
    collect_received_packet_type_info;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize global flags and counters used to decide if a buffer is completed
@@ -643,7 +643,7 @@ g_decArgo_nbOf3Or10TypePacketExpected = 0;
 g_decArgo_nbOf13Or11TypePacketExpected = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = 0;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collect information on received packet types
@@ -700,4 +700,4 @@ g_decArgo_nbAscentPacketsReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceive
 g_decArgo_nbTechPacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 
-return;
+return

@@ -91,12 +91,12 @@ if (okForNew == 1)
          paramValidMaxN{end+1} = rawN{idL, validMaxN};
          paramCbiN{end+1} = rawN{idL, cbiN};
       else
-         break;
+         break
       end
    end
 else
    fprintf('ERROR: Cannot find expected fields in input file %s\n', NEW_PARAMETER_FILE_NAME);
-   return;
+   return
 end
 
 % read the old Excel files
@@ -161,12 +161,12 @@ if (okForOld == 1)
          paramValidMaxO{end+1} = rawO{idL, validMaxO};
          paramCbiO{end+1} = rawO{idL, cbiO};
       else
-         break;
+         break
       end
    end
 else
    fprintf('ERROR: Cannot find expected fields in input file %s\n', NEW_PARAMETER_FILE_NAME);
-   return;
+   return
 end
 
 % compare file contents
@@ -263,4 +263,4 @@ end
 
 diary off;
 
-return;
+return

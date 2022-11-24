@@ -39,7 +39,7 @@ if (isempty(idUsedConf))
    
    fprintf('WARNING: Float #%d: config missing for cycle #%d\n', ...
       g_decArgo_floatNum, a_cycleNum);
-   return;
+   return
 end
 
 % retrieve the data of the concerned configuration
@@ -48,4 +48,4 @@ idConf = find(g_decArgo_floatConfig.DYNAMIC.NUMBER == configNumber);
 o_configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
 o_configValues = g_decArgo_floatConfig.DYNAMIC.VALUES(:, idConf);
 
-return;
+return

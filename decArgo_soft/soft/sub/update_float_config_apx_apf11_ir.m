@@ -188,7 +188,7 @@ end
      
 % create_csv_to_print_config_apx_apf11_ir('setConfig_', g_decArgo_floatConfig);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrive configuration name and value to store for a given configuration
@@ -396,4 +396,4 @@ switch (a_floatConfLabel)
          a_floatConfLabel);
 end
 
-return;
+return

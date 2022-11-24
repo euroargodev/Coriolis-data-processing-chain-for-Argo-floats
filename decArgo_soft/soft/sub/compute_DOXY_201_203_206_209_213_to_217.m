@@ -67,7 +67,7 @@ o_doxyValues = ones(length(a_c1PhaseDoxyValues), 1)*g_decArgo_doxyDef;
 
 
 if (isempty(a_c1PhaseDoxyValues) || isempty(a_c2PhaseDoxyValues) || isempty(a_tempDoxyValues))
-   return;
+   return
 end
 
 % get calibration information
@@ -75,7 +75,7 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef')))
    tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
    % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
@@ -83,13 +83,13 @@ elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo
       fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum);
-      return;
+      return
    end
 else
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -142,4 +142,4 @@ if (~isempty(idNoDef))
    o_doxyValues(idNoDef) = oxyValues;   
 end
 
-return;
+return

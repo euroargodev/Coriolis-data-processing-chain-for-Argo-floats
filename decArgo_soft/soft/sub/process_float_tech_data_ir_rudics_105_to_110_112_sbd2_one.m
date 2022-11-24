@@ -505,4 +505,4 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    253 cycleNum profNum phaseNum 173];
 g_decArgo_outputNcParamValue{end+1} = sprintf('%#x', a_tabTech(a_dataIndex, 74));
 
-return;
+return

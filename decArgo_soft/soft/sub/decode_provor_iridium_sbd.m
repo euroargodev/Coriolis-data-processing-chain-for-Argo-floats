@@ -230,8 +230,8 @@ end
 
 % initialize float parameter configuration
 init_float_config_ir_sbd(a_launchDate, a_decoderId);
-if (isempty(g_decArgo_floatConfig)) % CONFIG_PG00 not set
-   return;
+if (isempty(g_decArgo_floatConfig)) % CONFIG_PG00 not set or issue with config values (during str2num conversion)
+   return
 end
 
 % print DOXY coef in the output CSV file
@@ -502,7 +502,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
       end
       if (idSpoolFile < length(tabAllFileNames))
-         continue;
+         continue
       end
    end
       
@@ -536,6 +536,50 @@ for idSpoolFile = 1:length(tabAllFileNames)
             bufferRank = bufferRank + 1;
             bufferMailFileNames(idOld2) = [];
             bufferMailFileDates(idOld2) = [];
+         end
+      end
+   end
+   
+   % specific
+   % 3901850: MOMSN = 2512 is missing, we must artificially separate first and
+   % second Iridium session (which start with MOMSN = 2514 (and 2515)
+   %    if (g_decArgo_floatNum == 3901850)
+   %       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, '_300234063600100_002515_')))
+   %          newFile = regexprep(tabAllFileNames{idSpoolFile}, '.txt', '.sbd');
+   %          idNext = find(strcmp(newFile, tabFileNames));
+   %          idOld = setdiff(1:length(tabFileNames), idNext);
+   %          tabOldFileNames = tabFileNames(idOld);
+   %          tabOldFileDates = tabFileDates(idOld);
+   %          tabOldFileSizes = tabFileSizes(idOld);
+   %          if (g_decArgo_realtimeFlag)
+   %             idNext2 = find(strcmp(tabAllFileNames{idSpoolFile}, bufferMailFileNames));
+   %             idOld2 = setdiff(1:length(bufferMailFileNames), idNext2);
+   %             if (~isempty(idOld2))
+   %                write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
+   %                bufferRank = bufferRank + 1;
+   %                bufferMailFileNames(idOld2) = [];
+   %                bufferMailFileDates(idOld2) = [];
+   %             end
+   %          end
+   %       end
+   %    end
+   if (g_decArgo_floatNum == 3901850)
+      if (~isempty(strfind(tabAllFileNames{idSpoolFile}, '_300234063600100_002513_')))
+%          newFile = regexprep(tabAllFileNames{idSpoolFile}, '.txt', '.sbd');
+%          idNext = find(strcmp(newFile, tabFileNames));
+         idOld = 1:length(tabFileNames);
+         tabOldFileNames = tabFileNames(idOld);
+         tabOldFileDates = tabFileDates(idOld);
+         tabOldFileSizes = tabFileSizes(idOld);
+         if (g_decArgo_realtimeFlag)
+%             idNext2 = find(strcmp(tabAllFileNames{idSpoolFile}, bufferMailFileNames));
+            idOld2 = 1:length(bufferMailFileNames);
+            if (~isempty(idOld2))
+               write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
+               bufferRank = bufferRank + 1;
+               bufferMailFileNames(idOld2) = [];
+               bufferMailFileDates(idOld2) = [];
+            end
          end
       end
    end
@@ -796,6 +840,11 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_structConfig] = create_output_float_config_ir_sbd( ...
       decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
+   % specific: for float 6901763 remove DO data when PT21=0
+   if ((a_decoderId == 203) && (g_decArgo_floatNum == 6901763))
+      [o_tabProfiles, o_tabTrajNMeas] = remove_do_data(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
+   end
+   
    if (g_decArgo_realtimeFlag)
       
       % save the list of already processed rsync log files in the history
@@ -813,7 +862,7 @@ if (g_decArgo_virtualBuff)
    rmdir(g_decArgo_archiveSbdDirectory, 's');
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode one set of Iridium SBD files.
@@ -927,7 +976,7 @@ global g_decArgo_virtualBuff;
 
 % no data to process
 if (isempty(a_sbdFileNameList))
-   return;
+   return
 end
 
 % read the SBD file data
@@ -1513,7 +1562,7 @@ switch (a_decoderId)
          if (isempty(tabTech) && ~isempty(dataCTD))
             [cycleNumber] = estimate_cycle_number(dataCTD, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
-            fprintf('cyle #%d\n', g_decArgo_cycleNum);
+            fprintf('Cycle #%d\n', g_decArgo_cycleNum);
          end
       end
       
@@ -1756,7 +1805,7 @@ switch (a_decoderId)
          if (isempty(tabTech) && ~isempty(dataCTD))
             [cycleNumber] = estimate_cycle_number(dataCTD, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
-            fprintf('cyle #%d\n', g_decArgo_cycleNum);
+            fprintf('Cycle #%d\n', g_decArgo_cycleNum);
          end
       end
       
@@ -2000,7 +2049,7 @@ switch (a_decoderId)
          if (isempty(tabTech) && ~isempty(dataCTDO))
             [cycleNumber] = estimate_cycle_number(dataCTDO, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
-            fprintf('cyle #%d\n', g_decArgo_cycleNum);
+            fprintf('Cycle #%d\n', g_decArgo_cycleNum);
          end
       end
       
@@ -2114,7 +2163,7 @@ switch (a_decoderId)
             otherwise
                fprintf('ERROR: Nothing implemented yet to compute DOXY for decoderId #%d\n', ...
                   a_decoderId);
-               return;
+               return
          end
       end
       
@@ -2308,7 +2357,7 @@ switch (a_decoderId)
          if (isempty(tabTech) && ~isempty(dataCTDO))
             [cycleNumber] = estimate_cycle_number_209(dataCTDO, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
-            fprintf('cyle #%d\n', g_decArgo_cycleNum);
+            fprintf('Cycle #%d\n', g_decArgo_cycleNum);
          end
       end
       
@@ -3451,4 +3500,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

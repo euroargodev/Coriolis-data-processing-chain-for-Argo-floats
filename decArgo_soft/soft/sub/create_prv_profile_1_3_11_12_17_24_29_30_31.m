@@ -72,7 +72,7 @@ global g_decArgo_presCountsDef;
 
 
 if (isempty(a_tabProfCTD))
-   return;
+   return
 end
 
 % compute first CTD measurement dates (9 bits coded in transmitted message)
@@ -192,4 +192,4 @@ if (g_decArgo_generateNcTech ~= 0)
    g_decArgo_outputNcParamValue{end+1} = length(o_ascProfPres);
 end
 
-return;
+return

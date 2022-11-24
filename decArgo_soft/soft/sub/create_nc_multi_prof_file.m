@@ -49,7 +49,7 @@ global g_decArgo_generateNcFlag;
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 if (g_decArgo_floatTransType == 1)
@@ -95,7 +95,7 @@ if (g_decArgo_floatTransType == 1)
                   
                   idF = find(g_decArgo_existingArgosFileSystemDate >= ncFileUpdateDate, 1);
                   if (isempty(idF))
-                     return;
+                     return
                   end
                end
             end
@@ -114,11 +114,11 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    if ((g_decArgo_generateNcMultiProf == 2) && (g_decArgo_generateNcFlag == 0))
       % no buffer has been decoded => the file should not be updated
-      return;
+      return
    end
    
    create_nc_multi_prof_file_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
    
 end
 
-return;
+return

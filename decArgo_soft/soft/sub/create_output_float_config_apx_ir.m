@@ -72,25 +72,8 @@ if (ismember(a_decoderId, [1121 1321 1322]))
       finalConfigValue(idDel, :) = [];
    end
    
-   % create sensor list
-   sensorList = get_sensor_list_apex_apf11(g_decArgo_floatNum);
-   sensorListConfig = [];
-   for idS = 1:length(sensorList)
-      switch (sensorList{idS})
-         case 'CTD'
-            sensorListConfig = [sensorListConfig; {'Ctd'}];
-         case 'OPTODE'
-            sensorListConfig = [sensorListConfig; {'Optode'}];
-         case 'TRANSISTOR_PH'
-            sensorListConfig = [sensorListConfig; {'Ph'}];
-         otherwise
-            fprintf('ERROR: Float #%d: Sensor not managed yet in configuration labels: ''%s''\n', ...
-               g_decArgo_floatNum, ...
-               sensorList{idS});
-      end
-   end
-   
-   sensorList = [ ...
+   % link between sensor names (to create Argo names from float ones)
+   floatToNcSensorList = [ ...
       {'PT'} {'Ctd'}; ...
       {'PTS'} {'Ctd'}; ...
       {'CTD'} {'Ctd'}; ...
@@ -128,19 +111,19 @@ if (~isempty(a_decArgoConfParamNames))
                   fprintf('ERROR: Float #%d: Cannot find phase name associated to ''%s''\n', ...
                      g_decArgo_floatNum, ...
                      finalConfigName{idConfParam});
-                  continue;
+                  continue
                end
                
                % retrieve sensor name
                sensorNameIn = finalConfigName{idConfParam}(idFUs(3)+1:idFUs(4)-1);
-               idS = find(strcmp(sensorNameIn, sensorList(:, 1)));
+               idS = find(strcmp(sensorNameIn, floatToNcSensorList(:, 1)));
                if (~isempty(idS))
-                  sensorNameOut = sensorList{idS, 2};
+                  sensorNameOut = floatToNcSensorList{idS, 2};
                else
                   fprintf('ERROR: Float #%d: Cannot find sensor name associated to ''%s''\n', ...
                      g_decArgo_floatNum, ...
                      sensorNameIn);
-                  continue;
+                  continue
                end
                
                if (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_SAMPLE'))
@@ -276,4 +259,4 @@ o_ncConfig.NUMBER = finalConfigNum;
 o_ncConfig.NAMES = finalConfigName;
 o_ncConfig.VALUES = finalConfigValue;
 
-return;
+return

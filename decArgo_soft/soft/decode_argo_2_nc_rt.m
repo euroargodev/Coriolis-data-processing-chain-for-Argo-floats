@@ -218,4 +218,4 @@ xmlwrite(xmlFileName, g_decArgo_xmlReportDOMNode);
 %    edit(xmlFileName);
 % end
 
-return;
+return

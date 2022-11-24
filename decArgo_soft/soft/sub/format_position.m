@@ -54,4 +54,4 @@ if ((a_longitude ~= g_decArgo_argosLonDef) && (a_latitude ~= g_decArgo_argosLatD
    o_latitudeStr = sprintf('%d deg %.3f %s', latDeg, latMin, latStr);
 end
 
-return;
+return

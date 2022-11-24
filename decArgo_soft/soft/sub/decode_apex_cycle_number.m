@@ -70,7 +70,7 @@ if (a_checkTestMsg == 1)
             a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
 
       case {1021, 1022}
-         % 2.8.0, 2.10.4
+         % 2.8.0.A, 2.10.4.A
          
          nbTestMsg = 2;
          msgNumOfCyNum = 10;
@@ -110,7 +110,7 @@ if (a_checkTestMsg == 1)
             if (msgNum == msgNumOfCyNum)
                o_cycleNumber = data(bytePos);
                o_cycleNumberCount = data(1);
-               break;
+               break
             end
          end
       end
@@ -134,7 +134,7 @@ else
             a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
          
       case {1021, 1022}
-         % 2.8.0, 2.10.4
+         % 2.8.0.A, 2.10.4.A
          
          msgNumOfCyNum = 10;
          bytePos = 7;
@@ -155,11 +155,11 @@ else
          if (msgNum == msgNumOfCyNum)
             o_cycleNumber = data(bytePos);
             o_cycleNumberCount = data(1);
-            break;
+            break
          end
       end
    end
 
 end
 
-return;
+return

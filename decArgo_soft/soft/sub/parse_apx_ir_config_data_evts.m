@@ -40,11 +40,11 @@ HEADER = 'Mission configuration for';
 for idEv = 1:length(a_events)
    dataStr = a_events(idEv).info;
    if (isempty(dataStr))
-      continue;
+      continue
    end
    %    fprintf('''%s''\n', dataStr);
    if (any(strfind(dataStr, HEADER)))
-      continue;
+      continue
    else
       idF1 = strfind(dataStr, '(');
       idF2 = strfind(dataStr, ')');
@@ -63,19 +63,19 @@ for idEv = 1:length(a_events)
          end
          if (isempty(regexp(lower(item(1)), '[a-z]', 'once')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          if (any(strfind(item, ' ')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          o_configData.(item) = value;
          o_configData.([item '_unit']) = unit;
       else
          fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
 end
 
-return;
+return

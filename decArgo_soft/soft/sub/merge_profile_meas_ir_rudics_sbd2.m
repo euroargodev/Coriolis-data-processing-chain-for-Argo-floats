@@ -45,71 +45,62 @@ end
 
 if (~isempty(profInfo))
    % identify the profiles to merge
-   uSensorNum = unique(profInfo(:, 2));
-   uCycleNum = unique(profInfo(:, 3));
-   uProfileNum = unique(profInfo(:, 4));
-   uPhaseNum = unique(profInfo(:, 5));
-   for idS = 1:length(uSensorNum)
-      for idC = 1:length(uCycleNum)
-         for idP = 1:length(uProfileNum)
-            for idH = 1:length(uPhaseNum)
-               sensorNum = uSensorNum(idS);
-               cycleNum = uCycleNum(idC);
-               profileNum = uProfileNum(idP);
-               phaseNum = uPhaseNum(idH);
+   sensorCycleProfPhaseList = unique(profInfo(:, 2:5), 'rows');
+   for idSenCyPrPh = 1:size(sensorCycleProfPhaseList, 1)
+      sensorNum = sensorCycleProfPhaseList(idSenCyPrPh, 1);
+      cycleNum = sensorCycleProfPhaseList(idSenCyPrPh, 2);
+      profileNum = sensorCycleProfPhaseList(idSenCyPrPh, 3);
+      phaseNum = sensorCycleProfPhaseList(idSenCyPrPh, 4);
+      
+      idF = find((profInfo(:, 2) == sensorNum) & ...
+         (profInfo(:, 3) == cycleNum) & ...
+         (profInfo(:, 4) == profileNum) & ...
+         (profInfo(:, 5) == phaseNum));
+      if (~isempty(idF))
+         if (length(idF) > 1)
+            % merge the profiles
+            [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
+            if (~isempty(mergedProfile))
                
-               idF = find((profInfo(:, 2) == sensorNum) & ...
-                  (profInfo(:, 3) == cycleNum) & ...
-                  (profInfo(:, 4) == profileNum) & ...
-                  (profInfo(:, 5) == phaseNum));
-               if (~isempty(idF))
-                  if (length(idF) > 1)
-                     % merge the profiles
-                     [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
-                     if (~isempty(mergedProfile))
-                        
-                        % update the profileCompleted flag
-                        if (~isempty(mergedProfile.nbMeas))
-                           mergedProfile.profileCompleted = sum(mergedProfile.nbMeas) - size(mergedProfile.data, 1);
-                           
-                           if (mergedProfile.profileCompleted < 0)
-                              %                               techNbMeas = sprintf('%d ', mergedProfile.nbMeas);
-                              %                               fprintf('FLOAT_WARNING: Float #%d Cycle #%d Profile #%d: inconsistency in tech vs measurements (in terms of number of sampled measurements: tech = [%s] => %d, sampled = %d) for ''%c'' profile of sensor #%d\n', ...
-                              %                                  g_decArgo_floatNum, ...
-                              %                                  mergedProfile.cycleNumber, ...
-                              %                                  mergedProfile.profileNumber, ...
-                              %                                  techNbMeas(1:end-1), sum(mergedProfile.nbMeas), ...
-                              %                                  size(mergedProfile.data, 1), ...
-                              %                                  mergedProfile.direction, ...
-                              %                                  mergedProfile.sensorNumber);
-                           end
-                        end
-                        
-                        tabProfiles = [tabProfiles mergedProfile];
-                     end
-                  else
-                     % update the profileCompleted flag
-                     if (~isempty(a_tabProfiles(profInfo(idF, 1)).nbMeas))
-                        a_tabProfiles(profInfo(idF, 1)).profileCompleted = sum(a_tabProfiles(profInfo(idF, 1)).nbMeas) - size(a_tabProfiles(profInfo(idF, 1)).data, 1);
-                        
-                        if (a_tabProfiles(profInfo(idF, 1)).profileCompleted < 0)
-                           %                            techNbMeas = sprintf('%d ', a_tabProfiles(profInfo(idF, 1)).nbMeas);
-                           %                            fprintf('FLOAT_WARNING: Float #%d Cycle #%d Profile #%d: inconsistency in tech vs measurements (in terms of number of sampled measurements: tech = [%s] => %d, sampled = %d) for ''%c'' profile of sensor #%d\n', ...
-                           %                               g_decArgo_floatNum, ...
-                           %                               a_tabProfiles(profInfo(idF, 1)).cycleNumber, ...
-                           %                               a_tabProfiles(profInfo(idF, 1)).profileNumber, ...
-                           %                               techNbMeas(1:end-1), sum(a_tabProfiles(profInfo(idF, 1)).nbMeas), ...
-                           %                               size(a_tabProfiles(profInfo(idF, 1)).data, 1), ...
-                           %                               a_tabProfiles(profInfo(idF, 1)).direction, ...
-                           %                               a_tabProfiles(profInfo(idF, 1)).sensorNumber);
-                        end
-                     end
-                     
-                     a_tabProfiles(profInfo(idF, 1)).merged = 1;
-                     tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
+               % update the profileCompleted flag
+               if (~isempty(mergedProfile.nbMeas))
+                  mergedProfile.profileCompleted = sum(mergedProfile.nbMeas) - size(mergedProfile.data, 1);
+                  
+                  if (mergedProfile.profileCompleted < 0)
+                     %                               techNbMeas = sprintf('%d ', mergedProfile.nbMeas);
+                     %                               fprintf('FLOAT_WARNING: Float #%d Cycle #%d Profile #%d: inconsistency in tech vs measurements (in terms of number of sampled measurements: tech = [%s] => %d, sampled = %d) for ''%c'' profile of sensor #%d\n', ...
+                     %                                  g_decArgo_floatNum, ...
+                     %                                  mergedProfile.cycleNumber, ...
+                     %                                  mergedProfile.profileNumber, ...
+                     %                                  techNbMeas(1:end-1), sum(mergedProfile.nbMeas), ...
+                     %                                  size(mergedProfile.data, 1), ...
+                     %                                  mergedProfile.direction, ...
+                     %                                  mergedProfile.sensorNumber);
                   end
                end
+               
+               tabProfiles = [tabProfiles mergedProfile];
             end
+         else
+            % update the profileCompleted flag
+            if (~isempty(a_tabProfiles(profInfo(idF, 1)).nbMeas))
+               a_tabProfiles(profInfo(idF, 1)).profileCompleted = sum(a_tabProfiles(profInfo(idF, 1)).nbMeas) - size(a_tabProfiles(profInfo(idF, 1)).data, 1);
+               
+               if (a_tabProfiles(profInfo(idF, 1)).profileCompleted < 0)
+                  %                            techNbMeas = sprintf('%d ', a_tabProfiles(profInfo(idF, 1)).nbMeas);
+                  %                            fprintf('FLOAT_WARNING: Float #%d Cycle #%d Profile #%d: inconsistency in tech vs measurements (in terms of number of sampled measurements: tech = [%s] => %d, sampled = %d) for ''%c'' profile of sensor #%d\n', ...
+                  %                               g_decArgo_floatNum, ...
+                  %                               a_tabProfiles(profInfo(idF, 1)).cycleNumber, ...
+                  %                               a_tabProfiles(profInfo(idF, 1)).profileNumber, ...
+                  %                               techNbMeas(1:end-1), sum(a_tabProfiles(profInfo(idF, 1)).nbMeas), ...
+                  %                               size(a_tabProfiles(profInfo(idF, 1)).data, 1), ...
+                  %                               a_tabProfiles(profInfo(idF, 1)).direction, ...
+                  %                               a_tabProfiles(profInfo(idF, 1)).sensorNumber);
+               end
+            end
+            
+            a_tabProfiles(profInfo(idF, 1)).merged = 1;
+            tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
          end
       end
    end
@@ -118,7 +109,7 @@ end
 % update output parameters
 o_tabProfiles = tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge the profiles according to the treatment type of each depth zone.
@@ -177,7 +168,7 @@ if (length(unique([a_tabProfiles.paramNumberOfSubLevels])) > 1)
       o_tabProfile = a_tabProfiles;
       o_tabProfile.merged = 1;
       
-      return;
+      return
    end
 end
 
@@ -505,4 +496,4 @@ o_tabProfile.maxMeasDate = max(dates);
 
 o_tabProfile.merged = 1;
 
-return;
+return

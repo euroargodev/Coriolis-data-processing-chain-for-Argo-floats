@@ -39,7 +39,7 @@ ID_OFFSET = 1;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 % retrieve technical message data
@@ -292,4 +292,4 @@ else
    end
 end
  
-return;
+return

@@ -43,7 +43,7 @@ for id = 1:length(tabFirstBit)
 
    if ~((firstBit >= 1) && (lastBit <= dataLength))
       % bits are out of range
-      return;
+      return
    end
 
    % first and last bytes to consider
@@ -76,4 +76,4 @@ for id = 1:length(tabFirstBit)
    o_values = [o_values; value];
 end
 
-return;
+return

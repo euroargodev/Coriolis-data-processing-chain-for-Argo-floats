@@ -40,5 +40,5 @@ switch (a_internalPressureCode)
       o_internalPressure = '>875 mbar';
 end
 
-return;
+return
 

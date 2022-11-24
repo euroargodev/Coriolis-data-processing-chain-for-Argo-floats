@@ -76,187 +76,182 @@ a_dataSUNAAPF2 = a_dataSUNA{5};
 
 % packet type 0
 dataCyProfPhaseList = a_cyProfPhaseList(a_cyProfPhaseIndexList, :);
-cyleList = unique(dataCyProfPhaseList(:, 3));
-profList = unique(dataCyProfPhaseList(:, 4));
-phaseList = unique(dataCyProfPhaseList(:, 5));
+cycleList = unique(dataCyProfPhaseList(:, 3));
 
-if (~isempty(cyleList))
-   if (length(cyleList) > 1)
+if (~isempty(cycleList))
+   if (length(cycleList) > 1)
       fprintf('WARNING: Float #%d Cycle #%d: more than one cycle data in the data SBD files\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    else
-      if (cyleList(1) ~= g_decArgo_cycleNum)
+      if (cycleList(1) ~= g_decArgo_cycleNum)
          fprintf('DEC_WARNING: Float #%d Cycle #%d: data cycle number (%d) differs from data SBD file name cycle number (%d)\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            cyleList(1), g_decArgo_cycleNum);
+            cycleList(1), g_decArgo_cycleNum);
       end
    end
 end
 
 % print the sensor data
-for idCy = 1:length(cyleList)
-   cycleNum = cyleList(idCy);
-   for idProf = 1:length(profList)
-      profNum = profList(idProf);
-      for idPhase = 1:length(phaseList)
-         phaseNum = phaseList(idPhase);
+cycleProfPhaseList = unique(dataCyProfPhaseList(:, 3:5), 'rows');
+for idCyPrPh = 1:size(cycleProfPhaseList, 1)
+   cycleNum = cycleProfPhaseList(idCyPrPh, 1);
+   profNum = cycleProfPhaseList(idCyPrPh, 2);
+   phaseNum = cycleProfPhaseList(idCyPrPh, 3);
+   
+   idPack = find((dataCyProfPhaseList(:, 3) == cycleNum) & ...
+      (dataCyProfPhaseList(:, 4) == profNum) & ...
+      (dataCyProfPhaseList(:, 5) == phaseNum));
+   
+   if (~isempty(idPack))
+      dataTypeList = sort(unique(dataCyProfPhaseList(idPack, 2)));
+      for idDataType = 1:length(dataTypeList)
+         dataType = dataTypeList(idDataType);
          
-         idPack = find((dataCyProfPhaseList(:, 3) == cycleNum) & ...
-            (dataCyProfPhaseList(:, 4) == profNum) & ...
-            (dataCyProfPhaseList(:, 5) == phaseNum));
+         % the stDev & median data are printed with the mean data
+         if (ismember(dataType, [1 4 10 13 16 19 22]))
+            continue
+         end
          
-         if (~isempty(idPack))
-            dataTypeList = sort(unique(dataCyProfPhaseList(idPack, 2)));
-            for idDataType = 1:length(dataTypeList)
-               dataType = dataTypeList(idDataType);
+         switch (dataType)
+            case 0
+               % CTD (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_sbd2_CTD_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCTDMean, a_dataCTDStdMed);
                
-               % the stDev & median data are printed with the mean data
-               if (ismember(dataType, [1 4 10 13 16 19 22]))
-                  continue;
-               end
+            case 2
+               % CTD (raw)
+               print_data_in_csv_file_ir_rudics_CTD_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCTDRaw);
                
-               switch (dataType)
-                  case 0
-                     % CTD (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_sbd2_CTD_mean_stdMed( ...
+            case 3
+               % OXYGEN (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_OXY_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataOXYMean, a_dataOXYStdMed);
+               
+            case 5
+               % OXYGEN (raw)
+               print_data_in_csv_file_ir_rudics_OXY_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataOXYRaw);
+               
+            case 9
+               % ECO3 (mean & stDev & median)
+               switch (a_decoderId)
+                  case {105, 106, 107, 110, 112}
+                     print_data_in_csv_file_ECO3_mean_stdMed_105_to_107_110_to_113( ...
                         a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCTDMean, a_dataCTDStdMed);
-                     
-                  case 2
-                     % CTD (raw)
-                     print_data_in_csv_file_ir_rudics_CTD_raw( ...
+                        a_dataECO3Mean, a_dataECO3StdMed);
+                  case {108, 109}
+                     print_data_in_csv_file_ECO3_mean_stdMed_108_109( ...
                         a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCTDRaw);
-                     
-                  case 3
-                     % OXYGEN (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_OXY_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataOXYMean, a_dataOXYStdMed);
-                     
-                  case 5
-                     % OXYGEN (raw)
-                     print_data_in_csv_file_ir_rudics_OXY_raw( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataOXYRaw);
-                     
-                  case 9
-                     % ECO3 (mean & stDev & median)
-                     switch (a_decoderId)
-                        case {105, 106, 107, 110, 112}
-                           print_data_in_csv_file_ECO3_mean_stdMed_105_to_107_110_to_112( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataECO3Mean, a_dataECO3StdMed);
-                        case {108, 109}
-                           print_data_in_csv_file_ECO3_mean_stdMed_108_109( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataECO3Mean, a_dataECO3StdMed);
-                        otherwise
-                           fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
-                              g_decArgo_floatNum, ...
-                              g_decArgo_cycleNum, ...
-                              dataType, a_decoderId);
-                     end
-                     
-                  case 11
-                     % ECO3 (raw)
-                     switch (a_decoderId)
-                        case {105, 106, 107, 110, 112}
-                           print_data_in_csv_file_ECO3_raw_105_to_107_110_to_112( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataECO3Raw);
-                        case {108, 109}
-                           print_data_in_csv_file_ECO3_raw_108_109( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataECO3Raw);
-                        otherwise
-                           fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
-                              g_decArgo_floatNum, ...
-                              g_decArgo_cycleNum, ...
-                              dataType, a_decoderId);
-                     end
-                     
-                  case 12
-                     % OCR (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_OCR_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataOCRMean, a_dataOCRStdMed);
-                     
-                  case 14
-                     % OCR (raw)
-                     print_data_in_csv_file_ir_rudics_OCR_raw( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataOCRRaw);
-                     
-                  case 15
-                     % FLNTU (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_sbd2_FLNTU_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataFLNTUMean, a_dataFLNTUStdMed);
-                     
-                  case 17
-                     % FLNTU (raw)
-                     print_data_in_csv_file_ir_rudics_FLNTU_raw( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataFLNTURaw);
-                     
-                  case 18
-                     % cROVER (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_CROVER_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCROVERMean, a_dataCROVERStdMed);
-                     
-                  case 20
-                     % cROVER (raw)
-                     print_data_in_csv_file_ir_rudics_CROVER_raw( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCROVERRaw);
-                     
-                  case 21
-                     fprintf('WARNING: Float #%d Cycle #%d: SUNA (mean & stDev & median) is implemented but not used before checked\n', ...
-                        g_decArgo_floatNum, ...
-                        g_decArgo_cycleNum);
-                     if (0)
-                        % SUNA (mean & stDev & median)
-                        print_data_in_csv_file_ir_rudics_SUNA_mean_stdMed( ...
-                           a_decoderId, cycleNum, profNum, phaseNum, ...
-                           a_dataSUNAMean, a_dataSUNAStdMed);
-                     end
-                     
-                  case 23
-                     fprintf('WARNING: Float #%d Cycle #%d: SUNA (raw) is implemented but not used before checked\n', ...
-                        g_decArgo_floatNum, ...
-                        g_decArgo_cycleNum);
-                     if (0)
-                        % SUNA (raw)
-                        print_data_in_csv_file_ir_rudics_SUNA_raw( ...
-                           a_decoderId, cycleNum, profNum, phaseNum, ...
-                           a_dataSUNARaw);
-                     end
-                     
-                  case {24, 25}
-                     % SUNA (APF)
-                     if (dataType == 24)
-                        info = 'SUNA APF';
-                        dataSUNAAPF = a_dataSUNAAPF;
-                     else
-                        info = 'SUNA APF2';
-                        dataSUNAAPF = a_dataSUNAAPF2;
-                     end
-                     print_data_in_csv_file_ir_rudics_SUNA_APF( ...
-                        cycleNum, profNum, phaseNum, ...
-                        dataSUNAAPF, info);
-                     
+                        a_dataECO3Mean, a_dataECO3StdMed);
                   otherwise
-                     fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...
+                     fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
                         g_decArgo_floatNum, ...
                         g_decArgo_cycleNum, ...
-                        dataType);
+                        dataType, a_decoderId);
                end
-            end
+               
+            case 11
+               % ECO3 (raw)
+               switch (a_decoderId)
+                  case {105, 106, 107, 110, 112}
+                     print_data_in_csv_file_ECO3_raw_105_to_107_110_to_113( ...
+                        a_decoderId, cycleNum, profNum, phaseNum, ...
+                        a_dataECO3Raw);
+                  case {108, 109}
+                     print_data_in_csv_file_ECO3_raw_108_109( ...
+                        a_decoderId, cycleNum, profNum, phaseNum, ...
+                        a_dataECO3Raw);
+                  otherwise
+                     fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum, ...
+                        dataType, a_decoderId);
+               end
+               
+            case 12
+               % OCR (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_OCR_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataOCRMean, a_dataOCRStdMed);
+               
+            case 14
+               % OCR (raw)
+               print_data_in_csv_file_ir_rudics_OCR_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataOCRRaw);
+               
+            case 15
+               % FLNTU (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_sbd2_FLNTU_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataFLNTUMean, a_dataFLNTUStdMed);
+               
+            case 17
+               % FLNTU (raw)
+               print_data_in_csv_file_ir_rudics_FLNTU_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataFLNTURaw);
+               
+            case 18
+               % cROVER (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_CROVER_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCROVERMean, a_dataCROVERStdMed);
+               
+            case 20
+               % cROVER (raw)
+               print_data_in_csv_file_ir_rudics_CROVER_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCROVERRaw);
+               
+            case 21
+               fprintf('WARNING: Float #%d Cycle #%d: SUNA (mean & stDev & median) is implemented but not used before checked\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum);
+               if (0)
+                  % SUNA (mean & stDev & median)
+                  print_data_in_csv_file_ir_rudics_SUNA_mean_stdMed( ...
+                     a_decoderId, cycleNum, profNum, phaseNum, ...
+                     a_dataSUNAMean, a_dataSUNAStdMed);
+               end
+               
+            case 23
+               fprintf('WARNING: Float #%d Cycle #%d: SUNA (raw) is implemented but not used before checked\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum);
+               if (0)
+                  % SUNA (raw)
+                  print_data_in_csv_file_ir_rudics_SUNA_raw( ...
+                     a_decoderId, cycleNum, profNum, phaseNum, ...
+                     a_dataSUNARaw);
+               end
+               
+            case {24, 25}
+               % SUNA (APF)
+               if (dataType == 24)
+                  info = 'SUNA APF';
+                  dataSUNAAPF = a_dataSUNAAPF;
+               else
+                  info = 'SUNA APF2';
+                  dataSUNAAPF = a_dataSUNAAPF2;
+               end
+               print_data_in_csv_file_ir_rudics_SUNA_APF( ...
+                  cycleNum, profNum, phaseNum, ...
+                  dataSUNAAPF, info);
+               
+            otherwise
+               fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  dataType);
          end
       end
    end
 end
 
-return;
+return

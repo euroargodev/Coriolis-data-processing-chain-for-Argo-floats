@@ -1348,4 +1348,4 @@ if (~isempty(trajNMeasStruct.tabMeas))
    o_tabTrajNCycle = [o_tabTrajNCycle; trajNCycleStruct];
 end
 
-return;
+return

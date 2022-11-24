@@ -34,7 +34,7 @@ diary(logFile);
 outputFileName = [DIR_LOG_CSV_FILE '/' 'export_data_for_vss_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['PLATFORM_CODE; TECH_PARAMETER_ID; DIM_LEVEL; ' ...
    'CORIOLIS_TECH_METADATA.PARAMETER_VALUE; TECH_PARAMETER_CODE'];
@@ -109,4 +109,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

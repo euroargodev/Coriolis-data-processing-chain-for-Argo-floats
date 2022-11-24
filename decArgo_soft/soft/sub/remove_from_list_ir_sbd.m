@@ -45,13 +45,13 @@ global g_decArgo_sbdInfo;
 
 
 if (isempty(a_fileName))
-   return;
+   return
 end
 
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
    fprintf('BUFF_ERROR: Float #%d: remove_from_list_ir_sbd: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
-   return;
+   return
 end
 
 fileNameList = a_fileName;
@@ -127,4 +127,4 @@ if ((~isempty(a_fileName)) && (a_updateXmlReportFlag == 1))
    g_decArgo_sbdInfo = unique(g_decArgo_sbdInfo, 'rows');
 end
 
-return;
+return

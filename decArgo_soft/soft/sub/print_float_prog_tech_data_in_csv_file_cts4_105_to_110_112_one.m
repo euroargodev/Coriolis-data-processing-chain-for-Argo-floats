@@ -126,7 +126,7 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; float prog tech; PT27 - Coef
    g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
    a_floatProgTech(a_dataIndex, 31));
 
-return;
+return
 
 % function print_float_prog_tech_data_in_csv_file_cts4_105_to_110_112_one( ...
 %    a_cycleNum, a_profNum, a_dataIndex, ...
@@ -232,4 +232,4 @@ return;
 %    g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
 %    a_floatProgTech(a_dataIndex, 31));
 % 
-% return;
+% return

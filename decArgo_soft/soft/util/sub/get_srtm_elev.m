@@ -40,11 +40,11 @@ o_lat = [];
 % contrôle des positions définissant la zone géographique demandée
 if (a_latMin > a_latMax)
    fprintf('*** ATTENTION *** get_srtm_elev: zone géographique incohérente!\n');
-   return;
+   return
 else
    if ((a_latMin < -90) || (a_latMax > 90))
       fprintf('*** ATTENTION *** get_srtm_elev: zone géographique incohérente!\n');
-      return;
+      return
    end
 end
 
@@ -68,7 +68,7 @@ latMax = ceil(a_latMax*120)/120;
 % plus quatre tuiles)
 if (abs(lonMax - lonMin) >= 20) || (abs(latMax - latMin) >= 30)
    fprintf('*** ATTENTION *** get_srtm_elev: zone géographique trop étendue!\n');
-   return;
+   return
 end
 
 % détermination du cas de figure en latitude
@@ -337,4 +337,4 @@ if (~isempty(find(o_elev == g_elevDef, 1)))
    fprintf('*** ATTENTION *** get_srtm_elev: tableau des élévations incomplet!\n');
 end
 
-return;
+return

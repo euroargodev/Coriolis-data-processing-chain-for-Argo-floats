@@ -41,7 +41,7 @@ for idConf = 1:length(a_configDataStr)
    
    dataStr = a_configDataStr{idConf};
    if (isempty(dataStr))
-      continue;
+      continue
    end
    
    if (any(strfind(dataStr, HEADER)))
@@ -68,7 +68,7 @@ for idConf = 1:length(a_configDataStr)
          
       else
          fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       
    else
@@ -90,19 +90,19 @@ for idConf = 1:length(a_configDataStr)
          end
          if (isempty(regexp(lower(item(1)), '[a-z]', 'once')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          if (any(strfind(item, ' ')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          o_configData.(item) = value;
          o_configData.([item '_unit']) = unit;
       else
          fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
 end
 
-return,
+return

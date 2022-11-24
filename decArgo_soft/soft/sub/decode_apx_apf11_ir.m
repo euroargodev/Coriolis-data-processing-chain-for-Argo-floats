@@ -93,7 +93,7 @@ if (~isempty(a_scienceLogFileList))
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {1321, 1121} % 2.10.1, 2.10.4 & 2.11.3
+      case {1321, 1121} % 2.10.1.S, 2.10.4.R & 2.11.3.R
          
          [o_miscInfoSci, o_techData, o_gpsDataSci, ...
             o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
@@ -102,7 +102,7 @@ if (~isempty(a_scienceLogFileList))
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1322} % 2.11.1
+      case {1322} % 2.11.1.S
          
          [o_miscInfoSci, o_techData, o_gpsDataSci, ...
             o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
@@ -134,4 +134,4 @@ if (~isempty(a_criticalLogFileList))
       g_decArgo_floatNum, g_decArgo_cycleNum, a_criticalLogFileList);
 end
 
-return;
+return

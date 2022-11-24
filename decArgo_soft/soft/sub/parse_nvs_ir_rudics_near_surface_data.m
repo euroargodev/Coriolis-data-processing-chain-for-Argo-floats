@@ -38,7 +38,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_nearSurfaceDataStr))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -53,10 +53,10 @@ switch (a_decoderId)
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Navis near surface and surface data.
@@ -122,7 +122,7 @@ for idNS = 1:length(a_nearSurfaceDataStr)
    
    nearSurfaceDataStr = a_nearSurfaceDataStr{idNS};
    if (isempty(nearSurfaceDataStr))
-      continue;
+      continue
    end
    
    dataType = [];
@@ -180,7 +180,7 @@ for idNS = 1:length(a_nearSurfaceDataStr)
                   fprintf('DEC_WARNING: Float #%d Cycle #%d: Inconsistent NS data type\n', ...
                      g_decArgo_floatNum, ...
                      g_decArgo_cycleNum);
-                  return;
+                  return
             end
          end
          
@@ -194,13 +194,13 @@ for idNS = 1:length(a_nearSurfaceDataStr)
       
       dataStr = nearSurfaceDataStr{idL};
       if (any(strfind(dataStr, HEADER)))
-         continue;
+         continue
       end
       
       % set data type
       if (any(strfind(dataStr, PATTERN1)))
          dataType = 1;
-         continue;
+         continue
       end
       if (any(strfind(dataStr, PATTERN2)))
          if (~isempty(dataType))
@@ -208,7 +208,7 @@ for idNS = 1:length(a_nearSurfaceDataStr)
             store = 1;
          end
          dataType = 2;
-         continue;
+         continue
       end
       if (any(strfind(dataStr, PATTERN3)))
          if (~isempty(dataType))
@@ -216,7 +216,7 @@ for idNS = 1:length(a_nearSurfaceDataStr)
             store = 1;
          end
          dataType = 3;
-         continue;
+         continue
       end
       
       % extract data
@@ -302,10 +302,10 @@ for idNS = 1:length(a_nearSurfaceDataStr)
                fprintf('DEC_WARNING: Float #%d Cycle #%d: Inconsistent NS data type\n', ...
                   g_decArgo_floatNum, ...
                   g_decArgo_cycleNum);
-               return;
+               return
          end
       end
    end
 end
 
-return;
+return

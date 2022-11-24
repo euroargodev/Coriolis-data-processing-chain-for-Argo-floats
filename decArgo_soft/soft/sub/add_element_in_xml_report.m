@@ -35,4 +35,4 @@ docRootNode.appendChild(newChild);
 
 o_xmlReportDOMNode = docNode;
 
-return;
+return

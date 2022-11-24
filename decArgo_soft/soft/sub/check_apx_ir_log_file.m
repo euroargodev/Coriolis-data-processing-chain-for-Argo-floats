@@ -41,7 +41,7 @@ if (any(strcmp({events.cmd}, 'TelemetryInit()')))
    for idEv = 1:length(telemetryInitEvents)
       dataStr = telemetryInitEvents(idEv).info;
       if (isempty(dataStr))
-         continue;
+         continue
       end
       
       if (strncmp(dataStr, 'Profile ', length('Profile')) && ...
@@ -67,7 +67,7 @@ if (any(strcmp({events.cmd}, 'DescentInit()')))
    for idEv = 1:length(descentEvents)
       dataStr = descentEvents(idEv).info;
       if (isempty(dataStr))
-         continue;
+         continue
       end
       
       if (strncmp(dataStr, 'Deep profile ', length('Deep profile ')) && ...
@@ -102,7 +102,7 @@ if (any(strcmp({events.cmd}, 'GpsServices()')))
    for idEv = 1:length(gpsEvents)
       dataStr = gpsEvents(idEv).info;
       if (isempty(dataStr))
-         continue;
+         continue
       end
       
       if (strncmp(dataStr, 'Profile ', length('Profile ')) && ...
@@ -215,4 +215,4 @@ o_cyNumList{end+1} = cyNumStr;
 o_startLine = [o_startLine startLine];
 o_endLine = [o_endLine -1];
 
-return;
+return

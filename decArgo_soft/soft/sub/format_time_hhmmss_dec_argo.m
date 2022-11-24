@@ -40,4 +40,4 @@ if (s == 60)
 end
 o_time = sprintf('%02d%02d%02d', h, m, s);
 
-return;
+return

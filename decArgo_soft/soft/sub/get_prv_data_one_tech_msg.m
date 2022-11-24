@@ -92,7 +92,7 @@ NUMBER_OF_SUCCESSIVE_TECH_MSG = 15;
 for id = 1:length(a_argosFileName)
    if ~(exist(char(a_argosFileName{id}), 'file') == 2)
       fprintf('ERROR: Argos file not found: %s\n', char(a_argosFileName{id}));
-      return;
+      return
    end
 end
 
@@ -219,7 +219,7 @@ if (~isempty(tabSensors))
       
       % don't take NULL data message into account
       if (unique(currentData) == 0)
-         continue;
+         continue
       end
       
       % compute the redundancy of the messages
@@ -231,7 +231,7 @@ if (~isempty(tabSensors))
             % counter
             tabOcc(idData) = tabOcc(idData) + 1;
             ok = 1;
-            break;
+            break
          end
       end
       
@@ -273,7 +273,7 @@ if (~isempty(tabSensors))
          utcTimeJuld = tabDate(idMax);
          floatTimeJuld = fix(utcTimeJuld)+floatTimeHour/24;
          tabFloatTimeJuld = [floatTimeJuld-1 floatTimeJuld floatTimeJuld+1];
-         [unused, idMin] = min(abs(tabFloatTimeJuld-utcTimeJuld));
+         [~, idMin] = min(abs(tabFloatTimeJuld-utcTimeJuld));
          floatTimeJuld = tabFloatTimeJuld(idMin);
          floatClockDrift = floatTimeJuld - utcTimeJuld;
          
@@ -388,7 +388,7 @@ else
                %                   g_decArgo_floatNum, g_decArgo_cycleNum, length(idForTechMsg));
                combinedOk = 1;
                
-               break;
+               break
             end
          end
          
@@ -487,7 +487,7 @@ for idType = 1:length(typeNum)
                
                % don't take NULL data message into account
                if (unique(currentData) == 0)
-                  continue;
+                  continue
                end
                
                % compute the redundancy of the messages
@@ -499,7 +499,7 @@ for idType = 1:length(typeNum)
                      % counter
                      tabOcc(idData) = tabOcc(idData) + 1;
                      ok = 1;
-                     break;
+                     break
                   end
                end
                
@@ -584,7 +584,7 @@ for idType = 1:length(typeNum)
                      
                      combinedOk = 1;
                      
-                     break;
+                     break
                   end
                end
                
@@ -710,4 +710,4 @@ if (g_decArgo_generateNcTech ~= 0)
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmmss_dec_argo((lastArgosMsgDate-firstArgosMsgDate)*24);
 end
 
-return;
+return

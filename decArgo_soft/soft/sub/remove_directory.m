@@ -35,11 +35,11 @@ if (exist(a_dirPathName, 'dir') == 7)
       end
       if (status ~= 1)
          fprintf('RTQC_ERROR: Unable to remove directory: %s\n', a_dirPathName);
-         return;
+         return
       end
    end
 end
 
 o_ok = 1;
 
-return;
+return

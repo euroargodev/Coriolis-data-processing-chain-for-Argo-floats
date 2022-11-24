@@ -70,7 +70,7 @@ remove_directory(DIR_TMP_FILE);
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -120,4 +120,4 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return

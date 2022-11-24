@@ -66,7 +66,7 @@ global g_decArgo_doxy_202_205_304_pCoef3;
 
 
 if (isempty(a_C1PHASE_DOXY) || isempty(a_C2PHASE_DOXY) || isempty(a_TEMP_DOXY))
-   return;
+   return
 end
 
 % get calibration information
@@ -75,7 +75,7 @@ if (isempty(g_decArgo_calibInfo))
       g_decArgo_floatNum, ...
       a_profOptode.cycleNumber, ...
       a_profOptode.profileNumber);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef')))
    tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
    % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
@@ -84,14 +84,14 @@ elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo
          g_decArgo_floatNum, ...
          a_profOptode.cycleNumber, ...
          a_profOptode.profileNumber);
-      return;
+      return
    end
 else
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: inconsistent DOXY calibration coefficients => PPOX_DOXY not computed\n', ...
       g_decArgo_floatNum, ...
       a_profOptode.cycleNumber, ...
       a_profOptode.profileNumber);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -138,4 +138,4 @@ if (~isempty(idNoDef))
    o_PPOX_DOXY(idNoDef) = ppoxDoxyValues;
 end
 
-return;
+return

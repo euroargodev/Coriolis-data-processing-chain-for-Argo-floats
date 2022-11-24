@@ -241,7 +241,7 @@ if (~isempty(a_payloadData))
          case 'SUR'
             label = sprintf('Dated payload meas. [SURFACE]');
          case 'RAW'
-            continue;
+            continue
       end
       
       % convert date of first sample
@@ -291,4 +291,4 @@ if (~isempty(tabDateUtc))
    end
 end
 
-return;
+return

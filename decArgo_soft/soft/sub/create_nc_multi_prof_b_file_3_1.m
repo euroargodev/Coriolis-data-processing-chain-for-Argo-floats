@@ -68,7 +68,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % delete Auxiliary profiles (we do not create an AUX multi prof file)
@@ -77,7 +77,7 @@ a_tabProfiles(find(sensorNumList > 100)) = [];
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % assign time resolution for each float transmission type
@@ -113,7 +113,7 @@ end
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % check if there is at least one B profile
@@ -122,11 +122,11 @@ for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    if (~is_core_profile(profile))
       bFileNeeded = 1;
-      break;
+      break
    end
 end
 if (bFileNeeded == 0)
-   return;
+   return
 end
 
 % create the order to process profiles, the profile parameters list and compute
@@ -267,7 +267,7 @@ if (nbProfParam > 0)
    fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-      return;
+      return
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1640,7 +1640,7 @@ if (nbProfParam > 0)
          param = tabParams{idParam};
          idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
          if (isempty(idPosParam))
-            continue;
+            continue
          end
          tabEquation = tabEquations{idParam};
          tabCoefficient = tabCoefficients{idParam};
@@ -1694,4 +1694,4 @@ if (nbProfParam > 0)
    fprintf('... NetCDF MULTI-PROFILE b file created\n');
 end
 
-return;
+return

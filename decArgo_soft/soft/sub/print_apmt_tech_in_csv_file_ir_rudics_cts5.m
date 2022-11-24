@@ -32,7 +32,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_techData))
-   return;
+   return
 end
 
 fileTypeStr = '-';
@@ -90,4 +90,4 @@ for idF = 1:length(fieldNames)
    end
 end
 
-return;
+return

@@ -125,7 +125,7 @@ for idMes = 1:size(a_tabData, 1)
          g_decArgo_nbOf30To49TypePacketExpected = tabTech(20);
          g_decArgo_nbOf50To55TypePacketExpected = tabTech(24);
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % store cycle number
@@ -159,7 +159,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_nbOf2To4TypePacketReceived = g_decArgo_nbOf2To4TypePacketReceived + 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % compute the number of pressure points in the hydraulic packet
@@ -196,7 +196,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_5TypePacketReceived = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % determine if it is a deep cycle
@@ -244,7 +244,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf50To55TypePacketReceived = g_decArgo_nbOf50To55TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % determine if it is a deep cycle
@@ -425,4 +425,4 @@ if (a_procLevel > 0)
    end
 end
 
-return;
+return

@@ -433,7 +433,7 @@ end
 
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get a config value from a given configuration.
@@ -466,4 +466,4 @@ o_configValue = [];
 idPos = find(strcmp(a_configName, a_configNames) == 1, 1);
 o_configValue = a_configValues(idPos);
 
-return;
+return

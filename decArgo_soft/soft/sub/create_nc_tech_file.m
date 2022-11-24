@@ -54,7 +54,7 @@ global g_decArgo_generateNcFlag;
 
 % no data to save
 if (isempty(a_tabNcTechIndex) && isempty(a_tabNcTechVal) && isempty(a_tabTechNMeas))
-   return;
+   return
 end
 
 if (g_decArgo_floatTransType == 1)
@@ -100,7 +100,7 @@ if (g_decArgo_floatTransType == 1)
                   
                   idF = find(g_decArgo_existingArgosFileSystemDate >= ncFileUpdateDate, 1);
                   if (isempty(idF))
-                     return;
+                     return
                   end
                end
             end
@@ -119,7 +119,7 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    if ((g_decArgo_generateNcTech == 2) && (g_decArgo_generateNcFlag == 0))
       % no buffer has been decoded => the file should not be updated
-      return;
+      return
    end
    
    create_nc_tech_file_3_1(a_decoderId, ...
@@ -127,4 +127,4 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
 end
 
-return;
+return

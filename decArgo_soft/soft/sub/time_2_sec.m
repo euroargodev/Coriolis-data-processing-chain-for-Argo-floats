@@ -28,4 +28,4 @@ if (isempty(errmsg) && (count == 3))
    o_time = val(1)*3600 + val(2)*60 + val(3);
 end
 
-return;
+return

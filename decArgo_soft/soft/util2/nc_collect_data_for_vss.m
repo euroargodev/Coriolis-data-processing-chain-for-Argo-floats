@@ -52,7 +52,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -77,7 +77,7 @@ diary(logFile);
 outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_collect_data_for_vss' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Line; WMO; Nb thresholds; ' ...
    'Threshol #1; Threshol #2; Thickness #1; Thickness #2; Thickness #3; Nb prof'];
@@ -101,7 +101,7 @@ for idFloat = 1:nbFloats
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => exit\n', floatNum);
-      return;
+      return
    end
    floatDecId = listDecId(idF);
    
@@ -113,7 +113,7 @@ for idFloat = 1:nbFloats
          nbThreshold = 2;
       otherwise
          fprintf('WARNING: Nothing done yet for decoderId #%d\n', floatDecId);
-         continue;
+         continue
    end
    
    % directory of files for this float
@@ -195,7 +195,7 @@ for idFloat = 1:nbFloats
 %                nbElement(idMax) = [];
 %                valCenter(idMax) = [];
 %                if (isempty(nbElement))
-%                   break;
+%                   break
 %                end
 %                [~, idMax] = max(nbElement);
 %                valMax = valCenter(idMax);
@@ -229,7 +229,7 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve pressure measurements from a NetCDF mono-profile file.
@@ -260,14 +260,14 @@ o_presMeas = [];
 % check if the file exists
 if ~(exist(a_ncProfPathFileName, 'file') == 2)
    fprintf('WARNING: File not found : %s\n', a_ncProfPathFileName);
-   return;
+   return
 end
 
 % open NetCDF file
 fCdf = netcdf.open(a_ncProfPathFileName, 'NC_NOWRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncProfPathFileName);
-   return;
+   return
 end
 
 % check the format version
@@ -276,18 +276,18 @@ if (var_is_present_dec_argo(fCdf, 'FORMAT_VERSION'))
    if ((str2num(formatVersionStr) ~= 3.0) && (str2num(formatVersionStr) ~= 3.1))
       fprintf('ERROR: This program only manage Argo format 3.0 olr 3.1 version (the version of this file is %s)\n', formatVersionStr);
       netcdf.close(fCdf);
-      return;
+      return
    end
 else
    fprintf('ERROR: Cannot find ''FORMAT_VERSION'' variable in file: %s\n', a_ncProfPathFileName);
    netcdf.close(fCdf);
-   return;
+   return
 end
 
 if (~var_is_present_dec_argo(fCdf, 'PRES'))
    fprintf('INFO: Cannot find ''PRES'' variable in file: %s\n', a_ncProfPathFileName);
    netcdf.close(fCdf);
-   return;
+   return
 end
 
 % collect the station parameter list
@@ -321,4 +321,4 @@ netcdf.close(fCdf);
 
 o_presMeas(find(o_presMeas == presFillVal)) = [];
 
-return;
+return

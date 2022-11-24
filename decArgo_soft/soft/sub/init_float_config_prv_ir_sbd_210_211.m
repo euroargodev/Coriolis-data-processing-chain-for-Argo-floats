@@ -62,9 +62,6 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 
 % create static configuration names
 configNames1 = [];
@@ -92,7 +89,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_floatConfig = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -110,7 +107,15 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
       idPos = find(strncmp(jConfNames{id}, configNames2, idFUs(2)) == 1, 1);
       if (~isempty(idPos))
          if (~isempty(jConfValues{id}))
-            configValues2(idPos) = str2num(jConfValues{id});
+            [value, status] = str2num(jConfValues{id});
+            if ((length(value) == 1) && (status == 1))
+               configValues2(idPos) = value;
+            else
+               fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+                  g_decArgo_floatNum, ...
+                  jConfNames{id});
+               return
+            end
          end
       else
          idPos = find(strncmp(jConfNames{id}, configNames1, idFUs(2)) == 1, 1);
@@ -227,4 +232,4 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 % retrieve the RT offsets
 g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
 
-return;
+return

@@ -26,23 +26,23 @@ o_configData = [];
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: read_payload_config: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = [];
 while (1)
    line = fgetl(fId);
    if (isempty(line))
-      continue;
+      continue
    end
    if (line == -1)
-      break;
+      break
    end
    data{end+1} = line;
 end
@@ -57,7 +57,7 @@ end
 % parse the config data
 o_configData = parse_payload_config(data);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse payload configuration data.
@@ -207,4 +207,4 @@ for idL = 1:size(o_configData, 1)
    end
 end
 
-return;
+return

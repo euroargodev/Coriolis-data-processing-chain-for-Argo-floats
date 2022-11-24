@@ -38,6 +38,7 @@ o_decodeData = struct( ...
    'rankByCycle', -1, ... % number of the decoding buffer (sorted by cycle number)
    'rankByDate', -1, ... % number of the decoding buffer (sorted by SBD transmission date)
    'deep', -1, ... % 1 for a deep cycle, 0 otherwise
+   'iceDelayed', -1, ... % 1 for a Ice delayed cycle, 0 otherwise
    'reset', -1 ... % 1 if a reset has been detected, 0 otherwise
    );
 

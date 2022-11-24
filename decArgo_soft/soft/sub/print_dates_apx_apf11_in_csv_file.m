@@ -454,7 +454,7 @@ for id1 = id2+1:length(allTabDateAdj)-1
             end
             idFirst = id2;
          else
-            break;
+            break
          end
       end
    end
@@ -485,7 +485,7 @@ if (~isempty(allTabDate))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collect dates from profile data.
@@ -564,4 +564,4 @@ if (~isempty(a_profData))
    end
 end
 
-return;
+return

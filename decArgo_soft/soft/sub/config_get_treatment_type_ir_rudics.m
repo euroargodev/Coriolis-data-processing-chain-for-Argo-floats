@@ -54,7 +54,7 @@ for id = 1:4
       zoneThreshold = configValue(idPos, idConf);
       if (a_presValue <= zoneThreshold)
          depthZoneNum = id;
-         break;
+         break
       end
    end
 end
@@ -69,4 +69,4 @@ if (~isempty(idPos))
    o_treatType = configValue(idPos, idConf);
 end
 
-return;
+return

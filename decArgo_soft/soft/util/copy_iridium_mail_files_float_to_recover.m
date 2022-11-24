@@ -53,7 +53,7 @@ tic;
 % checks
 if ~(exist(SPOOL_DIR, 'dir') == 7)
    fprintf('Directory not found: %s\n', SPOOL_DIR);
-   return;
+   return
 end
 if ~(exist(OUTPUT_DIR, 'dir') == 7)
    fprintf('Creating directory: %s\n', OUTPUT_DIR);
@@ -79,7 +79,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -95,7 +95,7 @@ end
    listLaunchDate, listLaunchLon, listLaunchLat, ...
    listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
 if (isempty(numWmo))
-   return;
+   return
 end
 
 % current date
@@ -112,7 +112,7 @@ for idFloat = 1:nbFloats
    % find the imei of the float
    [floatImei] = find_login_name(floatNum, numWmo, tabImei);
    if (isempty(floatImei))
-      return;
+      return
    end
    
    % create the output directory of this float
@@ -194,7 +194,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % read an Iridium mail file an retrieve pertiment information
@@ -251,11 +251,11 @@ lineNum = 0;
 while 1
    line = fgetl(fId);
    if (line == -1)
-      break;
+      break
    end
    lineNum = lineNum + 1;
    if (isempty(strtrim(line)))
-      continue;
+      continue
    end
    
    if (strncmp(line, SUBJECT, length(SUBJECT)) && (imeiDone == 0))
@@ -316,4 +316,4 @@ end
 
 fclose(fId);
 
-return;
+return

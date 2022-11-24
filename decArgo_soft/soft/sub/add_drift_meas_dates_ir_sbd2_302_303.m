@@ -311,4 +311,4 @@ if (~isempty(a_dataSEAPOINT))
    o_dataSEAPOINT{2} = o_dataSEAPOINTStdMed;
 end
 
-return;
+return

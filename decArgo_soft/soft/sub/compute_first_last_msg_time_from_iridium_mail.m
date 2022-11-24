@@ -40,4 +40,4 @@ if (~isempty(idFCyNum))
    o_lastMsgTime = max(timeList);
 end
 
-return;
+return

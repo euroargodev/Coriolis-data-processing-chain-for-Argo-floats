@@ -48,4 +48,4 @@ docRootNode.appendChild(newChild);
 
 g_decArgo_xmlReportDOMNode = docNode;
 
-return;
+return

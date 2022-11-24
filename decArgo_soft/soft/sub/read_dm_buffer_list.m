@@ -108,7 +108,7 @@ if (exist(bufferListFileName, 'file') == 2)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the name and contents of a CTS4 Remocean SBD file by setting a new
@@ -171,7 +171,7 @@ if (packType ~= 251)
       if (~ok)
          fprintf('ERROR: Anomaly in modify_sbd_file while processing file : %s\n', ...
             [tmpDirName '/' a_fileName]);
-         return;
+         return
       end
       move_file([tmpDirName '/' newFileName], [a_fileDirName '/' newFileName]);
       
@@ -183,7 +183,7 @@ if (packType ~= 251)
    o_newFileName = newFileName;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the contents of a CTS4 Remocean SBD file by setting a new cycle and
@@ -293,4 +293,4 @@ fclose(fId);
 
 o_ok = 1;
 
-return;
+return

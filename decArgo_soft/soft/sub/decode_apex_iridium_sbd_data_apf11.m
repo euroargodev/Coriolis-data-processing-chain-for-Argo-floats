@@ -275,7 +275,7 @@ if (REPROCESS == 1)
    nbSystemLogFiles, nbCriticalLogFiles, nbScienceLogFiles, ...
    nbVitalsLogFiles] = convert_sbd_files_apex_apf11_iridium_sbd(g_decArgo_archiveSbdDirectory, g_decArgo_archiveFloatFilesDirectory);
    if (error == 1)
-      return;
+      return
    end
    fprintf('DEC_INFO: %d SBD files to process\n', nbSbdFiles);
    fprintf('DEC_INFO: %d binary ''science_log'' files to process\n', nbScienceLogFiles);
@@ -314,7 +314,7 @@ for idCy = 1:length(cycleList)
    
    % decode the files of the current cycle
    if (ismember(a_decoderId, [1321, 1322]))
-      % 2.10.1, 2.11.1
+      % 2.10.1.S, 2.11.1.S
          
       [miscInfoSci, miscInfoSys, ...
          metaData, missionCfg, sampleCfg, ...
@@ -540,4 +540,4 @@ if (isempty(g_decArgo_outputCsvFileId))
    
 end
 
-return;
+return

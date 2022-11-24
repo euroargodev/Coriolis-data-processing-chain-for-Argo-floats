@@ -73,7 +73,7 @@ if ~(exist(jsonInputFileName, 'file') == 2)
    fprintf('ERROR: Float #%d: Json meta-data file not found: %s\n', ...
       g_decArgo_floatNum, ...
       jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -236,11 +236,11 @@ switch (a_decoderId)
                configParamNum = -1;
                fieldNames = fieldnames(metaData.CONFIG_PARAMETER_NAME);
                for idConfParam = 1:length(fieldNames)
-                  confParamName = getfield(metaData.CONFIG_PARAMETER_NAME, fieldNames{idConfParam});
+                  confParamName = metaData.CONFIG_PARAMETER_NAME.(fieldNames{idConfParam});
                   if (~isempty(confParamName))
                      if (strcmp(confParamName, 'CONFIG_PT20_CTDPumpSwitchOffPres'))
                         configParamNum = idConfParam;
-                        break;
+                        break
                      end
                   end
                end
@@ -276,7 +276,7 @@ switch (a_decoderId)
       if (~isempty(confParamNameStruct))
          fieldNames = fieldnames(confParamNameStruct);
          for idConfParam = 1:length(fieldNames)
-            confParamName = getfield(confParamNameStruct, fieldNames{idConfParam});
+            confParamName = confParamNameStruct.(fieldNames{idConfParam});
             if (~isempty(confParamName))
                idF = strfind(confParamName, '_');
                if ((strncmp(confParamName, 'CONFIG_P', length('CONFIG_P')) == 1) && ...
@@ -303,7 +303,7 @@ switch (a_decoderId)
       configName = [];
       fieldNames = fieldnames(metaData.CONFIG_PARAMETER_NAME);
       for idL = 1:length(fieldNames)
-         configName{end+1} = getfield(metaData.CONFIG_PARAMETER_NAME, fieldNames{idL});
+         configName{end+1} = metaData.CONFIG_PARAMETER_NAME.(fieldNames{idL});
       end
       configName = configName';
       
@@ -313,7 +313,7 @@ switch (a_decoderId)
          if (~isempty(conf))
             fieldNames = fieldnames(conf);
             for idL = 1:length(fieldNames)
-               confParamVal = getfield(conf, fieldNames{idL});
+               confParamVal = conf.(fieldNames{idL});
                if (~isempty(confParamVal))
                   configValue(idL, idC) = str2num(confParamVal);
                end
@@ -340,7 +340,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -395,7 +395,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -435,7 +435,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
       
       % Remocean floats
       
@@ -487,7 +487,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -685,7 +685,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -811,7 +811,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -910,7 +910,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -993,7 +993,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -1101,7 +1101,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -1212,7 +1212,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -1341,7 +1341,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -1405,7 +1405,7 @@ switch (a_decoderId)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
                mandatoryList = [mandatoryList idC];
                if (idL < length(mandatoryConfigName))
-                  break;
+                  break
                end
             end
          end
@@ -1556,7 +1556,7 @@ currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
 fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2106,7 +2106,7 @@ for idField = 1:length(metaFieldNames)
    % corresponding nc varId
    idMeta = find(strcmp(floatNcVarName, fieldName) == 1);
    if (isempty(idMeta))
-      continue;
+      continue
    end
    
    % CONFIG_* information have been used in the configuration processing
@@ -2115,7 +2115,7 @@ for idField = 1:length(metaFieldNames)
          (strcmp(fieldName, 'CONFIG_PARAMETER_VALUE') == 1) || ...
          (strcmp(fieldName, 'CONFIG_MISSION_NUMBER') == 1) || ...
          (strcmp(fieldName, 'CONFIG_MISSION_COMMENT') == 1))
-      continue;
+      continue
    end
    
    % TEMPORARY START
@@ -2152,7 +2152,7 @@ for idField = 1:length(metaFieldNames)
    % TEMPORARY END
    
    % field values are to be stored in the nc META file
-   inputElt = getfield(metaData, fieldName);
+   inputElt = metaData.(fieldName);
    if (~isempty(inputElt))
       
       if (isa(inputElt, 'char'))
@@ -2196,7 +2196,7 @@ for idField = 1:length(metaFieldNames)
          % meta-data with one dimension
          fieldNames = fieldnames(inputElt);
          for id = 1:length(fieldNames)
-            valueStr = getfield(inputElt, fieldNames{id});
+            valueStr = inputElt.(fieldNames{id});
             if (~isempty(valueStr))
                [varName, xType, dimIds, nAtts] = netcdf.inqVar(fCdf, floatNcVarId(idMeta));
                if (xType == netcdf.getConstant('NC_CHAR'))
@@ -2224,7 +2224,7 @@ for idField = 1:length(metaFieldNames)
          %             inputSubElt = inputElt{id1};
          %             fieldNames = fieldnames(inputSubElt);
          %             for id2 = 1:length(fieldNames)
-         %                valueStr = getfield(inputSubElt, fieldNames{id2});
+         %                valueStr = inputSubElt.(fieldNames{id2});
          %                if (~isempty(valueStr))
          %                   % we only manage values of type double because only
          %                   % CONFIG_PARAMETER_VALUE variable has two dimensions
@@ -2281,4 +2281,4 @@ end
 
 fprintf('... NetCDF META-DATA file created\n');
 
-return;
+return

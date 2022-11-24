@@ -59,7 +59,7 @@ idDataAPF = find((a_dataSUNAAPFDate(:, 1) == a_cycleNum) & ...
    (a_dataSUNAAPFDate(:, 3) == a_phaseNum));
 
 if (isempty(idDataAPF))
-   return;
+   return
 end
 
 fprintf(g_decArgo_outputCsvFileId, ['%d; %d; %d; %s; %s; Date; ' ...
@@ -117,4 +117,4 @@ for idL = 1:size(dataAPF, 1)
    fprintf(g_decArgo_outputCsvFileId, '\n');
 end
 
-return;
+return

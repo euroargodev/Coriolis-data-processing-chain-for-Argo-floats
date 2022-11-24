@@ -41,4 +41,4 @@ end
 [fileDate, idSort] = sort(fileDate);
 o_fileName = o_fileName(idSort);
 
-return;
+return

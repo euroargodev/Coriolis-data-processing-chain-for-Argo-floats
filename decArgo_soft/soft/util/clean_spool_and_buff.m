@@ -82,4 +82,4 @@ for dirNum = 1:length(dirAll)
    end
 end
 
-return;
+return

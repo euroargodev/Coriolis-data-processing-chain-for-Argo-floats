@@ -77,7 +77,7 @@ global g_decArgo_doxy_202_205_303_pCoef3;
 
 
 if (isempty(a_C1PHASE_DOXY) || isempty(a_C2PHASE_DOXY) || isempty(a_TEMP_DOXY))
-   return;
+   return
 end
 
 % get calibration information
@@ -87,7 +87,7 @@ if (isempty(g_decArgo_calibInfo))
       a_profOptode.cycleNumber, ...
       a_profOptode.profileNumber, ...
       a_profOptode.direction);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef')))
    tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
    % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
@@ -98,7 +98,7 @@ elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo
          a_profOptode.cycleNumber, ...
          a_profOptode.profileNumber, ...
          a_profOptode.direction);
-      return;
+      return
    end
 else
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: inconsistent DOXY calibration coefficients => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
@@ -106,7 +106,7 @@ else
       a_profOptode.cycleNumber, ...
       a_profOptode.profileNumber, ...
       a_profOptode.direction);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -170,4 +170,4 @@ if (~isempty(idNoDef))
    o_DOXY(idNoDef) = oxyValues;
 end
 
-return;
+return

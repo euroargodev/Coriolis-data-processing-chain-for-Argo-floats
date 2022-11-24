@@ -58,7 +58,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabTrajNMeas) && isempty(a_tabTrajNCycle))
-   return;
+   return
 end
    
 % collect information on trajectory
@@ -217,7 +217,7 @@ if (nbMeasParam > 0)
    fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-      return;
+      return
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1278,4 +1278,4 @@ if (nbMeasParam > 0)
    
 end
 
-return;
+return

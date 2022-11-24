@@ -41,7 +41,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -112,7 +112,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert one NetCDF trajectory file contents in CSV format.
@@ -156,7 +156,7 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 fidOut = fopen(a_outputPathFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return;
+   return
 end
 
 % compute parameter variable names and output formats
@@ -190,15 +190,15 @@ paramQcNames = [];
 paramQcFormats = [];
 
 for idParam = 1:length(nMeasData.paramNameList)
-   paramName  = char(nMeasData.paramNameList(idParam));
+   paramName  = nMeasData.paramNameList{idParam};
    paramDataNbDim = nMeasData.paramDataNbDim(idParam);
-   paramQcName  = char(nMeasData.paramQcNameList(idParam));
+   paramQcName  = nMeasData.paramQcNameList{idParam};
    
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramQcNames = [paramQcNames sprintf('; %s', paramQcName)];
       
-      paramFormat = char(nMeasData.paramDataFormat(idParam));
+      paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
    else
@@ -206,7 +206,7 @@ for idParam = 1:length(nMeasData.paramNameList)
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramQcNames = [paramQcNames sprintf('; %s#%d', paramQcName, id)];
          
-         paramFormat = char(nMeasData.paramDataFormat(idParam));
+         paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
       paramQcFormats = [paramQcFormats '; %c'];
@@ -373,7 +373,7 @@ for cycleNumber = -1:max(cycles)
    for idM = 1:length(idMeas)
       
       if (nMeasData.measCode(idMeas(idM)) == 99999)
-         continue;
+         continue
       end
       
       if (~isempty(nMeasData.paramData))
@@ -544,4 +544,4 @@ end
 
 fclose(fidOut);
 
-return;
+return

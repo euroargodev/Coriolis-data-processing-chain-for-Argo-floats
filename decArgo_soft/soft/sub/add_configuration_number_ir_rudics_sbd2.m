@@ -140,7 +140,7 @@ if (~isempty(idF))
                while (profNum - shift >= 0)
                   idFCyProfPrev = idFCy(find(inputUsedProf(idFCy) == profNum - shift));
                   if (~isempty(idFCyProfPrev))
-                     break;
+                     break
                   else
                      shift = shift + 1;
                   end
@@ -244,4 +244,4 @@ o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 o_tabTechNMeas = a_tabTechNMeas;
 
-return;
+return

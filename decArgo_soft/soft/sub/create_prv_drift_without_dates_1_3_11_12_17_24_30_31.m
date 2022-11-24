@@ -46,7 +46,7 @@ global g_decArgo_presCountsDef;
 
 % no drift message received
 if (isempty(a_tabDrifCTD))
-   return;
+   return
 end
 
 % store drift measurements
@@ -73,4 +73,4 @@ end
 o_parkDate = ones(length(o_parkPres), 1)*g_decArgo_dateDef;
 o_parkTransDate = zeros(length(o_parkPres), 1);
 
-return;
+return

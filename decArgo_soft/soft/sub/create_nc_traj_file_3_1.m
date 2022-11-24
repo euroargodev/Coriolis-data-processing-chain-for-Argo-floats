@@ -33,4 +33,4 @@ create_nc_traj_b_file_3_1(a_decoderId, a_tabTrajNMeas, a_tabTrajNCycle, a_metaDa
 
 fprintf('... NetCDF TRAJECTORY files created\n');
 
-return;
+return

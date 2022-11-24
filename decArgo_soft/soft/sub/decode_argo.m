@@ -34,7 +34,7 @@ for idFloat = 1:nbFloats
    
    if (isempty(floatArgosId))
       fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-      continue;
+      continue
    end
    
    if (floatDecId < 1000)
@@ -48,4 +48,4 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return

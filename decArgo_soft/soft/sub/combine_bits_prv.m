@@ -72,4 +72,4 @@ for idByte = 1:size(a_tabSensors, 2)
    o_combinedBits(idByte) = bin2dec(num2str(res));
 end
 
-return;
+return

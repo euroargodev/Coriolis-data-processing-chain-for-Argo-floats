@@ -192,4 +192,4 @@ switch (a_firstSensorName)
          a_firstSensorName);
 end
 
-return;
+return

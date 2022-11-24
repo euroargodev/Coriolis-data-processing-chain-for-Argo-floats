@@ -32,7 +32,7 @@ o_elev = [];
 % check ETOPO2 file exists
 if ~(exist(a_etopo2PathFileName, 'file') == 2)
    fprintf('ERROR: ETOPO2 file not found (%s)\n', a_etopo2PathFileName);
-   return;
+   return
 end
 
 % expecting ETOPO2v2g_i2_MSB.bin file
@@ -40,7 +40,7 @@ fId = fopen(a_etopo2PathFileName, 'r', 'b'); % in big-endian format
 
 if (fId == -1)
    fprintf('ERROR: Error while opening ETOPO2 file (%s)\n', a_etopo2PathFileName);
-   return;
+   return
 end
 
 bLat = floor(min(a_lat)*30);

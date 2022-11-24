@@ -29,7 +29,7 @@ o_ctdLinkData = [];
 
 
 if (isempty(a_ctdDates))
-   return;
+   return
 end
 
 paramJuld = get_netcdf_param_attributes('JULD');
@@ -53,4 +53,4 @@ for idL = 1:length(a_dates)
    end
 end
 
-return;
+return

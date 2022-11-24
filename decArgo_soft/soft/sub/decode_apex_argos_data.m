@@ -133,7 +133,7 @@ for idCy = 1:length(a_cycleList)
    if (isempty(argosPathFileName))
       fprintf('INFO: Float #%d Cycle #%d: not processed according to float end date restriction\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
-      continue;
+      continue
    end
    
    % read the Argos file and select the data
@@ -183,7 +183,7 @@ for idCy = 1:length(a_cycleList)
    
    % 071412, 062608, 061609, 021009, 061810, 093008, 082213,
    % 021208, 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110,
-   % 090810, 2.8.0, 2.10.4
+   % 090810, 2.8.0.A, 2.10.4.A
    if (ismember(a_decoderId, [1001, 1002, 1003, 1004, 1005, 1006, 1007, ...
          1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, ...
          1021, 1022]))
@@ -368,4 +368,4 @@ if (isempty(g_decArgo_outputCsvFileId))
    
 end
 
-return;
+return

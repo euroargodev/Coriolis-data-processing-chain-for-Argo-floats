@@ -30,14 +30,14 @@ global g_NTCT_FIG_HANDLE;
 global g_NTCT_FLOAT_ID;
 
 % top directory of NetCDF files to plot (TRAJ and META)
-g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+g_NTCT_NC_DIR = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 % top directory of NetCDF auxiliary files to plot (TECH_AUX)
-g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
 % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
 % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
@@ -47,30 +47,37 @@ g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.75.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_bodc.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.65.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_5.74.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_5.75.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\TrajChecker\tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_nke_rem_bodc.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\arvor_deep_5.65.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_rudics.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_sbd.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_5.44_5.45_mocca_andro_iridium.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\provor_4.52_mocca_andro_argos.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\lists\TestNr022019\cts3_ir_1.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -103,7 +110,7 @@ if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -133,7 +140,7 @@ set(dataCursorMode, 'UpdateFcn', @data_cursor_output)
 % plot the first cycle of the first float
 plot_cycle_times(0, 0, 0);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Plot of cycle timings vs pressures.
@@ -354,7 +361,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          num2str(g_NTCT_FLOAT_LIST(a_idFloat+1)));
       title(label, 'FontSize', 14);
       fprintf('\n');
-      return;
+      return
    end
    
    idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
@@ -365,7 +372,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       fprintf('\n');
       fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);
-      return;
+      return
    end
    
    idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
@@ -833,7 +840,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       fprintf('\n');
       fprintf('ERROR: Input meta file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
          metaFileName, metaFileFormatVersion);
-      return;
+      return
    end
    
    % retrieve the needed configuration parameters
@@ -931,7 +938,7 @@ if (isempty(g_NTCT_cycles))
       length(g_NTCT_FLOAT_LIST), ...
       num2str(g_NTCT_FLOAT_LIST(a_idFloat+1)));
    title(label, 'FontSize', 14);
-   return;
+   return
 end
 
 presAxes = subplot(1, 1, 1);
@@ -1465,7 +1472,7 @@ if (g_NTCT_PRINT)
    orient portrait
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Callback to manage plots.
@@ -1570,7 +1577,7 @@ elseif (strcmp(a_eventData.Key, 'h'))
    display_current_config;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Display the current configuration.
@@ -1599,7 +1606,7 @@ fprintf('\nCurrent configuration:\n');
 fprintf('BATHY always visible flag: %d\n', g_NTCT_BATHY);
 fprintf('SURFACE data focus flag  : %d\n', g_NTCT_SURF);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Callback used to update the X tick labels after a zoom.
@@ -1642,7 +1649,7 @@ if (a_eventData.Axes == presAxes)
    set(presAxes, 'XTickLabel', xTickLabel);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Callback used to customize text of data cursor.
@@ -1670,4 +1677,4 @@ pos = get(a_eventData, 'Position');
 o_text = {['Time: ', julian_2_gregorian_dec_argo(pos(1))],...
    ['Pres: ',num2str(pos(2)) ' dbar']};
 
-return;
+return

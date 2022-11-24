@@ -168,12 +168,12 @@ for idMes = 1:size(a_tabData, 1)
             end
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % set float cycle number
          g_decArgo_cycleNum = tabTech(1);
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
          
          % compute the offset between float days and julian days
          startDateInfo = [tabTech(2:4); tabTech(6)];
@@ -251,7 +251,7 @@ for idMes = 1:size(a_tabData, 1)
          g_decArgo_nbOf2Or9TypePacketExpected = tabTech(2);
          g_decArgo_nbOf3Or10TypePacketExpected = tabTech(3);
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message and measurement counts are set to 0 for a surface cycle
@@ -289,7 +289,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -358,7 +358,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -446,7 +446,7 @@ for idMes = 1:size(a_tabData, 1)
          % EV or pump packet
          
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          if (packType == 6)
@@ -511,7 +511,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -593,7 +593,7 @@ if (a_procLevel > 0)
    collect_received_packet_type_info;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize global flags and counters used to decide if a buffer is completed
@@ -679,7 +679,7 @@ g_decArgo_nbOf14Or12TypePacketExpected = 0;
 g_decArgo_13Or11TypePacketExpected = 0;
 g_decArgo_14Or12TypePacketExpected = 0;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collect information on received packet types
@@ -741,4 +741,4 @@ g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
 g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 
-return;
+return

@@ -47,7 +47,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -73,7 +73,7 @@ tic;
 outputFileName = [DIR_LOG_FILE '/' 'nc_check_file_format' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Line #; WMO; File type; File name; Status; Compliance; Version; Cmd'];
 fprintf(fidOut, '%s\n', header);
@@ -115,7 +115,7 @@ for idFloat = 1:nbFloats
          ncFiles = dir([ncFileDir sprintf('%d_meta.nc', floatNum)]);
          pattern = 'META';
       else
-         continue;
+         continue
       end
 
       if (exist(ncFileDir, 'dir') == 7)
@@ -175,4 +175,4 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return

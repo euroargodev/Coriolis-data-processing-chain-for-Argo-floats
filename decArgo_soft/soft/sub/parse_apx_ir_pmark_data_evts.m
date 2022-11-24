@@ -63,7 +63,7 @@ for idEv = 1:length(a_events)
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
          fprintf('DEC_INFO: %sAnomaly detected while parsing P mark measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
 end
@@ -90,4 +90,4 @@ if (~isempty(data))
    o_pMarkData.datesStatus = repmat(g_JULD_STATUS_2, size(o_pMarkData.dates));
 end
 
-return;
+return

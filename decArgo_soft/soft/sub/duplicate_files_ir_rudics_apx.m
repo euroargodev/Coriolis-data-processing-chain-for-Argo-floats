@@ -52,13 +52,13 @@ for idFile = 1:length(fileIdList)
       g_decArgo_rsyncFloatSbdFileList{fileIdList(idFile)}];
    
    if ~(exist(dataFilePathName, 'file') == 2)
-      continue;
+      continue
    end
    
    fileNames = dir(dataFilePathName);
    if (fileNames(1).bytes == 0)
       fprintf('RSYNC_INFO: Empty file: %s => ignored\n', dataFilePathName);
-      continue;
+      continue
    end
    
    % parse input file name
@@ -99,7 +99,7 @@ for idFile = 1:length(fileIdList)
       if (error == 1)
          fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
             a_floatNum, dataFilePathName);
-         continue;
+         continue
       end
       
       dates = [];
@@ -153,7 +153,7 @@ for idFile = 1:length(fileIdList)
       else
          fprintf('RSYNC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
             a_floatNum, dataFilePathName);
-         continue;
+         continue
       end
       
    elseif (strcmp(dataFileExt, '.log'))
@@ -162,7 +162,7 @@ for idFile = 1:length(fileIdList)
       if (error == 1)
          fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
             a_floatNum, dataFilePathName);
-         continue;
+         continue
       end
       
       dates = [events.time];
@@ -171,7 +171,7 @@ for idFile = 1:length(fileIdList)
    else
       fprintf('RSYNC_INFO: Float #%d: Don''t know how to manage file ''%s'' in duplicate_files_ir_rudics_apx\n', ...
          a_floatNum, dataFilePathName);
-      continue;
+      continue
    end
    
    cycleNumOutStr = cycleNumInStr;
@@ -314,7 +314,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.log']))))
          if (error == 1)
             fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                a_floatNum, [g_decArgo_archiveDirectory fileName]);
-            continue;
+            continue
          end
          dates = [events.time];
          
@@ -407,7 +407,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
          if (error == 1)
             fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                a_floatNum, [g_decArgo_archiveDirectory fileName]);
-            continue;
+            continue
          end
          
          dates = [];
@@ -503,7 +503,7 @@ anomalyCyList = uCycleList(find(nbElts > 1));
 if (~isempty(anomalyCyList))
    for cyNum = anomalyCyList
       if (cyNum == 0)
-         continue;
+         continue
       end
       idFCy = find(cycleList == cyNum);
       fprintf('RSYNC_INFO: Float #%d Cycle #%d: %d msg files for this cycle\n', ...
@@ -565,7 +565,7 @@ anomalyCyList = uCycleList(find(nbElts > 1));
 if (~isempty(anomalyCyList))
    for cyNum = anomalyCyList
       if (cyNum == 0)
-         continue;
+         continue
       end
       
       printLog = 0;
@@ -638,7 +638,7 @@ if (~isempty(anomalyCyList))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compare the content of one file to a list of files.
@@ -676,11 +676,11 @@ while (~stop)
             o_delete{end+1} = a_fileNameList{idF2};
             a_fileNameList(idF2) = [];
             deleteFlag = 1;
-            break;
+            break
          end
       end
       if (deleteFlag == 1)
-         break;
+         break
       end
    end
    if (deleteFlag == 0)
@@ -688,7 +688,7 @@ while (~stop)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if 2 file contents are identical.
@@ -720,7 +720,7 @@ o_identical = 0;
 fid = fopen(a_fileName1, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName1);
-   return;
+   return
 end
 file1Contents = textscan(fid, '%s');
 file1Contents = file1Contents{:};
@@ -729,7 +729,7 @@ fclose(fid);
 fid = fopen(a_fileName2, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName2);
-   return;
+   return
 end
 file2Contents = textscan(fid, '%s');
 file2Contents = file2Contents{:};
@@ -740,4 +740,4 @@ if ((length(file1Contents) == length(file2Contents)) && ...
    o_identical = 1;
 end
 
-return;
+return

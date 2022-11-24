@@ -52,7 +52,7 @@ if (nargin == 0)
    % float list is given in configuration file
    if ~(exist(g_decArgo_floatListFileName, 'file') == 2)
       fprintf('ERROR: Float file list not found: %s\n', g_decArgo_floatListFileName);
-      return;
+      return
    end
    
    floatList = load(g_decArgo_floatListFileName);
@@ -77,7 +77,7 @@ outputFileName = [g_decArgo_dirOutputCsvFile '/provor_decoded_data' name '_' dat
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-   return;
+   return
 end
 g_decArgo_outputCsvFileId = fidOut;
 g_decArgo_generateNcTraj = 0;
@@ -93,4 +93,4 @@ fclose(g_decArgo_outputCsvFileId);
 
 diary off;
 
-return;
+return

@@ -35,7 +35,7 @@ if (~isempty(a_bufferFileList))
    fidOut = fopen(bufFilePathName, 'a');
    if (fidOut == -1)
       fprintf('ERROR: Float #%d: Unable to open file: %s\n', a_floatNum, bufFilePathName);
-      return;
+      return
    end
    
    for idF = 1:length(a_bufferFileList)
@@ -45,4 +45,4 @@ if (~isempty(a_bufferFileList))
    fclose(fidOut);
 end
 
-return;
+return

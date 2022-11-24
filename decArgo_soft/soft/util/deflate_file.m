@@ -36,7 +36,7 @@ SHUFFLE_FLAG = true;
 
 if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
    fprintf('ERROR: Directory not found: %s\n', INPUT_DIR_NAME);
-   return;
+   return
 end
 if (exist(OUTPUT_DIR_NAME, 'dir') == 7)
    fprintf('INFO: Cleaning directory: %s\n', OUTPUT_DIR_NAME);
@@ -180,4 +180,4 @@ for idFile = 1:length(dirFiles)
    end
 end
 
-return;
+return

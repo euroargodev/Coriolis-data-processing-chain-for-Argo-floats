@@ -92,7 +92,7 @@ if (STEP_1)
    dirNames = dir(DIR_INPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       %       fprintf('Directory: %s\n', dirNames(idDir).name);
@@ -103,11 +103,11 @@ if (STEP_1)
       end
       [floatRudicsId, status] = str2num(dirName);
       if (status == 0)
-         continue;
+         continue
       end
       
       %       if (floatRudicsId ~= 9253)
-      %          continue;
+      %          continue
       %       end
       
       % check if this file is managed
@@ -133,7 +133,7 @@ if (STEP_1)
             
             if (fileNames(idFile).bytes == 0)
                fprintf('INFO: Empty file: %s => ignored\n', filePathName);
-               continue;
+               continue
             end
             
             if (~isempty(decId))
@@ -150,7 +150,7 @@ if (STEP_1)
                   ] = read_apx_ir_rudics_msg_file(filePathName);
                if (error == 1)
                   fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-                  continue;
+                  continue
                end
                
                [configData] = parse_apx_ir_config_data(configDataStr);
@@ -175,7 +175,7 @@ if (STEP_1)
                   date = min(dates);
                else
                   fprintf('ERROR: No dates in file: %s => ignored\n', filePathName);
-                  continue;
+                  continue
                end
             else
                date = fileNames(idFile).datenum - g_decArgo_janFirst1950InMatlab;
@@ -190,7 +190,7 @@ if (STEP_1)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg');
                if (~isempty(errmsg) || (count ~= 2))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                cyNum = val(2);
@@ -198,7 +198,7 @@ if (STEP_1)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg.%d');
                if (~isempty(errmsg) || (count ~= 3))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                cyNum = val(2);
@@ -209,7 +209,7 @@ if (STEP_1)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg.%d.%d');
                if (~isempty(errmsg) || (count ~= 4))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                cyNum = val(2);
@@ -218,7 +218,7 @@ if (STEP_1)
                end
             else
                fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-               continue;
+               continue
             end
             
             if (~isempty(decId))
@@ -278,7 +278,7 @@ if (STEP_2)
    dirNames = dir(DIR_INPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       dirName = dirNames(idDir).name;
@@ -288,11 +288,11 @@ if (STEP_2)
       end
       [floatRudicsId, status] = str2num(dirName);
       if (status == 0)
-         continue;
+         continue
       end
       
       %       if (floatRudicsId ~= 9253)
-      %          continue;
+      %          continue
       %       end
       
       % check if this file is managed
@@ -319,13 +319,13 @@ if (STEP_2)
             
             if (fileNames(idFile).bytes == 0)
                fprintf('INFO: Empty file: %s => ignored\n', filePathName);
-               continue;
+               continue
             end
             
             [error, events] = read_apx_ir_rudics_log_file(filePathName);
             if (error == 1)
                fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-               continue;
+               continue
             end
             
             floatId = [];
@@ -337,7 +337,7 @@ if (STEP_2)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log');
                if (~isempty(errmsg) || (count ~= 2))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                if (val(2) < 1000)
@@ -347,7 +347,7 @@ if (STEP_2)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log.%d');
                if (~isempty(errmsg) || (count ~= 3))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                if (val(2) < 1000)
@@ -360,7 +360,7 @@ if (STEP_2)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log.%d.%d');
                if (~isempty(errmsg) || (count ~= 4))
                   fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
-                  continue;
+                  continue
                end
                floatId = val(1);
                if (val(2) < 1000)
@@ -433,7 +433,7 @@ if (STEP_3)
    dirNames = dir(DIR_OUTPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       fprintf('Directory: %s\n', dirNames(idDir).name);
@@ -470,13 +470,13 @@ if (STEP_4)
    dirNames = dir(DIR_OUTPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       fprintf('Directory: %s\n', dirNames(idDir).name);
       
       %       if (str2num(dirNames(idDir).name) ~= 9283)
-      %          continue;
+      %          continue
       %       end
       
       dirPathFileName = [DIR_OUTPUT_IR_FILES dirNames(idDir).name];
@@ -512,14 +512,14 @@ if (STEP_5)
    dirNames = dir(DIR_OUTPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       fprintf('Directory: %s\n', dirNames(idDir).name);
       floatRudicsId = str2num(dirNames(idDir).name);
       
       %       if (floatRudicsId ~= 9253)
-      %          continue;
+      %          continue
       %       end
       
       wmoList = [];
@@ -570,7 +570,7 @@ if (STEP_5)
                ] = read_apx_ir_rudics_msg_file(filePathName);
             if (error == 1)
                fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-               continue;
+               continue
             end
             
             [configData] = parse_apx_ir_config_data(configDataStr);
@@ -639,12 +639,12 @@ if (STEP_5)
                         if (endDate == g_decArgo_dateDef)
                            if (~any(dates < startDate))
                               floatWmo = wmoList(idD);
-                              break;
+                              break
                            end
                         else
                            if (~any(dates < startDate) && ~any(dates > endDate))
                               floatWmo = wmoList(idD);
-                              break;
+                              break
                            end
                         end
                      end
@@ -677,14 +677,14 @@ if (STEP_6)
    dirNames = dir(DIR_OUTPUT_IR_FILES);
    for idDir = 1:length(dirNames)
       if (strcmp(dirNames(idDir).name, '.') || strcmp(dirNames(idDir).name, '..'))
-         continue;
+         continue
       end
       
       fprintf('Directory: %s\n', dirNames(idDir).name);
       floatRudicsId = str2num(dirNames(idDir).name);
       
       %       if (floatRudicsId ~= 9253)
-      %          continue;
+      %          continue
       %       end
       
       % check if this file is managed
@@ -712,7 +712,7 @@ if (STEP_6)
                [error, events] = read_apx_ir_rudics_log_file(filePathName);
                if (error == 1)
                   fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-                  continue;
+                  continue
                end
                
                dates = [events.time];
@@ -743,12 +743,12 @@ if (STEP_6)
                         if (endDate == g_decArgo_dateDef)
                            if (any(dates >= startDate))
                               floatWmo = wmoList(idD);
-                              break;
+                              break
                            end
                         else
                            if (any((dates >= startDate) & (dates <= endDate)))
                               floatWmo = wmoList(idD);
-                              break;
+                              break
                            end
                         end
                      end
@@ -788,7 +788,7 @@ if (STEP_6)
                      [error, events] = read_apx_ir_rudics_log_file(filePathName);
                      if (error == 1)
                         fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-                        continue;
+                        continue
                      end
                      
                      idF = strfind(fileName, '_');
@@ -838,7 +838,7 @@ if (STEP_6)
                            [error, events] = read_apx_ir_rudics_log_file(filePathName);
                            if (error == 1)
                               fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-                              continue;
+                              continue
                            end
                            
                            dates = [events.time];
@@ -871,7 +871,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compare the content of one file to a list of files.
@@ -909,11 +909,11 @@ while (~stop)
             o_delete{end+1} = a_fileNameList{idF2};
             a_fileNameList(idF2) = [];
             deleteFlag = 1;
-            break;
+            break
          end
       end
       if (deleteFlag == 1)
-         break;
+         break
       end
    end
    if (deleteFlag == 0)
@@ -921,7 +921,7 @@ while (~stop)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if 2 file contents are identical.
@@ -953,7 +953,7 @@ o_identical = 0;
 fid = fopen(a_fileName1, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName1);
-   return;
+   return
 end
 file1Contents = textscan(fid, '%s');
 file1Contents = file1Contents{:};
@@ -962,7 +962,7 @@ fclose(fid);
 fid = fopen(a_fileName2, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName2);
-   return;
+   return
 end
 file2Contents = textscan(fid, '%s');
 file2Contents = file2Contents{:};
@@ -973,7 +973,7 @@ if ((length(file1Contents) == length(file2Contents)) && ...
    o_identical = 1;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Rename a list of msg files erroneously named log.
@@ -1022,4 +1022,4 @@ for idFile = 1:size(file_names, 1)
    end
 end
 
-return;
+return

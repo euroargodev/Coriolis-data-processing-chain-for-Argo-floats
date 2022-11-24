@@ -64,7 +64,7 @@ for iFile = 1:length(sbdFiles)
    if (fId == -1)
       fprintf('ERROR: Error while opening file : %s\n', sbdFilePathName);
       o_error = 1;
-      return;
+      return
    end
    sbdData = fread(fId);
    fclose(fId);
@@ -110,19 +110,19 @@ for iFile = 1:length(sbdFiles)
       % been ignored)
       if (isempty(prevData) && isempty(currentData))
          fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Starting with SBD with no header in file : %s => ignored\n', sbdFileName);
-         continue;
+         continue
       end
       
       % SBD file contents transmitted twice
       if (~isempty(prevData) && (length(sbdData) == length(prevData)) && ~any(sbdData ~= prevData))
          fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Duplicated data in file : %s => ignored\n', sbdFileName);
-         continue;
+         continue
       end
       
       % not needed additional SBD file
       if (currentData.nbSbdFileExpected == currentData.nbSbdFileUsed)
          fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Useless data in file : %s => ignored\n', sbdFileName);
-         continue;
+         continue
       end
       
       % store following data and information
@@ -133,7 +133,7 @@ for iFile = 1:length(sbdFiles)
       prevData = sbdData;
    else
       fprintf('WARNING: convert_sbd_files_apex_apf11_iridium_sbd: Anomaly in file : %s => ignored\n', sbdFileName);
-      continue;
+      continue
    end
    
    % retrieve MOMSN number from SBD file name
@@ -183,7 +183,7 @@ if (~isempty(dataList))
                   fileName, sizeList(idMax), length(idToDel));
                dataList(idToDel) = [];
                nbDel = nbDel + length(idToDel);
-               break;
+               break
             end
          end
       end
@@ -199,7 +199,7 @@ for iFile = 1:length(dataList)
    fIdOut = fopen(floatFilePathName, 'wb');
    if (fIdOut == -1)
       fprintf('ERROR: Error while creating file : %s\n', floatFilePathName);
-      return;
+      return
    end
    
    data = dataList(iFile).data;
@@ -230,4 +230,4 @@ o_nbScienceLogFiles = length(files);
 files = dir([a_outputDirName '*.vitals_log.bin']);
 o_nbVitalsLogFiles = length(files);
 
-return;
+return

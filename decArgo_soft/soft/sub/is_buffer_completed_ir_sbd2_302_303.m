@@ -77,13 +77,13 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
       % cycle
       id253Phase = find(g_decArgo_253TypeReceivedData(:, 3) == g_decArgo_phaseSatTrans);
       if (isempty(id253Phase))
-         return;
+         return
       else
          id253PhaseCyProf = find( ...
             (g_decArgo_253TypeReceivedData(id253Phase, 1) == expCy) & ...
             (g_decArgo_253TypeReceivedData(id253Phase, 2) == expProf), 1);
          if (isempty(id253PhaseCyProf))
-            return;
+            return
          end
       end
       
@@ -96,7 +96,7 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             (g_decArgo_250TypeReceivedData(:, 2) == expCy) & ...
             (g_decArgo_250TypeReceivedData(:, 3) == expProf));
          if (isempty(id250SensorCycProf))
-            return;
+            return
          else
             nbTransDesc = g_decArgo_250TypeReceivedData(id250SensorCycProf, 4);
             nbTransDrift = g_decArgo_250TypeReceivedData(id250SensorCycProf, 5);
@@ -111,9 +111,9 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             ((zeroTypeReceivedData(:, 4) == g_decArgo_phaseDsc2Prk) | ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseDsc2Prof)));
          if (isempty(id0SensorCycleProfDesc) && (nbTransDesc >0))
-            return;
+            return
          elseif (length(id0SensorCycleProfDesc) ~= nbTransDesc)
-            return;
+            return
          end
          id0SensorCycleProfDrift = find( ...
             (zeroTypeReceivedData(:, 1) == sensorNum(idS)) & ...
@@ -122,9 +122,9 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             ((zeroTypeReceivedData(:, 4) == g_decArgo_phaseParkDrift) | ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseProfDrift)));
          if (isempty(id0SensorCycleProfDrift) && (nbTransDrift >0))
-            return;
+            return
          elseif (length(id0SensorCycleProfDrift) ~= nbTransDrift)
-            return;
+            return
          end
          id0SensorCycleProfAsc = find( ...
             (zeroTypeReceivedData(:, 1) == sensorNum(idS)) & ...
@@ -132,9 +132,9 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             (zeroTypeReceivedData(:, 3) == expProf) & ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseAscProf));
          if (isempty(id0SensorCycleProfAsc) && (nbTransAsc >0))
-            return;
+            return
          elseif (length(id0SensorCycleProfAsc) ~= nbTransAsc)
-            return;
+            return
          end
          
       end
@@ -178,13 +178,13 @@ elseif (isempty(g_decArgo_0TypeReceivedData) && ...
       % cycle
       id253Phase = find(g_decArgo_253TypeReceivedData(:, 3) == g_decArgo_phaseSatTrans);
       if (isempty(id253Phase))
-         return;
+         return
       else
          id253PhaseCyProf = find( ...
             (g_decArgo_253TypeReceivedData(id253Phase, 1) == expCy) & ...
             (g_decArgo_253TypeReceivedData(id253Phase, 2) == expProf), 1);
          if (isempty(id253PhaseCyProf))
-            return;
+            return
          end
       end
       
@@ -197,13 +197,13 @@ elseif (isempty(g_decArgo_0TypeReceivedData) && ...
             (g_decArgo_250TypeReceivedData(:, 2) == expCy) & ...
             (g_decArgo_250TypeReceivedData(:, 3) == expProf));
          if (isempty(id250SensorCycProf))
-            return;
+            return
          else
             nbTransDesc = g_decArgo_250TypeReceivedData(id250SensorCycProf, 4);
             nbTransDrift = g_decArgo_250TypeReceivedData(id250SensorCycProf, 5);
             nbTransAsc = g_decArgo_250TypeReceivedData(id250SensorCycProf, 6);
             if (~isempty(find([nbTransDesc nbTransDrift nbTransAsc] ~= 0, 1)))
-               return;
+               return
             end
          end
          
@@ -217,4 +217,4 @@ elseif (isempty(g_decArgo_0TypeReceivedData) && ...
    
 end
 
-return;
+return

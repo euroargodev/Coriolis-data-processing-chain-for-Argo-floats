@@ -46,7 +46,7 @@ global g_decArgo_tempCpuChlaDef;
 
 
 if (isempty(a_engData))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -58,7 +58,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       % extract data
@@ -144,7 +144,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       % extract data
@@ -193,7 +193,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       if (any(strfind(a_engData{3}, '/')))
@@ -215,7 +215,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       % extract data
@@ -312,7 +312,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       if (any(strfind(a_engData{3}, '/')))
@@ -335,7 +335,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       % extract data
@@ -436,7 +436,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       if (any(strfind(a_engData{3}, '/')) && any(strfind(a_engData{4}, '/')))
@@ -461,7 +461,7 @@ switch (a_decoderId)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum);
-         return;
+         return
       end
       
       % extract data
@@ -557,4 +557,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

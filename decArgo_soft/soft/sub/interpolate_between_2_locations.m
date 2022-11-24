@@ -56,4 +56,4 @@ else
 end
 o_interpLocLat = interp1q([a_firstLocDate; a_secondLocDate], [a_firstLocLat; a_secondLocLat], a_interpDate);
 
-return;
+return

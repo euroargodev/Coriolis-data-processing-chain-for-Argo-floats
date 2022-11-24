@@ -98,7 +98,7 @@ global g_decArgo_iridiumMailData;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 refDay = a_refDay;
@@ -351,4 +351,4 @@ if (print == 1)
    end
 end
 
-return;
+return

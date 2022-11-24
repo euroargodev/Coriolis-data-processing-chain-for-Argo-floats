@@ -34,7 +34,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_vitalsLogFileList))
-   return;
+   return
 end
 
 if (length(a_vitalsLogFileList) > 1)
@@ -67,7 +67,7 @@ for idFile = 1:length(a_vitalsLogFileList)
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
-      return;
+      return
    end
    
    dataFields = fieldnames(data);
@@ -90,7 +90,7 @@ for idFile = 1:length(a_vitalsLogFileList)
                            if (isempty([idF{:}]))
                               fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                                  g_decArgo_floatNum, g_decArgo_cycleNum, 'Message', msgData, vitFilePathName);
-                              continue;
+                              continue
                            end
                         end
                      end
@@ -124,4 +124,4 @@ for idFile = 1:length(a_vitalsLogFileList)
    end
 end
 
-return;
+return

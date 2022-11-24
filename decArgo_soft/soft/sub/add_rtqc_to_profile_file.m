@@ -190,7 +190,7 @@ MEDITERRANEAN_SEA_REGION = [[30 40 -5 40]; ...
 if ~(exist(a_ncMonoProfInputPathFileName, 'file') == 2)
    fprintf('RTQC_ERROR: Float #%d: No input mono profile nc file to perform RTQC (%s)\n', ...
       a_floatNum, a_ncMonoProfInputPathFileName);
-   return;
+   return
 end
 ncMonoProfInputPathFileName = a_ncMonoProfInputPathFileName;
 
@@ -549,7 +549,7 @@ end
 % check if any test has to be performed
 if (isempty(find(testFlagList == 1, 1)))
    fprintf('RTQC_INFO: Float #%d: No RTQC test to perform\n', a_floatNum);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1316,7 +1316,7 @@ for idProf = 1:nProf
                if (idD == 2)
                   % we must consider filled adjusted variables
                   if (paramDataModeBFile(idProf, idP) == 'R')
-                     continue;
+                     continue
                   end
                   paramName = [paramName '_ADJUSTED'];
                end
@@ -1705,7 +1705,7 @@ if (testFlagList(21) == 1)
                         if (~isempty(idF))
                            paramSensorModel = sensorModelMeta(idF);
                            if (~strcmp(paramSensorModel, 'SBE63_OPTODE'))
-                              continue;
+                              continue
                            end
                         end
                      end
@@ -1851,7 +1851,7 @@ if (testFlagList(22) == 1)
                               for id = length(idCheck)-1:-1:1
                                  if ((presRef - profPres(idCheck(id))) < 0.5)
                                     idFirst = id;
-                                    break;
+                                    break
                                  else
                                     presRef = profPres(idCheck(id));
                                  end
@@ -3122,7 +3122,7 @@ if (testFlagList(16) == 1)
                   end
                end
                if (~isempty(meanParamRef))
-                  break;
+                  break
                end
             end
             
@@ -3322,7 +3322,7 @@ if (testFlagList(18) == 1)
                   end
                end
                if (~isempty(prevProfParamRef))
-                  break;
+                  break
                end
             end
             
@@ -3871,7 +3871,7 @@ if (testFlagList(63) == 1)
                                  (psalData(idNSProf(idP), :) ~= psalDataFillValue)))
                               found = 1;
                               idNSProf = idNSProf(idP);
-                              break;
+                              break
                            end
                         end
                         if (found == 0)
@@ -3929,7 +3929,7 @@ if (testFlagList(63) == 1)
                         fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: DARK_CHLA needed to perform test #63 => test #63 not performed\n', ...
                            a_floatNum, cycleNumber(idProf));
                         testFlagList(63) = 0;
-                        continue;
+                        continue
                      end
                      scaleChlaId = find(strcmp('TEST063_SCALE_CHLA', a_testMetaData) == 1);
                      if (~isempty(scaleChlaId))
@@ -3938,7 +3938,7 @@ if (testFlagList(63) == 1)
                         fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: SCALE_CHLA needed to perform test #63 => test #63 not performed\n', ...
                            a_floatNum, cycleNumber(idProf));
                         testFlagList(63) = 0;
-                        continue;
+                        continue
                      end
                      
                      % retrieve LAST_DARK_CHLA from NetCDF scientific calibration
@@ -4359,7 +4359,7 @@ if (~isempty(g_rtqc_trajData))
          else
             fprintf('RTQC_ERROR: Float #%d: PROF to TRAJ link rules not implemented for decoder Id #%d\n', ...
                a_floatNum, floatDecoderId);
-            continue;
+            continue
          end
          
          if (~isempty(profMeasCode))
@@ -4389,11 +4389,11 @@ if (~isempty(g_rtqc_trajData))
                               end
                               profNmeasXIndex(idLength, idProf, idLev) = idMeas;
                               found = 1;
-                              break;
+                              break
                            end
                         end
                         if (found == 1)
-                           break;
+                           break
                         end
                      end
                      if (found == 0)
@@ -4492,7 +4492,7 @@ end
 
 if (a_update_file_flag == 0)
    clear variables;
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4679,7 +4679,7 @@ remove_directory(DIR_TMP_FILE);
 
 clear variables;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -4714,7 +4714,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -4735,7 +4735,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {name}/{data} list.
@@ -4768,7 +4768,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{idVal+1};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a location is in a given region (defined by a list of rectangles).
@@ -4801,13 +4801,13 @@ for idR = 1:length(a_region)
    region = a_region(idR, :);
    if ((a_lat >= region(1)) && (a_lat <= region(2)) && (a_lon >= region(3)) && (a_lon <= region(4)));
       o_inRegionFlag = 1;
-      return;
+      return
    end
 end
 
 o_inRegionFlag = 0;
 
-return;
+return
 
 % function [o_inRegionFlag] = location_in_region(a_lon, a_lat, a_region)
 %
@@ -4836,7 +4836,7 @@ return;
 % [xLoc, yLoc] = m_ll2xy(a_lon, a_lat);
 % [o_inRegionFlag] = inpolygon(xLoc, yLoc, xRegion, yRegion);
 %
-% return;
+% return
 
 % ------------------------------------------------------------------------------
 % Update NetCDF files after RTQC and CHLA adjustment have been performed.
@@ -4914,7 +4914,7 @@ for idFile = 1:2
    else
       % b file update
       if (isempty(a_bMonoFileName))
-         continue;
+         continue
       end
       fileName = a_bMonoFileName;
    end
@@ -4946,7 +4946,7 @@ for idFile = 1:2
    fCdf = netcdf.open(fileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('RTQC_ERROR: Unable to open NetCDF file: %s\n', fileName);
-      return;
+      return
    end
    
    % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
@@ -5090,13 +5090,13 @@ for idFile = 1:2
             for idP = 1:nParam
                if (strcmp(deblank(parameter(:, idP, 1, idProf)'), 'CHLA'))
                   idParam = idP;
-                  break;
+                  break
                end
             end
             if (idParam == -1)
                fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable => calibration information not updated in file: %s\n', ...
                   'CHLA', fileName);
-               break;
+               break
             end
             
             % look for a calibId to store the information
@@ -5238,12 +5238,12 @@ if (~isempty(a_cMultiFileName))
          else
             % b file update
             if (isempty(a_bMultiFileName))
-               continue;
+               continue
             end
             fileName = a_bMultiFileName;
             profIdList = profIdListB;
             if (isempty(profIdList))
-               continue;
+               continue
             end
          end
          
@@ -5262,7 +5262,7 @@ if (~isempty(a_cMultiFileName))
          fCdf = netcdf.open(fileName, 'NC_WRITE');
          if (isempty(fCdf))
             fprintf('RTQC_ERROR: Unable to open NetCDF file: %s\n', fileName);
-            return;
+            return
          end
          
          for idProf = 1:length(a_idProfM)
@@ -5404,7 +5404,7 @@ end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse a string and look for the value of a given coefficient.
@@ -5436,7 +5436,7 @@ remain = a_calibCoefSting;
 while (1)
    [info, remain] = strtok(remain, ',');
    if (isempty(info))
-      break;
+      break
    else
       if (~isempty(strfind(info, a_coefName)))
          idF = strfind(info, '=');
@@ -5447,4 +5447,4 @@ while (1)
    end
 end
 
-return;
+return

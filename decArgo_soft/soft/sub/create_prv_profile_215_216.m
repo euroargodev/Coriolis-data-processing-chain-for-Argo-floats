@@ -114,7 +114,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_dataCTD) && isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
@@ -135,7 +135,7 @@ if (~isempty(a_dataCTD))
                if ((data(idMeas+1+15*2) == g_decArgo_presDef) && ...
                      (data(idMeas+1+15*3) == g_decArgo_tempDef) && ...
                      (data(idMeas+1+15*4) == g_decArgo_salDef))
-                  break;
+                  break
                end
                if (type > 3) 
                   data(idMeas+1) = data(idMeas) + inAirSampPeriodSeconds/86400;
@@ -187,7 +187,7 @@ if (~isempty(a_dataCTDO))
                      (data(idMeas+1+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
                      (data(idMeas+1+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
                      (data(idMeas+1+7*7) == g_decArgo_tempDoxyDef))
-                  break;
+                  break
                end
                if (type > 10)
                   data(idMeas+1) = data(idMeas) + inAirSampPeriodSeconds/86400;
@@ -255,4 +255,4 @@ if (~isempty(a_dataCTDO))
    o_ascProfTempDoxy = o_ascProfTempDoxy(idSorted);
 end
 
-return;
+return

@@ -91,7 +91,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_clockOffsetData.clockOffsetCycleNum))
-   return;
+   return
 end
 
 % clock adjustment of meas data of the current cycle
@@ -103,7 +103,7 @@ else
       idF = length(a_clockOffsetData.clockOffsetCycleNum);
    else
       % RTC offset information not received yet for this cycle
-      return;
+      return
    end
 end
 clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{idF};
@@ -155,7 +155,7 @@ if (~isempty(o_surfDataLog))
             idF = length(a_clockOffsetData.clockOffsetCycleNum);
          else
             % RTC offset information not received yet for this cycle
-            return;
+            return
          end
       end
       clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{idF};
@@ -241,7 +241,7 @@ if (~isempty(o_timeDataLog) && ~isempty(o_timeDataLog.transStartDate))
             idF = length(a_clockOffsetData.clockOffsetCycleNum);
          else
             % RTC offset information not received yet for this cycle
-            return;
+            return
          end
       end
       clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{idF};
@@ -309,7 +309,7 @@ if (~isempty(o_timeDataLog) && ~isempty(o_timeDataLog.transEndDate))
             idF = length(a_clockOffsetData.clockOffsetCycleNum);
          else
             % RTC offset information not received yet for this cycle
-            return;
+            return
          end
       end
       clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{idF};
@@ -365,7 +365,7 @@ if (~isempty(o_timeDataLog) && ~isempty(o_timeDataLog.transEndDate))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Apply clock offset adjustment to times of a set of measurements.
@@ -422,7 +422,7 @@ if (~isempty(o_profData))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Apply clock offset adjustment to a given time.
@@ -470,4 +470,4 @@ if (~isempty(a_time))
    end
 end
 
-return;
+return

@@ -57,7 +57,7 @@ global g_decArgo_dateDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -163,4 +163,4 @@ for idP = 1:length(idForType)
    end
 end
 
-return;
+return

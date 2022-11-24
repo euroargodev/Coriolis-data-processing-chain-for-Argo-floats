@@ -29,7 +29,7 @@ o_floatFiles = [];
 fId = fopen(a_rsyncLogName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_rsyncLogName);
-   return;
+   return
 end
 logData = textscan(fId, '%s');
 logData = logData{:};
@@ -44,4 +44,4 @@ for idL = 1:length(logData)
    end
 end
 
-return;
+return

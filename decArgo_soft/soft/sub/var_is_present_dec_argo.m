@@ -29,8 +29,8 @@ for idVar= 0:nbVars-1
    [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
    if (strcmp(varName, a_varName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return

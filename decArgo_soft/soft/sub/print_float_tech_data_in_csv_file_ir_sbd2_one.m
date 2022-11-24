@@ -313,4 +313,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; float tech; Sensor board sta
    g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(a_phaseNum), ...
    a_tabTech(a_dataIndex, 74));
 
-return;
+return

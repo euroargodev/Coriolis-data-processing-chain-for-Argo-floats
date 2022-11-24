@@ -117,7 +117,7 @@ global g_decArgo_floatConfig;
 
 if ~((~isempty(a_dataCTD) && any(ismember(a_dataCTD(:, 1), [1 3 13 14]))) || ...
       (~isempty(a_dataCTDO) && any(ismember(a_dataCTDO(:, 1), [8 10 11 12]))))
-   return;
+   return
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
@@ -134,7 +134,7 @@ else
       while (cyNum >= 0)
          if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
             [configNames, configValues] = get_float_config_ir_sbd(cyNum);
-            break;
+            break
          end
          cyNum = cyNum - 1;
       end
@@ -157,7 +157,7 @@ if (~isempty(a_dataCTD))
                if ((data(idMeas+15*2) == g_decArgo_presDef) && ...
                      (data(idMeas+15*3) == g_decArgo_tempDef) && ...
                      (data(idMeas+15*4) == g_decArgo_salDef))
-                  break;
+                  break
                end
                if (ismember(type, [13 14]))
                   date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
@@ -210,7 +210,7 @@ if (~isempty(a_dataCTDO))
                      (data(idMeas+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
                      (data(idMeas+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
                      (data(idMeas+7*7) == g_decArgo_tempDoxyDef))
-                  break;
+                  break
                end
                if (ismember(type, [11 12]))
                   date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
@@ -278,4 +278,4 @@ if (~isempty(a_dataCTDO))
    o_ascProfTempDoxy = o_ascProfTempDoxy(idSorted);
 end
 
-return;
+return

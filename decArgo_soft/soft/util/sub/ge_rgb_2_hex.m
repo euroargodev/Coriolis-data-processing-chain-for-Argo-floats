@@ -36,4 +36,4 @@ o_color(7-LR:6) = hexR;
 o_color(5-LG:4) = hexG;
 o_color(3-LB:2) = hexB;
 
-return;
+return

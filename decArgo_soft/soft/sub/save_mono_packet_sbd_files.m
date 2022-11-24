@@ -80,7 +80,7 @@ for idMes = 1:size(tabSensors, 1)
          if ((sensorDataType+1 < 1) || (sensorDataType+1 > length(lut)))
             fprintf('WARNING: Inconsistent sensorDataType (%d) => packet ignored\n', ...
                sensorDataType);
-            continue;
+            continue
          end
          
          % sensor number
@@ -92,7 +92,7 @@ for idMes = 1:size(tabSensors, 1)
          % empty msg
          uMsgdata = unique(msgData);
          if ((length(uMsgdata) == 1) && (uMsgdata == 0))
-            continue;
+            continue
          end
          
          % first item bit number
@@ -370,4 +370,4 @@ end
 
 o_ok = 1;
 
-return;
+return

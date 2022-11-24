@@ -202,7 +202,7 @@ switch (a_decoderId)
       o_dataMsgBytesToFreeze{3, 1} = 3;
       o_dataMsgBytesToFreeze{3, 2} = [3:8];
       
-   case {1021, 1022} % 2.8.0, 2.10.4
+   case {1021, 1022} % 2.8.0.A, 2.10.4.A
       o_testMsgBytesToFreeze{1, 1} = 1;
       o_testMsgBytesToFreeze{1, 2} = [3 10 11 15:18];
       o_testMsgBytesToFreeze{2, 1} = 2;
@@ -221,4 +221,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

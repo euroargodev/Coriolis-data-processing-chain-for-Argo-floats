@@ -66,7 +66,7 @@ switch (a_decoderId)
          a_floatLaunchDate, a_floatEndDate);
 
    case {1121}
-      % APEX APF11 (2.10.4 & 2.11.3)
+      % APEX APF11 (2.10.4.R & 2.11.3.R)
       
       [o_tabProfiles, ...
          o_tabTrajNMeas, o_tabTrajNCycle, ...
@@ -78,7 +78,7 @@ switch (a_decoderId)
       
    otherwise
       fprintf('ERROR: decode_apex_iridium_rudics_data not defined yet for decId #%d => exit\n', a_decoderId);
-      return;
+      return
 end
 
-return;
+return

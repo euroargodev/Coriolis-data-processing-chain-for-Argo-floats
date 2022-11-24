@@ -140,8 +140,8 @@ for idFloat = length(wmoList):-1:1
 
    floatNum = floatNum + 1;
    if (floatNum == nbFloats)
-      break;
+      break
    end
 end
 
-return;
+return

@@ -83,4 +83,4 @@ o_latArrowHead(3) = a_lat2;
 id = find(o_lonArrowHead > 180);
 o_lonArrowHead(id) = o_lonArrowHead(id) -360;
 
-return;
+return

@@ -34,7 +34,7 @@ else
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Print measurement data in CSV file.
@@ -74,7 +74,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_sampledData))
-   return;
+   return
 end
    
 cycleNumber = g_decArgo_cycleNum;
@@ -164,4 +164,4 @@ for idL = 1:size(paramData, 1)
    end
 end
 
-return;
+return

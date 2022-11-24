@@ -54,7 +54,7 @@ o_dataStruct = struct( ...
    'cycleProfPres', [] ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve information on cycle time provided by a float version.
@@ -103,7 +103,7 @@ switch (a_decoderId)
       o_downTimeEnd = 0;
       o_ascentStartTime = 0;
       
-   case {1021, 1022} % 2.8.0, 2.10.4
+   case {1021, 1022} % 2.8.0.A, 2.10.4.A
       o_downTimeEnd = 1;
       o_ascentStartTime = 0;
       
@@ -114,4 +114,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

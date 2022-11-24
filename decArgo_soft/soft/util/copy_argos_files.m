@@ -49,7 +49,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -74,7 +74,7 @@ tic;
 % create the output directory
 if (exist(DIR_OUTPUT_ARGOS_FILES, 'dir') == 7)
    fprintf('The output directory %s already exist => exit\n', DIR_OUTPUT_ARGOS_FILES);
-   return;
+   return
 else
    mkdir(DIR_OUTPUT_ARGOS_FILES);
 end
@@ -98,7 +98,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    
@@ -113,7 +113,7 @@ for idFloat = 1:nbFloats
       inputFile = [DIR_INPUT_ARGOS_FILES '/' argosFileName];
       outputFile = [DIR_OUTPUT_ARGOS_FILES '/' argosFileName];
       if (copy_file(inputFile, outputFile) == 0)
-         break;
+         break
       end
    end
 end
@@ -123,4 +123,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

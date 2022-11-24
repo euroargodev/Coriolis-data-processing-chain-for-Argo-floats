@@ -677,7 +677,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
       end
       if (idSpoolFile < length(tabAllFileNames))
-         continue;
+         continue
       end
    end
    
@@ -1061,7 +1061,7 @@ if (g_decArgo_virtualBuff)
    rmdir(g_decArgo_archiveSbdDirectory, 's');
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode one set of Iridium SBD files.
@@ -1173,7 +1173,7 @@ global g_decArgo_virtualBuff;
 
 % no data to process
 if (isempty(a_sbdFileNameList))
-   return;
+   return
 end
 
 % read the SBD file data
@@ -1227,11 +1227,11 @@ switch (a_decoderId)
             decode_nva_data_ir_sbd_2003(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       end
       if (g_decArgo_cycleNum == -1)
-         return;
+         return
       end
       
       if (g_decArgo_ackPacket == 0)
-         fprintf('Cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
       else
          fprintf('Acknowledgment packet\n');
          g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
@@ -1456,7 +1456,7 @@ switch (a_decoderId)
       [tabTech, dataCTDO, dataHydrau, dataAck, deepCycle] = ...
          decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       if (g_decArgo_cycleNum == -1)
-         return;
+         return
       end
       
       if (~isempty(a_completedBuffer))
@@ -1472,7 +1472,7 @@ switch (a_decoderId)
       end      
       
       if (g_decArgo_ackPacket == 0)
-         fprintf('Cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
       else
          fprintf('Acknowledgment packet\n');
          g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
@@ -1517,8 +1517,7 @@ switch (a_decoderId)
          firstMessageDate, lastMessageDate, ...
          floatClockDrift] = compute_nva_dates_2001_2002(tabTech, deepCycle);
       
-      % store GPS data and compute JAMSTEC QC for the GPS locations of the
-      % current cycle
+      % store GPS data
       store_gps_data_ir_sbd_nva_2001_2002(tabTech);
       
       % create descending and ascending profiles
@@ -1670,4 +1669,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

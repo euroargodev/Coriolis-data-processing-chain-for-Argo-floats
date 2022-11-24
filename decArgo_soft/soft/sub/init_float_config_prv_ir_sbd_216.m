@@ -56,9 +56,6 @@ global g_decArgo_calibInfo;
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 % ICE float firmware
 global g_decArgo_floatFirmware;
 g_decArgo_floatFirmware = '';
@@ -91,7 +88,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_floatConfig = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -112,10 +109,18 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
       idPos = find(strncmp(jConfNames{id}, configNames2, 11) == 1, 1);
       if (~isempty(idPos))
          if (~isempty(jConfValues{id}))
-            if (strncmp(jConfNames{id}, 'CONFIG_PG04', length('CONFIG_PG04')))
-               configValues2(idPos) = str2num(jConfValues{id})/1000;
+            [value, status] = str2num(jConfValues{id});
+            if ((length(value) == 1) && (status == 1))
+               if (strncmp(jConfNames{id}, 'CONFIG_PG04', length('CONFIG_PG04')))
+                  configValues2(idPos) = value/1000;
+               else
+                  configValues2(idPos) = value;
+               end
             else
-               configValues2(idPos) = str2num(jConfValues{id});
+               fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+                  g_decArgo_floatNum, ...
+                  jConfNames{id});
+               return
             end
          end
       else
@@ -200,7 +205,7 @@ if (isnan(pg00Value))
    fprintf('ERROR: Float #%d: PG0 configuration parameter is mandatory (should be set to 0 if Ice algorithm is not activated at launch; to the appropriate value otherwise)\n', ...
       g_decArgo_floatNum);
    g_decArgo_floatConfig = [];
-   return;
+   return
 end
 
 % store the configuration
@@ -240,7 +245,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                tabDoxyCoef(1, id+1) = calibData.(fieldName);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-               return;
+               return
             end
          end
          for id = 0:6
@@ -249,7 +254,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                tabDoxyCoef(2, id+1) = calibData.(fieldName);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-               return;
+               return
             end
          end
          g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -259,4 +264,4 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
    end
 end
 
-return;
+return

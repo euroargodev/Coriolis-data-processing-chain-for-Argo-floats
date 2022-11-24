@@ -54,13 +54,13 @@ for idFile = 1:length(fileName)
    fId = fopen(filePathName, 'r');
    if (fId == -1)
       fprintf('ERROR: Error while opening file: %s\n', filePathName);
-      return;
+      return
    end
    
    while (1)
       line = fgetl(fId);
       if (line == -1)
-         break;
+         break
       end
       lines{end+1} = line;
    end
@@ -80,7 +80,7 @@ fprintf('decode_provor_2_nc_rt(''rsynclog'', ''%s'', ''floatwmo'', ''7900591'')\
 fId = fopen(filePathName, 'wt');
 if (fId == -1)
    fprintf('ERROR: Error while opening file: %s\n', filePathName);
-   return;
+   return
 end
 fopenFlag = 1;
 for idL = 1:length(lines)
@@ -91,7 +91,7 @@ for idL = 1:length(lines)
       fId = fopen(filePathName, 'wt');
       if (fId == -1)
          fprintf('ERROR: Error while opening file: %s\n', filePathName);
-         return;
+         return
       end
       fopenFlag = 1;
    end
@@ -110,4 +110,4 @@ if (fopenFlag == 1)
    fclose(fId);
 end
 
-return;
+return

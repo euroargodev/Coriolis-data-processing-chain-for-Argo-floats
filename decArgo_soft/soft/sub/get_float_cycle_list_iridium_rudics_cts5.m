@@ -36,14 +36,14 @@ global g_decArgo_realtimeFlag;
 
 
 if (g_decArgo_realtimeFlag == 1)
-   return;
+   return
 end
 
 % search for existing Iridium cycles
 iriDirName = g_decArgo_iridiumDataDirectory;
 if ~(exist(iriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', iriDirName);
-   return;
+   return
 end
 
 % set file prefix
@@ -80,7 +80,7 @@ end
 
 o_cycleList = sort(o_cycleList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create cycle list from existing and expected cycle list.
@@ -119,7 +119,7 @@ first = strfind(a_expectedCycleList, '[');
 last = strfind(a_expectedCycleList, ']');
 if (isempty(first) || isempty(last))
    fprintf('ERROR: Syntax error in EXPECTED_CYCLE_LIST configuration parameter: %s\n', a_expectedCycleList);
-   return;
+   return
 end
 
 g_decArgo_expectedCycleList = strtrim(a_expectedCycleList(first+1:last-1));
@@ -127,7 +127,7 @@ remain = g_decArgo_expectedCycleList;
 while (1)
    [info, remain] = strtok(remain, ',');
    if (isempty(info))
-      break;
+      break
    end
    info = strtrim(info);
    if (isstrprop(info, 'digit'))
@@ -140,7 +140,7 @@ while (1)
       if (isempty(tildePos))
          fprintf('ERROR: Syntax error in EXPECTED_CYCLE_LIST configuration parameter: %s\n', a_expectedCycleList);
          o_outputList = [];
-         return;
+         return
       end
       if (length(info) == 1)
          % [~] => all cycles
@@ -168,4 +168,4 @@ end
 
 o_outputList = sort(unique(o_outputList));
 
-return;
+return

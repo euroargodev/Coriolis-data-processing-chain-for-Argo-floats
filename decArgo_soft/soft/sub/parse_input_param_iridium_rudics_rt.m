@@ -55,7 +55,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'rsynclog'))
@@ -72,7 +72,7 @@ if (~isempty(a_varargin))
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
-               return;
+               return
             end
          elseif (strcmpi(a_varargin{id}, 'floatwmo'))
             if (isempty(floatWmo))
@@ -83,7 +83,7 @@ if (~isempty(a_varargin))
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
-               return;
+               return
             end
          else
             fprintf('WARNING: unexpected input argument (%s) => ignored\n', a_varargin{id});
@@ -96,12 +96,12 @@ end
 if (rsyncLogInputParam == 0)
    fprintf('ERROR: ''rsynclog'' input param is mandatory => exit\n');
    o_inputError = 1;
-   return;
+   return
 end
 if (isempty(floatWmo))
    fprintf('ERROR: ''floatwmo'' input param is mandatory => exit\n');
    o_inputError = 1;
-   return;
+   return
 end
 
 % retrieve float login name and float decId
@@ -114,7 +114,7 @@ end
 if (isempty(floatLoginName))
    fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
-   return;
+   return
 end
 
 % g_decArgo_dirInputRsyncLog depends on decoder version
@@ -133,14 +133,14 @@ if (~isempty(rsyncLogFile))
    if ~(exist(rsyncLogPathFile, 'file') == 2)
       fprintf('ERROR: rsync log file (%s) does not exist => exit\n', rsyncLogPathFile);
       o_inputError = 1;
-      return;
+      return
    end
 end
 if (allRsyncLogFlag == 1)
    if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
       fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
       o_inputError = 1;
-      return;
+      return
    end
 end
 
@@ -198,7 +198,7 @@ for idFile = 1:length(ryncLogList)
          otherwise
             fprintf('ERROR: don''t know how to parse rsync log file for decId #%d => exit\n', floatDecId);
             o_inputError = 1;
-            return;
+            return
       end
    elseif ((floatDecId > 1000) && (floatDecId < 2000))
       % APEX Iridium RUDICS & NAVIS floats
@@ -225,4 +225,4 @@ end
 % output data
 o_floatList = unique(g_decArgo_rsyncFloatWmoList);
 
-return;
+return

@@ -100,7 +100,7 @@ else
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create the list of primary parameters.
@@ -135,4 +135,4 @@ for idP = 1:length(parameterList)
    o_paramList = [o_paramList get_netcdf_param_attributes(parameterList{idP})];
 end
 
-return;
+return

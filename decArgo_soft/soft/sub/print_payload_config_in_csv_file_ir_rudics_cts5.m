@@ -31,7 +31,7 @@ global g_decArgo_patternNumFloatStr;
 
 
 if (isempty(a_configData))
-   return;
+   return
 end
 
 
@@ -230,4 +230,4 @@ for idPhase = 1:length(tag1ExpectedList)
    end
 end
 
-return;
+return

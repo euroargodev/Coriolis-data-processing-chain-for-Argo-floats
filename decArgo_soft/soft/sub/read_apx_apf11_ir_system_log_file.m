@@ -37,7 +37,7 @@ global g_decArgo_floatLaunchDate;
 if ~(exist(a_logFileName, 'file') == 2)
    fprintf('ERROR: File not found: %s\n', a_logFileName);
    o_error = 1;
-   return;
+   return
 end
 
 % open the file and read the data
@@ -45,7 +45,7 @@ fId = fopen(a_logFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_logFileName);
    o_error = 1;
-   return;
+   return
 end
 
 % parse file data
@@ -55,13 +55,13 @@ while 1
    line = fgetl(fId);
    
    if (line == -1)
-      break;
+      break
    end
    
    lineNum = lineNum + 1;
    line = strtrim(line);
    if (isempty(line) || ((line(1) == '>') && (length(line) == 1)))
-      continue;
+      continue
    end
    
    idSep = strfind(line, '|');
@@ -74,7 +74,7 @@ while 1
       else
          fprintf('WARNING: System_log parsing: Less than 3 separators in line "%s" => ignored\n', line);
       end
-      continue;
+      continue
    end
    
    newEvent = [];
@@ -83,7 +83,7 @@ while 1
    
    if (a_fromLaunchFlag)
       if (~isempty(g_decArgo_floatLaunchDate) && (evtDate < g_decArgo_floatLaunchDate))
-         continue;
+         continue
       end
    end
    
@@ -98,4 +98,4 @@ end
 
 fclose(fId);
 
-return;
+return

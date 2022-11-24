@@ -72,7 +72,7 @@ global g_decArgo_dateDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 packType = [10 29; 30 49];
@@ -184,4 +184,4 @@ o_ascProfSal = o_ascProfSal(idSorted);
 o_ascProfTempDoxy = o_ascProfTempDoxy(idSorted);
 o_ascProfPhaseDelayDoxy = o_ascProfPhaseDelayDoxy(idSorted);
 
-return;
+return

@@ -46,7 +46,7 @@ global g_decArgo_outputCsvFileId;
 
 % no data to process
 if (isempty(a_sbdFileNameList))
-   return;
+   return
 end
 
 % read the SBD file data
@@ -89,7 +89,7 @@ for idBufFile = 1:length(a_sbdFileNameList)
          fprintf('WARNING: Float #%d: Inconsistent data in file : %s => ignored\n', ...
             g_decArgo_floatNum, ...
             sbdFileName);
-         continue;
+         continue
       end
    end
    
@@ -104,4 +104,4 @@ for idBufFile = 1:length(a_sbdFileNameList)
    end
 end
 
-return;
+return

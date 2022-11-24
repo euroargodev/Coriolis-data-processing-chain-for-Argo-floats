@@ -33,4 +33,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; RTCOffset; -; -; Clock offset; %d se
    g_decArgo_floatNum, g_decArgo_cycleNum, ...
    a_clockOffset);
 
-return;
+return

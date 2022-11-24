@@ -82,14 +82,14 @@ if (~isempty(idVal))
    fieldNames = fieldnames(configStruct);
    
    for id = 1:length(fieldNames)
-      valueStr = getfield(configStruct, fieldNames{id});
-      if (strfind(getfield(configStruct, fieldNames{id}), 'CONFIG_PRE_'))
+      valueStr = configStruct.(fieldNames{id});
+      if (strfind(valueStr, 'CONFIG_PRE_'))
          preludeDurationPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'CONFIG_TP_'))
+      elseif (strfind(valueStr, 'CONFIG_TP_'))
          profilePressurePos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'CONFIG_CT_'))
+      elseif (strfind(valueStr, 'CONFIG_CT_'))
          cycleDurationPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'CONFIG_DPF_'))
+      elseif (strfind(valueStr, 'CONFIG_DPF_'))
          dpfFloatFlagPos = id;
       end
    end
@@ -209,4 +209,4 @@ o_profilePressure = profilePressure;
 o_cycleDuration = cycleDuration;
 o_dpfFloatFlag = dpfFloatFlag;
 
-return;
+return

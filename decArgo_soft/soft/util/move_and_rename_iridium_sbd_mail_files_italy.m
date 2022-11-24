@@ -37,7 +37,7 @@ tic;
 % check the input directory
 if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
    fprintf('ERROR: Input directory doesn''t exist => exit\n');
-   return;
+   return
 end
 
 % create the output directory
@@ -120,7 +120,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_imei, o_timeOfSession, o_momsn, o_mtmsn, o_lineNum] = find_info_in_file(a_filePathName)
@@ -155,11 +155,11 @@ lineNum = 0;
 while 1
    line = fgetl(fId);
    if (line == -1)
-      break;
+      break
    end
    lineNum = lineNum + 1;
    if (isempty(strtrim(line)))
-      continue;
+      continue
    end
    
    if (strncmp(line, SUBJECT, length(SUBJECT)) && (imeiDone == 0))
@@ -229,7 +229,7 @@ end
 
 fclose(fId);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function copy_file_part(a_filePathNameIn, a_filePathNameOut, a_firstLineNum, a_lastLineNum)
@@ -238,7 +238,7 @@ function copy_file_part(a_filePathNameIn, a_filePathNameOut, a_firstLineNum, a_l
 fIdIn = fopen(a_filePathNameIn, 'r');
 if (fIdIn == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_filePathNameIn);
-   return;
+   return
 end
 
 lineStr = [];
@@ -246,7 +246,7 @@ lineNum = 0;
 while 1
    line = fgetl(fIdIn);
    if (line == -1)
-      break;
+      break
    end
    lineNum = lineNum + 1;
    if (a_lastLineNum ~= -1)
@@ -254,7 +254,7 @@ while 1
          lineStr{end+1} = line;
       else
          if (~isempty(lineStr))
-            break;
+            break
          end
       end
    else
@@ -270,7 +270,7 @@ fclose(fIdIn);
 fIdOut = fopen(a_filePathNameOut, 'w');
 if (fIdOut == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_filePathNameOut);
-   return;
+   return
 end
 
 % concaténation dans le fichier
@@ -280,7 +280,7 @@ end
 
 fclose(fIdOut);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function copy_file_bis(a_filePathNameIn, a_filePathNameOut, a_firstLineNum, a_lastLineNum)
@@ -292,7 +292,7 @@ START = '--';
 fIdIn = fopen(a_filePathNameIn, 'r');
 if (fIdIn == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_filePathNameIn);
-   return;
+   return
 end
 
 lineStr = [];
@@ -303,7 +303,7 @@ ignore = 0;
 while 1
    line = fgetl(fIdIn);
    if (line == -1)
-      break;
+      break
    end
    
    if (strncmp(line, CEP_RADIUS, length(CEP_RADIUS)))
@@ -315,15 +315,15 @@ while 1
          if (strncmp(line, START, length(START)))
             startString = line;
             ignore = 1;
-            continue;
+            continue
          end
       else
          if (strncmp(line, startString, length(startString)))
             ignore = 2;
             cepRadius = 0;
-            continue;
+            continue
          elseif (ignore == 1)
-            continue;
+            continue
          end
       end
    end
@@ -337,7 +337,7 @@ fclose(fIdIn);
 fIdOut = fopen(a_filePathNameOut, 'w');
 if (fIdOut == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_filePathNameOut);
-   return;
+   return
 end
 
 % concaténation dans le fichier
@@ -347,4 +347,4 @@ end
 
 fclose(fIdOut);
 
-return;
+return

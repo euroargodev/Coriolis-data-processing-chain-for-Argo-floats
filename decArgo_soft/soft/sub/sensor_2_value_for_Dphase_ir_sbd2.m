@@ -34,4 +34,4 @@ o_phaseValues(idDef) = ones(length(idDef), 1)*g_decArgo_oxyPhaseDef;
 idNoDef = find(a_phaseCounts ~= g_decArgo_oxyPhaseCountsDef);
 o_phaseValues(idNoDef) = o_phaseValues(idNoDef)/1000;
 
-return;
+return

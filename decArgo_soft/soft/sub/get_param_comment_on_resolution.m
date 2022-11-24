@@ -213,7 +213,7 @@ switch (a_decoderId)
             
       end      
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
       % PROVOR CTS4 & ARVOR CM
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -1066,4 +1066,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

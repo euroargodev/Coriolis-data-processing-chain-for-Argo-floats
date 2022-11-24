@@ -54,7 +54,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -104,7 +104,7 @@ for idFloat = 1:nbFloats
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    floatRudicsId = str2num(listRudicsId{idF});
@@ -143,7 +143,7 @@ for idFloat = 1:nbFloats
             ] = read_apx_ir_sbd_msg_file(filePathName, [], 0);
          if (error == 1)
             fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-            continue;
+            continue
          end
          
          if (~isempty(configDataStr))
@@ -257,7 +257,7 @@ for idVer = 1:length(configVersionList)
    outputFileName = [DIR_CSV_FILE '/' 'extract_conf_tech_apx_ir_sbd_CONF_' num2str(configVersionList{idVer}) name '_' timeInfo '.csv'];
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
-      return;
+      return
    end
    header = 'CONFIG_LABEL;CONFIG_LABEL_UNIT';
    fprintf(fidOut, '%s\n', header);
@@ -276,14 +276,14 @@ versionList = unique([engVersionList0{:} engVersionList{:}]);
 for idVer = 1:length(versionList)
 
    if (versionList(idVer) == -1)
-      continue;
+      continue
    end
       
    % create the CSV output file
    outputFileName = [DIR_CSV_FILE '/' 'extract_conf_tech_apx_ir_sbd_ENG_' num2str(versionList(idVer)) name '_' timeInfo '.csv'];
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
-      return;
+      return
    end
    header = 'ENG_LABEL_0;ENG_LABEL';
    fprintf(fidOut, '%s\n', header);
@@ -322,4 +322,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

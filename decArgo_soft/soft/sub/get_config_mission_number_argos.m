@@ -56,7 +56,7 @@ switch (a_decoderId)
                sumRepRate = 0;
                for idRep = 1:length(repRateMetaData)
                   sumRepRate = sumRepRate + ...
-                     str2num(getfield(repRateMetaData{idRep}, char(fieldnames(repRateMetaData{idRep}))));
+                     str2num(repRateMetaData{idRep}.(char(fieldnames(repRateMetaData{idRep}))));
                end
                if (rem(a_cycleNum, sumRepRate) ~= 0)
                   o_configMissionNumber = 2;
@@ -78,7 +78,7 @@ switch (a_decoderId)
          
          fprintf('WARNING: Float #%d: config missing for cycle #%d\n', ...
             g_decArgo_floatNum, a_cycleNum);
-         return;
+         return
       end
       
       % retrieve the number of the concerned configuration
@@ -155,4 +155,4 @@ switch (a_decoderId)
       
 end
 
-return;
+return

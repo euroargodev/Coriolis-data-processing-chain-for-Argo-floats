@@ -117,7 +117,7 @@ while (1)
          flag(order(1)) = 4;
          order(1) = [];
          m = m + 1;
-         continue;
+         continue
       end
    elseif (isempty(order))
       if (~isempty(a_fidOut))
@@ -259,7 +259,7 @@ while (1)
                   g_decArgo_floatNum, ...
                   g_decArgo_cycleNum, ...
                   maxId);
-               return;
+               return
             end
             
             if (maxId == length(order)) % maxspeed is the end section
@@ -282,7 +282,7 @@ while (1)
                   g_decArgo_floatNum, ...
                   g_decArgo_cycleNum, ...
                   maxId);
-               return;
+               return
             end
             
             % comparing speeds of 2 routes
@@ -353,4 +353,4 @@ end
 % output parameters
 o_argosLocQc = num2str(flag)';
 
-return;
+return

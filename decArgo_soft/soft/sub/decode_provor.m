@@ -104,7 +104,7 @@ for idFloat = 1:nbFloats
       idF = find(listWmoNum == floatNum, 1);
       if (isempty(idF))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
       
       floatArgosId = char(listArgosId(idF));
@@ -145,14 +145,14 @@ for idFloat = 1:nbFloats
       
       if (isempty(floatArgosId))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
    end
    
    % check that it is a PROVOR float
    if (floatDecId > 1000)
       fprintf('ERROR: Float #%d is not a Provor float => not decoded\n', floatNum);
-      continue;
+      continue
    end
    
    % read the NetCDF TECH parameter names
@@ -224,16 +224,27 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (~ismember(floatDecId, [121 122 123 124]))
+      if (~ismember(floatDecId, [121, 122, 123, 124]))
          
          % CTS4 Iridium RUDICS floats
-         [tabProfiles, ...
-            tabTrajNMeas, tabTrajNCycle, ...
-            tabNcTechIndex, tabNcTechVal, tabTechNMeas, ...
-            structConfig] = decode_provor_iridium_rudics_cts4( ...
-            floatNum, floatCycleList, ...
-            floatDecId, floatArgosId, ...
-            floatLaunchDate, floatRefDay, floatDelay, floatDmFlag);
+         if (ismember(floatDecId, [111, 113]))
+            % ICE floats
+            [tabProfiles, ...
+               tabTrajNMeas, tabTrajNCycle, ...
+               tabNcTechIndex, tabNcTechVal, tabTechNMeas, ...
+               structConfig] = decode_provor_iridium_rudics_cts4_delayed( ...
+               floatNum, floatCycleList, ...
+               floatDecId, floatArgosId, ...
+               floatLaunchDate, floatRefDay);
+         else
+            [tabProfiles, ...
+               tabTrajNMeas, tabTrajNCycle, ...
+               tabNcTechIndex, tabNcTechVal, tabTechNMeas, ...
+               structConfig] = decode_provor_iridium_rudics_cts4( ...
+               floatNum, floatCycleList, ...
+               floatDecId, floatArgosId, ...
+               floatLaunchDate, floatRefDay, floatDelay, floatDmFlag);
+         end
       else
          
          % CTS5 Iridium RUDICS floats
@@ -386,4 +397,4 @@ for idFloat = 1:nbFloats
    
 end
 
-return;
+return

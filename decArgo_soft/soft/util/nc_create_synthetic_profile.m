@@ -102,7 +102,7 @@ errorFlag = 0;
 % get input parameters
 [inputError, floatWmo, inputDirName, outputDirName] = parse_input_param(varargin);
 if (inputError == 1)
-   return;
+   return
 end
 
 % input parameters management
@@ -213,7 +213,7 @@ end
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Generate a synthetic profile for a given float.
@@ -251,7 +251,7 @@ global g_cocs_cycleDir;
 
 % consider float only if B prof files exist
 if (isempty(dir([a_floatDir '/profiles/' sprintf('B*%d*.nc', g_cocs_floatNum)])))
-   return;
+   return
 end
 
 floatWmoStr = num2str(g_cocs_floatNum);
@@ -260,7 +260,7 @@ floatWmoStr = num2str(g_cocs_floatNum);
 metaFileName = [a_floatDir '/' floatWmoStr '_meta.nc'];
 if ~(exist(metaFileName, 'file') == 2)
    fprintf('ERROR: Float %d: META file not found: %s\n', g_cocs_floatNum, metaFileName);
-   return;
+   return
 end
 
 % create the list of available cycle numbers (from PROF files)
@@ -332,7 +332,7 @@ for idCy = 1:length(cyNumList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse input parameters.
@@ -382,7 +382,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatWmo'))
@@ -418,4 +418,4 @@ if (~isempty(o_inputDirName) && ~isempty(o_floatWmo))
    end
 end
       
-return;
+return

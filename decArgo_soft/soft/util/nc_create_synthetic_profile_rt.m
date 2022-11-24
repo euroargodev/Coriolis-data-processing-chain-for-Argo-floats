@@ -234,7 +234,7 @@ xmlwrite(xmlFileName, g_cocs_xmlReportDOMNode);
 %    edit(xmlFileName);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize XML report.
@@ -279,7 +279,7 @@ docRootNode.appendChild(newChild);
 
 g_cocs_xmlReportDOMNode = docNode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse input parameters.
@@ -345,7 +345,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       o_logLines{end+1} = sprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatCProfFileName'))
@@ -385,13 +385,13 @@ end
 if (isempty(g_cocs_createOnlyMultiProfFlag))
    o_logLines{end+1} = sprintf('ERROR: ''createOnlyMultiProfFlag'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 if ((length(g_cocs_createOnlyMultiProfFlag) ~= 1) || ...
       ((g_cocs_createOnlyMultiProfFlag ~= '0') && (g_cocs_createOnlyMultiProfFlag ~= '1')))
    o_logLines{end+1} = sprintf('ERROR: Inconsistent ''createOnlyMultiProfFlag'' value (%s) (expected ''0'' or ''1'')\n', g_cocs_outputDirName);
    o_inputError = 1;
-   return;
+   return
 end
 
 if (g_cocs_createOnlyMultiProfFlag == '0')
@@ -399,59 +399,59 @@ if (g_cocs_createOnlyMultiProfFlag == '0')
    if (isempty(g_cocs_floatCProfFileName))
       o_logLines{end+1} = sprintf('ERROR: ''floatCProfFileName'' input parameter is mandatory\n');
       o_inputError = 1;
-      return;
+      return
    end
    if (isempty(g_cocs_floatBProfFileName))
       o_logLines{end+1} = sprintf('ERROR: ''floatBProfFileName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
          g_cocs_floatCProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if (isempty(g_cocs_floatMetaFileName))
       o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
          g_cocs_floatCProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if (isempty(g_cocs_createMultiProfFlag))
       o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
          g_cocs_floatCProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if (isempty(g_cocs_outputDirName))
       o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
          g_cocs_floatCProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
 
    % check input parameters
    if ~(exist(g_cocs_floatCProfFileName, 'file') == 2)
       o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocs_floatCProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if ~(exist(g_cocs_floatBProfFileName, 'file') == 2)
       o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocs_floatBProfFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if ~(exist(g_cocs_floatMetaFileName, 'file') == 2)
       o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocs_floatMetaFileName);
       o_inputError = 1;
-      return;
+      return
    end
    if ((length(g_cocs_createMultiProfFlag) ~= 1) || ...
          ((g_cocs_createMultiProfFlag ~= '0') && (g_cocs_createMultiProfFlag ~= '1')))
       o_logLines{end+1} = sprintf('ERROR: Inconsistent ''createMultiProfFlag'' value (%s) (expected ''0'' or ''1'')\n', g_cocs_outputDirName);
       o_inputError = 1;
-      return;
+      return
    end
    if ~(exist(g_cocs_outputDirName, 'dir') == 7)
       o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocs_outputDirName);
       o_inputError = 1;
-      return;
+      return
    end
    
    if (~isempty(g_cocs_floatWmo))
@@ -464,24 +464,24 @@ else
    if (isempty(g_cocs_floatWmo))
       o_logLines{end+1} = sprintf('ERROR: ''floatWmo'' input parameter is mandatory\n');
       o_inputError = 1;
-      return;
+      return
    end
    if (isempty(g_cocs_outputDirName))
       o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory (for ''floatWmo'': %s)\n', g_cocs_floatWmo);
       o_inputError = 1;
-      return;
+      return
    end
    
    % check input parameters
    if ~(exist(g_cocs_outputDirName, 'dir') == 7)
       o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocs_outputDirName);
       o_inputError = 1;
-      return;
+      return
    end
    if ~(exist([g_cocs_outputDirName '/' g_cocs_floatWmo], 'dir') == 7)
       o_logLines{end+1} = sprintf('ERROR: Float output directory not found: %s\n', [g_cocs_outputDirName '/' g_cocs_floatWmo]);
       o_inputError = 1;
-      return;
+      return
    end
    
    if (~isempty(g_cocs_floatCProfFileName))
@@ -503,27 +503,27 @@ end
 if ~(exist(g_cocs_monoProfRefFile, 'file') == 2)
    o_logLines{end+1} = sprintf('ERROR: Input mono-profile reference file not found: %s\n', g_cocs_monoProfRefFile);
    o_inputError = 1;
-   return;
+   return
 end
 if ~(exist(g_cocs_multiProfRefFile, 'file') == 2)
    o_logLines{end+1} = sprintf('ERROR: Input multi-profile reference file not found: %s\n', g_cocs_multiProfRefFile);
    o_inputError = 1;
-   return;
+   return
 end
 if ~(exist(g_cocs_outputLogDirName, 'dir') == 7)
    o_logLines{end+1} = sprintf('ERROR: Output LOG directory not found: %s\n', g_cocs_outputLogDirName);
    o_inputError = 1;
-   return;
+   return
 end
 if ~(exist(g_cocs_outputXmlReportDirName, 'dir') == 7)
    o_logLines{end+1} = sprintf('ERROR: Output XML directory not found: %s\n', g_cocs_outputXmlReportDirName);
    o_inputError = 1;
-   return;
+   return
 end
 if ~(exist(g_cocs_tmpDirName, 'dir') == 7)
    o_logLines{end+1} = sprintf('ERROR: Temporary directory not found: %s\n', g_cocs_tmpDirName);
    o_inputError = 1;
-   return;
+   return
 end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
@@ -545,7 +545,7 @@ o_logLines{end+1} = sprintf('multiProfRefFileName    : %s\n', g_cocs_multiProfRe
 o_logLines{end+1} = sprintf('tmpDirName              : %s\n', g_cocs_tmpDirName);
 o_logLines{end+1} = sprintf('\n');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Finalize the XML report.
@@ -632,7 +632,7 @@ docRootNode.appendChild(newChild);
 if (~isempty(infoMsg))
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
-      textNode = char(infoMsg(idMsg));
+      textNode = infoMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -641,7 +641,7 @@ end
 if (~isempty(warningMsg))
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
-      textNode = char(warningMsg(idMsg));
+      textNode = warningMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -650,7 +650,7 @@ end
 if (~isempty(errorMsg))
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
-      textNode = char(errorMsg(idMsg));
+      textNode = errorMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -689,7 +689,7 @@ newChild = docNode.createElement('status');
 newChild.appendChild(docNode.createTextNode(o_status));
 docRootNode.appendChild(newChild);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve INFO, WARNING and ERROR messages from the log file.
@@ -726,7 +726,7 @@ if (~isempty(a_logFileName))
    if (fId == -1)
       errorLine = sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
       o_errorMsg = [o_errorMsg {errorLine}];
-      return;
+      return
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
@@ -746,13 +746,13 @@ if (~isempty(a_logFileName))
          end
          idLine = idLine + 1;
          if (idLine > length(fileContents))
-            break;
+            break
          end
       end
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Duration format.
@@ -802,4 +802,4 @@ else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
 
-return;
+return

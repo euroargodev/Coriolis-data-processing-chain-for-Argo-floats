@@ -27,7 +27,7 @@ o_countSelectedValue = 0;
 
 
 if (isempty(a_tabValues))
-   return;
+   return
 end
 
 tabUniqueValues = unique(a_tabValues, 'first');
@@ -39,4 +39,4 @@ end
 [o_countSelectedValue, idMax] = max(count);
 o_selectedValue = tabUniqueValues(idMax(1));
 
-return;
+return

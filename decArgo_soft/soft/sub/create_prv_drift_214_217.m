@@ -58,7 +58,7 @@ global g_decArgo_tempDoxyDef;
 
 if ~((~isempty(a_dataCTD) && any(a_dataCTD(:, 1) == 2)) || ...
       (~isempty(a_dataCTDO) && any(a_dataCTDO(:, 1) == 9)))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -80,7 +80,7 @@ if (~isempty(a_dataCTD))
                data(idMeas) = data(idMeas-1) + driftSampPeriodHours/24;
                data(idMeas+15) = 0;
             else
-               break;
+               break
             end
          end
          
@@ -111,7 +111,7 @@ if (~isempty(a_dataCTDO))
                data(idMeas) = data(idMeas-1) + driftSampPeriodHours/24;
                data(idMeas+7) = 0;
             else
-               break;
+               break
             end
          end
          
@@ -139,4 +139,4 @@ if (~isempty(a_dataCTDO))
    o_parkTempDoxy = o_parkTempDoxy(idSorted);
 end
 
-return;
+return

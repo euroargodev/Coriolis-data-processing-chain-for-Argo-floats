@@ -69,7 +69,7 @@ end
 % finalize TECH data
 if (isempty(o_tabNcTechIndex))
    % tech msg not received
-   return;
+   return
 end
 
 % add additional columns so that the final output will be:
@@ -106,8 +106,8 @@ idInTechList = [];
 for id = 1:size(o_tabNcTechIndex, 1)
    idInTechList = [idInTechList; find(g_decArgo_outputNcParamId == o_tabNcTechIndex(id, 5))];
 end
-[unused, idSort] = sort(idInTechList);
+[~, idSort] = sort(idInTechList);
 o_tabNcTechIndex = o_tabNcTechIndex(idSort, :);
 o_tabNcTechVal = o_tabNcTechVal(idSort);
 
-return;
+return

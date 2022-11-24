@@ -40,7 +40,7 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute PROVOR CRC for given data.
@@ -85,4 +85,4 @@ end
 
 o_computedCrc = crc;
 
-return;
+return

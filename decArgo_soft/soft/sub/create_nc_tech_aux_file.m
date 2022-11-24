@@ -77,7 +77,7 @@ a_tabNcTechVal(find(idToDel == 1)) = [];
 
 % no data to save
 if (isempty(a_tabNcTechIndex) && isempty(a_tabTechNMeas))
-   return;
+   return
 end
    
 % retrieve auxiliary technical labels and descrptions for these float version
@@ -155,7 +155,7 @@ currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
 fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -589,4 +589,4 @@ end
 
 fprintf('... NetCDF TECHNICAL AUX file created\n');
 
-return;
+return

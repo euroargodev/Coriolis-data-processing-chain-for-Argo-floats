@@ -53,7 +53,7 @@ if (isempty(a_profCtdPts) && ...
       isempty(a_profDo) && ...
       isempty(a_profCtdCp) && ...
       isempty(a_profCtdCpH))
-   return;
+   return
 end
 
 % remove PPOX_DOXY data from the DO profile
@@ -113,7 +113,7 @@ if (isempty(profCtdPts) && ...
       isempty(profDo) && ...
       isempty(a_profCtdCp) && ...
       isempty(a_profCtdCpH))
-   return;
+   return
 end
 
 profCtdPtsStruct = [];
@@ -884,7 +884,7 @@ if (~isempty(profDoStruct))
    o_ncProfile = [o_ncProfile profDoStruct];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Clean profile data from unused parameters.
@@ -913,7 +913,7 @@ o_ncProfile = a_ncProfile;
 
 
 if (isempty(o_ncProfile))
-   return;
+   return
 end
 
 idParamTodel = [];
@@ -929,5 +929,5 @@ if (~isempty(o_ncProfile.dataAdj))
    o_ncProfile.dataAdj(:, idParamTodel) = [];
 end
 
-return;
+return
 

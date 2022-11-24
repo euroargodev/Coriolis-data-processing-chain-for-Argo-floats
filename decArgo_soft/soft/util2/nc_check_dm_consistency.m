@@ -39,7 +39,7 @@ for idDir = 1:length(dacDir)
    dacDirName = dacDir(idDir).name;
    
    %    if (~strcmp(dacDirName, 'coriolis'))
-   %       continue;
+   %       continue
    %    end
    
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
@@ -51,7 +51,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_check_dm_consistency_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
       
@@ -61,7 +61,7 @@ for idDir = 1:length(dacDir)
          floatDirName = floatDir(idDir2).name;
          
          %          if (~strcmp(floatDirName, '1900943'))
-         %             continue;
+         %             continue
          %          end
          
          floatDirPathName = [dacDirPathName '/' floatDirName];
@@ -78,7 +78,7 @@ for idDir = 1:length(dacDir)
                   
                   profFileName = profDir(idFProf).name;
                   if (profFileName(1) == 'M')
-                     continue;
+                     continue
                   end
                   profFilePathName = [floatProfDirPathName '/' profFileName];
                   if (exist(profFilePathName, 'file') == 2)
@@ -139,7 +139,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -174,7 +174,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -195,7 +195,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -228,4 +228,4 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return

@@ -86,4 +86,4 @@ if (~isempty(a_timeData.cycleNum))
    end
 end
 
-return;
+return

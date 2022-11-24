@@ -61,7 +61,7 @@ switch (a_decoderId)
          a_floatLaunchDate, a_floatEndDate);
 
    case {1321, 1322}
-      % APEX APF11 (2.10.1, 2.11.1)
+      % APEX APF11 (2.10.1.S, 2.11.1.S)
       
       [o_tabProfiles, ...
          o_tabTrajNMeas, o_tabTrajNCycle, ...
@@ -72,7 +72,7 @@ switch (a_decoderId)
       
    otherwise
       fprintf('ERROR: decode_apex_iridium_sbd_data not defined yet for decId #%d => exit\n', a_decoderId);
-      return;
+      return
 end
 
-return;
+return

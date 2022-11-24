@@ -265,7 +265,7 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {1021} % 2.8.0
+   case {1021} % 2.8.0.A
       
       if (a_cycleNum == 0)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
@@ -277,7 +277,7 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {1022} % 2.10.4
+   case {1022} % 2.10.4.A
       
       if (a_cycleNum == 0)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
@@ -294,4 +294,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

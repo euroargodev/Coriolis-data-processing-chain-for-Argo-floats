@@ -34,7 +34,7 @@ o_ncParamDescriptions = [];
 jsonInputFileName = [a_ncConfigParamListDir '/' sprintf('_config_param_name_%d.json', a_decoderId)];
 if ~(exist(jsonInputFileName, 'file') == 2)
    fprintf('ERROR: Configuration parameter information file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read configuration parameters file
@@ -42,12 +42,12 @@ confData = loadjson(jsonInputFileName);
 
 confDataFieldNames = fieldnames(confData);
 for idField = 1:length(confDataFieldNames)
-   confItemData = getfield(confData, char(confDataFieldNames(idField)));
+   confItemData = confData.(confDataFieldNames{idField});
    
    switch (a_decoderId)
       case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
-      case {105, 106, 107, 108, 109, 110, 111, 112, 121, 122, 123, 124}
+      case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
       case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
@@ -79,4 +79,4 @@ end
 o_ncParamIds = o_ncParamIds(idSort);
 o_ncParamDescriptions = o_ncParamDescriptions(idSort);
 
-return;
+return

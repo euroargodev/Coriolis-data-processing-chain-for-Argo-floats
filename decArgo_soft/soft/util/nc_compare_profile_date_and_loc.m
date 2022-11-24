@@ -46,7 +46,7 @@ if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -85,7 +85,7 @@ fprintf('\n');
 outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_compare_profile_date_and_loc' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = 'Line; WMO; Dir; CyNum; DateDiffer; DateLocDiffer; Date1 (new); DateLoc1; Date2 (EDAC); DateLoc2; Date1-Date2; DateLoc1-DateLoc2';
 fprintf(fidOut, '%s\n', header);
@@ -210,7 +210,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve information on profile dates of a mono-profile NetCDF file.
@@ -270,7 +270,7 @@ for idFile = 1:length(monoProfFiles)
    fileName = monoProfFiles(idFile).name;
    % do not consider b file (if exists)
    if (fileName(1) == 'B')
-      continue;
+      continue
    end
    profFileName = [monoProfDirName fileName];
 
@@ -280,7 +280,7 @@ for idFile = 1:length(monoProfFiles)
       fCdf = netcdf.open(profFileName, 'NC_NOWRITE');
       if (isempty(fCdf))
          fprintf('ERROR: Unable to open NetCDF input file: %s\n', profFileName);
-         return;
+         return
       end
 
       % retrieve information
@@ -340,7 +340,7 @@ for idFile = 1:length(monoProfFiles)
                a_commentStr, profFileName);
          end
          netcdf.close(fCdf);
-         continue;
+         continue
       end
    end
 end
@@ -360,7 +360,7 @@ o_ascProfNum = profNum(idAsc);
 o_ascProfDate = profDate(idAsc);
 o_ascProfLocDate = profLocDate(idAsc);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a variable (defined by its name) is present in a NetCDF file.
@@ -393,11 +393,11 @@ for idVar= 0:nbVars-1
    [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
    if (strcmp(varName, a_varName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert a julian 1950 date to a gregorian date.
@@ -439,7 +439,7 @@ for idDate = 1:length(dayNum)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Split of a julian 1950 date in gregorian date parts.
@@ -515,4 +515,4 @@ for id = 1:length(a_juld)
    
 end
 
-return;
+return

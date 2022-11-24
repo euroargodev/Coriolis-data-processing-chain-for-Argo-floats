@@ -31,7 +31,7 @@ fidOut = fopen(a_outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create json output file: %s\n', a_outputFileName);
    o_ok = 0;
-   return;
+   return
 end
 
 % fill file
@@ -41,9 +41,8 @@ metaStruct = a_metaStruct;
 metaStructNames = fieldnames(metaStruct);
 for idBSN = 1:length(metaStructNames)
    fprintf(fidOut, '   "%s" : ', char(metaStructNames(idBSN)));
-   fieldVal = getfield(metaStruct, char(metaStructNames(idBSN)));
+   fieldVal = metaStruct.(metaStructNames{idBSN});
    if (strcmp(metaStructNames{idBSN}, 'CALIBRATION_COEFFICIENT') == 1)
-      fieldVal = getfield(metaStruct, metaStructNames{idBSN});
       if (isempty(fieldVal) || (isa(fieldVal, 'struct')))
          fprintf(fidOut, '[ \n');
          if (~isempty(fieldVal))
@@ -79,7 +78,6 @@ for idBSN = 1:length(metaStructNames)
          end
       end
    elseif (strcmp(metaStructNames{idBSN}, 'RT_OFFSET') == 1)
-      fieldVal = getfield(metaStruct, metaStructNames{idBSN});
       if (isempty(fieldVal) || (isa(fieldVal, 'struct')))
          fprintf(fidOut, '[ \n');
          if (~isempty(fieldVal))
@@ -115,7 +113,6 @@ for idBSN = 1:length(metaStructNames)
          end
       end
    else
-      fieldVal = getfield(metaStruct, metaStructNames{idBSN});
       if (isa(fieldVal, 'char'))
          if (idBSN < length(metaStructNames))
             fprintf(fidOut, '"%s", \n', char(fieldVal));
@@ -169,4 +166,4 @@ fprintf(fidOut, '}\n');
 
 fclose(fidOut);
 
-return;
+return

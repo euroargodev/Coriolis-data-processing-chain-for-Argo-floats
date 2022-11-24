@@ -24,7 +24,7 @@ RSYNC_INPUT_OUTPUT_DIR = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\rsync_da
 
 if ~(exist(RSYNC_INPUT_OUTPUT_DIR, 'dir') == 7)
    fprintf('ERROR: Input directory is missing: %s\n', RSYNC_INPUT_OUTPUT_DIR);
-   return;
+   return
 end
 
 % process the directory contents
@@ -90,4 +90,4 @@ end
 
 fprintf('done \n');
 
-return;
+return

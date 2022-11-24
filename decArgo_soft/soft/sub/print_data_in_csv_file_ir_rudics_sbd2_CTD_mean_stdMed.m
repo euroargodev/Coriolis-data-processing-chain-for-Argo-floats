@@ -169,7 +169,7 @@ else
                else
                   fprintf('WARNING: Float #%d Cycle #%d: cannot fit CTD standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
-                  continue;
+                  continue
                end
             end
             data(idOk, 6:10) = dataStdMed(idL, 2:6);
@@ -207,4 +207,4 @@ else
    end
 end
 
-return;
+return

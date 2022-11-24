@@ -44,7 +44,7 @@ if ((length(a_newValues) ~= length(a_tabFirstBit)) || ...
    fprintf('ERROR: Float #%d Cycle #%d: Check dimension consistency in set_bits function\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % check range consistency
@@ -53,7 +53,7 @@ for id = 1:length(a_newValues)
       fprintf('ERROR: Float #%d Cycle #%d: Check range consistency in set_bits function\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum);
-      return;
+      return
    end
 end
    
@@ -69,7 +69,7 @@ for id = 1:length(a_newValues)
 
    if ~((firstBit >= 1) && (lastBit <= dataLength))
       % bits are out of range
-      return;
+      return
    end
 
    % first and last bytes to consider
@@ -119,4 +119,4 @@ end
 
 o_outputData = data;
 
-return;
+return

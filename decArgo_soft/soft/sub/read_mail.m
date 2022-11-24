@@ -39,13 +39,13 @@ mailFilePathName = [a_dirName '/' a_fileName];
 
 if ~(exist(mailFilePathName, 'file') == 2)
    fprintf('ERROR: Mail file not found: %s\n', mailFilePathName);
-   return;
+   return
 end
 
 fId = fopen(mailFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', mailFilePathName);
-   return;
+   return
 end
 
 % create a structure to store the data
@@ -59,7 +59,7 @@ cepRadiusDone = 0;
 while 1
    line = fgetl(fId);
    if (line == -1)
-      break;
+      break
    end
    
    % collect information
@@ -108,4 +108,4 @@ if (~isempty(mailContents.unitLocation))
    end
 end
 
-return;
+return

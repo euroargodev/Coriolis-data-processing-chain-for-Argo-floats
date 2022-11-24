@@ -240,4 +240,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; Dates; Date of last Argos location; 
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; Dates; Date of last Argos message received; ; %s\n', ...
    g_decArgo_floatNum, g_decArgo_cycleNum, julian_2_gregorian_dec_argo(lastArgosDate));
 
-return;
+return

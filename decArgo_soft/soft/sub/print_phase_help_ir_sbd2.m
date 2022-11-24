@@ -86,4 +86,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Not appl
 fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Erroneous transmitted phase #\n', ...
    g_decArgo_floatNum, get_phase_name(-1),get_phase_name(-2));
 
-return;
+return

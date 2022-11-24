@@ -37,7 +37,7 @@ if (~isempty(g_decArgo_floatNum))
 end
 
 if (isempty(a_driftMeasDataStr))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -61,10 +61,10 @@ switch (a_decoderId)
    otherwise
       fprintf('DEC_WARNING: %sNothing done yet in parse_apx_nvs_ir_rudics_drift_data for decoderId #%d\n', ...
          errorHeader, a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics drift data.
@@ -120,7 +120,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:end), '%d %d %f %f');
          if (~isempty(errmsg) || (count ~= 4))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, :) = [measDate val'];
       elseif (length(dataStr) >= 59)
@@ -128,7 +128,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:59), '%d %d %f');
          if (~isempty(errmsg) || (count ~= 3))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -137,7 +137,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:51), '%d %d');
          if (~isempty(errmsg) || (count ~= 2))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -146,7 +146,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:43), '%d');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -183,7 +183,7 @@ o_driftData.data = data(:, 4:5);
 % add date status to the data structure
 o_driftData.datesStatus = repmat(g_JULD_STATUS_2, size(o_driftData.dates));
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics drift data.
@@ -240,14 +240,14 @@ for idL = 1:length(a_driftMeasDataStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, '%d %d %f %f');
             if (~isempty(errmsg) || (count ~= 4))
                fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
-               continue;
+               continue
             end
             data(idL, :) = val';
          elseif (length(dataStr) >= 26)
             [val, count, errmsg, nextIndex] = sscanf(dataStr(1:26), '%d %d %f');
             if (~isempty(errmsg) || (count ~= 3))
                fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
-               continue;
+               continue
             end
             data(idL, 1:length(val')) = val';
             fprintf('INFO: Park measurement truncated\n');
@@ -281,7 +281,7 @@ o_driftData.data = data(:, 3:4);
 % add date status to the data structure
 o_driftData.datesStatus = repmat(g_JULD_STATUS_2, size(o_driftData.dates));
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics drift data.
@@ -337,7 +337,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:end), '%d %d %f %f %f');
          if (~isempty(errmsg) || (count ~= 5))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, :) = [measDate val'];
       elseif (length(dataStr) >= 68)
@@ -345,7 +345,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:68), '%d %d %f %f');
          if (~isempty(errmsg) || (count ~= 4))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -354,7 +354,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:60), '%d %d %f');
          if (~isempty(errmsg) || (count ~= 3))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -363,7 +363,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:52), '%d %d');
          if (~isempty(errmsg) || (count ~= 2))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -372,7 +372,7 @@ for idL = 1:length(a_driftMeasDataStr)
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:44), '%d');
          if (~isempty(errmsg) || (count ~= 1))
             fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
          %          fprintf('INFO: Park measurement truncated\n');
@@ -410,7 +410,7 @@ o_driftData.data = data(:, 4:6);
 % add date status to the data structure
 o_driftData.datesStatus = repmat(g_JULD_STATUS_2, size(o_driftData.dates));
       
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Navis drift data.
@@ -466,7 +466,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:end), '%f %f %f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 8))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, :) = [measDate val'];
    elseif (length(dataStr) >= 72)
@@ -474,7 +474,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:72), '%f %f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 7))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -483,7 +483,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:65), '%f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 6))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -492,7 +492,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:58), '%f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 5))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -501,7 +501,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:51), '%f %f %f %f');
       if (~isempty(errmsg) || (count ~= 4))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -510,7 +510,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:44), '%f %f %f');
       if (~isempty(errmsg) || (count ~= 3))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -519,7 +519,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:36), '%f %f');
       if (~isempty(errmsg) || (count ~= 2))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -528,7 +528,7 @@ for idL = 1:length(a_driftMeasDataStr)
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:28), '%f');
       if (~isempty(errmsg) || (count ~= 1))
          fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
       %       fprintf('INFO: Park measurement truncated\n');
@@ -576,4 +576,4 @@ o_driftData.data(find(o_driftData.data(:, 8) == 3.409469756*1e38), 8) = paramTem
 % add date status to the data structure
 o_driftData.datesStatus = repmat(g_JULD_STATUS_2, size(o_driftData.dates));
 
-return;
+return

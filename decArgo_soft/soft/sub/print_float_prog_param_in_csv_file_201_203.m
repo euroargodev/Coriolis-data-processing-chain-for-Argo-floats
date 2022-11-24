@@ -30,7 +30,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_floatParam))
-   return;
+   return
 end
 
 if (size(a_floatParam, 1) > 1)
@@ -170,4 +170,4 @@ elseif (size(a_floatParam, 1) == 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam(id, 57));
 end
 
-return;
+return

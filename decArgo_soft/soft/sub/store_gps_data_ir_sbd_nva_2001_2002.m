@@ -59,7 +59,7 @@ if (~isempty(a_tabTech))
       if (a_tabTech(idTech, 40+ID_OFFSET) == 0) && ...
             (fix(a_tabTech(idTech, 38+ID_OFFSET)) == 214) && ...
             (fix(a_tabTech(idTech, 39+ID_OFFSET)) == 214)
-         return;
+         return
       end
 
       % unpack the GPS data
@@ -84,7 +84,7 @@ if (~isempty(a_tabTech))
          gpsLocAccuracy = [];
          gpsLocSbdFileDate = [];
       end
-      
+            
       % append new GPS fix information
       gpsLocCycleNum = [gpsLocCycleNum; g_decArgo_cycleNum];
       gpsLocProfNum = [gpsLocProfNum; -1];
@@ -127,4 +127,4 @@ if (~isempty(a_tabTech))
    end
 end
 
-return;
+return

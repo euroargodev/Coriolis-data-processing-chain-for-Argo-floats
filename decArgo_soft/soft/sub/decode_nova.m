@@ -102,7 +102,7 @@ for idFloat = 1:nbFloats
       idF = find(listWmoNum == floatNum, 1);
       if (isempty(idF))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
       
       floatArgosId = char(listArgosId(idF));
@@ -129,14 +129,14 @@ for idFloat = 1:nbFloats
       
       if (isempty(floatArgosId))
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
-         continue;
+         continue
       end
    end
    
    % check that it is a NOVA float
    if ~((floatDecId > 2000) && (floatDecId < 3000))
       fprintf('ERROR: Float #%d is not a Nova float => not decoded\n', floatNum);
-      continue;
+      continue
    end
    
    % read the NetCDF TECH parameter names
@@ -255,4 +255,4 @@ for idFloat = 1:nbFloats
    
 end
 
-return;
+return

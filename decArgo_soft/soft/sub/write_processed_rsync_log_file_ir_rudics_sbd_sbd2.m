@@ -35,7 +35,7 @@ if (~isempty(a_logFileList))
    fidOut = fopen(logFilePathName, 'a');
    if (fidOut == -1)
       fprintf('ERROR: Float #%d: Unable to open file: %s\n', a_floatNum, logFilePathName);
-      return;
+      return
    end
    
    fprintf(fidOut, '%s\n', a_logFileList{:});
@@ -43,4 +43,4 @@ if (~isempty(a_logFileList))
    fclose(fidOut);
 end
 
-return;
+return

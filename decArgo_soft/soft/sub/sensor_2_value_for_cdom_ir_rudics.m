@@ -34,4 +34,4 @@ o_cdomValues(idDef) = ones(length(idDef), 1)*g_decArgo_cdomDef;
 idNoDef = find(a_cdomCounts ~= g_decArgo_cdomCountsDef);
 o_cdomValues(idNoDef) = o_cdomValues(idNoDef)/10;
 
-return;
+return

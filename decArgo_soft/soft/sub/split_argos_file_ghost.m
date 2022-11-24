@@ -33,7 +33,7 @@ global g_decArgo_janFirst1950InMatlab;
 fIdIn = fopen(a_filePathName, 'r');
 if (fIdIn == -1)
    fprintf('ERROR: Error while opening file : %s\n', a_filePathName);
-   return;
+   return
 end
 
 text = [];
@@ -67,12 +67,12 @@ while (1)
       satDateList = [];
       dataDateList = [];
       
-      break;
+      break
    end
    
    % empty line
    if (strcmp(deblank(line), ''))
-      continue;
+      continue
    end
    
    if (isempty(text))
@@ -244,7 +244,7 @@ fclose(fIdIn);
 [val, ~, ~, ~] = sscanf(text2{1}, '%d %d %d');
 if (val(3) > 17)
    % this is not a ghost satellite pass
-   return;
+   return
 end
 
 % move the input Argos file
@@ -271,14 +271,14 @@ for idF = 1:2
    if (exist(outputFilePathName, 'file') == 2)
       fprintf('ERROR: Argos cycle file already exist: %s\n', ...
          outputFilePathName);
-      return;
+      return
    else
       
       % store the data in the output file
       fIdOut = fopen(outputFilePathName, 'wt');
       if (fIdOut == -1)
          fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-         return;
+         return
       end
       
       for id = 1:length(text)
@@ -294,4 +294,4 @@ end
 % delete the input Argos file
 delete(filePathNameToDelete);
 
-return;
+return

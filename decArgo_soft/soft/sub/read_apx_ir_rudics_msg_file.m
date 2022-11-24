@@ -73,14 +73,14 @@ end
 
 if ~(exist(a_msgFileName, 'file') == 2)
    fprintf('ERROR: %sFile not found: %s\n', errorHeader, a_msgFileName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_msgFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: %sUnable to open file: %s\n', errorHeader, a_msgFileName);
-   return;
+   return
 end
 
 CONFIG_DATA_START = '$ Mission configuration for';
@@ -125,13 +125,13 @@ while 1
       if (endFlag ~= 1)
          %          fprintf('WARNING: End of file without ''<EOT>'' in file: %s\n', a_msgFileName);
       end
-      break;
+      break
    end
    
    lineNum = lineNum + 1;
    line = strtrim(line);
    if (isempty(line))
-      continue;
+      continue
    end
    
    if (any(strfind(line, CONFIG_DATA_START)))
@@ -217,7 +217,7 @@ while 1
       if (lowResMeasData ~= 1)
          if (strcmp(line, '# GPS fix obtaine'))
             fprintf('DEC_INFO: %sLine #%d : ''%s'' ignored in file: %s\n', errorHeader, lineNum, line, a_msgFileName);
-            continue;
+            continue
          else
             fprintf('DEC_ERROR: %sAnomaly detected (line #%d) while parsing file: %s\n', errorHeader, lineNum, a_msgFileName);
             o_error = 1;
@@ -278,25 +278,25 @@ while 1
    if (configData == 1)
       if (strcmp(line, CONFIG_DATA_END))
          configData = 0;
-         continue;
+         continue
       else
          if (strncmp(line, CONFIG_DATA_END, length(CONFIG_DATA_END)))
             o_configDataStr{end+1} = line;
-            continue;
+            continue
          end
       end
    elseif (driftMeasData == 1)
       o_driftMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (profInfo == 1)
       o_profInfoDataStr{end+1} = line;
-      continue;
+      continue
    elseif (lowResMeasData == 1)
       o_profLowResMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (highResMeasData == 1)
       o_profHighResMeasDataStr{end+1} = line;
-      continue;
+      continue
    elseif (fixData == 1)
       if (flushMultipleData == 1)
          if (~isempty(gpsFixDataStr) || ~isempty(engineeringDataStr) || ~isempty(nearSurfaceDataStr))
@@ -311,13 +311,13 @@ while 1
          flushMultipleData = 0;
       end
       gpsFixDataStr{end+1} = line;
-      continue;
+      continue
    elseif (engineeringData == 1)
       engineeringDataStr{end+1} = line;
-      continue;
+      continue
    elseif (nearSurfaceData == 1)
       nearSurfaceDataStr{end+1} = line;
-      continue;
+      continue
    end
 end
 
@@ -329,4 +329,4 @@ if (~isempty(gpsFixDataStr) || ~isempty(engineeringDataStr) || ~isempty(nearSurf
    o_nearSurfaceDataStr{end+1} = nearSurfaceDataStr;
 end
 
-return;
+return

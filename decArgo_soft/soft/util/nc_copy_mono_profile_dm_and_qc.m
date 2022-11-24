@@ -98,7 +98,7 @@ nc_copy_mono_profile_dm_and_qc_(floatList, logFile, ...
    DIR_OUTPUT_NC_FILES, ...
    IGNORED_PARAMETER);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Copy DM data and QC values set by the COriolis SCOOP tool.
@@ -159,7 +159,7 @@ DIR_OUTPUT_NC_FILES = a_dirOutputNcFiles;
 % retrieve the list of parameter to be ignored by the tool
 ignoredParamList = get_associated_param(a_ignoredParameter);
 if (isempty(ignoredParamList))
-   return;
+   return
 end
 
 diary(a_logFile);
@@ -200,7 +200,7 @@ for idFloat = 1:nbFloats
       files = dir([newProfDir '/' 'B*' floatNumStr '_' '*.nc']);
       if (isempty(files))
          fprintf('   => not a BGC float\n');
-         continue;
+         continue
       end
       
       % create the list of available cycle numbers (from PROF files)
@@ -350,32 +350,32 @@ for idFloat = 1:nbFloats
                      fprintf('ERROR: Float #%d Cycle #%d%c: B-PROF file in DM in "NEW DIRECTORY" only\n', ...
                         g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
                   end
-                  continue;
+                  continue
                end
             else
                if ((isempty(profFileNameOld) && ~isempty(bProfFileNameOld)) && ...
                      (~isempty(profFileNameNew) && ~isempty(bProfFileNameNew)))
                   fprintf('ERROR: Float #%d Cycle #%d%c: No C-PROF file in "OLD DIRECTORY" (%s)\n', ...
                      g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, floatOldDirPathName);
-                  continue;
+                  continue
                end
                if ((~isempty(profFileNameOld) && isempty(bProfFileNameOld)) && ...
                      (~isempty(profFileNameNew) && ~isempty(bProfFileNameNew)))
                   fprintf('ERROR: Float #%d Cycle #%d%c: No B-PROF file in "OLD DIRECTORY" (%s)\n', ...
                      g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, floatOldDirPathName);
-                  continue;
+                  continue
                end
                if ((~isempty(profFileNameOld) && ~isempty(bProfFileNameOld)) && ...
                      (isempty(profFileNameNew) && ~isempty(bProfFileNameNew)))
                   fprintf('ERROR: Float #%d Cycle #%d%c: No C-PROF file in "NEW DIRECTORY" (%s)\n', ...
                      g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, floatNewDirPathName);
-                  continue;
+                  continue
                end
                if ((~isempty(profFileNameOld) && ~isempty(bProfFileNameOld)) && ...
                      (~isempty(profFileNameNew) && isempty(bProfFileNameNew)))
                   fprintf('ERROR: Float #%d Cycle #%d%c: No B-PROF file in "NEW DIRECTORY" (%s)\n', ...
                      g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, floatNewDirPathName);
-                  continue;
+                  continue
                end
             end
          end
@@ -394,7 +394,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process C and B PROF files of a given cycle.
@@ -449,7 +449,7 @@ process_cycle_file( ...
    a_bProfFileNameNew, a_bProfFileDmNew, ...
    a_ignoredParameterList, a_dirOutputNcFiles, 1);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process C or B PROF files of a given cycle.
@@ -567,13 +567,13 @@ if (~strcmp(formatVersionOld, '3.1'))
    fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s => not managed\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameOld, formatVersionOld);
-   return;
+   return
 end
 if (~strcmp(formatVersionNew, '3.1'))
    fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s => not managed\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameNew, formatVersionNew);
-   return;
+   return
 end
 
 % check the DATA_MODE/PARAMETER_DATA_MODE
@@ -600,17 +600,17 @@ if (~needUpdate)
             paramName = regexprep(paramName, '_ADJUSTED', '');
             if (~ismember(paramName, a_ignoredParameterList))
                needUpdate = 1;
-               break;
+               break
             end
          end
       end
       if (needUpdate)
-         break;
+         break
       end
    end
 end
 if (~needUpdate)
-   return;
+   return
 end
 
 dataModeOld = get_data_from_name('DATA_MODE', profDataOld)';
@@ -712,13 +712,13 @@ if ((a_profFileDmOld == 1) && (~any(dataModeOld == 'D')))
    fprintf('ERROR: Float #%d Cycle #%d%c: %c file name and DATA_MODE are not consistent in file (%s)\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameOld);
-   return;
+   return
 end
 if ((a_profFileDmNew == 1) && (~any(dataModeNew == 'D')))
    fprintf('ERROR: Float #%d Cycle #%d%c: %c file name and DATA_MODE are not consistent in file (%s)\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameNew);
-   return;
+   return
 end
 
 % check consistency between DATA_MODE and PARAMETER_DATA_MODE
@@ -732,7 +732,7 @@ for idProf = 1:size(parameterDataModeOld, 1)
       fprintf('ERROR: Float #%d Cycle #%d%c: DATA_MODE and PARAMETER_DATA_MODE are not consistent in %c file (%s)\n', ...
          g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
          fileType, a_profFileNameOld);
-      return;
+      return
    end
 end
 for idProf = 1:size(parameterDataModeNew, 1)
@@ -745,7 +745,7 @@ for idProf = 1:size(parameterDataModeNew, 1)
       fprintf('ERROR: Float #%d Cycle #%d%c: DATA_MODE and PARAMETER_DATA_MODE are not consistent in %c file (%s)\n', ...
          g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
          fileType, a_profFileNameNew);
-      return;
+      return
    end
 end
 
@@ -803,7 +803,7 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                                  ((a_bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
                               param = [paramName '_ADJUSTED'];
                            else
-                              break;
+                              break
                            end
                         end
                         
@@ -846,10 +846,10 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                                  ((a_bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
                               param = [paramName '_ADJUSTED'];
                            else
-                              break;
+                              break
                            end
                         else
-                           break;
+                           break
                         end
                      end
                   
@@ -899,7 +899,7 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                               ((a_bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
                            param = [paramName '_ADJUSTED'];
                         else
-                           break;
+                           break
                         end
                      end
                      profStructOld.data.(param)(idUnpumped, :) = [];
@@ -932,7 +932,7 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
       fprintf('ERROR: Float #%d Cycle #%d%c: N_PROF=%d in OLD %c file whereas N_PROF=%d in NEW %c file\n', ...
          g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
          length(profStructOld.dataMode), fileType, length(profStructNew.dataMode), fileType);
-      return;
+      return
    end
 end
 
@@ -992,7 +992,7 @@ for idProf = 1:length(profIdToUpdate)
       idDel = find(rtProfIdToUpdate == profId);
       rtProfIdToUpdate(idDel) = [];
       nHistoryData(idDel) = [];
-      continue;
+      continue
    end
    
    % check that parameter lists are identical
@@ -1005,7 +1005,7 @@ for idProf = 1:length(profIdToUpdate)
       idDel = find(rtProfIdToUpdate == profId);
       rtProfIdToUpdate(idDel) = [];
       nHistoryData(idDel) = [];
-      continue;
+      continue
    end
    
    % update the NEW structure data
@@ -1029,7 +1029,7 @@ for idProf = 1:length(profIdToUpdate)
                g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
                parameter, profId, fileType);
          end
-         continue;
+         continue
       end
       
       % check that PARAM values are identical
@@ -1039,7 +1039,7 @@ for idProf = 1:length(profIdToUpdate)
          fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' values differ in N_PROF=%d of %c file\n', ...
             g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
             parameter, profId, fileType);
-         continue;
+         continue
       end
       
       % check consistency of HISTORY information
@@ -1092,7 +1092,7 @@ for idProf = 1:length(profIdToUpdate)
                g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
                parameter, stopPres, profId, fileType, softwareRelease);
          end
-         continue;
+         continue
       end
       
       % update QC in the NEW structure data
@@ -1151,7 +1151,7 @@ if (needUpdate)
       rtProfIdToUpdate, updatedData, nHistoryData, a_dirOutputNcFiles);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update PROF file.
@@ -1233,7 +1233,7 @@ if (~isempty(a_dmProfIdToUpdate))
          fprintf('ERROR: Float #%d Cycle #%d%c: N_CALIB=%d in OLD file and N_CALIB=%d in NEW\n', ...
             g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
             nCalibOld, nCalibNew);
-         return;
+         return
       end
       
       % update N_CALIB dimension in new file
@@ -1241,7 +1241,7 @@ if (~isempty(a_dmProfIdToUpdate))
       if (~ok)
          fprintf('ERROR: Float #%d Cycle #%d%c: an error occured during update of N_CALIB dimension in NEW file\n', ...
             g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
-         return;
+         return
       end
    end
 end
@@ -1267,7 +1267,7 @@ ok = update_prof_file_(tmpProfFileName, ...
 if (~ok)
    fprintf('ERROR: Float #%d Cycle #%d%c: an error occured during update of NEW file\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
-   return;
+   return
 end
 
 % update input file
@@ -1279,7 +1279,7 @@ g_cocd_updatedFileNameList{end+1} = outputProfFileName;
 % delete the temp directory
 remove_directory(DIR_TMP_FILE);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update PROF file.
@@ -1395,7 +1395,7 @@ dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
 fCdf = netcdf.open(a_profFileName, 'WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_profFileName);
-   return;
+   return
 end
 
 % copy variables with N_PROF dimension for DM profiles
@@ -1541,7 +1541,7 @@ if (~isempty(a_dmProfIdToUpdate))
                      ((a_profStructOld.bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
                   param = [paramName '_ADJUSTED'];
                else
-                  break;
+                  break
                end
             end
             
@@ -1696,7 +1696,7 @@ netcdf.close(fCdf);
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update the N_CALIB dimension of a PROF file.
@@ -1766,7 +1766,7 @@ remove_directory(DIR_TMP_FILE);
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -1816,7 +1816,7 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve I parameters associated to a given B parameter.
@@ -1988,7 +1988,7 @@ switch (a_paramName)
       fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': this parameter is not managed yet by this tool => exit\n', a_paramName);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -2021,7 +2021,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -2056,7 +2056,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -2077,4 +2077,4 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return

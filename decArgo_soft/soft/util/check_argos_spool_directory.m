@@ -59,7 +59,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -90,7 +90,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'check_argos_spool_directory' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Float status; WMO; Argos Id; File name; First data date; Last data date; Ellapsed time since last Argos data; Comment'];
 fprintf(fidOut, '%s\n', header);
@@ -276,7 +276,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get float information from JSON float information file.
@@ -322,12 +322,12 @@ if (~isempty(a_floatNum))
    % json float information file name
    floatInfoFileNames = dir([a_jsonFloatInfoDirName '/' sprintf('%d_*_info.json', a_floatNum)]);
    if (isempty(floatInfoFileNames))
-      return;
+      return
    elseif (length(floatInfoFileNames) == 1)
       floatInfoFileName = [a_jsonFloatInfoDirName '/' floatInfoFileNames(1).name];
    else
       fprintf('ERROR: Multiple float information files for float #%d\n', a_floatNum);
-      return;
+      return
    end
    
 elseif (~isempty(a_floatArgosId))
@@ -335,7 +335,7 @@ elseif (~isempty(a_floatArgosId))
    % json float information file name
    floatInfoFileNames = dir([a_jsonFloatInfoDirName '/' sprintf('*_%d_info.json', a_floatArgosId)]);
    if (isempty(floatInfoFileNames))
-      return;
+      return
    elseif (length(floatInfoFileNames) == 1)
       floatInfoFileName = [a_jsonFloatInfoDirName '/' floatInfoFileNames(1).name];
    else
@@ -348,7 +348,7 @@ elseif (~isempty(a_floatArgosId))
       
       if (isempty(lastArgosMsgDate))
          fprintf('WARNING: Input Argos file (%s) is empty => cannot choose between possible WMO numbers\n', a_argosFilePathName);
-         return;
+         return
       end
       
       % collect launch dates of possible json files
@@ -366,7 +366,7 @@ elseif (~isempty(a_floatArgosId))
          
          if (sum(isfield(fileContents, expectedFields)) ~= length(expectedFields))
             fprintf('ERROR: Missing data in float information file: %s\n', filePathName);
-            return;
+            return
          end
          
          floatLaunchDateStr = fileContents.LAUNCH_DATE;
@@ -382,7 +382,7 @@ elseif (~isempty(a_floatArgosId))
       
       if (isempty(fileName))
          o_floatDecId = -1;
-         return;
+         return
       else
          % sort the files according to launch dates
          [launchDate, idSort] = sort(launchDate);
@@ -392,7 +392,7 @@ elseif (~isempty(a_floatArgosId))
          if (~isempty(idF))
             idFloat = idF(end);
          else
-            [unused, idMin] = min(launchDate);
+            [~, idMin] = min(launchDate);
             idFloat = idMin;
          end
          
@@ -412,4 +412,4 @@ if (~strcmp(fileContents.PTT, 'Unknown'))
 end
 o_floatDecId = str2num(fileContents.DECODER_ID);
 
-return;
+return

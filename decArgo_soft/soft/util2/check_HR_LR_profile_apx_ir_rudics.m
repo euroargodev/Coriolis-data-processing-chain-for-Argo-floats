@@ -59,7 +59,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -86,7 +86,7 @@ tic;
 outputFileName = [DIR_CSV_FILE '/' 'check_HR_LR_profile_apx_ir_rudics' name '_' timeInfo '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 
 header = 'WMO;DECODER_ID;CYCLE_NUM;DEEP_PROFLE_PRES;CP_ACTIVATION_PRES;DEEP_PROFLE_PRES-CP_ACTIVATION_PRES;LR_NB_LEV;LR_P_MIN;LR_P_MAX;LR_P_RANGE;HR_NB_LEV;HR_P_MIN;HR_P_MAX;HR_P_RANGE;LR-HR_P_RANGE';
@@ -110,7 +110,7 @@ for idFloat = 1:nbFloats
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    floatRudicsId = str2num(listRudicsId{idF});
@@ -157,7 +157,7 @@ for idFloat = 1:nbFloats
             ] = read_apx_ir_rudics_msg_file(filePathName);
          if (error == 1)
             fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-            continue;
+            continue
          end
          
          if (~isempty(configDataStr))
@@ -213,4 +213,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

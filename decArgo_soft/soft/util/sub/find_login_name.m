@@ -28,13 +28,13 @@ a_loginName = [];
 idLog = find(a_tabWmo == a_wmoNum);
 if (isempty(idLog))
    fprintf('No login name for float : %d\n', a_wmoNum);
-   return;
+   return
 end
 if (length(idLog) > 1)
    fprintf('Multiple login names for float : %d\n', a_wmoNum);
-   return;
+   return
 end
 
 a_loginName = strtrim(char(a_tabLogin(idLog, :)));
 
-return;
+return

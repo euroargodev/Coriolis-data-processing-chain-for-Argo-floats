@@ -38,7 +38,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -63,7 +63,7 @@ diary(logFile);
 outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_traj_statistics' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 
 tic;
@@ -213,7 +213,7 @@ diary off;
 
 fclose(fidOut);
 
-return;
+return
 
 
 % ------------------------------------------------------------------------------
@@ -257,4 +257,4 @@ days = fix(h/24);
 h = h -24*days;
 o_durationStr = sprintf('%d day %02d:%02d:%02d', days, h, m, s);
 
-return;
+return

@@ -85,7 +85,7 @@ if ~((nargin == 0) || (nargin == 4))
    fprintf('   split_argos_messages(first_year, first_month, last_year, last_month)\n');
    fprintf('   split_argos_messages\n');
    fprintf('aborted ...\n');
-   return;
+   return
 end
 firstYear = [];
 firstMonth = [];
@@ -178,4 +178,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

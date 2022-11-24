@@ -46,14 +46,20 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Exp
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Finland_APF11_Rudics_from_VB_20181023.txt';
+dataBaseFileName = 'F:\NEW_20190125\Sélection flotteurs MOCCA\mocca_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
 floatListFileName = '';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% floatListFileName = 'F:\NEW_20190125\_RNU\DecArgo_soft\lists\tmp.txt';
+% floatListFileName = 'F:\NEW_20190125\Sélection flotteurs MOCCA\mocca_co_not_in_andro_floats.txt';
 
 % directory to store the log and csv file
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 
 % create and start log file recording
@@ -67,7 +73,7 @@ outputFileName = [DIR_LOG_CSV_FILE '/get_meta_data_from_data_base_bis_' datestr(
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Erreur ouverture fichier: %s\n', outputFileName);
-   return;
+   return
 end
 
 header = ['Trans system; Activity flag; Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
@@ -78,7 +84,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -92,7 +98,7 @@ metaWmoList = metaData(:, 1);
 for id = 1:length(metaWmoList)
    if (isempty(str2num(metaWmoList{id})))
       fprintf('%s is not a valid WMO number\n', metaWmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', metaWmoList{:});
@@ -308,4 +314,4 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return

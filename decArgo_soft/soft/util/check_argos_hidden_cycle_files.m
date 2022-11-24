@@ -54,7 +54,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -80,7 +80,7 @@ tic;
 outputFileName = [DIR_LOG_FILE '/' 'check_argos_hidden_cycle_files' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Hidden; Line; WMO; File name; File date'];
 fprintf(fidOut, '%s\n', header);
@@ -105,7 +105,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    
@@ -149,4 +149,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

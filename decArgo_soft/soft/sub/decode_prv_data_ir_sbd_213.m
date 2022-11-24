@@ -157,7 +157,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_0TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -283,7 +283,7 @@ for idMes = 1:size(a_tabData, 1)
          g_decArgo_nbOf13Or11TypePacketExpected = tabTech2(6);
          g_decArgo_nbOf14Or12TypePacketExpected = tabTech2(7);
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % BE CAREFUL
@@ -333,7 +333,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -354,7 +354,7 @@ for idMes = 1:size(a_tabData, 1)
             fprintf('WARNING: Float #%d, Cycle #%d: One empty packet type #%d has been received\n', ...
                g_decArgo_floatNum, ctdoValues(1), ...
                packType);
-            continue;
+            continue
          end
          
          % store cycle number
@@ -412,7 +412,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -448,7 +448,7 @@ for idMes = 1:size(a_tabData, 1)
          % EV or pump packet
          
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
@@ -523,7 +523,7 @@ if (a_procLevel > 0)
       if (length(unique(tabCycleNum)) == 1)
          
          g_decArgo_cycleNum = unique(tabCycleNum) + g_decArgo_cycleNumOffset;
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
       else
          fprintf('ERROR: Float #%d: Multiple cycle numbers have been received\n', ...
             g_decArgo_floatNum);
@@ -537,7 +537,7 @@ if (a_procLevel > 0)
    collect_received_packet_type_info;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize global flags and counters used to decide if a buffer is completed
@@ -612,7 +612,7 @@ g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
 g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
 g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collect information on received packet types
@@ -673,4 +673,4 @@ g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
 g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 
-return;
+return

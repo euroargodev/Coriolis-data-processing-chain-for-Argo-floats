@@ -32,7 +32,7 @@ o_tabProfiles = a_tabProfiles;
 % perform NITRATE RT adjustment
 [o_tabProfiles] = compute_rt_adjusted_nitrate(o_tabProfiles, a_launchDate);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Perform real time adjustment on CHLA profile data.
@@ -133,7 +133,7 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Perform real time adjustment on NITRATE profile data.
@@ -215,7 +215,7 @@ for idProf = 1:length(a_tabProfiles)
       
       idNoDef = find((presData ~= paramPres.fillValue) & (nitrateData ~= paramNitrate.fillValue));
       if (isempty(idNoDef))
-         continue;
+         continue
       end
       [presWoa, idMax] = max(presData(idNoDef) - 100);
       nitratePresWoa = nitrateData(idNoDef(idMax));
@@ -239,7 +239,7 @@ if (~isempty(profInfo))
    profInfo = get_WOA_data(profInfo);
    
    if (isempty(profInfo))
-      return;
+      return
    end
    
    offsetTab = [];
@@ -264,7 +264,7 @@ if (~isempty(profInfo))
             fprintf('WARNING: Float #%d Cycle #%d%c: no offset to compute med_offset => NITRATE data cannot be adjusted\n', ...
                g_decArgo_floatNum, ...
                profile.outputCycleNumber, profile.direction);
-            continue;
+            continue
          end
          
          % create array for adjusted data
@@ -359,4 +359,4 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return

@@ -48,7 +48,7 @@ if (nargin == 0)
    % float list is given in configuration file
    if ~(exist(g_decArgo_floatListFileName, 'file') == 2)
       fprintf('ERROR: Float file list not found: %s\n', g_decArgo_floatListFileName);
-      return;
+      return
    end
 
    fprintf('List of processed floats: %s\n', g_decArgo_floatListFileName);
@@ -77,4 +77,4 @@ decode_apex(floatList);
 
 diary off;
 
-return;
+return

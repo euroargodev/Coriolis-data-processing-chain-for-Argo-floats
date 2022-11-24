@@ -106,7 +106,7 @@ for iFile = 1:length(sbdFiles)
       currentData.dataRaw = [currentData.dataRaw {sbdData'}];
    else
       fprintf('ERROR: Anomaly in file : %s\n', sbdFileName);
-      continue;
+      continue
    end
    
    if (prevMomsn ~= -1)
@@ -164,7 +164,7 @@ for iFile = 1:length(dataList)
    fIdOut = fopen(asciiFilePathName, 'wt');
    if (fIdOut == -1)
       fprintf('ERROR: Error while creating file : %s\n', asciiFilePathName);
-      return;
+      return
    end
    
    data = dataList(iFile).data;
@@ -179,4 +179,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

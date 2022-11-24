@@ -61,4 +61,4 @@ else
    fprintf('DEC_WARNING: Multiple prefix in input files: ''%s'' is used\n', o_filePrefix);
 end
 
-return;
+return

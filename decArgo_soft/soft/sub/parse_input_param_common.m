@@ -52,7 +52,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'configfile'))
@@ -69,7 +69,7 @@ if (~isempty(a_varargin))
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
-               return;
+               return
             end
          end
       end
@@ -98,7 +98,7 @@ if (configFileInputParam == 1)
    if ~(exist(g_decArgo_configFilePathName, 'file') == 2)
       fprintf('ERROR: input configuration file (%s) does not exist => exit\n', g_decArgo_configFilePathName);
       o_inputError = 1;
-      return;
+      return
    end
 end
 
@@ -113,4 +113,4 @@ end
 o_unusedVarargin = a_varargin;
 o_unusedVarargin(idDel) = [];
 
-return;
+return

@@ -41,7 +41,7 @@ o_criticalLogFileList = [];
 floatIriDirName = a_dirName;
 if ~(exist(floatIriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', floatIriDirName);
-   return;
+   return
 end
 
 % science_log files
@@ -68,4 +68,4 @@ for idFile = 1:length(fileNames)
    o_criticalLogFileList{end+1} = [floatIriDirName '/' fileNames(idFile).name];
 end
 
-return;
+return

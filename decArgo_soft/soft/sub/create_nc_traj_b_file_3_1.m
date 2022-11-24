@@ -58,7 +58,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabTrajNMeas) && isempty(a_tabTrajNCycle))
-   return;
+   return
 end
 
 % remove Auxiliary trajectory data
@@ -82,7 +82,7 @@ a_tabTrajNMeas(idDel) = [];
 
 % no data to save
 if (isempty(a_tabTrajNMeas) && isempty(a_tabTrajNCycle))
-   return;
+   return
 end
 
 % collect information on trajectory
@@ -256,7 +256,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
    fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-      return;
+      return
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1018,7 +1018,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
       nMeas = a_tabTrajNMeas(idNM);
       
       if (isempty(nMeas.tabMeas))
-         continue;
+         continue
       end
 
       % find the cycle data mode
@@ -1704,4 +1704,4 @@ if (nbMeasParam > 1) % PRES and at least another parameter
    
 end
 
-return;
+return

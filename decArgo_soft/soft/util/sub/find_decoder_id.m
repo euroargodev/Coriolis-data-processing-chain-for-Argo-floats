@@ -85,7 +85,7 @@ for idMes = 1:size(a_tabSensors, 1)
          utcTimeJuld = a_tabDates(idMes);
          floatTimeJuld = fix(utcTimeJuld)+floatTimeHour/24;
          tabFloatTimeJuld = [floatTimeJuld-1 floatTimeJuld floatTimeJuld+1];
-         [unused, idMin] = min(abs(tabFloatTimeJuld-utcTimeJuld));
+         [~, idMin] = min(abs(tabFloatTimeJuld-utcTimeJuld));
          floatTimeJuld = tabFloatTimeJuld(idMin);
          floatClockDrift27 = floatTimeJuld - utcTimeJuld;
          
@@ -190,13 +190,13 @@ for idMes = 1:size(a_tabSensors, 1)
             % pressure
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 11, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                presCounts27(curCtdoMes) = value;
                if (value == 2047)
@@ -208,7 +208,7 @@ for idMes = 1:size(a_tabSensors, 1)
             else
                relpresCounts27 = get_bits(curBit, 6, msgData);
                if (isempty(relpresCounts27))
-                  break;
+                  break
                end
                presCounts27(curCtdoMes) = presCounts27(curCtdoMes-1) - sign*relpresCounts27;
                presCounts27Ok(curCtdoMes) = 1;
@@ -218,20 +218,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % temperature
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                tempCounts27(curCtdoMes) = value;
                curBit = curBit + 15;
             else
                reltempCounts27 = get_bits(curBit, 10, msgData);
                if (isempty(reltempCounts27))
-                  break;
+                  break
                end
                tempCounts27(curCtdoMes) = tempCounts27(curCtdoMes-1) + sign*(reltempCounts27 - 100);
                curBit = curBit + 10;
@@ -240,20 +240,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % salinity
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                salCounts27(curCtdoMes) = value;
                curBit = curBit + 15;
             else
                relsalCounts27 = get_bits(curBit, 8, msgData);
                if (isempty(relsalCounts27))
-                  break;
+                  break
                end
                salCounts27(curCtdoMes) = salCounts27(curCtdoMes-1) + sign*(relsalCounts27 - 25);
                curBit = curBit + 8;
@@ -262,20 +262,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % oxygen
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 13, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                oxyCounts27(curCtdoMes) = value;
                curBit = curBit + 13;
             else
                reloxyCounts27 = get_bits(curBit, 9, msgData);
                if (isempty(reloxyCounts27))
-                  break;
+                  break
                end
                oxyCounts27(curCtdoMes) = oxyCounts27(curCtdoMes-1) + reloxyCounts27 - 256;
                curBit = curBit + 9;
@@ -283,7 +283,7 @@ for idMes = 1:size(a_tabSensors, 1)
             
             curCtdoMes = curCtdoMes + 1;
             if (curCtdoMes == 6)
-               break;
+               break
             end
          end
          
@@ -324,13 +324,13 @@ for idMes = 1:size(a_tabSensors, 1)
             % pressure
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 11, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                presCounts30(curCtdMes) = value;
                if (value == 2047)
@@ -342,7 +342,7 @@ for idMes = 1:size(a_tabSensors, 1)
             else
                relpresCounts30 = get_bits(curBit, 6, msgData);
                if (isempty(relpresCounts30))
-                  break;
+                  break
                end
                presCounts30(curCtdMes) = presCounts30(curCtdMes-1) - sign*relpresCounts30;
                presCounts30Ok(curCtdMes) = 1;
@@ -352,20 +352,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % temperature
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                tempCounts30(curCtdMes) = value;
                curBit = curBit + 15;
             else
                reltempCounts30 = get_bits(curBit, 10, msgData);
                if (isempty(reltempCounts30))
-                  break;
+                  break
                end
                tempCounts30(curCtdMes) = tempCounts30(curCtdMes-1) + sign*(reltempCounts30 - 100);
                curBit = curBit + 10;
@@ -374,20 +374,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % salinity
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                salCounts30(curCtdMes) = value;
                curBit = curBit + 15;
             else
                relsalCounts30 = get_bits(curBit, 8, msgData);
                if (isempty(relsalCounts30))
-                  break;
+                  break
                end
                salCounts30(curCtdMes) = salCounts30(curCtdMes-1) + sign*(relsalCounts30 - 25);
                curBit = curBit + 8;
@@ -395,7 +395,7 @@ for idMes = 1:size(a_tabSensors, 1)
             
             curCtdMes = curCtdMes + 1;
             if (curCtdMes == 8)
-               break;
+               break
             end
          end
          
@@ -492,13 +492,13 @@ for idMes = 1:size(a_tabSensors, 1)
             % pressure
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 11, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                presCounts27(curCtdoMes) = value;
                if (value == 2047)
@@ -510,7 +510,7 @@ for idMes = 1:size(a_tabSensors, 1)
             else
                relpresCounts27 = twos_complement_dec_argo(get_bits(curBit, 6, msgData), 6);
                if (isempty(relpresCounts27))
-                  break;
+                  break
                end
                presCounts27(curCtdoMes) = presCounts27(curCtdoMes-1) + relpresCounts27;
                presCounts27Ok(curCtdoMes) = 1;
@@ -520,20 +520,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % temperature
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                tempCounts27(curCtdoMes) = value;
                curBit = curBit + 15;
             else
                relTempCounts27 = twos_complement_dec_argo(get_bits(curBit, 10, msgData), 10);
                if (isempty(relTempCounts27))
-                  break;
+                  break
                end
                tempCounts27(curCtdoMes) = tempCounts27(curCtdoMes-1) + relTempCounts27;
                curBit = curBit + 10;
@@ -542,20 +542,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % salinity
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                salCounts27(curCtdoMes) = value;
                curBit = curBit + 15;
             else
                relSalCounts27 = twos_complement_dec_argo(get_bits(curBit, 8, msgData), 8);
                if (isempty(relSalCounts27))
-                  break;
+                  break
                end
                salCounts27(curCtdoMes) = salCounts27(curCtdoMes-1) + relSalCounts27;
                curBit = curBit + 8;
@@ -564,20 +564,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % oxygen
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 13, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                oxyCounts27(curCtdoMes) = value;
                curBit = curBit + 13;
             else
                relOxyCounts27 = get_bits(curBit, 9, msgData);
                if (isempty(relOxyCounts27))
-                  break;
+                  break
                end
                oxyCounts27(curCtdoMes) = oxyCounts27(curCtdoMes-1) + relOxyCounts27 - 256;
                curBit = curBit + 9;
@@ -585,7 +585,7 @@ for idMes = 1:size(a_tabSensors, 1)
             
             curCtdoMes = curCtdoMes + 1;
             if (curCtdoMes == 6)
-               break;
+               break
             end
          end
          
@@ -621,13 +621,13 @@ for idMes = 1:size(a_tabSensors, 1)
             % pressure
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 11, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                presCounts30(curCtdMes) = value;
                if (value == 2047)
@@ -639,7 +639,7 @@ for idMes = 1:size(a_tabSensors, 1)
             else
                relpresCounts30 = twos_complement_dec_argo(get_bits(curBit, 6, msgData), 6);
                if (isempty(relpresCounts30))
-                  break;
+                  break
                end
                presCounts30(curCtdMes) = presCounts30(curCtdMes-1) + relpresCounts30;
                presCounts30Ok(curCtdMes) = 1;
@@ -649,20 +649,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % temperature
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                tempCounts30(curCtdMes) = value;
                curBit = curBit + 15;
             else
                relTempCounts30 = twos_complement_dec_argo(get_bits(curBit, 10, msgData), 10);
                if (isempty(relTempCounts30))
-                  break;
+                  break
                end
                tempCounts30(curCtdMes) = tempCounts30(curCtdMes-1) + relTempCounts30;
                curBit = curBit + 10;
@@ -671,20 +671,20 @@ for idMes = 1:size(a_tabSensors, 1)
             % salinity
             formatBit = get_bits(curBit, 1, msgData);
             if (isempty(formatBit))
-               break;
+               break
             end
             curBit = curBit + 1;
             if (formatBit == 0)
                value = get_bits(curBit, 15, msgData);
                if (isempty(value))
-                  break;
+                  break
                end
                salCounts30(curCtdMes) = value;
                curBit = curBit + 15;
             else
                relSalCounts30 = twos_complement_dec_argo(get_bits(curBit, 8, msgData), 8);
                if (isempty(relSalCounts30))
-                  break;
+                  break
                end
                salCounts30(curCtdMes) = salCounts30(curCtdMes-1) + relSalCounts30;
                curBit = curBit + 8;
@@ -692,7 +692,7 @@ for idMes = 1:size(a_tabSensors, 1)
             
             curCtdMes = curCtdMes + 1;
             if (curCtdMes == 8)
-               break;
+               break
             end
          end
          
@@ -759,4 +759,4 @@ for idMes = 1:size(a_tabSensors, 1)
    end
 end
 
-return;
+return

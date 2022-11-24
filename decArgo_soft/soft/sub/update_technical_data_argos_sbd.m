@@ -32,7 +32,7 @@ global g_decArgo_outputNcParamValue;
 
 if (isempty(g_decArgo_outputNcParamIndex))
    % tech msg not received
-   return;
+   return
 end
 
 % add additional columns so that the final output will be:
@@ -69,8 +69,8 @@ idInTechList = [];
 for id = 1:size(g_decArgo_outputNcParamIndex, 1)
    idInTechList = [idInTechList; find(g_decArgo_outputNcParamId == g_decArgo_outputNcParamIndex(id, 5))];
 end
-[unused, idSort] = sort(idInTechList);
+[~, idSort] = sort(idInTechList);
 g_decArgo_outputNcParamIndex = g_decArgo_outputNcParamIndex(idSort, :);
 g_decArgo_outputNcParamValue = g_decArgo_outputNcParamValue(idSort);
 
-return;
+return

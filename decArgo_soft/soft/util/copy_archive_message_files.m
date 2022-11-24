@@ -31,7 +31,7 @@ if (nargin ~= 1)
    fprintf('   copy_archive_message_files(start_date) => move message files from start_date\n');
    fprintf('where start_date is provided as strings (format: ''yyyy/mm/dd HH:MM:SS'')\n');
    fprintf('aborted ...\n');
-   return;
+   return
 else
    startDate = datenum(varargin{1}, 'yyyy/mm/dd HH:MM:SS');
 end
@@ -39,7 +39,7 @@ end
 % check the input directory
 if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
    fprintf('ERROR: Input directory doesn''t exist => exit\n');
-   return;
+   return
 end
 
 % create the output directory
@@ -74,7 +74,7 @@ for idF = 1:length(files)
                copy_file(fileIn, fileOut);
                nbCopied = nbCopied + 1;
             end
-            continue;
+            continue
          end
       end
 
@@ -88,7 +88,7 @@ for idF = 1:length(files)
                copy_file(fileIn, fileOut);
                nbCopied = nbCopied + 1;
             end
-            continue;
+            continue
          end
       end
       
@@ -107,4 +107,4 @@ fprintf('%d files copied (%d not dated)\n', nbCopied, nbCopiedNoDate);
 
 fprintf('done\n');
 
-return;
+return

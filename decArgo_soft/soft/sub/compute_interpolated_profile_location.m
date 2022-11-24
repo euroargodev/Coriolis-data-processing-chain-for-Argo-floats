@@ -75,7 +75,7 @@ if (~isempty(idPrevCycles))
       end
       
       if (prevLocDate ~= g_decArgo_dateDef)
-         break;
+         break
       end
    end
 end
@@ -131,4 +131,4 @@ if (prevLocDate ~= g_decArgo_dateDef)
    end
 end
 
-return;
+return

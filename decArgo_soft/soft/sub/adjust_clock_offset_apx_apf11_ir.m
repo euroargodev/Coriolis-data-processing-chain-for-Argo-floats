@@ -80,7 +80,7 @@ o_cycleTimeData = a_cycleTimeData;
 
 
 if (isempty(a_clockOffsetData.clockOffsetJuldUtc))
-   return;
+   return
 end
 
 % clock adjustment of the current cycle
@@ -136,7 +136,7 @@ if (~isempty(o_cycleTimeData))
    [o_cycleTimeData.transEndAdjDate] = adjust_time(o_cycleTimeData.transEndDate, o_cycleClockOffset);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Apply clock offset adjustment to times of a set of measurements.
@@ -175,7 +175,7 @@ if (~isempty(o_profData))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Apply clock offset adjustment to a given time.
@@ -208,4 +208,4 @@ if (~isempty(a_time))
    o_timeAdj = a_time - a_clockOffset/86400;
 end
 
-return;
+return

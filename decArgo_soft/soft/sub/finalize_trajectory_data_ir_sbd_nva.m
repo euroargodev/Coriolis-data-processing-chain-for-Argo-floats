@@ -101,7 +101,7 @@ if (~isempty(g_decArgo_iridiumMailData))
          configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
          if (~isempty(configMissionNumber))
             trajNCycleStruct.configMissionNumber = configMissionNumber;
-            break;
+            break
          end
          cyNum = cyNum - 1;
       end
@@ -392,7 +392,7 @@ for idCy = 1:length(tabCyNum)
    if (cycleNum == -1)
       % cycle number = -1 is used to store launch location and date only (no
       % need to add all the expected MCs)
-      continue;
+      continue
    end
    
    idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
@@ -442,7 +442,7 @@ end
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge FMT, LMT and GPS locations of N_MEASURMENT arrays
@@ -535,7 +535,7 @@ if (updated)
    o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge FMT, LMT, FLT and LLT of N_CYCLE arrays
@@ -608,4 +608,4 @@ if (~isempty(tabDate))
    o_tabTrajNCycle(a_storeId).juldLastLocationStatus = tabDateStatus(idMax);
 end
 
-return;
+return

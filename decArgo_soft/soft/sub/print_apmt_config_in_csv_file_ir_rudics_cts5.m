@@ -31,7 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_configData))
-   return;
+   return
 end
 
 fileTypeStr = 'Config_APMT';
@@ -49,7 +49,7 @@ for idF = 1:length(fieldNames)
       dataValue = dataValueList{idI};
       if (strncmp(section, 'PATTERN_', length('PATTERN_')) && ...
             (dataNum == 0) && (strcmp(dataValue, 'False')))
-         break;
+         break
       end
       if (~isempty(dataFmt))
          dataValueStr = sprintf(dataFmt, dataValue);
@@ -64,4 +64,4 @@ for idF = 1:length(fieldNames)
    end
 end
 
-return;
+return

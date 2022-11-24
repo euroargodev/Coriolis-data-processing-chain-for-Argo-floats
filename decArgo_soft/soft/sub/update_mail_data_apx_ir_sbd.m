@@ -132,4 +132,4 @@ for id = 1:length(tabCyNum)
    g_decArgo_iridiumMailData(idFCy(id)).cycleNumber = tabCyNum(id);
 end
 
-return;
+return

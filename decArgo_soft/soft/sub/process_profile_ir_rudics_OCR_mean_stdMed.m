@@ -79,266 +79,256 @@ a_dataOCRStdMedIr2Med = a_dataOCRStdMed{9};
 a_dataOCRStdMedIr3Med = a_dataOCRStdMed{10};
 a_dataOCRStdMedIr4Med = a_dataOCRStdMed{11};
 
-% list of profiles to process
-cycleNumList = sort(unique(a_dataOCRMeanDate(:, 1)));
-profileNumList = sort(unique(a_dataOCRMeanDate(:, 2)));
-phaseNumList = sort(unique(a_dataOCRMeanDate(:, 3)));
-
 % process the profiles
-o_tabProfiles = [];
-for idCy = 1:length(cycleNumList)
-   for idProf = 1:length(profileNumList)
-      for idPhase = 1:length(phaseNumList)
-
-         cycleNum = cycleNumList(idCy);
-         profNum = profileNumList(idProf);
-         phaseNum = phaseNumList(idPhase);
-
-         if ((phaseNum == g_decArgo_phaseDsc2Prk) || ...
-               (phaseNum == g_decArgo_phaseParkDrift) || ...
-               (phaseNum == g_decArgo_phaseAscProf))
-
-            profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, 0);
-            profStruct.sensorNumber = 2;
-
-            % select the data (according to cycleNum, profNum and phaseNum)
-            idDataMean = find((a_dataOCRMeanDate(:, 1) == cycleNum) & ...
-               (a_dataOCRMeanDate(:, 2) == profNum) & ...
-               (a_dataOCRMeanDate(:, 3) == phaseNum));
-            idDataStdMed = [];
-            if (~isempty(a_dataOCRStdMedDate))
-               idDataStdMed = find((a_dataOCRStdMedDate(:, 1) == cycleNum) & ...
-                  (a_dataOCRStdMedDate(:, 2) == profNum) & ...
-                  (a_dataOCRStdMedDate(:, 3) == phaseNum));
-            end
+cycleProfPhaseList = unique(a_dataOCRMeanDate(:, 1:3), 'rows');
+for idCyPrPh = 1:size(cycleProfPhaseList, 1)
+   cycleNum = cycleProfPhaseList(idCyPrPh, 1);
+   profNum = cycleProfPhaseList(idCyPrPh, 2);
+   phaseNum = cycleProfPhaseList(idCyPrPh, 3);
+   
+   if ((phaseNum == g_decArgo_phaseDsc2Prk) || ...
+         (phaseNum == g_decArgo_phaseParkDrift) || ...
+         (phaseNum == g_decArgo_phaseAscProf))
+      
+      profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, 0);
+      profStruct.sensorNumber = 2;
+      
+      % select the data (according to cycleNum, profNum and phaseNum)
+      idDataMean = find((a_dataOCRMeanDate(:, 1) == cycleNum) & ...
+         (a_dataOCRMeanDate(:, 2) == profNum) & ...
+         (a_dataOCRMeanDate(:, 3) == phaseNum));
+      idDataStdMed = [];
+      if (~isempty(a_dataOCRStdMedDate))
+         idDataStdMed = find((a_dataOCRStdMedDate(:, 1) == cycleNum) & ...
+            (a_dataOCRStdMedDate(:, 2) == profNum) & ...
+            (a_dataOCRStdMedDate(:, 3) == phaseNum));
+      end
+      
+      if (isempty(idDataMean) && isempty(idDataStdMed))
+         continue
+      end
+      
+      if (isempty(idDataStdMed))
+         
+         % mean data only
+         dataMean = [];
+         for idL = 1:length(idDataMean)
+            dataMean = cat(1, dataMean, ...
+               [a_dataOCRMeanDate(idDataMean(idL), 4:end)' ...
+               a_dataOCRMeanPres(idDataMean(idL), 4:end)' ...
+               a_dataOCRMeanIr1(idDataMean(idL), 4:end)' ...
+               a_dataOCRMeanIr2(idDataMean(idL), 4:end)' ...
+               a_dataOCRMeanIr3(idDataMean(idL), 4:end)' ...
+               a_dataOCRMeanIr4(idDataMean(idL), 4:end)']);
+         end
+         idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & ...
+            (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0) & (dataMean(:, 6) == 0));
+         dataMean(idDel, :) = [];
+         
+         if (~isempty(dataMean))
             
-            if (isempty(idDataMean) && isempty(idDataStdMed))
-               continue;
-            end
+            % create parameters
+            paramJuld = get_netcdf_param_attributes('JULD');
+            paramPres = get_netcdf_param_attributes('PRES');
+            paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380');
+            paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+            paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+            paramPar = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR');
             
-            if (isempty(idDataStdMed))
-               
-               % mean data only
-               dataMean = [];
-               for idL = 1:length(idDataMean)
-                  dataMean = [dataMean; ...
-                     a_dataOCRMeanDate(idDataMean(idL), 4:end)' ...
-                     a_dataOCRMeanPres(idDataMean(idL), 4:end)' ...
-                     a_dataOCRMeanIr1(idDataMean(idL), 4:end)' ...
-                     a_dataOCRMeanIr2(idDataMean(idL), 4:end)' ...
-                     a_dataOCRMeanIr3(idDataMean(idL), 4:end)' ...
-                     a_dataOCRMeanIr4(idDataMean(idL), 4:end)'];
-               end
-               idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & ...
-                  (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0) & (dataMean(:, 6) == 0));
-               dataMean(idDel, :) = [];
-
-               if (~isempty(dataMean))
-                  
-                  % create parameters            
-                  paramJuld = get_netcdf_param_attributes('JULD');
-                  paramPres = get_netcdf_param_attributes('PRES');
-                  paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380');
-                  paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
-                  paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
-                  paramPar = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR');
-
-                  % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
-               
-                  % convert decoder default values to netCDF fill values
-                  dataMean(find(dataMean(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
-                  dataMean(find(dataMean(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
-                  dataMean(find(dataMean(:, 3) == g_decArgo_iradianceCountsDef), 3) = paramIr1.fillValue;
-                  dataMean(find(dataMean(:, 4) == g_decArgo_iradianceCountsDef), 4) = paramIr2.fillValue;
-                  dataMean(find(dataMean(:, 5) == g_decArgo_iradianceCountsDef), 5) = paramIr3.fillValue;
-                  dataMean(find(dataMean(:, 6) == g_decArgo_parCountsDef), 6) = paramPar.fillValue;
-                  
-                  profStruct.paramList = [paramPres ...
-                     paramIr1 paramIr2 paramIr3 paramPar];
-                  profStruct.dateList = paramJuld;
-                  
-                  profStruct.data = dataMean(:, 2:end);
-                  profStruct.dates = dataMean(:, 1);
-                  
-                  % measurement dates
-                  dates = dataMean(:, 1);
-                  dates(find(dates == paramJuld.fillValue)) = [];
-                  profStruct.minMeasDate = min(dates);
-                  profStruct.maxMeasDate = max(dates);
-                  
-                  % treatment type
-                  profStruct.treatType = g_decArgo_treatAverage;
-               end
-
-            else
-               
-               if (isempty(idDataMean))
-                  fprintf('WARNING: Float #%d Cycle #%d: OCR standard deviation and median data without associated mean data\n', ...
-                     g_decArgo_floatNum, g_decArgo_cycleNum);
-               else
-
-                  % mean and stdMed data
-
-                  % merge the data
-                  dataMean = [];
-                  for idL = 1:length(idDataMean)
-                     dataMean = [dataMean; ...
-                        a_dataOCRMeanDate(idDataMean(idL), 4:end)' ...
-                        a_dataOCRMeanPres(idDataMean(idL), 4:end)' ...
-                        a_dataOCRMeanIr1(idDataMean(idL), 4:end)' ...
-                        a_dataOCRMeanIr2(idDataMean(idL), 4:end)' ...
-                        a_dataOCRMeanIr3(idDataMean(idL), 4:end)' ...
-                        a_dataOCRMeanIr4(idDataMean(idL), 4:end)'];
-                  end
-                  idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & ...
-                     (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0) & (dataMean(:, 6) == 0));
-                  dataMean(idDel, :) = [];
-
-                  dataStdMed = [];
-                  for idL = 1:length(idDataStdMed)
-                     dataStdMed = [dataStdMed; ...
-                        a_dataOCRStdMedPresMean(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr1Std(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr2Std(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr3Std(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr4Std(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr1Med(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr2Med(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr3Med(idDataStdMed(idL), 4:end)' ...
-                        a_dataOCRStdMedIr4Med(idDataStdMed(idL), 4:end)'];
-                  end
-                  idDel = find((dataStdMed(:, 1) == 0) & (dataStdMed(:, 2) == 0) & ...
-                     (dataStdMed(:, 3) == 0) & (dataStdMed(:, 4) == 0) & ...
-                     (dataStdMed(:, 5) == 0) & (dataStdMed(:, 6) == 0) & ...
-                     (dataStdMed(:, 7) == 0) & (dataStdMed(:, 8) == 0) & ...
-                     (dataStdMed(:, 9) == 0));
-                  dataStdMed(idDel, :) = [];
-
-                  data = cat(2, dataMean, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_parCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
-                     ones(size(dataMean, 1), 1)*g_decArgo_parCountsDef);
-
-                  for idL = 1:size(dataStdMed, 1)
-                     idOk = find(data(:, 2) == dataStdMed(idL, 1));
-                     if (~isempty(idOk))
-                        if (length(idOk) > 1)
-                           idF = find(data(idOk, 7) == g_decArgo_iradianceCountsDef, 1);
-                           if (~isempty(idF))
-                              idOk = idOk(idF);
-                           else
-                              fprintf('WARNING: Float #%d Cycle #%d: cannot fit OCR standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
-                                 g_decArgo_floatNum, g_decArgo_cycleNum);
-                              continue;
-                           end
-                        end
-                        data(idOk, 7:14) = dataStdMed(idL, 2:9);
+            % convert counts to values
+            dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
+            
+            % convert decoder default values to netCDF fill values
+            dataMean(find(dataMean(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
+            dataMean(find(dataMean(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
+            dataMean(find(dataMean(:, 3) == g_decArgo_iradianceCountsDef), 3) = paramIr1.fillValue;
+            dataMean(find(dataMean(:, 4) == g_decArgo_iradianceCountsDef), 4) = paramIr2.fillValue;
+            dataMean(find(dataMean(:, 5) == g_decArgo_iradianceCountsDef), 5) = paramIr3.fillValue;
+            dataMean(find(dataMean(:, 6) == g_decArgo_parCountsDef), 6) = paramPar.fillValue;
+            
+            profStruct.paramList = [paramPres ...
+               paramIr1 paramIr2 paramIr3 paramPar];
+            profStruct.dateList = paramJuld;
+            
+            profStruct.data = dataMean(:, 2:end);
+            profStruct.dates = dataMean(:, 1);
+            
+            % measurement dates
+            dates = dataMean(:, 1);
+            dates(find(dates == paramJuld.fillValue)) = [];
+            profStruct.minMeasDate = min(dates);
+            profStruct.maxMeasDate = max(dates);
+            
+            % treatment type
+            profStruct.treatType = g_decArgo_treatAverage;
+         end
+         
+      else
+         
+         if (isempty(idDataMean))
+            fprintf('WARNING: Float #%d Cycle #%d: OCR standard deviation and median data without associated mean data\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum);
+         else
+            
+            % mean and stdMed data
+            
+            % merge the data
+            dataMean = [];
+            for idL = 1:length(idDataMean)
+               dataMean = cat(1, dataMean, ...
+                  [a_dataOCRMeanDate(idDataMean(idL), 4:end)' ...
+                  a_dataOCRMeanPres(idDataMean(idL), 4:end)' ...
+                  a_dataOCRMeanIr1(idDataMean(idL), 4:end)' ...
+                  a_dataOCRMeanIr2(idDataMean(idL), 4:end)' ...
+                  a_dataOCRMeanIr3(idDataMean(idL), 4:end)' ...
+                  a_dataOCRMeanIr4(idDataMean(idL), 4:end)']);
+            end
+            idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & ...
+               (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0) & (dataMean(:, 6) == 0));
+            dataMean(idDel, :) = [];
+            
+            dataStdMed = [];
+            for idL = 1:length(idDataStdMed)
+               dataStdMed = cat(1, dataStdMed, ...
+                  [a_dataOCRStdMedPresMean(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr1Std(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr2Std(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr3Std(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr4Std(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr1Med(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr2Med(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr3Med(idDataStdMed(idL), 4:end)' ...
+                  a_dataOCRStdMedIr4Med(idDataStdMed(idL), 4:end)']);
+            end
+            idDel = find((dataStdMed(:, 1) == 0) & (dataStdMed(:, 2) == 0) & ...
+               (dataStdMed(:, 3) == 0) & (dataStdMed(:, 4) == 0) & ...
+               (dataStdMed(:, 5) == 0) & (dataStdMed(:, 6) == 0) & ...
+               (dataStdMed(:, 7) == 0) & (dataStdMed(:, 8) == 0) & ...
+               (dataStdMed(:, 9) == 0));
+            dataStdMed(idDel, :) = [];
+            
+            data = cat(2, dataMean, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_parCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_iradianceCountsDef, ...
+               ones(size(dataMean, 1), 1)*g_decArgo_parCountsDef);
+            
+            for idL = 1:size(dataStdMed, 1)
+               idOk = find(data(:, 2) == dataStdMed(idL, 1));
+               if (~isempty(idOk))
+                  if (length(idOk) > 1)
+                     idF = find(data(idOk, 7) == g_decArgo_iradianceCountsDef, 1);
+                     if (~isempty(idF))
+                        idOk = idOk(idF);
                      else
-                        fprintf('WARNING: Float #%d Cycle #%d: OCR standard deviation and median data without associated mean data\n', ...
+                        fprintf('WARNING: Float #%d Cycle #%d: cannot fit OCR standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                            g_decArgo_floatNum, g_decArgo_cycleNum);
+                        continue
                      end
                   end
-
-                  if (~isempty(data))
-                     
-                     % create parameters
-                     paramJuld = get_netcdf_param_attributes('JULD');
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380');
-                     paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
-                     paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
-                     paramPar = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR');
-                     paramIr1StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380_STD');
-                     paramIr2StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_STD');
-                     paramIr3StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_STD');
-                     paramParStDev = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR_STD');
-                     paramIr1Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380_MED');
-                     paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_MED');
-                     paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
-                     paramParMed = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR_MED');
-
-                     % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
-
-                     % convert decoder default values to netCDF fill values
-                     data(find(data(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
-                     data(find(data(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
-                     data(find(data(:, 3) == g_decArgo_iradianceCountsDef), 3) = paramIr1.fillValue;
-                     data(find(data(:, 4) == g_decArgo_iradianceCountsDef), 4) = paramIr2.fillValue;
-                     data(find(data(:, 5) == g_decArgo_iradianceCountsDef), 5) = paramIr3.fillValue;
-                     data(find(data(:, 6) == g_decArgo_parCountsDef), 6) = paramPar.fillValue;
-                     data(find(data(:, 7) == g_decArgo_iradianceCountsDef), 7) = paramIr1StDev.fillValue;
-                     data(find(data(:, 8) == g_decArgo_iradianceCountsDef), 8) = paramIr2StDev.fillValue;
-                     data(find(data(:, 9) == g_decArgo_iradianceCountsDef), 9) = paramIr3StDev.fillValue;
-                     data(find(data(:, 10) == g_decArgo_parCountsDef), 10) = paramParStDev.fillValue;
-                     data(find(data(:, 11) == g_decArgo_iradianceCountsDef), 11) = paramIr1Med.fillValue;
-                     data(find(data(:, 12) == g_decArgo_iradianceCountsDef), 12) = paramIr2Med.fillValue;
-                     data(find(data(:, 13) == g_decArgo_iradianceCountsDef), 13) = paramIr3Med.fillValue;
-                     data(find(data(:, 14) == g_decArgo_parCountsDef), 14) = paramParMed.fillValue;
-                     
-                     profStruct.paramList = [paramPres ...
-                        paramIr1 paramIr2 paramIr3 paramPar ...
-                        paramIr1StDev paramIr2StDev paramIr3StDev paramParStDev ...
-                        paramIr1Med paramIr2Med paramIr3Med paramParMed];
-                     profStruct.dateList = paramJuld;
-                     
-                     profStruct.data = data(:, 2:end);
-                     profStruct.dates = data(:, 1);
-                     
-                     % measurement dates
-                     dates = data(:, 1);
-                     dates(find(dates == paramJuld.fillValue)) = [];
-                     profStruct.minMeasDate = min(dates);
-                     profStruct.maxMeasDate = max(dates);
-                     
-                     % treatment type
-                     profStruct.treatType = g_decArgo_treatAverageAndStDev;
-                  end
+                  data(idOk, 7:14) = dataStdMed(idL, 2:9);
+               else
+                  fprintf('WARNING: Float #%d Cycle #%d: OCR standard deviation and median data without associated mean data\n', ...
+                     g_decArgo_floatNum, g_decArgo_cycleNum);
                end
             end
             
-            if (~isempty(profStruct.paramList))
+            if (~isempty(data))
                
-               % add number of measurements in each zone
-               [profStruct] = add_profile_nb_meas_ir_rudics_sbd2(profStruct, a_sensorTechOCR);
-
-               % add profile additional information
-               if (phaseNum ~= g_decArgo_phaseParkDrift)
-                  
-                  % profile direction
-                  if (phaseNum == g_decArgo_phaseDsc2Prk)
-                     profStruct.direction = 'D';
-                  end
-                  
-                  % positioning system
-                  profStruct.posSystem = 'GPS';
-      
-                  % profile date and location information
-                  [profStruct] = add_profile_date_and_location_ir_rudics_cts4( ...
-                     profStruct, ...
-                     a_descentToParkStartDate, a_ascentEndDate, ...
-                     a_gpsData);
-                  
-                  o_tabProfiles = [o_tabProfiles profStruct];
-                  
-               else
-                  
-                  % drift data is always 'raw' (even if transmitted through
-                  % 'mean' float packets) (NKE personal communication)
-                  profStruct.treatType = g_decArgo_treatRaw;
-
-                  o_tabDrift = [o_tabDrift profStruct];
-               end
+               % create parameters
+               paramJuld = get_netcdf_param_attributes('JULD');
+               paramPres = get_netcdf_param_attributes('PRES');
+               paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380');
+               paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+               paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+               paramPar = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR');
+               paramIr1StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380_STD');
+               paramIr2StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_STD');
+               paramIr3StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_STD');
+               paramParStDev = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR_STD');
+               paramIr1Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE380_MED');
+               paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_MED');
+               paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
+               paramParMed = get_netcdf_param_attributes('RAW_DOWNWELLING_PAR_MED');
+               
+               % convert counts to values
+               data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
+               
+               % convert decoder default values to netCDF fill values
+               data(find(data(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
+               data(find(data(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
+               data(find(data(:, 3) == g_decArgo_iradianceCountsDef), 3) = paramIr1.fillValue;
+               data(find(data(:, 4) == g_decArgo_iradianceCountsDef), 4) = paramIr2.fillValue;
+               data(find(data(:, 5) == g_decArgo_iradianceCountsDef), 5) = paramIr3.fillValue;
+               data(find(data(:, 6) == g_decArgo_parCountsDef), 6) = paramPar.fillValue;
+               data(find(data(:, 7) == g_decArgo_iradianceCountsDef), 7) = paramIr1StDev.fillValue;
+               data(find(data(:, 8) == g_decArgo_iradianceCountsDef), 8) = paramIr2StDev.fillValue;
+               data(find(data(:, 9) == g_decArgo_iradianceCountsDef), 9) = paramIr3StDev.fillValue;
+               data(find(data(:, 10) == g_decArgo_parCountsDef), 10) = paramParStDev.fillValue;
+               data(find(data(:, 11) == g_decArgo_iradianceCountsDef), 11) = paramIr1Med.fillValue;
+               data(find(data(:, 12) == g_decArgo_iradianceCountsDef), 12) = paramIr2Med.fillValue;
+               data(find(data(:, 13) == g_decArgo_iradianceCountsDef), 13) = paramIr3Med.fillValue;
+               data(find(data(:, 14) == g_decArgo_parCountsDef), 14) = paramParMed.fillValue;
+               
+               profStruct.paramList = [paramPres ...
+                  paramIr1 paramIr2 paramIr3 paramPar ...
+                  paramIr1StDev paramIr2StDev paramIr3StDev paramParStDev ...
+                  paramIr1Med paramIr2Med paramIr3Med paramParMed];
+               profStruct.dateList = paramJuld;
+               
+               profStruct.data = data(:, 2:end);
+               profStruct.dates = data(:, 1);
+               
+               % measurement dates
+               dates = data(:, 1);
+               dates(find(dates == paramJuld.fillValue)) = [];
+               profStruct.minMeasDate = min(dates);
+               profStruct.maxMeasDate = max(dates);
+               
+               % treatment type
+               profStruct.treatType = g_decArgo_treatAverageAndStDev;
             end
+         end
+      end
+      
+      if (~isempty(profStruct.paramList))
+         
+         % add number of measurements in each zone
+         [profStruct] = add_profile_nb_meas_ir_rudics_sbd2(profStruct, a_sensorTechOCR);
+         
+         % add profile additional information
+         if (phaseNum ~= g_decArgo_phaseParkDrift)
+            
+            % profile direction
+            if (phaseNum == g_decArgo_phaseDsc2Prk)
+               profStruct.direction = 'D';
+            end
+            
+            % positioning system
+            profStruct.posSystem = 'GPS';
+            
+            % profile date and location information
+            [profStruct] = add_profile_date_and_location_ir_rudics_cts4( ...
+               profStruct, ...
+               a_descentToParkStartDate, a_ascentEndDate, ...
+               a_gpsData);
+            
+            o_tabProfiles = [o_tabProfiles profStruct];
+            
+         else
+            
+            % drift data is always 'raw' (even if transmitted through
+            % 'mean' float packets) (NKE personal communication)
+            profStruct.treatType = g_decArgo_treatRaw;
+            
+            o_tabDrift = [o_tabDrift profStruct];
          end
       end
    end
 end
 
-return;
+return

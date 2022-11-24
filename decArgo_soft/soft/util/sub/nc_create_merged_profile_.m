@@ -121,7 +121,7 @@ end
 % delete the temporary directory
 remove_directory(tmpDirName);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve meta-data from META file.
@@ -156,7 +156,7 @@ global g_cocm_floatNum;
 if ~(exist(a_metaFilePathName, 'file') == 2)
    fprintf('ERROR: Float #%d: File not found: %s\n', ...
       g_cocm_floatNum, a_metaFilePathName);
-   return;
+   return
 end
 
 wantedVars = [ ...
@@ -179,7 +179,7 @@ formatVersion = deblank(get_data_from_name('FORMAT_VERSION', metaData)');
 if (~strcmp(formatVersion, '3.1'))
    fprintf('WARNING: Float #%d: Input META file (%s) format version is %s => not used\n', ...
       g_cocm_floatNum, a_metaFilePathName, formatVersion);
-   return;
+   return
 end
 
 % store META file information in a dedicated structure
@@ -195,7 +195,7 @@ o_metaData.configParameterName = get_data_from_name('CONFIG_PARAMETER_NAME', met
 o_metaData.configParameterValue = get_data_from_name('CONFIG_PARAMETER_VALUE', metaData)';
 o_metaData.configMissionNumber = get_data_from_name('CONFIG_MISSION_NUMBER', metaData);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -230,7 +230,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -251,7 +251,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -284,7 +284,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store META information.
@@ -319,7 +319,7 @@ o_metaDataStruct = struct( ...
    'configParameterValue', [], ...
    'configMissionNumber', []);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from TRAJ file.
@@ -361,17 +361,17 @@ for idType= 1:2
       if ~(exist(trajFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d: File not found: %s\n', ...
             g_cocm_floatNum, trajFilePathName);
-         return;
+         return
       end
    else
       if (isempty(a_bTrajFileName))
-         break;
+         break
       end
       trajFilePathName = a_bTrajFileName;
       if ~(exist(trajFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d: File not found: %s\n', ...
             g_cocm_floatNum, trajFilePathName);
-         return;
+         return
       end
    end
    
@@ -388,7 +388,7 @@ for idType= 1:2
    if (~strcmp(formatVersion, '3.1'))
       fprintf('WARNING: Float #%d: Input TRAJ file (%s) format version is %s => not used\n', ...
          g_cocm_floatNum, trajFilePathName, formatVersion);
-      return;
+      return
    end
    
    % create the list of parameter to be retrieved from TRAJ file
@@ -411,7 +411,7 @@ for idType= 1:2
       paramName = deblank(trajectoryParameters(:, idParam)');
       if (~isempty(paramName))
          if ((idType == 2) && strcmp(paramName, 'PRES'))
-            continue;
+            continue
          end
          paramInfo = get_netcdf_param_attributes(paramName);
          if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'b'))
@@ -501,7 +501,7 @@ for idType= 1:2
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store TRAJ information.
@@ -541,7 +541,7 @@ o_trajDataStruct = struct( ...
    'cycleNumberIndex', [], ...
    'dataMode', '');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from PROF file.
@@ -588,17 +588,17 @@ for idType= 1:2
       if ~(exist(profFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
             g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName);
-         return;
+         return
       end
    else
       if (isempty(a_bProfFileName))
-         break;
+         break
       end
       profFilePathName = a_bProfFileName;
       if ~(exist(profFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
             g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName);
-         return;
+         return
       end
    end
    
@@ -615,7 +615,7 @@ for idType= 1:2
    if (~strcmp(formatVersion, '3.1'))
       fprintf('WARNING: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s => not used\n', ...
          g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName, formatVersion);
-      return;
+      return
    end
    
    % create the list of parameters to be retrieved from PROF file
@@ -765,7 +765,7 @@ for idType= 1:2
             if (isempty(idF))
                fprintf('ERROR: Float #%d Cycle #%d%c: No SENSOR is associated to parameter ''%s'' in the meta file => exit\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, paramName);
-               return;
+               return
             end
             profData.paramSensorList{end+1} = metaParamSensorList{idF};
          end
@@ -785,7 +785,7 @@ for idType= 1:2
             profData.presData = paramData(idProf, :)';
          end
          if ((idType == 2) && strcmp(paramName, 'PRES'))
-            continue;
+            continue
          end
          if (idType == 1)
             profData.paramDataMode = [profData.paramDataMode dataMode(idProf)];
@@ -796,7 +796,7 @@ for idType= 1:2
                stationParametersParamName = deblank(stationParameters(:, idParamNc, idProf)');
                if (strcmp(paramName, stationParametersParamName))
                   nParamId = idParamNc;
-                  break;
+                  break
                end
             end
             if (~isempty(deblank(parameterDataMode)))
@@ -808,7 +808,7 @@ for idType= 1:2
             else
                fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName, dataMode(idProf));
-               return;
+               return
             end
          end
          profData.paramData = [profData.paramData paramData(idProf, :)'];
@@ -835,12 +835,12 @@ for idType= 1:2
                if (~isempty(calibParamName))
                   if (strcmp(paramName, calibParamName))
                      nParamId = idParamNc;
-                     break;
+                     break
                   end
                end
             end
             if (~isempty(nParamId))
-               break;
+               break
             end
          end
          if (~isempty(nParamId))
@@ -880,7 +880,7 @@ for idProfC = 1:length(profDataTabC)
             g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, ...
             length(profData.presData), ...
             length(profDataTabB(idProfB).presData));
-         return;
+         return
       end
       if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
          profDataB = profDataTabB(idProfB);
@@ -929,7 +929,7 @@ for idProfC = 1:length(profDataTabC)
          profData.scientificCalibComment = [profData.scientificCalibComment profDataB.scientificCalibComment];
          profData.scientificCalibDate = [profData.scientificCalibDate profDataB.scientificCalibDate];
          profDataTabB(idProfB) = [];
-         break;
+         break
       end
    end
    profDataTab = [profDataTab profData];
@@ -1036,7 +1036,7 @@ for idProf = idUnpumped
          if (length(paramList) == length(profDataTab(idP).paramList))
             if (~any(strcmp(paramList, profDataTab(idP).paramList) ~= 1))
                idRef = idP;
-               break;
+               break
             end
          end
       end
@@ -1057,7 +1057,7 @@ profDataTab = profDataTab(sortedId);
 % output parameter
 o_profData = profDataTab;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -1093,7 +1093,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve attributes from NetCDF file
@@ -1113,7 +1113,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get attribute data from variable name and attribute in a
@@ -1148,7 +1148,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{3*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store PROF information.
@@ -1215,7 +1215,7 @@ o_profDataStruct = struct( ...
    'scientificCalibDate', [] ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process PROF (and TRAJ) data to generate merged profile data.
@@ -1379,7 +1379,7 @@ if (length(unique([a_profData.configMissionNumber])) > 1)
    errorFlag = 1;
 end
 if (errorFlag == 1)
-   return;
+   return
 end
 
 % create merged profile
@@ -1688,7 +1688,7 @@ if (~isempty(a_trajData))
                fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter not found in TRAJ file => cannot add time on profile levels\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, paramName);
                trajParamId = [];
-               break;
+               break
             end
          end
          if (~isempty(trajParamId))
@@ -1700,7 +1700,7 @@ if (~isempty(a_trajData))
                   for idM = 1:length(idF)
                      if (~any(paramData(idL, :) ~= trajParamData(idF(idM), trajParamId)))
                         idLev = idF(idM);
-                        break;
+                        break
                      end
                   end
                   if (~isempty(idLev))
@@ -1874,7 +1874,7 @@ if (isempty(o_mergedProfData.paramData))
    o_mergedProfData = [];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store merged profile information.
@@ -1943,7 +1943,7 @@ o_profDataStruct = struct( ...
    'scientificCalibDate', [] ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Print merged profile data in a CSV file.
@@ -1993,7 +1993,7 @@ global g_cocm_cycleDir;
 % select the cycle to print
 % if ~((g_cocm_floatNum == 6900889) && (g_cocm_cycleNum == 1) && isempty(g_cocm_cycleDir))
 % if ~((g_cocm_cycleNum == 13) && isempty(g_cocm_cycleDir))
-%    return;
+%    return
 % end
 
 dateStr = datestr(now, 'yyyymmddTHHMMSS');
@@ -2006,7 +2006,7 @@ fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to create CSV output file: %s\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, outputFileName);
-   return;
+   return
 end
 
 data = [];
@@ -2082,7 +2082,7 @@ end
 
 fclose(fidOut);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create merged mono-profile NetCDF file.
@@ -2179,7 +2179,7 @@ move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/profiles/' 
 % report information structure
 g_cocm_reportData.outputMMonoProfFile = [a_outputDir '/' num2str(a_floatWmo) '/profiles/' outputFileName];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -2229,7 +2229,7 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Fill merged mono-profile NetCDF file.
@@ -2279,7 +2279,7 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, a_fileName);
-   return;
+   return
 end
 
 currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
@@ -2704,7 +2704,7 @@ end
 % close NetCDF file
 netcdf.close(fCdf);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Store data from all existing M-PROF files and a given directory in a dedicated
@@ -2792,7 +2792,7 @@ if (~isempty(o_mergedProfAllData))
    o_mergedProfAllData = uniformize_n_calib_dimension(o_mergedProfAllData);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Store data from one M-PROF file in a dedicated structure.
@@ -2828,7 +2828,7 @@ global g_cocm_cycleDir;
 if ~(exist(a_mProfFileName, 'file') == 2)
    fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, a_mProfFileName);
-   return;
+   return
 end
 
 % retrieve information from M-PROF file
@@ -2979,12 +2979,12 @@ for idProf = 1:nProf
                if (~isempty(calibParamName))
                   if (strcmp(paramName, calibParamName))
                      nParamId = idParamNc;
-                     break;
+                     break
                   end
                end
             end
             if (~isempty(nParamId))
-               break;
+               break
             end
          end
          if (~isempty(nParamId))
@@ -3003,7 +3003,7 @@ for idProf = 1:nProf
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Uniformize the N_CALIB dimension between the profile structures.
@@ -3059,7 +3059,7 @@ for idProf = 1:length(o_mergedProfAllData)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create merged multi-profile NetCDF file.
@@ -3152,7 +3152,7 @@ move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/' outputFil
 % report information structure
 g_cocm_reportData.outputMMultiProfFile = [a_outputDir '/' num2str(a_floatWmo) '/' outputFileName];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Fill merged multi-profile NetCDF file.
@@ -3202,7 +3202,7 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, a_fileName);
-   return;
+   return
 end
 
 currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
@@ -3583,4 +3583,4 @@ end
 % close NetCDF file
 netcdf.close(fCdf);
 
-return;
+return

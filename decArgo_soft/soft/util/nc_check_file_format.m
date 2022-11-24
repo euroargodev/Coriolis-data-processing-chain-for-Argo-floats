@@ -24,26 +24,29 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-08-06\';
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-10-09\';
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-11-07\';
+DIR_JAVA_CHECKER = 'F:\NEW_20190125\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-12-18\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-04-24\';
 
 % top directory of the NetCDF files to check
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_checkTraj\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'F:\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\201809-ArgoData\coriolis\';
 
 % directory to store checker reports
-DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
+DIR_OUTPUT_REPORT_FILES = 'F:\NEW_20190125\_DATA\OUT\checker_reports\';
 
 % default list of floats to check
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'F:\NEW_20190125\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
 
 % directory to store the log and csv files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
+DIR_LOG_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\'; 
 
 % nc file types to check
 CHECK_NC_TRAJ = 1;
@@ -65,7 +68,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -91,7 +94,7 @@ tic;
 outputFileName = [DIR_LOG_FILE '/' 'nc_check_file_format' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Line #; WMO; File type; File name; Status; Error numbers; Warning numbers'];
 fprintf(fidOut, '%s\n', header);
@@ -101,7 +104,7 @@ fprintf(fidOut, '%s\n', header);
 % fId = fopen(dataBaseFileName, 'r');
 % if (fId == -1)
 %    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-%    return;
+%    return
 % end
 % metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 % metaFileContents = metaFileContents{:};
@@ -159,7 +162,7 @@ for idFloat = 1:nbFloats
          ncFiles = dir([ncFileDir sprintf('%d_meta.nc', floatNum)]);
          pattern = 'META';
       else
-         continue;
+         continue
       end
 
       if (exist(ncFileDir, 'dir') == 7)
@@ -188,7 +191,7 @@ for idFloat = 1:nbFloats
                   ncFileName];
             else
                fprintf('Cannot determine operating system\n');
-               return;
+               return
             end
             
             [status, cmdOut] = system(cmd);
@@ -197,13 +200,13 @@ for idFloat = 1:nbFloats
                reportFilePathName = [DIR_OUTPUT_REPORT_FILES '/' ncFileName '.filecheck'];
                if ~(exist(reportFilePathName, 'file') == 2)
                   fprintf('ERROR: Report file not found: %s\n', reportFilePathName);
-                  continue;
+                  continue
                end
                
                fId = fopen(reportFilePathName, 'r');
                if (fId == -1)
                   fprintf('ERROR: Unable to open file: %s\n', reportFilePathName);
-                  continue;
+                  continue
                end
 
                status = '';
@@ -212,7 +215,7 @@ for idFloat = 1:nbFloats
                while 1
                   line = fgetl(fId);
                   if (line == -1)
-                     break;
+                     break
                   end
                   
                   % collect information
@@ -278,7 +281,7 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_floatDac] = get_float_dac(a_floatNum, a_metaWmoList, a_metaData)
@@ -295,5 +298,5 @@ else
    o_floatDac = 'CORIOLIS';
 end
 
-return;
+return
 

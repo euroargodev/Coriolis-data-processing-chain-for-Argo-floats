@@ -27,7 +27,7 @@ o_configData = [];
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: read_apmt_config: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % create the configuration info structure
@@ -37,16 +37,16 @@ end
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = [];
 while (1)
    line = fgetl(fId);
    if (isempty(line))
-      continue;
+      continue
    end
    if (line == -1)
-      break;
+      break
    end
    data{end+1} = line;
 end
@@ -77,7 +77,7 @@ for idL = 1:length(data)
          sectionName = configSectionList{idSection};
          if (strcmp(line, ['[' sectionName ']']))
             newSectionNum = idSection;
-            break;
+            break
          end
       end
       if (newSectionNum == -1)
@@ -89,7 +89,7 @@ for idL = 1:length(data)
                   configSectionList{end+1} = newSectionName;
                   configInfoStruct.(newSectionName) = configInfoStruct.(sectionName);
                   newSectionNum = length(configSectionList);
-                  break;
+                  break
                end
             end
          end
@@ -116,7 +116,7 @@ for idL = 1:length(data)
       currentStruct = [];
       currentSectionNum = newSectionNum;
       newSectionNum = -1;
-      continue;
+      continue
    end
 
    currentStruct{end+1} = line;
@@ -137,7 +137,7 @@ end
 fieldNames = fieldnames(configData);
 for idF = 1:length(fieldNames)
    if (strcmp(fieldNames{idF}, 'GUI'))
-      continue;
+      continue
    end
    rawData = configData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
@@ -177,7 +177,7 @@ end
 
 o_configData = configData;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to read APMT configuration.
@@ -214,10 +214,10 @@ switch (a_decoderId)
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to read APMT configuration.
@@ -976,7 +976,7 @@ param.name = 'serial port number';
 param.fmtOut = '%d';
 o_configInfoStruct.SBE41{end+1} = param;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to read APMT configuration.
@@ -1807,7 +1807,7 @@ o_configInfoStruct.SBE41{end+1} = param;
 
 o_configInfoStruct.GUI = [];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store information on each item of a section.
@@ -1841,4 +1841,4 @@ o_newStruct.count = 1;
 o_newStruct.func = [];
 o_newStruct.labelId = -1;
 
-return;
+return

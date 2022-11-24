@@ -63,7 +63,7 @@ for id = 1:length(labels)
             template = tmpLabel(idFStart:idFEnd);
             if (~ismember(template, templateList))
                fprintf('ERROR: template ''%s'' is not in the referenced list => aborted\n', template);
-               return;
+               return
             end
             templateId = find(strcmp(template, templateList));
             tmpLabelListOut{end+1} = regexprep(tmpLabel, templateList{templateId}, '');
@@ -126,7 +126,7 @@ for idDir = 1:length(dacDir)
    %          ~strcmp(dacDirName, 'kordi') && ~strcmp(dacDirName, 'meds') && ...
    %          ~strcmp(dacDirName, 'nmdis'))
    if (~strcmp(dacDirName, 'coriolis'))
-      continue;
+      continue
    end
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
@@ -137,7 +137,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_collect_not_allowed_tech_labels_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
       
@@ -146,7 +146,7 @@ for idDir = 1:length(dacDir)
          
          floatDirName = floatDir(idDir2).name;
          %          if (str2num(floatDirName) ~= 2901029)
-         %             continue;
+         %             continue
          %          end
          floatDirPathName = [dacDirPathName '/' floatDirName];
          if (exist(floatDirPathName, 'dir') == 7)
@@ -168,7 +168,7 @@ for idDir = 1:length(dacDir)
                idVal = find(strcmp('FORMAT_VERSION', techData(1:2:end)) == 1, 1);
                formatVersion = techData{2*idVal}';
                if (str2num(formatVersion) ~= 3.1)
-                  continue;
+                  continue
                end
                idVal = find(strcmp('PLATFORM_NUMBER', techData(1:2:end)) == 1, 1);
                platformNumber = techData{2*idVal}';
@@ -183,7 +183,7 @@ for idDir = 1:length(dacDir)
                   label = techParamNameList{id};
                   if (isempty(strtrim(label)))
                      fprintf('ERROR: empty label detected => label ignored\n');
-                     continue;
+                     continue
                   end
                   labelList{end+1} = label;
                end
@@ -211,7 +211,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -246,7 +246,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file

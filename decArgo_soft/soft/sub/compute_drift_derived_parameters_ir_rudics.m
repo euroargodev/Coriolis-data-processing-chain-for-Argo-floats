@@ -193,7 +193,7 @@ end
 % update output parameters
 o_tabDrift = a_tabDrift;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OCR sensor.
@@ -348,7 +348,7 @@ end
 a_driftOcr.derived = 1;
 o_driftOcr = a_driftOcr;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO2 sensor.
@@ -544,7 +544,7 @@ end
 a_driftEco2.derived = 1;
 o_driftEco2 = a_driftEco2;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO3 sensor.
@@ -769,7 +769,7 @@ end
 a_driftEco3.derived = 1;
 o_driftEco3 = a_driftEco3;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute BBP from the data provided by the ECO3 sensor.
@@ -857,7 +857,7 @@ if (~isempty(ctdLinkData))
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO3 sensor.
@@ -1012,7 +1012,7 @@ end
 a_driftEco3.derived = 1;
 o_driftEco3 = a_driftEco3;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the SUNA sensor.
@@ -1070,7 +1070,7 @@ end
 % if the fitlm Matlab function is available, compute NITRATE data from 
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
-   if (a_decoderId ~= 110)
+   if (~ismember(a_decoderId, [110, 113]))
       
       % compute NITRATE
       paramToDeriveList = [ ...
@@ -1135,7 +1135,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
             derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
             
-            [nitrate, bisulfide] = compute_drift_NITRATE_BISULFIDE_from_spectrum_110( ...
+            [nitrate, bisulfide] = compute_drift_NITRATE_BISULFIDE_from_spectrum_110_113( ...
                a_driftSuna.data(:, idF1:idF1+a_driftSuna.paramNumberOfSubLevels-1), ...
                a_driftSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1216,7 +1216,7 @@ end
 a_driftSuna.derived = 1;
 o_driftSuna = a_driftSuna;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OPTODE sensor.
@@ -1332,7 +1332,7 @@ end
 a_driftOptode.derived = 1;
 o_driftOptode = a_driftOptode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -1416,10 +1416,10 @@ if (~isempty(ctdLinkData))
             a_DOXY_fillValue, ...
             a_driftOptode);
 
-      case {107, 109, 110, 111, 121, 122, 124}
+      case {107, 109, 110, 111, 113, 121, 122, 124}
          
          % compute DOXY values using the Stern-Volmer equation
-         o_DOXY = compute_DOXY_107_109_to_111_121_122_124( ...
+         o_DOXY = compute_DOXY_107_109_to_111_113_121_122_124( ...
             a_C1PHASE_DOXY, ...
             a_C2PHASE_DOXY, ...
             a_TEMP_DOXY, ...
@@ -1465,4 +1465,4 @@ if (~isempty(ctdLinkData))
    end
 end
                
-return;
+return

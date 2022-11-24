@@ -163,41 +163,38 @@ a_tabTrajNMeas(idDel) = [];
 % merge first/last msg times
 cycleNumList = [a_tabTrajNMeas.cycleNumber];
 profNumList = [a_tabTrajNMeas.profileNumber];
-uCycleNum = sort(unique(cycleNumList));
-uProfNum = sort(unique(profNumList));
-for idCyc = 1:length(uCycleNum)
-   cycleNum = uCycleNum(idCyc);
-   for idPrf = 1:length(uProfNum)
-      profNum = uProfNum(idPrf);
+cycleProfList = unique([cycleNumList' profNumList'], 'rows');
+for idCyPr = 1:size(cycleProfList, 1)
+   cycleNum = cycleProfList(idCyPr, 1);
+   profNum = cycleProfList(idCyPr, 2);
+   
+   idData = find( ...
+      (cycleNumList == cycleNum) & ...
+      (profNumList == profNum));
+   
+   if (~isempty(idData))
       
-      idData = find( ...
-         (cycleNumList == cycleNum) & ...
-         (profNumList == profNum));
+      % process first msg time
+      [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
+         1, a_tabTrajNMeas, idData, ...
+         g_MC_FMT, g_decArgo_phaseSatTrans, g_decArgo_phaseEndOfLife);
       
-      if (~isempty(idData))
+      % process last msg time
+      [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
+         0, a_tabTrajNMeas, idData, ...
+         g_MC_LMT, g_decArgo_phaseSatTrans, g_decArgo_phaseEndOfLife);
+      
+      if ((cycleNum == -1) && (profNum == -1))
          
          % process first msg time
          [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
             1, a_tabTrajNMeas, idData, ...
-            g_MC_FMT, g_decArgo_phaseSatTrans, g_decArgo_phaseEndOfLife);
+            g_MC_FMT, g_decArgo_phasePreMission, g_decArgo_phaseSurfWait);
          
          % process last msg time
          [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
             0, a_tabTrajNMeas, idData, ...
-            g_MC_LMT, g_decArgo_phaseSatTrans, g_decArgo_phaseEndOfLife);
-         
-         if ((cycleNum == -1) && (profNum == -1))
-            
-            % process first msg time
-            [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
-               1, a_tabTrajNMeas, idData, ...
-               g_MC_FMT, g_decArgo_phasePreMission, g_decArgo_phaseSurfWait);
-            
-            % process last msg time
-            [a_tabTrajNMeas] = merge_one_first_last_msg_time( ...
-               0, a_tabTrajNMeas, idData, ...
-               g_MC_LMT, g_decArgo_phasePreMission, g_decArgo_phaseSurfWait);
-         end
+            g_MC_LMT, g_decArgo_phasePreMission, g_decArgo_phaseSurfWait);
       end
    end
 end
@@ -213,7 +210,7 @@ if (~isempty(a_tabTrajNCycle))
    for idCyc = 1:length(uCycleNum)
       cycleNum = uCycleNum(idCyc);
       if (cycleNum > 0)
-
+         
          idData = find( ...
             (cycleNumList == cycleNum) & ...
             (profNumList == 0));
@@ -233,162 +230,159 @@ if (~isempty(a_tabTrajNCycle))
    end
    
    % merge first/last msg and location times
-   cycleNumList = [a_tabTrajNCycle.cycleNumber];
-   profNumList = [a_tabTrajNCycle.profileNumber];
-   uCycleNum = sort(unique(cycleNumList));
-   uProfNum = sort(unique(profNumList));
-   for idCyc = 1:length(uCycleNum)
-      cycleNum = uCycleNum(idCyc);
-      for idPrf = 1:length(uProfNum)
-         profNum = uProfNum(idPrf);
+   cycleNumList = [a_tabTrajNMeas.cycleNumber];
+   profNumList = [a_tabTrajNMeas.profileNumber];
+   cycleProfList = unique([cycleNumList' profNumList'], 'rows');
+   for idCyPr = 1:size(cycleProfList, 1)
+      cycleNum = cycleProfList(idCyPr, 1);
+      profNum = cycleProfList(idCyPr, 2);
+      
+      idData = find( ...
+         (cycleNumList == cycleNum) & ...
+         (profNumList == profNum));
+      
+      if (~isempty(idData))
          
-         idData = find( ...
-            (cycleNumList == cycleNum) & ...
-            (profNumList == profNum));
-
-         if (~isempty(idData))
+         % prelude data
+         idPreMisAndSurfWait = find( ...
+            ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phasePreMission) | ...
+            ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait));
+         if (~isempty(idPreMisAndSurfWait))
             
-            % prelude data
-            idPreMisAndSurfWait = find( ...
-               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phasePreMission) | ...
-               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait));
-            if (~isempty(idPreMisAndSurfWait))
+            idFinal = find( ...
+               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait) & ...
+               ([a_tabTrajNCycle(idData).surfOnly] == 2));
+            if (~isempty(idFinal))
                
-               idFinal = find( ...
-                  ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait) & ...
-                  ([a_tabTrajNCycle(idData).surfOnly] == 2));
-               if (~isempty(idFinal))
-                  
-                  idFinal = idFinal(end);
-                  idList = idData(idPreMisAndSurfWait);
-                  
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldFirstMessage))
-                        dates = [dates; a_tabTrajNCycle(id).juldFirstMessage];
-                        status = [status; a_tabTrajNCycle(id).juldFirstMessageStatus];
-                     end
-                  end
-                  if (~isempty(dates))
-                     [minDate, idMin] = min(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessage = minDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessageStatus = status(idMin);
-                  end
-                                    
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldFirstLocation))
-                        dates = [dates; a_tabTrajNCycle(id).juldFirstLocation];
-                        status = [status; a_tabTrajNCycle(id).juldFirstLocationStatus];
-                     end
-                  end
-                  if (~isempty(dates))
-                     [minDate, idMin] = min(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocation = minDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocationStatus = status(idMin);
-                  end
-                  
-                  dates = [];
-                  status = [];
-                  for id = idData(idPreMisAndSurfWait)
-                     if (~isempty(a_tabTrajNCycle(id).juldLastLocation))
-                        dates = [dates; a_tabTrajNCycle(id).juldLastLocation];
-                        status = [status; a_tabTrajNCycle(id).juldLastLocationStatus];
-                     end
-                  end
-                  if (~isempty(dates))
-                     [maxDate, idMax] = max(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldLastLocation = maxDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldLastLocationStatus = status(idMax);
-                  end
-                  
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldLastMessage))
-                        dates = [dates; a_tabTrajNCycle(id).juldLastMessage];
-                        status = [status; a_tabTrajNCycle(id).juldLastMessageStatus];
-                     end
-                  end
-                  if (~isempty(dates))
-                     [maxDate, idMax] = max(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldLastMessage = maxDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldLastMessageStatus = status(idMax);
+               idFinal = idFinal(end);
+               idList = idData(idPreMisAndSurfWait);
+               
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldFirstMessage))
+                     dates = [dates; a_tabTrajNCycle(id).juldFirstMessage];
+                     status = [status; a_tabTrajNCycle(id).juldFirstMessageStatus];
                   end
                end
-            end            
-            
-            % after first dive data
-            idSatTransAndEol = find( ...
-               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSatTrans) | ...
-               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseEndOfLife));
-            if (~isempty(idSatTransAndEol))
+               if (~isempty(dates))
+                  [minDate, idMin] = min(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstMessage = minDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstMessageStatus = status(idMin);
+               end
                
-               idFinal = find( ...
-                  ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSatTrans) & ...
-                  ([a_tabTrajNCycle(idData).surfOnly] == 0));
-               if (~isempty(idFinal))
-                  
-                  idFinal = idFinal(end);
-                  idList = idData(idSatTransAndEol);
-                  
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldFirstMessage))
-                        dates = [dates; a_tabTrajNCycle(id).juldFirstMessage];
-                        status = [status; a_tabTrajNCycle(id).juldFirstMessageStatus];
-                     end
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldFirstLocation))
+                     dates = [dates; a_tabTrajNCycle(id).juldFirstLocation];
+                     status = [status; a_tabTrajNCycle(id).juldFirstLocationStatus];
                   end
-                  if (~isempty(dates))
-                     [minDate, idMin] = min(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessage = minDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessageStatus = status(idMin);
+               end
+               if (~isempty(dates))
+                  [minDate, idMin] = min(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstLocation = minDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstLocationStatus = status(idMin);
+               end
+               
+               dates = [];
+               status = [];
+               for id = idData(idPreMisAndSurfWait)
+                  if (~isempty(a_tabTrajNCycle(id).juldLastLocation))
+                     dates = [dates; a_tabTrajNCycle(id).juldLastLocation];
+                     status = [status; a_tabTrajNCycle(id).juldLastLocationStatus];
                   end
-                                    
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldFirstLocation))
-                        dates = [dates; a_tabTrajNCycle(id).juldFirstLocation];
-                        status = [status; a_tabTrajNCycle(id).juldFirstLocationStatus];
-                     end
+               end
+               if (~isempty(dates))
+                  [maxDate, idMax] = max(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldLastLocation = maxDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldLastLocationStatus = status(idMax);
+               end
+               
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldLastMessage))
+                     dates = [dates; a_tabTrajNCycle(id).juldLastMessage];
+                     status = [status; a_tabTrajNCycle(id).juldLastMessageStatus];
                   end
-                  if (~isempty(dates))
-                     [minDate, idMin] = min(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocation = minDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocationStatus = status(idMin);
+               end
+               if (~isempty(dates))
+                  [maxDate, idMax] = max(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldLastMessage = maxDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldLastMessageStatus = status(idMax);
+               end
+            end
+         end
+         
+         % after first dive data
+         idSatTransAndEol = find( ...
+            ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSatTrans) | ...
+            ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseEndOfLife));
+         if (~isempty(idSatTransAndEol))
+            
+            idFinal = find( ...
+               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSatTrans) & ...
+               ([a_tabTrajNCycle(idData).surfOnly] == 0));
+            if (~isempty(idFinal))
+               
+               idFinal = idFinal(end);
+               idList = idData(idSatTransAndEol);
+               
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldFirstMessage))
+                     dates = [dates; a_tabTrajNCycle(id).juldFirstMessage];
+                     status = [status; a_tabTrajNCycle(id).juldFirstMessageStatus];
                   end
-                  
-                  dates = [];
-                  status = [];
-                  for id = idData(idSatTransAndEol)
-                     if (~isempty(a_tabTrajNCycle(id).juldLastLocation))
-                        dates = [dates; a_tabTrajNCycle(id).juldLastLocation];
-                        status = [status; a_tabTrajNCycle(id).juldLastLocationStatus];
-                     end
+               end
+               if (~isempty(dates))
+                  [minDate, idMin] = min(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstMessage = minDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstMessageStatus = status(idMin);
+               end
+               
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldFirstLocation))
+                     dates = [dates; a_tabTrajNCycle(id).juldFirstLocation];
+                     status = [status; a_tabTrajNCycle(id).juldFirstLocationStatus];
                   end
-                  if (~isempty(dates))
-                     [maxDate, idMax] = max(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldLastLocation = maxDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldLastLocationStatus = status(idMax);
+               end
+               if (~isempty(dates))
+                  [minDate, idMin] = min(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstLocation = minDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldFirstLocationStatus = status(idMin);
+               end
+               
+               dates = [];
+               status = [];
+               for id = idData(idSatTransAndEol)
+                  if (~isempty(a_tabTrajNCycle(id).juldLastLocation))
+                     dates = [dates; a_tabTrajNCycle(id).juldLastLocation];
+                     status = [status; a_tabTrajNCycle(id).juldLastLocationStatus];
                   end
-                  
-                  dates = [];
-                  status = [];
-                  for id = idList
-                     if (~isempty(a_tabTrajNCycle(id).juldLastMessage))
-                        dates = [dates; a_tabTrajNCycle(id).juldLastMessage];
-                        status = [status; a_tabTrajNCycle(id).juldLastMessageStatus];
-                     end
+               end
+               if (~isempty(dates))
+                  [maxDate, idMax] = max(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldLastLocation = maxDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldLastLocationStatus = status(idMax);
+               end
+               
+               dates = [];
+               status = [];
+               for id = idList
+                  if (~isempty(a_tabTrajNCycle(id).juldLastMessage))
+                     dates = [dates; a_tabTrajNCycle(id).juldLastMessage];
+                     status = [status; a_tabTrajNCycle(id).juldLastMessageStatus];
                   end
-                  if (~isempty(dates))
-                     [maxDate, idMax] = max(dates);
-                     a_tabTrajNCycle(idData(idFinal)).juldLastMessage = maxDate;
-                     a_tabTrajNCycle(idData(idFinal)).juldLastMessageStatus = status(idMax);
-                  end
+               end
+               if (~isempty(dates))
+                  [maxDate, idMax] = max(dates);
+                  a_tabTrajNCycle(idData(idFinal)).juldLastMessage = maxDate;
+                  a_tabTrajNCycle(idData(idFinal)).juldLastMessageStatus = status(idMax);
                end
             end
          end
@@ -422,56 +416,53 @@ expMcList = [ ...
 
 cycleNumList = [a_tabTrajNMeas.cycleNumber];
 profNumList = [a_tabTrajNMeas.profileNumber];
-uCycleNum = sort(unique(cycleNumList));
-uProfNum = sort(unique(profNumList));
-for idCyc = 1:length(uCycleNum)
-   cycleNum = uCycleNum(idCyc);
+cycleProfList = unique([cycleNumList' profNumList'], 'rows');
+for idCyPr = 1:size(cycleProfList, 1)
+   cycleNum = cycleProfList(idCyPr, 1);
+   profNum = cycleProfList(idCyPr, 2);
    if (cycleNum == -1)
       % cycle number = -1 is used to store launch location and date only (no
       % need to add all the expected MCs)
-      continue;
+      continue
    end
-   for idPrf = 1:length(uProfNum)
-      profNum = uProfNum(idPrf);
+   
+   idData = find( ...
+      (cycleNumList == cycleNum) & ...
+      (profNumList == profNum));
+   
+   if (~isempty(idData))
       
-      idData = find( ...
-         (cycleNumList == cycleNum) & ...
-         (profNumList == profNum));
+      measCodeList = [];
+      for idD = 1:length(idData)
+         tabMeas = a_tabTrajNMeas(idData(idD)).tabMeas;
+         if (~isempty(tabMeas))
+            measCodeList = [measCodeList [tabMeas.measCode]];
+         end
+      end
+      measCodeList = unique(measCodeList);
       
-      if (~isempty(idData))
+      % add MCs so that all expected ones will be present
+      mcList = setdiff(expMcList, measCodeList);
+      measData = [];
+      for idMc = 1:length(mcList)
+         measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
+         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+         measData = [measData; measStruct];
          
-         measCodeList = [];
-         for idD = 1:length(idData)
-            tabMeas = a_tabTrajNMeas(idData(idD)).tabMeas;
-            if (~isempty(tabMeas))
-               measCodeList = [measCodeList [tabMeas.measCode]];
+         if (~isempty(a_tabTrajNCycle))
+            idF = find( ...
+               ([a_tabTrajNCycle.cycleNumber] == cycleNum) & ...
+               ([a_tabTrajNCycle.profileNumber] == profNum) & ...
+               ([a_tabTrajNCycle.surfOnly] ~= 2));
+            for id = 1:length(idF)
+               [a_tabTrajNCycle(idF(id))] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF(id)), mcList(idMc), g_JULD_STATUS_9);
             end
          end
-         measCodeList = unique(measCodeList);
-         
-         % add MCs so that all expected ones will be present
-         mcList = setdiff(expMcList, measCodeList);
-         measData = [];
-         for idMc = 1:length(mcList)
-            measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
-            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            if (~isempty(a_tabTrajNCycle))
-               idF = find( ...
-                  ([a_tabTrajNCycle.cycleNumber] == cycleNum) & ...
-                  ([a_tabTrajNCycle.profileNumber] == profNum) & ...
-                  ([a_tabTrajNCycle.surfOnly] ~= 2));
-               for id = 1:length(idF)
-                  [a_tabTrajNCycle(idF(id))] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF(id)), mcList(idMc), g_JULD_STATUS_9);
-               end
-            end
-         end
-         
-         % store the data
-         if (~isempty(measData))
-            a_tabTrajNMeas(idData(end)).tabMeas = [a_tabTrajNMeas(idData(end)).tabMeas; measData];
-         end
+      end
+      
+      % store the data
+      if (~isempty(measData))
+         a_tabTrajNMeas(idData(end)).tabMeas = [a_tabTrajNMeas(idData(end)).tabMeas; measData];
       end
    end
 end
@@ -480,7 +471,7 @@ end
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge one set of first or last msg times
@@ -573,4 +564,4 @@ end
 % store output data
 o_tabTrajNMeas = a_tabTrajNMeas;
 
-return;
+return

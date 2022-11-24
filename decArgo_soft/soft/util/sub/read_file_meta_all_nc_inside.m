@@ -111,18 +111,18 @@ o_deepestPressureDescending = [];
 
 if ~(exist(a_fileName, 'file') == 2)
    fprintf('Fichier introuvable : %s\n', a_fileName);
-   return;
+   return
 end
 
 fCdf = netcdf.open(a_fileName, 'NC_NOWRITE');
 if (isempty(fCdf))
    fprintf('Unable to open NetCDF file: %s\n', a_fileName);
-   return;
+   return
 end
 
 % dimensions
-[unused, o_nCycles] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_CYCLES'));
-[unused, o_nParam] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_PARAM'));
+[~, o_nCycles] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_CYCLES'));
+[~, o_nParam] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_PARAM'));
 
 % caractéristiques du flotteur
 o_platformNumber = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'PLATFORM_NUMBER'))';
@@ -225,4 +225,4 @@ end
 
 netcdf.close(fCdf);
 
-return;
+return

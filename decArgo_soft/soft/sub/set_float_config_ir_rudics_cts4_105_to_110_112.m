@@ -95,7 +95,7 @@ if (~isempty(a_cyProfPhaseList))
                   configName = tmpConfNames{id};
                   if (isempty(strfind(configName, 'CONFIG_PC_')))
                      if (updateNowPtPvPm == 0)
-                        continue;
+                        continue
                      end
                   end
                   idPos = find(strcmp(configName, configNames) == 1, 1);
@@ -142,13 +142,13 @@ if (~isempty(a_cyProfPhaseList))
                               confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                               idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                               currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                              break;
+                              break
                            end
                         else
                            confName = sprintf('CONFIG_PV_%d', 3+(idCP-1)*4);
                            idFCyclePeriod = find(strcmp(confName, configNames) == 1, 1);
                            currentConfig(idFPV03) = currentConfig(idFCyclePeriod);
-                           break;
+                           break
                         end
                      end
                   end
@@ -175,7 +175,7 @@ if (~isempty(a_cyProfPhaseList))
                            zoneThreshold = currentConfig(idPos);
                            if (configPC014 <= zoneThreshold)
                               depthZoneNum = id;
-                              break;
+                              break
                            end
                         end
                      end
@@ -255,4 +255,4 @@ if (~isempty(a_cyProfPhaseList))
    end
 end
 
-return;
+return

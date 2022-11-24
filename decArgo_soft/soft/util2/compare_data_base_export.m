@@ -57,7 +57,7 @@ outputFileName = [DIR_LOG_CSV_FILE '/compare_data_base_export_' datestr(now, 'yy
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Erreur ouverture fichier: %s\n', outputFileName);
-   return;
+   return
 end
 
 header = ['WMO; in BASE; in NEW; TECH Id; dim level; BASE value; NEW value'];
@@ -69,7 +69,7 @@ fprintf('Processing BASE file: %s\n', baseFileName);
 fId = fopen(baseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', baseFileName);
-   return;
+   return
 end
 baseFileContents = textscan(fId, '%s', 'delimiter', '\t');
 baseFileContents = baseFileContents{:};
@@ -83,7 +83,7 @@ baseWmoList = baseMetaData(:, 1);
 for id = 1:length(baseWmoList)
    if (isempty(str2num(baseWmoList{id})))
       fprintf('%s is not a valid WMO number\n', baseWmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', baseWmoList{:});
@@ -102,7 +102,7 @@ fprintf('Processing NEW file: %s\n', newFileName);
 fId = fopen(newFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', newFileName);
-   return;
+   return
 end
 newFileContents = textscan(fId, '%s', 'delimiter', '\t');
 newFileContents = newFileContents{:};
@@ -116,7 +116,7 @@ newWmoList = newMetaData(:, 1);
 for id = 1:length(newWmoList)
    if (isempty(str2num(newWmoList{id})))
       fprintf('%s is not a valid WMO number\n', newWmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', newWmoList{:});
@@ -200,4 +200,4 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return

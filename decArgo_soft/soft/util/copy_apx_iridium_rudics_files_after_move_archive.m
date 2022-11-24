@@ -54,7 +54,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -70,7 +70,7 @@ end
    floatLaunchDatelist, listLaunchLon, listLaunchLat, ...
    listRefDay, floatEndDateList, listDmFlag] = get_floats_info(floatInformationFileName);
 if (isempty(floatWmoList))
-   return;
+   return
 end
 
 % rename and duplicate file (if needed)
@@ -85,7 +85,7 @@ for idFloat = 1:nbFloats
    idF = find(floatWmoList == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => (nothing done)\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = floatDecIdList(idF);
    floatId = str2num(floatIdlist{idF});
@@ -114,7 +114,7 @@ for idFloat = 1:nbFloats
             floatNum, floatId, floatLaunchDate, floatEndDate);
       else
          fprintf('ERROR: Unknown file type (%s) => (nothing done)\n', inputFilePathName);
-         continue;
+         continue
       end
       
       outputFilePathName = [floatOutputDirName '/' outputFileName];
@@ -141,7 +141,7 @@ for idFloat = 1:nbFloats
                for idFi = 1:length(files)
                   if (files(idFi).bytes == inputFileSize)
                      copy = 0;
-                     break;
+                     break
                   end
                end
             end
@@ -208,7 +208,7 @@ for idFloat = 1:nbFloats
             [error, events] = read_apx_ir_rudics_log_file(filePathName);
             if (error == 1)
                fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
-               continue;
+               continue
             end
             
             dates = [events.time];
@@ -248,7 +248,7 @@ for idFloat = 1:nbFloats
    if (~isempty(anomalyCyList))
       for cyNum = anomalyCyList
          if (cyNum == 0)
-            continue;
+            continue
          end
          idFCy = find(cycleList == cyNum);
          fprintf('INFO: Float #%d Cycle #%d: %d msg files for this cycle\n', ...
@@ -310,7 +310,7 @@ for idFloat = 1:nbFloats
    if (~isempty(anomalyCyList))
       for cyNum = anomalyCyList
          if (cyNum == 0)
-            continue;
+            continue
          end
          
          printLog = 0;
@@ -384,4 +384,4 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return

@@ -599,7 +599,7 @@ if (check == 1)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a transmitted date has been updated.
@@ -655,4 +655,4 @@ if (~isempty(g_decArgo_timeData))
    end
 end
 
-return;
+return

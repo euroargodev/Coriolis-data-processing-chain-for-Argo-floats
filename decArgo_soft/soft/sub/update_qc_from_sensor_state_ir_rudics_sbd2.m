@@ -63,7 +63,7 @@ if (~isempty(g_decArgo_koSensorState))
                   profParam = parameterList(idParam);
                   if (strcmp(profParam.name, 'PRES') && (prof.sensorNumber ~= 0))
                      % PRES_QC is not modified (except if it is the CTD sensor)
-                     continue;
+                     continue
                   end
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, idParam);
@@ -81,7 +81,7 @@ if (~isempty(g_decArgo_koSensorState))
                   profParam = parameterList(idParam);
                   if (strcmp(profParam.name, 'PRES') && (prof.sensorNumber ~= 0))
                      % PRES_QC is not modified (except if it is the CTD sensor
-                     continue;
+                     continue
                   end
                   
                   % retrieve the column(s) associated with the parameter data
@@ -142,7 +142,7 @@ if (~isempty(g_decArgo_koSensorState))
                         if (strcmp(measParam.name, 'PRES') && (tabMeasOne.sensorNumber ~= 0))
                            % PRES_QC is not modified (except if it is the CTD
                            % sensor)
-                           continue;
+                           continue
                         end
                         
                         param = get_netcdf_param_attributes(measParam.name);
@@ -162,7 +162,7 @@ if (~isempty(g_decArgo_koSensorState))
                         if (strcmp(measParam.name, 'PRES') && (tabMeasOne.sensorNumber ~= 0))
                            % PRES_QC is not modified (except if it is the CTD
                            % sensor)
-                           continue;
+                           continue
                         end
                         
                         % retrieve the column(s) associated with the parameter data
@@ -202,4 +202,4 @@ end
 o_tabProfiles = a_tabProfiles;
 o_tabTrajNMeas = a_tabTrajNMeas;
 
-return;
+return

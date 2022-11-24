@@ -1108,7 +1108,7 @@ elseif (trajNCycleStruct.surfOnly == 1)
          configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
          if (~isempty(configMissionNumber))
             trajNCycleStruct.configMissionNumber = configMissionNumber;
-            break;
+            break
          end
       end
       cyNum = cyNum - 1;
@@ -1119,4 +1119,4 @@ end
 o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStruct];
 o_tabTrajNCycle = trajNCycleStruct;
 
-return;
+return

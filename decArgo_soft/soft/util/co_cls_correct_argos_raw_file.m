@@ -100,7 +100,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Correction of the Argos HEX files of a given directory.
@@ -139,7 +139,7 @@ for idFic = 1:nbFiles
       fIdIn = fopen(filePathName, 'r');
       if (fIdIn == -1)
          fprintf('Error while opening file : %s\n', filePathName);
-         return;
+         return
       end
       
       % first step: looking for satellite pass header and storing the number of
@@ -154,7 +154,7 @@ for idFic = 1:nbFiles
             if (startLine ~= -1)
                tabNbLinesToReadCor = [tabNbLinesToReadCor; lineNum-startLine+1];
             end
-            break;
+            break
          end
          lineNum = lineNum + 1;
          
@@ -192,7 +192,7 @@ for idFic = 1:nbFiles
             fIdIn = fopen(filePathName, 'r');
             if (fIdIn == -1)
                fprintf('Error while opening file : %s\n', filePathName);
-               return;
+               return
             end
             
             % output file
@@ -200,7 +200,7 @@ for idFic = 1:nbFiles
             fIdOut = fopen(outputFileName, 'wt');
             if (fIdOut == -1)
                fprintf('Error while creating file : %s\n', outputFileName);
-               return;
+               return
             end
             
             lineNum = 0;
@@ -210,7 +210,7 @@ for idFic = 1:nbFiles
                while (nbLinesToCopy > 0)
                   line = fgetl(fIdIn);
                   if (line == -1)
-                     break;
+                     break
                   end
                   lineNum = lineNum + 1;
                   
@@ -268,4 +268,4 @@ for idFic = 1:nbFiles
    end
 end
 
-return;
+return

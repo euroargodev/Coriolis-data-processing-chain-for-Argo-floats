@@ -29,7 +29,7 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 112 121 122 123 124 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 112 113 121 122 123 124 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
 decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1022 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1121 1314 1321 1322];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002 2003];
@@ -44,7 +44,7 @@ decoderIdList = [ ...
 if (~ismember(a_decoderId, decoderIdList))
    fprintf('ERROR: Float #%d: decoderId=%d is not present in the check list of the update_meta_data function\n', ...
       g_decArgo_floatNum, a_decoderId);
-   return;
+   return
 end
 
 % add a POSITIONING_SYSTEM = 'IRIDIUM' to GPS floats
@@ -486,7 +486,7 @@ else
       g_decArgo_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Add 'MTIME' parameter and associated SENSOR in meta-data.
@@ -553,7 +553,7 @@ if (isfield(a_metaData, 'SENSOR') && ...
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Insert a new field at the first place of the given structure and fill it with
@@ -591,7 +591,7 @@ if (~isempty(o_metaData.(a_fieldName)))
    o_metaData.(a_fieldName).([a_fieldName '_1']) = ' ';
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for ctd associated parameters.
@@ -624,7 +624,7 @@ paramList = [ ...
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for ctd associated parameters.
@@ -819,7 +819,7 @@ switch (a_paramName)
       
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for oxygen associated parameters.
@@ -859,7 +859,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 201, 203, 206, 121, 122, 123, 124, 215, 216, 217}
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 201, 203, 206, 121, 122, 123, 124, 215, 216, 217}
       if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 215, 216, 217]))
          paramList = [ ...
             {'TEMP_DOXY'} ...
@@ -990,7 +990,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for oxygen associated parameters.
@@ -1259,13 +1259,13 @@ switch (a_decoderId)
       if (isempty(idF))
          fprintf('WARNING: Float #%d: ''OPTODE_DOXY'' sensor is missing in JSON meta-data\n', ...
             g_decArgo_floatNum);
-         return;
+         return
       end
       sensorModel = a_metaData.SENSOR_MODEL.(['SENSOR_MODEL_' num2str(idF)]);
       if (~strcmp(sensorModel, 'AANDERAA_OPTODE_3830') && ~strcmp(sensorModel, 'AANDERAA_OPTODE_4330'))
          fprintf('WARNING: Float #%d: ''OPTODE_DOXY'' sensor model is inconsistent in JSON meta-data\n', ...
             g_decArgo_floatNum);
-         return;
+         return
       end
       
       if (strcmp(sensorModel, 'AANDERAA_OPTODE_3830'))
@@ -1290,7 +1290,7 @@ switch (a_decoderId)
                      ~isfield(g_decArgo_calibInfo.OPTODE, 'DoxyCalibRefSalinity'))
                   fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                doxyCalibRefSalinity = g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity;
                
@@ -1340,7 +1340,7 @@ switch (a_decoderId)
                      ~isfield(g_decArgo_calibInfo.OPTODE, 'DoxyCalibRefSalinity'))
                   fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                doxyCalibRefSalinity = g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity;
                
@@ -1390,14 +1390,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1447,7 +1447,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
@@ -1455,7 +1455,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1513,7 +1513,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
@@ -1521,7 +1521,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1570,7 +1570,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
@@ -1578,7 +1578,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'TEMP_DOXY';
@@ -1618,7 +1618,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
@@ -1626,7 +1626,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1674,7 +1674,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
@@ -1682,7 +1682,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'TEMP_DOXY';
@@ -1722,7 +1722,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
@@ -1730,7 +1730,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1774,7 +1774,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
@@ -1782,7 +1782,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -1813,7 +1813,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 111, 201, 203, 215, 216, 206, 213, 214, 121, 122, 124, 217, 1322}
+   case {107, 109, 110, 111, 113, 201, 203, 215, 216, 206, 213, 214, 121, 122, 124, 217, 1322}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -1854,14 +1854,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -1896,14 +1896,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -1969,14 +1969,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2033,14 +2033,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY2';
@@ -2099,7 +2099,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
@@ -2107,7 +2107,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2170,14 +2170,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2250,7 +2250,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabPhaseCoef = g_decArgo_calibInfo.OPTODE.TabPhaseCoef;
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
@@ -2258,7 +2258,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
@@ -2266,7 +2266,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2306,7 +2306,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabPhaseCoef = g_decArgo_calibInfo.OPTODE.TabPhaseCoef;
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
@@ -2314,7 +2314,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
@@ -2322,7 +2322,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -2413,14 +2413,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2455,14 +2455,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -2505,14 +2505,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 6
             if (~isempty(find((size(tabDoxyCoef) == [1 6]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2592,7 +2592,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
@@ -2600,7 +2600,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2643,7 +2643,7 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
@@ -2651,7 +2651,7 @@ switch (a_decoderId)
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -2739,14 +2739,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY';
@@ -2781,14 +2781,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PPOX_DOXY';
@@ -2838,14 +2838,14 @@ switch (a_decoderId)
                   ~isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
                fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
                fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOXY2';
@@ -2874,7 +2874,7 @@ switch (a_decoderId)
       end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for radiometric associated parameters.
@@ -2901,7 +2901,7 @@ function [o_metaData] = update_parameter_list_radiometric(a_metaData, a_decoderI
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -2920,7 +2920,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for radiometric associated parameters.
@@ -2972,7 +2972,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124}
       switch (a_paramName)
          
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -3021,7 +3021,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE380 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A0Lambda380') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1Lambda380') && ...
@@ -3032,7 +3032,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE380 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOWN_IRRADIANCE380';
@@ -3051,7 +3051,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE412 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A0Lambda412') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1Lambda412') && ...
@@ -3062,7 +3062,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE412 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOWN_IRRADIANCE412';
@@ -3081,7 +3081,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE490 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490') && ...
@@ -3092,7 +3092,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent DOWN_IRRADIANCE490 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOWN_IRRADIANCE490';
@@ -3111,7 +3111,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent DOWNWELLING_PAR calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A0PAR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1PAR') && ...
@@ -3122,7 +3122,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent DOWNWELLING_PAR calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'DOWNWELLING_PAR';
@@ -3163,7 +3163,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3199,7 +3199,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for backscattering associated parameters.
@@ -3252,7 +3252,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -3271,7 +3271,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
                   isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactBackscatter700') && ...
                   isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700') && ...
@@ -3302,7 +3302,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(darkCountBackscatter700_O))
@@ -3348,7 +3348,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
@@ -3363,7 +3363,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(darkCountBackscatter700_O))
@@ -3404,7 +3404,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent BBP532 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter532') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532') && ...
@@ -3419,7 +3419,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent BBP532 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(darkCountBackscatter532_O))
@@ -3465,7 +3465,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
                   isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactBackscatter700') && ...
                   isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700') && ...
@@ -3480,7 +3480,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(darkCountBackscatter700_O))
@@ -3533,7 +3533,7 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303, 121, 122, 123, 124}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303, 121, 122, 123, 124}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3557,7 +3557,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for chla associated parameters.
@@ -3609,7 +3609,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}
@@ -3628,7 +3628,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
                   isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA') && ...
                   isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
@@ -3650,7 +3650,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(DarkCountChloroA_O))
@@ -3696,7 +3696,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
                   isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
                   isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
@@ -3709,7 +3709,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(DarkCountChloroA_O))
@@ -3765,7 +3765,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
                   isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA') && ...
                   isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
@@ -3778,7 +3778,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(DarkCountChloroA_O))
@@ -3824,7 +3824,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
                   isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
                   isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
@@ -3837,7 +3837,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(DarkCountChloroA_O))
@@ -3865,7 +3865,7 @@ switch (a_decoderId)
       end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for cdom associated parameters.
@@ -3892,7 +3892,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3905,7 +3905,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for cdom associated parameters.
@@ -3957,7 +3957,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CDOM'}
@@ -3976,7 +3976,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent CDOM calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactCDOM') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM'))
@@ -3989,7 +3989,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent CDOM calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             if (isempty(darkCountCDOM_O))
@@ -4018,7 +4018,7 @@ switch (a_decoderId)
       
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for nitrate associated parameters.
@@ -4059,7 +4059,7 @@ switch (a_decoderId)
             {'HUMIDITY_NITRATE'} ...
             ];
       end
-   case {110}
+   case {110, 113}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -4079,7 +4079,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for nitrate associated parameters.
@@ -4138,7 +4138,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 109, 110, 111, 112, 121, 122, 123, 124}
+   case {105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124}
       switch (a_paramName)
          
          case {'UV_INTENSITY_NITRATE'}
@@ -4163,13 +4163,13 @@ switch (a_decoderId)
             
          case {'NITRATE'}
             
-            if (a_decoderId ~= 110)
+            if (~ismember(a_decoderId, [110, 113]))
                
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
                   fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
                      isfield(g_decArgo_calibInfo.SUNA, 'TabOpticalWavelengthUv') && ...
                      isfield(g_decArgo_calibInfo.SUNA, 'TabENitrate') && ...
@@ -4184,7 +4184,7 @@ switch (a_decoderId)
                else
                   fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                
                floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
@@ -4192,7 +4192,7 @@ switch (a_decoderId)
                if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
                   fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                
                idF1 = find(tabOpticalWavelengthUv >= 217);
@@ -4231,7 +4231,7 @@ switch (a_decoderId)
                if (isempty(g_decArgo_calibInfo))
                   fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
                      isfield(g_decArgo_calibInfo.SUNA, 'TabOpticalWavelengthUv') && ...
                      isfield(g_decArgo_calibInfo.SUNA, 'TabENitrate') && ...
@@ -4248,7 +4248,7 @@ switch (a_decoderId)
                else
                   fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                
                floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
@@ -4256,7 +4256,7 @@ switch (a_decoderId)
                if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
                   fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                      g_decArgo_floatNum);
-                  return;
+                  return
                end
                
                idF1 = find(tabOpticalWavelengthUv >= 217);
@@ -4279,7 +4279,8 @@ switch (a_decoderId)
                eSwaNitrateStr = [];
                eNitrateStr = [];
                eBisulfideStr = [];
-               for id = floatPixelBegin:floatPixelEnd
+               % for id = floatPixelBegin:floatPixelEnd % with floatPixelBegin:floatPixelEnd PREDEPLOYMENT_CALIB_COEFFICIENT exceeds 4096 characters
+               for id = pixelBegin:pixelEnd
                   if (tabUvIntensityRefNitrate(id) == 0)
                      uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
                   else
@@ -4309,14 +4310,14 @@ switch (a_decoderId)
                o_preCalibCoef = [ ...
                   sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                   floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-                  'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+                  'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
                   sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
                   g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-                  'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+                  'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
                   sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-                  'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-                  'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
-                  'E_BISULFIDE(Ntrans)=[' eBisulfideStr(1:end-1) ']' ...
+                  'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(1:end-1) ']; ' ...
+                  'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(1:end-1) ']' ...
+                  'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(1:end-1) ']' ...
                   ];
                
                o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
@@ -4328,7 +4329,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
                   isfield(g_decArgo_calibInfo.SUNA, 'TabOpticalWavelengthUv') && ...
                   isfield(g_decArgo_calibInfo.SUNA, 'TabENitrate') && ...
@@ -4345,7 +4346,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent NITRATE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
@@ -4353,7 +4354,7 @@ switch (a_decoderId)
             if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
                fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             idF1 = find(tabOpticalWavelengthUv >= 217);
@@ -4376,7 +4377,8 @@ switch (a_decoderId)
             eSwaNitrateStr = [];
             eNitrateStr = [];
             eBisulfideStr = [];
-            for id = floatPixelBegin:floatPixelEnd
+            % for id = floatPixelBegin:floatPixelEnd % with floatPixelBegin:floatPixelEnd PREDEPLOYMENT_CALIB_COEFFICIENT exceeds 4096 characters
+            for id = pixelBegin:pixelEnd
                if (tabUvIntensityRefNitrate(id) == 0)
                   uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
                else
@@ -4406,14 +4408,14 @@ switch (a_decoderId)
             o_preCalibCoef = [ ...
                sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-               'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+               'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
                sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
                g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-               'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+               'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
                sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-               'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-               'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
-               'E_BISULFIDE(Ntrans)=[' eBisulfideStr(1:end-1) ']' ...
+               'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(1:end-1) ']; ' ...
+               'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(1:end-1) ']' ...
+               'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(1:end-1) ']' ...
                ];
             
             o_preCalibComment = 'Bisulfide concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
@@ -4460,7 +4462,7 @@ switch (a_decoderId)
       end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update parameter list for ph associated parameters.
@@ -4500,7 +4502,7 @@ end
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update meta-data for ph associated parameters.
@@ -4561,7 +4563,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
@@ -4580,7 +4582,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PH_IN_SITU_FREE';
@@ -4600,7 +4602,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
@@ -4619,7 +4621,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PH_IN_SITU_TOTAL';
@@ -4643,7 +4645,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
@@ -4666,7 +4668,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PH_IN_SITU_FREE';
@@ -4686,7 +4688,7 @@ switch (a_decoderId)
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
@@ -4709,7 +4711,7 @@ switch (a_decoderId)
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
-               return;
+               return
             end
             
             o_param = 'PH_IN_SITU_TOTAL';
@@ -4725,7 +4727,7 @@ switch (a_decoderId)
       end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Generate fields associated to each parameter of a provided list.
@@ -4785,4 +4787,4 @@ if (~isempty(a_paramList))
    end
 end
 
-return;
+return

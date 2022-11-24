@@ -51,7 +51,7 @@ end
 floatIriDirName = g_decArgo_archiveAsciiDirectory;
 if ~(exist(floatIriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', floatIriDirName);
-   return;
+   return
 end
 
 % retrieve log file names
@@ -75,7 +75,7 @@ for idFile = 1:length(logFileList)
    [error, events] = read_apx_ir_sbd_log_file(logFilePathName);
    if (error == 1)
       fprintf('ERROR: Error in file: %s => ignored\n', logFilePathName);
-      return;
+      return
    end
    
    if (any(strcmp({events.cmd}, 'GpsServices()')))
@@ -184,7 +184,7 @@ if (isempty(o_clockOffset.clockOffsetCycleNum) || ...
          if (error == 1)
             fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum, msgFilePathName);
-            return;
+            return
          end
          
          juldUtc = [];
@@ -284,4 +284,4 @@ if (isempty(o_clockOffset.clockOffsetCycleNum) || ...
    
 end
 
-return;
+return

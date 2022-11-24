@@ -53,7 +53,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -69,7 +69,7 @@ end
    floatLaunchDatelist, listLaunchLon, listLaunchLat, ...
    listRefDay, floatEndDateList, listDmFlag] = get_floats_info(floatInformationFileName);
 if (isempty(floatWmoList))
-   return;
+   return
 end
 
 % rename and duplicate file (if needed)
@@ -84,7 +84,7 @@ for idFloat = 1:nbFloats
    idF = find(floatWmoList == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => (nothing done)\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = floatDecIdList(idF);
    floatId = str2num(floatIdlist{idF});
@@ -106,13 +106,13 @@ for idFloat = 1:nbFloats
       
       if (fileNames(idFile).bytes == 0)
          fprintf('INFO: Empty file: %s => ignored\n', fileNames(idFile).name);
-         continue;
+         continue
       end
       
       dataFilePathName = [floatInputDirName '/' fileNames(idFile).name];
       
       if ~(exist(dataFilePathName, 'file') == 2)
-         continue;
+         continue
       end
       
       % parse input file name
@@ -150,7 +150,7 @@ for idFloat = 1:nbFloats
          if (error == 1)
             fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
          dates = [];
@@ -204,7 +204,7 @@ for idFloat = 1:nbFloats
          else
             fprintf('INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
                floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
       elseif (strcmp(dataFileExt, '.log'))
@@ -213,7 +213,7 @@ for idFloat = 1:nbFloats
          if (error == 1)
             fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
          dates = [events.time];
@@ -222,7 +222,7 @@ for idFloat = 1:nbFloats
       else
          fprintf('INFO: Float #%d: Don''t know how to manage file ''%s'' in copy_apx_iridium_rudics_files\n', ...
             floatNum, dataFilePathName);
-         continue;
+         continue
       end
       
       cycleNumOutStr = cycleNumInStr;
@@ -367,7 +367,7 @@ for idFloat = 1:nbFloats
                if (error == 1)
                   fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                      floatNum, [floatOutputDirName fileName]);
-                  continue;
+                  continue
                end
                dates = [events.time];
                
@@ -462,7 +462,7 @@ for idFloat = 1:nbFloats
                if (error == 1)
                   fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                      floatNum, [floatOutputDirName fileName]);
-                  continue;
+                  continue
                end
                
                dates = [];
@@ -559,7 +559,7 @@ for idFloat = 1:nbFloats
    if (~isempty(anomalyCyList))
       for cyNum = anomalyCyList
          if (cyNum == 0)
-            continue;
+            continue
          end
          idFCy = find(cycleList == cyNum);
          fprintf('INFO: Float #%d Cycle #%d: %d msg files for this cycle\n', ...
@@ -621,7 +621,7 @@ for idFloat = 1:nbFloats
    if (~isempty(anomalyCyList))
       for cyNum = anomalyCyList
          if (cyNum == 0)
-            continue;
+            continue
          end
          
          printLog = 0;
@@ -695,7 +695,7 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compare the content of one file to a list of files.
@@ -733,11 +733,11 @@ while (~stop)
             o_delete{end+1} = a_fileNameList{idF2};
             a_fileNameList(idF2) = [];
             deleteFlag = 1;
-            break;
+            break
          end
       end
       if (deleteFlag == 1)
-         break;
+         break
       end
    end
    if (deleteFlag == 0)
@@ -745,7 +745,7 @@ while (~stop)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if 2 file contents are identical.
@@ -777,7 +777,7 @@ o_identical = 0;
 fid = fopen(a_fileName1, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName1);
-   return;
+   return
 end
 file1Contents = textscan(fid, '%s');
 file1Contents = file1Contents{:};
@@ -786,7 +786,7 @@ fclose(fid);
 fid = fopen(a_fileName2, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName2);
-   return;
+   return
 end
 file2Contents = textscan(fid, '%s');
 file2Contents = file2Contents{:};
@@ -797,4 +797,4 @@ if ((length(file1Contents) == length(file2Contents)) && ...
    o_identical = 1;
 end
 
-return;
+return

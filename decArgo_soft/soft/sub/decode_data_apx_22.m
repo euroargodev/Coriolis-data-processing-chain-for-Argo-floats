@@ -79,7 +79,7 @@ PRINT_FROZEN_BYTES = 0;
 
 
 if (isempty(a_sensorData))
-   return;
+   return
 end
 
 % information on hydrographic data storage
@@ -1354,4 +1354,4 @@ if (~isempty(techSeries))
    end
 end
 
-return;
+return

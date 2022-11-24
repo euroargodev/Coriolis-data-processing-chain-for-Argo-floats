@@ -47,7 +47,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_collect_static_meta_data_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
       
@@ -136,7 +136,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -171,7 +171,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file

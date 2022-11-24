@@ -93,7 +93,7 @@ for idFilePtn = 1:length(a_inputFileName)
             if (~isempty(cell2mat(idF)))
                for idL = 1:size(fileList, 1)
                   if (~isempty(idF{idL}))
-                     break;
+                     break
                   end
                end
                fileName = fileList{idL, 1};
@@ -117,7 +117,7 @@ for idFilePtn = 1:length(a_inputFileName)
                fileList{idFirst, 3} = a_inputFilePath{idFilePtn};
                fileList(idDel, :) = [];
             else
-               break;
+               break
             end
          end
       end
@@ -146,4 +146,4 @@ for idFile = 1:size(o_fileList, 1)
    end
 end
 
-return;
+return

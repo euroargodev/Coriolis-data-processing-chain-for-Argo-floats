@@ -42,12 +42,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'SEAPOINT'))
    fprintf('WARNING: Float #%d Cycle #%d: SEAPOINT sensor calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.SEAPOINT, 'Point1Volt')) && ...
       (isfield(g_decArgo_calibInfo.SEAPOINT, 'Point1Turbi')) && ...
       (isfield(g_decArgo_calibInfo.SEAPOINT, 'Point2Volt')) && ...
@@ -60,7 +60,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent SEAPOINT sensor calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % compute output data
@@ -69,4 +69,4 @@ aCoef = (point1Turbi-point2Turbi)/(point1Volt-point2Volt);
 bCoef = point1Turbi - aCoef*point1Volt;
 o_TURBIDITY(idNoDef) = aCoef*a_TURBIDITY_VOLTAGE(idNoDef) + bCoef;
                
-return;
+return

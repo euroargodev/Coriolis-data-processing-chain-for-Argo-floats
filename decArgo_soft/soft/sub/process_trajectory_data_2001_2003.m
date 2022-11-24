@@ -947,7 +947,7 @@ if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
          configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
          if (~isempty(configMissionNumber))
             trajNCycleStruct.configMissionNumber = configMissionNumber;
-            break;
+            break
          end
          cyNum = cyNum - 1;
       end
@@ -958,4 +958,4 @@ end
 o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStruct];
 o_tabTrajNCycle = trajNCycleStruct;
 
-return;
+return

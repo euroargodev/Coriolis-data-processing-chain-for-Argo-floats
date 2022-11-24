@@ -102,7 +102,7 @@ a_dataSUNAAPF = a_dataSUNA{4};
 a_dataSUNAAPF2 = a_dataSUNA{5};
 
 if (isempty(a_cyProfPhaseList))
-   return;
+   return
 end
 
 % consider only sensor data
@@ -117,7 +117,7 @@ for idDataType = 1:length(dataTypeList)
    % the stDev & median data are associated with mean data
    % SUNA APF2 (dataType == 25) is processed with SUNA APF (dataType == 24)
    if (ismember(dataType, [1 4 10 13 16 19 22 25]))
-      continue;
+      continue
    end
    
    prof = [];
@@ -154,7 +154,7 @@ for idDataType = 1:length(dataTypeList)
          % ECO3 (mean & stDev & median)
          switch (a_decoderId)
             case {105, 106, 107, 110, 112}
-               [prof, drift] = process_profile_ECO3_mean_stdMed_105_to_107_110_to_112( ...
+               [prof, drift] = process_profile_ECO3_mean_stdMed_105_to_107_110_to_113( ...
                   a_dataECO3Mean, a_dataECO3StdMed, ...
                   a_descentToParkStartDate, a_ascentEndDate, ...
                   a_gpsData, a_sensorTechECO3, a_decoderId);
@@ -174,7 +174,7 @@ for idDataType = 1:length(dataTypeList)
          % ECO3 (raw)
          switch (a_decoderId)
             case {105, 106, 107, 110, 112}
-               [prof, drift] = process_profile_ECO3_raw_105_to_107_110_to_112( ...
+               [prof, drift] = process_profile_ECO3_raw_105_to_107_110_to_113( ...
                   a_dataECO3Raw, ...
                   a_descentToParkStartDate, a_ascentEndDate, ...
                   a_gpsData, a_sensorTechECO3, a_decoderId);
@@ -297,7 +297,7 @@ if (a_decoderId == 110)
    if (ismember(24, dataTypeList) && ismember(25, dataTypeList))
       if (~isempty(a_dataSUNAAPF) && ~isempty(a_dataSUNAAPF2))
          
-         [prof, drift] = process_profile_ir_rudics_SUNA_APF_110( ...
+         [prof, drift] = process_profile_ir_rudics_SUNA_APF_110_113( ...
             a_dataSUNAAPF, a_dataSUNAAPF2, ...
             a_descentToParkStartDate, a_ascentEndDate, ...
             a_gpsData, a_sensorTechSUNA);
@@ -368,4 +368,4 @@ end
 %    end
 % end
 
-return;
+return

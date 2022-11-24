@@ -54,7 +54,7 @@ for idFile = 1:length(a_listFileNames)
       %       else
       if (move_file(fileNameIn, fileNamOut) == 0)
          o_ok = 0;
-         continue;
+         continue
       end
       %       end
       
@@ -88,7 +88,7 @@ for idFile = 1:length(a_listFileNames)
       %       else
       if (move_file(fileNameTxtIn, fileNameTxtOut) == 0)
          o_ok = 0;
-         continue;
+         continue
       end
       %       end
       
@@ -102,4 +102,4 @@ for idFile = 1:length(a_listFileNames)
    end
 end
 
-return;
+return

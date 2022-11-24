@@ -111,7 +111,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_0TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -220,7 +220,7 @@ for idMes = 1:size(a_tabData, 1)
          g_decArgo_nbOf2Or9TypePacketExpected = tabTech(2);
          g_decArgo_nbOf3Or10TypePacketExpected = tabTech(3);
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message and measurement counts are set to 0 for a surface cycle
@@ -242,7 +242,7 @@ for idMes = 1:size(a_tabData, 1)
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
          end
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
+         fprintf('Cycle #%d\n', g_decArgo_cycleNum);
 
          tabTech = [packType tabTech(1:83)' sbdFileDate];
          
@@ -270,7 +270,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -337,7 +337,7 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -404,7 +404,7 @@ for idMes = 1:size(a_tabData, 1)
          % EV or pump packet
          
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
@@ -465,7 +465,7 @@ for idMes = 1:size(a_tabData, 1)
          
          g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            continue;
+            continue
          end
          
          % message data frame
@@ -521,7 +521,7 @@ if (a_procLevel > 0)
    collect_received_packet_type_info;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize global flags and counters used to decide if a buffer is completed
@@ -598,7 +598,7 @@ g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 g_decArgo_nbOf13Or11TypePacketExpected = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = 0;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collect information on received packet types
@@ -657,4 +657,4 @@ g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
 g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 
-return;
+return

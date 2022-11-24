@@ -60,7 +60,7 @@ global g_decArgo_calibInfo;
 
 
 if (isempty(a_UV_INTENSITY_NITRATE) || isempty(a_UV_INTENSITY_DARK_NITRATE))
-   return;
+   return
 end
 
 % check that the 'fitlm' function is available in the Matlab configuration
@@ -70,7 +70,7 @@ if (isempty(which('fitlm')))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % get calibration information
@@ -80,7 +80,7 @@ if (isempty(g_decArgo_calibInfo))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabOpticalWavelengthUv') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabENitrate') && ...
@@ -98,7 +98,7 @@ else
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % retrieve configuration information
@@ -110,7 +110,7 @@ if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % in first version of CTS5 floats (decoderId = 121), the transmitted values of
@@ -135,7 +135,7 @@ if ((pixelBegin < floatPixelBegin) || (pixelEnd > floatPixelEnd))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % select useful data
@@ -153,7 +153,7 @@ tabUvIntensityNitrate = a_UV_INTENSITY_NITRATE(:, floatPixelBegin-pixelBegin+1:f
 %       a_profSuna.cycleNumber, ...
 %       a_profSuna.profileNumber, ...
 %       a_profSuna.direction);
-%    return;
+%    return
 % end
 
 % format useful data
@@ -257,7 +257,7 @@ if (~isempty(idNoDef))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Subfunction for NITRATE processing from UV_INTENSITY_NITRATE.
@@ -292,4 +292,4 @@ tabOpticalWavelength = repmat(a_opticalWavelength, size(a_temp, 1), 1);
 tabTemp = repmat(a_temp, 1, size(a_opticalWavelength, 2));
 o_output = (A + B*tabTemp) .* exp((C + D*tabTemp) .* (tabOpticalWavelength - OPTICAL_WAVELENGTH_OFFSET));
 
-return;
+return

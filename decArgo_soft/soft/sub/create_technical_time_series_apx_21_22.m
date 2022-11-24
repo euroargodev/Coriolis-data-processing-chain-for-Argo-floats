@@ -35,7 +35,7 @@ global g_JULD_STATUS_4;
 
 
 if (isempty(~isempty(a_techSeries.value)))
-   return;
+   return
 end
 
 % retrieve PARAM structure
@@ -65,4 +65,4 @@ for idM = 1:length(a_techSeries.time);
    end
 end
 
-return;
+return

@@ -37,7 +37,7 @@ VERBOSE_MODE = 1;
 
 if ~(exist(floatListFileName, 'file') == 2)
    fprintf('File not found: %s\n', floatListFileName);
-   return;
+   return
 end
 floatList = load(floatListFileName);
 % floatList = [6901854];
@@ -54,7 +54,7 @@ for idFloat = 1:length(floatList)
       fprintf('ERROR: Float #%d: Json meta-data file not found: %s => nothing done for this float\n', ...
          floatNum, ...
          jsonInputFileName);
-      return;
+      return
    end
    
    % read meta-data file
@@ -105,7 +105,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(strfind(configNames{idC}, mandatoryConfigNames{idL})))
             mandatoryList = [mandatoryList idC];
             if (idL < length(mandatoryConfigNames))
-               break;
+               break
             end
          end
       end
@@ -168,7 +168,7 @@ for idFloat = 1:length(floatList)
    fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-      return;
+      return
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -717,7 +717,7 @@ for idFloat = 1:length(floatList)
       % corresponding nc varId
       idMeta = find(strcmp(floatNcVarName, fieldName) == 1);
       if (isempty(idMeta))
-         continue;
+         continue
       end
       
       % CONFIG_* information have been used in the configuration processing
@@ -726,7 +726,7 @@ for idFloat = 1:length(floatList)
             (strcmp(fieldName, 'CONFIG_PARAMETER_VALUE') == 1) || ...
             (strcmp(fieldName, 'CONFIG_MISSION_NUMBER') == 1) || ...
             (strcmp(fieldName, 'CONFIG_MISSION_COMMENT') == 1))
-         continue;
+         continue
       end
       
       % TEMPORARY START
@@ -763,7 +763,7 @@ for idFloat = 1:length(floatList)
       % TEMPORARY END
       
       % field values are to be stored in the nc META file
-      inputElt = getfield(metaData, fieldName);
+      inputElt = metaData.(fieldName);
       if (~isempty(inputElt))
          
          if (isa(inputElt, 'char'))
@@ -800,7 +800,7 @@ for idFloat = 1:length(floatList)
             % meta-data with one dimension
             fieldNames = fieldnames(inputElt);
             for id = 1:length(fieldNames)
-               valueStr = getfield(inputElt, fieldNames{id});
+               valueStr = inputElt.(fieldNames{id});
                if (~isempty(valueStr))
                   [varName, xType, dimIds, nAtts] = netcdf.inqVar(fCdf, floatNcVarId(idMeta));
                   if (xType == netcdf.getConstant('NC_CHAR'))
@@ -828,7 +828,7 @@ for idFloat = 1:length(floatList)
             %             inputSubElt = inputElt{id1};
             %             fieldNames = fieldnames(inputSubElt);
             %             for id2 = 1:length(fieldNames)
-            %                valueStr = getfield(inputSubElt, fieldNames{id2});
+            %                valueStr = inputSubElt.(fieldNames{id2});
             %                if (~isempty(valueStr))
             %                   % we only manage values of type double because only
             %                   % CONFIG_PARAMETER_VALUE variable has two dimensions
@@ -871,4 +871,4 @@ for idFloat = 1:length(floatList)
    
 end
 
-return;
+return

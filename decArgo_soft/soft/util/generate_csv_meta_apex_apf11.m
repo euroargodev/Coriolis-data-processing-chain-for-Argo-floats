@@ -52,7 +52,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -78,7 +78,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta_apex_apf11' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE'];
 fprintf(fidOut, '%s\n', header);
@@ -95,7 +95,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -119,14 +119,14 @@ for idFloat = 1:nbFloats
    % get the list of sensors for this float
    [sensorList] = get_sensor_list_apex_apf11(floatNum);
    if (isempty(sensorList))
-      continue;
+      continue
    end
    
    % find decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    
@@ -193,7 +193,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel] = get_sensor_info(a_inputSensorName, a_decId, a_floatNum, a_metaWmoList, a_metaData)
@@ -229,7 +229,7 @@ switch a_inputSensorName
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_techParId, o_techParDimLev, o_techParCode, o_techParValue] = ...
@@ -279,7 +279,7 @@ for idSensor = 1:length(a_sensorList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_techParId, o_techParDimLev, o_techParCode, o_techParValue] = ...
@@ -321,7 +321,7 @@ for idC = 1:length(a_codeList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorSn] = get_sensor_sn(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
@@ -347,7 +347,7 @@ else
       a_sensorName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_sensorModel] = get_sensor_model(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
@@ -373,7 +373,7 @@ else
       a_sensorName, a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
@@ -390,7 +390,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_positioningSystem] = get_float_positioning_system(a_floatNum, a_metaWmoList, a_metaData)
@@ -409,7 +409,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -445,7 +445,7 @@ else
       o_platformFamily);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -481,7 +481,7 @@ else
       o_platformType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
@@ -517,7 +517,7 @@ else
       o_wmoInstType);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramName, o_paramDimLevel, o_paramSensor, ...
@@ -619,7 +619,7 @@ end
 o_paramAccuracy = o_paramAccuracy';
 o_paramResolution = o_paramResolution';
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_paramAccuracy, o_paramResolution] = ...
@@ -685,4 +685,4 @@ if (~isempty(idF1))
    
 end
 
-return;
+return

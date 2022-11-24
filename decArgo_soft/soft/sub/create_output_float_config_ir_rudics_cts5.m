@@ -30,7 +30,7 @@ o_ncConfig = [];
 % create output float configuration
 [o_ncConfig] = create_output_float_config(decArgoConfParamNames, ncConfParamNames);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create the final configuration that will be used in the meta.nc file.
@@ -342,4 +342,4 @@ o_ncConfig.DYNAMIC_NC.VALUES = finalConfigValue;
 % tmp.DYNAMIC_NC.VALUES = finalConfigValue;
 % create_csv_to_print_config_ir_rudics_sbd2('', 2, tmp);
 
-return;
+return

@@ -25,7 +25,7 @@ o_tabProfiles = [];
 
 
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % collect information on profiles to be merged
@@ -40,57 +40,48 @@ profInfo = [
 tabProfiles = [];
 if (~isempty(profInfo))
    % identify the profiles to merge
-   uSensorNum = unique(profInfo(:, 2));
-   uCycleNum = unique(profInfo(:, 3));
-   uProfileNum = unique(profInfo(:, 4));
-   uPhaseNum = unique(profInfo(:, 5));
-   for idS = 1:length(uSensorNum)
-      for idC = 1:length(uCycleNum)
-         for idP = 1:length(uProfileNum)
-            for idH = 1:length(uPhaseNum)
-               sensorNum = uSensorNum(idS);
-               cycleNum = uCycleNum(idC);
-               profileNum = uProfileNum(idP);
-               phaseNum = uPhaseNum(idH);
-               nbLoop = 1;
-               if (sensorNum == 6)
-                  nbLoop = 1:2;
+   sensorCycleProfPhaseList = unique(profInfo(:, 2:5), 'rows');
+   for idSenCyPrPh = 1:size(sensorCycleProfPhaseList, 1)
+      sensorNum = sensorCycleProfPhaseList(idSenCyPrPh, 1);
+      cycleNum = sensorCycleProfPhaseList(idSenCyPrPh, 2);
+      profileNum = sensorCycleProfPhaseList(idSenCyPrPh, 3);
+      phaseNum = sensorCycleProfPhaseList(idSenCyPrPh, 4);
+      nbLoop = 1;
+      if (sensorNum == 6)
+         nbLoop = 1:2;
+      end
+      for idL = nbLoop
+         
+         if (sensorNum ~= 6)
+            idF = find((profInfo(:, 2) == sensorNum) & ...
+               (profInfo(:, 3) == cycleNum) & ...
+               (profInfo(:, 4) == profileNum) & ...
+               (profInfo(:, 5) == phaseNum));
+         else
+            if (idL == 1) % to get SUNA CTD split profile
+               idF = find((profInfo(:, 2) == sensorNum) & ...
+                  (profInfo(:, 3) == cycleNum) & ...
+                  (profInfo(:, 4) == profileNum) & ...
+                  (profInfo(:, 5) == phaseNum) & ...
+                  (profInfo(:, 6) == 3));
+            else
+               idF = find((profInfo(:, 2) == sensorNum) & ...
+                  (profInfo(:, 3) == cycleNum) & ...
+                  (profInfo(:, 4) == profileNum) & ...
+                  (profInfo(:, 5) == phaseNum) & ...
+                  (profInfo(:, 6) ~= 3));
+            end
+         end
+         if (~isempty(idF))
+            if (length(idF) > 1)
+               % merge the profiles
+               [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
+               if (~isempty(mergedProfile))
+                  tabProfiles = [tabProfiles mergedProfile];
                end
-               for idL = nbLoop
-                  
-                  if (sensorNum ~= 6)
-                     idF = find((profInfo(:, 2) == sensorNum) & ...
-                        (profInfo(:, 3) == cycleNum) & ...
-                        (profInfo(:, 4) == profileNum) & ...
-                        (profInfo(:, 5) == phaseNum));
-                  else
-                     if (idL == 1) % to get SUNA CTD split profile
-                        idF = find((profInfo(:, 2) == sensorNum) & ...
-                           (profInfo(:, 3) == cycleNum) & ...
-                           (profInfo(:, 4) == profileNum) & ...
-                           (profInfo(:, 5) == phaseNum) & ...
-                           (profInfo(:, 6) == 3));
-                     else
-                        idF = find((profInfo(:, 2) == sensorNum) & ...
-                           (profInfo(:, 3) == cycleNum) & ...
-                           (profInfo(:, 4) == profileNum) & ...
-                           (profInfo(:, 5) == phaseNum) & ...
-                           (profInfo(:, 6) ~= 3));
-                     end
-                  end
-                  if (~isempty(idF))
-                     if (length(idF) > 1)
-                        % merge the profiles
-                        [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
-                        if (~isempty(mergedProfile))
-                           tabProfiles = [tabProfiles mergedProfile];
-                        end
-                     else
-                        a_tabProfiles(profInfo(idF, 1)).merged = 1;
-                        tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
-                     end
-                  end
-               end
+            else
+               a_tabProfiles(profInfo(idF, 1)).merged = 1;
+               tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
             end
          end
       end
@@ -100,7 +91,7 @@ end
 % update output parameters
 o_tabProfiles = tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge the profiles.
@@ -382,4 +373,4 @@ for idDir = 1:length(uDir)
    
 end
 
-return;
+return

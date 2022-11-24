@@ -60,7 +60,7 @@ global g_tempoJPR_nitrateFromFloat;
 
 
 if (isempty(a_UV_INTENSITY_NITRATE) || isempty(a_UV_INTENSITY_DARK_NITRATE))
-   return;
+   return
 end
 
 % check that the 'fitlm' function is available in the Matlab configuration
@@ -70,7 +70,7 @@ if (isempty(which('fitlm')))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % get calibration information
@@ -80,7 +80,7 @@ if (isempty(g_decArgo_calibInfo))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabOpticalWavelengthUv') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabENitrate') && ...
@@ -98,7 +98,7 @@ else
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % retrieve configuration information
@@ -120,7 +120,7 @@ if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % in the first versions of CTS5 floats, the transmitted values of
@@ -149,7 +149,7 @@ if ((pixelBegin < floatPixelBegin) || (pixelEnd > floatPixelEnd))
       a_profSuna.cycleNumber, ...
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
-   return;
+   return
 end
 
 % select useful data
@@ -167,7 +167,7 @@ tabUvIntensityNitrate = a_UV_INTENSITY_NITRATE(:, pixelBegin-floatPixelBegin+1:p
 %       a_profSuna.cycleNumber, ...
 %       a_profSuna.profileNumber, ...
 %       a_profSuna.direction);
-%    return;
+%    return
 % end
 
 % format useful data
@@ -405,7 +405,7 @@ if (0)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Subfunction for NITRATE processing from UV_INTENSITY_NITRATE.
@@ -441,4 +441,4 @@ tabOpticalWavelength = repmat(a_opticalWavelength, size(a_temp, 1), 1);
 tabTemp = repmat(a_temp, 1, size(a_opticalWavelength, 2));
 o_output = (g_decArgo_nitrate_a + g_decArgo_nitrate_b*tabTemp) .* exp((g_decArgo_nitrate_c + g_decArgo_nitrate_d*tabTemp) .* (tabOpticalWavelength - g_decArgo_nitrate_opticalWavelengthOffset));
 
-return;
+return

@@ -41,4 +41,4 @@ if (~isempty(a_cycleNumList))
    o_iceDetectedBitValue = iceDetectedBitValueBin;
 end
 
-return;
+return

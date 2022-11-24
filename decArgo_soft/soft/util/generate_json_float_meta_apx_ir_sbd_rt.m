@@ -64,6 +64,8 @@ try
    
    diary(logFileName);
    
+   fprintf('Log file: %s\n', logFileName);
+
    if (~isempty(logLines))
       fprintf('%s', logLines{:});
    end
@@ -103,7 +105,7 @@ xmlwrite(xmlFileName, g_cogj_xmlReportDOMNode);
 %    edit(xmlFileName);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize XML report.
@@ -148,7 +150,7 @@ docRootNode.appendChild(newChild);
 
 g_cogj_xmlReportDOMNode = docNode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse input parameters.
@@ -203,7 +205,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       o_logLines{end+1} = sprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatMetaFileName'))
@@ -227,27 +229,27 @@ end
 if (isempty(g_cogj_floatMetaFileName))
    o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 if (isempty(g_cogj_floatListFileName))
    o_logLines{end+1} = sprintf('ERROR: ''floatListFileName'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 if (isempty(g_cogj_outputJsonDirName))
    o_logLines{end+1} = sprintf('ERROR: ''outputJsonDirName'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 if (isempty(g_cogj_outputLogDirName))
    o_logLines{end+1} = sprintf('ERROR: ''outputLogDirName'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 if (isempty(g_cogj_xmlReportDirName))
    o_logLines{end+1} = sprintf('ERROR: ''xmlReportDirName'' input parameter is mandatory\n');
    o_inputError = 1;
-   return;
+   return
 end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
@@ -258,7 +260,7 @@ o_logLines{end+1} = sprintf('outputLogDirName: %s\n', g_cogj_outputLogDirName);
 o_logLines{end+1} = sprintf('xmlReportDirName: %s\n', g_cogj_xmlReportDirName);
 o_logLines{end+1} = sprintf('\n');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Finalize the XML report.
@@ -314,7 +316,7 @@ docRootNode.appendChild(newChild);
 if (~isempty(infoMsg))
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
-      textNode = char(infoMsg(idMsg));
+      textNode = infoMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -323,7 +325,7 @@ end
 if (~isempty(warningMsg))
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
-      textNode = char(warningMsg(idMsg));
+      textNode = warningMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -332,7 +334,7 @@ end
 if (~isempty(errorMsg))
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
-      textNode = char(errorMsg(idMsg));
+      textNode = errorMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -371,7 +373,7 @@ newChild = docNode.createElement('status');
 newChild.appendChild(docNode.createTextNode(o_status));
 docRootNode.appendChild(newChild);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve INFO, WARNING and ERROR messages from the log file.
@@ -408,7 +410,7 @@ if (~isempty(a_logFileName))
    if (fId == -1)
       errorLine = sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
       o_errorMsg = [o_errorMsg {errorLine}];
-      return;
+      return
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
@@ -428,13 +430,13 @@ if (~isempty(a_logFileName))
          end
          idLine = idLine + 1;
          if (idLine > length(fileContents))
-            break;
+            break
          end
       end
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Duration format.
@@ -484,4 +486,4 @@ else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
 
-return;
+return

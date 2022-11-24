@@ -102,10 +102,6 @@ global g_decArgo_253PacketPhaseReceived;
 % phase of received data
 global g_decArgo_receivedDataPhase;
 
-% cycle phases
-global g_decArgo_phaseSatTrans;
-global g_decArgo_phaseSurfWait;
-
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
@@ -172,6 +168,10 @@ g_decArgo_needFullBufferInfo = PRINT_INFO_ON_NOT_COMPLETED_BUFFER;
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDuration;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
+
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatLoginName '_' num2str(a_floatNum) '/'];
@@ -240,6 +240,9 @@ end
 
 % initialize float parameter configuration
 init_float_config_prv_ir_rudics_cts4(a_launchDate, a_decoderId);
+if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+   return
+end
 
 % add launch position and time in the TRAJ NetCDF file
 if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
@@ -258,7 +261,7 @@ if (~a_floatDmFlag)
       o_tabNcTechIndex = [];
       o_tabNcTechVal = [];
       o_structConfig = [];
-      return;
+      return
       
    else
       
@@ -313,9 +316,9 @@ if (~a_floatDmFlag)
             sbdFilePathName = [g_decArgo_dirInputRsyncData '/' ...
                g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
             [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
-            duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_decoderId);
+            duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
          end
-                  
+         
          % some SBD files can be present in the buffer (if the final buffer was not
          % completed during the previous run of the RT decoder)
          % move the SBD files from buffer to the archive directory
@@ -344,7 +347,7 @@ if (~a_floatDmFlag)
                
                sbdFileName = fileList(idF).name;
                cyIrJulD = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
-
+               
                if (cyIrJulD < a_launchDate)
                   fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
                      g_decArgo_floatNum, ...
@@ -363,7 +366,7 @@ if (~a_floatDmFlag)
             fprintf('BUFF_INFO: %d Iridium mail files moved from float archive dir to float spool dir\n', nbFiles);
          end
       end
-            
+      
       if ((g_decArgo_realtimeFlag) || (g_decArgo_delayedModeFlag) || ...
             (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc)))
          % initialize data structure to store report information
@@ -373,7 +376,7 @@ if (~a_floatDmFlag)
       if (g_decArgo_realtimeFlag)
          
          % process SBD files according to stored buffers
-
+         
          % read the RT buffer list file
          [sbdFileNameList, sbdFileRank] = read_buffer_list(a_floatNum, g_decArgo_historyDirectory);
          
@@ -414,7 +417,7 @@ if (~a_floatDmFlag)
                decode_sbd_files( ...
                tabFileNames, tabFileDates, tabFileSizes, ...
                a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, 1);
-
+            
             if (~isempty(tabProfiles))
                o_tabProfiles = [o_tabProfiles tabProfiles];
             end
@@ -453,7 +456,7 @@ if (~a_floatDmFlag)
          [tabAllFileNames, ~, tabAllFileDates, ~] = ...
             get_dir_files_info_ir_rudics(g_decArgo_spoolDirectory, a_floatLoginName, '');
       end
-            
+      
       % initialize information arrays
       g_decArgo_0TypeReceivedData = [];
       g_decArgo_250TypeReceivedData = [];
@@ -464,7 +467,7 @@ if (~a_floatDmFlag)
       g_decArgo_255TypeReceivedData = [];
       g_decArgo_253PacketPhaseReceived = [];
       g_decArgo_receivedDataPhase = [];
-            
+      
       % initialize file list
       tabNewFileNames = [];
       tabNewFileDates = [];
@@ -487,9 +490,9 @@ if (~a_floatDmFlag)
          else
             move_files_ir_rudics(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0);
          end
-
+         
          % process the files of the buffer directory
-
+         
          % retrieve information on the files in the buffer
          if (g_decArgo_virtualBuff)
             [tabFileNames, tabFileCycles, tabFileDates, tabFileSizes] = ...
@@ -499,87 +502,17 @@ if (~a_floatDmFlag)
                get_dir_files_info_ir_rudics(g_decArgo_bufferDirectory, a_floatLoginName, '');
          end
          
-         idOld = [];
-         
-         % for float 2902243 (6.11 float) in cycle #29 profile #0
-         % one ECO2 packet data is missing => we must process buffer files as
-         % soon as the second Iridium session transmission is received
-         % To do that we check if the buffer contains 2 float tech packets (type
-         % 253) one associated to g_decArgo_phaseSatTrans phase and the other to
-         % g_decArgo_phaseSurfWait phase. If so, all the buffer files but the
-         % last received one (which is the second Iridium session one) are
-         % processed together as 'old' files.
-         if (a_decoderId == 111)
-            
-            sbdFileName = tabAllFileNames{idSpoolFile};
-            if (g_decArgo_virtualBuff)
-               sbdFilePathName = [g_decArgo_archiveDirectory '/' sbdFileName];
-            else
-               sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-            end
-            
-            fId = fopen(sbdFilePathName, 'r');
-            if (fId == -1)
-               fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
-                  g_decArgo_floatNum, ...
-                  sbdFilePathName);
-            end
-            sbdData = fread(fId);
-            fclose(fId);
-            
-            if (strcmp(sbdFileName(end-3:end), '.b64'))
-               idZ = find(sbdData == 0, 1, 'first');
-               if (any(sbdData(idZ:end) ~= 0))
-                  fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
-                     g_decArgo_floatNum, ...
-                     sbdFilePathName);
-               end
-               sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
-            elseif (strcmp(sbdFileName(end-3:end), '.bin'))
-               if (length(sbdData) == 1024)
-                  sbdData = sbdData(1:980);
-               end
-            end
-            
-            sbdDataData = [];
-            if (rem(length(sbdData), 140) == 0)
-               sbdData = reshape(sbdData, 140, length(sbdData)/140)';
-               for idMsg = 1:size(sbdData, 1)
-                  data = sbdData(idMsg, :);
-                  if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
-                     sbdDataData = [sbdDataData; data];
-                  end
-               end
-            else
-               fprintf('DEC_WARNING: Float #%d: input file ignored because of unexpected size (%d bytes)  : %s\n', ...
-                  g_decArgo_floatNum, ...
-                  length(sbdData), ...
-                  sbdFilePathName);
-            end
-            
-            idFloatTechDataPack = find(sbdDataData(:, 1) == 253);
-            if (~isempty(idFloatTechDataPack))
-               if (isempty(g_decArgo_253PacketPhaseReceived))
-                  g_decArgo_253PacketPhaseReceived = sbdDataData(idFloatTechDataPack, 19);
-               elseif (any(g_decArgo_253PacketPhaseReceived == g_decArgo_phaseSatTrans) && ...
-                     any(sbdDataData(idFloatTechDataPack, 19) == g_decArgo_phaseSurfWait))
-                  idOld = 1:length(tabFileDates)-1;
-               end
-            end
-         end
-         
          % create the 'old' and 'new' file lists
          % test 1
          %       idOld = find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS);
-         if (isempty(idOld))
-            if (~isempty(find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS, 1)))
-               idOld = find((tabFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS) & ...
-                  tabFileCycles == tabFileCycles(1));
-            end
+         idOld = [];
+         if (~isempty(find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS, 1)))
+            idOld = find((tabFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS) & ...
+               tabFileCycles == tabFileCycles(1));
          end
          
          if (~isempty(idOld))
-                        
+            
             tabOldFileNames = tabFileNames(idOld);
             tabOldFileDates = tabFileDates(idOld);
             tabOldFileSizes = tabFileSizes(idOld);
@@ -588,7 +521,7 @@ if (~a_floatDmFlag)
                write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, tabOldFileNames, bufferRank);
                bufferRank = bufferRank + 1;
             end
-
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % process the 'old' files
             if (VERBOSE_MODE_BUFF == 1)
@@ -605,10 +538,8 @@ if (~a_floatDmFlag)
             
             if (PRINT_INFO_ON_NOT_COMPLETED_BUFFER)
                % check buffer contents with 'old' files contents
-               if (a_decoderId ~= 111)
-                  check_buffer_ir_rudics_cts4_105_to_110_112( ...
-                     tabOldFileNames, tabOldFileDates, a_floatDmFlag);
-               end
+               check_buffer_ir_rudics_cts4_105_to_110_112( ...
+                  tabOldFileNames, tabOldFileDates, a_floatDmFlag);
             end
             
             g_decArgo_bufferKo = 1;
@@ -680,15 +611,15 @@ if (~a_floatDmFlag)
             tabNewFileNames{end+1} = fileNameList{:};
             tabNewFileDates(end+1) = fileDateList;
             tabNewFileSizes(end+1) = fileSizeList;
-
+            
          end
-                  
+         
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % retrieve information on the new file (nominally only the new inserted
          % one), if old files have been processed all remaining files should be
          % considered
-
+         
          % initialize SBD data
          sbdDataDate = [];
          sbdDataData = [];
@@ -725,7 +656,7 @@ if (~a_floatDmFlag)
                   fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
                      g_decArgo_floatNum, ...
                      sbdFilePathName);
-                  continue;
+                  continue
                end
                sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
             elseif (strcmp(sbdFileName(end-3:end), '.bin'))
@@ -733,7 +664,7 @@ if (~a_floatDmFlag)
                   sbdData = sbdData(1:980);
                end
             end
-               
+            
             if (rem(length(sbdData), 140) == 0)
                sbdData = reshape(sbdData, 140, length(sbdData)/140)';
                for idMsg = 1:size(sbdData, 1)
@@ -763,11 +694,6 @@ if (~a_floatDmFlag)
                   % decode transmitted data
                   decode_prv_data_ir_rudics_cts4_105_to_110_112(sbdDataData, sbdDataDate, 0, a_floatDmFlag);
                   
-               case {111} % Remocean V3.00 and higher
-                  
-                  % decode transmitted data
-                  decode_prv_data_ir_rudics_cts4_111(sbdDataData, sbdDataDate, 0);
-                  
                otherwise
                   fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
                      g_decArgo_floatNum, ...
@@ -775,7 +701,7 @@ if (~a_floatDmFlag)
             end
             
             % check if the buffer contents can be processed
-            [okToProcess, cycleProfToProcess cycleInfoStr] = is_buffer_completed_ir_rudics_cts4(a_decoderId);
+            [okToProcess, cycleProfToProcess] = is_buffer_completed_ir_rudics_cts4_105_to_110_112;
             
             if ((okToProcess == 1) || ...
                   ((g_decArgo_realtimeFlag == 0) && (idSpoolFile == length(tabAllFileDates))))
@@ -783,9 +709,9 @@ if (~a_floatDmFlag)
                % process the 'new' files
                if (VERBOSE_MODE_BUFF == 1)
                   if ((okToProcess == 1) || (idSpoolFile < length(tabAllFileDates)))
-                     fprintf('BUFF_INFO: Float #%d: Processing %d SBD files: %s\n', ...
+                     fprintf('BUFF_INFO: Float #%d: Processing %d SBD files\n', ...
                         g_decArgo_floatNum, ...
-                        length(tabNewFileNames), cycleInfoStr);
+                        length(tabNewFileNames));
                   else
                      fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files\n', ...
                         g_decArgo_floatNum, ...
@@ -794,10 +720,8 @@ if (~a_floatDmFlag)
                      if (PRINT_INFO_ON_NOT_COMPLETED_BUFFER)
                         if ((okToProcess == 0) && (idSpoolFile == length(tabAllFileDates)))
                            % check buffer contents with 'old' files contents
-                           if (a_decoderId ~= 111)
-                              check_buffer_ir_rudics_cts4_105_to_110_112( ...
-                                 tabNewFileNames, tabNewFileDates, a_floatDmFlag);
-                           end
+                           check_buffer_ir_rudics_cts4_105_to_110_112( ...
+                              tabNewFileNames, tabNewFileDates, a_floatDmFlag);
                         end
                      end
                      
@@ -810,7 +734,7 @@ if (~a_floatDmFlag)
                         cycle, profile);
                   end
                end
-            
+               
                [tabProfiles, ...
                   tabTrajNMeas, tabTrajNCycle, ...
                   tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
@@ -843,7 +767,7 @@ if (~a_floatDmFlag)
                      bufferRank = bufferRank + 1;
                   end
                end
-
+               
                % move the processed 'new' files into the archive directory
                if (g_decArgo_virtualBuff)
                   remove_from_list_ir_rudics(tabNewFileNames, 'buffer', 1);
@@ -884,7 +808,7 @@ else
       o_tabNcTechIndex = [];
       o_tabNcTechVal = [];
       o_structConfig = [];
-      return;
+      return
       
    else
       
@@ -909,7 +833,7 @@ else
                
                [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
                
-               duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_decoderId);
+               duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
             end
             
             fprintf('RSYNC_INFO: duplication done ...\n');
@@ -981,7 +905,7 @@ else
          
          %          g_decArgo_nbBuffToProcess = g_decArgo_nbBuffToProcess - 1;
          %          if (g_decArgo_nbBuffToProcess < 0)
-         %             return;
+         %             return
          %          end
          
          if (~isempty(tabProfiles))
@@ -1014,7 +938,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % msg and location times
    [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
-      
+   
    % add interpolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
@@ -1044,9 +968,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % perform CHLA and NITRATE adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
-
+   
    if (g_decArgo_realtimeFlag == 1)
-            
+      
       % save the list of already processed rsync log files in the history
       % directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'processed', ...
@@ -1061,7 +985,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    o_tabNcTechIndex = update_technical_data_iridium_rudics_sbd2(o_tabNcTechIndex);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode one set of RUDICS SBD files.
@@ -1146,22 +1070,6 @@ global g_decArgo_virtualBuff;
 % to assign QC = '3' to decoded data when the buffer is not complete
 global g_decArgo_bufferKo;
 
-% cycle phases
-global g_decArgo_phaseSatTrans;
-
-% arrays to store rough information on received data
-global g_decArgo_0TypeReceivedData;
-global g_decArgo_250TypeReceivedData;
-global g_decArgo_253TypeReceivedData;
-global g_decArgo_248TypeReceivedData;
-global g_decArgo_249TypeReceivedData;
-global g_decArgo_254TypeReceivedData;
-global g_decArgo_255TypeReceivedData;
-global g_decArgo_253PacketPhaseReceived;
-
-% phase of received data
-global g_decArgo_receivedDataPhase;
-
 
 if (a_floatDmFlag == 1)
    sbdFileCycleNum = a_sbdFileSizeList;
@@ -1217,7 +1125,7 @@ while (procDone == 0)
             fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
                g_decArgo_floatNum, ...
                sbdCyFilePathName);
-            continue;
+            continue
          end
          sbdData = fread(fId);
          fclose(fId);
@@ -1228,7 +1136,7 @@ while (procDone == 0)
                fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
                   g_decArgo_floatNum, ...
                   sbdCyFilePathName);
-               continue;
+               continue
             end
             sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
          elseif (strcmp(sbdCyFileName(end-3:end), '.bin'))
@@ -1293,7 +1201,7 @@ while (procDone == 0)
                floatPres, ...
                tabTech, floatProgTechEmpty, floatProgParamEmpty] = ...
                decode_prv_data_ir_rudics_cts4_105_to_110_112(sbdDataData, sbdDataDate, 1, a_floatDmFlag);
-                     
+            
             % assign the current configuration to the decoded cycles and
             % profiles
             set_float_config_ir_rudics_cts4_105_to_110_112(cyProfPhaseList, a_floatSoftVersion);
@@ -1312,7 +1220,7 @@ while (procDone == 0)
                dataCTD, dataOXY, dataOCR, ...
                dataECO3, dataFLNTU, ...
                dataCROVER, dataSUNA);
-
+            
             % set drift of float RTC
             floatClockDrift = 0;
             
@@ -1375,7 +1283,7 @@ while (procDone == 0)
                      g_decArgo_gpsData);
                end
             else
-            
+               
                % output NetCDF files
                
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1478,238 +1386,6 @@ while (procDone == 0)
                
                g_decArgo_outputNcParamIndex = [];
                g_decArgo_outputNcParamValue = [];
-                  
-            end
-            
-         case {111} % Remocean V3.00 and higher
-            
-            if (a_buffModeFlag == 1)
-               % initialize information arrays
-               g_decArgo_0TypeReceivedData = [];
-               g_decArgo_250TypeReceivedData = [];
-               g_decArgo_253TypeReceivedData = [];
-               g_decArgo_248TypeReceivedData = [];
-               g_decArgo_249TypeReceivedData = [];
-               g_decArgo_254TypeReceivedData = [];
-               g_decArgo_255TypeReceivedData = [];
-               g_decArgo_253PacketPhaseReceived = [];
-               g_decArgo_receivedDataPhase = [];
-            end
-            
-            % decode sensor data and associated technical data (0, 250, 252 and
-            % 253 msg types)
-            [cyProfPhaseList, ...
-               dataCTD, dataOXY, dataOCR, ...
-               dataECO2, dataECO3, dataFLNTU, ...
-               dataCROVER, dataSUNA, ...
-               sensorTechCTD, sensorTechOPTODE, sensorTechOCR, ...
-               sensorTechECO2, sensorTechECO3, ...
-               sensorTechFLNTU, sensorTechCROVER, sensorTechSUNA, ...
-               tabTech, floatPres, ...
-               ~, ~, ~, ~] = ...
-               decode_prv_data_ir_rudics_cts4_111(sbdDataData, sbdDataDate, 1);
-            
-            if (a_buffModeFlag == 1)
-               % check the buffer contents to set the
-               % g_decArgo_receivedDataPhase variable
-               is_buffer_completed_ir_rudics_cts4(a_decoderId);
-            end
-
-            % assign the current configuration to the decoded cycles and
-            % profiles
-            if (g_decArgo_receivedDataPhase == g_decArgo_phaseSatTrans)
-               set_float_config_ir_rudics_cts4_111(cyProfPhaseList);
-            end
-            
-            % keep only new GPS locations (acquired during a surface phase)
-            [tabTech] = clean_gps_data_ir_rudics_111(tabTech);
-            
-            % store GPS data
-            store_gps_data_ir_rudics_111(tabTech);
-            
-            % add dates to drift measurements
-            [dataCTD, dataOXY, dataOCR, ...
-               dataECO2, dataECO3, dataFLNTU, ...
-               dataCROVER, dataSUNA] = ...
-               add_drift_meas_dates_ir_rudics_111(a_decoderId, ...
-               dataCTD, dataOXY, dataOCR, ...
-               dataECO2, dataECO3, dataFLNTU, ...
-               dataCROVER, dataSUNA);
-
-            % set drift of float RTC
-            floatClockDrift = 0;
-            
-            % compute the main dates of the cycle
-            [cycleStartDate, buoyancyRedStartDate, ...
-               descentToParkStartDate, ...
-               firstStabDate, firstStabPres, ...
-               descentToParkEndDate, ...
-               descentToProfStartDate, descentToProfEndDate, ...
-               ascentStartDate, ascentEndDate, ...
-               transStartDate, ...
-               buoyancyInvStartDate, ...
-               firstGroundDate, firstGroundPres, ...
-               firstHangDate, firstHangPres, ...
-               firstEmerAscentDate, firstEmergencyAscentPres] = ...
-               compute_prv_dates_ir_rudics_111(tabTech, ...
-               floatClockDrift, a_refDay);
-
-            % decode configuration data (251, 254 and 255 msg types)
-            [cyProfPhaseListConfig, ...
-               ~, ~, ~, ...
-               ~, ~, ~, ...
-               ~, ~, ...
-               ~, ~, ~, ...
-               ~, ~, ...
-               ~, ~, ~, ...
-               ~, ~, ...
-               floatProgRudics, floatProgTech, floatProgParam, floatProgSensor] = ...
-               decode_prv_data_ir_rudics_cts4_111(sbdDataData, sbdDataDate, 2);
-            
-            cyProfPhaseList = [cyProfPhaseList; cyProfPhaseListConfig];
-            
-            if (~isempty(g_decArgo_outputCsvFileId))
-               
-               % output CSV file
-               
-               % print decoded data in CSV file
-               print_info_in_csv_file_ir_rudics_cts4_111( ...
-                  a_decoderId, ...
-                  cyProfPhaseList, ...
-                  dataCTD, dataOXY, dataOCR, ...
-                  dataECO2, dataECO3, dataFLNTU, ...
-                  dataCROVER, dataSUNA, ...
-                  sensorTechCTD, sensorTechOPTODE, sensorTechOCR, ...
-                  sensorTechECO2, sensorTechECO3, ...
-                  sensorTechFLNTU, sensorTechCROVER, sensorTechSUNA, ...
-                  tabTech, floatPres, ...
-                  floatProgRudics, floatProgTech, floatProgParam, floatProgSensor);
-               
-               % print dated data in CSV file
-               if (~isempty(tabTech))
-                  print_dates_in_csv_file_ir_rudics_cts4_111( ...
-                     a_decoderId, ...
-                     cycleStartDate, buoyancyRedStartDate, ...
-                     descentToParkStartDate, ...
-                     firstStabDate, firstStabPres, ...
-                     descentToParkEndDate, ...
-                     descentToProfStartDate, descentToProfEndDate, ...
-                     ascentStartDate, ascentEndDate, ...
-                     transStartDate, ...
-                     buoyancyInvStartDate, ...
-                     firstGroundDate, firstGroundPres, ...
-                     firstHangDate, firstHangPres, ...
-                     firstEmerAscentDate, firstEmergencyAscentPres, ...
-                     dataCTD, dataOXY, dataOCR, ...
-                     dataECO2, dataECO3, dataFLNTU, ...
-                     dataCROVER, dataSUNA, ...
-                     g_decArgo_gpsData);
-               end
-            else
-               
-               % output NetCDF files
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               % PROF NetCDF file
-               
-               % process profile data for PROF NetCDF file
-               [tabProfiles, tabDrift] = process_profiles_ir_rudics_cts4_111( ...
-                  a_decoderId, ...
-                  cyProfPhaseList, ...
-                  dataCTD, dataOXY, dataOCR, ...
-                  dataECO2, dataECO3, dataFLNTU, ...
-                  dataCROVER, dataSUNA, ...
-                  descentToParkStartDate, ascentEndDate, ...
-                  g_decArgo_gpsData, ...
-                  sensorTechCTD, sensorTechOPTODE, sensorTechOCR, ...
-                  sensorTechECO2, sensorTechECO3, ...
-                  sensorTechFLNTU, sensorTechCROVER, sensorTechSUNA);
-
-               % add the vertical sampling scheme from configuration
-               % information
-               [tabProfiles] = add_vertical_sampling_scheme_ir_rudics(tabProfiles);
-
-               % merge profile measurements (raw and averaged measurements of
-               % a given profile)
-               [tabProfiles] = merge_profile_meas_ir_rudics_sbd2(tabProfiles);
-               
-               % compute derived parameters of the profiles
-               [tabProfiles] = compute_profile_derived_parameters_ir_rudics(tabProfiles, a_decoderId);
-               
-               print = 0;
-               if (print == 1)
-                  if (~isempty(tabProfiles))
-                     fprintf('DEC_INFO: Float #%d Cycle #%d: %d profiles for NetCDF file\n', ...
-                        g_decArgo_floatNum, g_decArgo_cycleNum, length(tabProfiles));
-                     for idP = 1:length(tabProfiles)
-                        prof = tabProfiles(idP);
-                        paramList = prof.paramList;
-                        paramList = sprintf('%s ', paramList.name);
-                        profLength = size(prof.data, 1);
-                        fprintf('   ->%2d: Profile #%d dir=%c length=%d param=(%s)\n', ...
-                           idP, prof.profileNumber, prof.direction, ...
-                           profLength, paramList(1:end-1));
-                     end
-                  else
-                     fprintf('DEC_INFO: Float #%d Cycle #%d: No profiles for NetCDF file\n', ...
-                        g_decArgo_floatNum, g_decArgo_cycleNum);
-                  end
-               end
-               
-               o_tabProfiles = [o_tabProfiles tabProfiles];
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               % TRAJ NetCDF file
-               
-               % merge drift measurements (raw and averaged measurements of
-               % the park phase)
-               [tabDrift] = merge_profile_meas_ir_rudics_sbd2(tabDrift);
-               
-               % compute derived parameters of the park phase
-               [tabDrift] = compute_drift_derived_parameters_ir_rudics(tabDrift, a_decoderId);
-               
-               % collect trajectory data for TRAJ NetCDF file
-               [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_111(a_decoderId, ...
-                  tabProfiles, tabDrift, ...
-                  floatPres, tabTech, a_refDay, ...
-                  cycleStartDate, buoyancyRedStartDate, ...
-                  descentToParkStartDate, ...
-                  descentToParkEndDate, ...
-                  descentToProfStartDate, descentToProfEndDate, ...
-                  ascentStartDate, ascentEndDate, ...
-                  firstEmerAscentDate, ...
-                  sensorTechCTD);
-
-               % process trajectory data for TRAJ NetCDF file
-               [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
-                  cyProfPhaseList, tabTrajIndex, tabTrajData);
-               
-               o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
-               o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               % TECH NetCDF file
-               
-               % process technical data for TECH NetCDF file
-               process_technical_data_ir_rudics_111( ...
-                  a_decoderId, cyProfPhaseList, ...
-                  sensorTechCTD, sensorTechOPTODE, sensorTechOCR, ...
-                  sensorTechECO2, sensorTechECO3, ...
-                  sensorTechFLNTU, sensorTechCROVER, sensorTechSUNA, ...
-                  tabTech, a_refDay, ...
-                  floatProgParam);
-               
-               % filter useless technical data
-               filter_technical_data_ir_rudics_sbd2;
-               
-               if (~isempty(g_decArgo_outputNcParamIndex))
-                  o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
-                  o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-               end
-               o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
-               
-               g_decArgo_outputNcParamIndex = [];
-               g_decArgo_outputNcParamValue = [];
                
             end
             
@@ -1731,7 +1407,7 @@ if (g_decArgo_bufferKo == 1)
       o_tabProfiles, o_tabTrajNMeas);
 end
 
-return;
+return
 
 % TEMP START
 % study SBD file times and size
@@ -1793,7 +1469,7 @@ return;
 % fidOut = fopen(outputFileName, 'wt');
 % if (fidOut == -1)
 %    fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-%    return;
+%    return
 % end
 %
 % header = ['WMO #; Cycle #; Sbd file name; Sbd file date; Diff date; Surf time; Sbd file size (bytes); Sbd files nb packets'];
@@ -1823,7 +1499,7 @@ return;
 %
 % fclose(fidOut);
 %
-% return;
+% return
 
 % TEMP STOP
 

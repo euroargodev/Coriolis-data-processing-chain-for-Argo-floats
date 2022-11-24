@@ -59,7 +59,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_systemLogFileList))
-   return;
+   return
 end
 
 if (length(a_systemLogFileList) > 1)
@@ -77,11 +77,11 @@ for idFile = 1:length(a_systemLogFileList)
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sysFilePathName);
-      return;
+      return
    end
    
    if (isempty(events))
-      continue;
+      continue
    end
 
    % retrieve useful information
@@ -181,4 +181,4 @@ if (~isempty(o_gpsData))
    end
 end
 
-return;
+return

@@ -43,7 +43,7 @@ switch (a_dacFormatId)
    otherwise
       fprintf('ERROR: Cannot find decoderId from DAC version ''%s'' in get_conf_at_launch_cts5\n', ...
          a_dacFormatId);
-      return;
+      return
 end
 
 % read configuration file
@@ -69,4 +69,4 @@ for idF = 1:length(fieldNames)
    end
 end
 
-return;
+return

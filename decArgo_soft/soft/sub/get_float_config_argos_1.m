@@ -37,11 +37,11 @@ idConf = find(g_decArgo_floatConfig.NUMBER == a_configMissionNumber);
 if (isempty(idConf))
    fprintf('WARNING: Float #%d: config #%d is missing\n', ...
       g_decArgo_floatNum, a_configMissionNumber);
-   return;
+   return
 end
 
 % retrieve the data of the concerned configuration
 o_configNames = g_decArgo_floatConfig.NAMES;
 o_configValues = g_decArgo_floatConfig.VALUES(:, idConf);
 
-return;
+return

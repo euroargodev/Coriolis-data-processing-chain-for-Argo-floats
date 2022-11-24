@@ -108,7 +108,7 @@ else
    fId = fopen(a_configReportFileName, 'r');
    if (fId == -1)
       fprintf('ERROR: Error while opening file: %s\n', a_configReportFileName);
-      return;
+      return
    end
    
    % parse input data and store configuration information
@@ -117,13 +117,13 @@ else
       line = fgetl(fId);
       lineNum = lineNum + 1;
       if (line == -1)
-         break;
+         break
       end
       line = strtrim(line);
       
       % empty line
       if (isempty(line))
-         continue;
+         continue
       end
       
       if (~isempty(strfind(line, '<VL V')))
@@ -146,7 +146,7 @@ else
             while (1)
                [info, remain] = strtok(remain, ' ');
                if (isempty(info))
-                  break;
+                  break
                end
                if (id == 3)
                   o_confParamNames{end+1} = name;
@@ -167,13 +167,13 @@ else
       line = fgetl(fId);
       lineNum = lineNum + 1;
       if (line == -1)
-         break;
+         break
       end
       line = strtrim(line);
       
       % empty line
       if (isempty(line))
-         continue;
+         continue
       end
       
       % configuration parameters
@@ -189,14 +189,14 @@ else
                fprintf('ERROR: Cannot parse line #%d: %s\n', lineNum, line);
             else
                if (~ismember(val(1), sensorList))
-                  continue;
+                  continue
                end
                o_confParamNames{end+1} = sprintf('CONFIG_PC_%d_1_%d', val(1), val(2));
                o_confParamValues{end+1} = num2str(val(3));
             end
          else
             if (~ismember(val(1), sensorList))
-               continue;
+               continue
             end
             o_confParamNames{end+1} = sprintf('CONFIG_PC_%d_0_%d', val(1), val(2));
             o_confParamValues{end+1} = num2str(val(3));
@@ -307,4 +307,4 @@ end
 [o_confParamNames, idSort] = sort(o_confParamNames);
 o_confParamValues = o_confParamValues(idSort);
 
-return;
+return

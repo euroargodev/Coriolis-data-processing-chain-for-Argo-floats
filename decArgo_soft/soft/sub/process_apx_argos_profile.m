@@ -33,7 +33,7 @@ o_ncProfile = [];
 
 
 if (isempty(a_profData))
-   return;
+   return
 end
    
 profiles = [a_profData a_profNstData];
@@ -132,4 +132,4 @@ if (ismember(a_decoderId, [1014]))
    o_ncProfile = [o_ncProfile addProfiles];
 end
 
-return;
+return

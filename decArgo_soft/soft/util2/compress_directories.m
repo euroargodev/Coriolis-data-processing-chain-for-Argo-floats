@@ -57,7 +57,7 @@ nbDir = length(dirs);
 for idDir = 1:length(dirs)
    
 %    if ((idDir < 376) || (idDir > 380))
-%       continue;
+%       continue
 %    end
    
    dirName = dirs(idDir).name;
@@ -79,4 +79,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

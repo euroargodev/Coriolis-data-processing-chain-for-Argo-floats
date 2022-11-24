@@ -25,7 +25,7 @@ o_tabProfiles = [];
 
 
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % collect information on profiles to be merged
@@ -39,36 +39,27 @@ profInfo = [
 tabProfiles = [];
 if (~isempty(profInfo))
    % identify the profiles to merge
-   uSensorNum = unique(profInfo(:, 2));
-   uCycleNum = unique(profInfo(:, 3));
-   uProfileNum = unique(profInfo(:, 4));
-   uPhaseNum = unique(profInfo(:, 5));
-   for idS = 1:length(uSensorNum)
-      for idC = 1:length(uCycleNum)
-         for idP = 1:length(uProfileNum)
-            for idH = 1:length(uPhaseNum)
-               sensorNum = uSensorNum(idS);
-               cycleNum = uCycleNum(idC);
-               profileNum = uProfileNum(idP);
-               phaseNum = uPhaseNum(idH);
-               
-               idF = find((profInfo(:, 2) == sensorNum) & ...
-                  (profInfo(:, 3) == cycleNum) & ...
-                  (profInfo(:, 4) == profileNum) & ...
-                  (profInfo(:, 5) == phaseNum));
-               if (~isempty(idF))
-                  if (length(idF) > 1)
-                     % merge the profiles
-                     [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
-                     if (~isempty(mergedProfile))
-                        tabProfiles = [tabProfiles mergedProfile];
-                     end
-                  else
-                     a_tabProfiles(profInfo(idF, 1)).merged = 1;
-                     tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
-                  end
-               end
+   sensorCycleProfPhaseList = unique(profInfo(:, 2:5), 'rows');
+   for idSenCyPrPh = 1:size(sensorCycleProfPhaseList, 1)
+      sensorNum = sensorCycleProfPhaseList(idSenCyPrPh, 1);
+      cycleNum = sensorCycleProfPhaseList(idSenCyPrPh, 2);
+      profileNum = sensorCycleProfPhaseList(idSenCyPrPh, 3);
+      phaseNum = sensorCycleProfPhaseList(idSenCyPrPh, 4);
+      
+      idF = find((profInfo(:, 2) == sensorNum) & ...
+         (profInfo(:, 3) == cycleNum) & ...
+         (profInfo(:, 4) == profileNum) & ...
+         (profInfo(:, 5) == phaseNum));
+      if (~isempty(idF))
+         if (length(idF) > 1)
+            % merge the profiles
+            [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
+            if (~isempty(mergedProfile))
+               tabProfiles = [tabProfiles mergedProfile];
             end
+         else
+            a_tabProfiles(profInfo(idF, 1)).merged = 1;
+            tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
          end
       end
    end
@@ -77,7 +68,7 @@ end
 % update output parameters
 o_tabProfiles = tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge the profiles according to the treatment type of each depth zone.
@@ -169,7 +160,7 @@ for idDir = 1:length(uDir)
                ones(size(data, 1), 1)*paramPresMed.fillValue, ...
                ones(size(data, 1), 1)*paramTempMed.fillValue, ...
                ones(size(data, 1), 1)*paramSalMed.fillValue];
-
+            
          case g_decArgo_treatAverageAndStDev
             % CTD (mean & stDev)
             
@@ -198,33 +189,33 @@ for idDir = 1:length(uDir)
    
    paramList = [paramPres paramTemp paramSal paramTempStDev paramSalStDev paramPresMed paramTempMed paramSalMed];
    
-  idDel = [];
-  for idP = 1:length(paramList)
-     if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-        idDel = [idDel, idP];
-     end
-  end
-  paramList(idDel) = [];
-  finalData(:, idDel) = [];
-  
-  newProfile = a_tabProfiles(idProfForDir(1));
-  
-  newProfile.paramList = paramList;
-  newProfile.treatType = '';
-  newProfile.dateList = paramJuld;
-      
-  newProfile.data = finalData;
-  newProfile.dates = finalDates;
-  newProfile.datesAdj = finalDatesAdj;
-  
-  newProfile.merged = 1;
-      
-  % measurement dates
-  newProfile.minMeasDate = min(newProfile.datesAdj);
-  newProfile.maxMeasDate = max(newProfile.datesAdj);
-
-  o_tabProfiles = [o_tabProfiles newProfile];
-  
+   idDel = [];
+   for idP = 1:length(paramList)
+      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
+         idDel = [idDel, idP];
+      end
+   end
+   paramList(idDel) = [];
+   finalData(:, idDel) = [];
+   
+   newProfile = a_tabProfiles(idProfForDir(1));
+   
+   newProfile.paramList = paramList;
+   newProfile.treatType = '';
+   newProfile.dateList = paramJuld;
+   
+   newProfile.data = finalData;
+   newProfile.dates = finalDates;
+   newProfile.datesAdj = finalDatesAdj;
+   
+   newProfile.merged = 1;
+   
+   % measurement dates
+   newProfile.minMeasDate = min(newProfile.datesAdj);
+   newProfile.maxMeasDate = max(newProfile.datesAdj);
+   
+   o_tabProfiles = [o_tabProfiles newProfile];
+   
 end
 
-return;
+return

@@ -44,7 +44,7 @@ for idFile = 1:length(a_listFileNames)
    
    if (move_file(fileNameIn, fileNameOut) == 0)
       o_ok = 0;
-      continue;
+      continue
    end
    
    if (a_updateXmlReportFlag == 1)
@@ -56,4 +56,4 @@ for idFile = 1:length(a_listFileNames)
    end
 end
 
-return;
+return

@@ -107,7 +107,7 @@ global g_decArgo_julD2FloatDayOffset;
 
 
 if (isempty(a_tabTech1) && isempty(a_tabTech1))
-   return;
+   return
 end
 
 ID_OFFSET = 1;
@@ -387,4 +387,4 @@ if (print == 1)
    end
 end
 
-return;
+return

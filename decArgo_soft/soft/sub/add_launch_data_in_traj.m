@@ -46,4 +46,4 @@ trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 % output data
 o_tabTrajNMeas = trajNMeasStruct;
 
-return;
+return

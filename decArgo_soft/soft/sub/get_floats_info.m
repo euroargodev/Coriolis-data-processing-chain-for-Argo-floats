@@ -59,7 +59,7 @@ global g_decArgo_dateDef;
 
 if ~(exist(a_floatInfoFileName, 'file') == 2)
    fprintf('ERROR: Float information file not found: %s\n', a_floatInfoFileName);
-   return;
+   return
 end
 
 fId = fopen(a_floatInfoFileName, 'r');
@@ -108,4 +108,4 @@ for id = 1:length(listRefDay)
    end
 end
 
-return;
+return

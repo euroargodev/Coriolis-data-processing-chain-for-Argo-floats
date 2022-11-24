@@ -28,7 +28,7 @@ end
 
 if (exist(dirToCheck, 'dir') == 7)
    fprintf('Cannot find directory %s => stop!\n', dirToCheck);
-   return;
+   return
 end
 
 fprintf('Directory: %s\n', dirToCheck);
@@ -99,4 +99,4 @@ for dirNum = 1:length(dirAll)
    end
 end
 
-return;
+return

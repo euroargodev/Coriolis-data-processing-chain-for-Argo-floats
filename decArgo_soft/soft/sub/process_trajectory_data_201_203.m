@@ -569,7 +569,7 @@ if (a_deepCycle == 1)
                   tabDur = [tabDur; data(idPoint+1+15*2)];
                   tabType = [tabType; data(1)];
                else
-                  break;
+                  break
                end
             end
          end
@@ -588,7 +588,7 @@ if (a_deepCycle == 1)
                   tabDur = [tabDur; data(idPoint+1+15*2)];
                   tabType = [tabType; data(1)];
                else
-                  break;
+                  break
                end
             end
          end
@@ -914,4 +914,4 @@ end
 o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStruct];
 o_tabTrajNCycle = trajNCycleStruct;
 
-return;
+return

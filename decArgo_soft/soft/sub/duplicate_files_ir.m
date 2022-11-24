@@ -33,8 +33,8 @@ for idFile = 1:length(a_listFileNames)
    fileNamOut = [a_outputDir '/' fileName];
    if (copy_file(fileNameIn, fileNamOut) == 0)
       o_ok = 0;
-      return;
+      return
    end
 end
 
-return;
+return

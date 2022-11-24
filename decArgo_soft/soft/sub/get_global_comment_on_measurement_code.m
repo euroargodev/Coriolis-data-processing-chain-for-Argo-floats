@@ -39,7 +39,7 @@ if (~isempty(mcList))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve the list of measurement codes for a given decoder.
@@ -378,7 +378,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
       % Provor CTS4 & Arvor CM
       o_mcList = [ ...
          g_MC_Launch ...
@@ -907,7 +907,7 @@ end
 
 o_mcList = unique(o_mcList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve comment on some specific measurement code.
@@ -1104,4 +1104,4 @@ else
    
 end
 
-return;
+return

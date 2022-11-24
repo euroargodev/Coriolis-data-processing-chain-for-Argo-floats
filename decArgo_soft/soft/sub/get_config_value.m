@@ -35,4 +35,4 @@ if (~isempty(idPos) && ~isempty(a_configValues(idPos)) && ~isnan(a_configValues(
    end
 end
 
-return;
+return

@@ -30,34 +30,36 @@ global g_cogj_reportData;
 
 
 % check inputs
-fprintf('Generating json meta-data files from input file: %s\n', a_floatMetaFileName);
+fprintf('Generating json meta-data files from input file: \n FLOAT_META_FILE_NAME = %s\n', a_floatMetaFileName);
 
 if ~(exist(a_floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', a_floatMetaFileName);
-   return;
+   return
 end
 
-fprintf('Generating json meta-data files for floats of the list: %s\n', a_floatListFileName);
+fprintf('Generating json meta-data files for floats of the list: \n FLOAT_LIST_FILE_NAME = %s\n', a_floatListFileName);
 
 if ~(exist(a_floatListFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_floatListFileName);
-   return;
+   return
 end
 
+fprintf('Output directory of json meta-data files: \n OUTPUT_DIR_NAME = %s\n', a_outputDirName);
+
 % lists of mandatory meta-data
+% FLOAT_SERIAL_NO and SENSOR_SERIAL_NO should not be in the following list
+% (only the database can set these mandatory values to 'n/a')
 mandatoryList1 = [ ...
    {'BATTERY_TYPE'} ...
    {'CONTROLLER_BOARD_SERIAL_NO_PRIMARY'} ...
    {'CONTROLLER_BOARD_TYPE_PRIMARY'} ...
    {'DAC_FORMAT_ID'} ...
    {'FIRMWARE_VERSION'} ...
-   {'FLOAT_SERIAL_NO'} ...
    {'MANUAL_VERSION'} ...
    {'PI_NAME'} ...
    {'PREDEPLOYMENT_CALIB_COEFFICIENT'} ...
    {'PREDEPLOYMENT_CALIB_EQUATION'} ...
    {'PTT'} ...
-   {'SENSOR_SERIAL_NO'} ...
    {'PARAMETER_UNITS'} ...
    {'PARAMETER_SENSOR'} ...
    {'STANDARD_FORMAT_ID'} ...
@@ -74,7 +76,7 @@ mandatoryList2 = [ ...
 fId = fopen(a_floatMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_floatMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -95,7 +97,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('ERROR: %s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -119,23 +121,25 @@ end
 % process floats
 for idFloat = 1:length(floatList)
    
-   fprintf('%3d/%3d %d\n', idFloat, length(floatList), floatList(idFloat));
+   skipFloat = 0;
+   floatNum = floatList(idFloat);
+   fprintf('%3d/%3d %d\n', idFloat, length(floatList), floatNum);
    
    % initialize the structure to be filled
    metaStruct = get_meta_init_struct();
    
-   metaStruct.PLATFORM_NUMBER = num2str(floatList(idFloat));
+   metaStruct.PLATFORM_NUMBER = num2str(floatNum);
    metaStruct.ARGO_USER_MANUAL_VERSION = '3.1';
    
    % direct conversion data
-   idForWmo = find(wmoList == floatList(idFloat));
+   idForWmo = find(wmoList == floatNum);
    for idBSN = 1:length(metaBddStructNames)
-      metaBddStructField = char(metaBddStructNames(idBSN));
+      metaBddStructField = metaBddStructNames{idBSN};
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
          if (~isempty(idF))
-            metaStruct.(metaBddStructField) = char(metaData(idForWmo(idF), 4));
+            metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
             if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'n/a';
@@ -143,35 +147,39 @@ for idFloat = 1:length(floatList)
             elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
             end
+            if (strcmp(metaBddStructField, 'FLOAT_SERIAL_NO'))
+               fprintf('ERROR: Float #%d: FLOAT_SERIAL_NO (''%s'') is mandatory => no json file generated\n', ...
+                  floatNum, metaBddStructValue);
+               skipFloat = 1;
+            end
          end
       end
    end
    
-   % IMEI / PTT specific processing
-   if (~isempty(metaStruct.IMEI))
-      if (length(metaStruct.IMEI) ~= 15)
-         fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s''); 15 digits expected\n', ...
-            floatList(idFloat), metaStruct.IMEI);
-      else
-         if (~strcmp(metaStruct.PTT, 'n/a'))
-            if (length(metaStruct.PTT) ~= 6)
-               fprintf('ERROR: Float #%d: inconsistent PTT number (''%s''); 6 digits expected\n', ...
-                  floatList(idFloat), metaStruct.PTT);
-            else
-               if (~strcmp(metaStruct.IMEI(end-6:end-1), metaStruct.PTT))
-                  fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s'') VS PTT number (''%s'')\n', ...
-                     floatList(idFloat), metaStruct.IMEI, metaStruct.PTT);
-               end
-            end
-         else
-            metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
-            fprintf('INFO: Float #%d: PTT number (''%s'') set from IMEI number (''%s'')\n', ...
-               floatList(idFloat), metaStruct.PTT, metaStruct.IMEI);
-         end
-      end
-   elseif (~strcmp(metaStruct.PTT, 'n/a'))
-      fprintf('WARNING: Float #%d: PTT number (''%s'') is set but IMEI number is unknown\n', ...
-         floatList(idFloat), metaStruct.PTT);
+   % retrieve DAC_FORMAT_ID
+   dacFormatId = metaStruct.DAC_FORMAT_ID;
+   if (isempty(dacFormatId))
+      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+         floatNum);
+      continue
+   end
+   
+   % check if the float version is concerned by this tool
+   if (~ismember(dacFormatId, [ ...
+         {'5.4'} ...
+         {'5.41'} {'5.42'} ...
+         {'5.6'} ...
+         {'5.61'} {'5.62'} {'5.63'} ...
+         {'5.64'} ...
+         {'5.65'} ...
+         {'5.7'} {'5.71'} {'5.72'} {'5.73'} ...
+         {'5.43'} {'5.44'} ...
+         {'5.45'} ...
+         {'5.74'} ...
+         {'5.75'} {'5.46'}]))
+      fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
+         floatNum, dacFormatId);
+      continue
    end
    
    % multi dim data
@@ -201,6 +209,18 @@ for idFloat = 1:length(floatList)
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
    
+   % check that SENSOR_SERIAL_NO is set
+   for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
+      if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
+         fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
+            floatNum, ...
+            metaStruct.SENSOR{idS}, ...
+            metaStruct.SENSOR_MODEL{idS}, ...
+            metaStruct.SENSOR_MAKER{idS});
+         skipFloat = 1;
+      end
+   end
+   
    itemList = [ ...
       {'PARAMETER'} ...
       {'PARAMETER_SENSOR'} ...
@@ -227,21 +247,40 @@ for idFloat = 1:length(floatList)
       itemList, ...
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
-   
-   % configuration parameters
-   
-   % retrieve DAC_FORMAT_ID
-   dacFormatId = getfield(metaStruct, 'DAC_FORMAT_ID');
-   if (isempty(dacFormatId))
-      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
-         floatList(idFloat));
-      continue;
+
+   % IMEI / PTT specific processing
+   if (~isempty(metaStruct.IMEI))
+      if (length(metaStruct.IMEI) ~= 15)
+         fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s''); 15 digits expected\n', ...
+            floatNum, metaStruct.IMEI);
+      else
+         if (~strcmp(metaStruct.PTT, 'n/a'))
+            if (length(metaStruct.PTT) ~= 6)
+               fprintf('ERROR: Float #%d: inconsistent PTT number (''%s''); 6 digits expected\n', ...
+                  floatNum, metaStruct.PTT);
+            else
+               if (~strcmp(metaStruct.IMEI(end-6:end-1), metaStruct.PTT))
+                  fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s'') VS PTT number (''%s'')\n', ...
+                     floatNum, metaStruct.IMEI, metaStruct.PTT);
+               end
+            end
+         else
+            metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+            fprintf('INFO: Float #%d: PTT number (''%s'') set from IMEI number (''%s'')\n', ...
+               floatNum, metaStruct.PTT, metaStruct.IMEI);
+         end
+      end
+   elseif (~strcmp(metaStruct.PTT, 'n/a'))
+      fprintf('WARNING: Float #%d: PTT number (''%s'') is set but IMEI number is unknown\n', ...
+         floatNum, metaStruct.PTT);
    end
+      
+   % configuration parameters
    
    % CONFIG_PARAMETER_NAME
    configStruct = get_config_init_struct(dacFormatId);
    if (isempty(configStruct))
-      continue;
+      continue
    end
    configStructNames = fieldnames(configStruct);
    metaStruct.CONFIG_PARAMETER_NAME = configStructNames;
@@ -249,7 +288,7 @@ for idFloat = 1:length(floatList)
    % CONFIG_PARAMETER_VALUE
    configBddStruct = get_config_bdd_struct(dacFormatId);
    if (isempty(configBddStruct))
-      continue;
+      continue
    end
    configBddStructNames = fieldnames(configBddStruct);
    
@@ -262,7 +301,7 @@ for idFloat = 1:length(floatList)
             configBddStructName = configBddStructNames{idBSN};
             if ((strcmp(configBddStructName, 'CONFIG_PM02_ReferenceDay') == 0) && ...
                   (strcmp(configBddStructName, 'CONFIG_PM03_EstimatedSurfaceTime') == 0))
-               configBddStructValue = getfield(configBddStruct, configBddStructName);
+               configBddStructValue = configBddStruct.(configBddStructName);
                if (~isempty(configBddStructValue))
                   idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1);
                   if (~isempty(idF))
@@ -303,6 +342,12 @@ for idFloat = 1:length(floatList)
                            value = '0';
                         end
                         configParamVal{idBSN, idConf} = value;
+                     end
+                  else
+                     if (strcmp(configBddStructName, 'CONFIG_IC00_NbDaysWithoutSurfacingAfterIceDetection'))
+                        fprintf('ERROR: Float #%d: CONFIG_IC00 (''%s'') is mandatory => no json file generated\n', ...
+                           floatNum, configBddStructValue);
+                        skipFloat = 1;
                      end
                   end
                else
@@ -363,7 +408,7 @@ for idFloat = 1:length(floatList)
             configBddStructName = configBddStructNames{idBSN};
             if ((strcmp(configBddStructName, 'CONFIG_PM02_ReferenceDay') == 0) && ...
                   (strcmp(configBddStructName, 'CONFIG_PM03_EstimatedSurfaceTime') == 0))
-               configBddStructValue = getfield(configBddStruct, configBddStructName);
+               configBddStructValue = configBddStruct.(configBddStructName);
                if (~isempty(configBddStructValue))
                   idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1);
                   if (~isempty(idF))
@@ -406,11 +451,17 @@ for idFloat = 1:length(floatList)
                            % processed below
                         end
                      end
+                  else
+                     if (strcmp(configBddStructName, 'CONFIG_PG00_NbDaysWithoutSurfacingAfterIceDetection'))
+                        fprintf('ERROR: Float #%d: CONFIG_PG00 (''%s'') is mandatory => no json file generated\n', ...
+                           floatNum, configBddStructValue);
+                        skipFloat = 1;
+                     end
                   end
                else
                   % if we want to use default values if the information is
                   % missing in the database
-                  %                      configParamVal{idBSN, idConf} = getfield(configStruct, configBddStructName);
+                  %                      configParamVal{idBSN, idConf} = configStruct.(configBddStructName);
                end
             else
                if (strcmp(configBddStructName, 'CONFIG_PM02_ReferenceDay') == 1)
@@ -442,7 +493,7 @@ for idFloat = 1:length(floatList)
          end
       end
    end
-   
+
    % CONFIG_PARAMETER_VALUE
    metaStruct.CONFIG_PARAMETER_VALUE = configParamVal;
    
@@ -530,7 +581,7 @@ for idFloat = 1:length(floatList)
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1));
          calibData = [];
          for id = 1:length(idF)
-            calibName = char(metaData(idForWmo(idF(id)), 5));
+            calibName = metaData{idForWmo(idF(id)), 5};
             if (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
                fieldName = ['TempCoef' calibName(end)];
             elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
@@ -546,7 +597,7 @@ for idFloat = 1:length(floatList)
             elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1)
                fieldName = ['FoilPolyDegO' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_O')+1:end)];
             end
-            calibData.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+            calibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
          end
          if (~isempty(calibData))
             calibrationCoefficient = [];
@@ -585,13 +636,13 @@ for idFloat = 1:length(floatList)
             [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
             if ((statusSlope == 0) || (statusValue == 0))
                fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
-                  floatList(idFloat), coefStrOri);
-               return;
+                  floatNum, coefStrOri);
+               return
             end
          else
             fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
-               floatList(idFloat), coefStrOri);
-            return;
+               floatNum, coefStrOri);
+            return
          end
       end
       rtOffsetDate = [];
@@ -609,22 +660,26 @@ for idFloat = 1:length(floatList)
       metaStruct.RT_OFFSET = rtOffsetData;
    end
    
+   if (skipFloat)
+      continue
+   end
+   
    % create the directory of json output files
    if ~(exist(a_outputDirName, 'dir') == 7)
       mkdir(a_outputDirName);
    end
    
    % create json output file
-   outputFileName = [a_outputDirName '/' sprintf('%d_meta.json', floatList(idFloat))];
+   outputFileName = [a_outputDirName '/' sprintf('%d_meta.json', floatNum)];
    ok = generate_json_file(outputFileName, metaStruct);
    if (~ok)
-      return;
+      return
    end
    g_cogj_reportData{end+1} = outputFileName;
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the list of configuration parameters for a given float version.
@@ -1342,7 +1397,7 @@ switch (a_dacFormatId)
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_prv_ir_sbd_ for dacFormatId %s\n', a_dacFormatId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the list of BDD variables associated to configuration parameters for a
@@ -1388,7 +1443,7 @@ switch (a_dacFormatId)
          'CONFIG_PM10_ThresholdSurfaceBottomPressure', 'SHALLOW_DEEP_THRESHOLD', ...
          'CONFIG_PM11_ThicknessOfTheSurfaceSlices', 'SURF_SLICE_THICKNESS', ...
          'CONFIG_PM12_ThicknessOfTheBottomSlices', 'DEPTH_SLICE_THICKNESS', ...
-         'CONFIG_PM13_IridiumEOLTransmissionPeriod', 'EndOfLifeTransPeriod', ...
+         'CONFIG_PM13_IridiumEOLTransmissionPeriod', 'PRCFG_EOL_trans_period', ...
          'CONFIG_PM14_IridiumSecondSessionWaitingTime', 'SECOND_IRIDIUM_SESSION_DELAY', ...
          'CONFIG_PT00_EVMaxDurationOnSurface', 'PRCFG_Surf_valve_max_duration', ...
          'CONFIG_PT01_EVMaxVolumeDuringDescentAndRepositioning', 'PRCFG_Depth_valve_max_volume', ...
@@ -1433,7 +1488,7 @@ switch (a_dacFormatId)
          'CONFIG_PM12_ThicknessOfTheSurfaceSlices', 'SURF_SLICE_THICKNESS', ...
          'CONFIG_PM13_ThicknessOfTheMiddleSlices', 'INT_SLICE_THICKNESS', ...
          'CONFIG_PM14_ThicknessOfTheBottomSlices', 'DEPTH_SLICE_THICKNESS', ...
-         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'EndOfLifeTransPeriod', ...
+         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'PRCFG_EOL_trans_period', ...
          'CONFIG_PM16_IridiumSecondSessionWaitingTime', 'SECOND_IRIDIUM_SESSION_DELAY', ...
          'CONFIG_PT00_EVMaxDurationOnSurface', 'PRCFG_Surf_valve_max_duration', ...
          'CONFIG_PT01_EVMaxVolumeDuringDescentAndRepositioning', 'PRCFG_Depth_valve_max_volume', ...
@@ -1478,7 +1533,7 @@ switch (a_dacFormatId)
          'CONFIG_PM12_ThicknessOfTheSurfaceSlices', 'SURF_SLICE_THICKNESS', ...
          'CONFIG_PM13_ThicknessOfTheMiddleSlices', 'INT_SLICE_THICKNESS', ...
          'CONFIG_PM14_ThicknessOfTheBottomSlices', 'DEPTH_SLICE_THICKNESS', ...
-         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'EndOfLifeTransPeriod', ...
+         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'PRCFG_EOL_trans_period', ...
          'CONFIG_PM16_IridiumSecondSessionWaitingTime', 'SECOND_IRIDIUM_SESSION_DELAY', ...
          'CONFIG_PM17_PostGroundingWaitingTime', 'RETRY_DELAY_IF_STUCK_AT_SURFACE', ...
          'CONFIG_PT00_EVMaxDurationOnSurface', 'PRCFG_Surf_valve_max_duration', ...
@@ -1526,7 +1581,7 @@ switch (a_dacFormatId)
          'CONFIG_PM12_ThicknessOfTheSurfaceSlices', 'SURF_SLICE_THICKNESS', ...
          'CONFIG_PM13_ThicknessOfTheMiddleSlices', 'INT_SLICE_THICKNESS', ...
          'CONFIG_PM14_ThicknessOfTheBottomSlices', 'DEPTH_SLICE_THICKNESS', ...
-         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'EndOfLifeTransPeriod', ...
+         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'PRCFG_EOL_trans_period', ...
          'CONFIG_PM16_IridiumSecondSessionWaitingTime', 'SECOND_IRIDIUM_SESSION_DELAY', ...
          'CONFIG_PM17_PostGroundingWaitingTime', 'RETRY_DELAY_IF_STUCK_AT_SURFACE', ...
          'CONFIG_PT00_EVMaxDurationOnSurface', 'PRCFG_Surf_valve_max_duration', ...
@@ -1720,7 +1775,7 @@ switch (a_dacFormatId)
          'CONFIG_PM12_ThicknessOfTheSurfaceSlices', 'SURF_SLICE_THICKNESS', ...
          'CONFIG_PM13_ThicknessOfTheMiddleSlices', 'INT_SLICE_THICKNESS', ...
          'CONFIG_PM14_ThicknessOfTheBottomSlices', 'DEPTH_SLICE_THICKNESS', ...
-         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'EndOfLifeTransPeriod', ...
+         'CONFIG_PM15_IridiumEOLTransmissionPeriod', 'PRCFG_EOL_trans_period', ...
          'CONFIG_PM16_IridiumSecondSessionWaitingTime', 'SECOND_IRIDIUM_SESSION_DELAY', ...
          'CONFIG_PT00_EVMaxDurationOnSurface', 'PRCFG_Surf_valve_max_duration', ...
          'CONFIG_PT01_EVMaxVolumeDuringDescentAndRepositioning', 'PRCFG_Depth_valve_max_volume', ...
@@ -2061,7 +2116,7 @@ switch (a_dacFormatId)
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_prv_ir_sbd_ for dacFormatId %s\n', a_dacFormatId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the list of BDD variables associated to float meta-data.
@@ -2140,4 +2195,4 @@ o_metaStruct = struct( ...
    'CALIB_RT_COMMENT', 'CALIB_RT_COMMENT', ...
    'CALIB_RT_DATE', 'CALIB_RT_DATE');
 
-return;
+return

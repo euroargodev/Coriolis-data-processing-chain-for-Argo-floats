@@ -61,4 +61,4 @@ if (a_posLon ~= g_decArgo_argosLonDef)
    o_measStruct.posQc = num2str(a_posQc);
 end
 
-return;
+return

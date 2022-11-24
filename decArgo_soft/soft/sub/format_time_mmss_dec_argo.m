@@ -46,4 +46,4 @@ else
    o_time = sprintf('%c %02d:%02d', sign, h*24+m, s);
 end
 
-return;
+return

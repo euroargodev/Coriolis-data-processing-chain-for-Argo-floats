@@ -60,7 +60,7 @@ global g_decArgo_dateDef;
 
 
 if (isempty(a_dataCTD))
-   return;
+   return
 end
 
 packType = [10 29; 30 49];
@@ -164,4 +164,4 @@ o_ascProfDateAdj = o_ascProfDateAdj(idSorted);
 o_ascProfTemp = o_ascProfTemp(idSorted);
 o_ascProfSal = o_ascProfSal(idSorted);
 
-return;
+return

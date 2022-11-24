@@ -38,7 +38,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_profLowResMeasDataStr))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -83,10 +83,10 @@ switch (a_decoderId)
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          a_decoderId);
-      return;
+      return
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -286,7 +286,7 @@ if (~isempty(profLrPres))
       profLrFluorescenceChla profLrBetaBackscqttering700 profLrTempCpuChla];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -427,7 +427,7 @@ if (~isempty(profLrPres))
    o_profLrData.data = [profLrPres profLrTemp profLrSal];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -594,7 +594,7 @@ if (~isempty(profLrPres))
    o_profLrData.data = [profLrPres profLrTemp profLrSal profLrTPhaseDoxy profLrTempDoxy];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -808,7 +808,7 @@ if (~isempty(profLrPres))
       profLrFluorescenceChla profLrBetaBackscqttering700 profLrTempCpuChla];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -988,7 +988,7 @@ if (~isempty(profLrPres))
    o_profLrData.data = [profLrPres profLrTemp profLrSal profLrTempDoxy profLrTPhaseDoxy profLrRPhaseDoxy];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Apex Iridium Rudics LR profile data.
@@ -1215,7 +1215,7 @@ if (~isempty(profLrPres))
       profLrFluorescenceChla profLrBetaBackscqttering700 profLrTempCpuChla];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse Navis LR profile data.
@@ -1462,4 +1462,4 @@ if (~isempty(profLrPres))
    o_profLrData.datesStatus = repmat(g_JULD_STATUS_2, size(o_profLrData.dates));
 end
 
-return;
+return

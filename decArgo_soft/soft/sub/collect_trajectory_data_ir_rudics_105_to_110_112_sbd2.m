@@ -58,7 +58,7 @@ function [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_ir_rudics_105
    a_ascentStartDate, a_ascentEndDate, ...
    a_firstEmerAscentDate, ...
    a_sensorTechCTD)
-               
+
 % output parameters initialization
 o_tabTrajIndex = [];
 o_tabTrajData = [];
@@ -88,7 +88,7 @@ paramJuld = get_netcdf_param_attributes('JULD');
 for idProf = 1:length(a_tabProfiles)
    
    profile = a_tabProfiles(idProf);
-      
+   
    datedMeasStruct = get_dated_meas_init_struct(profile.cycleNumber, ...
       profile.profileNumber, profile.phaseNumber);
    
@@ -112,7 +112,7 @@ end
 for idDrift = 1:length(a_tabDrift)
    
    drift = a_tabDrift(idDrift);
-      
+   
    datedMeasStruct = get_dated_meas_init_struct(drift.cycleNumber, ...
       drift.profileNumber, drift.phaseNumber);
    
@@ -127,7 +127,7 @@ for idDrift = 1:length(a_tabDrift)
    datedMeasStruct.dates = drift.dates(idDated);
    datedMeasStruct.data = drift.data(idDated, :);
    datedMeasStruct.sensorNumber = drift.sensorNumber;
-
+   
    o_tabTrajIndex = [o_tabTrajIndex;
       0  drift.cycleNumber drift.profileNumber drift.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
@@ -147,57 +147,51 @@ for idProf = 1:length(a_tabProfiles)
          subOffset = profile.paramNumberOfSubLevels;
          offset = sum(idSub) - length(idSub);
       end
-            
+      
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
       end
-
+      
       pres = profile.data(:, idPres+offset);
-      [unused, idMax] = max(pres);
-
+      [~, idMax] = max(pres);
+      
       profInfo = [profInfo;
          profile.cycleNumber profile.profileNumber direction max(pres) idMax idProf];
    end
 end
 
 if (~isempty(profInfo))
-   uCycle = sort(unique(profInfo(:, 1)));
-   uProf = sort(unique(profInfo(:, 2)));
-   uDir = sort(unique(profInfo(:, 3)));
-   for idC = 1:length(uCycle)
-      cyNum = uCycle(idC);
-      for idP = 1:length(uProf)
-         profNum = uProf(idP);
-         for idD = 1:length(uDir)
-            dirNum = uDir(idD);
-            
-            idProf = find((profInfo(:, 1) == cyNum) & ...
-               (profInfo(:, 2) == profNum) & ...
-               (profInfo(:, 3) == dirNum));
-            if (~isempty(idProf))
-               [unused, idMax] = max(profInfo(idProf, 4));
-               idProfMax = idProf(idMax);
-               
-               profile = a_tabProfiles(profInfo(idProfMax, 6));
-               
-               datedMeasStruct = get_dated_meas_init_struct(cyNum, ...
-                  profNum, profile.phaseNumber);
-               
-               datedMeasStruct.paramList = profile.paramList;
-               datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
-               datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
-               datedMeasStruct.dateList = profile.dateList;
-               
-               datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
-               datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
-               datedMeasStruct.sensorNumber = profile.sensorNumber;
-               
-               o_tabTrajIndex = [o_tabTrajIndex;
-                  1  cyNum profNum profile.phaseNumber];
-               o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
-            end
-         end
+   cycleProfDirList = unique(profInfo(:, 1:3), 'rows');
+   for idCyPrDir = 1:size(cycleProfDirList, 1)
+      cyNum = cycleProfDirList(idCyPrDir, 1);
+      profNum = cycleProfDirList(idCyPrDir, 2);
+      dirNum = cycleProfDirList(idCyPrDir, 3);
+      
+      idProf = find((profInfo(:, 1) == cyNum) & ...
+         (profInfo(:, 2) == profNum) & ...
+         (profInfo(:, 3) == dirNum));
+      if (~isempty(idProf))
+         [~, idMax] = max(profInfo(idProf, 4));
+         idProfMax = idProf(idMax);
+         
+         profile = a_tabProfiles(profInfo(idProfMax, 6));
+         
+         datedMeasStruct = get_dated_meas_init_struct(cyNum, ...
+            profNum, profile.phaseNumber);
+         
+         datedMeasStruct.paramList = profile.paramList;
+         datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
+         datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
+         datedMeasStruct.dateList = profile.dateList;
+         
+         datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
+         datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
+         datedMeasStruct.sensorNumber = profile.sensorNumber;
+         
+         o_tabTrajIndex = [o_tabTrajIndex;
+            1  cyNum profNum profile.phaseNumber];
+         o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
       end
    end
 end
@@ -211,159 +205,153 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
    a_floatPresTime = a_floatPres{3};
    
    if (~isempty(a_floatPresPumpOrEv))
-      cyleList = unique(a_floatPresPumpOrEv(:, 1));
-      profList = unique(a_floatPresPumpOrEv(:, 2));
-      phaseList = unique(a_floatPresPumpOrEv(:, 3));
+      cycleProfPhaseList = unique(a_floatPresPumpOrEv(:, 1:3), 'rows');
       
       paramPres = get_netcdf_param_attributes('PRES');
       paramPres.resolution = single(10);
       paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
       paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
       
-      for idCy = 1:length(cyleList)
-         cycleNum = cyleList(idCy);
-         for idProf = 1:length(profList)
-            profNum = profList(idProf);
-            for idPhase = 1:length(phaseList)
-               phaseNum = phaseList(idPhase);
+      for idCyPrPh = 1:size(cycleProfPhaseList, 1)
+         cycleNum = cycleProfPhaseList(idCyPrPh, 1);
+         profNum = cycleProfPhaseList(idCyPrPh, 2);
+         phaseNum = cycleProfPhaseList(idCyPrPh, 3);
+         
+         if (phaseNum ~= g_decArgo_phaseEmergencyAsc)
+            
+            idPack = find((a_floatPresPumpOrEv(:, 1) == cycleNum) & ...
+               (a_floatPresPumpOrEv(:, 2) == profNum) & ...
+               (a_floatPresPumpOrEv(:, 3) == phaseNum));
+            
+            if (~isempty(idPack))
                
-               if (phaseNum ~= g_decArgo_phaseEmergencyAsc)
+               idTechToUse = find( ...
+                  (a_cycleStartDate(:, 1) == cycleNum) & ...
+                  (a_cycleStartDate(:, 2) == profNum) & ...
+                  (a_cycleStartDate(:, 3) == g_decArgo_phaseSatTrans));
+               if (~isempty(idTechToUse))
                   
-                  idPack = find((a_floatPresPumpOrEv(:, 1) == cycleNum) & ...
-                     (a_floatPresPumpOrEv(:, 2) == profNum) & ...
-                     (a_floatPresPumpOrEv(:, 3) == phaseNum));
+                  buoyancyRedStartDate = a_buoyancyRedStartDate(idTechToUse, 5);
+                  descentToParkStartDate = a_descentToParkStartDate(idTechToUse, 5);
+                  descentToParkEndDate = a_descentToParkEndDate(idTechToUse, 5);
+                  descentToProfStartDate = a_descentToProfStartDate(idTechToUse, 5);
+                  descentToProfEndDate = a_descentToProfEndDate(idTechToUse, 5);
+                  ascentStartDate = a_ascentStartDate(idTechToUse, 5);
+                  ascentEndDate = a_ascentEndDate(idTechToUse, 5) + 10/1440;
                   
-                  if (~isempty(idPack))
+                  for id = 1:length(idPack)
+                     idP = idPack(id);
                      
-                     idTechToUse = find( ...
-                        (a_cycleStartDate(:, 1) == cycleNum) & ...
-                        (a_cycleStartDate(:, 2) == profNum) & ...
-                        (a_cycleStartDate(:, 3) == g_decArgo_phaseSatTrans));
-                     if (~isempty(idTechToUse))
+                     floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
+                     floatPresActPres = a_floatPresActPres(idP, 4);
+                     floatPresTime = a_floatPresTime(idP, 4);
+                     
+                     refDate = [];
+                     switch (phaseNum)
+                        case g_decArgo_phaseBuoyRed
+                           refDate = buoyancyRedStartDate;
+                        case g_decArgo_phaseDsc2Prk
+                           refDate = descentToParkStartDate;
+                        case g_decArgo_phaseParkDrift
+                           refDate = descentToParkEndDate;
+                        case g_decArgo_phaseDsc2Prof
+                           refDate = descentToProfStartDate;
+                        case g_decArgo_phaseProfDrift
+                           refDate = descentToProfEndDate;
+                        case g_decArgo_phaseAscProf
+                           refDate = ascentStartDate;
+                        case g_decArgo_phaseAscEmerg
+                           refDate = ascentEndDate;
+                        otherwise
+                           fprintf('DEC_WARNING: Float #%d Cycle #%d: Phase %s not considered in Msg type 252\n', ...
+                              g_decArgo_floatNum, ...
+                              g_decArgo_cycleNum, ...
+                              get_phase_name(phaseNum));
+                     end
+                     
+                     if (~isempty(refDate))
                         
-                        buoyancyRedStartDate = a_buoyancyRedStartDate(idTechToUse, 5);
-                        descentToParkStartDate = a_descentToParkStartDate(idTechToUse, 5);
-                        descentToParkEndDate = a_descentToParkEndDate(idTechToUse, 5);
-                        descentToProfStartDate = a_descentToProfStartDate(idTechToUse, 5);
-                        descentToProfEndDate = a_descentToProfEndDate(idTechToUse, 5);
-                        ascentStartDate = a_ascentStartDate(idTechToUse, 5);
-                        ascentEndDate = a_ascentEndDate(idTechToUse, 5) + 10/1440;
+                        datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
+                           profNum, phaseNum);
                         
-                        for id = 1:length(idPack)
-                           idP = idPack(id);
-                           
-                           floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
-                           floatPresActPres = a_floatPresActPres(idP, 4);
-                           floatPresTime = a_floatPresTime(idP, 4);
-                           
-                           refDate = [];
-                           switch (phaseNum)
-                              case g_decArgo_phaseBuoyRed
-                                 refDate = buoyancyRedStartDate;
-                              case g_decArgo_phaseDsc2Prk
-                                 refDate = descentToParkStartDate;
-                              case g_decArgo_phaseParkDrift
-                                 refDate = descentToParkEndDate;
-                              case g_decArgo_phaseDsc2Prof
-                                 refDate = descentToProfStartDate;
-                              case g_decArgo_phaseProfDrift
-                                 refDate = descentToProfEndDate;
-                              case g_decArgo_phaseAscProf
-                                 refDate = ascentStartDate;
-                              case g_decArgo_phaseAscEmerg
-                                 refDate = ascentEndDate;
-                              otherwise
-                                 fprintf('DEC_WARNING: Float #%d Cycle #%d: Phase %s not considered in Msg type 252\n', ...
-                                    g_decArgo_floatNum, ...
-                                    g_decArgo_cycleNum, ...
-                                    get_phase_name(phaseNum));
-                           end
-                           
-                           if (~isempty(refDate))
-                              
-                              datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
-                                 profNum, phaseNum);
-                              
-                              datedMeasStruct.paramList = paramPres;
-                              datedMeasStruct.data = floatPresActPres*10;
-                              if (floatPresPumpOrEv == 1)
-                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
-                                 datedMeasStruct.data = [datedMeasStruct.data 1];
-                              else
-                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
-                                 datedMeasStruct.data = [datedMeasStruct.data 1];
-                              end
-                              
-                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
-                              datedMeasStruct.dates = refDate + floatPresTime/1440;
-                              
-                              o_tabTrajIndex = [o_tabTrajIndex;
-                                 252  cycleNum profNum phaseNum];
-                              o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
-                           end
+                        datedMeasStruct.paramList = paramPres;
+                        datedMeasStruct.data = floatPresActPres*10;
+                        if (floatPresPumpOrEv == 1)
+                           datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
+                           datedMeasStruct.data = [datedMeasStruct.data 1];
+                        else
+                           datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
+                           datedMeasStruct.data = [datedMeasStruct.data 1];
                         end
+                        
+                        datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
+                        datedMeasStruct.dates = refDate + floatPresTime/1440;
+                        
+                        o_tabTrajIndex = [o_tabTrajIndex;
+                           252  cycleNum profNum phaseNum];
+                        o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
                      end
                   end
-               else
+               end
+            end
+         else
+            
+            idPack = find((a_floatPresPumpOrEv(:, 1) == cycleNum) & ...
+               (a_floatPresPumpOrEv(:, 2) == profNum) & ...
+               (a_floatPresPumpOrEv(:, 3) == phaseNum));
+            
+            if (~isempty(idPack))
+               
+               idTechToUse = find( ...
+                  (a_firstEmerAscentDate(:, 1) == cycleNum) & ...
+                  (a_firstEmerAscentDate(:, 2) == profNum) & ...
+                  ((a_firstEmerAscentDate(:, 3) == g_decArgo_phaseSatTrans) | ...
+                  (a_firstEmerAscentDate(:, 3) == g_decArgo_phaseEmergencyAsc)));
+               if (~isempty(idTechToUse))
                   
-                  idPack = find((a_floatPresPumpOrEv(:, 1) == cycleNum) & ...
-                     (a_floatPresPumpOrEv(:, 2) == profNum) & ...
-                     (a_floatPresPumpOrEv(:, 3) == phaseNum));
+                  firstEmerAscentDate = a_firstEmerAscentDate(idTechToUse, 5);
                   
-                  if (~isempty(idPack))
+                  for id = 1:length(idPack)
+                     idP = idPack(id);
                      
-                     idTechToUse = find( ...
-                        (a_firstEmerAscentDate(:, 1) == cycleNum) & ...
-                        (a_firstEmerAscentDate(:, 2) == profNum) & ...
-                        ((a_firstEmerAscentDate(:, 3) == g_decArgo_phaseSatTrans) | ...
-                        (a_firstEmerAscentDate(:, 3) == g_decArgo_phaseEmergencyAsc)));
-                     if (~isempty(idTechToUse))
-                        
-                        firstEmerAscentDate = a_firstEmerAscentDate(idTechToUse, 5);
-                        
-                        for id = 1:length(idPack)
-                           idP = idPack(id);
-                           
-                           floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
-                           floatPresActPres = a_floatPresActPres(idP, 4);
-                           floatPresTime = a_floatPresTime(idP, 4);
-                           
-                           refDate = [];
-                           switch (phaseNum)
-                              case g_decArgo_phaseEmergencyAsc
-                                 refDate = firstEmerAscentDate;
-                              otherwise
-                                 fprintf('DEC_WARNING: Float #%d Cycle #%d: Phase %s not considered in Msg type 252\n', ...
-                                    g_decArgo_floatNum, ...
-                                    g_decArgo_cycleNum, ...
-                                    get_phase_name(phaseNum));
-                           end
-                           
-                           if (~isempty(refDate))
-                              
-                              datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
-                                 profNum, phaseNum);
-                                                            
-                              datedMeasStruct.paramList = paramPres;
-                              datedMeasStruct.data = floatPresActPres*10;
-                              if (floatPresPumpOrEv == 1)
-                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
-                                 datedMeasStruct.data = [datedMeasStruct.data 1];
-                              else
-                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
-                                 datedMeasStruct.data = [datedMeasStruct.data 1];
-                              end
-                              
-                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
-                              datedMeasStruct.dates = refDate + floatPresTime/1440;
-                              
-                              o_tabTrajIndex = [o_tabTrajIndex;
-                                 252  cycleNum profNum phaseNum];
-                              o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
-                           end
-                        end
+                     floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
+                     floatPresActPres = a_floatPresActPres(idP, 4);
+                     floatPresTime = a_floatPresTime(idP, 4);
+                     
+                     refDate = [];
+                     switch (phaseNum)
+                        case g_decArgo_phaseEmergencyAsc
+                           refDate = firstEmerAscentDate;
+                        otherwise
+                           fprintf('DEC_WARNING: Float #%d Cycle #%d: Phase %s not considered in Msg type 252\n', ...
+                              g_decArgo_floatNum, ...
+                              g_decArgo_cycleNum, ...
+                              get_phase_name(phaseNum));
                      end
-                  end                  
+                     
+                     if (~isempty(refDate))
+                        
+                        datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
+                           profNum, phaseNum);
+                        
+                        datedMeasStruct.paramList = paramPres;
+                        datedMeasStruct.data = floatPresActPres*10;
+                        if (floatPresPumpOrEv == 1)
+                           datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
+                           datedMeasStruct.data = [datedMeasStruct.data 1];
+                        else
+                           datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
+                           datedMeasStruct.data = [datedMeasStruct.data 1];
+                        end
+                        
+                        datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
+                        datedMeasStruct.dates = refDate + floatPresTime/1440;
+                        
+                        o_tabTrajIndex = [o_tabTrajIndex;
+                           252  cycleNum profNum phaseNum];
+                        o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
+                     end
+                  end
                end
             end
          end
@@ -373,16 +361,16 @@ end
 
 % % retrieve packet dates for packet types 254
 % for idPack = 1:size(a_floatProgTech, 1)
-%    
+%
 %    packCycleNumber = a_floatProgTech(idPack, 2);
 %    packProfileNumber = a_floatProgTech(idPack, 3);
 %    packJuld = a_floatProgTech(idPack, 1);
-%    
+%
 %    packDateStruct = get_pack_date_init_struct(packCycleNumber, ...
 %       packProfileNumber);
-% 
+%
 %    packDateStruct.packetTime = packJuld;
-% 
+%
 %    o_tabTrajIndex = [o_tabTrajIndex;
 %       254  packCycleNumber packProfileNumber -1];
 %    o_tabTrajData = [o_tabTrajData; {packDateStruct}];
@@ -390,16 +378,16 @@ end
 
 % % retrieve packet dates for packet types 255
 % for idPack = 1:size(a_floatProgParam, 1)
-%    
+%
 %    packCycleNumber = a_floatProgParam(idPack, 2);
 %    packProfileNumber = a_floatProgParam(idPack, 3);
 %    packJuld = a_floatProgParam(idPack, 1);
-%    
+%
 %    packDateStruct = get_pack_date_init_struct(packCycleNumber, ...
 %       packProfileNumber);
-% 
+%
 %    packDateStruct.packetTime = packJuld;
-% 
+%
 %    o_tabTrajIndex = [o_tabTrajIndex;
 %       255  packCycleNumber packProfileNumber -1];
 %    o_tabTrajData = [o_tabTrajData; {packDateStruct}];
@@ -411,13 +399,13 @@ for idPack = 1:size(a_tabTech, 1)
    packCycleNumber = a_tabTech(idPack, 4);
    packProfileNumber = a_tabTech(idPack, 5);
    packPhaseNumber = a_tabTech(idPack, 8);
-
+   
    trajFromTechStruct = get_traj_from_tech_init_struct(packCycleNumber, ...
       packProfileNumber, packPhaseNumber);
-
+   
    [trajFromTechStruct] = collect_traj_data_from_float_tech_ir_rudics_105_to_110_112_sbd2( ...
       trajFromTechStruct, a_tabTech(idPack, :), a_refDay);
-
+   
    o_tabTrajIndex = [o_tabTrajIndex;
       253  packCycleNumber packProfileNumber packPhaseNumber];
    o_tabTrajData = [o_tabTrajData; {trajFromTechStruct}];
@@ -469,24 +457,24 @@ end
 %             ([a_tabProfiles.direction] == 'A') & ...
 %             ([a_tabProfiles.sensorNumber] == 1));
 %          if ((length(idFCtd) == 1) && (length(idFDo) == 1))
-%             
+%
 %             [inAirMeasProfile] = create_in_air_meas_profile_ir_rudics_sbd2(a_decoderId, ...
 %                a_tabProfiles(idFCtd), a_tabProfiles(idFDo));
-% 
+%
 %             if (~isempty(inAirMeasProfile))
 %                datedMeasStruct = get_dated_meas_init_struct( ...
 %                   inAirMeasProfile.cycleNumber, ...
 %                   inAirMeasProfile.profileNumber, ...
 %                   inAirMeasProfile.phaseNumber);
-%                
+%
 %                datedMeasStruct.paramList = inAirMeasProfile.paramList;
 %                datedMeasStruct.paramNumberWithSubLevels = inAirMeasProfile.paramNumberWithSubLevels;
 %                datedMeasStruct.paramNumberOfSubLevels = inAirMeasProfile.paramNumberOfSubLevels;
 %                datedMeasStruct.dateList = inAirMeasProfile.dateList;
-%                
+%
 %                datedMeasStruct.dates = inAirMeasProfile.dates;
 %                datedMeasStruct.data = inAirMeasProfile.data;
-%                
+%
 %                o_tabTrajIndex = [o_tabTrajIndex;
 %                   2  inAirMeasProfile.cycleNumber inAirMeasProfile.profileNumber inAirMeasProfile.phaseNumber];
 %                o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
@@ -496,7 +484,7 @@ end
 %    end
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store packet dates.
@@ -513,7 +501,7 @@ return;
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -527,7 +515,7 @@ o_packDateStruct = struct( ...
    'profileNumber', a_profNum, ...
    'packetTime', '');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store dated measurements.
@@ -545,7 +533,7 @@ return;
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -566,7 +554,7 @@ o_datedMeasStruct = struct( ...
    'dates', '', ...
    'sensorNumber', -1);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store trajectory data collected from tech data.
@@ -584,7 +572,7 @@ return;
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -626,7 +614,7 @@ o_trajFromTechStruct = struct( ...
    'gpsQc', '', ...
    'gpsAccuracy', '');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store trajectory data collected from CTD tech data.
@@ -643,7 +631,7 @@ return;
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -659,5 +647,5 @@ o_trajFromTechStruct = struct( ...
    'subsurface_temp', '', ...
    'subsurface_psal', '');
 
-return;
+return
 

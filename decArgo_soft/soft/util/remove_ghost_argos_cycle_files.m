@@ -48,7 +48,7 @@ if (nargin ~= 3)
    fprintf('Expecting:\n');
    fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') => remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
    fprintf('aborted ...\n');
-   return;
+   return
 else
    floatNum = varargin{1};
    cycleNum = varargin{2};
@@ -59,7 +59,7 @@ else
       fprintf('Expecting:\n');
       fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') => remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
       fprintf('aborted ...\n');
-      return;
+      return
    else
       firstFlag = 1;
       if (upper(first) ~= 'F')
@@ -71,7 +71,7 @@ end
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
    fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
-   return;
+   return
 end
 
 % get floats information
@@ -84,7 +84,7 @@ end
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
    fprintf('ERROR: No information on float #%d => exit\n', floatNum);
-   return;
+   return
 end
 floatArgosId = str2num(listArgosId{idF});
 
@@ -135,7 +135,7 @@ end
 
 fprintf('done\n');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Split an Argos cycle file (the first or last satellite pass is moved to a
@@ -175,7 +175,7 @@ global g_decArgo_janFirst1950InMatlab;
 fIdIn = fopen(a_filePathName, 'r');
 if (fIdIn == -1)
    fprintf('ERROR: Error while opening file : %s\n', a_filePathName);
-   return;
+   return
 end
 
 text = [];
@@ -212,12 +212,12 @@ if (a_firstFlag == 1)
          satDateList = [];
          dataDateList = [];
          
-         break;
+         break
       end
       
       % empty line
       if (strcmp(deblank(line), ''))
-         continue;
+         continue
       end
       
       if (isempty(text))
@@ -419,12 +419,12 @@ else
          satDateList = [];
          dataDateList = [];
          
-         break;
+         break
       end
       
       % empty line
       if (strcmp(deblank(line), ''))
-         continue;
+         continue
       end
       
       if (isempty(text))
@@ -632,14 +632,14 @@ for idF = 1:2
    if (exist(outputFilePathName, 'file') == 2)
       fprintf('ERROR: Argos cycle file already exist: %s\n', ...
          outputFilePathName);
-      return;
+      return
    else
       
       % store the data in the output file
       fIdOut = fopen(outputFilePathName, 'wt');
       if (fIdOut == -1)
          fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-         return;
+         return
       end
       
       for id = 1:length(text)
@@ -655,4 +655,4 @@ end
 % move the input Argos file
 delete(filePathNameToDelete);
 
-return;
+return

@@ -42,7 +42,7 @@ for idDir = 1:length(dacDir)
    %          ~strcmp(dacDirName, 'kordi') && ~strcmp(dacDirName, 'meds') && ...
    %          ~strcmp(dacDirName, 'nmdis'))
    %    if (~strcmp(dacDirName, 'coriolis'))
-   %       continue;
+   %       continue
    %    end
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
@@ -53,7 +53,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_cycle_to_reprocess_with_patch_014g_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
       
@@ -82,7 +82,7 @@ for idDir = 1:length(dacDir)
                idVal = find(strcmp('FORMAT_VERSION', techData(1:2:end)) == 1, 1);
                formatVersion = techData{2*idVal}';
                if (str2num(formatVersion) ~= 3.1)
-                  continue;
+                  continue
                end
                idVal = find(strcmp('TECHNICAL_PARAMETER_NAME', techData(1:2:end)) == 1, 1);
                techParamNameList = cellstr(techData{2*idVal}');
@@ -117,7 +117,7 @@ for idDir = 1:length(dacDir)
                idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
                formatVersion = trajData{2*idVal}';
                if (str2num(formatVersion) ~= 3.1)
-                  continue;
+                  continue
                end
                idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
                cycleNumber = trajData{2*idVal};
@@ -176,7 +176,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -211,7 +211,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file

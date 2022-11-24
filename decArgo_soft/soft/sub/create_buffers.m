@@ -94,7 +94,7 @@ for idFile = 1:length(sbdFiles)
    else
       sensorDataType = str2num(sensorDataTypeStr);
    end
-
+   
    sbdFilePathName = [a_dirName '/' sbdFileName];
    tabName{end+1} = sbdFilePathName;
    tabInfo = [tabInfo;
@@ -160,16 +160,14 @@ if (~isempty(idDel))
 end
 
 % process the SBD files of the directory
-uCycle = sort(unique(tabInfo(:, 5)));
-uCycle = uCycle(find(uCycle >= 0));
-uProf = sort(unique(tabInfo(:, 6)));
-uProf = uProf(find(uProf >= 0));
 idEndPrev = 0;
 numRank = 1;
-for idCy = 1:length(uCycle)
-   for idProf = 1:length(uProf)
-      cyNum = uCycle(idCy);
-      profNum = uProf(idProf);
+cycleProfList = unique(tabInfo(:, 5:6), 'rows');
+for idCyPr = 1:size(cycleProfList, 1)
+   cyNum = cycleProfList(idCyPr, 1);
+   profNum = cycleProfList(idCyPr, 2);
+   
+   if ((cyNum >= 0) && (profNum >= 0))
       
       idCyProf = find((tabInfo(:, 5) == cyNum) & (tabInfo(:, 6) == profNum));
       if (~isempty(idCyProf))
@@ -353,14 +351,14 @@ while (modifRank)
                            tabInfo(find(tabInfo(:, 2) == rkNum), 2) = rankNum;
                         end
                         modifRank = 1;
-                        break;
+                        break
                      else
                         % assign remaining files to the current rank
                         idF3 = find((tabInfo(idCy, 6) == pofNum) & (tabInfo(idCy, 2) > rankNum));
                         if (~isempty(idF3))
                            tabInfo(idCy(idF3), 2) = rankNum;
                            modifRank = 1;
-                           break;
+                           break
                         end
                      end
                   else
@@ -369,18 +367,18 @@ while (modifRank)
                      if (~isempty(idF3))
                         tabInfo(idCy(idF3), 2) = rankNum;
                         modifRank = 1;
-                        break;
+                        break
                      end
                   end
                end
                if (modifRank == 1)
-                  break;
+                  break
                end
             end
          end
       end
       if (modifRank == 1)
-         break;
+         break
       end
    end
 end
@@ -541,7 +539,7 @@ o_sbdFileCyNum = tabInfo(:, 5);
 o_sbdFileProfNum = tabInfo(:, 6);
 o_sbdFileDataType = tabInfo(:, 4);
 
-return;
+return
 
 
 % % delete test SBD files

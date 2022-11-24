@@ -49,7 +49,7 @@ global g_decArgo_archiveDirectory;
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
    fprintf('BUFF_ERROR: Float #%d: get_list_files_info_ir_rudics: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
-   return;
+   return
 end
 
 % check the SBD files of the directory
@@ -84,4 +84,4 @@ o_fileName = o_fileName(idSort);
 o_fileCycle = o_fileCycle(idSort);
 o_fileSize = o_fileSize(idSort);
 
-return;
+return

@@ -34,4 +34,4 @@ o_chloroVoltValues(idDef) = ones(length(idDef), 1)*g_decArgo_chloroVoltDef;
 idNoDef = find(a_chloroVoltCounts ~= g_decArgo_chloroAVoltCountsDef);
 o_chloroVoltValues(idNoDef) = o_chloroVoltValues(idNoDef)/1000;
 
-return;
+return

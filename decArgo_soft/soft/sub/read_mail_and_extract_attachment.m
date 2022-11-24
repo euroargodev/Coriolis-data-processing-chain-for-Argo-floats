@@ -55,13 +55,13 @@ mailFilePathName = [a_inputDirName '/' a_fileName];
 
 if ~(exist(mailFilePathName, 'file') == 2)
    fprintf('ERROR: Mail file not found: %s\n', mailFilePathName);
-   return;
+   return
 end
 
 fId = fopen(mailFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', mailFilePathName);
-   return;
+   return
 end
 
 % create a structure to store the data
@@ -83,7 +83,7 @@ sbdData = [];
 while 1
    line = fgetl(fId);
    if (line == -1)
-      break;
+      break
    end
    lineNum = lineNum + 1;
       
@@ -207,4 +207,4 @@ elseif (o_mailContents.messageSize > 0)
    fprintf('ERROR: Attachement not retrieved for mail file: %s => attachement ignored\n', a_fileName);
 end
 
-return;
+return

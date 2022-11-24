@@ -159,7 +159,7 @@ if (~isempty(presOffset))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute pressure surface offset to use to adjust pressure measurements
@@ -227,7 +227,7 @@ end
 
 o_presOffset = presOffset;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Adjust PRES measurements of a given profile.
@@ -264,7 +264,7 @@ else
    o_profData = adjust_one_profile(o_profData, a_presOffset);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Adjust PRES measurements of a given profile.
@@ -308,4 +308,4 @@ if (~isempty(o_profData))
    end
 end
 
-return;
+return

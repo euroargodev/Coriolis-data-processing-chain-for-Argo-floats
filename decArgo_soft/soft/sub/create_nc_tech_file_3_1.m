@@ -87,7 +87,7 @@ end
 
 % no data to save
 if (isempty(tabNcTechIndex))
-   return;
+   return
 end
 
 % create output file pathname
@@ -133,7 +133,7 @@ currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
 fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,4 +304,4 @@ end
 
 fprintf('... NetCDF TECHNICAL file created\n');
 
-return;
+return

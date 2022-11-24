@@ -486,27 +486,27 @@ if (~isempty(phaseDates))
       switch (measList{idML})
          case 'CTD_P'
             if (isempty(a_profCtdP))
-               continue;
+               continue
             end
             profData = a_profCtdP;
          case 'CTD_PT'
             if (isempty(a_profCtdPt))
-               continue;
+               continue
             end
             profData = a_profCtdPt;
          case 'CTD_PTS'
             if (isempty(a_profCtdPts))
-               continue;
+               continue
             end
             profData = a_profCtdPts;
          case 'CTD_PTSH'
             if (isempty(a_profCtdPtsh))
-               continue;
+               continue
             end
             profData = a_profCtdPtsh;
          case 'O2'
             if (isempty(a_profDo))
-               continue;
+               continue
             end
             profData = a_profDo;
             doDataFlag = 1;
@@ -583,27 +583,27 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
       switch (measList{idML})
          case 'CTD_P'
             if (isempty(a_profCtdP))
-               continue;
+               continue
             end
             profData = a_profCtdP;
          case 'CTD_PT'
             if (isempty(a_profCtdPt))
-               continue;
+               continue
             end
             profData = a_profCtdPt;
          case 'CTD_PTS'
             if (isempty(a_profCtdPts))
-               continue;
+               continue
             end
             profData = a_profCtdPts;
          case 'CTD_PTSH'
             if (isempty(a_profCtdPtsh))
-               continue;
+               continue
             end
             profData = a_profCtdPtsh;
          case 'O2'
             if (isempty(a_profDo))
-               continue;
+               continue
             end
             profData = a_profDo;
       end
@@ -684,27 +684,27 @@ if (~isempty(ascentStartDate) && ...
       switch (measList{idML})
          case 'CTD_PTS'
             if (isempty(a_profCtdPts))
-               continue;
+               continue
             end
             profData = a_profCtdPts;
          case 'CTD_PTSH'
             if (isempty(a_profCtdPtsh))
-               continue;
+               continue
             end
             profData = a_profCtdPtsh;
          case 'O2'
             if (isempty(a_profDo))
-               continue;
+               continue
             end
             profData = a_profDo;
          case 'CTD_CP'
             if (isempty(a_profCtdCp))
-               continue;
+               continue
             end
             profData = a_profCtdCp;
          case 'CTD_CP_H'
             if (isempty(a_profCtdCpH))
-               continue;
+               continue
             end
             profData = a_profCtdCpH;
       end
@@ -1236,4 +1236,4 @@ if (~isempty(trajNMeasStruct.tabMeas))
    o_tabTrajNCycle = [o_tabTrajNCycle; trajNCycleStruct];
 end
 
-return;
+return

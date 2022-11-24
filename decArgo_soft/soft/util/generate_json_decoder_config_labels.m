@@ -21,71 +21,71 @@ function generate_json_decoder_config_labels()
 
 % file information on configuration labels for a given decoder
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_3.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_24.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_25.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_27.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_31.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_32.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_111.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_124.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_3.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_24.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_25.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_27.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_31.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_32.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
+decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_111.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_124.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_201.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_202.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_204.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_205.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_212.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_214.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_215.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_216.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_201.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_202.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_204.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_205.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_212.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_214.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_215.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_216.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_301.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_302.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_303.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_206.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_301.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_302.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_303.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_206.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1001.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1002.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1004.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1008.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1011.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1015.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1021.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1022.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1001.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1002.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1004.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1008.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1011.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1015.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1021.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1022.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1101.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1102.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1103.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1105.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1108.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1111.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1201.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1321.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1101.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1102.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1103.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1105.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1108.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1111.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1201.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_1321.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_2001.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_2001.csv';
 
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_3001.csv';
+% decoderConfLabelsFileName = 'F:\NEW_20190125\_RNU\DecArgo_info\_configParamNames\_config_param_name_3001.csv';
 
 fprintf('Generating json reference configuration file from input file: %s\n', decoderConfLabelsFileName);
 
 if ~(exist(decoderConfLabelsFileName, 'file') == 2)
    fprintf('ERROR: Configuration information file not found: %s\n', decoderConfLabelsFileName);
-   return;
+   return
 end
 
 % read conf info file
 fId = fopen(decoderConfLabelsFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', decoderConfLabelsFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', ';');
 fileContents = fileContents{:};
@@ -104,7 +104,7 @@ for idF = 1:length(outputFileList)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create json output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    fprintf(fidOut, '{\n');
@@ -136,7 +136,7 @@ for idF = 1:length(outputFileList)
    fclose(fidOut);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_outputFileList] = create_output_files(a_inputFilePathName)
@@ -174,9 +174,9 @@ else
       case {105}
          decIdList = [105, 106, 107, 109, 110, 112];
       case {111}
-         decIdList = [111];
+         decIdList = [111, 113];
       case {121}
-         decIdList = [121 122 123];
+         decIdList = [121, 122, 123];
       case {124}
          decIdList = [124];
          
@@ -197,7 +197,7 @@ else
       case {213}
          decIdList = [213];
       case {214}
-         decIdList = [214 217];
+         decIdList = [214, 217];
       case {215}
          decIdList = [215];
       case {216}
@@ -211,15 +211,15 @@ else
          decIdList = [303];
          
       case {1001}
-         decIdList = [1001 1005 1007 1009 1010 1016];
+         decIdList = [1001, 1005, 1007, 1009, 1010, 1016];
       case {1002}
-         decIdList = [1002 1003 1006];
+         decIdList = [1002, 1003, 1006];
       case {1004}
          decIdList = [1004];
       case {1008}
-         decIdList = [1008 1013 1014];
+         decIdList = [1008, 1013, 1014];
       case {1011}
-         decIdList = [1011 1012];
+         decIdList = [1011, 1012];
       case {1015}
          decIdList = [1015];
       case {1021}
@@ -228,15 +228,15 @@ else
          decIdList = [1022];
          
       case {1101}
-         decIdList = [1101 1110 1112];
+         decIdList = [1101, 1110, 1112];
       case {1102}
          decIdList = [1102];
       case {1103}
-         decIdList = [1103 1104 1106 1107];
+         decIdList = [1103, 1104, 1106, 1107];
       case {1105}
          decIdList = [1105];
       case {1108}
-         decIdList = [1108 1109 1113 1314];
+         decIdList = [1108, 1109, 1113, 1314];
       case {1111}
          decIdList = [1111];
          
@@ -244,10 +244,10 @@ else
          decIdList = [1201];
          
       case {1321}
-         decIdList = [1121 1321 1322];
+         decIdList = [1121, 1321, 1322];
 
       case {2001}
-         decIdList = [2001 2002 2003];
+         decIdList = [2001, 2002, 2003];
 
       case {3001}
          decIdList = [3001];
@@ -261,4 +261,4 @@ else
    end
 end
 
-return;
+return

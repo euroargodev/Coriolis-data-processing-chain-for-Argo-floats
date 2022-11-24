@@ -60,7 +60,7 @@ inputArgosFileName = [inputArgosFileName ext];
 [ok] = correct_cycle_file_cls_header(g_decArgo_inputArgosFile);
 if (ok == 0)
    fprintf('ERROR: Unable to correct CLS headers in input Argos file (%s)\n', inputArgosFileName);
-   return;
+   return
 end
 
 % find the WMO number of the float
@@ -82,7 +82,7 @@ if (~isempty(idPos))
          % this float cannot be decoded by this decoder
          minArgosDataDate = datenum(inputArgosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
          move_argos_input_file(floatArgosId, minArgosDataDate, floatNum, [], 'MMM');
-         return;
+         return
       end
    else
       if (g_decArgo_processModeAll == 1)
@@ -133,7 +133,7 @@ if (~isempty(idPos))
             if (~isempty(find(diff(argosDataDate)*24 >= MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE, 1)))
                fprintf('ERROR: Inconsistent input Argos file (%s) contents for the Real Time decoder (all non-transmission periods should be less than %d hours)\n', ...
                   g_decArgo_inputArgosFile, MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE);
-               return;
+               return
             end
             
             if (length(unique(argosDataDate)) < g_decArgo_minNumMsgForNotGhost)
@@ -149,11 +149,11 @@ if (~isempty(idPos))
             end
          end
       end
-      return;
+      return
    end
 else
    fprintf('ERROR: Inconsistent input Argos file name (%s)\n', inputArgosFileName);
-   return;
+   return
 end
 
 % read Argos file
@@ -168,7 +168,7 @@ argosDataDate = sort(argosDataDate);
 if (~isempty(find(diff(argosDataDate)*24 >= MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE, 1)))
    fprintf('ERROR: Inconsistent input Argos file contents (%s) for the Real Time decoder (all non-transmission periods should be less than %d hours)\n', ...
       g_decArgo_inputArgosFile, MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE);
-   return;
+   return
 end
 
 % do not consider empty files or files with only ghost messages
@@ -208,14 +208,14 @@ if (g_decArgo_processModeAll == 1)
             g_decArgo_inputArgosFile);
       end
       
-      return;
+      return
    elseif (length(unique(argosDataDate)) < g_decArgo_minNumMsgForNotGhost)
       move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'GGG');
       
       fprintf('DEC_WARNING: Ghost Argos file (%s) => stored but not decoded\n', ...
          g_decArgo_inputArgosFile);
       
-      return;
+      return
    end
 end
 
@@ -237,7 +237,7 @@ if (floatDecId < 1000)
       else
          fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => not decoded\n', floatNum);
       end
-      return;
+      return
    end
    
    % retrieve useful TRAJ data
@@ -454,7 +454,7 @@ if (floatDecId < 1000)
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
       end
-      return;
+      return
    end
    
    % create the name of the input file and move it to the approriate directory
@@ -500,7 +500,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
       else
          fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => not decoded\n', floatNum);
       end
-      return;
+      return
    end
    
    % minimum duration of the first deep cycle for a DPF float (first transmission
@@ -538,7 +538,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             else
                fprintf('ERROR: Float #%d: Unable to split Argos cycle file: %s\n', ...
                   floatNum, g_decArgo_inputArgosFile);
-               return;
+               return
             end
          end
       end
@@ -598,7 +598,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             
             if (g_decArgo_processModeAll == 1)
                if (move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, cycleNumber) ~= 1)
-                  return;
+                  return
                else
                   if ((length(subFileNameList) == 1) || ...
                         ((length(subFileNameList) == 2) && (idFile == 2)))
@@ -708,7 +708,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             
             if (g_decArgo_processModeAll == 1)
                if (move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, cycleNumber) ~= 1)
-                  return;
+                  return
                else
                   if ((length(subFileNameList) == 1) || ...
                         ((length(subFileNameList) == 2) && (idFile == 2)))
@@ -811,7 +811,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
       end
-      return;
+      return
    end
    
    % delete the temporary sub-directory
@@ -827,7 +827,7 @@ else
    fprintf('ERROR: Decoder Id #%d not managed in rename_argos_input_file\n', floatDecId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute durations between cycles.
@@ -868,7 +868,7 @@ end
 
 o_duration = o_duration/24;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Correction of the Argos HEX data.
@@ -903,7 +903,7 @@ if (exist(a_inputArgosFile, 'file') == 2)
    fIdIn = fopen(a_inputArgosFile, 'r');
    if (fIdIn == -1)
       fprintf('ERROR: Error while opening file : %s\n', a_inputArgosFile);
-      return;
+      return
    end
    
    % first step: looking for satellite pass header and storing the number of
@@ -918,7 +918,7 @@ if (exist(a_inputArgosFile, 'file') == 2)
          if (startLine ~= -1)
             tabNbLinesToReadCor = [tabNbLinesToReadCor; lineNum-startLine+1];
          end
-         break;
+         break
       end
       lineNum = lineNum + 1;
       
@@ -964,14 +964,14 @@ if (exist(a_inputArgosFile, 'file') == 2)
          fIdIn = fopen(a_inputArgosFile, 'r');
          if (fIdIn == -1)
             fprintf('ERROR: Error while opening file : %s\n', a_inputArgosFile);
-            return;
+            return
          end
          
          % output file
          fIdOut = fopen(outputArgosFile, 'wt');
          if (fIdOut == -1)
             fprintf('ERROR: Error while creating file : %s\n', outputArgosFile);
-            return;
+            return
          end
          
          lineNum = 0;
@@ -981,7 +981,7 @@ if (exist(a_inputArgosFile, 'file') == 2)
             while (nbLinesToCopy > 0)
                line = fgetl(fIdIn);
                if (line == -1)
-                  break;
+                  break
                end
                lineNum = lineNum + 1;
                
@@ -1046,4 +1046,4 @@ end
 
 o_ok = 1;
 
-return;
+return

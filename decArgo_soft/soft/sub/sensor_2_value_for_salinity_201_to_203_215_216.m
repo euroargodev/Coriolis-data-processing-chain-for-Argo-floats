@@ -34,4 +34,4 @@ o_salValues(idDef) = ones(length(idDef), 1)*g_decArgo_salDef;
 idNoDef = find(a_salCounts ~= g_decArgo_salCountsDef);
 o_salValues(idNoDef) = (o_salValues(idNoDef)+10000)/1000;
 
-return;
+return

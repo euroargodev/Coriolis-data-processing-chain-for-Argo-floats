@@ -48,7 +48,7 @@ if (~isempty(g_decArgo_rtOffsetInfo))
                   idD = find((a_profile.date - g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= tabDate);
                   if (~isempty(idD))
                      o_adjExist = 1;
-                     return;
+                     return
                   end
                end
             end
@@ -58,4 +58,4 @@ if (~isempty(g_decArgo_rtOffsetInfo))
    end
 end
                   
-return;
+return

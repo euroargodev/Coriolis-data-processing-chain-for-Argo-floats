@@ -32,4 +32,4 @@ for idT = 1:length(a_techData)
    g_decArgo_outputNcParamValue{end+1} = a_techData{idT}.value;
 end
 
-return;
+return

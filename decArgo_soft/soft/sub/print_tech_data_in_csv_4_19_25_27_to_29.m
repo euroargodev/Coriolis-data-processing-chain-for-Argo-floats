@@ -118,4 +118,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; number of entrance in profile 
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; oxygen sensor state indicator (normal = 0, failure = 1); %d\n', ...
    g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(37));
 
-return;
+return

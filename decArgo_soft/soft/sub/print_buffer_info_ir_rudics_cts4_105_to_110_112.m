@@ -430,7 +430,7 @@ end
 fprintf('* BUFFER_CHECK: STOP\n');
 fprintf('**************************************************************************************************\n\n');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve the name of a provided sensor number.
@@ -483,4 +483,4 @@ switch (a_sensorNumber)
       o_sensorName = 'ERROR';
 end
 
-return;
+return

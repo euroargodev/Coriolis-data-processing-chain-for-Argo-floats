@@ -225,7 +225,7 @@ switch (a_decoderId)
       
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute sub-surface DOXY for Apex Iridium & Navis floats.
@@ -261,7 +261,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -705,7 +705,7 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute NS DOXY for Navis floats.
@@ -743,7 +743,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -912,7 +912,7 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY2 for Navis floats.
@@ -948,7 +948,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -1110,7 +1110,7 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute PPOX_DOXY for Apex Iridium & Navis floats.
@@ -1146,7 +1146,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 switch (a_decoderId)
@@ -1430,7 +1430,7 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute CHLA for Apex Iridium floats.
@@ -1459,7 +1459,7 @@ o_outputData = a_inputData;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
@@ -1566,7 +1566,7 @@ else
    o_outputData = dataStruct;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute BBP700 for Apex Iridium floats.
@@ -1597,7 +1597,7 @@ o_outputData = a_inputData;
 
 
 if (isempty(o_outputData))
-   return;
+   return
 end
 
 paramPres = get_netcdf_param_attributes('PRES');
@@ -1762,7 +1762,7 @@ else
    o_outputData = dataStruct;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve shallowest CTD measurement of profile LR and HR data.
@@ -1794,7 +1794,7 @@ o_ctdDataAdj = [];
 
 
 if (isempty(a_lrCtdData) && isempty(a_hrCtdData))
-   return;
+   return
 end
 
 ctdStruct = [];
@@ -1841,7 +1841,7 @@ if (~isempty(ctdStruct))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve PTS measurements of a profile.
@@ -1870,7 +1870,7 @@ o_ctdData = [];
 
 
 if (isempty(a_profData))
-   return;
+   return
 end
 
 if (iscell(a_profData))
@@ -1907,4 +1907,4 @@ else
    end
 end
 
-return;
+return

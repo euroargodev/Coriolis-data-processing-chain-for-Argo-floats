@@ -75,11 +75,11 @@ for idEng = 1:length(a_engineeringDataStr)
          item = dataStr(1:idF1(1)-1);
          if (isempty(regexp(lower(item(1)), '[a-z]', 'once')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          if (any(strfind(item, ' ')))
             fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-            continue;
+            continue
          end
          if (any(strfind(item, '[')))
             item = regexprep(item, '[', '_');
@@ -96,7 +96,7 @@ for idEng = 1:length(a_engineeringDataStr)
          end
       else
          fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s''=> ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
    if (~isempty(engineeringData))
@@ -104,4 +104,4 @@ for idEng = 1:length(a_engineeringDataStr)
    end
 end
 
-return,
+return

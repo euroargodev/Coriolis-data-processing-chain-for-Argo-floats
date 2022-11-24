@@ -44,7 +44,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -135,7 +135,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert one NetCDF profile file contents in CSV format.
@@ -179,14 +179,14 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_inputPathFileName);
-   return;
+   return
 end
 
 % create CSV file
 fidOut = fopen(a_outputPathFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return;
+   return
 end
 
 % dimensions
@@ -515,7 +515,7 @@ for idP = 1:nProf
    for idParam = 1:nParam
       parameterName = strtrim(stationParameters(:, idParam, idP)');
       if (isempty(parameterName))
-         continue;
+         continue
       end
       
       % PARAM
@@ -560,7 +560,7 @@ for idP = 1:nProf
    for idParam = 1:nParam
       parameterName = strtrim(stationParameters(:, idParam, idP)');
       if (isempty(parameterName))
-         continue;
+         continue
       end
       
       % PARAM
@@ -596,7 +596,7 @@ for idP = 1:nProf
    for idParam = 1:nParam
       parameterName = strtrim(stationParameters(:, idParam, idP)');
       if (isempty(parameterName))
-         continue;
+         continue
       end
       
       % PARAM
@@ -780,4 +780,4 @@ fclose(fidOut);
 
 netcdf.close(fCdf);
 
-return;
+return

@@ -62,7 +62,7 @@ if (~isempty(profInfo))
                if ((((sensorNum == 0) || (sensorNum == 0) )&& (length(idFS) > 2)) || ...
                      ((sensorNum > 1) && (length(idFS) > 1)))
                   anomaly = 1;
-                  break;
+                  break
                end
             end
             if (anomaly == 1)
@@ -84,4 +84,4 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return

@@ -59,7 +59,7 @@ o_depProfNum = [];
 fId = fopen(a_depFileName, 'r');
 if (fId == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_depFileName);
-   return;
+   return
 end
 
 % lecture et stockage des données du fichier DEP
@@ -91,4 +91,4 @@ o_depProfNum = dataDep{23}(:);
    
 fclose(fId);
 
-return;
+return

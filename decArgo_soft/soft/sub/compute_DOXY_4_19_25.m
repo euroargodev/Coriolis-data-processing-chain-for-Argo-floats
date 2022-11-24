@@ -61,7 +61,7 @@ o_doxyValues = ones(length(a_molarDoxyValues), 1)*g_decArgo_doxyDef;
 
 
 if (isempty(a_molarDoxyValues))
-   return;
+   return
 end
 
 % get calibration information
@@ -69,14 +69,14 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration reference salinity is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'DoxyCalibRefSalinity')))
    doxyCalibRefSalinity = g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity;
 else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent DOXY calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -119,4 +119,4 @@ if (~isempty(idNoDef))
    o_doxyValues(idNoDef) = oxyValues;
 end
 
-return;
+return

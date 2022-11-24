@@ -52,7 +52,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 
 if ~(exist(jsonInputFileName, 'file') == 2)
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -251,4 +251,4 @@ end
 [g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF, ...
    g_decArgo_jsonMetaData.PRES_STOP_CTD_PUMP] = compute_cutoff_pres(a_decoderId);
 
-return;
+return

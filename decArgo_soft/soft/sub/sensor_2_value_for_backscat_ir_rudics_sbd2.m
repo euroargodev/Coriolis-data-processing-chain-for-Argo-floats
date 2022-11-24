@@ -34,4 +34,4 @@ o_backscatValues(idDef) = ones(length(idDef), 1)*g_decArgo_backscatDef;
 idNoDef = find(a_backscatCounts ~= g_decArgo_backscatCountsDef);
 o_backscatValues(idNoDef) = o_backscatValues(idNoDef)/10;
 
-return;
+return

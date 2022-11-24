@@ -68,7 +68,7 @@ global g_MC_Grounded;
 % end
 
 if (a_ptnNum == 0)
-   return;
+   return
 end
 
 % event for the concerned float (cycle, pattern)
@@ -799,7 +799,7 @@ for idEvt = 1:length(g_decArgo_eventDataParamTech)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store trajectory information.
@@ -843,7 +843,7 @@ o_dataStruct = struct( ...
    'patternNumber', a_patternNum ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store time information.
@@ -882,7 +882,7 @@ o_dataStruct = struct( ...
    'source', 'E' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store technical information.
@@ -921,4 +921,4 @@ o_dataStruct = struct( ...
    'source', 'E' ... % 'T': from tech data 'E': from event data
    );
 
-return;
+return

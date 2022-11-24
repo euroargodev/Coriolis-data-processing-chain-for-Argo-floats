@@ -37,7 +37,7 @@ if (a_conf == 0)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    % print the TMP configuration
@@ -96,7 +96,7 @@ if (a_conf == 1)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    % print the full configuration
@@ -197,7 +197,7 @@ if (a_conf == 2)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    % print the NetCDF configuration
@@ -276,4 +276,4 @@ if (a_conf == 2)
    
 end
 
-return;
+return

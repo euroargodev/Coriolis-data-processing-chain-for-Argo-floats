@@ -39,13 +39,13 @@ global g_decArgo_reportStruct;
 
 
 if (isempty(a_fileName))
-   return;
+   return
 end
 
 if (~ismember(a_listName, [{'spool'} {'buffer'}]))
    fprintf('BUFF_ERROR: Float #%d: remove_from_list_ir_rudics: unknown list name (''%s'')\n', ...
       g_decArgo_floatNum, a_listName);
-   return;
+   return
 end
 
 fileNameList = a_fileName;
@@ -94,4 +94,4 @@ for idFile = 1:length(fileNameList)
    end
 end
 
-return;
+return

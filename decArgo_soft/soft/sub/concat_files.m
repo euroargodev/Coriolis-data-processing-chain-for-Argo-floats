@@ -33,7 +33,7 @@ for idF = 1:length(a_inputFiles)
    if (idF == 1)
       if (copy_file(inputFilePathName, outputFilePathName) == 0)
          o_ok = 0;
-         return;
+         return
       end
    else
       
@@ -42,14 +42,14 @@ for idF = 1:length(a_inputFiles)
       if (fidOutput == -1)
          fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
          o_ok = 0;
-         return;
+         return
       end
       
       fidInput = fopen(inputFilePathName, 'r');
       if (fidInput == -1)
          fprintf('ERROR: Unable to open file: %s\n', inputFilePathName);
          o_ok = 0;
-         return;
+         return
       end
       
       fwrite(fidOutput, fread(fidInput));
@@ -59,4 +59,4 @@ for idF = 1:length(a_inputFiles)
    end
 end
 
-return;
+return

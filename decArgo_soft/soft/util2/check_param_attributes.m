@@ -103,12 +103,12 @@ if (ok == 1)
          end
          paramCbi{end+1} = raw{idL, cbi};
       else
-         break;
+         break
       end
    end
 else
    fprintf('ERROR: Cannot find expected fields in input file %s\n', PARAMETER_FILE_NAME);
-   return;
+   return
 end
 
 % check parameter list
@@ -185,4 +185,4 @@ fprintf('\n');
 
 diary off;
 
-return;
+return

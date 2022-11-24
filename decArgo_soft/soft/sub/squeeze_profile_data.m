@@ -25,7 +25,7 @@ o_ncProfile = a_ncProfile;
 
 
 if (isempty(o_ncProfile))
-   return;
+   return
 end
 
 if (~isempty(o_ncProfile.data))
@@ -34,7 +34,7 @@ if (~isempty(o_ncProfile.data))
    for idP = 1:length(o_ncProfile.paramList)
       idDef = idDef(find(o_ncProfile.data(idDef, idP) == o_ncProfile.paramList(idP).fillValue));
       if (isempty(idDef))
-         break;
+         break
       end
    end
    
@@ -56,4 +56,4 @@ if (~isempty(o_ncProfile.data))
    end
 end
    
-return;
+return

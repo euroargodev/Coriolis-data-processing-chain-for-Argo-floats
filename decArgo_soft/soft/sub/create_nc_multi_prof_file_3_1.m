@@ -32,4 +32,4 @@ create_nc_multi_prof_b_file_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
 
 fprintf('... NetCDF MULTI-PROFILE files created\n');
 
-return;
+return

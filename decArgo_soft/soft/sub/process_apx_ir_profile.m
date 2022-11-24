@@ -33,7 +33,7 @@ o_ncProfile = [];
 
 
 if (isempty(a_profLrData) && isempty(a_profHrData) && isempty(a_nearSurfData))
-   return;
+   return
 end
 
 profLrStruct = [];
@@ -285,7 +285,7 @@ elseif (~isempty(profHrStruct))
 
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Merge HR and LR profiles to create the primary sampling one.
@@ -534,4 +534,4 @@ else
       g_decArgo_cycleNum);
 end
 
-return;
+return

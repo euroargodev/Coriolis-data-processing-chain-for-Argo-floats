@@ -31,7 +31,7 @@ outputDirName = ['C:\users\RNU\Argo\work\json_unused_float_info_files_' datestr(
 
 if ~(exist(ignoredArgosIdListFile, 'file') == 2)
    fprintf('ERROR: Ignored Argos Id list file not found: %s\n', ignoredArgosIdListFile);
-   return;
+   return
 end
 
 % create the list of Argos Id to ignore
@@ -50,7 +50,7 @@ for idArgosId = 1:length(ignoredArgosIdList)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create json output file: %s\n', outputFileName);
-      return;
+      return
    end
       
    fprintf(fidOut, '{\n');
@@ -70,4 +70,4 @@ end
 
 fprintf('done\n');
 
-return;
+return

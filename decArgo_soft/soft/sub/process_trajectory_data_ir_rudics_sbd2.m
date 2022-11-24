@@ -45,7 +45,7 @@ if (~isempty(a_tabTrajIndex))
       a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, o_tabTrajNMeasRpp);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process N_MEASUREMENT trajectory data.
@@ -158,14 +158,14 @@ for idCyc = 1:length(cycleNumList)
    cycleNum = cycleNumList(idCyc);
    for idPrf = 1:length(profNumList)
       profNum = profNumList(idPrf);
-
+      
       % structure to store N_MEASUREMENT data
       trajNMeasStruct = get_traj_n_meas_init_struct(cycleNum, profNum);
       trajNMeasStructRpp = get_traj_n_meas_init_struct(cycleNum, profNum);
       techNMeasStruct = get_traj_n_meas_init_struct(cycleNum, profNum);
       
       measData = [];
-                        
+      
       %%%%%%%%%%%%%%%%%%%%%%
       % data before the dive
       
@@ -179,7 +179,7 @@ for idCyc = 1:length(cycleNumList)
          ((a_cyProfPhaseList(:, 5) == g_decArgo_phasePreMission) | ...
          (a_cyProfPhaseList(:, 5) == g_decArgo_phaseSurfWait)));
       packTimes = a_cyProfPhaseList(idPack, 6);
-
+      
       if (~isempty(packTimes))
          
          if (any(a_cyProfPhaseList(idPack, 5) == g_decArgo_phaseSurfWait) && ...
@@ -189,7 +189,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.cyclePhase = g_decArgo_phaseSurfWait;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          end
-
+         
          % first message time
          [firstMsgTime, idMin] = min(packTimes);
          measStruct = create_one_meas_surface(g_MC_FMT, ...
@@ -235,7 +235,7 @@ for idCyc = 1:length(cycleNumList)
             g_decArgo_argosLonDef, [], [], [], [], 1);
          measStruct.cyclePhase = a_cyProfPhaseList(idPack(idMax), 5);
          measData = [measData; measStruct];
-
+         
          % sort the data by date
          measDates = [measData.juld];
          [measDates, idSort] = sort(measDates);
@@ -244,7 +244,7 @@ for idCyc = 1:length(cycleNumList)
          % store the data
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
          measData = [];
-
+         
          % transmission end time
          if (any(a_cyProfPhaseList(idPack, 5) == g_decArgo_phaseSurfWait) && ...
                (cycleNum == 0) && (profNum == 0))
@@ -266,7 +266,7 @@ for idCyc = 1:length(cycleNumList)
          (a_cyProfPhaseList(:, 4) == profNum));
       
       if (~isempty(idPackDeepData))
-
+         
          % technical information
          idPackTech  = find( ...
             (a_tabTrajIndex(:, 1) == 253) & ...
@@ -287,7 +287,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct = create_one_meas_float_time(g_MC_CycleStart, a_tabTrajData{idPackTech}.buoyancyRedStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-
+            
             % descent to park start time
             measStruct = create_one_meas_float_time(g_MC_DST, a_tabTrajData{idPackTech}.descentToParkStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
@@ -398,7 +398,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct = create_one_meas_float_time(g_MC_PST, a_tabTrajData{idPackTech}.descentToParkEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % max P during descent to park
             measStruct = get_traj_one_meas_init_struct();
             measStruct.measCode = g_MC_MaxPresInDescToPark;
@@ -408,7 +408,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDescentToPark;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % spy pressure measurements during drift at park
             idPackData  = find( ...
                (a_tabTrajIndex(:, 1) == 252) & ...
@@ -622,7 +622,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDriftAtPark;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % park end time
             measStruct = create_one_meas_float_time(g_MC_PET, a_tabTrajData{idPackTech}.descentToProfStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
@@ -742,7 +742,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDriftAtProf;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % ascent start time
             measStruct = create_one_meas_float_time(g_MC_AST, a_tabTrajData{idPackTech}.ascentStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
@@ -865,7 +865,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct = create_one_meas_float_time(g_MC_AET, a_tabTrajData{idPackTech}.ascentEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % transmission start time
             if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
                measStruct = create_one_meas_float_time(g_MC_TST, a_tabTrajData{idPackTech}.transStartDate, g_JULD_STATUS_3, 0);
@@ -879,7 +879,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-                        
+            
             % grounding information
             if (~isempty(a_tabTrajData{idPackTech}.groundingDate))
                measStruct = create_one_meas_float_time(g_MC_Grounded, a_tabTrajData{idPackTech}.groundingDate, g_JULD_STATUS_2, 0);
@@ -1523,7 +1523,7 @@ for idCyc = 1:length(cycleNumList)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process N_CYCLE trajectory data.
@@ -1585,295 +1585,290 @@ global g_decArgo_ncDateDef;
 
 
 % process each cycle and each profile
-cycleNumList = sort(unique(a_tabTrajIndex(:, 2)));
-profileNumList = sort(unique(a_tabTrajIndex(:, 3)));
-for idCyc = 1:length(cycleNumList)
-   cycleNum = cycleNumList(idCyc);
-   % we consider only the main profile
-   %    profNum = 0;
-   for idProf = 1:length(profileNumList)
-      profNum = profileNumList(idProf);
-
-      % collect the SBD dates of the packets (unfortunately msg types 254 and
-      % 255 have no phase information and cannot be used, because they can be
-      % received during a second Iridium session or during an usual
-      % transmission)
-      idPack = find( ...
-         ((a_cyProfPhaseList(:, 1) == 253) & ...
-         (a_cyProfPhaseList(:, 3) == cycleNum) & ...
-         (a_cyProfPhaseList(:, 4) == profNum) & ...
-         (a_cyProfPhaseList(:, 5) == g_decArgo_phaseSatTrans)) | ...
-         (((a_cyProfPhaseList(:, 1) == 0) | ...
-         (a_cyProfPhaseList(:, 1) == 250) | ...
-         (a_cyProfPhaseList(:, 1) == 252)) & ...
-         (a_cyProfPhaseList(:, 3) == cycleNum) & ...
-         (a_cyProfPhaseList(:, 4) == profNum)));
-      packTimes = a_cyProfPhaseList(idPack, 6);
+cycleProfList = unique(a_tabTrajIndex(:, 2:3), 'rows');
+for idCyPr = 1:size(cycleProfList, 1)
+   cycleNum = cycleProfList(idCyPr, 1);
+   profNum = cycleProfList(idCyPr, 2);
+   
+   % collect the SBD dates of the packets (unfortunately msg types 254 and
+   % 255 have no phase information and cannot be used, because they can be
+   % received during a second Iridium session or during an usual
+   % transmission)
+   idPack = find( ...
+      ((a_cyProfPhaseList(:, 1) == 253) & ...
+      (a_cyProfPhaseList(:, 3) == cycleNum) & ...
+      (a_cyProfPhaseList(:, 4) == profNum) & ...
+      (a_cyProfPhaseList(:, 5) == g_decArgo_phaseSatTrans)) | ...
+      (((a_cyProfPhaseList(:, 1) == 0) | ...
+      (a_cyProfPhaseList(:, 1) == 250) | ...
+      (a_cyProfPhaseList(:, 1) == 252)) & ...
+      (a_cyProfPhaseList(:, 3) == cycleNum) & ...
+      (a_cyProfPhaseList(:, 4) == profNum)));
+   packTimes = a_cyProfPhaseList(idPack, 6);
+   
+   if (~isempty(packTimes))
       
-      if (~isempty(packTimes))
+      % structure to store N_CYCLE data
+      trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, profNum);
+      
+      % technical information
+      idPackTech  = find( ...
+         (a_tabTrajIndex(:, 1) == 253) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      
+      if (~isempty(idPackTech))
          
-         % structure to store N_CYCLE data
-         trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, profNum);
+         % the float technical message has been received
+         if (length(idPackTech) > 1)
+            fprintf('WARNING: Float #%d Cycle #%d Prof #%d: %d float tech messages received after the dive (only the last one is considered)\n', ...
+               g_decArgo_floatNum, cycleNum, profNum, length(idPackTech));
+            idPackTech = idPackTech(end);
+         end
          
-         % technical information
-         idPackTech  = find( ...
-            (a_tabTrajIndex(:, 1) == 253) & ...
-            (a_tabTrajIndex(:, 2) == cycleNum) & ...
-            (a_tabTrajIndex(:, 3) == profNum) & ...
-            (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+         % descent to park start date
+         trajNCycleStruct.juldDescentStart = a_tabTrajData{idPackTech}.descentToParkStartDate;
+         trajNCycleStruct.juldDescentStartStatus = g_JULD_STATUS_2;
          
-         if (~isempty(idPackTech))
-            
-            % the float technical message has been received
-            if (length(idPackTech) > 1)
-               fprintf('WARNING: Float #%d Cycle #%d Prof #%d: %d float tech messages received after the dive (only the last one is considered)\n', ...
-                  g_decArgo_floatNum, cycleNum, profNum, length(idPackTech));
-               idPackTech = idPackTech(end);
-            end
-            
-            % descent to park start date
-            trajNCycleStruct.juldDescentStart = a_tabTrajData{idPackTech}.descentToParkStartDate;
-            trajNCycleStruct.juldDescentStartStatus = g_JULD_STATUS_2;
-            
-            % first stab date and pres
-            if (~isempty(a_tabTrajData{idPackTech}.firstStabDate))
-               trajNCycleStruct.juldFirstStab = a_tabTrajData{idPackTech}.firstStabDate;
-               trajNCycleStruct.juldFirstStabStatus = g_JULD_STATUS_2;
-            end
-            
-            % descent to park end date
-            trajNCycleStruct.juldParkStart = a_tabTrajData{idPackTech}.descentToParkEndDate;
-            trajNCycleStruct.juldParkStartStatus = g_JULD_STATUS_2;
-            
-            % descent to prof start date
-            trajNCycleStruct.juldParkEnd = a_tabTrajData{idPackTech}.descentToProfStartDate;
-            trajNCycleStruct.juldParkEndStatus = g_JULD_STATUS_2;
-            
-            % descent to prof end date
-            trajNCycleStruct.juldDeepParkStart = a_tabTrajData{idPackTech}.descentToProfEndDate;
-            trajNCycleStruct.juldDeepParkStartStatus = g_JULD_STATUS_2;
-            
-            % ascent start date
-            trajNCycleStruct.juldAscentStart = a_tabTrajData{idPackTech}.ascentStartDate;
-            trajNCycleStruct.juldAscentStartStatus = g_JULD_STATUS_2;
-            
-            % ascent end date
-            trajNCycleStruct.juldAscentEnd = a_tabTrajData{idPackTech}.ascentEndDate;
-            trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
-            
-            if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
-               if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
-                  
-                  % transmission start date
-                  trajNCycleStruct.juldTransmissionStart = a_tabTrajData{idPackTech}.transStartDate;
-                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_3;
-                  
-                  % GPS locations
-                  gpsDate = [a_tabTrajData{idPackTech}.gpsDate];
-                  
-                  % first message date
-                  trajNCycleStruct.juldFirstMessage = min(packTimes);
-                  trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
-                  
-                  % first location date
-                  trajNCycleStruct.juldFirstLocation = min(gpsDate);
-                  trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
-                  
-                  % last location date
-                  trajNCycleStruct.juldLastLocation = max(gpsDate);
-                  trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
-                  
-                  % last message date
-                  trajNCycleStruct.juldLastMessage = max(packTimes);
-                  trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
-                  
-                  % transmission end date
-                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-               else
-                  
-                  % transmission start date
-                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
-                  
-                  % transmission end date
-                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-               end
-            end
-            
-            % clock offset
-            trajNCycleStruct.clockOffset = 0;
-            
-            % data mode
-            trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
-            
-            % grounded
-            if (~isempty(a_tabTrajData{idPackTech}.groundingDate))
-               trajNCycleStruct.grounded = 'Y';
-            end
-            
-            % RPP
-            if (~isempty(a_tabTrajNMeasRpp))
-               idNMeasRpp  = find( ...
-                  ([a_tabTrajNMeasRpp.cycleNumber] == cycleNum) & ...
-                  ([a_tabTrajNMeasRpp.profileNumber] == profNum));
+         % first stab date and pres
+         if (~isempty(a_tabTrajData{idPackTech}.firstStabDate))
+            trajNCycleStruct.juldFirstStab = a_tabTrajData{idPackTech}.firstStabDate;
+            trajNCycleStruct.juldFirstStabStatus = g_JULD_STATUS_2;
+         end
+         
+         % descent to park end date
+         trajNCycleStruct.juldParkStart = a_tabTrajData{idPackTech}.descentToParkEndDate;
+         trajNCycleStruct.juldParkStartStatus = g_JULD_STATUS_2;
+         
+         % descent to prof start date
+         trajNCycleStruct.juldParkEnd = a_tabTrajData{idPackTech}.descentToProfStartDate;
+         trajNCycleStruct.juldParkEndStatus = g_JULD_STATUS_2;
+         
+         % descent to prof end date
+         trajNCycleStruct.juldDeepParkStart = a_tabTrajData{idPackTech}.descentToProfEndDate;
+         trajNCycleStruct.juldDeepParkStartStatus = g_JULD_STATUS_2;
+         
+         % ascent start date
+         trajNCycleStruct.juldAscentStart = a_tabTrajData{idPackTech}.ascentStartDate;
+         trajNCycleStruct.juldAscentStartStatus = g_JULD_STATUS_2;
+         
+         % ascent end date
+         trajNCycleStruct.juldAscentEnd = a_tabTrajData{idPackTech}.ascentEndDate;
+         trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
+         
+         if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+            if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
                
-               if (~isempty(idNMeasRpp))
-                  tabMeas = a_tabTrajNMeasRpp(idNMeasRpp).tabMeas;
-                  
-                  idF1 = find(strcmp('PRES', {tabMeas.paramList.name}) == 1, 1);
-                  if (~isempty(idF1))
-                     presCol = idF1;
-                     idF2 = find(tabMeas.paramNumberWithSubLevels < idF1);
-                     if (~isempty(idF2))
-                        presCol = presCol + sum(tabMeas.paramNumberOfSubLevels(idF2)) - length(idF2);
-                     end
-                     
-                     trajNCycleStruct.repParkPres = tabMeas.paramData(presCol);
-                     trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
-                  end
-               end
-            end
-         else
-            
-            % the float technical message has not been received
-            if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+               % transmission start date
+               trajNCycleStruct.juldTransmissionStart = a_tabTrajData{idPackTech}.transStartDate;
+               trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_3;
+               
+               % GPS locations
+               gpsDate = [a_tabTrajData{idPackTech}.gpsDate];
                
                % first message date
                trajNCycleStruct.juldFirstMessage = min(packTimes);
                trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+               
+               % first location date
+               trajNCycleStruct.juldFirstLocation = min(gpsDate);
+               trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+               
+               % last location date
+               trajNCycleStruct.juldLastLocation = max(gpsDate);
+               trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
                
                % last message date
                trajNCycleStruct.juldLastMessage = max(packTimes);
                trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
                
                % transmission end date
+               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
                trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-            end
-            
-            % clock offset
-            trajNCycleStruct.clockOffset = 0;
-            
-            % data mode
-            trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
-            
-            % RPP
-            if (~isempty(a_tabTrajNMeasRpp))
-               idNMeasRpp  = find( ...
-                  ([a_tabTrajNMeasRpp.cycleNumber] == cycleNum) & ...
-                  ([a_tabTrajNMeasRpp.profileNumber] == profNum));
+            else
                
-               if (~isempty(idNMeasRpp))
-                  tabMeas = a_tabTrajNMeasRpp(idNMeasRpp).tabMeas;
-                  
-                  idF1 = find(strcmp('PRES', {tabMeas.paramList.name}) == 1, 1);
-                  if (~isempty(idF1))
-                     presCol = idF1;
-                     idF2 = find(tabMeas.paramNumberWithSubLevels < idF1);
-                     if (~isempty(idF2))
-                        presCol = presCol + sum(tabMeas.paramNumberOfSubLevels(idF2)) - length(idF2);
-                     end
-                     
-                     trajNCycleStruct.repParkPres = tabMeas.paramData(presCol);
-                     trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
-                  end
-               end
+               % transmission start date
+               trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
+               
+               % transmission end date
+               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
             end
          end
          
-         % phase of the float tech message
-         trajNCycleStruct.cyclePhase = g_decArgo_phaseSatTrans;
+         % clock offset
+         trajNCycleStruct.clockOffset = 0;
          
-         o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
+         % data mode
+         trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
+         
+         % grounded
+         if (~isempty(a_tabTrajData{idPackTech}.groundingDate))
+            trajNCycleStruct.grounded = 'Y';
+         end
+         
+         % RPP
+         if (~isempty(a_tabTrajNMeasRpp))
+            idNMeasRpp  = find( ...
+               ([a_tabTrajNMeasRpp.cycleNumber] == cycleNum) & ...
+               ([a_tabTrajNMeasRpp.profileNumber] == profNum));
+            
+            if (~isempty(idNMeasRpp))
+               tabMeas = a_tabTrajNMeasRpp(idNMeasRpp).tabMeas;
+               
+               idF1 = find(strcmp('PRES', {tabMeas.paramList.name}) == 1, 1);
+               if (~isempty(idF1))
+                  presCol = idF1;
+                  idF2 = find(tabMeas.paramNumberWithSubLevels < idF1);
+                  if (~isempty(idF2))
+                     presCol = presCol + sum(tabMeas.paramNumberOfSubLevels(idF2)) - length(idF2);
+                  end
+                  
+                  trajNCycleStruct.repParkPres = tabMeas.paramData(presCol);
+                  trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
+               end
+            end
+         end
+      else
+         
+         % the float technical message has not been received
+         if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+            
+            % first message date
+            trajNCycleStruct.juldFirstMessage = min(packTimes);
+            trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+            
+            % last message date
+            trajNCycleStruct.juldLastMessage = max(packTimes);
+            trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
+            
+            % transmission end date
+            trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+         end
+         
+         % clock offset
+         trajNCycleStruct.clockOffset = 0;
+         
+         % data mode
+         trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
+         
+         % RPP
+         if (~isempty(a_tabTrajNMeasRpp))
+            idNMeasRpp  = find( ...
+               ([a_tabTrajNMeasRpp.cycleNumber] == cycleNum) & ...
+               ([a_tabTrajNMeasRpp.profileNumber] == profNum));
+            
+            if (~isempty(idNMeasRpp))
+               tabMeas = a_tabTrajNMeasRpp(idNMeasRpp).tabMeas;
+               
+               idF1 = find(strcmp('PRES', {tabMeas.paramList.name}) == 1, 1);
+               if (~isempty(idF1))
+                  presCol = idF1;
+                  idF2 = find(tabMeas.paramNumberWithSubLevels < idF1);
+                  if (~isempty(idF2))
+                     presCol = presCol + sum(tabMeas.paramNumberOfSubLevels(idF2)) - length(idF2);
+                  end
+                  
+                  trajNCycleStruct.repParkPres = tabMeas.paramData(presCol);
+                  trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
+               end
+            end
+         end
       end
       
-      % surface information
+      % phase of the float tech message
+      trajNCycleStruct.cyclePhase = g_decArgo_phaseSatTrans;
       
-      if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+      o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
+   end
+   
+   % surface information
+   
+   if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+      
+      for idPhase = [g_decArgo_phasePreMission g_decArgo_phaseSurfWait g_decArgo_phaseEndOfLife]
          
-         for idPhase = [g_decArgo_phasePreMission g_decArgo_phaseSurfWait g_decArgo_phaseEndOfLife]
+         idPack = find( ...
+            (a_cyProfPhaseList(:, 3) == cycleNum) & ...
+            (a_cyProfPhaseList(:, 4) == profNum) & ...
+            (a_cyProfPhaseList(:, 5) == idPhase));
+         packTimes = a_cyProfPhaseList(idPack, 6);
+         
+         idPackTech  = find( ...
+            (a_tabTrajIndex(:, 1) == 253) & ...
+            (a_tabTrajIndex(:, 2) == cycleNum) & ...
+            (a_tabTrajIndex(:, 3) == profNum) & ...
+            (a_tabTrajIndex(:, 4) == idPhase));
+         idPackLocDate = [];
+         for id = idPackTech'
+            if (a_tabTrajData{id}.gpsLon ~= g_decArgo_argosLonDef)
+               idPackLocDate = [idPackLocDate; id];
+            end
+         end
+         
+         if (~isempty(packTimes))
             
-            idPack = find( ...
-               (a_cyProfPhaseList(:, 3) == cycleNum) & ...
-               (a_cyProfPhaseList(:, 4) == profNum) & ...
-               (a_cyProfPhaseList(:, 5) == idPhase));
-            packTimes = a_cyProfPhaseList(idPack, 6);
-         
-            idPackTech  = find( ...
-               (a_tabTrajIndex(:, 1) == 253) & ...
-               (a_tabTrajIndex(:, 2) == cycleNum) & ...
-               (a_tabTrajIndex(:, 3) == profNum) & ...
-               (a_tabTrajIndex(:, 4) == idPhase));
-            idPackLocDate = [];
-            for id = idPackTech'
-               if (a_tabTrajData{id}.gpsLon ~= g_decArgo_argosLonDef)
-                  idPackLocDate = [idPackLocDate; id];
-               end
+            % structure to store N_CYCLE data
+            trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, profNum);
+            
+            % first message date
+            trajNCycleStruct.juldFirstMessage = min(packTimes);
+            trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+            
+            if (~isempty(idPackLocDate))
+               
+               % first location date
+               trajData = [a_tabTrajData{idPackLocDate}];
+               trajNCycleStruct.juldFirstLocation = min([trajData.gpsDate]);
+               trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+               
+               % last location date
+               trajNCycleStruct.juldLastLocation = max([trajData.gpsDate]);
+               trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
             end
             
-            if (~isempty(packTimes))
+            % last message date
+            trajNCycleStruct.juldLastMessage = max(packTimes);
+            trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
+            
+            % phase of the float tech message
+            trajNCycleStruct.cyclePhase = idPhase;
+            trajNCycleStruct.surfOnly = 1;
+            if ((cycleNum == 0) && (profNum == 0))
+               % to keep N_CYCLE arrays for the prelude
+               trajNCycleStruct.surfOnly = 2;
                
-               % structure to store N_CYCLE data
-               trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, profNum);
+               trajNCycleStruct.clockOffset = 0;
+               trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
+               trajNCycleStruct.grounded = 'U';
                
-               % first message date
-               trajNCycleStruct.juldFirstMessage = min(packTimes);
-               trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+               % transmission start date
+               trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
                
-               if (~isempty(idPackLocDate))
-
-                  % first location date
-                  trajData = [a_tabTrajData{idPackLocDate}];
-                  trajNCycleStruct.juldFirstLocation = min([trajData.gpsDate]);
-                  trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
-                  
-                  % last location date
-                  trajNCycleStruct.juldLastLocation = max([trajData.gpsDate]);
-                  trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
-               end
-               
-               % last message date
-               trajNCycleStruct.juldLastMessage = max(packTimes);
-               trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
-               
-               % phase of the float tech message
-               trajNCycleStruct.cyclePhase = idPhase;
-               trajNCycleStruct.surfOnly = 1;
-               if ((cycleNum == 0) && (profNum == 0))
-                  % to keep N_CYCLE arrays for the prelude
-                  trajNCycleStruct.surfOnly = 2;
-                  
-                  trajNCycleStruct.clockOffset = 0;
-                  trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
-                  trajNCycleStruct.grounded = 'U';
-                  
-                  % transmission start date
-                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
-                  
-                  % transmission end date
-                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-               end
-               
-               if (isempty(trajNCycleStruct.juldTransmissionStart))
-                  % set the correct status for transmission start date
-                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
-               end
-               
-               if (isempty(trajNCycleStruct.juldTransmissionEnd))
-                  % set the correct status for  transmission end date
-                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-               end
-               
-               o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
+               % transmission end date
+               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
             end
+            
+            if (isempty(trajNCycleStruct.juldTransmissionStart))
+               % set the correct status for transmission start date
+               trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
+            end
+            
+            if (isempty(trajNCycleStruct.juldTransmissionEnd))
+               % set the correct status for  transmission end date
+               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+               trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+            end
+            
+            o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
          end
       end
    end
 end
 
-return;
+return

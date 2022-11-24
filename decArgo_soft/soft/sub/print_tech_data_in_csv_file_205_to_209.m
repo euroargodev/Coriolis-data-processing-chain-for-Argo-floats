@@ -31,7 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 if (size(a_tabTech, 1) > 1)
@@ -258,4 +258,4 @@ elseif (size(a_tabTech, 1) == 1)
    end
 end
 
-return;
+return

@@ -37,7 +37,7 @@ o_surfData = [];
 
 
 if (isempty(a_engData))
-   return;
+   return
 end
 
 fields = fieldnames(a_engData);
@@ -63,7 +63,7 @@ for id = 1:length(fields)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse and process Apex Iridium Rudics engineering data.
@@ -643,4 +643,4 @@ switch (a_engName)
          a_engName);
 end
    
-return;
+return

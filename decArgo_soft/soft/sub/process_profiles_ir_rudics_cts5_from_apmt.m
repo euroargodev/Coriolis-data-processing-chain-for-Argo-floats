@@ -3,11 +3,11 @@
 %
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift, o_subSurfaceMeas, o_presCutOffProf] = ...
-%    process_profiles_ir_rudics_cts5_from_apmt(a_ctdData, a_timedata, a_gpsData)
+%    process_profiles_ir_rudics_cts5_from_apmt(a_ctdData, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
 %   a_ctdData  : APMT CTD data
-%   a_timedata : decoded time data
+%   a_timeData : decoded time data
 %   a_gpsData  : GPS data
 %
 % OUTPUT PARAMETERS :
@@ -25,7 +25,7 @@
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift, o_subSurfaceMeas, o_presCutOffProf] = ...
-   process_profiles_ir_rudics_cts5_from_apmt(a_ctdData, a_timedata, a_gpsData)
+   process_profiles_ir_rudics_cts5_from_apmt(a_ctdData, a_timeData, a_gpsData)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -70,7 +70,7 @@ global g_decArgo_cts5Treat_SS;
 
 
 if (isempty(a_ctdData))
-   return;
+   return
 end
 
 % find the subsurface point Id
@@ -78,7 +78,7 @@ subSurfaceId = [];
 for idP = 1:length(a_ctdData)
    if (a_ctdData{idP}.treatId == g_decArgo_cts5Treat_SS)
       subSurfaceId = idP;
-      break;
+      break
    end
 end
 
@@ -86,7 +86,7 @@ end
 for idP = 1:length(a_ctdData)
    
    if (idP == subSurfaceId)
-      continue;
+      continue
    end
    
    ctdDataStruct = a_ctdData{idP};
@@ -250,7 +250,7 @@ for idP = 1:length(a_ctdData)
          
          % profile date and location information
          [profStruct] = add_profile_date_and_location_ir_rudics_cts5( ...
-            profStruct, a_timedata, a_gpsData);
+            profStruct, a_timeData, a_gpsData);
          
          o_tabProfiles = [o_tabProfiles profStruct];
          
@@ -260,4 +260,4 @@ for idP = 1:length(a_ctdData)
    end
 end
 
-return;
+return

@@ -49,7 +49,7 @@ global g_decArgo_salDef;
 
 
 if (isempty(a_dataCTD))
-   return;
+   return
 end
 
 for type = [1 3]
@@ -63,7 +63,7 @@ for type = [1 3]
             if ((data(idMeas+1+15*2) == g_decArgo_presDef) && ...
                   (data(idMeas+1+15*3) == g_decArgo_tempDef) && ...
                   (data(idMeas+1+15*4) == g_decArgo_salDef))
-               break;
+               break
             end
          end
          
@@ -93,4 +93,4 @@ o_ascProfDate = o_ascProfDate(idSorted);
 o_ascProfTemp = o_ascProfTemp(idSorted);
 o_ascProfSal = o_ascProfSal(idSorted);
 
-return;
+return

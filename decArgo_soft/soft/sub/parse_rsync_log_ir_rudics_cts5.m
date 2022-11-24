@@ -29,7 +29,7 @@ o_floatFiles = [];
 fId = fopen(a_rsyncLogName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_rsyncLogName);
-   return;
+   return
 end
 logData = textscan(fId, '%s %s');
 fclose(fId);
@@ -63,7 +63,7 @@ for idL = 1:length(logData)
             if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
                   strcmp(fileExt, ptnList{idPtn, 2}))
                o_floatFiles{end+1} = [ptn2 fileName];
-               break;
+               break
             end
          end
       end
@@ -75,11 +75,11 @@ for idL = 1:length(logData)
       %             if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
       %                   strcmp(fileExt, ptnList{idPtn, 2}))
       %                o_floatFiles{end+1} = filePathName;
-      %                break;
+      %                break
       %             end
       %          end
       %       end
    end
 end
 
-return;
+return

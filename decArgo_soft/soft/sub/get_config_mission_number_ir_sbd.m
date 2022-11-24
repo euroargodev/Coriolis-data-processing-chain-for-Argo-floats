@@ -37,10 +37,10 @@ if (isempty(idUsedConf))
    
    fprintf('WARNING: Float #%d: config missing for cycle #%d\n', ...
       g_decArgo_floatNum, a_cycleNum);
-   return;
+   return
 end
 
 % retrieve the number of the concerned configuration
 o_configMissionNumber = unique(g_decArgo_floatConfig.USE.CONFIG(idUsedConf));
 
-return;
+return

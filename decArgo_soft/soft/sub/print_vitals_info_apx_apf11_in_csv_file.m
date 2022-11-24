@@ -30,7 +30,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_vitalsData))
-   return;
+   return
 end
 
 if (isfield(a_vitalsData, 'VITALS_CORE'))
@@ -81,4 +81,4 @@ if (isfield(a_vitalsData, 'WD_CNT'))
    end
 end
 
-return;
+return

@@ -96,4 +96,4 @@ fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech2; Previous cycle transmission s
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech2; Previous cycle Agos msg repetitions; %d\n', ...
    g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(28));
 
-return;
+return

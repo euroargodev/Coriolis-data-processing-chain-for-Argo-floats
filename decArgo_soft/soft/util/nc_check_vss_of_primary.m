@@ -41,7 +41,7 @@ floatList = [];
 if (~isempty(FLOAT_LIST_FILE_NAME))
    if ~(exist(FLOAT_LIST_FILE_NAME, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', FLOAT_LIST_FILE_NAME);
-      return;
+      return
    end
    fprintf('Floats from list: %s\n', FLOAT_LIST_FILE_NAME);
    floatList = load(FLOAT_LIST_FILE_NAME);
@@ -69,7 +69,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_check_vss_of_primary_' dacDirName '_' currentTime '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
 
@@ -86,7 +86,7 @@ for idDir = 1:length(dacDir)
 
                floatWmo = str2num(floatDirName);
                if (~isempty(floatList) && ~ismember(floatWmo, floatList))
-                  continue;
+                  continue
                end
                
                fprintf('%s\n', floatDirName);
@@ -148,7 +148,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -183,7 +183,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file

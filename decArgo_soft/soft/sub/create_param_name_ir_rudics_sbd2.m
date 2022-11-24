@@ -39,4 +39,4 @@ end
 % output data
 o_paramName = a_paramName;
 
-return;
+return

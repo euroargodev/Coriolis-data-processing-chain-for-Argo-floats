@@ -65,7 +65,7 @@ global g_decArgo_doxy_102_207_206_c0;
 
 
 if (isempty(a_FREQUENCY_DOXY))
-   return;
+   return
 end
 
 % get calibration information
@@ -73,7 +73,7 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef')))
    tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
    % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 6
@@ -81,13 +81,13 @@ elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo
       fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-      return;
+      return
    end
 else
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -129,4 +129,4 @@ if (~isempty(idNoDef))
    o_DOXY(idNoDef) = oxyValues;     
 end
 
-return;
+return

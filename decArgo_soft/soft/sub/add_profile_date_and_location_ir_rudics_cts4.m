@@ -193,7 +193,7 @@ else
                         (a_gpsLocProfNum(idPrev) == a_profStruct.profileNumber) && ...
                         (a_gpsLocPhase(idPrev) == g_decArgo_phaseSurfWait))
                      % the previous location is the location of the second
-                     % Iridium session of the current cyle
+                     % Iridium session of the current cycle
                      useIt = 1;
                   else
                      if ((a_gpsLocCycleNum(idPrev) == a_profStruct.cycleNumber-1) && ...
@@ -265,4 +265,4 @@ end
 % output data
 o_profStruct = a_profStruct;
 
-return;
+return

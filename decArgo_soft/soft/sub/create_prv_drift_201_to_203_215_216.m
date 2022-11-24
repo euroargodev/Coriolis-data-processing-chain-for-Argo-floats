@@ -60,7 +60,7 @@ global g_decArgo_julD2FloatDayOffset;
 
 
 if (isempty(a_dataCTD) && isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -82,7 +82,7 @@ if (~isempty(a_dataCTD))
                data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                data(idMeas+1+15) = 0;
             else
-               break;
+               break
             end
          end
          
@@ -113,7 +113,7 @@ if (~isempty(a_dataCTDO))
                data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                data(idMeas+1+7) = 0;
             else
-               break;
+               break
             end
          end
          
@@ -141,4 +141,4 @@ if (~isempty(a_dataCTDO))
    o_parkTempDoxy = o_parkTempDoxy(idSorted);
 end
 
-return;
+return

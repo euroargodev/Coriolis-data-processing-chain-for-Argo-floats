@@ -188,6 +188,10 @@ g_decArgo_dataPayloadCorrectedCycle = 0;
 global g_decArgo_apmtMetaFromTech;
 g_decArgo_apmtMetaFromTech = [];
 
+% time data retrieved from APMT tech files
+global g_decArgo_apmtTimeFromTech;
+g_decArgo_apmtTimeFromTech = [];
+
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
 g_decArgo_fileTypeListCts5 = [ ...
@@ -201,6 +205,9 @@ g_decArgo_fileTypeListCts5 = [ ...
    {7} {'*_payload*.bin'} {'_%u_%u_payload'} {19} {'_%03d_%02d_payload*.bin'}; ...
    %    {8} {'_system_*.hex'} {'_system_%u.hex'} {''}; ...
    ];
+
+% float configuration
+global g_decArgo_floatConfig;
 
 
 % create the float directory
@@ -271,7 +278,7 @@ if (g_decArgo_delayedModeFlag)
    o_tabNcTechIndex = [];
    o_tabNcTechVal = [];
    o_structConfig = [];
-   return;
+   return
    
 end
 
@@ -301,7 +308,10 @@ if (g_decArgo_realtimeFlag)
 end
 
 % initialize float configuration
-init_float_config_prv_ir_rudics_cts5(a_launchDate, a_decoderId);
+init_float_config_prv_ir_rudics_cts5(a_decoderId);
+if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+   return
+end
 g_decArgo_firstCycleNumFloat = g_decArgo_firstCycleNumCts5;
 g_decArgo_firstCycleNumFloatNew = g_decArgo_firstCycleNumCts5;
 
@@ -337,7 +347,7 @@ end
 % retrieve event data
 ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat, a_launchDate, a_decoderId);
 if (~ok)
-   return;
+   return
 end
 
 % process available files
@@ -347,7 +357,7 @@ for idFlCy = 1:length(floatCycleList)
    floatCyNum = floatCycleList(idFlCy);
    
    if (floatCyNum < g_decArgo_firstCycleNumFloat)
-      continue;
+      continue
    end
    
    if (floatCyNum == g_decArgo_firstCycleNumFloat)
@@ -356,7 +366,7 @@ for idFlCy = 1:length(floatCycleList)
    
    %    if (floatCyNum > 20)
    %       a=1
-   %       break;
+   %       break
    %    end
    
    % get files to process
@@ -371,7 +381,7 @@ for idFlCy = 1:length(floatCycleList)
                fprintf('INFO: expected file not received yet %s => stop\n', ...
                   expectedFileName);
                stop = 1;
-               break;
+               break
             else
                fprintf('WARNING: expected file not received yet %s\n', ...
                   expectedFileName);
@@ -511,12 +521,12 @@ for idFlCy = 1:length(floatCycleList)
                   if (~any(existingNum > max(missingNum)))
                      fprintf('INFO: expected files not received yet => stop\n');
                      stop = 1;
-                     break;
+                     break
                   end
                else
                   fprintf('INFO: expected files not received yet => stop\n');
                   stop = 1;
-                  break;
+                  break
                end
             end
          end
@@ -717,7 +727,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       update_technical_data_ir_rudics_cts5(o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Decode a set of PROVOR CTS5 files.
@@ -811,8 +821,12 @@ global g_decArgo_dataPayloadCorrectedCycle;
 % meta-data retrieved from APMT tech files
 global g_decArgo_apmtMetaFromTech;
 
+% time data retrieved from APMT tech files
+global g_decArgo_apmtTimeFromTech;
+
+
 if (isempty(a_fileNameList))
-   return;
+   return
 end
 
 % set the type of each file
@@ -830,7 +844,7 @@ for idF = 1:length(fileNames)
          if (isempty(errmsg) && (count == 2))
             if (strcmp(fileName(end-3:end), g_decArgo_fileTypeListCts5{idFL, 2}(end-3:end)))
                fileTypes(idF) = idType;
-               break;
+               break
             end
          end
       end
@@ -844,7 +858,7 @@ for idF = 1:length(fileNames)
                [g_decArgo_filePrefixCts5 g_decArgo_fileTypeListCts5{idFL, 3}]);
             if (isempty(errmsg) && (count == 1))
                fileTypes(idF) = idType;
-               break;
+               break
             end
          end
       elseif (strncmp(fileName, '_payload_', length('_payload_')))
@@ -972,7 +986,11 @@ for typeNum = typeOrderList
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
                   read_apmt_technical([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
                g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
-               
+               if (~isempty(g_decArgo_patternNumFloat))
+                  g_decArgo_apmtTimeFromTech = cat(1, g_decArgo_apmtTimeFromTech, ...
+                     [g_decArgo_cycleNumFloat g_decArgo_patternNumFloat {apmtTimeFromTech}]);
+               end
+
                % store GPS data
                store_gps_data_ir_rudics_cts5(apmtTech, typeNum);
                
@@ -1158,7 +1176,7 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
       % create profiles (as they are transmitted)
       [tabProfiles, tabDriftPayload, tabSurf, ...
          tabProfilesRaw, tabDriftRaw, tabSurfRaw] = process_profiles_ir_rudics_cts5_from_payload( ...
-         payloadData, apmtTimeFromTech, g_decArgo_gpsData, presCutOffProf, o_tabProfiles, trajDataFromApmtTech);
+         payloadData, g_decArgo_apmtTimeFromTech, g_decArgo_gpsData, presCutOffProf, o_tabProfiles, trajDataFromApmtTech);
       tabDrift = [tabDrift tabDriftPayload];
       
       % merge profiles (all data from a given sensor together)
@@ -1269,7 +1287,7 @@ if (~isempty(o_tabProfiles) || ~isempty(o_tabTrajNMeas) || ...
    g_decArgo_generateNcFlag = 1;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve cycle start date from APMT technical information
@@ -1304,4 +1322,4 @@ if (isfield(a_apmtTech, 'PROFILE'))
    end
 end
 
-return;
+return

@@ -103,7 +103,7 @@ if (~isempty(refWmo))
                g_decArgo_configFilePathName = tabConfigFilePathName;
                g_decArgo_dirInputJsonFloatDecodingParametersFile = [];
                o_configFileNumber = idConfigFile;
-               return;
+               return
             end
          end
       end
@@ -131,4 +131,4 @@ docRootNode.appendChild(newChild);
 
 fprintf(errorLabel);
 
-return;
+return

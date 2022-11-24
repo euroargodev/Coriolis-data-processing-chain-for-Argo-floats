@@ -46,7 +46,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -126,7 +126,7 @@ for idFloat = 1:nbFloats
             
             ncFileName = ncFiles(idFile).name;
             if (ncFileName(1) == 'S')
-               continue;
+               continue
             end
             ncFilePathName = [ncFileDir '/' ncFileName];
             
@@ -152,7 +152,7 @@ for idFloat = 1:nbFloats
             
             ncFileName = ncFiles(idFile).name;
             if (ncFileName(1) == 'S')
-               continue;
+               continue
             end
             ncFilePathName = [ncAuxFileDir '/' ncFileName];
             
@@ -173,7 +173,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert one NetCDF profile file contents in CSV format.
@@ -219,14 +219,14 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_inputPathFileName);
-   return;
+   return
 end
 
 % create CSV file
 fidOut = fopen(a_outputPathFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return;
+   return
 end
 
 % dimensions
@@ -612,7 +612,7 @@ if (a_writeQcFlag == 0)
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -665,7 +665,7 @@ if (a_writeQcFlag == 0)
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -725,7 +725,7 @@ if (a_writeQcFlag == 0)
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -904,7 +904,7 @@ else
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -971,7 +971,7 @@ else
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -1033,7 +1033,7 @@ else
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
          if (isempty(parameterName))
-            continue;
+            continue
          end
          
          for idS = 1:length(sufixList)
@@ -1366,4 +1366,4 @@ fclose(fidOut);
 
 netcdf.close(fCdf);
 
-return;
+return

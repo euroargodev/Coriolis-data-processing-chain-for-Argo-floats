@@ -106,7 +106,7 @@ for idEv = 1:length(events)
             if (~strcmpi(info{1}, 'SAMPLE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
-               return;
+               return
             end
             
             idF = find(strcmp('DBAR', info), 1);
@@ -154,7 +154,7 @@ for idEv = 1:length(events)
             if (~strcmpi(info{1}, 'PROFILE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
-               return;
+               return
             end
             
             sensor = info{2};
@@ -202,7 +202,7 @@ for idEv = 1:length(events)
             if (~strcmpi(info{1}, 'MEASURE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
-               return;
+               return
             end
                         
             sensor = info{2};
@@ -218,4 +218,4 @@ for idEv = 1:length(events)
    end
 end
 
-return;
+return

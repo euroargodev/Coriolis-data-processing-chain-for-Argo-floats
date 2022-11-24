@@ -140,4 +140,4 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
       'SBEOptodeE', tabDoxyCoef(1, 9));
 end
 
-return;
+return

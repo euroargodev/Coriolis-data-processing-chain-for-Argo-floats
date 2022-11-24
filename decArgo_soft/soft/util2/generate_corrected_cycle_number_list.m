@@ -64,7 +64,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -90,7 +90,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_corrected_cycle_number_list' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = 'WMO; DEP cycle; NC cycle; Diff';
 fprintf(fidOut, '%s\n', header);
@@ -108,7 +108,7 @@ for idFloat = 1:nbFloats
    depFileName = [DIR_INPUT_DEP_FILES '/' floatNumStr '/' floatNumStr '_data_dep.txt'];
    if ~(exist(depFileName, 'file') == 2)
       fprintf('WARNING: no DEP file for this float!\n');
-      continue;
+      continue
    end
       
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,7 +318,7 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Collecte des informations de profils (numéro de cycle et date) dans les
@@ -591,7 +591,7 @@ o_monoAscProfLocDate = monoProfLocDate(idAsc);
 %       length(o_multiAscProfNum), a_floatNum);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -626,7 +626,7 @@ if (~exist(a_ncPathFileName, 'dir') && exist(a_ncPathFileName, 'file'))
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retreive variables from NetCDF file
@@ -647,4 +647,4 @@ if (~exist(a_ncPathFileName, 'dir') && exist(a_ncPathFileName, 'file'))
    netcdf.close(fCdf);
 end
 
-return;
+return

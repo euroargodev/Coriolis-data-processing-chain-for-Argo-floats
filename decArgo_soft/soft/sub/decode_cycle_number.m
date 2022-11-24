@@ -42,7 +42,7 @@ for idMsg = 1:size(argosDataData, 1)
    
    % don't take NULL data message into account
    if (unique(sensor) == 0)
-      continue;
+      continue
    end
    
    if (check_crc_prv(sensor, a_decoderId) == 1)
@@ -85,4 +85,4 @@ if (~isempty(tabSensors))
    end
 end
 
-return;
+return

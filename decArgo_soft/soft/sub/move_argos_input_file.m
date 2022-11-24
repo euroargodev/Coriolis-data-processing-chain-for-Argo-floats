@@ -99,7 +99,7 @@ if (isempty(a_floatNum) || isempty(a_cycleNumber))
       fileNamOut = [argosIdDirName newArgosFileName];
       if (move_file(fileNameIn, fileNamOut) == 0)
          o_ok = 0;
-         return;
+         return
       end
    end
 
@@ -116,7 +116,7 @@ else
             g_decArgo_tmpArgosIdDirectory, ...
             message);
          o_ok = 0;
-         return;
+         return
       end
    end
    mkdir(g_decArgo_tmpArgosIdDirectory);
@@ -126,7 +126,7 @@ else
    fileNamOut = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
    if (copy_file(fileNameIn, fileNamOut) == 0)
       o_ok = 0;
-      return;
+      return
    end
    
    % check if there is already some data for this file
@@ -139,7 +139,7 @@ else
          fileNamOut = [argosIdDirName newArgosFileName];
          if (move_file(fileNameIn, fileNamOut) == 0)
             o_ok = 0;
-            return;
+            return
          end
          
          % delete the temporary sub-directory
@@ -149,7 +149,7 @@ else
                g_decArgo_tmpArgosIdDirectory, ...
                message);
             o_ok = 0;
-            return;
+            return
          end
          g_decArgo_tmpArgosIdDirectory = [];
          
@@ -201,7 +201,7 @@ else
          fprintf('#@# CONCAT %s\n', filePathName);
          if (concatenate_files(baseFilePathName, filePathName) == 0)
             o_ok = 0;
-            return;
+            return
          end
       end
       
@@ -213,7 +213,7 @@ else
       fileNamOut = [g_decArgo_tmpArgosIdDirectory baseFileName];
       if (move_file(fileNameIn, fileNamOut) == 0)
          o_ok = 0;
-         return;
+         return
       end
       
       % set the new temporary file to process
@@ -235,7 +235,7 @@ else
          fileNamOut = [argosIdDirName newArgosFileName];
          if (move_file(fileNameIn, fileNamOut) == 0)
             o_ok = 0;
-            return;
+            return
          end
          
          % delete the temporary sub-directory
@@ -245,7 +245,7 @@ else
                g_decArgo_tmpArgosIdDirectory, ...
                message);
             o_ok = 0;
-            return;
+            return
          end
          g_decArgo_tmpArgosIdDirectory = [];
          
@@ -255,4 +255,4 @@ else
    end
 end
 
-return;
+return

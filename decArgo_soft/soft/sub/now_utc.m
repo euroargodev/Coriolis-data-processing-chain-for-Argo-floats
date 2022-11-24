@@ -21,4 +21,4 @@ function [o_now] = now_utc
 
 o_now = (java.lang.System.currentTimeMillis/8.64e7) + datenum('1970', 'yyyy');
 
-return;
+return

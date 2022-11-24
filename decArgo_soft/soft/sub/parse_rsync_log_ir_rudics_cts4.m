@@ -73,4 +73,4 @@ for idL = 1:length(logData)
    end
 end
 
-return;
+return

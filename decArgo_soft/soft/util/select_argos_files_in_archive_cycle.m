@@ -32,7 +32,7 @@ if (nargin == 0)
    % les fichiers pris en compte sont ceux d'une liste de flotteurs prédéfinie
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('Fichier introuvable: %s\n', floatListFileName);
-      return;
+      return
    end
 
    fprintf('Flotteurs de la liste: %s\n', floatListFileName);
@@ -49,7 +49,7 @@ inputDirName = 'E:\archive_cycle_20130121/';
 outputDirName = [inputDirName '../selected/'];
 if (exist(outputDirName, 'dir') == 7)
    fprintf('Le répertoire %s existe déjà, arrêt du programme\n', outputDirName);
-   return;
+   return
 else
    mkdir(outputDirName);
 end
@@ -60,7 +60,7 @@ end
 numWmo = str2num(char(numWmo));
 numArgos = str2num(char(numArgos));
 if (isempty(numWmo))
-   return;
+   return
 end
 
 % déplacement des fichiers Argos des flotteurs de la liste
@@ -74,7 +74,7 @@ for idFloat = 1:nbFloats
    % recherche du numéro Argos de ce flotteur
    [argosId] = find_argosId(floatNum, numWmo, numArgos);
    if (isempty(argosId))
-      return;
+      return
    end
    
    argosFile = dir([inputDirName '/' sprintf('*%d*%d*.txt', argosId, floatNum)]);
@@ -95,4 +95,4 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return

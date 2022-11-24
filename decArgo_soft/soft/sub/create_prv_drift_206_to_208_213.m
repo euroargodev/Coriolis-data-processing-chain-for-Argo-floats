@@ -60,7 +60,7 @@ global g_decArgo_tempDoxyDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -99,7 +99,7 @@ for idP = 1:length(idDrift)
             data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
             data(idMeas+1+7) = 0;
          else
-            break;
+            break
          end
       end
       
@@ -124,4 +124,4 @@ o_parkC1PhaseDoxy = o_parkC1PhaseDoxy(idSorted);
 o_parkC2PhaseDoxy = o_parkC2PhaseDoxy(idSorted);
 o_parkTempDoxy = o_parkTempDoxy(idSorted);
 
-return;
+return

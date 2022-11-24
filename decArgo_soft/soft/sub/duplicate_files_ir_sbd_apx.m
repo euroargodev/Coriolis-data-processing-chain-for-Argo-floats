@@ -89,7 +89,7 @@ for idFile = 1:length(files)
          if (error == 1)
             fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                a_floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
          dates = [];
@@ -113,7 +113,7 @@ for idFile = 1:length(files)
          if (isempty(dates))
             fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
                a_floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
       elseif (strcmp(dataFileExt, '.log'))
@@ -123,7 +123,7 @@ for idFile = 1:length(files)
          if (error == 1)
             fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                a_floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
          dates = [events.time];
@@ -131,7 +131,7 @@ for idFile = 1:length(files)
       else
          fprintf('DEC_INFO: Float #%d: Don''t know how to manage file ''%s'' in duplicate_files_ir_sbd_apx\n', ...
             a_floatNum, dataFilePathName);
-         continue;
+         continue
       end
       
       cycleNumOutStr = cycleNumInStr;
@@ -584,7 +584,7 @@ if (FINAL_CHECK)
             if (error == 1)
                fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                   a_floatNum, dataFilePathName);
-               continue;
+               continue
             end
             
             dates = [];
@@ -608,7 +608,7 @@ if (FINAL_CHECK)
             if (isempty(dates))
                fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
                   a_floatNum, dataFilePathName);
-               continue;
+               continue
             end
             
          elseif (strcmp(dataFileExt, '.log'))
@@ -618,7 +618,7 @@ if (FINAL_CHECK)
             if (error == 1)
                fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
                   a_floatNum, dataFilePathName);
-               continue;
+               continue
             end
             
             dates = [events.time]';
@@ -626,7 +626,7 @@ if (FINAL_CHECK)
          else
             fprintf('DEC_INFO: Float #%d: Don''t know how to manage file ''%s'' in duplicate_files_ir_sbd_apx\n', ...
                a_floatNum, dataFilePathName);
-            continue;
+            continue
          end
          
          checkDates = [checkDates;
@@ -643,7 +643,7 @@ if (FINAL_CHECK)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compare the content of one file to a list of files.
@@ -681,11 +681,11 @@ while (~stop)
             o_delete{end+1} = a_fileNameList{idF2};
             a_fileNameList(idF2) = [];
             deleteFlag = 1;
-            break;
+            break
          end
       end
       if (deleteFlag == 1)
-         break;
+         break
       end
    end
    if (deleteFlag == 0)
@@ -693,7 +693,7 @@ while (~stop)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if 2 file contents are identical.
@@ -725,7 +725,7 @@ o_identical = 0;
 fid = fopen(a_fileName1, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName1);
-   return;
+   return
 end
 file1Contents = textscan(fid, '%s');
 file1Contents = file1Contents{:};
@@ -734,7 +734,7 @@ fclose(fid);
 fid = fopen(a_fileName2, 'r');
 if (fid == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_fileName2);
-   return;
+   return
 end
 file2Contents = textscan(fid, '%s');
 file2Contents = file2Contents{:};
@@ -745,4 +745,4 @@ if ((length(file1Contents) == length(file2Contents)) && ...
    o_identical = 1;
 end
 
-return;
+return

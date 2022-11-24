@@ -67,7 +67,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_calibInfo = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -92,7 +92,7 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
                         if (g_decArgo_bddUpdateCsvFileId == -1)
                            fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                           return;
+                           return
                         end
                         
                         header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -138,7 +138,7 @@ if (g_decArgo_realtimeFlag == 0)
                   case {1001, 1002, 1003, 1004, 1005, 1007, 1010, 1011, 1012, ...
                         1021, 1022}
                      % 071412, 062608, 061609, 021009, 061810, 082213,
-                     % 110613&090413, 121512, 110813, 2.8.0
+                     % 110613&090413, 121512, 110813, 2.8.0.A
                      % only one sensor (SBE41)
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
@@ -150,7 +150,7 @@ if (g_decArgo_realtimeFlag == 0)
                                  g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
                                  if (g_decArgo_bddUpdateCsvFileId == -1)
                                     fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                                    return;
+                                    return
                                  end
                                  
                                  header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -205,7 +205,7 @@ if (g_decArgo_realtimeFlag == 0)
                                     g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
                                     if (g_decArgo_bddUpdateCsvFileId == -1)
                                        fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                                       return;
+                                       return
                                     end
                                     
                                     header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -254,7 +254,7 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
                         if (g_decArgo_bddUpdateCsvFileId == -1)
                            fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                           return;
+                           return
                         end
                         
                         header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -322,7 +322,7 @@ if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
             else
                fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
                   g_decArgo_floatNum, cellConfigValue);
-               return;
+               return
             end
          end
       end
@@ -348,7 +348,7 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
                         if (g_decArgo_bddUpdateCsvFileId == -1)
                            fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                           return;
+                           return
                         end
                         
                         header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -554,7 +554,7 @@ switch (a_decoderId)
          g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod;
       end
       
-   case {1021, 1022} % 2.8.0, 2.10.4
+   case {1021, 1022} % 2.8.0.A, 2.10.4.A
       
       dpfFloatFlag = get_float_config_argos_3('CONFIG_DPF_');
       if (~isempty(dpfFloatFlag))
@@ -599,4 +599,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

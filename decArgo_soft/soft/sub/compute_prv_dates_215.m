@@ -108,7 +108,7 @@ o_firstEmergencyAscentPres = [];
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 % technical message #1
@@ -407,4 +407,4 @@ if (print == 1)
    end
 end
 
-return;
+return

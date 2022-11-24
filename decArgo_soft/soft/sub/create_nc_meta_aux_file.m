@@ -127,7 +127,7 @@ currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
 fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
 if (isempty(fCdf))
    fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-   return;
+   return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,11 +431,11 @@ for idField = 1:length(metaFieldNames)
    % corresponding nc varId
    idMeta = find(strcmp(floatNcVarName, fieldName) == 1);
    if (isempty(idMeta))
-      continue;
+      continue
    end
    
    % field values are to be stored in the nc META file
-   inputElt = getfield(a_metaDataAux, fieldName);
+   inputElt = a_metaDataAux.(fieldName);
    if (~isempty(inputElt))
       
       if (isa(inputElt, 'char'))
@@ -455,7 +455,7 @@ for idField = 1:length(metaFieldNames)
          % meta-data with one dimension
          fieldNames = fieldnames(inputElt);
          for id = 1:length(fieldNames)
-            valueStr = getfield(inputElt, fieldNames{id});
+            valueStr = inputElt.(fieldNames{id});
             if (strcmp(fieldName, 'SENSOR') || strcmp(fieldName, 'PARAMETER_SENSOR'))
                valueStr = regexprep(valueStr, 'AUX_', '');
             end
@@ -562,4 +562,4 @@ end
 
 fprintf('... NetCDF META-DATA AUX file created\n');
 
-return;
+return

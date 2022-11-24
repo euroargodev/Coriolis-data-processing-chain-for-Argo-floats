@@ -25,4 +25,4 @@ global g_decArgo_janFirst2000InJulD;
 
 o_julDay = g_decArgo_janFirst2000InJulD + a_epoch2000/86400;
 
-return;
+return

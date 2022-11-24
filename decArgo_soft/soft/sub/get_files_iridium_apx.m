@@ -36,7 +36,7 @@ o_logFileList = [];
 floatIriDirName = a_dirName;
 if ~(exist(floatIriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', floatIriDirName);
-   return;
+   return
 end
 
 % msg files
@@ -51,4 +51,4 @@ for idFile = 1:length(fileNames)
    o_logFileList{end+1} = [floatIriDirName '/' fileNames(idFile).name];
 end
 
-return;
+return

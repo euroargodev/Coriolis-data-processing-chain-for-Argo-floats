@@ -37,7 +37,7 @@ global g_decArgo_julD2FloatDayOffset;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 cycleStartDateDay = g_decArgo_dateDef;
@@ -393,4 +393,4 @@ elseif (length(idF2) == 1)
 
 end
 
-return;
+return

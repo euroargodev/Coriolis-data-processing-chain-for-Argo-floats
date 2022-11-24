@@ -34,4 +34,4 @@ o_tempValues(idDef) = ones(length(idDef), 1)*g_decArgo_tempDef;
 idNoDef = find(a_tempCounts ~= g_decArgo_tempCountsDef);
 o_tempValues(idNoDef) = twos_complement_dec_argo(o_tempValues(idNoDef), 16)/1000;
 
-return;
+return

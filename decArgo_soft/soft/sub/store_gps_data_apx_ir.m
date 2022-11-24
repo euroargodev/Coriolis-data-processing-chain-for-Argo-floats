@@ -390,4 +390,4 @@ g_decArgo_gpsData{7} = gpsLocQc;
 g_decArgo_gpsData{8} = gpsLocAccuracy;
 g_decArgo_gpsData{9} = gpsLocSbdFileDate;
 
-return;
+return

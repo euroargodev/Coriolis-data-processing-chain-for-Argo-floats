@@ -33,7 +33,7 @@ ID_OFFSET = 1;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 if (size(a_tabTech, 1) > 1)
@@ -242,4 +242,4 @@ for id = 1:size(a_tabTech, 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 52+ID_OFFSET));
 end
 
-return;
+return

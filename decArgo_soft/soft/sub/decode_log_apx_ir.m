@@ -62,7 +62,7 @@ global g_decArgo_cycleNum;
 
 
 if (isempty(a_logFileList))
-   return;
+   return
 end
 
 if (length(a_logFileList) > 1)
@@ -79,7 +79,7 @@ for idFile = 1:length(a_logFileList)
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, logFilePathName);
-      return;
+      return
    end
    
    if (any(strcmp({events.cmd}, 'LogConfiguration()')))
@@ -147,4 +147,4 @@ for idFile = 1:length(a_logFileList)
 
 end
 
-return;
+return

@@ -75,7 +75,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % remove Auxiliary profiles (they are process in create_nc_mono_prof_aux_files)
@@ -85,7 +85,7 @@ a_tabProfiles(idProfAux) = [];
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % check if there is at least one B file to create
@@ -94,11 +94,11 @@ for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    if (~is_core_profile(profile))
       bFileNeeded = 1;
-      break;
+      break
    end
 end
 if (bFileNeeded == 0)
-   return;
+   return
 end
 
 % assign time resolution for each float transmission type
@@ -215,14 +215,14 @@ for idProf = 1:length(tabProfiles)
          prof = tabProfiles(idProfInFile(idP));
          if (~is_core_profile(prof))
             bFileNeeded = 1;
-            break;
+            break
          end
       end
       if (bFileNeeded == 0)
          for idP = 1:nbProfToStore
             profInfo(idProfInFile(idP), 4) = 1;
          end
-         continue;
+         continue
       end
       
       % create the profile parameters list and compute the number of levels
@@ -443,7 +443,7 @@ for idProf = 1:length(tabProfiles)
                         end
                         if (nLevelsParam ~= ncProfLev(profPos+1))
                            differ = 1;
-                           break;
+                           break
                         end
                      end
                      if (differ == 1)
@@ -484,7 +484,7 @@ for idProf = 1:length(tabProfiles)
             end
          end
          if (generate == 0)
-            continue;
+            continue
          end
          
          % information to retrieve from a possible existing mono-profile file
@@ -551,7 +551,7 @@ for idProf = 1:length(tabProfiles)
             
             if (g_decArgo_generateNcMonoProf == 2)
                if (~isempty(profile.profileCompleted) && (profile.profileCompleted > 0))
-                  fprintf('WARNING: Float #%d cycle #%d: missing levels in transmitted profile (%d levels are missing)\n', ...
+                  fprintf('INFO: Float #%d cycle #%d: missing levels in transmitted profile (%d levels are missing)\n', ...
                      g_decArgo_floatNum, outputCycleNumber, profile.profileCompleted);
                end
             end
@@ -563,7 +563,7 @@ for idProf = 1:length(tabProfiles)
          fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
          if (isempty(fCdf))
             fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-            return;
+            return
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2011,7 +2011,7 @@ for idProf = 1:length(tabProfiles)
                param = tabParams{idParam};
                idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
                if (isempty(idPosParam))
-                  continue;
+                  continue
                end
                tabEquation = tabEquations{idParam};
                tabCoefficient = tabCoefficients{idParam};
@@ -2067,4 +2067,4 @@ end
 
 fprintf('... NetCDF MONO-PROFILE b files created\n');
 
-return;
+return

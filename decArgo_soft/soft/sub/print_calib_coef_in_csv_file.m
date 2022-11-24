@@ -44,7 +44,7 @@ switch (a_decoderId)
             fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent => PPOX_DOXY not computed\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
-            return;
+            return
          end
          tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
          % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
@@ -53,7 +53,7 @@ switch (a_decoderId)
             fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent => PPOX_DOXY not computed\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
-            return;
+            return
          end
          
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; CALIBRATION COEFFICIENTS\n', ...
@@ -88,7 +88,7 @@ switch (a_decoderId)
             fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
-            return;
+            return
          end
          
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; CALIBRATION COEFFICIENTS\n', ...
@@ -118,7 +118,7 @@ switch (a_decoderId)
             fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
-            return;
+            return
          end
          
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; CALIBRATION COEFFICIENTS\n', ...
@@ -371,4 +371,4 @@ switch (a_decoderId)
       end
 end
 
-return;
+return

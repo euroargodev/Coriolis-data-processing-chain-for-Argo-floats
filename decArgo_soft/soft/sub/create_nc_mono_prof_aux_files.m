@@ -68,7 +68,7 @@ VERBOSE_MODE = 1;
 
 % no data to save
 if (isempty(a_tabProfiles))
-   return;
+   return
 end
 
 % assign time resolution for each float transmission type
@@ -329,7 +329,7 @@ for idProf = 1:length(a_tabProfiles)
                         end
                         if (nLevelsParam ~= ncProfLev(profPos+1))
                            differ = 1;
-                           break;
+                           break
                         end
                      end
                      if (differ == 1)
@@ -340,7 +340,7 @@ for idProf = 1:length(a_tabProfiles)
             end
          end
          if (generate == 0)
-            continue;
+            continue
          end
          
          % information to retrieve from a possible existing mono-profile file
@@ -407,7 +407,7 @@ for idProf = 1:length(a_tabProfiles)
             
             if (g_decArgo_generateNcMonoProf == 2)
                if (~isempty(profile.profileCompleted) && (profile.profileCompleted > 0))
-                  fprintf('WARNING: Float #%d cycle #%d: missing levels in transmitted profile (%d levels are missing)\n', ...
+                  fprintf('INFO: Float #%d cycle #%d: missing levels in transmitted profile (%d levels are missing)\n', ...
                      g_decArgo_floatNum, outputCycleNumber, profile.profileCompleted);
                end
             end
@@ -419,7 +419,7 @@ for idProf = 1:length(a_tabProfiles)
          fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
          if (isempty(fCdf))
             fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
-            return;
+            return
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1613,7 +1613,7 @@ for idProf = 1:length(a_tabProfiles)
                param = tabParams{idParam};
                idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
                if (isempty(idPosParam))
-                  continue;
+                  continue
                end
                tabEquation = tabEquations{idParam};
                tabCoefficient = tabCoefficients{idParam};
@@ -1669,4 +1669,4 @@ end
 
 fprintf('... NetCDF MONO-PROFILE AUX files created\n');
 
-return;
+return

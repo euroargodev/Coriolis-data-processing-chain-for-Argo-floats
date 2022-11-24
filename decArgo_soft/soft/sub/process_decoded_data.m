@@ -85,7 +85,6 @@ global g_decArgo_iridiumMailData;
 
 % generate nc flag
 global g_decArgo_generateNcFlag;
-g_decArgo_generateNcFlag = 1;
 
 % number of the first deep cycle
 global g_decArgo_firstDeepCycleNumber;
@@ -100,6 +99,8 @@ if (isempty(a_decodedDataTab))
    return
 end
 
+g_decArgo_generateNcFlag = 1;
+
 % set information on current cycle
 g_decArgo_cycleNum = unique([a_decodedDataTab.cyNum]);
 deepCycleFlag =  unique([a_decodedDataTab.deep]);
@@ -112,6 +113,7 @@ julD2FloatDayOffset = setdiff(unique([a_decodedDataTab.julD2FloatDayOffset]), -1
 if (~isempty(julD2FloatDayOffset))
    g_decArgo_julD2FloatDayOffset = julD2FloatDayOffset;
 end
+iceDelayedCycleFlag = unique([a_decodedDataTab.iceDelayed]);
 
 % print SBD file description for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -213,7 +215,7 @@ switch (a_decoderId)
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, ...
          iceDetected] = ...
-         compute_prv_dates_212_214_217(tabTech1, tabTech2, deepCycleFlag, a_refDay);
+         compute_prv_dates_212_214_217(tabTech1, tabTech2, deepCycleFlag, iceDelayedCycleFlag, a_refDay);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
@@ -477,7 +479,7 @@ switch (a_decoderId)
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, ...
          iceDetected] = ...
-         compute_prv_dates_212_214_217(tabTech1, tabTech2, deepCycleFlag, a_refDay);
+         compute_prv_dates_212_214_217(tabTech1, tabTech2, deepCycleFlag, iceDelayedCycleFlag, a_refDay);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
@@ -746,7 +748,7 @@ switch (a_decoderId)
          secondGroundingDate, secondGroundingPres, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, ...
          iceDetected] = ...
-         compute_prv_dates_216(tabTech1, tabTech2, deepCycleFlag, a_refDay);
+         compute_prv_dates_216(tabTech1, tabTech2, deepCycleFlag, iceDelayedCycleFlag, a_refDay);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          

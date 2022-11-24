@@ -42,4 +42,4 @@ if (~strcmp(deblank(a_gregorianDate(:)), ''))
    end
 end
 
-return;
+return

@@ -42,7 +42,7 @@ global g_decArgo_janFirst1950InMatlab; % used in an inline function
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: read_apmt_technical: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % create the technical info structure
@@ -52,13 +52,13 @@ end
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = [];
 while (1)
    line = fgetl(fId);
    if (line == -1)
-      break;
+      break
    end
    data{end+1} = line;
 end
@@ -84,7 +84,7 @@ for idL = 1:length(data)
          sectionName = techSectionList{idSection};
          if (strcmp(line, ['[' sectionName ']']))
             newSectionNum = idSection;
-            break;
+            break
          end
       end
       if (newSectionNum == -1)
@@ -108,7 +108,7 @@ for idL = 1:length(data)
       currentStruct = [];
       currentSectionNum = newSectionNum;
       newSectionNum = -1;
-      continue;
+      continue
    end
 
    currentStruct{end+1} = line;
@@ -274,7 +274,7 @@ for idF = 1:length(fieldNames)
                end
                
                done = 1;
-               break;
+               break
             end
          end
       end
@@ -394,7 +394,7 @@ for idF = 1:length(fieldNames)
                   end
                   
                   done = 1;
-                  break;
+                  break
                end
             end
          end
@@ -408,7 +408,7 @@ end
 
 o_techData = techData;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to read APMT technical data.
@@ -454,7 +454,7 @@ switch (a_decoderId)
       
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % In line function to compute GPS latitude.
@@ -487,7 +487,7 @@ if (char(a_latStr) == 'S')
 end
 o_lat = decode_GPS(a_lat)*sig;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % In line function to compute GPS longitude.
@@ -520,7 +520,7 @@ if (char(a_lonStr) == 'W')
 end
 o_lon = decode_GPS(a_lon)*sig;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create self test alarm value from alarm item list.
@@ -569,4 +569,4 @@ for idS = 1:length(subSystemList)
    end
 end
 
-return;
+return

@@ -24,7 +24,7 @@ function [o_time] = format_time_dec_argo(a_time)
 o_time = [];
 
 if (isempty(a_time))
-   return;
+   return
 end
 
 if (a_time >= 0)
@@ -50,4 +50,4 @@ else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
 
-return;
+return

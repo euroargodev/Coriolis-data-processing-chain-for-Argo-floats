@@ -67,7 +67,7 @@ global g_decArgo_tempDoxyDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 for type = [1 3]
@@ -84,7 +84,7 @@ for type = [1 3]
                   (data(idMeas+1+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
                   (data(idMeas+1+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
                   (data(idMeas+1+7*7) == g_decArgo_tempDoxyDef))
-               break;
+               break
             end
          end
          
@@ -126,4 +126,4 @@ o_ascProfC1PhaseDoxy = o_ascProfC1PhaseDoxy(idSorted);
 o_ascProfC2PhaseDoxy = o_ascProfC2PhaseDoxy(idSorted);
 o_ascProfTempDoxy = o_ascProfTempDoxy(idSorted);
 
-return;
+return

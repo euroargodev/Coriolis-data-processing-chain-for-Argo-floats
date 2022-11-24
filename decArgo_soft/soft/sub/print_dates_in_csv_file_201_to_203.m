@@ -210,7 +210,7 @@ for idP = 1:size(a_evAct, 1)
          tabLabel{end+1} = 'EV action';
          tabPres(end+1) = data(idPoint+1+15);
       else
-         break;
+         break
       end
    end
 end
@@ -227,7 +227,7 @@ for idP = 1:size(a_pumpAct, 1)
          tabLabel{end+1} = 'Pump action';
          tabPres(end+1) = data(idPoint+1+15);
       else
-         break;
+         break
       end
    end
 end
@@ -296,4 +296,4 @@ if (~isempty(tabDate))
    end
 end
 
-return;
+return

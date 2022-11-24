@@ -80,7 +80,7 @@ if (~isempty(idEvts))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars/%d,%d,%d');
                if (~isempty(errmsg) || (count ~= 4))
                   fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-                  continue;
+                  continue
                end
                data = [data; events(idEv).time  val' events(idEv).mTime];
             else
@@ -94,7 +94,7 @@ if (~isempty(idEvts))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars / %fuM %fC %f %f / %d,%d,%d');
                if (~isempty(errmsg) || (count ~= 8))
                   fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-                  continue;
+                  continue
                end
                data = [data; events(idEv).time val(1) val(4) val(3) val(6) val(7) val(8) events(idEv).mTime];
             else
@@ -108,7 +108,7 @@ if (~isempty(idEvts))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars / %fuM %fC %f %f %f / %d,%d,%d');
                if (~isempty(errmsg) || (count ~= 9))
                   fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-                  continue;
+                  continue
                end
                data = [data; events(idEv).time val(1) val(3) val(4) val(5) val(6) val(7) val(8) events(idEv).mTime];
             else
@@ -127,7 +127,7 @@ if (~isempty(idEvts))
          otherwise
             fprintf('DEC_WARNING: %sNothing done yet in process_apx_ir_surf_data_evts for decoderId #%d\n', ...
                errorHeader, a_decoderId);
-            return;
+            return
       end
    end
 end
@@ -221,8 +221,8 @@ if (~isempty(data))
       otherwise
          fprintf('DEC_WARNING: %sNothing done yet in process_apx_ir_surf_data_evts for decoderId #%d\n', ...
             errorHeader, a_decoderId);
-         return;
+         return
    end
 end
 
-return;
+return

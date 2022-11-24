@@ -55,9 +55,9 @@ for id = 1:length(a_pressure)-1
       if (o_date(id) ~= g_decArgo_dateDef)
          o_date(id+1) = o_date(id) + driftSampPeriod(zoneNum);
       else
-         break;
+         break
       end
    end
 end
 
-return;
+return

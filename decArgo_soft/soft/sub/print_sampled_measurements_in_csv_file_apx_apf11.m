@@ -31,7 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 
 if (isempty(a_sampledData))
-   return;
+   return
 end
       
 format1 = [];
@@ -116,4 +116,4 @@ for idL = 1:size(paramData, 1)
    end
 end
 
-return;
+return

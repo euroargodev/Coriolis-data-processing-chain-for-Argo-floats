@@ -39,7 +39,7 @@ global g_decArgo_janFirst1950InMatlab;
 iriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatRudicsId '_' num2str(a_floatNum) '/archive/'];
 if ~(exist(iriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', iriDirName);
-   return;
+   return
 end
 
 existingCycles = [];
@@ -71,7 +71,7 @@ end
 
 o_cycleList = sort(o_cycleList);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create cycle list from existing and expected cycle list.
@@ -110,7 +110,7 @@ first = strfind(a_expectedCycleList, '[');
 last = strfind(a_expectedCycleList, ']');
 if (isempty(first) || isempty(last))
    fprintf('ERROR: Syntax error in EXPECTED_CYCLE_LIST configuration parameter: %s\n', a_expectedCycleList);
-   return;
+   return
 end
 
 g_decArgo_expectedCycleList = strtrim(a_expectedCycleList(first+1:last-1));
@@ -118,7 +118,7 @@ remain = g_decArgo_expectedCycleList;
 while (1)
    [info, remain] = strtok(remain, ',');
    if (isempty(info))
-      break;
+      break
    end
    info = strtrim(info);
    if (isstrprop(info, 'digit'))
@@ -131,7 +131,7 @@ while (1)
       if (isempty(tildePos))
          fprintf('ERROR: Syntax error in EXPECTED_CYCLE_LIST configuration parameter: %s\n', a_expectedCycleList);
          o_outputList = [];
-         return;
+         return
       end
       if (length(info) == 1)
          % [~] => all cycles
@@ -159,4 +159,4 @@ end
 
 o_outputList = sort(unique(o_outputList));
 
-return;
+return

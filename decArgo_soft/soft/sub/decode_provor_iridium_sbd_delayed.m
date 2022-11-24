@@ -172,12 +172,7 @@ end
 
 % create sub-directories:
 % - a 'archive' directory used to store the received mail files
-% WHEN USING VIRTUAL BUFFERS:
 % - a 'archive/sbd' directory used to store the received SBD files
-% WHEN USING DIRECTORY BUFFERS:
-% - a 'spool' directory used to select the SBD files that will be processed
-% during the current session of the decoder
-% - a 'buffer' directory used to gather the SBD files expected for a given cycle
 % IN RT MODE:
 % - a 'history_of_processed_data' directory used to store the information on
 % previous processings
@@ -362,7 +357,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
 end
 
 if (isempty(decodedDataTab))
-   fprintf('DEC_INDO: Float #%d: No data\n', ...
+   fprintf('DEC_INFO: Float #%d: No data\n', ...
       g_decArgo_floatNum);
    rmdir(g_decArgo_archiveSbdDirectory, 's');
    return
@@ -374,7 +369,7 @@ fprintf('\nDEC_INFO: creating buffers\n');
 decodedDataTab = create_decoding_buffers(decodedDataTab, a_decoderId);
 
 if (isempty(decodedDataTab))
-   fprintf('DEC_INDO: Float #%d: No data\n', ...
+   fprintf('DEC_INFO: Float #%d: No data\n', ...
       g_decArgo_floatNum);
    rmdir(g_decArgo_archiveSbdDirectory, 's');
    return

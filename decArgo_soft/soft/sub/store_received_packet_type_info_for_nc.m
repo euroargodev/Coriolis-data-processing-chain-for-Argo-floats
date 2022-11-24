@@ -263,4 +263,4 @@ switch (a_decoderId)
       fprintf('WARNING: Received packet type information is not defined yet for decoderId #%d\n', a_decoderId);
 end
 
-return;
+return

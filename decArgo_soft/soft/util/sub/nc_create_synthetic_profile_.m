@@ -99,7 +99,7 @@ end
 % delete the temporary directory
 remove_directory(tmpDirName);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from PROF file.
@@ -142,17 +142,17 @@ for idType= 1:2
       if ~(exist(profFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
             g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
-         return;
+         return
       end
    else
       if (isempty(a_bProfFileName))
-         break;
+         break
       end
       profFilePathName = a_bProfFileName;
       if ~(exist(profFilePathName, 'file') == 2)
          fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
             g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
-         return;
+         return
       end
    end
    
@@ -169,7 +169,7 @@ for idType= 1:2
    if (~strcmp(formatVersion, '3.1'))
       fprintf('WARNING: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s => not used\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, formatVersion);
-      return;
+      return
    end
    
    % create the list of parameters to be retrieved from PROF file
@@ -323,7 +323,7 @@ for idType= 1:2
             profData.presData = paramData(idProf, :)';
          end
          if ((idType == 2) && strcmp(paramName, 'PRES'))
-            continue;
+            continue
          end
          if (idType == 1)
             profData.paramDataMode = [profData.paramDataMode dataMode(idProf)];
@@ -334,7 +334,7 @@ for idType= 1:2
                stationParametersParamName = deblank(stationParameters(:, idParamNc, idProf)');
                if (strcmp(paramName, stationParametersParamName))
                   nParamId = idParamNc;
-                  break;
+                  break
                end
             end
             if (~isempty(deblank(parameterDataMode)))
@@ -346,7 +346,7 @@ for idType= 1:2
             else
                fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
                   g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
-               return;
+               return
             end
          end
          
@@ -364,12 +364,12 @@ for idType= 1:2
                if (~isempty(calibParamName))
                   if (strcmp(paramName, calibParamName))
                      nParamId = idParamNc;
-                     break;
+                     break
                   end
                end
             end
             if (~isempty(nParamId))
-               break;
+               break
             end
          end
          if (~isempty(nParamId))
@@ -409,7 +409,7 @@ for idProfC = 1:length(profDataTabC)
             g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
             length(profData.presData), ...
             length(profDataTabB(idProfB).presData));
-         return;
+         return
       end
       if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
          profDataB = profDataTabB(idProfB);
@@ -453,7 +453,7 @@ for idProfC = 1:length(profDataTabC)
          profData.scientificCalibComment = [profData.scientificCalibComment profDataB.scientificCalibComment];
          profData.scientificCalibDate = [profData.scientificCalibDate profDataB.scientificCalibDate];
          profDataTabB(idProfB) = [];
-         break;
+         break
       end
    end
    profDataTab = [profDataTab profData];
@@ -466,7 +466,7 @@ end
 % output parameter
 o_profData = profDataTab;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -501,7 +501,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -522,7 +522,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get data from name in a {var_name}/{var_data} list.
@@ -555,7 +555,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -591,7 +591,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve attributes from NetCDF file
@@ -611,7 +611,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get attribute data from variable name and attribute in a
@@ -646,7 +646,7 @@ if (~isempty(idVal))
    o_dataValues = a_dataList{3*idVal};
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store PROF information.
@@ -713,7 +713,7 @@ o_profDataStruct = struct( ...
    'scientificCalibDate', [] ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process PROF data to generate synthetic profile data.
@@ -867,7 +867,7 @@ if (length(unique([a_profData.configMissionNumber])) > 1)
    errorFlag = 1;
 end
 if (errorFlag == 1)
-   return;
+   return
 end
 
 % create synthetic profile
@@ -933,14 +933,14 @@ catch error
          error.stack(idS). file, ...
          error.stack(idS). name);
    end
-   return;
+   return
 end
 
 if (isempty(syntProfData))
    fprintf('INFO: Float #%d Cycle #%d%c: no synthetic profile data reported by ARGO_simplify_getpressureaxis_v6 fonction\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    o_syntProfData = [];
-   return;
+   return
 end
 
 % store synthetic profile data in the output structure
@@ -961,7 +961,7 @@ for idParam = 1:length(paramList)
       fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter is not present in the output file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
          paramName);
-      continue;
+      continue
    end
    data = syntProfData.(paramName).value;
    idOk = find(~isnan(data));
@@ -1096,7 +1096,7 @@ if (isempty(o_syntProfData.paramData))
    o_syntProfData = [];
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the dedicated structure to store synthetic profile information.
@@ -1160,7 +1160,7 @@ o_profDataStruct = struct( ...
    'scientificCalibDate', [] ...
    );
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create synthetic mono-profile NetCDF file.
@@ -1257,7 +1257,7 @@ move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/profiles/' 
 % report information structure
 g_cocs_reportData.outputSMonoProfFile = [a_outputDir '/' num2str(a_floatWmo) '/profiles/' outputFileName];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Modify the value of a dimension in a NetCDF schema.
@@ -1307,7 +1307,7 @@ end
 
 o_outputSchema = a_inputSchema;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Fill synthetic mono-profile NetCDF file.
@@ -1357,7 +1357,7 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_fileName);
-   return;
+   return
 end
 
 currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
@@ -1775,7 +1775,7 @@ end
 % close NetCDF file
 netcdf.close(fCdf);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Store data from all existing S-PROF files and a given directory in a dedicated
@@ -1863,7 +1863,7 @@ if (~isempty(o_syntProfAllData))
    o_syntProfAllData = uniformize_n_calib_dimension(o_syntProfAllData);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Store data from one S-PROF file in a dedicated structure.
@@ -1899,7 +1899,7 @@ global g_cocs_cycleDir;
 if ~(exist(a_sProfFileName, 'file') == 2)
    fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_sProfFileName);
-   return;
+   return
 end
 
 % retrieve information from S-PROF file
@@ -2046,12 +2046,12 @@ for idProf = 1:nProf
             if (~isempty(calibParamName))
                if (strcmp(paramName, calibParamName))
                   nParamId = idParamNc;
-                  break;
+                  break
                end
             end
          end
          if (~isempty(nParamId))
-            break;
+            break
          end
       end
       if (~isempty(nParamId))
@@ -2069,7 +2069,7 @@ for idProf = 1:nProf
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Uniformize the N_CALIB dimension between the profile structures.
@@ -2125,7 +2125,7 @@ for idProf = 1:length(a_syntProfAllData)
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create synthetic multi-profile NetCDF file.
@@ -2217,7 +2217,7 @@ move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/' outputFil
 % report information structure
 g_cocs_reportData.outputSMultiProfFile = [a_outputDir '/' num2str(a_floatWmo) '/' outputFileName];
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Fill synthetic multi-profile NetCDF file.
@@ -2267,7 +2267,7 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_fileName);
-   return;
+   return
 end
 
 currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
@@ -2634,4 +2634,4 @@ end
 % close NetCDF file
 netcdf.close(fCdf);
 
-return;
+return

@@ -55,8 +55,8 @@ for idF = 1:length(g_decArgo_rtOffsetInfo.param)
          fprintf('RTADJ_WARNING: Float #%d Cycle #%d Profile #%d: profile not dated => RT offset cannot be applied\n', ...
             g_decArgo_floatNum, a_profile.cycleNumber, a_profile.profileNumber);
       end
-      break;
+      break
    end
 end
 
-return;
+return

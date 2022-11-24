@@ -45,12 +45,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'OCR'))
    fprintf('WARNING: Float #%d Cycle #%d: OCR sensor calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490')) && ...
       (isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490')) && ...
       (isfield(g_decArgo_calibInfo.OCR, 'LmLambda490')))
@@ -61,7 +61,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent OCR sensor calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % compute output data
@@ -69,4 +69,4 @@ idNoDef = find(a_RAW_DOWNWELLING_IRRADIANCE490 ~= a_RAW_DOWNWELLING_IRRADIANCE49
 o_DOWN_IRRADIANCE490(idNoDef) = ...
    0.01*a1Lambda490*(a_RAW_DOWNWELLING_IRRADIANCE490(idNoDef) - a0Lambda490)*lmLambda490;
 
-return;
+return

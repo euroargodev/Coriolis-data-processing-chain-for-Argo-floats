@@ -126,7 +126,7 @@ if (~isempty(presOffset))
    o_cycleTimeData.ascentEndAdjPresSci = adjust_value(o_cycleTimeData.ascentEndPresSci, presOffset);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute pressure surface offset to use to adjust pressure measurements
@@ -194,7 +194,7 @@ end
 
 o_presOffset = presOffset;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Adjust PRES measurements of a given profile.
@@ -238,7 +238,7 @@ if (~isempty(o_profData))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Adjust PRES of a givent measurement.
@@ -274,4 +274,4 @@ if (~isempty(a_value) && (a_value ~= g_decArgo_presDef))
    o_valueAdj = a_value - a_presOffset;
 end
 
-return;
+return

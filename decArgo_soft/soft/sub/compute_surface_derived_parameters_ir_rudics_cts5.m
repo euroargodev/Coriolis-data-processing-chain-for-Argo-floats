@@ -52,7 +52,7 @@ end
 % update output parameters
 o_tabSurf = a_tabSurf;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OPTODE sensor.
@@ -138,7 +138,7 @@ end
 a_surfOptode.derived = 1;
 o_surfOptode = a_surfOptode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute PPOX_DOXY from the surface data provided by the OPTODE sensor.
@@ -233,4 +233,4 @@ switch (a_decoderId)
       
 end
                
-return;
+return

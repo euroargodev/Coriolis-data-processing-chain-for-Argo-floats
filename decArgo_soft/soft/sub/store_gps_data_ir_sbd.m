@@ -89,7 +89,7 @@ if (~isempty(a_tabTech))
             fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...
                g_decArgo_floatNum, ...
                a_decoderId);
-            return;
+            return
       end
       
       % GPS data (consider only 'valid' GPS locations)
@@ -154,4 +154,4 @@ if (~isempty(a_tabTech))
    end
 end
 
-return;
+return

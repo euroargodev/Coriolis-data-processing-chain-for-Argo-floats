@@ -59,7 +59,7 @@ outputFileName = [DIR_LOG_CSV_FILE '/get_meta_data_from_data_base_' datestr(now,
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    fprintf('Erreur ouverture fichier: %s\n', outputFileName);
-   return;
+   return
 end
 
 header = ['Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #; IMEI #; Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
@@ -70,7 +70,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -84,7 +84,7 @@ metaWmoList = metaData(:, 1);
 for id = 1:length(metaWmoList)
    if (isempty(str2num(metaWmoList{id})))
       fprintf('%s is not a valid WMO number\n', metaWmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', metaWmoList{:});
@@ -221,4 +221,4 @@ fclose(fidOut);
 
 diary off;
 
-return;
+return

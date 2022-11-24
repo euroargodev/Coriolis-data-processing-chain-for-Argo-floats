@@ -50,7 +50,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_calibInfo = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -64,12 +64,12 @@ if (g_decArgo_floatTransType == 3)
       [o_floatRudicsId, status] = str2num(jsonMetaData.FLOAT_RUDICS_ID);
       if (status == 0)
          fprintf('ERROR: FLOAT_RUDICS_ID is not correct in Json meta-data file (%s)\n', jsonInputFileName);
-         return;
+         return
       end
    end
    if (isempty(o_floatRudicsId))
       fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
-      return;
+      return
    end
 end
 
@@ -107,7 +107,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
@@ -125,7 +125,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(1, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             
@@ -138,7 +138,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   %                else
                   %                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  %                   return;
+                  %                   return
                end
             end
             for id = 0:13
@@ -147,7 +147,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(3, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             for id = 0:13
@@ -156,7 +156,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(3, id+15) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             for id = 0:27
@@ -165,7 +165,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(4, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             for id = 0:27
@@ -174,7 +174,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(5, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
                         
@@ -196,7 +196,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   %                else
                   %                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  %                   return;
+                  %                   return
                end
             end
             for id = 0:6
@@ -205,7 +205,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(2, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -224,7 +224,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(1, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             for id = 0:6
@@ -233,7 +233,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef(2, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -247,7 +247,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                  return;
+                  return
                end
             end
             g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
@@ -256,4 +256,4 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
    end
 end
 
-return;
+return

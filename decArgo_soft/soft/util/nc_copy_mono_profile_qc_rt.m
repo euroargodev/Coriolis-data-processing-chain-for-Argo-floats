@@ -228,7 +228,7 @@ xmlwrite(xmlFileName, g_cocq_xmlReportDOMNode);
 %    edit(xmlFileName);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Create a new set of NetCDF mono-profile files by adding Qc flags (provided in
@@ -412,7 +412,7 @@ for idFloat = 1:nbFloats
          if (g_cocq_realtimeFlag == 1)
             g_cocq_reportStruct.input_ko = [g_cocq_reportStruct.input_ko {qcProfFilePathName}];
          end
-         continue;
+         continue
       end
       
       % retrieve information from Qc file
@@ -428,7 +428,7 @@ for idFloat = 1:nbFloats
          if (g_cocq_realtimeFlag == 1)
             g_cocq_reportStruct.input_ko = [g_cocq_reportStruct.input_ko {qcProfFilePathName}];
          end
-         continue;
+         continue
       end
       
       % retrieve information from input c file
@@ -446,22 +446,22 @@ for idFloat = 1:nbFloats
          profNbLevelsQc = size(currentDataQc, 1);
          profNbLevelsInput = size(currentdataInput, 1);
          if (strcmp(vssQc{:}, vssCInput{idProf}) == 0)
-            continue;
+            continue
          elseif (strcmp(cParamStrQc{:}, cParamStrInput{idProf}) == 0)
-            continue;
+            continue
          elseif (profNbLevelsQc ~= profNbLevelsInput)
-            continue;
+            continue
          else
             dataDiffer = 0;
             for idLev = 1:size(currentdataInput, 1)
                if (~strcmp(currentdataInput(idLev, :), currentDataQc(idLev, :)))
                   dataDiffer = 1;
-                  break;
+                  break
                end
             end
             if (dataDiffer == 0)
                profNumToUpdate = idProf;
-               break;
+               break
             else
                if (PRINT_DIFF_DATA_FLAG == 1)
                   % the data comparison is not printed when we compare 2
@@ -499,7 +499,7 @@ for idFloat = 1:nbFloats
             for idLev = 1:size(dataInput, 1)
                if (~strcmp(dataInput(idLev, :), dataQc(idLev, :)))
                   dataDiffer = 1;
-                  break;
+                  break
                end
             end
             if (dataDiffer == 1)
@@ -522,7 +522,7 @@ for idFloat = 1:nbFloats
                if (g_cocq_realtimeFlag == 1)
                   g_cocq_reportStruct.input_ko = [g_cocq_reportStruct.input_ko {qcProfFilePathName}];
                end
-               continue;
+               continue
             end
          end
       else
@@ -532,7 +532,7 @@ for idFloat = 1:nbFloats
          if (g_cocq_realtimeFlag == 1)
             g_cocq_reportStruct.input_ko = [g_cocq_reportStruct.input_ko {qcProfFilePathName}];
          end
-         continue;
+         continue
       end
       
       % make a copy of the input file(s) to be updated
@@ -621,7 +621,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve information on profile(s) of a mono-profile or unique-profile NetCDF
@@ -677,7 +677,7 @@ if (exist(a_profFilePathName, 'file') == 2)
    fCdf = netcdf.open(a_profFilePathName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_profFilePathName);
-      return;
+      return
    end
    
    % retrieve information
@@ -713,7 +713,7 @@ if (exist(a_profFilePathName, 'file') == 2)
                if (~isempty(a_refParamlist))
                   % consider only the parameters of the reference list
                   if (isempty(find(strcmp(a_refParamlist, paramName) == 1)))
-                     continue;
+                     continue
                   end
                end
                paramList = [paramList {paramName}];
@@ -890,7 +890,7 @@ else
    fprintf('ERROR: file not found: %s\n', a_profFilePathName);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Update the QC of given mono-profile NetCDF file(s) (c file and b file if
@@ -992,7 +992,7 @@ for idType = 1:2
    else
       % b file update
       if (isempty(a_outputBFileName))
-         continue;
+         continue
       end
       outputFileName = a_outputBFileName;
       qcDataId = a_qcBDataId;
@@ -1003,7 +1003,7 @@ for idType = 1:2
    fCdf = netcdf.open(outputFileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', outputFileName);
-      return;
+      return
    end
    
    % retrieve the N_LEVELS dimension value
@@ -1057,13 +1057,13 @@ for idType = 1:2
                   if (dataMode(a_profNumToUpdate) == 'R')
                      fprintf('INFO: profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
                         a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
-                     continue;
+                     continue
                   end
                else
                   if (isempty(find(strcmp(paramNamePrefix, adjustedParam), 1)))
                      fprintf('INFO: parameter %s of profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
                         paramNamePrefix, a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
-                     continue;
+                     continue
                   end
                end
             end
@@ -1256,7 +1256,7 @@ end
 
 o_ok = 1;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a given variable is present in a NetCDF file.
@@ -1289,11 +1289,11 @@ for idVar = 0:nbVars-1
    [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
    if (strcmp(varName, a_varName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Check if a variable attribute is present in a NetCDF file.
@@ -1328,11 +1328,11 @@ for idAttr = 0:nbAtts-1
    attName = netcdf.inqAttName(a_ncId, varId, idAttr);
    if (strcmp(attName, a_attName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Adjust the size of 2 character arrays along the second dimension (by padding
@@ -1377,7 +1377,7 @@ end
 o_tab1 = a_tab1;
 o_tab2 = a_tab2;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -1412,7 +1412,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file
@@ -1433,7 +1433,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    netcdf.close(fCdf);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Initialize XML report.
@@ -1485,7 +1485,7 @@ docRootNode.appendChild(newChild);
 
 g_cocq_xmlReportDOMNode = docNode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Parse input parameters.
@@ -1543,7 +1543,7 @@ if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
       o_inputError = 1;
-      return;
+      return
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'xmlReportDir'))
@@ -1575,7 +1575,7 @@ if (~isempty(g_cocq_xmlReportFileName))
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store report information.
@@ -1608,7 +1608,7 @@ o_reportStruct = struct( ...
    'profNum_ok', '', ...
    'input_ko', '');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Finalize the XML report.
@@ -1700,7 +1700,7 @@ if (~isempty(infoMsg))
    
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
-      textNode = char(infoMsg(idMsg));
+      textNode = infoMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -1710,7 +1710,7 @@ if (~isempty(warningMsg))
    
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
-      textNode = char(warningMsg(idMsg));
+      textNode = warningMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -1720,7 +1720,7 @@ if (~isempty(errorMsg))
    
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
-      textNode = char(errorMsg(idMsg));
+      textNode = errorMsg{idMsg};
       newChild.appendChild(docNode.createTextNode(textNode));
       docRootNode.appendChild(newChild);
    end
@@ -1759,7 +1759,7 @@ newChild = docNode.createElement('status');
 newChild.appendChild(docNode.createTextNode(o_status));
 docRootNode.appendChild(newChild);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve INFO, WARNING and ERROR messages from the log file.
@@ -1796,7 +1796,7 @@ if (~isempty(a_logFileName))
    if (fId == -1)
       errorLine = sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
       o_errorMsg = [o_errorMsg {errorLine}];
-      return;
+      return
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
@@ -1816,13 +1816,13 @@ if (~isempty(a_logFileName))
          end
          idLine = idLine + 1;
          if (idLine > length(fileContents))
-            break;
+            break
          end
       end
    end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Duration format.
@@ -1872,4 +1872,4 @@ else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
 
-return;
+return

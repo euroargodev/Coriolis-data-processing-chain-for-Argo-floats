@@ -241,4 +241,4 @@ for idLine = 1:length(idSort)
    fprintf(g_decArgo_outputCsvFileId, '%s\n', tabLabel{idSort(idLine)});
 end
 
-return;
+return

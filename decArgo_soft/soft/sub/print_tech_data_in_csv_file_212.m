@@ -36,7 +36,7 @@ global g_decArgo_dateDef;
 
 
 if (isempty(a_tabTech1) && isempty(a_tabTech2))
-   return;
+   return
 end
 
 ID_OFFSET = 1;
@@ -448,4 +448,4 @@ elseif (length(idF2) == 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), a_tabTech2(id, 59+ID_OFFSET));
 end
 
-return;
+return

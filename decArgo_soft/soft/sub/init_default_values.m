@@ -497,7 +497,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '027f';
+g_decArgo_decoderVersion = '028a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -815,7 +815,7 @@ g_decArgo_doxy_102_207_206_a4 = -0.256847;
 g_decArgo_doxy_102_207_206_a5 = 3.88767;
 g_decArgo_doxy_102_207_206_b0 = -0.00624523;
 g_decArgo_doxy_102_207_206_b1 = -0.00737614;
-g_decArgo_doxy_102_207_206_b2 = -0.00103410;
+g_decArgo_doxy_102_207_206_b2 = -0.00103410;    
 g_decArgo_doxy_102_207_206_b3 = -0.00817083;
 g_decArgo_doxy_102_207_206_c0 = -0.000000488682;
 
@@ -826,4 +826,4 @@ g_decArgo_nitrate_c = -0.3101349;
 g_decArgo_nitrate_d = 0.001222;
 g_decArgo_nitrate_opticalWavelengthOffset = 208.5;
 
-return;
+return

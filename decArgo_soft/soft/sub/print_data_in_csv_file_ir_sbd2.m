@@ -77,98 +77,93 @@ end
 
 % packet type 0
 dataCyProfPhaseList = a_cyProfPhaseList(a_cyProfPhaseIndexList, :);
-cyleList = unique(dataCyProfPhaseList(:, 3));
-profList = unique(dataCyProfPhaseList(:, 4));
-phaseList = unique(dataCyProfPhaseList(:, 5));
+cycleList = unique(dataCyProfPhaseList(:, 3));
 
-if (~isempty(cyleList))
-   if (length(cyleList) > 1)
+if (~isempty(cycleList))
+   if (length(cycleList) > 1)
       fprintf('WARNING: Float #%d Cycle #%d: more than one cycle data in the data SBD files\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    end
 end
 
 % print the sensor data
-for idCy = 1:length(cyleList)
-   cycleNum = cyleList(idCy);
-   for idProf = 1:length(profList)
-      profNum = profList(idProf);
-      for idPhase = 1:length(phaseList)
-         phaseNum = phaseList(idPhase);
+cycleProfPhaseList = unique(dataCyProfPhaseList(:, 3:5), 'rows');
+for idCyPrPh = 1:size(cycleProfPhaseList, 1)
+   cycleNum = cycleProfPhaseList(idCyPrPh, 1);
+   profNum = cycleProfPhaseList(idCyPrPh, 2);
+   phaseNum = cycleProfPhaseList(idCyPrPh, 3);
+   
+   idPack = find((dataCyProfPhaseList(:, 3) == cycleNum) & ...
+      (dataCyProfPhaseList(:, 4) == profNum) & ...
+      (dataCyProfPhaseList(:, 5) == phaseNum));
+   
+   if (~isempty(idPack))
+      dataTypeList = sort(unique(dataCyProfPhaseList(idPack, 2)));
+      for idDataType = 1:length(dataTypeList)
+         dataType = dataTypeList(idDataType);
          
-         idPack = find((dataCyProfPhaseList(:, 3) == cycleNum) & ...
-            (dataCyProfPhaseList(:, 4) == profNum) & ...
-            (dataCyProfPhaseList(:, 5) == phaseNum));
+         % the stDev & median data are printed with the mean data
+         if (ismember(dataType, [1 4 7 16 38 41]))
+            continue
+         end
          
-         if (~isempty(idPack))
-            dataTypeList = sort(unique(dataCyProfPhaseList(idPack, 2)));
-            for idDataType = 1:length(dataTypeList)
-               dataType = dataTypeList(idDataType);
+         switch (dataType)
+            case 0
+               % CTD (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_sbd2_CTD_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCTDMean, a_dataCTDStdMed);
                
-               % the stDev & median data are printed with the mean data
-               if (ismember(dataType, [1 4 7 16 38 41]))
-                  continue;
-               end
-               
-               switch (dataType)
-                  case 0
-                     % CTD (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_sbd2_CTD_mean_stdMed( ...
+            case 3
+               % OXYGEN (mean & stDev & median)
+               switch (a_decoderId)
+                  case {301}
+                     print_data_in_csv_file_OXY_mean_stdMed_301( ...
                         a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCTDMean, a_dataCTDStdMed);
-                     
-                  case 3
-                     % OXYGEN (mean & stDev & median)
-                     switch (a_decoderId)
-                        case {301}
-                           print_data_in_csv_file_OXY_mean_stdMed_301( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataOXYMean, a_dataOXYStdMed);
-                        case {302, 303}
-                           print_data_in_csv_file_OXY_mean_stdMed_302_303( ...
-                              a_decoderId, cycleNum, profNum, phaseNum, ...
-                              a_dataOXYMean, a_dataOXYStdMed);
-                        otherwise
-                           fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
-                              g_decArgo_floatNum, ...
-                              g_decArgo_cycleNum, ...
-                              dataType, a_decoderId);
-                     end
-                     
-                  case 6
-                     % FLBB (mean & stDev & median)
-                     print_data_in_csv_file_ir_sbd2_FLBB_mean_stdMed( ...
+                        a_dataOXYMean, a_dataOXYStdMed);
+                  case {302, 303}
+                     print_data_in_csv_file_OXY_mean_stdMed_302_303( ...
                         a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataFLBBMean, a_dataFLBBStdMed);
-                     
-                  case 15
-                     % FLNTU (mean & stDev & median)
-                     print_data_in_csv_file_ir_rudics_sbd2_FLNTU_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataFLNTUMean, a_dataFLNTUStdMed);
-                     
-                  case 37
-                     % CYCLOPS (mean & stDev & median)
-                     print_data_in_csv_file_ir_sbd2_CYCLOPS_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataCYCLOPSMean, a_dataCYCLOPSStdMed);
-                     
-                  case 40
-                     % SEAPOINT (mean & stDev & median)
-                     print_data_in_csv_file_ir_sbd2_SEAPOINT_mean_stdMed( ...
-                        a_decoderId, cycleNum, profNum, phaseNum, ...
-                        a_dataSEAPOINTMean, a_dataSEAPOINTStdMed);
-                     
+                        a_dataOXYMean, a_dataOXYStdMed);
                   otherwise
-                     fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...
+                     fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet to process data type #%d for decoderId #%d\n', ...
                         g_decArgo_floatNum, ...
                         g_decArgo_cycleNum, ...
-                        dataType);
+                        dataType, a_decoderId);
                end
-            end
+               
+            case 6
+               % FLBB (mean & stDev & median)
+               print_data_in_csv_file_ir_sbd2_FLBB_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataFLBBMean, a_dataFLBBStdMed);
+               
+            case 15
+               % FLNTU (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_sbd2_FLNTU_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataFLNTUMean, a_dataFLNTUStdMed);
+               
+            case 37
+               % CYCLOPS (mean & stDev & median)
+               print_data_in_csv_file_ir_sbd2_CYCLOPS_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataCYCLOPSMean, a_dataCYCLOPSStdMed);
+               
+            case 40
+               % SEAPOINT (mean & stDev & median)
+               print_data_in_csv_file_ir_sbd2_SEAPOINT_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataSEAPOINTMean, a_dataSEAPOINTStdMed);
+               
+            otherwise
+               fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  dataType);
          end
       end
    end
 end
 
-return;
+return

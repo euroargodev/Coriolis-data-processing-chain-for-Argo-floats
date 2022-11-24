@@ -50,7 +50,7 @@ if (a_outputCsvFlag == 1)
    outputCsvFileId = fopen(outputCsvFilePathName, 'wt');
    if (outputCsvFileId == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputCsvFilePathName);
-      return;
+      return
    end
 end
 
@@ -58,7 +58,7 @@ end
 if ~(exist(a_logFileName, 'file') == 2)
    fprintf('ERROR: File not found: %s\n', a_logFileName);
    o_error = 1;
-   return;
+   return
 end
 
 % open the file and read the data
@@ -66,7 +66,7 @@ fId = fopen(a_logFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_logFileName);
    o_error = 1;
-   return;
+   return
 end
 sbdData = fread(fId);
 fclose(fId);
@@ -79,7 +79,7 @@ recCurPos = 1;
 while (1)
    
    if (recCurPos > length(sbdData))
-      break;
+      break
    end
    
    recLength = sbdData(recCurPos);
@@ -93,7 +93,7 @@ while (1)
       
       if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
          recCurPos = recCurPos + recLength + 1;
-         continue;
+         continue
       end
       
       % data
@@ -116,7 +116,7 @@ while (1)
          % check decoding information VS data length consistency
          if (5+sum([decStruct.tabBytes]) ~= recLength)
             fprintf('ERROR: science_log file reader: recId #%d inconsistency in decoding information => data ignored\n', recId);
-            continue;
+            continue
          end
          dataVal = nan(1, length(decStruct)+1);
          dataVal(1) = timeStamp;
@@ -159,7 +159,7 @@ if (a_outputCsvFlag == 1)
    fclose(outputCsvFileId);
 end
          
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the decoding information for a given record Id.
@@ -295,7 +295,7 @@ switch (a_logFileType)
       end
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the basic structure to store binary log file data.
@@ -346,7 +346,7 @@ switch (a_logFileType)
          );
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get the decoded data labels list associated to a given record type.
@@ -408,4 +408,4 @@ switch (a_recType)
       fprintf('WARNING: binary log file reader: no label defined yet for recType ''%s''\n', a_recType);
 end
 
-return;
+return

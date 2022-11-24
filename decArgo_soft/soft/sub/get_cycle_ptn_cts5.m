@@ -89,4 +89,4 @@ o_cycleList = cycleList;
 o_cyclePatternList = cyclePatternList;
 o_payloadConfFiles = payloadConfFileList;
 
-return;
+return

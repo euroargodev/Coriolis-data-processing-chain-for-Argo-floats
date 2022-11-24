@@ -62,7 +62,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -78,7 +78,7 @@ end
    listLaunchDate, listLaunchLon, listLaunchLat, ...
    listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
 if (isempty(numWmoList))
-   return;
+   return
 end
 
 % copy SBD files
@@ -92,7 +92,7 @@ for idFloat = 1:nbFloats
    % find the login name of the float
    [loginName] = find_login_name(floatNum, numWmoList, loginNameList);
    if (isempty(loginName))
-      return;
+      return
    end
    
    % create the output directory of this float
@@ -211,4 +211,4 @@ for idFloat = 1:nbFloats
    end
 end
 
-return;
+return

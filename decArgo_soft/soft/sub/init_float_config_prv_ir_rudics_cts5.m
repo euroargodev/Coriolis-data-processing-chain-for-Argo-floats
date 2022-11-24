@@ -2,10 +2,9 @@
 % Initialize the float configurations and store the configuration at launch.
 %
 % SYNTAX :
-%  init_float_config_prv_ir_rudics_cts5(a_launchDate, a_decoderId)
+%  init_float_config_prv_ir_rudics_cts5(a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_launchDate : launch date of the float
 %   a_decoderId  : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -18,7 +17,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function init_float_config_prv_ir_rudics_cts5(a_launchDate, a_decoderId)
+function init_float_config_prv_ir_rudics_cts5(a_decoderId)
 
 % float configuration structures:
 
@@ -65,9 +64,6 @@ global g_decArgo_calibInfo;
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 % number of the first cycle to process
 global g_decArgo_firstCycleNumCts5;
 g_decArgo_firstCycleNumCts5 = [];
@@ -91,7 +87,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_floatConfig = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -198,7 +194,7 @@ switch (a_decoderId)
    otherwise
       fprintf('ERROR: Static configuration parameters not defined yet for deciId #%d\n', ...
          a_decoderId);
-      return;
+      return
 end
 for idConfig = 1:length(configInfoList)
    section = configInfoList{idConfig, 1};
@@ -288,7 +284,7 @@ switch (a_decoderId)
          ];   otherwise
       fprintf('ERROR: Dynamic configuration parameters not defined yet for deciId #%d\n', ...
          a_decoderId);
-      return;
+      return
 end
 for idConfig = 1:length(configInfoList)
    section = configInfoList{idConfig, 1};
@@ -360,6 +356,7 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
                            g_decArgo_floatNum, ...
                            jConfName, ...
                            jsonInputFileName);
+                        return
                      end
                   else
                      fprintf('WARNING: Float #%d: cannot convert ''%s'' data to float type from Json meta-data file: %s\n', ...
@@ -454,7 +451,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:6
@@ -463,7 +460,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -481,7 +478,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(1, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:5
@@ -490,7 +487,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -499,7 +496,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:13
@@ -508,7 +505,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(3, id+15) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -517,7 +514,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(4, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:27
@@ -526,7 +523,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(5, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                for id = 0:1
@@ -535,7 +532,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabDoxyCoef(6, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                
@@ -560,28 +557,28 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   fieldName = ['E_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabENitrate = [tabENitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   fieldName = ['E_SWA_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                   fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
-                     return;
+                     return
                   end
                end
                g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
@@ -597,4 +594,4 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
    end
 end
 
-return;
+return

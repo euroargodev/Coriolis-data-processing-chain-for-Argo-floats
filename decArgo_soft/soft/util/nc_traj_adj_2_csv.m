@@ -20,7 +20,7 @@
 function nc_traj_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\CHECk_DO_VT\OLD\';
 
 % default list of floats to convert
@@ -42,9 +42,11 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 % measurement codes initialization
 init_measurement_codes;
@@ -59,7 +61,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -130,7 +132,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Convert one NetCDF trajectory file contents in CSV format.
@@ -174,7 +176,7 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 fidOut = fopen(a_outputPathFileName, 'wt');
 if (fidOut == -1)
    fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return;
+   return
 end
 
 % compute parameter variable names and output formats
@@ -208,15 +210,15 @@ paramQcNames = [];
 paramQcFormats = [];
 
 for idParam = 1:length(nMeasData.paramNameList)
-   paramName  = char(nMeasData.paramNameList(idParam));
+   paramName  = nMeasData.paramNameList{idParam};
    paramDataNbDim = nMeasData.paramDataNbDim(idParam);
-   paramQcName  = char(nMeasData.paramQcNameList(idParam));
+   paramQcName  = nMeasData.paramQcNameList{idParam};
    
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramQcNames = [paramQcNames sprintf('; %s', paramQcName)];
       
-      paramFormat = char(nMeasData.paramDataFormat(idParam));
+      paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
    else
@@ -224,7 +226,7 @@ for idParam = 1:length(nMeasData.paramNameList)
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramQcNames = [paramQcNames sprintf('; %s#%d', paramQcName, id)];
          
-         paramFormat = char(nMeasData.paramDataFormat(idParam));
+         paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
       paramQcFormats = [paramQcFormats '; %c'];
@@ -237,15 +239,15 @@ adjParamQcNames = [];
 adjParamQcFormats = [];
 
 for idParam = 1:length(nMeasData.adjParamNameList)
-   adjParamName  = char(nMeasData.adjParamNameList(idParam));
+   adjParamName  = nMeasData.adjParamNameList{idParam};
    adjParamDataNbDim = nMeasData.adjParamDataNbDim(idParam);
-   adjParamQcName  = char(nMeasData.adjParamQcNameList(idParam));
+   adjParamQcName  = nMeasData.adjParamQcNameList{idParam};
    
    if (adjParamDataNbDim == 1)
       adjParamNames = [adjParamNames sprintf('; %s', adjParamName)];
       adjParamQcNames = [adjParamQcNames sprintf('; %s', adjParamQcName)];
       
-      adjParamFormat = char(nMeasData.adjParamDataFormat(idParam));
+      adjParamFormat = nMeasData.adjParamDataFormat{idParam};
       adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       adjParamQcFormats = [adjParamQcFormats '; %c'];
    else
@@ -253,7 +255,7 @@ for idParam = 1:length(nMeasData.adjParamNameList)
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
          adjParamQcNames = [adjParamQcNames sprintf('; %s#%d', adjParamQcName, id)];
          
-         adjParamFormat = char(nMeasData.adjParamDataFormat(idParam));
+         adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
          adjParamQcFormats = [adjParamQcFormats '; %c'];
       end
@@ -391,7 +393,7 @@ for cycleNumber = -1:max(cycles)
    for idM = 1:length(idMeas)
       
       if (nMeasData.measCode(idMeas(idM)) == 99999)
-         continue;
+         continue
       end
       
       if (~isempty(nMeasData.paramData))
@@ -639,4 +641,4 @@ end
 
 fclose(fidOut);
 
-return;
+return

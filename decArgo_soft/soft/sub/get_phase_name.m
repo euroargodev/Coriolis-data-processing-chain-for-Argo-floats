@@ -85,4 +85,4 @@ switch (a_phaseNumber)
       o_phaseName = 'ERROR';
 end
 
-return;
+return

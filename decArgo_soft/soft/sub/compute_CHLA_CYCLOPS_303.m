@@ -43,12 +43,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'CYCLOPS'))
    fprintf('WARNING: Float #%d Cycle #%d: CYCLOPS sensor calibration information is missing\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.CYCLOPS, 'Point1Volt')) && ...
       (isfield(g_decArgo_calibInfo.CYCLOPS, 'Point1ChloroA')) && ...
       (isfield(g_decArgo_calibInfo.CYCLOPS, 'Point2Volt')) && ...
@@ -61,7 +61,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent CYCLOPS sensor calibration information\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 % compute output data
@@ -70,4 +70,4 @@ aCoef = (point1ChloroA-point2ChloroA)/(point1Volt-point2Volt);
 bCoef = point1ChloroA - aCoef*point1Volt;
 o_CHLA(idNoDef) = aCoef*a_FLUORESCENCE_VOLTAGE_CHLA(idNoDef) + bCoef;
                
-return;
+return

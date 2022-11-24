@@ -101,7 +101,7 @@ chlaAdjQcValue = g_decArgo_qcStrGood;
 if (isempty(a_darkChla) || isempty(a_scaleChla))
    fprintf('RTQC_WARNING: Float #%d Cycle #%d: Empty DARK_CHLA/SCALE_CHLA: unable to process RTQC CHLA\n', ...
       a_floatNum, a_cyNum);
-   return;
+   return
 end
 
 % if no adjustement has been performed
@@ -333,4 +333,4 @@ end
 idDef = find(o_profChlaAdjQc == g_decArgo_qcStrDef);
 o_profChlaAdjQc(idDef) = o_profChlaQc(idDef);
 
-return;
+return

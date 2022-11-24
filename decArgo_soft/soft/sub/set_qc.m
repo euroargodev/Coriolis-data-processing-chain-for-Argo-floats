@@ -27,4 +27,4 @@ if (~isempty(a_qcValues))
    o_qcValues = char(max(a_qcValues, repmat(a_newQcValue, size(a_qcValues))));
 end
 
-return;
+return

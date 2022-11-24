@@ -50,7 +50,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 if ~(exist(jsonInputFileName, 'file') == 2)
    g_decArgo_calibInfo = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -63,7 +63,7 @@ if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
 end
 if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, [1121]))
    fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
-   return;
+   return
 end
 
 % initialize the configuration with the json meta-data file contents
@@ -125,7 +125,7 @@ if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
                tabDoxyCoef(1, id+1) = calibData.(fieldName);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-               return;
+               return
             end
          end
          for id = 0:6
@@ -134,7 +134,7 @@ if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
                tabDoxyCoef(2, id+1) = calibData.(fieldName);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-               return;
+               return
             end
          end
          g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
@@ -144,4 +144,4 @@ if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    end
 end
 
-return;
+return

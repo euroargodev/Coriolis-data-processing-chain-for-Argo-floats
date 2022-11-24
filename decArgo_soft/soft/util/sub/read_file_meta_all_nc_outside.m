@@ -113,14 +113,14 @@ ncstartup;
 
 if ~(exist(a_fileName, 'file') == 2)
    fprintf('Fichier introuvable : %s\n', a_fileName);
-   return;
+   return
 end
 
 fCdf = netcdf(a_fileName, 'read');
 
 if (isempty(fCdf))
    fprintf('Echec ouverture fichier : %s\n', a_fileName);
-   return;
+   return
 end
 
 % dimensions
@@ -215,4 +215,4 @@ end
 
 close(fCdf);
 
-return;
+return

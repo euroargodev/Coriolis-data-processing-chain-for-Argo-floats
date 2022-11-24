@@ -312,7 +312,7 @@ switch (a_decoderId)
          ];
       
    case {1321, 1322, 1121}
-      % 2.10.1, 2.11.1, 2.10.4 & 2.11.3
+      % 2.10.1.S, 2.11.1.S, 2.10.4.R & 2.11.3.R
       
       configIds = [ ...
          {'CONFIG_DIR'} ...
@@ -402,4 +402,4 @@ end
 o_decArgoConfParamNames = decConfNames;
 o_ncConfParamNames = ncConfNames;
 
-return;
+return

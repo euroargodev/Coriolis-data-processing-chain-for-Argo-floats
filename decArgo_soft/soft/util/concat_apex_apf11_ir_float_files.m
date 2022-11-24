@@ -84,12 +84,12 @@ for idD = 1:length(dirNames)
                   fIdOut = fopen(outputFilePathName, 'wt');
                   if (fIdOut == -1)
                      fprintf('ERROR: Unable to create file: %s\n', outputFilePathName);
-                     return;
+                     return
                   end
                   fIdOut2 = fopen(outputFilePathName2, 'a');
                   if (fIdOut2 == -1)
                      fprintf('ERROR: Unable to create file: %s\n', outputFilePathName2);
-                     return;
+                     return
                   end
                end
                
@@ -99,7 +99,7 @@ for idD = 1:length(dirNames)
                   fId = fopen(filePathName, 'r');
                   if (fId == -1)
                      fprintf('ERROR: Unable to open file: %s\n', filePathName);
-                     return;
+                     return
                   end
                   
                   lineNum = 0;
@@ -107,16 +107,16 @@ for idD = 1:length(dirNames)
                      line = fgetl(fId);
                      
                      if (line == -1)
-                        break;
+                        break
                      end
                      
                      lineNum = lineNum + 1;
                      line = strtrim(line);
                      if (isempty(line))
-                        continue;
+                        continue
                      end
                      if (isempty(line) || ((line(1) == '>') && (length(line) == 1)))
-                        continue;
+                        continue
                      end
                      
                      if (idFile == 3)
@@ -141,4 +141,4 @@ for idD = 1:length(dirNames)
    end
 end
 
-return;
+return

@@ -26,14 +26,14 @@ o_ctdData = [];
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: decode_apmt_ctd: File not found: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
 % open the file and read the data
 fId = fopen(a_inputFilePathName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 data = fread(fId);
 fclose(fId);
@@ -50,10 +50,10 @@ if (data(1) == 1)
    o_ctdData = decode_apmt_ctd_extended(data, lastByteNum);
 elseif (data(1) == 2)
    fprintf('WARNING: decode_apmt_ctd_standard not implemented yet\n');
-   return;
+   return
 else
    fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
-   return;
+   return
 end
 
-return;
+return

@@ -81,4 +81,4 @@ o_profStruct = struct( ...
    'fakeProfFlag', 0 ... % 1 if it is a 'default' profile created by the decoder to pass the java checker
    );
 
-return;
+return

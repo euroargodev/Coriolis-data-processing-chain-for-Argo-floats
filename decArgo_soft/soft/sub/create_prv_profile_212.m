@@ -81,7 +81,7 @@ global g_decArgo_floatConfig;
 
 
 if ~(~isempty(a_dataCTD) && any(ismember(a_dataCTD(:, 1), [1 3 13 14])))
-   return;
+   return
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
@@ -98,7 +98,7 @@ else
       while (cyNum >= 0)
          if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
             [configNames, configValues] = get_float_config_ir_sbd(cyNum);
-            break;
+            break
          end
          cyNum = cyNum - 1;
       end
@@ -120,7 +120,7 @@ for type = [1 3 13 14]
             if ((data(idMeas+15*2) == g_decArgo_presDef) && ...
                   (data(idMeas+15*3) == g_decArgo_tempDef) && ...
                   (data(idMeas+15*4) == g_decArgo_salDef))
-               break;
+               break
             end
             if (ismember(type, [13 14]))
                date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
@@ -165,4 +165,4 @@ o_ascProfDate = o_ascProfDate(idSorted);
 o_ascProfTemp = o_ascProfTemp(idSorted);
 o_ascProfSal = o_ascProfSal(idSorted);
 
-return;
+return

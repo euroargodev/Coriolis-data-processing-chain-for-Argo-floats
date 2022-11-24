@@ -31,7 +31,7 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\ori_spl
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
-% number of cyle files to process per run
+% number of cycle files to process per run
 NB_FILES_PER_RUN = 10000;
 
 % mode processing flags
@@ -63,7 +63,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
 
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -102,7 +102,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    argosIdList = [argosIdList; floatArgosId];
@@ -183,4 +183,4 @@ fprintf('done\n');
 
 diary off;
 
-return;
+return

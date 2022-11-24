@@ -35,14 +35,14 @@ outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_unused_float_inf
 
 if ~(exist(floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', floatMetaFileName);
-   return;
+   return
 end
 
 % read meta file
 fId = fopen(floatMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', floatMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -63,7 +63,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('%s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -87,11 +87,11 @@ for idFloat = 1:length(floatList)
    % direct conversion data
    idForWmo = find(wmoList == floatList(idFloat));
    for idBSN = 1:length(infoBddStructNames)
-      infoBddStructValue = getfield(infoBddStruct, char(infoBddStructNames(idBSN)));
+      infoBddStructValue = infoBddStruct.(infoBddStructNames{idBSN});
       if (~isempty(infoBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), infoBddStructValue) == 1, 1);
          if (~isempty(idF))
-            infoStruct = setfield(infoStruct, char(infoBddStructNames(idBSN)), char(metaData(idForWmo(idF), 4)));
+            infoStruct.(infoBddStructNames{idBSN}) = metaData{idForWmo(idF), 4};
          end
       end
    end
@@ -100,9 +100,9 @@ for idFloat = 1:length(floatList)
    idF = find(strcmp(metaData(idForWmo, 5), 'PTT') == 1, 1);
    if (~isempty(idF))
       if (strcmp(infoStruct.TRANS_SYSTEM, 'ARGOS'))
-         infoStruct.PTT = char(metaData(idForWmo(idF), 4));
+         infoStruct.PTT = metaData{idForWmo(idF), 4};
       elseif (strcmp(infoStruct.TRANS_SYSTEM, 'IRIDIUM'))
-         infoStruct.IMEI = char(metaData(idForWmo(idF), 4));
+         infoStruct.IMEI = metaData{idForWmo(idF), 4};
       end
    end
    
@@ -111,7 +111,7 @@ for idFloat = 1:length(floatList)
    if (isempty(floatType))
       fprintf('ERROR: FLOAT_TYPE (from PLATFORM_TYPE) is missing for float %d => no json file generated\n', ...
          floatList(idFloat));
-      continue;
+      continue
    end
       
    % set the DECODER_ID field
@@ -123,7 +123,7 @@ for idFloat = 1:length(floatList)
       if (isempty(dacFormatId))
          fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
             floatList(idFloat));
-         continue;
+         continue
       end
       
       switch (dacFormatId)
@@ -169,7 +169,7 @@ for idFloat = 1:length(floatList)
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
          fprintf('ERROR: Unable to create json output file: %s\n', outputFileName);
-         return;
+         return
       end
       
       launchDateStrIn = infoStruct.LAUNCH_DATE;
@@ -199,7 +199,7 @@ end
 
 fprintf('done\n');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_infoStruct] = get_info_bdd_struct()
@@ -219,7 +219,7 @@ o_infoStruct = struct( ...
    'LAUNCH_LATITUDE', 'PR_LAUNCH_LATITUDE', ...
    'LAUNCH_LONGITUDE', 'PR_LAUNCH_LONGITUDE');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_infoStruct] = get_info_init_struct()
@@ -239,4 +239,4 @@ o_infoStruct = struct( ...
    'LAUNCH_LATITUDE', '', ...
    'LAUNCH_LONGITUDE', '');
 
-return;
+return

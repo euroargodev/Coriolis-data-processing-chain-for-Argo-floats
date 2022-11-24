@@ -211,7 +211,7 @@ if (~isempty(profInfo))
          % PROVOR CTS5 float
          if (~isempty(find(strcmp('TEMP', paramNameList) == 1, 1)))
             % it is the PTS profile reported by the SUNA sensor
-            continue;
+            continue
          end
          % look for the SUNA associated CTD profile
          idF = find((profInfo(:, 2) == 6) & ...
@@ -280,7 +280,7 @@ end
 % update output parameters
 o_tabProfiles = a_tabProfiles;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OCR sensor.
@@ -483,7 +483,7 @@ end
 a_profOcr.derived = 1;
 o_profOcr = a_profOcr;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO2 sensor.
@@ -706,7 +706,7 @@ end
 a_profEco2.derived = 1;
 o_profEco2 = a_profEco2;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO3 sensor.
@@ -970,7 +970,7 @@ end
 a_profEco3.derived = 1;
 o_profEco3 = a_profEco3;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute BBP from the data provided by the ECO3 sensor.
@@ -1092,7 +1092,7 @@ else
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the ECO3 sensor.
@@ -1247,7 +1247,7 @@ end
 a_profEco3.derived = 1;
 o_profEco3 = a_profEco3;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the SUNA sensor.
@@ -1303,7 +1303,7 @@ end
 % if the fitlm Matlab function is available, compute NITRATE data from 
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
-   if (a_decoderId ~= 110)
+   if (~ismember(a_decoderId, [110, 113]))
       
       % compute NITRATE
       paramToDeriveList = [ ...
@@ -1368,7 +1368,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
             derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
             
-            [nitrate, bisulfide] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110( ...
+            [nitrate, bisulfide] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1473,7 +1473,7 @@ end
 a_profSuna.derived = 1;
 o_profSuna = a_profSuna;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the OPTODE sensor.
@@ -1606,7 +1606,7 @@ end
 a_profOptode.derived = 1;
 o_profOptode = a_profOptode;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute DOXY from the data provided by the OPTODE sensor.
@@ -1694,10 +1694,10 @@ if (~isempty(ctdDataNoDef))
                a_DOXY_fillValue, ...
                a_profOptode);
             
-         case {107, 109, 110, 111, 121, 122, 124}
+         case {107, 109, 110, 111, 113, 121, 122, 124}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_121_122_124( ...
+            o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_113_121_122_124( ...
                a_C1PHASE_DOXY(idNoNan), ...
                a_C2PHASE_DOXY(idNoNan), ...
                a_TEMP_DOXY(idNoNan), ...
@@ -1772,7 +1772,7 @@ else
    
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute derived parameters for the TRANSISTOR_PH sensor.
@@ -1930,7 +1930,7 @@ end
 a_profTransPh.derived = 1;
 o_profTransPh = a_profTransPh;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL from the data provided by the
@@ -2163,7 +2163,7 @@ end
 % a_profOptode.derived = 1;
 % o_profOptode = a_profOptode;
 %
-% return;
+% return
 %
 % ------------------------------------------------------------------------------
 % Compute DOXY and DOXY_QC from the data provided by the OPTODE sensor.
@@ -2440,7 +2440,7 @@ end
 %          case {107, 109}
 %
 %             % compute DOXY values using the Stern-Volmer equation
-%             o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_121_122_124( ...
+%             o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_113_121_122_124( ...
 %                a_C1PHASE_DOXY(idNoNan), ...
 %                a_C2PHASE_DOXY(idNoNan), ...
 %                a_C1PHASE_DOXY_fillValue, ...
@@ -2491,7 +2491,7 @@ end
 %
 % end
 %
-% return;
+% return
 % ------------------------------------------------------------------------------
 % START - IMPLEMENTATION OF THE PREVIOUS SPECIFICATIONS - START
 % ------------------------------------------------------------------------------

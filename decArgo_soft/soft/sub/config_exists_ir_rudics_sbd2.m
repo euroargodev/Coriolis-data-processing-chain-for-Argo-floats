@@ -47,9 +47,9 @@ for idC = size(a_configVal, 2):-1:1
       idVal = ~isnan(config);
       if (isempty(find(config(idVal) ~= a_newConfig(idVal), 1)))
          o_configNum = a_configNum(idC);
-         break;
+         break
       end
    end
 end
 
-return;
+return

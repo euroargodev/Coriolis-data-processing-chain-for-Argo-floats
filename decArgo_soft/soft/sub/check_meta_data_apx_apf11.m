@@ -249,7 +249,7 @@ for idP = 1:length(decValueList)
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                g_decArgo_bddUpdateCsvFileName);
-            return;
+            return
          end
          
          header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -262,4 +262,4 @@ for idP = 1:length(decValueList)
    end
 end
 
-return;
+return

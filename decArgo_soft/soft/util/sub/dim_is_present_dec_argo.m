@@ -29,8 +29,8 @@ for idDim = 0:nbDims-1
    [dimName, dimLen] = netcdf.inqDim(a_ncId, idDim);
    if (strcmp(dimName, a_dimName))
       o_present = 1;
-      break;
+      break
    end
 end
 
-return;
+return

@@ -31,7 +31,7 @@ global g_decArgo_floatNum;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 nbMeasDescShallow = [];
@@ -92,5 +92,5 @@ end
 
 o_nbMeasList = [nbMeasDescShallow nbMeasDescDeep nbMeasAscShallow nbMeasAscDeep];
 
-return;
+return
 

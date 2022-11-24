@@ -30,9 +30,9 @@ switch (a_decoderId)
       
       init_float_config_prv_ir_rudics_cts4_105_to_110_112(a_launchDate, a_decoderId);
 
-   case {111}
+   case {111, 113}
       
-      init_float_config_prv_ir_rudics_cts4_111(a_launchDate, a_decoderId);
+      init_float_config_prv_ir_rudics_cts4_111_113(a_launchDate, a_decoderId);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in init_float_config_prv_ir_rudics_cts4 for decoderId #%d\n', ...
@@ -40,4 +40,4 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-return;
+return

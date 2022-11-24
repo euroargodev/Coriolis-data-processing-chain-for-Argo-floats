@@ -56,7 +56,7 @@ global g_decArgo_calibInfo;
 
 
 if (isempty(a_VRS_PH))
-   return;
+   return
 end
 
 % get calibration information
@@ -64,12 +64,12 @@ if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: TRANSISTOR_PH sensor calibration information is missing => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif (~isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH'))
    fprintf('WARNING: Float #%d Cycle #%d: TRANSISTOR_PH sensor calibration information is missing => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 elseif ((isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
       (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
       (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
@@ -92,7 +92,7 @@ else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent TRANSISTOR_PH sensor calibration information => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
-   return;
+   return
 end
 
 idDef = find( ...
@@ -124,4 +124,4 @@ if (~isempty(idNoDef))
 
 end
 
-return;
+return

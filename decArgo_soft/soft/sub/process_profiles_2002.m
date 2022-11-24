@@ -77,7 +77,7 @@ global g_decArgo_finalEolMode;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 if ((g_decArgo_finalEolMode == 0) && (size(a_tabTech, 1) > 1))
@@ -230,4 +230,4 @@ for idProf = 1:2
    end
 end
 
-return;
+return

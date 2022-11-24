@@ -38,8 +38,8 @@ for id = 1:length(a_structList)
       if (~isempty(a_field2Name))
          o_value = a_structList{id}.(a_field2Name);
       end
-      break;
+      break
    end
 end
 
-return;
+return

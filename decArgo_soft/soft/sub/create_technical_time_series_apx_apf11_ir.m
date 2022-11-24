@@ -46,7 +46,7 @@ global g_JULD_STATUS_2;
 
 
 if (isempty(a_vitalsData))
-   return;
+   return
 end
 
 % cycle timings and associated MCs
@@ -105,7 +105,7 @@ for idF = 1:length(fieldNames)
       
       fprintf('WARNING: Float #%d Cycle #%d: Field ''%s'' not expected in vitals data structure => data ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, fieldName);
-      continue;
+      continue
    end
    
    for idV = 1:size(a_vitalsData.(fieldName), 1)
@@ -152,4 +152,4 @@ for idF = 1:length(fieldNames)
    end
 end
 
-return;
+return

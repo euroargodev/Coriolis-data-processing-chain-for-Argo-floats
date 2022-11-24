@@ -50,7 +50,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -76,7 +76,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta_mandatory' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['PLATFORM_CODE; TECH_PARAMETER_ID; DIM_LEVEL; CORIOLIS_TECH_METADATA.PARAMETER_VALUE; TECH_PARAMETER_CODE; ARGO META-DATA; Coriolis version'];
 fprintf(fidOut, '%s\n', header);
@@ -86,7 +86,7 @@ fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
+   return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 metaFileContents = metaFileContents{:};
@@ -100,7 +100,7 @@ metaWmoList = metaData(:, 1);
 % for id = 1:length(metaWmoList)
 %    if (isempty(str2num(metaWmoList{id})))
 %       fprintf('%s is not a valid WMO number\n', metaWmoList{id});
-%       return;
+%       return
 %    end
 % end
 S = sprintf('%s*', metaWmoList{:});
@@ -220,7 +220,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
@@ -237,7 +237,7 @@ else
       a_floatNum);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_fieldValue, o_fieldDimLevel, o_fieldTechId] = ...
@@ -273,4 +273,4 @@ if (isempty(o_fieldTechId))
    o_fieldTechId = fieldTechId;
 end
 
-return;
+return

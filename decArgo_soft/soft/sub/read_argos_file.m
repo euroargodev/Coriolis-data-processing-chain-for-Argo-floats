@@ -68,5 +68,5 @@ elseif (g_decArgo_hexArgosFileFormat == 2)
       o_argosDataDate, o_argosDataData] = read_argos_file_fmt2(char(a_argosFileName{1}), a_frameLength);
 end
 
-return;
+return
 

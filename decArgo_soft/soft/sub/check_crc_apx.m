@@ -27,7 +27,7 @@ else
    o_crcCheckOk = 0;
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % WRC 31 bytes CRC algorithm.
@@ -58,7 +58,7 @@ for id = 2:length(a_sensor)
 end
 o_computedCrc = hasard(byteN);
    
-return;
+return
 
 function [o_byteN] = hasard(a_byteN)
 
@@ -87,7 +87,7 @@ else
    o_byteN = fix(a_byteN/2);
 end
 
-return;
+return
 
 function test_crc()
 
@@ -97,4 +97,4 @@ ckeckData = '8F 00 08 1C 8E 47 23 91 48 A4 D2 E9 74 3A 1D 0E 07 03 81 C0 60 30 9
 fprintf('CRC Données: %d\n', val(1));
 fprintf('CRC Calculé: %d\n', compute_crc(val(2:32)));
 
-return;
+return

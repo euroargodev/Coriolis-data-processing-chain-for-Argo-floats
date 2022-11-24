@@ -7,7 +7,7 @@
 % INPUT PARAMETERS :
 %   a_tabData     : data packet to decode
 %   a_sbdFileName : SBD file name
-%   a_sbdFileName : SBD file date
+%   a_sbdFileDate : SBD file date
 %
 % OUTPUT PARAMETERS :
 %   o_decodedData : decoded data
@@ -143,17 +143,20 @@ switch (packType)
       
       cycleNum = tabTech2(1);
             
-      % BE CAREFUL
-      % there is an issue with grounding day when the grounding occured
-      % during the descent to profile depth phase (i.e. phase #5)
-      % => the decoded value should be 256 - transmitted value
-      if ((tabTech2(21) > 0) && (tabTech2(25) == 5))
-         tabTech2(23) = 256 - tabTech2(23);
+      % BE CAREFUL (updated 01/23/2019 from NKE information)
+      % there is an issue with the transmitted grounding day:
+      % - when it occured during phase #2 (buoyancy reduction) it is the
+      % absolute float day
+      % - for all other phases, the days is relative to the beginning of the
+      % current cycle and the decoded value should be:
+      % mod(256 - transmitted value, 0)
+      if ((tabTech2(21) > 0) && (tabTech2(25) ~= 2))
+         tabTech2(23) = mod(256 - tabTech2(23), 256);
       end
-      if ((tabTech2(21) > 1) && (tabTech2(30) == 5))
-         tabTech2(28) = 256 - tabTech2(28);
+      if ((tabTech2(21) > 1) && (tabTech2(30) ~= 2))
+         tabTech2(28) = mod(256 - tabTech2(28), 256);
       end
-      
+	  
       % compute last reset date
       floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
       

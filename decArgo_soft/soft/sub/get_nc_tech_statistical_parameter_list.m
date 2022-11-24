@@ -65,4 +65,4 @@ switch (a_decoderId)
       fprintf('WARNING: The list of statistical technical parameters is not defined yet for decoderId #%d\n', a_decoderId);
 end
 
-return;
+return

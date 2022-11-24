@@ -45,7 +45,7 @@ for idL = 1:length(a_profInfoDataStr)
    
    dataStr = a_profInfoDataStr{idL};
    if (isempty(dataStr))
-      continue;
+      continue
    end
    
    if (any(strfind(dataStr, HEADER_1)) && any(strfind(dataStr, HEADER_2)))
@@ -65,7 +65,7 @@ for idL = 1:length(a_profInfoDataStr)
 
       else
          fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       
    else
@@ -73,4 +73,4 @@ for idL = 1:length(a_profInfoDataStr)
    end
 end
 
-return,
+return

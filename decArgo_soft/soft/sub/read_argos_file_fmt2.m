@@ -46,13 +46,13 @@ global g_decArgo_argosLatDef;
 
 if ~(exist(a_fileName, 'file') == 2)
    fprintf('ERROR: Argos file not found: %s\n', a_fileName);
-   return;
+   return
 end
 
 fId = fopen(a_fileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Error while opening Argos file: %s\n', a_fileName);
-   return;
+   return
 end
 
 % read the Argos file
@@ -128,4 +128,4 @@ if (~isempty(idDataMulti))
    o_argosDataData = o_argosDataData(idSort, :);
 end
 
-return;
+return

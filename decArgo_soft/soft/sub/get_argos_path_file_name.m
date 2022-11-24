@@ -71,10 +71,10 @@ if (g_decArgo_hexArgosFileFormat == 1)
       else
          if (isempty(g_decArgo_tmpArgosIdDirectory))
             fprintf('ERROR: Empty variable g_decArgo_tmpArgosIdDirectory\n');
-            return;
+            return
          else
             fprintf('ERROR: Argos directory not found: %s\n', g_decArgo_tmpArgosIdDirectory);
-            return;
+            return
          end
       end
    end
@@ -92,7 +92,7 @@ end
 
 if ~(exist(argosDirName, 'dir') == 7)
    fprintf('ERROR: Argos directory not found: %s\n', argosDirName);
-   return;
+   return
 end
 
 if (a_cycleNum ~= -1)
@@ -188,4 +188,4 @@ else
    
 end
 
-return;
+return

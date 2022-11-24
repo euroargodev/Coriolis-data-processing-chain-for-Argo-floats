@@ -77,7 +77,7 @@ for idT = 1:length(a_timedata)
       end
    end
    if ((ascentEndDate ~= g_decArgo_dateDef) && (cycleStartDate ~= g_decArgo_dateDef))
-      break;
+      break
    end
 end
 
@@ -266,4 +266,4 @@ end
 % output data
 o_profStruct = a_profStruct;
 
-return;
+return

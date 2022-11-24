@@ -135,7 +135,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -178,7 +178,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    floatEndDate = listEndDate(idF);
@@ -209,7 +209,7 @@ for idFloat = 1:nbFloats
                      julian_2_gregorian_dec_argo(floatEndDate));
                   g_decArgo_inputArgosFile = argosFilePathName;
                   move_argos_input_file(floatArgosId, fileDate, floatNum, [], 'UUU');
-                  continue;
+                  continue
                end
             end
 
@@ -238,7 +238,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Process one Argos cycle file by:
@@ -341,13 +341,13 @@ for idFile = 1:nbFiles
       end
       fprintf('INFO: File (%s) contains no Argos messages => file stored without cycle number (i.e. not decoded)\n', ...
          argosFileName);
-      continue;
+      continue
    elseif (length(unique(argosDataDate)) < NB_MSG_MIN)
       
       move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'GGG');
       fprintf('INFO: File (%s) contains only ghost messages => file stored without cycle number (i.e. not decoded)\n', ...
          argosFileName);
-      continue;
+      continue
    end
    
    % compute the cycle number
@@ -356,7 +356,7 @@ for idFile = 1:nbFiles
       
       fprintf('ERROR: Unable to compute cycle number because of missing meta-data => file stored without cycle number (i.e. not decoded)\n');
       move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
-      continue;
+      continue
    else
       if (lastArgosMsgDate <= launchDate)
          
@@ -364,7 +364,7 @@ for idFile = 1:nbFiles
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
          move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'TTT');
-         continue;
+         continue
       else
          
          subFileNameList = {argosFileName};
@@ -387,7 +387,7 @@ for idFile = 1:nbFiles
                else
                   fprintf('ERROR: Unable to split Argos cycle file: %s\n', ...
                      argosFileName);
-                  continue;
+                  continue
                end
             end
          end
@@ -601,4 +601,4 @@ fprintf('INFO: float #%d cycle duration : mean1 %.1f hours (stdev1 %.1f hours); 
 
 fprintf('\n')
 
-return;
+return

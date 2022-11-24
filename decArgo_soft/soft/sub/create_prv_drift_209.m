@@ -61,7 +61,7 @@ global g_decArgo_phaseDelayDoxyDef;
 
 
 if (isempty(a_dataCTDO))
-   return;
+   return
 end
 
 % retrieve the drift sampling period from the configuration
@@ -88,7 +88,7 @@ switch (optodeType)
                   data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                   data(idMeas+1+15) = 0;
                else
-                  break;
+                  break
                end
             end
             
@@ -119,7 +119,7 @@ switch (optodeType)
                   data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                   data(idMeas+1+7) = 0;
                else
-                  break;
+                  break
                end
             end
             
@@ -152,7 +152,7 @@ switch (optodeType)
                   data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                   data(idMeas+1+9) = 0;
                else
-                  break;
+                  break
                end
             end
             
@@ -187,7 +187,7 @@ switch (optodeType)
                   data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
                   data(idMeas+1+5) = 0;
                else
-                  break;
+                  break
                end
             end
             
@@ -224,4 +224,4 @@ if (~isempty(o_parkPhaseDelayDoxy))
    o_parkTempDoxySbe = o_parkTempDoxySbe(idSorted);
 end
 
-return;
+return

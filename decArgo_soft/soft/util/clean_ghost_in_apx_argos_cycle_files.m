@@ -54,7 +54,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
@@ -98,12 +98,12 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatDecId = listDecId(idF);
    if (ismember(floatDecId, [1021 1022]))
       fprintf('INFO: Clean ghost operation is not possible for decId #%d\n', floatDecId);
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    floatCycleTime = double(listCycleTime(idF));
@@ -187,7 +187,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Compute durations between cycles.
@@ -228,4 +228,4 @@ end
 
 o_duration = o_duration/24;
 
-return;
+return

@@ -151,7 +151,7 @@ else
                else
                   fprintf('WARNING: Float #%d Cycle #%d: cannot fit CYCLOPS standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
-                  continue;
+                  continue
                end
             end
             data(idOk, 5:6) = dataStdMed(idL, 2:3);
@@ -185,4 +185,4 @@ else
    end
 end
 
-return;
+return

@@ -49,7 +49,7 @@ PATTERN = 'GPS Skew: ';
 for idEv = 1:length(a_events)
    dataStr = a_events(idEv).message;
    if (isempty(dataStr))
-      continue;
+      continue
    end
    %    fprintf('''%s''\n', dataStr);
    
@@ -58,7 +58,7 @@ for idEv = 1:length(a_events)
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS Skew: %d secs');
       if (~isempty(errmsg) || (count ~= 1))
          fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
       
       % store RTC offset
@@ -71,9 +71,9 @@ for idEv = 1:length(a_events)
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
          fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-         continue;
+         continue
       end
    end
 end
 
-return;
+return

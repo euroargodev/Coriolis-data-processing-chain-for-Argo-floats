@@ -92,32 +92,32 @@ if (~isempty(idVal))
    fieldNames = fieldnames(configStruct);
    
    for id = 1:length(fieldNames)
-      valueStr = getfield(configStruct, fieldNames{id});
-      if (strfind(getfield(configStruct, fieldNames{id}), 'MC6_'))
+      valueStr = configStruct.(fieldNames{id});
+      if (strfind(valueStr, 'MC6_'))
          delayBeforeMissionPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PM4_'))
+      elseif (strfind(valueStr, 'PM4_'))
          delayBeforeMissionPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PA6_'))
+      elseif (strfind(valueStr, 'PA6_'))
          preludeDurationPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'AC6_'))
+      elseif (strfind(valueStr, 'AC6_'))
          preludeDurationPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PM1_'))
+      elseif (strfind(valueStr, 'PM1_'))
          cycleDurationPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'MC1_'))
+      elseif (strfind(valueStr, 'MC1_'))
          nbCyclesFirstMissionPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'MC2_'))
+      elseif (strfind(valueStr, 'MC2_'))
          cycleDuration1Pos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'MC3_'))
+      elseif (strfind(valueStr, 'MC3_'))
          cycleDuration2Pos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PM2_'))
+      elseif (strfind(valueStr, 'PM2_'))
          refDayPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'MC4_'))
+      elseif (strfind(valueStr, 'MC4_'))
          refDayPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PM3_'))
+      elseif (strfind(valueStr, 'PM3_'))
          startEndProfHourPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'MC5_'))
+      elseif (strfind(valueStr, 'MC5_'))
          startEndProfHourPos = id;
-      elseif (strfind(getfield(configStruct, fieldNames{id}), 'PM9_'))
+      elseif (strfind(valueStr, 'PM9_'))
          profPresPos = id;
       end
    end
@@ -370,4 +370,4 @@ elseif ~((launchDate == g_decArgo_dateDef) || ...
    o_cycleDuration = [cycleDuration1 cycleDuration2]/24;
 end
 
-return;
+return

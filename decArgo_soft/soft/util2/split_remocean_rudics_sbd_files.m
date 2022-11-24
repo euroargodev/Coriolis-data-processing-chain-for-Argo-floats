@@ -63,7 +63,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -92,7 +92,7 @@ tic;
    listLaunchDate, listLaunchLon, listLaunchLat, ...
    listRefDay, listEndDate] = get_floats_info(floatInformationFileName);
 if (isempty(numWmo))
-   return;
+   return
 end
 
 % process the floats
@@ -109,19 +109,19 @@ for idFloat = 1:nbFloats
       outputFileName = [DIR_LOG_FILE '/split_remocean_rudics_sbd_files_' floatNumStr '_' currentDate '.csv'];
       fidOutCsv = fopen(outputFileName, 'wt');
       if (fidOutCsv == -1)
-         return;
+         return
       end
    end
    outputFileName = [DIR_LOG_FILE '/' floatNumStr '_buffers.txt'];
    fidOutTxt = fopen(outputFileName, 'wt');
    if (fidOutTxt == -1)
-      return;
+      return
    end
    
    % find the login name of the float
    [logName] = find_login_name(floatNum, numWmo, loginName);
    if (isempty(logName))
-      return;
+      return
    end
    
    inputDirName = [irDataDirName '/' logName '_' floatNumStr '/archive/'];
@@ -129,7 +129,7 @@ for idFloat = 1:nbFloats
    
    idF = find(numWmo == floatNum, 1);
    if (isempty(idF))
-      return;
+      return
    end
    floatLaunchDate = listLaunchDate(idF);
    
@@ -158,4 +158,4 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return

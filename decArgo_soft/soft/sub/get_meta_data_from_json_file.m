@@ -33,7 +33,7 @@ jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_met
 
 if ~(exist(jsonInputFileName, 'file') == 2)
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
+   return
 end
 
 % read meta-data file
@@ -44,7 +44,7 @@ for idField = 1:length(a_wantedMetaNames)
    fieldName = char(a_wantedMetaNames(idField));
    
    if (isfield(metaData, fieldName))
-      fieldValue = getfield(metaData, fieldName);
+      fieldValue = metaData.(fieldName);
       if (~isempty(fieldValue))
          o_metaData = [o_metaData {fieldName} {fieldValue}];
       else
@@ -59,4 +59,4 @@ for idField = 1:length(a_wantedMetaNames)
    end
 end
 
-return;
+return

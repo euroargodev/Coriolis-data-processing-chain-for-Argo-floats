@@ -86,14 +86,14 @@ profDuringDescFloatList = load(descProfFloatListFileName);
 
 if ~(exist(floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', floatMetaFileName);
-   return;
+   return
 end
 
 % read meta file
 fId = fopen(floatMetaFileName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', floatMetaFileName);
-   return;
+   return
 end
 fileContents = textscan(fId, '%s', 'delimiter', '\t');
 fileContents = fileContents{:};
@@ -114,7 +114,7 @@ wmoList = metaData(:, 1);
 for id = 1:length(wmoList)
    if (isempty(str2num(wmoList{id})))
       fprintf('%s is not a valid WMO number\n', wmoList{id});
-      return;
+      return
    end
 end
 S = sprintf('%s*', wmoList{:});
@@ -126,7 +126,7 @@ floatList = unique(wmoList);
 
 if ~(exist(floatListFileName, 'file') == 2)
    fprintf('File not found: %s\n', floatListFileName);
-   return;
+   return
 end
 refFloatList = load(floatListFileName);
 
@@ -264,7 +264,7 @@ for idFloat = 1:length(floatList)
    if (isempty(dacFormatId))
       fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
          floatNum);
-      continue;
+      continue
    end
    
    
@@ -281,7 +281,7 @@ for idFloat = 1:length(floatList)
    if (isempty(idFRepRate))
       fprintf('ERROR: REPETITION_RATE is missing for float %d => no json file generated\n', ...
          floatNum);
-      continue;
+      continue
    end
    
    configBddStruct = get_config_bdd_struct(dacFormatId);
@@ -549,13 +549,13 @@ for idFloat = 1:length(floatList)
             [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
             if ((statusSlope == 0) || (statusValue == 0))
                fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
-                  floatList(idFloat), coefStrOri);
-               return;
+                  floatNum, coefStrOri);
+               return
             end
          else
             fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
-               floatList(idFloat), coefStrOri);
-            return;
+               floatNum, coefStrOri);
+            return
          end
       end
       rtOffsetDate = [];
@@ -732,7 +732,7 @@ for idFloat = 1:length(floatList)
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create json output file: %s\n', outputFileName);
-      return;
+      return
    end
    
    fprintf(fidOut, '{\n');
@@ -873,7 +873,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_metaStruct] = add_multi_dim_data( ...
@@ -939,7 +939,7 @@ end
 %    o_metaStruct = setfield(o_metaStruct, a_item, val);
 % end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
@@ -1003,7 +1003,7 @@ switch (a_dacFormatId)
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_iridium_nke_old_versions for dacFormatId %s\n', a_dacFormatId);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 function [o_metaStruct] = get_meta_bdd_struct()
@@ -1063,7 +1063,7 @@ o_metaStruct = struct( ...
    'CALIB_RT_COMMENT', 'CALIB_RT_COMMENT', ...
    'CALIB_RT_DATE', 'CALIB_RT_DATE');
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Lecture des méta-données corrigées d'un flotteur.
@@ -1124,7 +1124,7 @@ o_startUpDate = [];
 fId = fopen(a_metaFileName, 'r');
 if (fId == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_metaFileName);
-   return;
+   return
 end
 
 % lecture et stockage des données du fichier DEP
@@ -1162,7 +1162,7 @@ end
 
 fclose(fId);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Calcul des dates juliennes à partir des dates grégoriennes.
@@ -1202,7 +1202,7 @@ for idDate = 1:nbDates
    end
    if (strcmp([day ' ' hour], dateGregStr) == 0)
       o_julD = gregorian_2_julian_dec_argo([day ' ' hour]);
-      break;
+      break
    end
 end
 
@@ -1257,7 +1257,7 @@ o_listRefDay = [];
 
 if ~(~exist(a_floatInfoFileName, 'dir') && exist(a_floatInfoFileName, 'file'))
    fprintf('Float information file not found: %s\n', a_floatInfoFileName);
-   return;
+   return
 end
 
 fId = fopen(a_floatInfoFileName, 'r');
@@ -1305,4 +1305,4 @@ for id = 1:length(listRefDay)
    end
 end
 
-return;
+return

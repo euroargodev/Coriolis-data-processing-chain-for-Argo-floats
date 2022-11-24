@@ -36,7 +36,7 @@ global g_JULD_STATUS_2;
 
 
 if (isempty(a_parkMeasStr))
-   return;
+   return
 end
 
 errorHeader = '';
@@ -62,7 +62,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTSO: %fdbars %fC %fPSU     %d');
             if (~isempty(errmsg) || (count ~= 4))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data1 = val';
             
@@ -71,7 +71,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'FLBB FSig, BbSig, TSig: %d, %d, %d');
             if (~isempty(errmsg) || (count ~= 3))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data2 = val';
             
@@ -88,7 +88,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS: %fdbars %fC %fPSU');
             if (~isempty(errmsg) || (count ~= 3))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data = val';
             
@@ -105,7 +105,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS/O2,T2,TPhase,RawTemp: %fdbars %fC %fPSU / %fuM %fC %f %f');
             if (~isempty(errmsg) || (count ~= 7))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data = [val(1) val(2) val(3) val(6) val(5)];
             
@@ -123,7 +123,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS/O2,T2,TPhase,RawTemp: %fdbars %fC %fPSU / %fuM %fC %f %f');
             if (~isempty(errmsg) || (count ~= 7))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data1 = [val(1) val(2) val(3) val(6) val(5)];
             
@@ -132,7 +132,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'FLBB FSig, BbSig, TSig: %d, %d, %d');
             if (~isempty(errmsg) || (count ~= 3))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data2 = val';
             
@@ -149,7 +149,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS/O2,T2,TPhase,RawTemp: %fdbars %fC %fPSU / %fuM %fC %f %f %f');
             if (~isempty(errmsg) || (count ~= 8))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data = [val(1) val(2) val(3) val(5) val(6) val(7)];
             
@@ -167,7 +167,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS/O2,T2,TPhase,RawTemp: %fdbars %fC %fPSU / %fuM %fC %f %f %f');
             if (~isempty(errmsg) || (count ~= 8))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data1 = [val(1) val(2) val(3) val(5) val(6) val(7)];
             
@@ -176,7 +176,7 @@ for idM= 1:length(a_parkMeasStr)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'FLBB FSig, BbSig, TSig: %d, %d, %d');
             if (~isempty(errmsg) || (count ~= 3))
                fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-               continue;
+               continue
             end
             data2 = val';
             
@@ -195,7 +195,7 @@ for idM= 1:length(a_parkMeasStr)
                [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PTS/O,T,TPhase,RawTemp: %fdbars %fC %fPSU/ NaN NaN NaN NaN NaN/ NaN NaN NaN NaN');
                if (~isempty(errmsg) || (count ~= 3))
                   fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
-                  continue;
+                  continue
                else
                   data = [val(1) val(2) val(3)];
                end
@@ -210,7 +210,7 @@ for idM= 1:length(a_parkMeasStr)
       otherwise
          fprintf('DEC_INFO: %sNothing done yet in process_apx_ir_park_data_evts for decoderId #%d\n', ...
             errorHeader, a_decoderId);
-         return;
+         return
    end
 end
 
@@ -445,8 +445,8 @@ if ~(isempty(a_parkDate) && isempty(data) && isempty(data1) && isempty(data2))
       otherwise
          fprintf('DEC_WARNING: %sNothing done yet in process_apx_ir_park_data_evts for decoderId #%d\n', ...
             errorHeader, a_decoderId);
-         return;
+         return
    end
 end
 
-return;
+return

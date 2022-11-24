@@ -48,4 +48,4 @@ for idL = 1:length(configNames)
       a_comment, configNames{idL}, configValues(idL, end));
 end
 
-return;
+return

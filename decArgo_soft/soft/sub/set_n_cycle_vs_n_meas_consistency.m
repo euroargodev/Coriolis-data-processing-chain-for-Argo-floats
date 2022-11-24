@@ -238,4 +238,4 @@ for idNCy = 1:length(o_tabTrajNCycle)
    end
 end
 
-return;
+return

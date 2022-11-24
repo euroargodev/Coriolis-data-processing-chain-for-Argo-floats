@@ -59,7 +59,7 @@ if (nargin == 0)
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('File not found: %s\n', floatListFileName);
-      return;
+      return
    end
    
    fprintf('Floats from list: %s\n', floatListFileName);
@@ -85,7 +85,7 @@ tic;
 outputFileName = [DIR_LOG_CSV_FILE '/' 'find_apex_dpf_floats' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   return;
+   return
 end
 header = ['Version; WMO; First (hours); All (days)'];
 fprintf(fidOut, '%s\n', header);
@@ -110,7 +110,7 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
-      continue;
+      continue
    end
    floatArgosId = str2num(listArgosId{idF});
    
@@ -123,7 +123,7 @@ for idFloat = 1:nbFloats
    dirInputFloat = [DIR_INPUT_ARGOS_FILES '/' sprintf('%06d', floatArgosId) '/'];
    if (~isdir(dirInputFloat))
       fprintf('WARNING: No Argos data for float #%d\n', floatNum);
-      continue;
+      continue
    end
       
    % collect the dates of the float Argos messages in the considered period
@@ -142,9 +142,9 @@ for idFloat = 1:nbFloats
             read_argos_file_fmt1_rough(argosFilePathName, floatArgosId);
          
          if (max(argosDataDate) < startDate)
-            continue;
+            continue
          elseif (min(argosDataDate) > endDate)
-            break;
+            break
          else
             argosFloatMsgDate = [argosFloatMsgDate; argosDataDate];
          end
@@ -172,7 +172,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Get floats information from floats information file.
@@ -239,7 +239,7 @@ global g_decArgo_dateDef;
 
 if ~(exist(a_floatInfoFileName, 'file') == 2)
    fprintf('ERROR: Float information file not found: %s\n', a_floatInfoFileName);
-   return;
+   return
 end
 
 fId = fopen(a_floatInfoFileName, 'r');
@@ -289,4 +289,4 @@ for id = 1:length(listRefDay)
    end
 end
 
-return;
+return

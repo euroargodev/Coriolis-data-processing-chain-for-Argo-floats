@@ -120,4 +120,4 @@ if (~isempty(a_cycleTimeData.transStartDate))
       julian_2_gregorian_dec_argo(a_cycleTimeData.transStartDate));
 end
 
-return;
+return

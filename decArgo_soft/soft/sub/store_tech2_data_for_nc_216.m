@@ -35,7 +35,7 @@ global g_decArgo_outputNcParamValue;
 
 
 if (isempty(a_tabTech))
-   return;
+   return
 end
 
 % retrieve technical message #2 data
@@ -200,4 +200,4 @@ else
    
 end
 
-return;
+return

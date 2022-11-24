@@ -38,7 +38,7 @@ for idDir = 1:length(dacDir)
    dacDirName = dacDir(idDir).name;
    
    if (~strcmp(dacDirName, 'coriolis'))
-      continue;
+      continue
    end
    
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
@@ -50,7 +50,7 @@ for idDir = 1:length(dacDir)
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_empty_primary_profile_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
       if (fidOut == -1)
-         return;
+         return
       end
       fprintf(fidOut, '%s\n', header);
       
@@ -78,7 +78,7 @@ for idDir = 1:length(dacDir)
                idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
                formatVersion = metaData{2*idVal}';
                if (str2num(formatVersion) ~= 3.1)
-                  continue;
+                  continue
                end
                idVal = find(strcmp('PROJECT_NAME', metaData(1:2:end)) == 1, 1);
                projectName = strtrim(metaData{2*idVal});
@@ -90,7 +90,7 @@ for idDir = 1:length(dacDir)
                   
                   profFileName = profDir(idProf).name;
                   if (any(strfind(profFileName, 'B')) || any(strfind(profFileName, 'M')))
-                     continue;
+                     continue
                   end
                   profFilePathName = [floatProfDirPathName '/' profFileName];
                   if (exist(profFilePathName, 'file') == 2)
@@ -104,7 +104,7 @@ for idDir = 1:length(dacDir)
                      idVal = find(strcmp('FORMAT_VERSION', profData(1:2:end)) == 1, 1);
                      formatVersion = profData{2*idVal}';
                      if (str2num(formatVersion) ~= 3.1)
-                        continue;
+                        continue
                      end
                      idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
                      pres = profData{2*idVal};
@@ -128,7 +128,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve data from NetCDF file.
@@ -163,7 +163,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return;
+      return
    end
    
    % retrieve variables from NetCDF file

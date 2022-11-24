@@ -105,4 +105,4 @@ switch (a_measCode)
       o_nCycleStruct.juldTransmissionEndStatus = a_timeStatus;
 end
 
-return;
+return

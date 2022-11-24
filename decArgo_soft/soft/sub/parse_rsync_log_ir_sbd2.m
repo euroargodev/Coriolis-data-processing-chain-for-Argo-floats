@@ -34,7 +34,7 @@ o_rsyncLogName = [];
 fId = fopen(a_rsyncLogName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_rsyncLogName);
-   return;
+   return
 end
 logData = textscan(fId, '%s');
 logData = logData{:};
@@ -69,4 +69,4 @@ o_floatImei = floatImeiName;
 o_floatSbdFiles = floatSbdFiles;
 o_rsyncLogName = rsyncLogName;
 
-return;
+return

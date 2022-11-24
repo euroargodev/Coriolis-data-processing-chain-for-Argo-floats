@@ -41,7 +41,7 @@ usedConfNum = g_decArgo_floatConfig.USE.CONFIG;
 idUsedConf = find((usedCy == a_cycleNum) & (usedProf == a_profNum));
 if (isempty(idUsedConf))
    % the configuration does not exist (no data received yet)
-   return;
+   return
 end
 idConf = find(configNum == usedConfNum(idUsedConf));
 
@@ -49,4 +49,4 @@ idConf = find(configNum == usedConfNum(idUsedConf));
 idPos = find(strcmp(a_confParamName, configName) == 1, 1);
 o_confParamvalue = configValue(idPos, idConf);
 
-return;
+return

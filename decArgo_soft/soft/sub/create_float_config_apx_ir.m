@@ -50,7 +50,7 @@ global g_decArgo_jsonMetaData;
 
 
 if (isempty(a_configInfoLog) && isempty(a_configInfoMsg))
-   return;
+   return
 end
 
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -137,7 +137,7 @@ if (g_decArgo_realtimeFlag == 0)
    if (~isempty(inputMetaNames))
       for idMeta = 1:length(inputMetaNames)
          if (any(strcmp(inputMetaNames{idMeta}, g_decArgo_bddUpdateItemLabels)))
-            continue;
+            continue
          end
          
          if (isfield(jsonMetaData, inputMetaNames{idMeta}))
@@ -162,7 +162,7 @@ if (g_decArgo_realtimeFlag == 0)
                            g_decArgo_floatNum, ...
                            g_decArgo_cycleNum, ...
                            g_decArgo_bddUpdateCsvFileName);
-                        return;
+                        return
                      end
                      
                      header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -198,7 +198,7 @@ if (g_decArgo_realtimeFlag == 0)
       jsonConfFieldValues = fields(jsonMetaData.CONFIG_PARAMETER_VALUE);
       for idConf = 1:length(inputConfNames)
          if (any(strcmp(inputConfNames{idConf}, g_decArgo_bddUpdateItemLabels)))
-            continue;
+            continue
          end
          
          for idF = 1:length(jsonConfFieldNames)
@@ -224,7 +224,7 @@ if (g_decArgo_realtimeFlag == 0)
                               g_decArgo_floatNum, ...
                               g_decArgo_cycleNum, ...
                               g_decArgo_bddUpdateCsvFileName);
-                           return;
+                           return
                         end
                         
                         header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
@@ -263,7 +263,7 @@ if (isempty(g_decArgo_floatConfig))
                   g_decArgo_floatNum, ...
                   g_decArgo_cycleNum, ...
                   cellConfigValues{id});
-               return;
+               return
             end
          end
       end
@@ -414,7 +414,7 @@ g_decArgo_floatConfig.USE.CONFIG(end+1) = configNum;
      
 % create_csv_to_print_config_ir_sbd('setConfig_', 3, g_decArgo_floatConfig);
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve information from configuration parameter label.
@@ -602,7 +602,7 @@ switch (a_configInfoLabel)
          a_configInfoLabel);
 end
 
-return;
+return
 
 % ------------------------------------------------------------------------------
 % Retrieve information on BDD storage from configuration parameter label.
@@ -762,4 +762,4 @@ switch (a_label)
          a_label);
 end
 
-return;
+return

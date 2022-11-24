@@ -33,7 +33,7 @@ o_doubleValue = [];
 
 if (length(a_16bitValues) ~= 8)
    fprintf('ERROR: 8 bytes array expected for input of ''get_double_from_little_endian function''\n');
-   return;
+   return
 end
 
 doubleValue = 0;
@@ -43,4 +43,4 @@ end
 
 o_doubleValue = typecast(uint64(doubleValue), 'double');
 
-return;
+return
