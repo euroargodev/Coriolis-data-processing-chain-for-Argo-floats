@@ -104,7 +104,8 @@ for idProf = 1:length(a_tabProfiles)
       
       % generate AUX profile file only if associated core profile file has been
       % generated during the same session
-      if (~any((a_generatedProfList(:, 1) == outputCycleNumber) & ...
+      if (isempty(a_generatedProfList) || ...
+            ~any((a_generatedProfList(:, 1) == outputCycleNumber) & ...
             (a_generatedProfList(:, 2) == direction)))
          profInfo(idProf, 4) = 1;
          continue
