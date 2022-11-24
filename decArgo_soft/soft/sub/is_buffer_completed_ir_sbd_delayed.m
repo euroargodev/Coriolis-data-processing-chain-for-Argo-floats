@@ -398,7 +398,7 @@ switch (a_decoderId)
          end
          
          % from temporary configuration data
-         if (isempty(pt33Value))
+         if (isnan(pt33Value))
             idUsedConf = find(g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES == cycleNum-1);
             if (~isempty(idUsedConf))
                

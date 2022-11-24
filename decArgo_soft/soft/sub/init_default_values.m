@@ -123,6 +123,7 @@ global g_decArgo_phaseEndOfProf;
 global g_decArgo_phaseEndOfLife;
 global g_decArgo_phaseEmergencyAsc;
 global g_decArgo_phaseUserDialog;
+global g_decArgo_phaseBuoyInv;
 
 % treatment types
 global g_decArgo_treatRaw;
@@ -496,7 +497,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '018a';
+g_decArgo_decoderVersion = '018b';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -541,6 +542,7 @@ g_decArgo_phaseEndOfProf = 13;
 g_decArgo_phaseEndOfLife = 14;
 g_decArgo_phaseEmergencyAsc = 15;
 g_decArgo_phaseUserDialog = 16;
+g_decArgo_phaseBuoyInv = 17;
 
 g_decArgo_treatRaw = 0;
 g_decArgo_treatAverage = 1;
