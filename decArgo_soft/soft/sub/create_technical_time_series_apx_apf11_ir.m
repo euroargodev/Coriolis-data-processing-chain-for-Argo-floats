@@ -175,45 +175,49 @@ end
 
 % Ice detection data storage
 if (~isempty(a_iceDetection))
-   paramIceBreakupDetectFlag = get_netcdf_param_attributes('ICE_DREAKUP_DETECT_FLAG');
+   paramIceBreakupDetectFlag = get_netcdf_param_attributes('ICE_BREAKUP_DETECT_FLAG');
    paramIceAscentAbortNum = get_netcdf_param_attributes('ICE_ASCENT_ABORT_NUMBER');
-
-   for idMeas = 1:length(a_iceDetection.breakupDetect.detectTime)
-      time = a_iceDetection.breakupDetect.detectTime(idMeas);
-      timeAdj = a_iceDetection.breakupDetect.detectTimeAdj(idMeas);
-      [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_IceBreakupDetectionFlag, ...
-         time, ...
-         timeAdj, ...
-         g_JULD_STATUS_2);
-      if (isempty(measStruct))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
-         measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_IceBreakupDetectionFlag;
+   
+   for idI = 1:length(a_iceDetection)
+      iceDetection = a_iceDetection{idI};
+      
+      for idMeas = 1:length(iceDetection.breakupDetect.detectTime)
+         time = iceDetection.breakupDetect.detectTime(idMeas);
+         timeAdj = iceDetection.breakupDetect.detectTimeAdj(idMeas);
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_IceBreakupDetectionFlag, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (isempty(measStruct))
+            % some Ice events have been recovered from system_log file even without
+            % timestamp
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = g_MC_IceBreakupDetectionFlag;
+         end
+         measStruct.paramList = paramIceBreakupDetectFlag;
+         measStruct.paramData = iceDetection.breakupDetect.detectFlag(idMeas);
+         o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
       end
-      measStruct.paramList = paramIceBreakupDetectFlag;
-      measStruct.paramData = a_iceDetection.breakupDetect.detectFlag(idMeas);
-      o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
-   end
-
-   if (~isempty(a_iceDetection.ascent.abortTypeTime))
-      time = a_iceDetection.ascent.abortTypeTime;
-      timeAdj = a_iceDetection.ascent.abortTypeTimeAdj;
-      [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_IceAscentAbortNum, ...
-         time, ...
-         timeAdj, ...
-         g_JULD_STATUS_2);
-      if (isempty(measStruct))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
-         measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_IceAscentAbortNum;
+      
+      if (~isempty(iceDetection.ascent.abortTypeTime))
+         time = iceDetection.ascent.abortTypeTime;
+         timeAdj = iceDetection.ascent.abortTypeTimeAdj;
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_IceAscentAbortNum, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (isempty(measStruct))
+            % some Ice events have been recovered from system_log file even without
+            % timestamp
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = g_MC_IceAscentAbortNum;
+         end
+         measStruct.paramList = paramIceAscentAbortNum;
+         measStruct.paramData = iceDetection.ascent.abortType;
+         o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
       end
-      measStruct.paramList = paramIceAscentAbortNum;
-      measStruct.paramData = a_iceDetection.ascent.abortType;
-      o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
    end
 end
 

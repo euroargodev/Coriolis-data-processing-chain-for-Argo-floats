@@ -136,27 +136,31 @@ for idG = 1:size(o_grounding, 1)
 end
 
 % clock adjustment of ice information
-if (~isempty(o_iceDetection))
-   for idI = 1:length(o_iceDetection.thermalDetect.sampleTime)
-      o_iceDetection.thermalDetect.sampleTimeAdj(idI) = ...
-         adjust_time(o_iceDetection.thermalDetect.sampleTime(idI), o_cycleClockOffset);
+for idI = 1:length(o_iceDetection)
+   iceDetection = o_iceDetection{idI};
+   
+   for idM = 1:length(iceDetection.thermalDetect.sampleTime)
+      iceDetection.thermalDetect.sampleTimeAdj(idM) = ...
+         adjust_time(iceDetection.thermalDetect.sampleTime(idM), o_cycleClockOffset);
    end
-   if (~isempty(o_iceDetection.thermalDetect.medianTempTime))
-      o_iceDetection.thermalDetect.medianTempTimeAdj = ...
-         adjust_time(o_iceDetection.thermalDetect.medianTempTime, o_cycleClockOffset);
+   if (~isempty(iceDetection.thermalDetect.medianTempTime))
+      iceDetection.thermalDetect.medianTempTimeAdj = ...
+         adjust_time(iceDetection.thermalDetect.medianTempTime, o_cycleClockOffset);
    end
-   if (~isempty(o_iceDetection.thermalDetect.detectTime))
-      o_iceDetection.thermalDetect.detectTimeAdj = ...
-         adjust_time(o_iceDetection.thermalDetect.detectTime, o_cycleClockOffset);
+   if (~isempty(iceDetection.thermalDetect.detectTime))
+      iceDetection.thermalDetect.detectTimeAdj = ...
+         adjust_time(iceDetection.thermalDetect.detectTime, o_cycleClockOffset);
    end
-   for idI = 1:length(o_iceDetection.breakupDetect.detectTime)
-      o_iceDetection.breakupDetect.detectTimeAdj(idI) = ...
-         adjust_time(o_iceDetection.breakupDetect.detectTime(idI), o_cycleClockOffset);
+   for idM = 1:length(iceDetection.breakupDetect.detectTime)
+      iceDetection.breakupDetect.detectTimeAdj(idM) = ...
+         adjust_time(iceDetection.breakupDetect.detectTime(idM), o_cycleClockOffset);
    end
-   if (~isempty(o_iceDetection.ascent.abortTypeTime))
-      o_iceDetection.ascent.abortTypeTimeAdj = ...
-         adjust_time(o_iceDetection.ascent.abortTypeTime, o_cycleClockOffset);
+   if (~isempty(iceDetection.ascent.abortTypeTime))
+      iceDetection.ascent.abortTypeTimeAdj = ...
+         adjust_time(iceDetection.ascent.abortTypeTime, o_cycleClockOffset);
    end
+   
+   o_iceDetection{idI} = iceDetection;
 end
 
 % clock adjustment of buoyancy information

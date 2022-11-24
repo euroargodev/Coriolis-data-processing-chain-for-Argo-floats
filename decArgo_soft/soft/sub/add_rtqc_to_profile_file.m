@@ -191,6 +191,9 @@
 %                             moved)
 %                             - a measurement with QC = '3' is tested by other
 %                             quality control tests
+%   16/08/2021 - RNU - V 5.5: To follow Virginie Racapé's recomendation,
+%                             TEST 25: MEDD test is not performed on (PRES,
+%                             TEMP_DOXY) profiles
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -230,7 +233,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.4';
+g_decArgo_addRtqcToProfileVersion = '5.5';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -3069,8 +3072,6 @@ if (testFlagList(25) == 1)
    test25ParameterList = [ ...
       {'PRES'} {'TEMP'} {'PSAL'} {0}; ...
       {'PRES2'} {'TEMP2'} {'PSAL2'} {0}; ...
-      {'PRES'} {'TEMP_DOXY'} {''} {1}; ...
-      {'PRES'} {'TEMP_DOXY2'} {''} {1}; ...
       ];
    
    for idP = 1:size(test25ParameterList, 1)

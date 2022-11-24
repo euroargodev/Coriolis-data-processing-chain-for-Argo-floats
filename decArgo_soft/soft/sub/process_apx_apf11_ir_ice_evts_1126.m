@@ -139,7 +139,7 @@ for idEv = 1:length(events)
 end
 
 if (set)
-   o_iceDetection = iceDetection;
+   o_iceDetection{end+1} = iceDetection;
 end
 
 return

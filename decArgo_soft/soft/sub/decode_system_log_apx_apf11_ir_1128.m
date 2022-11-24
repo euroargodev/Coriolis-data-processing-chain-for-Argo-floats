@@ -211,7 +211,11 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'ICE') | ...
       strcmp({events.functionName}, 'ASCENT'));
    if (~isempty(idEvts))
-      iceDetectionTab = process_apx_apf11_ir_ice_evts_1124(events(idEvts));
+      iceDetectionTab = process_apx_apf11_ir_ice_evts_1125(events(idEvts));
+
+      if (~isempty(iceDetectionTab))
+         o_iceDetection = iceDetectionTab;
+      end
 
       for idI = 1:length(iceDetectionTab)
          iceDetection = iceDetectionTab{idI};
@@ -221,7 +225,14 @@ for idFile = 1:length(a_systemLogFileList)
             iceAlgoActivatedForCurrentCycle = 1;
          end
          
-         if (~isempty(iceDetection.thermalDetect.medianTempTime))
+         if (~isempty(iceDetection.thermalDetect.detectTime))
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Pressure Ice avoidance';
+            dataStruct.techId = 1006;
+            dataStruct.value = num2str(iceDetection.thermalDetect.detectPres);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+            
             dataStruct = get_apx_tech_data_init_struct(1);
             dataStruct.label = 'Median TEMP of mixed layer samples';
             dataStruct.techId = 1007;
@@ -230,45 +241,29 @@ for idFile = 1:length(a_systemLogFileList)
             o_techData{end+1} = dataStruct;
          end
          
-         %          if (~isempty(iceDetection.thermalDetect.detectTime))
-         %             dataStruct = get_apx_tech_data_init_struct(1);
-         %             dataStruct.label = 'Number of mixed layer samples';
-         %             dataStruct.techId = 1008;
-         %             dataStruct.value = num2str(iceDetection.thermalDetect.detectNbSample);
-         %             dataStruct.cyNum = g_decArgo_cycleNum;
-         %             o_techData{end+1} = dataStruct;
-         %
-         %             dataStruct = get_apx_tech_data_init_struct(1);
-         %             dataStruct.label = 'Pressure Ice avoidance';
-         %             dataStruct.techId = 1006;
-         %             dataStruct.value = num2str(iceDetection.thermalDetect.detectPres);
-         %             dataStruct.cyNum = g_decArgo_cycleNum;
-         %             o_techData{end+1} = dataStruct;
-         %          end
-         
-         %          if (~isempty(iceDetection.ascent.abortTypeTime))
-         %             o_cycleTimeData.ascentAbortDate = iceDetection.ascent.abortTypeTime;
-         %             if (~isempty(iceDetection.thermalDetect.detectPres))
-         %                o_cycleTimeData.ascentAbortPres = iceDetection.thermalDetect.detectPres;
-         %             end
-         %
-         %             dataStruct = get_apx_tech_data_init_struct(1);
-         %             dataStruct.label = 'Ice detection type';
-         %             dataStruct.techId = 1009;
-         %             dataStruct.value = num2str(iceDetection.ascent.abortType);
-         %             dataStruct.cyNum = g_decArgo_cycleNum;
-         %             o_techData{end+1} = dataStruct;
-         %
-         %             g_decArgo_cycleNumListIceDetected(end) = 1;
-         %             iceDetectedBitValue = compute_ice_detected_bit_value(g_decArgo_cycleNum, ...
-         %                g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
-         %             dataStruct = get_apx_tech_data_init_struct(1);
-         %             dataStruct.label = 'Ice detected bit';
-         %             dataStruct.techId = 1005;
-         %             dataStruct.value = iceDetectedBitValue;
-         %             dataStruct.cyNum = g_decArgo_cycleNum;
-         %             o_techData{end+1} = dataStruct;
-         %          end
+         if (~isempty(iceDetection.ascent.abortTypeTime))
+            o_cycleTimeData.ascentAbortDate = iceDetection.ascent.abortTypeTime;
+            if (~isempty(iceDetection.thermalDetect.detectPres))
+               o_cycleTimeData.ascentAbortPres = iceDetection.thermalDetect.detectPres;
+            end
+            
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Ice detection type';
+            dataStruct.techId = 1009;
+            dataStruct.value = num2str(iceDetection.ascent.abortType);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+            
+            g_decArgo_cycleNumListIceDetected(end) = 1;
+            iceDetectedBitValue = compute_ice_detected_bit_value(g_decArgo_cycleNum, ...
+               g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Ice detected bit';
+            dataStruct.techId = 1005;
+            dataStruct.value = iceDetectedBitValue;
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+         end
       end
    end
    if (g_decArgo_iceFloat == 1)

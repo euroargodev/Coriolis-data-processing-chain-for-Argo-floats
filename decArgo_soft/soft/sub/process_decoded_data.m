@@ -187,7 +187,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
       end
       
@@ -415,7 +415,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
       end
       
@@ -695,7 +695,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
       end
       
@@ -975,7 +975,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
       end
       
@@ -1255,7 +1255,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
          
          % update the configuration (even if no param packets are received)       
@@ -1515,7 +1515,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
          
          % update the configuration (even if no param packets are received)       
@@ -1732,7 +1732,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
          
          % update the configuration (even if no param packets are received)       
@@ -1993,7 +1993,7 @@ switch (a_decoderId)
          get_decoded_data(a_decodedDataTab, a_decoderId);
       
       % assign the current configuration to the current deep cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
+      if ((g_decArgo_cycleNum > 0) && ((deepCycleFlag == 1) || (resetDetectedFlag == 1)))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
          
          % update the configuration (even if no param packets are received)       

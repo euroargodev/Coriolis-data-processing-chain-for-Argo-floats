@@ -200,7 +200,7 @@ if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~=
    end
    
    if (isempty(floatParam1) && isempty(floatParam2))
-      if (g_decArgo_doneOnceFlag == 0) % this is the second deep cycle
+      if (g_decArgo_doneOnceFlag == 0)
          
          staticConfigNames = g_decArgo_floatConfig.STATIC.NAMES;
          staticConfigValues = g_decArgo_floatConfig.STATIC.VALUES;

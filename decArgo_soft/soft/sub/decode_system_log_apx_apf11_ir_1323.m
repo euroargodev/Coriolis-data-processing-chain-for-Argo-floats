@@ -211,10 +211,14 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'ICE') | ...
       strcmp({events.functionName}, 'ASCENT'));
    if (~isempty(idEvts))
-      iceDetection = process_apx_apf11_ir_ice_evts_1126(events(idEvts));
+      iceDetectionTab = process_apx_apf11_ir_ice_evts_1126(events(idEvts));
 
-      if (~isempty(iceDetection))
-         o_iceDetection = iceDetection;
+      if (~isempty(iceDetectionTab))
+         o_iceDetection = iceDetectionTab;
+      end
+
+      for idI = 1:length(iceDetectionTab)
+         iceDetection = iceDetectionTab{idI};
          
          if (~isempty(iceDetection.thermalDetect.sampleTime))
             g_decArgo_iceFloat = 1;

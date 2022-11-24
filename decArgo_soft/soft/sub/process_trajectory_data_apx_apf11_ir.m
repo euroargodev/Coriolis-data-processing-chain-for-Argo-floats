@@ -1009,17 +1009,18 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ICE DETECTION DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if (~isempty(a_iceDetection))
+   
+for idI = 1:length(a_iceDetection)
+   iceDetection = a_iceDetection{idI};
    
    % NOTE that, due to float issue, Ice information may have erroneous
    % timestamps in the system_log (Ex: 6903695 #40) file and then are not dated
    
    % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
    % with MC=590
-   for idMeas = 1:length(a_iceDetection.thermalDetect.sampleTime)
-      time = a_iceDetection.thermalDetect.sampleTime(idMeas);
-      timeAdj = a_iceDetection.thermalDetect.sampleTimeAdj(idMeas);
+   for idMeas = 1:length(iceDetection.thermalDetect.sampleTime)
+      time = iceDetection.thermalDetect.sampleTime(idMeas);
+      timeAdj = iceDetection.thermalDetect.sampleTimeAdj(idMeas);
       [measStruct, ~] = create_one_meas_float_time_bis( ...
          g_MC_AET - 10, ...
          time, ...
@@ -1032,9 +1033,9 @@ if (~isempty(a_iceDetection))
          measStruct.measCode = g_MC_AET - 10;
       end
       measStruct.paramList = [paramPres paramTemp];
-      measStruct.paramData = [a_iceDetection.thermalDetect.samplePres(idMeas) a_iceDetection.thermalDetect.sampleTemp(idMeas)];
-      if (a_iceDetection.thermalDetect.samplePresAdj(idMeas) ~= g_decArgo_presDef)
-         measStruct.paramDataAdj = [a_iceDetection.thermalDetect.samplePresAdj(idMeas) paramTemp.fillValue];
+      measStruct.paramData = [iceDetection.thermalDetect.samplePres(idMeas) iceDetection.thermalDetect.sampleTemp(idMeas)];
+      if (iceDetection.thermalDetect.samplePresAdj(idMeas) ~= g_decArgo_presDef)
+         measStruct.paramDataAdj = [iceDetection.thermalDetect.samplePresAdj(idMeas) paramTemp.fillValue];
          measStruct.paramDataMode = 'A ';
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -1042,9 +1043,9 @@ if (~isempty(a_iceDetection))
    
    % median value of PT measurements of thermal detection algorithm: (JULD, T)
    % stored in TRAJ with MC=595
-   if (~isempty(a_iceDetection.thermalDetect.medianTempTime))
-      time = a_iceDetection.thermalDetect.medianTempTime;
-      timeAdj = a_iceDetection.thermalDetect.medianTempTimeAdj;
+   if (~isempty(iceDetection.thermalDetect.medianTempTime)) % for versions which provide always median value
+      time = iceDetection.thermalDetect.medianTempTime;
+      timeAdj = iceDetection.thermalDetect.medianTempTimeAdj;
       [measStruct, ~] = create_one_meas_float_time_bis( ...
          g_MC_MedianValueInAscProf, ...
          time, ...
@@ -1057,16 +1058,33 @@ if (~isempty(a_iceDetection))
          measStruct.measCode = g_MC_MedianValueInAscProf;
       end
       measStruct.paramList = paramTemp;
-      measStruct.paramData = a_iceDetection.thermalDetect.medianTemp;
+      measStruct.paramData = iceDetection.thermalDetect.medianTemp;
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   elseif (~isempty(iceDetection.thermalDetect.detectTime)) % for versions which provide median value only when detection is TRUE
+      time = iceDetection.thermalDetect.detectTime;
+      timeAdj = iceDetection.thermalDetect.detectTimeAdj;
+      [measStruct, ~] = create_one_meas_float_time_bis( ...
+         g_MC_MedianValueInAscProf, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStruct))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_MedianValueInAscProf;
+      end
+      measStruct.paramList = paramTemp;
+      measStruct.paramData = iceDetection.thermalDetect.medianTemp;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
    % when thermal detection is TRUE: (JULD, P, NB_SAMPLE_ICE_DETECTION) stored in TRAJ_AUX
    % with MC=599
-   if (~isempty(a_iceDetection.thermalDetect.detectTime) && ...
-         ~isempty(a_iceDetection.thermalDetect.detectNbSample))
-      time = a_iceDetection.thermalDetect.detectTime;
-      timeAdj = a_iceDetection.thermalDetect.detectTimeAdj;
+   if (~isempty(iceDetection.thermalDetect.detectTime) && ...
+         ~isempty(iceDetection.thermalDetect.detectNbSample))
+      time = iceDetection.thermalDetect.detectTime;
+      timeAdj = iceDetection.thermalDetect.detectTimeAdj;
       [measStructAux, ~] = create_one_meas_float_time_bis( ...
          g_MC_IceThermalDetectionTrue, ...
          time, ...
@@ -1080,9 +1098,9 @@ if (~isempty(a_iceDetection))
       end
       measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
       measStructAux.paramList = [paramPres paramNbSampleIceDetect];
-      measStructAux.paramData = [a_iceDetection.thermalDetect.detectPres a_iceDetection.thermalDetect.detectNbSample];
-      if (a_iceDetection.thermalDetect.detectPresAdj ~= g_decArgo_presDef)
-         measStructAux.paramDataAdj = [a_iceDetection.thermalDetect.detectPresAdj paramNbSampleIceDetect.fillValue];
+      measStructAux.paramData = [iceDetection.thermalDetect.detectPres iceDetection.thermalDetect.detectNbSample];
+      if (iceDetection.thermalDetect.detectPresAdj ~= g_decArgo_presDef)
+         measStructAux.paramDataAdj = [iceDetection.thermalDetect.detectPresAdj paramNbSampleIceDetect.fillValue];
          measStructAux.paramDataMode = 'A ';
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];

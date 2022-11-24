@@ -134,19 +134,23 @@ if (~isempty(presOffset))
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);
    end
    
-   if (~isempty(o_iceDetection))
-      for idI = 1:length(o_iceDetection.thermalDetect.samplePres)
-         o_iceDetection.thermalDetect.samplePresAdj(idI) = ...
-            adjust_value(o_iceDetection.thermalDetect.samplePres(idI), presOffset);
+   for idI = 1:length(o_iceDetection)
+      iceDetection = o_iceDetection{idI};
+      
+      for idM = 1:length(iceDetection.thermalDetect.samplePres)
+         iceDetection.thermalDetect.samplePresAdj(idM) = ...
+            adjust_value(iceDetection.thermalDetect.samplePres(idM), presOffset);
       end
-      if (~isempty(o_iceDetection.thermalDetect.detectPres))
-         o_iceDetection.thermalDetect.detectPresAdj = ...
-            adjust_value(o_iceDetection.thermalDetect.detectPres, presOffset);
+      if (~isempty(iceDetection.thermalDetect.detectPres))
+         iceDetection.thermalDetect.detectPresAdj = ...
+            adjust_value(iceDetection.thermalDetect.detectPres, presOffset);
       end
-      if (~isempty(o_iceDetection.thermalDetect.detectMedianPres))
-         o_iceDetection.thermalDetect.detectMedianPresAdj = ...
-            adjust_value(o_iceDetection.thermalDetect.detectMedianPres, presOffset);
+      if (~isempty(iceDetection.thermalDetect.detectMedianPres))
+         iceDetection.thermalDetect.detectMedianPresAdj = ...
+            adjust_value(iceDetection.thermalDetect.detectMedianPres, presOffset);
       end
+      
+      o_iceDetection{idI} = iceDetection;
    end
    
    for idB =1:size(o_buoyancy, 1)
