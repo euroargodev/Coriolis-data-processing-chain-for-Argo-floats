@@ -819,12 +819,15 @@ idF = find((a_tabCycleTimes(:, 1) == o_profStruct.cycleNumber) & ...
    (a_tabCycleTimes(:, 3) == o_profStruct.outputCycleNumber));
 
 if (~isempty(idF))
-   if (o_profStruct.minMeasDate < a_tabCycleTimes(idF, 4))
+   % we cannot use o_profStruct.minMeasDate because measurements may start
+   % before AST
+   % Ex: 6902969 (84, 1) firts meas date: 2019-06-14T05:49:28.593292
+   % whereas AST: 2019/06/14 05:50:02 (adj: 2019/06/14 05:50:02)
+   if (o_profStruct.maxMeasDate < a_tabCycleTimes(idF, 4))
       
       % the cycle number is erroneous
-      idF = find(o_profStruct.minMeasDate > a_tabCycleTimes(:, 4));
+      idF = find(o_profStruct.maxMeasDate > a_tabCycleTimes(:, 4), 1, 'first');
       if (~isempty(idF))
-         idF = idF(end);
          
          fprintf('DEC_INFO: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Payload data of sensor #%d and phase #%d moved to Cycle #%d: (Cy,Ptn)=(%d,%d)\n', ...
             g_decArgo_floatNum, ...
