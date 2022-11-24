@@ -513,7 +513,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];      
 
-   case {122, 123, 124, 125, 126, 127}
+   case {122, 123, 124, 125, 126, 127, 128}
       % Provor CTS5
       o_mcList = [ ...
          g_MC_Launch ...
@@ -998,6 +998,8 @@ o_comment = [];
 
 % lists of managed decoders
 global g_decArgo_decoderIdListApexApf11Iridium;
+global g_decArgo_decoderIdListNkeCts5Usea;
+
 
 % global measurement codes
 global g_MC_FillValue;
@@ -1106,7 +1108,11 @@ if (~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
       case {g_MC_AscProf}
          o_comment = 'ascending profile dated levels';
       case {g_MC_LastAscPumpedCtd}
-         o_comment = 'last pumped CTD raw measurement sampled during ascending profile';
+         if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+            o_comment = 'last pumped CTD raw measurement sampled during ascending profile';
+         else
+            o_comment = 'last pumped CTD raw measurement sampled during ascending profile (when JULD, PRES, TEMP and PSAL are provided) or Ice abort cycle time and pressure (when JULD and PRES are provided)';
+         end
       case {g_MC_SpyAtSurface}
          o_comment = 'start of surface final pump action to acquire max buoyancy';
       case {g_MC_Grounded}

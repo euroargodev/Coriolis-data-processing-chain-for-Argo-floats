@@ -42,8 +42,7 @@
 
    "ADD_ARGOS_ERROR_ELLIPSES" : "0",   
    "DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/mails/OUT_MAIL/",
-   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/spool/",
-   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/archive/",
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/spool/",
 
    "APPLY_RTQC" : "1",
 

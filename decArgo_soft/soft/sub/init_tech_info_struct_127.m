@@ -1880,6 +1880,7 @@ sensorActivationSBE41.id{end+1} = 1;
 sensorActivationSBE41.name{end+1} = 'cumulated SBE41 activations duration (min)';
 sensorActivationSBE41.fmt{end+1} = '%d';
 sensorActivationSBE41.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SBE41 activations duration (min)');
+sensorActivationSBE41.tech{end}.shortSensorName = 'Ctd';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorActivationDO = init_basic_struct;

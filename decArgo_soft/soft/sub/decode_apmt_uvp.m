@@ -52,7 +52,7 @@ switch (data(1))
    case {16}
       fprintf('WARNING: decode_apmt_uvp_taxo_2 not implemented yet\n');
    case {17}
-      o_uvpBlackData = decode_apmt_uvp_black(data, lastByteNum);
+      o_uvpBlackData = decode_apmt_uvp_black(data, lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

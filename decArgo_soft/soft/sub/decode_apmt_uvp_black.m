@@ -2,11 +2,12 @@
 % Decode UVP-BLK data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_uvpBlackData] = decode_apmt_uvp_black(a_data, a_lastByteNum)
+%  [o_uvpBlackData] = decode_apmt_uvp_black(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input UVP-BLK data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_data              : input UVP-BLK data to decode
+%   a_lastByteNum       : number of the last useful byte of the data
+%   a_inputFilePathName : APMT UVP file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_uvpBlackData : UVP-BLK decoded data
@@ -19,7 +20,7 @@
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_uvpBlackData] = decode_apmt_uvp_black(a_data, a_lastByteNum)
+function [o_uvpBlackData] = decode_apmt_uvp_black(a_data, a_lastByteNum, a_inputFilePathName)
 
 % output parameters initialization
 o_uvpBlackData = [];

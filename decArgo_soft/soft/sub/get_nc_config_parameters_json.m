@@ -48,7 +48,8 @@ for idField = 1:length(confDataFieldNames)
    switch (a_decoderId)
       case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
-      case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 121, 122, 123, 124, 125, 126, 127}
+      case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
+            121, 122, 123, 124, 125, 126, 127, 128}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
       case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, ...
             213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225}
@@ -79,12 +80,12 @@ for idField = 1:length(confDataFieldNames)
    o_ncParamDescriptions{idField} = confItemData.CONF_PARAM_DESCRIPTION;
    
    % duplicate entries for <short_sensor_name> not in Argo (Ex: 'Uvp')
-   if (ismember(a_decoderId, [126 127]))
-      % for <short_sensor_name> = 'Uvp', configuration labels have been
-      % duplicated in the JSON config file but we also
-      % we need to generate all labels (for all depth zones) because META_AUX
+   if (ismember(a_decoderId, [126, 127, 128]))
+      % for <short_sensor_name> = 'Uvp', 'Opus', 'Ramses', 'Mpe', configuration
+      % labels have been duplicated in the JSON config file but we also
+      % need to generate all labels (for all depth zones) because META_AUX
       % needs a descrption for all its configuration labels
-      if (ismember(o_ncParamIds(idField), [1175:1183 1275:1283]))
+      if (ismember(o_ncParamIds(idField), [1175:1183 1275:1283 1375:1383 1475:1483])) % one set for each AUX <short_sensor_name>
          for idZ = 1:5
             paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
                [{'<N>'} {num2str(idZ)}]);
@@ -93,7 +94,7 @@ for idField = 1:length(confDataFieldNames)
             o_ncParamNames(length(confDataFieldNames)+nbExtra) = {paramName};
             o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
          end
-      elseif (ismember(o_ncParamIds(idField), [1184 1284]))
+      elseif (ismember(o_ncParamIds(idField), [1184 1284 1384 1484])) % one set for each AUX <short_sensor_name>
          for idZ = 1:5
             paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
                [{'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);

@@ -148,6 +148,27 @@ for idL = 1:size(cyclePatternNumFloat, 1)
    end
 end
 
+% set information for ptnNum = 0 cycles
+idPtn0 = find(isnan(cyclePatternNumFloat(:, 3)) & (cyclePatternNumFloat(:, 2) == 0));
+if (~isempty(idPtn0))
+   idFNewScript = find([g_decArgo_eventData{:, 4}] == 124);
+   for idL = 1:length(idPtn0)
+      idPrev = find(~isnan(cyclePatternNumFloat(1:idPtn0(idL)-1, 3)), 1, 'last');
+      idNext = find(~isnan(cyclePatternNumFloat(idPtn0(idL)+1:end, 3)), 1, 'first');
+      idF = [];
+      if (~isempty(idPrev) && ~isempty(idNext))
+         idNext = idNext + idPtn0(idL);
+         idF = find((idFNewScript > cyclePatternNumFloat(idPrev, 4)) & (idFNewScript < cyclePatternNumFloat(idNext, 4)), 1);
+      elseif (~isempty(idPrev))
+         idF = find(idFNewScript > cyclePatternNumFloat(idPrev, 4), 1);
+      end
+      if (~isempty(idF))
+         cyclePatternNumFloat(idPtn0(idL), 3:5) = idFNewScript(idF);
+         idFNewScript(idF) = [];
+      end
+   end
+end
+
 for idL = 1:size(cyclePatternNumFloat, 1)-1
    cyNum = cyclePatternNumFloat(idL, 1);
    ptnNum = cyclePatternNumFloat(idL, 2);
@@ -330,8 +351,8 @@ switch (a_decoderId)
       [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate);
    case {124, 125}
       [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate);
-   case {126, 127}
-      [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate);
+   case {126, 127, 128}
+      [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate);
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
@@ -736,7 +757,7 @@ return
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate)
+%  [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
@@ -753,7 +774,7 @@ return
 % RELEASES :
 %   09/02/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate)
+function [o_ok] = decode_event_data_126_127_128(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -776,7 +797,7 @@ init_event_lists_126_127;
 evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_event_data_126_127: File not found: %s\n', a_inputFilePathName);
+   fprintf('ERROR: decode_event_data_126_127_128: File not found: %s\n', a_inputFilePathName);
    return
 end
 
@@ -2073,7 +2094,7 @@ g_decArgo_eventNumTypeList = [ ...
    243	,	0  ...
    ];
 
-g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 126 127 141 197 198 204];
+g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 124 126 127 141 197 198 204];
 
 return
 
@@ -2388,7 +2409,7 @@ g_decArgo_eventNumTypeList = [ ...
    281	,	0	 ...
    ];
 
-g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 126 127 141 197 198 204];
+g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 124 126 127 141 197 198 204];
 
 return
 
@@ -2714,6 +2735,6 @@ g_decArgo_eventNumTypeList = [ ...
    292	,	0	 ...
    ];
 
-g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 126 127 141 197 198 204 282 284:287 289:291];
+g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 124 126 127 141 197 198 204 282 284:287 289:291];
 
 return

@@ -2,9 +2,11 @@
 % Decode SUNA data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_sunaData] = decode_apmt_suna_90_pixels(a_inputFilePathName)
+%  [o_sunaData] = decode_apmt_suna_90_pixels(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
+%   a_data              : input SUNA data to decode
+%   a_lastByteNum       : number of the last useful byte of the data
 %   a_inputFilePathName : APMT SUNA file to decode
 %
 % OUTPUT PARAMETERS :
@@ -18,7 +20,7 @@
 % RELEASES :
 %   01/21/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_sunaData] = decode_apmt_suna_90_pixels(a_inputFilePathName)
+function [o_sunaData] = decode_apmt_suna_90_pixels(a_data, a_lastByteNum, a_inputFilePathName)
 
 % output parameters initialization
 o_sunaData = [];
@@ -79,28 +81,8 @@ signedList = [ ...
    {[zeros(1, 8) 1 zeros(1, 92)]} ...
    ];
 
-if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_apmt_suna_90_pixels: File not found: %s\n', a_inputFilePathName);
-   return
-end
-
-% open the file and read the data
-fId = fopen(a_inputFilePathName, 'r');
-if (fId == -1)
-   fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
-   return
-end
-inputData = fread(fId);
-fclose(fId);
-
-if (inputData(1) ~= 13)
-   fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
-   return
-end
-
-% find the position of the last useful byte
-lastByteNum = get_last_byte_number(inputData, hex2dec('1a'));
-
+inputData = a_data;
+lastByteNum = a_lastByteNum;
 currentPhaseNum = -1;
 currentTreatNum = -1;
 dataStruct = [];

@@ -41,6 +41,7 @@ phasePrev = '';
 for idP = 1:length(a_sunaData)
    
    dataStruct = a_sunaData{idP};
+   nbPix = size(dataStruct.data, 2) - 11;
    
    phase = dataStruct.phase;
    phase = phase(2:end-1);
@@ -60,9 +61,9 @@ for idP = 1:length(a_sunaData)
             'MOLAR_NITRATE (micromole/l); FIT_ERROR_NITRATE (dimensionless)'], ...
             g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
             fileTypeStr, phase, sensorNum, sensorName);
-         fprintf(g_decArgo_outputCsvFileId, '; UV_INTENSITY_NITRATE_%d (count)', 1:90);
+         fprintf(g_decArgo_outputCsvFileId, '; UV_INTENSITY_NITRATE_%d (count)', 1:nbPix);
          fprintf(g_decArgo_outputCsvFileId, '\n');
-         outputFmt = ['%s; %s;%.1f;%.3f;%.3f;%.3f;%.3f;%g;%d;%d;%g;%g' repmat(';%d', 1, 90)];
+         outputFmt = ['%s; %s;%.1f;%.3f;%.3f;%.3f;%.3f;%g;%d;%d;%g;%g' repmat(';%d', 1, nbPix)];
          if (strcmp(treat, '(RW)'))
             measType = 'raw';
          elseif (strcmp(treat, '(DW)'))

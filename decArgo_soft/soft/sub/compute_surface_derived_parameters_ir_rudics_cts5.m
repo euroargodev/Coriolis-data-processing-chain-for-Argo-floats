@@ -53,6 +53,12 @@ if (~isempty(surfInfo))
    for idP = 1:length(idSensor2)
       a_tabSurf(surfInfo(idSensor2(idP), 1)) = compute_surface_derived_parameters_for_OCR(a_tabSurf(surfInfo(idSensor2(idP), 1)));
    end
+
+   % compute MPE derived parameters
+   idSensor110 = find((surfInfo(:, 2) == 110) & (surfInfo(:, 3) == 0));
+   for idP = 1:length(idSensor110)
+      a_tabSurf(surfInfo(idSensor110(idP), 1)) = compute_surface_derived_parameters_for_MPE(a_tabSurf(surfInfo(idSensor110(idP), 1)));
+   end
 end
 
 % update output parameters
@@ -199,10 +205,10 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {121, 122, 124, 126, 127}
+   case {121, 122, 124, 126, 127, 128}
       
       % compute PPOX_DOXY values using the Stern-Volmer equation
-      o_PPOX_DOXY = compute_PPOX_DOXY_107_109_to_111_113_to_115_121_122_124_126_127( ...
+      o_PPOX_DOXY = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_28( ...
          a_C1PHASE_DOXY, ...
          a_C2PHASE_DOXY, ...
          a_TEMP_DOXY, ...
@@ -393,5 +399,73 @@ end
 % update output parameters
 a_surfOcr.derived = 1;
 o_surfOcr = a_surfOcr;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the MPE sensor.
+%
+% SYNTAX :
+%  [o_surfMpe] = compute_surface_derived_parameters_for_MPE(a_surfMpe)
+%
+% INPUT PARAMETERS :
+%   a_surfMpe : input OCR surface profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_surfMpe : output OCR surface profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   11/18/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_surfMpe] = compute_surface_derived_parameters_for_MPE(a_surfMpe)
+
+% output parameters initialization
+o_surfMpe = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the surface profile
+paramNameList = {a_surfMpe.paramList.name};
+
+% compute DOWNWELLING_PAR data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'VOLTAGE_DOWNWELLING_PAR'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWNWELLING_PAR2'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downPar = compute_DOWNWELLING_PAR_mpe_128( ...
+         a_surfMpe.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfMpe.data(:, end+1) = downPar;
+      if (isempty(a_surfMpe.dataQc))
+         a_surfMpe.dataQc = ones(size(a_surfMpe.data, 1), length(a_surfMpe.paramList))*g_decArgo_qcDef;
+      end
+      downParQc = ones(size(a_surfMpe.data, 1), 1)*g_decArgo_qcDef;
+      downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfMpe.dataQc(:, end+1) = downParQc;
+      
+      a_surfMpe.paramList = [a_surfMpe.paramList derivedParam];
+   end
+end
+
+% update output parameters
+a_surfMpe.derived = 1;
+o_surfMpe = a_surfMpe;
 
 return

@@ -79,9 +79,17 @@ else
          o_tempCalNitrate = tempCalNitrate;
       end
    end
-   
+
    idFirstE = find(strcmp(calibData, 'E') == 1, 1);
+
    if (~isempty(idFirstE))
+
+      dataInfo = '';
+      idLastH = find(strcmp(calibData, 'H') == 1, 1, 'last');
+      if (~isempty(idFirstE) && ~isempty(idLastH))
+         dataInfo = calibData(idLastH+1:idFirstE-1);
+      end
+
       data = calibData(idFirstE:end);
       switch (a_dacFormatId)
          case {'5.9', '5.91', '5.92', '5.94', '6.01', '6.11', '7.01', '7.02', '7.03', '7.04', '7.05', '7.11'}
@@ -105,13 +113,26 @@ else
                o_creationDate = [];
                fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);
             end
-         case {'7.12'}
-            if (mod(length(data), 7) == 0)
+         case {'7.12', '7.13'}
+            if ((mod(length(data), 7) == 0) && (length(dataInfo) == 6) && ...
+                  strcmp(dataInfo{1}, 'Wavelength') && ...
+                  strcmp(dataInfo{2}, 'NO3') && ...
+                  strcmp(dataInfo{3}, 'SWA') && ...
+                  strcmp(dataInfo{6}, 'Reference'))
                o_opticalWavelengthUv = data(2:7:end);
-               o_eSwaNitrate = data(4:7:end);
                o_eNitrate = data(3:7:end);
+               o_eSwaNitrate = data(4:7:end);
                o_eBisulfide = data(6:7:end);
                o_uvIntensityRefNitrate = data(7:7:end);
+            elseif ((mod(length(data), 6) == 0) && (length(dataInfo) == 5) && ...
+                  strcmp(dataInfo{1}, 'Wavelength') && ...
+                  strcmp(dataInfo{2}, 'NO3') && ...
+                  strcmp(dataInfo{3}, 'SWA') && ...
+                  strcmp(dataInfo{5}, 'Reference'))
+               o_opticalWavelengthUv = data(2:6:end);
+               o_eNitrate = data(3:6:end);
+               o_eSwaNitrate = data(4:6:end);
+               o_uvIntensityRefNitrate = data(6:6:end);
             else
                o_creationDate = [];
                fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);

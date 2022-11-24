@@ -71,7 +71,7 @@ for idPack = 1:size(a_tabTech, 1)
    profileNumber = a_tabTech{idPack, 2};
    phaseNumber = a_tabTech{idPack, 3};
    techData = a_tabTech{idPack, 4};
-   
+
    groupList = cell2mat(techData)';
    groupList = [groupList.group];
    uGroupList = unique(groupList(find(groupList > 0)));

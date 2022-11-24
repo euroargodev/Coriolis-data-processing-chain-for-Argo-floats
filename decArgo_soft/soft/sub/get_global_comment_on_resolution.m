@@ -40,7 +40,7 @@ switch (a_decoderId)
       % PROVOR CTS4 & ARVOR CM
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {121, 122, 123, 124, 125, 126, 127}
+   case {121, 122, 123, 124, 125, 126, 127, 128}
       % PROVOR APMT
       o_comment = 'PRES variable resolutions depend on measurement codes';
       

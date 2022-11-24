@@ -480,10 +480,11 @@ if (isempty(g_decArgo_outputCsvFileId))
          unique(g_decArgo_rsyncLogFileUsedList));
    end
    
-   % add float cycle and pattern number to the NetCDF technical data
+   % add float cycle and pattern number + Ice detected bit to the NetCDF
+   % technical data
    [o_tabNcTechIndex, o_tabNcTechVal] = ...
       update_technical_data_ir_rudics_cts5( ...
-      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5);
+      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5, a_decoderId);
 end
 
 return
@@ -587,7 +588,7 @@ fileTypes = zeros(size(fileNames));
 for idF = 1:length(fileNames)
    fileName = fileNames{idF};
    if (~isempty(g_decArgo_patternNumFloat))
-      typeList = [1 2 4:17]; % types with pattern #
+      typeList = [1 2 4:18]; % types with pattern #
       for idType = typeList
          idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
          if (length(fileName) > g_decArgo_fileTypeListCts5{idFL, 4})
@@ -634,8 +635,8 @@ if (~isempty(intersect(fileTypes, 6:17)))
 end
 
 % the files should be processed in the following order
-typeOrderList = [3 4 6:17 5 1];
-% 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 5: usual order i.e. tech first, data after and EOL at the end
+typeOrderList = [3 4 6:18 5 1];
+% 3, 4, 6 to 18, 5: usual order i.e. tech first, data after and EOL at the end
 % 1: last the apmt configuration because it concerns the next cycle and pattern
 
 % process the files
@@ -646,12 +647,14 @@ apmtEco = [];
 apmtOcr = [];
 uvpLpmData = [];
 uvpBlackData = [];
-apmtCrover = [];
 apmtSbeph = [];
+apmtCrover = [];
 apmtSuna = [];
-ramsesData = [];
 opusLightData = [];
 opusBlackData = [];
+ramsesData = [];
+mpeData = [];
+
 techDataFromApmtTech = [];
 trajDataFromApmtTech = [];
 timeDataFromApmtTech = [];
@@ -911,7 +914,7 @@ for typeNum = typeOrderList
                % '*_suna*.hex'
                
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               apmtSuna = decode_apmt_suna_90_pixels([fileNameInfo{4} fileNameInfo{1}]);
+               apmtSuna = decode_apmt_suna([fileNameInfo{4} fileNameInfo{1}]);
                
                if (~isempty(g_decArgo_outputCsvFileId))
                   
@@ -965,7 +968,25 @@ for typeNum = typeOrderList
                   
                   print_data_in_csv_file_ir_rudics_cts5_RAMSES(ramsesData);
                end
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            case 18
+               % '*_mpe*.hex'
                
+               fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
+               mpeData = decode_apmt_mpe([fileNameInfo{4} fileNameInfo{1}]);
+               
+               if (~isempty(g_decArgo_outputCsvFileId))
+                  
+                  for idFile2 = 1:length(fileNameInfo{2})
+                     fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+                        fileNameInfo{2}{idFile2});
+                  end
+                  
+                  print_data_in_csv_file_ir_rudics_cts5_MPE(mpeData);
+               end
+
             otherwise
                fprintf('WARNING: Nothing define yet to process file: %s\n', ...
                   fileNamesForType{idFile});
@@ -991,7 +1012,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
    % print time data in csv file
    print_dates_in_csv_file_ir_rudics_cts5_usea( ...
       timeDataFromApmtTech, apmtCtd, apmtDo, apmtEco, apmtOcr, uvpLpmData, uvpBlackData, ...
-      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData, ramsesData);
+      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData, ramsesData, mpeData);
 end
 
 % output NetCDF data
@@ -1311,6 +1332,24 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles = [o_tabProfiles tabProfilesRamses];
    end
    
+   %%%%%%%%%%%%%%%%%%%%
+   if (~isempty(mpeData))
+      
+      % create profiles (as they are transmitted)
+      [tabProfilesMpe, tabDriftMpe, tabSurfMpe] = ...
+         process_profile_ir_rudics_cts5_usea_mpe(mpeData, apmtTimeFromTech, g_decArgo_gpsData);
+      tabDrift = [tabDrift tabDriftMpe];
+      tabSurf = [tabSurf tabSurfMpe];
+            
+      % merge profiles (all data from a given sensor together)
+      [tabProfilesMpe] = merge_profile_meas_ir_rudics_cts5_usea_mpe(tabProfilesMpe);
+      
+      % add the vertical sampling scheme from configuration information
+      [tabProfilesMpe] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesMpe);
+      
+      o_tabProfiles = [o_tabProfiles tabProfilesMpe];
+   end
+
    %%%%%%%%%%%%%%%%%%%%
    % compute derived parameters of the profiles
    [o_tabProfiles] = compute_profile_derived_parameters_ir_rudics(o_tabProfiles, a_decoderId);

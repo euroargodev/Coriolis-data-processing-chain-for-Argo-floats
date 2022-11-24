@@ -104,6 +104,7 @@ global g_MC_AscProfDeepestBin;
 global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_IceAscentAbortNum;
 global g_MC_AET;
 global g_MC_SpyAtSurface;
 global g_MC_TST;
@@ -840,23 +841,39 @@ for idCyc = 1:length(cycleNumList)
          measData = [measData; measDataTab];
       end
       
-      % last pumped CTD measurement
+      % last pumped CTD measurement or ice abort JULD and PRES
       idPackData  = find( ...
          (a_tabTrajIndex(:, 1) == g_MC_LastAscPumpedCtd) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum));
       if (~isempty(idPackData))
-         data = a_tabTrajData{idPackData}{:};
-         [measStruct, ~] = create_one_meas_float_time_bis(g_MC_LastAscPumpedCtd, ...
-            data.juld, data.juldAdj, g_JULD_STATUS_2);
-         paramPres = get_netcdf_param_attributes('PRES');
-         paramTemp = get_netcdf_param_attributes('TEMP');
-         paramPsal = get_netcdf_param_attributes('PSAL');
-         measStruct.paramList = [paramPres paramTemp paramPsal];
-         measStruct.paramData = single([data.pres data.temp data.psal]);
-         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-         measStruct.sensorNumber = 0;
-         measData = [measData; measStruct];
+         for id = 1:length(idPackData)
+            data = a_tabTrajData{idPackData(id)};
+            if (length(data) == 1)
+               data = data{:};
+               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_LastAscPumpedCtd, ...
+                  data.juld, data.juldAdj, g_JULD_STATUS_2);
+               paramPres = get_netcdf_param_attributes('PRES');
+               paramTemp = get_netcdf_param_attributes('TEMP');
+               paramPsal = get_netcdf_param_attributes('PSAL');
+               measStruct.paramList = [paramPres paramTemp paramPsal];
+               measStruct.paramData = single([data.pres data.temp data.psal]);
+            else
+               paramName = cell2mat(data);
+               paramName = {paramName.paramName};
+               % time should be missing (information reported in Events only)
+               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_IceAscentAbortNum, ...
+                  data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+                  data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+                  g_JULD_STATUS_2);
+               paramPres = get_netcdf_param_attributes('PRES');
+               measStruct.paramList = paramPres;
+               measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+            end
+            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+            measStruct.sensorNumber = 0;
+            measData = [measData; measStruct];
+         end
       end
       
       % ascent end time

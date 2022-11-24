@@ -120,6 +120,8 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 14];
          case 'OPUS'
             sensorList = [sensorList 15];
+         case 'MPE'
+            sensorList = [sensorList 17];
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...
@@ -157,7 +159,7 @@ end
 % create static configuration names
 configNames1 = [];
 switch (a_decoderId)
-   case {126, 127}
+   case {126, 127, 128}
       configInfoList = [ ...
          {'SYSTEM'} {[0:4 7 9:12]} {[]}; ...
          {'TECHNICAL'} {[0:1 8:15 17 18 20]} {[]}; ...
@@ -181,6 +183,7 @@ switch (a_decoderId)
          {'RAMSES'} {0} {[]}; ...
          {'OPUS'} {0} {[]}; ...
          {'UVP6'} {0} {[]}; ...
+         {'MPE'} {0} {[]}; ...
          ];
    otherwise
       fprintf('ERROR: Static configuration parameters not defined yet for deciId #%d\n', ...
@@ -242,7 +245,7 @@ configNames1 = [configNames1 ...
 % create dynamic configuration names
 configNames2 = [];
 switch (a_decoderId)
-   case {126, 127}
+   case {126, 127, 128}
       configInfoList = [ ...
          {'SYSTEM'} {[5 6 8]} {[]}; ...
          {'TECHNICAL'} {[2:7 16 19 21 22]} {[]}; ...
@@ -487,7 +490,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       
       % create the tabDoxyCoef array
       switch (a_decoderId)
-         case {126, 127}
+         case {126, 127, 128}
             if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'OPTODE')))
                if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                   calibData = g_decArgo_calibInfo.OPTODE;
@@ -524,7 +527,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                
                switch (a_decoderId)
                   
-                  case {126}
+                  case {126, 128}
                      calibData = g_decArgo_calibInfo.SUNA;
                      tabOpticalWavelengthUv = [];
                      tabENitrate = [];
@@ -629,6 +632,11 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
          end
       end
    end
+end
+
+% temporary calibration coefficient for MPE sensor
+if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'))
+   g_decArgo_calibInfo.MPE.ResponsivityW = metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W;
 end
 
 return

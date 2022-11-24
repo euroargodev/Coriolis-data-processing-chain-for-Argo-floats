@@ -160,7 +160,8 @@ for idP = 1:length(a_sunaData)
       else
          profStruct.paramNumberWithSubLevels = 10;
       end
-      profStruct.paramNumberOfSubLevels = 90;
+      nbPix = size(data, 2) - 11;
+      profStruct.paramNumberOfSubLevels = nbPix;
       
       if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          data(:, 10) = [];

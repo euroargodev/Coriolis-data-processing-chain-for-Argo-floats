@@ -599,7 +599,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125, 126, 127}
+   case {121, 122, 123, 124, 125, 126, 127, 128}
       
       % CTS5 floats
       
@@ -703,6 +703,79 @@ switch (a_decoderId)
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_INTENSITIES];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+
+         if (isfield(metaData, 'META_AUX_MPE_ACQUISITION_AVERAGE'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_ACQUISITION_AVERAGE'];
+            idF = find(strcmp('META_AUX_MPE_ACQUISITION_AVERAGE', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_ACQUISITION_AVERAGE];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_ACQUISITION_AVERAGE', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_ACQUISITION_RATE'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_ACQUISITION_RATE'];
+            idF = find(strcmp('META_AUX_MPE_ACQUISITION_RATE', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_ACQUISITION_RATE];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_ACQUISITION_RATE', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'];
+            idF = find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A'];
+            idF = find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_GAIN_HM'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_GAIN_HM'];
+            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_HM', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_GAIN_HM];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_HM', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_GAIN_ML'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_GAIN_ML'];
+            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_ML', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_GAIN_ML];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_ML', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_H'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_H'];
+            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_H', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_H];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_H', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_M'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_M'];
+            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_M', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_M];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_M', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_L'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_L'];
+            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_L', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_L];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_L', g_decArgo_outputNcConfParamLabel), 1))];
          end
       end
       

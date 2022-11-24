@@ -310,6 +310,12 @@ if (~isempty(profInfo))
          compute_profile_derived_parameters_for_TRANSISTOR_PH( ...
          profTransPh, profCtd);
    end
+
+   % compute MPE derived parameters
+   idSensor110 = find((profInfo(:, 2) == 110) & (profInfo(:, 3) == 0));
+   for idP = 1:length(idSensor110)
+      a_tabProfiles(profInfo(idSensor110(idP), 1)) = compute_profile_derived_parameters_for_MPE(a_tabProfiles(profInfo(idSensor110(idP), 1)));
+   end
 end
 
 % update output parameters
@@ -1311,7 +1317,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
             
-            [nitrate, rmsError] = compute_profile_NITRATE_105_to_109_111_112_114_115_121_to_126( ...
+            [nitrate, rmsError] = compute_profile_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1789,10 +1795,10 @@ if (~isempty(ctdDataNoDef))
       
       switch (a_decoderId)
                      
-         case {121, 122, 124, 126, 127}
+         case {121, 122, 124, 126, 127, 128}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_107_109_to_111_113_to_115_121_122_124_126_127( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_28( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -1980,7 +1986,7 @@ if (~isempty(ctdDataNoDef))
          case {107, 109, 110, 111, 113, 114, 115}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_107_109_to_111_113_to_115_121_122_124_126_127( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_28( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -1998,7 +2004,7 @@ if (~isempty(ctdDataNoDef))
             o_ptsForDoxy = ctdIntData;
             
             % compute PPOX_DOXY values using the Stern-Volmer equation
-            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_107_109_to_111_113_to_115_121_122_124_126_127( ...
+            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_28( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2350,5 +2356,85 @@ else
    o_PH_IN_SITU_TOTAL = [];
    
 end
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the MPE sensor.
+%
+% SYNTAX :
+%  [o_profMpe] = compute_profile_derived_parameters_for_MPE(a_profMpe)
+%
+% INPUT PARAMETERS :
+%   a_profMpe : input MPE profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_profMpe : output MPE profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   11/18/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_profMpe] = compute_profile_derived_parameters_for_MPE(a_profMpe)
+
+% output parameters initialization
+o_profMpe = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_profMpe.paramList.name};
+
+% compute DOWNWELLING_PAR data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'VOLTAGE_DOWNWELLING_PAR'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWNWELLING_PAR2'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downPar = compute_DOWNWELLING_PAR_mpe_128( ...
+         a_profMpe.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_profMpe.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profMpe.data(:, end+1) = ones(size(a_profMpe.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profMpe.dataQc))
+            a_profMpe.dataQc = ones(size(a_profMpe.data, 1), length(a_profMpe.paramList))*g_decArgo_qcDef;
+         else
+            a_profMpe.dataQc(:, end+1) = ones(size(a_profMpe.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profMpe.paramList = [a_profMpe.paramList derivedParam];
+         derivedParamId = size(a_profMpe.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_profMpe.data(:, derivedParamId) = downPar;
+      downParQc = ones(size(a_profMpe.data, 1), 1)*g_decArgo_qcDef;
+      downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profMpe.dataQc(:, derivedParamId) = downParQc;
+   end
+end
+
+% update output parameters
+a_profMpe.derived = 1;
+o_profMpe = a_profMpe;
 
 return

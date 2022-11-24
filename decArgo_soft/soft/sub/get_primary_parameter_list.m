@@ -68,7 +68,7 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {121, 122, 123, 124, 125, 126, 127}
+   case {121, 122, 123, 124, 125, 126, 127, 128}
 
       % CTS5 floats
       o_paramList = [ ...

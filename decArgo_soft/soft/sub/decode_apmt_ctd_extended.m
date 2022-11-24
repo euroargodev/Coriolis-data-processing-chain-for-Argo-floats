@@ -29,9 +29,9 @@ o_ctdData = [];
 
 switch (a_decoderId)
    case {121, 122, 123, 124, 125}
-      [o_ctdData] = decode_apmt_ctd_extended_121_2_125(a_data, a_lastByteNum, a_inputFilePathName);
-   case {126, 127}
-      [o_ctdData] = decode_apmt_ctd_extended_126_127(a_data, a_lastByteNum, a_inputFilePathName);
+      [o_ctdData] = decode_apmt_ctd_extended_121_to_125(a_data, a_lastByteNum, a_inputFilePathName);
+   case {126, 127, 128}
+      [o_ctdData] = decode_apmt_ctd_extended_126_to_128(a_data, a_lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: decode_apmt_ctd_extended not defined yet for deciId #%d\n', ...
          a_decoderId);

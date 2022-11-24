@@ -28,8 +28,8 @@ function [o_ctdData] = decode_apmt_ctd_standard(a_data, a_lastByteNum, a_decoder
 o_ctdData = [];
 
 switch (a_decoderId)
-   case {126, 127}
-      [o_ctdData] = decode_apmt_ctd_standard_126_127(a_data, a_lastByteNum, a_inputFilePathName);
+   case {126, 127, 128}
+      [o_ctdData] = decode_apmt_ctd_standard_126_to_128(a_data, a_lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: decode_apmt_ctd_standard not defined yet for deciId #%d\n', ...
          a_decoderId);

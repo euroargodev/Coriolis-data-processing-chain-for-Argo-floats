@@ -95,34 +95,34 @@ diary(logFile);
 tic;
 
 % create output directory
-if (exist(DIR_OUTPUT, 'dir') == 7)
-   rmdir(DIR_OUTPUT, 's');
-   fprintf('INFO: Removing directory: %s\n', DIR_OUTPUT);
-end
-mkdir(DIR_OUTPUT);
+% if (exist(DIR_OUTPUT, 'dir') == 7)
+%    rmdir(DIR_OUTPUT, 's');
+%    fprintf('INFO: Removing directory: %s\n', DIR_OUTPUT);
+% end
+% mkdir(DIR_OUTPUT);
 fprintf('INFO: Creating directory: %s\n', DIR_OUTPUT);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 1: split the data by satellite passes
-fprintf('STEP 1: split the data by satellite passes\n');
-dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
-[ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
-if (ok == 0)
-   fprintf('ERROR: In step1 - exit\n');
-   return
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 2: delete identical satellite passes
-fprintf('\nSTEP 2: delete identical satellite passes\n');
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 1: split the data by satellite passes
+% fprintf('STEP 1: split the data by satellite passes\n');
+% dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
+% [ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
+% if (ok == 0)
+%    fprintf('ERROR: In step1 - exit\n');
+%    return
+% end
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 2: delete identical satellite passes
+% fprintf('\nSTEP 2: delete identical satellite passes\n');
 dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
-% duplicate the input directory in the output one
-copy_file(dirOutStep1, dirOutStep2);
-[ok] = delete_double_argos_split_bis(dirOutStep2);
-if (ok == 0)
-   fprintf('ERROR: In step2 - exit\n');
-   return
-end
+% % duplicate the input directory in the output one
+% copy_file(dirOutStep1, dirOutStep2);
+% [ok] = delete_double_argos_split_bis(dirOutStep2);
+% if (ok == 0)
+%    fprintf('ERROR: In step2 - exit\n');
+%    return
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 3: create cycle files

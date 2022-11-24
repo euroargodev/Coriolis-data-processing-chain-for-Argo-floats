@@ -235,7 +235,7 @@ for idFloat = 1:length(floatList)
    end
 
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} {'7.11'} {'7.12'}]))
+   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} {'7.11'} {'7.12'} {'7.13'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -391,7 +391,7 @@ for idFloat = 1:length(floatList)
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
-      case {'7.01', '7.02', '7.04', '7.11', '7.12'}
+      case {'7.01', '7.02', '7.04', '7.11', '7.12', '7.13'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -594,7 +594,7 @@ for idFloat = 1:length(floatList)
    metaStruct.CONFIG_MISSION_NUMBER = {'0'};
    
    % for CTS5-USEA only
-   if (ismember(dacFormatId, [{'7.11'} {'7.12'}]))
+   if (ismember(dacFormatId, [{'7.11'} {'7.12'} {'7.13'}]))
       
       % remove unused sensors from configuration
       
@@ -633,6 +633,9 @@ for idFloat = 1:length(floatList)
             case 'OPUS'
                sensorListNum = [sensorListNum 15];
                sensorListName = [sensorListName {'CONFIG_APMT_OPUS_'}];
+            case 'MPE'
+               sensorListNum = [sensorListNum 17];
+               sensorListName = [sensorListName {'CONFIG_APMT_MPE_'}];
             otherwise
                fprintf('ERROR: unknown sensor name (%s) for float %d\n', ...
                   sensorName, floatNum);

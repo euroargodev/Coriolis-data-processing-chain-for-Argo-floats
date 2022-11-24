@@ -21,25 +21,16 @@
 function generate_csv_meta_cts5(varargin)
 
 % calibration coefficients decoded from data
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % SUNA output pixel numbers decoded from data
-outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+OUTPUT_PIXEL_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
-SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
 
 % meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_USEA.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.13_6903095_6903096.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.12_Ramses_6903706.txt';
-dataBaseFileName = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_rem_meta.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_7.13.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
@@ -107,9 +98,9 @@ fprintf(fidOut, '%s\n', header);
    listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
 
 % read calib file
-fId = fopen(calibFileName, 'r');
+fId = fopen(CALIB_FILE_NAME, 'r');
 if (fId == -1)
-   fprintf('ERROR: Unable to open file: %s\n', calibFileName);
+   fprintf('ERROR: Unable to open file: %s\n', CALIB_FILE_NAME);
    return
 end
 calibData = textscan(fId, '%s');
@@ -119,9 +110,9 @@ fclose(fId);
 calibData = reshape(calibData, 4, size(calibData, 1)/4)';
 
 % read output pixel file
-fId = fopen(outputPixelFileName, 'r');
+fId = fopen(OUTPUT_PIXEL_FILE_NAME, 'r');
 if (fId == -1)
-   fprintf('ERROR: Unable to open file: %s\n', outputPixelFileName);
+   fprintf('ERROR: Unable to open file: %s\n', OUTPUT_PIXEL_FILE_NAME);
    return
 end
 outputPixelData = textscan(fId, '%s');
@@ -134,10 +125,10 @@ outputPixelData = reshape(outputPixelData, 3, size(outputPixelData, 1)/3)';
 [wmoSensorList, nameSensorList] = get_sensor_list(SENSOR_LIST_FILE_NAME);
 
 % read meta file
-fprintf('Processing file: %s\n', dataBaseFileName);
-fId = fopen(dataBaseFileName, 'r');
+fprintf('Processing file: %s\n', FLOAT_META_FILE_NAME);
+fId = fopen(FLOAT_META_FILE_NAME, 'r');
 if (fId == -1)
-   fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
+   fprintf('ERROR: Unable to open file: %s\n', FLOAT_META_FILE_NAME);
    return
 end
 metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
@@ -347,6 +338,12 @@ switch a_inputSensorName
       o_sensorMaker = {'TRIOS'};
       o_sensorModel = {'RAMSES_ACC'};
       
+   case 'MPE'
+      o_sensorName = {'AUX_RADIOMETER_PAR'};
+      o_sensorDimLevel = [1301];
+      o_sensorMaker = {'Biospherical instruments inc'};
+      o_sensorModel = {'MPE'};
+      
    otherwise
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
 end
@@ -529,6 +526,9 @@ for idSensor = 1:length(a_sensorList)
          % nothing yet
          
       case 'RAMSES'
+         % nothing yet
+
+      case 'MPE'
          % nothing yet
          
       otherwise
@@ -888,7 +888,7 @@ switch a_inputSensorName
       
    case 'SUNA'
       switch a_decId
-         case {126}
+         case {126, 128}
             o_paramName = [ ...
                {'TEMP_NITRATE'} ...
                {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
@@ -1087,6 +1087,24 @@ switch a_inputSensorName
          {'count'} ...
          ];
       
+   case 'MPE'
+      o_paramName = [ ...
+         {'TEMP_DOWNWELLING_PAR'} ...
+         {'VOLTAGE_DOWNWELLING_PAR'} ...
+         {'DOWNWELLING_PAR2'} ...
+         ];
+      o_paramDimLevel = [1301 1302 1303];
+      o_paramSensor = [ ...
+         {'AUX_RADIOMETER_PAR'} ...
+         {'AUX_RADIOMETER_PAR'} ...
+         {'AUX_RADIOMETER_PAR'} ...
+         ];
+      o_paramUnits = [ ...
+         {'degree_Celsius'} ...
+         {'volt'} ...
+         {'microMoleQuanta/m^2/sec'} ...
+         ];
+
    otherwise
       fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputSensorName);
 end

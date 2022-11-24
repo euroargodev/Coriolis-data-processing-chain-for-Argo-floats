@@ -227,6 +227,8 @@ switch (a_decoderId)
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_126;
    case {127}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127;
+   case {128}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_128;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);

@@ -807,7 +807,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LastAscPumpedCtd));
       if (~isempty(idF))
-         g_NTCT_LastAscPumpedCtd_pres(idC) = pres(idF);
+         g_NTCT_LastAscPumpedCtd_pres(idC) = pres(idF(1));
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AET));
       if (~isempty(idF))
