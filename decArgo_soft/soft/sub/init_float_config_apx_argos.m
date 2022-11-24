@@ -51,7 +51,7 @@ end
 jsonMetaData = loadjson(jsonInputFileName);
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
 
 % add DO calibration coefficients
 if (ismember(a_decoderId, [1006 1008 1014 1016]))

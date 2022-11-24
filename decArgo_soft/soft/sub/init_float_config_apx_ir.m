@@ -72,7 +72,7 @@ if (g_decArgo_floatTransType == 3)
 end
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
 
 % add DO calibration coefficients
 if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]))
