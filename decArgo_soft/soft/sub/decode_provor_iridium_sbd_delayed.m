@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas, ...
 %    o_structConfig] = ...
 %    decode_provor_iridium_sbd_delayed( ...
 %    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -20,13 +20,13 @@
 %   a_floatEndDate      : end date of the data to process
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles    : decoded profiles
-%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex : decoded technical index information
-%   o_tabNcTechVal   : decoded technical data
-%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
-%   o_structConfig   : NetCDF float configuration
+%   o_tabProfiles     : decoded profiles
+%   o_tabTrajNMeas    : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle   : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex  : decoded technical index information
+%   o_tabNcTechVal    : decoded technical data
+%   o_tabTechAuxNMeas : decoded technical N_MEASUREMENT AUX data
+%   o_structConfig    : NetCDF float configuration
 %
 % EXAMPLES :
 %
@@ -41,7 +41,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas, ...
    o_structConfig] = ...
    decode_provor_iridium_sbd_delayed( ...
    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -53,7 +53,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
-o_tabTechNMeas = [];
+o_tabTechAuxNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -80,7 +80,6 @@ global g_decArgo_dateDef;
 global g_decArgo_iridiumDataDirectory;
 
 % SBD sub-directories
-global g_decArgo_spoolDirectory;
 global g_decArgo_archiveDirectory;
 global g_decArgo_archiveSbdDirectory;
 global g_decArgo_historyDirectory;
@@ -343,7 +342,7 @@ if ((g_decArgo_realtimeFlag) || ...
 end
 
 % ignore duplicated mail files (move duplicates in the archive directory)
-ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirectory);
+ignore_duplicated_mail_files;
 
 % retrieve information on spool directory contents
 [tabAllFileNames, ~, tabAllFileDates, ~] = get_list_files_info_ir_sbd('spool', '');
@@ -414,11 +413,11 @@ for bufNum = bufferNumList
    idSbd = find(bufferList == bufNum);
    [o_tabProfiles, ...
       o_tabTrajNMeas, o_tabTrajNCycle, ...
-      o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = process_decoded_data( ...
+      o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas] = process_decoded_data( ...
       decodedDataTab(idSbd), a_refDay, a_decoderId, ...
       o_tabProfiles, ...
       o_tabTrajNMeas, o_tabTrajNCycle, ...
-      o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
+      o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas);
 end
 
 % finalize NetCDF output
@@ -433,9 +432,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, ~, o_tabTechAuxNMeas] = ...
       update_output_cycle_number_ir_sbd( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, [], o_tabTechAuxNMeas);
    
    % clean FMT, LMT and GPS locations and set TET
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd( ...
@@ -453,7 +452,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_structConfig] = create_output_float_config_ir_sbd( ...
       decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
-   % perform DOXY adjustment
+   % perform PARAMETER adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0, a_decoderId);
 
    if (g_decArgo_realtimeFlag)

@@ -35,8 +35,11 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.adjError = [];
    o_rtOffsetInfo.adjErrorStr = [];
    o_rtOffsetInfo.adjErrorMethod = [];
+   o_rtOffsetInfo.equation = [];
+   o_rtOffsetInfo.coefficient = [];
+   o_rtOffsetInfo.comment = [];
    o_rtOffsetInfo.date = [];
-   
+
    rtData = a_metaData.RT_OFFSET;
    params = unique(struct2cell(rtData.PARAM), 'stable');
    for idParam = 1:length(params)
@@ -48,6 +51,9 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabAdjErrorStr = [];
       tabAdjErrorMethod = [];
       tabDate = [];
+      tabEquation = [];
+      tabCoef = [];
+      tabComment = [];
       for idF = 1:length(fieldNames)
          fieldName = fieldNames{idF};
          if (strcmp(rtData.PARAM.(fieldName), param) == 1)
@@ -77,22 +83,33 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             if (isfield(rtData, 'ADJUSTED_ERROR_METHOD'))
                if (isfield(rtData.ADJUSTED_ERROR_METHOD, ['ADJUSTED_ERROR_METHOD_' paramNum]))
                   adjErrorMethod = rtData.ADJUSTED_ERROR_METHOD.(['ADJUSTED_ERROR_METHOD_' paramNum]);
-                  tabAdjErrorMethod = [tabAdjErrorMethod adjErrorMethod];
+                  tabAdjErrorMethod{end+1} = adjErrorMethod;
                else
-                  tabAdjErrorMethod = [tabAdjErrorMethod nan];
+                  tabAdjErrorMethod{end+1} = 'nan';
                end
             else
-               tabAdjErrorMethod = [tabAdjErrorMethod nan];
+               tabAdjErrorMethod{end+1} = 'nan';
             end
             date = rtData.DATE.(['DATE_' paramNum]);
             date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
             tabDate = [tabDate date];
+            
+            % direct copy of DB information (to be reported in case of linear
+            % adjustment)
+            tabEquation = [tabEquation {a_metaData.CALIB_RT_EQUATION.(['CALIB_RT_EQUATION_' num2str(idF)])}];
+            tabCoef = [tabCoef {a_metaData.CALIB_RT_COEFFICIENT.(['CALIB_RT_COEFFICIENT_' num2str(idF)])}];
+            tabComment = [tabComment {a_metaData.CALIB_RT_COMMENT.(['CALIB_RT_COMMENT_' num2str(idF)])}];
          end
       end
       [tabDate, idSorted] = sort(tabDate);
       tabSlope = tabSlope(idSorted);
       tabValue = tabValue(idSorted);
       tabAdjError = tabAdjError(idSorted);
+      tabAdjErrorStr = tabAdjErrorStr(idSorted);
+      tabAdjErrorMethod = tabAdjErrorMethod(idSorted);
+      tabEquation = tabEquation(idSorted);
+      tabCoef = tabCoef(idSorted);
+      tabComment = tabComment(idSorted);
       
       % store the RT offsets
       o_rtOffsetInfo.param{end+1} = param;
@@ -101,6 +118,9 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       o_rtOffsetInfo.adjError{end+1} = tabAdjError;
       o_rtOffsetInfo.adjErrorStr{end+1} = tabAdjErrorStr;
       o_rtOffsetInfo.adjErrorMethod{end+1} = tabAdjErrorMethod;
+      o_rtOffsetInfo.equation{end+1} = tabEquation;
+      o_rtOffsetInfo.coefficient{end+1} = tabCoef;
+      o_rtOffsetInfo.comment{end+1} = tabComment;
       o_rtOffsetInfo.date{end+1} = tabDate;
    end
 end

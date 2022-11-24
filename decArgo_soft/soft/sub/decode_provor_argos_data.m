@@ -1280,7 +1280,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
-   % perform DOXY adjustment
+   % perform PARAMETER adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, g_decArgo_floatSurfData.launchDate, 0, a_decoderId);
 
    % set TET as cycle start time of the next cycle (only for post 2013 firmware)

@@ -81,6 +81,7 @@ if (a_addLaunchData == 1)
       ' ', ' ', '0', 0);
    
    trajNMeasStruct.surfOnly = 1;
+   
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 
    o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStruct];
@@ -171,7 +172,12 @@ for idC = 1:length(cycleNumList)
             measStruct.measCode = g_MC_DescProf;
          end
          measStruct.paramList = descPresMark.paramList;
+         measStruct.paramDataMode = descPresMark.paramDataMode;
          measStruct.paramData = descPresMark.data(idPM, :);
+         if (~isempty(descPresMark.dataAdj))
+            measStruct.paramDataAdj = descPresMark.dataAdj(idPM, :);
+         end
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
    end
@@ -189,13 +195,16 @@ for idC = 1:length(cycleNumList)
             ([trajNMeasStruct.tabMeas.sensorNumber] < 1000));
          if (~isempty(idDriftMeas))
             measStruct.paramList = trajNMeasStruct.tabMeas(idDriftMeas).paramList;
+            measStruct.paramDataMode = trajNMeasStruct.tabMeas(idDriftMeas).paramDataMode;
             measStruct.paramData = trajNMeasStruct.tabMeas(idDriftMeas).paramData;
+            measStruct.paramDataAdj = trajNMeasStruct.tabMeas(idDriftMeas).paramDataAdj;
             
             % update drift meas with associated date
             trajNMeasStruct.tabMeas(idDriftMeas) = measStruct;
             trajNMeasStruct.tabMeas(idDriftMeas).measCode = g_MC_DriftAtPark;
          end
       end
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 
       trajNCycleStruct.juldParkEnd = nCycleTime;
@@ -239,7 +248,9 @@ for idC = 1:length(cycleNumList)
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       else
          measStruct.paramList = trajNMeasStruct.tabMeas(idMeas).paramList;
+         measStruct.paramDataMode = trajNMeasStruct.tabMeas(idMeas).paramDataMode;
          measStruct.paramData = trajNMeasStruct.tabMeas(idMeas).paramData;
+         measStruct.paramDataAdj = trajNMeasStruct.tabMeas(idMeas).paramDataAdj;
          trajNMeasStruct.tabMeas(idMeas) = measStruct;
       end
       
@@ -259,8 +270,11 @@ for idC = 1:length(cycleNumList)
       idMeas = find([trajNMeasStruct.tabMeas.measCode] == g_MC_AST);
       if (~isempty(idMeas))
          measStruct.paramList = trajNMeasStruct.tabMeas(idMeas).paramList;
+         measStruct.paramDataMode = trajNMeasStruct.tabMeas(idMeas).paramDataMode;
          measStruct.paramData = trajNMeasStruct.tabMeas(idMeas).paramData;
-      end      
+         measStruct.paramDataAdj = trajNMeasStruct.tabMeas(idMeas).paramDataAdj;
+      end   
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -328,6 +342,7 @@ for idC = 1:length(cycleNumList)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          cycleTimeStruct.firstMsgTime, ...
          g_decArgo_argosLonDef, [], [], [], [], ~isempty(cycleTimeStruct.clockOffset));
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          
       trajNCycleStruct.juldFirstMessage = cycleTimeStruct.firstMsgTime;
@@ -339,6 +354,7 @@ for idC = 1:length(cycleNumList)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          cycleTimeStruct.lastMsgTime, ...
          g_decArgo_argosLonDef, [], [], [], [], ~isempty(cycleTimeStruct.clockOffset));
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = cycleTimeStruct.lastMsgTime;
@@ -390,19 +406,19 @@ for idC = 1:length(cycleNumList)
    % add press offset data to each meas
    idPOCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == cycleNum);
    if (~isempty(idPOCycleStruct))
-      [trajNMeasStruct.tabMeas.presOffset] = deal(a_presOffsetData.presOffset(idPOCycleStruct));
-      
-      % descent pressure marks have a 1 bar precision
-      idF = find([trajNMeasStruct.tabMeas.measCode] == g_MC_DescProf);
-      if (~isempty(idF))
-         [trajNMeasStruct.tabMeas(idF).presOffset] = deal(round(a_presOffsetData.presOffset(idPOCycleStruct)/10));
-      end
-      
-      % standard deviation should not be adjusted
-      idF = find([trajNMeasStruct.tabMeas.measCode] == g_MC_DriftAtParkStd);
-      if (~isempty(idF))
-         [trajNMeasStruct.tabMeas(idF).presOffset] = deal('');
-      end
+      %       [trajNMeasStruct.tabMeas.presOffset] = deal(a_presOffsetData.presOffset(idPOCycleStruct));
+      %
+      %       % descent pressure marks have a 1 bar precision
+      %       idF = find([trajNMeasStruct.tabMeas.measCode] == g_MC_DescProf);
+      %       if (~isempty(idF))
+      %          [trajNMeasStruct.tabMeas(idF).presOffset] = deal(round(a_presOffsetData.presOffset(idPOCycleStruct)/10));
+      %       end
+      %
+      %       % standard deviation should not be adjusted
+      %       idF = find([trajNMeasStruct.tabMeas.measCode] == g_MC_DriftAtParkStd);
+      %       if (~isempty(idF))
+      %          [trajNMeasStruct.tabMeas(idF).presOffset] = deal('');
+      %       end
       
       % update data mode
       trajNCycleStruct.dataMode = 'A';

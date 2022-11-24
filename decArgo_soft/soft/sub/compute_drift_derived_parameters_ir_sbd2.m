@@ -215,7 +215,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_driftFlbb.data(:, end+1) = chla;
       if (isempty(a_driftFlbb.dataQc))
-         a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), size(a_driftFlbb.data, 2)-1)*g_decArgo_qcDef;
+         a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), length(a_driftFlbb.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftFlbb.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -288,7 +288,7 @@ else
          if (~isempty(bbp700))
             a_driftFlbb.data(:, end+1) = bbp700;
             if (isempty(a_driftFlbb.dataQc))
-               a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), size(a_driftFlbb.data, 2)-1)*g_decArgo_qcDef;
+               a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), length(a_driftFlbb.paramList))*g_decArgo_qcDef;
             end
             bbp700Qc = ones(size(a_driftFlbb.data, 1), 1)*g_decArgo_qcDef;
             bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -362,7 +362,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_driftFlntu.data(:, end+1) = chla;
       if (isempty(a_driftFlntu.dataQc))
-         a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), size(a_driftFlntu.data, 2)-1)*g_decArgo_qcDef;
+         a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), length(a_driftFlntu.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftFlntu.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -391,7 +391,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_driftFlntu.data(:, end+1) = turbi;
       if (isempty(a_driftFlntu.dataQc))
-         a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), size(a_driftFlntu.data, 2)-1)*g_decArgo_qcDef;
+         a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), length(a_driftFlntu.paramList))*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_driftFlntu.data, 1), 1)*g_decArgo_qcDef;
       turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -459,7 +459,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_driftCyc.data(:, end+1) = chla;
       if (isempty(a_driftCyc.dataQc))
-         a_driftCyc.dataQc = ones(size(a_driftCyc.data, 1), size(a_driftCyc.data, 2)-1)*g_decArgo_qcDef;
+         a_driftCyc.dataQc = ones(size(a_driftCyc.data, 1), length(a_driftCyc.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftCyc.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -527,7 +527,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_driftStm.data(:, end+1) = turbi;
       if (isempty(a_driftStm.dataQc))
-         a_driftStm.dataQc = ones(size(a_driftStm.data, 1), size(a_driftStm.data, 2)-1)*g_decArgo_qcDef;
+         a_driftStm.dataQc = ones(size(a_driftStm.data, 1), length(a_driftStm.paramList))*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_driftStm.data, 1), 1)*g_decArgo_qcDef;
       turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -731,7 +731,7 @@ else
                
                a_driftOptode.data(:, end+1) = doxy;
                if (isempty(a_driftOptode.dataQc))
-                  a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), size(a_driftOptode.data, 2)-1)*g_decArgo_qcDef;
+                  a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), length(a_driftOptode.paramList))*g_decArgo_qcDef;
                end
                doxyQc = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
                doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -785,7 +785,7 @@ else
                
                a_driftOptode.data(:, end+1) = doxy;
                if (isempty(a_driftOptode.dataQc))
-                  a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), size(a_driftOptode.data, 2)-1)*g_decArgo_qcDef;
+                  a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), length(a_driftOptode.paramList))*g_decArgo_qcDef;
                end
                doxyQc = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
                doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;

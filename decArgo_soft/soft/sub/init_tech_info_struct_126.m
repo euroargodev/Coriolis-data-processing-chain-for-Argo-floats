@@ -1470,6 +1470,126 @@ numberOfSamplesECO.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of 
 numberOfSamplesECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesSBEPH = init_basic_struct;
+numberOfSamplesSBEPH.pattern = 'SBEPH=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesSBEPH.count = 6;
+numberOfSamplesSBEPH.id{end+1} = 1;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to parking depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of SBEPH samples during descent to parking depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 2;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at parking depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of SBEPH samples during drift at parking depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 3;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to profile depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of SBEPH samples during descent to profile depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 4;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at profile depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of SBEPH samples during drift at profile depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 5;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during ascent to surface';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of SBEPH samples during ascent to surface');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 6;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH surface samples';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of SBEPH surface samples');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesCROVER = init_basic_struct;
+numberOfSamplesCROVER.pattern = 'CROVER=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesCROVER.count = 6;
+numberOfSamplesCROVER.id{end+1} = 1;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER samples during descent to parking depth';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of CROVER samples during descent to parking depth');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+numberOfSamplesCROVER.id{end+1} = 2;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER samples during drift at parking depth';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of CROVER samples during drift at parking depth');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+numberOfSamplesCROVER.id{end+1} = 3;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER samples during descent to profile depth';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of CROVER samples during descent to profile depth');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+numberOfSamplesCROVER.id{end+1} = 4;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER samples during drift at profile depth';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of CROVER samples during drift at profile depth');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+numberOfSamplesCROVER.id{end+1} = 5;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER samples during ascent to surface';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of CROVER samples during ascent to surface');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+numberOfSamplesCROVER.id{end+1} = 6;
+numberOfSamplesCROVER.name{end+1} = 'number of CROVER surface samples';
+numberOfSamplesCROVER.fmt{end+1} = '%d';
+numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of CROVER surface samples');
+numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesSUNA = init_basic_struct;
+numberOfSamplesSUNA.pattern = 'SUNA=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesSUNA.count = 6;
+numberOfSamplesSUNA.id{end+1} = 1;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA samples during descent to parking depth';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of SUNA samples during descent to parking depth');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+numberOfSamplesSUNA.id{end+1} = 2;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA samples during drift at parking depth';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of SUNA samples during drift at parking depth');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+numberOfSamplesSUNA.id{end+1} = 3;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA samples during descent to profile depth';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of SUNA samples during descent to profile depth');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+numberOfSamplesSUNA.id{end+1} = 4;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA samples during drift at profile depth';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of SUNA samples during drift at profile depth');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+numberOfSamplesSUNA.id{end+1} = 5;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA samples during ascent to surface';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of SUNA samples during ascent to surface');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+numberOfSamplesSUNA.id{end+1} = 6;
+numberOfSamplesSUNA.name{end+1} = 'number of SUNA surface samples';
+numberOfSamplesSUNA.fmt{end+1} = '%d';
+numberOfSamplesSUNA.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of SUNA surface samples');
+numberOfSamplesSUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numberOfSamplesUvp6Lpm = init_basic_struct;
 numberOfSamplesUvp6Lpm.pattern = 'UVP6-LPM=%u/%u/%u/%u/%u/%u points';
 numberOfSamplesUvp6Lpm.count = 6;
@@ -1561,6 +1681,9 @@ o_techInfoStruct.DATA{end+1} = numberOfSamplesSBE41;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesDO;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOCR;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesECO;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesSBEPH;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesCROVER;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesSUNA;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesUvp6Lpm;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesUvp6Blk;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1623,7 +1746,7 @@ sensorActivationSBE41.count = 1;
 sensorActivationSBE41.id{end+1} = 1;
 sensorActivationSBE41.name{end+1} = 'cumulated SBE41 activations duration (min)';
 sensorActivationSBE41.fmt{end+1} = '%d';
-sensorActivationSBE41.tech{end+1} = get_cts5_tech_data_init_struct(145, 'Cumulated SBE41 activations duration (min)');
+sensorActivationSBE41.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SBE41 activations duration (min)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorActivationDO = init_basic_struct;
@@ -1636,34 +1759,64 @@ sensorActivationDO.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated 
 sensorActivationDO.tech{end}.shortSensorName = 'Optode';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorActivatioOCR = init_basic_struct;
-sensorActivatioOCR.pattern = 'OCR=%u min';
-sensorActivatioOCR.count = 1;
-sensorActivatioOCR.id{end+1} = 1;
-sensorActivatioOCR.name{end+1} = 'cumulated OCR activations duration (min)';
-sensorActivatioOCR.fmt{end+1} = '%d';
-sensorActivatioOCR.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated OCR activations duration (min)');
-sensorActivatioOCR.tech{end}.shortSensorName = 'Ocr';
+sensorActivationOCR = init_basic_struct;
+sensorActivationOCR.pattern = 'OCR=%u min';
+sensorActivationOCR.count = 1;
+sensorActivationOCR.id{end+1} = 1;
+sensorActivationOCR.name{end+1} = 'cumulated OCR activations duration (min)';
+sensorActivationOCR.fmt{end+1} = '%d';
+sensorActivationOCR.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated OCR activations duration (min)');
+sensorActivationOCR.tech{end}.shortSensorName = 'Ocr';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorActivatioECO = init_basic_struct;
-sensorActivatioECO.pattern = 'ECO=%u min';
-sensorActivatioECO.count = 1;
-sensorActivatioECO.id{end+1} = 1;
-sensorActivatioECO.name{end+1} = 'cumulated ECO activations duration (min)';
-sensorActivatioECO.fmt{end+1} = '%d';
-sensorActivatioECO.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated ECO activations duration (min)');
-sensorActivatioECO.tech{end}.shortSensorName = 'Eco';
+sensorActivationECO = init_basic_struct;
+sensorActivationECO.pattern = 'ECO=%u min';
+sensorActivationECO.count = 1;
+sensorActivationECO.id{end+1} = 1;
+sensorActivationECO.name{end+1} = 'cumulated ECO activations duration (min)';
+sensorActivationECO.fmt{end+1} = '%d';
+sensorActivationECO.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated ECO activations duration (min)');
+sensorActivationECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorActivatioUVP6 = init_basic_struct;
-sensorActivatioUVP6.pattern = 'UVP6=%u min';
-sensorActivatioUVP6.count = 1;
-sensorActivatioUVP6.id{end+1} = 1;
-sensorActivatioUVP6.name{end+1} = 'cumulated UVP6 activations duration (min)';
-sensorActivatioUVP6.fmt{end+1} = '%d';
-sensorActivatioUVP6.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated UVP6 activations duration (min)');
-sensorActivatioUVP6.tech{end}.shortSensorName = 'Uvp';
+sensorActivationSBEPH = init_basic_struct;
+sensorActivationSBEPH.pattern = 'SBEPH=%u min';
+sensorActivationSBEPH.count = 1;
+sensorActivationSBEPH.id{end+1} = 1;
+sensorActivationSBEPH.name{end+1} = 'cumulated SBEPH activations duration (min)';
+sensorActivationSBEPH.fmt{end+1} = '%d';
+sensorActivationSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SBEPH activations duration (min)');
+sensorActivationSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationCROVER = init_basic_struct;
+sensorActivationCROVER.pattern = 'CROVER=%u min';
+sensorActivationCROVER.count = 1;
+sensorActivationCROVER.id{end+1} = 1;
+sensorActivationCROVER.name{end+1} = 'cumulated CROVER activations duration (min)';
+sensorActivationCROVER.fmt{end+1} = '%d';
+sensorActivationCROVER.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated CROVER activations duration (min)');
+sensorActivationCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationSUNA = init_basic_struct;
+sensorActivationSUNA.pattern = 'SUNA=%u min';
+sensorActivationSUNA.count = 1;
+sensorActivationSUNA.id{end+1} = 1;
+sensorActivationSUNA.name{end+1} = 'cumulated SUNA activations duration (min)';
+sensorActivationSUNA.fmt{end+1} = '%d';
+sensorActivationSUNA.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SUNA activations duration (min)');
+sensorActivationSUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationUVP6 = init_basic_struct;
+sensorActivationUVP6.pattern = 'UVP6=%u min';
+sensorActivationUVP6.count = 1;
+sensorActivationUVP6.id{end+1} = 1;
+sensorActivationUVP6.name{end+1} = 'cumulated UVP6 activations duration (min)';
+sensorActivationUVP6.fmt{end+1} = '%d';
+sensorActivationUVP6.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated UVP6 activations duration (min)');
+sensorActivationUVP6.tech{end}.shortSensorName = 'Uvp';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1675,9 +1828,12 @@ o_techInfoStruct.POWER{end+1} = modemActivation;
 o_techInfoStruct.POWER{end+1} = gpsActivation;
 o_techInfoStruct.POWER{end+1} = sensorActivationSBE41;
 o_techInfoStruct.POWER{end+1} = sensorActivationDO;
-o_techInfoStruct.POWER{end+1} = sensorActivatioOCR;
-o_techInfoStruct.POWER{end+1} = sensorActivatioECO;
-o_techInfoStruct.POWER{end+1} = sensorActivatioUVP6;
+o_techInfoStruct.POWER{end+1} = sensorActivationOCR;
+o_techInfoStruct.POWER{end+1} = sensorActivationECO;
+o_techInfoStruct.POWER{end+1} = sensorActivationSBEPH;
+o_techInfoStruct.POWER{end+1} = sensorActivationCROVER;
+o_techInfoStruct.POWER{end+1} = sensorActivationSUNA;
+o_techInfoStruct.POWER{end+1} = sensorActivationUVP6;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2057,6 +2213,36 @@ sensorErrorBadValueECO.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number
 sensorErrorBadValueECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueSBEPH = init_basic_struct;
+sensorErrorBadValueSBEPH.pattern = 'SBEPH value (%u)';
+sensorErrorBadValueSBEPH.count = 1;
+sensorErrorBadValueSBEPH.id{end+1} = 1;
+sensorErrorBadValueSBEPH.name{end+1} = 'number of BAD VALUE errors for SBEPH sensor';
+sensorErrorBadValueSBEPH.fmt{end+1} = '%d';
+sensorErrorBadValueSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for SBEPH sensor');
+sensorErrorBadValueSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueCROVER = init_basic_struct;
+sensorErrorBadValueCROVER.pattern = 'CROVER value (%u)';
+sensorErrorBadValueCROVER.count = 1;
+sensorErrorBadValueCROVER.id{end+1} = 1;
+sensorErrorBadValueCROVER.name{end+1} = 'number of BAD VALUE errors for CROVER sensor';
+sensorErrorBadValueCROVER.fmt{end+1} = '%d';
+sensorErrorBadValueCROVER.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for CROVER sensor');
+sensorErrorBadValueCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueSUNA = init_basic_struct;
+sensorErrorBadValueSUNA.pattern = 'SUNA value (%u)';
+sensorErrorBadValueSUNA.count = 1;
+sensorErrorBadValueSUNA.id{end+1} = 1;
+sensorErrorBadValueSUNA.name{end+1} = 'number of BAD VALUE errors for SUNA sensor';
+sensorErrorBadValueSUNA.fmt{end+1} = '%d';
+sensorErrorBadValueSUNA.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for SUNA sensor');
+sensorErrorBadValueSUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBadValueUVP6 = init_basic_struct;
 sensorErrorBadValueUVP6.pattern = 'UVP6 value (%u)';
 sensorErrorBadValueUVP6.count = 1;
@@ -2107,6 +2293,36 @@ sensorErrorNoReplyECO.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number 
 sensorErrorNoReplyECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplySBEPH = init_basic_struct;
+sensorErrorNoReplySBEPH.pattern = 'SBEPH default (%u)';
+sensorErrorNoReplySBEPH.count = 1;
+sensorErrorNoReplySBEPH.id{end+1} = 1;
+sensorErrorNoReplySBEPH.name{end+1} = 'number of NO REPLY errors for SBEPH sensor';
+sensorErrorNoReplySBEPH.fmt{end+1} = '%d';
+sensorErrorNoReplySBEPH.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for SBEPH sensor');
+sensorErrorNoReplySBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplyCROVER = init_basic_struct;
+sensorErrorNoReplyCROVER.pattern = 'CROVER default (%u)';
+sensorErrorNoReplyCROVER.count = 1;
+sensorErrorNoReplyCROVER.id{end+1} = 1;
+sensorErrorNoReplyCROVER.name{end+1} = 'number of NO REPLY errors for CROVER sensor';
+sensorErrorNoReplyCROVER.fmt{end+1} = '%d';
+sensorErrorNoReplyCROVER.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for CROVER sensor');
+sensorErrorNoReplyCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplySUNA = init_basic_struct;
+sensorErrorNoReplySUNA.pattern = 'SUNA default (%u)';
+sensorErrorNoReplySUNA.count = 1;
+sensorErrorNoReplySUNA.id{end+1} = 1;
+sensorErrorNoReplySUNA.name{end+1} = 'number of NO REPLY errors for SUNA sensor';
+sensorErrorNoReplySUNA.fmt{end+1} = '%d';
+sensorErrorNoReplySUNA.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for SUNA sensor');
+sensorErrorNoReplySUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorNoReplyUVP6 = init_basic_struct;
 sensorErrorNoReplyUVP6.pattern = 'UVP6 default (%u)';
 sensorErrorNoReplyUVP6.count = 1;
@@ -2124,7 +2340,7 @@ sensorErrorBrokenSBE41.id{end+1} = 1;
 sensorErrorBrokenSBE41.name{end+1} = 'BROKEN alarm for SBE41 sensor';
 sensorErrorBrokenSBE41.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for SBE41 sensor');
 sensorErrorBrokenSBE41.tech{end}.shortSensorName = 'Ctd';
-
+   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenDO = init_basic_struct;
 sensorErrorBrokenDO.pattern = 'DO broken';
@@ -2151,6 +2367,33 @@ sensorErrorBrokenECO.id{end+1} = 1;
 sensorErrorBrokenECO.name{end+1} = 'BROKEN alarm for ECO sensor';
 sensorErrorBrokenECO.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for ECO sensor');
 sensorErrorBrokenECO.tech{end}.shortSensorName = 'Eco';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenSBEPH = init_basic_struct;
+sensorErrorBrokenSBEPH.pattern = 'SBEPH broken';
+sensorErrorBrokenSBEPH.count = 0;
+sensorErrorBrokenSBEPH.id{end+1} = 1;
+sensorErrorBrokenSBEPH.name{end+1} = 'BROKEN alarm for SBEPH sensor';
+sensorErrorBrokenSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for SBEPH sensor');
+sensorErrorBrokenSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenCROVER = init_basic_struct;
+sensorErrorBrokenCROVER.pattern = 'CROVER broken';
+sensorErrorBrokenCROVER.count = 0;
+sensorErrorBrokenCROVER.id{end+1} = 1;
+sensorErrorBrokenCROVER.name{end+1} = 'BROKEN alarm for CROVER sensor';
+sensorErrorBrokenCROVER.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for CROVER sensor');
+sensorErrorBrokenCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenSUNA = init_basic_struct;
+sensorErrorBrokenSUNA.pattern = 'SUNA broken';
+sensorErrorBrokenSUNA.count = 0;
+sensorErrorBrokenSUNA.id{end+1} = 1;
+sensorErrorBrokenSUNA.name{end+1} = 'BROKEN alarm for SUNA sensor';
+sensorErrorBrokenSUNA.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for SUNA sensor');
+sensorErrorBrokenSUNA.tech{end}.shortSensorName = 'Suna';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenUVP6 = init_basic_struct;
@@ -2200,6 +2443,36 @@ sensorErrorDataSizeECO.name{end+1} = 'DATA SIZE alarm for ECO sensor (KB)';
 sensorErrorDataSizeECO.fmt{end+1} = '%g';
 sensorErrorDataSizeECO.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for ECO sensor (KB)');
 sensorErrorDataSizeECO.tech{end}.shortSensorName = 'Eco';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeSBEPH = init_basic_struct;
+sensorErrorDataSizeSBEPH.pattern = 'SBEPH size (%f KB)';
+sensorErrorDataSizeSBEPH.count = 1;
+sensorErrorDataSizeSBEPH.id{end+1} = 1;
+sensorErrorDataSizeSBEPH.name{end+1} = 'DATA SIZE alarm for SBEPH sensor (KB)';
+sensorErrorDataSizeSBEPH.fmt{end+1} = '%g';
+sensorErrorDataSizeSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for SBEPH sensor (KB)');
+sensorErrorDataSizeSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeCROVER = init_basic_struct;
+sensorErrorDataSizeCROVER.pattern = 'CROVER size (%f KB)';
+sensorErrorDataSizeCROVER.count = 1;
+sensorErrorDataSizeCROVER.id{end+1} = 1;
+sensorErrorDataSizeCROVER.name{end+1} = 'DATA SIZE alarm for CROVER sensor (KB)';
+sensorErrorDataSizeCROVER.fmt{end+1} = '%g';
+sensorErrorDataSizeCROVER.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for CROVER sensor (KB)');
+sensorErrorDataSizeCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeSUNA = init_basic_struct;
+sensorErrorDataSizeSUNA.pattern = 'SUNA size (%f KB)';
+sensorErrorDataSizeSUNA.count = 1;
+sensorErrorDataSizeSUNA.id{end+1} = 1;
+sensorErrorDataSizeSUNA.name{end+1} = 'DATA SIZE alarm for SUNA sensor (KB)';
+sensorErrorDataSizeSUNA.fmt{end+1} = '%g';
+sensorErrorDataSizeSUNA.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for SUNA sensor (KB)');
+sensorErrorDataSizeSUNA.tech{end}.shortSensorName = 'Suna';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeUvp6Lpm = init_basic_struct;
@@ -2264,23 +2537,81 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueECO;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSBEPH;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyECO;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBEPH;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenECO;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBEPH;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeECO;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBEPH;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeUvp6Lpm;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeUvp6Blk;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+countersSUNA = init_basic_struct;
+countersSUNA.pattern = 'Counters=%u/%u/%u';
+countersSUNA.count = 3;
+countersSUNA.id{end+1} = 1;
+countersSUNA.name{end+1} = 'number of SUNA samples';
+countersSUNA.fmt{end+1} = '%d';
+countersSUNA.tech{end+1} = get_cts5_tech_data_init_struct(233, 'Number of SUNA samples');
+countersSUNA.tech{end}.shortSensorName = 'Suna';
+
+countersSUNA.id{end+1} = 2;
+countersSUNA.name{end+1} = 'number of SUNA power cycles';
+countersSUNA.fmt{end+1} = '%d';
+countersSUNA.tech{end+1} = get_cts5_tech_data_init_struct(234, 'Number of SUNA power cycles');
+countersSUNA.tech{end}.shortSensorName = 'Suna';
+
+countersSUNA.id{end+1} = 3;
+countersSUNA.name{end+1} = 'number of SUNA errors';
+countersSUNA.fmt{end+1} = '%d';
+countersSUNA.tech{end+1} = get_cts5_tech_data_init_struct(235, 'Number of SUNA errors');
+countersSUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+powerSupplySUNA = init_basic_struct;
+powerSupplySUNA.pattern = 'Power supply=%f V/%f A';
+powerSupplySUNA.count = 2;
+powerSupplySUNA.id{end+1} = 1;
+powerSupplySUNA.name{end+1} = 'SUNA power supply voltage';
+powerSupplySUNA.fmt{end+1} = '%g';
+powerSupplySUNA.tech{end+1} = get_cts5_tech_data_init_struct(236, 'SUNA power supply (voltage)');
+powerSupplySUNA.tech{end}.shortSensorName = 'Suna';
+
+powerSupplySUNA.id{end+1} = 2;
+powerSupplySUNA.name{end+1} = 'SUNA power supply current';
+powerSupplySUNA.fmt{end+1} = '%g';
+powerSupplySUNA.tech{end+1} = get_cts5_tech_data_init_struct(237, 'SUNA power supply (current)');
+powerSupplySUNA.tech{end}.shortSensorName = 'Suna';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+o_techInfoStruct.SENSOR_SUNA = [];
+o_techInfoStruct.SENSOR_SUNA{end+1} = countersSUNA;
+o_techInfoStruct.SENSOR_SUNA{end+1} = powerSupplySUNA;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

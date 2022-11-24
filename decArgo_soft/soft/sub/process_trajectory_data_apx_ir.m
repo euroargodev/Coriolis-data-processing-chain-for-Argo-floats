@@ -256,7 +256,12 @@ if (~isempty(a_timeDataLog))
       if (~isempty(measStruct))
          idDrift = find(a_driftData.dates == a_timeDataLog.descentEndDate);
          measStruct.paramList = a_driftData.paramList;
+         measStruct.paramDataMode = a_driftData.paramDataMode;
          measStruct.paramData = a_driftData.data(idDrift, :);
+         if (~isempty(a_driftData.dataAdj))
+            measStruct.paramDataAdj = a_driftData.dataAdj(idDrift, :);
+         end
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          
          trajNCycleStruct.juldDescentEnd = nCycleTime;
@@ -341,8 +346,10 @@ if (~isempty(a_timeDataLog))
             measStruct.paramData = a_timeDataLog.ascentStartPres;
             if (~isempty(a_timeDataLog.ascentStartAdjPres))
                measStruct.paramDataAdj = a_timeDataLog.ascentStartAdjPres;
+               measStruct.paramDataMode = 'A';
             end
          end
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          
          trajNCycleStruct.juldAscentStart = nCycleTime;
@@ -368,8 +375,10 @@ if (~isempty(a_timeDataLog))
             measStruct.paramData = a_timeDataLog.ascentEndPres;
             if (~isempty(a_timeDataLog.ascentEndAdjPres))
                measStruct.paramDataAdj = a_timeDataLog.ascentEndAdjPres;
+               measStruct.paramDataMode = 'A';
             end
          end
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          
          trajNCycleStruct.juldAscentEnd = nCycleTime;
@@ -583,7 +592,12 @@ if (~isempty(a_pMarkDataLog))
          a_pMarkDataLog.datesAdj(idPM), ...
          g_JULD_STATUS_2);
       measStruct.paramList = a_pMarkDataLog.paramList;
+      measStruct.paramDataMode = a_pMarkDataLog.paramDataMode;
       measStruct.paramData = a_pMarkDataLog.data(idPM, :);
+      if (~isempty(a_pMarkDataLog.dataAdj))
+         measStruct.paramDataAdj = a_pMarkDataLog.dataAdj(idPM, :);
+      end
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
 elseif (~isempty(a_pMarkDataMsg))
@@ -615,10 +629,12 @@ elseif (~isempty(a_pMarkDataMsg))
          measStruct.measCode = g_MC_DescProf;
       end
       measStruct.paramList = pMarkDataMsg.paramList;
+      measStruct.paramDataMode = pMarkDataMsg.paramDataMode;
       measStruct.paramData = pMarkDataMsg.data(idPM, :);
       if (~isempty(pMarkDataMsg.dataAdj))
          measStruct.paramDataAdj = pMarkDataMsg.dataAdj(idPM, :);
       end
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
 end
@@ -644,7 +660,12 @@ if (~isempty(a_driftData))
          a_driftData.datesAdj(idMeas), ...
          g_JULD_STATUS_2);
       measStruct.paramList = a_driftData.paramList;
+      measStruct.paramDataMode = a_driftData.paramDataMode;
       measStruct.paramData = a_driftData.data(idMeas, :);
+      if (~isempty(a_driftData.dataAdj))
+         measStruct.paramDataAdj = a_driftData.dataAdj(idMeas, :);
+      end
+      
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -661,6 +682,9 @@ if (~isempty(a_driftData))
       end
       if (~isempty(paramData))
          measStruct.paramList = [measStruct.paramList a_driftData.paramList(idParam)];
+         if (~isempty(a_driftData.paramDataMode))
+            measStruct.paramDataMode = [measStruct.paramDataMode a_driftData.paramDataMode(idParam)];
+         end
          measStruct.paramData = [measStruct.paramData mean(paramData)];
          if (~isempty(paramDataAdj))
             measStruct.paramDataAdj = [measStruct.paramDataAdj mean(paramDataAdj)];
@@ -677,9 +701,9 @@ if (~isempty(a_driftData))
          else
             trajNCycleStruct.repParkPres = measStruct.paramData(idPres);
          end
+         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
+         rppSet = 1;
       end
-      trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
-      rppSet = 1;
    end
 end
 
@@ -710,10 +734,12 @@ end
 
 if (~isempty(a_parkData))
    measStruct.paramList = a_parkData.paramList;
+   measStruct.paramDataMode = a_parkData.paramDataMode;
    measStruct.paramData = a_parkData.data;
    measStruct.paramDataAdj = a_parkData.dataAdj;
 elseif ((~isempty(a_timeDataLog)) && (~isempty(a_timeDataLog.parkEndMeas)))
    measStruct.paramList = a_timeDataLog.parkEndMeas.paramList;
+   measStruct.paramDataMode = a_timeDataLog.parkEndMeas.paramDataMode;
    measStruct.paramData = a_timeDataLog.parkEndMeas.data;
    measStruct.paramDataAdj = a_timeDataLog.parkEndMeas.dataAdj;
 end
@@ -730,6 +756,7 @@ if (~isempty(measStruct.paramList))
       measStructRpp = get_traj_one_meas_init_struct();
       measStructRpp.measCode = g_MC_RPP;
       measStructRpp.paramList = measStruct.paramList;
+      measStructRpp.paramDataMode = measStruct.paramDataMode;
       measStructRpp.paramData = measStruct.paramData;
       measStructRpp.paramDataAdj = measStruct.paramDataAdj;
       
@@ -742,8 +769,8 @@ if (~isempty(measStruct.paramList))
          else
             trajNCycleStruct.repParkPres = measStructRpp.paramData(idPres);
          end
+         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_4;
       end
-      trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_4;
    end
 end
 
@@ -766,10 +793,12 @@ if ((~isempty(a_profLrData)) && (~isempty(a_profLrData.dates)))
          g_JULD_STATUS_2);
       if (~isempty(measStruct))
          measStruct.paramList = a_profLrData.paramList;
+         measStruct.paramDataMode = a_profLrData.paramDataMode;
          measStruct.paramData = a_profLrData.data(idLev, :);
          if (~isempty(a_profLrData.dataAdj))
             measStruct.paramDataAdj = a_profLrData.dataAdj(idLev, :);
          end
+         
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
    end
@@ -800,6 +829,9 @@ if (~isempty(a_profHrData))
    idNbSample  = find(strcmp({a_profHrData.paramList.name}, 'NB_SAMPLE') == 1, 1);
    if (~isempty(idNbSample))
       a_profHrData.paramList(idNbSample) = [];
+      if (~isempty(a_profHrData.paramDataMode))
+         a_profHrData.paramDataMode(idNbSample) = [];
+      end
       a_profHrData.data(:, idNbSample) = [];
       if (~isempty(a_profHrData.dataAdj))
          a_profHrData.dataAdj(:, idNbSample) = [];
@@ -852,6 +884,7 @@ if (~isempty(finalProf))
          measStruct.measCode = g_MC_AscProfDeepestBin;
       end
       measStruct.paramList = finalProf.paramList;
+      measStruct.paramDataMode = finalProf.paramDataMode;
       measStruct.paramData = finalProf.data(finalId, :);
       if (~isempty(finalProf.dataAdj))
          measStruct.paramDataAdj = finalProf.dataAdj(finalId, :);
@@ -860,11 +893,13 @@ if (~isempty(finalProf))
       measStruct = get_traj_one_meas_init_struct();
       measStruct.measCode = g_MC_AscProfDeepestBin;
       measStruct.paramList = finalProf.paramList;
+      measStruct.paramDataMode = finalProf.paramDataMode;
       measStruct.paramData = finalProf.data(finalId, :);
       if (~isempty(finalProf.dataAdj))
          measStruct.paramDataAdj = finalProf.dataAdj(finalId, :);
       end
    end
+   
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
 
@@ -894,6 +929,7 @@ if (~isempty(a_nearSurfData))
          measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
       end
       measStruct.paramList = nearSurfData.paramList;
+      measStruct.paramDataMode = nearSurfData.paramDataMode;
       measStruct.paramData = nearSurfData.data(idM, :);
       if (~isempty(nearSurfData.dataAdj))
          measStruct.paramDataAdj = nearSurfData.dataAdj(idM, :);
@@ -937,6 +973,7 @@ if (~isempty(a_surfDataLog))
                measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
             end
             measStruct.paramList = a_surfDataLog.paramList;
+            measStruct.paramDataMode = a_surfDataLog.paramDataMode;
             measStruct.paramData = a_surfDataLog.data(idM, :);
             if (~isempty(a_surfDataLog.dataAdj))
                measStruct.paramDataAdj = a_surfDataLog.dataAdj(idM, :);
@@ -994,6 +1031,7 @@ if (~isempty(a_surfDataLog))
                measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
             end
             measStruct.paramList = a_surfDataLog.paramList;
+            measStruct.paramDataMode = a_surfDataLog.paramDataMode;
             measStruct.paramData = a_surfDataLog.data(idM, :);
             if (~isempty(a_surfDataLog.dataAdj))
                measStruct.paramDataAdj = a_surfDataLog.dataAdj(idM, :);
@@ -1016,6 +1054,7 @@ if (~isempty(a_surfDataLog))
             measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
          end
          measStruct.paramList = a_surfDataLog.paramList;
+         measStruct.paramDataMode = a_surfDataLog.paramDataMode;
          measStruct.paramData = a_surfDataLog.data(idM, :);
          if (~isempty(a_surfDataLog.dataAdj))
             measStruct.paramDataAdj = a_surfDataLog.dataAdj(idM, :);
@@ -1034,6 +1073,7 @@ if (~isempty(a_surfDataMsg))
       measStruct = get_traj_one_meas_init_struct();
       measStruct.measCode = g_MC_InAirSingleMeasRelativeToTST;
       measStruct.paramList = surfDataMsg.paramList;
+      measStruct.paramDataMode = surfDataMsg.paramDataMode;
       measStruct.paramData = surfDataMsg.data;
       measStruct.paramDataAdj = surfDataMsg.dataAdj;
       
@@ -1067,6 +1107,7 @@ if (~isempty(a_surfDataBladderDeflated))
          measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       measStruct.paramList = surfDataBladderDeflated.paramList;
+      measStruct.paramDataMode = surfDataBladderDeflated.paramDataMode;
       measStruct.paramData = surfDataBladderDeflated.data(idM, :);
       if (~isempty(surfDataBladderDeflated.dataAdj))
          measStruct.paramDataAdj = surfDataBladderDeflated.dataAdj(idM, :);
@@ -1078,11 +1119,22 @@ if (~isempty(a_surfDataBladderDeflated))
       measStructAux.sensorNumber = 101;
       idPres = find(strcmp({measStructAux.paramList.name}, 'PRES') == 1);
       measStructAux.paramList = measStructAux.paramList(idPres);
+      if (~isempty(measStructAux.paramDataMode))
+         measStructAux.paramDataMode = measStructAux.paramDataMode(idPres);
+      end
       measStructAux.paramData = measStructAux.paramData(idPres);
-      measStructAux.paramDataAdj = [];
+      if (~isempty(measStructAux.paramDataAdj))
+         measStructAux.paramDataAdj = measStructAux.paramDataAdj(idPres);
+      end
       paramBladderInflatedFlag = get_netcdf_param_attributes('BLADDER_INFLATED_FLAG');
       measStructAux.paramList = [measStructAux.paramList paramBladderInflatedFlag];
+      if (~isempty(measStructAux.paramDataMode))
+         measStructAux.paramDataMode = [measStructAux.paramDataMode ' '];
+      end
       measStructAux.paramData = [measStructAux.paramData zeros(size(measStructAux.paramData, 1))];
+      if (~isempty(measStructAux.paramDataAdj))
+         measStructAux.paramDataAdj = [measStructAux.paramDataAdj repmat(paramBladderInflatedFlag.fillValue, size(measStructAux.paramData, 1), 1)];
+      end
       
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
@@ -1110,6 +1162,7 @@ if (~isempty(a_surfDataBladderInflated))
          measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
       end
       measStruct.paramList = surfDataBladderInflated.paramList;
+      measStruct.paramDataMode = surfDataBladderInflated.paramDataMode;
       measStruct.paramData = surfDataBladderInflated.data(idM, :);
       if (~isempty(surfDataBladderInflated.dataAdj))
          measStruct.paramDataAdj = surfDataBladderInflated.dataAdj(idM, :);
@@ -1121,11 +1174,22 @@ if (~isempty(a_surfDataBladderInflated))
       measStructAux.sensorNumber = 101;
       idPres = find(strcmp({measStructAux.paramList.name}, 'PRES') == 1);
       measStructAux.paramList = measStructAux.paramList(idPres);
+      if (~isempty(measStructAux.paramDataMode))
+         measStructAux.paramDataMode = measStructAux.paramDataMode(idPres);
+      end
       measStructAux.paramData = measStructAux.paramData(idPres);
-      measStructAux.paramDataAdj = [];
+      if (~isempty(measStructAux.paramDataAdj))
+         measStructAux.paramDataAdj = measStructAux.paramDataAdj(idPres);
+      end
       paramBladderInflatedFlag = get_netcdf_param_attributes('BLADDER_INFLATED_FLAG');
       measStructAux.paramList = [measStructAux.paramList paramBladderInflatedFlag];
+      if (~isempty(measStructAux.paramDataMode))
+         measStructAux.paramDataMode = [measStructAux.paramDataMode ' '];
+      end
       measStructAux.paramData = [measStructAux.paramData ones(size(measStructAux.paramData, 1))];
+      if (~isempty(measStructAux.paramDataAdj))
+         measStructAux.paramDataAdj = [measStructAux.paramDataAdj repmat(paramBladderInflatedFlag.fillValue, size(measStructAux.paramData, 1), 1)];
+      end
       
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
@@ -1322,6 +1386,7 @@ for idFix = 1:length(gpsCyLocDate)
       ' ', ...
       num2str(gpsCyLocQc(idFix)), ...
       clockDriftKnown);
+   
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
 

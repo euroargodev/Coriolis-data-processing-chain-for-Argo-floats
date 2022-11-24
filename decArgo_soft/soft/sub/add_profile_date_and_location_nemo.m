@@ -68,14 +68,13 @@ end
 
 % from last profile measurement date
 if (o_profile.date == g_decArgo_dateDef)
-   idMtime = find(strcmp({o_profile.paramList.name}, 'MTIME') == 1, 1);
-   if (~isempty(idMtime))
-      if (~isempty(o_profile.dataAdj))
-         dates = o_profile.dataAdj(:, idMtime);
-      else
-         dates = o_profile.data(:, idMtime);
+   if (~isempty(o_profile.dateList))
+      if (~isempty(o_profile.datesAdj) && any(o_profile.datesAdj ~= o_profile.dateList.fillValue))
+         dates = o_profile.datesAdj;
+      elseif (~isempty(o_profile.dates) && any(o_profile.dates ~= o_profile.dateList.fillValue))
+         dates = o_profile.dates;
       end
-      dates(find(dates == o_profile.paramList(idMtime).fillValue)) = [];
+      dates(find(dates == o_profile.dateList.fillValue)) = [];
       if (~isempty(dates))
          o_profile.date = max(dates);
       end
@@ -90,16 +89,9 @@ if (~isempty(idMtime))
       % we compute MTIME as JULD-prof.date
       idNoDef = find(o_profile.data(:, idMtime) ~= paramMtime.fillValue);
       o_profile.data(idNoDef, idMtime) = o_profile.data(idNoDef, idMtime) - o_profile.date;
-      if (~isempty(o_profile.dataAdj))
-         idNoDef = find(o_profile.dataAdj(:, idMtime) ~= paramMtime.fillValue);
-         o_profile.dataAdj(idNoDef, idMtime) = o_profile.dataAdj(idNoDef, idMtime) - o_profile.date;
-      end
    else
       % we are not able to compute MTIME
       o_profile.data(:, idMtime) = ones(size(o_profile.data, 1), 1)*paramMtime.fillValue;
-      if (~isempty(o_profile.dataAdj))
-         o_profile.dataAdj(:, idMtime) = ones(size(o_profile.dataAdj, 1), 1)*paramMtime.fillValue;
-      end
    end
 end
 

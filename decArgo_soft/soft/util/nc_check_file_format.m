@@ -20,17 +20,8 @@
 function nc_check_file_format(varargin)
 
 % directory of the JAVA checker
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-12-18_spec_2018-07-10\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-08-06\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-10-09\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-11-07\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-12-18\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2019-02-26\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2019-07-15\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2020-09-08\';
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\_BETA_FOR_TRAJ\file_checker_v2.6.01_exec_2020-10-01_spec_2020-10-01\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\_BETA_FOR_TRAJ\file_checker_v2.6.01_exec_2020-10-01_spec_2020-10-07\';
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.6_2020-10-23_spec_2020-10-23\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.6_2020-10-23_spec_2021-01-12\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-04-24\';
 
@@ -43,11 +34,21 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20200103\OUT\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\COURANT\Coriolis_deep_floats_20210205\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_36\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_tmp\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\selected_nke_prv_ir\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Nke_2xx\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF9_ir_sbd\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF11_argos\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF11_ir_rudics\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF11_ir_sbd\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF9_ir_rudics\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF9_argos\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Nemo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
@@ -94,7 +95,17 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_atlantos.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_rem.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_rbr_5.49.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_rbr_5.49.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_sbd_090215.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all2.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all3.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
 
 
 % meta-data file exported from Coriolis data base
@@ -113,7 +124,6 @@ CHECK_NC_MULTI_PROF = 0;
 CHECK_NC_MONO_PROF = 1;
 CHECK_NC_TECH = 1;
 CHECK_NC_META = 1;
-
 % CHECK_NC_TRAJ = 1;
 % CHECK_NC_MULTI_PROF = 0;
 % CHECK_NC_MONO_PROF = 0;

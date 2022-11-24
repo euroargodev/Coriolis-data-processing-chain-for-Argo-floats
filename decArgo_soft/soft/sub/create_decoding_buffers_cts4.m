@@ -245,7 +245,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(35399:35400) = 1;
          tabDone(35709:35710) = 1;
          tabDone(36010:36011) = 1;
-         
+
       case 2902239
          startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
          stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');

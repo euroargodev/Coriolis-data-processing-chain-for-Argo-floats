@@ -21,6 +21,8 @@ function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_AVANT\Rem\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Rem\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
@@ -28,6 +30,17 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_sbd_090215.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_all_decId_2xx_4.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_cts4_atlantos_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_cts4_rem_all_1.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -36,7 +49,7 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 init_default_values;
 
 % to compare different set of files do not print current dates
-COMPARISON_MODE = 0;
+COMPARISON_MODE = 1;
 
 % to print the parameter Qc values
 WRITE_QC_FLAG = 1; % if 0 the code should be checked and corrected (failed for BGC floats)
@@ -208,6 +221,8 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 % list of parameters that have an extra dimension (N_VALUESx)
 paramWithExtraDimList = [ ...
    {'UV_INTENSITY_NITRATE'} ...
+   {'UV_INTENSITY_FULL_NITRATE'} ...
+   {'UV_INTENSITY_BINNED_NITRATE'} ...
    {'NB_SIZE_SPECTRA_PARTICLES'} ...
    {'GREY_SIZE_SPECTRA_PARTICLES'} ...
    {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
@@ -1435,33 +1450,41 @@ for idP = 1:nProf
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
    end
@@ -1588,9 +1611,11 @@ for idH = 1:nHistory
       fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE; %s\n', ...
          a_floatNum, idH, idP, ...
          strtrim(historySoftware(:, idP, idH)'));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE_RELEASE; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historySoftwareRelease(:, idP, idH)'));
+      if (a_comparisonFlag == 0)
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE_RELEASE; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historySoftwareRelease(:, idP, idH)'));
+      end
       fprintf(fidOut, ' %d; %d; %d; HISTORY_REFERENCE; %s\n', ...
          a_floatNum, idH, idP, ...
          strtrim(historyReference(:, idP, idH)'));
@@ -1668,6 +1693,8 @@ fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 % list of parameters that have an extra dimension (N_VALUESx)
 paramWithExtraDimList = [ ...
    {'UV_INTENSITY_NITRATE'} ...
+   {'UV_INTENSITY_FULL_NITRATE'} ...
+   {'UV_INTENSITY_BINNED_NITRATE'} ...
    {'NB_SIZE_SPECTRA_PARTICLES'} ...
    {'GREY_SIZE_SPECTRA_PARTICLES'} ...
    {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
@@ -2660,33 +2687,41 @@ for idP = 1:nProf
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
       
       fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
          a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+      if (a_comparisonFlag == 0)
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+         end
       end
       fprintf(fidOut, '\n');
    end

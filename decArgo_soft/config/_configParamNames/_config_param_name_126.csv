@@ -84,7 +84,7 @@ CONF_PARAM_DEC_ID;CONF_PARAM_TYPE;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PARA
 172;CONFIG_AUX;Enable/disable complete self-test;CONFIG_AUX_FullAutotest_LOGICAL;Perform a full autotest.
 310;META_AUX;Serial port number;META_AUX_EMAP_SERIAL_PORT_NUMBER;Serial port number used by the EMAP (USEA controller board).
 311;META_AUX;Power output number;META_AUX_EMAP_POWER_OUTPUT_PORT_NUMBER;Power output port number used by the EMAP (USEA controller board).
-312;META_AUX;USEA’s sensor list: 2 – DO 3 – OCR 4 – ECO 5 – SBEPH 6 – CROVER 7 – SUNA 8 – UVP6;META_AUX_UseaSensorList_STRING;List of sensors managed by the USEA card (2:DO, 3:OCR, 4:ECO, 5:SBEPH, 6:CROVER, 7:SUNA, 8:UVP6).
+312;META_AUX;USEA’s sensor list: 2 – DO 3 – OCR 4 – ECO 5 – SBEPH 6 – CROVER 7 – SUNA 8 – UVP6;META_AUX_USEA_SENSOR_LIST_STRING;List of sensors managed by the USEA card (2:DO, 3:OCR, 4:ECO, 5:SBEPH, 6:CROVER, 7:SUNA, 8:UVP6).
 307;META_AUX;Serial port number;META_AUX_GPS_SERIAL_PORT_NUMBER;Serial port number used by the GPS device.
 308;META_AUX;Power output number;META_AUX_GPS_POWER_OUTPUT_PORT_NUMBER;Power output port number used by the GPS device.
 173;CONFIG;Enable/disable PPS synchronisation (external module);CONFIG_GPSSetClockSensorCard_LOGICAL;When the float Real Time Clock is set, also set the clock of the measurement card.
@@ -141,6 +141,9 @@ CONF_PARAM_DEC_ID;CONF_PARAM_TYPE;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PARA
 313;META_AUX;serial port number;META_AUX_DO_SERIAL_PORT_NUMBER;Serial port number used by the DO sensor.
 314;META_AUX;serial port number;META_AUX_OCR_SERIAL_PORT_NUMBER;.Serial port number used by the OCR sensor.
 315;META_AUX;serial port number;META_AUX_ECO_SERIAL_PORT_NUMBER;Serial port number used by the ECO sensor.
+330;META_AUX;serial port number;META_AUX_SFET_SERIAL_PORT_NUMBER;Serial port number used by the SFET sensor.
+331;META_AUX;serial port number;META_AUX_CROVER_SERIAL_PORT_NUMBER;Serial port number used by the CROVER sensor.
+332;META_AUX;serial port number;META_AUX_SUNA_SERIAL_PORT_NUMBER;Serial port number used by the SUNA sensor.
 316;META_AUX;serial port number;META_AUX_UVP_SERIAL_PORT_NUMBER;Serial port number used by the UVP sensor.
 317;META_AUX;CID=xxxxxxxxxxxx;META_AUX_FLOAT_SIM_CARD_NUMBER;SIM card number of the float.
 318;META_AUX;Firmware=xxxxxxxxxxxx;META_AUX_FIRMWARE_VERSION_SECONDARY;Firmware version of secondary controller board.

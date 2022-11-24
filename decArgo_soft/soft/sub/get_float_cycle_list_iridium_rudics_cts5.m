@@ -62,8 +62,13 @@ fileTypeList = [ ...
    {'*_do*.hex'} ... % CTS5-USEA
    {'*_eco*.hex'} ... % CTS5-USEA
    {'*_ocr*.hex'} ... % CTS5-USEA
+   {'*_opus_blk*.hex'} ... % CTS5-USEA
+   {'*_opus_lgt*.hex'} ... % CTS5-USEA
    {'*_uvp6_blk*.hex'} ... % CTS5-USEA
-   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA   
+   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA
+   {'*_crover*.hex'} ... % CTS5-USEA
+   {'*_sbeph*.hex'} ... % CTS5-USEA
+   {'*_suna*.hex'} ... % CTS5-USEA
    ];
 
 fileDir = [iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/archive/'];

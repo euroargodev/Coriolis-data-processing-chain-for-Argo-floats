@@ -220,7 +220,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profFlbb.data(:, end+1) = chla;
       if (isempty(a_profFlbb.dataQc))
-         a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
+         a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), length(a_profFlbb.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -286,7 +286,7 @@ else
          if (~isempty(bbp700))
             a_profFlbb.data(:, end+1) = bbp700;
             if (isempty(a_profFlbb.dataQc))
-               a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
+               a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), length(a_profFlbb.paramList))*g_decArgo_qcDef;
             end
             bbp700Qc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
             bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -315,13 +315,13 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_126_1121_to_27_1322_1323( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_27_1322_1323( ...
          a_profFlbb.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
       a_profFlbb.data(:, end+1) = cdom;
       if (isempty(a_profFlbb.dataQc))
-         a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
+         a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), length(a_profFlbb.paramList))*g_decArgo_qcDef;
       end
       cdomQc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
       cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -389,7 +389,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profFlntu.data(:, end+1) = chla;
       if (isempty(a_profFlntu.dataQc))
-         a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), size(a_profFlntu.data, 2)-1)*g_decArgo_qcDef;
+         a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), length(a_profFlntu.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profFlntu.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -418,7 +418,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profFlntu.data(:, end+1) = turbi;
       if (isempty(a_profFlntu.dataQc))
-         a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), size(a_profFlntu.data, 2)-1)*g_decArgo_qcDef;
+         a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), length(a_profFlntu.paramList))*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_profFlntu.data, 1), 1)*g_decArgo_qcDef;
       turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -486,7 +486,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profCyc.data(:, end+1) = chla;
       if (isempty(a_profCyc.dataQc))
-         a_profCyc.dataQc = ones(size(a_profCyc.data, 1), size(a_profCyc.data, 2)-1)*g_decArgo_qcDef;
+         a_profCyc.dataQc = ones(size(a_profCyc.data, 1), length(a_profCyc.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profCyc.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -554,7 +554,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profStm.data(:, end+1) = chla;
       if (isempty(a_profStm.dataQc))
-         a_profStm.dataQc = ones(size(a_profStm.data, 1), size(a_profStm.data, 2)-1)*g_decArgo_qcDef;
+         a_profStm.dataQc = ones(size(a_profStm.data, 1), length(a_profStm.paramList))*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profStm.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -737,7 +737,7 @@ if (isempty(a_profCtd))
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
       if (~isempty(a_profOptode.dataQc))
-         a_profOptode.dataQc(:, end+1) = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
+         a_profOptode.dataQc = ones(size(a_profOptode.data, 1), length(a_profOptode.paramList))*g_decArgo_qcDef;
       end
       a_profOptode.paramList = [a_profOptode.paramList derivedParam];
    end
@@ -787,7 +787,7 @@ else
                if (~isempty(doxy))
                   a_profOptode.data(:, end+1) = doxy;
                   if (isempty(a_profOptode.dataQc))
-                     a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
+                     a_profOptode.dataQc = ones(size(a_profOptode.data, 1), length(a_profOptode.paramList))*g_decArgo_qcDef;
                   end
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
                   doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -840,7 +840,7 @@ else
                if (~isempty(doxy))
                   a_profOptode.data(:, end+1) = doxy;
                   if (isempty(a_profOptode.dataQc))
-                     a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
+                     a_profOptode.dataQc = ones(size(a_profOptode.data, 1), length(a_profOptode.paramList))*g_decArgo_qcDef;
                   end
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
                   doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;

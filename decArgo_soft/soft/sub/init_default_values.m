@@ -27,6 +27,8 @@ global g_decArgo_decoderIdListNkeIridiumRbr;
 global g_decArgo_decoderIdListNkeIridiumNotDeep;
 global g_decArgo_decoderIdListNkeIridiumDeep;
 global g_decArgo_decoderIdListNkeIridium;
+global g_decArgo_decoderIdListNkeCts4NotIce;
+global g_decArgo_decoderIdListNkeCts4Ice;
 global g_decArgo_decoderIdListNkeCts4;
 global g_decArgo_decoderIdListNkeCts5Osean;
 global g_decArgo_decoderIdListNkeCts5Usea;
@@ -34,6 +36,8 @@ global g_decArgo_decoderIdListNkeCts5;
 global g_decArgo_decoderIdListNkeMisc;
 global g_decArgo_decoderIdListNke;
 global g_decArgo_decoderIdListApexApf9Argos;
+global g_decArgo_decoderIdListApexApf9IridiumRudics;
+global g_decArgo_decoderIdListApexApf9IridiumSbd;
 global g_decArgo_decoderIdListApexApf9Iridium;
 global g_decArgo_decoderIdListApexApf11IridiumRudics;
 global g_decArgo_decoderIdListApexApf11IridiumSbd;
@@ -451,7 +455,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '039g';
+g_decArgo_decoderVersion = '040a';
 
 % list of managed decoders
 
@@ -467,9 +471,13 @@ g_decArgo_decoderIdListNkeIridium = [ ...
    g_decArgo_decoderIdListNkeIridiumNotDeep ...
    g_decArgo_decoderIdListNkeIridiumDeep ...
    g_decArgo_decoderIdListNkeIridiumRbr];
-g_decArgo_decoderIdListNkeCts4 = [105, 106, 107, 109, 110:113];
+g_decArgo_decoderIdListNkeCts4NotIce = [105, 106, 107, 109, 110, 112];
+g_decArgo_decoderIdListNkeCts4Ice = [111 113];
+g_decArgo_decoderIdListNkeCts4 = [ ...
+   g_decArgo_decoderIdListNkeCts4NotIce ...
+   g_decArgo_decoderIdListNkeCts4Ice];
 g_decArgo_decoderIdListNkeCts5Osean = [121:125];
-g_decArgo_decoderIdListNkeCts5Usea = [126];
+g_decArgo_decoderIdListNkeCts5Usea = [126 127];
 g_decArgo_decoderIdListNkeCts5 = [ ...
    g_decArgo_decoderIdListNkeCts5Osean ...
    g_decArgo_decoderIdListNkeCts5Usea ...
@@ -484,7 +492,11 @@ g_decArgo_decoderIdListNke = [ ...
    g_decArgo_decoderIdListNkeMisc];
 
 g_decArgo_decoderIdListApexApf9Argos = [1001:1016];
-g_decArgo_decoderIdListApexApf9Iridium = [1101:1113, 1314];
+g_decArgo_decoderIdListApexApf9IridiumRudics = [1101:1113];
+g_decArgo_decoderIdListApexApf9IridiumSbd = [1314];
+g_decArgo_decoderIdListApexApf9Iridium = [ ...
+   g_decArgo_decoderIdListApexApf9IridiumRudics ...
+   g_decArgo_decoderIdListApexApf9IridiumSbd];
 g_decArgo_decoderIdListApexApf11Argos = [1021, 1022];
 g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1127];
 g_decArgo_decoderIdListApexApf11IridiumSbd = [1321:1323];

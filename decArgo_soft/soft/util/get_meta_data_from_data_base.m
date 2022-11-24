@@ -34,6 +34,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Provor_Do_Ir-5.74\DBexpor
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\apex_rudics_meta_20170412.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_BioIndia_6.11_from_VB_20180319.txt';
 dataBaseFileName = 'C:\Users\jprannou\Desktop\Nouveau dossier\new_argos_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';

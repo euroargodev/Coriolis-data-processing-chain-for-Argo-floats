@@ -54,17 +54,7 @@ for idProf = 1:length(a_tabProfiles)
    end
    
    if (~isempty(profStruct.dataAdj))
-      if (profStruct.date ~= g_decArgo_dateDef)
-         if (~isempty(profStruct.datesAdj))
-            mtimeDataAdj = profStruct.datesAdj-profStruct.date;
-         elseif (~isempty(profStruct.dates))
-            mtimeDataAdj = profStruct.dates-profStruct.date;
-         else
-            mtimeDataAdj = ones(size(profStruct.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
-      else
-         mtimeDataAdj = ones(size(profStruct.dataAdj, 1), 1)*paramMtime.fillValue;
-      end
+      mtimeDataAdj = ones(size(profStruct.dataAdj, 1), 1)*paramMtime.fillValue;
       profStruct.dataAdj = cat(2, mtimeDataAdj, double(profStruct.dataAdj));
       
       if (~isempty(profStruct.dataAdjQc))

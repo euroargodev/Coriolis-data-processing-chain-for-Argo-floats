@@ -44,10 +44,16 @@ profStruct.posSystem = 'GPS';
 
 % add parameter variables to the profile structure
 profStruct.paramList = a_profileData.paramList;
+profStruct.paramDataMode = a_profileData.paramDataMode;
 
 % add parameter data to the profile structure
 profStruct.data = a_profileData.data;
 profStruct.dataAdj = a_profileData.dataAdj;
+
+% add parameter data to the profile structure
+profStruct.dateList = a_profileData.dateList;
+profStruct.dates = a_profileData.dates;
+profStruct.datesAdj = a_profileData.datesAdj;
 
 % add press offset data to the profile structure
 idCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == a_cycleNum);
@@ -70,24 +76,13 @@ if (~isempty(a_profileData.dateList))
       mtimeData = ones(size(a_profileData.data, 1), 1)*paramMtime.fillValue;
    end
    profStruct.paramList = [paramMtime profStruct.paramList];
+   if (~isempty(profStruct.paramDataMode))
+      profStruct.paramDataMode = [' ' profStruct.paramDataMode];
+   end
    profStruct.data = cat(2, mtimeData, double(profStruct.data));
-   
+
    if (~isempty(a_profileData.dataAdj))
-      if (any(a_profileData.datesAdj ~= a_profileData.dateList.fillValue))
-         % we temporarily store JULD as MTIME (because profile date will be
-         % computed later)
-         if (~isempty(a_profileData.datesAdj))
-            mtimeDataAdj = a_profileData.datesAdj;
-            mtimeDataAdj(find(mtimeDataAdj == a_profileData.dateList.fillValue)) = paramMtime.fillValue;
-         elseif (~isempty(a_profileData.dates))
-            mtimeDataAdj = a_profileData.dates;
-            mtimeDataAdj(find(mtimeDataAdj == a_profileData.dateList.fillValue)) = paramMtime.fillValue;
-         else
-            mtimeDataAdj = ones(size(a_profileData.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
-      else
-         mtimeDataAdj = ones(size(a_profileData.dataAdj, 1), 1)*paramMtime.fillValue;
-      end
+      mtimeDataAdj = ones(size(a_profileData.dataAdj, 1), 1)*paramMtime.fillValue;
       profStruct.dataAdj = cat(2, mtimeDataAdj, double(profStruct.dataAdj));
    end
 end
@@ -114,6 +109,9 @@ if (~isempty(idDel))
    profAuxStruct = profStruct;
    
    profStruct.paramList(idDel) = [];
+   if (~isempty(profStruct.paramDataMode))
+      profStruct.paramDataMode(idDel) = [];
+   end
    profStruct.data(:, idDel) = [];
    if (~isempty(profStruct.dataAdj))
       profStruct.dataAdj(:, idDel) = [];
@@ -123,6 +121,9 @@ if (~isempty(idDel))
    idPres = find(strcmp({profAuxStruct.paramList.name}, 'PRES') == 1, 1);
    idKeep = [idPres idDel];
    profAuxStruct.paramList = profAuxStruct.paramList(idKeep);
+   if (~isempty(profAuxStruct.paramDataMode))
+      profAuxStruct.paramDataMode = profAuxStruct.paramDataMode(idKeep);
+   end
    profAuxStruct.data = profAuxStruct.data(:, idKeep);
    if (~isempty(profAuxStruct.dataAdj))
       profAuxStruct.dataAdj = profAuxStruct.dataAdj(:, idKeep);

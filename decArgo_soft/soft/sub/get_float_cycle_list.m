@@ -34,6 +34,11 @@ o_excludedCycleList = [];
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts5;
+global g_decArgo_decoderIdListApexApf9IridiumRudics;
+global g_decArgo_decoderIdListNavis;
+
 
 if (g_decArgo_floatTransType == 1)
    
@@ -47,7 +52,7 @@ elseif (g_decArgo_floatTransType == 2)
    if (a_decoderId < 1000)
       
       % PROVOR floats
-      if (~ismember(a_decoderId, [121, 122, 123, 124, 125, 126]))
+      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5))
          % PROVOR CTS4 Iridium RUDICS floats
          [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
       else
@@ -58,7 +63,7 @@ elseif (g_decArgo_floatTransType == 2)
    elseif ((a_decoderId > 1000) && (a_decoderId < 2000))
       
       % Apex Iridium RUDICS floats
-      if (ismember(a_decoderId, [1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201]))
+      if (ismember(a_decoderId, [g_decArgo_decoderIdListApexApf9IridiumRudics g_decArgo_decoderIdListNavis]))
          % Apex APF9 & Navis floats
          [o_cycleList, ~] = get_float_cycle_list_iridium_rudics_apx_apf9_navis(a_floatNum, str2num(char(a_floatArgosIridiumId)));
       else

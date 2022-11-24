@@ -52,6 +52,10 @@ function [o_ncProfile] = process_apx_apf11_ir_profile( ...
 o_ncProfile = [];
 
 
+% if (a_cycleNum == 37)
+%    a=1
+% end
+
 if (isempty(a_profCtdPts) && ...
       isempty(a_profCtdPtsh) && ...
       isempty(a_profDo) && ...
@@ -67,6 +71,9 @@ if (~isempty(a_profDo))
    idPpoxDoxy  = find(strcmp({a_profDo.paramList.name}, 'PPOX_DOXY') == 1, 1);
    if (~isempty(idPpoxDoxy))
       a_profDo.paramList(idPpoxDoxy) = [];
+      if (~isempty(a_profDo.paramDataMode))
+         a_profDo.paramDataMode(idPpoxDoxy) = [];
+      end
       a_profDo.data(:, idPpoxDoxy) = [];
       if (~isempty(a_profDo.dataAdj))
          a_profDo.dataAdj(:, idPpoxDoxy) = [];
@@ -139,6 +146,7 @@ profCtdPtshStruct = [];
 profDoStruct = [];
 profFlbbCdStruct = [];
 profOcr504IStruct = [];
+profOcr504IAuxStruct = [];
 profCtdCpStruct = [];
 profCtdCpAuxStruct = [];
 profCtdCpHStruct = [];
@@ -201,6 +209,7 @@ if (~isempty(profCtdPts))
    
    % add parameter variables to the profile structure
    profCtdPtsStruct.paramList = profCtdPts.paramList;
+   profCtdPtsStruct.paramDataMode = profCtdPts.paramDataMode;
    
    % add parameter data to the profile structure
    profCtdPtsStruct.data = profCtdPts.data;
@@ -223,24 +232,13 @@ if (~isempty(profCtdPts))
          mtimeData = ones(size(profCtdPts.data, 1), 1)*paramMtime.fillValue;
       end
       profCtdPtsStruct.paramList = [paramMtime profCtdPtsStruct.paramList];
+      if (~isempty(profCtdPtsStruct.paramDataMode))
+         profCtdPtsStruct.paramDataMode = [' ' profCtdPtsStruct.paramDataMode];
+      end
       profCtdPtsStruct.data = cat(2, mtimeData, double(profCtdPtsStruct.data));
       
       if (~isempty(profCtdPts.dataAdj))
-         if (any(profCtdPts.datesAdj ~= profCtdPts.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            if (~isempty(profCtdPts.datesAdj))
-               mtimeDataAdj = profCtdPts.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == profCtdPts.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(profCtdPts.dates))
-               mtimeDataAdj = profCtdPts.dates;
-               mtimeDataAdj(find(mtimeDataAdj == profCtdPts.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(profCtdPts.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
-         else
-            mtimeDataAdj = ones(size(profCtdPts.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
+         mtimeDataAdj = ones(size(profCtdPts.dataAdj, 1), 1)*paramMtime.fillValue;
          profCtdPtsStruct.dataAdj = cat(2, mtimeDataAdj, double(profCtdPtsStruct.dataAdj));
       end
    end
@@ -258,6 +256,7 @@ if (~isempty(profCtdPtsh))
    
    % add parameter variables to the profile structure
    profCtdPtshStruct.paramList = profCtdPtsh.paramList;
+   profCtdPtshStruct.paramDataMode = profCtdPtsh.paramDataMode;
    
    % add parameter data to the profile structure
    profCtdPtshStruct.data = profCtdPtsh.data;
@@ -279,24 +278,13 @@ if (~isempty(profCtdPtsh))
       mtimeData = ones(size(profCtdPtsh.data, 1), 1)*paramMtime.fillValue;
    end
    profCtdPtshStruct.paramList = [paramMtime profCtdPtshStruct.paramList];
+   if (~isempty(profCtdPtshStruct.paramDataMode))
+      profCtdPtshStruct.paramDataMode = [' ' profCtdPtshStruct.paramDataMode];
+   end
    profCtdPtshStruct.data = cat(2, mtimeData, double(profCtdPtshStruct.data));
    
    if (~isempty(profCtdPtsh.dataAdj))
-      if (any(profCtdPtsh.datesAdj ~= profCtdPtsh.dateList.fillValue))
-         % we temporarily store JULD as MTIME (because profile date will be
-         % computed later)
-         if (~isempty(profCtdPtsh.datesAdj))
-            mtimeDataAdj = profCtdPtsh.datesAdj;
-            mtimeDataAdj(find(mtimeDataAdj == profCtdPtsh.dateList.fillValue)) = paramMtime.fillValue;
-         elseif (~isempty(profCtdPtsh.dates))
-            mtimeDataAdj = profCtdPtsh.dates;
-            mtimeDataAdj(find(mtimeDataAdj == profCtdPtsh.dateList.fillValue)) = paramMtime.fillValue;
-         else
-            mtimeDataAdj = ones(size(profCtdPtsh.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
-      else
-         mtimeDataAdj = ones(size(profCtdPtsh.dataAdj, 1), 1)*paramMtime.fillValue;
-      end
+      mtimeDataAdj = ones(size(profCtdPtsh.dataAdj, 1), 1)*paramMtime.fillValue;
       profCtdPtshStruct.dataAdj = cat(2, mtimeDataAdj, double(profCtdPtshStruct.dataAdj));
    end
 end
@@ -313,7 +301,8 @@ if (~isempty(profDo))
    
    % add parameter variables to the profile structure
    profDoStruct.paramList = profDo.paramList;
-   
+   profDoStruct.paramDataMode = profDo.paramDataMode;
+
    % add parameter data to the profile structure
    profDoStruct.data = profDo.data;
    profDoStruct.dataAdj = profDo.dataAdj;
@@ -335,24 +324,13 @@ if (~isempty(profDo))
          mtimeData = ones(size(profDo.data, 1), 1)*paramMtime.fillValue;
       end
       profDoStruct.paramList = [paramMtime profDoStruct.paramList];
+      if (~isempty(profDoStruct.paramDataMode))
+         profDoStruct.paramDataMode = [' ' profDoStruct.paramDataMode];
+      end
       profDoStruct.data = cat(2, mtimeData, double(profDoStruct.data));
       
       if (~isempty(profDo.dataAdj))
-         if (any(profDo.datesAdj ~= profDo.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            if (~isempty(profDo.datesAdj))
-               mtimeDataAdj = profDo.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == profDo.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(profDo.dates))
-               mtimeDataAdj = profDo.dates;
-               mtimeDataAdj(find(mtimeDataAdj == profDo.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
-         else
-            mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
+         mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
          profDoStruct.dataAdj = cat(2, mtimeDataAdj, double(profDoStruct.dataAdj));
       end
    end
@@ -370,6 +348,7 @@ if (~isempty(profFlbbCd))
    
    % add parameter variables to the profile structure
    profFlbbCdStruct.paramList = profFlbbCd.paramList;
+   profFlbbCdStruct.paramDataMode = profFlbbCd.paramDataMode;
    
    % add parameter data to the profile structure
    profFlbbCdStruct.data = profFlbbCd.data;
@@ -392,24 +371,13 @@ if (~isempty(profFlbbCd))
          mtimeData = ones(size(profFlbbCd.data, 1), 1)*paramMtime.fillValue;
       end
       profFlbbCdStruct.paramList = [paramMtime profFlbbCdStruct.paramList];
+      if (~isempty(profFlbbCdStruct.paramDataMode))
+         profFlbbCdStruct.paramDataMode = [' ' profFlbbCdStruct.paramDataMode];
+      end
       profFlbbCdStruct.data = cat(2, mtimeData, double(profFlbbCdStruct.data));
       
       if (~isempty(profFlbbCd.dataAdj))
-         if (any(profFlbbCd.datesAdj ~= profFlbbCd.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            if (~isempty(profFlbbCd.datesAdj))
-               mtimeDataAdj = profFlbbCd.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == profFlbbCd.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(profFlbbCd.dates))
-               mtimeDataAdj = profFlbbCd.dates;
-               mtimeDataAdj(find(mtimeDataAdj == profFlbbCd.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(profFlbbCd.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
-         else
-            mtimeDataAdj = ones(size(profFlbbCd.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
+         mtimeDataAdj = ones(size(profFlbbCd.dataAdj, 1), 1)*paramMtime.fillValue;
          profFlbbCdStruct.dataAdj = cat(2, mtimeDataAdj, double(profFlbbCdStruct.dataAdj));
       end
    end
@@ -418,56 +386,120 @@ end
 % create a profile with OCR540I data
 if (~isempty(profOcr504I))
    
-   % initialize a NetCDF profile structure and fill it with decoded profile data
-   profOcr504IStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
-   profOcr504IStruct.sensorNumber = 2;
-   
-   % positioning system
-   profOcr504IStruct.posSystem = 'GPS';
-   
-   % add parameter variables to the profile structure
-   profOcr504IStruct.paramList = profOcr504I.paramList;
-   
-   % add parameter data to the profile structure
-   profOcr504IStruct.data = profOcr504I.data;
-   profOcr504IStruct.dataAdj = profOcr504I.dataAdj;
-   
-   % add press offset data to the profile structure
-   profOcr504IStruct.presOffset = presOffset;
-   
-   % add configuration mission number
-   profOcr504IStruct.configMissionNumber = configMissionNumber;
-   
-   % add MTIME to data
-   if (~isempty(profOcr504I.dateList))
-      if (any(profOcr504I.dates ~= profOcr504I.dateList.fillValue))
-         % we temporarily store JULD as MTIME (because profile date will be
-         % computed later)
-         mtimeData = profOcr504I.dates;
-         mtimeData(find(mtimeData == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
-      else
-         mtimeData = ones(size(profOcr504I.data, 1), 1)*paramMtime.fillValue;
-      end
-      profOcr504IStruct.paramList = [paramMtime profOcr504IStruct.paramList];
-      profOcr504IStruct.data = cat(2, mtimeData, double(profOcr504IStruct.data));
+   if (0) % TEMPORARY (code when DOWN_IRRADIANCE670 in the checker)
       
-      if (~isempty(profOcr504I.dataAdj))
-         if (any(profOcr504I.datesAdj ~= profOcr504I.dateList.fillValue))
+      % initialize a NetCDF profile structure and fill it with decoded profile data
+      profOcr504IStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+      profOcr504IStruct.sensorNumber = 2;
+      
+      % positioning system
+      profOcr504IStruct.posSystem = 'GPS';
+      
+      % add parameter variables to the profile structure
+      profOcr504IStruct.paramList = profOcr504I.paramList;
+      profOcr504IStruct.paramDataMode = profOcr504I.paramDataMode;
+      
+      % add parameter data to the profile structure
+      profOcr504IStruct.data = profOcr504I.data;
+      profOcr504IStruct.dataAdj = profOcr504I.dataAdj;
+      
+      % add press offset data to the profile structure
+      profOcr504IStruct.presOffset = presOffset;
+      
+      % add configuration mission number
+      profOcr504IStruct.configMissionNumber = configMissionNumber;
+      
+      % add MTIME to data
+      if (~isempty(profOcr504I.dateList))
+         if (any(profOcr504I.dates ~= profOcr504I.dateList.fillValue))
             % we temporarily store JULD as MTIME (because profile date will be
             % computed later)
-            if (~isempty(profOcr504I.datesAdj))
-               mtimeDataAdj = profOcr504I.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(profOcr504I.dates))
-               mtimeDataAdj = profOcr504I.dates;
-               mtimeDataAdj(find(mtimeDataAdj == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
+            mtimeData = profOcr504I.dates;
+            mtimeData(find(mtimeData == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
          else
-            mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
+            mtimeData = ones(size(profOcr504I.data, 1), 1)*paramMtime.fillValue;
          end
-         profOcr504IStruct.dataAdj = cat(2, mtimeDataAdj, double(profOcr504IStruct.dataAdj));
+         profOcr504IStruct.paramList = [paramMtime profOcr504IStruct.paramList];
+         if (~isempty(profOcr504IStruct.paramDataMode))
+            profOcr504IStruct.paramDataMode = [' ' profOcr504IStruct.paramDataMode];
+         end
+         profOcr504IStruct.data = cat(2, mtimeData, double(profOcr504IStruct.data));
+         
+         if (~isempty(profOcr504I.dataAdj))
+            mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
+            profOcr504IStruct.dataAdj = cat(2, mtimeDataAdj, double(profOcr504IStruct.dataAdj));
+         end
+      end
+      
+   else
+      
+      % initialize a NetCDF profile structure and fill it with decoded profile data
+      profOcr504IStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+      profOcr504IStruct.sensorNumber = 2;
+      
+      % positioning system
+      profOcr504IStruct.posSystem = 'GPS';
+      
+      % add parameter variables to the profile structure
+      profOcr504IStruct.paramList = profOcr504I.paramList;
+      profOcr504IStruct.paramDataMode = profOcr504I.paramDataMode;
+      
+      % add parameter data to the profile structure
+      profOcr504IStruct.data = profOcr504I.data;
+      profOcr504IStruct.dataAdj = profOcr504I.dataAdj;
+      
+      % add press offset data to the profile structure
+      profOcr504IStruct.presOffset = presOffset;
+      
+      % add configuration mission number
+      profOcr504IStruct.configMissionNumber = configMissionNumber;
+      
+      % add MTIME to data
+      if (~isempty(profOcr504I.dateList))
+         if (any(profOcr504I.dates ~= profOcr504I.dateList.fillValue))
+            % we temporarily store JULD as MTIME (because profile date will be
+            % computed later)
+            mtimeData = profOcr504I.dates;
+            mtimeData(find(mtimeData == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
+         else
+            mtimeData = ones(size(profOcr504I.data, 1), 1)*paramMtime.fillValue;
+         end
+         profOcr504IStruct.paramList = [paramMtime profOcr504IStruct.paramList];
+         if (~isempty(profOcr504IStruct.paramDataMode))
+            profOcr504IStruct.paramDataMode = [' ' profOcr504IStruct.paramDataMode];
+         end
+         profOcr504IStruct.data = cat(2, mtimeData, double(profOcr504IStruct.data));
+         
+         if (~isempty(profOcr504I.dataAdj))
+            mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
+            profOcr504IStruct.dataAdj = cat(2, mtimeDataAdj, double(profOcr504IStruct.dataAdj));
+         end
+      end
+      
+      idDownIrr6670  = find(strcmp({profOcr504IStruct.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
+      if (~isempty(idDownIrr6670))
+         
+         profOcr504IAuxStruct = profOcr504IStruct;
+         profOcr504IAuxStruct.sensorNumber = 102; % to go to PROF_AUX file
+         
+         profOcr504IStruct.paramList(idDownIrr6670) = [];
+         if (~isempty(profOcr504IStruct.paramDataMode))
+            profOcr504IStruct.paramDataMode(idDownIrr6670) = [];
+         end
+         profOcr504IStruct.data(:, idDownIrr6670) = [];
+         if (~isempty(profOcr504IStruct.dataAdj))
+            profOcr504IStruct.dataAdj(:, idDownIrr6670) = [];
+         end
+         
+         idPres  = find(strcmp({profOcr504IAuxStruct.paramList.name}, 'PRES'), 1);
+         profOcr504IAuxStruct.paramList = [profOcr504IAuxStruct.paramList(idPres) profOcr504IAuxStruct.paramList(idDownIrr6670)];
+         if (~isempty(profOcr504IAuxStruct.paramDataMode))
+            profOcr504IAuxStruct.paramDataMode = [profOcr504IAuxStruct.paramDataMode(idPres) profOcr504IAuxStruct.paramDataMode(idDownIrr6670)];
+         end
+         profOcr504IAuxStruct.data = [profOcr504IAuxStruct.data(:, idPres) profOcr504IAuxStruct.data(:, idDownIrr6670)];
+         if (~isempty(profOcr504IAuxStruct.dataAdj))
+            profOcr504IAuxStruct.dataAdj = [profOcr504IAuxStruct.dataAdj(:, idPres) profOcr504IAuxStruct.dataAdj(:, idDownIrr6670)];
+         end
       end
    end
 end
@@ -508,6 +540,7 @@ if (~isempty(a_profCtdCp))
    
    % add parameter variables to the profile structure
    profCtdCpStruct.paramList = a_profCtdCp.paramList;
+   profCtdCpStruct.paramDataMode = a_profCtdCp.paramDataMode;
    
    % add parameter data to the profile structure
    profCtdCpStruct.data = flipud(a_profCtdCp.data);
@@ -526,14 +559,22 @@ if (~isempty(a_profCtdCp))
       
       profCtdCpAuxStruct = profCtdCpStruct;
       profCtdCpAuxStruct.sensorNumber = 101; % to go to PROF_AUX file
+      
       profCtdCpStruct.paramList(idNbSample) = [];
+      if (~isempty(profCtdCpStruct.paramDataMode))
+         profCtdCpStruct.paramDataMode(idNbSample) = [];
+      end
       profCtdCpStruct.data(:, idNbSample) = [];
       if (~isempty(profCtdCpStruct.dataAdj))
          profCtdCpStruct.dataAdj(:, idNbSample) = [];
       end
       
-      idPres  = find(strcmp({profCtdCpStruct.paramList.name}, 'PRES') == 1, 1);
+      idPres  = find(strcmp({profCtdCpAuxStruct.paramList.name}, 'PRES') == 1, 1);
+      idNbSample  = find(strcmp({profCtdCpAuxStruct.paramList.name}, 'NB_SAMPLE') == 1, 1);
       profCtdCpAuxStruct.paramList = [profCtdCpAuxStruct.paramList(idPres) profCtdCpAuxStruct.paramList(idNbSample)];
+      if (~isempty(profCtdCpAuxStruct.paramDataMode))
+         profCtdCpAuxStruct.paramDataMode = [profCtdCpAuxStruct.paramDataMode(idPres) profCtdCpAuxStruct.paramDataMode(idNbSample)];
+      end
       profCtdCpAuxStruct.data = [profCtdCpAuxStruct.data(:, idPres) profCtdCpAuxStruct.data(:, idNbSample)];
       if (~isempty(profCtdCpAuxStruct.dataAdj))
          profCtdCpAuxStruct.dataAdj = [profCtdCpAuxStruct.dataAdj(:, idPres) profCtdCpAuxStruct.dataAdj(:, idNbSample)];
@@ -553,6 +594,7 @@ if (~isempty(a_profCtdCpH))
    
    % add parameter variables to the profile structure
    profCtdCpHStruct.paramList = a_profCtdCpH.paramList;
+   profCtdCpHStruct.paramDataMode = a_profCtdCpH.paramDataMode;
    
    % add parameter data to the profile structure
    profCtdCpHStruct.data = flipud(a_profCtdCpH.data);
@@ -572,14 +614,23 @@ if (~isempty(a_profCtdCpH))
       
       profCtdCpHAuxStruct = profCtdCpHStruct;
       profCtdCpHAuxStruct.sensorNumber = 107; % to go to PROF_AUX file
+      
       profCtdCpHStruct.paramList([idNbSampleCtd idNbSampleTransistorPh]) = [];
+      if (~isempty(profCtdCpHStruct.paramDataMode))
+         profCtdCpHStruct.paramDataMode([idNbSampleCtd idNbSampleTransistorPh]) = [];
+      end
       profCtdCpHStruct.data(:, [idNbSampleCtd idNbSampleTransistorPh]) = [];
       if (~isempty(profCtdCpHStruct.dataAdj))
          profCtdCpHStruct.dataAdj(:, [idNbSampleCtd idNbSampleTransistorPh]) = [];
       end
       
-      idPres  = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES') == 1, 1);
+      idPres  = find(strcmp({profCtdCpHAuxStruct.paramList.name}, 'PRES') == 1, 1);
+      idNbSampleCtd  = find(strcmp({profCtdCpHAuxStruct.paramList.name}, 'NB_SAMPLE_CTD') == 1, 1);
+      idNbSampleTransistorPh  = find(strcmp({profCtdCpHAuxStruct.paramList.name}, 'NB_SAMPLE_TRANSISTOR_PH') == 1, 1);
       profCtdCpHAuxStruct.paramList = [profCtdCpHAuxStruct.paramList(idPres) profCtdCpHAuxStruct.paramList([idNbSampleCtd idNbSampleTransistorPh])];
+      if (~isempty(profCtdCpHAuxStruct.paramDataMode))
+         profCtdCpHAuxStruct.paramDataMode = [profCtdCpHAuxStruct.paramDataMode(idPres) profCtdCpHAuxStruct.paramDataMode([idNbSampleCtd idNbSampleTransistorPh])];
+      end
       profCtdCpHAuxStruct.data = [profCtdCpHAuxStruct.data(:, idPres) profCtdCpHAuxStruct.data(:, [idNbSampleCtd idNbSampleTransistorPh])];
       if (~isempty(profCtdCpHAuxStruct.dataAdj))
          profCtdCpHAuxStruct.dataAdj = [profCtdCpHAuxStruct.dataAdj(:, idPres) profCtdCpHAuxStruct.dataAdj(:, [idNbSampleCtd idNbSampleTransistorPh])];
@@ -598,10 +649,14 @@ if (~isempty(profCtdCpStruct))
    minP = min(profCtdCpStruct.data(:, 1));
    maxP = max(profCtdCpStruct.data(:, 1));
    if (~isempty(profCtdPtshStruct))
-      idShallow = find(profCtdPtshStruct.data(:, 2) < min(profCtdCpStruct.data(:, 1)));
-      idDeep = find(profCtdPtshStruct.data(:, 2) > max(profCtdCpStruct.data(:, 1)));
+      idPresCtdPtsh  = find(strcmp({profCtdPtshStruct.paramList.name}, 'PRES') == 1, 1);
+      idShallow = find(profCtdPtshStruct.data(:, idPresCtdPtsh) < min(profCtdCpStruct.data(:, 1)));
+      idDeep = find(profCtdPtshStruct.data(:, idPresCtdPtsh) > max(profCtdCpStruct.data(:, 1)));
       if (~isempty(idShallow) || ~isempty(idDeep))
          profCtdCpStruct.paramList = [paramMtime profCtdCpStruct.paramList paramVrsPh paramPhInSituFree paramPhInSituTotal];
+         if (~isempty(profCtdCpStruct.paramDataMode))
+            profCtdCpStruct.paramDataMode = [' ' profCtdCpStruct.paramDataMode '   '];
+         end
          profCtdCpStruct.data = [ ...
             ones(size(profCtdCpStruct.data, 1), 1)*paramMtime.fillValue ...
             double(profCtdCpStruct.data) ...
@@ -616,10 +671,11 @@ if (~isempty(profCtdCpStruct))
                ones(size(profCtdCpStruct.dataAdj, 1), 1)*double(paramPhInSituFree.fillValue) ...
                ones(size(profCtdCpStruct.dataAdj, 1), 1)*double(paramPhInSituTotal.fillValue)];
          end
+         idPresCtdCp  = find(strcmp({profCtdCpStruct.paramList.name}, 'PRES') == 1, 1);
          if (~isempty(idShallow))
             profCtdCpStruct.data = [profCtdCpStruct.data; ...
                profCtdPtshStruct.data(idShallow, :)];
-            [~, idSort] = sort(profCtdCpStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpStruct.data(:, idPresCtdCp), 'descend');
             profCtdCpStruct.data = profCtdCpStruct.data(idSort, :);
             if (~isempty(profCtdCpStruct.dataAdj))
                profCtdCpStruct.dataAdj = [profCtdCpStruct.dataAdj; ...
@@ -630,7 +686,7 @@ if (~isempty(profCtdCpStruct))
          if (~isempty(idDeep))
             profCtdCpStruct.data = [profCtdCpStruct.data; ...
                profCtdPtshStruct.data(idDeep, :)];
-            [~, idSort] = sort(profCtdCpStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpStruct.data(:, idPresCtdCp), 'descend');
             profCtdCpStruct.data = profCtdCpStruct.data(idSort, :);
             if (~isempty(profCtdCpStruct.dataAdj))
                profCtdCpStruct.dataAdj = [profCtdCpStruct.dataAdj; ...
@@ -645,10 +701,14 @@ if (~isempty(profCtdCpStruct))
          dataTypeStr = 'mixed';
       end
    elseif (~isempty(profCtdPtsStruct))
-      idShallow = find(profCtdPtsStruct.data(:, 2) < min(profCtdCpStruct.data(:, 1)));
-      idDeep = find(profCtdPtsStruct.data(:, 2) > max(profCtdCpStruct.data(:, 1)));
+      idPresCtdPts  = find(strcmp({profCtdPtsStruct.paramList.name}, 'PRES') == 1, 1);
+      idShallow = find(profCtdPtsStruct.data(:, idPresCtdPts) < min(profCtdCpStruct.data(:, 1)));
+      idDeep = find(profCtdPtsStruct.data(:, idPresCtdPts) > max(profCtdCpStruct.data(:, 1)));
       if (~isempty(idShallow) || ~isempty(idDeep))
          profCtdCpStruct.paramList = [paramMtime profCtdCpStruct.paramList];
+         if (~isempty(profCtdCpStruct.paramDataMode))
+            profCtdCpStruct.paramDataMode = [' ' profCtdCpStruct.paramDataMode];
+         end
          profCtdCpStruct.data = [ ...
             ones(size(profCtdCpStruct.data, 1), 1)*paramMtime.fillValue ...
             double(profCtdCpStruct.data)];
@@ -657,10 +717,11 @@ if (~isempty(profCtdCpStruct))
                ones(size(profCtdCpStruct.dataAdj, 1), 1)*paramMtime.fillValue ...
                double(profCtdCpStruct.dataAdj)];
          end
+         idPresCtdCp  = find(strcmp({profCtdCpStruct.paramList.name}, 'PRES') == 1, 1);
          if (~isempty(idShallow))
             profCtdCpStruct.data = [profCtdCpStruct.data; ...
                profCtdPtsStruct.data(idShallow, :)];
-            [~, idSort] = sort(profCtdCpStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpStruct.data(:, idPresCtdCp), 'descend');
             profCtdCpStruct.data = profCtdCpStruct.data(idSort, :);
             if (~isempty(profCtdCpStruct.dataAdj))
                profCtdCpStruct.dataAdj = [profCtdCpStruct.dataAdj; ...
@@ -671,7 +732,7 @@ if (~isempty(profCtdCpStruct))
          if (~isempty(idDeep))
             profCtdCpStruct.data = [profCtdCpStruct.data; ...
                profCtdPtsStruct.data(idDeep, :)];
-            [~, idSort] = sort(profCtdCpStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpStruct.data(:, idPresCtdCp), 'descend');
             profCtdCpStruct.data = profCtdCpStruct.data(idSort, :);
             if (~isempty(profCtdCpStruct.dataAdj))
                profCtdCpStruct.dataAdj = [profCtdCpStruct.dataAdj; ...
@@ -698,7 +759,7 @@ if (~isempty(profCtdCpStruct))
       description = create_vertical_sampling_scheme_description_apx_apf11_ir(a_cycleNum, 'CTD', '', minMax);
       dataTypeStr = 'averaged';
    end
-   
+      
    % add vertical sampling scheme
    profCtdCpStruct.vertSamplingScheme = sprintf('Primary sampling: %s [%s]', dataTypeStr, description);
    profCtdCpStruct.primarySamplingProfileFlag = 1;
@@ -710,17 +771,28 @@ if (~isempty(profCtdCpStruct))
       
       if (~isempty(profCtdPtshStruct))
          if (~isempty(idShallow) || ~isempty(idDeep))
+            idPresCtdPtsh  = find(strcmp({profCtdPtshStruct.paramList.name}, 'PRES') == 1, 1);
             if (~isempty(idShallow))
                profCtdCpAuxStruct.data = [profCtdCpAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idShallow, 2) ones(length(idShallow), 1)*paramNbSample.fillValue]];
+                  [profCtdPtshStruct.data(idShallow, idPresCtdPtsh) ones(length(idShallow), 1)*paramNbSample.fillValue]];
                [~, idSort] = sort(profCtdCpAuxStruct.data(:, 1), 'descend');
                profCtdCpAuxStruct.data = profCtdCpAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpAuxStruct.dataAdj))
+                  profCtdCpAuxStruct.dataAdj = [profCtdCpAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idShallow, idPresCtdPtsh) ones(length(idShallow), 1)*paramNbSample.fillValue]];
+                  profCtdCpAuxStruct.dataAdj = profCtdCpAuxStruct.dataAdj(idSort, :);
+               end
             end
             if (~isempty(idDeep))
                profCtdCpAuxStruct.data = [profCtdCpAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idDeep, 2) ones(length(idDeep), 1)*paramNbSample.fillValue]];
+                  [profCtdPtshStruct.data(idDeep, idPresCtdPtsh) ones(length(idDeep), 1)*paramNbSample.fillValue]];
                [~, idSort] = sort(profCtdCpAuxStruct.data(:, 1), 'descend');
                profCtdCpAuxStruct.data = profCtdCpAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpAuxStruct.dataAdj))
+                  profCtdCpAuxStruct.dataAdj = [profCtdCpAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idDeep, idPresCtdPtsh) ones(length(idDeep), 1)*paramNbSample.fillValue]];
+                  profCtdCpAuxStruct.dataAdj = profCtdCpAuxStruct.dataAdj(idSort, :);
+               end
             end
             
             % get detailed description of the VSS
@@ -729,17 +801,28 @@ if (~isempty(profCtdCpStruct))
          end
       elseif (~isempty(profCtdPtsStruct))
          if (~isempty(idShallow) || ~isempty(idDeep))
+            idPresCtdPts  = find(strcmp({profCtdPtsStruct.paramList.name}, 'PRES') == 1, 1);
             if (~isempty(idShallow))
                profCtdCpAuxStruct.data = [profCtdCpAuxStruct.data; ...
-                  [profCtdPtsStruct.data(idShallow, 2) ones(length(idShallow), 1)*paramNbSample.fillValue]];
+                  [profCtdPtsStruct.data(idShallow, idPresCtdPts) ones(length(idShallow), 1)*paramNbSample.fillValue]];
                [~, idSort] = sort(profCtdCpAuxStruct.data(:, 1), 'descend');
                profCtdCpAuxStruct.data = profCtdCpAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpAuxStruct.dataAdj))
+                  profCtdCpAuxStruct.dataAdj = [profCtdCpAuxStruct.dataAdj; ...
+                     [profCtdPtsStruct.dataAdj(idShallow, idPresCtdPts) ones(length(idShallow), 1)*paramNbSample.fillValue]];
+                  profCtdCpAuxStruct.dataAdj = profCtdCpAuxStruct.dataAdj(idSort, :);
+               end
             end
             if (~isempty(idDeep))
                profCtdCpAuxStruct.data = [profCtdCpAuxStruct.data; ...
-                  [profCtdPtsStruct.data(idDeep, 2) ones(length(idDeep), 1)*paramNbSample.fillValue]];
+                  [profCtdPtsStruct.data(idDeep, idPresCtdPts) ones(length(idDeep), 1)*paramNbSample.fillValue]];
                [~, idSort] = sort(profCtdCpAuxStruct.data(:, 1), 'descend');
                profCtdCpAuxStruct.data = profCtdCpAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpAuxStruct.dataAdj))
+                  profCtdCpAuxStruct.dataAdj = [profCtdCpAuxStruct.dataAdj; ...
+                     [profCtdPtsStruct.dataAdj(idDeep, idPresCtdPts) ones(length(idDeep), 1)*paramNbSample.fillValue]];
+                  profCtdCpAuxStruct.dataAdj = profCtdCpAuxStruct.dataAdj(idSort, :);
+               end
             end
             
             % get detailed description of the VSS
@@ -765,10 +848,16 @@ if (~isempty(profCtdCpStruct))
       if (~isempty(profCtdPtshStruct.dataAdj))
          profCtdPtshStruct.dataAdj([idShallow; idDeep], :) = [];
       end
+      if (isempty(profCtdPtshStruct.data))
+         profCtdPtshStruct = [];
+      end
    elseif (~isempty(profCtdPtsStruct))
       profCtdPtsStruct.data([idShallow; idDeep], :) = [];
       if (~isempty(profCtdPtsStruct.dataAdj))
          profCtdPtsStruct.dataAdj([idShallow; idDeep], :) = [];
+      end
+      if (isempty(profCtdPtsStruct.data))
+         profCtdPtsStruct = [];
       end
    end
 end
@@ -782,10 +871,14 @@ if (~isempty(profCtdCpHStruct))
    minP = min(profCtdCpHStruct.data(:, 1));
    maxP = max(profCtdCpHStruct.data(:, 1));
    if (~isempty(profCtdPtshStruct))
-      idShallow = find(profCtdPtshStruct.data(:, 2) < min(profCtdCpHStruct.data(:, 1)));
-      idDeep = find(profCtdPtshStruct.data(:, 2) > max(profCtdCpHStruct.data(:, 1)));
+      idPresCtdPtsh = find(strcmp({profCtdPtshStruct.paramList.name}, 'PRES') == 1, 1);
+      idShallow = find(profCtdPtshStruct.data(:, idPresCtdPtsh) < min(profCtdCpHStruct.data(:, 1)));
+      idDeep = find(profCtdPtshStruct.data(:, idPresCtdPtsh) > max(profCtdCpHStruct.data(:, 1)));
       if (~isempty(idShallow) || ~isempty(idDeep))
          profCtdCpHStruct.paramList = [paramMtime profCtdCpHStruct.paramList];
+         if (~isempty(profCtdCpHStruct.paramDataMode))
+            profCtdCpHStruct.paramDataMode = [' ' profCtdCpHStruct.paramDataMode];
+         end
          profCtdCpHStruct.data = [ ...
             ones(size(profCtdCpHStruct.data, 1), 1)*paramMtime.fillValue ...
             double(profCtdCpHStruct.data)];
@@ -794,10 +887,11 @@ if (~isempty(profCtdCpHStruct))
                ones(size(profCtdCpHStruct.dataAdj, 1), 1)*paramMtime.fillValue ...
                double(profCtdCpHStruct.dataAdj)];
          end
+         idPresCtdCpH = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES') == 1, 1);
          if (~isempty(idShallow))
             profCtdCpHStruct.data = [profCtdCpHStruct.data; ...
                profCtdPtshStruct.data(idShallow, :)];
-            [~, idSort] = sort(profCtdCpHStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
             profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
             if (~isempty(profCtdCpHStruct.dataAdj))
                profCtdCpHStruct.dataAdj = [profCtdCpHStruct.dataAdj; ...
@@ -808,7 +902,7 @@ if (~isempty(profCtdCpHStruct))
          if (~isempty(idDeep))
             profCtdCpHStruct.data = [profCtdCpHStruct.data; ...
                profCtdPtshStruct.data(idDeep, :)];
-            [~, idSort] = sort(profCtdCpHStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
             profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
             if (~isempty(profCtdCpHStruct.dataAdj))
                profCtdCpHStruct.dataAdj = [profCtdCpHStruct.dataAdj; ...
@@ -823,10 +917,14 @@ if (~isempty(profCtdCpHStruct))
          dataTypeStr = 'mixed';
       end
    elseif (~isempty(profCtdPtsStruct))
-      idShallow = find(profCtdPtsStruct.data(:, 2) < min(profCtdCpHStruct.data(:, 1)));
-      idDeep = find(profCtdPtsStruct.data(:, 2) > max(profCtdCpHStruct.data(:, 1)));
+      idPresCtdPts = find(strcmp({profCtdPtsStruct.paramList.name}, 'PRES') == 1, 1);
+      idShallow = find(profCtdPtsStruct.data(:, idPresCtdPts) < min(profCtdCpHStruct.data(:, 1)));
+      idDeep = find(profCtdPtsStruct.data(:, idPresCtdPts) > max(profCtdCpHStruct.data(:, 1)));
       if (~isempty(idShallow) || ~isempty(idDeep))
          profCtdCpHStruct.paramList = [paramMtime profCtdCpHStruct.paramList];
+         if (~isempty(profCtdCpHStruct.paramDataMode))
+            profCtdCpHStruct.paramDataMode = [' ' profCtdCpHStruct.paramDataMode];
+         end
          profCtdCpHStruct.data = [ ...
             ones(size(profCtdCpHStruct.data, 1), 1)*paramMtime.fillValue ...
             double(profCtdCpHStruct.data)];
@@ -835,13 +933,14 @@ if (~isempty(profCtdCpHStruct))
                ones(size(profCtdCpHStruct.dataAdj, 1), 1)*paramMtime.fillValue ...
                double(profCtdCpHStruct.dataAdj)];
          end
+         idPresCtdCpH = find(strcmp({profCtdCpHStruct.paramList.name}, 'PRES') == 1, 1);
          if (~isempty(idShallow))
             profCtdCpHStruct.data = [profCtdCpHStruct.data; ...
                [profCtdPtsStruct.data(idShallow, :) ...
                ones(length(idShallow), 1)*paramVrsPh.fillValue ...
                ones(length(idShallow), 1)*paramPhInSituFree.fillValue ...
                ones(length(idShallow), 1)*paramPhInSituTotal.fillValue]];
-            [~, idSort] = sort(profCtdCpHStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
             profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
             if (~isempty(profCtdCpHStruct.dataAdj))
                profCtdCpHStruct.dataAdj = [profCtdCpHStruct.dataAdj; ...
@@ -858,7 +957,7 @@ if (~isempty(profCtdCpHStruct))
                ones(length(idDeep), 1)*paramVrsPh.fillValue ...
                ones(length(idDeep), 1)*paramPhInSituFree.fillValue ...
                ones(length(idDeep), 1)*paramPhInSituTotal.fillValue]];
-            [~, idSort] = sort(profCtdCpHStruct.data(:, 2), 'descend');
+            [~, idSort] = sort(profCtdCpHStruct.data(:, idPresCtdCpH), 'descend');
             profCtdCpHStruct.data = profCtdCpHStruct.data(idSort, :);
             if (~isempty(profCtdCpHStruct.dataAdj))
                profCtdCpHStruct.dataAdj = [profCtdCpHStruct.dataAdj; ...
@@ -894,21 +993,36 @@ if (~isempty(profCtdCpHStruct))
       
       if (~isempty(profCtdPtshStruct))
          if (~isempty(idShallow) || ~isempty(idDeep))
+            idPresCtdPtsh = find(strcmp({profCtdPtshStruct.paramList.name}, 'PRES') == 1, 1);
             if (~isempty(idShallow))
                profCtdCpHAuxStruct.data = [profCtdCpHAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idShallow, 2) ...
+                  [profCtdPtshStruct.data(idShallow, idPresCtdPtsh) ...
                   ones(length(idShallow), 1)*paramNbSampleCtd.fillValue ...
                   ones(length(idShallow), 1)*paramNbSampleTransistorPh.fillValue]];
                [~, idSort] = sort(profCtdCpHAuxStruct.data(:, 1), 'descend');
                profCtdCpHAuxStruct.data = profCtdCpHAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpHAuxStruct.dataAdj))
+                  profCtdCpHAuxStruct.dataAdj = [profCtdCpHAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idShallow, idPresCtdPtsh) ...
+                     ones(length(idShallow), 1)*paramNbSampleCtd.fillValue ...
+                     ones(length(idShallow), 1)*paramNbSampleTransistorPh.fillValue]];
+                  profCtdCpHAuxStruct.dataAdj = profCtdCpHAuxStruct.dataAdj(idSort, :);
+               end
             end
             if (~isempty(idDeep))
                profCtdCpHAuxStruct.data = [profCtdCpHAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idDeep, 2) ...
+                  [profCtdPtshStruct.data(idDeep, idPresCtdPtsh) ...
                   ones(length(idDeep), 1)*paramNbSampleCtd.fillValue ...
                   ones(length(idDeep), 1)*paramNbSampleTransistorPh.fillValue]];
                [~, idSort] = sort(profCtdCpHAuxStruct.data(:, 1), 'descend');
                profCtdCpHAuxStruct.data = profCtdCpHAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpHAuxStruct.dataAdj))
+                  profCtdCpHAuxStruct.dataAdj = [profCtdCpHAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idDeep, idPresCtdPtsh) ...
+                     ones(length(idDeep), 1)*paramNbSampleCtd.fillValue ...
+                     ones(length(idDeep), 1)*paramNbSampleTransistorPh.fillValue]];
+                  profCtdCpHAuxStruct.dataAdj = profCtdCpHAuxStruct.dataAdj(idSort, :);
+               end
             end
             
             % get detailed description of the VSS
@@ -917,21 +1031,36 @@ if (~isempty(profCtdCpHStruct))
          end
       elseif (~isempty(profCtdPtsStruct))
          if (~isempty(idShallow) || ~isempty(idDeep))
+            idPresCtdPtsh = find(strcmp({profCtdPtshStruct.paramList.name}, 'PRES') == 1, 1);
             if (~isempty(idShallow))
                profCtdCpHAuxStruct.data = [profCtdCpHAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idShallow, 2) ...
+                  [profCtdPtshStruct.data(idShallow, idPresCtdPtsh) ...
                   ones(length(idShallow), 1)*paramNbSampleCtd.fillValue ...
                   ones(length(idShallow), 1)*paramNbSampleTransistorPh.fillValue]];
                [~, idSort] = sort(profCtdCpHAuxStruct.data(:, 1), 'descend');
                profCtdCpHAuxStruct.data = profCtdCpHAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpHAuxStruct.dataAdj))
+                  profCtdCpHAuxStruct.dataAdj = [profCtdCpHAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idShallow, idPresCtdPtsh) ...
+                     ones(length(idShallow), 1)*paramNbSampleCtd.fillValue ...
+                     ones(length(idShallow), 1)*paramNbSampleTransistorPh.fillValue]];
+                  profCtdCpHAuxStruct.dataAdj = profCtdCpHAuxStruct.dataAdj(idSort, :);
+               end
             end
             if (~isempty(idDeep))
                profCtdCpHAuxStruct.data = [profCtdCpHAuxStruct.data; ...
-                  [profCtdPtshStruct.data(idDeep, 2) ...
+                  [profCtdPtshStruct.data(idDeep, idPresCtdPtsh) ...
                   ones(length(idDeep), 1)*paramNbSampleCtd.fillValue ...
                   ones(length(idDeep), 1)*paramNbSampleTransistorPh.fillValue]];
                [~, idSort] = sort(profCtdCpHAuxStruct.data(:, 1), 'descend');
                profCtdCpHAuxStruct.data = profCtdCpHAuxStruct.data(idSort, :);
+               if (~isempty(profCtdCpHAuxStruct.dataAdj))
+                  profCtdCpHAuxStruct.dataAdj = [profCtdCpHAuxStruct.dataAdj; ...
+                     [profCtdPtshStruct.dataAdj(idDeep, idPresCtdPtsh) ...
+                     ones(length(idDeep), 1)*paramNbSampleCtd.fillValue ...
+                     ones(length(idDeep), 1)*paramNbSampleTransistorPh.fillValue]];
+                  profCtdCpHAuxStruct.dataAdj = profCtdCpHAuxStruct.dataAdj(idSort, :);
+               end
             end
             
             % get detailed description of the VSS
@@ -960,10 +1089,16 @@ if (~isempty(profCtdCpHStruct))
       % discrete PH data are not sampled during CP mode, we should remove
       % associated parameters in discrete profile
       profCtdPtshStruct = remove_unused_param(profCtdPtshStruct);
+      if (isempty(profCtdPtshStruct.data))
+         profCtdPtshStruct = [];
+      end
    elseif (~isempty(profCtdPtsStruct))
       profCtdPtsStruct.data([idShallow; idDeep], :) = [];
       if (~isempty(profCtdPtsStruct.dataAdj))
          profCtdPtsStruct.dataAdj([idShallow; idDeep], :) = [];
+      end
+      if (isempty(profCtdPtsStruct.data))
+         profCtdPtsStruct = [];
       end
    end
 end
@@ -1084,6 +1219,9 @@ for idParam = 1:length(o_ncProfile.paramList)
    end
 end
 o_ncProfile.paramList(idParamTodel) = [];
+if (~isempty(o_ncProfile.paramDataMode))
+   o_ncProfile.paramDataMode(idParamTodel) = [];
+end
 o_ncProfile.data(:, idParamTodel) = [];
 if (~isempty(o_ncProfile.dataAdj))
    o_ncProfile.dataAdj(:, idParamTodel) = [];

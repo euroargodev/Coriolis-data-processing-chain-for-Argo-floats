@@ -36,7 +36,7 @@ g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store pdf output
-g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_215_216_218_grounded.txt';
@@ -52,6 +52,7 @@ fprintf('   b            : bathy always visible\n');
 fprintf('   s            : focus on surface data\n');
 fprintf('   h            : write help and current configuration\n');
 fprintf('   p            : pdf output file generation\n');
+fprintf('   f            : pdf output file generation of all cycles\n');
 fprintf('Escape: exit\n\n');
 
 % bathy visible only if needed
@@ -799,7 +800,6 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FMT));
       if (~isempty(idF))
          if (length(idF) > 1)
-            % icicicic
             idF = idF(1)
          end
          g_NTCT_FMT_juld(idC) = juld(idF);
@@ -1591,6 +1591,19 @@ elseif (strcmp(a_eventData.Key, 'p'))
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % pdf output file generation of all cycles
+elseif (strcmp(a_eventData.Key, 'f'))
+   
+   cycleNumTmp = g_NTCT_cycle;
+   for idCy = g_NTCT_cycles'
+      g_NTCT_PRINT = 1;
+      plot_cycle_times(g_NTCT_FLOAT_ID, idCy, 0);
+   end
+   
+   g_NTCT_cycle = cycleNumTmp;
+   plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % write help and current configuration
 elseif (strcmp(a_eventData.Key, 'h'))
    fprintf('Plot management:\n');
@@ -1601,6 +1614,7 @@ elseif (strcmp(a_eventData.Key, 'h'))
    fprintf('   s            : focus on surface data\n');
    fprintf('   h            : write help and current configuration\n');
    fprintf('   p            : pdf output file generation\n');
+   fprintf('   f            : pdf output file generation of all cycles\n');
    fprintf('Escape: exit\n\n');
    
    display_current_config;

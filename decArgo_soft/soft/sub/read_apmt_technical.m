@@ -471,6 +471,9 @@ switch (a_decoderId)
 
    case {126}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_126;
+      
+   case {127}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_127;
 
    otherwise
       fprintf('ERROR: init_tech_info_struct: Don''t know how to parse APMT technical data for techId #%d\n', ...

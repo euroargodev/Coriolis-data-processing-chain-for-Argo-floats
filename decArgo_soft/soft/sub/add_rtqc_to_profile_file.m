@@ -174,6 +174,9 @@
 %                               that need PTS
 %   11/18/2020 - RNU - V 5.1: - correction of a bug in get_ctd_data when primary
 %                               or NS profile is missing
+%   02/04/2021 - RNU - V 5.2: TEST #23: set PSAL_ADJUSTED_QC = '2' below 2000
+%                             dbar (because PSAL adjustment with CPcor is
+%                             implemented in version '040a')
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -213,7 +216,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.1';
+g_decArgo_addRtqcToProfileVersion = '5.2';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -3970,12 +3973,12 @@ if (testFlagList(23) == 1)
       
       % list of parameters to test
       test23ParameterList = [ ...
-         {'PRES'} {'TEMP'} {g_decArgo_qcStrProbablyGood} {0}; ...
-         {'PRES2'} {'TEMP2'} {g_decArgo_qcStrProbablyGood} {0}; ...
-         {'PRES'} {'TEMP_DOXY'} {g_decArgo_qcStrProbablyGood} {0}; ...
-         {'PRES'} {'TEMP_DOXY2'} {g_decArgo_qcStrProbablyGood} {0}; ...
-         {'PRES'} {'PSAL'} {g_decArgo_qcStrCorrectable} {0}; ...
-         {'PRES2'} {'PSAL2'} {g_decArgo_qcStrCorrectable} {0}; ...
+         {'PRES'} {'TEMP'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES2'} {'TEMP2'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES'} {'TEMP_DOXY'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES'} {'TEMP_DOXY2'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES'} {'PSAL'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES2'} {'PSAL2'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrProbablyGood}; ...
          ];
       
       for idProf = 1:length(juld)
@@ -3985,24 +3988,21 @@ if (testFlagList(23) == 1)
             for idP = 1:size(test23ParameterList, 1)
                presName = test23ParameterList{idP, 1};
                paramName = test23ParameterList{idP, 2};
-               paramFlagValue = test23ParameterList{idP, 3};
-               presDataModeFlag = test23ParameterList{idP, 4};
+               paramFlagValueR = test23ParameterList{idP, 3};
+               paramFlagValueA = test23ParameterList{idP, 4};
                
                for idDM = 1:2
                   if (idDM == 1)
                      dataMode = 'R';
+                     paramFlagValue = paramFlagValueR;
                   else
                      dataMode = 'A';
-                  end
-                  if (presDataModeFlag == 1)
-                     presDataMode = '';
-                  else
-                     presDataMode = dataMode;
+                     paramFlagValue = paramFlagValueA;
                   end
                   
                   % retrieve PRES data
                   [presData, presDataQc, presDataFillValue, ~, presDataQcName] = ...
-                     get_param_data(presName, dataStruct, idProf, presDataMode);
+                     get_param_data(presName, dataStruct, idProf, dataMode);
                   
                   % retrieve PARAM data
                   [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...

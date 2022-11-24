@@ -143,6 +143,8 @@ switch (a_sectionName)
          o_rafosData.dateList = paramJuld;
          o_rafosData.dates = juld;
          o_rafosData.paramList = [paramPres paramTemp paramSal paramStatus paramCor paramToa];
+         o_rafosData.paramNumberWithSubLevels = [5 6];
+         o_rafosData.paramNumberOfSubLevels = [6 6];
          o_rafosData.data = [pres temp psal status corData toaData];
       else
          fprintf('ERROR: Float #%d Cycle #%d: anomaly in ''%s'' section\n', ...

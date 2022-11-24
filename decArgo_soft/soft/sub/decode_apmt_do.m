@@ -72,6 +72,17 @@ bitList = [ ...
    {[16 16 32 32 16]} ...
    ];
 
+% list of signed type parameters
+signedList = [ ...
+   {[0 0 0 0 0 1 1 1 0 0 0 0]} ...
+   {[0 0 0 0 0 1 1 1]} ...
+   {[0 0 0 0 0 0 0 0 0]} ...
+   {[0 0 0 0 0]} ...
+   {[0 0 0 0 0]} ...
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[0 0 0 0 0]} ...
+   ];
+
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: decode_apmt_do: File not found: %s\n', a_inputFilePathName);
    return
@@ -188,9 +199,14 @@ while (currentByte <= lastByteNum)
       end
       nbBytes = sum(tabNbBits)/8;
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
+      tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
          if ((tabNbBits(id) == 16) || (id == 1))
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            if (tabSignedList(id) == 0)
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            else
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''int%d'')', tabNbBits(id), id, tabNbBits(id));
+            end
             rawData(id) = eval(cmd);
          elseif (tabNbBits(id) == 32)
             rawData(id) = typecast(uint32(swapbytes(uint32(rawData(id)))), 'single');

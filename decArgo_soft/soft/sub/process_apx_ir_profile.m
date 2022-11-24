@@ -52,6 +52,7 @@ if (~isempty(a_profLrData))
    
    % add parameter variables to the profile structure
    profLrStruct.paramList = a_profLrData.paramList;
+   profLrStruct.paramDataMode = a_profLrData.paramDataMode;
    
    % add parameter data to the profile structure
    profLrStruct.data = a_profLrData.data;
@@ -78,24 +79,13 @@ if (~isempty(a_profLrData))
          mtimeData = ones(size(a_profLrData.data, 1), 1)*paramMtime.fillValue;
       end
       profLrStruct.paramList = [paramMtime profLrStruct.paramList];
+      if (~isempty(profLrStruct.paramDataMode))
+         profLrStruct.paramDataMode = [' ' profLrStruct.paramDataMode];
+      end
       profLrStruct.data = cat(2, mtimeData, double(profLrStruct.data));
       
       if (~isempty(a_profLrData.dataAdj))
-         if (any(a_profLrData.datesAdj ~= a_profLrData.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            if (~isempty(a_profLrData.datesAdj))
-               mtimeDataAdj = a_profLrData.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == a_profLrData.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(a_profLrData.dates))
-               mtimeDataAdj = a_profLrData.dates;
-               mtimeDataAdj(find(mtimeDataAdj == a_profLrData.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(a_profLrData.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
-         else
-            mtimeDataAdj = ones(size(a_profLrData.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
+         mtimeDataAdj = ones(size(a_profLrData.dataAdj, 1), 1)*paramMtime.fillValue;
          profLrStruct.dataAdj = cat(2, mtimeDataAdj, double(profLrStruct.dataAdj));
       end
    end   
@@ -114,6 +104,7 @@ if (~isempty(a_profHrData))
    
    % add parameter variables to the profile structure
    profHrStruct.paramList = a_profHrData.paramList;
+   profHrStruct.paramDataMode = a_profHrData.paramDataMode;
    
    % add parameter data to the profile structure
    profHrStruct.data = a_profHrData.data;
@@ -137,6 +128,9 @@ if (~isempty(a_profHrData))
       profHrAuxStruct = profHrStruct;
       profHrAuxStruct.sensorNumber = 101; % to go to PROF_AUX file
       profHrStruct.paramList(idNbSample) = [];
+      if (~isempty(profHrStruct.paramDataMode))
+         profHrStruct.paramDataMode(idNbSample) = [];
+      end
       profHrStruct.data(:, idNbSample) = [];
       if (~isempty(profHrStruct.dataAdj))
          profHrStruct.dataAdj(:, idNbSample) = [];
@@ -144,6 +138,9 @@ if (~isempty(a_profHrData))
       
       idPres  = find(strcmp({profHrStruct.paramList.name}, 'PRES') == 1, 1);
       profHrAuxStruct.paramList = [profHrAuxStruct.paramList(idPres) profHrAuxStruct.paramList(idNbSample)];
+      if (~isempty(profHrAuxStruct.paramDataMode))
+         profHrAuxStruct.paramDataMode = [profHrAuxStruct.paramDataMode(idPres) profHrAuxStruct.paramDataMode(idNbSample)];
+      end
       profHrAuxStruct.data = [profHrAuxStruct.data(:, idPres) profHrAuxStruct.data(:, idNbSample)];
       if (~isempty(profHrAuxStruct.dataAdj))
          profHrAuxStruct.dataAdj = [profHrAuxStruct.dataAdj(:, idPres) profHrAuxStruct.dataAdj(:, idNbSample)];
@@ -170,6 +167,7 @@ if (~isempty(a_nearSurfData))
    
    % add parameter variables to the profile structure
    profNsStruct.paramList = a_nearSurfData.paramList;
+   profNsStruct.paramDataMode = a_nearSurfData.paramDataMode;
    
    % add parameter data to the profile structure
    profNsStruct.data = a_nearSurfData.data;
@@ -200,32 +198,24 @@ if (~isempty(a_nearSurfData))
          mtimeData = ones(size(a_nearSurfData.data, 1), 1)*paramMtime.fillValue;
       end
       profNsStruct.paramList = [paramMtime profNsStruct.paramList];
+      if (~isempty(profNsStruct.paramDataMode))
+         profNsStruct.paramDataMode = [' ' profNsStruct.paramDataMode];
+      end
       profNsStruct.data = cat(2, mtimeData, double(profNsStruct.data));
       
       if (~isempty(a_nearSurfData.dataAdj))
-         if (any(a_nearSurfData.datesAdj ~= a_nearSurfData.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            if (~isempty(a_nearSurfData.datesAdj))
-               mtimeDataAdj = a_nearSurfData.datesAdj;
-               mtimeDataAdj(find(mtimeDataAdj == a_nearSurfData.dateList.fillValue)) = paramMtime.fillValue;
-            elseif (~isempty(a_nearSurfData.dates))
-               mtimeDataAdj = a_nearSurfData.dates;
-               mtimeDataAdj(find(mtimeDataAdj == a_nearSurfData.dateList.fillValue)) = paramMtime.fillValue;
-            else
-               mtimeDataAdj = ones(size(a_nearSurfData.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
-         else
-            mtimeDataAdj = ones(size(a_nearSurfData.dataAdj, 1), 1)*paramMtime.fillValue;
-         end
+         mtimeDataAdj = ones(size(a_nearSurfData.dataAdj, 1), 1)*paramMtime.fillValue;
          profNsStruct.dataAdj = cat(2, mtimeDataAdj, double(profNsStruct.dataAdj));
-      end      
-   end   
+      end
+   end
    
    % remove 'PPOX_DOXY' data (not needed in PROF file)
    idPpoxDoxy = find(strcmp({profNsStruct.paramList.name}, 'PPOX_DOXY') == 1);
    if (~isempty(idPpoxDoxy))
       profNsStruct.paramList(idPpoxDoxy) = [];
+      if (~isempty(profNsStruct.paramDataMode))
+         profNsStruct.paramDataMode(idPpoxDoxy) = [];
+      end
       profNsStruct.data(:, idPpoxDoxy) = [];
       if (~isempty(profNsStruct.dataAdj))
          profNsStruct.dataAdj(:, idPpoxDoxy) = [];
@@ -360,24 +350,37 @@ if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct
             
             % parameter list of concatenated profiles
             concatParamNameList = unique([{a_profLrStruct.paramList.name}, {a_profNsStruct.paramList.name}], 'stable');
-            concatParamlist = [];
+            concatParamList = [];
+            concatParamDataMode = [];
             concatParamFillValue = [];
             for idP = 1:length(concatParamNameList)
                idF = find(strcmp(concatParamNameList{idP}, {a_profLrStruct.paramList.name}));
                if (~isempty(idF))
-                  concatParamlist = [concatParamlist a_profLrStruct.paramList(idF)];
+                  concatParamList = [concatParamList a_profLrStruct.paramList(idF)];
+                  if (~isempty(a_profLrStruct.paramDataMode))
+                     concatParamDataMode = [concatParamDataMode a_profLrStruct.paramDataMode(idF)];
+                  else
+                     concatParamDataMode = [concatParamDataMode ' '];
+                  end
                   concatParamFillValue = [concatParamFillValue a_profLrStruct.paramList(idF).fillValue];
                else
                   idF = find(strcmp(concatParamNameList{idP}, {a_profNsStruct.paramList.name}));
-                  concatParamlist = [concatParamlist a_profNsStruct.paramList(idF)];
+                  concatParamList = [concatParamList a_profNsStruct.paramList(idF)];
+                  if (~isempty(a_profNsStruct.paramDataMode))
+                     concatParamDataMode = [concatParamDataMode a_profNsStruct.paramDataMode(idF)];
+                  else
+                     concatParamDataMode = [concatParamDataMode ' '];
+                  end
                   concatParamFillValue = [concatParamFillValue a_profNsStruct.paramList(idF).fillValue];
                end
             end
-            concatProf.paramList = concatParamlist;
+            concatProf.paramList = concatParamList;
+            concatProf.paramDataMode = concatParamDataMode;
             concatProf.data = repmat(double(concatParamFillValue), size(a_profLrStruct.data, 1)+size(a_profNsStruct.data, 1), 1);
             concatProf.dataAdj = concatProf.data;
             
             % concatenate profile data
+            adjDataFlag = 0;
             paramListIdLr = [];
             for idP = 1:length(a_profLrStruct.paramList)
                idF = find(strcmp(a_profLrStruct.paramList(idP).name, concatParamNameList));
@@ -388,6 +391,7 @@ if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct
             concatProf.data(1:size(a_profLrStruct.data, 1), paramListIdLr) = a_profLrStruct.data;
             if (~isempty(a_profLrStruct.dataAdj))
                concatProf.dataAdj(1:size(a_profLrStruct.dataAdj, 1), paramListIdLr) = a_profLrStruct.dataAdj;
+               adjDataFlag = 1;
             end
             
             paramListIdNs = [];
@@ -400,6 +404,12 @@ if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct
             concatProf.data(end-(size(a_profNsStruct.data, 1)-1):end, paramListIdNs) = a_profNsStruct.data;
             if (~isempty(a_profNsStruct.dataAdj))
                concatProf.dataAdj(end-(size(a_profNsStruct.data, 1)-1):end, paramListIdNs) = a_profNsStruct.dataAdj;
+               adjDataFlag = 1;
+            end
+            
+            if (~adjDataFlag)
+               concatProf.paramDataMode = [];
+               concatProf.dataAdj = [];
             end
             
             % set the vertical sampling scheme of the concatenated profile
@@ -419,12 +429,26 @@ end
 
 % retrieve the list of common parameters
 mergedParamList = [];
+mergedParamDataMode = [];
 paramListIdHr = [];
 paramListIdLr = [];
 for idP = 1:length(a_profHrStruct.paramList)
    idF = find(strcmp(a_profHrStruct.paramList(idP).name, {a_profLrStruct.paramList.name}));
    if (~isempty(idF))
       mergedParamList = [mergedParamList a_profHrStruct.paramList(idP)];
+      paramDataModeHr = ' ';
+      if (~isempty(a_profHrStruct.paramDataMode))
+         paramDataModeHr = a_profHrStruct.paramDataMode(idP);
+      end
+      paramDataModeLr = ' ';
+      if (~isempty(a_profLrStruct.paramDataMode))
+         paramDataModeLr = a_profLrStruct.paramDataMode(idF);
+      end
+      if (any([paramDataModeHr paramDataModeLr] == 'A'))
+         mergedParamDataMode = [mergedParamDataMode 'A'];
+      else
+         mergedParamDataMode = [mergedParamDataMode ' '];
+      end
       paramListIdHr = [paramListIdHr idP];
       paramListIdLr = [paramListIdLr idF];
    end
@@ -494,6 +518,7 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
    
    % add parameter variables to the profile structure
    o_profMergedStruct.paramList = mergedParamList;
+   o_profMergedStruct.paramDataMode = mergedParamDataMode;
    
    % add parameter data to the profile structure
    o_profMergedStruct.data = mergedData;

@@ -32,7 +32,6 @@ global g_decArgo_floatNum;
 global g_decArgo_cycleNum;
 
 % SBD sub-directories
-global g_decArgo_bufferDirectory;
 global g_decArgo_archiveDirectory;
 
 % arrays to store rough information on received data
@@ -47,9 +46,6 @@ global g_decArgo_253PacketPhaseReceived;
 
 % phase of received data
 global g_decArgo_receivedDataPhase;
-
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
 
 
 % initialize information arrays
@@ -74,11 +70,7 @@ for idBufFile = 1:length(a_sbdFileNameList)
       g_decArgo_cycleNum = get_cycle_num_from_sbd_name_ir_rudics({sbdFileName});
    end
    
-   if (g_decArgo_virtualBuff)
-      sbdFilePathName = [g_decArgo_archiveDirectory '/' sbdFileName];
-   else
-      sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-   end
+   sbdFilePathName = [g_decArgo_archiveDirectory '/' sbdFileName];
    sbdFileDate = a_sbdFileDateList(idBufFile);
    
    fId = fopen(sbdFilePathName, 'r');

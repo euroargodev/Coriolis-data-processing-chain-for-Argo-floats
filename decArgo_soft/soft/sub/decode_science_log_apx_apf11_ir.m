@@ -69,6 +69,9 @@ global g_decArgo_cycleNum;
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
+% arrays to store decoded calibration coefficient
+global g_decArgo_calibInfo;
+
 
 if (isempty(a_scienceLogFileList))
    return
@@ -314,22 +317,16 @@ paramSal.cFormat = '%10.4f';
 paramVrsPh = get_netcdf_param_attributes('VRS_PH');
 paramVrsPh.cFormat = '%.6f';
 
-paramO2 = get_netcdf_param_attributes('TEMP_DOXY');
-paramO2.name = 'O2';
-paramO2.units = '';
+paramO2 = get_netcdf_param_attributes('O2');
 paramO2.cFormat = '%.5f';
 
-paramAirSat = get_netcdf_param_attributes('TEMP_DOXY');
-paramAirSat.name = 'AirSat';
-paramAirSat.units = '';
+paramAirSat = get_netcdf_param_attributes('AirSat');
 paramAirSat.cFormat = '%.5f';
 
 paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
 paramTempDoxy.cFormat = '%.5f';
 
-paramCalPhase = get_netcdf_param_attributes('TEMP_DOXY');
-paramCalPhase.name = 'CalPhase';
-paramCalPhase.units = '';
+paramCalPhase = get_netcdf_param_attributes('CalPhase');
 paramCalPhase.cFormat = '%.5f';
 
 paramTphaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
@@ -341,58 +338,45 @@ paramC1phaseDoxy.cFormat = '%.5f';
 paramC2phaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
 paramC2phaseDoxy.cFormat = '%.5f';
 
-paramC1Amp = get_netcdf_param_attributes('TEMP_DOXY');
-paramC1Amp.name = 'C1Amp';
-paramC1Amp.units = '';
+paramC1Amp = get_netcdf_param_attributes('C1Amp');
 paramC1Amp.cFormat = '%.5f';
 
-paramC2Amp = get_netcdf_param_attributes('TEMP_DOXY');
-paramC2Amp.name = 'C2Amp';
-paramC2Amp.units = '';
+paramC2Amp = get_netcdf_param_attributes('C2Amp');
 paramC2Amp.cFormat = '%.5f';
 
-paramRawTemp = get_netcdf_param_attributes('TEMP_DOXY');
-paramRawTemp.name = 'RawTemp';
-paramRawTemp.units = '';
+paramRawTemp = get_netcdf_param_attributes('RawTemp');
 paramRawTemp.cFormat = '%.5f';
 
 paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
 paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
 paramNbSampleTransistorPh = get_netcdf_param_attributes('NB_SAMPLE_TRANSISTOR_PH');
 
-paramChlWave = get_netcdf_param_attributes('TEMP_DOXY');
-paramChlWave.name = 'chl_wave';
-paramChlWave.units = '';
+paramChlWave = get_netcdf_param_attributes('chl_wave');
 paramChlWave.cFormat = '%d';
 
 paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
 
-paramBscWave = get_netcdf_param_attributes('TEMP_DOXY');
-paramBscWave.name = 'bsc_wave';
-paramBscWave.units = '';
+paramBscWave = get_netcdf_param_attributes('bsc_wave');
 paramBscWave.cFormat = '%d';
 
 paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
 
-paramCdWave = get_netcdf_param_attributes('TEMP_DOXY');
-paramCdWave.name = 'cd_wave';
-paramCdWave.units = '';
+paramCdWave = get_netcdf_param_attributes('cd_wave');
 paramCdWave.cFormat = '%d';
 
 paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
 
-paramThermSig = get_netcdf_param_attributes('TEMP_DOXY');
-paramThermSig.name = 'therm_sig';
-paramThermSig.units = '';
+paramThermSig = get_netcdf_param_attributes('therm_sig');
 paramThermSig.cFormat = '%d';
 
 paramDownIrradiance380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
-
 paramDownIrradiance412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
-
 paramDownIrradiance490 = get_netcdf_param_attributes('DOWN_IRRADIANCE490');
-
 paramDownwellingPar = get_netcdf_param_attributes('DOWNWELLING_PAR');
+
+paramDownIrradiance443 = get_netcdf_param_attributes('DOWN_IRRADIANCE443');
+paramDownIrradiance555 = get_netcdf_param_attributes('DOWN_IRRADIANCE555');
+paramDownIrradiance670 = get_netcdf_param_attributes('DOWN_IRRADIANCE670');
 
 if (~isempty(ctdP))
    o_profCtdP = get_apx_profile_data_init_struct;
@@ -480,13 +464,65 @@ if (~isempty(flbbCdCfg))
 end
 
 if (~isempty(ocr504I))
-   o_profOcr504I = get_apx_profile_data_init_struct;
-   o_profOcr504I.dateList = paramJuld;
-   o_profOcr504I.dates = ocr504I(:, 1);
-   o_profOcr504I.paramList = [paramPres ...
-      paramDownIrradiance380 paramDownIrradiance412 ...
-      paramDownIrradiance490 paramDownwellingPar];
-   o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
+   % use calibration coefficients to define which parameters are concerned
+   if (isempty(g_decArgo_calibInfo))
+      fprintf('ERROR: Float #%d Cycle #%d: Calibration information is missing - cannot determine OCR parameters\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+   elseif (~isfield(g_decArgo_calibInfo, 'OCR'))
+      fprintf('ERROR: Float #%d Cycle #%d: OCR sensor calibration information is missing - cannot determine OCR parameters\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+   else
+      if (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda380') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda380') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda380') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0Lambda412') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda412') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda412') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0PAR') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1PAR') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmPAR'))
+         
+         o_profOcr504I = get_apx_profile_data_init_struct;
+         o_profOcr504I.dateList = paramJuld;
+         o_profOcr504I.dates = ocr504I(:, 1);
+         o_profOcr504I.paramList = [paramPres ...
+            paramDownIrradiance380 paramDownIrradiance412 ...
+            paramDownIrradiance490 paramDownwellingPar];
+         % BE CAREFULL: convert to Argo parameter units
+         ocr504I(:, 2:4) =  ocr504I(:, 2:4)*0.01;
+         o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
+         
+      elseif (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda443') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda443') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda443') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda490') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0Lambda555') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda555') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda555') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A0Lambda670') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'A1Lambda670') && ...
+            isfield(g_decArgo_calibInfo.OCR, 'LmLambda670'))
+         
+         o_profOcr504I = get_apx_profile_data_init_struct;
+         o_profOcr504I.dateList = paramJuld;
+         o_profOcr504I.dates = ocr504I(:, 1);
+         o_profOcr504I.paramList = [paramPres ...
+            paramDownIrradiance443 paramDownIrradiance490 ...
+            paramDownIrradiance555 paramDownIrradiance670];
+         % BE CAREFULL: convert to Argo parameter units
+         ocr504I(:, 2:end) =  ocr504I(:, 2:end)*0.01;
+         o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
+         
+      else
+         fprintf('ERROR: Float #%d Cycle #%d: Found unexpected set of OCR calibration coefficients - cannot determine OCR parameters\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+      end
+   end
 end
 
 % add PRES for DO, FLBB and OCR data

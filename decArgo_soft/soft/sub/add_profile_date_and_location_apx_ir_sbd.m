@@ -49,6 +49,7 @@ a_gpsLocDate = a_gpsData{4};
 a_gpsLocLon = a_gpsData{5};
 a_gpsLocLat = a_gpsData{6};
 a_gpsLocQc = a_gpsData{7};
+a_gpsLocReceivedCyNum = [];
 if (length(a_gpsData) > 11)
    a_gpsLocReceivedCyNum = a_gpsData{12};
 end
@@ -124,18 +125,9 @@ for idP = 1:length(o_tabProfiles)
             idNoDef = find(prof.data(:, idMtime) ~= paramMtime.fillValue);
             prof.data(idDef, idMtime) = prof.paramList(idMtime).fillValue;
             prof.data(idNoDef, idMtime) = prof.data(idNoDef, idMtime) - prof.date;
-            if (~isempty(prof.dataAdj))
-               idDef = find(prof.dataAdj(:, idMtime) == paramMtime.fillValue);
-               idNoDef = find(prof.dataAdj(:, idMtime) ~= paramMtime.fillValue);
-               prof.dataAdj(idDef, idMtime) = prof.paramList(idMtime).fillValue;
-               prof.dataAdj(idNoDef, idMtime) = prof.dataAdj(idNoDef, idMtime) - prof.date;
-            end
          else
             % we are not able to compute MTIME
             prof.data(:, idMtime) = ones(size(prof.data, 1), 1)*paramMtime.fillValue;
-            if (~isempty(prof.dataAdj))
-               prof.dataAdj(:, idMtime) = ones(size(prof.dataAdj, 1), 1)*paramMtime.fillValue;
-            end
          end
       end
       

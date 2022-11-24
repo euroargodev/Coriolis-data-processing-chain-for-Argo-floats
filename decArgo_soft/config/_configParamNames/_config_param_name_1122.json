@@ -689,13 +689,21 @@
    },
    "CONF_PARAM_87" :
    {
+      "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_4_3",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth4_nm",
+      "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #4 measurements (in nanometer)."
+   },
+   "CONF_PARAM_88" :
+   {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_1_2",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #1measurements (in nanometer)."
    },
-   "CONF_PARAM_88" :
+   "CONF_PARAM_89" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_2_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -703,7 +711,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength2_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_89" :
+   "CONF_PARAM_90" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_3_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -711,7 +719,15 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength3_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_90" :
+   "CONF_PARAM_91" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_4_2",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength4_nm",
+      "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #4 measurements (in nanometer)."
+   },
+   "CONF_PARAM_92" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_2_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -719,7 +735,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_91" :
+   "CONF_PARAM_93" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -727,7 +743,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_92" :
+   "CONF_PARAM_94" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_7",
       "CONF_PARAM_LABEL" : "n/a",
@@ -735,7 +751,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_93" :
+   "CONF_PARAM_95" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_8",
       "CONF_PARAM_LABEL" : "n/a",
@@ -743,7 +759,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
    },
-   "CONF_PARAM_94" :
+   "CONF_PARAM_96" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -751,7 +767,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_95" :
+   "CONF_PARAM_97" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_5",
       "CONF_PARAM_LABEL" : "n/a",
@@ -759,7 +775,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaWithScoop_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Suna with scoop which redirects flow through Suna optics"
    },
-   "CONF_PARAM_96" :
+   "CONF_PARAM_98" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_4_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",

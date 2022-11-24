@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, o_tabTechAuxNMeas, ...
 %    o_structConfig] = decode_apex_iridium_rudics_data_apf11( ...
 %    a_floatNum, a_cycleList, ...
 %    a_decoderId, a_floatRudicsId, ...
@@ -19,13 +19,14 @@
 %   a_floatEndDate    : float end decoding date
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles    : decoded profiles
-%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex : decoded technical index information
-%   o_tabNcTechVal   : decoded technical data
-%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
-%   o_structConfig   : NetCDF float configuration
+%   o_tabProfiles     : decoded profiles
+%   o_tabTrajNMeas    : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle   : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex  : decoded technical index information
+%   o_tabNcTechVal    : decoded technical data
+%   o_tabTechNMeas    : decoded technical N_MEASUREMENT data
+%   o_tabTechAuxNMeas : decoded technical N_MEASUREMENT AUX data
+%   o_structConfig    : NetCDF float configuration
 %
 % EXAMPLES :
 %
@@ -37,7 +38,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, o_tabTechAuxNMeas, ...
    o_structConfig] = decode_apex_iridium_rudics_data_apf11( ...
    a_floatNum, a_cycleList, ...
    a_decoderId, a_floatRudicsId, ...
@@ -50,6 +51,7 @@ o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
 o_tabTechNMeas = [];
+o_tabTechAuxNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -408,7 +410,7 @@ for idCy = 1:length(a_cycleList)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+         [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechAuxNMeas] = ...
             process_trajectory_data_apx_apf11_ir( ...
             cycleNum, ...
             profCtdP, profCtdPt, profCtdPts, profCtdPtsh, profDo, ...
@@ -416,7 +418,7 @@ for idCy = 1:length(a_cycleList)
             g_decArgo_gpsData, grounding, iceDetection, buoyancy, ...
             cycleTimeData, ...
             g_decArgo_clockOffset, ...
-            o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+            o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechAuxNMeas);
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
@@ -434,11 +436,14 @@ for idCy = 1:length(a_cycleList)
          g_decArgo_outputNcParamValue = [];
          
          % create time series of technical data
-         tabTechNMeas = create_technical_time_series_apx_apf11_ir( ...
+         [tabTechNMeas, tabTechAuxNMeas] = create_technical_time_series_apx_apf11_ir( ...
             vitalsData, cycleTimeData, iceDetection, g_decArgo_cycleNum);
          
          if (~isempty(tabTechNMeas))
             o_tabTechNMeas = [o_tabTechNMeas; tabTechNMeas];
+         end
+         if (~isempty(tabTechAuxNMeas))
+            o_tabTechAuxNMeas = [o_tabTechAuxNMeas; tabTechAuxNMeas];
          end
          
       end
@@ -463,11 +468,11 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, g_decArgo_gpsData, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas] = ...
       update_output_cycle_number_ir_sbd( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas);
 
-   % perform DOXY, CHLA and NITRATE adjustment
+   % perform PARAMETER adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatLaunchDate, 1, a_decoderId);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are

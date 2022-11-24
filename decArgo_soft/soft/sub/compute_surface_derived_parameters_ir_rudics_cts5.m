@@ -47,6 +47,12 @@ if (~isempty(surfInfo))
       a_tabSurf(surfInfo(idSensor1(idS), 1)) = ...
          compute_surface_derived_parameters_for_OPTODE(surfOptode, a_decoderId);
    end
+   
+   % compute OCR derived parameters
+   idSensor2 = find((surfInfo(:, 2) == 2) & (surfInfo(:, 3) == 0));
+   for idP = 1:length(idSensor2)
+      a_tabSurf(surfInfo(idSensor2(idP), 1)) = compute_surface_derived_parameters_for_OCR(a_tabSurf(surfInfo(idSensor2(idP), 1)));
+   end
 end
 
 % update output parameters
@@ -124,7 +130,7 @@ for idS = 1:size(paramToDeriveList, 1)
       
       a_surfOptode.data(:, end+1) = ppoxDoxy;
       if (isempty(a_surfOptode.dataQc))
-         a_surfOptode.dataQc = ones(size(a_surfOptode.data, 1), size(a_surfOptode.data, 2)-1)*g_decArgo_qcDef;
+         a_surfOptode.dataQc = ones(size(a_surfOptode.data, 1), length(a_surfOptode.paramList))*g_decArgo_qcDef;
       end
       ppoxDoxyQc = ones(size(a_surfOptode.data, 1), 1)*g_decArgo_qcDef;
       ppoxDoxyQc(find(ppoxDoxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -193,10 +199,10 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {121, 122, 124, 126}
+   case {121, 122, 124, 126, 127}
       
       % compute PPOX_DOXY values using the Stern-Volmer equation
-      o_PPOX_DOXY = compute_PPOX_DOXY_121_122_124_126( ...
+      o_PPOX_DOXY = compute_PPOX_DOXY_121_122_124_126_127( ...
          a_C1PHASE_DOXY, ...
          a_C2PHASE_DOXY, ...
          a_TEMP_DOXY, ...
@@ -233,4 +239,159 @@ switch (a_decoderId)
       
 end
                
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the OCR sensor.
+%
+% SYNTAX :
+%  [o_surfOcr] = compute_surface_derived_parameters_for_OCR(a_surfOcr)
+%
+% INPUT PARAMETERS :
+%   a_surfOcr : input OCR surface profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_surfOcr : output OCR surface profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/16/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_surfOcr] = compute_surface_derived_parameters_for_OCR(a_surfOcr)
+
+% output parameters initialization
+o_surfOcr = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the surface profile
+paramNameList = {a_surfOcr.paramList.name};
+
+% compute DOWN_IRRADIANCE380 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE380'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE380'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_127( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downIrr380;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr380Qc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downIrr380Qc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% compute DOWN_IRRADIANCE412 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE412'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE412'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_127( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downIrr412;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr412Qc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr412Qc(find(downIrr412 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downIrr412Qc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% compute DOWN_IRRADIANCE490 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE490'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE490'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_127( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downIrr490;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr490Qc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downIrr490Qc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% compute DOWNWELLING_PAR data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_PAR'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWNWELLING_PAR'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_127( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downPar;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downParQc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downParQc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% update output parameters
+a_surfOcr.derived = 1;
+o_surfOcr = a_surfOcr;
+
 return

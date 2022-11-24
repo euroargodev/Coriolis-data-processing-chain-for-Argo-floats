@@ -44,8 +44,13 @@ fileTypeList = [ ...
    {'*_do*.hex'} ... % CTS5-USEA
    {'*_eco*.hex'} ... % CTS5-USEA
    {'*_ocr*.hex'} ... % CTS5-USEA
+   {'*_opus_blk*.hex'} ... % CTS5-USEA
+   {'*_opus_lgt*.hex'} ... % CTS5-USEA
    {'*uvp6_blk*.hex'} ... % CTS5-USEA
-   {'*uvp6_lpm*.hex'} ... % CTS5-USEA
+   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA
+   {'*_crover*.hex'} ... % CTS5-USEA
+   {'*_sbeph*.hex'} ... % CTS5-USEA
+   {'*_suna*.hex'} ... % CTS5-USEA
    ];
 
 % configuration parameters
@@ -127,7 +132,7 @@ for idFloat = 1:nbFloats
       end
    end
    fileNameList = unique(fileNameList);
-
+   
    for idFile = 1:length(fileNameList)
       fileName = fileNameList{idFile};
       filePathName = [inputDirName '/' loginName '/' fileName];
@@ -136,7 +141,7 @@ for idFloat = 1:nbFloats
          fileName(1:end-4) '_' ...
          datestr(datenum(fileInfo.date, 'dd-mmmm-yyyy HH:MM:SS'), 'yyyymmddHHMMSS') ...
          fileName(end-3:end)];
-
+      
       filePathNameOut = [floatOutputDirName '/' fileNameOut];
       if (exist(filePathNameOut, 'file') == 2)
          % file exists

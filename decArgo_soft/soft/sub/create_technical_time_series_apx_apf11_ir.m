@@ -2,7 +2,7 @@
 % Create time series of technical data (to be stored in TECH_AUX file).
 %
 % SYNTAX :
-%  [o_tabTechNMeas] = create_technical_time_series_apx_apf11_ir( ...
+%  [o_tabTechNMeas, o_tabTechAuxNMeas] = create_technical_time_series_apx_apf11_ir( ...
 %    a_vitalsData, a_cycleTimeData, a_iceDetection, a_cycleNum)
 %
 % INPUT PARAMETERS :
@@ -12,7 +12,8 @@
 %   a_cycleNum      : current cycle number
 %
 % OUTPUT PARAMETERS :
-%   o_tabTechNMeas  : N_MEASUREMENT structure of technical data time series
+%   o_tabTechNMeas    : N_MEASUREMENT structure of technical data time series
+%   o_tabTechAuxNMeas : N_MEASUREMENT structure of AUX technical data time series
 %
 % EXAMPLES :
 %
@@ -20,13 +21,14 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/05/2018 - RNU - creation
+%   02/25/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTechNMeas] = create_technical_time_series_apx_apf11_ir( ...
+function [o_tabTechNMeas, o_tabTechAuxNMeas] = create_technical_time_series_apx_apf11_ir( ...
    a_vitalsData, a_cycleTimeData, a_iceDetection, a_cycleNum)
          
 % output parameters initialization
 o_tabTechNMeas = [];
+o_tabTechAuxNMeas = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -74,6 +76,7 @@ end
 
 % structure to store N_MEASUREMENT technical data
 o_tabTechNMeas = get_traj_n_meas_init_struct(a_cycleNum, -1);
+o_tabTechAuxNMeas = get_traj_n_meas_init_struct(a_cycleNum, -1);
 
 % vitals log file data storage
 fieldNames = fields(a_vitalsData);
@@ -84,32 +87,40 @@ for idF = 1:length(fieldNames)
    % create the parameter list
    if (strcmp(fieldName, 'VITALS_CORE'))
       
-      paramAirBladderPresDbar = get_netcdf_param_attributes('AIR_BLADDER_PRESSURE_DBAR');
-      paramAirBladderPresCount = get_netcdf_param_attributes('AIR_BLADDER_PRESSURE_COUNT');
-      paramBatteryVoltageVolt = get_netcdf_param_attributes('BATTERY_VOLTAGE_VOLT');
-      paramBatteryVoltageCount = get_netcdf_param_attributes('BATTERY_VOLTAGE_COUNT');
-      paramHumidityPercentRelative = get_netcdf_param_attributes('HUMIDITY_PERCENT_RELATIVE');
-      paramLeakDetectVoltageVolt = get_netcdf_param_attributes('LEAK_DETECT_VOLTAGE_VOLT');
-      paramInternalVacuumPresDbar = get_netcdf_param_attributes('INTERNAL_VACUUM_PRESSURE_DBAR');
-      paramInternalVacuumPresCount = get_netcdf_param_attributes('INTERNAL_VACUUM_PRESSURE_COUNT');
-      paramCoulombCounterAh = get_netcdf_param_attributes('COULOMB_COUNTER_AMPERE_HOUR');
-      paramBatteryCurrentDrawMa = get_netcdf_param_attributes('BATTERY_CURRENT_DRAW_MILLI_AMPERE');
-      paramBatteryCurrentRawMa = get_netcdf_param_attributes('BATTERY_CURRENT_RAW_MILLI_AMPERE');
+      paramAirBladderPresDbar = get_netcdf_param_attributes('PRESSURE_AirBladder_dbar');
+      paramAirBladderPresCount = get_netcdf_param_attributes('PRESSURE_AirBladder_COUNT');
+      paramBatteryVoltageVolt = get_netcdf_param_attributes('VOLTAGE_Battery_volts');
+      paramBatteryVoltageCount = get_netcdf_param_attributes('VOLTAGE_Battery_COUNT');
+      paramHumidityPercentRelative = get_netcdf_param_attributes('HUMIDITY_InsideHull_percent');
+      paramLeakDetectVoltageVolt = get_netcdf_param_attributes('VOLTAGE_WaterLeakInsideHullDetection_volts');
+      paramInternalVacuumPresDbar = get_netcdf_param_attributes('PRESSURE_InternalVacuum_dbar');
+      paramInternalVacuumPresCount = get_netcdf_param_attributes('PRESSURE_InternalVacuum_COUNT');
+      paramCoulombCounterMAh = get_netcdf_param_attributes('NUMBER_BatteryUsedCoulombCounts_mA_hour');
+      paramBatteryCurrentMa = get_netcdf_param_attributes('CURRENT_Battery_mA');
+      paramBatteryCurrentCount = get_netcdf_param_attributes('CURRENT_Battery_COUNT');
       
       paramList = [paramAirBladderPresDbar paramAirBladderPresCount paramBatteryVoltageVolt ...
          paramBatteryVoltageCount paramHumidityPercentRelative paramLeakDetectVoltageVolt ...
-         paramInternalVacuumPresDbar paramInternalVacuumPresCount paramCoulombCounterAh ...
-         paramBatteryCurrentDrawMa paramBatteryCurrentRawMa];
+         paramInternalVacuumPresDbar paramInternalVacuumPresCount paramCoulombCounterMAh ...
+         paramBatteryCurrentMa paramBatteryCurrentCount];
+      auxFlag = 1;
    elseif (strcmp(fieldName, 'WD_CNT'))
       
       paramFirmwareWatchdogCount = get_netcdf_param_attributes('FIRMWARE_WATCHDOG_COUNT');
       
       paramList = [paramFirmwareWatchdogCount];
+      auxFlag = 1;
    else
       
-      fprintf('WARNING: Float #%d Cycle #%d: Field ''%s'' not expected in vitals data structure - data ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in vitals data structure - data ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, fieldName);
       continue
+   end
+   
+   if (auxFlag)
+      tabTechNMeas = o_tabTechAuxNMeas;
+   else
+      tabTechNMeas = o_tabTechNMeas;
    end
    
    for idV = 1:size(a_vitalsData.(fieldName), 1)
@@ -118,16 +129,16 @@ for idF = 1:length(fieldNames)
       timeAdj = a_vitalsData.(fieldName)(idV, 2);
       
       done = 0;
-      if (~isempty(o_tabTechNMeas.tabMeas))
-         idMeas = find([o_tabTechNMeas.tabMeas.juld] == time);
+      if (~isempty(tabTechNMeas.tabMeas))
+         idMeas = find([tabTechNMeas.tabMeas.juld] == time);
          if (~isempty(idMeas))
             
-            o_tabTechNMeas.tabMeas(idMeas).paramList = [ ...
-               o_tabTechNMeas.tabMeas(idMeas).paramList paramList];
-            o_tabTechNMeas.tabMeas(idMeas).paramData = [ ...
-               o_tabTechNMeas.tabMeas(idMeas).paramData a_vitalsData.(fieldName)(idV, 3:end)];
+            tabTechNMeas.tabMeas(idMeas).paramList = [ ...
+               tabTechNMeas.tabMeas(idMeas).paramList paramList];
+            tabTechNMeas.tabMeas(idMeas).paramData = [ ...
+               tabTechNMeas.tabMeas(idMeas).paramData a_vitalsData.(fieldName)(idV, 3:end)];
             
-            o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
+            tabTechNMeas.tabMeas = [tabTechNMeas.tabMeas; measStruct];
             done = 1;
          end
       end
@@ -150,9 +161,15 @@ for idF = 1:length(fieldNames)
             measStruct.paramList = paramList;
             measStruct.paramData = a_vitalsData.(fieldName)(idV, 3:end);
             
-            o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
+            tabTechNMeas.tabMeas = [tabTechNMeas.tabMeas; measStruct];
          end
       end
+   end
+   
+   if (auxFlag)
+      o_tabTechAuxNMeas = tabTechNMeas;
+   else
+      o_tabTechNMeas = tabTechNMeas;
    end
 end
 
@@ -177,7 +194,7 @@ if (~isempty(a_iceDetection))
       end
       measStruct.paramList = paramIceBreakupDetectFlag;
       measStruct.paramData = a_iceDetection.breakupDetect.detectFlag(idMeas);
-      o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
+      o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
    end
 
    if (~isempty(a_iceDetection.ascent.abortTypeTime))
@@ -196,7 +213,7 @@ if (~isempty(a_iceDetection))
       end
       measStruct.paramList = paramIceAscentAbortNum;
       measStruct.paramData = a_iceDetection.ascent.abortType;
-      o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
+      o_tabTechAuxNMeas.tabMeas = [o_tabTechAuxNMeas.tabMeas; measStruct];
    end
 end
 

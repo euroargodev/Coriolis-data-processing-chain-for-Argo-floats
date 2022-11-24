@@ -139,6 +139,9 @@ for idF = 1:length(fieldNames)
    if (strcmp(fieldNames{idF}, 'GUI'))
       continue
    end
+   if (strcmp(fieldNames{idF}, 'SENSOR_16'))
+      continue
+   end
    rawData = configData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
       data = rawData{idI};
@@ -222,6 +225,8 @@ switch (a_decoderId)
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124_125;
    case {126}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_126;
+   case {127}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);

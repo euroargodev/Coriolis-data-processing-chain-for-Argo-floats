@@ -263,7 +263,7 @@ floatMetaDataNameVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_NAME', 'NC_CHAR', 
 netcdf.putAtt(fCdf, floatMetaDataNameVarId, 'long_name', 'Name of miscellaneous float metadata');
 netcdf.putAtt(fCdf, floatMetaDataNameVarId, '_FillValue', ' ');
 
-floatMetaDataValueVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_VALUE', 'NC_CHAR', fliplr([nFloatMetaDataDimId string512DimId]));
+floatMetaDataValueVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_VALUE', 'NC_CHAR', fliplr([nFloatMetaDataDimId string4096DimId]));
 netcdf.putAtt(fCdf, floatMetaDataValueVarId, 'long_name', 'Value of miscellaneous float metadata');
 netcdf.putAtt(fCdf, floatMetaDataValueVarId, '_FillValue', ' ');
 
@@ -516,11 +516,30 @@ for idConf = 1:length(a_launchAuxConfigName)
    confName = a_launchAuxConfigName{idConf};
    idDesc = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
    if (isempty(idDesc))
-      % confName(end-11:end) to be sure that we are after the las '>' in all
-      % cases
-      idDesc = find(cellfun(@(x) (length(x) > 11) && ~isempty(strfind(x(end-11:end), confName(end-11:end))), g_decArgo_outputNcConfParamLabel), 1);
+      idFz = strfind(confName, 'Zone');
+      if (length(idFz) == 1)
+         confNameBis = [confName(1:idFz-1) 'Zone<N>' confName(idFz+5:end)];
+         idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
+      elseif (length(idFz) == 2)
+         confNameBis = [confName(1:idFz(1)-1) 'Zone<N>' confName(idFz(1)+5:idFz(2)-1) 'Zone<N+1>' confName(idFz(2)+5:end)];
+         idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
+      end
+      if (isempty(idDesc))
+         % confName(end-11:end) to be sure that we are after the las '>' in all
+         % cases
+         idDescAll = find(cellfun(@(x) (length(x) > 11) && ~isempty(strfind(x(end-11:end), confName(end-11:end))), g_decArgo_outputNcConfParamLabel));
+         if (length(idDescAll) == 1)
+            idDesc = idDescAll;
+         end
+      end
    end
-   confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
+   if (~isempty(idDesc))
+      confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
+   else
+      confDescription = 'DESCRIPTION CANNOT BE RETRIEVED';
+      fprintf('ERROR: Float #%d: unable to retrieve description of AUX configuration parameter ''%s''\n', ...
+         g_decArgo_floatNum, confName);
+   end
    confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
 
    netcdf.putVar(fCdf, launchConfigParameterNameVarId, ...

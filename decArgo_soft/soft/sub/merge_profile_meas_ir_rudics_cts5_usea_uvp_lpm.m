@@ -135,11 +135,6 @@ for idDir = 1:length(uDir)
       dates = a_tabProfiles(idProf).dates;
       datesAdj = a_tabProfiles(idProf).datesAdj;
       data = a_tabProfiles(idProf).data;
-      if (uDir(idDir) == 'D')
-         dates = flipud(dates);
-         datesAdj = flipud(datesAdj);
-         data = flipud(data);
-      end
       
       finalDates = [finalDates; dates];
       finalDatesAdj = [finalDatesAdj; datesAdj];

@@ -25,7 +25,7 @@ FLOAT_LIST_FILE_NAME = '';
 
 % directory of Argo NetCDF files
 DIR_INPUT_NC_FILES = 'E:\201902-ArgoData\coriolis';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\Coriolis_deep_floats_20210205\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log and the csv files
@@ -71,7 +71,7 @@ if (fidOut == -1)
    return
 end
 header = 'WMO;File;N_PROF;PARAM_LIST;HISTORY_DATE';
-testList = sprintf('Test#%d;', [1:23 57:63]);
+testList = sprintf('Test#%d;', [1:25 57:63]);
 fprintf(fidOut, '%s;%s\n', header, testList(1:end-1));
 
 % process input directory contents
@@ -124,7 +124,7 @@ if (~isempty(g_ngrft_reportData.float))
       paramList = g_ngrft_reportData.profParam{idL};
       paramList = sprintf('%s/', paramList{:});
       testFailedFlag = get_qctest_flag(g_ngrft_reportData.qcTestFailed{idL});
-      testFailedFlag(24:56) = [];
+      testFailedFlag(26:56) = [];
       testFailedFlag = sprintf('%c;', testFailedFlag);
       
       fprintf(fidOut, '%d;%s;%d;%s;%s;%s\n', ...

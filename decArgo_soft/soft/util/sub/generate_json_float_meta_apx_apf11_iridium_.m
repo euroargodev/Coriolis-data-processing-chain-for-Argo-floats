@@ -185,18 +185,18 @@ for idFloat = 1:length(floatList)
       metaBddStructField = metaBddStructNames{idBSN};
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
-         idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
+         idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue), 1);
          if (~isempty(idF))
             metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
-            if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
+            if (~isempty(find(strcmp(mandatoryList1, metaBddStructField), 1)))
                if (strcmp(metaBddStructField, 'CONTROLLER_BOARD_TYPE_PRIMARY'))
                   metaStruct.(metaBddStructField) = 'APF11';
                else
                   metaStruct.(metaBddStructField) = 'n/a';
                end
                %                fprintf('Empty mandatory meta-data ''%s'' set to ''n/a''\n', metaBddStructValue);
-            elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
+            elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField), 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
             end
             if (strcmp(metaBddStructField, 'FLOAT_SERIAL_NO'))
@@ -353,8 +353,8 @@ for idFloat = 1:length(floatList)
    
    % add the calibration coefficients for ECO3 and OCR sensors (coming from the
    % a_calibFileName)
-   
-   idF = find(strcmp(calibData(:, 1), num2str(floatNum)) == 1);
+
+   idF = find(strcmp(calibData(:, 1), num2str(floatNum)));
    dataStruct = [];
    for id = 1:length(idF)
       fieldName1 = calibData{idF(id), 2};
@@ -362,22 +362,35 @@ for idFloat = 1:length(floatList)
       fieldName2 = calibData{idF(id), 3};
       dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
    end
-   metaStruct.CALIBRATION_COEFFICIENT = dataStruct;   
+   metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
+   
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'ECO3')))
+      if (~isfield(dataStruct, 'ECO3'))
+         fprintf('ERROR: Float #%d: ECO3 calibration coefficients are missing\n', ...
+            floatNum);
+      end
+   end
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'OCR')))
+      if (~isfield(dataStruct, 'OCR'))
+         fprintf('ERROR: Float #%d: OCR calibration coefficients are missing\n', ...
+            floatNum);
+      end
+   end
    
    % add the calibration coefficients for OPTODE sensor (coming from the data base)
    switch (dacFormatId)
       case {'2.11.1.S', '2.12.2.1.S', '2.11.3.R', '2.12.2.1.R', '2.12.3.R', '2.13.1.R', '2.13.1.1.R', '2.14.3.R', '2.15.0.R'}
-         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
-            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
-            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C'))) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_'))) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_'))));
          calibDataDb = [];
          for id = 1:length(idF)
             calibName = metaData{idForWmo(idF(id)), 5};
-            if (strncmp(calibName, 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1)
+            if (strncmp(calibName, 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')))
                fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
-            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')))
                fieldName = ['PhaseCoef' calibName(end)];
-            elseif (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')))
                fieldName = ['TempCoef' calibName(end)];
             end
             calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
@@ -388,15 +401,15 @@ for idFloat = 1:length(floatList)
    end
    
    % add the calibration information for TRANSISTOR_PH sensor
-   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH') == 1))
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH')))
       
-      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_')) == 1));
+      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_'))));
       phCalibData = [];
       for id = 1:length(idF)
          calibName = metaData{idForWmo(idF(id)), 5};
-         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')) == 1)
+         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')))
             fieldName = ['k' calibName(end)];
-         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')) == 1)
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')))
             fieldName = ['f' calibName(end)];
          end
          phCalibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
@@ -652,7 +665,7 @@ for idFloat = 1:length(floatList)
       configBddStructValue = configBddStruct.(configBddStructName);
       if (~isempty(configBddStructValue))
          
-         idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1, 1);
+         idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue), 1);
          if (~isempty(idF))
             dimLev = dimLevlist(idForWmo(idF));
             idDim = find(dimLev == 1, 1);
@@ -1388,7 +1401,7 @@ function [a_configParamNames, a_configParamValues] = get_conf_param( ...
 a_configParamNames = [];
 a_configParamValues = [];
 
-idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName) == 1);
+idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName));
 if (~isempty(idF))
    
    pattern = '<I>';

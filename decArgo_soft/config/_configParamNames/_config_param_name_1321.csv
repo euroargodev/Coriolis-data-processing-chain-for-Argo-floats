@@ -81,9 +81,11 @@ CONFIG_MEASURE02;n/a;n/a;CONFIG_<short_sensor_name>InAirMeasurementSamplingPerio
       CONFIG_PX_3_2_0_1_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth1_nm;Bandwidth of Ocr DownIrr #1 measurements (in nanometer).
       CONFIG_PX_3_2_0_2_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth2_nm;Bandwidth of Ocr DownIrr #2 measurements (in nanometer).
       CONFIG_PX_3_2_0_3_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth3_nm;Bandwidth of Ocr DownIrr #3 measurements (in nanometer).
+      CONFIG_PX_3_2_0_4_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth4_nm;Bandwidth of Ocr DownIrr #4 measurements (in nanometer).
       CONFIG_PX_3_2_0_1_2;n/a;n/a;CONFIG_OcrDownIrrWavelength1_nm;Wavelength of Ocr DownIrr #1measurements (in nanometer).
       CONFIG_PX_3_2_0_2_2;n/a;n/a;CONFIG_OcrDownIrrWavelength2_nm;Wavelength of Ocr DownIrr #2 measurements (in nanometer).
       CONFIG_PX_3_2_0_3_2;n/a;n/a;CONFIG_OcrDownIrrWavelength3_nm;Wavelength of Ocr DownIrr #3 measurements (in nanometer).
+      CONFIG_PX_3_2_0_4_2;n/a;n/a;CONFIG_OcrDownIrrWavelength4_nm;Wavelength of Ocr DownIrr #4 measurements (in nanometer).
       CONFIG_PX_1_2_0_0_0;n/a;n/a;CONFIG_OcrVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
       CONFIG_PX_1_1_0_0_0;n/a;n/a;CONFIG_OptodeVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
       CONFIG_PX_1_1_0_0_7;n/a;n/a;CONFIG_OptodeMeasurementsInAir_LOGICAL;Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0

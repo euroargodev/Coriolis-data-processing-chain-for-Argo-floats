@@ -29,10 +29,10 @@ o_ctdData = [];
 switch (a_decoderId)
    case {121, 122, 123, 124, 125}
       [o_ctdData] = decode_apmt_ctd_extended_121_2_125(a_data, a_lastByteNum);
-   case {126}
-      [o_ctdData] = decode_apmt_ctd_extended_126(a_data, a_lastByteNum);
+   case {126, 127}
+      [o_ctdData] = decode_apmt_ctd_extended_126_127(a_data, a_lastByteNum);
    otherwise
-      fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
+      fprintf('ERROR: decode_apmt_ctd_extended not defined yet for deciId #%d\n', ...
          a_decoderId);
       return
 end

@@ -241,6 +241,17 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 690300
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+         
+         % cycle #43 detected in 2 sessions
+         id = find((tabCyNum == 43) & (tabBase == 1));
+         tabBase(id(2)) = 0;
+         tabSession(find(tabSession == tabSession(id(2)))) = tabSession(id(1));
+         
+         % 23/10/2020 transmission detected in 2 sessions
+         id98 = find((tabCyNum == 98) & (tabBase == 1));
+         id96 = find((tabCyNum == 96) & (tabBase == 1));
+         tabBase(id96) = 0;
+         tabSession(find(tabSession == tabSession(id96))) = tabSession(id98);
       case 6902814
          % packet type 0 4 5 transmitted after data packets
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
@@ -367,18 +378,24 @@ for sesNum = sessionList
       idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
       
       % specific
-      if (ismember(g_decArgo_floatNum, [3901963 6903256]))
-         if (g_decArgo_floatNum == 3901963)
-            % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
-            % are not the first transmitted SBD
-            if (ismember(cyNum, [13 24 25]))
-               idStop = [];
-            end
-         end
-         if (g_decArgo_floatNum == 6903256)
-            if (cyNum == 6)
-               idStop = [];
-            end
+      if (ismember(g_decArgo_floatNum, [3901963 6903256 6903230]))
+         switch g_decArgo_floatNum
+            case 3901963
+               % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
+               % are not the first transmitted SBD
+               if (ismember(cyNum, [13 24 25]))
+                  idStop = [];
+               end
+            case 6903256
+               if (cyNum == 6)
+                  idStop = [];
+               end
+            case 6903230
+               % cycle #98 is delayed and the packet types [0 4 5]
+               % are not the first transmitted SBD
+               if (cyNum == 98)
+                  idStop = [];
+               end
          end
       end
       

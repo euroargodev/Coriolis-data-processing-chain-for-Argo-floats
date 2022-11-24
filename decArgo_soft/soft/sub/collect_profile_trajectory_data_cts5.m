@@ -84,11 +84,11 @@ for idProf = 1:length(a_tabProfiles)
    
    idPres = find(strcmp({profile.paramList.name}, 'PRES') == 1);
    if (~isempty(idPres))
-      offset = 0;
-      idSub = find(idPres > profile.paramNumberWithSubLevels);
-      if (~isempty(idSub))
-         subOffset = profile.paramNumberOfSubLevels;
-         offset = sum(idSub) - length(idSub);
+      if (~isempty(profile.paramNumberWithSubLevels))
+         idSub = find(profile.paramNumberWithSubLevels < idPres);
+         if (~isempty(idSub))
+            idPres = idPres + sum(profile.paramNumberOfSubLevels(idSub)) - length(idSub);
+         end
       end
       
       direction = 2;
@@ -96,7 +96,7 @@ for idProf = 1:length(a_tabProfiles)
          direction = 1;
       end
       
-      pres = profile.data(:, idPres+offset);
+      pres = profile.data(:, idPres);
       [~, idMax] = max(pres);
       
       profInfo = [profInfo;

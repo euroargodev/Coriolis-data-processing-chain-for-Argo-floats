@@ -333,6 +333,36 @@ for idFile = 1:nbFiles
    firstArgosMsgDate = min(argosDataDate);
    lastArgosMsgDate = max(argosDataDate);
    
+   % specific
+   % Apex float 3901663 (decId 1022) regularly resets at sea
+   if (a_floatNum == 3901663)
+      if (lastArgosMsgDate <= launchDate)
+         
+         fprintf('INFO: Last date of input file (%s) is before float launch date (%s) - file stored without cycle number (i.e. not decoded)\n', ...
+            julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
+            julian_2_gregorian_dec_argo(launchDate));
+         move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'TTT');
+         continue
+      else
+         if (fix(firstArgosMsgDate) == gregorian_2_julian_dec_argo('2018/04/20 00:00:00'))
+            cycleNumber = 0;
+         elseif (fix(firstArgosMsgDate) == gregorian_2_julian_dec_argo('2018/04/30 00:00:00'))
+            cycleNumber = 1;
+            prevDate = gregorian_2_julian_dec_argo('2018/04/30 00:00:00');
+         else
+            cycleNumber = cycleNumber + round((firstArgosMsgDate-prevDate)/10);
+            prevDate = firstArgosMsgDate;
+         end
+      end
+      
+      move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, cycleNumber);
+      tabCycleNumber = [tabCycleNumber; cycleNumber];
+      tabFirstMsgDate = [tabFirstMsgDate; firstArgosMsgDate];
+      tabLastMsgDate = [tabLastMsgDate; lastArgosMsgDate];
+      
+      continue
+   end
+   
    % store file with only ghost messages without any cycle number
    if (isempty(argosDataDate))
       
@@ -377,7 +407,7 @@ for idFile = 1:nbFiles
          % check if the input file contains data of prelude phase and first deep
          % cycle (generally occurs for DPF floats)
          if (isempty(tabCycleNumber) && (g_decArgo_dpfSplitDone == 0))
-
+            
             diffArgosDataDates = diff(argosDataDate)*24;
             if (max(diffArgosDataDates) > dpfFirstDeepCycleDuration/2)
                
@@ -416,7 +446,7 @@ for idFile = 1:nbFiles
                   ((length(subFileNameList) == 2) && (idFile2 == 1)))
                checkTestMsg = 1;
             end
-               
+            
             [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
                argosFileName, floatDecId, floatArgosId, checkTestMsg);
             
@@ -425,40 +455,9 @@ for idFile = 1:nbFiles
                cycleNumber = -1;
                cycleNumberCount = -1;
             end
-            if (a_floatNum == 3901663)
-               % Apex float 3901663 (decId 1022) regularly resets at sea
-               if (cycleNumber == 1)
-                  if (max([tabCycleNumber; remainingFileCycleNumber']) > 0)
-                     offsetCyNum = max([tabCycleNumber; remainingFileCycleNumber']);
-                     cycleNumberCount = 2;
-                  end
-               end
-               cycleNumber = cycleNumber + offsetCyNum;
-               
-               offsetDate = gregorian_2_julian_dec_argo('2019/03/23 00:00:00');
-               if (fix(firstArgosMsgDate) == offsetDate)
-                  cycleNumber = 34;
-                  cycleNumberCount = 2;
-               end
-               offsetDate2 = gregorian_2_julian_dec_argo('2019/04/22 00:00:00');
-               if (fix(firstArgosMsgDate) == offsetDate2)
-                  cycleNumber = 37;
-                  cycleNumberCount = 2;
-               end
-               offsetDate3 = gregorian_2_julian_dec_argo('2019/05/12 00:00:00');
-               if (fix(firstArgosMsgDate) == offsetDate3)
-                  cycleNumber = 39;
-                  cycleNumberCount = 2;
-               end
-               offsetDate4 = gregorian_2_julian_dec_argo('2019/05/31 00:00:00');
-               if (fix(firstArgosMsgDate) == offsetDate4)
-                  cycleNumber = 41;
-                  cycleNumberCount = 2;
-               end
-            end
             
             if (cycleNumberCount > 1)
-            
+               
                % manage possible roll over of profile number counter
                if (~isempty(tabCycleNumber))
                   idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);

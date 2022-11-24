@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas, ...
 %    o_structConfig] = ...
 %    decode_provor_iridium_sbd( ...
 %    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -20,13 +20,13 @@
 %   a_floatEndDate      : end date of the data to process
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles    : decoded profiles
-%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex : decoded technical index information
-%   o_tabNcTechVal   : decoded technical data
-%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
-%   o_structConfig   : NetCDF float configuration
+%   o_tabProfiles     : decoded profiles
+%   o_tabTrajNMeas    : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle   : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex  : decoded technical index information
+%   o_tabNcTechVal    : decoded technical data
+%   o_tabTechAuxNMeas : decoded technical N_MEASUREMENT AUX data
+%   o_structConfig    : NetCDF float configuration
 %
 % EXAMPLES :
 %
@@ -38,7 +38,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas, ...
    o_structConfig] = ...
    decode_provor_iridium_sbd( ...
    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -50,7 +50,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
-o_tabTechNMeas = [];
+o_tabTechAuxNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -82,8 +82,6 @@ global g_decArgo_iridiumDataDirectory;
 global g_decArgo_processRemainingBuffers;
 
 % SBD sub-directories
-global g_decArgo_spoolDirectory;
-global g_decArgo_bufferDirectory;
 global g_decArgo_archiveDirectory;
 global g_decArgo_archiveSbdDirectory;
 global g_decArgo_historyDirectory;
@@ -155,9 +153,6 @@ VERBOSE_MODE_BUFF = 1;
 global g_decArgo_minSubSurfaceCycleDuration;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
 
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
-
 % to detect ICE mode activation
 global g_decArgo_7TypePacketReceivedCyNum;
 g_decArgo_7TypePacketReceivedCyNum = [];
@@ -193,22 +188,11 @@ if (g_decArgo_realtimeFlag)
       mkdir(g_decArgo_historyDirectory);
    end
 end
-if (g_decArgo_virtualBuff)
-   g_decArgo_archiveSbdDirectory = [floatIriDirName 'archive/sbd/'];
-   if (exist(g_decArgo_archiveSbdDirectory, 'dir') == 7)
-      rmdir(g_decArgo_archiveSbdDirectory, 's');
-   end
-   mkdir(g_decArgo_archiveSbdDirectory);
-else
-   g_decArgo_spoolDirectory = [floatIriDirName 'spool/'];
-   if ~(exist(g_decArgo_spoolDirectory, 'dir') == 7)
-      mkdir(g_decArgo_spoolDirectory);
-   end
-   g_decArgo_bufferDirectory = [floatIriDirName 'buffer/'];
-   if ~(exist(g_decArgo_bufferDirectory, 'dir') == 7)
-      mkdir(g_decArgo_bufferDirectory);
-   end
+g_decArgo_archiveSbdDirectory = [floatIriDirName 'archive/sbd/'];
+if (exist(g_decArgo_archiveSbdDirectory, 'dir') == 7)
+   rmdir(g_decArgo_archiveSbdDirectory, 's');
 end
+mkdir(g_decArgo_archiveSbdDirectory);
 
 % inits for output NetCDF file
 decArgoConfParamNames = [];
@@ -271,11 +255,7 @@ if (~g_decArgo_realtimeFlag)
          end
       end
       
-      if (g_decArgo_virtualBuff)
-         add_to_list_ir_sbd(mailFileName, 'spool');
-      else
-         move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
-      end
+      add_to_list_ir_sbd(mailFileName, 'spool');
       nbFiles = nbFiles + 1;
    end
    
@@ -296,22 +276,6 @@ else
          g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
       [pathstr, mailFileName, ext] = fileparts(mailFilePathName);
       duplicate_files_ir({[mailFileName ext]}, pathstr, g_decArgo_archiveDirectory);
-   end
-   
-   % some mail files can be present in the buffer (if the final buffer was not
-   % completed during the previous run of the RT decoder)
-   % move the mail files from buffer to the archive directory (and delete the
-   % associated SBD files)
-   if (~g_decArgo_virtualBuff)
-      fileList = dir([g_decArgo_bufferDirectory '*.txt']);
-      if (~isempty(fileList))
-         fprintf('BUFF_INFO: Moving %d Iridium mail files from float buffer dir to float archive dir (and deleting associated SBD files)\n', ...
-            length(fileList));
-         for idF = 1:length(fileList)
-            fileName = fileList(idF).name;
-            move_files_ir_sbd({fileName}, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 0, 1);
-         end
-      end
    end
    
    % move the mail files from archive to the spool directory
@@ -342,11 +306,7 @@ else
             end
          end
          
-         if (g_decArgo_virtualBuff)
-            add_to_list_ir_sbd(mailFileName, 'spool');
-         else
-            move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
-         end
+         add_to_list_ir_sbd(mailFileName, 'spool');
          nbFiles = nbFiles + 1;
       end
       
@@ -361,7 +321,7 @@ if ((g_decArgo_realtimeFlag) || ...
 end
 
 % ignore duplicated mail files (move duplicates in the archive directory)
-ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirectory);
+ignore_duplicated_mail_files;
 
 if (g_decArgo_realtimeFlag)
    
@@ -380,29 +340,15 @@ if (g_decArgo_realtimeFlag)
       for idF = 1:length(idFileList)
          
          % move the next file into the buffer directory
-         if (g_decArgo_virtualBuff)
-            add_to_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer');
-            remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 0);
-         else
-            move_files_ir_sbd(mailFileNameList(idFileList(idF)), ...
-               g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
-         end
+         add_to_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer');
+         remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 0);
          
          % extract the attachement
-         if (g_decArgo_virtualBuff)
-            [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-               mailFileNameList{idFileList(idF)}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-         else
-            [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-               mailFileNameList{idFileList(idF)}, g_decArgo_bufferDirectory, g_decArgo_bufferDirectory);
-         end
+         [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+            mailFileNameList{idFileList(idF)}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
          g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
          if (attachmentFound == 0)
-            if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
-            else
-               move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-            end
+            remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
          else
             % specific
             % 3901598: co_20190119T061121Z_300234064737400_001169_000000_4032.txt
@@ -411,11 +357,7 @@ if (g_decArgo_realtimeFlag)
             % buffer for this cycle
             if (g_decArgo_floatNum == 3901598)
                if (strcmp(mailFileNameList{idFileList(idF)}, 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt'))
-                  if (g_decArgo_virtualBuff)
-                     remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
-                  else
-                     move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-                  end
+                  remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
                end
             end
          end
@@ -424,18 +366,12 @@ if (g_decArgo_realtimeFlag)
       % process the files of the buffer directory
       
       % retrieve information on the files in the buffer
-      if (g_decArgo_virtualBuff)
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = ...
-            get_list_files_info_ir_sbd('buffer', '');
-      else
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = ...
-            get_dir_files_info_ir_sbd(g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-      end
+      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd('buffer', '');
       
       % process the buffer files
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+         tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas] = ...
          decode_sbd_files( ...
          tabFileNames, tabFileDates, tabFileSizes, ...
          a_decoderId, a_launchDate, [], a_refDay);
@@ -455,28 +391,19 @@ if (g_decArgo_realtimeFlag)
       if (~isempty(tabNcTechVal))
          o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
       end
-      if (~isempty(tabTechNMeas))
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+      if (~isempty(tabTechAuxNMeas))
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
       end
       
       % move the processed files into the archive directory (and delete
       % the associated SBD files)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
-      else
-         move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-      end
+      remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
    end
 end
 
 % retrieve information on spool directory contents
-if (g_decArgo_virtualBuff)
-   [tabAllFileNames, ~, tabAllFileDates, ~] = ...
-      get_list_files_info_ir_sbd('spool', '');
-else
-   [tabAllFileNames, ~, tabAllFileDates, ~] = ...
-      get_dir_files_info_ir_sbd(g_decArgo_spoolDirectory, a_floatImei, 'txt', '');
-end
+[tabAllFileNames, ~, tabAllFileDates, ~] = ...
+   get_list_files_info_ir_sbd('spool', '');
 
 % process the mail files of the spool directory in chronological order
 if (g_decArgo_realtimeFlag)
@@ -499,28 +426,15 @@ for idSpoolFile = 1:length(tabAllFileNames)
    end
    
    % move the next file into the buffer directory
-   if (g_decArgo_virtualBuff)
-      add_to_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer');
-      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 0);
-   else
-      move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
-   end
+   add_to_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer');
+   remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 0);
    
    % extract the attachement
-   if (g_decArgo_virtualBuff)
-      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-         tabAllFileNames{idSpoolFile}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-   else
-      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-         tabAllFileNames{idSpoolFile}, g_decArgo_bufferDirectory, g_decArgo_bufferDirectory);
-   end
+   [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+      tabAllFileNames{idSpoolFile}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
    g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    if (attachmentFound == 0)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
-      else
-         move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-      end
+      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
       if (idSpoolFile < length(tabAllFileNames))
          continue
       end
@@ -535,7 +449,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % contains 3 ascending profile data packets (for cycle #233) that have been
       % already received. We must ignore it to avoid generating a fake second
       % buffer for this cycle
-
+      
       if (ismember(g_decArgo_floatNum, [3901598, 3901854]))
          if (g_decArgo_floatNum == 3901598)
             fileNameTodel = 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt';
@@ -544,11 +458,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             fileNameTodel = 'co_20200108T121507Z_300234063901300_001599_000000_6467.txt';
          end
          if (strcmp(tabAllFileNames{idSpoolFile}, fileNameTodel))
-            if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
-            else
-               move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-            end
+            remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
          end
       end
    end
@@ -556,13 +466,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % process the files of the buffer directory
    
    % retrieve information on the files in the buffer
-   if (g_decArgo_virtualBuff)
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-         'buffer', '');
-   else
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-         g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-   end
+   [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd('buffer', '');
    
    % create the 'old' and 'new' file lists
    tabOldFileNames = [];
@@ -607,7 +511,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % 3- some expected data are missing for cycle #129, as there is a
    % second Iridium session we must artificially separate first session (which
    % ends with MOMSN = 3043) and second Iridium session
-
+   
    % 6902935: MOMSN = 3076 to 3087 are missing, we must artificially separate
    % first and second Iridium session (which start with MOMSN = 31126 (and 31127))
    
@@ -658,7 +562,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    tabNewFileNames = tabFileNames(idNew);
    tabNewFileDates = tabFileDates(idNew);
    tabNewFileSizes = tabFileSizes(idNew);
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % process the 'old' files
    if (VERBOSE_MODE_BUFF == 1)
@@ -672,7 +576,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    if (~isempty(tabOldFileNames))
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+         tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas] = ...
          decode_sbd_files( ...
          tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
          a_decoderId, a_launchDate, 0, a_refDay);
@@ -692,17 +596,13 @@ for idSpoolFile = 1:length(tabAllFileNames)
       if (~isempty(tabNcTechVal))
          o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
       end
-      if (~isempty(tabTechNMeas))
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+      if (~isempty(tabTechAuxNMeas))
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
       end
       
       % move the processed 'old' files into the archive directory (and delete the
       % associated SBD files)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1, 0);
-      else
-         move_files_ir_sbd(tabOldFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-      end
+      remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1, 0);
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -715,11 +615,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       
       sbdFileName = tabNewFileNames{idBufFile};
       %       fprintf('SBD file : %s\n', sbdFileName);
-      if (g_decArgo_virtualBuff)
-         sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-      else
-         sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-      end
+      sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
       sbdFileDate = tabNewFileDates(idBufFile);
       sbdFileSize = tabNewFileSizes(idBufFile);
       
@@ -853,7 +749,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
-            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+            tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas] = ...
             decode_sbd_files( ...
             tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
             a_decoderId, a_launchDate, okToProcess, a_refDay);
@@ -873,17 +769,13 @@ for idSpoolFile = 1:length(tabAllFileNames)
          if (~isempty(tabNcTechVal))
             o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
          end
-         if (~isempty(tabTechNMeas))
-            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         if (~isempty(tabTechAuxNMeas))
+            o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          end
          
          % move the processed 'new' files into the archive directory (and delete
          % the associated SBD files)
-         if (g_decArgo_virtualBuff)
-            remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1, 0);
-         else
-            move_files_ir_sbd(tabNewFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-         end
+         remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1, 0);
       end
    end
 end
@@ -899,9 +791,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, ~, o_tabTechAuxNMeas] = ...
       update_output_cycle_number_ir_sbd( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, [], o_tabTechAuxNMeas);
    
    % clean FMT, LMT and GPS locations and set TET
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd( ...
@@ -920,7 +812,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       [o_tabProfiles, o_tabTrajNMeas] = remove_do_data(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    end
    
-   % perform DOXY adjustment
+   % perform PARAMETER adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0, a_decoderId);
    
    if (g_decArgo_realtimeFlag)
@@ -936,9 +828,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    end
 end
 
-if (g_decArgo_virtualBuff)
-   rmdir(g_decArgo_archiveSbdDirectory, 's');
-end
+rmdir(g_decArgo_archiveSbdDirectory, 's');
 
 return
 
@@ -948,7 +838,7 @@ return
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas] = ...
 %    decode_sbd_files( ...
 %    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
 %    a_decoderId, a_launchDate, a_completedBuffer, a_refDay)
@@ -963,12 +853,12 @@ return
 %   a_refDay           : reference day
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles    : decoded profiles
-%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex : decoded technical index information
-%   o_tabNcTechVal   : decoded technical data
-%   o_tabTechNMeas   : decoded technical PARAM data
+%   o_tabProfiles     : decoded profiles
+%   o_tabTrajNMeas    : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle   : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex  : decoded technical index information
+%   o_tabNcTechVal    : decoded technical data
+%   o_tabTechAuxNMeas : decoded technical PARAM AUX data
 %
 % EXAMPLES :
 %
@@ -980,7 +870,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechAuxNMeas] = ...
    decode_sbd_files( ...
    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
    a_decoderId, a_launchDate, a_completedBuffer, a_refDay)
@@ -991,7 +881,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
-o_tabTechNMeas = [];
+o_tabTechAuxNMeas = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -1022,7 +912,6 @@ global g_decArgo_realtimeFlag;
 global g_decArgo_reportStruct;
 
 % SBD sub-directories
-global g_decArgo_bufferDirectory;
 global g_decArgo_archiveSbdDirectory;
 
 % array to store GPS data
@@ -1048,9 +937,6 @@ global g_decArgo_cycleNumPrev;
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
-
 
 % no data to process
 if (isempty(a_sbdFileNameList))
@@ -1063,11 +949,7 @@ sbdDataData = [];
 for idFile = 1:length(a_sbdFileNameList)
    
    sbdFileName = a_sbdFileNameList{idFile};
-   if (g_decArgo_virtualBuff)
-      sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-   else
-      sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-   end
+   sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
    
    if (a_sbdFileSizeList(idFile) > 0)
       
@@ -1317,7 +1199,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_201_203( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_201_203( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -1354,7 +1236,7 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
@@ -1574,7 +1456,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_202( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_202( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -1611,7 +1493,7 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
@@ -2950,7 +2832,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_210_211( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_210_211( ...
             g_decArgo_cycleNum, deepCycle, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -2997,7 +2879,7 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
@@ -3237,7 +3119,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_213( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_213( ...
             g_decArgo_cycleNum, deepCycle, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -3281,7 +3163,7 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
@@ -3524,7 +3406,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_215( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_215( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -3565,7 +3447,7 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         o_tabTechAuxNMeas = [o_tabTechAuxNMeas tabTechAuxNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];

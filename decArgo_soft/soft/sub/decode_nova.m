@@ -81,17 +81,17 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
 % for virtual buffers management
-global g_decArgo_virtualBuff;
-g_decArgo_virtualBuff = 1;
 global g_decArgo_spoolFileList;
-g_decArgo_spoolFileList = [];
 global g_decArgo_bufFileList;
-g_decArgo_bufFileList = [];
 
 % float launch information
 global g_decArgo_floatLaunchDate;
 global g_decArgo_floatLaunchLon;
 global g_decArgo_floatLaunchLat;
+
+% to store information parameter RT adjustment
+global g_decArgo_paramAdjInfo;
+global g_decArgo_paramAdjId;
 
 
 % get floats information
@@ -112,10 +112,15 @@ for idFloat = 1:nbFloats
    g_decArgo_gpsData = [];
    g_decArgo_iridiumMailData = [];
    
+   g_decArgo_spoolFileList = [];
+   g_decArgo_bufFileList = [];
    g_decArgo_floatLaunchDate = '';
    g_decArgo_floatLaunchLon = '';
    g_decArgo_floatLaunchLat = '';
-
+   
+   g_decArgo_paramAdjInfo = [];
+   g_decArgo_paramAdjId = 1;   
+   
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
 
@@ -192,7 +197,7 @@ for idFloat = 1:nbFloats
       get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
    
    % decode float cycles
-   tabTechNMeas = [];
+   tabTechAuxNMeas = [];
    if (g_decArgo_floatTransType == 3)
       
       % Iridium SBD floats
@@ -212,7 +217,7 @@ for idFloat = 1:nbFloats
       
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas, ...
+         tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas, ...
          structConfig] = decode_nova_iridium_sbd( ...
          floatNum, floatCycleList, ...
          floatDecId, str2num(floatArgosId), ...
@@ -223,6 +228,10 @@ for idFloat = 1:nbFloats
    end
    
    if (isempty(g_decArgo_outputCsvFileId))
+      
+      % check consistency of PROF an TRAJ_NMEAS structures
+      check_prof_and_traj_struct_consistency(tabProfiles, tabTrajNMeas)
+
       % save decoded data in NetCDF files
       
       % meta-data used in TRAJ, PROF and TECH NetCDF files
@@ -234,11 +243,6 @@ for idFloat = 1:nbFloats
          {'PI_NAME'} ...
          {'FLOAT_SERIAL_NO'} ...
          {'FIRMWARE_VERSION'} ...
-         {'CALIB_RT_PARAMETER'} ...
-         {'CALIB_RT_EQUATION'} ...
-         {'CALIB_RT_COEFFICIENT'} ...
-         {'CALIB_RT_COMMENT'} ...
-         {'CALIB_RT_DATE'} ...
          ];
       
       % retrieve information from json meta-data file
@@ -265,7 +269,8 @@ for idFloat = 1:nbFloats
       % NetCDF TECHNICAL file
       if (g_decArgo_generateNcTech ~= 0)
          create_nc_tech_file(floatDecId, ...
-            tabNcTechIndex, tabNcTechVal, tabTechNMeas, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
+            tabNcTechIndex, tabNcTechVal, [], tabTechAuxNMeas, ...
+            g_decArgo_outputNcParamLabelInfo, additionalMetaData);
       end
       
       % NetCDF META-DATA file

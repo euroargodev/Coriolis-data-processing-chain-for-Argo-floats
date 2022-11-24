@@ -91,6 +91,10 @@ global g_decArgo_floatLaunchDate;
 global g_decArgo_floatLaunchLon;
 global g_decArgo_floatLaunchLat;
 
+% to store information parameter RT adjustment
+global g_decArgo_paramAdjInfo;
+global g_decArgo_paramAdjId;
+
 
 % get floats information
 if (g_decArgo_realtimeFlag == 0)
@@ -115,6 +119,9 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchDate = '';
    g_decArgo_floatLaunchLon = '';
    g_decArgo_floatLaunchLat = '';
+   
+   g_decArgo_paramAdjInfo = [];
+   g_decArgo_paramAdjId = 1;   
    
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
@@ -188,7 +195,6 @@ for idFloat = 1:nbFloats
    end
    
    % decode float cycles
-   tabTechNMeas = [];
    if (g_decArgo_floatTransType == 2)
       
       % Iridium RUDICS floats
@@ -219,7 +225,7 @@ for idFloat = 1:nbFloats
       
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas, ...
+         tabNcTechIndex, tabNcTechVal, ...
          structConfig] = decode_nemo_data( ...
          floatNum, floatCycleList, ...
          floatDecId, str2num(char(floatArgosId)), ...
@@ -228,6 +234,10 @@ for idFloat = 1:nbFloats
    end
    
    if (isempty(g_decArgo_outputCsvFileId))
+      
+      % check consistency of PROF an TRAJ_NMEAS structures
+      check_prof_and_traj_struct_consistency(tabProfiles, tabTrajNMeas)
+      
       % save decoded data in NetCDF files
       
       % meta-data used in TRAJ, PROF and TECH NetCDF files
@@ -239,11 +249,6 @@ for idFloat = 1:nbFloats
          {'PI_NAME'} ...
          {'FLOAT_SERIAL_NO'} ...
          {'FIRMWARE_VERSION'} ...
-         {'CALIB_RT_PARAMETER'} ...
-         {'CALIB_RT_EQUATION'} ...
-         {'CALIB_RT_COEFFICIENT'} ...
-         {'CALIB_RT_COMMENT'} ...
-         {'CALIB_RT_DATE'} ...
          ];
       
       % retrieve information from json meta-data file
@@ -270,7 +275,8 @@ for idFloat = 1:nbFloats
       % NetCDF TECHNICAL file
       if (g_decArgo_generateNcTech ~= 0)
          create_nc_tech_file(floatDecId, ...
-            tabNcTechIndex, tabNcTechVal, tabTechNMeas, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
+            tabNcTechIndex, tabNcTechVal, [], [], ...
+            g_decArgo_outputNcParamLabelInfo, additionalMetaData);
       end
       
       % NetCDF META-DATA file

@@ -26,9 +26,22 @@
 function [o_tabProfiles] = compute_rt_adjusted_param( ...
    a_tabProfiles, a_launchDate, a_notOnlyDoxyFlag, a_decoderId)
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeIridiumDeep;
+
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
 
+% perform DB RT adjustments
+[o_tabProfiles] = compute_rt_adjusted_param_from_db(o_tabProfiles);
+
+% TEMPORARY: waiting for an updated version of the GDAC checker
+if (0)
+   if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
+      % perform PSAL RT adjustment
+      [o_tabProfiles] = compute_rt_adjusted_psal_for_deep_float(o_tabProfiles);
+   end
+end
 
 % perform DOXY RT adjustment
 [o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles, a_decoderId);
@@ -39,6 +52,355 @@ if (a_notOnlyDoxyFlag)
    
    % perform NITRATE RT adjustment
    [o_tabProfiles] = compute_rt_adjusted_nitrate(o_tabProfiles, a_launchDate);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Perform real time adjustment on PSAL profile data for deep floats.
+%
+% SYNTAX :
+%  [o_tabProfiles] = compute_rt_adjusted_psal_for_deep_float(a_tabProfiles)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles : input profile structures
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles : output profile structures
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/04/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles] = compute_rt_adjusted_psal_for_deep_float(a_tabProfiles)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+
+% QC flag values (numerical)
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+% arrays to store RT offset information
+global g_decArgo_rtOffsetInfo;
+
+% global default values
+global g_decArgo_dateDef;
+global g_decArgo_nbHourForProfDateCompInRtOffsetAdj;
+global g_decArgo_janFirst1950InMatlab;
+
+% to store information on DOXY adjustment
+global g_decArgo_paramAdjInfo;
+global g_decArgo_paramAdjId;
+
+
+% from "Argo Quality Control Manual for CTD and Trajectory Data, Version 3.4, 02
+% February 2021"
+DELTA = 3.25e-6;
+CPCOR_SBE = -9.57e-8;
+% CPCOR_NEW_SBE_61 = -12.5e-8; % for Deep Apex and Deep SOLO => unused
+CPCOR_NEW_SBE_41CP = -13.5e-8; % for Deep Arvor and Deep Ninja
+
+% involved parameter information
+paramPres = get_netcdf_param_attributes('PRES');
+paramTemp = get_netcdf_param_attributes('TEMP');
+paramPsal = get_netcdf_param_attributes('PSAL');
+for idProf = 1:length(o_tabProfiles)
+   profile = o_tabProfiles(idProf);
+   if (any(strcmp({profile.paramList.name}, 'PSAL')))
+      
+      % retrieve PTS and PT_ADJUSTED values
+      idPres = find(strcmp({profile.paramList.name}, 'PRES'));
+      idTemp = find(strcmp({profile.paramList.name}, 'TEMP'));
+      idPsal = find(strcmp({profile.paramList.name}, 'PSAL'));
+      
+      presValues = profile.data(:, idPres);
+      tempValues = profile.data(:, idTemp);
+      psalValues = profile.data(:, idPsal);
+      
+      presAdjValues = presValues;
+      tempAdjValues = tempValues;
+      if (~isempty(profile.paramDataMode))
+         if (profile.paramDataMode(idPres) == 'A')
+            presAdjValues = profile.dataAdj(:, idPres);
+         end
+         if (profile.paramDataMode(idTemp) == 'A')
+            tempAdjValues = profile.dataAdj(:, idTemp);
+         end
+      end
+      
+      % clean fill values
+      idNoDefPts = find((presValues ~= paramPres.fillValue) & ...
+         (presAdjValues ~= paramPres.fillValue) & ...
+         (tempValues ~= paramTemp.fillValue) & ...
+         (tempAdjValues ~= paramTemp.fillValue) & ...
+         (psalValues ~= paramPsal.fillValue));
+      presValues = presValues(idNoDefPts);
+      presAdjValues = presAdjValues(idNoDefPts);
+      tempValues = tempValues(idNoDefPts);
+      tempAdjValues = tempAdjValues(idNoDefPts);
+      psalValues = psalValues(idNoDefPts);
+      
+      if (~isempty(presValues) && ~isempty(tempValues) && ~isempty(psalValues) && ...
+            ~isempty(presAdjValues) && ~isempty(tempAdjValues))
+         
+         % compute original conductivity
+         cndcValues = gsw_C_from_SP(psalValues, tempValues, presValues);
+         
+         % adjust conductivity
+         cndcAdjValues = cndcValues.*(1 + DELTA*tempValues + CPCOR_SBE*presValues)./ ...
+            (1 + DELTA*tempAdjValues + CPCOR_NEW_SBE_41CP*presAdjValues);
+         
+         % compute adjusted salinity
+         psalAjValues = gsw_SP_from_C(cndcAdjValues, tempAdjValues, presAdjValues);
+         psalAjValues(isnan(psalAjValues)) = paramPsal.fillValue;
+         
+         % fill structure to store adjustment information
+         if (profile.direction == 'A')
+            direction = 2;
+         else
+            direction = 1;
+         end
+         
+         equation = 'new conductivity = original conductivity * (1 + delta*TEMP + CPcor_SBE*PRES) / (1 + delta*TEMP_ADJUSTED + CPcor_new*PRES_ADJUSTED)';
+         coefficient = sprintf('CPcor_new = %g, CPcor_SBE = %g, delta = %g', CPCOR_NEW_SBE_41CP, CPCOR_SBE, DELTA);
+         comment = 'New conductivity computed by using a different CPcor value from that provided by Sea-Bird.';
+         
+         g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+            g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+            {'PSAL'} {equation} {coefficient} {comment} {''}];
+         profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
+         g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
+
+         if (any(psalAjValues ~= paramPsal.fillValue))
+            
+            % apply anew PSAL adjustments from DB (if any)
+            idPsalAdj = find(ismember([g_decArgo_paramAdjInfo{:, 1}]', profile.rtParamAdjIdList(1:end-1)) & ...
+               strcmp(g_decArgo_paramAdjInfo(:, 4), 'PSAL'));
+            
+            if (~isempty(idPsalAdj))
+               
+               for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
+                  if (~strcmp(g_decArgo_rtOffsetInfo.param{idPar}, 'PSAL'))
+                     continue
+                  end
+                  
+                  % we can have multiple linear adjustments for a given parameter
+                  paramName = g_decArgo_rtOffsetInfo.param{idPar};
+                  tabSlope = g_decArgo_rtOffsetInfo.slope{idPar};
+                  tabOffset = g_decArgo_rtOffsetInfo.value{idPar};
+                  tabEquation = g_decArgo_rtOffsetInfo.equation{idPar};
+                  tabCoef = g_decArgo_rtOffsetInfo.coefficient{idPar};
+                  tabComment = g_decArgo_rtOffsetInfo.comment{idPar};
+                  tabDate = g_decArgo_rtOffsetInfo.date{idPar};
+                  
+                  for idAdj = 1:length(tabDate)
+                     
+                     slopeRtAdj = tabSlope(idAdj);
+                     offsetRtAdj = tabOffset(idAdj);
+                     equationRtAdj = tabEquation{idAdj};
+                     coefRtAdj = tabCoef{idAdj};
+                     commentRtAdj = tabComment{idAdj};
+                     dateRtAdj = tabDate(idAdj);
+                     
+                     if ((profile.date ~= g_decArgo_dateDef) && ...
+                           ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj))
+                        
+                        % adjust data
+                        idNoDef = find(psalAjValues ~= paramPsal.fillValue);
+                        psalAjValues(idNoDef) = psalAjValues(idNoDef)*slopeRtAdj + offsetRtAdj;
+                        
+                        % fill structure to store adjustment information
+                        equation = equationRtAdj;
+                        coefficient = coefRtAdj;
+                        comment = commentRtAdj;
+                        date = datestr(dateRtAdj+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
+                        
+                        g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+                           g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+                           {paramName} {equation} {coefficient} {comment} {date}];
+                        profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
+                        g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
+                     end
+                  end
+               end
+               
+               % remove reference to SCIENTIFIC_CALIB_* information
+               profile.rtParamAdjIdList(idPsalAdj) = [];
+               g_decArgo_paramAdjInfo(idPsalAdj, :) = [];
+               
+            end
+         end
+         
+         % create array for adjusted data
+         paramFillValue = get_prof_param_fill_value(profile);
+         if (isempty(profile.dataAdj))
+            profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+            profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+            profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+         end
+         if (isempty(profile.dataAdjError))
+            profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
+         end
+         
+         % store adjusted data
+         profile.paramDataMode(idPsal) = 'A';
+         profile.dataAdj(idNoDefPts, idPsal) = psalAjValues;
+
+         idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
+         profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
+
+         % store error on adjusted data
+         idNoDef = find(profile.data(:, idPres) ~= paramPres.fillValue);
+         profile.dataAdjError(idNoDef, idPres) = (2.5/6000) * profile.data(idNoDef, idPres) + 2;
+         
+         idNoDef = find(profile.data(:, idTemp) ~= paramTemp.fillValue);
+         profile.dataAdjError(idNoDef, idTemp) = 0.002;
+         
+         idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
+         profile.dataAdjError(idNoDef, idPsal) = 0.004;
+         
+         o_tabProfiles(idProf) = profile;
+      end
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Perform real time linear adjustment on any parameter (but DOXY) profile data.
+%
+% SYNTAX :
+%  [o_tabProfiles] = compute_rt_adjusted_param_from_db(a_tabProfiles, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles : input profile structures
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles : output profile structures
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/02/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles] = compute_rt_adjusted_param_from_db(a_tabProfiles)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+
+% QC flag values (numerical)
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+% arrays to store RT offset information
+global g_decArgo_rtOffsetInfo;
+
+% global default values
+global g_decArgo_dateDef;
+global g_decArgo_nbHourForProfDateCompInRtOffsetAdj;
+global g_decArgo_janFirst1950InMatlab;
+
+% to store information on DOXY adjustment
+global g_decArgo_paramAdjInfo;
+global g_decArgo_paramAdjId;
+
+
+if (isempty(g_decArgo_rtOffsetInfo))
+   return
+end
+
+profDateList = [o_tabProfiles.date];
+profDateList(profDateList == g_decArgo_dateDef) = [];
+for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
+   if (strcmp(g_decArgo_rtOffsetInfo.param{idPar}, 'DOXY')) % DOXY RT adjustment is specific and performed in compute_rt_adjusted_doxy
+      continue
+   end
+   
+   % we can have multiple linear adjustments for a given parameter
+   paramName = g_decArgo_rtOffsetInfo.param{idPar};
+   tabSlope = g_decArgo_rtOffsetInfo.slope{idPar};
+   tabOffset = g_decArgo_rtOffsetInfo.value{idPar};
+   tabEquation = g_decArgo_rtOffsetInfo.equation{idPar};
+   tabCoef = g_decArgo_rtOffsetInfo.coefficient{idPar};
+   tabComment = g_decArgo_rtOffsetInfo.comment{idPar};
+   tabDate = g_decArgo_rtOffsetInfo.date{idPar};
+   
+   for idAdj = 1:length(tabDate)
+      
+      slopeRtAdj = tabSlope(idAdj);
+      offsetRtAdj = tabOffset(idAdj);
+      equationRtAdj = tabEquation{idAdj};
+      coefRtAdj = tabCoef{idAdj};
+      commentRtAdj = tabComment{idAdj};
+      dateRtAdj = tabDate(idAdj);
+      
+      if (any((profDateList + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj))
+         
+         for idProf = 1:length(o_tabProfiles)
+            profile = o_tabProfiles(idProf);
+            if (any(strcmp({profile.paramList.name}, paramName)) && ...
+                  (profile.date ~= g_decArgo_dateDef) && ...
+                  ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj))
+               
+               idParam = find(strcmp({profile.paramList.name}, paramName));
+               
+               % create array for adjusted data
+               if (isempty(profile.dataAdj))
+                  profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+                  paramFillValue = get_prof_param_fill_value(profile);
+                  profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+                  profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+                  
+                  paramData = profile.data(:, idParam);
+               else
+                  if (profile.paramDataMode(idParam) == ' ')
+                     paramData = profile.data(:, idParam);
+                  else
+                     paramData = profile.dataAdj(:, idParam);
+                  end
+               end
+               
+               % adjust data
+               paramDataAdj = paramData;
+               idNoDef = find(paramDataAdj ~= profile.paramList(idParam).fillValue);
+               paramDataAdj(idNoDef) = paramDataAdj(idNoDef)*slopeRtAdj + offsetRtAdj;
+               
+               % store adjusted data
+               profile.paramDataMode(idParam) = 'A';
+               profile.dataAdj(:, idParam) = paramDataAdj;
+               idNoDef = find(paramDataAdj ~= profile.paramList(idParam).fillValue);
+               profile.dataAdjQc(idNoDef, idParam) = g_decArgo_qcNoQc;
+               profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
+               o_tabProfiles(idProf) = profile;
+               
+               % fill structure to store adjustment information
+               if (profile.direction == 'A')
+                  direction = 2;
+               else
+                  direction = 1;
+               end
+               
+               equation = equationRtAdj;
+               coefficient = coefRtAdj;
+               comment = commentRtAdj;
+               date = datestr(dateRtAdj+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
+               
+               g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+                  g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+                  {paramName} {equation} {coefficient} {comment} {date}];
+               g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
+            end
+         end
+      end
+   end
 end
 
 return
@@ -82,6 +444,7 @@ global g_decArgo_janFirst1950InMatlab;
 
 % to store information on DOXY adjustment
 global g_decArgo_paramAdjInfo;
+global g_decArgo_paramAdjId;
 
 
 % look for DOXY profiles
@@ -114,7 +477,7 @@ if (~isempty(g_decArgo_rtOffsetInfo))
          if (isfield(g_decArgo_rtOffsetInfo, 'adjError'))
             doAdjError = g_decArgo_rtOffsetInfo.adjError{idF};
             doAdjErrorStr = g_decArgo_rtOffsetInfo.adjErrorStr{idF}{:};
-            doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF};
+            doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF}{:};
          end
          break
       end
@@ -123,7 +486,6 @@ end
 
 % adjust DOXY profiles
 if (~isempty(doSlope))
-   firstAdj = 1;
    for idProf = 1:length(o_tabProfiles)
       profile = o_tabProfiles(idProf);
       if (any(strcmp({profile.paramList.name}, 'DOXY')) && ...
@@ -139,13 +501,10 @@ if (~isempty(doSlope))
          % adjust DOXY for this profile
          [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset, doAdjError, a_decoderId);
          if (ok)
+            profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
             o_tabProfiles(idProf) = profile;
             
             % fill structure to store DOXY adjustment information
-            if (firstAdj)
-               g_decArgo_paramAdjInfo.DOXY = [];
-               firstAdj = 0;
-            end
             if (profile.direction == 'A')
                direction = 2;
             else
@@ -178,8 +537,10 @@ if (~isempty(doSlope))
             end
             date = datestr(doDate+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
 
-            g_decArgo_paramAdjInfo.DOXY = [g_decArgo_paramAdjInfo.DOXY;
-               profile.outputCycleNumber direction {equation} {coefficient} {comment} {date}];
+            g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+               g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+               {'DOXY'} {equation} {coefficient} {comment} {date}];
+            g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
          end
       end
    end
@@ -339,34 +700,33 @@ if (~isempty(presValues))
       paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, paramDoxy.fillValue, ...
       a_slope, a_offset, a_adjError, a_profile);
    
-   % create array for adjusted data
-   profile = a_profile;
-   paramFillValue = [];
-   for idParam = 1:length(profile.paramList)
-      paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-      paramFillValue = [paramFillValue paramInfo.fillValue];
+   if (any(doxyAdjValues ~= paramDoxy.fillValue))
+      
+      % create array for adjusted data
+      profile = a_profile;
+      paramFillValue = get_prof_param_fill_value(profile);
+      if (isempty(profile.dataAdj))
+         profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+         profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+         profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+      end
+      if (isempty(profile.dataAdjError) && ~isempty(doxyAdjErrValues))
+         profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
+      end
+      
+      % store adjusted data
+      profile.paramDataMode(idDoxy) = 'A';
+      profile.dataAdj(:, idDoxy) = doxyAdjValues;
+      idNoDef = find(doxyAdjValues ~= paramDoxy.fillValue);
+      profile.dataAdjQc(idNoDef, idDoxy) = g_decArgo_qcNoQc;
+      if (~isempty(doxyAdjErrValues))
+         profile.dataAdjError(:, idDoxy) = doxyAdjErrValues;
+      end
+      
+      % output parameters
+      o_ok = 1;
+      o_profile = profile;
    end
-   if (isempty(profile.dataAdj))
-      profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
-   end
-   if (isempty(profile.dataAdjQc))
-      profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
-   end
-   if (isempty(profile.dataAdjError) && ~isempty(doxyAdjErrValues))
-      profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
-   end
-   
-   % store adjusted data
-   idNoDef = find(doxyAdjValues ~= paramDoxy.fillValue);
-   profile.dataAdj(:, idDoxy) = doxyAdjValues;
-   profile.dataAdjQc(idNoDef, idDoxy) = g_decArgo_qcNoQc;
-   if (~isempty(doxyAdjErrValues))
-      profile.dataAdjError(:, idDoxy) = doxyAdjErrValues;
-   end
-   
-   % output parameters
-   o_ok = 1;
-   o_profile = profile;
 end
 
 return
@@ -402,68 +762,73 @@ global g_decArgo_qcNoQc;
 
 % to store information on CHLA adjustment
 global g_decArgo_paramAdjInfo;
-g_decArgo_paramAdjInfo.CHLA = [];
+global g_decArgo_paramAdjId;
 
+
+% look for CHLA profiles
+noChlaProfile = 1;
+for idProf = 1:length(o_tabProfiles)
+   if (any(strcmp({o_tabProfiles(idProf).paramList.name}, 'CHLA')))
+      noChlaProfile = 0;
+      break
+   end
+end
+if (noChlaProfile)
+   return
+end
 
 % adjust CHLA data
 for idProf = 1:length(o_tabProfiles)
    profile = o_tabProfiles(idProf);
    if (any(strcmp({profile.paramList.name}, 'CHLA')))
       
-      % create array for adjusted data
-      if (isempty(profile.dataAdj))
-         if (~isempty(profile.paramNumberWithSubLevels))
-            paramFillValue = [];
-            for idParam = 1:profile.paramNumberWithSubLevels-1
-               paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-               paramFillValue = [paramFillValue paramInfo.fillValue];
-            end
-            idParam = profile.paramNumberWithSubLevels;
-            paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-            paramFillValue = [paramFillValue repmat(paramInfo.fillValue, 1, profile.paramNumberOfSubLevels)];
-            for idParam = profile.paramNumberWithSubLevels+1:length(profile.paramList)
-               paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-               paramFillValue = [paramFillValue paramInfo.fillValue];
-            end
-         else
-            paramFillValue = [];
-            for idParam = 1:length(profile.paramList)
-               paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-               paramFillValue = [paramFillValue paramInfo.fillValue];
-            end
-         end
-         profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
-         profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
-      end
-      
-      % retrieve and adjust CHLA data
+      paramChla = get_netcdf_param_attributes('CHLA');
+
+      % retrieve CHLA data
       idChla = find(strcmp({profile.paramList.name}, 'CHLA'));
       if (~isempty(profile.paramNumberWithSubLevels))
-         if (idChla > profile.paramNumberWithSubLevels)
-            idChla = idChla + profile.paramNumberOfSubLevels - 1;
+         idSub = find(profile.paramNumberWithSubLevels < idChla);
+         if (~isempty(idSub))
+            idChla = idChla + sum(profile.paramNumberOfSubLevels(idSub)) - length(idSub);
          end
       end
       chlaData = profile.data(:, idChla);
-      paramChla = get_netcdf_param_attributes('CHLA');
-      idNoDef = find(chlaData ~= paramChla.fillValue);
       
-      chlaDataAdj = chlaData;
-      chlaDataAdj(idNoDef) = chlaDataAdj(idNoDef)/2;
-      profile.dataAdj(:, idChla) = chlaDataAdj;
-      profile.dataAdjQc(idNoDef, idChla) = g_decArgo_qcNoQc;
-      o_tabProfiles(idProf) = profile;
-      
-      % fill structure to store CHLA adjustment information
-      if (profile.direction == 'A')
-         direction = 2;
-      else
-         direction = 1;
+      if (any(chlaData ~= paramChla.fillValue))
+
+         % create array for adjusted data
+         if (isempty(profile.dataAdj))
+            paramFillValue = get_prof_param_fill_value(profile);
+            profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+            profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+            profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+         end
+         
+         % adjust CHLA data
+         idNoDef = find(chlaData ~= paramChla.fillValue);
+         chlaDataAdj = chlaData;
+         chlaDataAdj(idNoDef) = chlaDataAdj(idNoDef)/2;
+         
+         % store adjusted CHLA data
+         profile.paramDataMode(idChla) = 'A';
+         profile.dataAdj(:, idChla) = chlaDataAdj;
+         profile.dataAdjQc(idNoDef, idChla) = g_decArgo_qcNoQc;
+         profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
+         o_tabProfiles(idProf) = profile;
+         
+         % fill structure to store CHLA adjustment information
+         if (profile.direction == 'A')
+            direction = 2;
+         else
+            direction = 1;
+         end
+         equation = 'CHLA_ADJUSTED = CHLA/2';
+         comment = 'Real-time CHLA adjustment following recommendations of Roesler et al., 2017 (https://doi.org/10.1002/lom3.10185)';
+         g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+            g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+            {'CHLA'} {equation} {''} {comment} {''}];
+         g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
       end
-      g_decArgo_paramAdjInfo.CHLA = [g_decArgo_paramAdjInfo.CHLA;
-         profile.outputCycleNumber direction ...
-         {'CHLA_ADJUSTED = CHLA/2'} ...
-         {''} ...
-         {'Real-time CHLA adjustment following recommendations of Roesler et al., 2017 (https://doi.org/10.1002/lom3.10185)'}];
    end
 end
 
@@ -507,7 +872,7 @@ global g_decArgo_qcNoQc;
 
 % to store information on NITRATE adjustment
 global g_decArgo_paramAdjInfo;
-g_decArgo_paramAdjInfo.NITRATE = [];
+global g_decArgo_paramAdjId;
 
 % verbose mode flag
 VERBOSE_MODE = 0;
@@ -515,8 +880,8 @@ VERBOSE_MODE = 0;
 
 % look for NITRATE profiles
 noNitrateProfile = 1;
-for idProf = 1:length(a_tabProfiles)
-   if (any(strcmp({a_tabProfiles(idProf).paramList.name}, 'NITRATE')))
+for idProf = 1:length(o_tabProfiles)
+   if (any(strcmp({o_tabProfiles(idProf).paramList.name}, 'NITRATE')))
       noNitrateProfile = 0;
       break
    end
@@ -549,19 +914,22 @@ for idProf = 1:length(a_tabProfiles)
       
       idPres = find(strcmp({profile.paramList.name}, 'PRES'));
       if (~isempty(profile.paramNumberWithSubLevels))
-         if (idPres > profile.paramNumberWithSubLevels)
-            idPres = idPres + profile.paramNumberOfSubLevels;
+         idSub = find(profile.paramNumberWithSubLevels < idPres);
+         if (~isempty(idSub))
+            idPres = idPres + sum(profile.paramNumberOfSubLevels(idSub)) - length(idSub);
          end
       end
       presData = profile.data(:, idPres);
       
-      idNitrate = find(strcmp({profile.paramList.name}, 'NITRATE'));
+      idNitrateParam = find(strcmp({profile.paramList.name}, 'NITRATE'));
+      idNitrateData = idNitrateParam;
       if (~isempty(profile.paramNumberWithSubLevels))
-         if (idNitrate > profile.paramNumberWithSubLevels)
-            idNitrate = idNitrate + profile.paramNumberOfSubLevels - 1;
+         idSub = find(profile.paramNumberWithSubLevels < idNitrateData);
+         if (~isempty(idSub))
+            idNitrateData = idNitrateData + sum(profile.paramNumberOfSubLevels(idSub)) - length(idSub);
          end
       end
-      nitrateData = profile.data(:, idNitrate);
+      nitrateData = profile.data(:, idNitrateData);
       rmsErrorData = profile.rmsError;
       
       idNoDef = find((presData ~= paramPres.fillValue) & (nitrateData ~= paramNitrate.fillValue));
@@ -615,108 +983,103 @@ if (~isempty(profInfo))
          idProf = profInfoCur(1);
          profile = a_tabProfiles(idProf);
          
-         if (profInfoCur(10) == -1)
-            fprintf('WARNING: Float #%d Cycle #%d%c: RMS error too large - NITRATE data cannot be adjusted\n', ...
-               g_decArgo_floatNum, ...
-               profile.outputCycleNumber, profile.direction);
-            continue
-         end
-         
-         if (profInfoCur(10) == -2)
-            fprintf('WARNING: Float #%d Cycle #%d%c: the profile is not dated - NITRATE data cannot be adjusted\n', ...
-               g_decArgo_floatNum, ...
-               profile.outputCycleNumber, profile.direction);
-            continue
-         end
-         
-         % compute med_Offset
-         if (profInfoCur(9) ~= paramNitrate.fillValue)
-            offset = profInfoCur(8) - profInfoCur(9);
-            offsetTab = [offsetTab offset];
-         end
-         medOffset = median(offsetTab);
-         
-         % create array for adjusted data
-         if (isempty(profile.dataAdj))
-            if (~isempty(profile.paramNumberWithSubLevels))
-               paramFillValue = [];
-               for idParam = 1:profile.paramNumberWithSubLevels-1
-                  paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-                  paramFillValue = [paramFillValue paramInfo.fillValue];
-               end
-               idParam = profile.paramNumberWithSubLevels;
-               paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-               paramFillValue = [paramFillValue repmat(paramInfo.fillValue, 1, profile.paramNumberOfSubLevels)];
-               for idParam = profile.paramNumberWithSubLevels+1:length(profile.paramList)
-                  paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-                  paramFillValue = [paramFillValue paramInfo.fillValue];
-               end
-            else
-               paramFillValue = [];
-               for idParam = 1:length(profile.paramList)
-                  paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-                  paramFillValue = [paramFillValue paramInfo.fillValue];
-               end
-            end
-            profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
-            profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
-            profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
-         end
-         
-         % retrieve and adjust NITRATE data
-         idNitrate = find(strcmp({profile.paramList.name}, 'NITRATE'));
+         % retrieve NITRATE data
+         idNitrateParam = find(strcmp({profile.paramList.name}, 'NITRATE'));
+         idNitrateData = idNitrateParam;
          if (~isempty(profile.paramNumberWithSubLevels))
-            if (idNitrate > profile.paramNumberWithSubLevels)
-               idNitrate = idNitrate + profile.paramNumberOfSubLevels - 1;
+            idSub = find(profile.paramNumberWithSubLevels < idNitrateData);
+            if (~isempty(idSub))
+               idNitrateData = idNitrateData + sum(profile.paramNumberOfSubLevels(idSub)) - length(idSub);
             end
          end
-         nitrateData = profile.data(:, idNitrate);
-         idNoDef = find(nitrateData ~= paramNitrate.fillValue);
+         nitrateData = profile.data(:, idNitrateData);
          
-         nitrateDataAdj = nitrateData;
-         nitrateDataAdj(idNoDef) = nitrateDataAdj(idNoDef) - medOffset;
-         profile.dataAdj(:, idNitrate) = nitrateDataAdj;
-         profile.dataAdjQc(idNoDef, idNitrate) = g_decArgo_qcNoQc;
-         profile.dataAdjError(idNoDef, idNitrate) = 5;
-         a_tabProfiles(idProf) = profile;
+         if (any(nitrateData ~= paramNitrate.fillValue))
+            
+            if (profInfoCur(10) == -1)
+               fprintf('WARNING: Float #%d Cycle #%d%c: RMS error too large - NITRATE data cannot be adjusted\n', ...
+                  g_decArgo_floatNum, ...
+                  profile.outputCycleNumber, profile.direction);
+               continue
+            end
+            
+            if (profInfoCur(10) == -2)
+               fprintf('WARNING: Float #%d Cycle #%d%c: the profile is not dated - NITRATE data cannot be adjusted\n', ...
+                  g_decArgo_floatNum, ...
+                  profile.outputCycleNumber, profile.direction);
+               continue
+            end
+            
+            % compute med_Offset
+            if (profInfoCur(9) ~= paramNitrate.fillValue)
+               offset = profInfoCur(8) - profInfoCur(9);
+               offsetTab = [offsetTab offset];
+            end
+            medOffset = median(offsetTab);
+            
+            % create array for adjusted data
+            if (isempty(profile.dataAdj) || isempty(profile.dataAdjError))
+               paramFillValue = get_prof_param_fill_value(profile);
+               if (isempty(profile.dataAdj))
+                  profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+                  profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+                  profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+               end
+               if (isempty(profile.dataAdjError))
+                  profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
+               end
+            end
          
-         % fill structure to store NITRATE adjustment information
-         if (profile.direction == 'A')
-            direction = 2;
-         else
-            direction = 1;
-         end
-         nitrateEquation = 'NITRATE_ADJUSTED = NITRATE - OFFSET; OFFSET = med[NITRATE(PRES_WOA)-n_an(PRES_WOA) cumulated over two months after the deployment]';
-         if (profInfoCur(10) == 1)
-            nitrateCoefficient = sprintf('OFFSET=%g, NITRATE(PRES_WOA)=%g, n_an(PRES_WOA)=%g', medOffset, profInfoCur(8:9));
-         else
-            nitrateCoefficient = sprintf('OFFSET=%g', medOffset);
-         end
-         nitrateComment = 'OFFSET is the median of NITRATE(PRES_WOA)-n_an(PRES_WOA) cumulated over two months after the deployment; PRES_WOA=Profile pressure-100; n_an(LATITUDE,LONGITUDE) (closest neighbour) from WOA annual file (ftp://ftp.nodc.noaa.gov/pub/data.nodc/woa/WOA13/DATA)';
-         g_decArgo_paramAdjInfo.NITRATE = [g_decArgo_paramAdjInfo.NITRATE;
-            profile.outputCycleNumber direction ...
-            {nitrateEquation} ...
-            {nitrateCoefficient} ...
-            {nitrateComment}];
+            % adjust NITRATE data
+            nitrateDataAdj = nitrateData;
+            idNoDef = find(nitrateData ~= paramNitrate.fillValue);
+            nitrateDataAdj(idNoDef) = nitrateDataAdj(idNoDef) - medOffset;
          
-         if (VERBOSE_MODE)
-            fprintf('Float #%d Cycle #%d%c:\n', ...
-               g_decArgo_floatNum, ...
-               profile.outputCycleNumber, profile.direction);
-            fprintf('   * (profile_date - launch_date) = (%s - %s) = %g days\n', ...
-               julian_2_gregorian_dec_argo(profile.date), ...
-               julian_2_gregorian_dec_argo(a_launchDate), ...
-               profile.date - a_launchDate);
+            % store adjusted NITRATE data
+            profile.paramDataMode(idNitrateParam) = 'A';
+            profile.dataAdj(:, idNitrateData) = nitrateDataAdj;
+            profile.dataAdjQc(idNoDef, idNitrateData) = g_decArgo_qcNoQc;
+            profile.dataAdjError(idNoDef, idNitrateData) = 5;
+            profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
+            a_tabProfiles(idProf) = profile;
+         
+            % fill structure to store NITRATE adjustment information
+            if (profile.direction == 'A')
+               direction = 2;
+            else
+               direction = 1;
+            end
+            nitrateEquation = 'NITRATE_ADJUSTED = NITRATE - OFFSET; OFFSET = med[NITRATE(PRES_WOA)-n_an(PRES_WOA) cumulated over two months after the deployment]';
             if (profInfoCur(10) == 1)
-               fprintf('   * PRES_WOA = %g; float_NITRATE(PRES_WOA) = %g; WOA_NITRATE(PRES_WOA) = %g\n', ...
-                  profInfoCur(7:9));
-               fprintf('   * OFFSET = float_NITRATE(PRES_WOA) - WOA_NITRATE(PRES_WOA) = %g\n', ...
-                  profInfoCur(8)-profInfoCur(9));
+               nitrateCoefficient = sprintf('OFFSET=%g, NITRATE(PRES_WOA)=%g, n_an(PRES_WOA)=%g', medOffset, profInfoCur(8:9));
+            else
+               nitrateCoefficient = sprintf('OFFSET=%g', medOffset);
             end
-            fprintf('   * TAB_OFFSET = [');
-            fprintf(' %g', offsetTab);
-            fprintf(' ]\n');
-            fprintf('   * MED_OFFSET = median(TAB_OFFSET) = %g\n', medOffset);
+            nitrateComment = 'OFFSET is the median of NITRATE(PRES_WOA)-n_an(PRES_WOA) cumulated over two months after the deployment; PRES_WOA=Profile pressure-100; n_an(LATITUDE,LONGITUDE) (closest neighbour) from WOA annual file (ftp://ftp.nodc.noaa.gov/pub/data.nodc/woa/WOA13/DATA)';
+            g_decArgo_paramAdjInfo = [g_decArgo_paramAdjInfo;
+               g_decArgo_paramAdjId profile.outputCycleNumber direction ...
+               {'NITRATE'} {nitrateEquation} {nitrateCoefficient} {nitrateComment} {''}];
+            g_decArgo_paramAdjId = g_decArgo_paramAdjId + 1;
+            
+            if (VERBOSE_MODE)
+               fprintf('Float #%d Cycle #%d%c:\n', ...
+                  g_decArgo_floatNum, ...
+                  profile.outputCycleNumber, profile.direction);
+               fprintf('   * (profile_date - launch_date) = (%s - %s) = %g days\n', ...
+                  julian_2_gregorian_dec_argo(profile.date), ...
+                  julian_2_gregorian_dec_argo(a_launchDate), ...
+                  profile.date - a_launchDate);
+               if (profInfoCur(10) == 1)
+                  fprintf('   * PRES_WOA = %g; float_NITRATE(PRES_WOA) = %g; WOA_NITRATE(PRES_WOA) = %g\n', ...
+                     profInfoCur(7:9));
+                  fprintf('   * OFFSET = float_NITRATE(PRES_WOA) - WOA_NITRATE(PRES_WOA) = %g\n', ...
+                     profInfoCur(8)-profInfoCur(9));
+               end
+               fprintf('   * TAB_OFFSET = [');
+               fprintf(' %g', offsetTab);
+               fprintf(' ]\n');
+               fprintf('   * MED_OFFSET = median(TAB_OFFSET) = %g\n', medOffset);
+            end
          end
       end
    else

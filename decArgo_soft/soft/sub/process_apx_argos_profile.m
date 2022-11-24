@@ -50,6 +50,7 @@ for idP = 1:length(profiles)
    
    % add parameter variables to the profile structure
    profStruct.paramList = profData.paramList;
+   profStruct.paramDataMode = profData.paramDataMode;
    
    % add parameter data to the profile structure
    profStruct.data = profData.data;
@@ -110,6 +111,9 @@ if (ismember(a_decoderId, [1014]))
          newProf.sensorNumber = newProf.sensorNumber + 1000; % so that it will be stored in PROF_AUX file
          
          newProf.paramList = profStruct.paramList([idPres idBlueRef idNtuRef]);
+         if (~isempty(profStruct.paramDataMode))
+            newProf.paramDataMode = profStruct.paramDataMode([idPres idBlueRef idNtuRef]);
+         end
          
          newProf.data = profStruct.data(:, [idPres idBlueRef idNtuRef]);
          if (~isempty(profStruct.dataAdj))
@@ -118,6 +122,9 @@ if (ismember(a_decoderId, [1014]))
          
          % clean the current profile
          profStruct.paramList([idBlueRef idNtuRef]) = [];
+         if (~isempty(profStruct.paramDataMode))
+            profStruct.paramDataMode([idBlueRef idNtuRef]) = [];
+         end
          
          profStruct.data(:, [idBlueRef idNtuRef]) = [];
          if (~isempty(profStruct.dataAdj))

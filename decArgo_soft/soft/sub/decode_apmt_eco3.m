@@ -73,6 +73,17 @@ bitList = [ ...
    {repmat(16, 1, 5)} ...
    ];
 
+% list of signed type parameters
+signedList = [ ...
+   {[zeros(1, 2) ones(1, 6) 0 ones(1, 3)]} ...
+   {[zeros(1, 2) ones(1, 6)]} ...
+   {[zeros(1, 2) ones(1, 3) 0 ones(1, 3)]} ...
+   {[zeros(1, 2) ones(1, 3)]} ...
+   {[zeros(1, 2) ones(1, 3)]} ...
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[zeros(1, 2) ones(1, 3)]} ...
+   ];
+
 inputData = a_data;
 lastByteNum = a_lastByteNum;
 currentPhaseNum = -1;
@@ -169,9 +180,14 @@ while (currentByte <= lastByteNum)
       end
       nbBytes = sum(tabNbBits)/8;
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
+      tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            if (tabSignedList(id) == 0)
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            else
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''int%d'')', tabNbBits(id), id, tabNbBits(id));
+            end
             rawData(id) = eval(cmd);
          end
       end

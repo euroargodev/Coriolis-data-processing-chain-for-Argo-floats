@@ -358,19 +358,19 @@ switch a_inputSensorName
       
    case 'CYCLOPS'
       o_sensorName = [{'FLUOROMETER_CHLA2'}];
-      o_sensorDimLevel = [701];
+      o_sensorDimLevel = [2001];
       o_sensorMaker = [{'TURNER_DESIGN'}];
       o_sensorModel = [{'CYCLOPS-7_FLUOROMETER'}];
       
    case 'SEAPOINT'
       o_sensorName = [{'SCATTEROMETER_TURBIDITY2'}];
-      o_sensorDimLevel = [801];
+      o_sensorDimLevel = [2101];
       o_sensorMaker = [{'SEAPOINT'}];
       o_sensorModel = [{'SEAPOINT_TURBIDITY_METER'}];
 
    case 'TRANSISTOR_PH'
       o_sensorName = {'TRANSISTOR_PH'};
-      o_sensorDimLevel = [901];
+      o_sensorDimLevel = [701];
       o_sensorMaker = {'SBE'};
       o_sensorModel = {'SEAFET'};
 
@@ -1155,7 +1155,7 @@ switch a_inputSensorName
          {'FLUORESCENCE_VOLTAGE_CHLA'}...
          {'CHLA2'}...
          ];
-      o_paramDimLevel = [701 702];
+      o_paramDimLevel = [2001 2002];
       o_paramSensor = [ ...
          {'FLUOROMETER_CHLA2'}...
          {'FLUOROMETER_CHLA2'}...
@@ -1170,7 +1170,7 @@ switch a_inputSensorName
          {'VOLTAGE_TURBIDITY'}...
          {'TURBIDITY2'}...
          ];
-      o_paramDimLevel = [801 802];
+      o_paramDimLevel = [2101 2102];
       o_paramSensor = [ ...
          {'SCATTEROMETER_TURBIDITY2'}...
          {'SCATTEROMETER_TURBIDITY2'}...
@@ -1186,7 +1186,7 @@ switch a_inputSensorName
          {'PH_IN_SITU_FREE'} ...
          {'PH_IN_SITU_TOTAL'} ...
          ];
-      o_paramDimLevel = [901 902 903];
+      o_paramDimLevel = [701 702 703];
       o_paramSensor = [ ...
          {'TRANSISTOR_PH'} ...
          {'TRANSISTOR_PH'} ...

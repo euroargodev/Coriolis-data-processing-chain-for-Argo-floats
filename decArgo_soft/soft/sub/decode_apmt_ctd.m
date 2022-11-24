@@ -47,7 +47,7 @@ switch (data(1))
    case {1}
       o_ctdData = decode_apmt_ctd_extended(data, lastByteNum, a_decoderId);
    case {2}
-      fprintf('WARNING: decode_apmt_ctd_standard not implemented yet\n');
+      o_ctdData = decode_apmt_ctd_standard(data, lastByteNum, a_decoderId);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR APMT-OSEAN (CTS5)
       o_platformType = 'PROVOR_IV';
       
-   case {126}
+   case {126, 127}
       % PROVOR APMT-USEA (CTS5)
       o_platformType = 'PROVOR_V';
       

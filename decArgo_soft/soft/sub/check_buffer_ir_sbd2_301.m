@@ -5,12 +5,11 @@
 %
 % SYNTAX :
 %  check_buffer_ir_sbd2_301( ...
-%    a_mailFileNameList, a_mailFileDateList, a_floatDmFlag)
+%    a_mailFileNameList, a_mailFileDateList)
 %
 % INPUT PARAMETERS :
 %   a_mailFileNameList : list of SBD file names
 %   a_mailFileDateList : list of SBD file dates
-%   a_buffModeFlag     : predefined buffer mode flag
 %
 % OUTPUT PARAMETERS :
 %
@@ -23,16 +22,12 @@
 %   10/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function check_buffer_ir_sbd2_301( ...
-   a_mailFileNameList, a_mailFileDateList, a_floatDmFlag)
+   a_mailFileNameList, a_mailFileDateList)
 
 % current float WMO number
 global g_decArgo_floatNum;
 
-% current cycle number
-global g_decArgo_cycleNum;
-
 % SBD sub-directories
-global g_decArgo_bufferDirectory;
 global g_decArgo_archiveSbdDirectory;
 
 % arrays to store rough information on received data
@@ -47,9 +42,6 @@ global g_decArgo_253PacketPhaseReceived;
 
 % phase of received data
 global g_decArgo_receivedDataPhase;
-
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
 
 
 % initialize information arrays
@@ -70,11 +62,7 @@ for idBufFile = 1:length(a_mailFileNameList)
    
    sbdFileName = a_mailFileNameList{idBufFile};
    
-   if (g_decArgo_virtualBuff)
-      sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-   else
-      sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-   end
+   sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
    sbdFileDate = a_mailFileDateList(idBufFile);
    
    fId = fopen(sbdFilePathName, 'r');

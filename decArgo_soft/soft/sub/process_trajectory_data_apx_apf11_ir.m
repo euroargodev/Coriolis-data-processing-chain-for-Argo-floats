@@ -98,6 +98,10 @@ global g_decArgo_presDef;
 global g_decArgo_floatConfig;
 
 
+% if (a_cycleNum == 73)
+%    a=1
+% end
+
 % structure to store N_MEASUREMENT data
 trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
 
@@ -190,6 +194,7 @@ if (~isempty(descentStartDate))
          measStruct.paramData = descentStartPres;
          if (~isempty(descentStartAdjPres))
             measStruct.paramDataAdj = descentStartAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -217,6 +222,7 @@ if (~isempty(descentEndDate))
          measStruct.paramData = descentEndPres;
          if (~isempty(descentEndAdjPres))
             measStruct.paramDataAdj = descentEndAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -244,6 +250,7 @@ if (~isempty(parkStartDate))
          measStruct.paramData = parkStartPres;
          if (~isempty(parkStartAdjPres))
             measStruct.paramDataAdj = parkStartAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -271,6 +278,7 @@ if (~isempty(parkEndDate))
          measStruct.paramData = parkEndPres;
          if (~isempty(parkEndAdjPres))
             measStruct.paramDataAdj = parkEndAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -298,6 +306,7 @@ if (~isempty(deepDescentEndDate))
          measStruct.paramData = deepDescentEndPres;
          if (~isempty(deepDescentEndAdjPres))
             measStruct.paramDataAdj = deepDescentEndAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -325,6 +334,7 @@ if (~isempty(ascentStartDate))
          measStruct.paramData = ascentStartPres;
          if (~isempty(ascentStartAdjPres))
             measStruct.paramDataAdj = ascentStartAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -352,6 +362,7 @@ if (~isempty(ascentEndDate))
          measStruct.paramData = ascentEndPres;
          if (~isempty(ascentEndAdjPres))
             measStruct.paramDataAdj = ascentEndAdjPres;
+            measStruct.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -537,6 +548,20 @@ if (~isempty(phaseDates))
                continue
             end
             profData = a_profOcr504I;
+            
+            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
+            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
+            if (~isempty(idDownIrr6670))
+               
+               profData.paramList(idDownIrr6670) = [];
+               if (~isempty(profData.paramDataMode))
+                  profData.paramDataMode(idDownIrr6670) = [];
+               end
+               profData.data(:, idDownIrr6670) = [];
+               if (~isempty(profData.dataAdj))
+                  profData.dataAdj(:, idDownIrr6670) = [];
+               end
+            end
       end
       
       for idPhase = 1:length(phaseDates)+1
@@ -567,9 +592,18 @@ if (~isempty(phaseDates))
             end
          end
          
+         %          if (measCode == 590)
+         %             a=1
+         %          end
+         
          for idM = 1:length(idData)
             idMeas = idData(idM);
             time = profData.dates(idMeas);
+            
+            %             if (strcmp(julian_2_gregorian_dec_argo(time), '2020/02/20 04:24:23'))
+            %                a=1
+            %             end
+            
             timeAdj = g_decArgo_dateDef;
             if (~isempty(profData.datesAdj))
                timeAdj = profData.datesAdj(idMeas);
@@ -580,10 +614,26 @@ if (~isempty(phaseDates))
                timeAdj, ...
                g_JULD_STATUS_2);
             if (~isempty(measStruct))
+               
                measStruct.paramList = profData.paramList;
+               measStruct.paramDataMode = profData.paramDataMode;
                measStruct.paramData = profData.data(idMeas, :);
                if (~isempty(profData.dataAdj))
                   measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
+                  deleteFlag = 1;
+                  for idParam = 1:length(measStruct.paramList)
+                     if (measStruct.paramDataMode(idParam) == 'A')
+                        paramInfo = get_netcdf_param_attributes(measStruct.paramList(idParam).name);
+                        if (measStruct.paramDataAdj(1, idParam) ~= paramInfo.fillValue)
+                           deleteFlag = 0;
+                           break
+                        end
+                     end
+                  end
+                  if (deleteFlag)
+                     measStruct.paramDataMode = [];
+                     measStruct.paramDataAdj = [];
+                  end
                end
                trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
@@ -603,6 +653,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
    measStruct.measCode = g_MC_RPP;
    
    paramList = [];
+   paramDataMode = [];
    paramDataStruct = [];
    paramDataAdjStruct = [];
    measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'}];
@@ -643,6 +694,20 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                continue
             end
             profData = a_profOcr504I;
+            
+            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
+            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
+            if (~isempty(idDownIrr6670))
+               
+               profData.paramList(idDownIrr6670) = [];
+               if (~isempty(profData.paramDataMode))
+                  profData.paramDataMode(idDownIrr6670) = [];
+               end
+               profData.data(:, idDownIrr6670) = [];
+               if (~isempty(profData.dataAdj))
+                  profData.dataAdj(:, idDownIrr6670) = [];
+               end
+            end
       end
       
       idData = find((profData.dates >= parkStartDate) & ...
@@ -656,7 +721,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
             paramDataAdj = [];
             if (~isempty(profData.dataAdj))
                paramDataAdj = profData.dataAdj(idData, idParam);
-               paramDataAdj(find(paramData == profData.paramList(idParam).fillValue)) = [];
+               paramDataAdj(find(paramDataAdj == profData.paramList(idParam).fillValue)) = [];
             end
             if (~isempty(paramData))
                idF = [];
@@ -665,6 +730,11 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                end
                if (isempty(idF))
                   paramList = [paramList profData.paramList(idParam)];
+                  if (~isempty(profData.paramDataMode))
+                     paramDataMode = [paramDataMode profData.paramDataMode(idParam)];
+                  else
+                     paramDataMode = [paramDataMode ' '];
+                  end
                   paramDataStruct.(paramName) = paramData;
                   if (~isempty(paramDataAdj))
                      paramDataAdjStruct.(paramName) = paramDataAdj;
@@ -675,13 +745,14 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                      paramDataAdjStruct.(paramName) = [paramDataAdjStruct.(paramName); paramDataAdj];
                   end
                end
-            end               
+            end
          end
       end
    end
-      
+   
    if (~isempty(paramList))
       measStruct.paramList = paramList;
+      measStruct.paramDataMode = paramDataMode;
       for idParam = 1:length(paramList)
          measStruct.paramData = [measStruct.paramData mean(paramDataStruct.(paramList(idParam).name))];
          if (isfield(paramDataAdjStruct, paramList(idParam).name))
@@ -690,8 +761,12 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
             measStruct.paramDataAdj = [measStruct.paramDataAdj paramList(idParam).fillValue];
          end
       end
+      if (all(measStruct.paramDataMode == ' '))
+         measStruct.paramDataMode = [];
+         measStruct.paramDataAdj = [];
+      end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-
+      
       idPres = find(strcmp({measStruct.paramList.name}, 'PRES') == 1);
       if (~isempty(idPres))
          if (~isempty(measStruct.paramDataAdj))
@@ -699,8 +774,8 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
          else
             trajNCycleStruct.repParkPres = measStruct.paramData(idPres);
          end
+         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
       end
-      trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
    end
 end
 
@@ -744,6 +819,20 @@ if (~isempty(ascentStartDate) && ...
                continue
             end
             profData = a_profOcr504I;
+            
+            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
+            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
+            if (~isempty(idDownIrr6670))
+               
+               profData.paramList(idDownIrr6670) = [];
+               if (~isempty(profData.paramDataMode))
+                  profData.paramDataMode(idDownIrr6670) = [];
+               end
+               profData.data(:, idDownIrr6670) = [];
+               if (~isempty(profData.dataAdj))
+                  profData.dataAdj(:, idDownIrr6670) = [];
+               end
+            end
          case 'CTD_CP'
             if (isempty(a_profCtdCp))
                continue
@@ -818,9 +907,24 @@ if (~isempty(ascentStartDate) && ...
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
             measStruct.paramList = profMax.paramList;
+            measStruct.paramDataMode = profMax.paramDataMode;
             measStruct.paramData = profMax.data(idMax, :);
             if (~isempty(profMax.dataAdj))
                measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
+               deleteFlag = 1;
+               for idParam = 1:length(measStruct.paramList)
+                  if (measStruct.paramDataMode(idParam) == 'A')
+                     paramInfo = get_netcdf_param_attributes(measStruct.paramList(idParam).name);
+                     if (measStruct.paramDataAdj(1, idParam) ~= paramInfo.fillValue)
+                        deleteFlag = 0;
+                        break
+                     end
+                  end
+               end
+               if (deleteFlag)
+                  measStruct.paramDataMode = [];
+                  measStruct.paramDataAdj = [];
+               end
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          end
@@ -828,9 +932,24 @@ if (~isempty(ascentStartDate) && ...
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_AscProfDeepestBin;
          measStruct.paramList = profMax.paramList;
+         measStruct.paramDataMode = profMax.paramDataMode;
          measStruct.paramData = profMax.data(idMax, :);
          if (~isempty(profMax.dataAdj))
             measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
+            deleteFlag = 1;
+            for idParam = 1:length(measStruct.paramList)
+               if (measStruct.paramDataMode(idParam) == 'A')
+                  paramInfo = get_netcdf_param_attributes(measStruct.paramList(idParam).name);
+                  if (measStruct.paramDataAdj(1, idParam) ~= paramInfo.fillValue)
+                     deleteFlag = 0;
+                     break
+                  end
+               end
+            end
+            if (deleteFlag)
+               measStruct.paramDataMode = [];
+               measStruct.paramDataAdj = [];
+            end
          end
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
@@ -845,7 +964,7 @@ if (~isempty(a_iceDetection))
    
    % NOTE that, due to float issue, Ice information may have erroneous
    % timestamps in the system_log (Ex: 6903695 #40) file and then are not dated
-
+   
    % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
    % with MC=590
    for idMeas = 1:length(a_iceDetection.thermalDetect.sampleTime)
@@ -865,7 +984,8 @@ if (~isempty(a_iceDetection))
       measStruct.paramList = [paramPres paramTemp];
       measStruct.paramData = [a_iceDetection.thermalDetect.samplePres(idMeas) a_iceDetection.thermalDetect.sampleTemp(idMeas)];
       if (a_iceDetection.thermalDetect.samplePresAdj(idMeas) ~= g_decArgo_presDef)
-         measStruct.paramDataAdj = [a_iceDetection.thermalDetect.samplePresAdj(idMeas) a_iceDetection.thermalDetect.sampleTemp(idMeas)];
+         measStruct.paramDataAdj = [a_iceDetection.thermalDetect.samplePresAdj(idMeas) paramTemp.fillValue];
+         measStruct.paramDataMode = 'A ';
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
@@ -911,7 +1031,8 @@ if (~isempty(a_iceDetection))
       measStructAux.paramList = [paramPres paramNbSampleIceDetect];
       measStructAux.paramData = [a_iceDetection.thermalDetect.detectPres a_iceDetection.thermalDetect.detectNbSample];
       if (a_iceDetection.thermalDetect.detectPresAdj ~= g_decArgo_presDef)
-         measStructAux.paramDataAdj = [a_iceDetection.thermalDetect.detectPresAdj a_iceDetection.thermalDetect.detectNbSample];
+         measStructAux.paramDataAdj = [a_iceDetection.thermalDetect.detectPresAdj paramNbSampleIceDetect.fillValue];
+         measStructAux.paramDataMode = 'A ';
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
@@ -959,7 +1080,7 @@ end
 phaseMeasCode = phaseMeasCode(idSort);
 
 if (~isempty(a_buoyancy))
-
+   
    buoyDates = a_buoyancy(:, 1);
    for idPhase = 1:length(phaseDates)
       if (idPhase > 1)
@@ -969,7 +1090,7 @@ if (~isempty(a_buoyancy))
          idData = find(buoyDates <= phaseDates(idPhase));
       end
       refMeasCode = phaseMeasCode(idPhase);
-
+      
       for idB = 1:length(idData)
          idBuoy = idData(idB);
          time = buoyDates(idBuoy);
@@ -981,10 +1102,12 @@ if (~isempty(a_buoyancy))
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
             measStructTechNMeas = measStruct;
+            
             measStruct.paramList = paramPres;
             measStruct.paramData = a_buoyancy(idBuoy, 3);
             if (a_buoyancy(idBuoy, 4) ~= g_decArgo_presDef)
                measStruct.paramDataAdj = a_buoyancy(idBuoy, 4);
+               measStruct.paramDataMode = 'A';
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
@@ -1020,6 +1143,7 @@ if (~isempty(a_grounding))
          measStruct.paramData = a_grounding(idG, 3);
          if (a_grounding(idG, 4) ~= g_decArgo_presDef)
             measStruct.paramDataAdj = a_grounding(idG, 4);
+            measStruct.paramDataMode = 'A';
          end
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          grounded = 'Y';
@@ -1050,7 +1174,8 @@ if (~isempty(continuousProfileStartDate) && ~isempty(continuousProfileEndDate))
          measStructAux.paramList = paramPres;
          measStructAux.paramData = continuousProfileStartPres;
          if (~isempty(continuousProfileStartAdjPres))
-            measStruct.paramDataAdj = continuousProfileStartAdjPres;
+            measStructAux.paramDataAdj = continuousProfileStartAdjPres;
+            measStructAux.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
@@ -1072,7 +1197,8 @@ if (~isempty(continuousProfileStartDate) && ~isempty(continuousProfileEndDate))
          measStructAux.paramList = paramPres;
          measStructAux.paramData = continuousProfileEndPres;
          if (~isempty(continuousProfileEndAdjPres))
-            measStruct.paramDataAdj = continuousProfileEndAdjPres;
+            measStructAux.paramDataAdj = continuousProfileEndAdjPres;
+            measStructAux.paramDataMode = 'A';
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
@@ -1134,7 +1260,7 @@ if (a_cycleNum > 0)
                         newOne = 1;
                         
                         if ((gpsLocNbSatPrevCy(idFix) ~= -1) && (gpsLocTimeToFixPrevCy(idFix) ~= -1))
-                        
+                           
                            time = gpsLocDatePrevCy(idFix);
                            timeAdj = gpsLocDatePrevCy(idFix);
                            [measStructAux, ~] = create_one_meas_float_time_bis( ...

@@ -76,6 +76,10 @@ global g_RPP_STATUS_1;
 global g_decArgo_dateDef;
 
 
+% if (a_cycleNum == 24)
+%    a=1
+% end
+
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
 
@@ -217,6 +221,7 @@ if (~isempty(a_cycleTimeData))
             measStruct.paramData = techParkingPressureMedian;
             if (~isempty(techParkingPressureMedianAdj))
                measStruct.paramDataAdj = techParkingPressureMedianAdj;
+               measStruct.paramDataMode = 'A';
             end
          end
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -244,6 +249,7 @@ if (~isempty(a_cycleTimeData))
             measStruct.paramData = techDepthPressure;
             if (~isempty(techDepthPressureAdj))
                measStruct.paramDataAdj = techDepthPressureAdj;
+               measStruct.paramDataMode = 'A';
             end
          end
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -306,6 +312,7 @@ if (~isempty(techDepthPressureMax))
    measStruct.paramData = techDepthPressureMax;
    if (~isempty(techDepthPressureMaxAdj))
       measStruct.paramDataAdj = techDepthPressureMaxAdj;
+      measStruct.paramDataMode = 'A';
    end
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
@@ -347,6 +354,7 @@ if (~isempty(a_parkData) && ~isempty(a_parkData.data))
       end
       if (~isempty(measStruct))
          measStruct.paramList = a_parkData.paramList;
+         measStruct.paramDataMode = a_parkData.paramDataMode;
          measStruct.paramData = a_parkData.data(idMeas, :);
          if (~isempty(a_parkData.dataAdj))
             measStruct.paramDataAdj = a_parkData.dataAdj(idMeas, :);
@@ -364,20 +372,28 @@ if (~isempty(a_parkData) && ~isempty(a_parkData.data))
       paramDataAdj = [];
       if (~isempty(a_parkData.dataAdj))
          paramDataAdj = a_parkData.dataAdj(:, idParam);
-         paramDataAdj(find(paramData == a_parkData.paramList(idParam).fillValue)) = [];
+         paramDataAdj(find(paramDataAdj == a_parkData.paramList(idParam).fillValue)) = [];
       end
       if (~isempty(paramData))
          measStructRpp.paramList = [measStructRpp.paramList a_parkData.paramList(idParam)];
+         if (~isempty(a_parkData.paramDataMode))
+            measStructRpp.paramDataMode = [measStructRpp.paramDataMode a_parkData.paramDataMode(idParam)];
+         end
          measStructRpp.paramData = [measStructRpp.paramData {paramData}];
-         if (~isempty(paramDataAdj))
+         if (~isempty(a_parkData.dataAdj))
             measStructRpp.paramDataAdj = [measStructRpp.paramDataAdj {paramDataAdj}];
+            if (~isempty(paramDataAdj))
+               if (~isempty(measStructRpp.paramDataMode))
+                  measStructRpp.paramDataMode(end) = 'A';
+               end
+            end
          end
       end
    end
 end
 
 % RAFOS measurements
-if (~isempty(a_rafosData))
+if (~isempty(a_rafosData) && ~isempty(a_rafosData.data))
    for idMeas = 1:length(a_rafosData.dates)
       if (a_rafosData.dates(idMeas) ~= a_rafosData.dateList.fillValue)
          time = a_rafosData.dates(idMeas);
@@ -400,6 +416,19 @@ if (~isempty(a_rafosData))
             if (~isempty(a_rafosData.dataAdj))
                measCoreStruct.paramDataAdj = a_rafosData.dataAdj(idMeas, [idPres idTemp idPsal]);
             end
+            if (~isempty(a_rafosData.paramDataMode))
+               measCoreStruct.paramDataMode = a_rafosData.paramDataMode([idPres idTemp idPsal]);
+               idF = find(measCoreStruct.paramDataMode == 'A');
+               for idP = idF
+                  if (measCoreStruct.paramDataAdj(1, idP) == measCoreStruct.paramList(idP).fillValue)
+                     measCoreStruct.paramDataMode(idP) = ' ';
+                  end
+               end
+               if (all(measCoreStruct.paramDataMode == ' '))
+                  measCoreStruct.paramDataMode = [];
+                  measCoreStruct.paramDataAdj = [];
+               end
+            end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measCoreStruct];
             
             measAuxStruct = measStruct;
@@ -413,6 +442,19 @@ if (~isempty(a_rafosData))
             measAuxStruct.paramData = a_rafosData.data(idMeas, [idPres idStatus idCor:idCor+5 idToa+5:idToa+5+5]);
             if (~isempty(a_rafosData.dataAdj))
                measAuxStruct.paramDataAdj = a_rafosData.dataAdj(idMeas, [idPres idStatus idCor:idCor+5 idToa+5:idToa+5+5]);
+            end
+            if (~isempty(a_rafosData.paramDataMode))
+               measAuxStruct.paramDataMode = a_rafosData.paramDataMode([idPres idStatus idCor idToa]);
+               idF = find(measAuxStruct.paramDataMode == 'A');
+               for idP = idF
+                  if (measAuxStruct.paramDataAdj(1, idP) == measAuxStruct.paramList(idP).fillValue)
+                     measAuxStruct.paramDataMode(idP) = ' ';
+                  end
+               end
+               if (all(measAuxStruct.paramDataMode == ' '))
+                  measAuxStruct.paramDataMode = [];
+                  measAuxStruct.paramDataAdj = [];
+               end
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measAuxStruct];
          end
@@ -431,29 +473,46 @@ if (~isempty(a_rafosData))
       idParamInRafos = find(strcmp({a_rafosData.paramList.name}, paramName) == 1, 1);
       if (~isempty(idParamInRafos))
          paramData = a_rafosData.data(:, idParamInRafos);
+         paramData(find(paramData == a_rafosData.paramList(idParamInRafos).fillValue)) = [];
          paramDataAdj = [];
          if (~isempty(a_rafosData.dataAdj))
             paramDataAdj = a_rafosData.dataAdj(:, idParamInRafos);
+            paramDataAdj(find(paramDataAdj == a_rafosData.paramList(idParamInRafos).fillValue)) = [];
          end
-         idParamInRpp = [];
-         if (~isempty(measStructRpp.paramList))
-            idParamInRpp = find(strcmp({measStructRpp.paramList.name}, paramName) == 1, 1);
-         end
-         if (isempty(idParamInRpp))
-            newParam = get_netcdf_param_attributes(paramName);
-            measStructRpp.paramList = [measStructRpp.paramList newParam];
-            measStructRpp.paramData = [measStructRpp.paramData {paramData}];
-            if (~isempty(paramDataAdj))
-               measStructRpp.paramDataAdj = [measStructRpp.paramDataAdj {paramDataAdj}];
+         if (~isempty(paramData))
+            idParamInRpp = [];
+            if (~isempty(measStructRpp.paramList))
+               idParamInRpp = find(strcmp({measStructRpp.paramList.name}, paramName) == 1, 1);
             end
-         else
-            paramDataAll = measStructRpp.paramData{idParamInRpp};
-            paramDataAll = [paramDataAll; paramData];
-            measStructRpp.paramData{idParamInRpp} = paramDataAll;
-            if (~isempty(paramDataAdj))
-               paramDataAdjAll = measStructRpp.paramDataAdj{idParamInRpp};
-               paramDataAdjAll = [paramDataAdjAll; paramDataAdj];
-               measStructRpp.paramDataAdj{idParamInRpp} = paramDataAdjAll;
+            if (isempty(idParamInRpp))
+               newParam = get_netcdf_param_attributes(paramName);
+               measStructRpp.paramList = [measStructRpp.paramList newParam];
+               if (~isempty(measStructRpp.paramDataMode))
+                  measStructRpp.paramDataMode = [measStructRpp.paramDataMode ' '];
+               elseif (~isempty(a_rafosData.paramDataMode))
+                  measStructRpp.paramDataMode = repmat(' ', 1, length(measStructRpp.paramList));
+               end
+               measStructRpp.paramData = [measStructRpp.paramData {paramData}];
+               if (~isempty(measStructRpp.paramDataAdj))
+                  measStructRpp.paramDataAdj = [measStructRpp.paramDataAdj {paramDataAdj}];
+                  if (~isempty(paramDataAdj))
+                     if (~isempty(measStructRpp.paramDataMode))
+                        measStructRpp.paramDataMode(end) = 'A';
+                     end
+                  end
+               end
+            else
+               paramDataAll = measStructRpp.paramData{idParamInRpp};
+               paramDataAll = [paramDataAll; paramData];
+               measStructRpp.paramData{idParamInRpp} = paramDataAll;
+               if (~isempty(paramDataAdj))
+                  paramDataAdjAll = measStructRpp.paramDataAdj{idParamInRpp};
+                  paramDataAdjAll = [paramDataAdjAll; paramDataAdj];
+                  measStructRpp.paramDataAdj{idParamInRpp} = paramDataAdjAll;
+                  if (~isempty(measStructRpp.paramDataMode))
+                     measStructRpp.paramDataMode(idParamInRpp) = 'A';
+                  end
+               end
             end
          end
       end
@@ -465,7 +524,11 @@ if (~isempty(measStructRpp))
    for idParam = 1:length(measStructRpp.paramList)
       measStructRpp.paramData{idParam} = mean(measStructRpp.paramData{idParam});
       if (~isempty(measStructRpp.paramDataAdj))
-         measStructRpp.paramDataAdj{idParam} = mean(measStructRpp.paramDataAdj{idParam});
+         if (~isempty(measStructRpp.paramDataAdj{idParam}))
+            measStructRpp.paramDataAdj{idParam} = double(mean(measStructRpp.paramDataAdj{idParam}));
+         else
+            measStructRpp.paramDataAdj{idParam} = double(measStructRpp.paramList(idParam).fillValue);
+         end
       end
    end
    measStructRpp.paramData = cell2mat(measStructRpp.paramData);
@@ -502,6 +565,7 @@ if (~isempty(a_profileData))
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
             measStruct.paramList = a_profileData.paramList;
+            measStruct.paramDataMode = a_profileData.paramDataMode;
             measStruct.paramData = a_profileData.data(idLev, :);
             if (~isempty(a_profileData.dataAdj))
                measStruct.paramDataAdj = a_profileData.dataAdj(idLev, :);
@@ -515,6 +579,9 @@ if (~isempty(a_profileData))
                measAuxStruct = measStruct;
                
                measStruct.paramList(idDel) = [];
+               if (~isempty(measStruct.paramDataMode))
+                  measStruct.paramDataMode(idDel) = [];
+               end
                measStruct.paramData(:, idDel) = [];
                if (~isempty(a_profileData.dataAdj))
                   measStruct.paramDataAdj(:, idDel) = [];
@@ -524,6 +591,9 @@ if (~isempty(a_profileData))
                idPres = find(strcmp({measAuxStruct.paramList.name}, 'PRES') == 1, 1);
                idKeep = [idPres idDel];
                measAuxStruct.paramList = measAuxStruct.paramList(idKeep);
+               if (~isempty(measAuxStruct.paramDataMode))
+                  measAuxStruct.paramDataMode = measAuxStruct.paramDataMode(idKeep);
+               end
                measAuxStruct.paramData = measAuxStruct.paramData(:, idKeep);
                if (~isempty(a_profileData.dataAdj))
                   measAuxStruct.paramDataAdj = measAuxStruct.paramDataAdj(:, idKeep);
@@ -567,6 +637,7 @@ if (~isempty(a_profileData))
                measStruct.measCode = g_MC_AscProfDeepestBin;
             end
             measStruct.paramList = a_profileData.paramList;
+            measStruct.paramDataMode = a_profileData.paramDataMode;
             measStruct.paramData = a_profileData.data(idNoDef(idMax), :);
             if (~isempty(a_profileData.dataAdj))
                measStruct.paramDataAdj = a_profileData.dataAdj(idNoDef(idMax), :);
@@ -580,6 +651,9 @@ if (~isempty(a_profileData))
                measAuxStruct = measStruct;
                
                measStruct.paramList(idDel) = [];
+               if (~isempty(measStruct.paramDataMode))
+                  measStruct.paramDataMode(idDel) = [];
+               end
                measStruct.paramData(:, idDel) = [];
                if (~isempty(a_profileData.dataAdj))
                   measStruct.paramDataAdj(:, idDel) = [];
@@ -589,6 +663,9 @@ if (~isempty(a_profileData))
                idPres = find(strcmp({measAuxStruct.paramList.name}, 'PRES') == 1, 1);
                idKeep = [idPres idDel];
                measAuxStruct.paramList = measAuxStruct.paramList(idKeep);
+               if (~isempty(measAuxStruct.paramDataMode))
+                  measAuxStruct.paramDataMode = measAuxStruct.paramDataMode(idKeep);
+               end
                measAuxStruct.paramData = measAuxStruct.paramData(:, idKeep);
                if (~isempty(a_profileData.dataAdj))
                   measAuxStruct.paramDataAdj = measAuxStruct.paramDataAdj(:, idKeep);
@@ -600,6 +677,7 @@ if (~isempty(a_profileData))
             measStruct = get_traj_one_meas_init_struct();
             measStruct.measCode = g_MC_AscProfDeepestBin;
             measStruct.paramList = a_profileData.paramList;
+            measStruct.paramDataMode = a_profileData.paramDataMode;
             measStruct.paramData = a_profileData.data(idNoDef(idMax), :);
             if (~isempty(a_profileData.dataAdj))
                measStruct.paramDataAdj = a_profileData.dataAdj(idNoDef(idMax), :);
@@ -613,6 +691,9 @@ if (~isempty(a_profileData))
                measAuxStruct = measStruct;
                
                measStruct.paramList(idDel) = [];
+               if (~isempty(measStruct.paramDataMode))
+                  measStruct.paramDataMode(idDel) = [];
+               end
                measStruct.paramData(:, idDel) = [];
                if (~isempty(a_profileData.dataAdj))
                   measStruct.paramDataAdj(:, idDel) = [];
@@ -622,6 +703,9 @@ if (~isempty(a_profileData))
                idPres = find(strcmp({measAuxStruct.paramList.name}, 'PRES') == 1, 1);
                idKeep = [idPres idDel];
                measAuxStruct.paramList = measAuxStruct.paramList(idKeep);
+               if (~isempty(measAuxStruct.paramDataMode))
+                  measAuxStruct.paramDataMode = measAuxStruct.paramDataMode(idKeep);
+               end
                measAuxStruct.paramData = measAuxStruct.paramData(:, idKeep);
                if (~isempty(a_profileData.dataAdj))
                   measAuxStruct.paramDataAdj = measAuxStruct.paramDataAdj(:, idKeep);

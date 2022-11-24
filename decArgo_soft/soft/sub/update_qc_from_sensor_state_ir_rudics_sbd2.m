@@ -51,7 +51,7 @@ if (~isempty(g_decArgo_koSensorState))
             
             dataQc = prof.dataQc;
             if (isempty(dataQc))
-               dataQc = ones(size(prof.data))*g_decArgo_qcDef;
+               dataQc = ones(size(prof.data, 1), length(prof.paramList))*g_decArgo_qcDef;
             end
             
             if (isempty(prof.paramNumberWithSubLevels))
@@ -67,7 +67,7 @@ if (~isempty(g_decArgo_koSensorState))
                   end
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, idParam);
-                  paramDataQc = ones(length(paramData), 1)*g_decArgo_qcDef;
+                  paramDataQc = ones(size(paramData, 1), 1)*g_decArgo_qcDef;
                   paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
                   dataQc(:, idParam) = paramDataQc;
                end
@@ -101,9 +101,13 @@ if (~isempty(g_decArgo_koSensorState))
                   
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, firstCol:lastCol);
-                  paramDataQc = ones(size(paramData))*g_decArgo_qcDef;
-                  paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
-                  dataQc(:, firstCol:lastCol) = paramDataQc;
+                  paramDataQc = ones(size(paramData, 1), 1)*g_decArgo_qcDef;
+                  for idL = 1:size(paramData, 1)
+                     if (any(paramData(idL, :) ~= param.fillValue))
+                        paramDataQc(idL) = g_decArgo_qcCorrectable;
+                     end
+                  end
+                  dataQc(:, idParam) = paramDataQc;
                end
             end
                
@@ -128,7 +132,7 @@ if (~isempty(g_decArgo_koSensorState))
                   
                   paramDataQc = tabMeasOne.paramDataQc;
                   if (isempty(paramDataQc))
-                     paramDataQc = ones(size(tabMeasOne.paramData))*g_decArgo_qcDef;
+                     paramDataQc = ones(size(tabMeasOne.paramData, 1), length(tabMeasOne.paramList))*g_decArgo_qcDef;
                   end
                   
                   if (isempty(tabMeasOne.paramNumberWithSubLevels))
@@ -182,9 +186,13 @@ if (~isempty(g_decArgo_koSensorState))
                         
                         param = get_netcdf_param_attributes(measParam.name);
                         measData = tabMeasOne.paramData(:, firstCol:lastCol);
-                        measDataQc = ones(size(measData))*g_decArgo_qcDef;
-                        measDataQc(find(measData ~= param.fillValue)) = g_decArgo_qcCorrectable;
-                        paramDataQc(:, firstCol:lastCol) = measDataQc;
+                        measDataQc = ones(size(measData, 1), 1)*g_decArgo_qcDef;
+                        for idL = 1:size(measData, 1)
+                           if (any(measData(idL, :) ~= param.fillValue))
+                              measDataQc(idL) = g_decArgo_qcCorrectable;
+                           end
+                        end
+                        paramDataQc(:, idParam) = measDataQc;
                      end
                   end
                   

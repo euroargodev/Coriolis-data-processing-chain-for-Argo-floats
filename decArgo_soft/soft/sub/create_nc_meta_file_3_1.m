@@ -62,6 +62,9 @@ global g_decArgo_outputNcParamDescription;
 % decoder version
 global g_decArgo_decoderVersion;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts5Usea;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -576,7 +579,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125, 126}
+   case {121, 122, 123, 124, 125, 126, 127}
       
       % CTS5 floats
       
@@ -609,7 +612,7 @@ switch (a_decoderId)
       end
       
       % CTS5-USEA
-      if (a_decoderId == 126)
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
          if (isfield(metaData, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FLOAT_SIM_CARD_NUMBER'];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FLOAT_SIM_CARD_NUMBER];
@@ -635,6 +638,30 @@ switch (a_decoderId)
                inputAuxMetaDescription = [inputAuxMetaDescription; ...
                   g_decArgo_outputNcConfParamDescription(find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1))];
             end
+         end
+         if (isfield(metaData, 'META_AUX_OPUS_FIRMWARE_VERSION'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_FIRMWARE_VERSION'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_FIRMWARE_VERSION];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_LENGTH'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_LENGTH'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_LENGTH];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_LENGTH', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_INTENSITIES'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_INTENSITIES'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_INTENSITIES];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1))];
          end
       end
       

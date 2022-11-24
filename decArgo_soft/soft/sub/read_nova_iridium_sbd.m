@@ -34,11 +34,7 @@ o_sbdDataData = [];
 global g_decArgo_floatNum;
 
 % SBD sub-directories
-global g_decArgo_bufferDirectory;
 global g_decArgo_archiveSbdDirectory;
-
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
@@ -52,13 +48,9 @@ end
 % read the SBD file data
 for idBufFile = 1:length(a_sbdFileNameList)
    
-   sbdFileName = a_sbdFileNameList{idBufFile};   
+   sbdFileName = a_sbdFileNameList{idBufFile};
    %       fprintf('SBD file : %s\n', sbdFileName);
-   if (g_decArgo_virtualBuff)
-      sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-   else
-      sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-   end
+   sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
    sbdFileDate = a_sbdFileDateList(idBufFile);
    sbdFileSize = a_sbdFileSizeList(idBufFile);
    

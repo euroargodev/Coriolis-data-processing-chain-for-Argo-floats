@@ -52,9 +52,15 @@ else
    % '_%03d_%02d_do*.hex'
    % '_%03d_%02d_eco*.hex'
    % '_%03d_%02d_ocr*.hex'
+   % '_%03d_%02d_opus_blk*.hex'
+   % '_%03d_%02d_opus_lgt*.hex'
    % '_%03d_%02d_uvp6_blk*.hex'
    % '_%03d_%02d_uvp6_lpm*.hex'
-   for idType = [1 4 6:11]
+   % '_%03d_%02d_crover*.hex'
+   % '_%03d_%02d_sbeph*.hex'
+   % '_%03d_%02d_suna*.hex'
+
+   for idType = [1 4 6:16]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, a_cyNum, a_ptnNum)]);

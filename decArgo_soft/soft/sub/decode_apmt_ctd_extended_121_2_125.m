@@ -67,6 +67,17 @@ bitList = [ ...
    {[32 16 16 16 4 4]} ...
    ];
 
+% list of signed type parameters
+signedList = [ ...
+   {[0 0 0 0 0 0 1 1 0 0 0 0 0 ]} ...
+   {[0 0 0 0 0 0 1 1]} ...
+   {[0 0 0 0 0 0 0 0 0 0 0]} ...
+   {[0 0 0 0 0 0]} ...
+   {[0 0 0 0 0 0]} ...
+   {[0 0 0 0 0 0]} ...
+   {[0 0 0 0 0 0]} ...
+   ];
+
 currentPhaseNum = -1;
 currentTreatNum = -1;
 dataStruct = [];
@@ -163,9 +174,14 @@ while (currentByte <= a_lastByteNum)
       end
       nbBytes = sum(tabNbBits)/8;
       rawData = get_bits(1, tabNbBits, a_data(currentByte:currentByte+nbBytes-1));
+      tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            if (tabSignedList(id) == 0)
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
+            else
+               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''int%d'')', tabNbBits(id), id, tabNbBits(id));
+            end
             rawData(id) = eval(cmd);
          end
       end

@@ -33,6 +33,9 @@ o_profFlbbCd = a_profFlbbCd;
 % remove the unused entries of the DO profile
 if (~isempty(o_profDo))
    o_profDo.paramList([2 3 5 6 9:11]) = [];
+   if (~isempty(o_profDo.paramDataMode))
+      o_profDo.paramDataMode([2 3 5 6 9:11]) = [];
+   end
    o_profDo.data(:, [2 3 5 6 9:11]) = [];
    if (~isempty(o_profDo.dataAdj))
       o_profDo.dataAdj(:, [2 3 5 6 9:11]) = [];
@@ -43,12 +46,18 @@ end
 if (~isempty(o_profFlbbCd))
    if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
       o_profFlbbCd.paramList([2:2:8]) = [];
+      if (~isempty(o_profFlbbCd.paramDataMode))
+         o_profFlbbCd.paramDataMode([2:2:8]) = [];
+      end
       o_profFlbbCd.data(:, [2:2:8]) = [];
       if (~isempty(o_profFlbbCd.dataAdj))
          o_profFlbbCd.dataAdj(:, [2:2:8]) = [];
       end
    else
       o_profFlbbCd.paramList(5) = [];
+      if (~isempty(o_profFlbbCd.paramDataMode))
+         o_profFlbbCd.paramDataMode(5) = [];
+      end
       o_profFlbbCd.data(:, 5) = [];
       if (~isempty(o_profFlbbCd.dataAdj))
          o_profFlbbCd.dataAdj(:, 5) = [];

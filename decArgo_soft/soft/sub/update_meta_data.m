@@ -28,13 +28,12 @@ o_metaData = a_metaData;
 global g_decArgo_floatNum;
 
 % lists of managed decoders
-global g_decArgo_decoderIdListNemo;
 global g_decArgo_decoderIdListMtime;
 
 
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
-   105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
    201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
@@ -57,34 +56,9 @@ if (~ismember(a_decoderId, decoderIdList))
 end
 
 % add a POSITIONING_SYSTEM = 'IRIDIUM' to GPS floats
-if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Remocean floats
-      ~(fix(a_decoderId/100) == 11) && ... % because this should not be done for Apex Iridium Rudics floats
-      ~(fix(a_decoderId/100) == 12)) % because this should not be done for Navis floats
-   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
-         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
-         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
-         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')))
-      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2 = 'IRIDIUM';
-      
-      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = IRIDIUM'' to float positioning systems\n', ...
-         g_decArgo_floatNum);
-   end
-end
-
 % add a POSITIONING_SYSTEM = 'RAFOS' to NEMO floats
-if (ismember(a_decoderId, g_decArgo_decoderIdListNemo))
-   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
-         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
-         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
-         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')) && ...
-         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2, 'IRIDIUM')) && ...
-         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_3')))
-      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_3 = 'RAFOS';
-      
-      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = RAFOS'' to float positioning systems\n', ...
-         g_decArgo_floatNum);
-   end
-end
+% set CONTROLLER_BOARD_TYPE_PRIMARY and BATTERY_TYPE
+[o_metaData] = add_misc_meta_data(o_metaData, a_decoderId);
 
 % add 'MTIME' parameter and associated SENSOR to specific floats
 if (ismember(a_decoderId, g_decArgo_decoderIdListMtime))
@@ -484,6 +458,125 @@ if (isfield(o_metaData, 'PARAMETER'))
 else
    fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information - parameter information cannot be updated\n', ...
       g_decArgo_floatNum);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Update misc meta data.
+%
+% SYNTAX :
+%  [o_metaData] = add_misc_meta_data(a_metaData, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_metaData  : input meta-data to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_metaData : output updated meta-data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/27/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaData] = add_misc_meta_data(a_metaData, a_decoderId)
+
+% output parameters initialization
+o_metaData = a_metaData;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeIridiumDeep;
+global g_decArgo_decoderIdListNkeCts5Osean;
+global g_decArgo_decoderIdListNkeCts5Usea;
+global g_decArgo_decoderIdListNkeCts5;
+global g_decArgo_decoderIdListNke;
+global g_decArgo_decoderIdListApexApf9Argos;
+global g_decArgo_decoderIdListApexApf9Iridium;
+global g_decArgo_decoderIdListApexApf11Iridium;
+global g_decArgo_decoderIdListApexApf11Argos;
+global g_decArgo_decoderIdListApex;
+global g_decArgo_decoderIdListNemo;
+
+
+% add a POSITIONING_SYSTEM = 'IRIDIUM' to GPS floats
+if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Remocean floats
+      ~(fix(a_decoderId/100) == 11) && ... % because this should not be done for Apex Iridium Rudics floats
+      ~(fix(a_decoderId/100) == 12)) % because this should not be done for Navis floats
+   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
+         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')))
+      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2 = 'IRIDIUM';
+      
+      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = IRIDIUM'' to float positioning systems\n', ...
+         g_decArgo_floatNum);
+   end
+end
+
+% add a POSITIONING_SYSTEM = 'RAFOS' to NEMO floats
+if (ismember(a_decoderId, g_decArgo_decoderIdListNemo))
+   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2, 'IRIDIUM')) && ...
+         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_3')))
+      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_3 = 'RAFOS';
+      
+      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = RAFOS'' to float positioning systems\n', ...
+         g_decArgo_floatNum);
+   end
+end
+
+% set CONTROLLER_BOARD_TYPE_PRIMARY
+if (isfield(o_metaData, 'CONTROLLER_BOARD_TYPE_PRIMARY') && ...
+      isempty(o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY))
+   if (ismember(a_decoderId, g_decArgo_decoderIdListNke))
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5))
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'APMT';
+      else
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'I535';
+      end
+   elseif (ismember(a_decoderId, g_decArgo_decoderIdListApex))
+      if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf9Argos) || ...
+            ismember(a_decoderId, g_decArgo_decoderIdListApexApf9Iridium))
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'APF9';
+      elseif (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Argos) || ...
+            ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'APF11';
+      end
+   end
+end
+
+% set CONTROLLER_BOARD_TYPE_SECONDARY
+if (isfield(o_metaData, 'CONTROLLER_BOARD_TYPE_SECONDARY') && ...
+      isempty(o_metaData.CONTROLLER_BOARD_TYPE_SECONDARY))
+   if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5))
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Osean))
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'OSEAN';
+      elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+         o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'USEA';
+      end
+   end
+end
+
+% set BATTERY_TYPE
+if (isfield(o_metaData, 'BATTERY_TYPE') && ...
+      isempty(o_metaData.BATTERY_TYPE))
+   if (ismember(a_decoderId, g_decArgo_decoderIdListNke))
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
+         o_metaData.BATTERY_TYPE = 'SAFT Lithium 14.5 V';
+      else
+         o_metaData.BATTERY_TYPE = 'SAFT Lithium 11 V';
+      end
+   end
 end
 
 return
@@ -931,8 +1024,8 @@ switch (a_decoderId)
          ];
       
    case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, ...
-         201, 203, 206, 121, 122, 123, 124, 125, 126, 215, 216, 217, 218, 221, 223}
-      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 215, 216, 217, 218, 221, 223]))
+         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223}
+      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223]))
          if (a_decoderId == 124) % no optode on CTS5 UVP #6902968
             if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
                   any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -1954,7 +2047,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 111, 113, 121, 122, 124, 126, ...
+   case {107, 109, 110, 111, 113, 121, 122, 124, 126, 127, ...
          201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, ...
          1121, 1122, 1123, 1124, 1125, 1126, 1127, 1322, 1323}
       % CASE_202_205_304
@@ -3042,9 +3135,13 @@ return
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_radiometric(a_metaData, a_decoderId)
 
+% arrays to store decoded calibration coefficient
+global g_decArgo_calibInfo;
+
+
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3061,12 +3158,50 @@ switch (a_decoderId)
    case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
-         paramList = [ ...
-            {'DOWN_IRRADIANCE380'} ...
-            {'DOWN_IRRADIANCE412'} ...
-            {'DOWN_IRRADIANCE490'} ...
-            {'DOWNWELLING_PAR'} ...
-            ];
+         % for Apex APF11 floats, parameter names is defined from calibration
+         % information
+         if (isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OCR'))
+            if (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda380') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda380') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda380') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda412') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda412') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda412') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0PAR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1PAR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmPAR'))
+               
+               paramList = [ ...
+                  {'DOWN_IRRADIANCE380'} ...
+                  {'DOWN_IRRADIANCE412'} ...
+                  {'DOWN_IRRADIANCE490'} ...
+                  {'DOWNWELLING_PAR'} ...
+                  ];
+               
+            elseif (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda443') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda443') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda443') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda490') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda555') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda555') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda555') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda670') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda670') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda670'))
+               
+               paramList = [ ...
+                  {'DOWN_IRRADIANCE443'} ...
+                  {'DOWN_IRRADIANCE490'} ...
+                  {'DOWN_IRRADIANCE555'} ...
+                  {'DOWN_IRRADIANCE670'} ...
+                  ];
+            end
+         end
       end
 end
 
@@ -3125,7 +3260,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -3229,6 +3364,36 @@ switch (a_decoderId)
                a1Lambda412, a0Lambda412, lmLambda412);
             o_preCalibComment = '';
             
+         case {'DOWN_IRRADIANCE443'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE443 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda443') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda443') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda443'))
+               a0Lambda443 = double(g_decArgo_calibInfo.OCR.A0Lambda443);
+               a1Lambda443 = double(g_decArgo_calibInfo.OCR.A1Lambda443);
+               lmLambda443 = double(g_decArgo_calibInfo.OCR.LmLambda443);
+            else
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE443 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            
+            o_param = 'DOWN_IRRADIANCE443';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR443';
+            o_paramUnits = 'W/m^2/nm';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'DOWN_IRRADIANCE443=0.01*A1_443*(RAW_DOWNWELLING_IRRADIANCE443-A0_443)*lm_443';
+            o_preCalibCoef = sprintf('A1_443=%g, A0_443=%g, lm_443=%g', ...
+               a1Lambda443, a0Lambda443, lmLambda443);
+            o_preCalibComment = '';
+            
          case {'DOWN_IRRADIANCE490'}
             
             % get calibration information
@@ -3257,6 +3422,66 @@ switch (a_decoderId)
             o_preCalibEq = 'DOWN_IRRADIANCE490=0.01*A1_490*(RAW_DOWNWELLING_IRRADIANCE490-A0_490)*lm_490';
             o_preCalibCoef = sprintf('A1_490=%g, A0_490=%g, lm_490=%g', ...
                a1Lambda490, a0Lambda490, lmLambda490);
+            o_preCalibComment = '';
+            
+         case {'DOWN_IRRADIANCE555'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE555 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda555') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda555') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda555'))
+               a0Lambda555 = double(g_decArgo_calibInfo.OCR.A0Lambda555);
+               a1Lambda555 = double(g_decArgo_calibInfo.OCR.A1Lambda555);
+               lmLambda555 = double(g_decArgo_calibInfo.OCR.LmLambda555);
+            else
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE555 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            
+            o_param = 'DOWN_IRRADIANCE555';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR555';
+            o_paramUnits = 'W/m^2/nm';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'DOWN_IRRADIANCE555=0.01*A1_555*(RAW_DOWNWELLING_IRRADIANCE555-A0_555)*lm_555';
+            o_preCalibCoef = sprintf('A1_555=%g, A0_555=%g, lm_555=%g', ...
+               a1Lambda555, a0Lambda555, lmLambda555);
+            o_preCalibComment = '';
+            
+         case {'DOWN_IRRADIANCE670'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE670 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda670') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda670') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda670'))
+               a0Lambda670 = double(g_decArgo_calibInfo.OCR.A0Lambda670);
+               a1Lambda670 = double(g_decArgo_calibInfo.OCR.A1Lambda670);
+               lmLambda670 = double(g_decArgo_calibInfo.OCR.LmLambda670);
+            else
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE670 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            
+            o_param = 'DOWN_IRRADIANCE670';
+            o_paramSensor = 'AUX_RADIOMETER_DOWN_IRR670';
+            o_paramUnits = 'W/m^2/nm';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'DOWN_IRRADIANCE670=0.01*A1_670*(RAW_DOWNWELLING_IRRADIANCE670-A0_670)*lm_670';
+            o_preCalibCoef = sprintf('A1_670=%g, A0_670=%g, lm_670=%g', ...
+               a1Lambda670, a0Lambda670, lmLambda670);
             o_preCalibComment = '';
             
          case {'DOWNWELLING_PAR'}
@@ -3317,7 +3542,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -3407,7 +3632,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -3689,7 +3914,7 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          301, 302, 303, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
@@ -3767,7 +3992,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -4051,7 +4276,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -4117,7 +4342,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -4220,7 +4445,7 @@ switch (a_decoderId)
             {'HUMIDITY_NITRATE'} ...
             ];
       end
-   case {110, 113}
+   case {110, 113, 127}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -4299,7 +4524,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126}
+   case {105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127}
       switch (a_paramName)
          
          case {'UV_INTENSITY_NITRATE'}
@@ -4324,7 +4549,7 @@ switch (a_decoderId)
             
          case {'NITRATE'}
             
-            if (~ismember(a_decoderId, [110, 113]))
+            if (~ismember(a_decoderId, [110, 113, 127]))
                
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
@@ -4373,21 +4598,106 @@ switch (a_decoderId)
                
                o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
                
-               uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
-               opticalWavelengthUvStr = sprintf('%.2f,', tabOpticalWavelengthUv(floatPixelBegin:floatPixelEnd));
-               eSwaNitrateStr = sprintf('%.8f,', tabESwaNitrate(floatPixelBegin:floatPixelEnd));
-               eNitrateStr = sprintf('%.8f,', tabENitrate(floatPixelBegin:floatPixelEnd));
-               o_preCalibCoef = [ ...
-                  sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
-                  floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-                  'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
-                  sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-                  'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
-                  sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-                  'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-                  'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
-                  ];
+               if (a_decoderId ~= 126)
+                  uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
+                  opticalWavelengthUvStr = sprintf('%.2f,', tabOpticalWavelengthUv(floatPixelBegin:floatPixelEnd));
+                  eSwaNitrateStr = sprintf('%.8f,', tabESwaNitrate(floatPixelBegin:floatPixelEnd));
+                  eNitrateStr = sprintf('%.8f,', tabENitrate(floatPixelBegin:floatPixelEnd));
+                  o_preCalibCoef = [ ...
+                     sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
+                     floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
+                     'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+                     sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                     g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                     'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+                     sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
+                     'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
+                     'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
+                     ];
+               else
+                  % even if these floats only measure NITRATE, their SUNA are
+                  % configured to send 90 pixels => we should use the
+                  % restrictions of "BISULFIDE floats" to be sure to generate a
+                  % PREDEPLOYMENT_CALIB_COEFFICIENT of less than 4096 characters
+                  uvIntensityRefNitrateStr = [];
+                  opticalWavelengthUvStr = [];
+                  eSwaNitrateStr = [];
+                  eNitrateStr = [];
+                  % for id = floatPixelBegin:floatPixelEnd % with floatPixelBegin:floatPixelEnd PREDEPLOYMENT_CALIB_COEFFICIENT exceeds 4096 characters
+                  for id = pixelBegin:pixelEnd
+                     if (tabUvIntensityRefNitrate(id) == 0)
+                        uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
+                     else
+                        val = sprintf('%.3f', tabUvIntensityRefNitrate(id));
+                        val2 = fliplr(val);
+                        idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                        val2(1:idN-1) = [];
+                        uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
+                     end
+                     
+                     if (tabOpticalWavelengthUv(id) == 0)
+                        opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
+                     else
+                        val = sprintf('%.2f', tabOpticalWavelengthUv(id));
+                        val2 = fliplr(val);
+                        idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                        val2(1:idN-1) = [];
+                        opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
+                     end
+                     
+                     if (tabESwaNitrate(id) == 0)
+                        eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
+                     else
+                        val = sprintf('%.8f', tabESwaNitrate(id));
+                        val2 = fliplr(val);
+                        idN = find(val2 ~= '0', 1, 'first');
+                        if (val2(idN) == '.')
+                           idN = idN + 1;
+                        end
+                        val2(1:idN-1) = [];
+                        val3 = fliplr(val2);
+                        idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                        if (any(val3(1:idN) == '.'))
+                           nd = length(val3(idN:end));
+                           format = ['%.' num2str(nd-1) 'e'];
+                           val4 = sprintf(format, str2double(val3));
+                        else
+                           val4 = val3;
+                        end
+                        eSwaNitrateStr = [eSwaNitrateStr ',' val4];
+                     end
+                     
+                     if (tabENitrate(id) == 0)
+                        eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
+                     else
+                        val = sprintf('%.8f', tabENitrate(id));
+                        val2 = fliplr(val);
+                        idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                        val2(1:idN-1) = [];
+                        val3 = fliplr(val2);
+                        idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                        if (any(val3(1:idN) == '.'))
+                           nd = length(val3(idN:end));
+                           format = ['%.' num2str(nd-1) 'e'];
+                           val4 = sprintf(format, str2double(val3));
+                        else
+                           val4 = val3;
+                        end
+                        eNitrateStr = [eNitrateStr ',' val4];
+                     end
+                  end
+                  o_preCalibCoef = [ ...
+                     sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
+                     floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
+                     'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
+                     sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                     g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                     'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
+                     sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
+                     'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
+                     'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
+                     ];
+               end
                
                o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             else
@@ -4448,45 +4758,100 @@ switch (a_decoderId)
                eSwaNitrateStr = [];
                eNitrateStr = [];
                eBisulfideStr = [];
-               % for id = floatPixelBegin:floatPixelEnd % with floatPixelBegin:floatPixelEnd PREDEPLOYMENT_CALIB_COEFFICIENT exceeds 4096 characters
+               
                for id = pixelBegin:pixelEnd
                   if (tabUvIntensityRefNitrate(id) == 0)
                      uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
                   else
-                     uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%.8f,', tabUvIntensityRefNitrate(id))];
+                     val = sprintf('%.3f', tabUvIntensityRefNitrate(id));
+                     val2 = fliplr(val);
+                     idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                     val2(1:idN-1) = [];
+                     uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
                   end
+                  
                   if (tabOpticalWavelengthUv(id) == 0)
                      opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
                   else
-                     opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%.2f,', tabOpticalWavelengthUv(id))];
+                     val = sprintf('%.2f', tabOpticalWavelengthUv(id));
+                     val2 = fliplr(val);
+                     idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                     val2(1:idN-1) = [];
+                     opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
                   end
+                  
                   if (tabESwaNitrate(id) == 0)
                      eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
                   else
-                     eSwaNitrateStr = [eSwaNitrateStr sprintf('%.8f,', tabESwaNitrate(id))];
+                     val = sprintf('%.8f', tabESwaNitrate(id));
+                     val2 = fliplr(val);
+                     idN = find(val2 ~= '0', 1, 'first');
+                     if (val2(idN) == '.')
+                        idN = idN + 1;
+                     end
+                     val2(1:idN-1) = [];
+                     val3 = fliplr(val2);
+                     idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                     if (any(val3(1:idN) == '.'))
+                        nd = length(val3(idN:end));
+                        format = ['%.' num2str(nd-1) 'e'];
+                        val4 = sprintf(format, str2double(val3));
+                     else
+                        val4 = val3;
+                     end
+                     eSwaNitrateStr = [eSwaNitrateStr ',' val4];
                   end
+                  
                   if (tabENitrate(id) == 0)
                      eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
                   else
-                     eNitrateStr = [eNitrateStr sprintf('%.8f,', tabENitrate(id))];
+                     val = sprintf('%.8f', tabENitrate(id));
+                     val2 = fliplr(val);
+                     idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                     val2(1:idN-1) = [];
+                     val3 = fliplr(val2);
+                     idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                     if (any(val3(1:idN) == '.'))
+                        nd = length(val3(idN:end));
+                        format = ['%.' num2str(nd-1) 'e'];
+                        val4 = sprintf(format, str2double(val3));
+                     else
+                        val4 = val3;
+                     end
+                     eNitrateStr = [eNitrateStr ',' val4];
                   end
+                  
                   if (tabEBisulfide(id) == 0)
                      eBisulfideStr = [eBisulfideStr sprintf('%d,', tabEBisulfide(id))];
                   else
-                     eBisulfideStr = [eBisulfideStr sprintf('%.9f,', tabEBisulfide(id))];
+                     val = sprintf('%.8f', tabEBisulfide(id));
+                     val2 = fliplr(val);
+                     idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                     val2(1:idN-1) = [];
+                     val3 = fliplr(val2);
+                     idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                     if (any(val3(1:idN) == '.'))
+                        nd = length(val3(idN:end));
+                        format = ['%.' num2str(nd-1) 'e'];
+                        val4 = sprintf(format, str2double(val3));
+                     else
+                        val4 = val3;
+                     end
+                     eBisulfideStr = [eBisulfideStr ',' val4];
                   end
                end
+               
                o_preCalibCoef = [ ...
                   sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                   floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-                  'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+                  'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
                   sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
                   g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-                  'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+                  'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
                   sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-                  'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-                  'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(1:end-1) ']' ...
-                  'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(1:end-1) ']' ...
+                  'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
+                  'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
+                  'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(2:end) ']' ...
                   ];
                
                o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
@@ -4545,50 +4910,106 @@ switch (a_decoderId)
             
             % for NITRATE&BISULFIDE we have more pixel and we must squeeze
             % their output as possible
+            
             uvIntensityRefNitrateStr = [];
             opticalWavelengthUvStr = [];
             eSwaNitrateStr = [];
             eNitrateStr = [];
             eBisulfideStr = [];
-            % for id = floatPixelBegin:floatPixelEnd % with floatPixelBegin:floatPixelEnd PREDEPLOYMENT_CALIB_COEFFICIENT exceeds 4096 characters
+
             for id = pixelBegin:pixelEnd
                if (tabUvIntensityRefNitrate(id) == 0)
                   uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
                else
-                  uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%.8f,', tabUvIntensityRefNitrate(id))];
+                  val = sprintf('%.3f', tabUvIntensityRefNitrate(id));
+                  val2 = fliplr(val);
+                  idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                  val2(1:idN-1) = [];
+                  uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
                end
+               
                if (tabOpticalWavelengthUv(id) == 0)
                   opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
                else
-                  opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%.2f,', tabOpticalWavelengthUv(id))];
+                  val = sprintf('%.2f', tabOpticalWavelengthUv(id));
+                  val2 = fliplr(val);
+                  idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                  val2(1:idN-1) = [];
+                  opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
                end
+               
                if (tabESwaNitrate(id) == 0)
                   eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
                else
-                  eSwaNitrateStr = [eSwaNitrateStr sprintf('%.8f,', tabESwaNitrate(id))];
+                  val = sprintf('%.8f', tabESwaNitrate(id));
+                  val2 = fliplr(val);
+                  idN = find(val2 ~= '0', 1, 'first');
+                  if (val2(idN) == '.')
+                     idN = idN + 1;
+                  end
+                  val2(1:idN-1) = [];
+                  val3 = fliplr(val2);
+                  idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                  if (any(val3(1:idN) == '.'))
+                     nd = length(val3(idN:end));
+                     format = ['%.' num2str(nd-1) 'e'];
+                     val4 = sprintf(format, str2double(val3));
+                  else
+                     val4 = val3;
+                  end
+                  eSwaNitrateStr = [eSwaNitrateStr ',' val4];
                end
+               
                if (tabENitrate(id) == 0)
                   eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
                else
-                  eNitrateStr = [eNitrateStr sprintf('%.8f,', tabENitrate(id))];
+                  val = sprintf('%.8f', tabENitrate(id));
+                  val2 = fliplr(val);
+                  idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                  val2(1:idN-1) = [];
+                  val3 = fliplr(val2);
+                  idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                  if (any(val3(1:idN) == '.'))
+                     nd = length(val3(idN:end));
+                     format = ['%.' num2str(nd-1) 'e'];
+                     val4 = sprintf(format, str2double(val3));
+                  else
+                     val4 = val3;
+                  end
+                  eNitrateStr = [eNitrateStr ',' val4];
                end
+               
                if (tabEBisulfide(id) == 0)
                   eBisulfideStr = [eBisulfideStr sprintf('%d,', tabEBisulfide(id))];
                else
-                  eBisulfideStr = [eBisulfideStr sprintf('%.9f,', tabEBisulfide(id))];
+                  val = sprintf('%.8f', tabEBisulfide(id));
+                  val2 = fliplr(val);
+                  idN = find((val2 ~= '0') & (val2 ~= '.'), 1, 'first');
+                  val2(1:idN-1) = [];
+                  val3 = fliplr(val2);
+                  idN = find((val3 ~= '0') & (val3 ~= '.') & (val3 ~= '-'), 1, 'first');
+                  if (any(val3(1:idN) == '.'))
+                     nd = length(val3(idN:end));
+                     format = ['%.' num2str(nd-1) 'e'];
+                     val4 = sprintf(format, str2double(val3));
+                  else
+                     val4 = val3;
+                  end
+                  eBisulfideStr = [eBisulfideStr ',' val4];
                end
             end
+            
             o_preCalibCoef = [ ...
                sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-               'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+               'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
                sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
                g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-               'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+               'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
                sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-               'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-               'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(1:end-1) ']' ...
-               'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(1:end-1) ']' ...
+               'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
+               'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
+               'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(2:end) ']' ...
                ];
             
             o_preCalibComment = 'Bisulfide concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
@@ -4662,7 +5083,7 @@ function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {121, 122, 123, 124, 125, 126}
+   case {121, 122, 123, 124, 125}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -4674,7 +5095,7 @@ switch (a_decoderId)
             {'PH_IN_SITU_TOTAL'} ...
             ];
       end
-   case {1322, 1323, 111, 113}
+   case {1322, 1323, 111, 113, 126, 127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -4740,7 +5161,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {121, 122, 123, 124, 125, 126}
+   case {121, 122, 123, 124, 125, 126, 127}
       switch (a_paramName)
          
          case {'VRS_PH'}

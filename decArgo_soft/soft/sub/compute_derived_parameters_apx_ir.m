@@ -330,6 +330,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                end
             end
@@ -390,6 +391,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
             end
          end
@@ -471,6 +473,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                end
             end
@@ -540,6 +543,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
             end
          end
@@ -621,6 +625,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                end
             end
@@ -691,6 +696,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
             end
          end
@@ -828,6 +834,7 @@ switch (a_decoderId)
                   % but we should have the same number of columns in
                   % dataStruct.data and dataStruct.dataAdj
                   if (~isempty(dataStruct.dataAdj))
+                     dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                      dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                   end
                end
@@ -897,6 +904,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                end
             end
@@ -1027,6 +1035,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
                end
             end
@@ -1096,6 +1105,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
             end
          end
@@ -1217,6 +1227,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
                end
             end
@@ -1280,6 +1291,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
             end
          end
@@ -1353,6 +1365,7 @@ switch (a_decoderId)
                % but we should have the same number of columns in
                % dataStruct.data and dataStruct.dataAdj
                if (~isempty(dataStruct.dataAdj))
+                  dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                   dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
                end
             end
@@ -1416,6 +1429,7 @@ switch (a_decoderId)
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
             end
          end
@@ -1510,6 +1524,7 @@ if (iscell(o_outputData))
          % but we should have the same number of columns in
          % dataStruct.data and dataStruct.dataAdj
          if (~isempty(dataStruct.dataAdj))
+            dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
             dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
          end
       end
@@ -1559,6 +1574,7 @@ else
       % but we should have the same number of columns in
       % dataStruct.data and dataStruct.dataAdj
       if (~isempty(dataStruct.dataAdj))
+         dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
          dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
       end
    end
@@ -1677,6 +1693,7 @@ if (iscell(o_outputData))
             % but we should have the same number of columns in
             % dataStruct.data and dataStruct.dataAdj
             if (~isempty(dataStruct.dataAdj))
+               dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
                dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramBbp700.fillValue];
             end
          end
@@ -1754,6 +1771,7 @@ else
          % but we should have the same number of columns in
          % dataStruct.data and dataStruct.dataAdj
          if (~isempty(dataStruct.dataAdj))
+            dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
             dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramBbp700.fillValue];
          end
       end
@@ -1807,6 +1825,7 @@ if (~isempty(a_lrCtdData))
       ctdStruct.paramList = a_lrCtdData.paramList([idPres idTemp idPsal]);
       ctdStruct.data = a_lrCtdData.data(:, [idPres idTemp idPsal]);
       if (~isempty(a_lrCtdData.dataAdj))
+         ctdStruct.paramDataMode = a_lrCtdData.paramDataMode([idPres idTemp idPsal]);
          ctdStruct.dataAdj = a_lrCtdData.dataAdj(:, [idPres idTemp idPsal]);
       end
    end
@@ -1821,6 +1840,7 @@ if (~isempty(a_hrCtdData))
          ctdStruct.paramList = a_hrCtdData.paramList([idPres idTemp idPsal]);
          ctdStruct.data = a_hrCtdData.data(:, [idPres idTemp idPsal]);
          if (~isempty(a_hrCtdData.dataAdj))
+            ctdStruct.paramDataMode = a_hrCtdData.paramDataMode([idPres idTemp idPsal]);
             ctdStruct.dataAdj = a_hrCtdData.dataAdj(:, [idPres idTemp idPsal]);
          end
       else
@@ -1885,6 +1905,7 @@ if (iscell(a_profData))
          ctdStruct.paramList = dataStruct.paramList([idPres idTemp idPsal]);
          ctdStruct.data = dataStruct.data([idPres idTemp idPsal]);
          if (~isempty(dataStruct.dataAdj))
+            ctdStruct.paramDataMode = dataStruct.paramDataMode([idPres idTemp idPsal]);
             ctdStruct.dataAdj = dataStruct.dataAdj([idPres idTemp idPsal]);
          end
          o_ctdData{idS} = ctdStruct;
@@ -1901,6 +1922,7 @@ else
       ctdStruct.paramList = dataStruct.paramList([idPres idTemp idPsal]);
       ctdStruct.data = dataStruct.data(:, [idPres idTemp idPsal]);
       if (~isempty(dataStruct.dataAdj))
+         ctdStruct.paramDataMode = dataStruct.paramDataMode([idPres idTemp idPsal]);
          ctdStruct.dataAdj = dataStruct.dataAdj(:, [idPres idTemp idPsal]);
       end
       o_ctdData = ctdStruct;

@@ -20,7 +20,8 @@
 % ------------------------------------------------------------------------------
 function select_argos_files_remocean(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\rsync_rudics_20151005\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS4_V1.xx_V2.xx\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS4_V1.xx_V2.xx\rsync_data\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -104,7 +105,7 @@ for idFloat = 1:nbFloats
    floatArgosId = listArgosId{idF};
    
    % select the Argos files or directories associated with the floats
-   dirIn = [DIR_INPUT_ARGOS_FILES '/' floatArgosId];
+   dirIn = [DIR_INPUT_ARGOS_FILES '/' floatArgosId '_' floatNumStr];
    if (exist(dirIn, 'dir') == 7)
       move_file(dirIn, selectDirName);
       fprintf('ok\n');

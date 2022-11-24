@@ -52,7 +52,7 @@ for idProf = 1:length(a_tabProfiles)
          profParam = parameterList(idParam);
          param = get_netcdf_param_attributes(profParam.name);
          paramData = prof.data(:, idParam);
-         paramDataQc = ones(length(paramData), 1)*g_decArgo_qcDef;
+         paramDataQc = ones(size(paramData, 1), 1)*g_decArgo_qcDef;
          paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
          dataQc(:, idParam) = paramDataQc;
       end
@@ -82,9 +82,13 @@ for idProf = 1:length(a_tabProfiles)
          
          param = get_netcdf_param_attributes(profParam.name);
          paramData = prof.data(:, firstCol:lastCol);
-         paramDataQc = ones(size(paramData))*g_decArgo_qcDef;
-         paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
-         dataQc(:, firstCol:lastCol) = paramDataQc;
+         paramDataQc = ones(size(paramData, 1), 1)*g_decArgo_qcDef;
+         for idL = 1:size(paramData, 1)
+            if (any(paramData(idL, :) ~= param.fillValue))
+               paramDataQc(idL) = g_decArgo_qcCorrectable;
+            end
+         end
+         dataQc(:, idParam) = paramDataQc;
       end
    end
    
@@ -114,7 +118,7 @@ for idNmeas = 1:length(a_tabTrajNMeas)
             measParam = parameterList(idParam);
             param = get_netcdf_param_attributes(measParam.name);
             measData = tabMeasOne.paramData(:, idParam);
-            measDataQc = ones(length(measData), 1)*g_decArgo_qcDef;
+            measDataQc = ones(size(measData, 1), 1)*g_decArgo_qcDef;
             measDataQc(find(measData ~= param.fillValue)) = g_decArgo_qcCorrectable;
             paramDataQc(:, idParam) = measDataQc;
          end
@@ -144,9 +148,13 @@ for idNmeas = 1:length(a_tabTrajNMeas)
             
             param = get_netcdf_param_attributes(measParam.name);
             measData = tabMeasOne.paramData(:, firstCol:lastCol);
-            measDataQc = ones(size(measData))*g_decArgo_qcDef;
-            measDataQc(find(measData ~= param.fillValue)) = g_decArgo_qcCorrectable;
-            paramDataQc(:, firstCol:lastCol) = measDataQc;
+            measDataQc = ones(size(measData, 1), 1)*g_decArgo_qcDef;
+            for idL = 1:size(measData, 1)
+               if (any(measData(idL, :) ~= param.fillValue))
+                  measDataQc(idL) = g_decArgo_qcCorrectable;
+               end
+            end
+            paramDataQc(:, idParam) = measDataQc;
          end
       end
       

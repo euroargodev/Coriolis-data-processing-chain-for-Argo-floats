@@ -334,8 +334,8 @@ switch (a_decoderId)
       [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate);
    case {124, 125}
       [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate);
-   case {126}
-      [o_ok] = decode_event_data_126(a_inputFilePathName, a_launchDate);
+   case {126, 127}
+      [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate);
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
@@ -722,7 +722,7 @@ return
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data_126(a_inputFilePathName, a_launchDate)
+%  [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
@@ -739,7 +739,7 @@ return
 % RELEASES :
 %   09/02/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data_126(a_inputFilePathName, a_launchDate)
+function [o_ok] = decode_event_data_126_127(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -758,11 +758,11 @@ global g_decArgo_eventUsedList;
 
 
 % initialize event list
-init_event_lists_126;
+init_event_lists_126_127;
 evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_event_data_126: File not found: %s\n', a_inputFilePathName);
+   fprintf('ERROR: decode_event_data_126_127: File not found: %s\n', a_inputFilePathName);
    return
 end
 
@@ -809,7 +809,7 @@ while ((curBit-1)/8 < lastByteNum)
          if (ismember(evtNum, g_decArgo_eventUsedList))
             retrieve = 1;
          end
-         [ok, curBit, evtData] = get_event_126(curBit, data, evtDataType, retrieve);
+         [ok, curBit, evtData] = get_event_126_127(curBit, data, evtDataType, retrieve);
          if (~ok)
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
@@ -1474,7 +1474,7 @@ return
 % Decode (or only read without storing it) one CTS5 event.
 %
 % SYNTAX :
-%  [o_ok, o_curBit, o_evtData] = get_event_126(a_curBit, a_data, a_evtDataType, a_retrieve)
+%  [o_ok, o_curBit, o_evtData] = get_event_126_127(a_curBit, a_data, a_evtDataType, a_retrieve)
 %
 % INPUT PARAMETERS :
 %   a_curBit      : input current bit
@@ -1495,7 +1495,7 @@ return
 % RELEASES :
 %   10/18/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok, o_curBit, o_evtData] = get_event_126(a_curBit, a_data, a_evtDataType, a_retrieve)
+function [o_ok, o_curBit, o_evtData] = get_event_126_127(a_curBit, a_data, a_evtDataType, a_retrieve)
 
 % output parameters initialization
 o_ok = 0;
@@ -2373,7 +2373,7 @@ return
 % Init event type list and event used list.
 %
 % SYNTAX :
-%  init_event_lists_126
+%  init_event_lists_126_127
 %
 % INPUT PARAMETERS :
 %
@@ -2387,7 +2387,7 @@ return
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function init_event_lists_126
+function init_event_lists_126_127
 
 % variable to store event numbers and types
 global g_decArgo_eventNumTypeList;

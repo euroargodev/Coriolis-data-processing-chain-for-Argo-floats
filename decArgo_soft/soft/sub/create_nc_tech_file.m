@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  create_nc_tech_file(a_decoderId, ...
-%    a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, ...
+%    a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabTechAuxNMeas, ...
 %    a_tabNcTechLabelInfo, a_metaDataFromJson)
 %
 % INPUT PARAMETERS :
@@ -11,6 +11,7 @@
 %   a_tabNcTechIndex     : index information on technical data
 %   a_tabNcTechVal       : values of technical data
 %   a_tabTechNMeas       : values of technical parameter data
+%   a_tabTechAuxNMeas    : values of technical parameter AUX data
 %   a_tabNcTechLabelInfo : additional information for technical labels
 %   a_metaDataFromJson   : additional information retrieved from JSON meta-data
 %                          file
@@ -26,7 +27,7 @@
 %   03/31/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function create_nc_tech_file(a_decoderId, ...
-   a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, ...
+   a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabTechAuxNMeas, ...
    a_tabNcTechLabelInfo, a_metaDataFromJson)
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
@@ -53,7 +54,7 @@ global g_decArgo_generateNcFlag;
 
 
 % no data to save
-if (isempty(a_tabNcTechIndex) && isempty(a_tabTechNMeas))
+if (isempty(a_tabNcTechIndex) && isempty(a_tabTechNMeas) && isempty(a_tabTechAuxNMeas))
    return
 end
 
@@ -109,7 +110,8 @@ if (g_decArgo_floatTransType == 1)
    end
       
    create_nc_tech_file_3_1(a_decoderId, ...
-      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabNcTechLabelInfo, a_metaDataFromJson);
+      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabTechAuxNMeas, ...
+      a_tabNcTechLabelInfo, a_metaDataFromJson);
    
 elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
@@ -123,7 +125,8 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    end
    
    create_nc_tech_file_3_1(a_decoderId, ...
-      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabNcTechLabelInfo, a_metaDataFromJson);
+      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabTechAuxNMeas, ...
+      a_tabNcTechLabelInfo, a_metaDataFromJson);
    
 end
 

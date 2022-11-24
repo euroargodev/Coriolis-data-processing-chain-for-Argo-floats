@@ -36,8 +36,19 @@ o_lastMsgTime = g_decArgo_dateDef;
 
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880]))
+if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880, 6903230]))
    switch g_decArgo_floatNum
+      case 6903230
+         if (ismember(a_cycleNumber, [12 44]))
+            % unique mail file (no data) transmitted during Ice session
+            idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+            if (~isempty(idFCyNum))
+               timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+               o_firstMsgTime = min(timeList(1:end-1));
+               o_lastMsgTime = max(timeList(1:end-1));
+            end
+            return
+         end
       case 6903256
          if (a_cycleNumber == 4)
             return

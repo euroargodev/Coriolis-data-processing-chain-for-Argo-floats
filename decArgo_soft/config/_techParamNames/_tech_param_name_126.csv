@@ -7,9 +7,6 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 105;TECH;Battery voltage under load (min.);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 210;TECH_AUX;Pressure of battery voltage under load (min.);TECH_AUX_PRES_BatteryPumpStartProfile_dbar;"Pressure associated to ""VOLTAGE_BatteryPumpStartProfile_volts = Pump battery voltage (volts) at depth""."
 206;TECH;Internal temperature;TEMPERATURE_InternalVacuumAtSurface_degC;internal tube temperature at the surface
-300;META;APMT version;META_FIRMWARE_VERSION;Firmware version for the float.
-301;META_AUX;Payload version;META_AUX_SENSOR_BOARD_FIRMWARE_VERSION;Firmware version of the sensor board.
-302;META_AUX;SIM card ID;META_AUX_FLOAT_SIM_CARD_NUMBER;SIM card number of the float.
 303;META_AUX;nke ID;META_AUX_FLOAT_WC_NUMBER;WC number of the float.
 207;TECH;Pressure activation start;CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;pressure activation scrutation start date
 208;TECH;Pressure activation stop;CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;pressure activation scrutation end date
@@ -81,7 +78,6 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 142;TECH_AUX;Processing/standby ratio;TECH_AUX_RATE_ProcessingVsStandByeRatio_percent;Ratio between float activity and stand bye during the cycle.
 143;TECH_AUX;Solenoid valve;TECH_AUX_TIME_TotalValveActivity_csec;Total duration of valve actions during the cycle.
 144;TECH_AUX;Pump;TECH_AUX_TIME_TotalPumpActivity_csec;Total duration of pump actions during the cycle.
-145;TECH_AUX;Cumulated SBE41 activations;TECH_AUX_TIME_TotalCtdActivity_minutes;Total duration of CTD activity during the cycle.
 146;TECH;Cumulated modem activations (Information on previous pattern/cycle);TIME_PreviousIridiumSession_minutes;duration of the previous iridium session
 147;TECH_AUX;Cumulated GPS activations;TECH_AUX_TIME_TotalGpsActivity_seconds;Total duration of GPS activity during the cycle.
 222;TECH_AUX; Cumulated sensor activations:  - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES]  - Duration;TECH_AUX_TIME_Total<short_sensor_name>Activity_minutes;Total duration of <short_sensor_name> sensor activity during the cycle.
@@ -126,6 +122,11 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 229;TECH_AUX;No reply/framing error: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, RAMSES] - Error count;TECH_AUX_NUMBER_<short_sensor_name>NoReplyCountAlarm_COUNT;Alarm raised to report no reply counter of <short_sensor_name> sensor.
 230;TECH_AUX;Repetitive default: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, RAMSES];TECH_AUX_FLAG_<short_sensor_name>BrokenAlarm_LOGICAL;Alarm raised when <short_sensor_name> sensor is broken.
 231;TECH_AUX;Data size: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6-LPM, UVP6-TX1, UVP6-TX2, UVP6-BLK, EXT-TRIG, RAMSES] - Data size;TECH_AUX_NUMBER_<short_sensor_name>DataSizeAlarm_kbyte;Alarm raised to report <short_sensor_name> sensor data size (in KB).
+233;TECH_AUX;Counters:  - Sample counter;TECH_AUX_NUMBER_SunaSamples_COUNT;Number of samples acquired by the Suna.
+234;TECH_AUX; - Power cycle counter;TECH_AUX_NUMBER_SunaPowerCycles_COUNT;Number of power cycles performed by the Suna.
+235;TECH_AUX; - Error counter;TECH_AUX_NUMBER_SunaErrors_COUNT;Number of errors reported by the Suna.
+236;TECH_AUX;Power supply:   - Voltage;TECH_AUX_VOLTAGE_Suna_volts;Suna power supply voltage.
+237;TECH_AUX; - Intensity;TECH_AUX_CURRENT_Suna_amps;Suna power supply current.
 232;TECH_AUX;SD memory free space;TECH_AUX_NUMBER_UvpMemoryFreeSpace_gbyte;Remaining space in the SD card of the UVP sensor (in GB).
 174;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS;Alarm raised when the float is hanged during ascent.
 175;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float escaped from hanging during ascent.

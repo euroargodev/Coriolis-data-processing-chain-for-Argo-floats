@@ -52,16 +52,12 @@ global g_decArgo_dirOutputNetcdfFile;
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_qcDef;
-global g_decArgo_janFirst1950InMatlab;
 
 % decoder version
 global g_decArgo_decoderVersion;
 
 % report information structure
 global g_decArgo_reportStruct;
-
-% arrays to store RT offset information
-global g_decArgo_rtOffsetInfo;
 
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
@@ -428,7 +424,7 @@ for idProf = 1:length(tabProfiles)
                                     else
                                        idNoDef = [];
                                        for id = 1:size(paramData, 1)
-                                          if ~((length(unique(paramData(id, :))) == 1) && (unique(paramData(id, :)) == paramInfo.fillValue))
+                                          if (any(paramData(id, :) ~= paramInfo.fillValue))
                                              idNoDef = [idNoDef id];
                                           end
                                        end
@@ -1075,24 +1071,7 @@ for idProf = 1:length(tabProfiles)
          end
          
          netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
-         
-         % create a PARAMETER(N_POF, N_PARAM) array
-         parameterArray = repmat({''}, nbProfToStore, nbProfParam);
-         for idP = 1:nbProfToStore
-            prof = tabProfiles(idProfInFile(idP));
-            parameterList = prof.paramList;
-            paramPos = 0;
-            for idParam = 1:length(parameterList)
-               if (((parameterList(idParam).paramType ~= 'c') || ...
-                     strcmp(parameterList(idParam).name, 'PRES')) && ...
-                     ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
-                     ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
-                  paramPos = paramPos + 1;
-                  parameterArray(idP, paramPos) = {parameterList(idParam).name};
-               end
-            end
-         end
-         
+                  
          % create profile variables
          
          for idP = 1:nbProfToStore
@@ -1123,7 +1102,10 @@ for idProf = 1:length(tabProfiles)
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
             
+            netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'R');
+
             parameterList = prof.paramList;
+            parameterDataMode = prof.paramDataMode;
             paramPos = 0;
             for idParam = 1:length(parameterList)
                
@@ -1143,7 +1125,15 @@ for idProf = 1:length(tabProfiles)
                   netcdf.putVar(fCdf, stationParametersVarId, ...
                      fliplr([profPos paramPos 0]), fliplr([1 1 length(valueStr)]), valueStr');
                   
-                  netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
+                  if (isempty(parameterDataMode))
+                     netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
+                  elseif ((parameterDataMode(idParam) == 'A') && (~strcmp(parameterList(idParam).name, 'PRES')))
+                     netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'A');
+                     netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
+                  else
+                     netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
+                  end
+                  
                   paramPos = paramPos + 1;
                end
             end
@@ -1163,14 +1153,12 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, dataStateIndicatorVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
-            netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'R');
-            
+                        
             valueStr = get_platform_type(a_decoderId);
             netcdf.putVar(fCdf, platformTypeVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = ' ';
             idVal = find(strcmp('FLOAT_SERIAL_NO', a_metaDataFromJson) == 1);
             if (~isempty(idVal))
@@ -1225,22 +1213,9 @@ for idProf = 1:length(tabProfiles)
          % - some parameters (CHLA, NITRATE, ...) may have their own RT
          % adjustment
          % Concerning adjustments stored in the DB:
-         % - the data are adjusted during the nc file creation
          % - there is no reprocessing of associated derived parameters (i.e. for
          % example if PSAL should be adjusted, associated DOXY data is not
          % reprocessed to DOXY_ADJUSTED)
-         % - adjustements stored in the DB have the highest priority (i.e. for
-         % example if NITRATE has a DB adjustment it will replace the one
-         % performed during the decoding process).
-         
-         % create the list of RT adjusted profiles (from DB information)
-         adjustedProfilesList = zeros(nbProfToStore, 1);
-         for idP = 1:nbProfToStore
-            prof = tabProfiles(idProfInFile(idP));
-            if (~prof.fakeProfFlag)
-               adjustedProfilesList(idP) = rt_adjusment_exist(prof, 0);
-            end
-         end
          
          % add profile data
          for idP = 1:nbProfToStore
@@ -1305,12 +1280,7 @@ for idProf = 1:length(tabProfiles)
             
             % profile parameter data
             parameterList = prof.paramList;
-            dbAdjustedParamIdList = []; % for RT adjustments stored in the DB
-            dbAdjustedParamNameList = []; % for RT adjustments stored in the DB
-            decAdjustedParamIdList = []; % for RT adjustments performed by the decoder
-            decAdjustedParamNameList = []; % for RT adjustments performed by the decoder
-            specificAdjParamList = [{'CHLA'} {'NITRATE'} {'DOXY'}];
-            specificAdjParamFlag = zeros(size(specificAdjParamList));
+            parameterDataMode = prof.paramDataMode;
             for idParam = 1:length(parameterList)
                
                if ((parameterList(idParam).paramType ~= 'c') || ...
@@ -1358,7 +1328,7 @@ for idProf = 1:length(tabProfiles)
                            paramDataQcStr(find(paramData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                         else
                            paramDataQc = prof.dataQc(:, idParam);
-                           if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
+                           if (all(paramDataQc == g_decArgo_qcDef))
                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
                               paramDataQcStr(find(paramData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                            else
@@ -1387,77 +1357,43 @@ for idProf = 1:length(tabProfiles)
                            netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramDataQcStr(measIds));
                         end
                         
-                        % parameter RT DB adjustment
-                        if (adjustedProfilesList(idP) == 1)
-                           if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
-                              
-                              % process RT DB adjustment of this parameter
-                              paramAdjData = compute_adjusted_data(paramData, profParam, prof);
-                              
-                              if (~isempty(paramAdjData))
-                                 
-                                 idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                 if (~isempty(idPosParam))
-                                    dbAdjustedParamIdList = [dbAdjustedParamIdList idPosParam-1];
-                                    dbAdjustedParamNameList = [dbAdjustedParamNameList {profParamName}];
-                                 else
-                                    fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                       g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                       profParamName, idP);
-                                 end
-                                 
-                                 % store parameter adjusted data in ADJUSTED variable
-                                 netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                                 
+                        if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
+                              (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                           
+                           % parameter adjusted data
+                           paramAdjData = prof.dataAdj(:, idParam);
+                           if (isempty(prof.dataAdjQc))
+                              paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                              paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
+                           else
+                              paramAdjDataQc = prof.dataAdjQc(:, idParam);
+                              if (all(paramAdjDataQc == g_decArgo_qcDef))
                                  paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                  paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                                 netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                              end
-                           end
-                        end
-                        
-                        % parameter decoder RT adjustment
-                        if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
-                           
-                           % check if the parameter was adjusted by the decoder
-                           if (any(strcmp(profParamName, specificAdjParamList)))
-                              if (~isempty(prof.dataAdj))
-                                 paramAdjData = prof.dataAdj(:, idParam);
+                              else
+                                 paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, length(paramAdjData), 1);
+                                 idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
+                                 paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
                                  
-                                 if (any(paramAdjData ~= profParam.fillValue))
-                                    idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                    if (~isempty(idPosParam))
-                                       if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                          decAdjustedParamIdList = [decAdjustedParamIdList idPosParam-1];
-                                          decAdjustedParamNameList = [decAdjustedParamNameList {profParamName}];
-                                       end
-                                    else
-                                       fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                          g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                          profParamName, idP);
-                                    end
-                                    
-                                    if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                       % store parameter adjusted data in ADJUSTED variable
-                                       netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                                       
-                                       paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
-                                       paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                                       netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                                       
-                                       if (~isempty(prof.dataAdjError))
-                                          paramAdjDataError = prof.dataAdjError(:, idParam);
-                                          if (any(paramAdjDataError ~= profParam.fillValue))
-                                             netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
-                                          end
-                                       end
-                                    end
-                                 end
+                                 profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
+                                 profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                                 netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
+                              end
+                           end
+                           
+                           netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
+                           
+                           netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                           
+                           if (~isempty(prof.dataAdjError))
+                              paramAdjDataError = prof.dataAdjError(:, idParam);
+                              if (any(paramAdjDataError ~= profParam.fillValue))
+                                 netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
                               end
                            end
                         end
                         
-                     else
+                     else % of if (isempty(prof.paramNumberWithSubLevels))
                         
                         % some profile parameters have sublevels
                         
@@ -1483,26 +1419,26 @@ for idProf = 1:length(tabProfiles)
                               paramDataQcStr(find(paramData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                            else
                               for idL = 1: size(paramData, 1)
-                                 if (~isempty(find(paramData(idL, :) ~= profParam.fillValue, 1)))
+                                 if (any(paramData(idL, :) ~= profParam.fillValue))
                                     paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
                                  end
                               end
                            end
                         else
                            paramDataQc = prof.dataQc(:, idParam);
-                           if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
+                           if (all(paramDataQc == g_decArgo_qcDef))
                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
                               if (size(paramData, 2) == 1)
                                  paramDataQcStr(find(paramData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                               else
                                  for idL = 1: size(paramData, 1)
-                                    if (~isempty(find(paramData(idL, :) ~= profParam.fillValue, 1)))
+                                    if (any(paramData(idL, :) ~= profParam.fillValue))
                                        paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
                                     end
                                  end
                               end
                            else
-                              paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
+                              paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
                               idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                               paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                               
@@ -1529,77 +1465,47 @@ for idProf = 1:length(tabProfiles)
                               netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataQcStr)]), paramDataQcStr(measIds));
                            end
                            
-                           % parameter RT DB adjustment
-                           if (adjustedProfilesList(idP) == 1)
-                              if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
-                                 
-                                 % process RT DB adjustment of this parameter
-                                 paramAdjData = compute_adjusted_data(paramData, profParam, prof);
-                                 
-                                 if (~isempty(paramAdjData))
-                                    
-                                    idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                    if (~isempty(idPosParam))
-                                       dbAdjustedParamIdList = [dbAdjustedParamIdList idPosParam-1];
-                                       dbAdjustedParamNameList = [dbAdjustedParamNameList {profParamName}];
-                                    else
-                                       fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                          g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                          profParamName, idP);
-                                    end
-                                    
-                                    % store parameter adjusted data in ADJUSTED variable
-                                    netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                                    
+                           if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
+                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                              
+                              % parameter adjusted data
+                              paramAdjData = prof.dataAdj(:, firstCol:lastCol);
+                              if (isempty(prof.dataAdjQc))
+                                 paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                                 paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
+                              else
+                                 paramAdjDataQc = prof.dataAdjQc(:, idParam);
+                                 if (all(paramAdjDataQc == g_decArgo_qcDef))
                                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                     paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                                    netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                                 end
-                              end
-                           end
-                           
-                           % parameter decoder RT adjustment
-                           if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
-                              
-                              % check if the parameter was adjusted by the decoder
-                              if (any(strcmp(profParamName, specificAdjParamList)))
-                                 if (~isempty(prof.dataAdj))
-                                    paramAdjData = prof.dataAdj(:, firstCol:lastCol);
+                                 else
+                                    paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                                    idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
+                                    paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
                                     
-                                    if (any(paramAdjData ~= profParam.fillValue))
-                                       idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                       if (~isempty(idPosParam))
-                                          if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                             decAdjustedParamIdList = [decAdjustedParamIdList idPosParam-1];
-                                             decAdjustedParamNameList = [decAdjustedParamNameList {profParamName}];
-                                          end
-                                       else
-                                          fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                             g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                             profParamName, idP);
-                                       end
-                                       
-                                       if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                          % store parameter adjusted data in ADJUSTED variable
-                                          netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                                          
-                                          paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
-                                          paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                                          netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                                          
-                                          if (~isempty(prof.dataAdjError))
-                                             paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
-                                             if (any(paramAdjDataError ~= profParam.fillValue))
-                                                netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
-                                             end
-                                          end
-                                       end
+                                    if ~(strcmp(profParam.name, 'PRES') || ...
+                                          strcmp(profParam.name(end-3:end), '_STD') || ...
+                                          strcmp(profParam.name(end-3:end), '_MED'))
+                                       profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
+                                       profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                                       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                                     end
                                  end
                               end
+                              
+                              netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
+                              
+                              netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                              
+                              if (~isempty(prof.dataAdjError))
+                                 paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
+                                 if (any(paramAdjDataError ~= profParam.fillValue))
+                                    netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
+                                 end
+                              end
                            end
                            
-                        else
+                        else % of if (size(paramData, 2) == 1)
                            
                            netcdf.putVar(fCdf, profParamVarId, fliplr([profPos 0 0]), fliplr([1 size(paramData)]), paramData(measIds, :)');
                            
@@ -1607,80 +1513,50 @@ for idProf = 1:length(tabProfiles)
                               netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataQcStr)]), paramDataQcStr(measIds));
                            end
                            
-                           % parameter RT DB adjustment
-                           if (adjustedProfilesList(idP) == 1)
-                              if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
-                                 
-                                 % process RT DB adjustment of this parameter
-                                 paramAdjData = compute_adjusted_data(paramData, profParam, prof);
-                                 
-                                 if (~isempty(paramAdjData))
-                                    
-                                    idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                    if (~isempty(idPosParam))
-                                       dbAdjustedParamIdList = [dbAdjustedParamIdList idPosParam-1];
-                                       dbAdjustedParamNameList = [dbAdjustedParamNameList {profParamName}];
-                                    else
-                                       fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                          g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                          profParamName, idP);
+                           if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
+                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                              
+                              % parameter adjusted data
+                              paramAdjData = prof.dataAdj(:, firstCol:lastCol);
+                              if (isempty(prof.dataAdjQc))
+                                 paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                                 for idL = 1: size(paramAdjData, 1)
+                                    if (any(paramAdjData(idL, :) ~= profParam.fillValue))
+                                       paramAdjDataQcStr(idL) = g_decArgo_qcStrNoQc;
                                     end
-                                    
-                                    % store parameter adjusted data in ADJUSTED variable
-                                    netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjData)]), paramAdjData(measIds, :)');
-                                    
+                                 end
+                              else
+                                 paramAdjDataQc = prof.dataAdjQc(:, idParam);
+                                 if (all(paramAdjDataQc == g_decArgo_qcDef))
                                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                     for idL = 1: size(paramAdjData, 1)
-                                       if (~isempty(find(paramAdjData(idL, :) ~= profParam.fillValue, 1)))
+                                       if (any(paramAdjData(idL, :) ~= profParam.fillValue))
                                           paramAdjDataQcStr(idL) = g_decArgo_qcStrNoQc;
                                        end
                                     end
-                                    netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 size(paramAdjData, 1)]), paramAdjDataQcStr(measIds));
+                                 else
+                                    paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                                    idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
+                                    paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
+                                    
+                                    if ~(strcmp(profParam.name, 'PRES') || ...
+                                          strcmp(profParam.name(end-3:end), '_STD') || ...
+                                          strcmp(profParam.name(end-3:end), '_MED'))
+                                       profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
+                                       profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                                       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
+                                    end
                                  end
                               end
-                           end
-                           
-                           % parameter decoder RT adjustment
-                           if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
                               
-                              % check if the parameter was adjusted by the decoder
-                              if (any(strcmp(profParamName, specificAdjParamList)))
-                                 if (~isempty(prof.dataAdj))
-                                    paramAdjData = prof.dataAdj(:, firstCol:lastCol);
-                                    
-                                    if (any(paramAdjData ~= profParam.fillValue))
-                                       idPosParam = find(strcmp(parameterArray(idP, :), profParamName) == 1);
-                                       if (~isempty(idPosParam))
-                                          if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                             decAdjustedParamIdList = [decAdjustedParamIdList idPosParam-1];
-                                             decAdjustedParamNameList = [decAdjustedParamNameList {profParamName}];
-                                          end
-                                       else
-                                          fprintf('ERROR: Float #%d Cycle #%d Profile #%d Output Cycle #%d: unable to get idPosParam for ''%s'' parameter in profile #%d - SCIENTIFIC_CALIB_* not set\n', ...
-                                             g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                                             profParamName, idP);
-                                       end
-                                       
-                                       if (~ismember(idPosParam-1, dbAdjustedParamIdList)) % RT DB adjustment already exist
-                                          % store parameter adjusted data in ADJUSTED variable
-                                          netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjData)]), paramAdjData(measIds, :)');
-                                          
-                                          paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
-                                          for idL = 1: size(paramAdjData, 1)
-                                             if (~isempty(find(paramAdjData(idL, :) ~= profParam.fillValue, 1)))
-                                                paramAdjDataQcStr(idL) = g_decArgo_qcStrNoQc;
-                                             end
-                                          end
-                                          netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 size(paramAdjData, 1)]), paramAdjDataQcStr(measIds));
-                                          
-                                          if (~isempty(prof.dataAdjError))
-                                             paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
-                                             if (any(paramAdjDataError ~= profParam.fillValue))
-                                                netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjDataError)]), paramAdjDataError(measIds, :)');
-                                             end
-                                          end
-                                       end
-                                    end
+                              netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjData)]), paramAdjData(measIds, :)');
+
+                              netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                              
+                              if (~isempty(prof.dataAdjError))
+                                 paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
+                                 if (any(paramAdjDataError ~= profParam.fillValue))
+                                    netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjDataError)]), paramAdjDataError(measIds, :)');
                                  end
                               end
                            end
@@ -1690,136 +1566,66 @@ for idProf = 1:length(tabProfiles)
                end
             end
             
-            % for RT DB adjustments:
-            % - set DATA_MODE and PARAMETER_DATA_MODE
-            % - retrieve SCIENTIFIC_CALIB_* from DB (meta.json file)
-            if (adjustedProfilesList(idP) == 1)
-               netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
-               for id = 1:length(dbAdjustedParamIdList)
-                  netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos dbAdjustedParamIdList(id)]), fliplr([1 1]), 'A');
-               end
+            % add specific comment for PRES parameter
+            if (any(strcmp({prof.paramList.name}, 'PRES')))
                
-               % process calibration information
-               idVal = find(strcmp('CALIB_RT_PARAMETER', a_metaDataFromJson) == 1);
-               if (~isempty(idVal))
-                  metaData = a_metaDataFromJson{idVal+1};
-                  if (~isempty(metaData) && isstruct(metaData))
-                     tabParam = unique(struct2cell(metaData));
-                     idDel = [];
-                     for idParam = 1:length(tabParam)
-                        param = tabParam{idParam};
-                        idPosParam = find(strcmp({parameterList.name}, param) == 1);
-                        paramTypeList = [parameterList.paramType];
-                        if (isempty(idPosParam) || ...
-                              ~((paramTypeList(idPosParam) ~= 'c') || ...
-                              strcmp(param, 'PRES')))
-                           idDel = [idDel idParam];
-                        end
-                     end
-                     tabParam(idDel) = [];
-                     tabId = [];
-                     tabEquation = [];
-                     tabCoefficient = [];
-                     tabComment = [];
-                     tabDate = [];
-                     for idParam = 1:length(tabParam)
-                        param = tabParam{idParam};
-                        fieldNames = fields(metaData);
-                        tab = [];
-                        for idF = 1:length(fieldNames)
-                           fieldName = fieldNames{idF};
-                           if (strcmp(metaData.(fieldName), param) == 1)
-                              idPos = strfind(fieldName, '_');
-                              posNum = str2num(fieldName(idPos(end)+1:end));
-                              tab = [tab posNum];
-                           end
-                        end
-                        tabId{idParam} = tab;
-                     end
+               comment = '';
+               paramDate = '';
+               if (any(prof.paramDataMode == 'A'))
+                  comment = 'Not applicable';
+                  if (isempty(ncCreationDate))
+                     paramDate = currentDate;
+                  else
+                     paramDate = ncCreationDate;
+                  end
+               end
+               tabParam = {'PRES'};
+               tabEquation = {comment};
+               tabCoefficient = {comment};
+               tabComment = {'Adjusted values are provided in the core profile file'};
+               tabDate = {paramDate};
+               
+               % store calibration information for this profile
+               profCalibInfo = [];
+               profCalibInfo.profId = idP;
+               profCalibInfo.param = tabParam;
+               profCalibInfo.equation = tabEquation;
+               profCalibInfo.coefficient = tabCoefficient;
+               profCalibInfo.comment = tabComment;
+               profCalibInfo.date = tabDate;
+               calibInfo{end+1} = profCalibInfo;
+            end
+            
+            % for decoder RT adjustments:
+            % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramAdjInfo
+            % global variable
+            if (~isempty(prof.rtParamAdjIdList))
+               for idAdj = prof.rtParamAdjIdList
+                  
+                  % retrieve information on PARAM adjustment
+                  idF = find([g_decArgo_paramAdjInfo{:, 1}] == idAdj);
+                  paramAdjInfo = g_decArgo_paramAdjInfo(idF, :);
+                  paramName = paramAdjInfo{4};
+                  
+                  paramInfo = get_netcdf_param_attributes(paramName);
+                  if (paramInfo.paramType ~= 'c')
+                     paramEquation = paramAdjInfo{5};
+                     paramCoefficient = paramAdjInfo{6};
+                     paramComment = paramAdjInfo{7};
+                     paramDate = paramAdjInfo{8};
                      
-                     idVal = find(strcmp('CALIB_RT_EQUATION', a_metaDataFromJson) == 1);
-                     if (~isempty(idVal))
-                        metaData = a_metaDataFromJson{idVal+1};
-                        if (~isempty(metaData))
-                           for idParam = 1:length(tabParam)
-                              equation = [];
-                              tab = tabId{idParam};
-                              for id = 1:length(tab)
-                                 eq = '';
-                                 if (isfield(metaData, ['CALIB_RT_EQUATION_' num2str(tab(id))]))
-                                    eq = metaData.(['CALIB_RT_EQUATION_' num2str(tab(id))]);
-                                    idF = find(strcmp(tabParam{idParam}, specificAdjParamList));
-                                    specificAdjParamFlag(idF) = 1;
-                                 end
-                                 equation{id} = eq;
-                              end
-                              tabEquation{idParam} = equation;
-                           end
+                     if (isempty(paramDate))
+                        if (isempty(ncCreationDate))
+                           paramDate = currentDate;
+                        else
+                           paramDate = ncCreationDate;
                         end
                      end
-                     
-                     idVal = find(strcmp('CALIB_RT_COEFFICIENT', a_metaDataFromJson) == 1);
-                     if (~isempty(idVal))
-                        metaData = a_metaDataFromJson{idVal+1};
-                        if (~isempty(metaData))
-                           for idParam = 1:length(tabParam)
-                              coefficient = [];
-                              tab = tabId{idParam};
-                              for id = 1:length(tab)
-                                 coef = '';
-                                 if (isfield(metaData, ['CALIB_RT_COEFFICIENT_' num2str(tab(id))]))
-                                    coef = metaData.(['CALIB_RT_COEFFICIENT_' num2str(tab(id))]);
-                                    idF = find(strcmp(tabParam{idParam}, specificAdjParamList));
-                                    specificAdjParamFlag(idF) = 1;
-                                 end
-                                 coefficient{id} = coef;
-                              end
-                              tabCoefficient{idParam} = coefficient;
-                           end
-                        end
-                     end
-                     
-                     idVal = find(strcmp('CALIB_RT_COMMENT', a_metaDataFromJson) == 1);
-                     if (~isempty(idVal))
-                        metaData = a_metaDataFromJson{idVal+1};
-                        if (~isempty(metaData))
-                           for idParam = 1:length(tabParam)
-                              comment = [];
-                              tab = tabId{idParam};
-                              for id = 1:length(tab)
-                                 com = '';
-                                 if (isfield(metaData, ['CALIB_RT_COMMENT_' num2str(tab(id))]))
-                                    com = metaData.(['CALIB_RT_COMMENT_' num2str(tab(id))]);
-                                    idF = find(strcmp(tabParam{idParam}, specificAdjParamList));
-                                    specificAdjParamFlag(idF) = 1;
-                                 end
-                                 comment{id} = com;
-                              end
-                              tabComment{idParam} = comment;
-                           end
-                        end
-                     end
-                     
-                     idVal = find(strcmp('CALIB_RT_DATE', a_metaDataFromJson) == 1);
-                     if (~isempty(idVal))
-                        metaData = a_metaDataFromJson{idVal+1};
-                        if (~isempty(metaData))
-                           for idParam = 1:length(tabParam)
-                              dates = [];
-                              tab = tabId{idParam};
-                              for id = 1:length(tab)
-                                 dat = '';
-                                 if (isfield(metaData, ['CALIB_RT_DATE_' num2str(tab(id))]))
-                                    dat = metaData.(['CALIB_RT_DATE_' num2str(tab(id))]);
-                                    idF = find(strcmp(tabParam{idParam}, specificAdjParamList));
-                                    specificAdjParamFlag(idF) = 1;
-                                 end
-                                 dates{id} = dat;
-                              end
-                              tabDate{idParam} = dates;
-                           end
-                        end
-                     end
+                     tabParam = {paramName};
+                     tabEquation = {paramEquation};
+                     tabCoefficient = {paramCoefficient};
+                     tabComment = {paramComment};
+                     tabDate = {paramDate};
                      
                      % store calibration information for this profile
                      profCalibInfo = [];
@@ -1832,96 +1638,6 @@ for idProf = 1:length(tabProfiles)
                      calibInfo{end+1} = profCalibInfo;
                   end
                end
-            end
-            
-            % for decoder RT adjustments:
-            % - set DATA_MODE and PARAMETER_DATA_MODE
-            % - retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramAdjInfo
-            % global variable
-            for idDecAdjParam = 1:length(decAdjustedParamNameList)
-               decAdjParamName = decAdjustedParamNameList{idDecAdjParam};
-               idFP = find(strcmp(decAdjParamName, specificAdjParamList));
-               if (~specificAdjParamFlag(idFP))
-                  % there is no RT DB adjustment
-                  netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
-                  netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos decAdjustedParamIdList(idDecAdjParam)]), fliplr([1 1]), 'A');
-                  
-                  % retrieve information on PARAM adjustment
-                  paramEquation = '';
-                  paramCoefficient = '';
-                  paramComment = '';
-                  paramDate = '';
-                  if (prof.direction == 'A')
-                     direction = 2;
-                  else
-                     direction = 1;
-                  end
-                  paramAdjInfo = g_decArgo_paramAdjInfo.(decAdjParamName);
-                  paramAdjInfo2 = cell2mat(paramAdjInfo(:, 1:2));
-                  idF = find((paramAdjInfo2(:, 1) == prof.outputCycleNumber) & ...
-                     (paramAdjInfo2(:, 2) == direction));
-                  if (~isempty(idF))
-                     paramEquation = paramAdjInfo{idF, 3};
-                     paramCoefficient = paramAdjInfo{idF, 4};
-                     paramComment = paramAdjInfo{idF, 5};
-                     if (size(paramAdjInfo, 2) > 5)
-                        paramDate = paramAdjInfo{idF, 6};
-                     end
-                  end
-                  
-                  if (isempty(paramDate))
-                     if (isempty(ncCreationDate))
-                        paramDate = currentDate;
-                     else
-                        paramDate = ncCreationDate;
-                     end
-                  end
-                  tabParam = decAdjustedParamNameList(idDecAdjParam);
-                  tabEquation = {{paramEquation}};
-                  tabCoefficient = {{paramCoefficient}};
-                  tabComment = {{paramComment}};
-                  tabDate = {{paramDate}};
-                  
-                  % store calibration information for this profile
-                  profCalibInfo = [];
-                  profCalibInfo.profId = idP;
-                  profCalibInfo.param = tabParam;
-                  profCalibInfo.equation = tabEquation;
-                  profCalibInfo.coefficient = tabCoefficient;
-                  profCalibInfo.comment = tabComment;
-                  profCalibInfo.date = tabDate;
-                  calibInfo{end+1} = profCalibInfo;
-               end
-            end
-            
-            % add specific comment for PRES parameter
-            if (~isempty(find(strcmp({prof.paramList.name}, 'PRES') == 1, 1)))
-               
-               comment = '';
-               paramDate = '';
-               if (adjustedProfilesList(idP) == 1)
-                  comment = 'Not applicable';
-                  if (isempty(ncCreationDate))
-                     paramDate = currentDate;
-                  else
-                     paramDate = ncCreationDate;
-                  end
-               end
-               tabParam = {'PRES'};
-               tabEquation = {{comment}};
-               tabCoefficient = {{comment}};
-               tabComment = {{'Adjusted values are provided in the core profile file'}};
-               tabDate = {{paramDate}};
-               
-               % store calibration information for this profile
-               profCalibInfo = [];
-               profCalibInfo.profId = idP;
-               profCalibInfo.param = tabParam;
-               profCalibInfo.equation = tabEquation;
-               profCalibInfo.coefficient = tabCoefficient;
-               profCalibInfo.comment = tabComment;
-               profCalibInfo.date = tabDate;
-               calibInfo{end+1} = profCalibInfo;
             end
             
             % history information
@@ -1954,20 +1670,22 @@ for idProf = 1:length(tabProfiles)
          
          % compute the N_CALIB dimension
          nbCalib = 1;
-         for idC = 1:length(calibInfo)
-            tabParam = calibInfo{idC}.param;
-            tabEquation = calibInfo{idC}.equation;
-            tabCoefficient = calibInfo{idC}.coefficient;
-            tabComment = calibInfo{idC}.comment;
-            tabDate = calibInfo{idC}.date;
-            for idParam = 1:length(tabParam)
-               nbCalib = max(nbCalib, max([ ...
-                  length(tabEquation{idParam}) ...
-                  length(tabCoefficient{idParam}) ...
-                  length(tabComment{idParam}) ...
-                  length(tabDate{idParam}) ...
-                  ]));
+         if (~isempty(calibInfo))
+            tabCalibInfo1 = [];
+            for idC = 1:length(calibInfo)
+               if (isempty(tabCalibInfo1))
+                  tabCalibInfo1 = [tabCalibInfo1; calibInfo{idC}.profId calibInfo{idC}.param 1];
+               else
+                  idF = find(([tabCalibInfo1{:, 1}] == calibInfo{idC}.profId)' & ...
+                     strcmp(tabCalibInfo1(:, 2), calibInfo{idC}.param{:}));
+                  if (isempty(idF))
+                     tabCalibInfo1 = [tabCalibInfo1; calibInfo{idC}.profId calibInfo{idC}.param 1];
+                  else
+                     tabCalibInfo1{idF, end} = tabCalibInfo1{idF, end} + 1;
+                  end
+               end
             end
+            nbCalib = max([tabCalibInfo1{:, end}]);
          end
          
          netcdf.reDef(fCdf);
@@ -2025,61 +1743,64 @@ for idProf = 1:length(tabProfiles)
             end
          end
          
+         tabCalibInfo2 = [];
          for idC = 1:length(calibInfo)
             profId = calibInfo{idC}.profId;
             profPos = profId-1+profShiftIfNoPrimary;
-            tabParams = calibInfo{idC}.param;
-            tabEquations = calibInfo{idC}.equation;
-            tabCoefficients = calibInfo{idC}.coefficient;
-            tabComments = calibInfo{idC}.comment;
-            tabDates = calibInfo{idC}.date;
+            param = calibInfo{idC}.param{:};
+            idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
+            equation = calibInfo{idC}.equation{:};
+            coef = calibInfo{idC}.coefficient{:};
+            comment = calibInfo{idC}.comment{:};
+            date = calibInfo{idC}.date{:};
             
-            for idParam = 1:length(tabParams)
-               param = tabParams{idParam};
-               idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
-               if (isempty(idPosParam))
-                  continue
-               end
-               tabEquation = tabEquations{idParam};
-               tabCoefficient = tabCoefficients{idParam};
-               tabComment = tabComments{idParam};
-               tabDate = tabDates{idParam};
-               
-               for idCalib = 1:max([length(tabEquation) length(tabCoefficient) length(tabComment) length(tabDate)])
-                  value = param;
-                  netcdf.putVar(fCdf, parameterVarId, ...
-                     fliplr([profPos idCalib-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
-               end
-               for idCalib = 1:length(tabEquation)
-                  value = tabEquation{idCalib};
-                  if (~isempty(value))
-                     netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
-                        fliplr([profPos idCalib-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
-                  end
-               end
-               for idCalib = 1:length(tabCoefficient)
-                  value = tabCoefficient{idCalib};
-                  if (~isempty(value))
-                     netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
-                        fliplr([profPos idCalib-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
-                  end
-               end
-               for idCalib = 1:length(tabComment)
-                  value = tabComment{idCalib};
-                  if (~isempty(value))
-                     netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
-                        fliplr([profPos idCalib-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
-                  end
-               end
-               for idCalib = 1:length(tabDate)
-                  value = tabDate{idCalib};
-                  if (~isempty(value))
-                     netcdf.putVar(fCdf, scientificCalibDateVarId, ...
-                        fliplr([profPos idCalib-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
-                  end
+            % compute start calibId
+            if (isempty(tabCalibInfo2))
+               tabCalibInfo2 = [tabCalibInfo2; calibInfo{idC}.profId calibInfo{idC}.param 1];
+               idCalibStart = 1;
+            else
+               idF = find(([tabCalibInfo2{:, 1}] == calibInfo{idC}.profId)' & ...
+                  strcmp(tabCalibInfo2(:, 2), calibInfo{idC}.param{:}));
+               if (isempty(idF))
+                  tabCalibInfo2 = [tabCalibInfo2; calibInfo{idC}.profId calibInfo{idC}.param 1];
+                  idCalibStart = 1;
+               else
+                  tabCalibInfo2{idF, end} = tabCalibInfo2{idF, end} + 1;
+                  idCalibStart = idCalibStart + 1;
                end
             end
-         end
+            
+            idF = find(([tabCalibInfo1{:, 1}] == profId)' & strcmp(tabCalibInfo1(:, 2), param));
+            idCalibStop = idCalibStart + (nbCalib-tabCalibInfo1{idF, end});
+            
+            for id = idCalibStart:idCalibStop
+               value = param;
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, parameterVarId, ...
+                     fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
+               end
+               value = equation;
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
+                     fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
+               end
+               value = coef;
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
+                     fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
+               end
+               value = comment;
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
+                     fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
+               end
+               value = date;
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, scientificCalibDateVarId, ...
+                     fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
+               end
+            end
+         end         
          
          netcdf.close(fCdf);
          

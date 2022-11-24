@@ -294,16 +294,25 @@ o_profData = a_profData;
 
 
 if (~isempty(o_profData))
-   profParamList = o_profData.paramList;
-   profDataAdj = o_profData.data;
-   
-   if (~isempty(profDataAdj))
-      idPres = find(strcmp({profParamList.name}, 'PRES') == 1, 1);
+   if (~isempty(o_profData.data))
+      idPres = find(strcmp({o_profData.paramList.name}, 'PRES') == 1, 1);
       if (~isempty(idPres))
+         
+         profDataAdj = o_profData.data(:, idPres);
          paramPres = get_netcdf_param_attributes('PRES');
-         idNoDef = find(profDataAdj(:, idPres) ~= paramPres.fillValue);
-         profDataAdj(idNoDef, idPres) = profDataAdj(idNoDef, idPres) - a_presOffset;
-         o_profData.dataAdj = profDataAdj;
+         idNoDef = find(profDataAdj ~= paramPres.fillValue);
+         if (~isempty(idNoDef))
+            
+            if (isempty(o_profData.dataAdj))
+               o_profData.paramDataMode = repmat(' ', 1, length(o_profData.paramList));
+               paramFillValue = get_prof_param_fill_value(o_profData);
+               o_profData.dataAdj = repmat(double(paramFillValue), size(o_profData.data, 1), 1);
+            end
+            
+            profDataAdj(idNoDef) = profDataAdj(idNoDef) - a_presOffset;
+            o_profData.dataAdj(:, idPres) = profDataAdj;
+            o_profData.paramDataMode(idPres) = 'A';
+         end
       end
    end
 end

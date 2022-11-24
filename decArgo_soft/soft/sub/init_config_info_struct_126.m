@@ -60,6 +60,8 @@ o_configSectionList = [ ...
    {'OCR'} ...
    {'ECO'} ...
    {'SBEPH'} ...
+   {'CROVER'} ...
+   {'SUNA'} ...
    {'UVP6'} ...
    {'GUI'} ...
    ];
@@ -1088,6 +1090,22 @@ param.fmtIn = '%u';
 param.name = 'serial port number';
 param.fmtOut = '%d';
 o_configInfoStruct.ECO{end+1} = param;
+
+o_configInfoStruct.CROVER = [];
+param = init_basic_struct;
+param.num = 0;
+param.fmtIn = '%u';
+param.name = 'serial port number';
+param.fmtOut = '%d';
+o_configInfoStruct.CROVER{end+1} = param;
+
+o_configInfoStruct.SUNA = [];
+param = init_basic_struct;
+param.num = 0;
+param.fmtIn = '%u';
+param.name = 'serial port number';
+param.fmtOut = '%d';
+o_configInfoStruct.SUNA{end+1} = param;
 
 o_configInfoStruct.SBEPH = [];
 param = init_basic_struct;
