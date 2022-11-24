@@ -2,7 +2,7 @@
 % Print APMT CTD data in output CSV file.
 %
 % SYNTAX :
-%  print_ctd_data_in_csv_file_121(a_ctdData)
+%  print_ctd_data_in_csv_file_ir_rudics_cts5(a_ctdData)
 %
 % INPUT PARAMETERS :
 %   a_ctdData : APMT CTD data
@@ -17,7 +17,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_ctd_data_in_csv_file_121(a_ctdData)
+function print_ctd_data_in_csv_file_ir_rudics_cts5(a_ctdData)
 
 % current float WMO number
 global g_decArgo_floatNum;

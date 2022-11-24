@@ -200,6 +200,6 @@ else
    g_decArgo_floatConfig.USE.CONFIG(end+1) = configNum;
 end
 
-% print_config_in_csv_file_ir_rudics_cts5('setConfig_', 1, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_rudics_cts5('setConfig_', 1, g_decArgo_floatConfig);
 
 return;

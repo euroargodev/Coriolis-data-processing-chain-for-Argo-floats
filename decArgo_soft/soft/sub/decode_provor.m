@@ -222,7 +222,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (~ismember(floatDecId, [121]))
+      if (~ismember(floatDecId, [121 122]))
          
          % CTS4 Iridium RUDICS floats
          [tabProfiles, ...

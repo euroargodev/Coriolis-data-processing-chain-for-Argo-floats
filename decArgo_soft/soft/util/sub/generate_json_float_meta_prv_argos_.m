@@ -236,6 +236,9 @@ for idFloat = 1:length(floatList)
    
    % CONFIG_PARAMETER_NAME
    configStruct = get_config_init_struct(dacFormatId);
+   if (isempty(configStruct))
+      continue;
+   end
    configStructNames = fieldnames(configStruct);
    metaStruct.CONFIG_PARAMETER_NAME = configStructNames;
    
@@ -247,6 +250,9 @@ for idFloat = 1:length(floatList)
       % transmitted by the float seems more reliable).
       
       configBddStruct = get_config_bdd_struct(dacFormatId);
+      if (isempty(configBddStruct))
+         continue;
+      end
       configBddStructNames = fieldnames(configBddStruct);
       
       nbConfig = 1;
@@ -345,6 +351,9 @@ for idFloat = 1:length(floatList)
       if (~isempty(idFRepRate))
          
          configBddStruct = get_config_bdd_struct(dacFormatId);
+         if (isempty(configBddStruct))
+            continue;
+         end
          configBddStructNames = fieldnames(configBddStruct);
          
          nbConfig = length(idFRepRate);

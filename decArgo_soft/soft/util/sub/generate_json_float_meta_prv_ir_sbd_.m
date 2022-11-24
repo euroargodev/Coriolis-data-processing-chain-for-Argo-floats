@@ -227,11 +227,17 @@ for idFloat = 1:length(floatList)
    
    % CONFIG_PARAMETER_NAME
    configStruct = get_config_init_struct(dacFormatId);
+   if (isempty(configStruct))
+      continue;
+   end
    configStructNames = fieldnames(configStruct);
    metaStruct.CONFIG_PARAMETER_NAME = configStructNames;
    
    % CONFIG_PARAMETER_VALUE
    configBddStruct = get_config_bdd_struct(dacFormatId);
+   if (isempty(configBddStruct))
+      continue;
+   end
    configBddStructNames = fieldnames(configBddStruct);
    
    if (ismember(dacFormatId, [{'5.43'} {'5.44'} {'5.45'} {'5.75'}]))
@@ -757,7 +763,7 @@ switch (a_dacFormatId)
          'CONFIG_PT25_InternalPressureCalibrationCoefficient2', '0', ...
          'CONFIG_PX00_Direction', '');
       
-   case {'5.61', '5.62'}
+   case {'5.61', '5.62', '5.63'}
       o_configStruct = struct( ...
          'CONFIG_PM00_NumberOfCycles', '255', ...
          'CONFIG_PM01_CyclePeriod', '10', ...
@@ -1392,7 +1398,7 @@ switch (a_dacFormatId)
          'CONFIG_PT25_InternalPressureCalibrationCoefficient2', 'PRCFG_Pressure_coefficient_B', ...
          'CONFIG_PX00_Direction', 'DIRECTION');
       
-   case {'5.61', '5.62'}
+   case {'5.61', '5.62', '5.63'}
       o_configStruct = struct( ...
          'CONFIG_PM00_NumberOfCycles', 'CONFIG_MaxCycles_NUMBER', ...
          'CONFIG_PM01_CyclePeriod', 'CYCLE_TIME', ...

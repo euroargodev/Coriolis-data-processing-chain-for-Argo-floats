@@ -2,7 +2,7 @@
 % Print APMT configuration data in output CSV file.
 %
 % SYNTAX :
-%  print_apmt_config_in_csv_file_121(a_configData)
+%  print_apmt_config_in_csv_file_ir_rudics_cts5(a_configData)
 %
 % INPUT PARAMETERS :
 %   a_configData : APMT configuration data
@@ -17,7 +17,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_apmt_config_in_csv_file_121(a_configData)
+function print_apmt_config_in_csv_file_ir_rudics_cts5(a_configData)
 
 % current float WMO number
 global g_decArgo_floatNum;

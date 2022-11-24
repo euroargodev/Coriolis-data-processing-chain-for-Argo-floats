@@ -30,8 +30,9 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_105.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_122.csv';
 
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_205.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_209.csv';
@@ -39,7 +40,7 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_302.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_210.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_212.csv';
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_215.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_215.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
@@ -163,6 +164,8 @@ else
          decIdList = [105, 106, 107, 109, 110];
       case {121}
          decIdList = [121];
+      case {122}
+         decIdList = [122];
 
       case {201}
          decIdList = [201, 202];

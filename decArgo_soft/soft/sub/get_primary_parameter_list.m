@@ -73,7 +73,7 @@ switch (a_decoderId)
          {'PSAL_MED'} ...
          ];
       
-   case {121}
+   case {121, 122}
 
       % CTS5 floats
       o_paramList = [ ...

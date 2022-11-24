@@ -1,14 +1,13 @@
 % ------------------------------------------------------------------------------
-% Print the configurations in a CSV file.
+% Print float configuration in temporary CSV file.
 %
 % SYNTAX :
-%  print_config_in_csv_file_ir_rudics_sbd2(a_comment, a_conf)
+%  create_csv_to_print_config_ir_rudics_cts5(a_comment, a_conf, a_configStruct)
 %
 % INPUT PARAMETERS :
-%   a_comment      : comment to add into the CSV file name
-%   a_conf         : which configuration to print
-%                    (0: DYNAMIC_TMP, 1: DYNAMIC, 2: NC configuration)
-%   a_configStruct : configuration structure
+%   a_comment      : additional comment
+%   a_conf         : configuration type
+%   a_configStruct : configuration data
 %
 % OUTPUT PARAMETERS :
 %
@@ -18,9 +17,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/16/2013 - RNU - creation
+%   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_config_in_csv_file_ir_rudics_sbd2(a_comment, a_conf, a_configStruct)
+function create_csv_to_print_config_ir_rudics_cts5(a_comment, a_conf, a_configStruct)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -42,7 +41,7 @@ if (a_conf == 0)
    end
    
    % print the TMP configuration
-   configDates = a_configStruct.DYNAMIC_TMP.DATES;
+   configNums = a_configStruct.DYNAMIC_TMP.NUMBER;
    configNames = a_configStruct.DYNAMIC_TMP.NAMES;
    configValues = a_configStruct.DYNAMIC_TMP.VALUES;
    
@@ -63,10 +62,10 @@ if (a_conf == 0)
       sumModVal3 = sum(sumModVal2, 1);
    end
    
-   fprintf(fidOut, 'Dates; %d;', sumModVal3);
-   for idC = 1:length(configDates)
-      fprintf(fidOut, '%s;', julian_2_gregorian_dec_argo(configDates(idC)));
-      if (idC < length(configDates))
+   fprintf(fidOut, 'Number; %d;', sumModVal3);
+   for idC = 1:length(configNums)
+      fprintf(fidOut, '%d;', configNums(idC));
+      if (idC < length(configNums))
          fprintf(fidOut, '%d;', sumModVal1(idC));
       end
    end
@@ -142,9 +141,9 @@ if (a_conf == 1)
    configValues(idDel, :) = [];
    
    % detect modification in the configuration
-   if (isempty(find(configValues == 9999999999, 1)))
+   if (isempty(find(configValues == realmax, 1)))
       configValues2 = configValues;
-      configValues2(find(isnan(configValues2))) = 9999999999;
+      configValues2(find(isnan(configValues2))) = realmax;
    end
    modifiedVal = (diff(configValues2, 1, 2) ~= 0);
    sumModVal1 = sum(modifiedVal, 1);
@@ -160,8 +159,8 @@ if (a_conf == 1)
       sumModVal2 = sum(modifiedVal, 2);
       sumModVal3 = sum(sumModVal2, 1);
       
-      configNum(idDel+1) = [];
-      configValues(:, idDel+1) = [];
+      configNum(idDel) = [];
+      configValues(:, idDel) = [];
    end
    
    fprintf(fidOut, 'Num; %d;', sumModVal3);

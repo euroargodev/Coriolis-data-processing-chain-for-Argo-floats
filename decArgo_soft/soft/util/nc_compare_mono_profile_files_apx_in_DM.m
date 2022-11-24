@@ -27,11 +27,13 @@ function nc_compare_mono_profile_files_apx_in_DM(varargin)
 % top directory of base NetCDF mono-profile files
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
 DIR_INPUT_BASE_NC_FILES = 'H:\archive_201608\coriolis\\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\DM_data\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule_set_2\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\RT_data\';
 
 
 % directory to store the log and the csv files
@@ -53,6 +55,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_11
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_121512.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_110813.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_DM.txt';
 
 
 % flag to print data measurements (when different) in the log file

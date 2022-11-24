@@ -120,6 +120,13 @@ switch(a_floatNum)
             [a_outputDir '/' regexprep(movFile.name, '#02', '')]);
       end
       
+   case 4901805
+      % files 012b_* should not be kept
+      delFile = dir([a_outputDir '/012b_*']);
+      for idF = 1:length(delFile)
+         move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
+      end
+      
    case 6902667
       % there are 2 deployments of the same float => use only files dated
       % after july 2016
@@ -132,6 +139,13 @@ switch(a_floatNum)
                %                fprintf('MISC: %s => not used\n', files(idF).name);
             end
          end
+      end
+      
+   case 6902669
+      % files 3a9b_* should not be kept
+      delFile = dir([a_outputDir '/3a9b_*']);
+      for idF = 1:length(delFile)
+         move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
       end
 end
 

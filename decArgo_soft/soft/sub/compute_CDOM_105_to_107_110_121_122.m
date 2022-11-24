@@ -1,17 +1,17 @@
 % ------------------------------------------------------------------------------
-% Compute CHLA from FLUORESCENCE_CHLA provided by the ECO3 sensor.
+% Compute CDOM from FLUORESCENCE_CDOM provided by the ECO3 sensor.
 %
 % SYNTAX :
-%  [o_CHLA] = compute_CHLA_105_to_110_121(a_FLUORESCENCE_CHLA, ...
-%    a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
+%  [o_CDOM] = compute_CDOM_105_to_107_110_121_122(a_FLUORESCENCE_CDOM, ...
+%    a_FLUORESCENCE_CDOM_fill_value, a_CDOM_fill_value)
 %
 % INPUT PARAMETERS :
-%   a_FLUORESCENCE_CHLA            : input FLUORESCENCE_CHLA data
-%   a_FLUORESCENCE_CHLA_fill_value : fill value for input FLUORESCENCE_CHLA data
-%   a_CHLA_fill_value              : fill value for output CHLA data
+%   a_FLUORESCENCE_CDOM            : input FLUORESCENCE_CDOM data
+%   a_FLUORESCENCE_CDOM_fill_value : fill value for input FLUORESCENCE_CDOM data
+%   a_CDOM_fill_value              : fill value for output CDOM data
 %
 % OUTPUT PARAMETERS :
-%   o_CHLA : output CHLA data
+%   o_CDOM : output CDOM data
 %
 % EXAMPLES :
 %
@@ -19,10 +19,10 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/01/2014 - RNU - creation
+%   06/16/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_CHLA] = compute_CHLA_105_to_110_121(a_FLUORESCENCE_CHLA, ...
-   a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
+function [o_CDOM] = compute_CDOM_105_to_107_110_121_122(a_FLUORESCENCE_CDOM, ...
+   a_FLUORESCENCE_CDOM_fill_value, a_CDOM_fill_value)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -34,7 +34,7 @@ global g_decArgo_cycleNum;
 global g_decArgo_calibInfo;
 
 % output parameters initialization
-o_CHLA = ones(length(a_FLUORESCENCE_CHLA), 1)*a_CHLA_fill_value;
+o_CDOM = ones(length(a_FLUORESCENCE_CDOM), 1)*a_CDOM_fill_value;
 
 
 % calibration coefficients
@@ -48,12 +48,12 @@ elseif (~isfield(g_decArgo_calibInfo, 'ECO3'))
       g_decArgo_floatNum, ...
       g_decArgo_cycleNum);
    return;
-elseif ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA')) && ...
-      (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA')))
-   scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
-   darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
-   if (isfield(g_decArgo_calibInfo.ECO3, 'darkCountChloroA_O'))
-      darkCountChloroA = double(g_decArgo_calibInfo.ECO3.darkCountChloroA_O);
+elseif ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactCDOM')) && ...
+      (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM')))
+   scaleFactCDOM = double(g_decArgo_calibInfo.ECO3.ScaleFactCDOM);
+   darkCountCDOM = double(g_decArgo_calibInfo.ECO3.DarkCountCDOM);
+   if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM_O'))
+      darkCountCDOM = double(g_decArgo_calibInfo.ECO3.DarkCountCDOM_O);
    end
 else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
@@ -63,7 +63,8 @@ else
 end
 
 % compute output data
-idNoDef = find(a_FLUORESCENCE_CHLA ~= a_FLUORESCENCE_CHLA_fill_value);
-o_CHLA(idNoDef) = (a_FLUORESCENCE_CHLA(idNoDef) - darkCountChloroA)*scaleFactChloroA;
-               
+idNoDef = find(a_FLUORESCENCE_CDOM ~= a_FLUORESCENCE_CDOM_fill_value);
+o_CDOM(idNoDef) = ...
+   ((a_FLUORESCENCE_CDOM(idNoDef) - darkCountCDOM)*scaleFactCDOM);
+
 return;

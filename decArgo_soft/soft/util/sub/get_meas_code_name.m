@@ -61,6 +61,7 @@ global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
 global g_MC_AET_Float;
+global g_MC_SpyAtSurface;
 global g_MC_NearSurfaceSeriesOfMeas;
 global g_MC_InAirSingleMeas;
 global g_MC_InAirSeriesOfMeas;
@@ -69,6 +70,7 @@ global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
+global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
 
@@ -189,6 +191,9 @@ switch (a_measCode)
    case g_MC_AET_Float
       o_measCodeName = sprintf('%03d: ASCENT_END_FROM_FLOAT', a_measCode);
       
+   case g_MC_SpyAtSurface
+      o_measCodeName = sprintf('%03d: SURF_FINAL_PUMP_START', a_measCode);
+
    case g_MC_NearSurfaceSeriesOfMeas
       o_measCodeName = sprintf('%03d: NEAR_SURFACE_SERIES_OF_MEAS', a_measCode);
       
@@ -212,6 +217,9 @@ switch (a_measCode)
 
    case g_MC_LMT
       o_measCodeName = sprintf('%03d: LAST_MESSAGE', a_measCode);
+
+   case g_MC_SingleMeasToTET
+      o_measCodeName = sprintf('%03d: SURFACE_SINGLE_MEAS', a_measCode);
 
    case g_MC_TET
       o_measCodeName = sprintf('%03d: TRANSMISSION_END', a_measCode);

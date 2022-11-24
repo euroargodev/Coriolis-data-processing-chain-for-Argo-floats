@@ -192,7 +192,7 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 g_decArgo_floatConfig.TMP.NAMES = configNames3;
 g_decArgo_floatConfig.TMP.VALUES = configValues3;
 
-% print_config_in_csv_file_ir_sbd('init_', 0, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_sbd('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
 if (isfield(metaData, 'RT_OFFSET'))

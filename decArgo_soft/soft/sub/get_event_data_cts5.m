@@ -2,10 +2,12 @@
 % Decode and store CTS5 event data.
 %
 % SYNTAX :
-%  [o_ok] = get_event_data_cts5(a_cyclePatternNumFloat)
+%  [o_ok] = get_event_data_cts5(a_cyclePatternNumFloat, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_cyclePatternNumFloat : cycle and pattern numbers
+%   a_launchDate           : launch date
+%   a_decoderId            : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_ok : decoding report flag (1 if ok, 0 otherwise)
@@ -18,7 +20,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = get_event_data_cts5(a_cyclePatternNumFloat)
+function [o_ok] = get_event_data_cts5(a_cyclePatternNumFloat, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_ok = 0;
@@ -45,7 +47,7 @@ g_decArgo_clockOffset = get_clock_offset_cts5_init_struct;
 
 % get system file names
 eventFiles = manage_split_files({g_decArgo_archiveDirectory}, ...
-   {[g_decArgo_filePrefixCts5 '_system_*.hex']});
+   {[g_decArgo_filePrefixCts5 '_system_*.hex']}, a_decoderId);
 
 % sort the files
 [~, idSort] = sort(eventFiles(:, 1));
@@ -78,7 +80,7 @@ for idFile = 1:nbEventFiles
    end
    
    % decode file contents
-   ok = decode_event_data(filePathName);
+   ok = decode_event_data(filePathName, a_launchDate);
    if (~ok)
       o_ok = ok;
       return;
@@ -189,10 +191,11 @@ return;
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data(a_inputFilePathName)
+%  [o_ok] = decode_event_data(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
+%   a_launchDate        : launch date
 %
 % OUTPUT PARAMETERS :
 %   o_ok : decoding report flag (1 if ok, 0 otherwise)
@@ -205,7 +208,7 @@ return;
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data(a_inputFilePathName)
+function [o_ok] = decode_event_data(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -248,6 +251,8 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 timeOffset = 455812984;
 
 curBit = 1;
+ignoreEvts = 0;
+ignoreNextEvt = 0;
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
@@ -279,7 +284,28 @@ while ((curBit-1)/8 < lastByteNum)
             return;
          end
          
-         if (retrieve)
+         % BE CAREFUL: the RTC could be erroneously set
+         % see for example float 6902829:
+         % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
+         % in that case we ignore following events until the next #12 event
+         ignoreNextEvt = 0;
+         if (evtNum == 12)
+            % check if the new RTC set date is after float launch date - 365
+            if (evtData{:} > a_launchDate - 365)
+               if (ignoreEvts == 1)
+                  fprintf('WARNING: RTC correctly set to %s in file %s => end of ignored events\n', ...
+                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                  ignoreEvts = 0;
+                  ignoreNextEvt = 1;
+               end
+            else
+               ignoreEvts = 1;
+               fprintf('WARNING: RTC erroneously set to %s in file %s => start of ignored events\n', ...
+                  julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+            end
+         end
+         
+         if (retrieve && ~ignoreEvts && ~ignoreNextEvt)
             evtNew = cell(1, 3);
             if (~isempty(g_decArgo_eventData))
                evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
@@ -290,6 +316,9 @@ while ((curBit-1)/8 < lastByteNum)
             evtNew{1, 3} = evtData;
             evtNew{1, 4} = evtJulD;
             g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
+         elseif (retrieve && (ignoreEvts || ignoreNextEvt))
+            fprintf('WARNING: event #%d ignored in file %s (due to erroneus RTC value)\n', ...
+               evtNum, a_inputFilePathName);
          end
       else
          fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
@@ -484,27 +513,32 @@ switch (a_evtDataType)
       % SS
       if (a_retrieve)
          evtRawData = get_bits(o_curBit, bitPattern, a_data);
-         o_curBit = o_curBit + sum(bitPattern);
-         evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(1)), a_data);
-         o_curBit = o_curBit + evtRawData(1)*8;
-         % decode latitude
-         rawDataLat = char(evtRawData2-128)';
-         sign = 1;
-         if (rawDataLat(end) == 'S')
-            sign = -1;
+         if ((evtRawData(1) == 0) && (evtRawData(2) == 0))
+            % empty GPS loc found in float 6902666 system file #26
+            o_curBit = o_curBit + sum(bitPattern);
+         else
+            o_curBit = o_curBit + sum(bitPattern);
+            evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(1)), a_data);
+            o_curBit = o_curBit + evtRawData(1)*8;
+            % decode latitude
+            rawDataLat = char(evtRawData2-128)';
+            sign = 1;
+            if (rawDataLat(end) == 'S')
+               sign = -1;
+            end
+            data = str2double(rawDataLat(1:end-1));
+            o_evtData{end+1} = (fix(data/100)+(data-fix(data/100)*100)/60)*sign;
+            evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
+            o_curBit = o_curBit + evtRawData(2)*8;
+            % decode longitude
+            rawDataLat = char(evtRawData3-128)';
+            sign = 1;
+            if (rawDataLat(end) == 'W')
+               sign = -1;
+            end
+            data = str2double(rawDataLat(1:end-1));
+            o_evtData{end+1} = (fix(data/100)+(data-fix(data/100)*100)/60)*sign;
          end
-         data = str2double(rawDataLat(1:end-1));
-         o_evtData{end+1} = (fix(data/100)+(data-fix(data/100)*100)/60)*sign;         
-         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
-         o_curBit = o_curBit + evtRawData(2)*8;
-         % decode longitude
-         rawDataLat = char(evtRawData3-128)';
-         sign = 1;
-         if (rawDataLat(end) == 'W')
-            sign = -1;
-         end
-         data = str2double(rawDataLat(1:end-1));
-         o_evtData{end+1} = (fix(data/100)+(data-fix(data/100)*100)/60)*sign;         
       else
          evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern) + evtRawData(1)*8 + evtRawData(2)*8;

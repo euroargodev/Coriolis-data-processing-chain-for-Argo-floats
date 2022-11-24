@@ -341,7 +341,8 @@ configValues1 = configValues1bis;
 
 % initialize payload configuration
 payloadConfigFile = manage_split_files({g_decArgo_archiveDirectory}, ...
-   {[g_decArgo_filePrefixCts5 sprintf('_%03d_00_payload*.xml', g_decArgo_firstCycleNumCts5)]});
+   {[g_decArgo_filePrefixCts5 sprintf('_%03d_00_payload*.xml', g_decArgo_firstCycleNumCts5)]}, ...
+   a_decoderId);
 if (isempty(payloadConfigFile))
    fprintf('DEC_WARNING: Float #%d: payload configuration (at launch) file not found\n', ...
       g_decArgo_floatNum);
@@ -352,7 +353,7 @@ else
    configNames2 = cat(2, configNames2, payloadConfigNames);
    configValues2 = cat(1, configValues2, payloadConfigValues');
    
-      voir = cat(2, configNames2', num2cell(configValues2));
+   %    voir = cat(2, configNames2', num2cell(configValues2));
 end
 
 % store the configuration
@@ -371,7 +372,7 @@ g_decArgo_floatConfig.DYNAMIC_TMP.NUMBER = 1;
 g_decArgo_floatConfig.DYNAMIC_TMP.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 
-% print_config_in_csv_file_ir_rudics_sbd2('init_', 0, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_rudics_sbd2('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
 if (isfield(metaData, 'RT_OFFSET'))
@@ -419,7 +420,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       % create the tabDoxyCoef array
       switch (a_decoderId)
 
-         case {121}
+         case {121, 122}
             if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                calibData = g_decArgo_calibInfo.OPTODE;
                tabDoxyCoef = [];

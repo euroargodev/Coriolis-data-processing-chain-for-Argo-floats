@@ -55,6 +55,7 @@ global g_MC_SpyAtProf;
 global g_MC_AST;
 global g_MC_SpyInAscProf;
 global g_MC_AET;
+global g_MC_SpyAtSurface;
 global g_MC_TST;
 global g_MC_Surface;
 global g_MC_TET;
@@ -221,6 +222,17 @@ if (~isempty(idF))
       'Ascent end date', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
       a_cyNum, a_ptnNum);
    ascentEndDate = g_decArgo_eventData{idFCyPtn(idF), 6};
+end
+
+% surface time (final pump action start date
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 97);
+if (~isempty(idF))
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'FINAL PUMP ACTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
+      g_MC_SpyAtSurface, 'JULD', ...
+      'Final pump action start date', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
+      a_cyNum, a_ptnNum);
 end
 
 % transmission start time
@@ -737,7 +749,7 @@ if (~isempty(idF))
    g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
    g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      171, 'End of life flag', 1);
+      172, 'Emergency ascent flag', 1);
 end
 
 % update output value of TECH data

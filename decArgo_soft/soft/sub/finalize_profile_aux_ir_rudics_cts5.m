@@ -29,10 +29,11 @@ global g_decArgo_dateDef;
 
 % add MTIME parameter to AUX profiles
 paramMtime = get_netcdf_param_attributes('MTIME');
+tabProfilesNew = [];
 for idProf = 1:length(a_tabProfiles)
    
    profStruct = a_tabProfiles(idProf);
-   if (profStruct.sensorNumber > 100)
+   if (profStruct.sensorNumber > 100) % not BGC sensors or raw data from any sensor
       
       % sort raw data by date
       if (profStruct.sensorNumber > 1000)
@@ -51,10 +52,28 @@ for idProf = 1:length(a_tabProfiles)
       profStruct.paramNumberWithSubLevels = profStruct.paramNumberWithSubLevels + 1;
       
       a_tabProfiles(idProf) = profStruct;
+      
+   else
+      
+      if (profStruct.date ~= g_decArgo_dateDef)
+         
+         profStructNew = profStruct;
+         profStructNew.sensorNumber = profStruct.sensorNumber + 200;
+         
+         idFPres = find(strcmp('PRES', {profStructNew.paramList.name}));
+         mtimeData = profStructNew.dates-profStructNew.date;
+         
+         profStructNew.paramList = [paramMtime profStructNew.paramList(idFPres)];
+         profStructNew.data = cat(2, mtimeData, double(profStructNew.data(:, idFPres)));
+         profStructNew.paramNumberWithSubLevels = [];
+         profStructNew.paramNumberOfSubLevels = [];
+         
+         tabProfilesNew = [tabProfilesNew profStructNew];
+      end
    end
 end
 
 % update output parameters
-o_tabProfiles = a_tabProfiles;
+o_tabProfiles = [a_tabProfiles tabProfilesNew];
 
 return;

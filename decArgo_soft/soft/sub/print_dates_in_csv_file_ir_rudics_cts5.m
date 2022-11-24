@@ -2,7 +2,7 @@
 % Print time information in output CSV file.
 %
 % SYNTAX :
-%  print_dates_in_csv_file_121(a_timeDataFromApmtTech, a_apmtCtd, a_payloadData)
+%  print_dates_in_csv_file_ir_rudics_cts5(a_timeDataFromApmtTech, a_apmtCtd, a_payloadData)
 %
 % INPUT PARAMETERS :
 %   a_timeDataFromApmtTech : times from APMT technical data
@@ -19,7 +19,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_dates_in_csv_file_121(a_timeDataFromApmtTech, a_apmtCtd, a_payloadData)
+function print_dates_in_csv_file_ir_rudics_cts5(a_timeDataFromApmtTech, a_apmtCtd, a_payloadData)
 
 % current float WMO number
 global g_decArgo_floatNum;

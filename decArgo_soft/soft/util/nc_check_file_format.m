@@ -23,7 +23,8 @@ function nc_check_file_format(varargin)
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-01-18_spec_2017-03-23\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-01-18_spec_2017-04-24\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-03-13_spec_2017-05-15\';
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-07-12_spec_2017-05-15\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-07-12_spec_2017-05-15\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-07-12_spec_2017-09-13\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_2016-10-20_beta_spec_2016-10-20_beta\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-03-13\';
@@ -33,6 +34,7 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 % top directory of the NetCDF files to check
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_checkTraj\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
@@ -71,6 +73,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudic
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.75.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_finland.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 
 
 

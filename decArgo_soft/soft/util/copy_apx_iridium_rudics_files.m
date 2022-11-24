@@ -123,11 +123,11 @@ for idFloat = 1:nbFloats
       
       idF = strfind(dataFileName, '_');
       floatId = str2double(dataFileName(1:idF(1)-1));
-      if (length(idF) == 3)
-         pid = str2double(dataFileName(idF(3)+1:end));
+      pid = 0;
+      cycleNumInStr = 'CCC';
+      if (length(idF) == 5)
          cycleNumInStr = dataFileName(idF(2)+1:idF(3)-1);
       else
-         pid = 0;
          cycleNumInStr = dataFileName(idF(2)+1:end);
       end
       if (length(cycleNumInStr) == 10)

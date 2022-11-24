@@ -184,6 +184,10 @@ g_decArgo_trajDataFromApmtTech = [];
 global g_decArgo_dataPayloadCorrectedCycle;
 g_decArgo_dataPayloadCorrectedCycle = 0;
 
+% meta-data retrieved from APMT tech files
+global g_decArgo_apmtMetaFromTech;
+g_decArgo_apmtMetaFromTech = [];
+
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
 g_decArgo_fileTypeListCts5 = [ ...
@@ -231,7 +235,7 @@ if (g_decArgo_realtimeFlag)
    end
 end
 
-% create temporary directory to store concatenated file
+% create temporary directory to store concatenated files
 floatTmpDirName = [g_decArgo_archiveDirectory '/tmp/'];
 if (exist(floatTmpDirName, 'dir') == 7)
    rmdir(floatTmpDirName, 's');
@@ -306,7 +310,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
    
    g_decArgo_cycleNumFloatStr = '-';
    g_decArgo_patternNumFloatStr = '-';
-   print_config_in_csv_file_121('Launch_config');
+   print_config_in_csv_file_ir_rudics_cts5('Launch_config');
 end
 
 if ((g_decArgo_realtimeFlag) || (g_decArgo_delayedModeFlag) || ...
@@ -331,7 +335,7 @@ for idFile = 1:length(payloadConfigFiles)
 end
 
 % retrieve event data
-ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat);
+ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat, a_launchDate, a_decoderId);
 if (~ok)
    return;
 end
@@ -341,6 +345,7 @@ tabCyclesToProcessAgain = [];
 stop = 0;
 for idFlCy = 1:length(floatCycleList)
    floatCyNum = floatCycleList(idFlCy);
+   
    if (floatCyNum < g_decArgo_firstCycleNumFloat)
       continue;
    end
@@ -360,12 +365,18 @@ for idFlCy = 1:length(floatCycleList)
       expectedFileName = expectedFileList{idFile};
       if (isempty(dir([g_decArgo_archiveDirectory '/' expectedFileName(1:end-4) '*' expectedFileName(end-3:end)])))
          if (idFlCy == length(floatCycleList))
-            fprintf('DEC_INFO: expected file not received yet %s\n', ...
-               expectedFileName);
-            stop = 1;
-            break;
+            idDel = [idDel idFile];
+            if (g_decArgo_realtimeFlag)
+               fprintf('INFO: expected file not received yet %s => stop\n', ...
+                  expectedFileName);
+               stop = 1;
+               break;
+            else
+               fprintf('WARNING: expected file not received yet %s\n', ...
+                  expectedFileName);
+            end
          else
-            fprintf('ERROR: expected file not received %s\n', ...
+            fprintf('WARNING: expected file not received %s\n', ...
                expectedFileName);
             idDel = [idDel idFile];
          end
@@ -452,19 +463,59 @@ for idFlCy = 1:length(floatCycleList)
          
          % get files to process
          idDel = [];
+         missingFileList = [];
          expectedFileList = get_expected_file_list(floatCyNum, floatPtnNum, g_decArgo_filePrefixCts5, g_decArgo_firstCycleNumFloat);
          for idFile = 1:length(expectedFileList)
             expectedFileName = expectedFileList{idFile};
             if (isempty(dir([g_decArgo_archiveDirectory '/' expectedFileName(1:end-4) '*' expectedFileName(end-3:end)])))
                if (idFlCy == length(floatCycleList))
-                  fprintf('DEC_INFO: expected file not received yet %s\n', ...
-                     expectedFileName);
-                  stop = 1;
-                  break;
+                  idDel = [idDel idFile];
+                  if (g_decArgo_realtimeFlag)
+                     missingFileList{end+1} = expectedFileName;
+                     fprintf('WARNING: expected file not received %s\n', ...
+                        expectedFileName);
+                     idDel = [idDel idFile];
+                  else
+                     fprintf('WARNING: expected file not received yet %s\n', ...
+                        expectedFileName);
+                  end
                else
-                  fprintf('ERROR: expected file not received %s\n', ...
+                  fprintf('WARNING: expected file not received %s\n', ...
                      expectedFileName);
                   idDel = [idDel idFile];
+               end
+            end
+         end
+         if (g_decArgo_realtimeFlag)
+            if (~isempty(missingFileList))
+               % EOL files are not necessarily received all
+               % Ex: 4901804: the float switched to EOL mode after an emergency
+               % ascent but because of ice coverage and full memory all EOL
+               % messages were not transmitted (only the last ones and the
+               % memorized ones are transmitted).
+               if (length(cell2mat(strfind(missingFileList, '_default_'))) == length(missingFileList))
+                  missingNum = [];
+                  for idFile = 1:length(missingFileList)
+                     missingFileName = missingFileList{idFile};
+                     idFUs = strfind(missingFileName, '_');
+                     missingNum = [missingNum str2num(missingFileName(idFUs(4)+1:end-4))];
+                  end
+                  existingNum = [];
+                  existingFileList = dir([g_decArgo_archiveDirectory '/' missingFileName(1:idFUs(4)) '*']);
+                  for idFile = 1:length(existingFileList)
+                     existingFileName = existingFileList(idFile).name;
+                     idFUs = strfind(existingFileName, '_');
+                     existingNum = [existingNum str2num(existingFileName(idFUs(4)+1:idFUs(5)-1))];
+                  end
+                  if (~any(existingNum > max(missingNum)))
+                     fprintf('INFO: expected files not received yet => stop\n');
+                     stop = 1;
+                     break;
+                  end
+               else
+                  fprintf('INFO: expected files not received yet => stop\n');
+                  stop = 1;
+                  break;
                end
             end
          end
@@ -738,6 +789,9 @@ global g_decArgo_fileTypeListCts5;
 global g_decArgo_trajDataFromApmtTech;
 global g_decArgo_dataPayloadCorrectedCycle;
 
+% meta-data retrieved from APMT tech files
+global g_decArgo_apmtMetaFromTech;
+
 if (isempty(a_fileNameList))
    return;
 end
@@ -821,7 +875,7 @@ for typeNum = typeOrderList
          % manage split files
          [~, fileName, fileExtension] = fileparts(fileNamesForType{idFile});
          fileNameInfo = manage_split_files({g_decArgo_archiveDirectory}, ...
-            {[fileName '*' fileExtension]});
+            {[fileName '*' fileExtension]}, a_decoderId);
          
          % decode files
          switch (typeNum)
@@ -846,10 +900,10 @@ for typeNum = typeOrderList
                   end
                   
                   % print apmt configuration in CSV file
-                  print_apmt_config_in_csv_file_121(apmtConfig);
+                  print_apmt_config_in_csv_file_ir_rudics_cts5(apmtConfig);
                   
                   % print updated configuration in CSV file
-                  print_config_in_csv_file_121('Updated_config');
+                  print_config_in_csv_file_ir_rudics_cts5('Updated_config');
                end
                
             case 2
@@ -873,10 +927,10 @@ for typeNum = typeOrderList
                   payloadConfig = read_payload_config([fileNameInfo{4} fileNameInfo{1}]);
                   
                   % print payload configuration in CSV file
-                  print_payload_config_in_csv_file_121(payloadConfig);
+                  print_payload_config_in_csv_file_ir_rudics_cts5(payloadConfig);
                   
                   % print updated configuration in CSV file
-                  print_config_in_csv_file_121('Updated_config');
+                  print_config_in_csv_file_ir_rudics_cts5('Updated_config');
                end
                
                payloadConfigFileOnly = 1;
@@ -892,7 +946,8 @@ for typeNum = typeOrderList
                
                [apmtTech, apmtTimeFromTech, ...
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-                  read_apmt_technical([fileNameInfo{4} fileNameInfo{1}]);
+                  read_apmt_technical([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
+               g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
                
                % store GPS data
                store_gps_data_ir_rudics_cts5(apmtTech, typeNum);
@@ -916,7 +971,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
                   
-                  print_apmt_tech_in_csv_file_121(apmtTech, typeNum);
+                  print_apmt_tech_in_csv_file_ir_rudics_cts5(apmtTech, typeNum);
                   
                   % store TIME information
                   if (~isempty(apmtTimeFromTech))
@@ -974,7 +1029,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
                   
-                  print_ctd_data_in_csv_file_121(apmtCtd);
+                  print_ctd_data_in_csv_file_ir_rudics_cts5(apmtCtd);
                end
                
             case 7
@@ -1019,7 +1074,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
                   
-                  print_payload_data_in_csv_file_121(payloadData);
+                  print_payload_data_in_csv_file_ir_rudics_cts5(payloadData);
                end
                
             otherwise
@@ -1041,7 +1096,7 @@ end
 if (~isempty(g_decArgo_outputCsvFileId))
    
    % print time data in csv file
-   print_dates_in_csv_file_121(timeDataFromApmtTech, apmtCtd, payloadData);
+   print_dates_in_csv_file_ir_rudics_cts5(timeDataFromApmtTech, apmtCtd, payloadData);
 end
 
 % output NetCDF data

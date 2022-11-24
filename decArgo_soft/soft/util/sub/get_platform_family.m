@@ -41,11 +41,11 @@ switch (a_decoderId)
       % PROVOR REMOCEAN
       o_platformFamily = 'FLOAT';
       
-   case {121}
+   case {121, 122}
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       
-   case {201, 202, 203}
+   case {201, 202, 203, 215}
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
@@ -53,7 +53,7 @@ switch (a_decoderId)
       % ARVOR Iridium
       o_platformFamily = 'FLOAT';
       
-   case {206, 207, 208, 209}
+   case {206, 207, 208, 209, 213, 214}
       % Provor-DO Iridium
       o_platformFamily = 'FLOAT';
             

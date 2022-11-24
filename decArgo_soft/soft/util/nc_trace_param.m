@@ -38,7 +38,7 @@ global g_NTP_NAME_PARAM2;
 % g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
 g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'FLUORESCENCE_CDOM';
-% g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
+g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_BLUE_REF';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_NTU_REF';
 % g_NTP_NAME_PARAM1 = 'NITRATE';
@@ -52,7 +52,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_F_SIG';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_NTU_SIG';
 % g_NTP_NAME_PARAM2 = 'NITRATE';
-% g_NTP_NAME_PARAM2 = 'DOXY';
+g_NTP_NAME_PARAM2 = 'DOXY';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -102,6 +102,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.6
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_030512.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_psal_30.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

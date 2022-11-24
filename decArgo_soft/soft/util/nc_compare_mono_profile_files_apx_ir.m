@@ -26,14 +26,20 @@ function nc_compare_mono_profile_files_apx_ir(varargin)
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apres_PARAM_SURF\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_BASE_NC_FILES = 'H:\archive_201708\coriolis\';
+% DIR_INPUT_BASE_NC_FILES = 'H:\archive_201708\coriolis\';
+% DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\DM_data\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apx_ir_20170918\';
 
 % top directory of new NetCDF mono-profile files
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
 % DIR_INPUT_NEW_NC_FILES = 'H:\archive_201608\coriolis\';
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_avant_PARAM_SURF\';
-DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170905\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\RT_data\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_EDAC_20170918\';
+DIR_INPUT_NEW_NC_FILES = 'H:\archive_201609\coriolis\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -73,6 +79,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudic
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_073014.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_102815.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_DM.txt';
 
 % flag to print data measurements (when different) in the log file
 PRINT_DIFF_DATA_FLAG = 1;

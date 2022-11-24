@@ -72,7 +72,7 @@ for idC = 1:length(inputUsedCy)
 end
 g_decArgo_floatConfig.USE.CYCLE_OUT = inputUsedCyOut;
 
-% print_config_in_csv_file_ir_rudics_sbd2('create_output_', 1, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_rudics_sbd2('create_output_', 1, g_decArgo_floatConfig);
 
 % final configuration
 finalConfigNum = inputConfigNum;
@@ -211,6 +211,6 @@ o_ncConfig.DYNAMIC_NC.VALUES = finalConfigValue;
 % tmp.DYNAMIC_NC.NAMES_DEC = finalConfigNameBefore;
 % tmp.DYNAMIC_NC.NAMES = finalConfigName;
 % tmp.DYNAMIC_NC.VALUES = finalConfigValue;
-% print_config_in_csv_file_ir_rudics_sbd2('', 2, tmp);
+% create_csv_to_print_config_ir_rudics_sbd2('', 2, tmp);
 
 return;

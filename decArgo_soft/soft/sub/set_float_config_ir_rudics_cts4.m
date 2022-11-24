@@ -251,7 +251,7 @@ if (~isempty(a_cyProfPhaseList))
          end
       end
       
-%             print_config_in_csv_file_ir_rudics_sbd2('setConfig_', 1, g_decArgo_floatConfig);
+%             create_csv_to_print_config_ir_rudics_sbd2('setConfig_', 1, g_decArgo_floatConfig);
    end
 end
 

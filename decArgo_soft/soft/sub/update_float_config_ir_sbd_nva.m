@@ -130,6 +130,6 @@ end
 g_decArgo_floatConfig.DYNAMIC_TMP.DATES = [g_decArgo_floatConfig.DYNAMIC_TMP.DATES configDate];
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = [g_decArgo_floatConfig.DYNAMIC_TMP.VALUES newConfig];
 
-% print_config_in_csv_file_ir_sbd('updateConfig_', 0, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_sbd('updateConfig_', 0, g_decArgo_floatConfig);
 
 return;

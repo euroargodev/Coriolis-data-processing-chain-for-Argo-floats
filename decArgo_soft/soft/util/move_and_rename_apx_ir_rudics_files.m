@@ -36,9 +36,11 @@ init_default_values;
 
 % input directory to process
 DIR_INPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_in_20170904\';
+DIR_INPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_in_test\';
 
 % output directory
 DIR_OUTPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_20170904\';
+DIR_OUTPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_test\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

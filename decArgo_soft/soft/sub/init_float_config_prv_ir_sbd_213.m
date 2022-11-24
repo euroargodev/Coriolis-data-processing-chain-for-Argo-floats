@@ -225,7 +225,7 @@ g_decArgo_floatConfig.DYNAMIC_TMP.DATES = a_launchDate;
 g_decArgo_floatConfig.DYNAMIC_TMP.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 
-% print_config_in_csv_file_ir_sbd('init_', 0, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_sbd('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
 if (isfield(metaData, 'RT_OFFSET'))

@@ -398,7 +398,7 @@ end
 g_decArgo_floatConfig.USE.CYCLE(end+1) = g_decArgo_cycleNum;
 g_decArgo_floatConfig.USE.CONFIG(end+1) = configNum;
      
-% print_config_in_csv_file_ir_sbd('setConfig_', 3, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_sbd('setConfig_', 3, g_decArgo_floatConfig);
 
 return;
 

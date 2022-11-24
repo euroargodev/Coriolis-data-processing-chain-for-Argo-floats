@@ -323,7 +323,7 @@ for idFloat = 1:length(floatList)
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
-      case {'7.01'}
+      case {'7.01', '7.02'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));

@@ -335,7 +335,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -535,7 +535,7 @@ switch a_inputSensorName
                {'degree'} {'micromole/kg'} {'millibar'} ...
                ];
             
-         case {201, 202, 203, 206, 207, 208}
+         case {201, 202, 203, 206, 207, 208, 213, 214, 215}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...

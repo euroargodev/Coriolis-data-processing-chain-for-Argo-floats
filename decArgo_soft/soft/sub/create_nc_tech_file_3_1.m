@@ -272,9 +272,6 @@ for outputCycleNumber = min(tabNcTechIndex(:, 6)):max(tabNcTechIndex(:, 6))
          
          idParamName = find(g_decArgo_outputNcParamId == tabNcTechIndex(idPar, 5));
          paramName = char(g_decArgo_outputNcParamLabel{idParamName});
-         if (isempty(paramName))
-            a=1
-         end
          
          if (tabNcTechIndex(idPar, 4) < -1)
             [paramName] = create_param_name_ir_rudics_sbd2(paramName, a_tabNcTechLabelInfo{tabNcTechIndex(idPar, 4)*-1});

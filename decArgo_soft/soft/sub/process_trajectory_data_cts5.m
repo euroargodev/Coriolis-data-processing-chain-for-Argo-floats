@@ -97,12 +97,15 @@ global g_MC_SpyInDescToProf;
 global g_MC_MaxPresInDescToProf;
 global g_MC_DPST;
 global g_MC_SpyAtProf;
+global g_MC_MinPresInDriftAtProf;
+global g_MC_MaxPresInDriftAtProf;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
+global g_MC_SpyAtSurface;
 global g_MC_TST;
 global g_MC_Surface;
 global g_MC_SingleMeasToTET;
@@ -661,6 +664,40 @@ for idCyc = 1:length(cycleNumList)
       end            
       measData = [measData; measDataTab];
 
+      % min pressure during drift at prof
+      idPackTech  = find( ...
+         (a_tabTrajIndex(:, 1) == g_MC_MinPresInDriftAtProf) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      if (~isempty(idPackTech))
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_MinPresInDriftAtProf;
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramPres.resolution = single(1);
+         measStruct.paramList = paramPres;
+         measStruct.paramData = single(a_tabTrajData{idPackTech}{:}.value);
+         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
+      
+      % max pressure during drift at park
+      idPackTech  = find( ...
+         (a_tabTrajIndex(:, 1) == g_MC_MaxPresInDriftAtProf) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      if (~isempty(idPackTech))
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_MaxPresInDriftAtProf;
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramPres.resolution = single(1);
+         measStruct.paramList = paramPres;
+         measStruct.paramData = single(a_tabTrajData{idPackTech}{:}.value);
+         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
+      
       % ascent start time
       idPackTech  = find( ...
          (a_tabTrajIndex(:, 1) == g_MC_AST) & ...
@@ -800,6 +837,21 @@ for idCyc = 1:length(cycleNumList)
          measStruct.cyclePhase = g_decArgo_phaseSatTrans;
          measData = [measData; measStruct];
       end
+      
+      % final pump action start time
+      idPackTech  = find( ...
+         (a_tabTrajIndex(:, 1) == g_MC_SpyAtSurface) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      if (~isempty(idPackTech))
+         [measStruct, ~] = create_one_meas_float_time_bis(g_MC_SpyAtSurface, ...
+            a_tabTrajData{idPackTech}{:}.value, ...
+            a_tabTrajData{idPackTech}{:}.valueAdj, ...
+            g_JULD_STATUS_2);
+         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+         measData = [measData; measStruct];
+      end
                   
       % IN AIR measurements
       idPackData  = find( ...
@@ -887,9 +939,12 @@ for idCyc = 1:length(cycleNumList)
       if (~isempty(idPackTech))
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_SingleMeasToTET;
-         paramPres = get_netcdf_param_attributes('TEMP');
-         measStruct.paramList = paramPres;
-         measStruct.paramData = a_tabTrajData{idPackTech}{:}.value;
+         for idP = 1:length(idPackTech)
+            measStruct.paramList = [measStruct.paramList ...
+               get_netcdf_param_attributes(a_tabTrajData{idPackTech(idP)}{:}.paramName)];
+            measStruct.paramData = [measStruct.paramData ...
+               a_tabTrajData{idPackTech(idP)}{:}.value];
+         end
          measStruct.cyclePhase = g_decArgo_phaseSatTrans;
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end      

@@ -27,8 +27,9 @@ calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DataF
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -895,7 +896,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {121}
+         case {121, 122}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
 
@@ -918,7 +919,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {121}
+         case {121, 122}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');

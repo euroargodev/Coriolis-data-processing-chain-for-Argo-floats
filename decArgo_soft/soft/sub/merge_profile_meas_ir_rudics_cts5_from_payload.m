@@ -44,23 +44,40 @@ if (~isempty(profInfo))
    uCycleNum = unique(profInfo(:, 3));
    uProfileNum = unique(profInfo(:, 4));
    uPhaseNum = unique(profInfo(:, 5));
-   uParamNb = sort(unique(profInfo(:, 6)), 'descend');
    for idS = 1:length(uSensorNum)
       for idC = 1:length(uCycleNum)
          for idP = 1:length(uProfileNum)
             for idH = 1:length(uPhaseNum)
-               for idPN = 1:length(uParamNb)
-                  sensorNum = uSensorNum(idS);
-                  cycleNum = uCycleNum(idC);
-                  profileNum = uProfileNum(idP);
-                  phaseNum = uPhaseNum(idH);
-                  paramNb = uParamNb(idPN);
+               sensorNum = uSensorNum(idS);
+               cycleNum = uCycleNum(idC);
+               profileNum = uProfileNum(idP);
+               phaseNum = uPhaseNum(idH);
+               nbLoop = 1;
+               if (sensorNum == 6)
+                  nbLoop = 1:2;
+               end
+               for idL = nbLoop
                   
-                  idF = find((profInfo(:, 2) == sensorNum) & ...
-                     (profInfo(:, 3) == cycleNum) & ...
-                     (profInfo(:, 4) == profileNum) & ...
-                     (profInfo(:, 5) == phaseNum) & ...
-                     (profInfo(:, 6) == paramNb));
+                  if (sensorNum ~= 6)
+                     idF = find((profInfo(:, 2) == sensorNum) & ...
+                        (profInfo(:, 3) == cycleNum) & ...
+                        (profInfo(:, 4) == profileNum) & ...
+                        (profInfo(:, 5) == phaseNum));
+                  else
+                     if (idL == 1) % to get SUNA CTD split profile
+                        idF = find((profInfo(:, 2) == sensorNum) & ...
+                           (profInfo(:, 3) == cycleNum) & ...
+                           (profInfo(:, 4) == profileNum) & ...
+                           (profInfo(:, 5) == phaseNum) & ...
+                           (profInfo(:, 6) == 3));
+                     else
+                        idF = find((profInfo(:, 2) == sensorNum) & ...
+                           (profInfo(:, 3) == cycleNum) & ...
+                           (profInfo(:, 4) == profileNum) & ...
+                           (profInfo(:, 5) == phaseNum) & ...
+                           (profInfo(:, 6) ~= 3));
+                     end
+                  end
                   if (~isempty(idF))
                      if (length(idF) > 1)
                         % merge the profiles

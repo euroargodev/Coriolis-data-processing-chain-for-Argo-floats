@@ -174,6 +174,6 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = [g_decArgo_floatConfig.DYNAMIC_TMP.VA
 
 % voir = cat(2, g_decArgo_floatConfig.DYNAMIC_TMP.NAMES, num2cell(g_decArgo_floatConfig.DYNAMIC_TMP.VALUES));
 
-% print_config_in_csv_file_ir_rudics_cts5('', 0, g_decArgo_floatConfig);
+% create_csv_to_print_config_ir_rudics_cts5('', 0, g_decArgo_floatConfig);
 
 return;

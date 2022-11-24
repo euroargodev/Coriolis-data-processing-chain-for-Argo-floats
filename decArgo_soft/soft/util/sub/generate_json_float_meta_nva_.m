@@ -218,11 +218,17 @@ for idFloat = 1:length(floatList)
    
    % CONFIG_PARAMETER_NAME
    configStruct = get_config_init_struct(dacFormatId);
+   if (isempty(configStruct))
+      continue;
+   end
    configStructNames = fieldnames(configStruct);
    metaStruct.CONFIG_PARAMETER_NAME = configStructNames;
    
    % CONFIG_PARAMETER_VALUE
    configBddStruct = get_config_bdd_struct(dacFormatId);
+   if (isempty(configBddStruct))
+      continue;
+   end
    configBddStructNames = fieldnames(configBddStruct);
    
    nbConfig = 1;

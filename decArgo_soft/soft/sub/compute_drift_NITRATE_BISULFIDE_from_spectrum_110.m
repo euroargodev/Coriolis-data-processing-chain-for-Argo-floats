@@ -9,7 +9,7 @@
 %    a_NITRATE_fill_value, a_BISULFIDE_fill_value, ...
 %    a_UV_INTENSITY_NITRATE_dates, a_ctdDates, a_ctdData, ...
 %    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, ...
-%    a_profSuna, a_decoderId)
+%    a_profSuna)
 %
 % INPUT PARAMETERS :
 %   a_UV_INTENSITY_NITRATE                 : input UV_INTENSITY_NITRATE data
@@ -30,7 +30,6 @@
 %   a_TEMP_fill_value                      : fill value for input TEMP data
 %   a_PSAL_fill_value                      : fill value for input PSAL data
 %   a_profSuna                             : input SUNA profile structure
-%   a_decoderId                            : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_NITRATE   : output NITRATE data
@@ -50,7 +49,7 @@ function [o_NITRATE, o_BISULFIDE] = compute_drift_NITRATE_BISULFIDE_from_spectru
    a_NITRATE_fill_value, a_BISULFIDE_fill_value, ...
    a_UV_INTENSITY_NITRATE_dates, a_ctdDates, a_ctdData, ...
    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, ...
-   a_profSuna, a_decoderId)
+   a_profSuna)
 
 % output parameters initialization
 o_NITRATE = ones(size(a_UV_INTENSITY_NITRATE, 1), 1)*a_NITRATE_fill_value;
@@ -117,13 +116,6 @@ if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
       a_profSuna.profileNumber, ...
       a_profSuna.direction);
    return;
-end
-
-% in first version of CTS5 floats (decoderId = 121), the transmitted values of
-% Pixel Begin/End should be shifted by one pixel to the right
-if (a_decoderId == 121)
-   floatPixelBegin = floatPixelBegin + 1;
-   floatPixelEnd = floatPixelEnd + 1;
 end
 
 % assign the CTD data to the UV_INTENSITY_NITRATE measurements (timely closest

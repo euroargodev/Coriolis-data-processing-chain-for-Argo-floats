@@ -328,7 +328,7 @@ switch (a_decoderId)
             
       end
       
-   case {121}
+   case {121, 122}
       % PROVOR CTS5
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

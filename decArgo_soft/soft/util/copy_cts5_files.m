@@ -155,7 +155,7 @@ for idFloat = 1:nbFloats
    % clean files to be processed
    switch(floatNum)
       case 4901801
-         % files 019b_* should be kept
+         % files 019b_* should not be kept
          delFile = dir([floatOutputDirName '/019b_*']);
          for idF = 1:length(delFile)
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
@@ -173,6 +173,14 @@ for idFloat = 1:nbFloats
          move_file([floatOutputDirName '/' movFile.name], ...
             [floatOutputDirName '/' regexprep(movFile.name, '#02', '')]);
          
+      case 4901805
+         % files 012b_* should not be kept
+         delFile = dir([floatOutputDirName '/012b_*']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s => not used\n', delFile(idF).name);
+         end
+         
       case 6902667
          % there are 2 deployments of the same float => use only files dated
          % after july 2016
@@ -185,6 +193,14 @@ for idFloat = 1:nbFloats
                   fprintf('MISC: %s => not used\n', files(idF).name);
                end
             end
+         end
+         
+      case 6902669
+         % files 3a9b_* should not be kept
+         delFile = dir([floatOutputDirName '/3a9b_*']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s => not used\n', delFile(idF).name);
          end
    end
 end

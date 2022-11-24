@@ -46,8 +46,21 @@ global g_decArgo_outputNcConfParamId;
 % output NetCDF configuration parameter labels
 global g_decArgo_outputNcConfParamLabel;
 
+% output NetCDF configuration parameter descriptions
+global g_decArgo_outputNcConfParamDescription;
+
 % structure to store miscellaneous meta-data
 global g_decArgo_jsonMetaData;
+
+% meta-data retrieved from APMT tech files
+global g_decArgo_apmtMetaFromTech;
+
+% output NetCDF technical parameter Ids
+global g_decArgo_outputNcParamId;
+
+% output NetCDF technical parameter labels
+global g_decArgo_outputNcParamLabel;
+global g_decArgo_outputNcParamDescription;
 
 
 % verbose mode flag
@@ -490,7 +503,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
 
-   case {121}
+   case {121, 122}
       
       % CTS5 floats
       
@@ -504,6 +517,7 @@ switch (a_decoderId)
       inputAuxStaticConfigValue = [];
       inputAuxMetaName = [];
       inputAuxMetaValue = [];
+      inputAuxMetaDescription = [];
       for idC = 1:length(staticConfigName)
          if (strncmp(staticConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             inputAuxStaticConfigName = [inputAuxStaticConfigName; staticConfigName(idC)];
@@ -511,11 +525,51 @@ switch (a_decoderId)
          elseif (strncmp(staticConfigName{idC}, 'META_AUX_', length('META_AUX_')))
             inputAuxMetaName = [inputAuxMetaName; staticConfigName(idC)];
             inputAuxMetaValue = [inputAuxMetaValue; staticConfigValue(idC)];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp(staticConfigName(idC), g_decArgo_outputNcConfParamLabel), 1))];
          elseif (strncmp(staticConfigName{idC}, 'META_', length('META_')))
             % not used
          else
             inputStaticConfigName = [inputStaticConfigName; staticConfigName(idC)];
             inputStaticConfigValue = [inputStaticConfigValue; staticConfigValue(idC)];
+         end
+      end
+      
+      % retrieve meta-data from APMT tech files
+      if (~isempty(g_decArgo_apmtMetaFromTech))
+         
+         % delete duplicates
+         metaStructList = [g_decArgo_apmtMetaFromTech{:}];
+         idList = [metaStructList.techId];
+         if (~isempty(idList))
+            uIdList = unique(idList);
+            if (length(uIdList) == 1)
+               g_decArgo_apmtMetaFromTech(2:end) = [];
+            else
+               nbElts = hist(idList, uIdList);
+               idDel = [];
+               idToDel = uIdList(find(nbElts > 1));
+               for id = idToDel
+                  idF = find(idList == id);
+                  idDel = [idDel idF(2:end)];
+               end
+               g_decArgo_apmtMetaFromTech(idDel) = [];
+            end
+         end
+         
+         for idM = 1:length(g_decArgo_apmtMetaFromTech)
+            metaStruct = g_decArgo_apmtMetaFromTech{idM};
+            idMetaName = find(g_decArgo_outputNcParamId == metaStruct.techId);
+            metaName = char(g_decArgo_outputNcParamLabel{idMetaName});
+            metaDescription = char(g_decArgo_outputNcParamDescription{idMetaName});
+
+            if (strncmp(metaName, 'META_AUX_', length('META_AUX_')))
+               inputAuxMetaName = [inputAuxMetaName; metaName];
+               inputAuxMetaValue = [inputAuxMetaValue; metaStruct.value];
+               inputAuxMetaDescription = [inputAuxMetaDescription; metaDescription];
+            elseif (strncmp(staticConfigName{idC}, 'META_', length('META_')))
+               % not used
+            end
          end
       end
       
@@ -641,7 +695,7 @@ switch (a_decoderId)
       if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
             ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
          create_nc_meta_aux_file( ...
-            inputAuxMetaName, inputAuxMetaValue, ...
+            inputAuxMetaName, inputAuxMetaValue, inputAuxMetaDescription, ...
             inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
             launchAuxConfigName, launchAuxConfigValue, ...
             missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
@@ -921,7 +975,7 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
-            [], [], ...
+            [], [], [], ...
             [], [], ...
             launchAuxConfigName, launchAuxConfigValue, ...
             missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...

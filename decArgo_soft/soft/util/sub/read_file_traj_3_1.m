@@ -347,6 +347,12 @@ else
       for idParam = 1:length(paramNameList)
          offset(idParam) = sum(paramDataNbDimList(1:idParam-1)) - idParam + 1;
       end
+      if (a_withAdj == 1)
+         offsetAdj = zeros(length(paramAdjNameList), 1);
+         for idParam = 1:length(paramAdjNameList)
+            offsetAdj(idParam) = sum(paramAdjDataNbDimList(1:idParam-1)) - idParam + 1;
+         end
+      end
       for idParam = 1:length(paramSortedList)
          for idS = 1:length(sufixList)
             paramName = [paramSortedList{idParam} sufixList{idS}];
@@ -373,7 +379,7 @@ else
                   paramAdjNameListTmp = [paramAdjNameListTmp paramAdjNameList(idF)];
                   paramAdjDataFormatListTmp = [paramAdjDataFormatListTmp paramAdjDataFormatList(idF)];
                   paramAdjDataNbDimListTmp = [paramAdjDataNbDimListTmp paramAdjDataNbDimList(idF)];
-                  paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offset(idF):idF+paramAdjDataNbDimList(idF)-1+offset(idF))];
+                  paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offsetAdj(idF):idF+paramAdjDataNbDimList(idF)-1+offsetAdj(idF))];
                   paramAdjQcNameListTmp = [paramAdjQcNameListTmp paramAdjQcNameList(idF)];
                   paramAdjQcDataTmp = [paramAdjQcDataTmp paramAdjQcData(:, idF)];
                end
@@ -407,7 +413,7 @@ else
                paramAdjNameListTmp = [paramAdjNameListTmp paramAdjNameList(idF)];
                paramAdjDataFormatListTmp = [paramAdjDataFormatListTmp paramAdjDataFormatList(idF)];
                paramAdjDataNbDimListTmp = [paramAdjDataNbDimListTmp paramAdjDataNbDimList(idF)];
-               paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offset(idF):idF+paramAdjDataNbDimList(idF)-1+offset(idF))];
+               paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offsetAdj(idF):idF+paramAdjDataNbDimList(idF)-1+offsetAdj(idF))];
                paramAdjQcNameListTmp = [paramAdjQcNameListTmp paramAdjQcNameList(idF)];
                paramAdjQcDataTmp = [paramAdjQcDataTmp paramAdjQcData(:, idF)];
             end

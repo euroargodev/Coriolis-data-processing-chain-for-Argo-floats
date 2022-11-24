@@ -2,7 +2,7 @@
 % Print APMT technical data in output CSV file.
 %
 % SYNTAX :
-%  print_apmt_tech_in_csv_file_121(a_techData, a_fileType)
+%  print_apmt_tech_in_csv_file_ir_rudics_cts5(a_techData, a_fileType)
 %
 % INPUT PARAMETERS :
 %   a_techData : APMT technical data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_apmt_tech_in_csv_file_121(a_techData, a_fileType)
+function print_apmt_tech_in_csv_file_ir_rudics_cts5(a_techData, a_fileType)
 
 % current float WMO number
 global g_decArgo_floatNum;

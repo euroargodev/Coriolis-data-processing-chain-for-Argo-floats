@@ -45,6 +45,7 @@ floatListFileName = configVal{1};
 floatInformationFileName = configVal{2};
 inputDirName = configVal{3};
 % inputDirName = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_new\';
+% inputDirName = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_20170904\';
 outputDirName = configVal{4};
 % outputDirName = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\apx_rudics_data\';
 % outputDirName = 'C:\Users\jprannou\_DATA\IN\APEX_IR\apx_rudics_data_new\';
