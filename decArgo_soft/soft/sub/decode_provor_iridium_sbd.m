@@ -824,6 +824,9 @@ if (isempty(g_decArgo_outputCsvFileId))
       update_output_cycle_number_ir_sbd( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, [], o_tabTechAuxNMeas);
    
+   % add MTIME in profiles
+   o_tabProfiles = add_mtime_in_profile(o_tabProfiles);
+   
    % clean FMT, LMT and GPS locations and set TET
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd( ...
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);

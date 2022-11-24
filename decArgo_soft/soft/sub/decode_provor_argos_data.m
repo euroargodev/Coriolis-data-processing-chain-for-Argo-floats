@@ -1283,6 +1283,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
+   % add MTIME in profiles
+   o_tabProfiles = add_mtime_in_profile(o_tabProfiles);
+   
    if (g_decArgo_addErrorEllipses == 1)
       % add Argos error ellipses
       [o_tabTrajNMeas] = add_argos_error_ellipses(a_floatArgosId, o_tabTrajNMeas);
