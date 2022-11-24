@@ -563,12 +563,17 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % set cycle numbers to Iridium mail files data
    update_mail_data_apx_ir_sbd(o_tabTrajNMeas);
-
+   
+   % update the output cycle number in the structures
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas] = ...
+      update_output_cycle_number_ir_sbd( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas);
+   
    % add Iridium location in trajectory data
    [o_tabTrajNMeas, o_tabTrajNCycle] = ...
       add_iridium_locations_in_trajectory_data( ...
       o_tabTrajNMeas, o_tabTrajNCycle, g_decArgo_iridiumMailData);
-
+   
    % sort trajectory data structures according to the predefined
    % measurement code order
    o_tabTrajNMeas = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
@@ -577,11 +582,6 @@ if (isempty(g_decArgo_outputCsvFileId))
    o_tabProfiles = add_profile_date_and_location_apx_ir_sbd( ...
       o_tabProfiles, g_decArgo_gpsData, g_decArgo_iridiumMailData, o_tabTrajNMeas, o_tabTrajNCycle);
    
-   % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas] = ...
-      update_output_cycle_number_ir_sbd( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas, o_tabTechAuxNMeas);
-
    % perform PARAMETER adjustment
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
       compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_floatLaunchDate, 1, a_decoderId);

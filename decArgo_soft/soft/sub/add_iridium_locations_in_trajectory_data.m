@@ -29,82 +29,40 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = ...
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
 
-% default values
-global g_decArgo_dateDef;
-
 % global measurement codes
-global g_MC_CycleStart;
-global g_MC_DST;
-global g_MC_FST;
-global g_MC_SpyInDescToPark;
-global g_MC_DescProf;
-global g_MC_MaxPresInDescToPark;
-global g_MC_DescProfDeepestBin;
-global g_MC_PST;
-global g_MC_SpyAtPark;
-global g_MC_DriftAtPark;
-global g_MC_MinPresInDriftAtPark;
-global g_MC_MaxPresInDriftAtPark;
-global g_MC_PET;
-global g_MC_RPP;
-global g_MC_SpyInDescToProf;
-global g_MC_MaxPresInDescToProf;
-global g_MC_DPST;
-global g_MC_SpyAtProf;
-global g_MC_MinPresInDriftAtProf;
-global g_MC_MaxPresInDriftAtProf;
-global g_MC_AST;
-global g_MC_AscProfDeepestBin;
-global g_MC_SpyInAscProf;
-global g_MC_AscProf;
-global g_MC_LastAscPumpedCtd;
-global g_MC_AET;
-global g_MC_TST;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
-global g_MC_TET;
-global g_MC_Grounded;
-global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
-global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
-global g_JULD_STATUS_1;
-global g_JULD_STATUS_2;
 global g_JULD_STATUS_4;
-global g_JULD_STATUS_9;
 
 % default values
-global g_decArgo_ncDateDef;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
-global g_decArgo_presDef;
-global g_decArgo_tempDef;
-global g_decArgo_salDef;
-global g_decArgo_c1C2PhaseDoxyDef;
-global g_decArgo_tempDoxyDef;
-global g_decArgo_doxyDef;
 
 
 if (~isempty(a_iridiumMailData))
    
-   cycleNumList = sort(unique([o_tabTrajNMeas.cycleNumber a_iridiumMailData.cycleNumber]));
+   cycleNumList = sort(unique([o_tabTrajNMeas.outputCycleNumber a_iridiumMailData.cycleNumber]));
    cycleNumList(cycleNumList == -1) = [];
    for idCy = 1:length(cycleNumList)
       cycleNum = cycleNumList(idCy);
       
-      idNMeasForCy = find([o_tabTrajNMeas.cycleNumber] == cycleNum);
+      idNMeasForCy = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
       if (isempty(idNMeasForCy))
          trajNMeasStruct = get_traj_n_meas_init_struct(cycleNum, -1);
+         trajNMeasStruct.outputCycleNumber = cycleNum;
          o_tabTrajNMeas = [o_tabTrajNMeas trajNMeasStruct];
-         idNMeasForCy = find([o_tabTrajNMeas.cycleNumber] == cycleNum);
+         idNMeasForCy = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
       end
       
-      idNCycleForCy = find([o_tabTrajNCycle.cycleNumber] == cycleNum);
+      idNCycleForCy = find([o_tabTrajNCycle.outputCycleNumber] == cycleNum);
       if (isempty(idNCycleForCy))
          trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, -1);
+         trajNCycleStruct.outputCycleNumber = cycleNum;
          o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
-         idNCycleForCy = find([o_tabTrajNCycle.cycleNumber] == cycleNum);
+         idNCycleForCy = find([o_tabTrajNCycle.outputCycleNumber] == cycleNum);
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,24 +77,21 @@ if (~isempty(a_iridiumMailData))
          measStruct = create_one_meas_surface(g_MC_FMT, ...
             firstMsgTime, ...
             g_decArgo_argosLonDef, [], [], [], [], 1);
-         idF = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_FMT);
-         if (isempty(idF))
-            o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
+         if (~isempty(o_tabTrajNMeas(idNMeasForCy).tabMeas))
+            idF = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_FMT);
+            if (isempty(idF))
+               o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
+            else
+               o_tabTrajNMeas(idNMeasForCy).tabMeas(idF) = measStruct; % FMT already set for INCOIS FLBB (based on packet dates)
+            end
          else
-            o_tabTrajNMeas(idNMeasForCy).tabMeas(idF) = measStruct; % FMT already set for INCOIS FLBB (based on packet dates)
+            o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
          end
          
          [o_tabTrajNCycle(idNCycleForCy).juldFirstMessage] = deal(firstMsgTime);
          [o_tabTrajNCycle(idNCycleForCy).juldFirstMessageStatus] = deal(g_JULD_STATUS_4);
       end
-      
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % GPS LOCATIONS
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-      idFGps = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_Surface);
-      gpsCyLocDate = [o_tabTrajNMeas(idNMeasForCy).tabMeas(idFGps).juld];
-      
+            
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % IRIDIUM LOCATIONS
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,15 +113,22 @@ if (~isempty(a_iridiumMailData))
             o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
          end
       end
-      iridiumCyLocDate = [a_iridiumMailData(idFixForCycle).timeOfSessionJuld];
       
-      if (~isempty(gpsCyLocDate) || ~isempty(iridiumCyLocDate))
-         locDates = [gpsCyLocDate iridiumCyLocDate];
-         
-         o_tabTrajNCycle(idNCycleForCy).juldFirstLocation = min(locDates);
+      % sort GPS and Iridium locations
+      surfLocDate = [];
+      if (~isempty(o_tabTrajNMeas(idNMeasForCy).tabMeas))
+         idFSurfLoc = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_Surface);
+         surfLocDate = [o_tabTrajNMeas(idNMeasForCy).tabMeas(idFSurfLoc).juld];
+         [~, idSort] = sort(surfLocDate);
+         o_tabTrajNMeas(idNMeasForCy).tabMeas(idFSurfLoc) = o_tabTrajNMeas(idNMeasForCy).tabMeas(idFSurfLoc(idSort));
+      end
+      
+      if (~isempty(surfLocDate))
+
+         o_tabTrajNCycle(idNCycleForCy).juldFirstLocation = min(surfLocDate);
          o_tabTrajNCycle(idNCycleForCy).juldFirstLocationStatus = g_JULD_STATUS_4;
          
-         o_tabTrajNCycle(idNCycleForCy).juldLastLocation = max(locDates);
+         o_tabTrajNCycle(idNCycleForCy).juldLastLocation = max(surfLocDate);
          o_tabTrajNCycle(idNCycleForCy).juldLastLocationStatus = g_JULD_STATUS_4;
       end
       
@@ -178,11 +140,15 @@ if (~isempty(a_iridiumMailData))
          measStruct = create_one_meas_surface(g_MC_LMT, ...
             lastMsgTime, ...
             g_decArgo_argosLonDef, [], [], [], [], 1);
-         idF = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_LMT);
-         if (isempty(idF))
-            o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
+         if (~isempty(o_tabTrajNMeas(idNMeasForCy).tabMeas))
+            idF = find([o_tabTrajNMeas(idNMeasForCy).tabMeas.measCode] == g_MC_LMT);
+            if (isempty(idF))
+               o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
+            else
+               o_tabTrajNMeas(idNMeasForCy).tabMeas(idF) = measStruct; % LMT already set for INCOIS FLBB (based on packet dates)
+            end
          else
-            o_tabTrajNMeas(idNMeasForCy).tabMeas(idF) = measStruct; % LMT already set for INCOIS FLBB (based on packet dates)
+            o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
          end
          
          o_tabTrajNCycle(idNCycleForCy).juldLastMessage = lastMsgTime;

@@ -515,7 +515,11 @@ for idMes = 1:size(a_tabData, 1)
          
          % calibration coefficients
          tabParam(55) = tabParam(55)/1000;
-         tabParam(56) = -tabParam(56);
+         if (tabParam(56) < 32768) % 32768 = 65536/2
+            tabParam(56) = -tabParam(56);
+         else
+            tabParam(56) = 65536 - tabParam(56);
+         end
          
          % specific: for float 6901763 replace PT21=2 by PT21=0
          if (g_decArgo_floatNum == 6901763)

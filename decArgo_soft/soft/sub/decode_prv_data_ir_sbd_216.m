@@ -315,7 +315,11 @@ switch (packType)
       
       % calibration coefficients
       tabParam1(60) = tabParam1(60)/1000;
-      tabParam1(61) = -tabParam1(61);
+      if (tabParam1(61) < 32768) % 32768 = 65536/2
+         tabParam1(61) = -tabParam1(61);
+      else
+         tabParam1(61) = 65536 - tabParam1(61);
+      end
       
       % reference temperature (PG4)
       tabParam1(66) = twos_complement_dec_argo(tabParam1(66), 16)/1000;

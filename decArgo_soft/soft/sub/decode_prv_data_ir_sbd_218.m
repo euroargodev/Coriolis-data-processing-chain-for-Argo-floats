@@ -313,8 +313,12 @@ switch (packType)
       
       % calibration coefficients
       tabParam1(59) = tabParam1(59)/1000;
-      tabParam1(60) = -tabParam1(60);
-            
+      if (tabParam1(60) < 32768) % 32768 = 65536/2
+         tabParam1(60) = -tabParam1(60);
+      else
+         tabParam1(60) = 65536 - tabParam1(60);
+      end
+      
       floatParam1 = [packType cycleNum tabParam1' floatTime a_sbdFileDate];
       
       decodedData.decData = {floatParam1};

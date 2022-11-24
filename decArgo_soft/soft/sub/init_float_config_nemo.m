@@ -71,17 +71,35 @@ if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
    cellConfigValues = jsonMetaData.CONFIG_PARAMETER_VALUE;
    configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
    configNumbers = 1:length(cellConfigValues);
-   for idConf = 1:length(cellConfigValues)
-      cellConfigVals = struct2cell(cellConfigValues{idConf});
-      for idVal = 1:length(cellConfigVals)
-         if (~isempty(cellConfigVals{idVal}))
-            [value, status] = str2num(cellConfigVals{idVal});
+   if (length(cellConfigValues) > 1)
+      for idConf = 1:length(cellConfigValues)
+         cellConfigVals = struct2cell(cellConfigValues{idConf});
+         for idVal = 1:length(cellConfigVals)
+            if (~isempty(cellConfigVals{idVal}))
+               [value, status] = str2num(cellConfigVals{idVal});
+               if ((length(value) == 1) && (status == 1))
+                  configValues(idVal, idConf) = value;
+               else
+                  fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+                     g_decArgo_floatNum, ...
+                     configNames{idConf});
+                  return
+               end
+            end
+         end
+      end
+   else
+      fieldNames = fields(cellConfigValues);
+      for idVal = 1:length(fieldNames)
+         convigValue = cellConfigValues.(fieldNames{idVal});
+         if (~isempty(convigValue))
+            [value, status] = str2num(convigValue);
             if ((length(value) == 1) && (status == 1))
-               configValues(idVal, idConf) = value;
+               configValues(idVal, 1) = value;
             else
                fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
                   g_decArgo_floatNum, ...
-                  configNames{idConf});
+                  configNames{1});
                return
             end
          end

@@ -489,7 +489,11 @@ for idMes = 1:size(a_tabData, 1)
          
          % calibration coefficients
          tabParam(49) = tabParam(49)/1000;
-         tabParam(50) = -tabParam(50);
+         if (tabParam(50) < 32768) % 32768 = 65536/2
+            tabParam(50) = -tabParam(50);
+         else
+            tabParam(50) = 65536 - tabParam(50);
+         end
          
          o_floatParam = [o_floatParam; ...
             packType tabParam' floatTime sbdFileDate];

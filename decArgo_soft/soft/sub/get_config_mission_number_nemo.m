@@ -35,15 +35,19 @@ global g_decArgo_jsonMetaData;
 
 if (isfield(g_decArgo_jsonMetaData, 'CONFIG_REPETITION_RATE'))
    cellRepRates = g_decArgo_jsonMetaData.CONFIG_REPETITION_RATE;
-   sumNumCycles = 0;
-   for idMis = 1:length(cellRepRates)
-      cellRepRate = struct2cell(cellRepRates{idMis});
-      repRate = str2num(cellRepRate{:});
-      sumNumCycles = sumNumCycles + repRate;
-      if (a_cycleNum <= sumNumCycles)
-         o_configMissionNumber = idMis;
-         break
+   if (length(cellRepRates) > 1)
+      sumNumCycles = 0;
+      for idMis = 1:length(cellRepRates)
+         cellRepRate = struct2cell(cellRepRates{idMis});
+         repRate = str2num(cellRepRate{:});
+         sumNumCycles = sumNumCycles + repRate;
+         if (a_cycleNum <= sumNumCycles)
+            o_configMissionNumber = idMis;
+            break
+         end
       end
+   else
+      o_configMissionNumber = 1;
    end
    if (isempty(o_configMissionNumber))
    fprintf('WARNING: Float #%d Cycle #%d: config mission number cannot be computed\n', ...

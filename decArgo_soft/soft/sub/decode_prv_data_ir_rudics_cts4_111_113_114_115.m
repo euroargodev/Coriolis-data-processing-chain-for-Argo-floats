@@ -1891,7 +1891,11 @@ switch (packType)
       
       % calibration coefficients
       values(37) = values(37)/1000;
-      values(38) = -values(38);
+      if (values(38) < 32768) % 32768 = 65536/2
+         values(38) = -values(38);
+      else
+         values(38) = 65536 - values(38);
+      end
       
       cycleNum = values(7);
       profNum = values(8);

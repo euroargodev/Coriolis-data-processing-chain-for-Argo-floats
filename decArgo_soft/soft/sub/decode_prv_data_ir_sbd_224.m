@@ -487,7 +487,11 @@ switch (packType)
       
       % calibration coefficients
       tabParam1(70) = tabParam1(70)/1000;
-      tabParam1(71) = -tabParam1(71);
+      if (tabParam1(71) < 32768) % 32768 = 65536/2
+         tabParam1(71) = -tabParam1(71);
+      else
+         tabParam1(71) = 65536 - tabParam1(71);
+      end
       
       floatParam1 = [packType tabParam1(1:71)' floatTime a_sbdFileDate];
       

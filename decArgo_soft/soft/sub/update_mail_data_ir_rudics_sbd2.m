@@ -47,13 +47,13 @@ surfMcList1 = [g_MC_CycleStart g_MC_DST];
 surfMcList2 = [g_MC_AET ...
    g_MC_SpyAtSurface ...
    g_MC_TST g_MC_FMT g_MC_Surface g_MC_LMT g_MC_TET];
-trajCyNumList = unique([a_tabTrajNMeas.cycleNumber]);
+trajCyNumList = unique([a_tabTrajNMeas.outputCycleNumber]);
 trajCyNumList(trajCyNumList == -1) = [];
 for idCy = 1:length(trajCyNumList)
    cyNum = trajCyNumList(idCy);
    
    surfDates = [];
-   idCyNextNMeas = find([a_tabTrajNMeas.cycleNumber] == cyNum+1);
+   idCyNextNMeas = find([a_tabTrajNMeas.outputCycleNumber] == cyNum+1);
    if (~isempty(idCyNextNMeas))
       if (~isempty(a_tabTrajNMeas(idCyNextNMeas).tabMeas))
          idDates = find(ismember([a_tabTrajNMeas(idCyNextNMeas).tabMeas.measCode], surfMcList1));
@@ -66,7 +66,7 @@ for idCy = 1:length(trajCyNumList)
          end
       end
    end
-   idCyNMeas = find([a_tabTrajNMeas.cycleNumber] == cyNum);
+   idCyNMeas = find([a_tabTrajNMeas.outputCycleNumber] == cyNum);
    if (~isempty(idCyNMeas))
       if (~isempty(a_tabTrajNMeas(idCyNMeas).tabMeas))
          idDates = find(ismember([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode], surfMcList2));

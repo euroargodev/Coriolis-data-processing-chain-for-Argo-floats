@@ -2196,7 +2196,11 @@ if (~isempty(a_tabSensors))
             
             % calibration coefficients
             values(35) = values(35)/1000;
-            values(36) = -values(36);
+            if (values(36) < 32768) % 32768 = 65536/2
+               values(36) = -values(36);
+            else
+               values(36) = 65536 - values(36);
+            end
             
             cycleNum = values(7);
             if (cycleNum ~= g_decArgo_cycleNum)

@@ -57,15 +57,10 @@ g_decArgo_nemoStartupDate = [];
 % retrieve STARTUP_DATE
 if (isfield(g_decArgo_jsonMetaData, 'STARTUP_DATE') && ~isempty(g_decArgo_jsonMetaData.STARTUP_DATE))
    g_decArgo_nemoStartupDate = datenum(g_decArgo_jsonMetaData.STARTUP_DATE, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-else
-   idF = find(strcmp({a_metaData.metaConfigLabel}, 'STARTUP_DATE'));
-   if (~isempty(idF))
-      g_decArgo_nemoStartupDate = datenum(a_metaData(idF).techParamValue, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-   end
 end
 o_clockOffset.startupDate = g_decArgo_nemoStartupDate;
 if (isempty(g_decArgo_nemoStartupDate))
-      fprintf('WARNING: Float #%d: Cannot retrieve STARTUO_DATE - cycle timings cannot be computed\n', ...
+      fprintf('WARNING: Float #%d: Cannot retrieve STARTUP_DATE - cycle timings cannot be computed\n', ...
          g_decArgo_floatNum);
 end
 
