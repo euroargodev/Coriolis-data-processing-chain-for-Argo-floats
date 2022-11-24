@@ -93,6 +93,12 @@ g_decArgo_firstDeepCycleNumber = 1;
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
+% RT processing flag
+global g_decArgo_realtimeFlag;
+
+% report information structure
+global g_decArgo_reportStruct;
+
 
 % no data to process
 if (isempty(a_decodedDataTab))
@@ -114,6 +120,11 @@ if (~isempty(julD2FloatDayOffset))
    g_decArgo_julD2FloatDayOffset = julD2FloatDayOffset;
 end
 iceDelayedCycleFlag = unique([a_decodedDataTab.iceDelayed]);
+
+if (g_decArgo_realtimeFlag == 1)
+   % update the reports structure cycle list
+   g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+end
 
 % print SBD file description for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))

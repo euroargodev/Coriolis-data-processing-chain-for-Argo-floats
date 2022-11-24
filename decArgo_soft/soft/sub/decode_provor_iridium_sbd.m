@@ -595,6 +595,12 @@ for idSpoolFile = 1:length(tabAllFileNames)
       end
       if (g_decArgo_floatNum == 6902798)
          filePattern = '_300234064631980_002021_';
+         if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
+            filePattern = '_300234064631980_002473_';
+            if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
+               filePattern = '_300234064631980_002913_';
+            end
+         end
       end
       if (g_decArgo_floatNum == 6902799)
          filePattern = '_300234064633980_002149_';

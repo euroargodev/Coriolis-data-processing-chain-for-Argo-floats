@@ -79,6 +79,12 @@ global g_decArgo_gpsData;
 % generate nc flag
 global g_decArgo_generateNcFlag;
 
+% RT processing flag
+global g_decArgo_realtimeFlag;
+
+% report information structure
+global g_decArgo_reportStruct;
+
 
 % no data to process
 if (isempty(a_decodedDataTab))
@@ -91,6 +97,11 @@ g_decArgo_generateNcFlag = 1;
 g_decArgo_cycleNum = unique([a_decodedDataTab.cyNumOut]);
 g_decArgo_cycleProfNum = unique([a_decodedDataTab.cyNum]);
 deepCycleFlag =  unique([a_decodedDataTab.deep]);
+
+if (g_decArgo_realtimeFlag == 1)
+   % update the reports structure cycle list
+   g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+end
 
 % print SBD file description for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
