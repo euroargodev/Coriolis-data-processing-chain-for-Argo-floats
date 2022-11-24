@@ -783,12 +783,12 @@ if (a_deepCycle == 1)
          paramDoxy = get_netcdf_param_attributes('DOXY');
          measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
          
-         pres = sensor_2_value_for_pressure_202_210_to_213(tabTech2(10));
-         temp = sensor_2_value_for_temperature_201_202_203(tabTech2(11));
-         psal = sensor_2_value_for_salinity_201_202_203(tabTech2(12));
-         c1PhaseDoxy = sensor_2_value_for_C1C2Phase_doxy_201_to_203_206_to_209_213(tabTech2(13));
-         c2PhaseDoxy = sensor_2_value_for_C1C2Phase_doxy_201_to_203_206_to_209_213(tabTech2(14));
-         tempDoxy = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213(tabTech2(15));
+         pres = sensor_2_value_for_pressure_202_210_to_214(tabTech2(10));
+         temp = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
+         psal = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
+         c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_215(tabTech2(13));
+         c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_215(tabTech2(14));
+         tempDoxy = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_215(tabTech2(15));
          doxy = compute_DOXY_202_207(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
          measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
          
@@ -799,9 +799,9 @@ if (a_deepCycle == 1)
          paramSal = get_netcdf_param_attributes('PSAL');
          measStruct.paramList = [paramPres paramTemp paramSal];
          
-         pres = sensor_2_value_for_pressure_202_210_to_213(tabTech2(10));
-         temp = sensor_2_value_for_temperature_201_202_203(tabTech2(11));
-         psal = sensor_2_value_for_salinity_201_202_203(tabTech2(12));
+         pres = sensor_2_value_for_pressure_202_210_to_214(tabTech2(10));
+         temp = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
+         psal = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
          measStruct.paramData = [pres temp psal];
          
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

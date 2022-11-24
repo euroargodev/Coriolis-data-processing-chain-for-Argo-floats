@@ -979,7 +979,7 @@ if (nbLev > 0)
          profSalRed(profileLength2+1:end) = [];
       end
       
-      % try to identify auxiliary engeneering data start byte
+      % try to identify auxiliary engineering data start byte
       % according to the depth table if the last pressure is < 6 dbar, the last
       % transmitted message has been received
       if (profPres(end) <= 6)
@@ -1067,7 +1067,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) |
             (receivedData(2) == 255) && (decData(2) ~= 255) && (decData(2) > nbPresMarkMax))
 
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));
-         dataStruct.label = 'AUXILIARY ENGENEERING DATA';
+         dataStruct.label = 'AUXILIARY ENGINEERING DATA';
          o_auxInfo{end+1} = dataStruct;
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));

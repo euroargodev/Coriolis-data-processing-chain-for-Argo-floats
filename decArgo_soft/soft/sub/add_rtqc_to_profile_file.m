@@ -1807,8 +1807,10 @@ if (testFlagList(22) == 1)
                            end
                            testDoneList(22, idProf) = 1;
                            testDoneListForTraj{22, idProf} = [testDoneListForTraj{22, idProf} idNoDef];
-                        elseif (floatDecoderId < 1100)
+                        elseif (floatDecoderId < 1300)
                            % Apex Argos floats
+                           % Apex Iridium Rudics floats
+                           % Navis floats
                            
                            % apply the test
                            idCheck = find(profPres < 5);
@@ -4217,7 +4219,8 @@ if (~isempty(g_rtqc_trajData))
             {'PRES_ADJUSTED'} ...
             {'TEMP_ADJUSTED'} ...
             {'PSAL_ADJUSTED'} ...
-            ];
+            {'CHLA_ADJUSTED'} ...
+            ];         
       end
             
       % create the sorted list of profile and trajectory common parameters
@@ -4225,12 +4228,16 @@ if (~isempty(g_rtqc_trajData))
       
       % put PRES, TEMP and PSAL on top of the list (for debugging purposes and
       % to ignore PSAL if the link cannot be done (see below))
+      sortListId = [];
       for idP = 1:length(paramList)
          idParam = find(strcmp(paramList{idP}, ncProfTrajXNameList) == 1, 1);
          if (idParam ~= idP)
             tmp = ncProfTrajXNameList(idP);
             ncProfTrajXNameList(idP) = ncProfTrajXNameList(idParam);
             ncProfTrajXNameList(idParam) = tmp;
+         end
+         if (~isempty(idParam))
+            sortListId = [sortListId idP];
          end
       end
       
@@ -4338,13 +4345,24 @@ if (~isempty(g_rtqc_trajData))
                   end
                   if (found == 0)
                      % most of the time the link fails because PSAL has been
-                     % adjusted; we will try to link the measurements again
+                     % adjusted => we will try to link the measurements again
                      % without considering PSAL
+                     % CHLA_ADJUSTED values may also differ (if they have been
+                     % adjusted during RTQC on pofiles) => => we will try to
+                     % link the measurements again without considering
+                     % CHLA_ADJUSTED
+                     ignoreListId = [];
+                     if (any(sortListId == 3))
+                        ignoreListId = [ignoreListId 3];
+                     end
+                     if (any(sortListId == 4))
+                        ignoreListId = [ignoreListId 4];
+                     end
                      for idProf = 1:size(profNmeasXIndex, 2)
                         profData = dataProf{idProf};
                         for idLev = 1:size(profNmeasXIndex, 3)
                            if ((size(profData, 2) > 2) && (size(dataTraj, 2) > 2))
-                              if (~any(profData(idLev, [1:2 4:end]) ~= dataTraj(idMeas, [1:2 4:end])))
+                              if (~any(profData(idLev, setdiff(1:end, ignoreListId)) ~= dataTraj(idMeas, setdiff(1:end, ignoreListId))))
                                  idLength = 1;
                                  while ((idLength <= size(profNmeasXIndex, 1)) && ...
                                        (profNmeasXIndex(idLength, idProf, idLev) ~= 0))
@@ -5078,8 +5096,8 @@ for idFile = 1:2
                end
             end
             if (idCalib == -1)
-               fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
-                  'CHLA', fileName);
+               %                fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
+               %                   'CHLA', fileName);
                idCalib = nCalib;
             end
             

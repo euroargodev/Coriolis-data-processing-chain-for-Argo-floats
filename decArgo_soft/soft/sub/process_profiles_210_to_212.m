@@ -70,7 +70,7 @@ if (~isempty(a_tabTech2))
          size(a_tabTech2, 1));
    end
    tabTech = a_tabTech2(end, :);
-   presCutOffProf = sensor_2_value_for_pressure_202_210_to_213(tabTech(16));
+   presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
 end
 if (isempty(presCutOffProf))
       

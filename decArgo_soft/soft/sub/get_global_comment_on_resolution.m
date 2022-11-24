@@ -44,16 +44,18 @@ switch (a_decoderId)
       % PROVOR APMT
       o_comment = 'PRES variable resolutions depend on measurement codes';
       
-   case {201, 202, 203}
+   case {201, 202, 203, 215}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
+      % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210, 211, 212, 213}
+   case {205, 204, 210, 211, 212, 213, 214}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
       % ARVOR-ARN-Ice Iridium
       % PROVOR-ARN-DO Iridium
+      % Provor-ARN-DO-Ice Iridium
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
    case {209}
@@ -73,6 +75,14 @@ switch (a_decoderId)
       % Apex Argos
       o_comment = 'PRES variable resolution depends on measurement codes';
 
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113}
+      % Apex Iridium Rudics
+      o_comment = 'PRES variable resolution depends on measurement codes';
+      
+   case {1201}
+      % Navis
+      o_comment = 'PRES variable resolution depends on measurement codes';
+      
    case {2001, 2002}
       % Nova, Dova
       o_comment = 'JULD and PRES variable resolution depends on measurement codes';

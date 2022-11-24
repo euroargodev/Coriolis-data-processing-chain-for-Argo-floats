@@ -269,14 +269,28 @@ end
 % compute first grounding date
 if ((o_cycleStartDate ~= g_decArgo_dateDef) && ~isempty(a_tabTech1))
    if (a_tabTech1(18) > 0)
-      o_firstGroundingDate = fix(o_cycleStartDate) + a_tabTech1(15) + a_tabTech1(16)*6/1440;
+
+      % manage possible roll over of first grounding day
+      firstGroundingDay = a_tabTech1(15);
+      while ((fix(o_cycleStartDate) + firstGroundingDay + a_tabTech1(16)*6/1440) < o_cycleStartDate)
+         firstGroundingDay = firstGroundingDay + 16;
+      end
+      
+      o_firstGroundingDate = fix(o_cycleStartDate) + firstGroundingDay + a_tabTech1(16)*6/1440;
    end
 end
 
 % compute first emergency ascent date
 if ((o_cycleStartDate ~= g_decArgo_dateDef) && ~isempty(a_tabTech1))
    if (a_tabTech1(43) > 0)
-      o_firstEmergencyAscentDate = fix(o_cycleStartDate) + a_tabTech1(47) + a_tabTech1(44)*6/1440;
+      
+      % manage possible roll over of first emergency ascent day
+      firstEmergencyAscentDay = a_tabTech1(47);
+      while ((fix(o_cycleStartDate) + firstEmergencyAscentDay + a_tabTech1(44)*6/1440) < o_cycleStartDate)
+         firstEmergencyAscentDay = firstEmergencyAscentDay + 16;
+      end
+      
+      o_firstEmergencyAscentDate = fix(o_cycleStartDate) + firstEmergencyAscentDay + a_tabTech1(44)*6/1440;
    end
 end
 

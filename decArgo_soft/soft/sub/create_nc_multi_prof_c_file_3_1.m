@@ -68,6 +68,15 @@ if (isempty(a_tabProfiles))
    return;
 end
 
+% delete Auxiliary profiles (we do not create an AUX multi prof file)
+sensorNumList = [a_tabProfiles.sensorNumber];
+a_tabProfiles(find(sensorNumList > 100)) = [];
+
+% no data to save
+if (isempty(a_tabProfiles))
+   return;
+end
+
 % assign time resolution for each float transmission type
 profJulDLocRes = double(1/5184000); % 1 second
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(g_decArgo_floatTransType, a_decoderId);
@@ -774,7 +783,7 @@ if (nbProfParam > 0)
       end
    end
    
-   % create the list of RT adjusted profiles
+   % create the list of RT adjusted profiles (from DB information)
    adjustedProfilesList = zeros(length(a_tabProfiles), 1);
    for idP = 1:length(a_tabProfiles)
       prof = a_tabProfiles(profIdList(idP));
@@ -904,12 +913,12 @@ if (nbProfParam > 0)
             
             netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramDataQcStr(measIds));
             
-            % parameter RT adjustment
+            % parameter RT DB adjustment
             paramAdjData = [];
             if (adjustedProfilesList(idP) == 1)
                if (profParam.adjAllowed == 1)
                   
-                  % process RT adjustment of this parameter
+                  % process RT DB adjustment of this parameter
                   [paramAdjData] = compute_adjusted_data(paramData, profParam, prof);
                   
                   if (~isempty(paramAdjData))
@@ -934,34 +943,29 @@ if (nbProfParam > 0)
             if (~isempty(prof.presOffset))
                if (profParam.adjAllowed == 1)
                   
-                  paramDataIn = paramData;
-                  if (~isempty(paramAdjData))
+                  if (isempty(paramAdjData))
+                     % no RT adjustment in the data base
+                     paramDataIn = prof.dataAdj(:, idParam);
+                  else
                      paramDataIn = paramAdjData;
+                     if (strcmp(profParamName, 'PRES'))
+                        % process RT PRES adjustment of this parameter
+                        [paramDataIn] = compute_adjusted_pres(paramDataIn, prof.presOffset);
+                     end
                   end
                   
-                  if (strcmp(profParamName, 'PRES'))
-                     % process RT adjustment of this parameter
-                     [paramAdjData] = compute_adjusted_pres(paramDataIn, prof.presOffset);
-                     
-                     % store parameter adjusted data in ADJUSTED variable
-                     netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                     
-                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
-                     paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                     netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                  else
-                     % copy parameter data in ADJUSTED variable
-                     netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramDataIn(measIds));
-                     
-                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramDataIn, 1), 1);
-                     paramAdjDataQcStr(find(paramDataIn ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
-                     netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramAdjDataQcStr(measIds));
-                  end
+                  % copy parameter data in ADJUSTED variable
+                  netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramDataIn(measIds));
+                  
+                  paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramDataIn, 1), 1);
+                  paramAdjDataQcStr(find(paramDataIn ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
+                  netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramAdjDataQcStr(measIds));
                end
             end
          end
       end
       
+      % add RT DB adjustments information
       if (adjustedProfilesList(idP) == 1)
          netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
          
@@ -1091,6 +1095,7 @@ if (nbProfParam > 0)
          end
       end
       
+      % add PRES adjustment information
       if (~isempty(prof.presOffset))
          netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
          

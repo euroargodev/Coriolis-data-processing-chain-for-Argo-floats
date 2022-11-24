@@ -29,18 +29,22 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 201 202 203 204 205 206 208 209 210 211 212 213 301 302 303];
-decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1016];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 201 202 203 204 205 206 208 209 210 211 212 213 214 215 301 302 303];
+decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1016 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113];
+decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002];
-decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNova];
+decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
 % only to check that the function has been updated for each new decoder
 if (~ismember(a_decoderId, decoderIdList))
    fprintf('ERROR: Float #%d: decoderId=%d is not present in the check list of the update_meta_data function\n', ...
-      g_decArgo_floatNum);
+      g_decArgo_floatNum, a_decoderId);
+   return;
 end
 
 % add a POSITIONING_SYSTEM = 'IRIDIUM' to GPS floats
-if ~(fix(a_decoderId/100) == 1) % because this should not be done for Remocean floats
+if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Remocean floats
+      ~(fix(a_decoderId/100) == 11) && ... % because this should not be done for Apex Iridium Rudics floats
+      ~(fix(a_decoderId/100) == 12)) % because this should not be done for Navis floats
    if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
          (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
          (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
@@ -554,9 +558,9 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 107, 109, 110, 201, 203, 206, 121}
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 201, 203, 206, 121, 215}
       if (ismember(a_decoderId, [106 107 109 110 213]))
-         if (a_decoderId == 213)
+         if (ismember(a_decoderId, [213 214]))
          
             % retrieve configuration parameters
             configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
@@ -644,10 +648,54 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {1013, 1015}
+   case {1013, 1015, 1101}
       paramList = [ ...
          {'FREQUENCY_DOXY'} ...
          {'DOXY'} ...
+         ];
+      
+   case {1104}
+      paramList = [ ...
+         {'TEMP_DOXY'} ...
+         {'TPHASE_DOXY'} ...
+         {'DOXY'} ...
+         ];
+      
+   case {1105}
+      paramList = [ ...
+         {'TEMP_DOXY'} ...
+         {'TPHASE_DOXY'} ...
+         {'PPOX_DOXY'} ...
+         {'DOXY'} ...
+         ];
+      
+   case {1107, 1113}
+      paramList = [ ...
+         {'TEMP_DOXY'} ...
+         {'TPHASE_DOXY'} ...
+         {'C2PHASE_DOXY'} ...
+         {'DOXY'} ...
+         ];
+      
+   case {1110, 1111, 1112}
+      paramList = [ ...
+         {'TEMP_DOXY'} ...
+         {'TPHASE_DOXY'} ...
+         {'C2PHASE_DOXY'} ...
+         {'PPOX_DOXY'} ...
+         {'DOXY'} ...
+         ];
+      
+   case {1201}
+      paramList = [ ...
+         {'TEMP_DOXY'} ...
+         {'TPHASE_DOXY'} ...
+         {'RPHASE_DOXY'} ...
+         {'PPOX_DOXY'} ...
+         {'DOXY'} ...
+         {'TEMP_DOXY2'} ...
+         {'PHASE_DELAY_DOXY2'} ...
+         {'DOXY2'} ...
          ];
 end
 
@@ -799,6 +847,26 @@ global g_decArgo_doxy_202_204_203_c0;
 global g_decArgo_doxy_202_204_203_pCoef1;
 global g_decArgo_doxy_202_204_203_pCoef2;
 global g_decArgo_doxy_202_204_203_pCoef3;
+
+global g_decArgo_doxy_202_204_302_a0;
+global g_decArgo_doxy_202_204_302_a1;
+global g_decArgo_doxy_202_204_302_a2;
+global g_decArgo_doxy_202_204_302_a3;
+global g_decArgo_doxy_202_204_302_a4;
+global g_decArgo_doxy_202_204_302_a5;
+global g_decArgo_doxy_202_204_302_d0;
+global g_decArgo_doxy_202_204_302_d1;
+global g_decArgo_doxy_202_204_302_d2;
+global g_decArgo_doxy_202_204_302_d3;
+global g_decArgo_doxy_202_204_302_sPreset;
+global g_decArgo_doxy_202_204_302_b0;
+global g_decArgo_doxy_202_204_302_b1;
+global g_decArgo_doxy_202_204_302_b2;
+global g_decArgo_doxy_202_204_302_b3;
+global g_decArgo_doxy_202_204_302_c0;
+global g_decArgo_doxy_202_204_302_pCoef1;
+global g_decArgo_doxy_202_204_302_pCoef2;
+global g_decArgo_doxy_202_204_302_pCoef3;
 
 global g_decArgo_doxy_202_205_302_a0;
 global g_decArgo_doxy_202_205_302_a1;
@@ -1705,7 +1773,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 201, 203, 206, 213, 121}
+   case {107, 109, 110, 201, 203, 215, 206, 213, 214, 121}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -2346,7 +2414,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {1009}
+   case {1009, 1107, 1112, 1113}
       % CASE_202_204_304
       switch (a_paramName)
          
@@ -2373,6 +2441,342 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'TPHASE_DOXY'}
+            o_param = 'TPHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'RPHASE_DOXY'}
+            o_param = 'RPHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'C2PHASE_DOXY'}
+            o_param = 'C2PHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
+            if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'umol/kg';
+            o_paramAccuracy = '8 umol/kg or 10%';
+            o_paramResolution = '1 umol/kg';
+            o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+               g_decArgo_doxy_202_204_304_sPreset, ...
+               g_decArgo_doxy_202_204_304_pCoef1, ...
+               g_decArgo_doxy_202_204_304_pCoef2, ...
+               g_decArgo_doxy_202_204_304_pCoef3, ...
+               g_decArgo_doxy_202_204_304_b0, ...
+               g_decArgo_doxy_202_204_304_b1, ...
+               g_decArgo_doxy_202_204_304_b2, ...
+               g_decArgo_doxy_202_204_304_b3, ...
+               g_decArgo_doxy_202_204_304_c0, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(2, 1:7), ...
+               g_decArgo_doxy_202_204_304_d0, ...
+               g_decArgo_doxy_202_204_304_d1, ...
+               g_decArgo_doxy_202_204_304_d2, ...
+               g_decArgo_doxy_202_204_304_d3 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            
+         case {'PPOX_DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
+            if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'PPOX_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'mbar';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
+            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g', ...
+               g_decArgo_doxy_202_204_304_pCoef1, ...
+               g_decArgo_doxy_202_204_304_pCoef2, ...
+               g_decArgo_doxy_202_204_304_pCoef3, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(2, 1:7), ...
+               g_decArgo_doxy_202_204_304_d0, ...
+               g_decArgo_doxy_202_204_304_d1, ...
+               g_decArgo_doxy_202_204_304_d2 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+      end
+      
+   case {1013, 1015, 1101}
+      % CASE_102_207_206
+      switch (a_paramName)
+         
+         case {'FREQUENCY_DOXY'}
+            o_param = 'FREQUENCY_DOXY';
+            o_paramSensor = 'IDO_DOXY';
+            o_paramUnits = 'hertz';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Output frequency of the DO sensor';
+            
+         case {'DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 6
+            if (~isempty(find((size(tabDoxyCoef) == [1 6]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'DOXY';
+            o_paramSensor = 'IDO_DOXY';
+            o_paramUnits = 'umol/kg';
+            o_paramAccuracy = '4 umol/kg or 2%';
+            o_paramResolution = '0.4 umol/kg';
+            o_preCalibEq = 'Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; Oxsol=exp[A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5+PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; MLPL_DOXY=Soc*(FREQUENCY_DOXY+Foffset)*Oxsol*(1.0+A*TEMP+B*TEMP^2+C*TEMP^3)*exp[E*PRES/(273.15+TEMP)]; DOXY=44.6596*MLPL_DOXY/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Soc=%g, Foffset=%g, A=%g, B=%g, C=%g, E=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g', ...
+               tabDoxyCoef(1:6), ...
+               g_decArgo_doxy_102_207_206_a0, ...
+               g_decArgo_doxy_102_207_206_a1, ...
+               g_decArgo_doxy_102_207_206_a2, ...
+               g_decArgo_doxy_102_207_206_a3, ...
+               g_decArgo_doxy_102_207_206_a4, ...
+               g_decArgo_doxy_102_207_206_a5, ...
+               g_decArgo_doxy_102_207_206_b0, ...
+               g_decArgo_doxy_102_207_206_b1, ...
+               g_decArgo_doxy_102_207_206_b2, ...
+               g_decArgo_doxy_102_207_206_b3, ...
+               g_decArgo_doxy_102_207_206_c0);
+            o_preCalibComment = 'see Application note #64: SBE43 Dissolved Oxygen Sensor – Background Information, Deployment Recommendations and Clearing and Storage (revised June 2013); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+      end
+      
+   case {1104, 1105, 1110, 1111}
+      % CASE_202_204_302
+      switch (a_paramName)
+         
+         case {'TEMP_DOXY'} % CASE_202_102_001
+            
+            % get calibration information
+            tabDoxyTempCoef = [];
+            if (~isempty(g_decArgo_calibInfo) && ...
+                  isfield(g_decArgo_calibInfo, 'OPTODE') && ...
+                  isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
+               tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
+            end
+            
+            o_param = 'TEMP_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degC';
+            o_paramAccuracy = '0.03 degC';
+            o_paramResolution = '0.01 degC';
+            o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
+            if (isempty(tabDoxyTempCoef))
+               o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
+            else
+               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+                  tabDoxyTempCoef(1, 1:6));
+            end
+            o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+         
+         case {'TPHASE_DOXY'}
+            o_param = 'TPHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'C2PHASE_DOXY'}
+            o_param = 'C2PHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+         case {'DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
+            % Aanderaa standard calibration
+            if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'umol/kg';
+            o_paramAccuracy = '8 umol/kg or 10%';
+            o_paramResolution = '1 umol/kg';
+            o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+               g_decArgo_doxy_202_204_302_sPreset, ...
+               g_decArgo_doxy_202_204_302_pCoef1, ...
+               g_decArgo_doxy_202_204_302_pCoef2, ...
+               g_decArgo_doxy_202_204_302_pCoef3, ...
+               g_decArgo_doxy_202_204_302_b0, ...
+               g_decArgo_doxy_202_204_302_b1, ...
+               g_decArgo_doxy_202_204_302_b2, ...
+               g_decArgo_doxy_202_204_302_b3, ...
+               g_decArgo_doxy_202_204_302_c0, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(3, 1:28), ...
+               tabDoxyCoef(4, 1:28), ...
+               tabDoxyCoef(5, 1:28), ...
+               g_decArgo_doxy_202_204_302_a0, ...
+               g_decArgo_doxy_202_204_302_a1, ...
+               g_decArgo_doxy_202_204_302_a2, ...
+               g_decArgo_doxy_202_204_302_a3, ...
+               g_decArgo_doxy_202_204_302_a4, ...
+               g_decArgo_doxy_202_204_302_a5, ...
+               g_decArgo_doxy_202_204_302_d0, ...
+               g_decArgo_doxy_202_204_302_d1, ...
+               g_decArgo_doxy_202_204_302_d2, ...
+               g_decArgo_doxy_202_204_302_d3 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+      
+         case {'PPOX_DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
+            % Aanderaa standard calibration
+            if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'PPOX_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'mbar';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP_DOXY^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=Cstar*44.614*AirSat/100; Pcorr=1+((Pcoef2*TEMP_DOXY+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP_DOXY+273.15))+D2*ln((TEMP_DOXY+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP_DOXY+273.15))]';
+            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+               g_decArgo_doxy_202_204_302_pCoef1, ...
+               g_decArgo_doxy_202_204_302_pCoef2, ...
+               g_decArgo_doxy_202_204_302_pCoef3, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(3, 1:28), ...
+               tabDoxyCoef(4, 1:28), ...
+               tabDoxyCoef(5, 1:28), ...
+               g_decArgo_doxy_202_204_302_a0, ...
+               g_decArgo_doxy_202_204_302_a1, ...
+               g_decArgo_doxy_202_204_302_a2, ...
+               g_decArgo_doxy_202_204_302_a3, ...
+               g_decArgo_doxy_202_204_302_a4, ...
+               g_decArgo_doxy_202_204_302_a5, ...
+               g_decArgo_doxy_202_204_302_d0, ...
+               g_decArgo_doxy_202_204_302_d1, ...
+               g_decArgo_doxy_202_204_302_d2 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+      end
+      
+   case {1201}
+      % CASE_202_204_304 for AANDERAA
+      % CASE_103_208_307 for SBE
+      switch (a_paramName)
+         
+         case {'TEMP_DOXY'} % CASE_202_102_001
+            
+            % get calibration information
+            tabDoxyTempCoef = [];
+            if (~isempty(g_decArgo_calibInfo) && ...
+                  isfield(g_decArgo_calibInfo, 'OPTODE') && ...
+                  isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
+               tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
+            end
+            
+            o_param = 'TEMP_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degC';
+            o_paramAccuracy = '0.03 degC';
+            o_paramResolution = '0.01 degC';
+            o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
+            if (isempty(tabDoxyTempCoef))
+               o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
+            else
+               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+                  tabDoxyTempCoef(1, 1:6));
+            end
+            o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            
+            % CASE_202_204_304 for AANDERAA
             
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
@@ -2470,23 +2874,30 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_304_d2 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-      end
-      
-   case {1013, 1015}
-      % CASE_102_207_206
-      switch (a_paramName)
-         
-         case {'FREQUENCY_DOXY'}
-            o_param = 'FREQUENCY_DOXY';
-            o_paramSensor = 'IDO_DOXY';
-            o_paramUnits = 'hertz';
+            
+         case {'TEMP_DOXY2'} % CASE_103_102_001
+            o_param = 'TEMP_DOXY2';
+            o_paramSensor = 'OPTODE_DOXY2';
+            o_paramUnits = 'degC';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'TEMP_DOXY2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
+            o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
+            o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
+            
+            % CASE_103_208_307 for SBE
+            
+         case {'PHASE_DELAY_DOXY2'}
+            o_param = 'PHASE_DELAY_DOXY2';
+            o_paramSensor = 'OPTODE_DOXY2';
+            o_paramUnits = 'usec';
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
-            o_preCalibComment = 'Output frequency of the DO sensor';
+            o_preCalibComment = 'output phase delay';
             
-         case {'DOXY'}
+         case {'DOXY2'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
                   ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
@@ -2496,33 +2907,36 @@ switch (a_decoderId)
                return;
             end
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
-            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 6
-            if (~isempty(find((size(tabDoxyCoef) == [1 6]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
+            if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return;
             end
             
-            o_param = 'DOXY';
-            o_paramSensor = 'IDO_DOXY';
+            o_param = 'DOXY2';
+            o_paramSensor = 'OPTODE_DOXY2';
             o_paramUnits = 'umol/kg';
-            o_paramAccuracy = '4 umol/kg or 2%';
-            o_paramResolution = '0.4 umol/kg';
-            o_preCalibEq = 'Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; Oxsol=exp[A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5+PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; MLPL_DOXY=Soc*(FREQUENCY_DOXY+Foffset)*Oxsol*(1.0+A*TEMP+B*TEMP^2+C*TEMP^3)*exp[E*PRES/(273.15+TEMP)]; DOXY=44.6596*MLPL_DOXY/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Soc=%g, Foffset=%g, A=%g, B=%g, C=%g, E=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g', ...
-               tabDoxyCoef(1:6), ...
-               g_decArgo_doxy_102_207_206_a0, ...
-               g_decArgo_doxy_102_207_206_a1, ...
-               g_decArgo_doxy_102_207_206_a2, ...
-               g_decArgo_doxy_102_207_206_a3, ...
-               g_decArgo_doxy_102_207_206_a4, ...
-               g_decArgo_doxy_102_207_206_a5, ...
-               g_decArgo_doxy_102_207_206_b0, ...
-               g_decArgo_doxy_102_207_206_b1, ...
-               g_decArgo_doxy_102_207_206_b2, ...
-               g_decArgo_doxy_102_207_206_b3, ...
-               g_decArgo_doxy_102_207_206_c0);
-            o_preCalibComment = 'see Application note #64: SBE43 Dissolved Oxygen Sensor – Background Information, Deployment Recommendations and Clearing and Storage (revised June 2013); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            o_paramAccuracy = '3 umol/kg or 2%';
+            o_paramResolution = '0.2 umol/kg';
+            o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY2+C2*TEMP_DOXY2^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY2+A2*V^2)/(B0+B1*V)-1]/Ksv; O2=MLPL_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(SolB0+SolB1*TS+SolB2*TS^2+SolB3*TS^3)+SolC0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; TS=ln[(298.15–TEMP)/(273.15+TEMP)]; DOXY2[umol/kg]=44.6596*O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; A0=%g, A1=%g, A2=%g; B0=%g, B1=%g; C0=%g, C1=%g, C2=%g; Spreset=%g; D0=%g, D1=%g, D2=%g, D3=%g; SolB0=%g, SolB1=%g, SolB2=%g, SolB3=%g; SolC0=%g', ...
+               g_decArgo_doxy_103_208_307_pCoef1, ...
+               g_decArgo_doxy_103_208_307_pCoef2, ...
+               g_decArgo_doxy_103_208_307_pCoef3, ...
+               tabDoxyCoef(1, 1:8), ...
+               g_decArgo_doxy_103_208_307_sPreset, ...
+               g_decArgo_doxy_103_208_307_d0, ...
+               g_decArgo_doxy_103_208_307_d1, ...
+               g_decArgo_doxy_103_208_307_d2, ...
+               g_decArgo_doxy_103_208_307_d3, ...
+               g_decArgo_doxy_103_208_307_solB0, ...
+               g_decArgo_doxy_103_208_307_solB1, ...
+               g_decArgo_doxy_103_208_307_solB2, ...
+               g_decArgo_doxy_103_208_307_solB3, ...
+               g_decArgo_doxy_103_208_307_solC0 ...
+               );
+            o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 end
 
@@ -2841,7 +3255,7 @@ switch (a_decoderId)
             {'BBP700'} ...
             ];
       end
-   case {1015}
+   case {1015, 1101, 1105, 1110, 1111, 1112}
       paramList = [ ...
          {'BETA_BACKSCATTERING700'} ...
          {'BBP700'} ...
@@ -2908,7 +3322,7 @@ switch (a_decoderId)
          
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'SCATTEROMETER_BBP';
+            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
             o_paramUnits = 'count';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -2942,7 +3356,7 @@ switch (a_decoderId)
             
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -2952,7 +3366,7 @@ switch (a_decoderId)
                o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
             else
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -2969,7 +3383,7 @@ switch (a_decoderId)
          
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'SCATTEROMETER_BBP';
+            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
             o_paramUnits = 'count';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -3003,7 +3417,7 @@ switch (a_decoderId)
             
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3013,7 +3427,7 @@ switch (a_decoderId)
                o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
             else
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3025,7 +3439,7 @@ switch (a_decoderId)
             
          case {'BETA_BACKSCATTERING532'}
             o_param = 'BETA_BACKSCATTERING532';
-            o_paramSensor = 'SCATTEROMETER_BBP';
+            o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
             o_paramUnits = 'count';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -3059,7 +3473,7 @@ switch (a_decoderId)
             
             if (isempty(darkCountBackscatter532_O))
                o_param = 'BBP532';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3069,7 +3483,7 @@ switch (a_decoderId)
                o_preCalibComment = 'No DARK_BACKSCATTERING532_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916';
             else
                o_param = 'BBP532';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3081,12 +3495,12 @@ switch (a_decoderId)
             
       end
       
-   case {301, 1015}
+   case {301, 1015, 1101, 1105, 1110, 1111, 1112}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'SCATTEROMETER_BBP';
+            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
             o_paramUnits = 'count';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -3120,7 +3534,7 @@ switch (a_decoderId)
             
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3130,7 +3544,7 @@ switch (a_decoderId)
                o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
             else
                o_param = 'BBP700';
-               o_paramSensor = 'SCATTEROMETER_BBP';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
                o_paramUnits = 'm-1';
                o_paramAccuracy = '';
                o_paramResolution = '';
@@ -3176,7 +3590,7 @@ switch (a_decoderId)
             {'CHLA'} ...
             ];
       end
-   case {1015}
+   case {1015, 1101, 1105, 1110, 1111, 1112}
       paramList = [ ...
          {'FLUORESCENCE_CHLA'} ...
          {'TEMP_CPU_CHLA'} ...
@@ -3357,7 +3771,7 @@ switch (a_decoderId)
 
       end
       
-   case {301, 1015}
+   case {301, 1015, 1101, 1105, 1110, 1111, 1112}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}

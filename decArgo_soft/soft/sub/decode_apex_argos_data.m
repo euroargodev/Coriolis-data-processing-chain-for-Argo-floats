@@ -79,7 +79,7 @@ g_decArgo_configDone = 0;
 
 % cycle timings storage
 global g_decArgo_timeData;
-g_decArgo_timeData = get_apx_float_time_init_struct(a_decoderId);
+g_decArgo_timeData = get_apx_argos_float_time_init_struct(a_decoderId);
 
 % pressure offset storage
 global g_decArgo_presOffsetData;
@@ -187,7 +187,7 @@ for idCy = 1:length(a_cycleList)
       
       [miscInfo, auxInfo, profData, profNstData, parkData, astData, surfData, metaData, techData, trajData, ...
          timeInfo, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
-         decode_apx(argosDataData, argosDataUsed, argosDataDate, sensorData, sensorDate, ...
+         decode_apx_argos(argosDataData, argosDataUsed, argosDataDate, sensorData, sensorDate, ...
          cycleNum, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
       
       % create the configuration
@@ -202,7 +202,7 @@ for idCy = 1:length(a_cycleList)
       
       % apply pressure adjustment
       [miscInfo, profData, profNstData, parkData, astData, surfData, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
-         adjust_pres_from_surf_offset(miscInfo, profData, profNstData, parkData, astData, surfData, ...
+         adjust_pres_from_surf_offset_apx_argos(miscInfo, profData, profNstData, parkData, astData, surfData, ...
          g_decArgo_timeData, cycleNum, g_decArgo_presOffsetData, a_decoderId);
       
       % compute the times of the cycle
@@ -240,7 +240,7 @@ for idCy = 1:length(a_cycleList)
          % PROF NetCDF file
          
          % process profile data for PROF NetCDF file
-         [cycleProfile] = process_apx_profile(profData, profNstData, cycleNum, ...
+         [cycleProfile] = process_apx_argos_profile(profData, profNstData, cycleNum, ...
             g_decArgo_timeData, g_decArgo_presOffsetData, a_floatSurfData, a_decoderId);
          
          print = 0;
@@ -289,7 +289,7 @@ for idCy = 1:length(a_cycleList)
          % TECH NetCDF file
          
          % store technical data for output NetCDF files
-         store_tech_data_for_nc_apx(techData);
+         store_tech_data_for_nc_apx_argos(techData);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);

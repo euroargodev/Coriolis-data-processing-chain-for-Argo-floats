@@ -36,6 +36,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_met
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
 dataBaseFileName = 'C:\Users\jprannou\Desktop\6902741\new_rem_meta.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170620\new_rem_meta.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -59,6 +60,9 @@ g_decArgo_delayedModeFlag = 0;
 [configVal, unusedVarargin, inputError] = get_config_dec_argo(configVar, []);
 floatListFileName = configVal{1};
 floatInformationFileName = configVal{2};
+
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170620\new_rem.txt';
+% floatInformationFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170620\_provor_floats_information_co.txt';
 
 if (nargin == 0)
    

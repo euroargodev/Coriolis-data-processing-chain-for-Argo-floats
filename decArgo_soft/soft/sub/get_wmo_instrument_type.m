@@ -29,7 +29,7 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213}
+   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213, 214}
       % Provor, Seabird conductivity sensor
       o_wmoInstType = '841';
       
@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR_IV float
       o_wmoInstType = '835';
       
-   case {201, 202, 203}
+   case {201, 202, 203, 215}
       % Arvor-D float
       o_wmoInstType = '838';
       
@@ -54,9 +54,15 @@ switch (a_decoderId)
       o_wmoInstType = '837';
       
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
-         1012, 1013, 1014, 1015, 1016}
+         1012, 1013, 1014, 1015, 1016, ...
+         1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, ...
+         1112, 1113}
       % Webb Research, Seabird sensor
       o_wmoInstType = '846';
+      
+   case {1201}
+      % Navis-A Float
+      o_wmoInstType = '863';
       
    case {2001, 2002}
       % Nova & Dova float

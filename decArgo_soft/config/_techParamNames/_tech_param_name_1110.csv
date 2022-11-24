@@ -1,0 +1,30 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+1001;-1;ActiveBallastAdjustments;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+1002;-1;AirBladderPressure;PRESSURE_AirBladder_COUNT;measured in COUNT - approx 148 COUNT
+1003;-1;AirPumpAmps;CURRENT_BatterySurfaceAirPumpOn_mA ;Battery Current measured at the surface with the air pump running (6 seconds)
+1004;-1;AirPumpVolts;VOLTAGE_BatterySurfaceAirPumpOn_volts;Voltage measured when AIR PUMP is switched on at the surface for extra buoyancy
+1005;-1;BuoyancyPumpAmps;CURRENT_BatteryPumpOn_mA;Battery Current buoyancy pump on 
+1006;-1;BuoyancyPumpOnTime;TIME_BuoyancyPumpOn_seconds;are the units right?
+1007;-1;BuoyancyPumpVolts;VOLTAGE_BatteryPumpOn_volts;Pump Battery Voltage LSB=0.1 Volts
+1008;-1;CurrentBuoyancyPosition;POSITION_PistonNow_COUNT;TBD
+1010;-1;DeepProfileBuoyancyPosition;POSITION_PistonProfile_COUNT;piston position at maximum profile pressure
+1012;-1;FlashErrorsCorrectable;TECH_AUX_NUMBER_FlashErrorsCorrectable_COUNT;Contact Teledyne Webb Research for assistance.
+1013;-1;FlashErrorsUncorrectable;TECH_AUX_NUMBER_FlashErrorsUncorrectable_COUNT;Contact Teledyne Webb Research for assistance.
+1015;-1;GpsFixTime;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+1018;-1;ObsIndex;TECH_AUX_NUMBER_ObsIndex_NUMBER;Contact Teledyne Webb Research for assistance.
+1022;-1;ParkDescentPCnt;NUMBER_PRESSamplesDuringDescentToPark_COUNT;number of pressure samples collected as the float descends from the Shallow to the park pressure.
+1023;-1;ParkPistonPosition;POSITION_PistonParkEnd_COUNT;piston position at end of park period before descent to profile depth
+1024;-1;QuiescentAmps;TECH_AUX_CURRENT_BatterySurfaceNoLoad_mA;Battery current during inactive surface phase.
+1025;-1;QuiescentVolts;VOLTAGE_BatterySurfaceNoLoad_volts;battery voltage during inactive surface phase
+1026;-1;RtcSkew;CLOCK_RealTimeDrift_seconds;The difference (seconds)between apf9's real time clock (rtc) and gps time representing clock drift
+1027;-1;Sbe41cpAmps;CURRENT_BatterySBEParkEnd_mA;battery current measured when the SBE41 sampled at the end of park
+1028;-1;Sbe41cpStatus;FLAG_CTDStatus_hex;Flag indicating the status of the CTD (see manual) (could be reported as hex)
+1029;-1;Sbe41cpVolts;VOLTAGE_BatterySBEParkEnd_volts;battery voltage measured when the SBE41 sampled after the end of park phase
+1032;-1;status;FLAG_FloatStatus_hex;Flag indicating the status of the Float (see manual) (could be reported as hex)
+1033;-1;SurfaceBuoyancyPosition;POSITION_PistonSurface_COUNT;Piston position, recorded as the instrument reaches the surface
+1035;-1;SurfacePressure;PRES_SurfaceOffsetNotTruncated_dbar;Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board Not autocorrected
+1036;-1;Vacuum;PRESSURE_InternalVacuumParkEnd_inHg;Internal Vacuum at end of park. before descent to profile depth
+1037;-1;GPS fix obtained in N seconds;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+1038;-1;GPS nb sat;NUMBER_GPSSatellites_COUNT;number of GPS satellites seen by the float 
+1039;-1;GPS failed after N seconds;TECH_AUX_TIME_IridiumGPSFixFailed_seconds;The number of seconds ellapsed during the failed attempt to get GPS fix.
+1040;-1;GPS valid fix;TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).

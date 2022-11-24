@@ -1,0 +1,242 @@
+{
+   "TECH_PARAM_1" :
+   {
+      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ActiveBallastAdjustments",
+      "TECH_PARAM_NAME" : "NUMBER_RepositionsDuringPark_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "number of times the float readjusts its buoyancy during park phase - using either the pump or EV"
+   },
+   "TECH_PARAM_2" :
+   {
+      "TECH_PARAM_DEC_ID" : "1002",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "AirBladderPressure",
+      "TECH_PARAM_NAME" : "PRESSURE_AirBladder_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "measured in COUNT - approx 148 COUNT"
+   },
+   "TECH_PARAM_3" :
+   {
+      "TECH_PARAM_DEC_ID" : "1003",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "AirPumpAmps",
+      "TECH_PARAM_NAME" : "CURRENT_BatterySurfaceAirPumpOn_mA ",
+      "TECH_PARAM_DESCRIPTION" : "Battery Current measured at the surface with the air pump running (6 seconds)"
+   },
+   "TECH_PARAM_4" :
+   {
+      "TECH_PARAM_DEC_ID" : "1004",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "AirPumpVolts",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatterySurfaceAirPumpOn_volts",
+      "TECH_PARAM_DESCRIPTION" : "Voltage measured when AIR PUMP is switched on at the surface for extra buoyancy"
+   },
+   "TECH_PARAM_5" :
+   {
+      "TECH_PARAM_DEC_ID" : "1005",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "BuoyancyPumpAmps",
+      "TECH_PARAM_NAME" : "CURRENT_BatteryPumpOn_mA",
+      "TECH_PARAM_DESCRIPTION" : "Battery Current buoyancy pump on "
+   },
+   "TECH_PARAM_6" :
+   {
+      "TECH_PARAM_DEC_ID" : "1006",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "BuoyancyPumpOnTime",
+      "TECH_PARAM_NAME" : "TIME_BuoyancyPumpOn_seconds",
+      "TECH_PARAM_DESCRIPTION" : "are the units right?"
+   },
+   "TECH_PARAM_7" :
+   {
+      "TECH_PARAM_DEC_ID" : "1007",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "BuoyancyPumpVolts",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatteryPumpOn_volts",
+      "TECH_PARAM_DESCRIPTION" : "Pump Battery Voltage LSB=0.1 Volts"
+   },
+   "TECH_PARAM_8" :
+   {
+      "TECH_PARAM_DEC_ID" : "1008",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "CurrentBuoyancyPosition",
+      "TECH_PARAM_NAME" : "POSITION_PistonNow_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_9" :
+   {
+      "TECH_PARAM_DEC_ID" : "1010",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "DeepProfileBuoyancyPosition",
+      "TECH_PARAM_NAME" : "POSITION_PistonProfile_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "piston position at maximum profile pressure"
+   },
+   "TECH_PARAM_10" :
+   {
+      "TECH_PARAM_DEC_ID" : "1012",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "FlashErrorsCorrectable",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FlashErrorsCorrectable_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Contact Teledyne Webb Research for assistance."
+   },
+   "TECH_PARAM_11" :
+   {
+      "TECH_PARAM_DEC_ID" : "1013",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "FlashErrorsUncorrectable",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FlashErrorsUncorrectable_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Contact Teledyne Webb Research for assistance."
+   },
+   "TECH_PARAM_12" :
+   {
+      "TECH_PARAM_DEC_ID" : "1014",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "FlbbStatus",
+      "TECH_PARAM_NAME" : "FLAG_FlbbStatus_NUMBER",
+      "TECH_PARAM_DESCRIPTION" : "Flag indicating the status of the FLBB (see manual)"
+   },
+   "TECH_PARAM_13" :
+   {
+      "TECH_PARAM_DEC_ID" : "1015",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "GpsFixTime",
+      "TECH_PARAM_NAME" : "TIME_IridiumGPSFix_seconds",
+      "TECH_PARAM_DESCRIPTION" : "the number of seconds required to obtain a GPS fix for a profile"
+   },
+   "TECH_PARAM_14" :
+   {
+      "TECH_PARAM_DEC_ID" : "1018",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ObsIndex",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ObsIndex_NUMBER",
+      "TECH_PARAM_DESCRIPTION" : "Contact Teledyne Webb Research for assistance."
+   },
+   "TECH_PARAM_15" :
+   {
+      "TECH_PARAM_DEC_ID" : "1022",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ParkDescentPCnt",
+      "TECH_PARAM_NAME" : "NUMBER_PRESSamplesDuringDescentToPark_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "number of pressure samples collected as the float descends from the Shallow to the park pressure."
+   },
+   "TECH_PARAM_16" :
+   {
+      "TECH_PARAM_DEC_ID" : "1023",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ParkPistonPosition",
+      "TECH_PARAM_NAME" : "POSITION_PistonParkEnd_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "piston position at end of park period before descent to profile depth"
+   },
+   "TECH_PARAM_17" :
+   {
+      "TECH_PARAM_DEC_ID" : "1024",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "QuiescentAmps",
+      "TECH_PARAM_NAME" : "TECH_AUX_CURRENT_BatterySurfaceNoLoad_mA",
+      "TECH_PARAM_DESCRIPTION" : "Battery current during inactive surface phase."
+   },
+   "TECH_PARAM_18" :
+   {
+      "TECH_PARAM_DEC_ID" : "1025",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "QuiescentVolts",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatterySurfaceNoLoad_volts",
+      "TECH_PARAM_DESCRIPTION" : "battery voltage during inactive surface phase"
+   },
+   "TECH_PARAM_19" :
+   {
+      "TECH_PARAM_DEC_ID" : "1026",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "RtcSkew",
+      "TECH_PARAM_NAME" : "CLOCK_RealTimeDrift_seconds",
+      "TECH_PARAM_DESCRIPTION" : "The difference (seconds)between apf9's real time clock (rtc) and gps time representing clock drift"
+   },
+   "TECH_PARAM_20" :
+   {
+      "TECH_PARAM_DEC_ID" : "1027",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Sbe41cpAmps",
+      "TECH_PARAM_NAME" : "CURRENT_BatterySBEParkEnd_mA",
+      "TECH_PARAM_DESCRIPTION" : "battery current measured when the SBE41 sampled at the end of park"
+   },
+   "TECH_PARAM_21" :
+   {
+      "TECH_PARAM_DEC_ID" : "1028",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Sbe41cpStatus",
+      "TECH_PARAM_NAME" : "FLAG_CTDStatus_hex",
+      "TECH_PARAM_DESCRIPTION" : "Flag indicating the status of the CTD (see manual) (could be reported as hex)"
+   },
+   "TECH_PARAM_22" :
+   {
+      "TECH_PARAM_DEC_ID" : "1029",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Sbe41cpVolts",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatterySBEParkEnd_volts",
+      "TECH_PARAM_DESCRIPTION" : "battery voltage measured when the SBE41 sampled after the end of park phase"
+   },
+   "TECH_PARAM_23" :
+   {
+      "TECH_PARAM_DEC_ID" : "1032",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "status",
+      "TECH_PARAM_NAME" : "FLAG_FloatStatus_hex",
+      "TECH_PARAM_DESCRIPTION" : "Flag indicating the status of the Float (see manual) (could be reported as hex)"
+   },
+   "TECH_PARAM_24" :
+   {
+      "TECH_PARAM_DEC_ID" : "1033",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "SurfaceBuoyancyPosition",
+      "TECH_PARAM_NAME" : "POSITION_PistonSurface_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Piston position, recorded as the instrument reaches the surface"
+   },
+   "TECH_PARAM_25" :
+   {
+      "TECH_PARAM_DEC_ID" : "1035",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "SurfacePressure",
+      "TECH_PARAM_NAME" : "PRES_SurfaceOffsetNotTruncated_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board Not autocorrected"
+   },
+   "TECH_PARAM_26" :
+   {
+      "TECH_PARAM_DEC_ID" : "1036",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Vacuum",
+      "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumParkEnd_inHg",
+      "TECH_PARAM_DESCRIPTION" : "Internal Vacuum at end of park. before descent to profile depth"
+   },
+   "TECH_PARAM_27" :
+   {
+      "TECH_PARAM_DEC_ID" : "1037",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "GPS fix obtained in N seconds",
+      "TECH_PARAM_NAME" : "TIME_IridiumGPSFix_seconds",
+      "TECH_PARAM_DESCRIPTION" : "the number of seconds required to obtain a GPS fix for a profile"
+   },
+   "TECH_PARAM_28" :
+   {
+      "TECH_PARAM_DEC_ID" : "1038",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "GPS nb sat",
+      "TECH_PARAM_NAME" : "NUMBER_GPSSatellites_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "number of GPS satellites seen by the float "
+   },
+   "TECH_PARAM_29" :
+   {
+      "TECH_PARAM_DEC_ID" : "1039",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "GPS failed after N seconds",
+      "TECH_PARAM_NAME" : "TECH_AUX_TIME_IridiumGPSFixFailed_seconds",
+      "TECH_PARAM_DESCRIPTION" : "The number of seconds ellapsed during the failed attempt to get GPS fix."
+   },
+   "TECH_PARAM_30" :
+   {
+      "TECH_PARAM_DEC_ID" : "1040",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "GPS valid fix",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_GPSValidFix_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise)."
+   }
+}

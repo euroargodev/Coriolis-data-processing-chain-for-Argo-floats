@@ -1130,7 +1130,12 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                      data{measParamVarId+1}(idM) = paramData;
                      
                      if ((adjustedCycle == 1) && ~isempty(measParamAdjVarId))
-                        data{measParamAdjVarId+1}(idM) = paramData;
+                        if (~isempty(meas.paramDataAdj))
+                           paramAdjData = meas.paramDataAdj(:, idParam);
+                        else
+                           paramAdjData = paramData; % only duplicate parameter values
+                        end
+                        data{measParamAdjVarId+1}(idM) = paramAdjData;
                      end
                      
                      if (~isempty(measParamQcVarId))
@@ -1168,7 +1173,12 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                         data{measParamVarId+1}(idM) = paramData;
                         
                         if ((adjustedCycle == 1) && ~isempty(measParamAdjVarId))
-                           data{measParamAdjVarId+1}(idM) = paramData;
+                           if (~isempty(meas.paramDataAdj))
+                              paramAdjData = meas.paramDataAdj(:, firstCol:lastCol);
+                           else
+                              paramAdjData = paramData; % only duplicate parameter values
+                           end
+                           data{measParamAdjVarId+1}(idM) = paramAdjData;
                         end
                         
                         if (~isempty(measParamQcVarId))
@@ -1197,7 +1207,12 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                         data{measParamVarId+1}(1:size(paramData, 2), idM) = paramData';
                         
                         if ((adjustedCycle == 1) && ~isempty(measParamAdjVarId))
-                           data{measParamAdjVarId+1}(1:size(paramData, 2), idM) = paramData';
+                           if (~isempty(meas.paramDataAdj))
+                              paramAdjData = meas.paramDataAdj(:, firstCol:lastCol);
+                           else
+                              paramAdjData = paramData; % only duplicate parameter values
+                           end
+                           data{measParamAdjVarId+1}(1:size(paramAdjData, 2), idM) = paramAdjData';
                         end
                         
                         if (~isempty(measParamQcVarId))

@@ -50,31 +50,54 @@ global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 
+% Arvor-deep 4000 with "Near Surface" & "In Air" measurements (5.64) (decid 215)
+global g_decArgo_13Or11TypePacketExpected;
+global g_decArgo_14Or12TypePacketExpected;
+
+
+if (a_decoderId == 215)
+   
+   % as the number of "Near Surface" or "In Air" CTD(O) expected packets is not
+   % reported in the TECH messages, we never set the buffer completed if such
+   % packets are expected
+   
+   if (a_whyFlag == 0)
+      if ((g_decArgo_13Or11TypePacketExpected == 1) || (g_decArgo_14Or12TypePacketExpected == 1))
+         o_completed = 0;
+         return;
+      end
+   end
+end
 
 % check if all expected data have been received
-if ((g_decArgo_0TypePacketReceivedFlag == 1) && ...
-      (g_decArgo_4TypePacketReceivedFlag == 1) && ...
-      (g_decArgo_5TypePacketReceivedFlag == 1) && ...
-      (g_decArgo_7TypePacketReceivedFlag == 1) && ...
-      (g_decArgo_nbOf1Or8Or11Or14TypePacketExpected == g_decArgo_nbOf1Or8Or11Or14TypePacketReceived) && ...
-      (g_decArgo_nbOf2Or9Or12Or15TypePacketExpected == g_decArgo_nbOf2Or9Or12Or15TypePacketReceived) && ...
-      (g_decArgo_nbOf3Or10Or13Or16TypePacketExpected == g_decArgo_nbOf3Or10Or13Or16TypePacketReceived) && ...
-      (g_decArgo_nbOf1Or8TypePacketExpected == g_decArgo_nbOf1Or8TypePacketReceived) && ...
-      (g_decArgo_nbOf2Or9TypePacketExpected == g_decArgo_nbOf2Or9TypePacketReceived) && ...
-      (g_decArgo_nbOf3Or10TypePacketExpected == g_decArgo_nbOf3Or10TypePacketReceived) && ...
-      (g_decArgo_nbOf13Or11TypePacketExpected == g_decArgo_nbOf13Or11TypePacketReceived) && ...
-      (g_decArgo_nbOf14Or12TypePacketExpected == g_decArgo_nbOf14Or12TypePacketReceived))
+if (a_whyFlag == 0)
    
-   % the buffer is complete
-   o_completed = 1;
-         
-elseif (a_whyFlag == 1)
+   if ((g_decArgo_0TypePacketReceivedFlag == 1) && ...
+         (g_decArgo_4TypePacketReceivedFlag == 1) && ...
+         (g_decArgo_5TypePacketReceivedFlag == 1) && ...
+         (g_decArgo_7TypePacketReceivedFlag == 1) && ...
+         (g_decArgo_nbOf1Or8Or11Or14TypePacketExpected == g_decArgo_nbOf1Or8Or11Or14TypePacketReceived) && ...
+         (g_decArgo_nbOf2Or9Or12Or15TypePacketExpected == g_decArgo_nbOf2Or9Or12Or15TypePacketReceived) && ...
+         (g_decArgo_nbOf3Or10Or13Or16TypePacketExpected == g_decArgo_nbOf3Or10Or13Or16TypePacketReceived) && ...
+         (g_decArgo_nbOf1Or8TypePacketExpected == g_decArgo_nbOf1Or8TypePacketReceived) && ...
+         (g_decArgo_nbOf2Or9TypePacketExpected == g_decArgo_nbOf2Or9TypePacketReceived) && ...
+         (g_decArgo_nbOf3Or10TypePacketExpected == g_decArgo_nbOf3Or10TypePacketReceived) && ...
+         (g_decArgo_nbOf13Or11TypePacketExpected == g_decArgo_nbOf13Or11TypePacketReceived) && ...
+         (g_decArgo_nbOf14Or12TypePacketExpected == g_decArgo_nbOf14Or12TypePacketReceived))
+      
+      % the buffer is complete
+      o_completed = 1;
+   end
+   
+else
    
    switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {201, 202, 203} % Arvor-deep 4000 & 3500
+      case {201, 202, 203, 215}
+         % Arvor-deep 4000 & 3500
+         % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
          
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical packet #1 is missing\n', ...
@@ -89,27 +112,27 @@ elseif (a_whyFlag == 1)
                g_decArgo_floatNum);
          end
          if (g_decArgo_4TypePacketReceivedFlag == 1)
-            if (g_decArgo_nbOf1Or8Or11Or14TypePacketExpected ~= g_decArgo_nbOf1Or8Or11Or14TypePacketReceived)
+            if (g_decArgo_nbOf1Or8TypePacketExpected ~= g_decArgo_nbOf1Or8TypePacketReceived)
                fprintf('BUFF_INFO: Float #%d: %d descent data packets are missing\n', ...
                   g_decArgo_floatNum, ...
-                  g_decArgo_nbOf1Or8Or11Or14TypePacketExpected-g_decArgo_nbOf1Or8Or11Or14TypePacketReceived);
+                  g_decArgo_nbOf1Or8TypePacketExpected-g_decArgo_nbOf1Or8TypePacketReceived);
             end
-            if (g_decArgo_nbOf2Or9Or12Or15TypePacketExpected ~= g_decArgo_nbOf2Or9Or12Or15TypePacketReceived)
+            if (g_decArgo_nbOf2Or9TypePacketExpected ~= g_decArgo_nbOf2Or9TypePacketReceived)
                fprintf('BUFF_INFO: Float #%d: %d drift data packets are missing\n', ...
                   g_decArgo_floatNum, ...
-                  g_decArgo_nbOf2Or9Or12Or15TypePacketExpected-g_decArgo_nbOf2Or9Or12Or15TypePacketReceived);
+                  g_decArgo_nbOf2Or9TypePacketExpected-g_decArgo_nbOf2Or9TypePacketReceived);
             end
-            if (g_decArgo_nbOf3Or10Or13Or16TypePacketExpected ~= g_decArgo_nbOf3Or10Or13Or16TypePacketReceived)
+            if (g_decArgo_nbOf3Or10TypePacketExpected ~= g_decArgo_nbOf3Or10TypePacketReceived)
                fprintf('BUFF_INFO: Float #%d: %d ascent data packets are missing\n', ...
                   g_decArgo_floatNum, ...
-                  g_decArgo_nbOf3Or10Or13Or16TypePacketExpected-g_decArgo_nbOf3Or10Or13Or16TypePacketReceived);
+                  g_decArgo_nbOf3Or10TypePacketExpected-g_decArgo_nbOf3Or10TypePacketReceived);
             end
          end
          
       case {205, 204, 206, 207, 208}
          % Arvor Iridium 5.41 & 5.42 & 5.4
          % Provor-DO Iridium 5.71 & 5.7 & 5.72
-
+         
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical packet is missing\n', ...
                g_decArgo_floatNum);
@@ -138,7 +161,7 @@ elseif (a_whyFlag == 1)
          
       case {209}
          % Arvor-2DO Iridium 5.73
-
+         
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical packet is missing\n', ...
                g_decArgo_floatNum);
@@ -168,7 +191,7 @@ elseif (a_whyFlag == 1)
       case {210, 211, 213}
          % Arvor-ARN Iridium
          % Provor-ARN-DO Iridium
-
+         
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical #1 packet is missing\n', ...
                g_decArgo_floatNum);
@@ -209,9 +232,10 @@ elseif (a_whyFlag == 1)
             end
          end
          
-      case {212}
+      case {212, 214}
          % Arvor-ARN-Ice Iridium
-
+         % Provor-ARN-DO-Ice Iridium
+         
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical #1 packet is missing\n', ...
                g_decArgo_floatNum);

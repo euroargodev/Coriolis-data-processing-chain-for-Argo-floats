@@ -17,7 +17,7 @@
 % RELEASES :
 %   09/23/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_misc_info_in_csv_file(a_miscInfo)
+function print_misc_info_in_csv_file(a_miscInfo, o_FileType)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -41,6 +41,8 @@ for idL = 1:length(a_miscInfo)
    data{end+1} = g_decArgo_cycleNum;
    format = [format ';%s'];
    data{end+1} = dataStruct.msgType;
+      format = [format ';%s'];
+   data{end+1} = o_FileType;
    if (~isempty(dataStruct.msgNum))
       format = [format ';%d'];
       data{end+1} = dataStruct.msgNum;

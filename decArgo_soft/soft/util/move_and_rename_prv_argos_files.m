@@ -33,6 +33,9 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle_FINAL\'
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEP4\';
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEp4_FINAL\';
 
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\STEP4\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\STEP4_FINAL\';
+
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
@@ -244,6 +247,9 @@ global g_decArgo_minNumMsgForNotGhost;
 % minimum number of float messages for not only ghosts in contents
 NB_MSG_MIN = g_decArgo_minNumMsgForNotGhost;
 
+% global input parameter information
+global g_decArgo_inputArgosFile;
+
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle
 MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = g_decArgo_minNonTransDurForNewCycle;
@@ -393,8 +399,37 @@ if (lastArgosMsgDate > launchDate)
          a_floatNum, a_argosId, frameLen, floatDecId);
       
       if (~isempty(decodedCycleNumber) && (decodedCycleNumber ~= -1))
+         
          % the cycle number has been decoded from the transmitted data
          cycleNumber = decodedCycleNumber;
+      elseif (decodedCycleNumber == -1)
+         
+         diffArgosDataDates = diff(argosDataDate)*24;
+
+         % the file contains multiple cycles
+         [subFileNameList] = split_argos_file(a_argosFileName, a_floatNum, a_argosId);
+         if (~isempty(subFileNameList))
+            
+            fprintf('INFO: Argos cycle file split (%.1f hours without transmission): %s\n', ...
+               max(diffArgosDataDates), a_argosFileName);
+         else
+            fprintf('ERROR: Unable to split Argos cycle file: %s\n', ...
+               argosFileName);
+         end
+         
+         for idFile = 1:length(subFileNameList)
+            decodedCycleNumber = decode_cycle_number(subFileNameList{idFile}, ...
+               a_floatNum, a_argosId, frameLen, floatDecId);
+            if (~isempty(decodedCycleNumber) && (decodedCycleNumber ~= -1))
+               cycleNumber = [cycleNumber decodedCycleNumber];
+            else
+               fprintf('ERROR: Float #%d: Cannot determine cycle number for file: %s\n', ...
+                  a_floatNum, subFileNameList{idFile});
+               cycleNumber = [];
+               break;
+            end
+         end
+         
       else
          
          % the cycle number cannot be decoded from the transmitted data
@@ -512,17 +547,43 @@ end
 
 % create the name of the input file and move it to the approriate directory
 if (~isempty(cycleNumber))
-   if (cycleNumber < 0)
-      move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
-      
-      fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data => file stored without cycle number (i.e. not decoded)\n', ...
-         cycleNumber);
+   if (length(cycleNumber) == 1)
+      if (cycleNumber < 0)
+         move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
+         
+         fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data => file stored without cycle number (i.e. not decoded)\n', ...
+            cycleNumber);
+      else
+         move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, cycleNumber);
+         
+         g_util_cycleNumber = [g_util_cycleNumber; cycleNumber];
+         g_util_firstMsgDate = [g_util_firstMsgDate; firstArgosMsgDate];
+         g_util_lastMsgDate = [g_util_lastMsgDate; lastArgosMsgDate];
+      end
    else
-      move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, cycleNumber);
-      
-      g_util_cycleNumber = [g_util_cycleNumber; cycleNumber];
-      g_util_firstMsgDate = [g_util_firstMsgDate; firstArgosMsgDate];
-      g_util_lastMsgDate = [g_util_lastMsgDate; lastArgosMsgDate];
+      for idFile = 1:length(subFileNameList)
+         
+         % read Argos file
+         [argosLocDate, argosLocLon, argosLocLat, argosLocAcc, argosLocSat, ...
+            argosDataDate, argosDataData] = read_argos_file_fmt1({subFileNameList{idFile}}, a_argosId, frameLen);
+         firstArgosMsgDate = min(argosDataDate);
+         lastArgosMsgDate = max(argosDataDate);
+         
+         g_decArgo_inputArgosFile = subFileNameList{idFile};
+         
+         if (cycleNumber(idFile) < 0)
+            move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
+            
+            fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data => file stored without cycle number (i.e. not decoded)\n', ...
+               cycleNumber(idFile));
+         else
+            move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, cycleNumber(idFile));
+            
+            g_util_cycleNumber = [g_util_cycleNumber; cycleNumber(idFile)];
+            g_util_firstMsgDate = [g_util_firstMsgDate; firstArgosMsgDate];
+            g_util_lastMsgDate = [g_util_lastMsgDate; lastArgosMsgDate];
+         end
+      end
    end
 end
 

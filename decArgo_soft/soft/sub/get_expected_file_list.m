@@ -107,7 +107,7 @@ elseif (~isempty(a_ptnNum) && (a_ptnNum == 0))
       o_expectedFileList = [o_expectedFileList [a_filePrefix sprintf('_%03d_%02d_apmt.ini', a_cyNum, a_ptnNum)]];
       %       o_expectedFileList = [o_expectedFileList [a_filePrefix
       %       sprintf('_%03d_%02d_payload.xml', a_cyNum, a_ptnNum)]]; %
-      %       considered in init_float_config_ir_rudics_cts5
+      %       considered in init_float_config_prv_ir_rudics_cts5
    end
    
 else

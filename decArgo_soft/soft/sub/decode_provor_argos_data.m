@@ -93,7 +93,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % initialize float configuration
-init_float_config_argos(a_decoderId);
+init_float_config_prv_argos(a_decoderId);
 
 % inits for output NetCDF file
 decArgoConfParamNames = [];

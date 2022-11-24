@@ -1134,6 +1134,7 @@ for idProf = 1:length(a_tabProfiles)
                   end
                   
                   % parameter RT adjustment
+                  paramAdjData = [];
                   if (adjustedProfilesList(idP) == 1)
                      if (profParam.adjAllowed == 1)
                         
@@ -1157,6 +1158,36 @@ for idProf = 1:length(a_tabProfiles)
                            paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
                            paramAdjDataQcStr(find(paramData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                            netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramAdjDataQcStr(measIds));
+                        end
+                     end
+                  end
+                  
+                  % RT PRES adjustment of Apex float
+                  if (~isempty(prof.presOffset))
+                     if (profParam.adjAllowed == 1)
+                        
+                        paramDataIn = paramData;
+                        if (~isempty(paramAdjData))
+                           paramDataIn = paramAdjData;
+                        end
+                        
+                        if (strcmp(profParamName, 'PRES'))
+                           % process RT adjustment of this parameter
+                           [paramAdjData] = compute_adjusted_pres(paramDataIn, prof.presOffset);
+                           
+                           % store parameter adjusted data in ADJUSTED variable
+                           netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
+                           
+                           paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                           paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
+                           netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                        else
+                           % copy parameter data in ADJUSTED variable
+                           netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramDataIn(measIds));
+                           
+                           paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramDataIn, 1), 1);
+                           paramAdjDataQcStr(find(paramDataIn ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
+                           netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataIn)]), paramAdjDataQcStr(measIds));
                         end
                      end
                   end

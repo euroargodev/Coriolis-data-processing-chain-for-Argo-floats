@@ -66,6 +66,7 @@ global g_JULD_STATUS_4;
 
 % RPP status
 global g_RPP_STATUS_2;
+global g_RPP_STATUS_4;
 
 % default values
 global g_decArgo_presDef;
@@ -154,6 +155,18 @@ if (ismember(a_decoderId, [1013, 1015]))
       measStruct.paramList = a_parkData.paramList;
       measStruct.paramData = a_parkData.data;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      
+      idPres = find(strcmp({measStruct.paramList.name}, 'PRES') == 1);
+      if (~isempty(idPres))
+         % add adjusted RPP to the N_CYCLE data
+         paramDataAdj = measStruct.paramData(idPres);
+         idCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == a_cycleNum);
+         if (~isempty(idCycleStruct))
+            paramDataAdj = compute_adjusted_pres(measStruct.paramData(idPres), a_presOffsetData.presOffset(idCycleStruct));
+         end
+         trajNCycleStruct.repParkPres = paramDataAdj;
+         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_4;
+      end
    end
 else
    if (~isempty(a_trajData))

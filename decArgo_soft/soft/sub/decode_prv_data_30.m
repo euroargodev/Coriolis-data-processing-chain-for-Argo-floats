@@ -125,6 +125,13 @@ for idMes = 1:size(a_tabSensors, 1)
             o_tabTech1(45) = (o_tabTech1(45)+200)*10;
          end
          
+         % BE CAREFUL
+         % there is an issue with grounding day
+         % => the decoded value should be 16 - transmitted value
+         if (o_tabTech1(18) > 0)
+            o_tabTech1(15) = mod(16 - o_tabTech1(15), 16);
+         end
+         
          % output CSV file
          if (~isempty(g_decArgo_outputCsvFileId))
             print_tech1_data_in_csv_30_32(o_tabTech1);

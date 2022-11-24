@@ -314,6 +314,138 @@ switch (a_decoderId)
          end
       end
       
+   case {210, 211}
+      % Arvor-ARN Iridium
+      
+      for id = [0 4:10 17:26 29:31]
+         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [2 11 12]
+         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0 1 2]
+         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0:13 15:24]
+         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      
+   case {213}
+      % Provor-ARN-DO Iridium
+      
+      for id = [0 4:10 17:26 29:31]
+         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [2 11 12]
+         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0:4]
+         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0:13 15:25]
+         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      
+   case {212, 214} 
+      % Arvor-ARN-Ice Iridium
+      % Provor-ARN-DO-Ice Iridium
+      
+      for id = [0 4:10 17:26 29:31]
+         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [2 11 12]
+         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0:3]
+         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = [0:13 15:25]
+         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = 0:15
+         decConfNames{end+1} = sprintf('CONFIG_IC%02d_', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('IC%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      
+   case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
+      
+      for id = 0:17
+         decConfNames{end+1} = sprintf('CONFIG_PM%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PM%d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      for id = [0:15 18 20:35]
+         decConfNames{end+1} = sprintf('CONFIG_PT%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PT%d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      for id = [0 2]
+         decConfNames{end+1} = sprintf('CONFIG_PX%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      
    case {2001, 2002} % Nova, Dova
       
       for id = [0:9 12:14]
@@ -366,82 +498,6 @@ switch (a_decoderId)
                a_decoderId, decConfNames{end});
             ncConfNames{end+1} = '';
          end
-      end
-      
-   case {210, 211}
-      % Arvor-ARN Iridium
-      
-      for id = [0 4:10 17:26 29:31]
-         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [2 11 12]
-         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0 1 2]
-         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:13 15:24]
-         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      
-   case {213}
-      % Provor-ARN-DO Iridium
-      
-      for id = [0 4:10 17:26 29:31]
-         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [2 11 12]
-         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:4]
-         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:13 15:25]
-         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      
-   case {212} % Arvor-ARN-Ice Iridium
-      
-      for id = [0 4:10 17:26 29:31]
-         decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [2 11 12]
-         decConfNames{end+1} = sprintf('CONFIG_MC%03d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:3]
-         decConfNames{end+1} = sprintf('CONFIG_PX%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:13 15:25]
-         decConfNames{end+1} = sprintf('CONFIG_TC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = 0:15
-         decConfNames{end+1} = sprintf('CONFIG_IC%02d_', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('IC%02d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
       end
       
    otherwise

@@ -32,6 +32,9 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% to detect ICE mode activation
+global g_decArgo_7TypePacketReceivedCyNum;
+
 
 % current configuration
 inputConfigNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
@@ -49,7 +52,7 @@ switch (a_decoderId)
       
       %nothing for Nova floats
 
-   case {201, 202, 203, 204, 205, 206, 208, 209}
+   case {201, 202, 203, 204, 205, 206, 208, 209, 215}
       
       % use CONFIG_PT20 to fill CONFIG_PX02 = CONFIG_PT20 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_PT20') == 1, 1);
@@ -60,7 +63,7 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-   case {210, 211, 212, 213}
+   case {210, 211, 213}
       
       % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);
@@ -71,26 +74,57 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-      % if ice detection is used for at least one cycle, set ice float mandatory
-      % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
-      idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
-      idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
+   case {212, 214}
+      
+      % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
+      idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);
+      idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX02_') == 1, 1);
       if (~isempty(idPos1) && ~isempty(idPos2))
-         iceUsed = finalConfigValue(idPos1, :);
-         if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
-            finalConfigValue(idPos2, :) = 4095;
-         end
+         finalConfigValue(idPos2, :) = finalConfigValue(idPos1, :);
+         idNoNan = find(~isnan(finalConfigValue(idPos2, :)));
+         finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-      % when ice detection is used, replace TC19 by IC10
-      idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
-      idPos2 = find(strcmp(finalConfigName, 'CONFIG_TC19_') == 1, 1);
-      idPos3 = find(strcmp(finalConfigName, 'CONFIG_IC10_') == 1, 1);
-      if (~isempty(idPos1) && ~isempty(idPos2))
-         iceUsed = finalConfigValue(idPos1, :);
-         idF = find(iceUsed ~= 0);
-         finalConfigValue(idPos2, idF) = finalConfigValue(idPos3, idF);
-         finalConfigValue(idPos3, :) = nan;
+      if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+         
+         % when ice mode is activated
+         
+         % if ice detection is used for at least one cycle, set ice float mandatory
+         % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
+               finalConfigValue(idPos2, :) = 4095;
+            end
+         end
+         
+         % when ice detection is used, replace TC19 by IC10
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_TC19_') == 1, 1);
+         idPos3 = find(strcmp(finalConfigName, 'CONFIG_IC10_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            idF = find(iceUsed ~= 0);
+            finalConfigValue(idPos2, idF) = finalConfigValue(idPos3, idF);
+            finalConfigValue(idPos3, :) = nan;
+         end
+      else
+         
+         % when ice mode is not activated
+         
+         % remove ice configuration parameters from final configuration
+         idDel = [];
+         for id = 0:15
+            name = sprintf('CONFIG_IC%02d_', id);
+            idPos = find(strcmp(finalConfigName, name) == 1, 1);
+            if (~isempty(idPos))
+               idDel = [idDel; idPos];
+            end
+         end
+         finalConfigName(idDel) = [];
+         finalConfigValue(idDel, :) = [];
       end
       
    otherwise

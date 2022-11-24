@@ -82,6 +82,9 @@ global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 
+% to detect ICE mode activation
+global g_decArgo_7TypePacketReceivedCyNum;
+
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
@@ -140,6 +143,7 @@ end
 init_counts;
 
 % decode packet data
+packetType7Received = 0;
 tabCycleNum = [];
 floatLastResetTime = [];
 for idMes = 1:size(a_tabData, 1)
@@ -428,10 +432,14 @@ for idMes = 1:size(a_tabData, 1)
          % parameter packet #2
          
          g_decArgo_7TypePacketReceivedFlag = 1;
+         packetType7Received = 1;
          if (a_procLevel == 0)
+            if (isempty(g_decArgo_7TypePacketReceivedCyNum))
+               g_decArgo_7TypePacketReceivedCyNum = -1;
+            end
             continue;
          end
-         
+
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -445,7 +453,7 @@ for idMes = 1:size(a_tabData, 1)
             ];
          % get item bits
          tabParam = get_bits(firstBit, tabNbBits, msgData);
-         
+                  
          % store cycle number
          tabCycleNum = [tabCycleNum tabParam(1)];
                   
@@ -538,6 +546,12 @@ if (a_procLevel > 0)
          
          g_decArgo_cycleNum = unique(tabCycleNum) + g_decArgo_cycleNumOffset;
          fprintf('cyle #%d\n', g_decArgo_cycleNum);
+         
+         if (packetType7Received)
+            if (isempty(g_decArgo_7TypePacketReceivedCyNum) || (g_decArgo_7TypePacketReceivedCyNum == -1))
+               g_decArgo_7TypePacketReceivedCyNum = g_decArgo_cycleNum;
+            end
+         end
       else
          fprintf('ERROR: Float #%d: Multiple cycle numbers have been received\n', ...
             g_decArgo_floatNum);
@@ -603,6 +617,9 @@ global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 
+% to detect ICE mode activation
+global g_decArgo_7TypePacketReceivedCyNum;
+
 % initialize information arrays
 g_decArgo_0TypePacketReceivedFlag = 0;
 g_decArgo_4TypePacketReceivedFlag = 0;
@@ -631,25 +648,34 @@ g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
 g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
 g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 
-% if IC0 = 0, the ice detection algorithm is disabled and parameter #2 packet
-% (type 7) is not send by the float
-
-% retrieve configuration parameters
-configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
-configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
-
-% retrieve IC0 configuration value
-idPos = find(strncmp('CONFIG_IC00_', configNames, length('CONFIG_IC00_')) == 1, 1);
-if (~isempty(idPos))
-   iceNoSurfaceDelay = configValues(idPos, end);
-   if (iceNoSurfaceDelay == 0)
-      % ice detection algorithm is disabled => parameter packet #2 is not
-      % expected
-      g_decArgo_7TypePacketReceivedFlag = 1;
+% if one parameter packet #2 has been received, it means that the ICE mode is
+% activated
+if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+   
+   % if IC0 = 0, the ice detection algorithm is disabled and parameter #2 packet
+   % (type 7) is not send by the float
+   
+   % retrieve configuration parameters
+   configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
+   configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
+   
+   % retrieve IC0 configuration value
+   idPos = find(strncmp('CONFIG_IC00_', configNames, length('CONFIG_IC00_')) == 1, 1);
+   if (~isempty(idPos))
+      iceNoSurfaceDelay = configValues(idPos, end);
+      if (iceNoSurfaceDelay == 0)
+         % ice detection algorithm is disabled => parameter packet #2 is not
+         % expected
+         g_decArgo_7TypePacketReceivedFlag = 1;
+      end
+   else
+      fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...
+         g_decArgo_floatNum);
    end
 else
-   fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...
-      g_decArgo_floatNum);
+   
+   % ICE mode is not activated => parameter packet #2 is not expected
+   g_decArgo_7TypePacketReceivedFlag = 1;
 end
 
 return;

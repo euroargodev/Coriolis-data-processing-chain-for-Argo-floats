@@ -31,6 +31,7 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -166,8 +167,6 @@ wantedTechVars = [ ...
    {'TECHNICAL_PARAMETER_NAME'} ...
    {'TECHNICAL_PARAMETER_VALUE'} ...
    {'CYCLE_NUMBER'} ...
-   {'TECH_AUX_PARAM_LABEL'} ...
-   {'TECH_AUX_PARAM_DESCRIPTION'} ...
    ];
 if (a_comparisonFlag == 0)
    wantedTechVars = [ ...
@@ -197,25 +196,6 @@ else
    fprintf(fidOut, ' %d; N_TECH_PARAM\n', a_floatNum);
 end
 
-techAuxParamLabel = '';
-idVal = find(strcmp('TECH_AUX_PARAM_LABEL', techData) == 1);
-if (~isempty(idVal))
-   techAuxParamLabel = techData{idVal+1}';
-   if (techAuxParamLabel == ' ')
-      techAuxParamLabel = '';
-   end
-end
-
-techAuxParamDescription = '';
-idVal = find(strcmp('TECH_AUX_PARAM_DESCRIPTION', techData) == 1);
-if (~isempty(idVal))
-   techAuxParamDescription = techData{idVal+1}';
-end
-
-if (~isempty(techAuxParamLabel))
-   fprintf(fidOut, ' %d; N_REF_TECH_AUX_LABEL ; %d\n', a_floatNum, size(techAuxParamLabel, 1));
-end
-
 fprintf(fidOut, ' %d\n', a_floatNum);
 fprintf(fidOut, ' WMO; ------------------------------; GENERAL INFORMATION\n');
 
@@ -237,14 +217,6 @@ for idL = 1:length(techVars)
       val = techData{idVal+1}';
    end
    fprintf(fidOut, ' %d; %s; %s\n', a_floatNum, name, strtrim(val));
-end
-
-fprintf(fidOut, ' %d\n', a_floatNum);
-fprintf(fidOut, ' %d; ------------------------------; --------------------------------------------------------------------------------; --------------------------------------------------------------------------------\n', a_floatNum);
-fprintf(fidOut, ' WMO; Param #; TECHNICAL PARAMETER LABEL; TECHNICAL PARAMETER DESCRIPTION\n');
-
-for idParam = 1:size(techAuxParamLabel, 1)
-   fprintf(fidOut, ' %d; %d; %s; %s\n', a_floatNum, idParam, strtrim(techAuxParamLabel(idParam, :)), strtrim(techAuxParamDescription(idParam, :)));
 end
 
 fprintf(fidOut, ' %d\n', a_floatNum);

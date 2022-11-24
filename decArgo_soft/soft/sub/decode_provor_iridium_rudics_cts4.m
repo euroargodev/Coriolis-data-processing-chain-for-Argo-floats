@@ -215,7 +215,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % initialize float parameter configuration
-init_float_config_ir_rudics_cts4(a_launchDate, a_decoderId);
+init_float_config_prv_ir_rudics_cts4(a_launchDate, a_decoderId);
 
 % add launch position and time in the TRAJ NetCDF file
 if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
@@ -290,7 +290,7 @@ if (~a_floatDmFlag)
             sbdFilePathName = [g_decArgo_dirInputRsyncData '/' ...
                g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
             [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
-            copy_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
+            duplicate_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
          end
                   
          % some SBD files can be present in the buffer (if the final buffer was not
@@ -759,7 +759,7 @@ else
                
                [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
                
-               copy_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
+               duplicate_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
             end
             
             fprintf('RSYNC_INFO: duplication done ...\n');
@@ -895,7 +895,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       
       % save the list of used rsync log files in the history directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'used', ...
-         g_decArgo_rsyncLogFileUsedList);
+         unique(g_decArgo_rsyncLogFileUsedList));
    end
    
    % update NetCDF technical data (add a column to store output cycle numbers)

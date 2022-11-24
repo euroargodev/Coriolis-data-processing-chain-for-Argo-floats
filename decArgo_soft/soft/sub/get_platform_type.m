@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR APMT (CTS5)
       o_platformType = 'PROVOR_IV';
       
-   case {201, 202, 203}
+   case {201, 202, 203, 215}
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
@@ -53,7 +53,7 @@ switch (a_decoderId)
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       
-   case {206, 207, 208, 213}
+   case {206, 207, 208, 213, 214}
       % Provor-DO Iridium
       o_platformType = 'PROVOR';
             
@@ -65,6 +65,14 @@ switch (a_decoderId)
          1012, 1013, 1014, 1015, 1016}
       % Apex Argos
       o_platformType = 'APEX';
+      
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113}
+      % Apex Iridium Rudics
+      o_platformType = 'APEX';
+      
+   case {1201}
+      % Navis
+      o_platformType = 'NAVIS_A';
       
    case {2001, 2002}
       % Nova & Dova

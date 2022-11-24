@@ -613,7 +613,7 @@ for idL = 1:size(a_sensorData, 1)
       parkFrequencyDoxy = sensor_2_value_for_apex_apf9_frequencyDoxy(decData(7), g_decArgo_frequencyDoxyDef);
       
       % compute DOXY
-      parkDoxy = compute_DOXY_SBE_1013_1015(parkFrequencyDoxy, ...
+      parkDoxy = compute_DOXY_SBE_1013_1015_1101(parkFrequencyDoxy, ...
          g_decArgo_frequencyDoxyDef, ...
          parkPres, parkTemp, parkSal, ...
          g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
@@ -777,7 +777,7 @@ if (nbLev > 0)
          profFrequencyDoxyRed(profileLength2+1:end) = [];
       end
       
-      % try to identify auxiliary engeneering data start byte
+      % try to identify auxiliary engineering data start byte
       % according to the depth table if the last pressure is < 6 dbar, the last
       % transmitted message has been received
       if (profPres(end) <= 6)
@@ -825,7 +825,7 @@ if (nbLev > 0)
    paramDoxy = get_netcdf_param_attributes('DOXY');
 
    % compute DOXY
-   profDoxy = compute_DOXY_SBE_1013_1015(profFrequencyDoxy, ...
+   profDoxy = compute_DOXY_SBE_1013_1015_1101(profFrequencyDoxy, ...
       g_decArgo_frequencyDoxyDef, ...
       profPres, profTemp, profSal, ...
       g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
@@ -883,7 +883,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) |
             (receivedData(2) == 255) && (decData(2) ~= 255) && (decData(2) > nbPresMarkMax))
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));
-         dataStruct.label = 'AUXILIARY ENGENEERING DATA';
+         dataStruct.label = 'AUXILIARY ENGINEERING DATA';
          o_auxInfo{end+1} = dataStruct;
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));

@@ -135,16 +135,9 @@ if (isempty(floatImei))
    return;
 end
 
-% retrieve rsync log file names
-ryncLogList = [];
-if (~isempty(rsyncLogPathFile))
-   ryncLogList{end+1} = rsyncLogPathFile;
-end
-if (allRsyncLogFlag == 1)
-   [ryncLogList] = get_rsync_log_dir_file_names_ir_sbd(g_decArgo_dirInputRsyncLog);
-end
-
-% filter the ryncLogList file names according to rsync log files already processed
+% create the g_decArgo_historyDirectory directory (used below when there is no
+% input files to process); additional directories will be created later
+% according to float type and decoder configuration
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatImei '_' num2str(floatWmo) '/'];
@@ -156,6 +149,17 @@ g_decArgo_historyDirectory = [floatIriDirName 'history_of_processed_data/'];
 if ~(exist(g_decArgo_historyDirectory, 'dir') == 7)
    mkdir(g_decArgo_historyDirectory);
 end
+
+% retrieve rsync log file names
+ryncLogList = [];
+if (~isempty(rsyncLogPathFile))
+   ryncLogList{end+1} = rsyncLogPathFile;
+end
+if (allRsyncLogFlag == 1)
+   [ryncLogList] = get_rsync_log_dir_file_names_ir_sbd(g_decArgo_dirInputRsyncLog);
+end
+
+% filter the ryncLogList file names according to rsync log files already processed
 
 % get the list of the rsync log already processed for this float
 [rsyncDoneLogList] = read_processed_rsync_log_file_ir_rudics_sbd_sbd2(floatWmo);

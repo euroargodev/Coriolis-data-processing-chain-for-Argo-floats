@@ -148,7 +148,14 @@ for idP = 1:size(a_tabTech, 1)
    firstEmerAscentDate = g_decArgo_dateDef;
    if (a_tabTech(idP, 56) > 0)
       % First emergency ascent date
-      firstEmergencyAscentDate = a_refDay + a_tabTech(idP, 60) + a_tabTech(idP, 57)/1440;
+      
+      % manage possible roll over of first emergency ascent day
+      firstEmergencyAscentDay = a_tabTech(idP, 60);
+      while ((a_refDay + firstEmergencyAscentDay + a_tabTech(idP, 57)/1440) < cycleStartDate)
+         firstEmergencyAscentDay = firstEmergencyAscentDay + 256;
+      end
+      
+      firstEmergencyAscentDate = a_refDay + firstEmergencyAscentDay + a_tabTech(idP, 57)/1440;
       o_firstEmerAscentDate = [o_firstEmerAscentDate; ...
          [a_tabTech(idP, 4) a_tabTech(idP, 5) a_tabTech(idP, 8) a_tabTech(idP, end) firstEmergencyAscentDate]];
    end

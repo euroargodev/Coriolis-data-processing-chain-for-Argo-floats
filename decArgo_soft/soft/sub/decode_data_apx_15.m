@@ -71,7 +71,7 @@ global g_decArgo_salDef;
 global g_decArgo_frequencyDoxyDef;
 global g_decArgo_doxyDef;
 global g_decArgo_janFirst1970InJulD;
-global g_decArgo_florescenceChlaDef;
+global g_decArgo_fluorescenceChlaDef;
 global g_decArgo_betaBackscattering700Def;
 global g_decArgo_tempCpuChlaDef;
 global g_decArgo_chloroADef;
@@ -682,25 +682,25 @@ for idL = 1:size(a_sensorData, 1)
       surfTempCpuChla = [];
       for id = 1:length(idListFB)
          surfPres = [surfPres; sensor_2_value_for_apex_apf9_pressure(decDataBis(id, 7), g_decArgo_presDef)];
-         surfFluorescenceChla = [surfFluorescenceChla; sensor_2_value_for_apex_apf9_fluorescenceChla(decDataBis(id, 8), g_decArgo_florescenceChlaDef)];
+         surfFluorescenceChla = [surfFluorescenceChla; sensor_2_value_for_apex_apf9_fluorescenceChla(decDataBis(id, 8), g_decArgo_fluorescenceChlaDef)];
          surfBetaBackscattering700 = [surfBetaBackscattering700; sensor_2_value_for_apex_apf9_betaBackscattering700(decDataBis(id, 9), g_decArgo_betaBackscattering700Def)];
          surfTempCpuChla = [surfTempCpuChla; sensor_2_value_for_apex_apf9_tempCpuChla(decDataBis(id, 10), g_decArgo_tempCpuChlaDef)];
       end
             
       % compute CHLA
-      surfChla = compute_CHLA_301_1015( ...
+      surfChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
          surfFluorescenceChla, ...
-         g_decArgo_florescenceChlaDef, g_decArgo_chloroADef);
+         g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
 
       % compute BBP700
-      %       surfBbp700 = compute_BBP700_301_1015( ...
+      %       surfBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
       %          surfBetaBackscattering700, ...
       %          g_decArgo_betaBackscattering700Def, g_decArgo_backscatDef, ...
       %          [surfPres ? ?], g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef);
 
       % convert decoder default values to netCDF fill values
       surfPres(find(surfPres == g_decArgo_presDef)) = paramPres.fillValue;
-      surfFluorescenceChla(find(surfFluorescenceChla == g_decArgo_florescenceChlaDef)) = paramFluorescenceChla.fillValue;
+      surfFluorescenceChla(find(surfFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
       surfBetaBackscattering700(find(surfBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       surfTempCpuChla(find(surfTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       surfChla(find(surfChla == g_decArgo_chloroADef)) = paramChla.fillValue;
@@ -727,24 +727,24 @@ for idL = 1:size(a_sensorData, 1)
       parkSal = sensor_2_value_for_apex_apf9_salinity(decData(12), g_decArgo_salDef);
       parkPres = sensor_2_value_for_apex_apf9_pressure(decData(13), g_decArgo_presDef);
       parkFrequencyDoxy = sensor_2_value_for_apex_apf9_frequencyDoxy(decData(14), g_decArgo_frequencyDoxyDef);
-      parkFluorescenceChla = sensor_2_value_for_apex_apf9_fluorescenceChla(decData(15), g_decArgo_florescenceChlaDef);
+      parkFluorescenceChla = sensor_2_value_for_apex_apf9_fluorescenceChla(decData(15), g_decArgo_fluorescenceChlaDef);
       parkBetaBackscattering700 = sensor_2_value_for_apex_apf9_betaBackscattering700(decData(16), g_decArgo_betaBackscattering700Def);
       parkTempCpuChla = sensor_2_value_for_apex_apf9_tempCpuChla(decData(17), g_decArgo_tempCpuChlaDef);
       
       % compute DOXY
-      parkDoxy = compute_DOXY_SBE_1013_1015(parkFrequencyDoxy, ...
+      parkDoxy = compute_DOXY_SBE_1013_1015_1101(parkFrequencyDoxy, ...
          g_decArgo_frequencyDoxyDef, ...
          parkPres, parkTemp, parkSal, ...
          g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
          g_decArgo_doxyDef);
       
       % compute CHLA
-      parkChla = compute_CHLA_301_1015( ...
+      parkChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
          parkFluorescenceChla, ...
-         g_decArgo_florescenceChlaDef, g_decArgo_chloroADef);
+         g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
 
       % compute BBP700
-      parkBbp700 = compute_BBP700_301_1015( ...
+      parkBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
          parkBetaBackscattering700, ...
          g_decArgo_betaBackscattering700Def, g_decArgo_backscatDef, ...
          [parkPres parkTemp parkSal], g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef);
@@ -755,7 +755,7 @@ for idL = 1:size(a_sensorData, 1)
       parkSal(find(parkSal == g_decArgo_salDef)) = paramSal.fillValue;
       parkFrequencyDoxy(find(parkFrequencyDoxy == g_decArgo_frequencyDoxyDef)) = paramFrequencyDoxy.fillValue;
       parkDoxy(find(parkDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
-      parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_florescenceChlaDef)) = paramFluorescenceChla.fillValue;
+      parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
       parkBetaBackscattering700(find(parkBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       parkTempCpuChla(find(parkTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       parkChla(find(parkChla == g_decArgo_chloroADef)) = paramChla.fillValue;
@@ -868,9 +868,9 @@ if (nbLev > 0)
          frequencyDoxy = g_decArgo_frequencyDoxyDef;
       end
       if ((receivedData(id+5) == 4095) && (decData(id+5) ~= 4095))
-         fluorescenceChla = sensor_2_value_for_apex_apf9_fluorescenceChla(decData(id+5), g_decArgo_florescenceChlaDef);
+         fluorescenceChla = sensor_2_value_for_apex_apf9_fluorescenceChla(decData(id+5), g_decArgo_fluorescenceChlaDef);
       else
-         fluorescenceChla = g_decArgo_florescenceChlaDef;
+         fluorescenceChla = g_decArgo_fluorescenceChlaDef;
       end
       if ((receivedData(id+6) == 4095) && (decData(id+6) ~= 4095))
          betaBackscattering700 = sensor_2_value_for_apex_apf9_betaBackscattering700(decData(id+6), g_decArgo_betaBackscattering700Def);
@@ -960,7 +960,7 @@ if (nbLev > 0)
          profTempCpuChlaRed(profileLength2+1:end) = [];
       end
       
-      % try to identify auxiliary engeneering data start byte
+      % try to identify auxiliary engineering data start byte
       % according to the depth table if the last pressure is < 6 dbar, the last
       % transmitted message has been received
       if (profPres(end) <= 6)
@@ -982,7 +982,7 @@ if (nbLev > 0)
       (profTemp == g_decArgo_tempDef) & ...
       (profSal == g_decArgo_salDef) & ...
       (profFrequencyDoxy == g_decArgo_frequencyDoxyDef) & ...
-      (profFluorescenceChla == g_decArgo_florescenceChlaDef) & ...
+      (profFluorescenceChla == g_decArgo_fluorescenceChlaDef) & ...
       (profBetaBackscattering700 == g_decArgo_betaBackscattering700Def) & ...
       (profTempCpuChla == g_decArgo_tempCpuChlaDef)));
    profPres(idDel) = [];
@@ -1022,7 +1022,7 @@ if (nbLev > 0)
    paramBbp700 = get_netcdf_param_attributes('BBP700');
    
    % compute DOXY
-   profDoxy = compute_DOXY_SBE_1013_1015(profFrequencyDoxy, ...
+   profDoxy = compute_DOXY_SBE_1013_1015_1101(profFrequencyDoxy, ...
       g_decArgo_frequencyDoxyDef, ...
       profPres, profTemp, profSal, ...
       g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
@@ -1031,14 +1031,14 @@ if (nbLev > 0)
    profDoxyRed = min([profPresRed profTempRed profSalRed profFrequencyDoxy], [], 2);
 
    % compute CHLA
-   profChla = compute_CHLA_301_1015( ...
+   profChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
       profFluorescenceChla, ...
-      g_decArgo_florescenceChlaDef, g_decArgo_chloroADef);
+      g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
    
    profChlaRed = profFluorescenceChlaRed;
 
    % compute BBP700
-   profBbp700 = compute_BBP700_301_1015( ...
+   profBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
       profBetaBackscattering700, ...
       g_decArgo_betaBackscattering700Def, g_decArgo_backscatDef, ...
       [profPres profTemp profSal], g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef);
@@ -1051,7 +1051,7 @@ if (nbLev > 0)
    profSal(find(profSal == g_decArgo_salDef)) = paramSal.fillValue;
    profFrequencyDoxy(find(profFrequencyDoxy == g_decArgo_frequencyDoxyDef)) = paramFrequencyDoxy.fillValue;
    profDoxy(find(profDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
-   profFluorescenceChla(find(profFluorescenceChla == g_decArgo_florescenceChlaDef)) = paramFluorescenceChla.fillValue;
+   profFluorescenceChla(find(profFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
    profBetaBackscattering700(find(profBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
    profTempCpuChla(find(profTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
    profChla(find(profChla == g_decArgo_chloroADef)) = paramChla.fillValue;
@@ -1109,7 +1109,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) |
             (receivedData(3) == 255) && (decData(3) ~= 255) && (decData(3) > nbPresMarkMax))
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));
-         dataStruct.label = 'AUXILIARY ENGENEERING DATA';
+         dataStruct.label = 'AUXILIARY ENGINEERING DATA';
          o_auxInfo{end+1} = dataStruct;
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));

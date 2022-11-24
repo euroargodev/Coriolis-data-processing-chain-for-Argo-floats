@@ -1509,10 +1509,14 @@ for idNM = 1:length(a_tabTrajNMeas)
             
             if (adjustedCycle == 1)
                
-               % process RT adjustment of this parameter
-               paramAdjData = paramData; % only duplicate parameter values
-               if (strcmp(measParamName, 'PRES') && ~isempty(meas.presOffset))
-                  [paramAdjData] = compute_adjusted_pres(paramData, meas.presOffset); % RT PRES adjustment of Apex float
+               % process RT PRES adjustment of this parameter
+               if (~isempty(meas.paramDataAdj))
+                  paramAdjData = meas.paramDataAdj(:, idParam);
+               else
+                  paramAdjData = paramData; % only duplicate parameter values
+                  if (strcmp(measParamName, 'PRES') && ~isempty(meas.presOffset))
+                     [paramAdjData] = compute_adjusted_pres(paramData, meas.presOffset); % RT PRES adjustment of Apex float
+                  end
                end
                
                % store the data

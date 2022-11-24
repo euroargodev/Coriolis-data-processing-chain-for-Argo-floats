@@ -21,7 +21,7 @@
 %   o_evAct       : decoded hydraulic (EV) data
 %   o_pumpAct     : decoded hydraulic (pump) data
 %   o_floatParam  : decoded parameter data
-%   o_deepCycle   : deep cycle flag (1 if it is a deep cycle 0 otherwise
+%   o_deepCycle   : deep cycle flag (1 if it is a deep cycle 0 otherwise)
 %
 % EXAMPLES :
 %
@@ -68,12 +68,12 @@ global g_decArgo_durationDef;
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
+global g_decArgo_nbOf1Or8TypePacketExpected;
+global g_decArgo_nbOf1Or8TypePacketReceived;
+global g_decArgo_nbOf2Or9TypePacketExpected;
+global g_decArgo_nbOf2Or9TypePacketReceived;
+global g_decArgo_nbOf3Or10TypePacketExpected;
+global g_decArgo_nbOf3Or10TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 
 % offset between float days and julian days
@@ -213,9 +213,9 @@ for idMes = 1:size(a_tabData, 1)
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
          g_decArgo_4TypePacketReceivedFlag = 1;
-         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(1);
-         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(2);
-         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(3);
+         g_decArgo_nbOf1Or8TypePacketExpected = tabTech(1);
+         g_decArgo_nbOf2Or9TypePacketExpected = tabTech(2);
+         g_decArgo_nbOf3Or10TypePacketExpected = tabTech(3);
          if (a_procLevel == 0)
             continue;
          end
@@ -260,11 +260,11 @@ for idMes = 1:size(a_tabData, 1)
          o_deepCycle = 1;
 
          if (packType == 1)
-            g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
+            g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
          elseif (packType == 2)
-            g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
+            g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
          elseif (packType == 3)
-            g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
+            g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
             continue;
@@ -278,7 +278,7 @@ for idMes = 1:size(a_tabData, 1)
          % item bit lengths
          tabNbBits = [ ...
             16 8 8 ...
-            repmat(16, 1, 48) ...
+            repmat(16, 1, 45) ...
             repmat(8, 1, 5) ...
             ];
          % get item bits
@@ -327,11 +327,11 @@ for idMes = 1:size(a_tabData, 1)
          o_deepCycle = 1;
          
          if (packType == 8)
-            g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
+            g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
          elseif (packType == 9)
-            g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
+            g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
          elseif (packType == 10)
-            g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
+            g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
          end
          if (a_procLevel == 0)
             continue;
@@ -505,7 +505,7 @@ if (a_procLevel ~= 0)
    if (g_decArgo_generateNcTech ~= 0)
       if (~isempty(o_tabTech))
          idFTech1 = find(o_tabTech(:, 1) == 0);
-         store_tech1_data_for_nc_201_202_203(o_tabTech(idFTech1, :), o_deepCycle);
+         store_tech1_data_for_nc_201_to_203_215(o_tabTech(idFTech1, :), o_deepCycle);
          idFTech2 = find(o_tabTech(:, 1) == 4);
          store_tech2_data_for_nc_202(o_tabTech(idFTech2, :), o_deepCycle);
       end
@@ -589,9 +589,9 @@ g_decArgo_nbOf6TypePacketReceived = 0;
 % items not concerned by this decoder
 g_decArgo_7TypePacketReceivedFlag = 1;
 
-g_decArgo_nbOf1Or8TypePacketExpected = 0;
-g_decArgo_nbOf2Or9TypePacketExpected = 0;
-g_decArgo_nbOf3Or10TypePacketExpected = 0;
+g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
+g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
+g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 g_decArgo_nbOf13Or11TypePacketExpected = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = 0;
 

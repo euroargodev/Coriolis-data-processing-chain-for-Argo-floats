@@ -4,14 +4,13 @@
 % SYNTAX :
 %  [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
 %    o_floatParam, o_irSessionNum, o_deepCycle] = ...
-%    decode_prv_data_ir_sbd_213(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
+%    decode_prv_data_ir_sbd_213(a_tabData, a_tabDataDates, a_procLevel)
 %
 % INPUT PARAMETERS :
 %   a_tabData      : data frame to decode
 %   a_tabDataDates : corresponding dates of Iridium SBD
 %   a_procLevel    : processing level (0: collect only rough information, 1:
 %                    decode the data)
-%   a_decoderId    : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTech1     : decoded data of technical msg #1
@@ -33,7 +32,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
    o_floatParam, o_irSessionNum, o_deepCycle] = ...
-   decode_prv_data_ir_sbd_213(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
+   decode_prv_data_ir_sbd_213(a_tabData, a_tabDataDates, a_procLevel)
 
 % output parameters initialization
 o_tabTech1 = [];

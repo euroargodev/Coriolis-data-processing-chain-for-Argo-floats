@@ -331,7 +331,7 @@ o_sensorList = [];
 % get the list of sensors for this float
 switch a_decId
    
-   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211}
+   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211, 212}
       % CTD floats
       o_sensorList = [{'CTD'}];
       

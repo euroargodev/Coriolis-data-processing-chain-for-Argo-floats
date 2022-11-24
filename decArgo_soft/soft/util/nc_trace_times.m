@@ -84,8 +84,13 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.75.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_bodc.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_finland.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -355,6 +360,11 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
          idF = find(strcmp('CONFIG_CycleTime_seconds', launchConfigName(:)) == 1, 1);
          if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
             cycleTimeMeta = launchConfigValue(idF)/86400;
+         else
+            idF = find(strcmp('CONFIG_CycleTime_minutes', launchConfigName(:)) == 1, 1);
+            if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+               cycleTimeMeta = launchConfigValue(idF)/1440;
+            end
          end
       end
    end
@@ -375,6 +385,13 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
             cycleTime = configValue(idF, :);
             cycleTime(find(cycleTime == 99999)) = [];
             cycleTimeMeta = cycleTime(end)/86400;
+         else
+            idF = find(strcmp('CONFIG_CycleTime_minutes', configName(:)) == 1, 1);
+            if (~isempty(idF))
+               cycleTime = configValue(idF, :);
+               cycleTime(find(cycleTime == 99999)) = [];
+               cycleTimeMeta = cycleTime(end)/1440;
+            end
          end
       end
    end

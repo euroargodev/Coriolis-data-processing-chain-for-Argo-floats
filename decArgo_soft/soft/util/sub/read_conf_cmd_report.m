@@ -270,7 +270,7 @@ else
          if (~isempty(errmsg) || (count ~= 3))
             [val, count, errmsg, nextindex] = sscanf(line2, 'PARAM SENSOR Measure: Sensor No%d Specific parameter No%d Value: %f');
             if (~isempty(errmsg) || (count ~= 3))
-               fprintf('ERROR: Cannot parse line #%d: %s\n', lineNum, line);
+               fprintf('PARSING_ERROR: Cannot parse line #%d: %s\n', lineNum, line);
             else
                if (~ismember(val(1), sensorList))
                   continue;

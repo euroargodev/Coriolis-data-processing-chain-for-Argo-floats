@@ -1339,7 +1339,7 @@ if ((stop == 0) && (profileLength >= 0) && (profileCcNstLength >= 0) && (profile
             (receivedData(2) == 255) && (decData(2) ~= 255) && (decData(2) > nbPresMarkMax))
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));
-         dataStruct.label = 'AUXILIARY ENGENEERING DATA';
+         dataStruct.label = 'AUXILIARY ENGINEERING DATA';
          o_auxInfo{end+1} = dataStruct;
          
          dataStruct = get_apx_misc_data_init_struct('Aux data', lastMsgNum, msgRed, a_sensorDate(end));

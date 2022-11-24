@@ -114,14 +114,16 @@ agosTransDur = configValues(idPosAc3);
 confName = 'CONFIG_AC6_';
 idPosAc6 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
 agosPreludeDur = configValues(idPosAc6);
+confName = 'CONFIG_MC002_';
+idPosMc002 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
 if (~isnan(refDay) && ~isnan(timeAtSurf) && ~isnan(delayBeforeMission) && ...
       ~isnan(agosTransDur) && ~isnan(agosPreludeDur))
-   confName = 'CONFIG_MC002_';
-   idPosMc002 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
    % refDay start when the magnet is removed, the float start to dive after
    % delayBeforeMission + agosPreludeDur minutes
    configValues(idPosMc002) = (refDay + timeAtSurf/24 + agosTransDur/24 - ...
       delayBeforeMission/1440 - agosPreludeDur/1440)*24;
+else
+   configValues(idPosMc002) = nan;
 end
 
 % update MC010 and MC011 for the cycle #1

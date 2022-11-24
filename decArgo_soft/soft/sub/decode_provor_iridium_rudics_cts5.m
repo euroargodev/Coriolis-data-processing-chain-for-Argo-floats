@@ -285,7 +285,7 @@ if (g_decArgo_realtimeFlag)
       sbdFilePathName = [g_decArgo_dirInputRsyncData '/' ...
          g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
       [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
-      nbFiles = copy_files_ir_cts5({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_floatNum);
+      nbFiles = duplicate_files_ir_cts5({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_floatNum);
       nbFilesTot = nbFilesTot + nbFiles;
    end
    
@@ -297,7 +297,7 @@ if (g_decArgo_realtimeFlag)
 end
 
 % initialize float configuration
-init_float_config_ir_rudics_cts5(a_launchDate, a_decoderId);
+init_float_config_prv_ir_rudics_cts5(a_launchDate, a_decoderId);
 g_decArgo_firstCycleNumFloat = g_decArgo_firstCycleNumCts5;
 g_decArgo_firstCycleNumFloatNew = g_decArgo_firstCycleNumCts5;
 
@@ -639,7 +639,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       
       % save the list of used rsync log files in the history directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'used', ...
-         g_decArgo_rsyncLogFileUsedList);
+         unique(g_decArgo_rsyncLogFileUsedList));
    end
    
    % add float cycle and pattern number to the NetCDF technical data

@@ -257,6 +257,26 @@ global g_decArgo_doxy_202_204_203_pCoef1;
 global g_decArgo_doxy_202_204_203_pCoef2;
 global g_decArgo_doxy_202_204_203_pCoef3;
 
+global g_decArgo_doxy_202_204_302_a0;
+global g_decArgo_doxy_202_204_302_a1;
+global g_decArgo_doxy_202_204_302_a2;
+global g_decArgo_doxy_202_204_302_a3;
+global g_decArgo_doxy_202_204_302_a4;
+global g_decArgo_doxy_202_204_302_a5;
+global g_decArgo_doxy_202_204_302_d0;
+global g_decArgo_doxy_202_204_302_d1;
+global g_decArgo_doxy_202_204_302_d2;
+global g_decArgo_doxy_202_204_302_d3;
+global g_decArgo_doxy_202_204_302_sPreset;
+global g_decArgo_doxy_202_204_302_b0;
+global g_decArgo_doxy_202_204_302_b1;
+global g_decArgo_doxy_202_204_302_b2;
+global g_decArgo_doxy_202_204_302_b3;
+global g_decArgo_doxy_202_204_302_c0;
+global g_decArgo_doxy_202_204_302_pCoef1;
+global g_decArgo_doxy_202_204_302_pCoef2;
+global g_decArgo_doxy_202_204_302_pCoef3;
+
 global g_decArgo_doxy_202_205_302_a0;
 global g_decArgo_doxy_202_205_302_a1;
 global g_decArgo_doxy_202_205_302_a2;
@@ -471,7 +491,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '012d';
+g_decArgo_decoderVersion = '013a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -649,6 +669,26 @@ g_decArgo_doxy_202_204_203_c0 = -4.88682e-7;
 g_decArgo_doxy_202_204_203_pCoef1 = 0.1;
 g_decArgo_doxy_202_204_203_pCoef2 = 0.00022;
 g_decArgo_doxy_202_204_203_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_204_302_a0 = 2.00856;
+g_decArgo_doxy_202_204_302_a1 = 3.22400;
+g_decArgo_doxy_202_204_302_a2 = 3.99063;
+g_decArgo_doxy_202_204_302_a3 = 4.80299;
+g_decArgo_doxy_202_204_302_a4 = 9.78188e-1;
+g_decArgo_doxy_202_204_302_a5 = 1.71069;
+g_decArgo_doxy_202_204_302_d0 = 24.4543;
+g_decArgo_doxy_202_204_302_d1 = -67.4509;
+g_decArgo_doxy_202_204_302_d2 = -4.8489;
+g_decArgo_doxy_202_204_302_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_302_sPreset = 0;
+g_decArgo_doxy_202_204_302_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_302_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_302_b2 = -1.03410e-3;
+g_decArgo_doxy_202_204_302_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_302_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_302_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_302_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_302_pCoef3 = 0.0419;
 
 g_decArgo_doxy_202_205_302_a0 = 2.00856;
 g_decArgo_doxy_202_205_302_a1 = 3.22400;

@@ -73,6 +73,7 @@ global g_decArgo_argosLonDef;
 % file to store BDD update
 global g_decArgo_bddUpdateCsvFileName;
 global g_decArgo_bddUpdateCsvFileId;
+global g_decArgo_bddUpdateItemLabels;
 g_decArgo_bddUpdateCsvFileName = '';
 g_decArgo_bddUpdateCsvFileId = -1;
 
@@ -87,6 +88,7 @@ end
 % decode the floats of the "a_floatList" list
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
+   g_decArgo_bddUpdateItemLabels = [];
    floatNum = a_floatList(idFloat);
    
    if (g_decArgo_realtimeFlag == 0)
@@ -150,22 +152,22 @@ for idFloat = 1:nbFloats
          get_nc_config_parameters_json(g_decArgo_dirInputJsonConfLabelFile, floatDecId);
    end
    
-   % create list of cycles to decode
-   [floatCycleList, floatExcludedCycleList] = ...
-      get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
-   
    % decode float cycles
    tabTechNMeas = [];
    if (g_decArgo_floatTransType == 1)
       
       % Argos floats
       
+      % create list of cycles to decode
+      [floatCycleList, floatExcludedCycleList] = ...
+         get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
+      
       if ((g_decArgo_realtimeFlag == 1) || ...
             (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1)))
          % initialize data structure to store report information
          g_decArgo_reportStruct = get_report_init_struct(floatNum, floatCycleList);
       end
-      
+
       % create the float surface data structure used to compute profile
       % time and location
       floatSurfData = get_float_surf_data_init_struct();
@@ -184,7 +186,43 @@ for idFloat = 1:nbFloats
          floatNum, floatCycleList, floatExcludedCycleList, ...
          floatDecId, str2num(floatArgosId), floatFrameLen, ...
          floatSurfData, floatEndDate);
-            
+         
+   elseif (g_decArgo_floatTransType == 2)
+
+      % Iridium RUDICS floats
+      
+      floatCycleList = [];
+      if (g_decArgo_realtimeFlag == 0)
+         % create list of cycles to decode
+         [floatCycleList, ~] = get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
+         
+         if ((isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1)))
+            % initialize data structure to store report information
+            g_decArgo_reportStruct = get_report_init_struct(floatNum, floatCycleList);
+         end
+      end
+      
+      % update GPS data global variable
+      g_decArgo_gpsData = [];
+      if (floatLaunchLon ~= g_decArgo_argosLonDef)
+         g_decArgo_gpsData{1} = -1;
+         g_decArgo_gpsData{2} = -1;
+         g_decArgo_gpsData{3} = -1;
+         g_decArgo_gpsData{4} = floatLaunchDate;
+         g_decArgo_gpsData{5} = floatLaunchLon;
+         g_decArgo_gpsData{6} = floatLaunchLat;
+         g_decArgo_gpsData{7} = 0;
+         g_decArgo_gpsData{8} = ' ';
+         g_decArgo_gpsData{9} = g_decArgo_dateDef;
+      end
+      
+      [tabProfiles, ...
+         tabTrajNMeas, tabTrajNCycle, ...
+         tabNcTechIndex, tabNcTechVal, ...
+         structConfig] = decode_apex_iridium_rudics_data( ...
+         floatNum, floatCycleList, ...
+         floatDecId, str2num(floatArgosId), ...
+         floatLaunchDate, floatEndDate);
    end
    
    if (isempty(g_decArgo_outputCsvFileId))

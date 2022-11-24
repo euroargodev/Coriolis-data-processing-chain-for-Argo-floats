@@ -268,7 +268,7 @@ end
 
 if (a_conf == 3)
    % output TMP configuration CSV file creation
-   outputFileName = [g_decArgo_dirOutputCsvFile '/provor_config_' a_comment num2str(g_decArgo_floatNum) '_' dateStr '.csv'];
+   outputFileName = [g_decArgo_dirOutputCsvFile '/float_config_' a_comment num2str(g_decArgo_floatNum) '_' dateStr '.csv'];
    fidOut = fopen(outputFileName, 'wt');
    if (fidOut == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);

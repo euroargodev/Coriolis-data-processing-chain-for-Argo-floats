@@ -227,6 +227,11 @@ o_chlaAdjInfo.deltaDepthDark = DELTA_DEPTH_DARK;
 o_profChlaAdj = ones(size(a_profChla))*a_chlaDataFillValue;
 o_profChlaAdjQc = ones(size(a_profFluoChlaQc))*g_decArgo_qcStrDef;
 
+% BEGIN - see 6900796 #83
+idDef = find((a_profFluoChla == a_fluoChlaDataFillValue) & (a_profPresFluoChla ~= a_presFluoChlaDataFillValue));
+o_profChlaAdjQc(idDef) = g_decArgo_qcStrMissing;
+% END - see 6900796 #83
+
 idNoDef = find(a_profFluoChla ~= a_fluoChlaDataFillValue);
 o_profChlaAdj(idNoDef) = (a_profFluoChla(idNoDef) - newDarkChla)*a_scaleChla;
 o_profChlaAdjQc(idNoDef) = set_qc(o_profChlaAdjQc(idNoDef), chlaAdjQcValue);

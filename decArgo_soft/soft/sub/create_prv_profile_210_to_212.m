@@ -80,7 +80,7 @@ if (isempty(a_dataCTD))
    return;
 end
 
-% retrieve the drift sampling period from the configuration
+% retrieve the "Near Surface" or "In Air" sampling period from the configuration
 [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
 inAirSampPeriodSeconds = get_config_value('CONFIG_MC30', configNames, configValues);
 
@@ -102,7 +102,6 @@ for type = [1 3 13 14]
             end
             if (type > 3)
                date = data(1) + a_refDay + (idMeas-1)*inAirSampPeriodSeconds/86400;
-               dateTrans = 0;
             end
          end
          

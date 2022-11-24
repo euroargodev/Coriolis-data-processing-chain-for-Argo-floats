@@ -31,6 +31,9 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -97,6 +100,8 @@ for idFloat = 1:nbFloats
          nc_prof_adj_2_csv_file(profFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
       end
       
+      %       if (0)
+      
       % convert multi-profile b file
       profFileName = sprintf('%d_Bprof.nc', floatNum);
       profFilePathName = [ncFileDirRef profFileName];
@@ -149,7 +154,7 @@ for idFloat = 1:nbFloats
             nc_prof_adj_2_csv_file(ncFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
          end
       end
-      
+      %       end
    else
       fprintf('WARNING: Directory not found: %s\n', ncFileDirRef);
    end
@@ -367,6 +372,16 @@ else
    fprintf('WARNING: Variable %s is missing in file %s\n', ...
       varName, inputFileName);
 end
+if (a_cfileFlag == 0)
+   varName = 'PARAMETER_DATA_MODE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      parameterDataMode = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+end
 
 varName = 'DATA_STATE_INDICATOR';
 if (var_is_present_dec_argo(fCdf, varName))
@@ -570,6 +585,11 @@ if (a_writeQcFlag == 0)
       fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          dataMode(idP));
+      if (a_cfileFlag == 0)
+         fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
+            a_floatNum, cycleNumber(idP), idP, ...
+            parameterDataMode(:, idP)');
+      end
       fprintf(fidOut, ' %d; %d; %d; DATA_STATE_INDICATOR; %s\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          strtrim(dataStateIndicator(:, idP)'));
@@ -954,6 +974,11 @@ else
       fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          dataMode(idP));
+      if (a_cfileFlag == 0)
+         fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
+            a_floatNum, cycleNumber(idP), idP, ...
+            parameterDataMode(:, idP)');
+      end
       fprintf(fidOut, ' %d; %d; %d; DATA_STATE_INDICATOR; %s\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          strtrim(dataStateIndicator(:, idP)'));

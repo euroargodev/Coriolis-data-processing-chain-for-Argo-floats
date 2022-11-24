@@ -135,6 +135,27 @@ if (isempty(floatLoginName))
    return;
 end
 
+% create the g_decArgo_historyDirectory directory (used below when there is no
+% input files to process); additional directories will be created later
+% according to float type and decoder configuration
+
+% create the float directory
+if (floatDecId < 1000)
+   % NKE floats
+   floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatLoginName '_' num2str(floatWmo) '/'];
+elseif ((floatDecId > 1000) && (floatDecId < 2000))
+   % APEX Iridium RUDICS & NAVIS floats
+   floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', str2double(floatLoginName)) '_' num2str(floatWmo) '/'];
+end
+if ~(exist(floatIriDirName, 'dir') == 7)
+   mkdir(floatIriDirName);
+end
+% create the float history directory
+g_decArgo_historyDirectory = [floatIriDirName 'history_of_processed_data/'];
+if ~(exist(g_decArgo_historyDirectory, 'dir') == 7)
+   mkdir(g_decArgo_historyDirectory);
+end
+   
 % retrieve rsync log file names
 ryncLogList = [];
 if (~isempty(rsyncLogPathFile))
@@ -145,17 +166,6 @@ if (allRsyncLogFlag == 1)
 end
 
 % filter the ryncLogList file names according to rsync log files already processed
-
-% create the float directory
-floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatLoginName '_' num2str(floatWmo) '/'];
-if ~(exist(floatIriDirName, 'dir') == 7)
-   mkdir(floatIriDirName);
-end
-% create the float history directory
-g_decArgo_historyDirectory = [floatIriDirName 'history_of_processed_data/'];
-if ~(exist(g_decArgo_historyDirectory, 'dir') == 7)
-   mkdir(g_decArgo_historyDirectory);
-end
 
 % get the list of the rsync log already processed for this float
 [rsyncDoneLogList] = read_processed_rsync_log_file_ir_rudics_sbd_sbd2(floatWmo);
@@ -173,13 +183,19 @@ end
 tabFloatSbdFiles = [];
 tabRsyncLogFiles = [];
 for idFile = 1:length(ryncLogList)
-   if (~ismember(floatDecId, [121]))
-      % CTS4 Iridium RUDICS floats
-      floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
-   else
-      % CTS5 Iridium RUDICS floats
-      floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
-   end
+   if (floatDecId < 1000)
+      % NKE floats
+      if (~ismember(floatDecId, [121]))
+         % CTS4 Iridium RUDICS floats
+         floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
+      else
+         % CTS5 Iridium RUDICS floats
+         floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
+      end
+   elseif ((floatDecId > 1000) && (floatDecId < 2000))
+      % APEX Iridium RUDICS & NAVIS floats
+      floatFiles = parse_rsync_log_ir_rudics_apex(ryncLogList{idFile}, floatLoginName);
+   end   
    if (~isempty(floatFiles))
       tabFloatSbdFiles = [tabFloatSbdFiles floatFiles];
       tabRsyncLogFiles = [tabRsyncLogFiles repmat(ryncLogList(idFile), size(floatFiles))];

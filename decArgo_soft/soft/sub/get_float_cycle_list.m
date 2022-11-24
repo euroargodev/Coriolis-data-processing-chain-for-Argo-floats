@@ -44,13 +44,16 @@ elseif (g_decArgo_floatTransType == 2)
    
    % Iridium RUDICS floats
    
-      if (~ismember(a_decoderId, [121]))
-         % CTS4 Iridium RUDICS floats
-         [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
-      else
-         % CTS5 Iridium RUDICS floats
-         [o_cycleList] = get_float_cycle_list_iridium_rudics_cts5(a_floatNum, char(a_floatArgosIridiumId));
-      end
+   if ((a_decoderId > 1000) && (a_decoderId < 2000))
+      % Apex Iridium RUDICS floats
+      [o_cycleList] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, str2num(char(a_floatArgosIridiumId)));
+   elseif (~ismember(a_decoderId, [121]))
+      % PROVOR CTS4 Iridium RUDICS floats
+      [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
+   else
+      % PROVOR CTS5 Iridium RUDICS floats
+      [o_cycleList] = get_float_cycle_list_iridium_rudics_cts5(a_floatNum, char(a_floatArgosIridiumId));
+   end
       
 elseif ((g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
    
