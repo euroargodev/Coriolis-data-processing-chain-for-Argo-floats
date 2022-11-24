@@ -1345,7 +1345,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % sort trajectory data structures according to the predefined
    % measurement code order
-   [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+   %    [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
    
    o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
    o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
