@@ -98,6 +98,7 @@ global g_decArgo_decoderVersion;
 global g_decArgo_minNonTransDurForNewCycle;
 global g_decArgo_minNonTransDurForGhost
 global g_decArgo_minNumMsgForNotGhost;
+global g_decArgo_minNumMsgForProcessing;
 global g_decArgo_minSubSurfaceCycleDuration;
 global g_decArgo_minSubSurfaceCycleDurationIrSbd2;
 global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
@@ -470,7 +471,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '012b';
+g_decArgo_decoderVersion = '012c';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -484,11 +485,15 @@ g_decArgo_minNonTransDurForGhost = 3;
 g_decArgo_minSubSurfaceCycleDuration = 5;
 g_decArgo_minSubSurfaceCycleDurationIrSbd2 = 1.5;
 
-% minimum number of float messages in an Argos files to use it
-% (if the Argos file conatins less than g_decArgo_minNumMsgForNotGhost float
+% minimum number of float messages in an Argos file to use it
+% (if the Argos file contains less than g_decArgo_minNumMsgForNotGhost float
 % Argos messages, the file is not decoded because considered as a ghost
 % file (i.e. it only contains ghost messages))
 g_decArgo_minNumMsgForNotGhost = 4;
+
+% minimum number of float messages in an Argos file to be processed within the
+% 'profile' mode
+g_decArgo_minNumMsgForProcessing = 5;
 
 % maximum time difference (in days) between 2 GPS locations used to replace
 % Iridium profile locations by interpolated GPS profile locations

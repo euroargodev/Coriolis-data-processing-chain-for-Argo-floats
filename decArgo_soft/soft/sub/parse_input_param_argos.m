@@ -45,6 +45,10 @@ global g_decArgo_generateNcMeta;
 % DOM node of XML report
 global g_decArgo_xmlReportDOMNode;
 
+% minimum number of float messages in an Argos file to be processed within the
+% 'profile' mode
+global g_decArgo_minNumMsgForProcessing;
+
 
 % check input parameters
 processModeInputParam = 0;
@@ -190,6 +194,26 @@ if (g_decArgo_processModeRedecode == 1)
    if (~isempty(g_decArgo_inputFloatWmoList))
       if ~(exist(g_decArgo_inputFloatWmoList, 'file') == 2)
          fprintf('ERROR: input WMO list file (%s) does not exist => exit\n', g_decArgo_inputFloatWmoList);
+         o_inputError = 1;
+         return;
+      end
+   end
+end
+
+% in 'profile' mode, check that the Argos input file contains at least
+% g_decArgo_minNumMsgForProcessing float messages
+if ((g_decArgo_processModeAll == 0) && (g_decArgo_processModeRedecode == 0))
+   % argos input file name
+   [pathstr, inputArgosFileName, ext] = fileparts(g_decArgo_inputArgosFile);
+   idPos = strfind(inputArgosFileName, '_');
+   if (~isempty(idPos))
+      floatArgosId = str2num(inputArgosFileName(1:idPos(1)-1));
+      
+      [argosLocDate, argosLocLon, argosLocLat, argosLocAcc, argosLocSat, ...
+         argosDataDate, argosDataData] = read_argos_file({g_decArgo_inputArgosFile}, floatArgosId, 31);
+      if (length(argosDataDate) < g_decArgo_minNumMsgForProcessing)
+         fprintf('INFO: in ''profile'' mode the Argos input file should contain at least %d float messages to be processed\n', ...
+            g_decArgo_minNumMsgForProcessing);
          o_inputError = 1;
          return;
       end

@@ -753,9 +753,11 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
                         argosPathFileName = subFileNameList{1};
                         
                         argosDate(end) = [];
-                        lastArgosMsgDate = argosDate(end);
-                        fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
-                           floatNum, subFileNameList{2});
+                        if (~isempty(argosDate))
+                           lastArgosMsgDate = argosDate(end);
+                           fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
+                              floatNum, subFileNameList{2});
+                        end
                      else
                         % this is not a real ghost message
                         stop = 1;
