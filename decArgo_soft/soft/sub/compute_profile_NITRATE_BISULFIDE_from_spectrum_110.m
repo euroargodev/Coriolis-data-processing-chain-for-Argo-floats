@@ -225,7 +225,7 @@ if (~isempty(idNoDef))
       f_function(tabOpticalWavelengthUv, tempCalNitrate);
    
    % Equation #4 (with the pressure effect taken into account)
-   absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.02 * tabPres / 1000));
+   absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.026 * tabPres / 1000));
    
    % Equation #5
    % solve:

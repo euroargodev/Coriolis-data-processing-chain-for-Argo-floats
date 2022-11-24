@@ -227,9 +227,9 @@ if (~isempty(idNoDef))
       f_function(tabOpticalWavelengthUv, tempCalNitrate);
    
    % Equation #4 (with the pressure effect taken into account)
-   absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.02 * tabPres / 1000));
+   absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.026 * tabPres / 1000));
    
-   % Equation #5
+   % Equation #5  
    % solve:
    % A11*x1 + A12x2 + A13*X3 = B1
    % A21*x1 + A22x2 + A23*X3 = B2

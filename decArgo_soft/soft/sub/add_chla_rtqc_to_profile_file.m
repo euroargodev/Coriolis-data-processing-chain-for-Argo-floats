@@ -82,7 +82,8 @@ global g_decArgo_qcStrInterpolated;  % '8'
 global g_decArgo_qcStrMissing;       % '9'
 
 
-SPECIFICATION_DOI = 'http://dx.doi.org/10.13155/35385';
+SPECIFICATION_DOI_1 = 'http://dx.doi.org/10.13155/35385';
+SPECIFICATION_DOI_2 = 'https://doi.org/10.1002/lom3.10185';
 MLD_LIMIT = 0.03;
 DELTA_DEPTH = 200; % in meters
 DELTA_DEPTH_DARK = 50; % in meters
@@ -218,7 +219,8 @@ o_chlaAdjInfo.newDarkChla = newDarkChla;
 o_chlaAdjInfo.scaleChla = a_scaleChla;
 o_chlaAdjInfo.depthNPQ = '';
 o_chlaAdjInfo.chlaNPQ = '';
-o_chlaAdjInfo.doi = SPECIFICATION_DOI;
+o_chlaAdjInfo.doi1 = SPECIFICATION_DOI_1;
+o_chlaAdjInfo.doi2 = SPECIFICATION_DOI_2;
 o_chlaAdjInfo.mldLimit = MLD_LIMIT;
 o_chlaAdjInfo.deltaDepth = DELTA_DEPTH;
 o_chlaAdjInfo.deltaDepthDark = DELTA_DEPTH_DARK;
@@ -234,6 +236,7 @@ o_profChlaAdjQc(idDef) = g_decArgo_qcStrMissing;
 
 idNoDef = find(a_profFluoChla ~= a_fluoChlaDataFillValue);
 o_profChlaAdj(idNoDef) = (a_profFluoChla(idNoDef) - newDarkChla)*a_scaleChla;
+o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/2; % recommendations of Roesler et al., 2017
 o_profChlaAdjQc(idNoDef) = set_qc(o_profChlaAdjQc(idNoDef), chlaAdjQcValue);
 
 
@@ -306,7 +309,7 @@ if (~isempty(mld) && (mldFlag == 0))
          idNoDefChlaAdj = find(o_profChlaAdj ~= a_chlaDataFillValue);
          idToFlag = find(idNoDefChlaAdj <= idNoDefAndGood(idNoPosSpike(depthNpqId)));
          o_profChlaAdj(idNoDefChlaAdj(idToFlag)) = profChlaAdj(depthNpqId);
-         o_profChlaAdjQc(idNoDefChlaAdj(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDefChlaAdj(idToFlag)), g_decArgo_qcStrInterpolated);
+         o_profChlaAdjQc(idNoDefChlaAdj(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDefChlaAdj(idToFlag)), g_decArgo_qcStrChanged);
                   
          % update CHLA_QC
          idNoDefChla = find(a_profChla ~= a_chlaDataFillValue);

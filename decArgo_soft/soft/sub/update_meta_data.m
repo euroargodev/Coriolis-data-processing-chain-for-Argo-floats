@@ -3548,7 +3548,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             else
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -3558,7 +3558,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700_O)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, DARK_BACKSCATTERING700_O=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
             
       end
@@ -3609,7 +3609,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             else
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -3619,7 +3619,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700_O)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, DARK_BACKSCATTERING700_O=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
             
          case {'BETA_BACKSCATTERING532'}
@@ -3665,7 +3665,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP532=2*pi*khi*((BETA_BACKSCATTERING532-DARK_BACKSCATTERING532)*SCALE_BACKSCATTERING532-BETASW532)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING532=%g, SCALE_BACKSCATTERING532=%g, khi=%g, BETASW532 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter532, scaleFactBackscatter532, khiCoefBackscatter);
-               o_preCalibComment = 'No DARK_BACKSCATTERING532_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             else
                o_param = 'BBP532';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
@@ -3675,7 +3675,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP532=2*pi*khi*((BETA_BACKSCATTERING532-DARK_BACKSCATTERING532_O)*SCALE_BACKSCATTERING532-BETASW532)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING532=%g, DARK_BACKSCATTERING532_O=%g, SCALE_BACKSCATTERING532=%g, khi=%g, BETASW532 (contribution of pure sea water) is calculated at 124 angularDeg', ...
                   darkCountBackscatter532, darkCountBackscatter532_O, scaleFactBackscatter532, khiCoefBackscatter);
-               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
             
       end
@@ -3726,7 +3726,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 142 angularDeg', ...
                   darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             else
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -3736,7 +3736,7 @@ switch (a_decoderId)
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700_O)*SCALE_BACKSCATTERING700-BETASW700)';
                o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, DARK_BACKSCATTERING700_O=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 142 angularDeg', ...
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
-               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
             
       end
@@ -3868,18 +3868,18 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
                scaleFactChloroA = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
                darkCountChloroA = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
-               darkCountChloroA_O = [];
-               if (isfield(g_decArgo_calibInfo.ECO2, 'darkCountChloroA_O'))
-                  darkCountChloroA_O = double(g_decArgo_calibInfo.ECO2.darkCountChloroA_O);
+               DarkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA_O'))
+                  DarkCountChloroA_O = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA_O);
                end
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA'))
                scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
                darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
-               darkCountChloroA_O = [];
-               if (isfield(g_decArgo_calibInfo.ECO3, 'darkCountChloroA_O'))
-                  darkCountChloroA_O = double(g_decArgo_calibInfo.ECO3.darkCountChloroA_O);
+               DarkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA_O'))
+                  DarkCountChloroA_O = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA_O);
                end
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -3887,7 +3887,7 @@ switch (a_decoderId)
                return;
             end
             
-            if (isempty(darkCountChloroA_O))
+            if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
                o_paramUnits = 'mg/m3';
@@ -3896,7 +3896,7 @@ switch (a_decoderId)
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
                   scaleFactChloroA, darkCountChloroA);
-               o_preCalibComment = 'No DARK_CHLA_O provided';
+               o_preCalibComment = '';
             else
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -3905,7 +3905,7 @@ switch (a_decoderId)
                o_paramResolution = '0.025 mg/m3';
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA_O)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g, DARK_CHLA_O=%g', ...
-                  scaleFactChloroA, darkCountChloroA, darkCountChloroA_O);
+                  scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
             
@@ -3936,9 +3936,9 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
                scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
                darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-               darkCountChloroA_O = [];
-               if (isfield(g_decArgo_calibInfo.FLNTU, 'darkCountChloroA_O'))
-                  darkCountChloroA_O = double(g_decArgo_calibInfo.FLNTU.darkCountChloroA_O);
+               DarkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA_O'))
+                  DarkCountChloroA_O = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA_O);
                end
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -3946,7 +3946,7 @@ switch (a_decoderId)
                return;
             end
             
-            if (isempty(darkCountChloroA_O))
+            if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
                o_paramUnits = 'mg/m3';
@@ -3955,7 +3955,7 @@ switch (a_decoderId)
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
                   scaleFactChloroA, darkCountChloroA);
-               o_preCalibComment = 'No DARK_CHLA_O provided';
+               o_preCalibComment = '';
             else
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -3964,7 +3964,7 @@ switch (a_decoderId)
                o_paramResolution = '0.025 mg/m3';
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA_O)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g, DARK_CHLA_O=%g', ...
-                  scaleFactChloroA, darkCountChloroA, darkCountChloroA_O);
+                  scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
 
@@ -4005,9 +4005,9 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
                scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
                darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
-               darkCountChloroA_O = [];
-               if (isfield(g_decArgo_calibInfo.FLBB, 'darkCountChloroA_O'))
-                  darkCountChloroA_O = double(g_decArgo_calibInfo.FLBB.darkCountChloroA_O);
+               DarkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA_O'))
+                  DarkCountChloroA_O = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA_O);
                end
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4015,7 +4015,7 @@ switch (a_decoderId)
                return;
             end
             
-            if (isempty(darkCountChloroA_O))
+            if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
                o_paramUnits = 'mg/m3';
@@ -4024,7 +4024,7 @@ switch (a_decoderId)
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
                   scaleFactChloroA, darkCountChloroA);
-               o_preCalibComment = 'No DARK_CHLA_O provided';
+               o_preCalibComment = '';
             else
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4033,7 +4033,7 @@ switch (a_decoderId)
                o_paramResolution = '0.025 mg/m3';
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA_O)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g, DARK_CHLA_O=%g', ...
-                  scaleFactChloroA, darkCountChloroA, darkCountChloroA_O);
+                  scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
 
@@ -4064,9 +4064,9 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
                scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
                darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-               darkCountChloroA_O = [];
-               if (isfield(g_decArgo_calibInfo.FLNTU, 'darkCountChloroA_O'))
-                  darkCountChloroA_O = double(g_decArgo_calibInfo.FLNTU.darkCountChloroA_O);
+               DarkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA_O'))
+                  DarkCountChloroA_O = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA_O);
                end
             else
                fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4074,7 +4074,7 @@ switch (a_decoderId)
                return;
             end
             
-            if (isempty(darkCountChloroA_O))
+            if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
                o_paramUnits = 'mg/m3';
@@ -4083,7 +4083,7 @@ switch (a_decoderId)
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
                   scaleFactChloroA, darkCountChloroA);
-               o_preCalibComment = 'No DARK_CHLA_O provided';
+               o_preCalibComment = '';
             else
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4092,7 +4092,7 @@ switch (a_decoderId)
                o_paramResolution = '0.025 mg/m3';
                o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA_O)*SCALE_CHLA';
                o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g, DARK_CHLA_O=%g', ...
-                  scaleFactChloroA, darkCountChloroA, darkCountChloroA_O);
+                  scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
 
@@ -4235,7 +4235,7 @@ switch (a_decoderId)
                o_preCalibEq = 'CDOM=(FLUORESCENCE_CDOM-DARK_CDOM)*SCALE_CDOM';
                o_preCalibCoef = sprintf('SCALE_CDOM=%g, DARK_CDOM=%g', ...
                   scaleFactCDOM, darkCountCDOM);
-               o_preCalibComment = 'No DARK_CDOM_O provided';
+               o_preCalibComment = '';
             else
                o_param = 'CDOM';
                o_paramSensor = 'FLUOROMETER_CDOM';
@@ -4440,7 +4440,7 @@ switch (a_decoderId)
                o_paramAccuracy = '2 umol/kg';
                o_paramResolution = '0.01 umol/kg';
                
-               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-E_SWA_INSITU(R)*PSAL; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
                
                uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
                opticalWavelengthUvStr = sprintf('%.2f,', tabOpticalWavelengthUv(floatPixelBegin:floatPixelEnd));
@@ -4458,7 +4458,7 @@ switch (a_decoderId)
                   'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
                   ];
                
-               o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.0, May 3rd 2016';
+               o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             else
                
                % get calibration information
@@ -4504,7 +4504,7 @@ switch (a_decoderId)
                o_paramAccuracy = '2 umol/kg';
                o_paramResolution = '0.01 umol/kg';
                
-               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-E_SWA_INSITU(R)*PSAL; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
                
                % for NITRATE&BISULFIDE we have more pixel and we must squeeze
                % their output as possible
@@ -4553,7 +4553,7 @@ switch (a_decoderId)
                   'E_BISULFIDE(Ntrans)=[' eBisulfideStr(1:end-1) ']' ...
                   ];
                
-               o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.0, May 3rd 2016';
+               o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             end
             
          case {'BISULFIDE'}
@@ -4601,7 +4601,7 @@ switch (a_decoderId)
             o_paramAccuracy = '2 umol/kg';
             o_paramResolution = '0.02 umol/kg';
             
-            o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-E_SWA_INSITU(R)*PSAL; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
             
             % for NITRATE&BISULFIDE we have more pixel and we must squeeze
             % their output as possible
@@ -4650,7 +4650,7 @@ switch (a_decoderId)
                'E_BISULFIDE(Ntrans)=[' eBisulfideStr(1:end-1) ']' ...
                ];
             
-            o_preCalibComment = 'Bisulfide concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.0, May 3rd 2016';
+            o_preCalibComment = 'Bisulfide concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             
          case {'FIT_ERROR_NITRATE'}
             o_param = 'FIT_ERROR_NITRATE';

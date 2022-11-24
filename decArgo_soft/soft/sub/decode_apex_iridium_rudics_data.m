@@ -420,6 +420,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
+   % perform CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatLaunchDate);
+   
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistency
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);

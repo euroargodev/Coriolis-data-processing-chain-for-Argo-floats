@@ -965,6 +965,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    % a buffer anomaly (more than one profile for a given profile number)
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
+   % perform CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+
    if (g_decArgo_realtimeFlag)
       
       % save the list of already processed rsync log files in the history

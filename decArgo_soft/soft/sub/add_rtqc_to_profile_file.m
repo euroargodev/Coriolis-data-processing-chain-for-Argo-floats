@@ -108,6 +108,12 @@
 %                               Coriolis DB) and the se adjustments are
 %                               performed on PROF data only (i.e. not on TRAJ
 %                               data).
+%   06/27/2018 - RNU - V 3.3: For CHLA adjustment:
+%                             - input CHLA data should be divided by 2 (and the
+%                               SCIENTIFIC_CALIB_* information updated
+%                               accordingly).
+%                             - CHLA_ADJUSTED_QC = 8 replaced by
+%                               CHLA_ADJUSTED_QC = 5
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -139,7 +145,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.2';
+g_decArgo_addRtqcToProfileVersion = '3.3';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -5050,9 +5056,9 @@ for idFile = 1:2
             end
             
             if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
-               equation = 'CHLA_ADJUSTED = (FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               equation = 'CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA)/2';
             else
-               equation = sprintf('CHLA_ADJUSTED = %g for PRES in [0,%g], CHLA_ADJUSTED = (FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA otherwise', ...
+               equation = sprintf('CHLA_ADJUSTED = %g for PRES in [0,%g], CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA)/2 otherwise', ...
                   a_chlaAdjInfo{idProf}.chlaNPQ, a_chlaAdjInfo{idProf}.depthNPQ);
             end
             netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_EQUATION'), ...
@@ -5065,8 +5071,8 @@ for idFile = 1:2
                fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(coefficient)]), coefficient');
             %             fprintf('SCIENTIFIC_CALIB_COEFFICIENT: %s\n', coefficient);
             
-            comment = sprintf('CHLA real time adjustment (specified in %s and computed with MLD_LIMIT = %g, DELTA_DEPTH = %g, DELTA_DEPTH_DARK = %g)', ...
-               a_chlaAdjInfo{idProf}.doi, a_chlaAdjInfo{idProf}.mldLimit, a_chlaAdjInfo{idProf}.deltaDepth, a_chlaAdjInfo{idProf}.deltaDepthDark);
+            comment = sprintf('CHLA real time adjustment (specified in %s and computed with MLD_LIMIT = %g, DELTA_DEPTH = %g, DELTA_DEPTH_DARK = %g) and following recommendations of Roesler et al., 2017 (%s)', ...
+               a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit, a_chlaAdjInfo{idProf}.deltaDepth, a_chlaAdjInfo{idProf}.deltaDepthDark, a_chlaAdjInfo{idProf}.doi2);
             netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
                fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(comment)]), comment');
             

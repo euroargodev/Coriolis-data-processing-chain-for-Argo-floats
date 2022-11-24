@@ -697,6 +697,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    % consistency
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
+   % perform CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+
    if (g_decArgo_realtimeFlag == 1)
       
       % save the list of already processed rsync log files in the history
