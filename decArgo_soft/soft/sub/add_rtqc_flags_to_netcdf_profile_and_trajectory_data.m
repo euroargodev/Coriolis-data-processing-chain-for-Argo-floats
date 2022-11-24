@@ -291,9 +291,8 @@ g_rtqc_trajData = [];
 
 % retrieve the traj c file path name
 trajFileName = sprintf('%d_Rtraj.nc', floatNum);
-if (g_decArgo_generateNcTraj ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
-elseif (g_decArgo_generateNcTraj32 ~= 0)
+trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
+if ~(exist(trajFilePathName, 'file') == 2)
    trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
 end
 if (exist(trajFilePathName, 'file') == 2)
