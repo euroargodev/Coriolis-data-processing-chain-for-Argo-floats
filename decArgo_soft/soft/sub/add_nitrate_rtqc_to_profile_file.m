@@ -116,6 +116,12 @@ end
 if (a_decoderId == 121)
    floatPixelBegin = floatPixelBegin + 1;
    floatPixelEnd = floatPixelEnd + 1;
+else
+   % specific
+   if (ismember(a_floatNum, [6902897]))
+      floatPixelBegin = floatPixelBegin + 1;
+      floatPixelEnd = floatPixelEnd + 1;
+   end
 end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE

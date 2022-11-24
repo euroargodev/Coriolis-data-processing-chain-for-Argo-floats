@@ -122,6 +122,12 @@ end
 if (a_decoderId == 121)
    floatPixelBegin = floatPixelBegin + 1;
    floatPixelEnd = floatPixelEnd + 1;
+else
+   % specific
+   if (ismember(g_decArgo_floatNum, [6902897]))
+      floatPixelBegin = floatPixelBegin + 1;
+      floatPixelEnd = floatPixelEnd + 1;
+   end
 end
 
 % assign the CTD data to the UV_INTENSITY_NITRATE measurements (timely closest
