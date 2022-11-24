@@ -299,14 +299,17 @@ end
 % get payload configuration files
 [floatCycleList, g_decArgo_cyclePatternNumFloat] = get_cycle_ptn_cts5_usea;
 
-% read and store technical data (in g_decArgo_useaTechData)
-read_apmt_technical_data(g_decArgo_cyclePatternNumFloat, g_decArgo_filePrefixCts5, a_decoderId);
+% read and store clock offset information from technical data (in g_decArgo_useaTechData)
+read_apmt_technical_data(g_decArgo_cyclePatternNumFloat, g_decArgo_filePrefixCts5, a_decoderId, 1);
 
 % retrieve event data
 ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat, a_launchDate, a_decoderId);
 if (~ok)
    return
 end
+
+% read and store technical data (in g_decArgo_useaTechData)
+read_apmt_technical_data(g_decArgo_cyclePatternNumFloat, g_decArgo_filePrefixCts5, a_decoderId, 0);
 
 % process available files
 stop = 0;
@@ -509,7 +512,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
    % output NetCDF files
 
-   % add interpolated profile locations
+   % add interpolated/extrapolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
 

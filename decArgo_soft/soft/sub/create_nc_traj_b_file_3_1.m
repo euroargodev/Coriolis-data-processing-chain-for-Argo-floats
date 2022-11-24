@@ -96,10 +96,8 @@ for idNM = 1:length(a_tabTrajNMeas)
       if (~isempty(measParamList))
          measParamNameList = {measParamList.name};
          measParamTypeList = [measParamList.paramType];
-         idNotCore = find((((measParamTypeList ~= 'c') & (measParamTypeList ~= 'j')) | ...
-            strcmp(measParamNameList, 'PRES')) & ...
-            cellfun(@(x) ~strcmp(x(end-3:end), '_STD'), measParamNameList) & ...
-            cellfun(@(x) ~strcmp(x(end-3:end), '_MED'), measParamNameList));
+         idNotCore = find(((measParamTypeList ~= 'c') & (measParamTypeList ~= 'j')) | ...
+            strcmp(measParamNameList, 'PRES'));
          measParamNameAll = [measParamNameAll measParamNameList(idNotCore)];
          
          idWithSubLevels = find(~cellfun(@isempty, {nMeas.tabMeas.paramNumberWithSubLevels}));
@@ -126,55 +124,6 @@ for idParamSL = 1:length(paramSubLevels)
       max(measSubLevelsAll(find(strcmp(paramNameSubLevelsAll, paramSubLevels{idParamSL}))))];
 end
 measSubLevels = sort(unique(dimSubLevels), 'descend');
-
-% NOT OPTIMIZED VERSION - BEGIN
-% measParamName = [];
-% measSubLevels = [];
-% paramNameSubLevels = [];
-% for idNM = 1:length(a_tabTrajNMeas)
-%    nMeas = a_tabTrajNMeas(idNM);
-%    for idM = 1:length(nMeas.tabMeas)
-%       if (~isempty(nMeas.tabMeas(idM).paramList))
-%          if (~is_core_profile(nMeas.tabMeas(idM)))
-%             measParamNameList = {nMeas.tabMeas(idM).paramList.name};
-%             measParamTypeList = [nMeas.tabMeas(idM).paramList.paramType];
-%             idParam = [];
-%             for idP = 1:length(measParamNameList)
-%                paramName = measParamNameList{idP};
-%                if (((measParamTypeList(idP) ~= 'c') || ...
-%                      strcmp(paramName, 'PRES')) && ...
-%                      ~strcmp(paramName(end-3:end), '_STD') && ...
-%                      ~strcmp(paramName(end-3:end), '_MED'))
-%                   idParam = [idParam idP];
-%                end
-%             end         
-%             measParamNameList2 = measParamNameList(idParam);
-%             measParamName = unique([measParamName measParamNameList2], 'stable');
-%             measParamSubLevList = [nMeas.tabMeas(idM).paramNumberWithSubLevels];
-%             if (~isempty(measParamSubLevList))
-%                idParamSL = find(ismember(idParam, measParamSubLevList) == 1);
-%                paramNameSubLevels = [paramNameSubLevels measParamNameList2(idParamSL)];
-%                
-%                measParamNbLevList = [nMeas.tabMeas(idM).paramNumberOfSubLevels];
-%                idParamSL = find(ismember(idParam(idParamSL), measParamSubLevList) == 1);
-%                measSubLevels = [measSubLevels measParamNbLevList(idParamSL)];
-%             end
-%          end
-%       end
-%    end
-% end
-% measUniqueParamName = unique(measParamName, 'stable');
-% nbMeasParam = length(measUniqueParamName);
-% % due to erroneous received data, the number of sublevels can vary for a same
-% % parameter
-% paramSubLevels = unique(paramNameSubLevels, 'stable');
-% dimSubLevels = [];
-% for idParamSL = 1:length(paramSubLevels)
-%    dimSubLevels = [dimSubLevels ...
-%       max(measSubLevels(find(strcmp(paramNameSubLevels, paramSubLevels{idParamSL}))))];
-% end
-% measSubLevels = sort(unique(dimSubLevels), 'descend');
-% NOT OPTIMIZED VERSION - END
 
 if (nbMeasParam > 1) % PRES and at least another parameter
    
@@ -603,23 +552,20 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                      if (~isempty(measParam.axis))
                         netcdf.putAtt(fCdf, measParamVarId, 'axis', measParam.axis);
                      end
-                        
+
                      % parameter QC variable and attributes
                      if ((measParam.paramType ~= 'c') && (measParam.paramType ~= 'j'))
-                        if ~(strcmp(measParamName(end-3:end), '_STD') || ...
-                              strcmp(measParamName(end-3:end), '_MED'))
-                           
-                           measParamQcName = [measParamName '_QC'];
-                           if (~any(strcmp(measParamQcName, paramNameInFile)))
-                              
-                              paramNameInFile{end+1} = measParamQcName;
-                              
-                              measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
-                              
-                              netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
-                              netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
-                              netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
-                           end
+
+                        measParamQcName = [measParamName '_QC'];
+                        if (~any(strcmp(measParamQcName, paramNameInFile)))
+
+                           paramNameInFile{end+1} = measParamQcName;
+
+                           measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
+
+                           netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
+                           netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
+                           netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
                         end
                      end
                      
@@ -981,8 +927,6 @@ if (nbMeasParam > 1) % PRES and at least another parameter
       varNameList = [ varNameList ...
          {measUniqueParamName{idVar}} ...
          {[measUniqueParamName{idVar} '_QC']} ...
-         {[measUniqueParamName{idVar} '_STD']} ...
-         {[measUniqueParamName{idVar} '_MED']} ...
          {[measUniqueParamName{idVar} '_ADJUSTED']} ...
          {[measUniqueParamName{idVar} '_ADJUSTED_QC']} ...
          ];
@@ -1273,380 +1217,6 @@ if (nbMeasParam > 1) % PRES and at least another parameter
       end
       measPos = measPos + length(nMeas.tabMeas);
    end
-   
-   % V2 - BEGIN
-   %    cycleNumberVarFillValue = netcdf.getAtt(fCdf, cycleNumberVarId, '_FillValue');
-   %    measurementCodeVarFillValue = netcdf.getAtt(fCdf, measurementCodeVarId, '_FillValue');
-   %    juldVarFillValue = netcdf.getAtt(fCdf, juldVarId, '_FillValue');
-   %    juldStatusVarFillValue = netcdf.getAtt(fCdf, juldStatusVarId, '_FillValue');
-   %    juldQcVarFillValue = netcdf.getAtt(fCdf, juldQcVarId, '_FillValue');
-   %    latitudeVarFillValue = netcdf.getAtt(fCdf, latitudeVarId, '_FillValue');
-   %    longitudeVarFillValue = netcdf.getAtt(fCdf, longitudeVarId, '_FillValue');
-   %    positionAccuracyVarFillValue = netcdf.getAtt(fCdf, positionAccuracyVarId, '_FillValue');
-   %    positionQcVarFillValue = netcdf.getAtt(fCdf, positionQcVarId, '_FillValue');
-   %    satelliteNameVarIdFillValue = netcdf.getAtt(fCdf, satelliteNameVarId, '_FillValue');
-   %
-   %    measPos = 0;
-   %    measPos2 = 0;
-   %    for idNM = 1:length(a_tabTrajNMeas)
-   %       nMeas = a_tabTrajNMeas(idNM);
-   %
-   %       cycleNumberVarTab = int32(ones(length(nMeas.tabMeas), 1))*cycleNumberVarFillValue;
-   %       measurementCodeVarTab = int32(ones(length(nMeas.tabMeas), 1))*measurementCodeVarFillValue;
-   %       juldVarTab = ones(length(nMeas.tabMeas), 1)*juldVarFillValue;
-   %       juldStatusVarTab = repmat(juldStatusVarFillValue, length(nMeas.tabMeas), 1);
-   %       juldQcVarTab = repmat(juldQcVarFillValue, length(nMeas.tabMeas), 1);
-   %       latitudeVarTab = ones(length(nMeas.tabMeas), 1)*latitudeVarFillValue;
-   %       longitudeVarTab = ones(length(nMeas.tabMeas), 1)*longitudeVarFillValue;
-   %       positionAccuracyVarTab = repmat(positionAccuracyVarFillValue, length(nMeas.tabMeas), 1);
-   %       positionQcVarTab = repmat(positionQcVarFillValue, length(nMeas.tabMeas), 1);
-   %       satelliteNameVarTab = repmat(satelliteNameVarIdFillValue, length(nMeas.tabMeas), 1);
-   %
-   %       for idM = 1:length(nMeas.tabMeas)
-   %          meas = nMeas.tabMeas(idM);
-   %
-   %          if (~is_core_profile(meas) && ~isempty(meas.paramList))
-   %
-   %             cycleNumberVarTab(idM) = nMeas.outputCycleNumber;
-   %             measurementCodeVarTab(idM) = meas.measCode;
-   %
-   %             if (~isempty(meas.juld))
-   %                juldVarTab(idM) = meas.juld;
-   %             end
-   %             if (~isempty(meas.juldStatus))
-   %                juldStatusVarTab(idM) = meas.juldStatus;
-   %             end
-   %             if (~isempty(meas.juldQc))
-   %                juldQcVarTab(idM) = meas.juldQc;
-   %             end
-   %             if (~isempty(meas.latitude))
-   %                latitudeVarTab(idM) = meas.latitude;
-   %             end
-   %             if (~isempty(meas.longitude))
-   %                longitudeVarTab(idM) = meas.longitude;
-   %             end
-   %             if (~isempty(meas.posAccuracy))
-   %                positionAccuracyVarTab(idM) = meas.posAccuracy;
-   %             end
-   %             if (~isempty(meas.posQc))
-   %                positionQcVarTab(idM) = meas.posQc;
-   %             end
-   %             if (~isempty(meas.satelliteName))
-   %                satelliteNameVarTab(idM) = meas.satelliteName;
-   %             end
-   %
-   %             % parameters
-   %             measParamList = meas.paramList;
-   %             for idParam = 1:length(measParamList)
-   %
-   %                if ((measParamList(idParam).paramType ~= 'c') || ...
-   %                      strcmp(measParamList(idParam).name, 'PRES') || ...
-   %                      strcmp(measParamList(idParam).name, 'PRES2'))
-   %
-   %                   measParam = measParamList(idParam);
-   %
-   %                   measParamName = measParam.name;
-   %                   measParamVarId = netcdf.inqVarID(fCdf, measParamName);
-   %
-   %                   measParamQcVarId = '';
-   %                   if ~(strcmp(measParamName, 'PRES') || ...
-   %                         strcmp(measParamName, 'PRES2') || ...
-   %                         strcmp(measParamName(end-3:end), '_STD') || ...
-   %                         strcmp(measParamName(end-3:end), '_MED'))
-   %                      measParamQcName = sprintf('%s_QC', measParamName);
-   %                      measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
-   %                   end
-   %
-   %                   % parameter data
-   %                   if (isempty(meas.paramNumberWithSubLevels))
-   %
-   %                      % none of the profile parameters has sublevels
-   %
-   %                      % parameter data
-   %                      paramData = meas.paramData(:, idParam);
-   %                      if (isempty(meas.paramDataQc))
-   %                         paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                         paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                      else
-   %                         paramDataQc = meas.paramDataQc(:, idParam);
-   %                         if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                            paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                            paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                         else
-   %                            paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                            idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                            paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                         end
-   %                      end
-   %
-   %                      % store the data
-   %                      netcdf.putVar(fCdf, measParamVarId, measPos, size(paramData, 1), paramData);
-   %
-   %                      if (~isempty(measParamQcVarId))
-   %                         netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                      end
-   %                   else
-   %
-   %                      % some profile parameters have sublevels
-   %
-   %                      % retrieve the column(s) associated with the parameter data
-   %                      idF = find(meas.paramNumberWithSubLevels < idParam);
-   %                      if (isempty(idF))
-   %                         firstCol = idParam;
-   %                      else
-   %                         firstCol = idParam + sum(meas.paramNumberOfSubLevels(idF)) - length(idF);
-   %                      end
-   %
-   %                      idF = find(meas.paramNumberWithSubLevels == idParam);
-   %                      if (isempty(idF))
-   %                         lastCol = firstCol;
-   %                      else
-   %                         lastCol = firstCol + meas.paramNumberOfSubLevels(idF) - 1;
-   %                      end
-   %
-   %                      % parameter data
-   %                      paramData = meas.paramData(:, firstCol:lastCol);
-   %
-   %                      if (size(paramData, 2) == 1)
-   %
-   %                         netcdf.putVar(fCdf, measParamVarId, measPos, size(paramData, 1), paramData);
-   %
-   %                         if (~isempty(measParamQcVarId))
-   %                            if (isempty(meas.paramDataQc))
-   %                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                               paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                            else
-   %                               paramDataQc = meas.paramDataQc(:, idParam);
-   %                               if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                                  paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                               else
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                                  idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                                  paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                               end
-   %                            end
-   %                            netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                         end
-   %                      else
-   %
-   %                         netcdf.putVar(fCdf, measParamVarId, fliplr([measPos 0]), fliplr([size(paramData)]), paramData');
-   %
-   %                         if (~isempty(measParamQcVarId))
-   %                            if (isempty(meas.paramDataQc))
-   %                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                               for idL = 1: size(paramData, 1)
-   %                                  if (~isempty(find(paramData(idL, :) ~= measParam.fillValue, 1)))
-   %                                     paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
-   %                                  end
-   %                               end
-   %                            else
-   %                               paramDataQc = meas.paramDataQc(:, idParam);
-   %                               if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                                  for idL = 1: size(paramData, 1)
-   %                                     if (~isempty(find(paramData(idL, :) ~= measParam.fillValue, 1)))
-   %                                        paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
-   %                                     end
-   %                                  end
-   %                               else
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                                  idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                                  paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                               end
-   %                            end
-   %                            netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                         end
-   %                      end
-   %                   end
-   %                end
-   %             end
-   %          end
-   %          measPos = measPos + 1;
-   %       end
-   %
-   %       netcdf.putVar(fCdf, cycleNumberVarId, measPos2, length(nMeas.tabMeas), cycleNumberVarTab);
-   %       netcdf.putVar(fCdf, measurementCodeVarId, measPos2, length(nMeas.tabMeas), measurementCodeVarTab);
-   %       netcdf.putVar(fCdf, juldVarId, measPos2, length(nMeas.tabMeas), juldVarTab);
-   %       netcdf.putVar(fCdf, juldStatusVarId, measPos2, length(nMeas.tabMeas), juldStatusVarTab);
-   %       netcdf.putVar(fCdf, juldQcVarId, measPos2, length(nMeas.tabMeas), juldQcVarTab);
-   %       netcdf.putVar(fCdf, latitudeVarId, measPos2, length(nMeas.tabMeas), latitudeVarTab);
-   %       netcdf.putVar(fCdf, longitudeVarId, measPos2, length(nMeas.tabMeas), longitudeVarTab);
-   %       netcdf.putVar(fCdf, positionAccuracyVarId, measPos2, length(nMeas.tabMeas), positionAccuracyVarTab);
-   %       netcdf.putVar(fCdf, positionQcVarId, measPos2, length(nMeas.tabMeas), positionQcVarTab);
-   %       netcdf.putVar(fCdf, satelliteNameVarId, measPos2, length(nMeas.tabMeas), satelliteNameVarTab);
-   %
-   %       measPos2 = measPos2 + length(nMeas.tabMeas);
-   %
-   %    end
-   % V2 - END
-   
-   % NOT OPTIMIZED VERSION - BEGIN
-   %    measPos = 0;
-   %    for idNM = 1:length(a_tabTrajNMeas)
-   %       nMeas = a_tabTrajNMeas(idNM);
-   %       for idM = 1:length(nMeas.tabMeas)
-   %          meas = nMeas.tabMeas(idM);
-   %
-   %          if (~is_core_profile(meas) && ~isempty(meas.paramList))
-   %
-   %             netcdf.putVar(fCdf, cycleNumberVarId, measPos, 1, nMeas.outputCycleNumber);
-   %             netcdf.putVar(fCdf, measurementCodeVarId, measPos, 1, meas.measCode);
-   %
-   %             if (~isempty(meas.juld))
-   %                netcdf.putVar(fCdf, juldVarId, measPos, 1, meas.juld);
-   %             end
-   %             if (~isempty(meas.juldStatus))
-   %                netcdf.putVar(fCdf, juldStatusVarId, measPos, 1, meas.juldStatus);
-   %             end
-   %             if (~isempty(meas.juldQc))
-   %                netcdf.putVar(fCdf, juldQcVarId, measPos, 1, meas.juldQc);
-   %             end
-   %             if (~isempty(meas.latitude))
-   %                netcdf.putVar(fCdf, latitudeVarId, measPos, 1, meas.latitude);
-   %             end
-   %             if (~isempty(meas.longitude))
-   %                netcdf.putVar(fCdf, longitudeVarId, measPos, 1, meas.longitude);
-   %             end
-   %             if (~isempty(meas.posAccuracy))
-   %                netcdf.putVar(fCdf, positionAccuracyVarId, measPos, 1, meas.posAccuracy);
-   %             end
-   %             if (~isempty(meas.posQc))
-   %                netcdf.putVar(fCdf, positionQcVarId, measPos, 1, meas.posQc);
-   %             end
-   %             if (~isempty(meas.satelliteName))
-   %                netcdf.putVar(fCdf, satelliteNameVarId, measPos, 1, meas.satelliteName);
-   %             end
-   %
-   %             % parameters
-   %             measParamList = meas.paramList;
-   %             for idParam = 1:length(measParamList)
-   %
-   %                if ((measParamList(idParam).paramType ~= 'c') || ...
-   %                      strcmp(measParamList(idParam).name, 'PRES'))
-   %
-   %                   measParam = measParamList(idParam);
-   %
-   %                   measParamName = measParam.name;
-   %                   measParamVarId = netcdf.inqVarID(fCdf, measParamName);
-   %
-   %                   measParamQcVarId = '';
-   %                   if ~(strcmp(measParamName, 'PRES') || ...
-   %                         strcmp(measParamName(end-3:end), '_STD') || ...
-   %                         strcmp(measParamName(end-3:end), '_MED'))
-   %                      measParamQcName = sprintf('%s_QC', measParamName);
-   %                      measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
-   %                   end
-   %
-   %                   % parameter data
-   %                   if (isempty(meas.paramNumberWithSubLevels))
-   %
-   %                      % none of the profile parameters has sublevels
-   %
-   %                      % parameter data
-   %                      paramData = meas.paramData(:, idParam);
-   %                      if (isempty(meas.paramDataQc))
-   %                         paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                         paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                      else
-   %                         paramDataQc = meas.paramDataQc(:, idParam);
-   %                         if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                            paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                            paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                         else
-   %                            paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                            idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                            paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                         end
-   %                      end
-   %
-   %                      % store the data
-   %                      netcdf.putVar(fCdf, measParamVarId, measPos, size(paramData, 1), paramData);
-   %
-   %                      if (~isempty(measParamQcVarId))
-   %                         netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                      end
-   %                   else
-   %
-   %                      % some profile parameters have sublevels
-   %
-   %                      % retrieve the column(s) associated with the parameter data
-   %                      idF = find(meas.paramNumberWithSubLevels < idParam);
-   %                      if (isempty(idF))
-   %                         firstCol = idParam;
-   %                      else
-   %                         firstCol = idParam + sum(meas.paramNumberOfSubLevels(idF)) - length(idF);
-   %                      end
-   %
-   %                      idF = find(meas.paramNumberWithSubLevels == idParam);
-   %                      if (isempty(idF))
-   %                         lastCol = firstCol;
-   %                      else
-   %                         lastCol = firstCol + meas.paramNumberOfSubLevels(idF) - 1;
-   %                      end
-   %
-   %                      % parameter data
-   %                      paramData = meas.paramData(:, firstCol:lastCol);
-   %
-   %                      if (size(paramData, 2) == 1)
-   %
-   %                         netcdf.putVar(fCdf, measParamVarId, measPos, size(paramData, 1), paramData);
-   %
-   %                         if (~isempty(measParamQcVarId))
-   %                            if (isempty(meas.paramDataQc))
-   %                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                               paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                            else
-   %                               paramDataQc = meas.paramDataQc(:, idParam);
-   %                               if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                                  paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
-   %                               else
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                                  idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                                  paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                               end
-   %                            end
-   %                            netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                         end
-   %                      else
-   %
-   %                         netcdf.putVar(fCdf, measParamVarId, fliplr([measPos 0]), fliplr([size(paramData)]), paramData');
-   %
-   %                         if (~isempty(measParamQcVarId))
-   %                            if (isempty(meas.paramDataQc))
-   %                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                               for idL = 1: size(paramData, 1)
-   %                                  if (~isempty(find(paramData(idL, :) ~= measParam.fillValue, 1)))
-   %                                     paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
-   %                                  end
-   %                               end
-   %                            else
-   %                               paramDataQc = meas.paramDataQc(:, idParam);
-   %                               if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
-   %                                  for idL = 1: size(paramData, 1)
-   %                                     if (~isempty(find(paramData(idL, :) ~= measParam.fillValue, 1)))
-   %                                        paramDataQcStr(idL) = g_decArgo_qcStrNoQc;
-   %                                     end
-   %                                  end
-   %                               else
-   %                                  paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
-   %                                  idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
-   %                                  paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-   %                               end
-   %                            end
-   %                            netcdf.putVar(fCdf, measParamQcVarId, measPos, size(paramData, 1), paramDataQcStr);
-   %                         end
-   %                      end
-   %                   end
-   %                end
-   %             end
-   %          end
-   %          measPos = measPos + 1;
-   %       end
-   %    end
-   % NOT OPTIMIZED VERSION - BEGIN
 
    % N_CYCLE data
    if (~isempty(cycles))

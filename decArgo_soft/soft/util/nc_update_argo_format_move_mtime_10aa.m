@@ -24,7 +24,7 @@ function nc_update_argo_format_move_mtime_10aa(varargin)
 DO_IT = 0;
 
 % list of floats to process (if empty, all encountered files will be checked)
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 FLOAT_LIST_FILE_NAME = '';
 
 % top directory of NetCDF files to update
@@ -86,7 +86,6 @@ try
       % floats to process come from input parameters
       floatList = cell2mat(varargin);
    end
-   
    
    % create a temporary directory for this run
    tmpDir = [DIR_TMP '/' 'nc_update_argo_format_move_mtime_10aa_' currentTime];

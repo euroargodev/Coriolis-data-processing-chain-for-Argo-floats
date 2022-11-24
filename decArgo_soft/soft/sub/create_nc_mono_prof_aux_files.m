@@ -138,19 +138,16 @@ for idProf = 1:length(a_tabProfiles)
          parameterList = prof.paramList;
          profileData = prof.data;
          for idParam = 1:length(parameterList)
-            if (~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
-                  ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
 
-               profParamName = [profParamName; {parameterList(idParam).name}];
-               paramNameOfProf = [paramNameOfProf; {parameterList(idParam).name}];
-               nbProfLevels = max(nbProfLevels, size(profileData, 1));
+            profParamName = [profParamName; {parameterList(idParam).name}];
+            paramNameOfProf = [paramNameOfProf; {parameterList(idParam).name}];
+            nbProfLevels = max(nbProfLevels, size(profileData, 1));
 
-               if (~isempty(prof.paramNumberWithSubLevels))
-                  idF = find(prof.paramNumberWithSubLevels == idParam);
-                  if (~isempty(idF))
-                     profSubLevels = [profSubLevels prof.paramNumberOfSubLevels(idF)];
-                     paramNameSubLevels = [paramNameSubLevels {parameterList(idParam).name}];
-                  end
+            if (~isempty(prof.paramNumberWithSubLevels))
+               idF = find(prof.paramNumberWithSubLevels == idParam);
+               if (~isempty(idF))
+                  profSubLevels = [profSubLevels prof.paramNumberOfSubLevels(idF)];
+                  paramNameSubLevels = [paramNameSubLevels {parameterList(idParam).name}];
                end
             end
          end
@@ -577,18 +574,14 @@ for idProf = 1:length(a_tabProfiles)
                end
 
                % parameter QC variable and attributes
-               if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                     strcmp(profParam.name(end-3:end), '_MED'))
+               profParamQcName = sprintf('%s_QC', profParam.name);
+               if (~var_is_present_dec_argo(fCdf, profParamQcName))
 
-                  profParamQcName = sprintf('%s_QC', profParam.name);
-                  if (~var_is_present_dec_argo(fCdf, profParamQcName))
+                  profParamQcVarId = netcdf.defVar(fCdf, profParamQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
 
-                     profParamQcVarId = netcdf.defVar(fCdf, profParamQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
-
-                     netcdf.putAtt(fCdf, profParamQcVarId, 'long_name', 'quality flag');
-                     netcdf.putAtt(fCdf, profParamQcVarId, 'conventions', 'Argo reference table 2');
-                     netcdf.putAtt(fCdf, profParamQcVarId, '_FillValue', ' ');
-                  end
+                  netcdf.putAtt(fCdf, profParamQcVarId, 'long_name', 'quality flag');
+                  netcdf.putAtt(fCdf, profParamQcVarId, 'conventions', 'Argo reference table 2');
+                  netcdf.putAtt(fCdf, profParamQcVarId, '_FillValue', ' ');
                end
 
                % parameter adjusted variable and attributes
@@ -801,23 +794,19 @@ for idProf = 1:length(a_tabProfiles)
             paramPos = 0;
             for idParam = 1:length(parameterList)
 
-               if (~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
-                     ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
+               valueStr = parameterList(idParam).name;
 
-                  valueStr = parameterList(idParam).name;
-
-                  if (length(valueStr) > paramNameLength)
-                     fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) - name truncated\n', ...
-                        g_decArgo_floatNum, valueStr, paramNameLength);
-                     valueStr = valueStr(1:paramNameLength);
-                  end
-
-                  netcdf.putVar(fCdf, stationParametersVarId, ...
-                     fliplr([profPos paramPos 0]), fliplr([1 1 length(valueStr)]), valueStr');
-
-                  netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
-                  paramPos = paramPos + 1;
+               if (length(valueStr) > paramNameLength)
+                  fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) - name truncated\n', ...
+                     g_decArgo_floatNum, valueStr, paramNameLength);
+                  valueStr = valueStr(1:paramNameLength);
                end
+
+               netcdf.putVar(fCdf, stationParametersVarId, ...
+                  fliplr([profPos paramPos 0]), fliplr([1 1 length(valueStr)]), valueStr');
+
+               netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
+               paramPos = paramPos + 1;
             end
 
             netcdf.putVar(fCdf, cycleNumberVarId, profPos, 1, outputCycleNumber);
@@ -964,12 +953,8 @@ for idProf = 1:length(a_tabProfiles)
                profParamVarId = netcdf.inqVarID(fCdf, profParamName);
 
                % parameter QC variable and attributes
-               profParamQcVarId = '';
-               if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                     strcmp(profParam.name(end-3:end), '_MED'))
-                  profParamQcName = sprintf('%s_QC', profParam.name);
-                  profParamQcVarId = netcdf.inqVarID(fCdf, profParamQcName);
-               end
+               profParamQcName = sprintf('%s_QC', profParam.name);
+               profParamQcVarId = netcdf.inqVarID(fCdf, profParamQcName);
 
                if (profParam.adjAllowed == 1)
                   % parameter adjusted variable and attributes
@@ -1002,12 +987,9 @@ for idProf = 1:length(a_tabProfiles)
                         idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                         paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
 
-                        if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                              strcmp(profParam.name(end-3:end), '_MED'))
-                           profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
-                           profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
-                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
-                        end
+                        profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
+                        profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                      end
                   end
 
@@ -1107,12 +1089,9 @@ for idProf = 1:length(a_tabProfiles)
                         idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                         paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
 
-                        if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                              strcmp(profParam.name(end-3:end), '_MED'))
-                           profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
-                           profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
-                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
-                        end
+                        profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
+                        profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                      end
                   end
 
@@ -1147,12 +1126,9 @@ for idProf = 1:length(a_tabProfiles)
                               idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                               paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
 
-                              if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                                    strcmp(profParam.name(end-3:end), '_MED'))
-                                 profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
-                                 profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
-                                 netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
-                              end
+                              profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
+                              profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                              netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                            end
                         end
 
@@ -1202,12 +1178,9 @@ for idProf = 1:length(a_tabProfiles)
                               idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                               paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
 
-                              if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
-                                    strcmp(profParam.name(end-3:end), '_MED'))
-                                 profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
-                                 profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
-                                 netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
-                              end
+                              profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
+                              profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
+                              netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                            end
                         end
 
@@ -1386,18 +1359,14 @@ for idProf = 1:length(a_tabProfiles)
             paramPos = 0;
             for idParam = 1:length(parameterList)
 
-               if (~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
-                     ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
+               valueStr = parameterList(idParam).name;
 
-                  valueStr = parameterList(idParam).name;
-
-                  for idCalib = 1:nbCalib
-                     netcdf.putVar(fCdf, parameterVarId, ...
-                        fliplr([profPos idCalib-1 paramPos 0]), fliplr([1 1 1 length(valueStr)]), valueStr');
-                  end
-                  paramPos = paramPos + 1;
-                  ncParamlist(idP, paramPos) = {valueStr};
+               for idCalib = 1:nbCalib
+                  netcdf.putVar(fCdf, parameterVarId, ...
+                     fliplr([profPos idCalib-1 paramPos 0]), fliplr([1 1 1 length(valueStr)]), valueStr');
                end
+               paramPos = paramPos + 1;
+               ncParamlist(idP, paramPos) = {valueStr};
             end
          end
 

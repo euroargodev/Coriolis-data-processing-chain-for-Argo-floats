@@ -532,7 +532,7 @@ for idFile = 1:length(fileNames)
    fileName = fileNames(idFile).name;
 
    % read technical file
-   [apmtTech, ~, ~, ~, ~] = read_apmt_technical_file([archiveDirectory fileName], a_decoderId);
+   [apmtTech, ~, ~, ~, ~] = read_apmt_technical_file([archiveDirectory fileName], a_decoderId, 0);
 
    % store GPS data
    if (~isempty(apmtTech))

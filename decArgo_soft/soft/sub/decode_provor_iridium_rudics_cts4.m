@@ -858,7 +858,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
-   % add interpolated profile locations
+   % add interpolated/extrapolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    

@@ -851,7 +851,6 @@ return
 function [o_metaData] = update_parameter_list_ctd(a_metaData)
 
 % parameter added "on the fly" to meta-data file
-global g_decArgo_addParamNbSampleCtd;
 global g_decArgo_addParamListCtd;
 
 
@@ -861,13 +860,9 @@ paramList = [ ...
    {'PSAL'} ...
    ];
 
-if (g_decArgo_addParamNbSampleCtd)
-   paramList = [paramList {'NB_SAMPLE_CTD'}];
+if (~isempty(g_decArgo_addParamListCtd))
+   paramList = [paramList g_decArgo_addParamListCtd];
 end
-
-% if (~isempty(g_decArgo_addParamListCtd))
-%    paramList = [paramList g_decArgo_addParamListCtd];
-% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -1404,9 +1399,9 @@ if (a_decoderId == 201)
    end
 end
 
-% if (~isempty(g_decArgo_addParamListOxygen))
-%    paramList = [paramList g_decArgo_addParamListOxygen];
-% end
+if (~isempty(g_decArgo_addParamListOxygen))
+   paramList = [paramList g_decArgo_addParamListOxygen];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -3703,9 +3698,9 @@ switch (a_decoderId)
       end
 end
 
-% if (~isempty(g_decArgo_addParamListRadiometry))
-%    paramList = [paramList g_decArgo_addParamListRadiometry];
-% end
+if (~isempty(g_decArgo_addParamListRadiometry))
+   paramList = [paramList g_decArgo_addParamListRadiometry];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -4196,9 +4191,9 @@ switch (a_decoderId)
          ];
 end
 
-% if (~isempty(g_decArgo_addParamListBackscattering))
-%    paramList = [paramList g_decArgo_addParamListBackscattering];
-% end
+if (~isempty(g_decArgo_addParamListBackscattering))
+   paramList = [paramList g_decArgo_addParamListBackscattering];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -4620,9 +4615,9 @@ switch (a_decoderId)
          ];
 end
 
-% if (~isempty(g_decArgo_addParamListChla))
-%    paramList = [paramList g_decArgo_addParamListChla];
-% end
+if (~isempty(g_decArgo_addParamListChla))
+   paramList = [paramList g_decArgo_addParamListChla];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -5044,9 +5039,9 @@ switch (a_decoderId)
       end
 end
 
-% if (~isempty(g_decArgo_addParamListCdom))
-%    paramList = [paramList g_decArgo_addParamListCdom];
-% end
+if (~isempty(g_decArgo_addParamListCdom))
+   paramList = [paramList g_decArgo_addParamListCdom];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -5225,24 +5220,13 @@ switch (a_decoderId)
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
+            {'UV_INTENSITY_DARK_NITRATE_STD'} ...
             {'NITRATE'} ...
             {'FIT_ERROR_NITRATE'} ...
             {'TEMP_NITRATE'} ...
             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
             {'HUMIDITY_NITRATE'} ...
             ];
-         % NEW TEMPO START
-         %          paramList = [ ...
-         %             {'UV_INTENSITY_NITRATE'} ...
-         %             {'UV_INTENSITY_DARK_NITRATE'} ...
-         %             {'UV_INTENSITY_DARK_NITRATE_STD'} ...
-         %             {'NITRATE'} ...
-         %             {'FIT_ERROR_NITRATE'} ...
-         %             {'TEMP_NITRATE'} ...
-         %             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
-         %             {'HUMIDITY_NITRATE'} ...
-         %             ];
-         % NEW TEMPO END
       end
    case {110, 113, 127}
       % check that a SUNA sensor is mounted on the float
@@ -5251,6 +5235,7 @@ switch (a_decoderId)
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
+            {'UV_INTENSITY_DARK_NITRATE_STD'} ...
             {'NITRATE'} ...
             {'BISULFIDE'} ...
             {'FIT_ERROR_NITRATE'} ...
@@ -5258,19 +5243,6 @@ switch (a_decoderId)
             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
             {'HUMIDITY_NITRATE'} ...
             ];
-         % NEW TEMPO START
-         %          paramList = [ ...
-         %             {'UV_INTENSITY_NITRATE'} ...
-         %             {'UV_INTENSITY_DARK_NITRATE'} ...
-         %             {'UV_INTENSITY_DARK_NITRATE_STD'} ...
-         %             {'NITRATE'} ...
-         %             {'BISULFIDE'} ...
-         %             {'FIT_ERROR_NITRATE'} ...
-         %             {'TEMP_NITRATE'} ...
-         %             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
-         %             {'HUMIDITY_NITRATE'} ...
-         %             ];
-         % NEW TEMPO END
       end
 end
 
@@ -5360,17 +5332,15 @@ switch (a_decoderId)
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Intensity of ultra violet flux dark measurement from nitrate sensor';
 
-            % NEW TEMPO START
-            %          case {'UV_INTENSITY_DARK_NITRATE_STD'}
-            %             o_param = 'UV_INTENSITY_DARK_NITRATE_STD';
-            %             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
-            %             o_paramUnits = 'count';
-            %             o_paramAccuracy = '';
-            %             o_paramResolution = '';
-            %             o_preCalibEq = 'none';
-            %             o_preCalibCoef = 'none';
-            %             o_preCalibComment = 'Standard deviation of intensity of ultra violet flux dark measurement from nitrate sensor';
-            % NEW TEMPO START
+         case {'UV_INTENSITY_DARK_NITRATE_STD'}
+            o_param = 'UV_INTENSITY_DARK_NITRATE_STD';
+            o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Standard deviation of intensity of ultra violet flux dark measurement from nitrate sensor';
 
          case {'NITRATE'}
             
@@ -5907,7 +5877,6 @@ return
 function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 
 % parameter added "on the fly" to meta-data file
-global g_decArgo_addParamNbSampleSfet;
 global g_decArgo_addParamListPh;
 
 
@@ -5935,15 +5904,12 @@ switch (a_decoderId)
             {'PH_IN_SITU_FREE'} ...
             {'PH_IN_SITU_TOTAL'} ...
             ];
-         if (g_decArgo_addParamNbSampleSfet)
-            paramList = [paramList {'NB_SAMPLE_SFET'}];
-         end
       end
 end
 
-% if (~isempty(g_decArgo_addParamListPh))
-%    paramList = [paramList g_decArgo_addParamListPh];
-% end
+if (~isempty(g_decArgo_addParamListPh))
+   paramList = [paramList g_decArgo_addParamListPh];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -6431,9 +6397,9 @@ elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
    end
 end
 
-% if (~isempty(g_decArgo_addParamListCp))
-%    paramList = [paramList g_decArgo_addParamListCp];
-% end
+if (~isempty(g_decArgo_addParamListCp))
+   paramList = [paramList g_decArgo_addParamListCp];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -6609,9 +6575,9 @@ elseif (ismember(a_decoderId, [1014]))
       ];
 end
 
-% if (~isempty(g_decArgo_addParamListTurbidity))
-%    paramList = [paramList g_decArgo_addParamListTurbidity];
-% end
+if (~isempty(g_decArgo_addParamListTurbidity))
+   paramList = [paramList g_decArgo_addParamListTurbidity];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);

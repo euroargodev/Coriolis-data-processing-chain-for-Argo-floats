@@ -47,7 +47,7 @@ else
    % JPR CONFIGURATION - START
 
    % common float information file
-   floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
+   floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_tmp.txt';
 
    % directory of individual json float information files
    outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_float_info_files_' datestr(now, 'yyyymmddTHHMMSS')];

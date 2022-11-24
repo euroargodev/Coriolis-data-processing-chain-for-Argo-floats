@@ -39,9 +39,6 @@ global g_decArgo_floatNum;
 global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTST;
 
-% QC flag values (char)
-global g_decArgo_qcStrInterpolated;
-
 
 % unpack the GPS input data
 a_gpsLocCycleNum = a_gpsData{1};
@@ -57,13 +54,13 @@ end
 % process all the profiles of the list
 for idP = 1:length(o_tabProfiles)
    prof = o_tabProfiles(idP);
-   
+
    if (prof.direction == 'A')
-      
+
       % add profile date
       idCyNCycle = find([a_tabTrajNCycle.cycleNumber] == prof.cycleNumber);
       if (~isempty(idCyNCycle))
-         
+
          % choice #1 - ASCEND_END_DATE
          if (~isempty(a_tabTrajNCycle(idCyNCycle).juldAscentEnd))
             prof.date = a_tabTrajNCycle(idCyNCycle).juldAscentEnd;
@@ -71,7 +68,7 @@ for idP = 1:length(o_tabProfiles)
             idCyNMeas = find([a_tabTrajNMeas.cycleNumber] == prof.cycleNumber);
             if (~isempty(idCyNMeas))
                if (~isempty(a_tabTrajNMeas(idCyNMeas).tabMeas))
-                  
+
                   % choice #2 - last near surface measurement date (Navis only)
                   idNSSOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST);
                   if (~isempty(idNSSOM))
@@ -80,7 +77,7 @@ for idP = 1:length(o_tabProfiles)
                         prof.date = max(nearSurfMeasdates);
                      end
                   end
-                  
+
                   % choice #3 - first surface measurement date
                   if (prof.date == g_decArgo_dateDef)
                      idIASOM = find([a_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_InAirSingleMeasRelativeToTST);
@@ -93,7 +90,7 @@ for idP = 1:length(o_tabProfiles)
                   end
                end
             end
-            
+
             if (prof.date == g_decArgo_dateDef)
                if (~isempty(a_tabTrajNCycle(idCyNCycle).juldFirstLocation))
                   % choice #4 - FIRST_LOCATION_DATE
@@ -105,7 +102,7 @@ for idP = 1:length(o_tabProfiles)
             end
          end
       end
-      
+
       if (prof.date == g_decArgo_dateDef)
          % choice #5 - FIRST_MESSAGE_DATE
          [firstMsgTime, ~] = ...
@@ -114,7 +111,7 @@ for idP = 1:length(o_tabProfiles)
             prof.date = firstMsgTime;
          end
       end
-      
+
       % set MTIME values
       idMtime  = find(strcmp({prof.paramList.name}, 'MTIME') == 1, 1);
       if (~isempty(idMtime))
@@ -130,12 +127,12 @@ for idP = 1:length(o_tabProfiles)
             prof.data(:, idMtime) = ones(size(prof.data, 1), 1)*paramMtime.fillValue;
          end
       end
-      
+
       % add profile location
-      
+
       % select the GPS data to use
       idPosToUse = find((a_gpsLocCycleNum == prof.cycleNumber) & (a_gpsLocQc == 1));
-      
+
       if (~isempty(idPosToUse))
          % set the profile updated flag if no GPS fix has been received during
          % the last cycle of the current decoding session (used to detect when a
@@ -148,7 +145,7 @@ for idP = 1:length(o_tabProfiles)
                end
             end
          end
-         
+
          % a GPS fix exists
          [~, idMin] = min(a_gpsLocDate(idPosToUse));
          idPosToUse = idPosToUse(idMin);
@@ -156,78 +153,13 @@ for idP = 1:length(o_tabProfiles)
          prof.locationLon = a_gpsLocLon(idPosToUse);
          prof.locationLat = a_gpsLocLat(idPosToUse);
          prof.locationQc = num2str(a_gpsLocQc(idPosToUse));
-      else
-         % no GPS fix exists
-         
-         if (prof.date ~= g_decArgo_dateDef)
-            
-            % we must interpolate between the existing GPS locations
-            prevLocDate = g_decArgo_dateDef;
-            nextLocDate = g_decArgo_dateDef;
-            
-            % find the previous GPS location
-            idPrev = find((a_gpsLocDate <= prof.date) & (a_gpsLocQc == 1));
-            if (~isempty(idPrev))
-               % previous good GPS locations exist, use the last one
-               [~, idMax] = max(a_gpsLocDate(idPrev));
-               prevLocDate = a_gpsLocDate(idPrev(idMax));
-               prevLocLon = a_gpsLocLon(idPrev(idMax));
-               prevLocLat = a_gpsLocLat(idPrev(idMax));
-            end
-            
-            % find the next GPS location
-            idNext = find((a_gpsLocDate >= prof.date) & (a_gpsLocQc == 1));
-            if (~isempty(idNext))
-               % next good GPS locations exist, use the first one
-               [~, idMin] = min(a_gpsLocDate(idNext));
-               nextLocDate = a_gpsLocDate(idNext(idMin));
-               nextLocLon = a_gpsLocLon(idNext(idMin));
-               nextLocLat = a_gpsLocLat(idNext(idMin));
-            end
-            
-            % interpolate between the 2 locations
-            if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-               
-               % interpolate the locations
-               [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-                  prevLocDate, prevLocLon, prevLocLat, ...
-                  nextLocDate, nextLocLon, nextLocLat, ...
-                  prof.date);
-               
-               if (~isnan(interpLocLon))
-                  % assign the interpolated location to the profile
-                  prof.locationDate = prof.date;
-                  prof.locationLon = interpLocLon;
-                  prof.locationLat = interpLocLat;
-                  prof.locationQc = g_decArgo_qcStrInterpolated;
-                  
-                  % set the profile updated flag if profile location is
-                  % interpolated thanks to a new GPS received during the last
-                  % cycle of the current decoding session (used to detect when a
-                  % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-                  if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-                     idNext = find(a_gpsLocDate == nextLocDate);
-                     idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
-                     if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
-                        if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
-                              (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
-                           prof.updated = 1;
-                        end
-                     end
-                  end
-               else
-                  fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
-                     g_decArgo_floatNum, ...
-                     prof.cycleNumber);
-               end
-            end
-         end
       end
-      
+
       % we have not been able to set a location for the profile, we will use the
       % Iridium locations
       if (prof.locationDate == g_decArgo_dateDef)
-         [locDate, locLon, locLat, locQc, lastCycleFlag] = ...
+
+         [locDate, locLon, locLat, locQc, ~] = ...
             compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, prof.cycleNumber);
          if (~isempty(locDate))
             % assign the averaged Iridium location to the profile
@@ -236,28 +168,26 @@ for idP = 1:length(o_tabProfiles)
             prof.locationLat = locLat;
             prof.locationQc = locQc;
             prof.iridiumLocation = 1;
-            
+
             % positioning system
             prof.posSystem = 'IRIDIUM';
-            
-            % if the current cycle is the last received cycle, the location could
-            % have been updated (if the last cycle data have been received in two
-            % different rsync log files)
-            if (lastCycleFlag == 1)
-               prof.updated = 1;
+
+         else
+
+            [locDate, locLon, locLat, locQc, ~] = ...
+               compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, prof.cycleNumber);
+            if (~isempty(locDate))
+               % assign the averaged Iridium location to the profile
+               prof.locationDate2 = locDate;
+               prof.locationLon2 = locLon;
+               prof.locationLat2 = locLat;
+               prof.locationQc2 = locQc;
+               prof.iridiumLocation2 = 1;
+
+               % positioning system
+               prof.posSystem2 = 'IRIDIUM';
             end
          end
-      end
-      
-      if (prof.date == g_decArgo_dateDef)
-         fprintf('WARNING: Float #%d Cycle #%d: Unable to find the date of the profile\n', ...
-            g_decArgo_floatNum, ...
-            prof.cycleNumber);
-      end
-      if (prof.locationDate == g_decArgo_dateDef)
-         fprintf('WARNING: Float #%d Cycle #%d: Unable to find the location of the profile\n', ...
-            g_decArgo_floatNum, ...
-            prof.cycleNumber);
       end
    else
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in add_profile_date_and_location_apx_ir_sbd for profile direction ''%c''\n', ...
@@ -265,7 +195,7 @@ for idP = 1:length(o_tabProfiles)
          prof.cycleNumber, ...
          prof.direction);
    end
-   
+
    o_tabProfiles(idP) = prof;
 end
 

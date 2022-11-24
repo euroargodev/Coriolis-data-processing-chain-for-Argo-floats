@@ -351,10 +351,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % output NetCDF files
    
-   % fill Iridium profile locations with interpolated positions
-   % (profile locations have been computed cycle by cycle, we will check if
-   % some Iridium profile locations can not be replaced by interpolated locations
-   % of the surface trajectory)
+   % add interpolated/extrapolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
    
    % update the output cycle number in the structures

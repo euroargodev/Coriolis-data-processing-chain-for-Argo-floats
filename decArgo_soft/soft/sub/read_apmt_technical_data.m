@@ -2,12 +2,13 @@
 % Parse APMT technical files.
 %
 % SYNTAX :
-%  read_apmt_technical(a_cyclePatternNumFloat, a_filePrefix, a_decoderId)
+%  read_apmt_technical(a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
 %
 % INPUT PARAMETERS :
 %   a_cyclePatternNumFloat : cycle and pattern numbers
 %   a_filePrefix           : prefix of float transmitted files
 %   a_decoderId            : float decoder Id
+%   a_clockOffsetOnlyFlag  : read only clock offset information
 %
 % OUTPUT PARAMETERS :
 %
@@ -19,7 +20,7 @@
 % RELEASES :
 %   02/01/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function read_apmt_technical_data(a_cyclePatternNumFloat, a_filePrefix, a_decoderId)
+function read_apmt_technical_data(a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
 
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
@@ -48,7 +49,7 @@ for idCy = 1:length(uCycleList)
       for iF = 1:length(inputFiles)
          [apmtTech, apmtTimeFromTech, ...
             ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-            read_apmt_technical_file([g_decArgo_archiveDirectory '/' inputFiles(iF).name], a_decoderId);
+            read_apmt_technical_file([g_decArgo_archiveDirectory '/' inputFiles(iF).name], a_decoderId, a_clockOffsetOnlyFlag);
          g_decArgo_useaTechData = [g_decArgo_useaTechData; ...
             [floatCyNum -1 {inputFiles(iF).name} {apmtTech} {apmtTimeFromTech} {ncApmtTech} {apmtTrajFromTech} {apmtMetaFromTech}]];
       end
@@ -70,7 +71,7 @@ for idCyPat = 1:size(a_cyclePatternNumFloat, 1)
       for iF = 1:length(inputFiles)
          [apmtTech, apmtTimeFromTech, ...
             ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-            read_apmt_technical_file([g_decArgo_archiveDirectory '/' inputFiles(iF).name], a_decoderId);
+            read_apmt_technical_file([g_decArgo_archiveDirectory '/' inputFiles(iF).name], a_decoderId, a_clockOffsetOnlyFlag);
          g_decArgo_useaTechData = [g_decArgo_useaTechData; ...
             [floatCyNum floatPtnNum {inputFiles(iF).name} {apmtTech} {apmtTimeFromTech} {ncApmtTech} {apmtTrajFromTech} {apmtMetaFromTech}]];
       end

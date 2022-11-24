@@ -1276,10 +1276,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas = add_launch_data_in_traj(g_decArgo_floatSurfData);
    end
    
-   % fill empty profile locations with interpolated positions
-   % (profile locations have been computed cycle by cycle, we will check if
-   % some empty profile locations can not be determined using interpolations of the
-   % surface trajectory)
+   % add interpolated/extrapolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_argos(g_decArgo_floatSurfData, o_tabProfiles);
    
    % update the output cycle number in the structures

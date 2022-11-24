@@ -523,7 +523,7 @@ switch (a_decoderId)
          ];
       
    case {1125, 1128}
-      % 2.15.0.R, 2.15.2.R
+      % 2.15.0.R, 2.15.2.R, 2.15.5.R
       
       configIds = [ ...
          {'CONFIG_DIR'} ...

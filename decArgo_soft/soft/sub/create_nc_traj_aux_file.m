@@ -497,28 +497,23 @@ if (nbMeasParam > 0)
                   if (~isempty(resComment))
                      netcdf.putAtt(fCdf, measParamVarId, 'comment_on_resolution', resComment);
                   end
-                  
+
                   if (~isempty(measParam.axis))
                      netcdf.putAtt(fCdf, measParamVarId, 'axis', measParam.axis);
                   end
                end
-               
+
                % parameter QC variable and attributes
-               if ~((length(measParamName) > 3) && ...
-                     (strcmp(measParamName(end-3:end), '_STD') || ...
-                     strcmp(measParamName(end-3:end), '_MED')))
-                  
-                  measParamQcName = sprintf('%s_QC', measParamName);
-                  if (~var_is_present_dec_argo(fCdf, measParamQcName))
-                     
-                     measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
-                     
-                     netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
-                     netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
-                     netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
-                  end
+               measParamQcName = sprintf('%s_QC', measParamName);
+               if (~var_is_present_dec_argo(fCdf, measParamQcName))
+
+                  measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
+
+                  netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
+                  netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
+                  netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
                end
-               
+
                % parameter adjusted variable and attributes
                if (measParam.adjAllowed == 1)
                   
@@ -898,24 +893,19 @@ if (nbMeasParam > 0)
             % parameters
             measParamList = meas.paramList;
             for idParam = 1:length(measParamList)
-               
+
                measParam = measParamList(idParam);
                measParamName = measParam.name;
                measParamVarId = netcdf.inqVarID(fCdf, measParamName);
-               
-               measParamQcVarId = '';
-               if ~((length(measParamName) > 3) && ...
-                     (strcmp(measParamName(end-3:end), '_STD') || ...
-                     strcmp(measParamName(end-3:end), '_MED')))
-                  measParamQcName = sprintf('%s_QC', measParamName);
-                  measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
-               end
-               
+
+               measParamQcName = sprintf('%s_QC', measParamName);
+               measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
+
                % parameter data
                if (isempty(meas.paramNumberWithSubLevels))
-                  
+
                   % none of the profile parameters has sublevels
-                  
+
                   % parameter data
                   paramData = meas.paramData(:, idParam);
                   

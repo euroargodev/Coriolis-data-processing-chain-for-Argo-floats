@@ -32,12 +32,6 @@ function [o_profStruct] = add_profile_date_and_location_201_to_224_2001_to_2003(
 % output parameters initialization
 o_profStruct = [];
 
-% current float WMO number
-global g_decArgo_floatNum;
-
-% current cycle number
-global g_decArgo_cycleNum;
-
 % default values
 global g_decArgo_dateDef;
 
@@ -46,7 +40,6 @@ global g_decArgo_firstDeepCycleNumber;
 
 % QC flag values (char)
 global g_decArgo_qcStrNoQc;
-global g_decArgo_qcStrInterpolated;
 
 
 % add profile date dans location
@@ -111,56 +104,6 @@ if (a_profStruct.direction == 'D')
          a_profStruct.locationQc = g_decArgo_qcStrNoQc;
          a_profStruct.iridiumLocation = 0;
          
-      elseif (a_profStruct.date ~= g_decArgo_dateDef)
-         
-         % there is no GPS locations for the previous cycle, we must interpolate
-         % between existing GPS locations
-         prevLocDate = g_decArgo_dateDef;
-         nextLocDate = g_decArgo_dateDef;
-         
-         % find the previous GPS location
-         idPrev = find((gpsLocDate <= a_profStruct.date) & (gpsLocQc == 1));
-         if (~isempty(idPrev))
-            % previous good GPS locations exist, use the last one
-            [~, idMax] = max(gpsLocDate(idPrev));
-            prevLocDate = gpsLocDate(idPrev(idMax));
-            prevLocLon = gpsLocLon(idPrev(idMax));
-            prevLocLat = gpsLocLat(idPrev(idMax));
-         end
-         
-         % find the next GPS location
-         idNext = find((gpsLocDate >= a_profStruct.date) & (gpsLocQc == 1));
-         if (~isempty(idNext))
-            % next good GPS locations exist, use the first one
-            [~, idMin] = min(gpsLocDate(idNext));
-            nextLocDate = gpsLocDate(idNext(idMin));
-            nextLocLon = gpsLocLon(idNext(idMin));
-            nextLocLat = gpsLocLat(idNext(idMin));
-         end
-         
-         % interpolate between the 2 locations
-         if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-
-            % interpolate the locations
-            [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-               prevLocDate, prevLocLon, prevLocLat, ...
-               nextLocDate, nextLocLon, nextLocLat, ...
-               a_profStruct.date);
-            
-            if (~isnan(interpLocLon))
-               % assign the interpolated location to the profile
-               a_profStruct.locationDate = a_profStruct.date;
-               a_profStruct.locationLon = interpLocLon;
-               a_profStruct.locationLat = interpLocLat;
-               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
-               a_profStruct.iridiumLocation = 0;
-               a_profStruct.posSystem = 'GPS';
-            else
-               fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
-                  g_decArgo_floatNum, ...
-                  g_decArgo_cycleNum);
-            end
-         end
       end
    end
    
@@ -180,8 +123,23 @@ if (a_profStruct.direction == 'D')
          
          % positioning system
          a_profStruct.posSystem = 'IRIDIUM';
+
+      else
+
+         [locDate, locLon, locLat, locQc, ~] = ...
+            compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, a_profStruct.cycleNumber-1);
+         if (~isempty(locDate))
+            % assign the averaged Iridium location to the profile
+            a_profStruct.locationDate2 = locDate;
+            a_profStruct.locationLon2 = locLon;
+            a_profStruct.locationLat2 = locLat;
+            a_profStruct.locationQc2 = locQc;
+            a_profStruct.iridiumLocation2 = 1;
+
+            % positioning system
+            a_profStruct.posSystem2 = 'IRIDIUM';
+         end
       end
-      
    end
    
 else
@@ -237,62 +195,13 @@ else
          a_profStruct.locationQc = num2str(gpsLocQc(idLocCy(idMin))); % it is '1'
          a_profStruct.iridiumLocation = 0;
          
-      elseif (a_profStruct.date ~= g_decArgo_dateDef)
-         
-         % there is no good GPS locations for this cycle, we must interpolate between
-         % the existing GPS locations
-         prevLocDate = g_decArgo_dateDef;
-         nextLocDate = g_decArgo_dateDef;
-         
-         % find the previous GPS location
-         idPrev = find((gpsLocDate <= a_profStruct.date) & (gpsLocQc == 1));
-         if (~isempty(idPrev))
-            % previous good GPS locations exist, use the last one
-            [~, idMax] = max(gpsLocDate(idPrev));
-            prevLocDate = gpsLocDate(idPrev(idMax));
-            prevLocLon = gpsLocLon(idPrev(idMax));
-            prevLocLat = gpsLocLat(idPrev(idMax));
-         end
-         
-         % find the next GPS location
-         idNext = find((gpsLocDate >= a_profStruct.date) & (gpsLocQc == 1));
-         if (~isempty(idNext))
-            % next good GPS locations exist, use the first one
-            [~, idMin] = min(gpsLocDate(idNext));
-            nextLocDate = gpsLocDate(idNext(idMin));
-            nextLocLon = gpsLocLon(idNext(idMin));
-            nextLocLat = gpsLocLat(idNext(idMin));
-         end
-         
-         % interpolate between the 2 locations
-         if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-            
-            % interpolate the locations
-            [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-               prevLocDate, prevLocLon, prevLocLat, ...
-               nextLocDate, nextLocLon, nextLocLat, ...
-               a_profStruct.date);
-            
-            if (~isnan(interpLocLon))
-               % assign the interpolated location to the profile
-               a_profStruct.locationDate = a_profStruct.date;
-               a_profStruct.locationLon = interpLocLon;
-               a_profStruct.locationLat = interpLocLat;
-               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
-               a_profStruct.iridiumLocation = 0;
-               a_profStruct.posSystem = 'GPS';
-            else
-               fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
-                  g_decArgo_floatNum, ...
-                  g_decArgo_cycleNum);
-            end
-         end
       end
    end
    
    % we have not been able to set a location for the profile, we will use the
    % Iridium locations
    if (a_profStruct.locationDate == g_decArgo_dateDef)
+
       [locDate, locLon, locLat, locQc, ~] = ...
          compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, a_profStruct.cycleNumber);
       if (~isempty(locDate))
@@ -302,9 +211,25 @@ else
          a_profStruct.locationLat = locLat;
          a_profStruct.locationQc = locQc;
          a_profStruct.iridiumLocation = 1;
-         
+
          % positioning system
          a_profStruct.posSystem = 'IRIDIUM';
+
+      else
+
+         [locDate, locLon, locLat, locQc, ~] = ...
+            compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, a_profStruct.cycleNumber);
+         if (~isempty(locDate))
+            % assign the averaged Iridium location to the profile
+            a_profStruct.locationDate2 = locDate;
+            a_profStruct.locationLon2 = locLon;
+            a_profStruct.locationLat2 = locLat;
+            a_profStruct.locationQc2 = locQc;
+            a_profStruct.iridiumLocation2 = 1;
+
+            % positioning system
+            a_profStruct.posSystem2 = 'IRIDIUM';
+         end
       end
    end
    

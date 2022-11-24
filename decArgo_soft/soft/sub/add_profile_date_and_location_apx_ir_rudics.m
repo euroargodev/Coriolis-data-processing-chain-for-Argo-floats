@@ -401,4 +401,51 @@ for idP = 1:length(o_tabProfiles)
    o_tabProfiles(idP) = prof;
 end
 
+% Loop 6: extrapolate existing locations
+profList = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
+   ([o_tabProfiles.locationDate] == g_decArgo_dateDef));
+if (~isempty(profList))
+
+   idF = find([o_tabProfiles.date] < o_tabProfiles(profList(1)).date);
+
+   % look for the previous cycles
+   cyDateList = [o_tabProfiles(idF).date];
+   cyLonList = [o_tabProfiles(idF).locationLon];
+   cyLatList = [o_tabProfiles(idF).locationLat];
+   [~, idUnique, ~] = unique(cyDateList);
+   cyDateList = cyDateList(idUnique);
+   cyLonList = cyLonList(idUnique);
+   cyLatList = cyLatList(idUnique);
+
+   if (length(cyDateList) > 1)
+
+      % extrapolate the locations
+      [extrapLocLon, extrapLocLat] = extrapolate_locations(...
+         cyDateList(end-1), ...
+         cyLonList(end-1), ...
+         cyLatList(end-1), ...
+         cyDateList(end), ...
+         cyLonList(end), ...
+         cyLatList(end), ...
+         [o_tabProfiles(profList).date]);
+
+      % assign the extrapolated location to the profile
+      for id = 1:length(profList)
+         o_tabProfiles(profList(id)).locationDate = o_tabProfiles(profList(id)).date;
+         o_tabProfiles(profList(id)).locationLon = extrapLocLon(id);
+         o_tabProfiles(profList(id)).locationLat = extrapLocLat(id);
+         o_tabProfiles(profList(id)).locationQc = g_decArgo_qcStrInterpolated;
+      end
+   else
+
+      % use the launch location with a POSITION_QC=3
+      for id = 1:length(profList)
+         o_tabProfiles(profList(id)).locationDate = o_tabProfiles(profList(id)).date;
+         o_tabProfiles(profList(id)).locationLon = a_gpsLocLon(a_gpsLocCycleNum == -1);
+         o_tabProfiles(profList(id)).locationLat = a_gpsLocLat(a_gpsLocCycleNum == -1);
+         o_tabProfiles(profList(id)).locationQc = g_decArgo_qcStrCorrectable;
+      end
+   end
+end
+
 return

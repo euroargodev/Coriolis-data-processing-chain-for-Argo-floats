@@ -3,11 +3,12 @@
 %
 % SYNTAX :
 %  [o_techData, o_timeData, o_ncTechData, o_ncTrajData, o_ncMetaData] = ...
-%    read_apmt_technical_file(a_inputFilePathName, a_decoderId)
+%    read_apmt_technical_file(a_inputFilePathName, a_decoderId, a_clockOffsetOnlyFlag)
 %
 % INPUT PARAMETERS :
-%   a_inputFilePathName : APMT technical file path name
-%   a_decoderId         : float decoder Id
+%   a_inputFilePathName   : APMT technical file path name
+%   a_decoderId           : float decoder Id
+%   a_clockOffsetOnlyFlag : read only clock offset information
 %
 % OUTPUT PARAMETERS :
 %   o_techData   : APMT technical data
@@ -25,7 +26,7 @@
 %   02/01/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_techData, o_timeData, o_ncTechData, o_ncTrajData, o_ncMetaData] = ...
-   read_apmt_technical_file(a_inputFilePathName, a_decoderId)
+   read_apmt_technical_file(a_inputFilePathName, a_decoderId, a_clockOffsetOnlyFlag)
 
 % output parameters initialization
 o_techData = [];
@@ -126,6 +127,9 @@ end
 % retrieve technical information
 fieldNames = fieldnames(techData);
 for idF = 1:length(fieldNames)
+   if ((a_clockOffsetOnlyFlag == 1) && ~strcmp(fieldNames{idF}, 'GPS'))
+      continue
+   end
    rawData = techData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
       done = 0;

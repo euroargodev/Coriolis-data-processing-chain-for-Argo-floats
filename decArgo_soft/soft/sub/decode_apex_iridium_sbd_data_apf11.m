@@ -588,7 +588,10 @@ if (isempty(g_decArgo_outputCsvFileId))
    % add profile date and location information
    o_tabProfiles = add_profile_date_and_location_apx_ir_sbd( ...
       o_tabProfiles, g_decArgo_gpsData, g_decArgo_iridiumMailData, o_tabTrajNMeas, o_tabTrajNCycle);
-   
+
+   % add interpolated/extrapolated profile locations
+   o_tabProfiles = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
+
    % perform PARAMETER adjustment
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
       compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_floatLaunchDate, 1, a_decoderId);

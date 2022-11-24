@@ -31,10 +31,10 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\liste_snapshot
 
 % top directory of the NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\IN\';
-DIR_INPUT_NC_FILES = 'D:\202202-ArgoData\coriolis\';
+% DIR_INPUT_NC_FILES = 'D:\202202-ArgoData\coriolis\';
 
 % directory of output files
-DIR_OUTPUT_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\OUT7\';
+DIR_OUTPUT_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\OUT6\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -254,8 +254,7 @@ a_floatData.speed = speed;
 a_floatData.gebcoDepth = get_gebco_depth(a_floatData.longitude, a_floatData.latitude, a_gebcoFilePathName);
 
 % process the sets of cycles
-% for idS = 1:length(startIdList)
-for idS = 115
+for idS = 1:length(startIdList)
    idStart = startIdList(idS);
    idStop = stopIdList(idS);
 

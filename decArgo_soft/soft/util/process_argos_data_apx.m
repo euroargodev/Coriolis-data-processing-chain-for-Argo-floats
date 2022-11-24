@@ -26,11 +26,11 @@
 function process_argos_data_apx(varargin)
 
 % directory of input Argos files (all the files in only one directory)
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\argos_data\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\data_20220406\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
-DIR_OUTPUT = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\argos_data\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\data_20220406\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

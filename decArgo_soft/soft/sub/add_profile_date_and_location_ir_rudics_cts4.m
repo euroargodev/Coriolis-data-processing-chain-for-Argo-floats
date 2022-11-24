@@ -54,11 +54,11 @@ a_gpsLocDate = a_gpsData{4};
 a_gpsLocLon = a_gpsData{5};
 a_gpsLocLat = a_gpsData{6};
 a_gpsLocQc = a_gpsData{7};
-a_gpsLocAccuracy = a_gpsData{8};
-a_gpsLocSbdFileDate = a_gpsData{9};
 
 % add profile date dans location
 if (a_profStruct.direction == 'A')
+
+   % ascending profile
    
    % add profile date
    if (~isempty(a_ascentEndDate))
@@ -80,7 +80,7 @@ if (a_profStruct.direction == 'A')
          (a_gpsLocCycleNum == a_profStruct.cycleNumber) & ...
          (a_gpsLocProfNum == a_profStruct.profileNumber) & ...
          (a_gpsLocPhase == g_decArgo_phaseSatTrans));
-      
+
       if (~isempty(idPosToUse))
          
          if (length(idPosToUse) > 1)
@@ -152,6 +152,8 @@ if (a_profStruct.direction == 'A')
    end
    
 else
+
+   % descending profile
    
    % add profile date
    if (~isempty(a_descentToParkStartDate))

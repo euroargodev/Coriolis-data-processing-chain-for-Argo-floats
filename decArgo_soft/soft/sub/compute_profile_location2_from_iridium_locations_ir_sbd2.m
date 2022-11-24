@@ -2,10 +2,11 @@
 % Compute the profile location of a given cycle from Iridium locations (used
 % only when no GPS fixes are available), as specifieed in the trajectory DAC
 % cookbook.
+% Only Iridium locations with the min CEP radius are used.
 %
 % SYNTAX :
 %  [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
-%    compute_profile_location_from_iridium_locations_ir_sbd2( ...
+%    compute_profile_location2_from_iridium_locations_ir_sbd2( ...
 %    a_iridiumMailData, a_cycleNumber, a_profileNumber, a_prevCycleFlag)
 %
 % INPUT PARAMETERS :
@@ -32,7 +33,7 @@
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
-   compute_profile_location_from_iridium_locations_ir_sbd2( ...
+   compute_profile_location2_from_iridium_locations_ir_sbd2( ...
    a_iridiumMailData, a_cycleNumber, a_profileNumber, a_prevCycleFlag)
 
 % QC flag values (char)
@@ -65,49 +66,54 @@ else
 end
 
 % process the contents of the Iridium mail associated to the current cycle
-idFCyProfNum = find(([a_iridiumMailData.floatCycleNumber] == cycleNumber) & ...
-   ([a_iridiumMailData.floatProfileNumber] == profileNumber) & ...
-   ([a_iridiumMailData.cepRadius] ~= 0) & ([a_iridiumMailData.cepRadius] < 5));
-if (~isempty(idFCyProfNum))
-   timeList = [a_iridiumMailData(idFCyProfNum).timeOfSessionJuld];
-   latList = [a_iridiumMailData(idFCyProfNum).unitLocationLat];
-   lonList = [a_iridiumMailData(idFCyProfNum).unitLocationLon];
-   radiusList = [a_iridiumMailData(idFCyProfNum).cepRadius];
-   
-   % CEP Radius is initialized to 0 (so that the Iridium location is not
-   % considered if not present in the mail; Ex: co_20190527T062249Z_300234065420780_000939_000000_10565.txt)
-   % note also that NOVA/DOVA Iridium data (recieved from Paul Lane in CSV
-   % files) have CEP Radius set to 0
-   idDel = find(radiusList == 0);
-   if (~isempty(idDel))
-      timeList(idDel) = [];
-      latList(idDel) = [];
-      lonList(idDel) = [];
-      radiusList(idDel) = [];
-   end
-   
-   % longitudes must be in the [-180, 180[ interval
-   % (see cycle #18 of float #6903190)
-   idToShift = find(lonList >= 180);
-   lonList(idToShift) = lonList(idToShift) - 360;
-   
-   if (~isempty(timeList))
-      weight = 1./(radiusList.*radiusList);
-      o_locDate = mean(timeList);
-      o_locLon = sum(lonList.*weight)/sum(weight);
-      o_locLat = sum(latList.*weight)/sum(weight);
-      if (mean(radiusList) < 5)
-         o_locQc = g_decArgo_qcStrGood;
-      else
-         o_locQc = g_decArgo_qcStrProbablyGood;
+idForCy = find([a_iridiumMailData.cycleNumber] == cycleNumber);
+if (~isempty(idForCy))
+   cepRadiusCy = [a_iridiumMailData(idForCy).cepRadius];
+   cepRadiusCy(cepRadiusCy == 0) = [];
+   idFCyProfNum = find(([a_iridiumMailData.floatCycleNumber] == cycleNumber) & ...
+      ([a_iridiumMailData.floatProfileNumber] == profileNumber) & ...
+      ([a_iridiumMailData.cepRadius] == min(cepRadiusCy)));
+   if (~isempty(idFCyProfNum))
+      timeList = [a_iridiumMailData(idFCyProfNum).timeOfSessionJuld];
+      latList = [a_iridiumMailData(idFCyProfNum).unitLocationLat];
+      lonList = [a_iridiumMailData(idFCyProfNum).unitLocationLon];
+      radiusList = [a_iridiumMailData(idFCyProfNum).cepRadius];
+
+      % CEP Radius is initialized to 0 (so that the Iridium location is not
+      % considered if not present in the mail; Ex: co_20190527T062249Z_300234065420780_000939_000000_10565.txt)
+      % note also that NOVA/DOVA Iridium data (recieved from Paul Lane in CSV
+      % files) have CEP Radius set to 0
+      idDel = find(radiusList == 0);
+      if (~isempty(idDel))
+         timeList(idDel) = [];
+         latList(idDel) = [];
+         lonList(idDel) = [];
+         radiusList(idDel) = [];
       end
-      o_firstMsgTime = min(timeList);
-      
-      o_lastCycleFlag = 0;
-      if (cycleNumber == max([a_iridiumMailData.floatCycleNumber]))
-         idFCyNum = find([a_iridiumMailData.floatCycleNumber] == cycleNumber);
-         if (profileNumber == max([a_iridiumMailData(idFCyNum).floatProfileNumber]))
-            o_lastCycleFlag = 1;
+
+      % longitudes must be in the [-180, 180[ interval
+      % (see cycle #18 of float #6903190)
+      idToShift = find(lonList >= 180);
+      lonList(idToShift) = lonList(idToShift) - 360;
+
+      if (~isempty(timeList))
+         weight = 1./(radiusList.*radiusList);
+         o_locDate = mean(timeList);
+         o_locLon = sum(lonList.*weight)/sum(weight);
+         o_locLat = sum(latList.*weight)/sum(weight);
+         if (mean(radiusList) < 5)
+            o_locQc = g_decArgo_qcStrGood;
+         else
+            o_locQc = g_decArgo_qcStrProbablyGood;
+         end
+         o_firstMsgTime = min(timeList);
+
+         o_lastCycleFlag = 0;
+         if (cycleNumber == max([a_iridiumMailData.floatCycleNumber]))
+            idFCyNum = find([a_iridiumMailData.floatCycleNumber] == cycleNumber);
+            if (profileNumber == max([a_iridiumMailData(idFCyNum).floatProfileNumber]))
+               o_lastCycleFlag = 1;
+            end
          end
       end
    end

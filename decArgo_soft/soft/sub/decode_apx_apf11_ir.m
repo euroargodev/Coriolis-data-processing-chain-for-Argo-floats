@@ -224,7 +224,7 @@ if (~isempty(a_systemLogFileList))
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1128} % 2.15.2.R
+      case {1128} % 2.15.2.R & 2.15.5.R
          
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...

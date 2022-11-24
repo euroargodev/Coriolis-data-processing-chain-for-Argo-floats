@@ -29,11 +29,9 @@ o_tabProfiles = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
-% current cycle number
-global g_decArgo_cycleNum;
-
 % QC flag values (char)
 global g_decArgo_qcStrGood;
+global g_decArgo_qcStrCorrectable;
 global g_decArgo_qcStrInterpolated;
 
 % global default values
@@ -88,6 +86,9 @@ for idProf = 1:length(a_tabProfiles)
          prevLocDate = a_floatSurfData.launchDate;
          prevLocLon = a_floatSurfData.launchLon;
          prevLocLat = a_floatSurfData.launchLat;
+
+         % positioning system
+         a_tabProfiles(idProf).posSystem = 'NONE';
       end
       
       if (prevLocDate ~= g_decArgo_dateDef)
@@ -145,9 +146,51 @@ for idProf = 1:length(a_tabProfiles)
          else
             % retrieve 2 previous profile locations
             idF1 = find([a_tabProfiles.date] < profile.date);
-            [~, idSort] = sort([a_tabProfiles(idF1).cycleNumber]);
-            
 
+            % be sure of the chronological order
+            [~, idSort] = sort([a_tabProfiles(idF1).cycleNumber]);
+            idF1 = idSort(idF1);
+
+            % look for the previous cycles
+            cyDateList = [a_tabProfiles(idF1).locationDate];
+            cyLonList = [a_tabProfiles(idF1).locationLon];
+            cyLatList = [a_tabProfiles(idF1).locationLat];
+            [~, idUnique, ~] = unique(cyDateList);
+            cyDateList = cyDateList(idUnique);
+            cyLonList = cyLonList(idUnique);
+            cyLatList = cyLatList(idUnique);
+
+            if (length(cyDateList) > 1)
+
+               % extrapolate the locations
+               [extrapLocLon, extrapLocLat] = extrapolate_locations(...
+                  cyDateList(end-1), ...
+                  cyLonList(end-1), ...
+                  cyLatList(end-1), ...
+                  cyDateList(end), ...
+                  cyLonList(end), ...
+                  cyLatList(end), ...
+                  profile.date);
+
+               if (~isnan(extrapLocLon))
+                  % assign the extrapolated location to the profile
+                  a_tabProfiles(idProf).locationDate = profile.date;
+                  a_tabProfiles(idProf).locationLon = extrapLocLon;
+                  a_tabProfiles(idProf).locationLat = extrapLocLat;
+                  a_tabProfiles(idProf).locationQc = g_decArgo_qcStrInterpolated;
+               else
+                  fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while extrapolating for profile location processing - profile not located\n', ...
+                     g_decArgo_floatNum, ...
+                     profile.cycleNumber);
+               end
+            else
+
+               % use the launch location with a POSITION_QC=3
+               a_tabProfiles(idProf).locationDate = profile.date;
+               a_tabProfiles(idProf).locationLon = a_floatSurfData.launchLon;
+               a_tabProfiles(idProf).locationLat = a_floatSurfData.launchLat;
+               a_tabProfiles(idProf).locationQc = g_decArgo_qcStrCorrectable;
+            end
          end
       end
    end

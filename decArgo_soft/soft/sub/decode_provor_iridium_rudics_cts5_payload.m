@@ -666,7 +666,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % output NetCDF files
    
-   % add interpolated profile locations
+   % add interpolated/extrapolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    
@@ -980,7 +980,7 @@ for typeNum = typeOrderList
                
                [apmtTech, apmtTimeFromTech, ...
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-                  read_apmt_technical_file([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
+                  read_apmt_technical_file([fileNameInfo{4} fileNameInfo{1}], a_decoderId, 0);
                g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
                if (~isempty(g_decArgo_patternNumFloat))
                   g_decArgo_apmtTimeFromTech = cat(1, g_decArgo_apmtTimeFromTech, ...

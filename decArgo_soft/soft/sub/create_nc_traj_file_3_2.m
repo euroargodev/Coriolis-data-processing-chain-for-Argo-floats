@@ -102,7 +102,6 @@ end
 
 % collect information on trajectory
 measParamNameAll = [];
-measParamStatNameAll = [];
 paramNameSubLevelsAll = [];
 measSubLevelsAll = [];
 for idNM = 1:length(a_tabTrajNMeas)
@@ -111,12 +110,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       measParamList = [nMeas.tabMeas.paramList];
       if (~isempty(measParamList))
          measParamNameList = {measParamList.name};
-         idParam = find(cellfun(@(x) ~strcmp(x(end-3:end), '_STD'), measParamNameList) & ...
-            cellfun(@(x) ~strcmp(x(end-3:end), '_MED'), measParamNameList));
-         measParamNameAll = [measParamNameAll measParamNameList(idParam)];
-         idParamStat = find(cellfun(@(x) strcmp(x(end-3:end), '_STD'), measParamNameList) | ...
-            cellfun(@(x) strcmp(x(end-3:end), '_MED'), measParamNameList));
-         measParamStatNameAll = [measParamStatNameAll measParamNameList(idParamStat)];
+         measParamNameAll = [measParamNameAll measParamNameList];
          
          idWithSubLevels = find(~cellfun(@isempty, {nMeas.tabMeas.paramNumberWithSubLevels}));
          if (~isempty(idWithSubLevels))
@@ -131,7 +125,6 @@ for idNM = 1:length(a_tabTrajNMeas)
    end
 end
 measUniqueParamName = unique(measParamNameAll, 'stable');
-measUniqueParamStatName = unique(measParamStatNameAll, 'stable');
 nbMeasParam = length(measUniqueParamName);
 
 % due to erroneous received data, the number of sublevels can vary for a same
@@ -630,171 +623,26 @@ for idNM = 1:length(a_tabTrajNMeas)
             if (~isempty(resComment))
                netcdf.putAtt(fCdf, measParamVarId, 'comment_on_resolution', resComment);
             end
-            
+
             if (~isempty(measParam.axis))
                netcdf.putAtt(fCdf, measParamVarId, 'axis', measParam.axis);
             end
-            
-            % statistical parameter variable and attributes
-            measParamStdName = [measParamName '_STD'];
-            if (any(strcmp(measParamStdName, measUniqueParamStatName)))
-               if (~any(strcmp(measParamStdName, paramNameInFileAll)))
-                  
-                  paramNameInFileAll{end+1} = measParamStdName;
-                  measParamStd = get_netcdf_param_attributes(measParamStdName);
-                  
-                  % create parameter variable and attributes
-                  if (strcmp(measParamNcType, 'NC_DOUBLE'))
-                     doubleTypeInFile = 1;
-                  end
-                  if (paramWithSubLevels == 0)
-                     measParamStdVarId = netcdf.defVar(fCdf, measParamStdName, measParamNcType, nMeasurementDimId);
-                  else
-                     measParamStdVarId = netcdf.defVar(fCdf, measParamStdName, measParamNcType, fliplr([nMeasurementDimId nValuesDimId]));
-                  end
-                  
-                  if (~isempty(measParamStd.longName))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'long_name', measParamStd.longName);
-                  end
-                  if (~isempty(measParamStd.standardName))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'standard_name', measParamStd.standardName);
-                  end
-                  if (~isempty(measParamStd.fillValue))
-                     netcdf.putAtt(fCdf, measParamStdVarId, '_FillValue', measParamStd.fillValue);
-                  end
-                  if (~isempty(measParamStd.units))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'units', measParamStd.units);
-                  end
-                  if (~isempty(measParamStd.validMin))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'valid_min', measParamStd.validMin);
-                  end
-                  if (~isempty(measParamStd.validMax))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'valid_max', measParamStd.validMax);
-                  end
-                  
-                  [cFormat, fortranFormat] = get_param_output_format(measParamStdName, a_decoderId);
-                  if (isempty(cFormat))
-                     if (~isempty(measParamStd.cFormat))
-                        netcdf.putAtt(fCdf, measParamStdVarId, 'C_format', measParamStd.cFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'C_format', cFormat);
-                  end
-                  if (isempty(fortranFormat))
-                     if (~isempty(measParamStd.fortranFormat))
-                        netcdf.putAtt(fCdf, measParamStdVarId, 'FORTRAN_format', measParamStd.fortranFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'FORTRAN_format', fortranFormat);
-                  end
-                  
-                  [resNominal, resComment] = get_param_comment_on_resolution(measParamStdName, a_decoderId);
-                  if (isempty(resNominal))
-                     if (~isempty(measParamStd.resolution))
-                        netcdf.putAtt(fCdf, measParamStdVarId, 'resolution', measParamStd.resolution);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'resolution', resNominal);
-                  end
-                  if (~isempty(resComment))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'comment_on_resolution', resComment);
-                  end
-                  
-                  if (~isempty(measParamStd.axis))
-                     netcdf.putAtt(fCdf, measParamStdVarId, 'axis', measParamStd.axis);
-                  end
-               end
-            end
-            
-            measParamMedName = [measParamName '_MED'];
-            if (any(strcmp(measParamMedName, measUniqueParamStatName)))
-               if (~any(strcmp(measParamMedName, paramNameInFileAll)))
-                  
-                  paramNameInFileAll{end+1} = measParamMedName;
-                  measParamMed = get_netcdf_param_attributes(measParamMedName);
-                  
-                  % create parameter variable and attributes
-                  if (strcmp(measParamNcType, 'NC_DOUBLE'))
-                     doubleTypeInFile = 1;
-                  end
-                  if (paramWithSubLevels == 0)
-                     measParamMedVarId = netcdf.defVar(fCdf, measParamMedName, measParamNcType, nMeasurementDimId);
-                  else
-                     measParamMedVarId = netcdf.defVar(fCdf, measParamMedName, measParamNcType, fliplr([nMeasurementDimId nValuesDimId]));
-                  end
-                  
-                  if (~isempty(measParamMed.longName))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'long_name', measParamMed.longName);
-                  end
-                  if (~isempty(measParamMed.standardName))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'standard_name', measParamMed.standardName);
-                  end
-                  if (~isempty(measParamMed.fillValue))
-                     netcdf.putAtt(fCdf, measParamMedVarId, '_FillValue', measParamMed.fillValue);
-                  end
-                  if (~isempty(measParamMed.units))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'units', measParamMed.units);
-                  end
-                  if (~isempty(measParamMed.validMin))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'valid_min', measParamMed.validMin);
-                  end
-                  if (~isempty(measParamMed.validMax))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'valid_max', measParamMed.validMax);
-                  end
-                  
-                  [cFormat, fortranFormat] = get_param_output_format(measParamMedName, a_decoderId);
-                  if (isempty(cFormat))
-                     if (~isempty(measParamMed.cFormat))
-                        netcdf.putAtt(fCdf, measParamMedVarId, 'C_format', measParamMed.cFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'C_format', cFormat);
-                  end
-                  if (isempty(fortranFormat))
-                     if (~isempty(measParamMed.fortranFormat))
-                        netcdf.putAtt(fCdf, measParamMedVarId, 'FORTRAN_format', measParamMed.fortranFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'FORTRAN_format', fortranFormat);
-                  end
-                  
-                  [resNominal, resComment] = get_param_comment_on_resolution(measParamMedName, a_decoderId);
-                  if (isempty(resNominal))
-                     if (~isempty(measParamMed.resolution))
-                        netcdf.putAtt(fCdf, measParamMedVarId, 'resolution', measParamMed.resolution);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'resolution', resNominal);
-                  end
-                  if (~isempty(resComment))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'comment_on_resolution', resComment);
-                  end
-                  
-                  if (~isempty(measParamMed.axis))
-                     netcdf.putAtt(fCdf, measParamMedVarId, 'axis', measParamMed.axis);
-                  end
-               end
-            end
-            
+
             % parameter QC variable and attributes
-            if ~(strcmp(measParamName(end-3:end), '_STD') || ...
-                  strcmp(measParamName(end-3:end), '_MED'))
-               
-               measParamQcName = [measParamName '_QC'];
-               if (~any(strcmp(measParamQcName, paramNameInFileAll)))
-                  
-                  paramNameInFileAll{end+1} = measParamQcName;
-                  
-                  measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
-                  
-                  netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
-                  netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
-                  netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
-               end
+            measParamQcName = [measParamName '_QC'];
+            if (~any(strcmp(measParamQcName, paramNameInFileAll)))
+
+               paramNameInFileAll{end+1} = measParamQcName;
+
+               measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
+
+               netcdf.putAtt(fCdf, measParamQcVarId, 'long_name', 'quality flag');
+               netcdf.putAtt(fCdf, measParamQcVarId, 'conventions', 'Argo reference table 2');
+               netcdf.putAtt(fCdf, measParamQcVarId, '_FillValue', ' ');
             end
-            
+
             % parameter adjusted variable and attributes
-            if (measParam.adjAllowed == 1) % adj is not allowed for all <PARAM>_MED and <PARAM>_STD in get_netcdf_param_attributes_3_1
+            if (measParam.adjAllowed == 1)
                
                measParamAdjName = [measParamName '_ADJUSTED'];
                if (~any(strcmp(measParamAdjName, paramNameInFileAll)))
@@ -1659,11 +1507,9 @@ for idVar = 1:length(measUniqueParamName)
    varNameList = [ varNameList ...
       {measUniqueParamName{idVar}} ...
       {[measUniqueParamName{idVar} '_QC']} ...
-      {[measUniqueParamName{idVar} '_STD']} ...
-      {[measUniqueParamName{idVar} '_MED']} ...
       {[measUniqueParamName{idVar} '_ADJUSTED']} ...
       {[measUniqueParamName{idVar} '_ADJUSTED_QC']} ...
-      {[measUniqueParamName{idVar} '_ADJUSTED_ERROR']} ... %%%%%%%%%%%%%%
+      {[measUniqueParamName{idVar} '_ADJUSTED_ERROR']} ...
       ];
 end
 varNameList = unique(varNameList, 'stable');
@@ -1915,20 +1761,18 @@ for idNM = 1:length(a_tabTrajNMeas)
                   end
                end
             end
-            
-            if (~ismember(measParamName, measUniqueParamStatName)) % for statistical parameters
-               idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
-               if (isempty(meas.paramDataMode))
+
+            idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
+            if (isempty(meas.paramDataMode))
+               if (paramData ~= measParam.fillValue)
+                  data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
+               end
+            else
+               if (meas.paramDataMode(idParam) == 'A')
+                  data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
+               else
                   if (paramData ~= measParam.fillValue)
                      data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
-                  end
-               else
-                  if (meas.paramDataMode(idParam) == 'A')
-                     data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
-                  else
-                     if (paramData ~= measParam.fillValue)
-                        data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
-                     end
                   end
                end
             end
@@ -2004,30 +1848,28 @@ for idNM = 1:length(a_tabTrajNMeas)
                   
                   if (~isempty(meas.paramDataAdjError))
                      if (~isempty(measParamAdjErrorVarId))
-                        
+
                         paramAdjErrorData = meas.paramDataAdjError(:, firstCol:lastCol);
                         data{measParamAdjErrorVarId+1}(idM) = paramAdjErrorData;
                      end
                   end
                end
-               
-               if (~ismember(measParamName, measUniqueParamStatName)) % for statistical parameters
-                  idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
-                  if (isempty(meas.paramDataMode))
+
+               idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
+               if (isempty(meas.paramDataMode))
+                  if (paramData ~= measParam.fillValue)
+                     data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
+                  end
+               else
+                  if (meas.paramDataMode(idParam) == 'A')
+                     data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
+                  else
                      if (paramData ~= measParam.fillValue)
                         data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
                      end
-                  else
-                     if (meas.paramDataMode(idParam) == 'A')
-                        data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
-                     else
-                        if (paramData ~= measParam.fillValue)
-                           data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
-                        end
-                     end
                   end
                end
-               
+
             else
                
                data{measParamVarId+1}(1:size(paramData, 2), idM) = paramData';
@@ -2099,24 +1941,22 @@ for idNM = 1:length(a_tabTrajNMeas)
                      end
                   end
                end
-               
-               if (~ismember(measParamName, measUniqueParamStatName)) % for statistical parameters
-                  idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
-                  if (isempty(meas.paramDataMode))
+
+               idParamInList = find(strcmp(paramNameInFile, measParamName), 1);
+               if (isempty(meas.paramDataMode))
+                  if (any(paramData ~= measParam.fillValue))
+                     data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
+                  end
+               else
+                  if (meas.paramDataMode(idParam) == 'A')
+                     data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
+                  else
                      if (any(paramData ~= measParam.fillValue))
                         data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
                      end
-                  else
-                     if (meas.paramDataMode(idParam) == 'A')
-                        data{trajParamDataModeId+1}(idParamInList, idM) = 'A';
-                     else
-                        if (any(paramData ~= measParam.fillValue))
-                           data{trajParamDataModeId+1}(idParamInList, idM) = 'R';
-                        end
-                     end
                   end
                end
-               
+
             end
          end
       end
@@ -2289,16 +2129,16 @@ if (~isempty(g_decArgo_paramTrajAdjInfo))
       
       idParam = find(strcmp(measUniqueParamName, param));
       netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
-         fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(equation)]), equation');
+         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(equation)]), equation');
       netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
-         fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(coefficient)]), coefficient');
+         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(coefficient)]), coefficient');
       if (~isempty(comment))
          netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
-            fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(comment)]), comment');
+            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(comment)]), comment');
       end
       if (~isempty(date))
          netcdf.putVar(fCdf, scientificCalibDateVarId, ...
-            fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(date)]), date');
+            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(date)]), date');
       end
    end
 end

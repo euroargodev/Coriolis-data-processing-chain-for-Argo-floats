@@ -104,8 +104,6 @@ global g_decArgo_juldTrajAdjInfo;
 global g_decArgo_juldTrajAdjId;
 
 % parameter added "on the fly" to meta-data file
-global g_decArgo_addParamNbSampleCtd;
-global g_decArgo_addParamNbSampleSfet;
 global g_decArgo_addParamListCtd;
 global g_decArgo_addParamListOxygen;
 global g_decArgo_addParamListPh;
@@ -150,8 +148,6 @@ for idFloat = 1:nbFloats
    g_decArgo_juldTrajAdjInfo = [];
    g_decArgo_juldTrajAdjId = 1;
 
-   g_decArgo_addParamNbSampleCtd = 0;
-   g_decArgo_addParamNbSampleSfet = 0;
    g_decArgo_addParamListCtd = [];
    g_decArgo_addParamListOxygen = [];
    g_decArgo_addParamListPh = [];
