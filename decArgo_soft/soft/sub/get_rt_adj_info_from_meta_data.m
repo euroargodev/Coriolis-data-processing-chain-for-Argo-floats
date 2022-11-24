@@ -32,6 +32,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.param = [];
    o_rtOffsetInfo.slope = [];
    o_rtOffsetInfo.value = [];
+   o_rtOffsetInfo.drift = [];
+   o_rtOffsetInfo.inclineT = [];
    o_rtOffsetInfo.adjError = [];
    o_rtOffsetInfo.adjErrorStr = [];
    o_rtOffsetInfo.adjErrorMethod = [];
@@ -47,6 +49,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       fieldNames = fields(rtData.PARAM);
       tabSlope = [];
       tabValue = [];
+      tabDrift = [];
+      tabInclineT = [];
       tabAdjError = [];
       tabAdjErrorStr = [];
       tabAdjErrorMethod = [];
@@ -67,6 +71,26 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             tabSlope = [tabSlope slope];
             value = str2double(rtData.VALUE.(['VALUE_' paramNum]));
             tabValue = [tabValue value];
+            if (isfield(rtData, 'DRIFT'))
+               if (isfield(rtData.DRIFT, ['DRIFT_' paramNum]))
+                  drift = str2double(rtData.DRIFT.(['DRIFT_' paramNum]));
+                  tabDrift = [tabDrift drift];
+               else
+                  tabDrift = [tabDrift 0];
+               end
+            else
+               tabDrift = [tabDrift 0];
+            end
+            if (isfield(rtData, 'INCLINE'))
+               if (isfield(rtData.INCLINE, ['INCLINE_' paramNum]))
+                  inclineT = str2double(rtData.INCLINE.(['INCLINE_' paramNum]));
+                  tabInclineT = [tabInclineT inclineT];
+               else
+                  tabInclineT = [tabInclineT 0];
+               end
+            else
+               tabInclineT = [tabInclineT 0];
+            end
             if (isfield(rtData, 'ADJUSTED_ERROR'))
                if (isfield(rtData.ADJUSTED_ERROR, ['ADJUSTED_ERROR_' paramNum]))
                   adjError = str2double(rtData.ADJUSTED_ERROR.(['ADJUSTED_ERROR_' paramNum]));
@@ -104,6 +128,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       [tabDate, idSorted] = sort(tabDate);
       tabSlope = tabSlope(idSorted);
       tabValue = tabValue(idSorted);
+      tabDrift = tabDrift(idSorted);
+      tabInclineT = tabInclineT(idSorted);
       tabAdjError = tabAdjError(idSorted);
       tabAdjErrorStr = tabAdjErrorStr(idSorted);
       tabAdjErrorMethod = tabAdjErrorMethod(idSorted);
@@ -115,6 +141,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       o_rtOffsetInfo.param{end+1} = param;
       o_rtOffsetInfo.slope{end+1} = tabSlope;
       o_rtOffsetInfo.value{end+1} = tabValue;
+      o_rtOffsetInfo.drift{end+1} = tabDrift;
+      o_rtOffsetInfo.inclineT{end+1} = tabInclineT;
       o_rtOffsetInfo.adjError{end+1} = tabAdjError;
       o_rtOffsetInfo.adjErrorStr{end+1} = tabAdjErrorStr;
       o_rtOffsetInfo.adjErrorMethod{end+1} = tabAdjErrorMethod;

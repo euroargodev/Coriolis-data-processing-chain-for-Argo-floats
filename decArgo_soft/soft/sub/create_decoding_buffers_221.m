@@ -286,7 +286,7 @@ for sesNum = sessionList
    
    % check current session contents
    [completed, deep, ~] = check_buffer(idForCheck, tabPackType, ...
-      tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, 0);
+      tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 0);
    delayed = 0;
    
    % check data of following sessions (to get possibly unexpected data such
@@ -303,7 +303,7 @@ for sesNum = sessionList
          delayed = 2;
          idForCheck = [idForCheck idRemaining];
          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, ...
-            tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, 0);
+            tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 0);
       end
    end
    
@@ -349,7 +349,7 @@ for sesNum = sessionList
          
          % check current session contents
          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, ...
-            tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, 0);
+            tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 0);
          
          % check data of following sessions (to get possibly unexpected data such
          % as pump or valve packets)
@@ -363,7 +363,7 @@ for sesNum = sessionList
             if (~isempty(idRemaining))
                idForCheck = [idForCheck idRemaining];
                [completed, deep, ~] = check_buffer(idForCheck, tabPackType, ...
-                  tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, 0);
+                  tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 0);
             end
          end
          
@@ -486,7 +486,7 @@ for cyNum = cyNumList
          
          if (tabCompleted(idRankCy) == 0)
             [~, ~, why] = check_buffer(idForRankCy, tabPackType, ...
-               tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, 1);
+               tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 1);
             
             for idL = 1:length(why)
                fprintf('   -> %s\n', why{idL});
@@ -637,7 +637,7 @@ return
 % SYNTAX :
 %  [o_completed, o_deep, o_whyStr] = check_buffer( ...
 %    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-%    a_tabExpNbNearSurface, a_tabExpNbInAir, a_whyFlag)
+%    a_tabExpNbNearSurface, a_tabExpNbInAir, a_cycleNum, a_whyFlag)
 %
 % INPUT PARAMETERS :
 %   a_idForCheck          : Id list of SBD to be checked
@@ -647,6 +647,7 @@ return
 %   a_tabExpNbAsc         : expected number of ascending data packets
 %   a_tabExpNbNearSurface : expected number of Near Surface measurements
 %   a_tabExpNbInAir       : expected number of In Air measurements
+%   a_cycleNum            : cycle number
 %   a_whyFlag             : if set to 1, print why the buffer is not completed
 %
 % OUTPUT PARAMETERS :
@@ -665,12 +666,15 @@ return
 % ------------------------------------------------------------------------------
 function [o_completed, o_deep, o_whyStr] = check_buffer( ...
    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-   a_tabExpNbNearSurface, a_tabExpNbInAir, a_whyFlag)
+   a_tabExpNbNearSurface, a_tabExpNbInAir, a_cycleNum, a_whyFlag)
 
 % output parameter initialization
 o_completed = 0;
 o_deep = 0;
 o_whyStr = '';
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 
 % check buffer completion
@@ -729,12 +733,33 @@ if (~isempty(idPackTech2))
          o_completed = 1;
       else
          % deep cycle
-         if ((recNbDesc == expNbDesc) && ...
-               (recNbDrift == expNbDrift) && ...
-               (recNbAsc == expNbAsc) && ...
-               (recNbNearSurface == expNbNearSurface) && ...
-               (recNbInAir == expNbInAir))
+         if ((recNbDesc >= expNbDesc) && ...
+               (recNbDrift >= expNbDrift) && ...
+               (recNbAsc >= expNbAsc) && ...
+               (recNbNearSurface >= expNbNearSurface) && ...
+               (recNbInAir >= expNbInAir))
             o_completed = 1;
+            
+            if (recNbDesc > expNbDesc)
+               fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d descending data packets are NOT EXPECTED\n', ...
+                  g_decArgo_floatNum, a_cycleNum, recNbDesc-expNbDesc);
+            end
+            if (recNbDrift > expNbDrift)
+               fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d drift data packets are NOT EXPECTED\n', ...
+                  g_decArgo_floatNum, a_cycleNum, recNbDrift-expNbDrift);
+            end
+            if (recNbAsc > expNbAsc)
+               fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d ascending data packets are NOT EXPECTED\n', ...
+                  g_decArgo_floatNum, a_cycleNum, recNbAsc-expNbAsc);
+            end
+            if (recNbNearSurface > expNbNearSurface)
+               fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d ''Near Surface'' data packets are NOT EXPECTED\n', ...
+                  g_decArgo_floatNum, a_cycleNum, recNbNearSurface-expNbNearSurface);
+            end
+            if (recNbInAir > expNbInAir)
+               fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d ''In Air'' data packets are NOT EXPECTED\n', ...
+                  g_decArgo_floatNum, a_cycleNum, recNbInAir-expNbInAir);
+            end
          end
          o_deep = 1;
       end

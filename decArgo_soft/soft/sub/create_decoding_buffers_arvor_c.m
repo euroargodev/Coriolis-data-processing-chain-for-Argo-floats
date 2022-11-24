@@ -178,7 +178,7 @@ for cyNum = cyNumList
          length(idForCy), deepStr, completedStr, piDecStr);
       
       if (tabCompleted(idCy) == 0)
-         [~, ~, why] = check_buffer(idForCy, tabPackType, tabExpNbAsc, 1);
+         [~, ~, why] = check_buffer(idForCy, tabPackType, tabExpNbAsc, cyNum, 1);
          for idL = 1:length(why)
             fprintf('   -> %s\n', why{idL});
          end
@@ -257,13 +257,14 @@ return
 %
 % SYNTAX :
 %  [o_completed, o_deep, o_whyStr] = check_buffer( ...
-%    a_idForCheck, a_tabPackType, a_tabExpNbAsc, a_whyFlag)
+%    a_idForCheck, a_tabPackType, a_tabExpNbAsc, a_cycleNum, a_whyFlag)
 %
 % INPUT PARAMETERS :
-%   a_idForCheck    : Id list of SBD to be checked
-%   a_tabPackType   : SBD packet types
-%   a_tabExpNbAsc   : expected number of ascending data packets
-%   a_whyFlag       : if set to 1, print why the buffer is not completed
+%   a_idForCheck  : Id list of SBD to be checked
+%   a_tabPackType : SBD packet types
+%   a_tabExpNbAsc : expected number of ascending data packets
+%   a_cycleNum    : cycle number
+%   a_whyFlag     : if set to 1, print why the buffer is not completed
 %
 % OUTPUT PARAMETERS :
 %   o_completed : 1 if the buffer is completed, 0 otherwise
@@ -280,12 +281,15 @@ return
 %   09/17/2019 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_completed, o_deep, o_whyStr] = check_buffer( ...
-   a_idForCheck, a_tabPackType, a_tabExpNbAsc, a_whyFlag)
+   a_idForCheck, a_tabPackType, a_tabExpNbAsc, a_cycleNum, a_whyFlag)
 
 % output parameter initialization
 o_completed = 0;
 o_deep = 0;
 o_whyStr = '';
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 
 % check buffer completion
@@ -306,8 +310,13 @@ if (~isempty(idPackTech))
       o_completed = 1;
    else
       % deep cycle
-      if (recNbAsc == expNbAsc)
+      if (recNbAsc >= expNbAsc)
          o_completed = 1;
+         
+         if (recNbAsc > expNbAsc)
+            fprintf('BUFF_WARNING: Float #%d Cycle #%3d : %d ascending data packets are NOT EXPECTED\n', ...
+               g_decArgo_floatNum, a_cycleNum, recNbAsc-expNbAsc);
+         end
       end
       o_deep = 1;
    end

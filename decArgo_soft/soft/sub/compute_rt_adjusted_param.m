@@ -41,7 +41,7 @@ if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
 end
 
 % perform DOXY RT adjustment
-[o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles, a_decoderId);
+[o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles, a_launchDate, a_decoderId);
 
 if (a_notOnlyDoxyFlag)
    % perform CHLA RT adjustment
@@ -406,10 +406,11 @@ return
 % Perform real time adjustment on DOXY profile data.
 %
 % SYNTAX :
-%  [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_decoderId)
+%  [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabProfiles : input profile structures
+%   a_launchDate  : float launch date
 %   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -423,7 +424,7 @@ return
 % RELEASES :
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_decoderId)
+function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
@@ -459,6 +460,8 @@ end
 % retrieve information on DOXY adjustement in RT_OFFSET information of META.json file
 doSlope = '';
 doOffset = '';
+doDrift = '';
+doInclineT = '';
 doDate = '';
 doAdjError = '';
 doAdjErrorStr = '';
@@ -475,6 +478,15 @@ if (~isempty(g_decArgo_rtOffsetInfo))
             doAdjError = g_decArgo_rtOffsetInfo.adjError{idF};
             doAdjErrorStr = g_decArgo_rtOffsetInfo.adjErrorStr{idF}{:};
             doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF}{:};
+         end
+         % new fields (possibly not filled for old adjustments)
+         doDrift = 0;
+         if (isfield(g_decArgo_rtOffsetInfo, 'drift'))
+            doDrift = g_decArgo_rtOffsetInfo.drift{idF};
+         end
+         doInclineT = 0;
+         if (isfield(g_decArgo_rtOffsetInfo, 'inclineT'))
+            doInclineT = g_decArgo_rtOffsetInfo.inclineT{idF};
          end
          break
       end
@@ -495,8 +507,20 @@ if (~isempty(doSlope))
             ([o_tabProfiles.direction] == profile.direction) & ...
             ([o_tabProfiles.sensorNumber] < 100)); % AUX profiles should not be considered
          
+         % some cases need the PPOX_ERROR to increase with time
+         startDateToIncreasePpoxErrorWithTime = '';
+         if (~isnan(doAdjError))
+            switch (doAdjErrMethod)
+               case {'1_1', '2_1'}
+                  startDateToIncreasePpoxErrorWithTime = '';
+               case {'1_2', '2_2', '3_2'}
+                  startDateToIncreasePpoxErrorWithTime = doDate;
+            end
+         end
+         
          % adjust DOXY for this profile
-         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset, doAdjError, a_decoderId);
+         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), ...
+            doSlope, doOffset, doDrift, doInclineT, doAdjError, startDateToIncreasePpoxErrorWithTime, a_launchDate, a_decoderId);
          if (ok)
             profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
             o_tabProfiles(idProf) = profile;
@@ -508,24 +532,37 @@ if (~isempty(doSlope))
                direction = 1;
             end
             
-            equation = 'PPOX_DOXY_ADJUSTED = PPOX_DOXY * SLOPE + OFFSET';
-            coefficient = sprintf('SLOPE = %g, OFFSET = %g', doSlope, doOffset);
+            equation = ['PPOX=f(DOXY), ' ...
+               'PPOX_DOXY_ADJUSTED=(SLOPE*(1+DRIFT/100*(profile_date_juld-launch_date_juld)/365)+INCLINE_T*TEMP)*(PPOX_DOXY+OFFSET), ' ...
+               'DOXY_ADJUSTED=f(PPOX_DOXY_ADJUSTED)'];
+            coefficient = sprintf('OFFSET = %g, SLOPE = %g, DRIFT = %g, INCLINE_T = %g, launch_date_juld = %s', ...
+               doOffset, doSlope, doDrift, doInclineT, datestr(a_launchDate + g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS'));
             comment = '';
             if (~isnan(doAdjError))
                switch (doAdjErrMethod)
                   case '1_1'
                      comment = sprintf(['DOXY_ADJUSTED is computed from an adjustment ' ...
-                        'of in water PSAT or PPOX float data at surface by comparison to WOA PSAT ' ...
-                        'climatology or WOA PPOX in using PSATWOA and TEMP and PSALfloat at 1 atm, ' ...
+                        'of in water PSAT or PPOX float data at surface by comparison to woaPSAT ' ...
+                        'climatology or WOA PPOX in using woaPSAT and floatTEMP and PSAL at 1 atm, ' ...
                         'DOXY_ADJUSTED_ERROR is computed from a PPOX_ERROR of %s mbar'], doAdjErrorStr);
+                  case '1_2'
+                     comment = sprintf(['DOXY_ADJUSTED is computed from an adjustment ' ...
+                        'of in water PSAT or PPOX float data at surface by comparison to woaPSAT ' ...
+                        'climatology or woaPPOX{woaPSAT,floatTEMP,floatPSAL} at 1 atm, ' ...
+                        'DOXY_ADJUSTED_ERROR is computed from a PPOX_ERROR of %s mbar +1mb/year'], doAdjErrorStr);
                   case '2_1'
                      comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
                         'of in air PPOX float data by comparison to NCEP reanalysis, ' ...
-                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %s mbar.'], doAdjErrorStr);
-                  case '3_1'
+                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %s mbar'], doAdjErrorStr);
+                  case '2_2'
+                     comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
+                        'of in air PPOX float data by comparison to NCEP reanalysis, ' ...
+                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %s mbar ' ...
+                        'with an increase of 1mbar/year'], doAdjErrorStr);
+                  case '3_2'
                      comment = sprintf(['DOXY_ADJUSTED is estimated from the last valid cycle ' ...
                         'with DM adjustment, DOXY_ADJUSTED_ERROR is recomputed from a ' ...
-                        'PPOX_ERROR = %s mbar.'], doAdjErrorStr);
+                        'PPOX_ERROR = %s mbar with an increase of 1mbar/year'], doAdjErrorStr);
                   otherwise
                      fprintf('ERROR: Float #%d Cycle #%d%c: input CALIB_RT_ADJ_ERROR_METHOD (''%s'') of DOXY adjustment is not implemented yet - SCIENTIFIC_CALIB_COMMENT of DOXY parameter not set\n', ...
                         g_decArgo_floatNum, ...
@@ -550,7 +587,7 @@ return
 %
 % SYNTAX :
 %  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-%    a_slope, a_offset, a_adjError, a_decoderId)
+%    a_slope, a_offset, a_doDrift, a_doInclineT, a_adjError, a_adjDate, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_profile     : input DOXY profile structure
@@ -558,7 +595,11 @@ return
 %                   direction as the DOXY one
 %   a_slope       : slope to be used for PPOX_DOXY adjustment
 %   a_offset      : offset to be used for PPOX_DOXY adjustment
+%   a_doDrift     : drift to be used for PPOX_DOXY adjustment
+%   a_doInclineT  : incline_t to be used for PPOX_DOXY adjustment
 %   a_adjError    : error on PPOX_DOXY adjusted values
+%   a_adjDate     : start date to apply adjustment
+%   a_launchDate  : float launch date
 %   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -574,7 +615,7 @@ return
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-   a_slope, a_offset, a_adjError, a_decoderId)
+   a_slope, a_offset, a_doDrift, a_doInclineT, a_adjError, a_adjDate, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_ok = 0;
@@ -695,7 +736,7 @@ if (~isempty(presValues))
    [doxyAdjValues, doxyAdjErrValues] = compute_DOXY_ADJUSTED( ...
       presValues, tempValues, psalValues, doxyValues, ...
       paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, paramDoxy.fillValue, ...
-      a_slope, a_offset, a_adjError, a_profile);
+      a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profile);
    
    if (any(doxyAdjValues ~= paramDoxy.fillValue))
       

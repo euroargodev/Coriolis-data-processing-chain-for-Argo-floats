@@ -49,30 +49,91 @@ if (~isempty(idF))
    
    rtOffsetSlope = [];
    rtOffsetValue = [];
+   rtOffsetDrift = [];
+   rtOffsetInclineT = [];
    idF = find(strcmp(a_metaData(a_idForWmo, 5), 'CALIB_RT_COEFFICIENT') == 1);
    for id = 1:length(idF)
       dimLevel = str2num(a_metaData{a_idForWmo(idF(id)), 3});
       fieldNameValue = ['VALUE_' num2str(dimLevel)];
       fieldNameSlope = ['SLOPE_' num2str(dimLevel)];
+      fieldNameDrift = ['DRIFT_' num2str(dimLevel)];
+      fieldNameInclineT = ['INCLINE_' num2str(dimLevel)];
       coefStrOri = a_metaData{a_idForWmo(idF(id)), 4};
       coefStr = regexprep(coefStrOri, ' ', '');
-      idPos1 = strfind(coefStr, 'a1=');
-      idPos2 = strfind(coefStr, ',a0=');
-      if (~isempty(idPos1) && ~isempty(idPos2))
-         rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+3:idPos2-1);
-         rtOffsetValue.(fieldNameValue) = coefStr(idPos2+4:end);
-         [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
-         [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
-         if ((statusSlope == 0) || (statusValue == 0))
-            fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+      if (any(strfind(coefStr, 'a0')))
+         % expecting a0 and a1 coefficients
+         idPos1 = strfind(coefStr, 'a1=');
+         idPos2 = strfind(coefStr, ',a0=');
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+3:idPos2-1);
+            rtOffsetValue.(fieldNameValue) = coefStr(idPos2+4:end);
+            [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
+            [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
+            if ((statusSlope == 0) || (statusValue == 0))
+               fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+                  floatNum, coefStrOri);
+               return
+            end
+            dimLevelValueSlope = [dimLevelValueSlope dimLevel];
+         else
+            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') - exit\n', ...
                floatNum, coefStrOri);
             return
          end
-         dimLevelValueSlope = [dimLevelValueSlope dimLevel];
       else
-         fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') - exit\n', ...
-            floatNum, coefStrOri);
-         return
+         % expecting a0 and a1 coefficients
+         idPos1 = strfind(coefStr, 'slope=');
+         idPos2 = strfind(coefStr, ',offset=');
+         idPos3 = strfind(coefStr, ',drift=');
+         idPos4 = strfind(coefStr, ',incline_t=');
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+6:idPos2-1);
+            if (~isempty(idPos3))
+               rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:idPos3-1);
+            elseif (~isempty(idPos4))
+               rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:idPos4-1);
+            else
+               rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:end);
+            end
+            [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
+            [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
+            if ((statusSlope == 0) || (statusValue == 0))
+               fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+                  floatNum, coefStrOri);
+               return
+            end
+            if (~isempty(idPos3))
+               if (~isempty(idPos4))
+                  rtOffsetDrift.(fieldNameDrift) = coefStr(idPos3+7:idPos4-1);
+               else
+                  rtOffsetDrift.(fieldNameDrift) = coefStr(idPos3+7:end);
+               end
+               [~, statusDrift] = str2num(rtOffsetDrift.(fieldNameDrift));
+               if (statusDrift == 0)
+                  fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+                     floatNum, coefStrOri);
+                  return
+               end
+            else
+               rtOffsetDrift.(fieldNameDrift) = '0';
+            end
+            if (~isempty(idPos4))
+               rtOffsetInclineT.(fieldNameInclineT) = coefStr(idPos4+11:end);
+               [~, statusInclineT] = str2num(rtOffsetInclineT.(fieldNameInclineT));
+               if (statusInclineT == 0)
+                  fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+                     floatNum, coefStrOri);
+                  return
+               end
+            else
+               rtOffsetInclineT.(fieldNameInclineT) = '0';
+            end
+            dimLevelValueSlope = [dimLevelValueSlope dimLevel];
+         else
+            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') - exit\n', ...
+               floatNum, coefStrOri);
+            return
+         end
       end
    end
    
@@ -153,6 +214,12 @@ if (~isempty(idF))
    rtOffsetData.PARAM = rtOffsetParam;
    rtOffsetData.SLOPE = rtOffsetSlope;
    rtOffsetData.VALUE = rtOffsetValue;
+   if (~isempty(rtOffsetDrift))
+      rtOffsetData.DRIFT = rtOffsetDrift;
+   end
+   if (~isempty(rtOffsetInclineT))
+      rtOffsetData.INCLINE = rtOffsetInclineT;
+   end
    if (~isempty(rtOffsetAdjError))
       rtOffsetData.ADJUSTED_ERROR = rtOffsetAdjError;
    end

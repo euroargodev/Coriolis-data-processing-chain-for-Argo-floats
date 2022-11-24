@@ -177,6 +177,14 @@
 %   02/04/2021 - RNU - V 5.2: TEST #23: set PSAL_ADJUSTED_QC = '2' below 2000
 %                             dbar (because PSAL adjustment with CPcor is
 %                             implemented in version '040a')
+%   04/29/2021 - RNU - V 5.3: Updated to cope with version 2.1 of Argo Quality
+%                             Control Manual for Dissolved Oxygen Concentration 
+%                             Test #57: if PARAMETER_DATA_MODE = ‘A’ then
+%                             DOXY_ADJUSTED_QC should be defined from PSAL_QC,
+%                             TEMP_QC and PRES_QC
+%                             Tests #9 and #11: DOXY tests should ignore
+%                             DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and
+%                             DOXY_ADJUSTED_QC = 4
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -216,7 +224,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.2';
+g_decArgo_addRtqcToProfileVersion = '5.3';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -2664,12 +2672,30 @@ if (testFlagList(9) == 1)
                      profPresQc = presDataQc(idProf, :);
                      profParam = paramData(idProf, :);
                      profParamQc = paramDataQc(idProf, :);
-                     idDefOrBad = find((profPres == presDataFillValue) | ...
-                        (profPresQc == g_decArgo_qcStrCorrectable) | ...
-                        (profPresQc == g_decArgo_qcStrBad) | ...
-                        (profParam == paramDataFillValue) | ...
-                        (profParamQc == g_decArgo_qcStrCorrectable) | ...
-                        (profParamQc == g_decArgo_qcStrBad));
+                     if (~strncmp(paramName, 'DOXY', length('DOXY')))
+                        idDefOrBad = find((profPres == presDataFillValue) | ...
+                           (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                           (profPresQc == g_decArgo_qcStrBad) | ...
+                           (profParam == paramDataFillValue) | ...
+                           (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                           (profParamQc == g_decArgo_qcStrBad));
+                     else
+                        % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
+                        if (idDM == 1)
+                           idDefOrBad = find((profPres == presDataFillValue) | ...
+                              (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                              (profPresQc == g_decArgo_qcStrBad) | ...
+                              (profParam == paramDataFillValue) | ...
+                              (profParamQc == g_decArgo_qcStrBad));
+                        else
+                           idDefOrBad = find((profPres == presDataFillValue) | ...
+                              (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                              (profPresQc == g_decArgo_qcStrBad) | ...
+                              (profParam == paramDataFillValue) | ...
+                              (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                              (profParamQc == g_decArgo_qcStrBad));
+                        end
+                     end
                      idDefOrBad = [0 idDefOrBad length(profParam)+1];
                      for idSlice = 1:length(idDefOrBad)-1
                         
@@ -2877,12 +2903,21 @@ if (testFlagList(11) == 1)
                profPresQc = presDataQc(idProf, :);
                profParam = paramData(idProf, :);
                profParamQc = paramDataQc(idProf, :);
-               idDefOrBad = find((profPres == presDataFillValue) | ...
-                  (profPresQc == g_decArgo_qcStrCorrectable) | ...
-                  (profPresQc == g_decArgo_qcStrBad) | ...
-                  (profParam == paramDataFillValue) | ...
-                  (profParamQc == g_decArgo_qcStrCorrectable) | ...
-                  (profParamQc == g_decArgo_qcStrBad));
+               % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
+               if (idDM == 1)
+                  idDefOrBad = find((profPres == presDataFillValue) | ...
+                     (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                     (profPresQc == g_decArgo_qcStrBad) | ...
+                     (profParam == paramDataFillValue) | ...
+                     (profParamQc == g_decArgo_qcStrBad));
+               else
+                  idDefOrBad = find((profPres == presDataFillValue) | ...
+                     (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                     (profPresQc == g_decArgo_qcStrBad) | ...
+                     (profParam == paramDataFillValue) | ...
+                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                     (profParamQc == g_decArgo_qcStrBad));
+               end
                idDefOrBad = [0 idDefOrBad length(profParam)+1];
                for idSlice = 1:length(idDefOrBad)-1
                   
@@ -4126,9 +4161,10 @@ if (testFlagList(57) == 1)
             end
             
             % retrieve PRES data
+            % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
             [presData, presDataQc, presDataFillValue, ~, ~] = ...
-               get_param_data('PRES', dataStruct, idProf, '');
-            
+               get_param_data('PRES', dataStruct, idProf, 'R');
+
             profParam = paramData(idProf, :);
             
             % initialize Qc flags
@@ -4164,8 +4200,9 @@ if (testFlagList(57) == 1)
                % it is a PTSO float
                
                % retrieve TEMP data
+               % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
                [tempData, tempDataQc, tempDataFillValue, ~, ~] = ...
-                  get_param_data(tempName, dataStruct, idProf, '');
+                  get_param_data(tempName, dataStruct, idProf, 'R');
                
                % if TEMP_QC=4 then DOXY_QC=4
                if (~isempty(tempData))
@@ -4187,8 +4224,9 @@ if (testFlagList(57) == 1)
                end
                
                % retrieve PSAL data
+               % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
                [psalData, psalDataQc, psalDataFillValue, ~, ~] = ...
-                  get_param_data(psalName, dataStruct, idProf, '');
+                  get_param_data(psalName, dataStruct, idProf, 'R');
                
                % if PSAL_QC=4, then DOXY_QC=3
                if (~isempty(psalData))
@@ -4213,14 +4251,12 @@ if (testFlagList(57) == 1)
                % it is a BGC float (each sensor has is own PRES axis)
                
                % retrieve the CTD data
-               % we use the data associated to the PARAMETER_DATA_MODE of the primary
-               % profile (i.e. if the NS one has a different PARAMETER_DATA_MODE, it will
-               % not be used)
+               % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
                
                [profPresCtd, ~, presCtdDataFillValue, ...
                   profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
                   profPsalCtd, profPsalCtdQc, psalCtdDataFillValue] = ...
-                  get_ctd_data(a_floatNum, dataStruct, vssList);
+                  get_ctd_data(a_floatNum, dataStruct, vssList, 'R');
                
                % if TEMP_QC=4 then DOXY_QC=4
                if (~isempty(profPresCtd) && ~isempty(profTempCtd) && ~isempty(presData))
@@ -4292,7 +4328,7 @@ if (testFlagList(59) == 1)
       [profPresCtd, ~, presCtdDataFillValue, ...
          profTempCtd, ~, tempCtdDataFillValue, ...
          profPsalCtd, ~, psalCtdDataFillValue] = ...
-         get_ctd_data(a_floatNum, dataStruct, vssList);
+         get_ctd_data(a_floatNum, dataStruct, vssList, '');
       
       idNoDefPts = find((profPresCtd ~= presCtdDataFillValue) & ...
          (profTempCtd ~= tempCtdDataFillValue) & ...
@@ -4513,7 +4549,7 @@ if (testFlagList(63) == 1)
       [profPresCtd, profPresCtdQc, presCtdDataFillValue, ...
          profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
          profPsalCtd, profPsalCtdQc, psalCtdDataFillValue] = ...
-         get_ctd_data(a_floatNum, dataStruct, vssList);
+         get_ctd_data(a_floatNum, dataStruct, vssList, '');
       
       idPres = find(strcmp('PRES', ncParamNameList) == 1, 1);
       idTemp = find(strcmp('TEMP', ncParamNameList) == 1, 1);
@@ -6439,19 +6475,21 @@ end
 return
 
 % ------------------------------------------------------------------------------
-% Retrieve CTD data from the data structure according to the primary profile
-% data mode.
+% Retrieve CTD data from the data structure according to a given data mode
+% (a_wantedDataMode). If the wanted data mode is not provided (empty), the
+% primary profile data mode is used.
 % 
 % SYNTAX :
 %  [o_profPresCtd, o_profPresCtdQc, o_presCtdDataFillValue, ...
 %    o_profTempCtd, o_profTempCtdQc, o_tempCtdDataFillValue, ...
 %    o_profPsalCtd, o_profPsalCtdQc, o_psalCtdDataFillValue] = ...
-%    get_ctd_data(a_floatNum, a_dataStruct, a_vssList)
+%    get_ctd_data(a_floatNum, a_dataStruct, a_vssList, a_wantedDataMode)
 % 
 % INPUT PARAMETERS :
-%   a_floatNum   : float WMO number
-%   a_dataStruct : data structure
-%   a_vssList    : list of VSS
+%   a_floatNum       : float WMO number
+%   a_dataStruct     : data structure
+%   a_vssList        : list of VSS
+%   a_wantedDataMode : data mode of the data to retrieve
 % 
 % OUTPUT PARAMETERS :
 %   o_profPresCtd          : CTD PRES data
@@ -6475,7 +6513,7 @@ return
 function [o_profPresCtd, o_profPresCtdQc, o_presCtdDataFillValue, ...
    o_profTempCtd, o_profTempCtdQc, o_tempCtdDataFillValue, ...
    o_profPsalCtd, o_profPsalCtdQc, o_psalCtdDataFillValue] = ...
-   get_ctd_data(a_floatNum, a_dataStruct, a_vssList)
+   get_ctd_data(a_floatNum, a_dataStruct, a_vssList, a_wantedDataMode)
 
 % output parameters initialization
 o_profPresCtd = [];
@@ -6499,7 +6537,7 @@ tempPrimaryDataMode = '';
 psalPrimaryDataMode = '';
 if (~isempty(idPrimary))
    [presCtdData, presCtdDataQc, o_presCtdDataFillValue, presPrimaryDataMode, ~] = ...
-      get_param_data('PRES', a_dataStruct, idPrimary, '');
+      get_param_data('PRES', a_dataStruct, idPrimary, a_wantedDataMode);
    if (~isempty(presCtdData))
       profPresPrimaryCtd = presCtdData(idPrimary, :);
       profPresPrimaryCtdQc = presCtdDataQc(idPrimary, :);
@@ -6510,7 +6548,7 @@ if (~isempty(idPrimary))
    
    % retrieve TEMP CTD data
    [tempCtdData, tempCtdDataQc, o_tempCtdDataFillValue, tempPrimaryDataMode, ~] = ...
-      get_param_data('TEMP', a_dataStruct, idPrimary, '');
+      get_param_data('TEMP', a_dataStruct, idPrimary, a_wantedDataMode);
    if (~isempty(tempCtdData))
       profTempPrimaryCtd = tempCtdData(idPrimary, :);
       profTempPrimaryCtdQc = tempCtdDataQc(idPrimary, :);
@@ -6521,7 +6559,7 @@ if (~isempty(idPrimary))
    
    % retrieve PSAL CTD data
    [psalCtdData, psalCtdDataQc, o_psalCtdDataFillValue, psalPrimaryDataMode, ~] = ...
-      get_param_data('PSAL', a_dataStruct, idPrimary, '');
+      get_param_data('PSAL', a_dataStruct, idPrimary, a_wantedDataMode);
    if (~isempty(psalCtdData))
       profPsalPrimaryCtd = psalCtdData(idPrimary, :);
       profPsalPrimaryCtdQc = psalCtdDataQc(idPrimary, :);
@@ -6541,7 +6579,7 @@ tempNSDataMode = '';
 psalNSDataMode = '';
 if (~isempty(idNSProf))
    [presCtdData, presCtdDataQc, presNSCtdDataFillValue, presNSDataMode, ~] = ...
-      get_param_data('PRES', a_dataStruct, idNSProf, '');
+      get_param_data('PRES', a_dataStruct, idNSProf, a_wantedDataMode);
    if (~isempty(presCtdData))
       profPresNSCtd = presCtdData(idNSProf, :);
       profPresNSCtdQc = presCtdDataQc(idNSProf, :);
@@ -6555,7 +6593,7 @@ if (~isempty(idNSProf))
    
    % retrieve TEMP CTD data
    [tempCtdData, tempCtdDataQc, tempNSCtdDataFillValue, tempNSDataMode, ~] = ...
-      get_param_data('TEMP', a_dataStruct, idNSProf, '');
+      get_param_data('TEMP', a_dataStruct, idNSProf, a_wantedDataMode);
    if (~isempty(tempCtdData))
       profTempNSCtd = tempCtdData(idNSProf, :);
       profTempNSCtdQc = tempCtdDataQc(idNSProf, :);
@@ -6569,7 +6607,7 @@ if (~isempty(idNSProf))
    
    % retrieve PSAL CTD data
    [psalCtdData, psalCtdDataQc, psalNSCtdDataFillValue, psalNSDataMode, ~] = ...
-      get_param_data('PSAL', a_dataStruct, idNSProf, '');
+      get_param_data('PSAL', a_dataStruct, idNSProf, a_wantedDataMode);
    if (~isempty(psalCtdData))
       profPsalNSCtd = psalCtdData(idNSProf, :);
       profPsalNSCtdQc = psalCtdDataQc(idNSProf, :);
@@ -6582,28 +6620,34 @@ if (~isempty(idNSProf))
    end
 end
 
-ctdDataModePrimary = unique([presPrimaryDataMode tempPrimaryDataMode psalPrimaryDataMode]);
-if (length(ctdDataModePrimary) > 1)
-   fprintf('RTQC_ERROR: Float #%d: CTD data mode not unique for primary profile\n', ...
-      a_floatNum);
-   return
-end
-
-ctdDataModeNS = unique([presNSDataMode tempNSDataMode psalNSDataMode]);
-if (length(ctdDataModeNS) > 1)
-   fprintf('RTQC_ERROR: Float #%d: CTD data mode not unique for NS profile\n', ...
-      a_floatNum);
-   return
-end
-
-if (~isempty(ctdDataModePrimary) && ~isempty(ctdDataModeNS) && ...
-      (ctdDataModePrimary ~= ctdDataModeNS))
-   profPresNSCtd = [];
-   profPresNSCtdQc = [];
-   profTempNSCtd = [];
-   profTempNSCtdQc = [];
-   profPsalNSCtd = [];
-   profPsalNSCtdQc = [];
+if (isempty(a_wantedDataMode))
+   
+   % if we use primary profile data mode, we should check primary profile and NS
+   % profile data mode consistency
+   
+   ctdDataModePrimary = unique([presPrimaryDataMode tempPrimaryDataMode psalPrimaryDataMode]);
+   if (length(ctdDataModePrimary) > 1)
+      fprintf('RTQC_ERROR: Float #%d: CTD data mode not unique for primary profile\n', ...
+         a_floatNum);
+      return
+   end
+   
+   ctdDataModeNS = unique([presNSDataMode tempNSDataMode psalNSDataMode]);
+   if (length(ctdDataModeNS) > 1)
+      fprintf('RTQC_ERROR: Float #%d: CTD data mode not unique for NS profile\n', ...
+         a_floatNum);
+      return
+   end
+   
+   if (~isempty(ctdDataModePrimary) && ~isempty(ctdDataModeNS) && ...
+         (ctdDataModePrimary ~= ctdDataModeNS))
+      profPresNSCtd = [];
+      profPresNSCtdQc = [];
+      profTempNSCtd = [];
+      profTempNSCtdQc = [];
+      profPsalNSCtd = [];
+      profPsalNSCtdQc = [];
+   end
 end
 
 if (~isempty(profPresNSCtd) && ~isempty(profPresPrimaryCtd))

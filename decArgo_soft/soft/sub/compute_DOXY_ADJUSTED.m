@@ -7,7 +7,7 @@
 %  [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED( ...
 %    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
 %    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-%    a_slope, a_offset, a_adjError, a_profOptode)   
+%    a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
 %
 % INPUT PARAMETERS :
 %   a_PRES           : input PRES data
@@ -21,7 +21,11 @@
 %   a_DOXY_fillValue : fill value for input DOXY data
 %   a_slope          : slope of PPOX_DOXY adjustment
 %   a_offset         : slope of PPOX_DOXY adjustment
+%   a_doDrift        : drift to be used for PPOX_DOXY adjustment
+%   a_doInclineT     : incline_t to be used for PPOX_DOXY adjustment
+%   a_launchDate     : float launch date
 %   a_adjError       : error on PPOX_DOXY adjusted values
+%   a_adjDate        : start date to apply adjustment
 %   a_profOptode     : OPTODE profile structure
 %
 % OUTPUT PARAMETERS :
@@ -39,7 +43,7 @@
 function [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED( ...
    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-   a_slope, a_offset, a_adjError, a_profOptode)   
+   a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
    
 % output parameters initialization
 o_DOXY_ADJUSTED = ones(length(a_DOXY), 1)*a_DOXY_fillValue;
@@ -48,6 +52,9 @@ if (~isnan(a_adjError))
 else
    o_DOXY_ADJUSTED_ERROR = [];
 end
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 % retrieve global coefficient default values
 global g_decArgo_doxy_202_205_304_d0;
@@ -61,6 +68,9 @@ global g_decArgo_doxy_202_205_304_b3;
 global g_decArgo_doxy_202_205_304_c0;
 global g_decArgo_doxy_202_205_304_pCoef2;
 global g_decArgo_doxy_202_205_304_pCoef3;
+
+% global default values
+global g_decArgo_dateDef;
 
 
 if (isempty(a_PRES) || isempty(a_TEMP) || isempty(a_PSAL) || isempty(a_DOXY))
@@ -113,7 +123,14 @@ if (~isempty(idNoDef))
       );
    
    % adjust PPOX_DOXY
-   ppoxDoxyAdjValues = ppoxDoxyValues * a_slope + a_offset;
+   
+   if (a_profOptode.date ~= g_decArgo_dateDef)      
+      ppoxDoxyAdjValues = (a_slope * (1 + a_doDrift/100 * (a_profOptode.date-a_launchDate)/365) + a_doInclineT*tempValues) .* (ppoxDoxyValues + a_offset);
+   else
+      fprintf('WARNING: Float #%d Cycle #%d%c: profile is not dated - DOXY_ADJUSTED set to FillValue\n', ...
+         g_decArgo_floatNum, ...
+         a_profOptode.outputCycleNumber, a_profOptode.direction);
+   end
    
    % convert PPOX_ADJUSTED into DOXY_ADJUSTED_in_molar_units_and_inside_conditions 
    % units convertion (hPa to micromol/L)
@@ -151,6 +168,11 @@ if (~isempty(idNoDef))
       
       % use PPOX_DOXY_ADJUSTED_ERROR from META-DATA
       ppoxDoxyAdjErrValues = a_adjError;
+      
+      % increase PPOX_DOXY_ADJUSTED_ERROR with time (1 mbar/year)
+      if (~isempty(a_adjDate))
+         ppoxDoxyAdjErrValues = ppoxDoxyAdjErrValues + (a_profOptode.date - a_adjDate)/365;
+      end
       
       % convert PPOX_ADJUSTED_ERROR into DOXY_ADJUSTED_ERROR_in_molar_units_and_inside_conditions
       % units convertion (hPa to micromol/L)
