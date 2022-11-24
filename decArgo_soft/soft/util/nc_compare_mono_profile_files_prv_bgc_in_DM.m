@@ -28,6 +28,7 @@ DIR_INPUT_BASE_NC_FILES = 'E:\DM_3.1\coriolis_csio_incois_kordi_nmdis\';
 DIR_INPUT_BASE_NC_FILES = 'E:\archive_201505\coriolis\selected\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\OLD\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\BASE\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos_sans_EOL\';
@@ -36,6 +37,7 @@ DIR_INPUT_NEW_NC_FILES = 'E:\nc_output_decPrv_argos_20150129\';
 DIR_INPUT_NEW_NC_FILES = 'E:\archive_201510\201510-ArgoData\DATA\coriolis\selected\\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\NEW\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
 
 
 % directory to store the log and the csv files
@@ -1010,7 +1012,6 @@ for idFile = 1:length(monoProfFiles)
          netcdf.close(fCdf);
          continue
       end
-      netcdf.close(fCdf);
    end
 end
 

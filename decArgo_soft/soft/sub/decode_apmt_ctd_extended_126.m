@@ -21,12 +21,6 @@
 % ------------------------------------------------------------------------------
 function [o_ctdData] = decode_apmt_ctd_extended_126(a_data, a_lastByteNum)
 
-% default values
-global g_decPrv_dateDef;
-global g_decPrv_presDef;
-global g_decPrv_tempDef;
-global g_decPrv_salDef;
-
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
@@ -184,7 +178,6 @@ while (currentByte <= lastByteNum)
       
       if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))
          % raw data
-         data = nan(1, 4);
          if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
             data(1) = epoch_2_julian_dec_argo(rawData(1));
          else
@@ -195,18 +188,12 @@ while (currentByte <= lastByteNum)
          data(4) = rawData(4)/1000;
       elseif (currentTreatNum == g_decArgo_cts5Treat_SS)
          % sub-surface point
-         data = nan(1, 4);
          data(1) = epoch_2_julian_dec_argo(rawData(1));
          data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
          data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
          data(4) = rawData(4)/1000;
       else
          % mean data
-         data = [g_decPrv_dateDef ...
-            g_decPrv_presDef g_decPrv_tempDef g_decPrv_salDef ...
-            g_decPrv_tempDef g_decPrv_salDef ...
-            g_decPrv_presDef g_decPrv_tempDef g_decPrv_salDef];
-         
          switch (currentTreatNum)
             case g_decArgo_cts5Treat_AM_SD_MD
                data(1) = rawData(1);
@@ -230,9 +217,9 @@ while (currentByte <= lastByteNum)
                data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
                data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
                data(4) = rawData(4)/1000;
-               data(7) = rawData(7)/10 - 100 + rawData(10)*0.01;
-               data(8) = rawData(8)/1000 - 5 + rawData(11)*0.0001;
-               data(9) = rawData(9)/1000;
+               data(5) = rawData(7)/10 - 100 + rawData(10)*0.01;
+               data(6) = rawData(8)/1000 - 5 + rawData(11)*0.0001;
+               data(7) = rawData(9)/1000;
             case g_decArgo_cts5Treat_AM
                data(1) = rawData(1);
                data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;

@@ -23,12 +23,6 @@ function [o_doData] = decode_apmt_do(a_inputFilePathName)
 % output parameters initialization
 o_doData = [];
 
-% default values
-global g_decArgo_dateDef;
-global g_decArgo_presDef;
-global g_decArgo_c1C2PhaseDoxyDef;
-global g_decArgo_tempDoxyDef;
-
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
@@ -205,7 +199,6 @@ while (currentByte <= lastByteNum)
       
       if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))
          % raw data
-         data = nan(1, 5);
          if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
             data(1) = epoch_2_julian_dec_argo(rawData(1));
          else
@@ -217,11 +210,6 @@ while (currentByte <= lastByteNum)
          data(5) = rawData(5)/1000 - 5;
       else
          % mean data
-         data = [g_decArgo_dateDef ...
-            g_decArgo_presDef g_decArgo_c1C2PhaseDoxyDef g_decArgo_c1C2PhaseDoxyDef g_decArgo_tempDoxyDef ...
-            g_decArgo_c1C2PhaseDoxyDef g_decArgo_c1C2PhaseDoxyDef g_decArgo_tempDoxyDef ...
-            g_decArgo_presDef g_decArgo_c1C2PhaseDoxyDef g_decArgo_c1C2PhaseDoxyDef g_decArgo_tempDoxyDef];
-         
          switch (currentTreatNum)
             case g_decArgo_cts5Treat_AM_SD_MD
                data(1) = rawData(1);
@@ -251,10 +239,10 @@ while (currentByte <= lastByteNum)
                data(3) = rawData(3);
                data(4) = rawData(4);
                data(5) = rawData(5)/1000 - 5;
-               data(9) = rawData(6)/10 - 100;
-               data(10) = rawData(7);
-               data(11) = rawData(8);
-               data(12) = rawData(9)/1000 - 5;
+               data(6) = rawData(6)/10 - 100;
+               data(7) = rawData(7);
+               data(8) = rawData(8);
+               data(9) = rawData(9)/1000 - 5;
             case g_decArgo_cts5Treat_AM
                data(1) = rawData(1);
                data(2) = rawData(2)/10 - 100;

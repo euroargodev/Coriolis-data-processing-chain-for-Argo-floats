@@ -37,6 +37,8 @@
 %                             replaced by IGNORED_PARAMETER_LIST)
 %   10/14/2019 - RNU - V 1.4: added management of 'DOWN_IRRADIANCE443' and
 %                             'DOWN_IRRADIANCE555' parameters
+%   11/04/2020 - RNU - V 1.5: copy, in NEW file, the global attributes only
+%                             present in OLD file
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_dm_and_qc(varargin)
 
@@ -59,22 +61,25 @@ HISTORY_REFERENCE = 'http://doi.org/10.17882/42182#58265';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OLD\';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\201809-ArgoData\coriolis\';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OLD\';
+DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 
 % top directory of NEW input NetCDF files
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_check_refonte_DO_201809\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\NEW\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\EDAC\coriolis\';
 
 % top directory of output NetCDF updated files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OUT\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % program version
 global g_cocd_ncCopyMonoProfileDmAndQcVersion;
-g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.4';
+g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.5';
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64);' for the current action
 global g_cocd_historyReferenceToReport;
@@ -179,8 +184,8 @@ DIR_OUTPUT_NC_FILES = a_dirOutputNcFiles;
 
 
 % retrieve the list of parameters to be ignored in the report of SCOOP QCs
-ignoredParamList = get_associated_param(a_ignoredParameterList);
-if (isempty(ignoredParamList))
+ignoredParamListAll = get_associated_param(a_ignoredParameterList);
+if (isempty(ignoredParamListAll))
    return
 end
 
@@ -364,7 +369,7 @@ for idFloat = 1:nbFloats
                      bProfFileNameOld, bProfFileDmOld, ...
                      profFileNameNew, cProfFileDmNew, ...
                      bProfFileNameNew, bProfFileDmNew, ...
-                     ignoredParamList, a_dirOutputNcFiles);
+                     a_ignoredParameterList, ignoredParamListAll, a_dirOutputNcFiles);
                   
                else
                   if (cProfFileDmOld >= cProfFileDmNew)
@@ -430,19 +435,20 @@ return
 %    a_bProfFileNameOld, a_bProfFileDmOld, ...
 %    a_profFileNameNew, a_cProfFileDmNew, ...
 %    a_bProfFileNameNew, a_bProfFileDmNew, ...
-%    a_ignoredParameterList, a_dirOutputNcFiles)
+%    a_ignoredParameterList, a_ignoredParameterListAll, a_dirOutputNcFiles)
 %
 % INPUT PARAMETERS :
-%   a_profFileNameOld      : OLD C PROF file path name
-%   a_cProfFileDmOld       : OLD C PROF file DM flag
-%   a_bProfFileNameOld     : OLD B PROF file path name
-%   a_bProfFileDmOld       : OLD B PROF file DM flag
-%   a_profFileNameNew      : NEW C PROF file path name
-%   a_cProfFileDmNew       : NEW C PROF file DM flag
-%   a_bProfFileNameNew     : NEW B PROF file path name
-%   a_bProfFileDmNew       : NEW B PROF file DM flag
-%   a_ignoredParameterList : 'B' and associted 'I' parameters to ignore
-%   a_dirOutputNcFiles     : name of output data set directory
+%   a_profFileNameOld         : OLD C PROF file path name
+%   a_cProfFileDmOld          : OLD C PROF file DM flag
+%   a_bProfFileNameOld        : OLD B PROF file path name
+%   a_bProfFileDmOld          : OLD B PROF file DM flag
+%   a_profFileNameNew         : NEW C PROF file path name
+%   a_cProfFileDmNew          : NEW C PROF file DM flag
+%   a_bProfFileNameNew        : NEW B PROF file path name
+%   a_bProfFileDmNew          : NEW B PROF file DM flag
+%   a_ignoredParameterList    : 'B' parameters to ignore
+%   a_ignoredParameterListAll : 'B' and associted 'I' parameters to ignore
+%   a_dirOutputNcFiles        : name of output data set directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -459,20 +465,20 @@ function process_cycle( ...
    a_bProfFileNameOld, a_bProfFileDmOld, ...
    a_profFileNameNew, a_cProfFileDmNew, ...
    a_bProfFileNameNew, a_bProfFileDmNew, ...
-   a_ignoredParameterList, a_dirOutputNcFiles)
+   a_ignoredParameterList, a_ignoredParameterListAll, a_dirOutputNcFiles)
 
 
 % process C-PROF file
 process_cycle_file( ...
    a_profFileNameOld, a_cProfFileDmOld, ...
    a_profFileNameNew, a_cProfFileDmNew, ...
-   a_ignoredParameterList, a_dirOutputNcFiles, 0);
+   a_ignoredParameterList, a_ignoredParameterListAll, a_dirOutputNcFiles, 0);
 
 % process B-PROF file
 process_cycle_file( ...
    a_bProfFileNameOld, a_bProfFileDmOld, ...
    a_bProfFileNameNew, a_bProfFileDmNew, ...
-   a_ignoredParameterList, a_dirOutputNcFiles, 1);
+   a_ignoredParameterList, a_ignoredParameterListAll, a_dirOutputNcFiles, 1);
 
 return
 
@@ -483,16 +489,18 @@ return
 %  process_cycle_file( ...
 %    a_profFileNameOld, a_profFileDmOld, ...
 %    a_profFileNameNew, a_profFileDmNew, ...
-%    a_ignoredParameterList, a_dirOutputNcFiles, a_bFileFlag)
+%    a_ignoredParameterList, a_ignoredParameterListAll, ...
+%    a_dirOutputNcFiles, a_bFileFlag)
 %
 % INPUT PARAMETERS :
-%   a_profFileNameOld      : OLD PROF file path name
-%   a_profFileDmOld        : OLD PROF file DM flag
-%   a_profFileNameNew      : NEW PROF file path name
-%   a_profFileDmNew        : NEW PROF file DM flag
-%   a_ignoredParameterList : 'B' and associted 'I' parameters to ignore
-%   a_dirOutputNcFiles     : name of output data set directory
-%   a_bFileFlag            : B PROF file flag
+%   a_profFileNameOld         : OLD PROF file path name
+%   a_profFileDmOld           : OLD PROF file DM flag
+%   a_profFileNameNew         : NEW PROF file path name
+%   a_profFileDmNew           : NEW PROF file DM flag
+%   a_ignoredParameterList    : 'B' parameters to ignore
+%   a_ignoredParameterListAll : 'B' and associted 'I' parameters to ignore
+%   a_dirOutputNcFiles        : name of output data set directory
+%   a_bFileFlag               : B PROF file flag
 %
 % OUTPUT PARAMETERS :
 %
@@ -507,7 +515,8 @@ return
 function process_cycle_file( ...
    a_profFileNameOld, a_profFileDmOld, ...
    a_profFileNameNew, a_profFileDmNew, ...
-   a_ignoredParameterList, a_dirOutputNcFiles, a_bFileFlag)
+   a_ignoredParameterList, a_ignoredParameterListAll, ...
+   a_dirOutputNcFiles, a_bFileFlag)
 
 % current references
 global g_cocd_floatNum;
@@ -628,6 +637,8 @@ wantedVars = [ ...
    ];
 profDataOld = get_data_from_nc_file(a_profFileNameOld, wantedVars);
 profDataNew = get_data_from_nc_file(a_profFileNameNew, wantedVars);
+globalAttOld = get_global_att_from_nc_file(a_profFileNameOld);
+globalAttNew = get_global_att_from_nc_file(a_profFileNameNew);
 
 formatVersionOld = deblank(get_data_from_name('FORMAT_VERSION', profDataOld)');
 formatVersionNew = deblank(get_data_from_name('FORMAT_VERSION', profDataNew)');
@@ -671,7 +682,7 @@ if (~needUpdate)
                strcmp(strtrim(squeeze(histAction(idHisto, idProf, :))'), 'CF'))
             paramName = squeeze(histParam(idHisto, idProf, :))';
             paramName = regexprep(paramName, '_ADJUSTED', '');
-            if (~ismember(paramName, a_ignoredParameterList))
+            if (~ismember(paramName, a_ignoredParameterListAll))
                needUpdate = 1;
                break
             end
@@ -725,7 +736,7 @@ for idLoop = 1:2
       for idParam = 1:nParam
          paramName = deblank(stationParameters(:, idParam, idProf)');
          if (~isempty(paramName))
-            %             if (~ismember(paramName, a_ignoredParameterList))
+            %             if (~ismember(paramName, a_ignoredParameterListAll))
             paramInfo = get_netcdf_param_attributes(paramName);
             profParamList{end+1} = paramName;
             wantedVars = [wantedVars ...
@@ -1216,12 +1227,32 @@ if (~isempty(profIdToUpdate))
    needUpdate = 1;
 end
 
-% update the PROF file
 if (needUpdate)
+   
+   % create the list of new global attributes to copy in output file
+   newGlobalAtt = [];
+   for idG = 1:size(globalAttOld, 1)
+      if (~ismember(globalAttOld(idG, 1), globalAttNew(:, 1)))
+         if (any(strfind(globalAttOld{idG, 1}, 'comment_dmqc_operator')))
+            attValue = globalAttOld{idG, 2};
+            idF = strfind(attValue, '|');
+            if (~isempty(idF))
+               paramName = strtrim(attValue(1:idF(1)-1));
+               if (ismember(paramName, a_ignoredParameterList))
+                  globalAttOld{idG, 2} = [paramName ' | | '];
+               end
+            end
+         end
+         newGlobalAtt = [newGlobalAtt; globalAttOld(idG, :)];
+      end
+   end
+   
+   % update the PROF file
    update_prof_file( ...
       a_profFileNameOld, a_profFileNameNew, ...
       profStructOld, profStructNew, dmProfIdToUpdate, ...
-      rtProfIdToUpdate, updatedData, nHistoryData, a_dirOutputNcFiles);
+      rtProfIdToUpdate, updatedData, nHistoryData, newGlobalAtt, ...
+      a_dirOutputNcFiles);
 end
 
 return
@@ -1233,7 +1264,8 @@ return
 %  update_prof_file( ...
 %    a_profFileNameOld, a_profFileNameNew, ...
 %    a_profStructOld, a_profStructNew, a_dmProfIdToUpdate, ...
-%    a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_dirOutputNcFiles)
+%    a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_newGlobalAtt, ...
+%    a_dirOutputNcFiles)
 %
 % INPUT PARAMETERS :
 %   a_profFileNameOld  : OLD PROF file path name
@@ -1244,6 +1276,7 @@ return
 %   a_rtProfIdToUpdate : list of RT profiles with updated SCOOP QCs
 %   a_updatedData      : list of RT updated profiles and associated variables
 %   a_nHistoryData     : HISTORY data of each updated profile
+%   a_newGlobalAtt     : additional global attributes for the NEW PROF
 %   a_dirOutputNcFiles : name of output data set directory
 %
 % OUTPUT PARAMETERS :
@@ -1259,7 +1292,8 @@ return
 function update_prof_file( ...
    a_profFileNameOld, a_profFileNameNew, ...
    a_profStructOld, a_profStructNew, a_dmProfIdToUpdate, ...
-   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_dirOutputNcFiles)
+   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_newGlobalAtt, ...
+   a_dirOutputNcFiles)
 
 % current references
 global g_cocd_floatNum;
@@ -1336,7 +1370,7 @@ copy_file(outputProfFileName, tmpProfFileName);
 % update PROF file
 ok = update_prof_file_(tmpProfFileName, ...
    a_profStructOld, a_profStructNew, a_dmProfIdToUpdate, ...
-   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData);
+   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_newGlobalAtt);
 if (~ok)
    fprintf('ERROR: Float #%d Cycle #%d%c: an error occured during update of NEW file\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
@@ -1360,7 +1394,7 @@ return
 % SYNTAX :
 %  [o_ok] = update_prof_file_(a_profFileName, ...
 %    a_profStructOld, a_profStructNew, a_dmProfIdToUpdate, ...
-%    a_rtProfIdToUpdate, a_updatedData, a_nHistoryData)
+%    a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_newGlobalAtt)
 %
 % INPUT PARAMETERS :
 %   a_profFileName     : output PROF file path name
@@ -1370,6 +1404,7 @@ return
 %   a_rtProfIdToUpdate : list of RT profiles with updated SCOOP QCs
 %   a_updatedData      : list of RT updated profiles and associated variables
 %   a_nHistoryData     : HISTORY data of each updated profile
+%   a_newGlobalAtt     : additional global attributes for the NEW PROF
 %
 % OUTPUT PARAMETERS :
 %   o_ok : update operation report flag (1 if ok, 0 otherwise)
@@ -1384,7 +1419,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_ok] = update_prof_file_(a_profFileName, ...
    a_profStructOld, a_profStructNew, a_dmProfIdToUpdate, ...
-   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData)
+   a_rtProfIdToUpdate, a_updatedData, a_nHistoryData, a_newGlobalAtt)
 
 % output parameters initialization
 o_ok = 0;
@@ -1792,6 +1827,12 @@ globalHistoryText = [ ...
    datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COCD (V' g_cocd_ncCopyMonoProfileDmAndQcVersion ') tool)'];
 netcdf.reDef(fCdf);
 netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), 'history', globalHistoryText);
+
+% add new global attributes
+for idG = 1:size(a_newGlobalAtt, 1)
+   netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), a_newGlobalAtt{idG, 1}, a_newGlobalAtt{idG, 2});
+end
+
 netcdf.endDef(fCdf);
 
 netcdf.close(fCdf);
@@ -2188,6 +2229,55 @@ if (exist(a_ncPathFileName, 'file') == 2)
          o_ncData = [o_ncData {varName} {''}];
       end
       
+   end
+   
+   netcdf.close(fCdf);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve global attributes from NetCDF file.
+%
+% SYNTAX :
+%  [o_globalAttData] = get_global_att_from_nc_file(a_ncPathFileName)
+%
+% INPUT PARAMETERS :
+%   a_ncPathFileName : NetCDF file name
+%
+% OUTPUT PARAMETERS :
+%   o_globalAttData : retrieved global attributes
+%
+% EXAMPLES :
+%
+% SEE ALSO : 
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   11/04/2020 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_globalAttData] = get_global_att_from_nc_file(a_ncPathFileName)
+
+% output parameters initialization
+o_globalAttData = [];
+
+
+if (exist(a_ncPathFileName, 'file') == 2)
+   
+   % open NetCDF file
+   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
+   if (isempty(fCdf))
+      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      return
+   end
+   
+   [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+   
+   % store global attributes
+   for idGAtt = 0:nbGAtts-1
+      attName = netcdf.inqAttName(fCdf, netcdf.getConstant('NC_GLOBAL'), idGAtt);
+      attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), attName);
+      o_globalAttData = [o_globalAttData; [{attName} {attValue}]];
    end
    
    netcdf.close(fCdf);
