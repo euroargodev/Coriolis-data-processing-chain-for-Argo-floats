@@ -121,11 +121,30 @@ if (ismember(a_decoderId, [111, 113]))
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
 if (ismember(g_decArgo_floatNum, ...
-      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241]))
+      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241, 6903026]))
    switch g_decArgo_floatNum
+      case 6903026
+         % cycle #54 and #55 are transmitted together => set the second one to a
+         % different transmission session
+         startId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 250), 1, 'last');
+
+         startId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 248));
+         
+         tabSession(startId55:end) = tabSession(startId55:end) + 1;
+         tabBase(startId55) = 1;
+         tabDeep(startId55:stopId55) = 1;
+         
+         a_decodedData(startId55).cyProfPhaseList(6) = a_decodedData(startId54).cyProfPhaseList(6);
+         for id = startId54:stopId54
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+         
       case 2902263
          idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
          tabCyNum(idF) = tabCyNumRaw(idF)*100 + tabProfNumRaw(idF) + 1;
+         
       case 6903240
          idF = find((tabCyNumRaw == 2) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
          tabExpNbDesc(idF) = 338 - 256;
@@ -141,6 +160,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabExpNbDesc(idF) = 258 - 256;
          idF = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
          tabExpNbDesc(idF) = 278 - 256;
+         
       case 6903549
          startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
          stopId = find(tabSession == tabSession(startId), 1, 'last');
@@ -154,6 +174,7 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId44:stopId44
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
+         
       case 6903551
          startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:49:41')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
          stopId = find(tabSession == tabSession(startId), 1, 'last');
@@ -188,6 +209,17 @@ if (ismember(g_decArgo_floatNum, ...
          % buoyancy action)
          tabCyNum(18972:18973) = 6400;
          tabCyNum(19275:19276) = 6500;
+         
+         % buoyancy action during the "surface session" data transmitted for an
+         % Ice deep cycle => unused
+         tabCyNum(21355:21356) = 7200;
+         tabCyNum(21662:21663) = 7300;
+         % FMT/LMT are erroneous in such case
+         idF = find(ismember(tabSession, [143:148]));
+         for id = idF
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+         
       case 2902239
          startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
          stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');
@@ -207,6 +239,7 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId158:stopId158
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
+         
       case 2902264
          startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:54:48')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
          stopId = find(tabSession == tabSession(startId), 1, 'last');
@@ -220,6 +253,7 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId125:stopId125
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
+         
       case 6903550
          startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 12:04:36')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
          
@@ -229,6 +263,7 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId44:stopId44
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
+         
       case 3902122
          % transmission of second Iridium session of cycle 192, 0 failed => data
          % transmitted with cycle 193, 0 ones
@@ -247,6 +282,7 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId192_2:stopId192_2
             a_decodedData(id).cyProfPhaseList(6) = a_decodedData(stopId192_1).cyProfPhaseList(6);
          end
+         
       case 2902241
          % error in transmitted data
          idDel = find((tabSession == 373) & (tabCyNum ~= 18600));

@@ -178,6 +178,7 @@ global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
+global g_decArgo_cts5PhaseSurface;
 
 % codes for CTS5 treatment types (used to decode CTD data)
 global g_decArgo_cts5Treat_AM_SD_MD;
@@ -186,6 +187,7 @@ global g_decArgo_cts5Treat_AM_MD;
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_SS;
+global g_decArgo_cts5Treat_DW;
 
 % DOXY coefficients
 global g_decArgo_doxy_nomAirPress;
@@ -502,7 +504,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '035h';
+g_decArgo_decoderVersion = '035i';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -598,6 +600,7 @@ g_decArgo_cts5PhasePark = 2;
 g_decArgo_cts5PhaseDeepProfile = 3;
 g_decArgo_cts5PhaseShortPark = 4;
 g_decArgo_cts5PhaseAscent = 5;
+g_decArgo_cts5PhaseSurface = 6;
 
 % codes for CTS5 treatment types (used to decode CTD data)
 g_decArgo_cts5Treat_AM_SD_MD = 1; % mean + st dev + median
@@ -606,6 +609,7 @@ g_decArgo_cts5Treat_AM_MD = 3; % mean + median
 g_decArgo_cts5Treat_RW = 4; % raw
 g_decArgo_cts5Treat_AM = 5; % mean
 g_decArgo_cts5Treat_SS = 6; % sub-surface point (last pumped raw measurement)
+g_decArgo_cts5Treat_DW = 7; % decimated raw
 
 % DOXY coefficients
 g_decArgo_doxy_nomAirPress = 1013.25;
