@@ -1085,10 +1085,10 @@ for idProf = 1:length(tabProfiles)
             profDate = prof.date;
             if (profDate ~= g_decArgo_dateDef)
                netcdf.putVar(fCdf, juldVarId, profPos, 1, profDate);
-               if (isempty(prof.dateQc))
-                  netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
-               else
+               if (~isempty(prof.dateQc))
                   netcdf.putVar(fCdf, juldQcVarId, profPos, 1, prof.dateQc);
+               else
+                  netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
                end
             else
                netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrMissing);
@@ -1104,7 +1104,11 @@ for idProf = 1:length(tabProfiles)
                netcdf.putVar(fCdf, juldLocationVarId, profPos, 1, profLocationDate);
                netcdf.putVar(fCdf, latitudeVarId, profPos, 1, profLocationLat);
                netcdf.putVar(fCdf, longitudeVarId, profPos, 1, profLocationLon);
-               netcdf.putVar(fCdf, positionQcVarId, profPos, 1, profLocationQc);
+               if (~isempty(profLocationQc))
+                  netcdf.putVar(fCdf, positionQcVarId, profPos, 1, profLocationQc);
+               else
+                  netcdf.putVar(fCdf, positionQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
+               end
             else
                netcdf.putVar(fCdf, positionQcVarId, profPos, 1, g_decArgo_qcStrMissing);
             end
@@ -1323,7 +1327,7 @@ for idProf = 1:length(tabProfiles)
                   for idParam = 1:length(newList)
                      paramName = newList{idParam};
                      paramInfo = get_netcdf_param_attributes(paramName);
-                     if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
+                     if (paramInfo.paramType == 'c')
                         
                         tabParam = {paramName};
                         tabEquation = {[paramName '_ADJUSTED = ' paramName]};

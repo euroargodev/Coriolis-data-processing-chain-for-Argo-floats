@@ -25,6 +25,10 @@ global g_decArgo_decoderVersion;
 global g_tempoJPR_generateTraj_3_2;
 g_tempoJPR_generateTraj_3_2 = 0;
 
+% temporary flag to add error ellipses
+global g_tempoJPR_add_error_ellipses;
+g_tempoJPR_add_error_ellipses = 0;
+
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeArgos;
 global g_decArgo_decoderIdListNkeIridiumRbr;
@@ -487,7 +491,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '043g';
+g_decArgo_decoderVersion = '043h';
 
 % list of managed decoders
 
