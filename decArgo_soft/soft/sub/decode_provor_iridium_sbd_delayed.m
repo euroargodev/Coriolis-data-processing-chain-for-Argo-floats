@@ -454,7 +454,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    % perform DOXY adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0);
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0, a_decoderId);
 
    if (g_decArgo_realtimeFlag)
       

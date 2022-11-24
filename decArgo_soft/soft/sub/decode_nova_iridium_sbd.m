@@ -1054,7 +1054,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
    
    % perform DOXY adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0);
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 0, a_decoderId);
    
    % add unseen cycles, clean FMT, LMT and GPS locations and set TST and TET
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd_nva( ...

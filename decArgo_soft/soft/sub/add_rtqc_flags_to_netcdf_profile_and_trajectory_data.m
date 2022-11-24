@@ -105,7 +105,6 @@ testMetaData = [ ...
    {'TEST015_GREY_LIST_FILE'} {g_decArgo_rtqcGreyList} ...
    {'TEST019_METADA_DATA_FILE'} {''} ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
-   {'TEST023_DEEP_FLOAT_FLAG'} {''} ...
    {'TEST057_METADA_DATA_FILE'} {''} ...
    {'TEST062_DARK_BBP700_O'} {''} ...
    {'TEST062_DARK_BBP352_O'} {''} ...
@@ -163,19 +162,6 @@ if (test_to_perform('TEST021_NS_UNPUMPED_SALINITY', testToPerformList) == 1)
    end
 end
 
-if (test_to_perform('TEST023_DEEP_FLOAT', testToPerformList) == 1)
-   
-   % set the deep float flag
-   idVal = find(strcmp('TEST023_DEEP_FLOAT_FLAG', testMetaData) == 1);
-   if (~isempty(idVal))
-      if (ismember(a_decoderId, [201, 202, 203, 215, 216, 218, 221]))
-         testMetaData{idVal+1} = 1;
-      else
-         testMetaData{idVal+1} = 0;
-      end
-   end
-end
-
 if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
    
    % add meta file path name
@@ -196,8 +182,8 @@ if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
    % retrieve DARK_BBP700_O and DARK_BBP352_O from json meta data file
    
    % calibration coefficients
-   darkCountBackscatter700_O = [];
-   darkCountBackscatter532_O = [];
+   darkCountBackscatter700_O = '';
+   darkCountBackscatter532_O = '';
    if (~isempty(g_decArgo_calibInfo))
       if (isfield(g_decArgo_calibInfo, 'ECO2'))
          if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700_O'))

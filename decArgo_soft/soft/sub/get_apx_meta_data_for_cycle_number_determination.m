@@ -47,6 +47,9 @@ global g_decArgo_presDef;
 global g_decArgo_durationDef;
 global g_decArgo_janFirst1950InMatlab;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11Argos;
+
 
 % meta-data used for cycle number estimation
 wantedMetaNames = [ ...
@@ -188,8 +191,7 @@ if (~isempty(idVal))
    end
 end
 
-apexApf11ArgosDecoderIdList = [1021 1022];
-if (ismember(a_decoderId, apexApf11ArgosDecoderIdList))
+if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Argos))
    if (preludeDuration ~= g_decArgo_durationDef)
       preludeDuration = preludeDuration/60; % PRELUDE duration is in minutes in the APF11 float configuration
    end

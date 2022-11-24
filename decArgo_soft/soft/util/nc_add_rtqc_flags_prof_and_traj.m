@@ -23,18 +23,22 @@ function nc_add_rtqc_flags_prof_and_traj(varargin)
 % top directory of the input NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_all - copie pour test RTQC\';
+% DIR_INPUT_NC_FILES = 'D:\202002-ArgoData\coriolis\';
 
 % top directory of the output NetCDF files (should be set to '' if we want to
 % update the existing files
 DIR_OUTPUT_NC_FILES = ''; % update existing files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\refonte_RTQC_20201113\DATA_OUT\NKE2\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\refonte_RTQC_20201113\LIST\nke2.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\refonte_RTQC_20201113\LIST\apex.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % GEBCO file
 GEBCO_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2020\GEBCO_2020.nc';
@@ -101,33 +105,34 @@ testToPerformList = [ ...
    ];
 
 % ALL
-testToPerformList = [ ...
-   {'TEST001_PLATFORM_IDENTIFICATION'} {1} ...
-   {'TEST002_IMPOSSIBLE_DATE'} {1} ...
-   {'TEST003_IMPOSSIBLE_LOCATION'} {1} ...
-   {'TEST004_POSITION_ON_LAND'} {1} ...
-   {'TEST005_IMPOSSIBLE_SPEED'} {1} ...
-   {'TEST006_GLOBAL_RANGE'} {1} ...
-   {'TEST007_REGIONAL_RANGE'} {1} ...
-   {'TEST008_PRESSURE_INCREASING'} {1} ...
-   {'TEST009_SPIKE'} {1} ...
-   {'TEST011_GRADIENT'} {1} ...
-   {'TEST013_STUCK_VALUE'} {1} ...
-   {'TEST014_DENSITY_INVERSION'} {1} ...
-   {'TEST015_GREY_LIST'} {1} ...
-   {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {1} ...
-   {'TEST018_FROZEN_PRESSURE'} {1} ...
-   {'TEST019_DEEPEST_PRESSURE'} {1} ...
-   {'TEST020_QUESTIONABLE_ARGOS_POSITION'} {1} ...
-   {'TEST021_NS_UNPUMPED_SALINITY'} {1} ...
-   {'TEST022_NS_MIXED_AIR_WATER'} {1} ...
-   {'TEST023_DEEP_FLOAT'} {1} ...
-   {'TEST025_MEDD'} {1} ...
-   {'TEST057_DOXY'} {1} ...
-   {'TEST059_NITRATE'} {1} ...
-   {'TEST062_BBP'} {1} ...
-   {'TEST063_CHLA'} {1} ...
-   ];
+% testToPerformList = [ ...
+%    {'TEST001_PLATFORM_IDENTIFICATION'} {1} ...
+%    {'TEST002_IMPOSSIBLE_DATE'} {1} ...
+%    {'TEST003_IMPOSSIBLE_LOCATION'} {1} ...
+%    {'TEST004_POSITION_ON_LAND'} {1} ...
+%    {'TEST005_IMPOSSIBLE_SPEED'} {1} ...
+%    {'TEST006_GLOBAL_RANGE'} {1} ...
+%    {'TEST007_REGIONAL_RANGE'} {1} ...
+%    {'TEST008_PRESSURE_INCREASING'} {1} ...
+%    {'TEST009_SPIKE'} {1} ...
+%    {'TEST011_GRADIENT'} {1} ...
+%    {'TEST012_DIGIT_ROLLOVER'} {1} ...
+%    {'TEST013_STUCK_VALUE'} {1} ...
+%    {'TEST014_DENSITY_INVERSION'} {1} ...
+%    {'TEST015_GREY_LIST'} {1} ...
+%    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {1} ...
+%    {'TEST018_FROZEN_PRESSURE'} {1} ...
+%    {'TEST019_DEEPEST_PRESSURE'} {1} ...
+%    {'TEST020_QUESTIONABLE_ARGOS_POSITION'} {1} ...
+%    {'TEST021_NS_UNPUMPED_SALINITY'} {1} ...
+%    {'TEST022_NS_MIXED_AIR_WATER'} {1} ...
+%    {'TEST023_DEEP_FLOAT'} {1} ...
+%    {'TEST025_MEDD'} {1} ...
+%    {'TEST057_DOXY'} {1} ...
+%    {'TEST059_NITRATE'} {1} ...
+%    {'TEST062_BBP'} {1} ...
+%    {'TEST063_CHLA'} {1} ...
+%    ];
 
 % one test
 % testToPerformList = [ ...
@@ -166,8 +171,9 @@ testMetaData = [ ...
    {'TEST015_GREY_LIST_FILE'} {GREY_LIST_FILE_PATH_NAME} ...
    {'TEST019_METADA_DATA_FILE'} {''} ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
-   {'TEST023_DEEP_FLOAT_FLAG'} {''} ...
    {'TEST057_METADA_DATA_FILE'} {''} ...
+   {'TEST062_DARK_BBP700_O'} {''} ...
+   {'TEST062_DARK_BBP352_O'} {''} ...
    {'TEST063_DARK_CHLA'} {''} ...
    {'TEST063_SCALE_CHLA'} {''} ...
    ];
@@ -300,22 +306,6 @@ for idFloat = 1:nbFloats
          end
       end
             
-      if (test_to_perform('TEST023_DEEP_FLOAT', testToPerformList) == 1)
-         
-         if (~isempty(floatDecoderId))
-            idVal = find(strcmp('TEST023_DEEP_FLOAT_FLAG', testMetaData) == 1);
-            if (~isempty(idVal))
-               if (ismember(floatDecoderId, [201 202 203]))
-                  testMetaData{idVal+1} = 1;
-               else
-                  testMetaData{idVal+1} = 0;
-               end
-            end
-         else
-            fprintf('WARNING: TEST023: Unable to retrieve the float decoder Id to set the deep float flag to perform test#23\n');
-         end
-      end
-      
       if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
          
          % add meta file path name
@@ -343,77 +333,79 @@ for idFloat = 1:nbFloats
             metaData = loadjson(jsonInputFileName);
             
             if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-               jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
-               if (any(strcmp(jSensorNames, 'SUNA')))
-                  
-                  if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
-                     if (~isempty(metaData.CALIBRATION_COEFFICIENT))
-                        fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
-                        for idF = 1:length(fieldNames)
-                           g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+               if (~isempty(metaData.SENSOR_MOUNTED_ON_FLOAT))
+                  jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+                  if (any(strcmp(jSensorNames, 'SUNA')))
+                     
+                     if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
+                        if (~isempty(metaData.CALIBRATION_COEFFICIENT))
+                           fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+                           for idF = 1:length(fieldNames)
+                              g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+                           end
                         end
                      end
-                  end
-                  
-                  if (isfield(g_decArgo_calibInfo, 'SUNA'))
-                     calibData = g_decArgo_calibInfo.SUNA;
-                     tabOpticalWavelengthUv = [];
-                     tabENitrate = [];
-                     tabESwaNitrate = [];
-                     tabEBisulfide = [];
-                     tabUvIntensityRefNitrate = [];
-                     for id = 1:256
-                        fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
-                        if (isfield(calibData, fieldName))
-                           tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
-                        else
-                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
-                           return
-                        end
-                        fieldName = ['E_NITRATE_' num2str(id)];
-                        if (isfield(calibData, fieldName))
-                           tabENitrate = [tabENitrate calibData.(fieldName)];
-                        else
-                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
-                           return
-                        end
-                        fieldName = ['E_SWA_NITRATE_' num2str(id)];
-                        if (isfield(calibData, fieldName))
-                           tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
-                        else
-                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
-                           return
-                        end
-                        if (floatDecoderId == 110)
-                           fieldName = ['E_BISULFIDE_' num2str(id)];
+                     
+                     if (isfield(g_decArgo_calibInfo, 'SUNA'))
+                        calibData = g_decArgo_calibInfo.SUNA;
+                        tabOpticalWavelengthUv = [];
+                        tabENitrate = [];
+                        tabESwaNitrate = [];
+                        tabEBisulfide = [];
+                        tabUvIntensityRefNitrate = [];
+                        for id = 1:256
+                           fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
                            if (isfield(calibData, fieldName))
-                              tabEBisulfide = [tabEBisulfide calibData.(fieldName)];
+                              tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
+                           else
+                              fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                              return
+                           end
+                           fieldName = ['E_NITRATE_' num2str(id)];
+                           if (isfield(calibData, fieldName))
+                              tabENitrate = [tabENitrate calibData.(fieldName)];
+                           else
+                              fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                              return
+                           end
+                           fieldName = ['E_SWA_NITRATE_' num2str(id)];
+                           if (isfield(calibData, fieldName))
+                              tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
+                           else
+                              fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                              return
+                           end
+                           if (floatDecoderId == 110)
+                              fieldName = ['E_BISULFIDE_' num2str(id)];
+                              if (isfield(calibData, fieldName))
+                                 tabEBisulfide = [tabEBisulfide calibData.(fieldName)];
+                              else
+                                 fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                                 return
+                              end
+                           end
+                           fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
+                           if (isfield(calibData, fieldName))
+                              tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
                            else
                               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
                               return
                            end
                         end
-                        fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
-                        if (isfield(calibData, fieldName))
-                           tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
-                        else
-                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
-                           return
+                        g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
+                        g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
+                        g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
+                        if (~isempty(tabEBisulfide))
+                           g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
                         end
+                        g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
+                        
+                        g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
+                        g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
+                        g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
+                     else
+                        fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
                      end
-                     g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
-                     g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
-                     g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
-                     if (~isempty(tabEBisulfide))
-                        g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
-                     end
-                     g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
-                     
-                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
-                  else
-                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
                   end
                end
             end
@@ -653,6 +645,57 @@ for idFloat = 1:nbFloats
          end
       end
       
+      if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
+         
+         % json meta-data file for this float
+         jsonInputFileName = [dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', floatNum)];
+         
+         % calibration coefficients
+         darkCountBackscatter700_O = '';
+         darkCountBackscatter532_O = '';
+         if ~(exist(jsonInputFileName, 'file') == 2)
+            fprintf('ERROR: TEST062: Json meta-data file not found: %s\n', jsonInputFileName);
+         else
+            % read meta-data file
+            metaData = loadjson(jsonInputFileName);
+         
+            % fill the calibration coefficients
+            if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
+               if (~isempty(metaData.CALIBRATION_COEFFICIENT))
+                  fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+                  idF = find((strcmp(fieldNames, 'ECO2') == 1) | ...
+                     (strcmp(fieldNames, 'ECO3') == 1) | ...
+                     (strcmp(fieldNames, 'FLBB') == 1));
+                  if (length(idF) == 1)
+                     ecoCalibStruct = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+                     fieldNames = fields(ecoCalibStruct);
+                     idF = find(strcmp(fieldNames, 'DarkCountBackscatter700_O') == 1);
+                     if (length(idF) == 1)
+                        darkCountBackscatter700_O = double(ecoCalibStruct.(fieldNames{idF}));
+                     end
+                     idF = find(strcmp(fieldNames, 'DarkCountBackscatter532_O') == 1);
+                     if (length(idF) == 1)
+                        darkCountBackscatter532_O = double(ecoCalibStruct.(fieldNames{idF}));
+                     end
+                  end
+               end
+            end
+         end
+         
+         if (~isempty(darkCountBackscatter700_O))
+            idVal = find(strcmp('TEST062_DARK_BBP700_O', testMetaData) == 1);
+            if (~isempty(idVal))
+               testMetaData{idVal+1} = darkCountBackscatter700_O;
+            end
+         end
+         if (~isempty(darkCountBackscatter532_O))
+            idVal = find(strcmp('TEST062_DARK_BBP532_O', testMetaData) == 1);
+            if (~isempty(idVal))
+               testMetaData{idVal+1} = darkCountBackscatter532_O;
+            end
+         end
+      end
+      
       if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
       
          % retrieve DARK_CHLA and SCALE_CHLA from json meta data file and
@@ -822,10 +865,12 @@ for idFloat = 1:nbFloats
                multiProfInputFilePathName, multiProfOutputFilePathName, ...
                testToPerformList, testMetaData, UPDATE_PROFILE_FILE_FLAG, 0);
             if (~isempty(multiProfOutputFilePathName))
-               multiProfInputFilePathName = multiProfOutputFilePathName;
-               multiProfOutputFilePathName = '';
+               if (exist(multiProfOutputFilePathName, 'file') == 2)
+                  multiProfInputFilePathName = multiProfOutputFilePathName;
+                  multiProfOutputFilePathName = '';
+               end
             end
-            fprintf('\n');
+            %             fprintf('\n');
             nbFiles = nbFiles - 1;
             if (nbFiles == 0)
                break

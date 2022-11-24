@@ -426,7 +426,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % perform DOXY, CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatLaunchDate, 1);
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatLaunchDate, 1, a_decoderId);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent

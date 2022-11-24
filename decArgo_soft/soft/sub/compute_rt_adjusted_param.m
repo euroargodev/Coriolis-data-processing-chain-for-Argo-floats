@@ -2,13 +2,15 @@
 % Perform real time adjustment on parameter profile data.
 %
 % SYNTAX :
-%  [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate, a_bgcFloatFlag)
+%  [o_tabProfiles] = compute_rt_adjusted_param( ...
+%    a_tabProfiles, a_launchDate, a_notOnlyDoxyFlag, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_tabProfiles  : input profile structures
-%   a_launchDate   : float launch date
-%   a_bgcFloatFlag : BGC float flag (1: if float is a 'real' BGC float,
-%                    0: if only DOXY adjustment should be checked)
+%   a_tabProfiles     : input profile structures
+%   a_launchDate      : float launch date
+%   a_notOnlyDoxyFlag : 0: if only DOXY adjustment should be done
+%                       1: if other BGC parameters should be adjusted
+%   a_decoderId       : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : output profile structures
@@ -21,16 +23,17 @@
 % RELEASES :
 %   06/28/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate, a_bgcFloatFlag)
+function [o_tabProfiles] = compute_rt_adjusted_param( ...
+   a_tabProfiles, a_launchDate, a_notOnlyDoxyFlag, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
 
 
 % perform DOXY RT adjustment
-[o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles);
+[o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles, a_decoderId);
 
-if (a_bgcFloatFlag)
+if (a_notOnlyDoxyFlag)
    % perform CHLA RT adjustment
    [o_tabProfiles] = compute_rt_adjusted_chla(o_tabProfiles);
    
@@ -44,10 +47,11 @@ return
 % Perform real time adjustment on DOXY profile data.
 %
 % SYNTAX :
-%  [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles)
+%  [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabProfiles : input profile structures
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : output profile structures
@@ -60,7 +64,7 @@ return
 % RELEASES :
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles)
+function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
@@ -131,7 +135,7 @@ if (~isempty(doSlope))
             ([o_tabProfiles.sensorNumber] < 100)); % AUX profiles should not be considered
          
          % adjust DOXY for this profile
-         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset, doAdjError);
+         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset, doAdjError, a_decoderId);
          if (ok)
             o_tabProfiles(idProf) = profile;
             
@@ -186,7 +190,7 @@ return
 %
 % SYNTAX :
 %  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-%    a_slope, a_offset, a_adjError)
+%    a_slope, a_offset, a_adjError, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_profile     : input DOXY profile structure
@@ -195,6 +199,7 @@ return
 %   a_slope       : slope to be used for PPOX_DOXY adjustment
 %   a_offset      : offset to be used for PPOX_DOXY adjustment
 %   a_adjError    : error on PPOX_DOXY adjusted values
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_ok      : 1 if the adjustment has been performed, 0 otherwise
@@ -209,7 +214,7 @@ return
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-   a_slope, a_offset, a_adjError)
+   a_slope, a_offset, a_adjError, a_decoderId)
 
 % output parameters initialization
 o_ok = 0;
@@ -221,6 +226,9 @@ global g_decArgo_floatNum;
 % QC flag values (numerical)
 global g_decArgo_qcDef;
 global g_decArgo_qcNoQc;
+
+% lists of managed decoders
+global g_decArgo_decoderIdListBgcFloatAll;
 
 
 % involved parameter information
@@ -238,7 +246,8 @@ idPres = find(strcmp({a_profile.paramList.name}, 'PRES'));
 idTemp = find(strcmp({a_profile.paramList.name}, 'TEMP'));
 idPsal = find(strcmp({a_profile.paramList.name}, 'PSAL'));
 idDoxy = find(strcmp({a_profile.paramList.name}, 'DOXY'));
-if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
+
+if (~ismember(a_decoderId, g_decArgo_decoderIdListBgcFloatAll))
 
    % case of a PTSO float
    presValues = a_profile.data(:, idPres);

@@ -27,6 +27,10 @@ o_metaData = a_metaData;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNemo;
+global g_decArgo_decoderIdListMtime;
+
 
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
@@ -68,7 +72,7 @@ if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Re
 end
 
 % add a POSITIONING_SYSTEM = 'RAFOS' to NEMO floats
-if (ismember(a_decoderId, decoderIdListNemo))
+if (ismember(a_decoderId, g_decArgo_decoderIdListNemo))
    if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
          (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
          (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
@@ -83,16 +87,7 @@ if (ismember(a_decoderId, decoderIdListNemo))
 end
 
 % add 'MTIME' parameter and associated SENSOR to specific floats
-decoderIdListMtimeCTS5 = [121, 122, 123, 124, 125, 126];
-decoderIdListMtimeApex = [1121, 1122, 1123, 1321, 1322];
-decoderIdListMtimeNavis = [1201];
-decoderIdListMtimeNemo = [3001];
-decoderIdListMtime = [ ...
-   decoderIdListMtimeCTS5 ...
-   decoderIdListMtimeApex ...
-   decoderIdListMtimeNavis ...
-   decoderIdListMtimeNemo];
-if (ismember(a_decoderId, decoderIdListMtime))
+if (ismember(a_decoderId, g_decArgo_decoderIdListMtime))
    o_metaData = add_mtime_parameter(o_metaData);
 end
 

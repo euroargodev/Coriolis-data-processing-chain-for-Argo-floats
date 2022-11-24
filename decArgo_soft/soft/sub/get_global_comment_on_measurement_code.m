@@ -956,6 +956,9 @@ function [o_comment] = get_comment(a_measurementCode, a_decoderId)
 % output parameters initialization
 o_comment = [];
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11Iridium;
+
 % global measurement codes
 global g_MC_FillValue;
 global g_MC_Launch;
@@ -1014,9 +1017,7 @@ global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTET;
 
 
-apexApf11IrDecoderIdList = [1121, 1122, 1123, 1321, 1322];
-
-if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
+if (~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
 
    switch (a_measurementCode)
       case {g_MC_CycleStart}

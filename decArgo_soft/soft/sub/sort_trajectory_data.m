@@ -31,13 +31,15 @@ global g_decArgo_floatNum;
 % default values
 global g_decArgo_dateDef;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11Iridium;
+
 
 % sort the N_MEASUREMENT data structures according to the predefined measurement
 % code order
 if (~isempty(o_tabTrajNMeas))
    
-   apexApf11IrDecoderIdList = [1121, 1122, 1123, 1321, 1322];
-   if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
+   if (~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
       
       mcOrderList = get_mc_order_list(a_decoderId);
       if (~isempty(mcOrderList))

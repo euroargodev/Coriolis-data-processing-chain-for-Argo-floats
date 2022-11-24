@@ -18,6 +18,34 @@
 % ------------------------------------------------------------------------------
 function init_default_values(varargin)
 
+% decoder version
+global g_decArgo_decoderVersion;
+
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeArgos;
+global g_decArgo_decoderIdListNkeIridium;
+global g_decArgo_decoderIdListNkeCts4;
+global g_decArgo_decoderIdListNkeCts5;
+global g_decArgo_decoderIdListNkeMisc;
+global g_decArgo_decoderIdListNke;
+global g_decArgo_decoderIdListApexApf9Argos;
+global g_decArgo_decoderIdListApexApf9Iridium;
+global g_decArgo_decoderIdListApexApf11Iridium;
+global g_decArgo_decoderIdListApexApf11Argos;
+global g_decArgo_decoderIdListApexArgos;
+global g_decArgo_decoderIdListApexIridium;
+global g_decArgo_decoderIdListApex;
+global g_decArgo_decoderIdListNavis;
+global g_decArgo_decoderIdListNova;
+global g_decArgo_decoderIdListNemo;
+global g_decArgo_decoderIdListAll;
+global g_decArgo_decoderIdListDeepFloat;
+global g_decArgo_decoderIdListBgcFloatNKE;
+global g_decArgo_decoderIdListBgcFloatApex;
+global g_decArgo_decoderIdListBgcFloatAll;
+global g_decArgo_decoderIdListProfWithDatedLev;
+global g_decArgo_decoderIdListMtime;
+
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_epochDef;
@@ -97,15 +125,12 @@ global g_decArgo_nbHourForProfDateCompInRtOffsetAdj;
 global g_decArgo_profNum;
 global g_decArgo_vertSpeed;
 
-global g_decArgo_decoderVersion;
-
 global g_decArgo_minNonTransDurForNewCycle;
 global g_decArgo_minNonTransDurForGhost
 global g_decArgo_minNumMsgForNotGhost;
 global g_decArgo_minNumMsgForProcessing;
 global g_decArgo_minSubSurfaceCycleDuration;
 global g_decArgo_minSubSurfaceCycleDurationIrSbd2;
-global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
 global g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate;
 
 % cycle phases
@@ -416,6 +441,91 @@ global g_decArgo_nitrate_d;
 global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
+% the first 3 digits are incremented at each new complete dated release
+% the last digit is incremented at each patch associated to a given complete
+% dated release 
+g_decArgo_decoderVersion = '037f';
+
+% list of managed decoders
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THE FOLLOWING LISTS SHOULD BE UPDATED FOR EACH NEW DECODER
+
+% all managed decoders
+g_decArgo_decoderIdListNkeArgos = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27:32];
+g_decArgo_decoderIdListNkeIridium = [201:223];
+g_decArgo_decoderIdListNkeCts4 = [105, 106, 107, 109, 110:113];
+g_decArgo_decoderIdListNkeCts5 = [121:126];
+g_decArgo_decoderIdListNkeMisc = [301, 302, 303];
+
+g_decArgo_decoderIdListNke = [ ...
+   g_decArgo_decoderIdListNkeArgos ...
+   g_decArgo_decoderIdListNkeIridium ...
+   g_decArgo_decoderIdListNkeCts4 ...
+   g_decArgo_decoderIdListNkeCts5 ...
+   g_decArgo_decoderIdListNkeMisc];
+
+g_decArgo_decoderIdListApexApf9Argos = [1001:1016];
+g_decArgo_decoderIdListApexApf9Iridium = [1101:1113, 1314];
+g_decArgo_decoderIdListApexApf11Argos = [1021, 1022];
+g_decArgo_decoderIdListApexApf11Iridium = [1121:1123, 1321, 1322];
+g_decArgo_decoderIdListApexArgos = [ ...
+   g_decArgo_decoderIdListApexApf9Argos ...
+   g_decArgo_decoderIdListApexApf11Argos];
+g_decArgo_decoderIdListApexIridium = [ ...
+   g_decArgo_decoderIdListApexApf9Iridium ...
+   g_decArgo_decoderIdListApexApf11Iridium];
+
+g_decArgo_decoderIdListApex = [ ...
+   g_decArgo_decoderIdListApexArgos ...
+   g_decArgo_decoderIdListApexIridium];
+
+g_decArgo_decoderIdListNavis = [1201];
+g_decArgo_decoderIdListNova = [2001, 2002, 2003];
+g_decArgo_decoderIdListNemo = [3001];
+
+g_decArgo_decoderIdListAll = [ ...
+   g_decArgo_decoderIdListNke ...
+   g_decArgo_decoderIdListApex ...
+   g_decArgo_decoderIdListNavis ...
+   g_decArgo_decoderIdListNova ...
+   g_decArgo_decoderIdListNemo];
+
+% DEEP float decoders
+g_decArgo_decoderIdListDeepFloat = [201:203 215 216 218 221];
+
+% BGC float decoders (each sensor has is own PRES axis, i.e. need to interpolate
+% the CTD data when needed by a BGC parameter)
+g_decArgo_decoderIdListBgcFloatNKE = [105:107 109:113 121:126];
+g_decArgo_decoderIdListBgcFloatApex = g_decArgo_decoderIdListApexIridium;
+
+g_decArgo_decoderIdListBgcFloatAll = [ ...
+   g_decArgo_decoderIdListBgcFloatNKE ...
+   g_decArgo_decoderIdListBgcFloatApex ...
+   g_decArgo_decoderIdListNavis];
+
+% the floats that report profile dated levels are:
+% - all NKE floats
+% - all NOVA/DOVA floats
+% - all NAVIS floats
+% - all NEMO floats
+% - Apex APF11 Iridium floats
+g_decArgo_decoderIdListProfWithDatedLev = [ ...
+   g_decArgo_decoderIdListNke ...
+   g_decArgo_decoderIdListNova ...
+   g_decArgo_decoderIdListNavis ...
+   g_decArgo_decoderIdListNemo ...
+   g_decArgo_decoderIdListApexIridium];
+
+% the float with 'MTIME' parameter
+g_decArgo_decoderIdListMtime = [ ...
+   g_decArgo_decoderIdListNkeCts5 ...
+   g_decArgo_decoderIdListApexApf11Iridium ...
+   g_decArgo_decoderIdListNavis ...
+   g_decArgo_decoderIdListNemo];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % global default values initialization
 g_decArgo_dateDef = 99999.99999999;
 g_decArgo_epochDef = 9999999999;
@@ -501,11 +611,6 @@ g_decArgo_nbHourForProfDateCompInRtOffsetAdj = 2;
 
 g_decArgo_profNum = 99;
 g_decArgo_vertSpeed = 99.9;
-
-% the first 3 digits are incremented at each new complete dated release
-% the last digit is incremented at each patch associated to a given complete
-% dated release 
-g_decArgo_decoderVersion = '037e';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
