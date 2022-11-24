@@ -318,6 +318,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idDel) = 1;
          idDel = find((tabSession == 374) & (tabCyNum == 18600) & (tabPackType == 0));
          tabDone(idDel) = 1;
+                  
    end
 end
 
@@ -481,6 +482,20 @@ if (ismember(a_decoderId, [111, 113]))
    % it from decoding buffers)
    idSurfSensorTech = find((tabPackType == 250) & (tabDeep == 0) & (tabCyNum > 0));
    tabRank(idSurfSensorTech) = -1;
+end
+if (ismember(g_decArgo_floatNum, ...
+      [6903249]))
+   switch g_decArgo_floatNum
+
+      case 6903249
+         % cycle #184 is ok for vector timings but without any measurements +
+         % TECH packets of the OCR don't have the expected length => ignore TECH
+         % packets of OCR sensor
+         idSession = find((tabCyNum == 18400) & (tabPhaseNumRaw == 12));
+         idDel = find((tabSession == tabSession(idSession)) & (tabSensorType == 2));
+         tabRank(idDel) = -1;
+         
+   end
 end
 
 % sort rank numbers according to cycle numbers

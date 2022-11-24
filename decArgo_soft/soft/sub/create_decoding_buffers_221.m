@@ -184,13 +184,17 @@ if (any(diff(tabResetDate(idPackType4)) > 0))
       end
       
       % update also cycle numbers in clock offset structure
+      firstPackClockOffset = find(g_decArgo_clockOffset.juldUtc >= resetDate, 1);
       cycNumPrevClockOffset = g_decArgo_clockOffset.cycleNum( ...
          find(g_decArgo_clockOffset.juldUtc < resetDate, 1, 'last'));
-      firstPackClockOffset = find(g_decArgo_clockOffset.juldUtc >= resetDate, 1);
+      offset = 0;
+      if (idR == 1)
+         offset = cycNumPrevClockOffset;
+      end
       
       if (cycNumPrevClockOffset > 0)
          g_decArgo_clockOffset.cycleNum(firstPackClockOffset:end) = ...
-            g_decArgo_clockOffset.cycleNum(firstPackClockOffset:end) + cycNumPrevClockOffset + 1;
+            g_decArgo_clockOffset.cycleNum(firstPackClockOffset:end) + offset + 1;
       end
    end
 end
