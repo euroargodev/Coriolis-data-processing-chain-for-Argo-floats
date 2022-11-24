@@ -284,6 +284,13 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 
+% cycle phases
+global g_decArgo_phaseSurfWait;
+global g_decArgo_phaseSatTrans;
+
+% QC flag values (char)
+global g_decArgo_qcStrInterpolated;
+
 
 % use the other profiles of the same cycle to fill missing dates and locations
 if ((a_profStruct.locationDate == g_decArgo_dateDef) || ...
