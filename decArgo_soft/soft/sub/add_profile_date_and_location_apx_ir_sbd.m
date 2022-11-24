@@ -150,7 +150,8 @@ for idP = 1:length(o_tabProfiles)
          % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
          if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
             if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
-               if (a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))
+               if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
+                     (a_gpsLocCycleNum(end) == prof.cycleNumber))
                   prof.updated = 1;
                end
             end
@@ -213,11 +214,13 @@ for idP = 1:length(o_tabProfiles)
                   % cycle of the current decoding session (used to detect when a
                   % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
                   if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-                     idPrev = find(a_gpsLocDate == prevLocDate);
                      idNext = find(a_gpsLocDate == nextLocDate);
-                     if ((a_gpsLocReceivedCyNum(idPrev) == max(a_gpsLocCycleNum)) || ...
-                           (a_gpsLocReceivedCyNum(idNext) == max(a_gpsLocCycleNum)))
-                        prof.updated = 1;
+                     idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
+                     if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
+                        if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
+                              (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
+                           prof.updated = 1;
+                        end
                      end
                   end
                else
