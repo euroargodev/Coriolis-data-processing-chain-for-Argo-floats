@@ -18,7 +18,6 @@
 %         floatBProfFileName  : input b PROF file path name
 %         floatMetaFileName   : input META file path name
 %         floatCTrajFileName  : input c TRAJ file path name
-%         floatBTrajFileName  : input b TRAJ file path name
 %         createMultiProfFlag : should be set to '1' to create multi-profile
 %                               file, to '0' otherwise
 %         outputDirName       : output directory name
@@ -33,6 +32,8 @@
 %      monoProfRefFileName     : M mono-profile reference file path name
 %      multiProfRefFileName    : M multi-profile reference file path name
 %      tmpDirName              : base name of the temporary directory
+%      if createOnlyMultiProfFlag is set to '0' one optional parameter is:
+%         floatBTrajFileName  : input b TRAJ file path name
 %
 % OUTPUT PARAMETERS :
 %
@@ -48,6 +49,7 @@
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 %   09/25/2018 - RNU - V 1.3: added input parameters 'createOnlyMultiProfFlag' and 'floatWmo'
+%   10/10/2018 - RNU - V 1.3: floatBTrajFileName is optional
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile_rt(varargin)
 
@@ -113,7 +115,7 @@ g_cocm_reportData.outputMMultiProfFile = [];
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.3';
+g_cocm_ncCreateMergedProfileVersion = '1.4';
 
 % current float and cycle identification
 global g_cocm_floatNum;
@@ -425,11 +427,11 @@ if (g_cocm_createOnlyMultiProfFlag == '0')
       o_inputError = 1;
       return;
    end
-   if (isempty(g_cocm_floatBTrajFileName))
-      o_logLines{end+1} = sprintf('ERROR: ''floatBTrajFileName'' input parameter is mandatory\n');
-      o_inputError = 1;
-      return;
-   end
+   %    if (isempty(g_cocm_floatBTrajFileName))
+   %       o_logLines{end+1} = sprintf('ERROR: ''floatBTrajFileName'' input parameter is mandatory\n');
+   %       o_inputError = 1;
+   %       return;
+   %    end
    if (isempty(g_cocm_createMultiProfFlag))
       o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory\n');
       o_inputError = 1;
@@ -462,10 +464,12 @@ if (g_cocm_createOnlyMultiProfFlag == '0')
       o_inputError = 1;
       return;
    end
-   if ~(exist(g_cocm_floatBTrajFileName, 'file') == 2)
-      o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBTrajFileName);
-      o_inputError = 1;
-      return;
+   if (~isempty(g_cocm_floatBTrajFileName))
+      if ~(exist(g_cocm_floatBTrajFileName, 'file') == 2)
+         o_logLines{end+1} = sprintf('ERROR: Input file not found: %s\n', g_cocm_floatBTrajFileName);
+         o_inputError = 1;
+         return;
+      end
    end
    if ((length(g_cocm_createMultiProfFlag) ~= 1) || ...
          ((g_cocm_createMultiProfFlag ~= '0') && (g_cocm_createMultiProfFlag ~= '1')))

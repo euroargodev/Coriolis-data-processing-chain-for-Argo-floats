@@ -41,6 +41,9 @@ OUTPUT_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp_3901863\';
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
+% maximum age of files to consider (in hours
+MAX_FILE_AGE_IN_HOUR = 1;
+
 
 % create and start log file recording
 logFile = [DIR_LOG_FILE '/' 'copy_iridium_mail_files_float_to_recover' datestr(now, 'yyyymmddTHHMMSS') '.log'];
@@ -95,6 +98,9 @@ if (isempty(numWmo))
    return;
 end
 
+% current date
+curUtcDate = now_utc;
+
 % copy SBD files
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
@@ -128,14 +134,16 @@ for idFloat = 1:nbFloats
       
       mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
       if (exist(mailFilePathNameOut, 'file') == 2)
-         % when the file already exists, check (with its date) if it needs to be
-         % updated
-         mailFileOut = dir(mailFilePathNameOut);
-         if (~strcmp(mailFile(idFile).date, mailFileOut.date))
-            copy_file(mailFilePathName, floatOutputDirName);
-            fprintf('   %s => copy\n', mailFileName);
-         else
-            fprintf('   %s => unchanged\n', mailFileName);
+         if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
+            % when the file already exists, check (with its date) if it needs to be
+            % updated
+            mailFileOut = dir(mailFilePathNameOut);
+            if (~strcmp(mailFile(idFile).date, mailFileOut.date))
+               copy_file(mailFilePathName, floatOutputDirName);
+               fprintf('   %s => copy\n', mailFileName);
+            else
+               fprintf('   %s => unchanged\n', mailFileName);
+            end
          end
       else
          % copy the file if it doesn't exist
@@ -148,33 +156,35 @@ for idFloat = 1:nbFloats
    fprintf('SPOOL_DIR files (%s):\n', SPOOL_DIR);
    mailFile = dir([SPOOL_DIR '/' 'co*.txt']);
    for idFile = 1:length(mailFile)
-      mailFileName = mailFile(idFile).name;
-      mailFilePathName = [SPOOL_DIR '/' mailFileName];
-      
-      [imei, timeOfSession, momsn, mtmsn, lineNum] = find_info_in_file(mailFilePathName);
-      if (~isempty(imei) && ~isempty(timeOfSession) && ~isempty(momsn) && ~isempty(mtmsn))
+      if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
+         mailFileName = mailFile(idFile).name;
+         mailFilePathName = [SPOOL_DIR '/' mailFileName];
          
-         if (num2str(imei) == floatImei)
+         [imei, timeOfSession, momsn, mtmsn, lineNum] = find_info_in_file(mailFilePathName);
+         if (~isempty(imei) && ~isempty(timeOfSession) && ~isempty(momsn) && ~isempty(mtmsn))
             
-            idFUs = strfind(mailFileName, '_');
-            idFExt = strfind(mailFileName, '.txt');
-            pidNum = mailFileName(idFUs(end)+1:idFExt-1);
-            
-            newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...
-               datestr(timeOfSession + 712224, 'yyyymmddTHHMMSS'), ...
-               imei, momsn, mtmsn) pidNum '.txt'];
-            
-            mailFilePathNameOut = [floatOutputDirName '/' newfilename];
-            if (exist(mailFilePathNameOut, 'file') == 2)
-               fprintf('   %s => unchanged\n', newfilename);
-            else
-               % copy the file if it doesn't exist
-               copy_file(mailFilePathName, mailFilePathNameOut);
-               fprintf('   %s => copy\n', newfilename);
+            if (num2str(imei) == floatImei)
+               
+               idFUs = strfind(mailFileName, '_');
+               idFExt = strfind(mailFileName, '.txt');
+               pidNum = mailFileName(idFUs(end)+1:idFExt-1);
+               
+               newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...
+                  datestr(timeOfSession + 712224, 'yyyymmddTHHMMSS'), ...
+                  imei, momsn, mtmsn) pidNum '.txt'];
+               
+               mailFilePathNameOut = [floatOutputDirName '/' newfilename];
+               if (exist(mailFilePathNameOut, 'file') == 2)
+                  fprintf('   %s => unchanged\n', newfilename);
+               else
+                  % copy the file if it doesn't exist
+                  copy_file(mailFilePathName, mailFilePathNameOut);
+                  fprintf('   %s => copy\n', newfilename);
+               end
             end
+         else
+            fprintf('ERROR: Missing information in file: %s\n', mailFilePathName);
          end
-      else
-         fprintf('ERROR: Missing information in file: %s\n', mailFilePathName);
       end
    end
 end

@@ -185,7 +185,7 @@ if (~isempty(a_nearSurfData))
    profNsStruct.configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
    
    % add vertical sampling scheme
-   profNsStruct.vertSamplingScheme = 'Near-surface sampling: []';
+   profNsStruct.vertSamplingScheme = 'Near-surface sampling: discrete, unpumped []';
    profNsStruct.primarySamplingProfileFlag = 0;
    
    % add MTIME to data
