@@ -410,6 +410,10 @@ if (isempty(g_decArgo_rtOffsetInfo))
    return
 end
 
+if (isempty(o_tabProfiles))
+   return
+end
+
 profDateList = [o_tabProfiles.date];
 profDateList(profDateList == g_decArgo_dateDef) = [];
 adjFlag = 0;

@@ -51,22 +51,24 @@ ellipsesDataStruct = get_argos_error_ellipses(a_floatArgosId, ...
    );
 
 % add error ellipses data in trajectories
-for id = 1:length(o_tabTrajNMeas)
-   if (o_tabTrajNMeas(id).outputCycleNumber >= 0)
-      cycleFmt = [];
-      idFmt = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_FMT);
-      if (~isempty(idFmt))
-         cycleFmt = o_tabTrajNMeas(id).tabMeas(idFmt).juld;
+if (~isempty(ellipsesDataStruct))
+   for id = 1:length(o_tabTrajNMeas)
+      if (o_tabTrajNMeas(id).outputCycleNumber >= 0)
+         cycleFmt = [];
+         idFmt = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_FMT);
+         if (~isempty(idFmt))
+            cycleFmt = o_tabTrajNMeas(id).tabMeas(idFmt).juld;
+         end
+         cycleLmt = [];
+         idLmt = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_LMT);
+         if (~isempty(idLmt))
+            cycleLmt = o_tabTrajNMeas(id).tabMeas(idLmt).juld;
+         end
+         idFix = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
+         o_tabTrajNMeas(id).tabMeas(idFix) = ...
+            update_traj_data(o_tabTrajNMeas(id).tabMeas(idFix), ...
+            cycleFmt, cycleLmt, o_tabTrajNMeas(id).outputCycleNumber, ellipsesDataStruct);
       end
-      cycleLmt = [];
-      idLmt = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_LMT);
-      if (~isempty(idLmt))
-         cycleLmt = o_tabTrajNMeas(id).tabMeas(idLmt).juld;
-      end
-      idFix = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
-      o_tabTrajNMeas(id).tabMeas(idFix) = ...
-         update_traj_data(o_tabTrajNMeas(id).tabMeas(idFix), ...
-         cycleFmt, cycleLmt, o_tabTrajNMeas(id).outputCycleNumber, ellipsesDataStruct);
    end
 end
 
@@ -545,8 +547,8 @@ if (exist(dataDirPathName, 'dir') == 7)
    if (exist(dataFilePathName, 'file') == 2)
       o_data = read_argos_error_ellipses_csv_file(dataFilePathName);
    else
-      fprintf('WARNING: Float #%d: Empty directory of mail Argos error ellipses (%s)\n', ...
-         g_decArgo_floatNum, dataDirPathName);
+      %       fprintf('WARNING: Float #%d: Empty directory of mail Argos error ellipses (%s)\n', ...
+      %          g_decArgo_floatNum, dataDirPathName);
    end
 end
 
