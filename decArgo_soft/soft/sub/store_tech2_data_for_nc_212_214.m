@@ -237,7 +237,7 @@ if (a_deepCycle == 1)
    % algorithm is enabled
    [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
    iceUsed = get_config_value('CONFIG_IC00_', configNames, configValues);
-   if (~isempty(iceUsed) && ~isnan(iceUsed) && (iceUsed ~= 0))
+   if (~isempty(iceUsed) && (iceUsed ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 243];
       g_decArgo_outputNcParamValue{end+1} = tabTech2(59+ID_OFFSET);

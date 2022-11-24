@@ -78,7 +78,7 @@ if (isempty(presCutOffProf))
    presCutOffProf = [];
    [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
    ctpPumpSwitchOffPres = get_config_value('CONFIG_PX02_', configNames, configValues);
-   if (~isnan(ctpPumpSwitchOffPres))
+   if (~isempty(ctpPumpSwitchOffPres))
       presCutOffProf = ctpPumpSwitchOffPres;
       
       fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data => value retrieved from the configuration\n', ...

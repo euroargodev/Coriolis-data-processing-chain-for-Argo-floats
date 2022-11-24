@@ -97,7 +97,7 @@ else
    
    % set the descending sampling period to 10 seconds
    descSampPeriod = get_config_value('CONFIG_MC7_', configNames, currentConfig);
-   if (isnan(descSampPeriod) || (descSampPeriod == 0))
+   if (isempty(descSampPeriod) || (descSampPeriod == 0))
       confName = 'CONFIG_MC7_';
       idPosMc7 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
       currentConfig(idPosMc7) = 10;
@@ -117,13 +117,13 @@ end
 
 % manage alternated profile pressure
 secondProfRepRate = get_config_value('CONFIG_TC14_', configNames, currentConfig);
-if (~isnan(secondProfRepRate) && (secondProfRepRate ~= 1))
+if (~isempty(secondProfRepRate) && (secondProfRepRate ~= 1))
    
    % check float internal cycle number VS TC14
    if ((mod(a_cyNum-1, secondProfRepRate) == 0) || (a_cyNum == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
       % profile pressure is TC15
       secondProfPres = get_config_value('CONFIG_TC15_', configNames, currentConfig);
-      if (~isnan(secondProfPres))
+      if (~isempty(secondProfPres))
          confName = 'CONFIG_MC011_';
          idPosMc011 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
          currentConfig(idPosMc011) = secondProfPres;
@@ -133,7 +133,7 @@ end
 
 % manage auto-increment of parking pressure
 driftDepthIncrement = get_config_value('CONFIG_TC17_', configNames, currentConfig);
-if (~isnan(driftDepthIncrement) && (driftDepthIncrement ~= 0))
+if (~isempty(driftDepthIncrement) && (driftDepthIncrement ~= 0))
    
    confName = 'CONFIG_MC010_';
    idPosMc010 = find(strncmp(confName, configNames, length(confName)) == 1, 1);

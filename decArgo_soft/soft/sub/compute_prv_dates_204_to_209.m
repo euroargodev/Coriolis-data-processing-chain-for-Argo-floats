@@ -140,7 +140,7 @@ elseif (length(idF) == 1)
          [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
          cycleDurationDays = get_config_value('CONFIG_PM01', configNames, configValues);
          
-         if ((lastMsgDateOfCycle ~= g_decArgo_dateDef) && ~isnan(cycleDurationDays))
+         if ((lastMsgDateOfCycle ~= g_decArgo_dateDef) && ~isempty(cycleDurationDays))
          
             % compute the estimate of the last message time of the previous
             % cycle
@@ -211,7 +211,7 @@ elseif (length(idF) == 1)
          [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
          PT4Seconds = get_config_value('CONFIG_PT04', configNames, configValues)/100;
          
-         if (~isnan(PT4Seconds))
+         if (~isempty(PT4Seconds))
             
             o_ascentEndDate = o_transStartDate - 10/1440 - PT4Seconds/86400;
             

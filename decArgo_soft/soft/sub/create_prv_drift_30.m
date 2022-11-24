@@ -88,7 +88,7 @@ end
 % retrieve the drift sampling period from the configuration
 [configNames, configValues] = get_float_config_argos_1(0);
 driftSamplingPeriod = get_config_value('CONFIG_MC8_', configNames, configValues);
-if (isnan(driftSamplingPeriod))
+if (isempty(driftSamplingPeriod))
    driftSamplingPeriod = a_driftSamplingPeriod;
 end
 

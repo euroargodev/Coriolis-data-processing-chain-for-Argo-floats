@@ -156,7 +156,7 @@ descentToProfEndMinute = a_tabTech2(15)*6;
 [configNames, configValues] = get_float_config_argos_2(g_decArgo_cycleNum);
 driftDepth = get_config_value('CONFIG_MC010_', configNames, configValues);
 profDepth = get_config_value('CONFIG_MC011_', configNames, configValues);
-if (~isnan(driftDepth) && ~isnan(profDepth))
+if (~isempty(driftDepth) && ~isempty(profDepth))
 
    if (driftDepth == profDepth)
       if ((descentToProfEndMinute < descentToProfStartMinute) && ...
@@ -217,7 +217,7 @@ if (g_decArgo_cycleNum > firstDeepCycleNumber)
       % configuration
       [configNames, configValues] = get_float_config_argos_2(g_decArgo_cycleNum);
       minArgosTransDur = get_config_value('CONFIG_AC3_', configNames, configValues);
-      if (~isnan(minArgosTransDur))
+      if (~isempty(minArgosTransDur))
          transEndDateOfPrevCycle = transStartDateOfPrevCycle - minArgosTransDur/24;
       else
          % retrieve the current cycle duration (always exists)
