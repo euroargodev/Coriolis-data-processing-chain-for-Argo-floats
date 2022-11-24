@@ -50,8 +50,13 @@ if (exist(a_ncPathFileName, 'file') == 2)
    positionQc = profData{idVal+1};
    positionQc = unique(positionQc);
    idVal = find(strcmp('POSITIONING_SYSTEM', profData) == 1);
-   positioningSystem = profData{idVal+1}';
-   positioningSystem = strtrim(unique(positioningSystem)');
+   posSystem = profData{idVal+1};
+   for idPs = 1:size(posSystem, 2)
+      positioningSystem = strtrim(posSystem(:, idPs)');
+      if (~isempty(positioningSystem))
+         break
+      end
+   end
 
    o_ncProfLoc = sprintf('%s %.3f %.3f %c %s', ...
    julian_2_gregorian_dec_argo(juldLocation), ...
