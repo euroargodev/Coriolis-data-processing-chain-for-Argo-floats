@@ -204,6 +204,16 @@ if (g_decArgo_floatNum == 2902264)
       a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
    end
 end
+if (g_decArgo_floatNum == 6903550)
+   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 12:04:36')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+   
+   startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 11:56:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+   stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
+   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
+   for id = startId44:stopId44
+      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+   end
+end
 
 % modify cycle number of the second Iridum session expected files
 idSurf = find((tabDeep == 0) & ismember(tabPackType, [248 249 253 254 255]));
