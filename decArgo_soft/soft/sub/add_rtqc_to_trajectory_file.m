@@ -92,6 +92,9 @@
 %                             processing the next cycle (see cycle #48 of float
 %                             6903183).
 %   03/26/2019 - RNU - V 2.5: Added RTQC tests for NITRATE parameter
+%   07/15/2019 - RNU - V 2.6: In version 3.2 of the QC manual, for test #7, the
+%                             minimal range for TEMP in the Read Sea has been
+%                             set to 21°C (instead of 21.7°C).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -130,7 +133,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.5';
+g_decArgo_addRtqcToTrajVersion = '2.6';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1202,10 +1205,10 @@ if (testFlagList(7) == 1)
                if (location_in_region(meanLonOfCy, meanLatOfCy, RED_SEA_REGION))
                   
                   paramTestMinMax = [ ...
-                     21.7 40; ... % TEMP
-                     21.7 40; ... % TEMP2
-                     21.7 40; ... % TEMP_DOXY
-                     21.7 40; ... % TEMP_DOXY2
+                     21 40; ... % TEMP
+                     21 40; ... % TEMP2
+                     21 40; ... % TEMP_DOXY
+                     21 40; ... % TEMP_DOXY2
                      2 41; ... % PSAL
                      2 41; ... % PSAL2
                      ];

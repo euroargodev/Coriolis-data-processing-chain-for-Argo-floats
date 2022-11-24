@@ -144,6 +144,9 @@
 %                             values, the QC are reported only if the adjustment
 %                             is done by the decoder itself (not when it comes
 %                             from BDD slope+offset information).
+%   07/15/2019 - RNU - V 4.3: In version 3.2 of the QC manual, for test #7, the
+%                             minimal range for TEMP in the Read Sea has been
+%                             set to 21°C (instead of 21.7°C).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -175,7 +178,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '4.2';
+g_decArgo_addRtqcToProfileVersion = '4.3';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -2114,10 +2117,10 @@ if (testFlagList(7) == 1)
                if (location_in_region(longitude(idProf), latitude(idProf), RED_SEA_REGION))
                   
                   paramTestMinMax = [ ...
-                     21.7 40; ... % TEMP
-                     21.7 40; ... % TEMP2
-                     21.7 40; ... % TEMP_DOXY
-                     21.7 40; ... % TEMP_DOXY2
+                     21 40; ... % TEMP
+                     21 40; ... % TEMP2
+                     21 40; ... % TEMP_DOXY
+                     21 40; ... % TEMP_DOXY2
                      2 41; ... % PSAL
                      2 41; ... % PSAL2
                      ];
