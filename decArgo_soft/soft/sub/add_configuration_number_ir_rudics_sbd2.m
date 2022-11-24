@@ -184,7 +184,7 @@ if (~isempty(idF))
             idFCyProf2 = find((cyNum == finalCyNum) & ...
                (profNum == finalProfNum));
             if (~isempty(idFCyProf1) && ~isempty(idFCyProf2))
-               inputUsedCyOut(idFCyProf1) = idFCyProf2;
+               inputUsedCyOut(idFCyProf1) = finalCyNum(idFCyProf2);
             end
          end
          

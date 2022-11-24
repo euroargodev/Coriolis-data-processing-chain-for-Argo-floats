@@ -28,6 +28,8 @@ global g_decArgo_decoderIdListNkeIridiumNotDeep;
 global g_decArgo_decoderIdListNkeIridiumDeep;
 global g_decArgo_decoderIdListNkeIridium;
 global g_decArgo_decoderIdListNkeCts4;
+global g_decArgo_decoderIdListNkeCts5Osean;
+global g_decArgo_decoderIdListNkeCts5Usea;
 global g_decArgo_decoderIdListNkeCts5;
 global g_decArgo_decoderIdListNkeMisc;
 global g_decArgo_decoderIdListNke;
@@ -449,7 +451,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '039e';
+g_decArgo_decoderVersion = '039f';
 
 % list of managed decoders
 
@@ -466,7 +468,12 @@ g_decArgo_decoderIdListNkeIridium = [ ...
    g_decArgo_decoderIdListNkeIridiumDeep ...
    g_decArgo_decoderIdListNkeIridiumRbr];
 g_decArgo_decoderIdListNkeCts4 = [105, 106, 107, 109, 110:113];
-g_decArgo_decoderIdListNkeCts5 = [121:126];
+g_decArgo_decoderIdListNkeCts5Osean = [121:125];
+g_decArgo_decoderIdListNkeCts5Usea = [126];
+g_decArgo_decoderIdListNkeCts5 = [ ...
+   g_decArgo_decoderIdListNkeCts5Osean ...
+   g_decArgo_decoderIdListNkeCts5Usea ...
+   ];
 g_decArgo_decoderIdListNkeMisc = [301, 302, 303];
 
 g_decArgo_decoderIdListNke = [ ...
