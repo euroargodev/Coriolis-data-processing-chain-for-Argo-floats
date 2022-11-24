@@ -75,6 +75,8 @@
 %                              LOCATION
 %   04/05/2022 - RNU - V 1.12: includes version 01.04.2022 of ARGO_simplified_profile
 %   06/10/2022 - RNU - V 1.13: includes version 09.06.2022 of ARGO_simplified_profile
+%   08/23/2022 - RNU - V 1.14: CP660_MED and _STD remained in 'b' type in
+%                              get_netcdf_param_attributes_3_1, set to 'i'
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -143,7 +145,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.13 (version 09.06.2022 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.14 (version 09.06.2022 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
