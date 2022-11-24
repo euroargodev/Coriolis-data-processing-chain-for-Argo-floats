@@ -184,6 +184,7 @@ for id = 1:length(a_fileName)
                   argosDataDataTmp(nbVal, :) = sensor(1:end);
                   argosDataSatTmp(nbVal) = satellite;
                   argosDataOccTmp(nbVal) = dataOcc;
+                  nbVal = nbVal + 1;
                   date = [];
                   clear sensor;
                   sensor = [];
