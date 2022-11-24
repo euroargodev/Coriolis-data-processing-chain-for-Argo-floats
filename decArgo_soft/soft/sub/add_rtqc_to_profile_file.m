@@ -139,6 +139,11 @@
 %                              - for profile pressures shallower than 1000 dbar,
 %                                the coefficient varies linearly between
 %                                10% at 1000 dbar and 150% at 10 dbar
+%   06/04/2019 - RNU - V 4.2: Bug corrected while linking PROF and TRAJ
+%                             data to report QC for some MCs: for adjusted
+%                             values, the QC are reported only if the adjustment
+%                             is done by the decoder itself (not when it comes
+%                             from BDD slope+offset information).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -170,7 +175,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '4.1';
+g_decArgo_addRtqcToProfileVersion = '4.2';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -4680,38 +4685,47 @@ if (~isempty(g_rtqc_trajData))
       % create the sorted list of profile and trajectory common parameters
       ncProfTrajXNameList = intersect(ncProfParamXNameList, ncTrajParamXNameList);
       
+      % link profile and trajectory data for concerned MC
+      profNmeasXIndex = [];
+
       % as RT adjustments (stored in the data-base) are applied on PROF data
       % only (not on TRAJ data) we should link PROF and TRAJ data with non
       % adjusted data only (except when adjustment is performed by the
       % decoder)
       %       if (idD == 1)
-         
-         % collect prof and traj data
-         
-         % collect profile data
-         dataProf = [];
-         dimNValuesProf = [];
-         for idProf = 1:length(juld)
-            dataBis = [];
-            for idP = 1:length(ncProfTrajXNameList)
-               if ((idD == 2) && ...
-                     ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
-                  continue
-               end
-               idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
-               data = eval(ncProfParamXDataList{idParam});
-               if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
-                  dimNValuesProf = [dimNValuesProf size(data, 3)];
-               end
-               if (ndims(data) == 3)
-                  dataBis = [dataBis permute(data(idProf, :, :), [2 3 1])];
-               else
-                  dataBis = [dataBis data(idProf, :)'];
-               end
+      
+      % collect prof and traj data
+      
+      % collect profile data
+      dataProf = [];
+      dimNValuesProf = [];
+      noAdjDataToLink = 1;
+      for idProf = 1:length(juld)
+         dataBis = [];
+         for idP = 1:length(ncProfTrajXNameList)
+            if ((idD == 2) && ...
+                  ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
+               continue
             end
-            dataProf{idProf} = dataBis;
+            idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
+            data = eval(ncProfParamXDataList{idParam});
+            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+               dimNValuesProf = [dimNValuesProf size(data, 3)];
+            end
+            if (ndims(data) == 3)
+               dataBis = [dataBis permute(data(idProf, :, :), [2 3 1])];
+            else
+               dataBis = [dataBis data(idProf, :)'];
+            end
          end
-         dimNValuesProf = unique(dimNValuesProf);
+         dataProf{idProf} = dataBis;
+         if ((idD == 2) && ~isempty(dataBis))
+            noAdjDataToLink = 0;
+         end
+      end
+      dimNValuesProf = unique(dimNValuesProf);
+      
+      if ((idD == 1) || ((idD == 2) && (noAdjDataToLink == 0)))
          
          % collect traj data
          dataTraj = [];
@@ -4740,9 +4754,6 @@ if (~isempty(g_rtqc_trajData))
             dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
          end
          
-         % link profile and trajectory data for concerned MC
-         profNmeasXIndex = [];
-         
          if (floatDecoderId < 1000) || ((floatDecoderId > 2000) && (floatDecoderId < 3000))
             % NKE, NOVA, DOVA floats
             if (direction(1) == 'A')
@@ -4762,6 +4773,8 @@ if (~isempty(g_rtqc_trajData))
                a_floatNum, floatDecoderId);
             continue
          end
+         
+         % link profile and trajectory data for concerned MC
          
          if (~isempty(profMeasCode))
             
@@ -4805,7 +4818,7 @@ if (~isempty(g_rtqc_trajData))
                end
             end
          end
-         %       end
+      end
       
       if (idD == 1)
          profNmeasIndex = profNmeasXIndex;
