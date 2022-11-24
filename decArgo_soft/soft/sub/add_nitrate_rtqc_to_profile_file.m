@@ -245,7 +245,7 @@ if (~isempty(idNoDef))
       a = [tabOpticalWavelengthUv' tabENitrate'];
       for idL = 1:size(absorbanceCorNitrate, 1)
          b = absorbanceCorNitrate(idL, :)';
-         mdl = fitlm(a, b);
+         mdl = fitlm(double(a), double(b)); % both inputs should be double since R2020b
          
          % check RMS Error
          rawResiduals = mdl.Residuals.Raw;

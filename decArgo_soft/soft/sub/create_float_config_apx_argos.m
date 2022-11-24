@@ -401,13 +401,13 @@ floatConfigValues = [];
 floatConfigNumbers = 0;
 
 % is it a DPF float ?
-idF = find(strcmp(configNames, 'CONFIG_DPF_DeepProfileFirstFloat'));
-if (isnan(configValues(idF)))
+idDPF = find(strcmp(configNames, 'CONFIG_DPF_DeepProfileFirstFloat'));
+if (isnan(configValues(idDPF)))
    fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 0 for this run\n', ...
       g_decArgo_floatNum, 'CONFIG_DPF_DeepProfileFirstFloat');
-   configValues(idF) = 0;
+   configValues(idDPF) = 0;
 end
-if (configValues(idF) == 1)
+if (configValues(idDPF) == 1)
    idF2 = find(strcmp(configNames, 'CONFIG_CT_CycleTime'));
    newCycleTime = nan;
    idF3 = find(strcmp(configNames, 'CONFIG_UP_UpTime'));
@@ -424,19 +424,18 @@ if (configValues(idF) == 1)
 end
 
 % is it always profiling from the same depth ?
-idF = find(strcmp(configNames, 'CONFIG_N_ParkAndProfileCycleLength'));
-if (isnan(configValues(idF)))
+idN = find(strcmp(configNames, 'CONFIG_N_ParkAndProfileCycleLength'));
+if (isnan(configValues(idN)))
    if (isempty(a_decMetaData))
       fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
          g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
    end
-   configValues(idF) = 1;
+   configValues(idN) = 1;
 end
-if (configValues(idF) > 1)
+if ((configValues(idN) > 1) && (configValues(idN) ~= get_park_and_prof_specific_value_apx(a_decoderId)))
    idF2 = find(strcmp(configNames, 'CONFIG_PRKP_ParkPressure'));
    idF3 = find(strcmp(configNames, 'CONFIG_TP_ProfilePressure'));
-   if ((~isnan(configValues(idF2)) || ~isnan(configValues(idF3))) && ...
-         (configValues(idF2) ~= configValues(idF3)))
+   if (~isnan(configValues(idF2)) && ~isnan(configValues(idF3)))
       newConfigValues = configValues;
       newConfigValues(idF3) = newConfigValues(idF2);
       floatConfigValues = [floatConfigValues newConfigValues];
@@ -445,17 +444,18 @@ if (configValues(idF) > 1)
 end
 
 % base configuration
-idF = find(strcmp(configNames, 'CONFIG_N_ParkAndProfileCycleLength'));
-if (isnan(configValues(idF)))
-   if (isempty(a_decMetaData))
-      fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
-         g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
-   end
-   configValues(idF) = 1;
-end
-if (configValues(idF) ~= get_park_and_prof_specific_value_apx(a_decoderId))
+if (configValues(idN) ~= get_park_and_prof_specific_value_apx(a_decoderId))
    floatConfigValues = [floatConfigValues configValues];
    floatConfigNumbers(end+1) = max(floatConfigNumbers) + 1;
+else
+   idF2 = find(strcmp(configNames, 'CONFIG_PRKP_ParkPressure'));
+   idF3 = find(strcmp(configNames, 'CONFIG_TP_ProfilePressure'));
+   if (~isnan(configValues(idF2)) && ~isnan(configValues(idF3)))
+      newConfigValues = configValues;
+      newConfigValues(idF3) = newConfigValues(idF2);
+      floatConfigValues = [floatConfigValues newConfigValues];
+      floatConfigNumbers(end+1) = max(floatConfigNumbers) + 1;
+   end
 end
 
 % APF11 floats

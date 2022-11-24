@@ -86,18 +86,18 @@ if (a_cycleNum > 0)
       idF2 = find(strcmp(gpsDataAllStr{idP}, gpsDataSysStr));
       if (~isempty(idF2))
          gpsDataAllPrev = [gpsDataAllPrev;  gpsDataSys(idF2(1), :)];
-         if (isempty(idF1))
-            fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum);
-         elseif (~any((abs(gpsDataSci(idF1, 3)-gpsDataSys(idF2, 3)) < 1e-5) | ...
-               (abs(gpsDataSci(idF1, 4)-gpsDataSys(idF2, 4)) < 1e-5)))
-            fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum);
-         end
+         %          if (isempty(idF1))
+         %             fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
+         %                g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          elseif (~any((abs(gpsDataSci(idF1, 3)-gpsDataSys(idF2, 3)) < 1e-5) | ...
+         %                (abs(gpsDataSci(idF1, 4)-gpsDataSys(idF2, 4)) < 1e-5)))
+         %             fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
+         %                g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          end
       else
          gpsDataAllPrev = [gpsDataAllPrev;  [gpsDataSci(idF1(1), :) -1]];
-         fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in system_log file\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in system_log file\n', ...
+         %             g_decArgo_floatNum, g_decArgo_cycleNum);
       end
    end
    
@@ -183,18 +183,18 @@ else
       idF2 = find(strcmp(gpsDataAllStr{idP}, gpsDataSysStr));
       if (~isempty(idF2))
          gpsDataAllCur = [gpsDataAllCur;  gpsDataSys(idF2(1), :)];
-         if (isempty(idF1))
-            fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum);
-         elseif (~any((abs(gpsDataSci(idF1, 3)-gpsDataSys(idF2, 3)) < 1e-5) | ...
-               (abs(gpsDataSci(idF1, 4)-gpsDataSys(idF2, 4)) < 1e-5)))
-            fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum);
-         end
+         %          if (isempty(idF1))
+         %             fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
+         %                g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          elseif (~any((abs(gpsDataSci(idF1, 3)-gpsDataSys(idF2, 3)) < 1e-5) | ...
+         %                (abs(gpsDataSci(idF1, 4)-gpsDataSys(idF2, 4)) < 1e-5)))
+         %             fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in science_log file\n', ...
+         %                g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          end
       else
          gpsDataAllCur = [gpsDataAllCur;  [gpsDataSci(idF1(1), :) -1]];
-         fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in system_log file\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum);
+         %          fprintf('WARNING: Float #%d Cycle #%d: GPS data not reported in system_log file\n', ...
+         %             g_decArgo_floatNum, g_decArgo_cycleNum);
       end
    end
 end

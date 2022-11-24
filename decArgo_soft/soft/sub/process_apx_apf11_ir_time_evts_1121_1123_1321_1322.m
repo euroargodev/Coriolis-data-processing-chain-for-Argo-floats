@@ -29,6 +29,7 @@ o_cycleTimeData = a_cycleTimeData;
 PATTERN_STARTUP_DATE = 'Mission state IDLE -> PRELUDE';
 PATTERN_DESCENT_TO_PARK_1 = 'Mission state PRELUDE -> PARKDESCENT';
 PATTERN_DESCENT_TO_PARK_2 = 'Mission state SURFACE -> PARKDESCENT';
+PATTERN_DESCENT_TO_PARK_3 = 'Mission state RECOVERY -> PARKDESCENT';
 PATTERN_PARK_START = 'Mission state PARKDESCENT -> PARK';
 PATTERN_DEEP_DESCENT_START = 'Mission state PARK -> DEEPDESCENT';
 PATTERN_ASCENT_START_1 = 'Mission state DEEPDESCENT -> ASCENT';
@@ -43,7 +44,9 @@ for idEv = 1:length(events)
    if (any(strfind(dataStr, PATTERN_STARTUP_DATE)))
       startTime = evt.timestamp;
       o_cycleTimeData.preludeStartDateSys = evt.timestamp;
-   elseif (any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_1)) || any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_2)))
+   elseif (any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_1)) || ...
+         any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_2)) || ...
+         any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_3)))
       if (isempty(startTime))
          startTime = evt.timestamp;
       end

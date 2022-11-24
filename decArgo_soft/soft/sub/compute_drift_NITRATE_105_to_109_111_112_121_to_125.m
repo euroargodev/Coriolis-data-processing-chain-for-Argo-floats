@@ -240,7 +240,7 @@ if (~isempty(idNoDef))
    a = [tabOpticalWavelengthUv' tabENitrate'];
    for idL = 1:length(tabMolarNitrate)
       b = absorbanceCorNitrate(idL, :)';
-      mdl = fitlm(a, b);
+      mdl = fitlm(double(a), double(b)); % both inputs should be double since R2020b
       tabMolarNitrate(idL) = mdl.Coefficients.Estimate(end);
    end
    
