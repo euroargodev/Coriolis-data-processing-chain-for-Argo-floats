@@ -609,7 +609,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % second Iridium session we must artificially separate first session (which
    % ends with MOMSN = 3043) and second Iridium session
 
-   if (ismember(g_decArgo_floatNum, [3901850, 6902798, 6902799]))
+   % 6902935: MOMSN = 3076 to 3087 are missing, we must artificially separate
+   % first and second Iridium session (which start with MOMSN = 31126 (and 31127))
+   
+   if (ismember(g_decArgo_floatNum, [3901850, 6902798, 6902799, 6902935]))
       if (g_decArgo_floatNum == 3901850)
          filePattern = '_300234063600100_002513_';
       end
@@ -631,6 +634,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
             end
          end
       end
+      if (g_decArgo_floatNum == 6902935)
+         filePattern = '_300234066511640_003125_';
+      end
+      
       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
          idOld = 1:length(tabFileNames);
          tabOldFileNames = tabFileNames(idOld);

@@ -226,7 +226,7 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006 6901880]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -285,6 +285,11 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 690300
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
          id = find((tabCyNum == 107) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
+      case 6901880
+         % packet type 0 4 5 transmitted after data packets
+         id = find((tabCyNum == 40) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
    end
