@@ -1,0 +1,67 @@
+{
+   "FLOAT_LIST_FILE_NAME" : "C:/Users/jprannou/_RNU/DecArgo_soft/lists/_apex_argos_071412.txt",
+   
+   "EXPECTED_CYCLE_LIST" : "99999",
+   
+   "FLOAT_TRANSMISSION_TYPE" : "1",
+   
+   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/json_float_info/",
+
+   "HEX_ARGOS_FILE_FORMAT" : "1",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "C:/Users/jprannou/_DATA/IN/split_argos/out_rt/",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "unused",
+   "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "3",
+   
+   "DIR_INPUT_RSYNC_DATA" : "unused",
+   "DIR_INPUT_RSYNC_LOG" : "unused",
+
+   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_techParamNames/",
+   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_configParamNames/",
+
+   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/json_float_meta_argos/",
+   
+   "DIR_INPUT_DM_BUFFER_LIST" : "unused",
+
+   "IRIDIUM_DATA_DIRECTORY" : "unused",
+
+   "DIR_OUTPUT_LOG_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/log/",
+   "DIR_OUTPUT_CSV_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/csv/",
+   "DIR_OUTPUT_XML_FILE" : "unused",
+   "DIR_OUTPUT_NETCDF_FILE" : "C:/Users/jprannou/_DATA/OUT/nc_output_decArgo_rt/",
+
+   "GENERATE_NC_TRAJ" : "1",
+   "GENERATE_NC_MULTI_PROF" : "1",
+   "GENERATE_NC_MONO_PROF" : "1",
+   "GENERATE_NC_TECH" : "1",
+   "GENERATE_NC_META" : "1",   
+
+   "APPLY_RTQC" : "0",
+   
+   "TEST001_PLATFORM_IDENTIFICATION" : "1",
+   "TEST002_IMPOSSIBLE_DATE" : "1",
+   "TEST003_IMPOSSIBLE_LOCATION" : "1",
+   "TEST004_POSITION_ON_LAND" : "1",
+   "TEST005_IMPOSSIBLE_SPEED" : "1",
+   "TEST006_GLOBAL_RANGE" : "1",
+   "TEST007_REGIONAL_RANGE" : "1",
+   "TEST008_PRESSURE_INCREASING" : "1",
+   "TEST009_SPIKE" : "1",
+   "TEST011_GRADIENT" : "1",
+   "TEST012_DIGIT_ROLLOVER" : "1",
+   "TEST013_STUCK_VALUE" : "1",
+   "TEST014_DENSITY_INVERSION" : "1",
+   "TEST015_GREY_LIST" : "1",
+   "TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT" : "1",
+   "TEST018_FROZEN_PRESSURE" : "1",
+   "TEST019_DEEPEST_PRESSURE" : "1",
+   "TEST021_NS_UNPUMPED_SALINITY" : "1",
+   "TEST022_NS_MIXED_AIR_WATER" : "1",
+   "TEST023_DEEP_FLOAT" : "1",
+   "TEST063_CHLA" : "1",
+   
+   "TEST004_ETOPO2_FILE" : "C:/Users/jprannou/_RNU/Argo/_ressources/ETOPO2/ETOPO2v2g_i2_MSB.bin",
+   "TEST015_GREY_LIST_FILE" : "C:/Users/jprannou/_RNU/DecPrv_soft/work/ar_greylist.txt",
+
+   "ADD_THREE_MINUTES" : "0"
+
+}

@@ -1,0 +1,110 @@
+CREATION DE LA LISTE DES FLOTTEURS A DECLARER
+Les flotteurs déclarés pour le décodeur Matlab sont listés dans _provor_floats_information_co.txt (.xls).
+Créer, via une requête SQL la liste des flotteurs déclarés en base mais non présents dans le fichier _provor_floats_information_co.txt, i.e. flotteurs NKE dont la version est litée en colonne N mais dont le numéro WMO n'est pas en colonne A.
+Classer le résultat de cette requête, par version de flotteur puis par numéro WMO.
+=> liste new_argos_yyyymmdd.txt
+
+
+CREATION D'UN EXPORT DE LA BASE POUR LES FLOTTEURS A DECLARER
+Générer un export csv de la base pour les flotteurs de la liste new_argos_yyyymmdd.txt.
+Dans cet export, remplacer chaque retour à la ligne (ALT + 010) par un espace (et faire la mise à jour en base pour ne plus être embêté à l'avenir).
+Copier le contenu du .csv obtenu dans une .txt (copie des colonnes A à E).
+=> fichier new_meta_yyyymmdd.txt
+
+
+MISE A JOUR DU FICHIER _provor_floats_information_co.xls
+Utiliser l'outil get_meta_data_from_data_base pour generer, à partir de l'export de la base, un fichier csv contenant les informations présentes dans _provor_floats_information_co.xls.
+Mettre à jour le fichier _provor_floats_information_co.xls puis le fichier _provor_floats_information_co.txt.
+
+
+ENRICHISSEMENT DE L'EXPORT DE LA BASE
+Le contenu de la base doit être enrichi avec des informations que l'on peut déduire de la version de flotteur et avec des valeurs par défaut.
+Ces ajouts sont réalisés par l'outil generate_csv_meta un fichier csv enrichi. Les ajouts sont listés par un message INFO. Il ne doit pas y avoir de message ERROR.
+Cet outil effectue également le changement du DIM_LEVEL associé aux capteurs et aux paramètres: sur 3 digits, le premier servant à identifier le capteur d'appartenance(0: CTD, 1: OPTODE, 2: OCR, 3: ECO3, 4: FLBB, 5: CROVER, 6: SUNA). Cela rend plus aisé l'accès aux différents capteurs et paramètres associés (notament pour leur mise à jour).
+
+Les données du fichier CSV produit doivent remplacer les informations de l'export de la base (new_meta_yyyymmdd.txt) pour les TECH_PARAMETER_ID concernés.
+On peut relancer generate_csv_meta avec l'export de la base mis à jour jusqu'à ne plus avoir d'ajout effectué par l'outil (plus de message INFO dans le log).
+
+L'export de base obtenu doit ensuite être vérifié pour contrôler que les informations obligatoires (pour le checker) y sont. L'outil generate_csv_meta_mandatory effectue cette vérification.
+La colonne D du CSV produit:
+- peut comporter des mentions "MANDATORY (can be replaced by 'n/a')" (signifie que l'information est obligatoire mais que l'on peut mettre 'n/a' si elle est absente, ceci sera fait par l'outil de génération des fichier JSON de méta-données).
+- mais aucune mention "MANDATORY"; ces champs doivent impérativement être renseignés si l'on veut que le fichier meta.nc passe le checker.
+
+Une fois l'export de base enrichi, mettre à jour la base avec son contenu (pour archivage). Penser à exclure les champs vides.
+
+
+GENERATION DES FICHIERS JSON DE META-DONNEES
+Générer les fichiers JSON de méta-données avec les outils generate_json_float_meta_argos et generate_json_float_meta_ir_sbd et dépalcer les fihiers produits dans les répertoires ad hoc du décodeur.
+
+
+FLOTTEURS ARGOS: PREPARATION DES DONNES ARGOS
+La déclaration des flotteurs peut être faite avant leur mise à l'eau, cependant, la faire après quelques cycles permet de les déclarer et en même temps de vérifier qu'ils se décodent correctement (qu'ils sont bien "calés" temporellement et que leur méta-données sont correctes).
+Les flotteurs étant déclarés après avoir déjà émis, il est cependant nécessaire de préparer les données Argos déjà reçues. Cette étape nécessite d'avoir déclaré le flotteur pour le décodeur (dans le fichier _provor_floats_information_co.txt) et d'avoir créé son fichier JSON de méta-données.
+La préparation des données Argos consiste à créer des fichiers cycles identifiés (numéro WMO et numéro de cycle) avec les données reçues.
+
+Avant d'effectuer cette opération il est nécessaire de vérifier qu'aucun fichier Argos de ce flotteur, présent dans le spool ne risque d'être archivé pendant l'opération (sinon les données de ce fichier seront perdues puisque nous travaillons sur les fichiers déjà archivés).
+L'outil check_argos_spool_directory permet de contrôler le contenu du spool.
+
+La préparation des données Argos s'effectue alors en trois étapes.
+
+Copie des données:
+L'outil copy_argos_files_in_archive_cycle effectue une copie des données Argos archivées vers un répertoire de travail.
+
+Préparation des données:
+L'outil process_argos_data effectue le traitement des données Argos du répertoire de travail.
+Cet outil enchaine les 4 outils:
+- STEP1: split_argos_cycles: Eclatement des données par balise Argos et par passage satellite
+- STEP2: delete_double_argos_split: Suppression des passages satellite identiques
+- STEP3: create_argos_cycle_files: Création des fichiers cycles (i.e. concaténation temporelle des passages satellite avec un changement de fichier dès que le flotteur n'a pas émis pendant au moins 18 heures
+- STEP4 (FINAL): move_and_rename_argos_files: Identification des fichiers cycles (i.e. détermination du numéro de cycle, algorithme prenant en compte le contenu du fichier JSON de méta-données).
+
+Contrôle du résultat:
+L'outil check_argos_cycle_files permet de contrôler le découpage réalisé.
+
+Les fichiers produits doivent ensuite remplacer les fichiers existants dans l'espace d'archivage des données Argos (on peut utiliser l'outil select_argos_files pour regrouper les répertoires Argos d'un ensemble de flotteurs.
+
+
+FLOTTEURS IRIDIUM: DUPLICATION DES DONNES IRIDIUM
+Les données des flotteurs Iridium ne nécessitent pas de préparation.
+Pour en effectuer le décodage (décodage de contrôle par l'opérateur) il est toutefois nécessaire d'effectuer une copie des données reçues, de l'espace d'archivage (DIR_INPUT_RSYNC_DATA) vers l'espace d'exploitation (IRIDIUM_DATA_DIRECTORY).
+Cette opération s'effectue avec loutil copy_iridium_mail_files.
+
+La configuration du flotteur au lâcher est transmise lors du prélude. Si le SBD en question a été collecté après la date de mise à l'eau du flotteur, il ne sera pas décodé. Il est alors possible de le récupérer en changeant temporairement cette date, en décodant ces données et en insérant en base les informations décodées.
+
+
+CONTROLE DES DONNEES DECODEES
+Les données peuvent ensuite être décodées (avec decode_provor_2_csv et decode_provor_2_nc).
+Les données décodées doivent alors être contrôlées.
+
+Un parcours rapide du fichier CSV permet de vérifier que le décodage semble correct (regarder par exemple l'offset de l'horloge et des donnes mesurées).
+
+Un contrôle visuel des données permet de vérifier globalement qu'il n'y a pas de problème, de re-caler le flotteur si nécessaire et de vérifier les méta-données. En cas d'anomalie, on reviendra au détail des données du fichier CSV.
+
+L'outil nc_trace_times permet de vérifier, le durée du cycle, la période des mesures en dérive, les immersions de parking et de profil et plus généralement la qualité de la transmission et les cohérence des informations temporelles.
+
+L'outil nc_trace_disp permet de vérifier la position de lâcher et les déplacements du flotteur.
+
+L'outil nc_trace_param permet de vérifier les données de profil.
+
+
+CONTROLES DE ROUTINE
+
+Contrôle des fichiers Argos:
+Le numéro de cycle de chaque fichier Argos est déterminé lors de l'archivage du fichier en question.
+Ces numéros doivent être vérifiés en particulier lorsque le flotteur dysfonctionne (mauvaise transmission, saut d'horloge, remontée d'urgence) ou émet en mode EOL.
+Ce contrôle permet d'éviter que des données soient diffusées avec des numéro de cycles incorrects (en particulier pour les opérateurs DM).
+
+L'outil check_argos_hidden_cycle_files permet de vérifier qu'aucun fihcier Argos cycle n'est masqué au décodeur (pas de numéro WMO de flotteur dans le nom du fichier).
+
+L'outil check_argos_cycle_files permet de contrôler les fichiers Argos cycle.
+
+
+Comparaison des informations en base et dans les fichiers JSON de méta-données:
+Toute modification en base d'une information préutilisée dans le fichier meta.nc doit être également mise à jour dans le fichier JSON de méta-données.
+
+Une génération de tous les fichiers JSON de méta-données à partir d'un export de la base puis leur comparaison avec les fichiers en exploitation permet de s'assurer que les fichiers meta.nc seront conformes au contenu de la base.
+
+
+
+
+

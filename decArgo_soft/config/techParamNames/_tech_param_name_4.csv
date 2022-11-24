@@ -1,0 +1,53 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+10;-1;statistics on Argos or GPS received data;NUMBER_ArgosPositions_COUNT;total number of Argos positions received.
+11;-1;statistics on Argos received data;NUMBER_ArgosPositioningClass0_COUNT;positioning (ARGOS message) - Class 0 - accuracy >1500m radius
+12;-1;statistics on Argos received data;NUMBER_ArgosPositioningClass1_COUNT;positioning (ARGOS message) - Class 1 - accuracy better than 1500m radius
+13;-1;statistics on Argos received data;NUMBER_ArgosPositioningClass2_COUNT;positioning (ARGOS message) - Class 2 - accuracy better than 500m radius
+14;-1;statistics on Argos received data;NUMBER_ArgosPositioningClass3_COUNT;positioning (ARGOS message) - Class 3 - accuracy better than 250m radius
+15;-1;statistics on Argos received data;NUMBER_ArgosPositioningClassA_COUNT;positioning (ARGOS message) - Class A
+16;-1;statistics on Argos received data;NUMBER_ArgosPositioningClassB_COUNT;positioning (ARGOS message) - Class B
+17;-1;statistics on Argos received data;NUMBER_ArgosPositioningClassZ_COUNT;positioning (ARGOS message) - Class Z
+20;-1;statistics on Argos received data;NUMBER_TransmissionFloatFramesComplete_COUNT;Transmission (PROVOR frames) - Complete
+21;-1;statistics on Argos received data;NUMBER_TransmissionFloatFramesCrcOk_COUNT;Transmission (PROVOR frames) - CRC OK
+22;-1;statistics on Argos received data;NUMBER_TransmissionFloatFramesTechnicalOk_COUNT;Transmission (PROVOR frames) - Technical OK
+115;1;descent start time;CLOCK_StartDescentProfile_HHMM;time when descent profile starts
+210;2;number of valve actions at the surface;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+116;3;float stabilisation time;CLOCK_InitialStabilizationDuringDescentToPark_HHMM;time when first stabilization appears during descent to park (tenths of an hour since midnight)
+212;5;number of valve actions in descent;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+213;6;number of pump actions in descent;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+118;7;end of descent time;CLOCK_EndDescentToPark_HHMM;time when park pressure is reached  (tenths of an hour since midnight)
+311;8;number of repositions;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+127;9;time at end of ascent;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
+510;10;number of pump actions in ascent;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+220;11;number of descent CTD messages;NUMBER_FramesEmittedOnDescendingProfile_COUNT;Distinct frames emitted on descending profile
+221;-1;statistics on Argos or Iridium received data;NUMBER_FloatFramesReceivedOnDescendingProfile_COUNT;Provor frames received on descending profile
+320;12;number of drift CTD messages;NUMBER_FramesEmittedOnPark_COUNT;Distinct frames emitted on immersion profile
+520;13;number of ascent CTD messages;NUMBER_FramesEmittedOnAscendingProfile_COUNT;Distinct frames emitted on ascending profile
+521;-1;statistics on Argos or Iridium received data;NUMBER_FramesReceivedOnAscendingProfile_COUNT;Frames received on ascending profile
+222;14;number of descent slices in shallow zone;NUMBER_DescendingProfileReductionUpperPart_COUNT;Descending profile reduction Number of slices in shallow zone - NTS
+223;15;number of descent slices in deep zone;NUMBER_DescendingProfileReductionLowerPart_COUNT;Descending profile reduction Number of slices in deep zone - NTF
+224;-1;parameter #222 + parameter #223;NUMBER_DescendingCTDSamplesInternalCounter_COUNT;total number of slices of the descending profile after reduction
+225;-1;statistics on Argos or Iridium received data;NUMBER_DescendingCTDSamplesTotal_COUNT;Descending profile  measurements - Profile total
+522;16;number of ascent slices in shallow zone;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
+523;17;number of ascent slices in deep zone;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
+524;-1;parameter #522 + parameter #523;NUMBER_AscendingCTDSamplesInternalCounter_COUNT;total number of slices of the ascending profile after reduction
+525;-1;statistics on Argos or Iridium received data;NUMBER_AscendingCTDSamplesTotal_COUNT;Ascending profile  measurements - Profile total
+322;18;number of CTD measurements in drift;NUMBER_ParkCTDSamplesInternal_COUNT;Park  measurements - Internal counter
+321;-1;statistics on Argos or Iridium received data;NUMBER_FramesCrcOkOnPark_COUNT;Distinct frames received with crc ok on immersion profile
+323;-1;statistics on Argos or Iridium received data;NUMBER_ParkCTDSamplesTotal_COUNT;Park  measurements - Drift total
+111;19;float's time : hh (5bits)+mm (6bits)+ss (6bits);CLOCK_FloatTime_HHMMSS;float internal clock time
+112;-1;Argos or Iridium date of technical message;CLOCK_Satellite_YYYYMMDDHHMMSS;time derived from satellite communications
+113;-1;"""float time"" - ""satellite time""";CLOCK_FloatTimeCorrection_minutes;float internal clock time correction
+610;20;pressure sensor offset;PRES_SurfaceOffsetBeforeReset_1dBarResolution_dbar ;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset and no further correction is possible. Autocorrected
+611;21;internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+124;23;profile ascent start time;CLOCK_StartAscentToSurface_HHMM;ascent start time (tenths of an hour since midnight)
+310;24;number of entrance in drift target range (descent);NUMBER_DescentToParkEntriesInParkMargin_COUNT;descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+412;28;number of hydraulic valve action in descent profile;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+413;29;number of pump actions in descent profile;NUMBER_PumpActionsDuringDescentToProfile_COUNT;number of pump actions during descent to start profile pressure
+411;31;number of re-positionning in profile stand-by;NUMBER_RepositionsAtProfileDepth_COUNT;at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV
+614;32;batteries voltage drop at Pmax, pump ON (with regard to Unom = 10.0 V) (in dV);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
+120;33;profile descent start time;CLOCK_StartDescentToProfile_HHMM;time when descent to profile pressure starts  (tenths of an hour since midnight)
+122;34;profile descent stop time;CLOCK_EndDescentToProfile_HHMM;time when float reaches profile pressure  (tenths of an hour since midnight)
+110;35;RTC state indicator ( normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
+410;36;number of entrance in profile target range (descent);NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+616;37;oxygen sensor state indicator (normal = 0, failure = 1);FLAG_OptodeStatus_LOGICAL;Sensor status - 1= OK, 0=not OK

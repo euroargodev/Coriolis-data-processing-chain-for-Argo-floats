@@ -1,0 +1,47 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+100;4;Cycle start time;CLOCK_InitialValveActionDescentToPark_HHMM;Day number of the beginning of buoyancy reduction (relative to mission start day).
+101;5;Number of valve actions at the surface;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+102;6;Descent start time;CLOCK_StartDescentProfile_HHMM;time when descent profile starts
+103;7;Float stabilisation time;CLOCK_InitialStabilizationDuringDescentToPark_HHMM;time when first stabilization appears during descent to park (tenths of an hour since midnight)
+104;8;End of descent time;CLOCK_EndDescentToPark_HHMM;time when park pressure is reached  (tenths of an hour since midnight)
+105;9;Number of valve actions in descent;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+106;10;Number of pump actions in descent;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+107;13;Number of entrance in drift target range (descent);NUMBER_DescentToParkEntriesInParkMargin_COUNT;descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+108;14;Number of repositions;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+109;17;Number of valve actions in parking;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
+110;18;Number of pump actions in parking;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
+111;19;Descent start time;CLOCK_StartDescentToProfile_HHMM;Number of minutes elapsed in the day at the beginning of the descent to profile depth.
+112;20;End of descent time;CLOCK_EndDescentToProfile_HHMM;Number of minutes elapsed in the day at the end of the descent to profile depth.
+113;21;Number of valve actions in descent;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+114;22;Number of pump actions in descent;NUMBER_PumpActionsDuringDescentToProfile_COUNT;number of pump actions during descent to start profile pressure
+115;24;Number of entrance in drift target range;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+116;25;Number of re-positioning in profile stand-by;NUMBER_RepositionsAtProfileDepth_COUNT;at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV
+117;26;Number of valve actions in drift to Profile;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
+118;27;Number of pump actions in drift to Profile;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
+119;30;Ascent start time;CLOCK_StartAscentToSurface_HHMM;Number of minutes elapsed in the day at the beginning of the ascent to the surface.
+120;31;Time at end of ascent;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
+121;32;Number of pump actions in ascent;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+122;33;Number of descent CTD messages;NUMBER_DescentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+123;34;Number of drift CTD messages;NUMBER_ParkIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the drift at park depth.
+124;35;Number of ascent CTD messages;NUMBER_AscentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the ascent from the profile depth to the surface.
+125;36;Number of descent slices in shallow zone;NUMBER_DescendingProfileReductionUpperPart_COUNT;Descending profile reduction Number of slices in shallow zone - NTS
+126;37;Number of descent slices in deep zone;NUMBER_DescendingProfileReductionLowerPart_COUNT;Descending profile reduction Number of slices in deep zone - NTF
+127;38;Number of CTD measurements in drift;NUMBER_ParkCTDSamplesInternal_COUNT;Park  measurements - Internal counter
+128;39;Number of ascent slices in shallow zone;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
+129;40;Number of ascent slices in deep zone;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
+145;41;Sub-Surface pressure;PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).
+130;46;Pressure sensor offset (two’s complement coded);PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
+131;47;Internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+132;48;Batteries voltage drop at Pmax, pump ON (with regard to Unom = 10.0 V) (in dV) ;VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
+133;49;RTC state indicator ( normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
+134;50;Coherence problem counter;NUMBER_CTDError_COUNT;CTD error count
+135;51;Grounding detected (grounding = 1, No grounding = 0);FLAG_Grounded_NUMBER;grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded
+136;53;Grounding day relative to cycle beginning;CLOCK_TimeGrounded_FloatDay;Day number when the float grounds for the first time (relative to mission start day).
+137;54;Hour at grounding;CLOCK_TimeGrounded_HHMM;time the float grounded
+138;55;Emergency ascent number;NUMBER_EmergencyAscents_COUNT;Number of Emergency ascents - Internal count
+139;56;1st Emergency ascent time;CLOCK_TimeOfFirstEmergencyAscent_HHMM;Number of minutes elapsed in the day of the float first emergency ascent.
+140;57;1st Emergency pressure;PRES_FirstEmergencyAscent_dbar;Pressure that triggered the first emergency ascent
+141;58;Number of pump actions in emergency ascent;NUMBER_PumpActionsOnFirstEmergencyAscent_COUNT;Emergency ascent - pump actions at emergency depth
+142;59;1st Emergency ascent relative day (to 1st cycle day);CLOCK_TimeOfFirstEmergencyAscent_FloatDay;Day number of the float first emergency ascent (relative to mission start day).
+143;60;Remote control received;FLAG_RemoteControlMessageOK_COUNT;Number of remote control successfully considered.
+144;61;Remote control rejected;FLAG_RemoteControlMessageKO_COUNT;Number of remote control rejected by the float (due to out of range value or remote control syntax error).

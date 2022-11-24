@@ -1,0 +1,24 @@
+08/04/2015
+
+Concernant le décodage du point de subsurface fourni par les flotteurs NKE Iridium:
+
+Pour les Remoceans (decId 105, 106, 107 et 109) et les FLBB (decId 301), la mesure PTS (fournie dans le message technique du capteur CTD) est transmise en valeur flottante (float) qui ne nécessite pas de décodage (pas de conversion).
+
+Pour les Arvor deep (decId 201 et 202), la mesure PTSO fournie dans le second message technique doit être décodée de la même manière que pour les mesures de la CTDO.
+
+DEMANDE DE CONFIRMATION (EN COURS) A JS sur ce point:
+Pour les Arvor Iridium (decId 204 et 205) et les Provor DO Iridium (decid 206, 207 et 208), la mesure PTS fournie dans le message technique doit être décodée de la même manière que pour les mesures de la CTD(O) pour ce qui concerne la pression et la température. La salinité est fournie sans offset, i.e. PSAL = techValue/1000.
+
+
+
+Les mesures PTS (pas l'oxygène quand il y en a (cas des Arvor deep)) du point de subsurface est:
+
+- stocké dans le fichier TECH avec les labels:
+PRES_LastAscentPumpedRawSample_dbar
+TEMP_LastAscentPumpedRawSample_degC
+PSAL_LastAscentPumpedRawSample_psu
+
+- stocké dans le fichier TRAJ avec le measurement code g_MC_LastAscPumpedCtd = 599
+
+
+

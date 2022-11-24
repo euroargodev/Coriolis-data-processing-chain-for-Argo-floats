@@ -1,0 +1,66 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+100;253; Packet time;CLOCK_FloatTime_YYYYMMDDHHMMSS;float internal clock time
+101;253; Total number of profiles;NUMBER_SubCyclesDoneSinceDeployment_COUNT;Number of sub-cycle done since the deployment of the float.
+174;253; Cycle #;NUMBER_InternalCycle_NUMBER;float internal cycle number
+175;253; Profile #;NUMBER_SubCycle_NUMBER;float internal sub-cycle number
+102;253; Cycle start day (relative to mission start day);CLOCK_StartInternalCycle_FloatDay;the time of the (internal) cycle start for floats with multiple sub-cycles
+103;253; Cycle start hour (resolution: 1 minute);CLOCK_StartInternalCycle_HHMM;the time of the (internal) cycle start for floats with multiple sub-cycles
+104;253;;CLOCK_StartInternalCycle_YYYYMMDDHHMMSS;the time of the (internal) cycle start for floats with multiple sub-cycles
+105;253;Sensor board dialog error;NUMBER_VectorToSensorBoardsDialogErrors_COUNT;Number of dialog errors between vector and sensor boards.
+106;253;Timeout FP;NUMBER_SBEFPCommandTimeouts_COUNT;"Number of timeouts while measuring pressure with the SBE sensor using a ""Fast Pressure"" command."
+107;253; Internal vacuum (modulo 5 mbar);PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+108;253; Battery voltage (voltage dropout from 15V, resolution: 1.0 V);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
+109;253; Real Time Clock state;FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
+110;253; Buoyancy reduction start day (relative to mission start day);CLOCK_InitialValveActionDescentToPark_FloatDay;Time in the day when the float first activated the valve during its descent
+111;253; Buoyancy reduction start hour (resolution: 1 minute);CLOCK_InitialValveActionDescentToPark_HHMM;Time in the day when the float first activated the valve during its descent
+112;253;;CLOCK_InitialValveActionDescentToPark_YYYYMMDDHHMMSS;Time in the day when the float first activated the valve during its descent
+113;253; EV timing opening (in minutes);TIME_ValveActionsAtSurface_minutes;duration of the basic valve actions which is computed by the float from preceding cycles
+114;253; Number of valve actions at the surface;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+115;253; Descent to parking depth start day (relative to mission start day);CLOCK_StartDescentToPark_FloatDay;time after the crossing  the gap threshold 
+116;253; Descent to parking depth start hour (resolution: 1 minute);CLOCK_StartDescentToPark_HHMM;time after the crossing  the gap threshold (tenths of an hour since midnight)
+118;253; First stabilization day (relative to mission start day);CLOCK_InitialStabilizationDuringDescentToPark_FloatDay;time when first stabilization appears during descent to park 
+119;253; First stabilization hour (resolution: 1 minute);CLOCK_InitialStabilizationDuringDescentToPark_HHMM;time when first stabilization appears during descent to park 
+122;253; Descent to parking depth end day (relative to mission start day);CLOCK_EndDescentToPark_FloatDay;time when park pressure is reached  
+123;253; Descent to parking depth end hour (resolution: 1 minute);CLOCK_EndDescentToPark_HHMM;time when park pressure is reached  
+125;253; Number of valve actions during descent to parking depth;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+126;253; Number of pump actions during descent to parking depth;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+128;253; Number of entrance in drift target range (descent);NUMBER_DescentToParkEntriesInParkMargin_COUNT;descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+129;253; Number of repositions during drift at park;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+132;253; Number of valve actions during drift at park;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
+133;253; Number of pump actions during drift at park;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
+134;253; Descent to prof start day (relative to mission start day);CLOCK_StartDescentToProfile_FloatDay;time when descent to profile pressure starts  
+135;253; Descent to prof start hour (resolution: 1 minute);CLOCK_StartDescentToProfile_HHMM;time when descent to profile pressure starts  
+137;253; Descent to prof end day (relative to mission start day);CLOCK_EndDescentToProfile_FloatDay;time when float reaches profile pressure  
+138;253; Descent to prof end hour (resolution: 1 minute);CLOCK_EndDescentToProfile_HHMM;time when float reaches profile pressure  
+140;253; Number of valve actions during descent to prof;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+141;253; Number of pump actions during descent to prof;NUMBER_PumpActionsDuringDescentToProfile_COUNT;number of pump actions during descent to start profile pressure
+143;253; Number of entrance in prof target range;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+144;253; Number of repositions during drift at prof;NUMBER_RepositionsAtProfileDepth_COUNT;at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV
+145;253; Number of valve actions during drift at prof;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
+146;253; Number of pump actions during drift at prof;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
+149;253;Profile ascent start day (relative to mission start day);CLOCK_StartAscentToSurface_FloatDay;ascent start time 
+150;253;Profile ascent start hour (resolution: 1 minute);CLOCK_StartAscentToSurface_HHMM;ascent start time 
+152;253;Profile ascent end day (relative to mission start day);CLOCK_PumpActionsAtSurface_FloatDay;the time when the float moves the  pump to acquire additional buoyancy for surface drift.
+153;253;Profile ascent end hour (resolution: 1 minute);CLOCK_PumpActionsAtSurface_HHMM;the time when the float moves the  pump to acquire additional buoyancy for surface drift.
+154;253;;CLOCK_PumpActionsAtSurface_YYYYMMDDHHMMSS;the time when the float moves the  pump to acquire additional buoyancy for surface drift.
+157;253; Number of pump actions during ascent;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+160;253; Grounding day  (relative to mission start day);CLOCK_TimeGrounded_FloatDay;time the float grounded
+161;253; Grounding hour (resolution: 1 minute);CLOCK_TimeGrounded_HHMM;time the float grounded
+163;253; Number of emergency ascent;NUMBER_EmergencyAscents_COUNT;Number of Emergency ascents - Internal count
+164;253; First emergency ascent day  (relative to mission start day);CLOCK_TimeOfFirstEmergencyAscent_FloatDay;time of first emergency ascent
+165;253; First emergency ascent hour (resolution: 1 minute);CLOCK_TimeOfFirstEmergencyAscent_HHMM;time of first emergency ascent
+166;253;;CLOCK_TimeOfFirstEmergencyAscent_YYYYMMDDHHMMSS;time of first emergency ascent
+167;253; First emergency ascent pressure (resolution: 1 bar);PRES_FirstEmergencyAscent_dbar;Pressure that triggered the first emergency ascent
+168;253; Number of pump actions during the first emergency ascent;NUMBER_PumpActionsOnFirstEmergencyAscent_COUNT;Emergency ascent - pump actions at emergency depth
+169;253; Number of received remote control;FLAG_RemoteControlMessageOK_COUNT;number of messages sent by the remote control and received by the iridium float
+170;253; Number of rejected remote control;FLAG_RemoteControlMessageKO_COUNT;number of received messages which have been rejected by the float
+173;253; Sensor board status;FLAG_SensorBoardStatus_NUMBER;Flag reporting the status of the sensor board.
+200;250;"Packet number for ""X"" type in descent";NUMBER_<Sensor>DescentIridiumMessages_COUNT;Number of Iridium packets used to transmit <Sensor> data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+201;250;"Packet number for ""X"" type in drift";NUMBER_<Sensor>ParkIridiumMessages_COUNT;Number of Iridium packets used to transmit <Sensor> data collected during the drift at park depth.
+202;250;"Packet number for ""X"" type in ascent";NUMBER_<Sensor>AscentIridiumMessages_COUNT;Number of Iridium packets used to transmit <Sensor> data collected during the ascent from the profile depth to the surface.
+203;250;Descent, nb points zone 1;NUMBER_<Sensor>DescentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <Sensor> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth). Depth zone number: <Z> = 1..5
+204;250; Nb points in drift;NUMBER_Park<Sensor>SamplesInternal_COUNT;Park  measurements - Internal counter
+205;250;Ascent, nb points zone 1;NUMBER_<Sensor>AscentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <Sensor> in the depth zone #<Z> during the ascent from the profile depth to the surface. Depth zone number: <Z> = 1..5
+206;250;"""X"" type status sensor (1: normal, 0 if problem)";FLAG_<Sensor>Status_LOGICAL;The <Sensor> is OK (Yes/No).
+207;250;Pressure offset (surface);PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
+208;250;"Pressure ""subsurface""";PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).

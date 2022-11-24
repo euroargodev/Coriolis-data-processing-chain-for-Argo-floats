@@ -1,0 +1,233 @@
+% ------------------------------------------------------------------------------
+% Rename and move the Argos input file in the correct directory (according to
+% the 'processmode' input parameter value).
+%
+% SYNTAX :
+%  [o_ok] = move_argos_input_file(a_floatArgosId, a_firstArgosMsgDate, ...
+%    a_floatNum, a_cycleNumber, a_noCycleNumberTag)
+%
+% INPUT PARAMETERS :
+%   a_floatArgosId      : float PTT number
+%   a_firstArgosMsgDate : first Argos msg date of the file
+%   a_floatNum          : float WMO number
+%   a_cycleNumber       : cycle number
+%   a_noCycleNumberTag  : tag to explain why cycle number has not been
+%                         determined:
+%                         'EEE': empty file (no consistent Argos message)
+%                         'WWW': no WMO number for the given ArgosId
+%                         'MMM': missing meta-data to computed cycle number
+%                         'TTT': emission test done before float launch date
+%                         'GGG': ghost message file
+%                         additional tag set by miscellaneous utility tools
+%                         'UUU': data frozen by an operator action
+%
+% OUTPUT PARAMETERS :
+%   o_ok : move operation report flag (1 if ok, 0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = move_argos_input_file(a_floatArgosId, a_firstArgosMsgDate, ...
+   a_floatNum, a_cycleNumber, a_noCycleNumberTag)
+
+% output parameters initialization
+o_ok = 1;
+
+% global input parameter information
+global g_decArgo_processModeAll;
+global g_decArgo_inputArgosFile;
+
+% default values
+global g_decArgo_janFirst1950InMatlab;
+
+% configuration values
+global g_decArgo_dirInputHexArgosFileFormat1
+
+% Argos Id temporary sub-directory
+global g_decArgo_tmpArgosIdDirectory;
+
+
+% create the new name of the Argos input file
+[inputArgosFilePathName, inputArgosFileName, ext] = fileparts(g_decArgo_inputArgosFile);
+inputArgosFileName = [inputArgosFileName ext];
+
+if (isempty(a_floatNum))
+   newArgosFileName = sprintf('%06d_%s_WWWWWWW_%s.txt', ...
+      a_floatArgosId, ...
+      datestr(a_firstArgosMsgDate+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+      a_noCycleNumberTag);
+elseif (isempty(a_cycleNumber))
+   newArgosFileName = sprintf('%06d_%s_%d_%s.txt', ...
+      a_floatArgosId, ...
+      datestr(a_firstArgosMsgDate+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+      a_floatNum, ...
+      a_noCycleNumberTag);
+else
+   newArgosFileName = sprintf('%06d_%s_%d_%03d.txt', ...
+      a_floatArgosId, ...
+      datestr(a_firstArgosMsgDate+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+      a_floatNum, ...
+      a_cycleNumber);
+end
+
+% for comparison with archived files
+% if (~isempty(a_cycleNumber))
+%    pattern = sprintf('%d_%03d', a_floatNum, a_cycleNumber);
+%    if (isempty(strfind(inputArgosFileName, pattern)))
+%       fprintf('\n#@# DIFF Filenames differ %s %s\n\n', ...
+%          inputArgosFileName, newArgosFileName);
+%    end
+% end
+
+% create the Argos Id directory
+argosIdDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', a_floatArgosId) '/'];
+if ~(exist(argosIdDirName, 'dir') == 7)
+   mkdir(argosIdDirName);
+end
+
+if (isempty(a_floatNum) || isempty(a_cycleNumber))
+   
+   % no processing of input data, just archiving of the file
+   if (g_decArgo_processModeAll == 1)
+      % move the Argos input file for storage
+      fileNameIn = g_decArgo_inputArgosFile;
+      fileNamOut = [argosIdDirName newArgosFileName];
+      if (move_file(fileNameIn, fileNamOut) == 0)
+         o_ok = 0;
+         return;
+      end
+   end
+
+else
+   
+   % the input data will be processed
+   
+   % create the temporary sub-directory
+   g_decArgo_tmpArgosIdDirectory = [argosIdDirName 'tmp/'];
+   if (exist(g_decArgo_tmpArgosIdDirectory, 'dir') == 7)
+      [status, message, messageid] = rmdir(g_decArgo_tmpArgosIdDirectory, 's');
+      if (status == 0)
+         fprintf('ERROR: Error while deleting the %s directory (%s)\n', ...
+            g_decArgo_tmpArgosIdDirectory, ...
+            message);
+         o_ok = 0;
+         return;
+      end
+   end
+   mkdir(g_decArgo_tmpArgosIdDirectory);
+   
+   % copy the Argos input file in the temporary sub-directory
+   fileNameIn = g_decArgo_inputArgosFile;
+   fileNamOut = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
+   if (copy_file(fileNameIn, fileNamOut) == 0)
+      o_ok = 0;
+      return;
+   end
+   
+   % check if there is already some data for this file
+   existingCycleFiles = dir([argosIdDirName sprintf('*_%d_%03d*', a_floatNum, a_cycleNumber)]);
+   if (length(existingCycleFiles) == 0)
+      
+      if (g_decArgo_processModeAll == 1)
+         % move the temporary Argos input file for processing
+         fileNameIn = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
+         fileNamOut = [argosIdDirName newArgosFileName];
+         if (move_file(fileNameIn, fileNamOut) == 0)
+            o_ok = 0;
+            return;
+         end
+         
+         % delete the temporary sub-directory
+         [status, message, messageid] = rmdir(g_decArgo_tmpArgosIdDirectory, 's');
+         if (status == 0)
+            fprintf('ERROR: Error while deleting the %s directory (%s)\n', ...
+               g_decArgo_tmpArgosIdDirectory, ...
+               message);
+            o_ok = 0;
+            return;
+         end
+         g_decArgo_tmpArgosIdDirectory = [];
+         
+         % delete the Argos input file
+         delete(g_decArgo_inputArgosFile);
+      end
+      
+   else
+      
+      fprintf('WARNING: %d Argos file(s) already exist(s) for float #%d and cycle #%d => concatenating contents before processing\n', ...
+         length(existingCycleFiles), a_floatNum, a_cycleNumber);
+      fprintf('\n#@# CONCAT %d Argos file(s) already exist(s) for float #%d and cycle #%d => concatenating contents before processing\n', ...
+         length(existingCycleFiles), a_floatNum, a_cycleNumber);
+      
+      % concatenate all the file contents in a new file
+      baseFileName = existingCycleFiles(1).name;
+      baseFilePathName = [g_decArgo_tmpArgosIdDirectory 'concat_' baseFileName];
+      for idFile = 1:length(existingCycleFiles)
+         existingCycleFile = existingCycleFiles(idFile).name;
+         fprintf('#@# CONCAT %s\n', existingCycleFile);
+         newFilePathName = [argosIdDirName existingCycleFile];
+         if (concatenate_files(baseFilePathName, newFilePathName) == 0)
+            o_ok = 0;
+            return;
+         end
+      end
+      newFilePathName = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
+      fprintf('#@# CONCAT %s\n\n', inputArgosFileName);
+      if (concatenate_files(baseFilePathName, newFilePathName) == 0)
+         o_ok = 0;
+         return;
+      end
+      
+      % delete the temporary Argos input file
+      delete([g_decArgo_tmpArgosIdDirectory newArgosFileName]);
+      
+      % rename the concatenated file
+      fileNameIn = [g_decArgo_tmpArgosIdDirectory 'concat_' baseFileName];
+      fileNamOut = [g_decArgo_tmpArgosIdDirectory baseFileName];
+      if (move_file(fileNameIn, fileNamOut) == 0)
+         o_ok = 0;
+         return;
+      end
+      
+      % set the new temporary file to process
+      newArgosFileName = baseFileName;
+      
+      if (g_decArgo_processModeAll == 1)
+         % move the temporary Argos input file for processing
+         fileNameIn = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
+         fileNamOut = [argosIdDirName newArgosFileName];
+         if (move_file(fileNameIn, fileNamOut) == 0)
+            o_ok = 0;
+            return;
+         end
+         
+         % delete concatenated files
+         for idFile = 2:length(existingCycleFiles)
+            delete([argosIdDirName existingCycleFiles(idFile).name]);
+            fprintf('DEC_INFO: Deleting file %s\n', ...
+               [argosIdDirName existingCycleFiles(idFile).name]);
+         end
+         
+         % delete the temporary sub-directory
+         [status, message, messageid] = rmdir(g_decArgo_tmpArgosIdDirectory, 's');
+         if (status == 0)
+            fprintf('ERROR: Error while deleting the %s directory (%s)\n', ...
+               g_decArgo_tmpArgosIdDirectory, ...
+               message);
+            o_ok = 0;
+            return;
+         end
+         g_decArgo_tmpArgosIdDirectory = [];
+         
+         % delete the Argos input file
+         delete(g_decArgo_inputArgosFile);
+      end
+   end
+end
+
+return;
