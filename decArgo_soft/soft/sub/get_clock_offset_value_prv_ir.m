@@ -39,7 +39,7 @@ if (a_cycleTimeData.cycleNum ~= 0)
    
    idF = find(a_clockOffsetData.cycleNum == a_cycleTimeData.cycleNum);
    if (~isempty(idF))
-      o_clockOffset = a_clockOffsetData.clockOffset(idF);
+      o_clockOffset = mean(a_clockOffsetData.clockOffset(idF));
    else
       idF1 = find(a_clockOffsetData.cycleNum <= a_cycleTimeData.cycleNum - 1, 1, 'last');
       idF2 = find(a_clockOffsetData.cycleNum >= a_cycleTimeData.cycleNum, 1, 'first');
