@@ -33,7 +33,13 @@ decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 11
 decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1022 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1121 1314 1321 1322];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002 2003];
-decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
+decoderIdListNemo = [3001];
+decoderIdList = [ ...
+   decoderIdListNke ...
+   decoderIdListApex ...
+   decoderIdListNavis ...
+   decoderIdListNova ...
+   decoderIdListNemo];
 % only to check that the function has been updated for each new decoder
 if (~ismember(a_decoderId, decoderIdList))
    fprintf('ERROR: Float #%d: decoderId=%d is not present in the check list of the update_meta_data function\n', ...
@@ -56,11 +62,31 @@ if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Re
    end
 end
 
+% add a POSITIONING_SYSTEM = 'RAFOS' to NEMO floats
+if (ismember(a_decoderId, decoderIdListNemo))
+   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2, 'IRIDIUM')) && ...
+         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_3')))
+      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_3 = 'RAFOS';
+      
+      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = RAFOS'' to float positioning systems\n', ...
+         g_decArgo_floatNum);
+   end
+end
+
 % add 'MTIME' parameter and associated SENSOR to specific floats
 decoderIdListMtimeCTS5 = [121 122 123 124];
 decoderIdListMtimeApex = [1121 1321 1322];
 decoderIdListMtimeNavis = [1201];
-decoderIdListMtime = [decoderIdListMtimeCTS5 decoderIdListMtimeApex decoderIdListMtimeNavis];
+decoderIdListMtimeNemo = [3001];
+decoderIdListMtime = [ ...
+   decoderIdListMtimeCTS5 ...
+   decoderIdListMtimeApex ...
+   decoderIdListMtimeNavis ...
+   decoderIdListMtimeNemo];
 if (ismember(a_decoderId, decoderIdListMtime))
    o_metaData = add_mtime_parameter(o_metaData);
 end
@@ -228,7 +254,7 @@ if (isfield(o_metaData, 'PARAMETER'))
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_backscattering(paramList{idP}, a_decoderId);
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_backscattering(paramList{idP}, a_decoderId, o_metaData);
       if (~isempty(param))
          
          % check meta data length
@@ -3185,6 +3211,7 @@ return;
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
 %   a_decoderId : float decoder Id
+%   a_metaData  : input meta-data
 %
 % OUTPUT PARAMETERS :
 %   o_param           : output updated PARAMETER information
@@ -3205,7 +3232,7 @@ return;
 %   09/30/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_backscattering(a_paramName, a_decoderId)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_backscattering(a_paramName, a_decoderId, a_metaData)
 
 % output parameters initialization
 o_param = '';
@@ -3273,6 +3300,30 @@ switch (a_decoderId)
                return;
             end
             
+            % determine angle of measurement
+            % if SENSOR_MODEL == ECO_FLBB => 142°
+            % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
+            angle = 124;
+            if (a_decoderId == 111)
+               % INCOIS Provor CTS4 v3.xx floats have ECO_FLBB sensors
+               % (whereas Coriolis Provor CTS4 v3.xx floats have ECO_FLBBCD
+               % sensors)
+               idP = find(strcmp('BBP700', struct2cell(a_metaData.PARAMETER)));
+               paramSensorList = struct2cell(a_metaData.PARAMETER_SENSOR);
+               paramSensor = paramSensorList{idP};
+               idS = find(strcmp(paramSensor, struct2cell(a_metaData.SENSOR)));
+               sensorModelList = struct2cell(a_metaData.SENSOR_MODEL);
+               sensorModel = sensorModelList{idS};
+               if (~isempty(sensorModel))
+                  if (strcmp(sensorModel, 'ECO_FLBB'))
+                     angle = 142;
+                  end
+               else
+                  fprintf('WARNING: Float #%d: no SENSOR_MODEL associated to PARAMETER BBP700\n', ...
+                     g_decArgo_floatNum);
+               end
+            end
+            
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -3280,8 +3331,8 @@ switch (a_decoderId)
                o_paramAccuracy = '';
                o_paramResolution = '';
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
-               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
-                  darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+                  darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter, angle);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             else
                o_param = 'BBP700';
@@ -3290,8 +3341,8 @@ switch (a_decoderId)
                o_paramAccuracy = '';
                o_paramResolution = '';
                o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700_O)*SCALE_BACKSCATTERING700-BETASW700)';
-               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, DARK_BACKSCATTERING700_O=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
-                  darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, DARK_BACKSCATTERING700_O=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+                  darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter, angle);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
             

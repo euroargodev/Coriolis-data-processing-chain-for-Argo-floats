@@ -379,7 +379,8 @@ for idProf = 1:length(tabProfiles)
                            % of the previous run and we received a new one
                            
                            fileCycleNum = [];
-                           floatFiles = dir([outputDirName '/' sprintf('*%d_*.nc', g_decArgo_floatNum)]);
+                           floatFiles = [dir([outputDirName '/' sprintf('R%d_*.nc', g_decArgo_floatNum)]); ...
+                              dir([outputDirName '/' sprintf('D%d_*.nc', g_decArgo_floatNum)])];
                            for idFile = 1:length(floatFiles)
                               floatFileName = floatFiles(idFile).name;
                               idFUs = strfind(floatFileName, '_');

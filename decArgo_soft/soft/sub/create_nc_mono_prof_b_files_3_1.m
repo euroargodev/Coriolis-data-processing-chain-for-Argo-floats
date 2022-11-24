@@ -52,6 +52,7 @@ global g_decArgo_dirOutputNetcdfFile;
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_qcDef;
+global g_decArgo_janFirst1950InMatlab;
 
 % decoder version
 global g_decArgo_decoderVersion;
@@ -462,7 +463,8 @@ for idProf = 1:length(tabProfiles)
                            % of the previous run and we received a new one
                            
                            fileCycleNum = [];
-                           floatFiles = dir([outputDirName '/' sprintf('*%d_*.nc', g_decArgo_floatNum)]);
+                           floatFiles = [dir([outputDirName '/' sprintf('BR%d_*.nc', g_decArgo_floatNum)]); ...
+                              dir([outputDirName '/' sprintf('BD%d_*.nc', g_decArgo_floatNum)])];
                            for idFile = 1:length(floatFiles)
                               floatFileName = floatFiles(idFile).name;
                               idFUs = strfind(floatFileName, '_');
