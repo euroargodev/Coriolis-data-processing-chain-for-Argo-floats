@@ -1663,15 +1663,15 @@ if (~isempty(a_tabSensors))
                   sensorType);
             end
             
-            o_cyProfPhaseList = [o_cyProfPhaseList; ...
-               250 sensorType cycleNum profNum -1 sbdFileDate];
-
             % message data frame
             msgData = tabSensors(idMes, 21:end);
 
             if (all(msgData == 0))
                continue
             end
+
+            o_cyProfPhaseList = [o_cyProfPhaseList; ...
+               250 sensorType cycleNum profNum -1 sbdFileDate];
 
             switch (sensorType)
 
