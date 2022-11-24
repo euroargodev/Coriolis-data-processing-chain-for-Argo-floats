@@ -879,9 +879,7 @@ else
       trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
    end
    
-   if (g_decArgo_ackPacket == 1)
-      trajNMeasStruct.surfOnly = 1;
-   end
+   trajNMeasStruct.surfOnly = 1;
    
    % clock offset
    if (~isempty(cycleTimeStruct) && ~isempty(cycleTimeStruct.clockDrift))
@@ -891,9 +889,7 @@ else
       trajNCycleStruct.dataMode = 'R';
    end
    
-   if (g_decArgo_ackPacket == 1)
-      trajNCycleStruct.surfOnly = 1;
-   end
+   trajNCycleStruct.surfOnly = 1;
 end
 
 % Transmission End Time

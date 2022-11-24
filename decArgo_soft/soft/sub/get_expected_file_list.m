@@ -46,8 +46,14 @@ if (~isempty(a_ptnNum) && (a_ptnNum > 0))
    o_expectedFileList = [o_expectedFileList g_decArgo_eventData{idF(idF2), 5}];
    idF2 = find([g_decArgo_eventData{idF, 4}] == 76);
    list = [g_decArgo_eventData{idF(idF2), 5}];
-   list(1:2:end) = [];
-   o_expectedFileList = [o_expectedFileList list];
+   if (~isempty(list))
+      list2 = 1:2:length(list);
+      idF3 = find([list{list2}] ~= 0);
+      if (~isempty(idF3))
+         list3 = list(list2(idF3)+1);
+         o_expectedFileList = [o_expectedFileList list3];
+      end
+   end
    
    % an input cmd has be processed
    if (~isempty(find([g_decArgo_eventData{idF, 4}] == 141, 1)))
@@ -74,8 +80,14 @@ elseif (~isempty(a_ptnNum) && (a_ptnNum == 0))
    o_expectedFileList = [o_expectedFileList g_decArgo_eventData{idF2, 5}];
    idF2 = find([g_decArgo_eventData{:, 4}] == 76);
    list = [g_decArgo_eventData{idF2, 5}];
-   list(1:2:end) = [];
-   o_expectedFileList = [o_expectedFileList list];
+   if (~isempty(list))
+      list2 = 1:2:length(list);
+      idF3 = find([list{list2}] ~= 0);
+      if (~isempty(idF3))
+         list3 = list(list2(idF3)+1);
+         o_expectedFileList = [o_expectedFileList list3];
+      end
+   end
    
    % skipped files
    if (~isempty(find([g_decArgo_eventData{:, 4}] == 127, 1)))
@@ -104,8 +116,14 @@ else
    o_expectedFileList = [o_expectedFileList g_decArgo_eventData{idF2, 5}];
    idF2 = find([g_decArgo_eventData{:, 4}] == 76);
    list = [g_decArgo_eventData{idF2, 5}];
-   list(1:2:end) = [];
-   o_expectedFileList = [o_expectedFileList list];
+   if (~isempty(list))
+      list2 = 1:2:length(list);
+      idF3 = find([list{list2}] ~= 0);
+      if (~isempty(idF3))
+         list3 = list(list2(idF3)+1);
+         o_expectedFileList = [o_expectedFileList list3];
+      end
+   end
    
    % skipped files
    if (~isempty(find([g_decArgo_eventData{:, 4}] == 127, 1)))

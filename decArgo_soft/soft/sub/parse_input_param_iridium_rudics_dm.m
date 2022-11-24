@@ -109,9 +109,10 @@ if (checkRsyncLog == 1)
    [ryncLogList] = get_rsync_log_dir_file_names_ir_rudics(g_decArgo_dirInputRsyncLog);
    
    for idFile = 1:length(ryncLogList)
-      [floatLoginNameList, floatSbdFiles, rsyncLogName] = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile});
-      idF = find(strcmp(floatLoginName, floatLoginNameList) == 1);
-      tabFloatSbdFiles = [tabFloatSbdFiles floatSbdFiles(idF)];
+      floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
+      if (~isempty(floatFiles))
+         tabFloatSbdFiles = [tabFloatSbdFiles floatFiles];
+      end
    end
 end
 

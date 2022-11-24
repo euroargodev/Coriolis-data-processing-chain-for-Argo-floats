@@ -1240,7 +1240,11 @@ for idCyc = 1:length(cycleNumList)
          (g_decArgo_clockOffset.cycleNum == cycleNum) & ...
          (g_decArgo_clockOffset.patternNum == profNum));
       if (~isempty(idClockOffset))
-         trajNCycleStruct.clockOffset = g_decArgo_clockOffset.clockOffset(idClockOffset);
+         if (length(idClockOffset) > 1)
+            trajNCycleStruct.clockOffset = mean(g_decArgo_clockOffset.clockOffset(idClockOffset));
+         else
+            trajNCycleStruct.clockOffset = g_decArgo_clockOffset.clockOffset(idClockOffset);
+         end
       else
          refDate = [];
          if (~isempty(trajNCycleStruct.juldTransmissionStart))

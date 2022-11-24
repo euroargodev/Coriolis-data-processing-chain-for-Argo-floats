@@ -124,10 +124,10 @@ for idMes = 1:size(a_tabData, 1)
          tabCycleNum = [tabCycleNum tabTech(30)];
          
          % determine if it is a deep cycle
-         if ((length(unique(tabTech([2 7:15 19:20]))) == 1) && (unique(tabTech([2 7:15 19:20])) == 0))
-            o_deepCycle = 0;
-         else
+         if (any(tabTech([20 22 24]) ~= 0))
             o_deepCycle = 1;
+         else
+            o_deepCycle = 0;
          end
          
          % decode the retrieved data

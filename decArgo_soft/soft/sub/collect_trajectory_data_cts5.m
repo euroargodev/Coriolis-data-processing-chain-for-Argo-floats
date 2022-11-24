@@ -32,6 +32,7 @@ o_tabTrajIndex = [];
 o_tabTrajData = [];
 
 % cycle phases
+global g_decArgo_phaseSatTrans;
 global g_decArgo_phaseEndOfLife;
 
 % global measurement codes
@@ -253,7 +254,7 @@ if (~isempty(tabTrajIndexAll))
                end
             end
          end
-         idToDel = [idToDel idT];
+         idToDel = [idToDel; idT];
       end
    end
    tabTrajIndexAll(idToDel, :) = [];
@@ -264,6 +265,9 @@ if (~isempty(tabTrajIndexAll))
       phase = g_decArgo_phaseEndOfLife;
    else
       phase = unique(tabTrajIndexAll(find(tabTrajIndexAll(:, 4) ~= -1), 4));
+   end
+   if (isempty(phase))
+      phase = g_decArgo_phaseSatTrans;
    end
    tabTrajIndexAll(find(tabTrajIndexAll(:, 4) == -1), 4) = phase;
    tabTrajDataAll(idToDel) = [];

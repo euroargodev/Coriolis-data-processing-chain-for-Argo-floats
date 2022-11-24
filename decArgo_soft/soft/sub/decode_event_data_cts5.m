@@ -226,22 +226,26 @@ end
 % transmission start time
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 121);
 if (~isempty(idF))
+   transmissionStartTime = min([g_decArgo_eventData{idFCyPtn(idF), 6}]);
+   
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
-      'TRANSMISSION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+      'TRANSMISSION START TIME', 'JULD', transmissionStartTime, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
       g_MC_TST, 'JULD', ...
-      'Transmission start date', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
+      'Transmission start date', transmissionStartTime, ...
       a_cyNum, a_ptnNum);
 end
 
 % transmission end time
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 126);
 if (~isempty(idF))
+   transmissionEndTime = max([g_decArgo_eventData{idFCyPtn(idF), 6}]);
+   
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
-      'TRANSMISSION END TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+      'TRANSMISSION END TIME', 'JULD', transmissionEndTime, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
       g_MC_TET, 'JULD', ...
-      'Transmission end date', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
+      'Transmission end date', transmissionEndTime, ...
       a_cyNum, a_ptnNum);
 end
 
@@ -705,14 +709,16 @@ end
 % end of life
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 115);
 if (~isempty(idF))
-   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
-      'END OF LIFE TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
-   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      183, 'End of life time', g_decArgo_eventData{idFCyPtn(idF), 6});
-   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
-   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
-   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      171, 'End of life flag', 1);
+   for id = 1:length(idF)
+      g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+         'END OF LIFE TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF(id)), 6}, []);
+      g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+         183, 'End of life time', g_decArgo_eventData{idFCyPtn(idF(id)), 6});
+      g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+      g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+      g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+         171, 'End of life flag', 1);
+   end
 end
 
 % emergency ascent
@@ -722,10 +728,12 @@ idF = find(([g_decArgo_eventData{idFCyPtn, 4}] == 31) | ...
    ([g_decArgo_eventData{idFCyPtn, 4}] == 46) | ...
    ([g_decArgo_eventData{idFCyPtn, 4}] == 114));
 if (~isempty(idF))
+   emergencyAscentStartTime = min([g_decArgo_eventData{idFCyPtn(idF), 6}]);
+
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
-      'EMERGENCY ASCENT START DATE', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+      'EMERGENCY ASCENT START DATE', 'JULD', emergencyAscentStartTime, []);
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      176, 'Emergency ascent start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+      176, 'Emergency ascent start time', emergencyAscentStartTime);
    g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
    g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
