@@ -59,6 +59,12 @@
 %                             information)
 %                             - a last HISTORY step is added to report the use
 %                             of the current tool (COCQ)
+%   09/28/2016 - RNU - V 3.1: HISTORY information of QC file (reporting Coriolis
+%                             Objective Analysis and SCOOP tool actions) is
+%                             copied in 'c' or 'b' files (according to
+%                             HISTORY_PARAMETER information) only for HISTORY
+%                             steps where HISTORY_SOFTWARE is in a pre-defined
+%                             list (g_cocq_historySoftwareToReport).
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_qc(varargin)
 
@@ -77,7 +83,15 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % program version
 global g_cocq_ncCopyMonoProfileQcVersion;
-g_cocq_ncCopyMonoProfileQcVersion = '3.0';
+g_cocq_ncCopyMonoProfileQcVersion = '3.1';
+
+% list of HISTORY_SOFTWARE that should be reported from the QC file to the
+% output file
+global g_cocq_historySoftwareToReport;
+g_cocq_historySoftwareToReport = [ ...
+   {'COOA'} ...
+   {'SCOO'} ...
+   ];
 
 % default values initialization
 init_default_values;
@@ -779,6 +793,10 @@ global g_cocq_ncCopyMonoProfileQcVersion;
 % QC flag values
 global g_decArgo_qcStrDef;
 
+% list of HISTORY_SOFTWARE that should be reported from the QC file to the
+% output file
+global g_cocq_historySoftwareToReport;
+
 
 % retrieve needed information from QC file
 wantedQcVars = [ ...
@@ -945,87 +963,99 @@ for idType = 1:2
    % concerned parameter
    idF = find(strcmp('HISTORY_PARAMETER', qcData) == 1, 1);
    historyParameter = qcData{idF+1};
+   idF = find(strcmp('HISTORY_SOFTWARE', qcData) == 1, 1);
+   historySoftware = qcData{idF+1};
    for idHistory = 1:size(historyParameter, 3)
       for idProf = 1:size(historyParameter, 2) % size(historyParameter, 2) = 1 (only one Coriolis 'station' is concerned by the Qc reported in each file)
+         
          paramName = historyParameter(:, idProf, idHistory)';
          paramName = strtrim(paramName);
          if (~isempty(paramName))
             
-            % use HISTORY_PARAMETER to decide if output file HISTORY information
-            % should be updated
-            copyHistory = 0;
+            % use HISTORY_PARAMETER to decide if output file should be
+            % updated
+            updateFile = 0;
             if (strcmp(paramName, 'DAT$') || strcmp(paramName, 'POS$'))
                % if JULD_QC has been modified, it is reported in HISTORY
                % information through HISTORY_PARAMETER='DAT$'
                % if POSITION_QC has been modified, it is reported in HISTORY
                % information through HISTORY_PARAMETER='POS$'
-               copyHistory = 1;
+               % in both cases the output file should be updated
+               updateFile = 1;
             else
                paramInfo = get_netcdf_param_attributes(paramName);
                if (((paramInfo.paramType == 'c') && (idType == 1)) || ...
                      ((paramInfo.paramType ~= 'c') && (idType == 2)))
-                  copyHistory = 1;
+                  updateFile = 1;
                end
             end
-      
-            % update output file HISTORY information
-            if (copyHistory == 1)
+            
+            if (updateFile == 1)
                
-               % the current output file should be updated
-               histoItemList = [ ...
-                  {'HISTORY_INSTITUTION'} ...
-                  {'HISTORY_STEP'} ...
-                  {'HISTORY_SOFTWARE'} ...
-                  {'HISTORY_SOFTWARE_RELEASE'} ...
-                  {'HISTORY_REFERENCE'} ...
-                  {'HISTORY_DATE'} ...
-                  {'HISTORY_ACTION'} ...
-                  {'HISTORY_PARAMETER'} ...
-                  {'HISTORY_QCTEST'} ...
-                  ];
-               for idHI = 1:length(histoItemList)
-                  histoItemParamName = histoItemList{idHI};
-                  
-                  idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
-                  inputValue = qcData{idVal+1};
-                  if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
-                     % been seen for unknown reason) the variables are not present in the
-                     % input Qc file
-                     data = inputValue(:, idProf, idHistory)';
-                     data = strtrim(data);
-                     if (~isempty(data))
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
-                           fliplr([currentHistoId profPos 0]), ...
-                           fliplr([1 1 length(data)]), data');
-                     end
-                  end
-               end
-               
-               histoItemList = [ ...
-                  {'HISTORY_START_PRES'} ...
-                  {'HISTORY_STOP_PRES'} ...
-                  {'HISTORY_PREVIOUS_VALUE'} ...
-                  ];
-               for idHI = 1:length(histoItemList)
-                  histoItemParamName = histoItemList{idHI};
-                  
-                  idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
-                  inputValue = qcData{idVal+1};
-                  if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
-                     % been seen for unknown reason) the variables are not present in the
-                     % input Qc file
-                     data = inputValue(idProf, idHistory);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
-                        fliplr([currentHistoId profPos]), ...
-                        fliplr([1 1]), data);
-                  end
-               end
-               currentHistoId = currentHistoId + 1;
-               
+               % the output file should be updated
                if (idType == 1)
                   o_updatedCFile = 1;
                else
                   o_updatedBFile = 1;
+               end
+               
+               % output file HISTORY information should be updated only for
+               % history steps where HISTORY_SOFTWARE is in the
+               % g_cocq_historySoftwareToReport list
+               softwareName = historySoftware(:, idProf, idHistory)';
+               softwareName = strtrim(softwareName);
+               if (ismember(softwareName, g_cocq_historySoftwareToReport))
+                  
+                  % the current output file should be updated
+                  histoItemList = [ ...
+                     {'HISTORY_INSTITUTION'} ...
+                     {'HISTORY_STEP'} ...
+                     {'HISTORY_SOFTWARE'} ...
+                     {'HISTORY_SOFTWARE_RELEASE'} ...
+                     {'HISTORY_REFERENCE'} ...
+                     {'HISTORY_DATE'} ...
+                     {'HISTORY_ACTION'} ...
+                     {'HISTORY_PARAMETER'} ...
+                     {'HISTORY_QCTEST'} ...
+                     ];
+                  for idHI = 1:length(histoItemList)
+                     histoItemParamName = histoItemList{idHI};
+                     
+                     idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
+                     inputValue = qcData{idVal+1};
+                     if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
+                        % been seen for unknown reason) the variables are not present in the
+                        % input Qc file
+                        data = inputValue(:, idProf, idHistory)';
+                        data = strtrim(data);
+                        if (~isempty(data))
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
+                              fliplr([currentHistoId profPos 0]), ...
+                              fliplr([1 1 length(data)]), data');
+                        end
+                     end
+                  end
+                  
+                  histoItemList = [ ...
+                     {'HISTORY_START_PRES'} ...
+                     {'HISTORY_STOP_PRES'} ...
+                     {'HISTORY_PREVIOUS_VALUE'} ...
+                     ];
+                  for idHI = 1:length(histoItemList)
+                     histoItemParamName = histoItemList{idHI};
+                     
+                     idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
+                     inputValue = qcData{idVal+1};
+                     if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
+                        % been seen for unknown reason) the variables are not present in the
+                        % input Qc file
+                        data = inputValue(idProf, idHistory);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
+                           fliplr([currentHistoId profPos]), ...
+                           fliplr([1 1]), data);
+                     end
+                  end
+                  currentHistoId = currentHistoId + 1;
                end
             end
          end

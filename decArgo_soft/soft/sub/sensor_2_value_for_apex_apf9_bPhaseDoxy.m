@@ -23,7 +23,7 @@ function [o_value] = sensor_2_value_for_apex_apf9_bPhaseDoxy(a_sensorValue, a_bP
 
 o_value = a_bPhaseDoxyDef;
 
-if ~((a_sensorValue == hex2dec('FFD')) || (a_sensorValue == hex2dec('FFE')) || (a_sensorValue == hex2dec('000')))
+if ~((a_sensorValue == hex2dec('FFE')) || (a_sensorValue == hex2dec('FFD')) || (a_sensorValue == hex2dec('000')))
    o_value = (a_sensorValue/100) + 23;
 end
 

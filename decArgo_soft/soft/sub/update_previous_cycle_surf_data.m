@@ -47,7 +47,7 @@ for idCy = 1:length(cycleToProcess)
    cyNum = cycleToProcess(idCy);
    
    % get the Argos file name(s) for this cycle
-   [argosPathFileName, unused] = get_argos_path_file_name(a_floatArgosId, a_floatNum, cyNum);
+   [argosPathFileName, unused] = get_argos_path_file_name(a_floatArgosId, a_floatNum, cyNum, g_decArgo_dateDef);
    
    % read Argos file(s)
    [argosLocDate, argosLocLon, argosLocLat, argosLocAcc, argosLocSat, ...

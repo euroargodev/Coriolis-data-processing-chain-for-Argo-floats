@@ -23,13 +23,13 @@ function [o_processedLogFiles] = read_processed_rsync_log_file_ir_rudics_sbd_sbd
 % output parameters initialization
 o_processedLogFiles = [];
 
-% tmp directory
-global g_decArgo_tmpDirectory;
+% history directory
+global g_decArgo_historyDirectory;
 
 
 % file name of the processed rsync log file list
 logFileName = sprintf('processed_rsync_log_%d.txt', a_floatNum);
-logFilePathName = [g_decArgo_tmpDirectory '/' logFileName];
+logFilePathName = [g_decArgo_historyDirectory '/' logFileName];
 
 if ~(exist(logFilePathName, 'file') == 2)
    return;

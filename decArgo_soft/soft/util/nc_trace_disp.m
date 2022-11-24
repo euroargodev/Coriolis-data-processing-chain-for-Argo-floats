@@ -59,9 +59,13 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_ma
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_110813.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213_1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_102015.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_dova.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 
@@ -1076,6 +1080,8 @@ elseif (strcmp(a_eventData.Key, 'i'))
    end
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % switch between bathymetric atlas to plot isobath (ETOPO2 or SRTM30+)
 elseif (strcmp(a_eventData.Key, 's'))
@@ -1083,6 +1089,8 @@ elseif (strcmp(a_eventData.Key, 's'))
       g_NTD_ISO_SRTM = mod(g_NTD_ISO_SRTM+1, 2);
       plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    end
+   
+   display_current_config;
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % decrease the number of displacements per set
@@ -1094,6 +1102,8 @@ elseif (strcmp(a_eventData.Character, '-'))
    fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % increase the number of displacements per set
 elseif (strcmp(a_eventData.Character, '+'))
@@ -1104,6 +1114,8 @@ elseif (strcmp(a_eventData.Character, '+'))
    fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot all the displacements of the float
 elseif (strcmp(a_eventData.Key, 'a'))
@@ -1113,6 +1125,8 @@ elseif (strcmp(a_eventData.Key, 'a'))
    g_NTD_ID_CYCLE = 0;
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % back to plot the default number of displacements per set
 elseif (strcmp(a_eventData.Key, 'd'))
@@ -1121,6 +1135,8 @@ elseif (strcmp(a_eventData.Key, 'd'))
    fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    g_NTD_ID_CYCLE = 0;
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
+   
+   display_current_config;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation
@@ -1135,6 +1151,8 @@ elseif (strcmp(a_eventData.Key, 'q'))
    g_NTD_LOAD_FLOAT = 1;
    g_NTD_QC = mod(g_NTD_QC+1, 2);
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
+   
+   display_current_config;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % write help and current configuration
@@ -1157,12 +1175,41 @@ elseif (strcmp(a_eventData.Key, 'h'))
    fprintf('   h: write help and current configuration\n');
    fprintf('Escape: exit\n\n');
 
-   fprintf('Current configuration:\n');
-   fprintf('NB DISP / SET: %d\n', g_NTD_NB_PLOT_CYCLE);
-   fprintf('QC           : %d\n', g_NTD_QC);
-   fprintf('ISOBATH      : %d\n', g_NTD_ISOBATH);
-   fprintf('ISOBATH SRTM : %d\n', g_NTD_ISO_SRTM);
+   display_current_config;
 end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Display the current visualization configuration.
+%
+% SYNTAX :
+%   display_current_config
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/18/2016 - RNU - creation
+% ------------------------------------------------------------------------------
+function display_current_config
+
+global g_NTD_NB_PLOT_CYCLE;
+global g_NTD_ISOBATH;
+global g_NTD_ISO_SRTM;
+global g_NTD_QC;
+
+fprintf('\nCurrent configuration:\n');
+fprintf('NB DISP / SET: %d\n', g_NTD_NB_PLOT_CYCLE);
+fprintf('QC           : %d\n', g_NTD_QC);
+fprintf('ISOBATH      : %d\n', g_NTD_ISOBATH);
+fprintf('ISOBATH SRTM : %d\n', g_NTD_ISO_SRTM);
 
 return;
 

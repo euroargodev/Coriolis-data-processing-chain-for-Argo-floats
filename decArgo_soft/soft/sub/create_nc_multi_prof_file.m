@@ -106,39 +106,18 @@ if (g_decArgo_floatTransType == 1)
    create_nc_multi_prof_file_3_1(a_decoderId, ...
       a_tabProfiles, a_metaDataFromJson);
    
-elseif (g_decArgo_floatTransType == 2)
+elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    % Iridium RUDICS floats
-   
-   if ((g_decArgo_generateNcMultiProf == 1) || ...
-         ((g_decArgo_generateNcMultiProf == 2) && (g_decArgo_generateNcFlag == 1)))
-      
-      create_nc_multi_prof_file_3_1(a_decoderId, ...
-         a_tabProfiles, a_metaDataFromJson);
-   end
-   
-elseif (g_decArgo_floatTransType == 3)
-   
    % Iridium SBD floats
-   
-   if ((g_decArgo_generateNcMultiProf == 1) || ...
-         ((g_decArgo_generateNcMultiProf == 2) && (g_decArgo_generateNcFlag == 1)))
-      
-      create_nc_multi_prof_file_3_1(a_decoderId, ...
-         a_tabProfiles, a_metaDataFromJson);
-      
-   end
-   
-elseif (g_decArgo_floatTransType == 4)
-   
    % Iridium SBD ProvBioII floats
    
-   if ((g_decArgo_generateNcMultiProf == 1) || ...
-         ((g_decArgo_generateNcMultiProf == 2) && (g_decArgo_generateNcFlag == 1)))
-      
-      create_nc_multi_prof_file_3_1(a_decoderId, ...
-         a_tabProfiles, a_metaDataFromJson);
+   if ((g_decArgo_generateNcMultiProf == 2) && (g_decArgo_generateNcFlag == 0))
+      % no buffer has been decoded => the file should not be updated
+      return;
    end
+   
+   create_nc_multi_prof_file_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
    
 end
 

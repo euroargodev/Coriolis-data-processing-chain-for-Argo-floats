@@ -179,9 +179,11 @@ for idCy = 1:length(a_cycleList)
    
    % decode the selected data according to decoder Id
    
-   % 071412, 062608, 061609, 021009, 061810, 093008, 082213, 021208,
-   % 032213, 110613&090413, 121512, 110813
-   if (ismember(a_decoderId, [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012]))
+   % 071412, 062608, 061609, 021009, 061810, 093008, 082213,
+   % 021208, 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110,
+   % 090810
+   if (ismember(a_decoderId, [1001, 1002, 1003, 1004, 1005, 1006, 1007, ...
+         1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016]))
       
       [miscInfo, auxInfo, profData, profNstData, parkData, astData, surfData, metaData, techData, trajData, ...
          timeInfo, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
@@ -192,7 +194,7 @@ for idCy = 1:length(a_cycleList)
       if (g_decArgo_configDone == 0)
          create_float_config_apx_argos(metaData, a_decoderId);
          if (~isempty(g_decArgo_outputCsvFileId))
-            if (ismember(a_decoderId, [1006 1008 1009]))
+            if (ismember(a_decoderId, [1006 1008 1009, 1013, 1014, 1015, 1016]))
                print_calib_coef_in_csv_file(a_decoderId);
             end
          end

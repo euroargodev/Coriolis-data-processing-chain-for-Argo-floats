@@ -73,7 +73,11 @@ switch (a_decoderId)
       
       o_dataMsgBytesToFreeze{1, 1} = 1;
       o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
-      
+      o_dataMsgBytesToFreeze{2, 1} = 2;
+      o_dataMsgBytesToFreeze{2, 2} = [];
+      o_dataMsgBytesToFreeze{3, 1} = 3;
+      o_dataMsgBytesToFreeze{3, 2} = [3:7];
+
    case {1007} % 082213
       o_testMsgBytesToFreeze{1, 1} = 1;
       o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
@@ -91,7 +95,11 @@ switch (a_decoderId)
       
       o_dataMsgBytesToFreeze{1, 1} = 1;
       o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
-      
+      o_dataMsgBytesToFreeze{2, 1} = 2;
+      o_dataMsgBytesToFreeze{2, 2} = [];
+      o_dataMsgBytesToFreeze{3, 1} = 3;
+      o_dataMsgBytesToFreeze{3, 2} = [3:7];
+
    case {1009} % 032213
       o_testMsgBytesToFreeze{1, 1} = 1;
       o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
@@ -105,7 +113,7 @@ switch (a_decoderId)
       o_dataMsgBytesToFreeze{2, 1} = 2;
       o_dataMsgBytesToFreeze{2, 2} = [];
       o_dataMsgBytesToFreeze{3, 1} = 3;
-      o_dataMsgBytesToFreeze{3, 2} = [4];
+      o_dataMsgBytesToFreeze{3, 2} = [4 7:12];
       
    case {1010} % 110613&090413
       o_testMsgBytesToFreeze{1, 1} = 1;
@@ -147,6 +155,52 @@ switch (a_decoderId)
       o_dataMsgBytesToFreeze{2, 2} = [];
       o_dataMsgBytesToFreeze{3, 1} = 3;
       o_dataMsgBytesToFreeze{3, 2} = [4];
+      
+   case {1013} % 021208
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 20:23];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
+
+   case {1014} % 082807
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 20:23];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
+      o_dataMsgBytesToFreeze{2, 1} = 2;
+      o_dataMsgBytesToFreeze{2, 2} = [];
+      o_dataMsgBytesToFreeze{3, 1} = 3;
+      o_dataMsgBytesToFreeze{3, 2} = [6:16];
+
+   case {1015} % 020110
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 20:23];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
+      o_dataMsgBytesToFreeze{2, 1} = 2;
+      o_dataMsgBytesToFreeze{2, 2} = [13:18];
+
+   case {1016} % 090810
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 22:25];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 12 27:31];
+      o_dataMsgBytesToFreeze{2, 1} = 2;
+      o_dataMsgBytesToFreeze{2, 2} = [];
+      o_dataMsgBytesToFreeze{3, 1} = 3;
+      o_dataMsgBytesToFreeze{3, 2} = [3:8];
 
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_bytes_to_freeze for decoderId #%d\n', ...

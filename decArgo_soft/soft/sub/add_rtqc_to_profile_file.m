@@ -81,6 +81,12 @@
 %   06/22/2016 - RNU - V 2.6: in test #5, the JULD_LOCATION can be found in traj
 %                             JULD or JULD_ADJUSTED (due to NOVA/DOVA floats
 %                             which transmit GPS times in float time)
+%   10/18/2016 - RNU - V 2.7: - correction of the 'set_qc' function (QC = '8'
+%                               can be changed to QC = '9' only)
+%                             - if a profile location with POSITION_QC = '8'
+%                               failed test #4 the JULD_LOCATION, LATITUDE and
+%                               LONGITUDE are set to FillValue and POSITION_QC
+%                               is set to '9' (missing value)
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -112,7 +118,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '2.6';
+g_decArgo_addRtqcToProfileVersion = '2.7';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1537,7 +1543,14 @@ if (testFlagList(4) == 1)
                testDoneList(4, idProf) = 1;
                % apply the test
                if (mean(mean(elev)) >= 0)
-                  positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
+                  if (positionQc(idProf) ~= g_decArgo_qcStrInterpolated)
+                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
+                  else
+                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrMissing);
+                     juldLocation(idProf) = paramJuld.fillValue;
+                     latitude(idProf) = paramLat.fillValue;
+                     longitude(idProf) = paramLon.fillValue;
+                  end
                   testFailedList(4, idProf) = 1;
                end
             else
@@ -2793,6 +2806,11 @@ if (multiProfFileFlag)
                juldQcM(idProfM) = juldQc(idProf);
                positionQcM(idProfM) = positionQc(idProf);
                
+               % update JULD_LOCATION and LATITUDE, LONGITUDE
+               juldLocationM(idProfM) = juldLocation(idProf);
+               latitudeM(idProfM) = latitude(idProf);
+               longitudeM(idProfM) = longitude(idProf);
+
                % update <PARAM>_QC
                for idParam = 1:length(ncMParamNameQcList)
                   paramNameQc = lower(ncMParamNameQcList{idParam});
@@ -4221,7 +4239,11 @@ for idParam = 1:length(ncParamAdjNameList)
 end
 
 % create the list of data to store in the NetCDF mono profile files
-dataList = [];
+dataList = [ ...
+   {'JULD_LOCATION'} {juldLocation} ...
+   {'LATITUDE'} {latitude} ...
+   {'LONGITUDE'} {longitude} ...
+   ];
 for idParam = 1:length(ncParamAdjNameList)
    dataList = [dataList ...
       {upper(ncParamAdjDataList{idParam})} {eval(ncParamAdjDataList{idParam})} ...
@@ -4246,8 +4268,12 @@ if (multiProfFileFlag)
    end
    
    % create the list of data to store in the NetCDF multi profile files
-   dataMList = [];
-   
+   dataMList = [ ...
+      {'JULD_LOCATION'} {juldLocationM} ...
+      {'LATITUDE'} {latitudeM} ...
+      {'LONGITUDE'} {longitudeM} ...
+      ];
+
    % create the list of data Qc to store in the NetCDF multi profile files
    dataQcMList = [ ...
       {'JULD_QC'} {juldQcM} ...
@@ -4598,7 +4624,7 @@ for idFile = 1:2
       return;
    end
    
-   % update <PARAM>_QC and PROFILE_<PARAM>_QC values
+   % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
    for idParamQc = 1:2:length(a_dataQc)
       paramQcName = a_dataQc{idParamQc};
       if (var_is_present_dec_argo(fCdf, paramQcName))
@@ -4644,15 +4670,22 @@ for idFile = 1:2
       end
    end
    
-   % update <PARAM> values
+   % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE) and <PARAM> values
    for idParam = 1:2:length(a_data)
       paramName = a_data{idParam};
       if (var_is_present_dec_argo(fCdf, paramName))
          data = a_data{idParam+1};
-         if (size(data, 2) > nLevels)
-            data = data(:, 1:nLevels);
+         
+         if (strcmp(paramName, 'JULD_LOCATION') || ...
+               strcmp(paramName, 'LATITUDE') || ...
+               strcmp(paramName, 'LONGITUDE'))
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), data);
+         else
+            if (size(data, 2) > nLevels)
+               data = data(:, 1:nLevels);
+            end
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName),  permute(data, fliplr(1:ndims(data))));
          end
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName),  permute(data, fliplr(1:ndims(data))));
       end
    end
    
@@ -4911,7 +4944,7 @@ if (~isempty(a_cMultiFileName))
             if (a_idProfM(idProf) ~= -1)
                idProfM = a_idProfM(idProf);
                
-               % update <PARAM>_QC and PROFILE_<PARAM>_QC values
+               % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
                for idParamQcM = 1:2:length(a_dataQcM)
                   paramQcName = a_dataQcM{idParamQcM};
                   if (var_is_present_dec_argo(fCdf, paramQcName))
@@ -4955,6 +4988,23 @@ if (~isempty(a_cMultiFileName))
                               end
                            end
                         end
+                     end
+                  end
+               end
+               
+               % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE)
+               for idParamM = 1:2:length(a_dataM)
+                  paramName = a_dataM{idParamM};
+                  if (var_is_present_dec_argo(fCdf, paramName))
+                     
+                     % <PARAM>_QC values
+                     data = a_dataM{idParamM+1};
+                     if (strcmp(paramName, 'JULD_LOCATION') || ...
+                           strcmp(paramName, 'LATITUDE') || ...
+                           strcmp(paramName, 'LONGITUDE'))
+                        data = data(1, idProfM);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), ...
+                           idProfM-1, 1, data);
                      end
                   end
                end

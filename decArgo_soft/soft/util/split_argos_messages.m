@@ -69,6 +69,12 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\histo
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\base_traitements_20160823\';
 
 
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp_split\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015_ori_cycle\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015_ori_cycle_split\';
+
+
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 

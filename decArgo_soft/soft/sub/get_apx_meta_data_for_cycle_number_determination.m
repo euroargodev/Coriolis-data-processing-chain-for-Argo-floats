@@ -6,11 +6,10 @@
 %  [o_launchDate, o_preludeDuration, o_profilePressure, ...
 %    o_cycleDuration, o_dpfFloatFlag] = ...
 %    get_apx_meta_data_for_cycle_number_determination( ...
-%    a_floatNum, a_floatDecId, a_floatLaunchDate, a_floatCycleTime)
+%    a_floatNum, a_floatLaunchDate, a_floatCycleTime)
 %
 % INPUT PARAMETERS :
 %   a_floatNum        : float WMO number
-%   a_floatDecId      : float decoder Id
 %   a_floatLaunchDate : float launch date
 %   a_floatCycleTime  : cycle duration
 %
@@ -32,7 +31,7 @@
 function [o_launchDate, o_preludeDuration, o_profilePressure, ...
    o_cycleDuration, o_dpfFloatFlag] = ...
    get_apx_meta_data_for_cycle_number_determination( ...
-   a_floatNum, a_floatDecId, a_floatLaunchDate, a_floatCycleTime)
+   a_floatNum, a_floatLaunchDate, a_floatCycleTime)
 
 % output parameters initialization
 o_launchDate = [];

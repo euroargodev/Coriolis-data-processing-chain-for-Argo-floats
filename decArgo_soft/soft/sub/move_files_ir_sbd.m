@@ -39,31 +39,6 @@ global g_decArgo_realtimeFlag;
 % report information structure
 global g_decArgo_reportStruct;
 
-% array to store information on already decoded SBD files
-global g_decArgo_sbdInfo;
-
-
-% if the SBD has been decoded, update the associated list
-if ((~isempty(a_listFileNames)) && (a_updateXmlReportFlag == 1) && (a_deleteSbdFileFlag == 1))
-   
-   % check the files of the directory
-   for idFile = 1:length(a_listFileNames)
-      fileName = a_listFileNames{idFile};
-      
-      idFUs = strfind(fileName, '_');
-      if (length(idFUs) == 5)
-         imei = str2num(fileName(idFUs(2)+1:idFUs(3)-1));
-         momsn = str2num(fileName(idFUs(3)+1:idFUs(4)-1));
-         mtmsn = str2num(fileName(idFUs(4)+1:idFUs(5)-1));
-      else
-         fprintf('WARNING: Inconsistent SBD file name: %s\n', dirFileName);
-      end
-      
-      g_decArgo_sbdInfo = [g_decArgo_sbdInfo; ...
-         imei momsn mtmsn];
-   end
-   g_decArgo_sbdInfo = unique(g_decArgo_sbdInfo, 'rows');
-end
 
 % move the files of the list
 for idFile = 1:length(a_listFileNames)

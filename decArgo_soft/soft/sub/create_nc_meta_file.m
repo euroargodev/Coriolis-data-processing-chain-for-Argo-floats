@@ -57,35 +57,29 @@ if (g_decArgo_floatTransType == 1)
       
    create_nc_meta_file_3_1(a_decoderId, a_structConfig);
    
-elseif (g_decArgo_floatTransType == 2)
+elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    % Iridium RUDICS floats
-   
-   if ((g_decArgo_generateNcMeta == 1) || ...
-         ((g_decArgo_generateNcMeta == 2) && (g_decArgo_generateNcFlag == 1)))
-            
-      create_nc_meta_file_3_1(a_decoderId, a_structConfig);
-   end
-   
-elseif (g_decArgo_floatTransType == 3)
-   
    % Iridium SBD floats
-   
-   if ((g_decArgo_generateNcMeta == 1) || ...
-         ((g_decArgo_generateNcMeta == 2) && (g_decArgo_generateNcFlag == 1)))
-            
-      create_nc_meta_file_3_1(a_decoderId, a_structConfig);
-   end
-   
-elseif (g_decArgo_floatTransType == 4)
-   
    % Iridium SBD ProvBioII floats
    
-   if ((g_decArgo_generateNcMeta == 1) || ...
-         ((g_decArgo_generateNcMeta == 2) && (g_decArgo_generateNcFlag == 1)))
-            
-      create_nc_meta_file_3_1(a_decoderId, a_structConfig);
+   if ((g_decArgo_generateNcMeta == 2) && (g_decArgo_generateNcFlag == 0))
+      
+      % even if no buffer has been decoded the file should be created if it
+      % doesn't exist
+      % check if the NetCDF META-DATA file already exists
+      floatNumStr = num2str(g_decArgo_floatNum);
+      ncDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
+      ncFileName = [floatNumStr '_meta.nc'];
+      ncPathFileName = [ncDirName ncFileName];
+      
+      if (exist(ncPathFileName, 'file') == 2)
+         % the file is not updated if it already exists
+         return;
+      end
    end
+            
+   create_nc_meta_file_3_1(a_decoderId, a_structConfig);
    
 end
 

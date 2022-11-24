@@ -57,6 +57,7 @@ global g_decArgo_timeData;
 if (~isempty(g_decArgo_timeData))
    idCycleStruct = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
    if (~isempty(idCycleStruct))
+      idCycleStruct = idCycleStruct(end);
       cycleTimeStruct = g_decArgo_timeData.cycleTime(idCycleStruct);
       
       % retrieve cycle timings of the previous cycle

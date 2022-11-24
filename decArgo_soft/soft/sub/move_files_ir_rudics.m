@@ -29,9 +29,6 @@ function [o_ok] = move_files_ir_rudics(a_listFileNames, a_inputDir, a_outputDir,
 % output parameters initialization
 o_ok = 1;
 
-% current float WMO number
-global g_decArgo_floatNum;
-
 % RT processing flag
 global g_decArgo_realtimeFlag;
 
@@ -43,23 +40,18 @@ global g_decArgo_reportStruct;
 for idFile = 1:length(a_listFileNames)
    fileName = a_listFileNames{idFile};
    fileNameIn = [a_inputDir '/' fileName];
-   fileNamOut = [a_outputDir '/' fileName];
+   fileNameOut = [a_outputDir '/' fileName];
    
-   if ((g_decArgo_realtimeFlag == 1) && (a_updateXmlReportFlag == 1))
-      % in RT we delete the processed files
-      delete(fileNameIn);
-   else
-      if (move_file(fileNameIn, fileNamOut) == 0)
-         o_ok = 0;
-         continue;
-      end
+   if (move_file(fileNameIn, fileNameOut) == 0)
+      o_ok = 0;
+      continue;
    end
    
    if (a_updateXmlReportFlag == 1)
       if (g_decArgo_realtimeFlag == 1)
          % store information for the XML report
          g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles ...
-            {fileNamOut}];
+            {fileNameOut}];
       end
    end
 end

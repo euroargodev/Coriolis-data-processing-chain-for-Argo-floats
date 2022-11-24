@@ -45,16 +45,9 @@ global g_decArgo_xmlReportDOMNode;
 global g_decArgo_reportData;
 g_decArgo_reportData = [];
 
-% Argos Id temporary sub-directory
-global g_decArgo_tmpArgosIdDirectory;
 
 % global input parameter information
 global g_decArgo_xmlReportFileName;
-
-% global input parameter information
-global g_decArgo_processModeRedecode;
-global g_decArgo_inputFloatWmo;
-global g_decArgo_inputFloatWmoList;
 
 
 logFileName = [];
@@ -167,8 +160,8 @@ end
 
 % save the XML report
 xmlwrite(xmlFileName, g_decArgo_xmlReportDOMNode);
-% if (strcmp(status, 'nok') == 1)
-%    edit(xmlFileName);
-% end
+if (strcmp(status, 'nok') == 1)
+   edit(xmlFileName);
+end
 
 return;

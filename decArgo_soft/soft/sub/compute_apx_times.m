@@ -107,8 +107,12 @@ if (a_cycleNum > 0)
    % compute TST from float transmission strategy
    [tabTst1, tabTst2] = compute_apx_TST( ...
       a_argosDataData, a_argosDataUsed, a_argosDataDate, o_timeData.configParam, a_decoderId);
-   [cycleTimeStruct.transStartTime1, ~] = select_a_value(tabTst1);
-   [cycleTimeStruct.transStartTime2, ~] = select_a_value(tabTst2);
+   if (~isempty(tabTst1))
+      [cycleTimeStruct.transStartTime1, ~] = select_a_value(tabTst1);
+   end
+   if (~isempty(tabTst2))
+      [cycleTimeStruct.transStartTime2, ~] = select_a_value(tabTst2);
+   end
    
    if (VERBOSE)
       uTst1 = unique(tabTst1(find(tabTst1 ~= g_decArgo_dateDef)));
@@ -134,10 +138,13 @@ if (a_cycleNum > 0)
    end
    
    % store TST from float transmission strategy
-   if (cycleTimeStruct.transStartTime1 ~= g_decArgo_dateDef)
-      cycleTimeStruct.transStartTime = cycleTimeStruct.transStartTime1;
-   else
+   if (cycleTimeStruct.transStartTime2 ~= g_decArgo_dateDef)
+      % we prefer the improved method because the TWR one needs additional
+      % configuration information (trans rep rate) that can be erroneously
+      % reported
       cycleTimeStruct.transStartTime = cycleTimeStruct.transStartTime2;
+   else
+      cycleTimeStruct.transStartTime = cycleTimeStruct.transStartTime1;
    end
    cycleTimeStruct.transStartTimeAdj = cycleTimeStruct.transStartTime;
    if (cycleTimeStruct.transStartTime ~= g_decArgo_dateDef)

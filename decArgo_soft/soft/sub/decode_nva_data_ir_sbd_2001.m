@@ -44,6 +44,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% number of the previous decoded cycle
+global g_decArgo_cycleNumPrev;
+
 % default values
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
@@ -73,6 +76,10 @@ global g_decArgo_secondIridiumSession;
 % max number of CTD samples in one NOVA sensor data packet
 global g_decArgo_maxCTDSampleInNovaDataPacket;
 NB_MEAS_MAX_NOVA = g_decArgo_maxCTDSampleInNovaDataPacket;
+
+% EOL mode
+global g_decArgo_eolMode;
+g_decArgo_eolMode = 0;
 
 
 % decode packet data
@@ -313,6 +320,15 @@ if (a_procLevel > 0)
                end
             else
                g_decArgo_cycleNum = g_decArgo_cycleNum + 1;
+            end
+            
+            % EOL mode
+            if ((g_decArgo_cycleNum == g_decArgo_cycleNumPrev) && ...
+                  ((length(unique(o_tabTech(20:25))) == 1) && (unique(o_tabTech(20:25)) == 0)))
+               o_deepCycle = 0;
+               g_decArgo_eolMode = 1;
+               %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...
+               %                   g_decArgo_floatNum, g_decArgo_cycleNum);
             end
             
             % output NetCDF files

@@ -62,6 +62,7 @@ global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
@@ -188,7 +189,10 @@ switch (a_measCode)
       o_measCodeName = sprintf('%03d: ASCENT_END_FROM_FLOAT', a_measCode);
       
    case g_MC_InAirSingleMeas
-      o_measCodeName = sprintf('%03d: IN_AIR_MEAS', a_measCode);
+      o_measCodeName = sprintf('%03d: IN_AIR_SINGLE_MEAS', a_measCode);
+
+   case g_MC_InAirSeriesOfMeas
+      o_measCodeName = sprintf('%03d: IN_AIR_SERIES_OF_MEAS', a_measCode);
 
    case g_MC_TST
       o_measCodeName = sprintf('%03d: TRANSMISSION_START', a_measCode);

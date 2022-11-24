@@ -26,11 +26,11 @@
 function process_argos_data_apx(varargin)
 
 % directory of input Argos files (all the files in only one directory)
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\TEST_20160223\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\TMP\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
-DIR_OUTPUT = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\TEST_20160223\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\_DATA\Apex_set3\TMP_out\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -1304,7 +1304,7 @@ floatCycleTime = listCycleTime(idFloat);
 
 % retrieve useful float meta-data
 [launchDate, preludeDuration, profilePressure, cycleDuration, dpfFloatFlag] = ...
-   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatDecId, floatLaunchDate, floatCycleTime);
+   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatLaunchDate, floatCycleTime);
 
 % minimum duration of the first deep cycle for a DPF float (first transmission
 % is expected to occur after an ascent/descent at profile pressure with an

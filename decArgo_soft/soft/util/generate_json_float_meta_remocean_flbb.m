@@ -33,7 +33,7 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_ir_sbd_rem_all.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20160512.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 

@@ -28,22 +28,12 @@ o_floatList = [];
 o_inputError = 0;
 
 % global configuration values
-global g_decArgo_floatListFileName;
 global g_decArgo_dirInputRsyncLog;
-global g_decArgo_dirInputJsonFloatDecodingParametersFile;
 global g_decArgo_iridiumDataDirectory;
-
-% SBD sub-directory
-global g_decArgo_tmpDirectory;
 
 % rsync information
 global g_decArgo_rsyncFloatWmoList;
-global g_decArgo_rsyncFloatLoginNameList;
 global g_decArgo_rsyncFloatSbdFileList;
-
-% already processed rsync log information
-global g_decArgo_floatWmoUnderProcessList;
-global g_decArgo_rsyncLogFileUnderProcessList;
 
 % DOM node of XML report
 global g_decArgo_xmlReportDOMNode;
@@ -51,7 +41,6 @@ global g_decArgo_xmlReportDOMNode;
 
 % check input parameters
 floatWmo = [];
-floatWmoList = [];
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
@@ -60,22 +49,11 @@ if (~isempty(a_varargin))
    else
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatwmo'))
-            if (isempty(floatWmo) && isempty(floatWmoList))
-               floatWmo = a_varargin{id+1};
+            if (isempty(floatWmo))
+               floatWmo = str2num(a_varargin{id+1});
                
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_floatwmo', a_varargin{id+1});
-            else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
-               o_inputError = 1;
-               return;
-            end
-         elseif (strcmpi(a_varargin{id}, 'floatwmolist'))
-            if (isempty(floatWmo) && isempty(floatWmoList))
-               floatWmoList = eval(a_varargin{id+1});
-               
-               % store input parameter in the XML report
-               g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_floatwmolist', a_varargin{id+1});
             else
                fprintf('ERROR: inconsistent input arguments => exit\n');
                o_inputError = 1;
@@ -88,6 +66,13 @@ if (~isempty(a_varargin))
    end
 end
 
+% check mandatory input parameter
+if (isempty(floatWmo))
+   fprintf('ERROR: ''floatwmo'' input param is mandatory => exit\n');
+   o_inputError = 1;
+   return;
+end
+
 % check the corresponding directories and files
 if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
    fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
@@ -95,92 +80,42 @@ if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
    return;
 end
 
-floatList = [];
-if (~isempty(floatWmo))
-   floatList = str2num(floatWmo);
-elseif (~isempty(floatWmoList))
-   floatList = floatWmoList;
-else
-   floatWmoList = g_decArgo_floatListFileName;
-   if ~(exist(floatWmoList, 'file') == 2)
-      fprintf('ERROR: default WMO float file list (%s) does not exist => exit\n', floatWmoList);
-      o_inputError = 1;
-      return;
-   end
-   floatList = load(floatWmoList);
+% retrieve float IMEI number
+[floatWmo, floatImei, ...
+   floatDecVersion, floatDecId, ...
+   floatFrameLen, ...
+   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
+   floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
+   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
+if (isempty(floatImei))
+   fprintf('ERROR: no information on float #%d => exit\n', g_decArgo_dirInputRsyncLog);
+   o_inputError = 1;
+   return;
 end
-
-checkRsyncLog = 0;
-for idFloat = 1:length(floatList)
-   [floatNum, floatImei, ...
-      floatDecVersion, floatDecId, ...
-      floatFrameLen, ...
-      floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
-      floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-      floatRefDay, floatEndDate] = get_one_float_info(floatList(idFloat), []);
    
-   archiveDir = [g_decArgo_iridiumDataDirectory '/' floatImei '_' num2str(floatNum) '/archive/'];
-   mailFiles = dir([archiveDir '/' sprintf('*_%s_*.txt', floatImei)]);
-   if (isempty(mailFiles))
-      checkRsyncLog = 1;
-      break;
-   end
+% get archive directory
+checkRsyncLog = 0;
+floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatImei '_' num2str(floatWmo) '/'];
+archiveDmDir = [floatIriDirName 'archive_dm/'];
+mailFiles = dir([archiveDmDir '/' sprintf('*_%s_*.txt', floatImei)]); % we can have *.txt and .sbd files but we should have at least one .txt file
+if (isempty(mailFiles))
+   checkRsyncLog = 1;
 end
 
-tabFloatWmoList = [];
-tabFloatImei = [];
 tabFloatMailFiles = [];
-
 if (checkRsyncLog == 1)
    
    % parse rsync log files
    [ryncLogList] = get_rsync_log_dir_file_names_ir_rudics(g_decArgo_dirInputRsyncLog);
    
-   for idFloat = 1:length(ryncLogList)
-      [floatImei, floatMailFiles, rsyncLogName] = parse_rsync_log_ir_sbd2(ryncLogList{idFloat});
-      tabFloatImei = [tabFloatImei floatImei];
-      tabFloatMailFiles = [tabFloatMailFiles floatMailFiles];
+   for idFile = 1:length(ryncLogList)
+      [floatImeiList, floatMailFiles, rsyncLogName] = parse_rsync_log_ir_sbd2(ryncLogList{idFile});
+      idF = find(strcmp(floatImei, floatImeiList) == 1);
+      tabFloatMailFiles = [tabFloatMailFiles floatMailFiles(idF)];
    end
-   
-   % keep only the entries of the floatList floats
-   idToDelete = ones(1, length(tabFloatImei));
-   tabFloatWmoList = ones(1, length(tabFloatImei))*-1;
-   for idFloat = 1:length(floatList)
-      [floatNum, floatImei, ...
-         floatDecVersion, floatDecId, ...
-         floatFrameLen, ...
-         floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
-         floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-         floatRefDay, floatEndDate] = get_one_float_info(floatList(idFloat), []);
-      
-      idF = find(strcmp(tabFloatImei, floatImei) == 1);
-      if (~isempty(idF))
-         
-         % some floats can share the same IMEI
-         if (~isempty(find(tabFloatWmoList(idF) ~= -1, 1)))
-            
-            % duplicate these entries for this float
-            tabFloatImei = [tabFloatImei tabFloatImei(idF)];
-            tabFloatMailFiles = [tabFloatMailFiles tabFloatMailFiles(idF)];
-            
-            tabFloatWmoList = [tabFloatWmoList ones(1, length(idF))*floatList(idFloat)];
-            idToDelete = [idToDelete zeros(1, length(idF))];
-         else
-            
-            tabFloatWmoList(idF) = floatList(idFloat);
-            idToDelete(idF) = 0;
-         end
-      end
-   end
-   
-   idDel = find(idToDelete == 1);
-   tabFloatImei(idDel) = [];
-   tabFloatMailFiles(idDel) = [];
-   tabFloatWmoList(idDel) = [];
 end
 
-g_decArgo_rsyncFloatWmoList = tabFloatWmoList;
-g_decArgo_rsyncFloatLoginNameList = tabFloatImei;
+g_decArgo_rsyncFloatWmoList = ones(size(tabFloatMailFiles))*floatWmo;
 g_decArgo_rsyncFloatSbdFileList = tabFloatMailFiles;
 
 % output data

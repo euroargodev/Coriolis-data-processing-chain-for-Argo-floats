@@ -23,7 +23,7 @@ function [o_value] = sensor_2_value_for_apex_apf9_salinity(a_sensorValue, a_salD
 
 o_value = a_salDef;
 
-if ~((a_sensorValue == hex2dec('EFFF')) || (a_sensorValue == hex2dec('F000')) || (a_sensorValue == hex2dec('F001')))
+if ~((a_sensorValue == hex2dec('F000')) || (a_sensorValue == hex2dec('EFFF')) || (a_sensorValue == hex2dec('F001')))
    if (a_sensorValue < hex2dec('EFFF'))
       o_value = a_sensorValue/1000;
    else

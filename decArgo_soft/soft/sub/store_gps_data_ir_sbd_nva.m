@@ -85,7 +85,7 @@ if (~isempty(a_tabTech))
       
       % retrieve date from g_decArgo_timeData structure
       idCycleStruct = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
-      gpsLocDate = [gpsLocDate; g_decArgo_timeData.cycleTime(idCycleStruct).gpsTimeAdj];
+      gpsLocDate = [gpsLocDate; g_decArgo_timeData.cycleTime(idCycleStruct(end)).gpsTimeAdj];
       
       gpsLocLon = [gpsLocLon; a_tabTech(id, 39+ID_OFFSET)];
       gpsLocLat = [gpsLocLat; a_tabTech(id, 38+ID_OFFSET)];

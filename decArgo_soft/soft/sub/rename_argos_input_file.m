@@ -490,7 +490,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
    
    % retrieve useful float meta-data
    [launchDate, preludeDuration, profilePressure, cycleDuration, dpfFloatFlag] = ...
-      get_apx_meta_data_for_cycle_number_determination(floatNum, floatDecId, floatLaunchDate, floatCycleTime);
+      get_apx_meta_data_for_cycle_number_determination(floatNum, floatLaunchDate, floatCycleTime);
 
    if (isempty(launchDate))
       if (g_decArgo_processModeAll == 1)

@@ -79,7 +79,7 @@ if (~isempty(a_floatNum))
    if (length(floatInfoFileNames) == 1)
       floatInfoFileName = [g_decArgo_dirInputJsonFloatDecodingParametersFile '/' floatInfoFileNames(1).name];
    elseif (isempty(floatInfoFileNames))
-      fprintf('ERROR: Float information file not found for float #%d\n', a_floatNum);
+      fprintf('WARNING: Float information file not found for float #%d\n', a_floatNum);
       return;
    else
       fprintf('ERROR: Multiple float information files for float #%d\n', a_floatNum);
@@ -91,7 +91,7 @@ elseif (~isempty(a_floatArgosId))
    if (length(floatInfoFileNames) == 1)
       floatInfoFileName = [g_decArgo_dirInputJsonFloatDecodingParametersFile '/' floatInfoFileNames(1).name];
    elseif (isempty(floatInfoFileNames))
-      fprintf('ERROR: Float information file not found for Argos Id #%d\n', a_floatArgosId);
+      fprintf('WARNING: Float information file not found for Argos Id #%d\n', a_floatArgosId);
       return;
    else
       for idF = 1: length(floatInfoFileNames)

@@ -26,7 +26,7 @@ function [o_value] = sensor_2_value_for_apex_apf9_tPhaseDoxy(a_sensorValue, a_tP
 
 o_value = a_tPhaseDoxyDef;
 
-if ~((a_sensorValue == hex2dec('3FFD')) || (a_sensorValue == hex2dec('3FFE')) || (a_sensorValue == hex2dec('0000')))
+if ~((a_sensorValue == hex2dec('3FFE')) || (a_sensorValue == hex2dec('3FFD')) || (a_sensorValue == hex2dec('0000')))
    o_value = (a_sensorValue/250) + 10;
 end
 

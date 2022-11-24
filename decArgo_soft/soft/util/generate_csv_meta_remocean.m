@@ -1318,11 +1318,15 @@ switch a_parameterName
       
       if ((~isempty(scaleFactBackscatter700)) && (~isempty(darkCountBackscatter700)) && ...
             (~isempty(khiCoefBackscatter)))
+         if (a_decId == 301)
+            o_calibCoef = sprintf('DARK_BACKSCATTERING700=%s, SCALE_BACKSCATTERING700=%s, khi=%s, BETASW700 (contribution of pure sea water) is calculated at 142 angularDeg', ...
+               num_2_str(darkCountBackscatter700), num_2_str(scaleFactBackscatter700), num_2_str(khiCoefBackscatter));
+         else
+            o_calibCoef = sprintf('DARK_BACKSCATTERING700=%s, SCALE_BACKSCATTERING700=%s, khi=%s, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
+               num_2_str(darkCountBackscatter700), num_2_str(scaleFactBackscatter700), num_2_str(khiCoefBackscatter));
+         end
          o_calibEquation = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
-         o_calibCoef = sprintf('DARK_BACKSCATTERING700=%s, SCALE_BACKSCATTERING700=%s, khi=%s, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
-            num_2_str(darkCountBackscatter700), num_2_str(scaleFactBackscatter700), num_2_str(khiCoefBackscatter));
          o_calibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
-
       end
       
    case {'CDOM'}

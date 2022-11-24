@@ -21,27 +21,27 @@
 % ------------------------------------------------------------------------------
 function move_and_rename_apx_argos_files(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_final\';
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1_final\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\021208\';
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\021208_final\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\032213\';
@@ -52,8 +52,18 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1_final\';
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\090413_final\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\121512\';
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\121512_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT_FINAL\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT_FINAL\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\071807\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\071807_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\082807\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\082807_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\020110\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\020110_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\090810\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\090810_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015_final\';
 
 
 % directory to store the log file
@@ -286,7 +296,7 @@ floatCycleTime = listCycleTime(idFloat);
 
 % retrieve useful float meta-data
 [launchDate, preludeDuration, profilePressure, cycleDuration, dpfFloatFlag] = ...
-   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatDecId, floatLaunchDate, floatCycleTime);
+   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatLaunchDate, floatCycleTime);
 
 % minimum duration of the first deep cycle for a DPF float (first transmission
 % is expected to occur after an ascent/descent at profile pressure with an

@@ -26,7 +26,7 @@ function [o_value] = sensor_2_value_for_apex_apf9_rPhaseDoxy(a_sensorValue, a_rP
 
 o_value = a_rPhaseDoxyDef;
 
-if ~((a_sensorValue == hex2dec('3D')) || (a_sensorValue == hex2dec('3E')) || (a_sensorValue == hex2dec('00')))
+if ~((a_sensorValue == hex2dec('3E')) || (a_sensorValue == hex2dec('3D')) || (a_sensorValue == hex2dec('00')))
    o_value = (a_sensorValue/10) + 2.6;
 end
 

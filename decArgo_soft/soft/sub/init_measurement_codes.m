@@ -65,6 +65,7 @@ global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
 global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_fill_value;
@@ -132,6 +133,7 @@ g_MC_LMT = 704;
 g_MC_TET = 800;
 g_MC_Grounded = 901;
 g_MC_InAirSingleMeas = 1099;
+g_MC_InAirSeriesOfMeas = 1090;
 
 % status values
 g_JULD_STATUS_fill_value = ' ';

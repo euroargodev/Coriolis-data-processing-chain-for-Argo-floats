@@ -77,7 +77,7 @@ if ((g_decArgo_realtimeFlag == 1) || (g_decArgo_delayedModeFlag == 1))
 else
    
    % configuration file name
-   CONFIG_FILE_NAME = '_argo_decoder.conf';
+   CONFIG_FILE_NAME = '_argo_decoder_conf.txt';
    if ~(exist(CONFIG_FILE_NAME, 'file') == 2)
       fprintf('ERROR: Configuration file not found: %s\n', CONFIG_FILE_NAME);
       o_inputError = 1;

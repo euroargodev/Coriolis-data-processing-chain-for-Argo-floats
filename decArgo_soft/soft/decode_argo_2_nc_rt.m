@@ -146,7 +146,7 @@ try
          
          % check and analyse input parameters
          [floatList, stopProcess] = ...
-            parse_input_param_iridium_sbd(unusedVarargin);
+            parse_input_param_iridium_sbd_rt(unusedVarargin);
          
       elseif (g_decArgo_floatTransType == 4)
          

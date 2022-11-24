@@ -159,7 +159,7 @@ switch (a_decoderId)
       
       if (a_cycleNum == 0)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
-            decode_test_apx_8(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+            decode_test_apx_8_14(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
       else
          [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
             decode_data_apx_8(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
@@ -211,6 +211,54 @@ switch (a_decoderId)
       else
          [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
             decode_data_apx_12(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1013} % 071807
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_13_15(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_13(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1014} % 082807
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_8_14(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_14(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1015} % 020110
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_13_15(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_15(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1016} % 090810
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_16(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_16(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
       end
       
    otherwise

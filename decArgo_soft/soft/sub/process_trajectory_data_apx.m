@@ -54,10 +54,12 @@ global g_MC_Launch;
 global g_MC_DriftAtPark;
 global g_MC_DriftAtParkMean;
 global g_MC_RPP;
+global g_MC_MinPresInDriftAtPark;
+global g_MC_MaxPresInDriftAtPark;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_Surface;
-global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_4;
@@ -143,47 +145,58 @@ end
 % REPRESENTATIVE PARKING MEASUREMENTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~isempty(a_trajData))
-   
-   idRpMeas = find([a_trajData.measCode] == g_MC_DriftAtParkMean);
-   if (~isempty(idRpMeas))
+if (ismember(a_decoderId, [1013, 1015]))
+   if (~isempty(a_parkData))
       
       measStruct = get_traj_one_meas_init_struct();
       measStruct.measCode = g_MC_RPP;
-      
-      for id = 1:length(idRpMeas)
-         % create the parameters
-         paramName = a_trajData(idRpMeas(id)).paramName;
-         paramStruct = get_netcdf_param_attributes(paramName);
-         % convert decoder default values to netCDF fill values
-         paramData = a_trajData(idRpMeas(id)).value;
-         if (strcmp(paramName, 'PRES'))
-            paramData(find(paramData == g_decArgo_presDef)) = paramStruct.fillValue;
-            
-            % add adjusted RPP to the N_CYCLE data
-            paramDataAdj = paramData;
-            idCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == a_cycleNum);
-            if (~isempty(idCycleStruct))
-               paramDataAdj = compute_adjusted_pres(paramData, a_presOffsetData.presOffset(idCycleStruct));
-            end
-            
-            trajNCycleStruct.repParkPres = paramDataAdj;
-            trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_2;
-
-         elseif (strcmp(paramName, 'TEMP'))
-            paramData(find(paramData == g_decArgo_tempDef)) = paramStruct.fillValue;
-         elseif (strcmp(paramName, 'PSAL'))
-            paramData(find(paramData == g_decArgo_salDef)) = paramStruct.fillValue;
-         else
-            fprintf('ERROR: Float #%d Cycle #%d: Parameter ''%s'' not managed during storage of traj representative parking data\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, ...
-               paramName);
-         end
-         measStruct.paramList = [measStruct.paramList paramStruct];
-         measStruct.paramData = [measStruct.paramData paramData];
-      end
-   
+      measStruct.paramList = a_parkData.paramList;
+      measStruct.paramData = a_parkData.data;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
+else
+   if (~isempty(a_trajData))
+      
+      idRpMeas = find([a_trajData.measCode] == g_MC_DriftAtParkMean);
+      if (~isempty(idRpMeas))
+         
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_RPP;
+         
+         for id = 1:length(idRpMeas)
+            % create the parameters
+            paramName = a_trajData(idRpMeas(id)).paramName;
+            paramStruct = get_netcdf_param_attributes(paramName);
+            % convert decoder default values to netCDF fill values
+            paramData = a_trajData(idRpMeas(id)).value;
+            if (strcmp(paramName, 'PRES'))
+               paramData(find(paramData == g_decArgo_presDef)) = paramStruct.fillValue;
+               
+               % add adjusted RPP to the N_CYCLE data
+               paramDataAdj = paramData;
+               idCycleStruct = find([a_presOffsetData.cycleNumAdjPres] == a_cycleNum);
+               if (~isempty(idCycleStruct))
+                  paramDataAdj = compute_adjusted_pres(paramData, a_presOffsetData.presOffset(idCycleStruct));
+               end
+               
+               trajNCycleStruct.repParkPres = paramDataAdj;
+               trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_2;
+               
+            elseif (strcmp(paramName, 'TEMP'))
+               paramData(find(paramData == g_decArgo_tempDef)) = paramStruct.fillValue;
+            elseif (strcmp(paramName, 'PSAL'))
+               paramData(find(paramData == g_decArgo_salDef)) = paramStruct.fillValue;
+            else
+               fprintf('ERROR: Float #%d Cycle #%d: Parameter ''%s'' not managed during storage of traj representative parking data\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  paramName);
+            end
+            measStruct.paramList = [measStruct.paramList paramStruct];
+            measStruct.paramData = [measStruct.paramData paramData];
+         end
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
    end
 end
 
@@ -206,11 +219,13 @@ end
 
 if (~isempty(a_surfData))
    
-   measStruct = get_traj_one_meas_init_struct();
-   measStruct.measCode = g_MC_InAirSingleMeas;
-   measStruct.paramList = a_surfData.paramList;
-   measStruct.paramData = a_surfData.data;
-   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   for idMeas = 1:size(a_surfData.data, 1)
+      measStruct = get_traj_one_meas_init_struct();
+      measStruct.measCode = g_MC_InAirSeriesOfMeas;
+      measStruct.paramList = a_surfData.paramList;
+      measStruct.paramData = a_surfData.data(idMeas, :);
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,36 +281,74 @@ end
 % other miscellaneous measurements
 if (~isempty(a_trajData))
    
-   measCodeList = unique([a_trajData.measCode]);
+   measCodeList = unique([a_trajData.measCode], 'stable');
    for idMC = 1:length(measCodeList)
       measCode = measCodeList(idMC);
 
-      measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = measCode;
-      
-      idForMC = find([a_trajData.measCode] == measCode);
-      for id = 1:length(idForMC)
-         % create the parameters
-         paramName = a_trajData(idForMC(id)).paramName;
-         paramStruct = get_netcdf_param_attributes(paramName);
-         % convert decoder default values to netCDF fill values
-         paramData = a_trajData(idForMC(id)).value;
-         if (strcmp(paramName, 'PRES'))
-            paramData(find(paramData == g_decArgo_presDef)) = paramStruct.fillValue;
-         elseif (strcmp(paramName, 'TEMP'))
-            paramData(find(paramData == g_decArgo_tempDef)) = paramStruct.fillValue;
-         elseif (strcmp(paramName, 'PSAL'))
-            paramData(find(paramData == g_decArgo_salDef)) = paramStruct.fillValue;
-         else
-            fprintf('ERROR: Float #%d Cycle #%d: Parameter ''%s'' not managed during storage of traj miscellaneous measurements\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, ...
-               paramName);
+      if (~ismember(measCode, [g_MC_MinPresInDriftAtPark g_MC_MaxPresInDriftAtPark]))
+         
+         % for these MC we should merge all the parameter measurements of a
+         % given MC
+         
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = measCode;
+         
+         idForMC = find([a_trajData.measCode] == measCode);
+         for id = 1:length(idForMC)
+            % create the parameters
+            paramName = a_trajData(idForMC(id)).paramName;
+            paramStruct = get_netcdf_param_attributes(paramName);
+            % convert decoder default values to netCDF fill values
+            paramData = a_trajData(idForMC(id)).value;
+            if (strcmp(paramName, 'PRES'))
+               paramData(find(paramData == g_decArgo_presDef)) = paramStruct.fillValue;
+            elseif (strcmp(paramName, 'TEMP'))
+               paramData(find(paramData == g_decArgo_tempDef)) = paramStruct.fillValue;
+            elseif (strcmp(paramName, 'PSAL'))
+               paramData(find(paramData == g_decArgo_salDef)) = paramStruct.fillValue;
+            else
+               fprintf('ERROR: Float #%d Cycle #%d: Parameter ''%s'' not managed during storage of traj miscellaneous measurements\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  paramName);
+            end
+            measStruct.paramList = [measStruct.paramList paramStruct];
+            measStruct.paramData = [measStruct.paramData paramData];
          end
-         measStruct.paramList = [measStruct.paramList paramStruct];
-         measStruct.paramData = [measStruct.paramData paramData];
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      else
+                  
+         % for these MC we should not merge all the parameter measurements of a
+         % given MC
+
+         idForMC = find([a_trajData.measCode] == measCode);
+         for id = 1:length(idForMC)
+            
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = measCode;
+            
+            % create the parameters
+            paramName = a_trajData(idForMC(id)).paramName;
+            paramStruct = get_netcdf_param_attributes(paramName);
+            % convert decoder default values to netCDF fill values
+            paramData = a_trajData(idForMC(id)).value;
+            if (strcmp(paramName, 'PRES'))
+               paramData(find(paramData == g_decArgo_presDef)) = paramStruct.fillValue;
+            elseif (strcmp(paramName, 'TEMP'))
+               paramData(find(paramData == g_decArgo_tempDef)) = paramStruct.fillValue;
+            elseif (strcmp(paramName, 'PSAL'))
+               paramData(find(paramData == g_decArgo_salDef)) = paramStruct.fillValue;
+            else
+               fprintf('ERROR: Float #%d Cycle #%d: Parameter ''%s'' not managed during storage of traj miscellaneous measurements\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  paramName);
+            end
+            measStruct.paramList = [measStruct.paramList paramStruct];
+            measStruct.paramData = [measStruct.paramData paramData];
+            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
       end
-      
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
 end
 

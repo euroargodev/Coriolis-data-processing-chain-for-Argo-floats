@@ -132,7 +132,7 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -813,10 +813,10 @@ for idCyc = 1:length(cycleNumList)
 
                for idM = 1:length(dates)
                   if (dates(idM) ~= dateFillValue)
-                     measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, dates(idM), g_JULD_STATUS_2, 0);
+                     measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, dates(idM), g_JULD_STATUS_2, 0);
                   else
                      measStruct = get_traj_one_meas_init_struct();
-                     measStruct.measCode = g_MC_InAirSingleMeas;
+                     measStruct.measCode = g_MC_InAirSeriesOfMeas;
                   end
                   measStruct.paramList = a_tabTrajData{id}.paramList;
                   measStruct.paramNumberWithSubLevels = a_tabTrajData{id}.paramNumberWithSubLevels;

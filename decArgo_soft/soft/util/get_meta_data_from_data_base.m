@@ -26,7 +26,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNova_info\_configParamNames\NOVA_D
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_ARVOR_I_5-43_21060628.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-55_20160701.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\nemo_DB_export_from_VB_20160818.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_export_apex102015_20161006.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';

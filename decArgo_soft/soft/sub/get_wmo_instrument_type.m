@@ -38,7 +38,7 @@ switch (a_decoderId)
       o_wmoInstType = '844';
       
    case {105, 106, 107, 108, 109, 301}
-      % Provor-II float
+      % PROVOR_III float
       o_wmoInstType = '839';
       
    case {201, 202, 203}
@@ -49,7 +49,8 @@ switch (a_decoderId)
       % Arvor-C float
       o_wmoInstType = '837';
       
-   case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
+   case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
+         1012, 1013, 1014, 1015, 1016}
       % Webb Research, Seabird sensor
       o_wmoInstType = '846';
       

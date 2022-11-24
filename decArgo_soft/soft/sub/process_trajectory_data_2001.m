@@ -95,7 +95,6 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
-global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -151,7 +150,7 @@ cycleTimeStruct = [];
 if (~isempty(g_decArgo_timeData))
    idCycleStruct = find([g_decArgo_timeData.cycleNum] == a_cycleNum);
    if (~isempty(idCycleStruct))
-      cycleTimeStruct = g_decArgo_timeData.cycleTime(idCycleStruct);
+      cycleTimeStruct = g_decArgo_timeData.cycleTime(idCycleStruct(end));
    end
 end
 
@@ -810,9 +809,9 @@ else
       trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
    end
    
-   if (g_decArgo_ackPacket == 1)
-      trajNMeasStruct.surfOnly = 1;
-   end
+   %    if (g_decArgo_ackPacket == 1)
+   trajNMeasStruct.surfOnly = 1;
+   %    end
    
    % clock offset
    if (~isempty(cycleTimeStruct) && ~isempty(cycleTimeStruct.clockDrift))
@@ -822,9 +821,9 @@ else
       trajNCycleStruct.dataMode = 'R';
    end
    
-   if (g_decArgo_ackPacket == 1)
-      trajNCycleStruct.surfOnly = 1;
-   end
+   %    if (g_decArgo_ackPacket == 1)
+   trajNCycleStruct.surfOnly = 1;
+   %    end
 end
 
 % add configuration mission number

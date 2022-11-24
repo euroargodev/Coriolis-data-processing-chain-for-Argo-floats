@@ -54,6 +54,58 @@ global g_JULD_STATUS_9;
 % default values
 global g_decArgo_ncDateDef;
 
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
+
+
+% when the transmission failed, only one mail file without attachment can be
+% received (Ex: 6903177 #3 and #11); these cycles have not been processed (since
+% no data has been received) however the information FMT/LMT should be added to
+% the trajectory (to report that the float was at the surface and tried a
+% transmission)
+
+if (~isempty(g_decArgo_iridiumMailData))
+   
+   tabTrajCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
+   tabMailCyNum = sort(unique([g_decArgo_iridiumMailData.cycleNumber]));
+   unseenCycles = setdiff(tabMailCyNum, tabTrajCyNum);
+   for idCy = 1:length(unseenCycles)
+      cycleNum = unseenCycles(idCy);
+      
+      [firstMsgTime, lastMsgTime] = ...
+         compute_first_last_msg_time_from_iridium_mail(g_decArgo_iridiumMailData, cycleNum);
+      
+      % structure to store N_MEASUREMENT data
+      trajNMeasStruct = get_traj_n_meas_init_struct(cycleNum, -1);
+      trajNMeasStruct.outputCycleNumber = cycleNum;
+      
+      % structure to store N_CYCLE data
+      trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, -1);
+      trajNCycleStruct.outputCycleNumber = cycleNum;
+      trajNCycleStruct.grounded = ' ';
+      
+      % First Message Time
+      measStruct = create_one_meas_surface(g_MC_FMT, ...
+         firstMsgTime, ...
+         g_decArgo_argosLonDef, [], [], [], []);
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      
+      trajNCycleStruct.juldFirstMessage = firstMsgTime;
+      trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+      
+      % Last Message Time
+      measStruct = create_one_meas_surface(g_MC_LMT, ...
+         lastMsgTime, ...
+         g_decArgo_argosLonDef, [], [], [], []);
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      
+      trajNCycleStruct.juldLastMessage = lastMsgTime;
+      trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
+      
+      a_tabTrajNMeas = [a_tabTrajNMeas trajNMeasStruct];
+      a_tabTrajNCycle = [a_tabTrajNCycle trajNCycleStruct];
+   end
+end
 
 % N_MEASUREMENT DATA
 
@@ -151,7 +203,7 @@ if (~isempty(a_tabTrajNCycle))
    % clean the collected data from float anomaly
    % Ex: float 6901038 #272: the float transmitted twice the TECH and PARAM
    % messages
-   idDel = [];
+   idDelFinal = [];
    tabCyNum = sort(unique([a_tabTrajNCycle.cycleNumber]));
    for idCy = 1:length(tabCyNum)
       cycleNum = tabCyNum(idCy);
@@ -203,7 +255,7 @@ if (~isempty(a_tabTrajNCycle))
                g_decArgo_floatNum, cycleNum, ...
                length(idCyDeep));
          end
-         idDel = [idDel idCyDeep(2:end)];
+         idDelFinal = [idDelFinal idCyDeep(2:end)];
       end
       
       idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
@@ -211,12 +263,12 @@ if (~isempty(a_tabTrajNCycle))
          fprintf('INFO: Float #%d cycle #%d: %d surf N_CYCLE records\n', ...
             g_decArgo_floatNum, cycleNum, ...
             length(idCySurf));
-         idDel = [idDel idCySurf(1:end-1)];
+         idDelFinal = [idDelFinal idCySurf(1:end-1)];
       end
    end
    
    % delete the corresponding records
-   a_tabTrajNCycle(idDel) = [];
+   a_tabTrajNCycle(idDelFinal) = [];
    
    if (~isempty(a_tabTrajNCycle))
       

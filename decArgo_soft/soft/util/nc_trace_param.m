@@ -35,14 +35,18 @@ global g_NTP_NAME_PARAM2;
 
 % g_NTP_NAME_PARAM1 = 'TURBIDITY';
 % g_NTP_NAME_PARAM1 = 'CHLA';
-% g_NTP_NAME_PARAM1 = 'RPHASE_DOXY';
+% g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
 g_NTP_NAME_PARAM1 = 'TEMP';
+% g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_BLUE_REF';
+% g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_NTU_REF';
 % g_NTP_NAME_PARAM1 = 'NITRATE';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
-% g_NTP_NAME_PARAM2 = 'CHLA2';
+% g_NTP_NAME_PARAM2 = 'BBP700';
 % g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
 g_NTP_NAME_PARAM2 = 'PSAL';
+% g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_F_SIG';
+% g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_NTU_SIG';
 % g_NTP_NAME_PARAM2 = 'NITRATE';
 % g_NTP_NAME_PARAM2 = 'DOXY';
 
@@ -70,8 +74,13 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_03
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213_1.txt';
 % % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_090810.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_102015.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
@@ -1235,6 +1244,9 @@ elseif (strcmp(a_eventData.Key, 'd'))
    g_NTP_nbCyles = g_NTP_DEFAULT_NB_CYCLES;
    fprintf('Plot of %d profiles per set\n', g_NTP_nbCyles);
    plot_pt_ps(g_NTP_ID_FLOAT, 0);
+   
+   fprintf('\nCurrent configuration:\n');
+   fprintf('NB PROFILES / SET: %d\n', g_NTP_nbCyles);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation

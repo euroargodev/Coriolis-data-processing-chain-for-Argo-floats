@@ -23,7 +23,7 @@ function [o_value] = sensor_2_value_for_apex_apf9_pressure_1byte(a_sensorValue, 
 
 o_value = a_presDef;
 
-if ~((a_sensorValue == hex2dec('EA')) || (a_sensorValue == hex2dec('EB')) || (a_sensorValue == hex2dec('EC')))
+if ~((a_sensorValue == hex2dec('EB')) || (a_sensorValue == hex2dec('EA')) || (a_sensorValue == hex2dec('EC')))
    if (a_sensorValue < hex2dec('EA'))
       o_value = a_sensorValue/10;
    else

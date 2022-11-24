@@ -22,7 +22,7 @@
 function check_argos_hidden_cycle_files(varargin)
 
 % directory of the argos files to check
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\archive_cycle_co_20150409\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARGOS\cycle\';
 
 % directory to store the log and CSV files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -111,7 +111,7 @@ for idFloat = 1:nbFloats
    
    % look for 'WWW' in file names
    dirFloat = [DIR_INPUT_ARGOS_FILES '/' sprintf('%06d', floatArgosId) '/'];
-   hiddenFiles = dir([dirFloat '/*WWW*']);
+   hiddenFiles = [dir([dirFloat '/*WWW*']); dir([dirFloat '/*MMM*'])] ;
    if (isempty(hiddenFiles))
       fprintf('=> OK\n');
    else
@@ -125,7 +125,7 @@ for idFloat = 1:nbFloats
          argosFileName = argosFiles(idFile).name;
          
          hidden = 0;
-         if (~isempty(strfind(argosFileName, 'WWW')))
+         if ~(isempty(strfind(argosFileName, 'WWW')) && isempty(strfind(argosFileName, 'MMM')))
             hidden = 1;
          end
          

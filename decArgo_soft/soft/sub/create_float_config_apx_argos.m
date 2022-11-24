@@ -182,8 +182,11 @@ if (g_decArgo_realtimeFlag == 0)
                      end
                      
                      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                  case {1006, 1008, 1009} % 093008, 021208, 032213
-                     % two sensors (SBE41 and Aanderaa 3830/4330)
+                  case {1006, 1008, 1009, 1013, 1014, 1015, 1016}
+                     % 093008, 021208, 032213, 071807, 082807, 020110, 090810
+                     % two sensors (SBE41 and Aanderaa 3830/4330 or SBE43 IDO)
+                     % because FLBB or FLNTU sensor are not provided by the
+                     % floats
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
                         if (((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_1') || ...

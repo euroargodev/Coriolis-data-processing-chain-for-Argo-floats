@@ -31,7 +31,7 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {1006, 1008}
+   case {1006, 1008, 1014, 1016}
       
       if (~isempty(g_decArgo_calibInfo) && ...
             (isfield(g_decArgo_calibInfo, 'OPTODE')) && ...
@@ -105,6 +105,38 @@ switch (a_decoderId)
                ['SVUFoilCoef' num2str(idC-1)], tabDoxyCoef(2, idC));
          end
 
+      end
+      
+   case {1013, 1015}
+      
+      if (~isempty(g_decArgo_calibInfo) && ...
+            (isfield(g_decArgo_calibInfo, 'OPTODE')) && ...
+            (isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef')))
+         tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
+         % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 6
+         if (~isempty(find((size(tabDoxyCoef) == [1 6]) ~= 1, 1)))
+            fprintf('ERROR: Float #%d Cycle #%d: DOXY calibration coefficients are inconsistent\n', ...
+               g_decArgo_floatNum, ...
+               g_decArgo_cycleNum);
+            return;
+         end
+         
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; CALIBRATION COEFFICIENTS\n', ...
+            g_decArgo_floatNum, -1);
+         
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; Soc; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(1));
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; Foffset; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(2));
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; A; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(3));
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; B; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(4));
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; C; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(5));
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; E; %g\n', ...
+            g_decArgo_floatNum, -1, tabDoxyCoef(6));
+         
       end
 end
 

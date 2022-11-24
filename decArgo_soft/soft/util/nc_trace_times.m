@@ -37,7 +37,8 @@ global g_NTT_FLOAT_TIMES;
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_nova\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule\';
-% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_all\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule_set_2\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apres_PARAM_SURF';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -49,7 +50,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_06
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all_2.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all2.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021208.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_032213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_110613.txt';
@@ -58,9 +59,13 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_ma
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_110813.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213_1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_102015.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_dova.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 
@@ -93,7 +98,7 @@ g_NTT_PRINT = 0;
 g_NTT_CYCLE_0 = 1;
 
 % use adjusted data
-g_NTT_ADJ = 1;
+g_NTT_ADJ = 2;
 
 % display float times
 g_NTT_FLOAT_TIMES = 0;
@@ -383,6 +388,8 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
       {'MEASUREMENT_CODE'} ...
       {'PRES'} ...
       {'PRES_ADJUSTED'} ...
+      {'DATA_MODE'} ...
+      {'CYCLE_NUMBER_INDEX'} ...
       ];
    [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
    
@@ -420,7 +427,33 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
    idVal = find(strcmp('POSITION_ACCURACY', trajData(1:2:end)) == 1, 1);
    posAcc = trajData{2*idVal};
    
-   if (g_NTT_ADJ == 1)
+   idVal = find(strcmp('DATA_MODE', trajData(1:2:end)) == 1, 1);
+   dataMode = trajData{2*idVal};
+   
+   idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
+   cycleNumberIndexTraj = trajData{2*idVal};
+   
+   if (g_NTT_ADJ == 2)
+      idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+      juldAdj = trajData{2*idVal};
+      
+      idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+      trajPresAdj = trajData{2*idVal};
+      
+      idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+      juldNotAdj = trajData{2*idVal};
+      
+      idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+      trajPresNotAdj = trajData{2*idVal};
+      
+      juld = juldAdj;
+      trajPres = trajPresAdj;
+      idNotAdj = find(dataMode == 'R');
+      cycleNumNotAdj = unique(cycleNumberIndexTraj(idNotAdj));
+      idNotAdj = find(ismember(cycleNumberTraj, cycleNumNotAdj));
+      juld(idNotAdj) = juldNotAdj(idNotAdj);
+      trajPres(idNotAdj) = trajPresNotAdj(idNotAdj);
+   elseif (g_NTT_ADJ == 1)
       idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
       juld = trajData{2*idVal};
       
@@ -1446,12 +1479,16 @@ elseif (strcmp(a_eventData.Key, 'downarrow'))
 elseif (strcmp(a_eventData.Key, 'z'))
    g_NTT_CYCLE_0 = mod(g_NTT_CYCLE_0+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
+   
+   display_current_config;
       
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % use adjusted times and pressures
 elseif (strcmp(a_eventData.Key, 'j'))
-   g_NTT_ADJ = mod(g_NTT_ADJ+1, 2);
+   g_NTT_ADJ = mod(g_NTT_ADJ+1, 3);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
+   
+   display_current_config;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot float times
@@ -1459,17 +1496,23 @@ elseif (strcmp(a_eventData.Key, 'f'))
    g_NTT_FLOAT_TIMES = mod(g_NTT_FLOAT_TIMES+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot of parking drift measurement times
 elseif (strcmp(a_eventData.Key, 'd'))
    g_NTT_DRIFT_MES = mod(g_NTT_DRIFT_MES+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
    
+   display_current_config;
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot of profile bin levels
 elseif (strcmp(a_eventData.Key, 'm'))
    g_NTT_ALL_MES_PROF = mod(g_NTT_ALL_MES_PROF+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
+   
+   display_current_config;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation
@@ -1493,13 +1536,50 @@ elseif (strcmp(a_eventData.Key, 'h'))
    fprintf('p: pdf output file generation\n');
    fprintf('Escape: exit\n\n');
    
-   fprintf('Current configuration:\n');
-   fprintf('DRIFT MES           : %d\n', g_NTT_DRIFT_MES);
-   fprintf('PROF MES            : %d\n', g_NTT_ALL_MES_PROF);
-   fprintf('DISPLAY CYCLE #0    : %d\n', g_NTT_CYCLE_0);
-   fprintf('USE ADJUSTED DATA   : %d\n', g_NTT_ADJ);
-   fprintf('DISPLAY FLOAT TIMES : %d\n', g_NTT_FLOAT_TIMES);
+   display_current_config;
 end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Display the current visualization configuration.
+%
+% SYNTAX :
+%   display_current_config
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/18/2016 - RNU - creation
+% ------------------------------------------------------------------------------
+function display_current_config
+
+global g_NTT_DRIFT_MES;
+global g_NTT_ALL_MES_PROF;
+global g_NTT_CYCLE_0;
+global g_NTT_ADJ;
+global g_NTT_FLOAT_TIMES;
+
+fprintf('\nCurrent configuration:\n');
+fprintf('DRIFT MES           : %d\n', g_NTT_DRIFT_MES);
+fprintf('PROF MES            : %d\n', g_NTT_ALL_MES_PROF);
+fprintf('DISPLAY CYCLE #0    : %d\n', g_NTT_CYCLE_0);
+if (g_NTT_ADJ == 0)
+   comment = 'real time data only';
+elseif  (g_NTT_ADJ == 1)
+   comment = 'adjusted data only';
+elseif  (g_NTT_ADJ == 2)
+   comment = 'real time and adjusted data merged';
+end
+fprintf('USE ADJUSTED DATA   : %d, %s\n', g_NTT_ADJ, comment);
+fprintf('DISPLAY FLOAT TIMES : %d\n', g_NTT_FLOAT_TIMES);
 
 return;
 

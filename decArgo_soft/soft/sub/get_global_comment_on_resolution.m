@@ -58,7 +58,8 @@ switch (a_decoderId)
       % Provor-DO Iridium
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
 
-   case {1001, 1002, 1003, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
+   case {1001, 1002, 1003, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, ...
+         1013, 1014, 1015, 1016}
       % Apex Argos
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       

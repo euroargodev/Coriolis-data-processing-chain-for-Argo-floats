@@ -3,10 +3,11 @@
 % files already processed.
 %
 % SYNTAX :
-%  write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, a_logFileList)
+%  write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, a_listType, a_logFileList)
 %
 % INPUT PARAMETERS :
 %   a_floatNum    : float WMO number
+%   a_listType    : type of list to save 'processed' or 'used'
 %   a_logFileList : new rsync log files
 %
 % OUTPUT PARAMETERS :
@@ -19,16 +20,16 @@
 % RELEASES :
 %   09/18/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, a_logFileList)
+function write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, a_listType, a_logFileList)
 
-% tmp directory
-global g_decArgo_tmpDirectory;
+% history directory
+global g_decArgo_historyDirectory;
 
 if (~isempty(a_logFileList))
    
    % file name of the processed rsync log files
-   logFileName = sprintf('processed_rsync_log_%d.txt', a_floatNum);
-   logFilePathName = [g_decArgo_tmpDirectory '/' logFileName];
+   logFileName = [a_listType sprintf( '_rsync_log_%d.txt', a_floatNum)];
+   logFilePathName = [g_decArgo_historyDirectory '/' logFileName];
    
    % append the file
    fidOut = fopen(logFilePathName, 'a');

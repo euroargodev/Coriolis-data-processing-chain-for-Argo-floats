@@ -67,6 +67,14 @@ global g_decArgo_gpsData;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
+% to use virtual buffers instead of directories
+global g_decArgo_virtualBuff;
+g_decArgo_virtualBuff = 1;
+global g_decArgo_spoolFileList;
+g_decArgo_spoolFileList = [];
+global g_decArgo_bufFileList;
+g_decArgo_bufFileList = [];
+
 
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))

@@ -22,9 +22,10 @@ function generate_json_float_meta_prv_argos()
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-52_20160701.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-52_20160701.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_6902665.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -32,6 +33,7 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_argos_all.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.52.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
@@ -116,7 +118,7 @@ refFloatList = load(floatListFileName);
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [3901000];
 % floatList = [6901881];
-% floatList = [7900120];
+% floatList = [6900967];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))

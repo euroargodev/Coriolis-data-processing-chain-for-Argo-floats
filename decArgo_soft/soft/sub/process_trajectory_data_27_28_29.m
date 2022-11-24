@@ -94,7 +94,7 @@ global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
-global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -398,10 +398,10 @@ for idProf = 1:length(a_cycleProfiles)
          
          for idMeas = 1:length(inAirMeasDates)
             if (inAirMeasDates(idMeas) ~= dateFillValue)
-               measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
+               measStruct = create_one_meas_float_time(g_MC_InAirSeriesOfMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
             else
                measStruct = get_traj_one_meas_init_struct();
-               measStruct.measCode = g_MC_InAirSingleMeas;
+               measStruct.measCode = g_MC_InAirSeriesOfMeas;
             end
             measStruct.paramList = inAirMeasProfile.paramList;
             measStruct.paramData = inAirMeasProfile.data(idMeas, :);

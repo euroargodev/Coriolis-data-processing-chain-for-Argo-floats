@@ -113,38 +113,30 @@ if (g_decArgo_floatTransType == 1)
    create_nc_traj_file_3_1(a_decoderId, ...
       a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
    
-elseif (g_decArgo_floatTransType == 2)
+elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    % Iridium RUDICS floats
-   
-   if ((g_decArgo_generateNcTraj == 1) || ...
-         ((g_decArgo_generateNcTraj == 2) && (g_decArgo_generateNcFlag == 1)))
-      
-      create_nc_traj_file_3_1(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
-   end
-   
-elseif (g_decArgo_floatTransType == 3)
-   
    % Iridium SBD floats
-   
-   if ((g_decArgo_generateNcTraj == 1) || ...
-         ((g_decArgo_generateNcTraj == 2) && (g_decArgo_generateNcFlag == 1)))
-      
-      create_nc_traj_file_3_1(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
-   end
-   
-elseif (g_decArgo_floatTransType == 4)
-   
    % Iridium SBD ProvBioII floats
    
-   if ((g_decArgo_generateNcTraj == 1) || ...
-         ((g_decArgo_generateNcTraj == 2) && (g_decArgo_generateNcFlag == 1)))
+   if ((g_decArgo_generateNcTraj == 2) && (g_decArgo_generateNcFlag == 0))
+      % no buffer has been decoded => the file should be created only if it
+      % doesn't exist
       
-      create_nc_traj_file_3_1(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
+      % check if the NetCDF TRAJECTORY file already exists
+      floatNumStr = num2str(g_decArgo_floatNum);
+      ncDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
+      ncFileName = [floatNumStr '_Rtraj.nc'];
+      ncPathFileName = [ncDirName ncFileName];
+      
+      if (exist(ncPathFileName, 'file') == 2)
+         % the file is not updated if it already exists
+         return;
+      end
    end
+   
+   create_nc_traj_file_3_1(a_decoderId, ...
+      a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
    
 end
 

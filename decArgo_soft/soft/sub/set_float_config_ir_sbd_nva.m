@@ -2,10 +2,11 @@
 % Set the float configuration used to process the data of given profiles.
 %
 % SYNTAX :
-%  set_float_config_ir_sbd_nva(a_cyNum)
+%  set_float_config_ir_sbd_nva(a_cyNum, a_deepCycle)
 %
 % INPUT PARAMETERS :
-%   a_cyNum : cycle number associated to the configuration
+%   a_cyNum     : cycle number associated to the configuration
+%   a_deepCycle : deep cycle flag
 %
 % OUTPUT PARAMETERS :
 %
@@ -17,7 +18,7 @@
 % RELEASES :
 %   04/28/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function set_float_config_ir_sbd_nva(a_cyNum)
+function set_float_config_ir_sbd_nva(a_cyNum, a_deepCycle)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -27,6 +28,16 @@ global g_decArgo_floatConfig;
 
 % flag to detect a second Iridium session
 global g_decArgo_secondIridiumSession;
+
+
+% if it is a surface cycle the cycle could be already in the configuration
+% (second Iridium session or EOL)
+if (a_deepCycle == 0)
+   idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == a_cyNum);
+   if (~isempty(idUsedConf))
+      return;
+   end
+end
 
 
 % update the configuration

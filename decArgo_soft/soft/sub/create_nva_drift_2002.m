@@ -109,7 +109,7 @@ for idP = 1:length(idForType)
                end
                
                o_parkDate = [o_parkDate; measDate];
-               o_parkDateAdj = [o_parkDate; measDateAdj];
+               o_parkDateAdj = [o_parkDateAdj; measDateAdj];
                o_parkTransDate = [o_parkTransDate; 1];
             else
                

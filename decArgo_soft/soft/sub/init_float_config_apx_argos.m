@@ -86,10 +86,8 @@ if (isfield(jsonMetaData, 'RT_OFFSET'))
 end
 
 % add DO calibration coefficients
-if (ismember(a_decoderId, [1006 1008]))
-   
-   % read the calibration coefficients in the json meta-data file
-   
+if (ismember(a_decoderId, [1006 1008 1014 1016]))
+      
    % fill the calibration coefficients
    if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
       if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
@@ -100,7 +98,7 @@ if (ismember(a_decoderId, [1006 1008]))
       end
    end
    
-   % create the tabPhaseCoef, tabDoxyCoef and arrays
+   % create the tabPhaseCoef, tabDoxyCoef and tabDoxyTempCoef arrays
    if (isfield(g_decArgo_calibInfo, 'OPTODE'))
       calibData = g_decArgo_calibInfo.OPTODE;
       
@@ -146,9 +144,7 @@ if (ismember(a_decoderId, [1006 1008]))
       fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
    end
 elseif (ismember(a_decoderId, [1009]))
-   
-   % read the calibration coefficients in the json meta-data file
-   
+      
    % fill the calibration coefficients
    if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
       if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
@@ -159,7 +155,7 @@ elseif (ismember(a_decoderId, [1009]))
       end
    end
    
-   % create the tabPhaseCoef, tabDoxyCoef and arrays
+   % create the tabDoxyCoef and tabDoxyTempCoef arrays
    if (isfield(g_decArgo_calibInfo, 'OPTODE'))
       calibData = g_decArgo_calibInfo.OPTODE;
 
@@ -199,6 +195,80 @@ elseif (ismember(a_decoderId, [1009]))
       end
    else
       fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+   end
+elseif (ismember(a_decoderId, [1013 1015]))
+   
+   % fill the calibration coefficients
+   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+         for idF = 1:length(fieldNames)
+            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         end
+         
+         % create the tabDoxyCoef array
+         if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+            calibData = g_decArgo_calibInfo.OPTODE;
+
+            tabDoxyCoef = [];
+            coefNameList = [{'Soc'} {'FOffset'} {'CoefA'} {'CoefB'} {'CoefC'} {'CoefE'}];
+            for id = 1:length(coefNameList)
+               fieldName = coefNameList{id};
+               if (isfield(calibData, fieldName))
+                  tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                  return;
+               end
+            end
+            g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
+         end
+      end
+   end
+   
+   % create the tabPhaseCoef, tabDoxyCoef and arrays
+   if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+      calibData = g_decArgo_calibInfo.OPTODE;
+
+      tabDoxyCoef = [];
+      
+      % TBD
+      
+%       for id = 0:3
+%          fieldName = ['PhaseCoef' num2str(id)];
+%          if (isfield(calibData, fieldName))
+%             tabDoxyCoef(1, id+1) = calibData.(fieldName);
+%          else
+%             fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+%             return;
+%          end
+%       end
+%       for id = 0:6
+%          fieldName = ['SVUFoilCoef' num2str(id)];
+%          if (isfield(calibData, fieldName))
+%             tabDoxyCoef(2, id+1) = calibData.(fieldName);
+%          else
+%             fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+%             return;
+%          end
+%       end
+      g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
+      
+%       tabDoxyTempCoef = [];
+%       for id = 0:5
+%          fieldName = ['TempCoef' num2str(id)];
+%          if (isfield(calibData, fieldName))
+%             tabDoxyTempCoef(1, id+1) = calibData.(fieldName);
+%          else
+%             tabDoxyTempCoef = [];
+%             break;
+%          end
+%       end
+%       if (~isempty(tabDoxyTempCoef))
+%          g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef = tabDoxyTempCoef;
+%       end
+%    else
+%       fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
    end
 end
 

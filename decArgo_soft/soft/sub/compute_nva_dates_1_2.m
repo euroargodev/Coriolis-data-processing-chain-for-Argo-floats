@@ -104,12 +104,11 @@ global g_decArgo_timeData;
 % pre-decoding data storage
 global g_decArgo_preDecodedData;
 
+% EOL mode
+global g_decArgo_eolMode;
+
 
 ID_OFFSET = 1;
-
-if (isempty(a_tabTech))
-   return;
-end
 
 % technical message
 if (size(a_tabTech, 1) > 1)
@@ -135,7 +134,11 @@ elseif (size(a_tabTech, 1) == 1)
          (fix(a_tabTech(id, 38+ID_OFFSET)) == 214) && ...
          (fix(a_tabTech(id, 39+ID_OFFSET)) == 214))
       
-      [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(o_firstMessageDate);
+      if (~g_decArgo_eolMode)
+         [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(o_firstMessageDate);
+      else
+         [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(a_tabTech(id, end)); % in EOL mode, FMT could be far from current TECH msg
+      end
       if (day < a_tabTech(id, 40+ID_OFFSET))
          if (month > 1)
             month = month - 1;
@@ -318,11 +321,14 @@ elseif (size(a_tabTech, 1) == 1)
    if (~isempty(g_decArgo_timeData))
       % check that current cycle times are not already stored
       if (any([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum))
-         fprintf('ERROR: Float #%d cycle #%d: Timings already exist for this cycle\n', ...
+         % Ex: 6903179 #238
+         fprintf('INFO: Float #%d cycle #%d: EOL mode detected\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          
-         idCycleStruct = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
-         g_decArgo_timeData.cycleTime(idCycleStruct) = cycleTimeStruct;
+         g_decArgo_timeData.cycleNum = [g_decArgo_timeData.cycleNum g_decArgo_cycleNum];
+         g_decArgo_timeData.cycleTime = [g_decArgo_timeData.cycleTime cycleTimeStruct];
+         %          idCycleStruct = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
+         %          g_decArgo_timeData.cycleTime(idCycleStruct) = cycleTimeStruct;
       else
          g_decArgo_timeData.cycleNum = [g_decArgo_timeData.cycleNum g_decArgo_cycleNum];
          g_decArgo_timeData.cycleTime = [g_decArgo_timeData.cycleTime cycleTimeStruct];
@@ -330,6 +336,32 @@ elseif (size(a_tabTech, 1) == 1)
    else
       g_decArgo_timeData.cycleNum = g_decArgo_cycleNum;
       g_decArgo_timeData.cycleTime = cycleTimeStruct;
+   end
+else
+   % if no tech msg has been received (ex: 6903179 #161)
+   
+   if (~isempty(g_decArgo_timeData))
+      if (~any([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum))
+         
+         % create a structure to store the cycle timings
+         cycleTimeStruct = get_nva_cycle_time_init_struct;
+         
+         % retrieve the Iridium message times of the current cycle
+         [o_firstMessageDate, o_lastMessageDate] = ...
+            compute_first_last_msg_time_from_iridium_mail(g_decArgo_iridiumMailData, g_decArgo_cycleNum);
+         
+         % retrieve the Iridium message times of the previous cycle
+         [~, o_lastMessageDateOfPrevCycle] = ...
+            compute_first_last_msg_time_from_iridium_mail(g_decArgo_iridiumMailData, g_decArgo_cycleNum-1);
+         
+         % store the cycle timings
+         cycleTimeStruct.firstMessageTime = o_firstMessageDate;
+         cycleTimeStruct.lastMessageTime = o_lastMessageDate;
+         
+         % store the cycle timings of the current cycle
+         g_decArgo_timeData.cycleNum = [g_decArgo_timeData.cycleNum g_decArgo_cycleNum];
+         g_decArgo_timeData.cycleTime = [g_decArgo_timeData.cycleTime cycleTimeStruct];
+      end
    end
 end
 
