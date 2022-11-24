@@ -334,6 +334,9 @@ end
 
 if (isempty(g_decArgo_outputCsvFileId))
    
+   % add interpolated/extrapolated profile locations
+   [o_tabProfiles] = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
+   
    % sort trajectory data structures according to the predefined
    % measurement code order
    o_tabTrajNMeas = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
