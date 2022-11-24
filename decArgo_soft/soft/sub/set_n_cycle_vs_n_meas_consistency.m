@@ -193,7 +193,8 @@ for idNCy = 1:length(o_tabTrajNCycle)
          idFSurf = find([trajNMeas.tabMeas.measCode] == g_MC_Surface);
          for idSurf = 1:length(idFSurf)
             if (~isempty(trajNMeas.tabMeas(idFSurf(idSurf)).longitude) && ...
-                  trajNMeas.tabMeas(idFSurf(idSurf)).longitude ~= g_decArgo_argosLonDef)
+                  (trajNMeas.tabMeas(idFSurf(idSurf)).longitude ~= g_decArgo_argosLonDef) && ...
+                  (trajNMeas.tabMeas(idFSurf(idSurf)).posAccuracy ~= 'I'))
                if (isempty(trajNMeas.tabMeas(idFSurf(idSurf)).juldAdj) || ...
                      (trajNMeas.tabMeas(idFSurf(idSurf)).juldAdj == g_decArgo_ncDateDef))
                   juld = [juld trajNMeas.tabMeas(idFSurf(idSurf)).juld];
