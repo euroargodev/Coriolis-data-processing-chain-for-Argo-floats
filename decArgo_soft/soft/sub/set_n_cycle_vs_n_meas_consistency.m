@@ -83,7 +83,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
       juldStatusFinal = [];
       for idNMeas = 1:length(idFNMeas)
          trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
-         if (any([trajNMeas.tabMeas.measCode] == measCode))
+         if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == measCode))
             idF = find([trajNMeas.tabMeas.measCode] == measCode);
             if (isempty(trajNMeas.tabMeas(idF).juldAdj) || ...
                   (trajNMeas.tabMeas(idF).juldAdj == g_decArgo_ncDateDef))
@@ -124,7 +124,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    juldStatus = [];
    for idNMeas = 1:length(idFNMeas)
       trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
-      if (any([trajNMeas.tabMeas.measCode] == g_MC_Surface))
+      if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == g_MC_Surface))
          idFSurf = find([trajNMeas.tabMeas.measCode] == g_MC_Surface);
          for idSurf = 1:length(idFSurf)
             if (~isempty(trajNMeas.tabMeas(idFSurf(idSurf)).longitude) && ...
@@ -185,7 +185,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    grdFlag = 0;
    for idNMeas = 1:length(idFNMeas)
       trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
-      if (any([trajNMeas.tabMeas.measCode] == g_MC_Grounded))
+      if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == g_MC_Grounded))
          grdFlag = 1;
       end
    end
