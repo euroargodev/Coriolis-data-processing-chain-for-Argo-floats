@@ -89,7 +89,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 15.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

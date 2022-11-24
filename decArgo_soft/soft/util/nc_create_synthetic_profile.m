@@ -42,9 +42,11 @@ DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 
 % top directory of output NetCDF files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_classic\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_co\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_aoml\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_csiro\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -66,7 +68,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 15.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

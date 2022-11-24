@@ -27,6 +27,7 @@ function synth=ARGO_simplify_getpressureaxis_v6(varargin)
 % 27.06.2018, make approach more robust: Union of PARAMETER and STATION_PARAMETERS, 
 %             only apply vertical offsets for sensors with data, be tolerant towards 
 %             older, pre-v3.1 meta files
+% 29.06.2018, separate PARAM and PARAM_ADJUSTED overlap determination, using no bad PRES_QC
 
 includeTSflag=0;
 addTSeverywhere=1;
@@ -290,6 +291,12 @@ else % pre-v3.1 meta file
 end % define N_PROF priority
 clear C 
 
+%inpres=round(1000*S.PRES.value)/1000; % use copy of pressure to work with; rounded to 1/1000 to avoid numerical ..1e-6 issues
+%inpres(~pflag)=NaN; 
+FV=-99999;
+%inpres=int32(1000*S.PRES.value); % use copy of pressure to work with; cast truly to "1/1000" integer to avoid numerical ..1e-6 issues
+S.PRES.value=int32(1000*S.PRES.value); % cast truly to "1/1000" integer to avoid numerical ..1e-6 issues
+
 % double check pressure inversion test in profile (in a simplistic way): 
 % Mustn't have repeated pressure levels with PRES_QC 0..3
 % sometimes not properly flagged, e.g., D5903712_149.nc
@@ -309,11 +316,6 @@ clear pinversion ind
 % only use PRES_QC 0..3, ignore PRES_QC=4
 pflag=ismember(S.PRES_QC.value,[0 1 2 3]); 
 
-%inpres=round(1000*S.PRES.value)/1000; % use copy of pressure to work with; rounded to 1/1000 to avoid numerical ..1e-6 issues
-%inpres(~pflag)=NaN; 
-FV=-99999;
-%inpres=int32(1000*S.PRES.value); % use copy of pressure to work with; cast truly to "1/1000" integer to avoid numerical ..1e-6 issues
-S.PRES.value=int32(1000*S.PRES.value); % cast truly to "1/1000" integer to avoid numerical ..1e-6 issues
 inpres=S.PRES.value; % use copy of pressure to work with
 inpres(~pflag)=FV; 
 
@@ -444,14 +446,37 @@ for i=1:length(ubgcparams)
     yadjerr=S.([ubgcparams{i} '_ADJUSTED_ERROR']).value(:,asort);
     % check for overlapping portion of nprofs
     if ismember(ubgcparams{i},{'PRES'})
-        overlap=~isnan(y);
+        overlap=~isnan(y); % should be ~=FV?
+        % get max and min ranges per nprof for adjusted anyway
+    xrangeadj=ones(2,1+noNPROFs)*NaN;
+    overlapadj=false(size(yadj)); % and flag portions that don't overlap for adjusted data
+    for k=1:noNPROFs 
+        % and adjusted
+        indadj=~isnan(yadj(:,k)) & xpresqc(:,k);
+        if any(indadj) % data in current nprof and with proper pres
+            xrangeadj(:,1+k)=[min(xpres(indadj,k)); max(xpres(indadj,k))]; 
+            % check if it should be added or not
+            if isnan(xrangeadj(1,1)) % first nprof with data
+                xrangeadj(:,1)=xrangeadj(:,1+k);
+                overlapadj(:,k)=indadj;
+            else % more than one nprof with data: keep only data outside existing range
+                overlapadj(:,k)=indadj & (xpres(:,k)>xrangeadj(2,1) | xpres(:,k)<xrangeadj(1,1));
+                xrangeadj(1,1)=min([xrangeadj(1,1) xrangeadj(1,1+k)]);
+                xrangeadj(2,1)=max([xrangeadj(2,1) xrangeadj(2,1+k)]);
+            end
+        end
+    end % cycle all nprofs
+    clear indadj xrangeadj
+        
     else
     % get max and min ranges per nprof
     xrange=ones(2,1+noNPROFs)*NaN;
+    xrangeadj=ones(2,1+noNPROFs)*NaN;
     overlap=false(size(y)); % and flag portions that don't overlap
+    overlapadj=false(size(yadj)); % and flag portions that don't overlap for adjusted data
     for k=1:noNPROFs 
-        ind=~isnan(y(:,k));
-        if any(ind) % data in current nprof
+        ind=~isnan(y(:,k)) & xpresqc(:,k);
+        if any(ind) % data in current nprof and with proper pres
             xrange(:,1+k)=[min(xpres(ind,k)); max(xpres(ind,k))]; 
             % check if it should be added or not
             if isnan(xrange(1,1)) % first nprof with data
@@ -463,8 +488,22 @@ for i=1:length(ubgcparams)
                 xrange(2,1)=max([xrange(2,1) xrange(2,1+k)]);
             end
         end
+        % and adjusted
+        indadj=~isnan(yadj(:,k)) & xpresqc(:,k);
+        if any(indadj) % data in current nprof and with proper pres
+            xrangeadj(:,1+k)=[min(xpres(indadj,k)); max(xpres(indadj,k))]; 
+            % check if it should be added or not
+            if isnan(xrangeadj(1,1)) % first nprof with data
+                xrangeadj(:,1)=xrangeadj(:,1+k);
+                overlapadj(:,k)=indadj;
+            else % more than one nprof with data: keep only data outside existing range
+                overlapadj(:,k)=indadj & (xpres(:,k)>xrangeadj(2,1) | xpres(:,k)<xrangeadj(1,1));
+                xrangeadj(1,1)=min([xrangeadj(1,1) xrangeadj(1,1+k)]);
+                xrangeadj(2,1)=max([xrangeadj(2,1) xrangeadj(2,1+k)]);
+            end
+        end
     end % cycle all nprofs
-    clear ind xrange
+    clear ind xrange indadj xrangeadj
     end
     % do not use <PARAM>_QC of 8 or FillValue
     yflagqc=ismember(yqc,[0 1 2 3 4 5]);
@@ -484,7 +523,7 @@ for i=1:length(ubgcparams)
     yadj=yadj(xpresqc & yflagadjqc & yflagadjnoFV);
     yadjqc=yadjqc(xpresqc & yflagadjqc & yflagadjnoFV);
     yadjerr=yadjerr(xpresqc & yflagadjqc & yflagadjnoFV);
-    overlapadj=overlap(xpresqc & yflagadjqc & yflagadjnoFV);
+    overlapadj=overlapadj(xpresqc & yflagadjqc & yflagadjnoFV);
     overlap=overlap(xpresqc & yflagqc & yflagnoFV);
     yadjerrpresence=~all(isnan(yadjerr)); % error not mandatory for adjusted fields..
     
@@ -679,13 +718,15 @@ for i=1:length(ubgcparams)
     % qc extrapolation: nearest-neighbour
     synth.([ubgcparams{i} '_ADJUSTED_QC']).value(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value))=interp1(double(xadj(uindadj)),yadjqc(uindadj),double(presaxis(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value))),'nearest','extrap');
     clear qcnextadj qcpreviousadj qcfilladj
-    else % only one value, keep this value, its error, and its QC, and place it closest to the original pressure
-    [~,ifill]=min(abs(presaxis-xadj));
-    synth.([ubgcparams{i} '_ADJUSTED']).value(ifill)=yadj;
-    if yadjerrpresence % same with errors if any
-    synth.([ubgcparams{i} '_ADJUSTED_ERROR']).value(ifill)=yadjerr;
-    end
-    synth.([ubgcparams{i} '_ADJUSTED_QC']).value(ifill)=yadjqc;
+    elseif ~isempty(xadj) % only one value, keep this value, its error, and its QC, and place it closest to the original pressure
+        [~,ifill]=min(abs(presaxis-xadj));
+        synth.([ubgcparams{i} '_ADJUSTED']).value(ifill)=yadj;
+        if yadjerrpresence % same with errors if any
+        synth.([ubgcparams{i} '_ADJUSTED_ERROR']).value(ifill)=yadjerr;
+        end
+        synth.([ubgcparams{i} '_ADJUSTED_QC']).value(ifill)=yadjqc;
+    else % no adjusted value left from overlapping portions
+        % do nothing
     end
     
     % and kick out unmatched data
