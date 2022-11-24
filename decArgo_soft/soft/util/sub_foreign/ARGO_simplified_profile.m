@@ -43,6 +43,13 @@ function synthfull=ARGO_simplified_profile(varargin)
 %             all info messages, correct treatment of levels with QC '4' in
 %             adjusted fields, add bgcFloatFlag as optional input
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_cycleDir;
+global g_cocs_inputFile;
 
 if nargin<1 || isempty(varargin)
     varargin{1}='bfilepath';varargin{2}='\argo\dac\coriolis\6901485\profiles\BR6901485_049.nc';
@@ -121,11 +128,31 @@ if ~isempty(cfilepath) % c-file exists
     fnamec=setdiff(fieldnames(C),fieldnames(S)); % find core parameter names
     for i=1:length(fnamec), S.(fnamec{i})=C.(fnamec{i}); end % copy core data to bio data
 else
-    if verbose>-2, disp(['S-PROF_ERROR: File ' bfilestr '.nc: No corresponding core file found. Create empty s-profile.']), end
+    if (verbose>-2)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: No corresponding core file found. Create empty s-profile.'])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = 'No corresponding core file found. Create empty s-profile.';
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     S.PRES_QC.value=ones(size(S.PRES.value))*4; % mimic core PRES_QC: all bad, because no info
 end
 if isfield(S,'empty') && bgcfloatflag
-    if verbose>-2, disp(['S-PROF_ERROR: File ' cfilestr '.nc: No corresponding bio file found. Use only the core file.']), end
+    if (verbose>-2)
+       disp(['S-PROF_WARNING: File ' cfilestr '.nc: No corresponding bio file found. Use only the core file.'])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = 'No corresponding bio file found. Use only the core file.';
+       [~, fileName, fileExt] = fileparts(cfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     S=rmfield(S,'empty');
 end
 
@@ -141,7 +168,18 @@ indperm=ones(ndims(C.PARAMETER.value),1)*NaN;
 try
     for i=1:length(indperm), indperm(i)=find(strcmpi(C.PARAMETER.dimname,indstr{i})); end
 catch me
-    if verbose>-1, disp(['S-PROF_WARNING: File ' cfilestr '.nc: Could not figure out N_DIMs order of core file PARAMETER field with dimensions: ' strjoin(C.PARAMETER.dimname,', ')]), end
+    if (verbose>-1)
+       disp(['S-PROF_WARNING: File ' cfilestr '.nc: Could not figure out N_DIMs order of core file PARAMETER field with dimensions: ' strjoin(C.PARAMETER.dimname,', ')])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = sprintf('Could not figure out N_DIMs order of core file PARAMETER field with dimensions: %s.', ...
+          strjoin(C.PARAMETER.dimname,' '));
+       [~, fileName, fileExt] = fileparts(cfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     indperm=1:ndims(C.PARAMETER.value);
 end
 C.PARAMETER.value=permute(C.PARAMETER.value,indperm);
@@ -153,7 +191,18 @@ indperm=ones(ndims(C.STATION_PARAMETERS.value),1)*NaN;
 try
     for i=1:length(indperm), indperm(i)=find(strcmpi(C.STATION_PARAMETERS.dimname,indstr{i})); end
 catch me
-    if verbose>-1, disp(['S-PROF_WARNING: File ' cfilestr '.nc: Could not figure out N_DIMs order of core file STATION_PARAMETERS field with dimensions: ' strjoin(C.PARAMETER.dimname,', ')]), end
+    if (verbose>-1)
+       disp(['S-PROF_WARNING: File ' cfilestr '.nc: Could not figure out N_DIMs order of core file STATION_PARAMETERS field with dimensions: ' strjoin(C.PARAMETER.dimname,', ')])
+    
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = sprintf('Could not figure out N_DIMs order of core file STATION_PARAMETERS field with dimensions: %s.', ...
+          strjoin(C.PARAMETER.dimname,' '));
+       [~, fileName, fileExt] = fileparts(cfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     indperm=1:ndims(C.STATION_PARAMETERS.value);
 end
 C.STATION_PARAMETERS.value=permute(C.STATION_PARAMETERS.value,indperm);
@@ -171,7 +220,18 @@ indperm=ones(ndims(S.PARAMETER.value),1)*NaN;
 try
     for i=1:length(indperm), indperm(i)=find(strcmpi(S.PARAMETER.dimname,indstr{i})); end
 catch me
-    if verbose>-1, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not figure out N_DIMs order of bio file PARAMETER field with dimensions: ' strjoin(S.PARAMETER.dimname,', ')]), end
+    if (verbose>-1)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not figure out N_DIMs order of bio file PARAMETER field with dimensions: ' strjoin(S.PARAMETER.dimname,', ')])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = sprintf('Could not figure out N_DIMs order of bio file PARAMETER field with dimensions: %s.', ...
+          strjoin(S.PARAMETER.dimname,' '));
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     indperm=1:ndims(S.PARAMETER.value);
 end
 S.PARAMETER.value=permute(S.PARAMETER.value,indperm);
@@ -183,7 +243,17 @@ indperm=ones(ndims(S.STATION_PARAMETERS.value),1)*NaN;
 try
     for i=1:length(indperm), indperm(i)=find(strcmpi(S.STATION_PARAMETERS.dimname,indstr{i})); end
 catch me
-    if verbose>-1, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not figure out N_DIMs order of bio file STATION_PARAMETERS field with dimensions: ' strjoin(S.PARAMETER.dimname,', ')]), end
+    if (verbose>-1)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not figure out N_DIMs order of bio file STATION_PARAMETERS field with dimensions: ' strjoin(S.PARAMETER.dimname,', ')])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = sprintf('Could not figure out N_DIMs order of bio file STATION_PARAMETERS field with dimensions: %s.', strjoin(S.PARAMETER.dimname,' '));
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     indperm=1:ndims(S.STATION_PARAMETERS.value);
 end
 S.STATION_PARAMETERS.value=permute(S.STATION_PARAMETERS.value,indperm);
@@ -258,7 +328,17 @@ if any(size(S.PRES.value)~=size(S.PRES_QC.value))
     if isfield(S,'TEMP'), S=rmfield(S,'TEMP'); end
     if isfield(S,'PSAL'), S=rmfield(S,'PSAL'); end
     %}
-    if verbose>-2, disp(['S-PROF_ERROR: File ' bfilestr '.nc: PRES (bio) and PRES_QC (core) dimensions don''t match. Create synthetic profile only with available core data.']), end
+    if (verbose>-2)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: PRES (bio) and PRES_QC (core) dimensions don''t match. Create synthetic profile only with available core data.'])
+       
+       % CSV output
+       msgType = 'warning_s-prof';
+       message = 'PRES (bio) and PRES_QC (core) dimensions don''t match. Create synthetic profile only with available core data.';
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     S.PRES.value=int32(C.PRES.value);
     [noNLEVELs,noNPROFs]=size(S.PRES.value);
     for i=1:length(ubgcparams)
@@ -278,7 +358,18 @@ for i=1:size(S.PRES.value,2)
 end
 %pinversion=pinversion & ismember(S.PRES_QC.value,[0 1 2 3]);
 if any(pinversion(:))
-    if verbose>1, disp(['S-PROF_INFO: File ' cfilestr '.nc: Found ' num2str(sum(pinversion(:))) ' levels with unflagged pressure inversions. Flag with PRES_QC=4.']), end
+   if (verbose>1)
+      disp(['S-PROF_INFO: File ' cfilestr '.nc: Found ' num2str(sum(pinversion(:))) ' levels with unflagged pressure inversions. Flag with PRES_QC=4.'])
+      
+      % CSV output
+      msgType = 'info_s-prof';
+      message = sprintf('Found %s levels with unflagged pressure inversions. Flag with PRES_QC=4.', ...
+         num2str(sum(pinversion(:))));
+      [~, fileName, fileExt] = fileparts(cfilepath);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     S.PRES_QC.value(pinversion)=4;
     % check if there are more
     pnum=0;
@@ -294,7 +385,18 @@ if any(pinversion(:))
             pnum=pnum+sum(pinversion(:));
         end
     end % while
-    if verbose>1 && pnum, disp(['S-PROF_INFO: File ' cfilestr '.nc: Found ' num2str(pnum) ' more levels with unflagged pressure inversions. Flag with PRES_QC=4.']), end
+    if (verbose>1 && pnum)
+       disp(['S-PROF_INFO: File ' cfilestr '.nc: Found ' num2str(pnum) ' more levels with unflagged pressure inversions. Flag with PRES_QC=4.'])
+       
+       % CSV output
+       msgType = 'info_s-prof';
+       message = sprintf('Found %s more levels with unflagged pressure inversions. Flag with PRES_QC=4.', ...
+          num2str(pnum));
+       [~, fileName, fileExt] = fileparts(cfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
 end % first iteration
 clear pinversion ind pnum
 
@@ -340,12 +442,31 @@ try
     C=lov_netcdf_pickprod(metafilepath,infields);
 catch me
     % failed to locate meta file
-    if verbose>-2, disp(['S-PROF_ERROR: Float ' strtrim(S.PLATFORM_NUMBER.value(1,:)) ': Could not find meta file ' metafilepath '. Abort..']), end
+    if (verbose>-2)
+       disp(['S-PROF_ERROR: Float ' strtrim(S.PLATFORM_NUMBER.value(1,:)) ': Could not find meta file ' metafilepath '. Abort..']);
+       
+      % CSV output
+      msgType = 'error';
+      message = 'File not found.';
+      [~, fileName, fileExt] = fileparts(metafilepath);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     synthfull=[];
     return
 end
 if isempty(C)
-    if verbose>-2, disp(['S-PROF_ERROR: Float ' strtrim(S.PLATFORM_NUMBER.value(1,:)) ': Could not find meta file ' strtrim(S.PLATFORM_NUMBER.value(1,:)) '_meta.nc in current or parent folder. Abort..']), end
+    if (verbose>-2)
+       disp(['S-PROF_ERROR: Float ' strtrim(S.PLATFORM_NUMBER.value(1,:)) ': Could not find meta file ' strtrim(S.PLATFORM_NUMBER.value(1,:)) '_meta.nc in current or parent folder. Abort..']);
+       
+      % CSV output
+      msgType = 'error';
+      message = 'File not found.';
+      g_cocs_inputFile  = [strtrim(S.PLATFORM_NUMBER.value(1,:)) '_meta.nc'];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     synthfull=[];
     return
 end % meta file exists
@@ -387,14 +508,35 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
     ind=find(~cellfun(@isempty,strfind(cellstr(lower(names)),lower(cnames{1})))); % ignore upper/lower case
     
     if any(ind)
-        if verbose>1, disp(['S-PROF_INFO: File ' metafilestr '.nc: Found ' num2str(length(ind)) ' VerticalOffsets']); end
+        if (verbose>1)
+           disp(['S-PROF_INFO: File ' metafilestr '.nc: Found ' num2str(length(ind)) ' VerticalOffsets'])
+        
+           % CSV output
+           msgType = 'info_s-prof';
+           message = sprintf('Found %s VerticalOffsets.', ...
+              num2str(length(ind)));
+           [~, fileName, fileExt] = fileparts(metafilestr);
+           g_cocs_inputFile  = [fileName fileExt];
+           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+        end
         % get short sensor names and vertical offsets
         cpnames=strrep(strrep(cellstr(lower(names(ind,:))),lower(cnames{1}),''),lower('CONFIG_'),'');
         voffset=values(ind);
         try % get corresponding full-length sensor name: index to param_sensors / sensors
-            sensorind=cellfun(@(x)find(~cellfun(@isempty,strfind(lower(sensors),lower(x)))),cpnames);
+           sensorind=cellfun(@(x)find(~cellfun(@isempty,strfind(lower(sensors),lower(x)))),cpnames);
         catch me
-            if verbose>0, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not identify some short sensor name in meta file ' strjoin(cpnames,'; ')]), end
+           if (verbose>0)
+              disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not identify some short sensor name in meta file ' strjoin(cpnames,'; ')])
+              
+              % CSV output
+              msgType = 'warning_s-prof';
+              message = sprintf('Could not identify some short sensor name in meta file %s.', strjoin(cpnames,' '));
+              [~, fileName, fileExt] = fileparts(bfilepath);
+              g_cocs_inputFile  = [fileName fileExt];
+              fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+                 g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+           end
         end
         % and assign vertical offset via full-length sensor name to
         % bgc parameters
@@ -420,7 +562,18 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
                 %keyboard
                 %synthfull=[];
                 %return
-                if verbose>0, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not identify parameter with sensor name(s) ' strjoin(cellstr(snames),', ') '; Skipping vertical offset of ' num2str(voffset(i)) ' dbar from LAUNCH_CONFIG']), end
+                if (verbose>0)
+                   disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not identify parameter with sensor name(s) ' strjoin(cellstr(snames),', ') '; Skipping vertical offset of ' num2str(voffset(i)) ' dbar from LAUNCH_CONFIG'])
+                
+                   % CSV output
+                   msgType = 'warning_s-prof';
+                   message = sprintf('Could not identify parameter with sensor name(s) %s. Skipping vertical offset of %s dbar from LAUNCH_CONFIG.', ...
+                      strjoin(cellstr(snames),' '), num2str(voffset(i)));
+                   [~, fileName, fileExt] = fileparts(bfilepath);
+                   g_cocs_inputFile  = [fileName fileExt];
+                   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+                      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+                end
                 
             else % found 
                 pnames=C.PARAMETER.value(pind); % get i- and b- parameter names
@@ -441,12 +594,33 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
         voff.linbgcparams=reshape(linbgcparams,1,[]); voff.linvoffset=reshape(linvoffset,1,[]);
         clear inpflag cpnames sensorind voffset sensors param_sensors
     else
-        if verbose>1, disp(['S-PROF_INFO: File ' bfilestr '.nc: Found no verticalOffsets in meta file']), end
+        if (verbose>1)
+           disp(['S-PROF_INFO: File ' bfilestr '.nc: Found no verticalOffsets in meta file'])
+        
+           % CSV output
+           msgType = 'info_s-prof';
+           message = 'Found no VerticalOffsets in meta file.';
+           [~, fileName, fileExt] = fileparts(bfilepath);
+           g_cocs_inputFile  = [fileName fileExt];
+           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+        end
         voff.linbgcparams={};voff.linvoffset=[];
     end % config name found
     clear ind cnames names values
 else
-	if verbose>-1, disp(['S-PROF_INFO: File ' bfilestr '.nc: Could not find LAUNCH_CONFIG_PARAMETER_NAME in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). No vertical sensor offsets corrected.']), end
+   if (verbose>-1)
+      disp(['S-PROF_INFO: File ' bfilestr '.nc: Could not find LAUNCH_CONFIG_PARAMETER_NAME in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). No vertical sensor offsets corrected.'])
+      
+      % CSV output
+      msgType = 'info_s-prof';
+      message = sprintf('Could not find LAUNCH_CONFIG_PARAMETER_NAME in meta file (FORMAT_VERSION %s). No vertical sensor offsets corrected.', ...
+         C.FORMAT_VERSION.value);
+      [~, fileName, fileExt] = fileparts(bfilepath);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   end
     voff.linbgcparams={};voff.linvoffset=[];
 end % LAUNCH_CONFIG_PARAMETER_NAME
 end % addoffsetflag
@@ -465,8 +639,25 @@ if isempty(upres)
     if verbose>0
         if isempty(ubgcparams)
             disp(['S-PROF_WARNING: File ' bfilestr '.nc: Found no b-parameters. Create synthetic profile only with available core data.'])
+            
+            % CSV output
+            msgType = 'warning';
+            message = 'Found no b-parameters. Create synthetic profile only with available core data.';
+            [~, fileName, fileExt] = fileparts(bfilepath);
+            g_cocs_inputFile  = [fileName fileExt];
+            fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+               g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
         else
             disp(['S-PROF_WARNING: File ' bfilestr '.nc: Found b-parameter(s) ' strjoin(ubgcparams,' ') ', but without any PRES_QC=0..3 and non-FillValue BGC data. Create synthetic profile only with available core data.'])
+            
+            % CSV output
+            msgType = 'warning';
+            message = sprintf('Found b-parameter(s) %s but without any PRES_QC=0..3 and non-FillValue BGC data. Create synthetic profile only with available core data.', ...
+               strjoin(ubgcparams,' '));
+            [~, fileName, fileExt] = fileparts(bfilepath);
+            g_cocs_inputFile  = [fileName fileExt];
+            fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+               g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
         end
     end
     %synthfull=[]; return
@@ -479,7 +670,18 @@ for i=1:size(inpres,2),prespresent(:,i)=ismember(upres,inpres(:,i));end
 
 % verify that there are BGC observations, not just BGC N_PROFs
 if ~any(prespresent(:)) % may not be needed; redundant
-    if verbose>0, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Found b-parameter(s) ' strjoin(ubgcparams,' ') ', but without any non-FillValue data. Create synthetic profile only with available core data.']), end
+    if (verbose>0)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: Found b-parameter(s) ' strjoin(ubgcparams,' ') ', but without any non-FillValue data. Create synthetic profile only with available core data.'])
+       
+       % CSV output
+       msgType = 'warning';
+       message = sprintf('Found b-parameter(s) %s but without any non-FillValue data. Create synthetic profile only with available core data.', ...
+          strjoin(ubgcparams,' '));
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     %synthfull=[]; return
     presaxis=[]; % default to empty presaxis
     break % extra loop around presaxis construction
@@ -525,7 +727,17 @@ while ~isempty(i)
         i=ind(find(max(flipud(cumsum(flipud(obspresence),1)),[],2)>1,1,'last'));
         if isempty(i)
             %keyboard % should not happen?? Check code..
-            if verbose>-3, disp(['S-PROF_ERROR: File ' bfilestr '.nc: Trouble during creation of synthetic pressure axis. Create synthetic profile only with available core data.']), end
+            if (verbose>-3)
+               disp(['S-PROF_WARNING: File ' bfilestr '.nc: Trouble during creation of synthetic pressure axis. Create synthetic profile only with available core data.'])
+               
+               % CSV output
+               msgType = 'warning';
+               message = 'Trouble during creation of synthetic pressure axis. Create synthetic profile only with available core data.';
+               [~, fileName, fileExt] = fileparts(bfilepath);
+               g_cocs_inputFile  = [fileName fileExt];
+               fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+                  g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+            end
             %synthfull=[]; return
             useind=[]; % default to empty presaxis if failed
             break % loop of pressure levels from bottom
@@ -540,9 +752,19 @@ while ~isempty(i)
     end
     clear obspresence
     if niter>nitermax
-        if verbose>-3, disp(['S-PROF_ERROR: File ' bfilestr '.nc: Exceeded maximum number of iterations in selection of synthetic pressure levels. Should not happen... Create synthetic profile only with available core data.']), end
-        %synthfull=[]; return
-        useind=[]; % default to empty presaxis if failed
+       if (verbose>-3)
+          disp(['S-PROF_WARNING: File ' bfilestr '.nc: Exceeded maximum number of iterations in selection of synthetic pressure levels. Should not happen... Create synthetic profile only with available core data.'])
+          
+          % CSV output
+          msgType = 'warning';
+          message = 'Exceeded maximum number of iterations in selection of synthetic pressure levels. Should not happen... Create synthetic profile only with available core data.';
+          [~, fileName, fileExt] = fileparts(bfilepath);
+          g_cocs_inputFile  = [fileName fileExt];
+          fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+             g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+       end
+       %synthfull=[]; return
+       useind=[]; % default to empty presaxis if failed
         break % loop of pressure levels from bottom
     end
 end
@@ -570,7 +792,18 @@ if isfield(C,'PARAMETER_SENSOR') % not a very old meta file
     % and bring into order but keeping nprof 1 at first position
     [~,asort]=sort(nprofstr(2:end));asort=[1 asort+1];
 else % pre-v3.1 meta file
-    if verbose>0, disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not find PARAMETER_SENSOR in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). Kept N_PROF order as in profile file.']), end
+    if (verbose>0)
+       disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not find PARAMETER_SENSOR in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). Kept N_PROF order as in profile file.'])
+    
+       % CSV output
+       msgType = 'warning';
+       message = sprintf('Could not find PARAMETER_SENSOR in meta file (FORMAT_VERSION %s). Kept N_PROF order as in profile file.', ...
+          C.FORMAT_VERSION.value);
+       [~, fileName, fileExt] = fileparts(bfilepath);
+       g_cocs_inputFile  = [fileName fileExt];
+       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+    end
     asort=1:noNPROFs;
 end % define N_PROF priority
 

@@ -134,6 +134,13 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
 
 onlyCFileFlag = 0;
 onlyBFileFlag = 0;
@@ -162,15 +169,27 @@ for idType= 1:2
    wantedVars = [ ...
       {'FORMAT_VERSION'} ...
       {'STATION_PARAMETERS'} ...
+      {'DATA_CENTRE'} ...
       ];
    [profData1] = get_data_from_nc_file(profFilePathName, wantedVars);
    
    formatVersion = deblank(get_data_from_name('FORMAT_VERSION', profData1)');
+   dataCentre = get_data_from_name('DATA_CENTRE', profData1);
+   g_cocs_dacName = dataCentre(:, 1)';
    
    % check the PROF file format version
    if (~strcmp(formatVersion, '3.1'))
       fprintf('ERROR: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s => not used\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, formatVersion);
+      
+      % CSV output
+      msgType = 'error';
+      message = sprintf('Input file format version is %s - not used.', formatVersion);
+      [~, fileName, fileExt] = fileparts(profFilePathName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
       return
    end
    
@@ -349,6 +368,15 @@ for idType= 1:2
                else
                   fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
                      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
+                  
+                  % CSV output
+                  msgType = 'error';
+                  message = sprintf('PARAMETER_DATA_MODE information is missing in file - file ignored (as DATA_MODE = ''%c'').', dataMode(idProf));
+                  [~, fileName, fileExt] = fileparts(profFilePathName);
+                  g_cocs_inputFile  = [fileName fileExt];
+                  fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+                     g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
                   return
                end
             end
@@ -416,6 +444,17 @@ if (~isempty(profDataTabC) && ~isempty(profDataTabB))
                g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
                length(profData.presData), ...
                length(profDataTabB(idProfB).presData));
+            
+            % CSV output
+            msgType = 'error';
+            message = sprintf('C and B files don''t have the same number of levels (%d vs %d) - files ignored.', ...
+               length(profData.presData), ...
+               length(profDataTabB(idProfB).presData));
+            [~, fileName, fileExt] = fileparts(a_bProfFileName);
+            g_cocs_inputFile  = [fileName fileExt];
+            fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+               g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
             return
          end
          if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
@@ -469,6 +508,16 @@ if (~isempty(profDataTabC) && ~isempty(profDataTabB))
    if (~isempty(profDataTabB))
       fprintf('WARNING: Float #%d Cycle #%d%c: %d B profiles are not used\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, length(profDataTabB));
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('%d B profiles are not used.', ...
+         length(profDataTabB));
+      [~, fileName, fileExt] = fileparts(a_bProfFileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+      
    end
    
 elseif (~isempty(profDataTabC))
@@ -508,6 +557,14 @@ function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
 % output parameters initialization
 o_ncData = [];
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_cycleDir;
+global g_cocs_inputFile;
+
 
 if (exist(a_ncPathFileName, 'file') == 2)
    
@@ -515,6 +572,15 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      
+      % CSV output
+      msgType = 'error';
+      message = 'Unable to open file.';
+      [~, fileName, fileExt] = fileparts(a_ncPathFileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+      
       return
    end
    
@@ -598,6 +664,14 @@ function [o_ncDataAtt] = get_att_from_nc_file(a_ncPathFileName, a_wantedVarAtts)
 % output parameters initialization
 o_ncDataAtt = [];
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_cycleDir;
+global g_cocs_inputFile;
+
 
 if (exist(a_ncPathFileName, 'file') == 2)
    
@@ -605,6 +679,15 @@ if (exist(a_ncPathFileName, 'file') == 2)
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      
+      % CSV output
+      msgType = 'error';
+      message = 'Unable to open file.';
+      [~, fileName, fileExt] = fileparts(a_ncPathFileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+      
       return
    end
    
@@ -768,117 +851,260 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
+
+msgType = 'error';
+[~, fileName, fileExt] = fileparts(a_bProfFileName);
+g_cocs_inputFile  = [fileName fileExt];
 
 % check input profile consistency
 errorFlag = 0;
 if (length(unique({a_profData.handbookVersion})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple HANDBOOK_VERSION => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple HANDBOOK_VERSION - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.referenceDateTime})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple REFERENCE_DATE_TIME => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple REFERENCE_DATE_TIME - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformNumber})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_NUMBER => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple PLATFORM_NUMBER - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.projectName})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple PROJECT_NAME => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple PROJECT_NAME - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.piName})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple PI_NAME => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple PI_NAME - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.cycleNumber])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple CYCLE_NUMBER => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple CYCLE_NUMBER - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.direction})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple DIRECTION => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple DIRECTION - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.dataCentre})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple DATA_CENTRE => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple DATA_CENTRE - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformType})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_TYPE => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple PLATFORM_TYPE - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.floatSerialNo})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple FLOAT_SERIAL_NO => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple FLOAT_SERIAL_NO - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.firmwareVersion})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple FIRMWARE_VERSION => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple FIRMWARE_VERSION - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.wmoInstType})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple WMO_INST_TYPE => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple WMO_INST_TYPE - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.juld])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple JULD - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldResolution])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD:resolution => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple JULD:resolution - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.juldQc})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_QC => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple JULD_QC - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocation])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple JULD_LOCATION - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocationResolution])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION:resolution => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple JULD_LOCATION:resolution - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.latitude])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple LATITUDE => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple LATITUDE - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.longitude])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple LONGITUDE => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple LONGITUDE - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.positionQc})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITION_QC => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple POSITION_QC - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique({a_profData.positioningSystem})) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITIONING_SYSTEM => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple POSITIONING_SYSTEM - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (length(unique([a_profData.configMissionNumber])) > 1)
    fprintf('ERROR: Float #%d Cycle #%d%c: multiple CONFIG_MISSION_NUMBER => file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   message = 'Multiple CONFIG_MISSION_NUMBER - file ignored.';
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    errorFlag = 1;
 end
 if (errorFlag == 1)
@@ -939,6 +1165,15 @@ catch error
    [~, bProfFileName, bProfFileExt] = fileparts(a_bProfFileName);
    fprintf('ERROR: Float #%d Cycle #%d%c: the synthetic profile data processing failed (ARGO_simplified_profile fonction on file %s)\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, [bProfFileName bProfFileExt]);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'The synthetic profile data processing failed (ARGO_simplified_profile fonction).';
+   [~, fileName, fileExt] = fileparts(a_bProfFileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    o_syntProfData = [];
    
    % write error information in log file
@@ -953,8 +1188,17 @@ catch error
 end
 
 if (isempty(syntProfData))
-   fprintf('INFO: Float #%d Cycle #%d%c: no synthetic profile data reported by ARGO_simplified_profile fonction\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: no synthetic profile data reported by ARGO_simplified_profile fonction\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'No synthetic profile data reported by ARGO_simplified_profile fonction.';
+   [~, fileName, fileExt] = fileparts(a_bProfFileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    o_syntProfData = [];
    return
 end
@@ -977,6 +1221,15 @@ for idParam = 1:length(paramList)
       fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter is not present in the output file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
          paramName);
+      
+      % CSV output
+      msgType = 'error';
+      message = sprintf('''%s'' parameter is not present in output file.', paramName);
+      [~, fileName, fileExt] = fileparts(a_bProfFileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+      
       continue
    end
    data = syntProfData.(paramName).value;
@@ -1111,8 +1364,17 @@ o_syntProfData.scientificCalibDate = scientificCalibDate;
 
 if (isempty(o_syntProfData.paramData))
    
-   fprintf('INFO: Float #%d Cycle #%d%c: no data remain after processing => no synthetic profile\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: no data remain after processing => no synthetic profile\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'No data remain after processing - no synthetic profile.';
+   [~, fileName, fileExt] = fileparts(a_bProfFileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    o_syntProfData = [];
 end
 
@@ -1356,6 +1618,13 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
 
@@ -1377,6 +1646,15 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_fileName);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'Unable to open file.';
+   [~, fileName, fileExt] = fileparts(a_fileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    return
 end
 
@@ -1391,6 +1669,14 @@ institution = get_institution_from_data_centre(a_profData.dataCentre, 0);
 if (isempty(deblank(institution)))
    fprintf('WARNING: Float #%d Cycle #%d%c: No institution assigned to data centre %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData.dataCentre);
+   
+   % CSV output
+   msgType = 'warning';
+   message = sprintf('No institution assigned to data centre %s.', a_profData.dataCentre);
+   [~, fileName, fileExt] = fileparts(a_fileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
 end
 netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
 netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -1481,8 +1767,16 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramVarId, 'axis', paramInfo.axis);
       end
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramName);
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('Parameter ''%s'' already exists in file.', paramName);
+      [~, fileName, fileExt] = fileparts(a_fileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
    end
    
    % parameter QC variable and attributes
@@ -1502,8 +1796,16 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramQcVarId, '_FillValue', ' ');
       end
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramQcName);
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('Parameter ''%s'' already exists in file.', paramQcName);
+      [~, fileName, fileExt] = fileparts(a_fileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
    end
    
    % parameter displacement variable and attributes
@@ -1526,8 +1828,16 @@ for idParam = 1:length(paramList)
             netcdf.putAtt(fCdf, paramDPresVarId, 'units', paramPresInfo.units);
          end
       else
-         fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+         fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
             g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramDPresName);
+         
+         % CSV output
+         msgType = 'warning';
+         message = sprintf('Parameter ''%s'' already exists in file.', paramDPresName);
+         [~, fileName, fileExt] = fileparts(a_fileName);
+         g_cocs_inputFile  = [fileName fileExt];
+         fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+            g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
       end
    end
    
@@ -1575,8 +1885,16 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramAdjVarId, 'axis', paramInfo.axis);
       end
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramAdjName);
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('Parameter ''%s'' already exists in file.', paramAdjName);
+      [~, fileName, fileExt] = fileparts(a_fileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
    end
    
    % parameter adjusted QC variable and attributes
@@ -1596,8 +1914,16 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramAdjQcVarId, '_FillValue', ' ');
       end
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramAdjQcName);
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('Parameter ''%s'' already exists in file.', paramAdjQcName);
+      [~, fileName, fileExt] = fileparts(a_fileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
    end
    
    % parameter adjusted error variable and attributes
@@ -1630,8 +1956,16 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramAdjErrVarId, 'resolution', paramInfo.resolution);
       end
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramAdjErrName);
+      
+      % CSV output
+      msgType = 'warning';
+      message = sprintf('Parameter ''%s'' already exists in file.', paramAdjErrName);
+      [~, fileName, fileExt] = fileparts(a_fileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
    end
 end
 
@@ -1744,6 +2078,7 @@ end
 % fill PARAM variable data
 for idParam = 1:length(paramList)
    
+   paramDataMode = a_profData.paramDataMode(idParam);
    paramData = a_profData.paramData(:, idParam);
    paramDataQc = a_profData.paramDataQc(:, idParam);
    paramDataDPres = a_profData.paramDataDPres(:, idParam);
@@ -1761,7 +2096,11 @@ for idParam = 1:length(paramList)
    paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
    
    % global quality of PARAM profile
-   profParamQcData = compute_profile_quality_flag(paramDataQc);
+   if (paramDataMode == 'R')
+      profParamQcData = compute_profile_quality_flag(paramDataQc);
+   else
+      profParamQcData = compute_profile_quality_flag(paramDataAdjQc);
+   end
    profParamQcName = ['PROFILE_' paramName '_QC'];
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 0, 1, profParamQcData);
    
@@ -1856,6 +2195,13 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
 
 floatWmoStr = num2str(g_cocs_floatNum);
 
@@ -1877,7 +2223,8 @@ cyNumList = unique(cyNumList);
 for idCy = 1:length(cyNumList)
    
    g_cocs_cycleNum = cyNumList(idCy);
-   
+   g_cocs_cycleNumStr = num2str(g_cocs_cycleNum);
+
    % process descending and ascending profiles
    for idDir = 1:2
       
@@ -1943,10 +2290,26 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
 
 if ~(exist(a_sProfFileName, 'file') == 2)
    fprintf('ERROR: Float #%d Cycle #%d%c: File not found: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_sProfFileName);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'File not found.';
+   [~, fileName, fileExt] = fileparts(a_sProfFileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+   
    return
 end
 
@@ -2294,6 +2657,13 @@ global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_inputFile;
+
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
 
@@ -2315,6 +2685,15 @@ fCdf = netcdf.open(a_fileName, 'NC_WRITE');
 if (isempty(fCdf))
    fprintf('ERROR: Float #%d Cycle #%d%c: Unable to open NetCDF output file: %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_fileName);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'Unable to open file.';
+   [~, fileName, fileExt] = fileparts(a_fileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
    return
 end
 
@@ -2329,6 +2708,14 @@ institution = get_institution_from_data_centre(a_profData(1).dataCentre, 0);
 if (isempty(deblank(institution)))
    fprintf('WARNING: Float #%d Cycle #%d%c: No institution assigned to data centre %s\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData(1).dataCentre);
+   
+   % CSV output
+   msgType = 'warning';
+   message = sprintf('No institution assigned to data centre %s.', a_profData(1).dataCentre);
+   [~, fileName, fileExt] = fileparts(a_fileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
 end
 netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
 netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -2631,6 +3018,7 @@ for idProf = 1:length(a_profData)
    % fill PARAM variable data
    for idParam = 1:length(paramList)
       
+      paramDataMode = profData.paramDataMode(idParam);
       paramData = profData.paramData(:, idParam);
       paramDataQc = profData.paramDataQc(:, idParam);
       paramDataDPres = profData.paramDataDPres(:, idParam);
@@ -2648,7 +3036,11 @@ for idProf = 1:length(a_profData)
       paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
       
       % global quality of PARAM profile
-      profParamQcData = compute_profile_quality_flag(paramDataQc);
+      if (paramDataMode == 'R')
+         profParamQcData = compute_profile_quality_flag(paramDataQc);
+      else
+         profParamQcData = compute_profile_quality_flag(paramDataAdjQc);
+      end
       profParamQcName = ['PROFILE_' paramName '_QC'];
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), profPos, 1, profParamQcData);
       
@@ -2709,5 +3101,89 @@ end
 
 % close NetCDF file
 netcdf.close(fCdf);
+
+return
+
+% ------------------------------------------------------------------------------
+% Remove a given diretory and all its contents.
+%
+% SYNTAX :
+%  [o_ok] = remove_directory(a_dirPathName)
+%
+% INPUT PARAMETERS :
+%   a_dirPathName : path name of the directory to remove
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/25/2015 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = remove_directory(a_dirPathName)
+
+% output parameters initialization
+o_ok = 0;
+
+NB_ATTEMPTS = 10;
+
+if (exist(a_dirPathName, 'dir') == 7)
+   [status, ~, ~] = rmdir(a_dirPathName, 's');
+   if (status ~= 1)
+      nbAttemps = 0;
+      while ((nbAttemps < NB_ATTEMPTS) && (status ~= 1))
+         pause(1);
+         [status, ~, ~] = rmdir(a_dirPathName, 's');
+         nbAttemps = nbAttemps + 1;
+      end
+      if (status ~= 1)
+         fprintf('ERROR: Unable to remove directory: %s\n', a_dirPathName);
+         return
+      end
+   end
+end
+
+o_ok = 1;
+
+return
+
+% ------------------------------------------------------------------------------
+% Move file.
+%
+% SYNTAX :
+%  [o_ok] = move_file(a_sourceFileName, a_destFileName)
+%
+% INPUT PARAMETERS :
+%   a_sourceFileName : source file path name
+%   a_destFileName   : destination file path name
+%
+% OUTPUT PARAMETERS :
+%   o_ok : copy operation report flag (1 if ok, 0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = move_file(a_sourceFileName, a_destFileName)
+
+% output parameters initialization
+o_ok = 1;
+
+
+[status, message, messageid] = movefile(a_sourceFileName, a_destFileName);
+if (status == 0)
+   fprintf('ERROR: Error while moving file %s to file %s (%s)\n', ...
+      a_sourceFileName, ...
+      a_destFileName, ...
+      message);
+   o_ok = 0;
+end
 
 return

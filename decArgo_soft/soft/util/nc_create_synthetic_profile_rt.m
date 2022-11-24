@@ -67,6 +67,9 @@
 %                             this new version generates S-PROF file (possibly
 %                             empty) even when 'c' PROF or 'b' PROF file is
 %                             missing
+%   07/10/2020 - RNU - V 1.10: correction in processing of PROFILE_<PARAM>_QC
+%                              (the input Qcs used depend on PARAMATER_DATA_MODE
+%                              information)
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -135,12 +138,16 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.9 (version 30.06.2020 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.10 (version 30.06.2020 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
+
+% output CSV file Id
+global g_cocs_fidCsvFile;
+g_cocs_fidCsvFile = -1;
 
 
 % startTime
@@ -232,6 +239,21 @@ try
          g_cocs_floatNum = str2double(g_cocs_floatWmo);
       end
       
+      % output CSV file name
+      [~, logFile, ~] = fileparts(logFileName);
+      csvFileName = [g_cocs_outputCsvDirName '/' logFile '.csv'];
+
+      % create CSV file
+      g_cocs_fidCsvFile = fopen(csvFileName, 'wt');
+      if (g_cocs_fidCsvFile == -1)
+         fprintf('ERROR: Unable to create output CSV file: %s\n', csvFileName);
+         return
+      end
+      
+      % put header
+      header = 'dac, type, float code, cycle number, message, file';
+      fprintf(g_cocs_fidCsvFile, '%s\n', header);
+
       % generate S-PROF file
       nc_create_synthetic_profile_(...
          str2num(g_cocs_createOnlyMultiProfFlag), ...
@@ -246,6 +268,8 @@ try
 
    end
    
+   fclose(g_cocs_fidCsvFile);
+   
    diary off;
    
    % finalize XML report
@@ -253,16 +277,15 @@ try
    
 catch
    
+   if (g_cocs_fidCsvFile ~= -1)
+      fclose(g_cocs_fidCsvFile);
+   end
+   
    diary off;
    
    % finalize XML report
    [status] = finalize_xml_report(ticStartTime, logFileName, lasterror);
    
-end
-
-if (~isempty(g_cocs_outputCsvDirName))
-   % generate CSV file (from log file contents)
-   generate_csv_file(logFileName, g_cocs_outputCsvDirName);
 end
 
 % create the XML report path file name
@@ -886,105 +909,5 @@ if (isempty(sign))
 else
    o_time = sprintf('%c %02d:%02d:%02d', sign, h, m, s);
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Generate the output CSV file (from INFO/WARNING/ERROR messages of the log
-% file).
-%
-% SYNTAX :
-%  generate_csv_file(a_logFileName, a_csvDirName)
-%
-% INPUT PARAMETERS :
-%   a_logFileName : log file path name of the run
-%   a_csvDirName  : directory of CSV files
-%
-% OUTPUT PARAMETERS :
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   04/22/2020 - RNU - creation
-% ------------------------------------------------------------------------------
-function generate_csv_file(a_logFileName, a_csvDirName)
-
-% output CSV file name
-[~, logFileName, ~] = fileparts(a_logFileName);
-csvFileName = [a_csvDirName '/' logFileName '.csv'];
-
-
-% create CSV file
-fidOut = fopen(csvFileName, 'wt');
-if (fidOut == -1)
-   fprintf('ERROR: Unable to create output file: %s\n', csvFileName);
-   return
-end
-
-% put header
-header = 'MESSAGE TYPE;MESSAGE SOURCE;MESSAGE CONTENT';
-fprintf(fidOut, '%s\n', header);
-
-if (~isempty(a_logFileName))
-   % read log file
-   fId = fopen(a_logFileName, 'r');
-   if (fId == -1)
-      sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
-      return
-   end
-   fileContents = textscan(fId, '%s', 'delimiter', '\n');
-   fclose(fId);
-   
-   if (~isempty(fileContents) && ~isempty(fileContents{:}))
-      % retrieve wanted messages
-      fileContents = fileContents{:};
-      idLine = 1;
-      while (1)
-         line = fileContents{idLine};
-         msgType = '';
-         msgSource = '';
-         msg = '';
-         if (strncmp(line, 'INFO: ', length('INFO: ')))
-            msgType = 'INFO';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('INFO: ')+1:end);
-         elseif (strncmp(line, 'WARNING: ', length('WARNING: ')))
-            msgType = 'WARNING';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('WARNING: ')+1:end);
-         elseif (strncmp(line, 'ERROR: ', length('ERROR: ')))
-            msgType = 'ERROR';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('ERROR: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_INFO: ', length('S-PROF_INFO: ')))
-            msgType = 'INFO';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_INFO: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_WARNING: ', length('S-PROF_WARNING: ')))
-            msgType = 'WARNING';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_WARNING: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_ERROR: ', length('S-PROF_ERROR: ')))
-            msgType = 'ERROR';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_ERROR: ')+1:end);
-         end
-         
-         if (~isempty(msgType))
-            fprintf(fidOut, '%s;%s;%s\n', msgType, msgSource, msg);
-         end
-         
-         idLine = idLine + 1;
-         if (idLine > length(fileContents))
-            break
-         end
-      end
-   end
-end
-
-fclose(fidOut);
 
 return

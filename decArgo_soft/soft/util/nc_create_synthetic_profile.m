@@ -48,6 +48,9 @@
 %                             this new version generates S-PROF file (possibly
 %                             empty) even when 'c' PROF or 'b' PROF file is
 %                             missing
+%   07/10/2020 - RNU - V 1.10: correction in processing of PROFILE_<PARAM>_QC
+%                              (the input Qcs used depend on PARAMATER_DATA_MODE
+%                              information)
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -102,10 +105,14 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.9 (version 30.06.2020 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.10 (version 30.06.2020 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
+
+% output CSV file Id
+global g_cocs_fidCsvFile;
+g_cocs_fidCsvFile = -1;
 
 
 % default values initialization
@@ -190,6 +197,22 @@ if (~isempty(DIR_CSV_FILE))
 end
 
 if (errorFlag == 0)
+   
+   % output CSV file name
+   [~, logFileName, ~] = fileparts(logFile);
+   csvFileName = [DIR_CSV_FILE '/' logFileName '.csv'];
+   
+   % create CSV file
+   g_cocs_fidCsvFile = fopen(csvFileName, 'wt');
+   if (g_cocs_fidCsvFile == -1)
+      fprintf('ERROR: Unable to create output CSV file: %s\n', csvFileName);
+      return
+   end
+   
+   % put header
+   header = 'dac, type, float code, cycle number, message, file';
+   fprintf(g_cocs_fidCsvFile, '%s\n', header);
+
    if (~isempty(floatList))
       
       % process floats of the FLOAT_LIST_FILE_NAME file (or provided in input
@@ -238,12 +261,14 @@ if (errorFlag == 0)
    end
 end
 
+fclose(g_cocs_fidCsvFile);
+
 diary off;
 
-if (~isempty(DIR_CSV_FILE))
-   % generate CSV file (from log file contents)
-   generate_csv_file(logFile, DIR_CSV_FILE);
-end
+% if (~isempty(DIR_CSV_FILE))
+%    % generate CSV file (from log file contents)
+%    generate_csv_file(logFile, DIR_CSV_FILE);
+% end
 
 return
 
@@ -279,16 +304,45 @@ function process_one_float(a_floatDir, a_outputDir, ...
 global g_cocs_floatNum;
 global g_cocs_cycleNum;
 global g_cocs_cycleDir;
+g_cocs_cycleDir = '';
 
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+g_cocs_dacName = '-';
+global g_cocs_floatWmoStr;
+g_cocs_floatWmoStr = num2str(g_cocs_floatNum);
+global g_cocs_cycleNumStr;
+g_cocs_cycleNumStr = '-';
+global g_cocs_inputFile;
+g_cocs_inputFile = '-';
 
 floatWmoStr = num2str(g_cocs_floatNum);
+
 
 % META data file
 metaFileName = [a_floatDir '/' floatWmoStr '_meta.nc'];
 if ~(exist(metaFileName, 'file') == 2)
    fprintf('ERROR: Float %d: META file not found: %s\n', g_cocs_floatNum, metaFileName);
+   
+   % CSV output
+   msgType = 'error';
+   message = 'File not found.';
+   [~, fileName, fileExt] = fileparts(metaFileName);
+   g_cocs_inputFile  = [fileName fileExt];
+   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
    return
 end
+
+% retrieve DATA_CENTRE from META file
+wantedVars = [ ...
+   {'DATA_CENTRE'} ...
+   ];
+[metaData] = get_data_from_nc_file(metaFileName, wantedVars);
+dataCentre = get_data_from_name('DATA_CENTRE', metaData);
+g_cocs_dacName = dataCentre(:, 1)';
 
 % create the list of available cycle numbers (from PROF files)
 profileDir = [a_floatDir '/profiles'];
@@ -315,6 +369,7 @@ cyNumList = unique(cyNumList);
 for idCy = 1:length(cyNumList)
    
    g_cocs_cycleNum = cyNumList(idCy);
+   g_cocs_cycleNumStr = num2str(g_cocs_cycleNum);
    
    createMultiProfFlag = 0;
    if (idCy == length(cyNumList))
@@ -450,17 +505,17 @@ end
 return
 
 % ------------------------------------------------------------------------------
-% Generate the output CSV file (from INFO/WARNING/ERROR messages of the log
-% file).
+% Get data from name in a {var_name}/{var_data} list.
 %
 % SYNTAX :
-%  generate_csv_file(a_logFileName, a_csvDirName)
+%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
 %
 % INPUT PARAMETERS :
-%   a_logFileName : log file path name of the run
-%   a_csvDirName  : directory of CSV files
+%   a_dataName : name of the data to retrieve
+%   a_dataList : {var_name}/{var_data} list
 %
 % OUTPUT PARAMETERS :
+%   o_dataValues : concerned data
 %
 % EXAMPLES :
 %
@@ -468,83 +523,89 @@ return
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/22/2020 - RNU - creation
+%   06/15/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function generate_csv_file(a_logFileName, a_csvDirName)
+function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
 
-% output CSV file name
-[~, logFileName, ~] = fileparts(a_logFileName);
-csvFileName = [a_csvDirName '/' logFileName '.csv'];
+% output parameters initialization
+o_dataValues = [];
 
-
-% create CSV file
-fidOut = fopen(csvFileName, 'wt');
-if (fidOut == -1)
-   fprintf('ERROR: Unable to create output file: %s\n', csvFileName);
-   return
+idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
+if (~isempty(idVal))
+   o_dataValues = a_dataList{2*idVal};
 end
 
-% put header
-header = 'MESSAGE TYPE;MESSAGE SOURCE;MESSAGE CONTENT';
-fprintf(fidOut, '%s\n', header);
+return
 
-if (~isempty(a_logFileName))
-   % read log file
-   fId = fopen(a_logFileName, 'r');
-   if (fId == -1)
-      sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
+% ------------------------------------------------------------------------------
+% Retrieve data from NetCDF file.
+%
+% SYNTAX :
+%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+%
+% INPUT PARAMETERS :
+%   a_ncPathFileName : NetCDF file name
+%   a_wantedVars     : NetCDF variables to retrieve from the file
+%
+% OUTPUT PARAMETERS :
+%   o_ncData : retrieved data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/15/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+
+% output parameters initialization
+o_ncData = [];
+
+% output CSV file information
+global g_cocs_fidCsvFile;
+global g_cocs_dacName;
+global g_cocs_floatWmoStr;
+global g_cocs_cycleNumStr;
+global g_cocs_cycleDir;
+global g_cocs_inputFile;
+
+
+if (exist(a_ncPathFileName, 'file') == 2)
+   
+   % open NetCDF file
+   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
+   if (isempty(fCdf))
+      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      
+      % CSV output
+      msgType = 'error';
+      message = 'Unable to open file.';
+      [~, fileName, fileExt] = fileparts(a_ncPathFileName);
+      g_cocs_inputFile  = [fileName fileExt];
+      fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+         g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+      
       return
    end
-   fileContents = textscan(fId, '%s', 'delimiter', '\n');
-   fclose(fId);
    
-   if (~isempty(fileContents) && ~isempty(fileContents{:}))
-      % retrieve wanted messages
-      fileContents = fileContents{:};
-      idLine = 1;
-      while (1)
-         line = fileContents{idLine};
-         msgType = '';
-         msgSource = '';
-         msg = '';
-         if (strncmp(line, 'INFO: ', length('INFO: ')))
-            msgType = 'INFO';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('INFO: ')+1:end);
-         elseif (strncmp(line, 'WARNING: ', length('WARNING: ')))
-            msgType = 'WARNING';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('WARNING: ')+1:end);
-         elseif (strncmp(line, 'ERROR: ', length('ERROR: ')))
-            msgType = 'ERROR';
-            msgSource = 'nc_create_synthetic_profile';
-            msg = line(length('ERROR: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_INFO: ', length('S-PROF_INFO: ')))
-            msgType = 'INFO';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_INFO: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_WARNING: ', length('S-PROF_WARNING: ')))
-            msgType = 'WARNING';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_WARNING: ')+1:end);
-         elseif (strncmp(line, 'S-PROF_ERROR: ', length('S-PROF_ERROR: ')))
-            msgType = 'ERROR';
-            msgSource = 'ARGO_simplified_profile';
-            msg = line(length('S-PROF_ERROR: ')+1:end);
-         end
-         
-         if (~isempty(msgType))
-            fprintf(fidOut, '%s;%s;%s\n', msgType, msgSource, msg);
-         end
-         
-         idLine = idLine + 1;
-         if (idLine > length(fileContents))
-            break
-         end
+   % retrieve variables from NetCDF file
+   for idVar = 1:length(a_wantedVars)
+      varName = a_wantedVars{idVar};
+      
+      if (var_is_present_dec_argo(fCdf, varName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+         o_ncData = [o_ncData {varName} {varValue}];
+      else
+         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
+         %             varName, a_ncPathFileName);
+         o_ncData = [o_ncData {varName} {' '}];
       end
+      
    end
+   
+   netcdf.close(fCdf);
 end
-
-fclose(fidOut);
 
 return
