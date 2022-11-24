@@ -596,7 +596,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
-      6900790, 6901880, 6903229, 6903795]))
+      6900790, 6901880, 6903229, 6903795, 6903703]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -707,7 +707,7 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(idF120) = tabRankByCycle(idRef120);
          tabRankByDate(idF120) = tabRankByDate(idRef120); 
       case 6903795
-         % cycle #57 data transmitted twice (float recovered)
+         % cycle #57 set EOL cmd => data transmitted twice (float recovered)
          idStart = find((tabCyNum == 57) & (tabEolFlag == 1) & (tabPackType == 0));
          idStart = idStart(1);
          idStop = find((tabCyNum == 57) & (tabDeep == 0) & (tabPackType == 0));
@@ -723,6 +723,15 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idType7(idF)) = -1;
          tabRankByCycle(idType7(idF)) = -1;
          tabRankByDate(idType7(idF)) = -1;
+      case 6903703
+         % cycle #114 set EOL cmd => data transmitted twice (float recovered)
+         idStart = find((tabCyNum == 114) & (tabEolFlag == 1) & (tabPackType == 0));
+         idStart = idStart(1);
+         idStop = find((tabCyNum == 114) & (tabDeep == 0) & (tabPackType == 0));
+         idStop = idStop(1) - 1;
+         tabRank(idStart:idStop) = -1;
+         tabRankByCycle(idStart:idStop) = -1;
+         tabRankByDate(idStart:idStop) = -1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
