@@ -185,6 +185,12 @@
 %                             Tests #9 and #11: DOXY tests should ignore
 %                             DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and
 %                             DOXY_ADJUSTED_QC = 4
+%   06/03/2021 - RNU - V 5.4: Updated to cope with version 3.5 of Argo Quality
+%                             Control Manual For CTD and Trajectory Data
+%                             - new test application order (tests 15 and 19 have
+%                             moved)
+%                             - a measurement with QC = '3' is tested by other
+%                             quality control tests
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -224,7 +230,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.3';
+g_decArgo_addRtqcToProfileVersion = '5.4';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1603,6 +1609,254 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 1: platform identification test
+%
+if (testFlagList(1) == 1)
+   % always Ok
+   testDoneList(1, :) = 1;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 2: impossible date test
+%
+if (testFlagList(2) == 1)
+   
+   % as JULD is a julian date we only need to check it is after 01/01/1997
+   % and before the current date
+   for idProf = 1:length(juld)
+      if (juld(idProf) ~= paramJuld.fillValue)
+         % initialize Qc flag
+         juldQc(idProf) = set_qc(juldQc(idProf), g_decArgo_qcStrGood);
+         testDoneList(2, idProf) = 1;
+         % apply the test
+         if ((juld(idProf) < janFirst1997InJulD) || ...
+               ((juld(idProf)+g_decArgo_janFirst1950InMatlab) > now_utc))
+            juldQc(idProf) = set_qc(juldQc(idProf), g_decArgo_qcStrBad);
+            testFailedList(2, idProf) = 1;
+         end
+      end
+      % we also check that JULD_LOCATION is after 01/01/1997 and before the
+      % current date
+      if (juldLocation(idProf) ~= paramJuld.fillValue)
+         % initialize Qc flag
+         positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
+         testDoneList(2, idProf) = 1;
+         % apply the test
+         if ((juldLocation(idProf) < janFirst1997InJulD) || ...
+               ((juld(idProf)+g_decArgo_janFirst1950InMatlab) > now_utc))
+            positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
+            testFailedList(2, idProf) = 1;
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 3: impossible location test
+%
+if (testFlagList(3) == 1)
+   
+   if (~isempty(latitude) && ~isempty(longitude))
+      for idProf = 1:length(juld)
+         if ((latitude(idProf) ~= paramLat.fillValue) && ...
+               (longitude(idProf) ~= paramLon.fillValue))
+            % initialize Qc flag
+            positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
+            testDoneList(3, idProf) = 1;
+            % apply the test
+            if ((latitude(idProf) > 90) || (latitude(idProf) < -90) || ...
+                  (longitude(idProf) > 180) || (longitude(idProf) < -180))
+               positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
+               testFailedList(3, idProf) = 1;
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 4: position on land test
+%
+if (testFlagList(4) == 1)
+   
+   % we check that the mean value of the elevations provided by the GEBCO
+   % bathymetric atlas is < 0 at the profile location
+   if (~isempty(latitude) && ~isempty(longitude))
+      for idProf = 1:length(juld)
+         if ((latitude(idProf) ~= paramLat.fillValue) && ...
+               (longitude(idProf) ~= paramLon.fillValue))
+            
+            [elev] = get_gebco_elev_point(longitude(idProf), latitude(idProf), gebcoPathFileName);
+            
+            if (~isempty(elev))
+               % initialize Qc flag
+               positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
+               testDoneList(4, idProf) = 1;
+               % apply the test
+               if (mean(mean(elev)) >= 0)
+                  if (positionQc(idProf) ~= g_decArgo_qcStrInterpolated)
+                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
+                  else
+                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrMissing);
+                     juldLocation(idProf) = paramJuld.fillValue;
+                     latitude(idProf) = paramLat.fillValue;
+                     longitude(idProf) = paramLon.fillValue;
+                  end
+                  testFailedList(4, idProf) = 1;
+               end
+            else
+               fprintf('RTQC_WARNING: TEST004: Float #%d Cycle #%d: Unable to retrieve GEBCO elevations at profile location - test #4 not performed\n', ...
+                  a_floatNum, cycleNumber(idProf));
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 5: impossible speed test
+%
+if (testFlagList(5) == 1)
+   
+   for idProf = 1:length(juld)
+      % the profile position should be in the trajectory data except when:
+      % POSITIONONG_SYSTEM = 'IRIDIUM' (in this case a POSITION_QC has been
+      % computed by the decoder), or
+      % POSITION_QC = '8', or
+      % POSITION_QC = '9'
+      if (~strcmp(strtrim(positioningSystem(idProf, :)), 'IRIDIUM') && ...
+            (positionQc(idProf) ~= g_decArgo_qcStrInterpolated) && ...
+            (positionQc(idProf) ~= g_decArgo_qcStrMissing))
+         cycleOffset = 0;
+         if (direction(idProf) == 'D')
+            cycleOffset = -1;
+         end
+         % look for the profile position in the trajectory data
+         idProfPosInTraj = find( ...
+            (g_rtqc_trajData.cycleNumber == cycleNumber(idProf)+cycleOffset) & ...
+            (g_rtqc_trajData.measurementCode == g_MC_Surface) & ...
+            ((g_rtqc_trajData.juld == juldLocation(idProf)) | (abs(g_rtqc_trajData.juldAdj - juldLocation(idProf)) < 1/86400)) & ...
+            (g_rtqc_trajData.latitude == latitude(idProf)) & ...
+            (g_rtqc_trajData.longitude == longitude(idProf)));
+         if (length(idProfPosInTraj) >= 1) % we can have multiple identical locations in the traj file (Ex: 6900750 #74)
+            [~, idMin] = min(g_rtqc_trajData.positionQc(idProfPosInTraj));
+            positionQc(idProf) = g_rtqc_trajData.positionQc(idProfPosInTraj(idMin));
+            if (positionQc(idProf) ~= g_decArgo_qcStrGood)
+               testFailedList(5, idProf) = 1;
+            end
+            testDoneList(5, idProf) = 1;
+         elseif (isempty(idProfPosInTraj))
+            fprintf('RTQC_INFO: TEST005: Float #%d Cycle #%d: Unable to retrieve profile location Qc from trajectory data - test #5 not performed\n', ...
+               a_floatNum, cycleNumber(idProf));
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 15: grey list test
+%
+if (testFlagList(15) == 1)
+   
+   for idProf = 1:length(juld)
+      if (juld(idProf) ~= paramJuld.fillValue)
+         
+         % read grey list file
+         fId = fopen(greyListPathFileName, 'r');
+         if (fId == -1)
+            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
+               a_floatNum, cycleNumber(idProf), greyListPathFileName);
+         else
+            fileContents = textscan(fId, '%s', 'delimiter', ',');
+            fclose(fId);
+            fileContents = fileContents{:};
+            if (rem(size(fileContents, 1), 7) ~= 0)
+               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
+                  a_floatNum, cycleNumber(idProf), greyListPathFileName);
+            else
+               
+               greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
+               
+               % retrieve information for the current float
+               idF = find(strcmp(num2str(a_floatNum), greyListInfo(:, 1)) == 1);
+               
+               % apply the grey list information
+               for id = 1:length(idF)
+                  for idD = 1:2
+                     if (idD == 1)
+                        % non adjusted data processing
+                        
+                        % set the name list
+                        ncParamXNameList = ncParamNameList;
+                        ncParamXDataList = ncParamDataList;
+                        ncParamXDataQcList = ncParamDataQcList;
+                        ncParamXFillValueList = ncParamFillValueList;
+                        
+                        % retrieve grey listed parameter name
+                        param = greyListInfo{idF(id), 2};
+                     else
+                        % adjusted data processing
+                        
+                        % set the name list
+                        ncParamXNameList = ncParamAdjNameList;
+                        ncParamXDataList = ncParamAdjDataList;
+                        ncParamXDataQcList = ncParamAdjDataQcList;
+                        ncParamXFillValueList = ncParamAdjFillValueList;
+                        
+                        % retrieve grey listed parameter adjusted name
+                        param = [greyListInfo{idF(id), 2} '_ADJUSTED'];
+                     end
+                     
+                     startDate = greyListInfo{idF(id), 3};
+                     endDate = greyListInfo{idF(id), 4};
+                     qcVal = greyListInfo{idF(id), 5};
+                     
+                     startDateJuld = datenum(startDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
+                     endDateJuld = '';
+                     if (~isempty(endDate))
+                        endDateJuld = datenum(endDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
+                     end
+                     
+                     if (((isempty(endDateJuld)) && (juld(idProf) >= startDateJuld)) || ...
+                           ((juld(idProf) >= startDateJuld) && (juld(idProf) <= endDateJuld)))
+                        
+                        idParam = find(strcmp(param, ncParamXNameList) == 1, 1);
+                        if (~isempty(idParam))
+                           paramData = dataStruct.(ncParamXDataList{idParam});
+                           paramDataQc = dataStruct.(ncParamXDataQcList{idParam});
+                           paramDataFillValue = ncParamXFillValueList{idParam};
+                           
+                           if (~isempty(paramData))
+                              if (ndims(paramData) == 2)
+                                 profParamData = paramData(idProf, :);
+                                 idNoDef = find(profParamData ~= paramDataFillValue);
+                              else
+                                 idNoDef = [];
+                                 for idL = 1: size(paramData, 2)
+                                    uParamDataL = unique(paramData(idProf, idL, :));
+                                    if ~((length(uParamDataL) == 1) && (uParamDataL == paramDataFillValue))
+                                       idNoDef = [idNoDef idL];
+                                    end
+                                 end
+                              end
+                              
+                              % apply the test
+                              paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), qcVal);
+                              dataStruct.(ncParamXDataQcList{idParam}) = paramDataQc;
+                              testFailedList(15, idProf) = 1;
+                           end
+                        end
+                     end
+                  end
+               end
+               testDoneList(15, idProf) = 1;
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 19: deepest pressure test
 %
 if (testFlagList(19) == 1)
@@ -1749,151 +2003,6 @@ if (testFlagList(19) == 1)
                   end
                end
             end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 1: platform identification test
-%
-if (testFlagList(1) == 1)
-   % always Ok
-   testDoneList(1, :) = 1;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 2: impossible date test
-%
-if (testFlagList(2) == 1)
-   
-   % as JULD is a julian date we only need to check it is after 01/01/1997
-   % and before the current date
-   for idProf = 1:length(juld)
-      if (juld(idProf) ~= paramJuld.fillValue)
-         % initialize Qc flag
-         juldQc(idProf) = set_qc(juldQc(idProf), g_decArgo_qcStrGood);
-         testDoneList(2, idProf) = 1;
-         % apply the test
-         if ((juld(idProf) < janFirst1997InJulD) || ...
-               ((juld(idProf)+g_decArgo_janFirst1950InMatlab) > now_utc))
-            juldQc(idProf) = set_qc(juldQc(idProf), g_decArgo_qcStrBad);
-            testFailedList(2, idProf) = 1;
-         end
-      end
-      % we also check that JULD_LOCATION is after 01/01/1997 and before the
-      % current date
-      if (juldLocation(idProf) ~= paramJuld.fillValue)
-         % initialize Qc flag
-         positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
-         testDoneList(2, idProf) = 1;
-         % apply the test
-         if ((juldLocation(idProf) < janFirst1997InJulD) || ...
-               ((juld(idProf)+g_decArgo_janFirst1950InMatlab) > now_utc))
-            positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
-            testFailedList(2, idProf) = 1;
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 3: impossible location test
-%
-if (testFlagList(3) == 1)
-   
-   if (~isempty(latitude) && ~isempty(longitude))
-      for idProf = 1:length(juld)
-         if ((latitude(idProf) ~= paramLat.fillValue) && ...
-               (longitude(idProf) ~= paramLon.fillValue))
-            % initialize Qc flag
-            positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
-            testDoneList(3, idProf) = 1;
-            % apply the test
-            if ((latitude(idProf) > 90) || (latitude(idProf) < -90) || ...
-                  (longitude(idProf) > 180) || (longitude(idProf) < -180))
-               positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
-               testFailedList(3, idProf) = 1;
-            end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 4: position on land test
-%
-if (testFlagList(4) == 1)
-   
-   % we check that the mean value of the elevations provided by the GEBCO
-   % bathymetric atlas is < 0 at the profile location
-   if (~isempty(latitude) && ~isempty(longitude))
-      for idProf = 1:length(juld)
-         if ((latitude(idProf) ~= paramLat.fillValue) && ...
-               (longitude(idProf) ~= paramLon.fillValue))
-            
-            [elev] = get_gebco_elev_point(longitude(idProf), latitude(idProf), gebcoPathFileName);
-            
-            if (~isempty(elev))
-               % initialize Qc flag
-               positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
-               testDoneList(4, idProf) = 1;
-               % apply the test
-               if (mean(mean(elev)) >= 0)
-                  if (positionQc(idProf) ~= g_decArgo_qcStrInterpolated)
-                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
-                  else
-                     positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrMissing);
-                     juldLocation(idProf) = paramJuld.fillValue;
-                     latitude(idProf) = paramLat.fillValue;
-                     longitude(idProf) = paramLon.fillValue;
-                  end
-                  testFailedList(4, idProf) = 1;
-               end
-            else
-               fprintf('RTQC_WARNING: TEST004: Float #%d Cycle #%d: Unable to retrieve GEBCO elevations at profile location - test #4 not performed\n', ...
-                  a_floatNum, cycleNumber(idProf));
-            end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 5: impossible speed test
-%
-if (testFlagList(5) == 1)
-   
-   for idProf = 1:length(juld)
-      % the profile position should be in the trajectory data except when:
-      % POSITIONONG_SYSTEM = 'IRIDIUM' (in this case a POSITION_QC has been
-      % computed by the decoder), or
-      % POSITION_QC = '8', or
-      % POSITION_QC = '9'
-      if (~strcmp(strtrim(positioningSystem(idProf, :)), 'IRIDIUM') && ...
-            (positionQc(idProf) ~= g_decArgo_qcStrInterpolated) && ...
-            (positionQc(idProf) ~= g_decArgo_qcStrMissing))
-         cycleOffset = 0;
-         if (direction(idProf) == 'D')
-            cycleOffset = -1;
-         end
-         % look for the profile position in the trajectory data
-         idProfPosInTraj = find( ...
-            (g_rtqc_trajData.cycleNumber == cycleNumber(idProf)+cycleOffset) & ...
-            (g_rtqc_trajData.measurementCode == g_MC_Surface) & ...
-            ((g_rtqc_trajData.juld == juldLocation(idProf)) | (abs(g_rtqc_trajData.juldAdj - juldLocation(idProf)) < 1/86400)) & ...
-            (g_rtqc_trajData.latitude == latitude(idProf)) & ...
-            (g_rtqc_trajData.longitude == longitude(idProf)));
-         if (length(idProfPosInTraj) >= 1) % we can have multiple identical locations in the traj file (Ex: 6900750 #74)
-            [~, idMin] = min(g_rtqc_trajData.positionQc(idProfPosInTraj));
-            positionQc(idProf) = g_rtqc_trajData.positionQc(idProfPosInTraj(idMin));
-            if (positionQc(idProf) ~= g_decArgo_qcStrGood)
-               testFailedList(5, idProf) = 1;
-            end
-            testDoneList(5, idProf) = 1;
-         elseif (isempty(idProfPosInTraj))
-            fprintf('RTQC_INFO: TEST005: Float #%d Cycle #%d: Unable to retrieve profile location Qc from trajectory data - test #5 not performed\n', ...
-               a_floatNum, cycleNumber(idProf));
          end
       end
    end
@@ -2674,16 +2783,13 @@ if (testFlagList(9) == 1)
                      profParamQc = paramDataQc(idProf, :);
                      if (~strncmp(paramName, 'DOXY', length('DOXY')))
                         idDefOrBad = find((profPres == presDataFillValue) | ...
-                           (profPresQc == g_decArgo_qcStrCorrectable) | ...
                            (profPresQc == g_decArgo_qcStrBad) | ...
                            (profParam == paramDataFillValue) | ...
-                           (profParamQc == g_decArgo_qcStrCorrectable) | ...
                            (profParamQc == g_decArgo_qcStrBad));
                      else
                         % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
                         if (idDM == 1)
                            idDefOrBad = find((profPres == presDataFillValue) | ...
-                              (profPresQc == g_decArgo_qcStrCorrectable) | ...
                               (profPresQc == g_decArgo_qcStrBad) | ...
                               (profParam == paramDataFillValue) | ...
                               (profParamQc == g_decArgo_qcStrBad));
@@ -2727,7 +2833,6 @@ if (testFlagList(9) == 1)
                   profParam = paramData(idProf, :);
                   profParamQc = paramDataQc(idProf, :);
                   idDefOrBad = find((profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
                      (profParamQc == g_decArgo_qcStrBad));
                   idDefOrBad = [0 idDefOrBad length(profParam)+1];
                   for idSlice = 1:length(idDefOrBad)-1
@@ -2758,7 +2863,6 @@ if (testFlagList(9) == 1)
                   profParam = paramData(idProf, :);
                   profParamQc = paramDataQc(idProf, :);
                   idDefOrBad = find((profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
                      (profParamQc == g_decArgo_qcStrBad));
                   idDefOrBad = [0 idDefOrBad length(profParam)+1];
                   for idSlice = 1:length(idDefOrBad)-1
@@ -2853,6 +2957,8 @@ if (testFlagList(9) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OBSOLETE REPLACED BY TEST 25
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 11: gradient test
 %
 if (testFlagList(11) == 1)
@@ -2906,7 +3012,6 @@ if (testFlagList(11) == 1)
                % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
                if (idDM == 1)
                   idDefOrBad = find((profPres == presDataFillValue) | ...
-                     (profPresQc == g_decArgo_qcStrCorrectable) | ...
                      (profPresQc == g_decArgo_qcStrBad) | ...
                      (profParam == paramDataFillValue) | ...
                      (profParamQc == g_decArgo_qcStrBad));
@@ -3177,7 +3282,6 @@ if (testFlagList(12) == 1)
                profParam = paramData(idProf, :);
                profParamQc = paramDataQc(idProf, :);
                idDefOrBad = find((profParam == paramDataFillValue) | ...
-                  (profParamQc == g_decArgo_qcStrCorrectable) | ...
                   (profParamQc == g_decArgo_qcStrBad));
                idDefOrBad = [0 idDefOrBad length(profParam)+1];
                for idSlice = 1:length(idDefOrBad)-1
@@ -3376,13 +3480,10 @@ if (testFlagList(14) == 1)
                      testDoneListForTraj{14, idProf} = [testDoneListForTraj{14, idProf} idNoDefPsal];
                      
                      idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                        (profPresQc ~= g_decArgo_qcStrCorrectable) & ...
                         (profPresQc ~= g_decArgo_qcStrBad) & ...
                         (profTemp ~= tempDataFillValue) & ...
-                        (profTempQc ~= g_decArgo_qcStrCorrectable) & ...
                         (profTempQc ~= g_decArgo_qcStrBad) & ...
                         (profPsal ~= psalDataFillValue) & ...
-                        (profPsalQc ~= g_decArgo_qcStrCorrectable) & ...
                         (profPsalQc ~= g_decArgo_qcStrBad));
                      profPres = profPres(idNoDefAndGood);
                      profTemp = profTemp(idNoDefAndGood);
@@ -3434,109 +3535,6 @@ if (testFlagList(14) == 1)
                      end
                   end
                end
-            end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 15: grey list test
-%
-if (testFlagList(15) == 1)
-   
-   for idProf = 1:length(juld)
-      if (juld(idProf) ~= paramJuld.fillValue)
-         
-         % read grey list file
-         fId = fopen(greyListPathFileName, 'r');
-         if (fId == -1)
-            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
-               a_floatNum, cycleNumber(idProf), greyListPathFileName);
-         else
-            fileContents = textscan(fId, '%s', 'delimiter', ',');
-            fclose(fId);
-            fileContents = fileContents{:};
-            if (rem(size(fileContents, 1), 7) ~= 0)
-               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
-                  a_floatNum, cycleNumber(idProf), greyListPathFileName);
-            else
-               
-               greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
-               
-               % retrieve information for the current float
-               idF = find(strcmp(num2str(a_floatNum), greyListInfo(:, 1)) == 1);
-               
-               % apply the grey list information
-               for id = 1:length(idF)
-                  for idD = 1:2
-                     if (idD == 1)
-                        % non adjusted data processing
-                        
-                        % set the name list
-                        ncParamXNameList = ncParamNameList;
-                        ncParamXDataList = ncParamDataList;
-                        ncParamXDataQcList = ncParamDataQcList;
-                        ncParamXFillValueList = ncParamFillValueList;
-                        
-                        % retrieve grey listed parameter name
-                        param = greyListInfo{idF(id), 2};
-                     else
-                        % adjusted data processing
-                        
-                        % set the name list
-                        ncParamXNameList = ncParamAdjNameList;
-                        ncParamXDataList = ncParamAdjDataList;
-                        ncParamXDataQcList = ncParamAdjDataQcList;
-                        ncParamXFillValueList = ncParamAdjFillValueList;
-                        
-                        % retrieve grey listed parameter adjusted name
-                        param = [greyListInfo{idF(id), 2} '_ADJUSTED'];
-                     end
-                     
-                     startDate = greyListInfo{idF(id), 3};
-                     endDate = greyListInfo{idF(id), 4};
-                     qcVal = greyListInfo{idF(id), 5};
-                     
-                     startDateJuld = datenum(startDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
-                     endDateJuld = '';
-                     if (~isempty(endDate))
-                        endDateJuld = datenum(endDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
-                     end
-                     
-                     if (((isempty(endDateJuld)) && (juld(idProf) >= startDateJuld)) || ...
-                           ((juld(idProf) >= startDateJuld) && (juld(idProf) <= endDateJuld)))
-                        
-                        idParam = find(strcmp(param, ncParamXNameList) == 1, 1);
-                        if (~isempty(idParam))
-                           paramData = dataStruct.(ncParamXDataList{idParam});
-                           paramDataQc = dataStruct.(ncParamXDataQcList{idParam});
-                           paramDataFillValue = ncParamXFillValueList{idParam};
-                           
-                           if (~isempty(paramData))
-                              if (ndims(paramData) == 2)
-                                 profParamData = paramData(idProf, :);
-                                 idNoDef = find(profParamData ~= paramDataFillValue);
-                              else
-                                 idNoDef = [];
-                                 for idL = 1: size(paramData, 2)
-                                    uParamDataL = unique(paramData(idProf, idL, :));
-                                    if ~((length(uParamDataL) == 1) && (uParamDataL == paramDataFillValue))
-                                       idNoDef = [idNoDef idL];
-                                    end
-                                 end
-                              end
-                              
-                              % apply the test
-                              paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), qcVal);
-                              dataStruct.(ncParamXDataQcList{idParam}) = paramDataQc;
-                              testFailedList(15, idProf) = 1;
-                           end
-                        end
-                     end
-                  end
-               end
-               testDoneList(15, idProf) = 1;
             end
          end
       end
@@ -3884,10 +3882,8 @@ if (testFlagList(18) == 1)
                      profParamQc = paramDataQc(idFPrevProf, :);
                      
                      idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                        (profPresQc ~= g_decArgo_qcStrCorrectable) & ...
                         (profPresQc ~= g_decArgo_qcStrBad) & ...
                         (profParam ~= paramDataFillValue) & ...
-                        (profParamQc ~= g_decArgo_qcStrCorrectable) & ...
                         (profParamQc ~= g_decArgo_qcStrBad));
                      profPres = profPres(idNoDefAndGood);
                      profParam = profParam(idNoDefAndGood);
@@ -5529,14 +5525,6 @@ global g_decArgo_addRtqcToProfileVersion;
 
 % QC flag values
 global g_decArgo_qcStrDef;           % ' '
-global g_decArgo_qcStrNoQc;          % '0'
-global g_decArgo_qcStrGood;          % '1'
-global g_decArgo_qcStrProbablyGood;  % '2'
-global g_decArgo_qcStrCorrectable;   % '3'
-global g_decArgo_qcStrBad;           % '4'
-global g_decArgo_qcStrChanged;       % '5'
-global g_decArgo_qcStrInterpolated;  % '8'
-global g_decArgo_qcStrMissing;       % '9'
 
 
 % date of the file update

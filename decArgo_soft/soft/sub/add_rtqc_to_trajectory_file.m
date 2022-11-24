@@ -105,6 +105,12 @@
 %                             Quality Control Manual:
 %                              - Test 6: Global range test modified (for PRES).
 %   06/19/2020 - RNU - V 2.9: TEST #57: set DOXY_QC = '3'
+%   06/03/2021 - RNU - V 3.0: Updated to cope with version 3.5 of Argo Quality
+%                             Control Manual For CTD and Trajectory Data
+%                             - new test application order (tests 6 and 7 have
+%                             moved)
+%                             - a measurement with QC = '3' is tested by other
+%                             quality control tests
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -143,7 +149,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.9';
+g_decArgo_addRtqcToTrajVersion = '3.0';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -986,6 +992,243 @@ if (a_partialRtqcFlag == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 15: grey list test
+%
+if (testFlagList(15) == 1)
+   
+   % read grey list file
+   fId = fopen(greyListPathFileName, 'r');
+   if (fId == -1)
+      fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
+         a_floatNum, greyListPathFileName);
+   else
+      fileContents = textscan(fId, '%s', 'delimiter', ',');
+      fclose(fId);
+      fileContents = fileContents{:};
+      if (rem(size(fileContents, 1), 7) ~= 0)
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
+            a_floatNum, greyListPathFileName);
+      else
+         
+         greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
+         
+         % retrieve information for the current float
+         idF = find(strcmp(num2str(a_floatNum), greyListInfo(:, 1)) == 1);
+         
+         % apply the grey list information
+         for id = 1:length(idF)
+            
+            startDate = greyListInfo{idF(id), 3};
+            endDate = greyListInfo{idF(id), 4};
+            qcVal = greyListInfo{idF(id), 5};
+            
+            startDateJuld = datenum(startDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
+            endDateJuld = '';
+            if (~isempty(endDate))
+               endDateJuld = datenum(endDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
+            end
+            
+            for idD = 1:2
+               if (idD == 1)
+                  % non adjusted data processing
+                  
+                  % set the name list
+                  ncTrajParamXNameList = ncTrajParamNameList;
+                  ncTrajParamXDataList = ncTrajParamDataList;
+                  ncTrajParamXDataQcList = ncTrajParamDataQcList;
+                  ncTrajParamXFillValueList = ncTrajParamFillValueList;
+                  juldX = juld;
+                  juldXQc = juldQc;
+                  
+                  % retrieve grey listed parameter name
+                  param = greyListInfo{idF(id), 2};
+               else
+                  % adjusted data processing
+                  
+                  % set the name list
+                  ncTrajParamXNameList = ncTrajParamAdjNameList;
+                  ncTrajParamXDataList = ncTrajParamAdjDataList;
+                  ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+                  ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+                  juldX = juldAdj;
+                  juldXQc = juldAdjQc;
+
+                  % retrieve grey listed parameter adjusted name
+                  param = [greyListInfo{idF(id), 2} '_ADJUSTED'];
+               end
+               
+               cyclelist = [];
+               idFirstMeas = find( ...
+                  ((juldXQc == g_decArgo_qcStrGood)' | ...
+                  (juldXQc == g_decArgo_qcStrProbablyGood)') & ...
+                  (juldX >= startDateJuld));
+               if (~isempty(idFirstMeas))
+                  idFirstMeas = idFirstMeas(1);
+                  firstCycle = cycleNumber(idFirstMeas);
+                  
+                  lastCycle = [];
+                  if (~isempty(endDateJuld))
+                     idLastMeas = find( ...
+                        ((juldXQc == g_decArgo_qcStrGood)' | ...
+                        (juldXQc == g_decArgo_qcStrProbablyGood)') & ...
+                        (juldX <= endDateJuld));
+                     if (~isempty(idLastMeas))
+                        idLastMeas = idLastMeas(end);
+                        lastCycle = cycleNumber(idLastMeas);
+                     end
+                  end
+                  
+                  if (isempty(lastCycle))
+                     cyclelist = [firstCycle:max(cycleNumber)];
+                  else
+                     cyclelist = [firstCycle:lastCycle];
+                  end
+               end
+               if (~isempty(cyclelist))
+                  idParam = find(strcmp(param, ncTrajParamXNameList) == 1, 1);
+                  if (~isempty(idParam))
+                     data = eval(ncTrajParamXDataList{idParam});
+                     dataQc = eval(ncTrajParamXDataQcList{idParam});
+                     paramFillValue = ncTrajParamXFillValueList{idParam};
+                     
+                     idMeas = find( ...
+                        (data ~= paramFillValue) & ...
+                        ismember(cycleNumber, cyclelist));
+                     
+                     % apply the test
+                     dataQc(idMeas) = set_qc(dataQc(idMeas), qcVal);
+                     eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
+                     
+                     testDoneList(15) = 1;
+                     testFailedList(15) = 1;
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 21: near-surface unpumped CTD salinity test
+%
+if (testFlagList(21) == 1)
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      if (idD == 1)
+         % non adjusted data processing
+         
+         % set the name list
+         ncTrajParamXNameList = ncTrajParamNameList;
+         ncTrajParamXDataList = ncTrajParamDataList;
+         ncTrajParamXDataQcList = ncTrajParamDataQcList;
+         ncTrajParamXFillValueList = ncTrajParamFillValueList;
+         
+         idPsal = find(strcmp('PSAL', ncTrajParamXNameList) == 1, 1);
+      else
+         % adjusted data processing
+         
+         % set the name list
+         ncTrajParamXNameList = ncTrajParamAdjNameList;
+         ncTrajParamXDataList = ncTrajParamAdjDataList;
+         ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+         ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+         
+         idPsal = find(strcmp('PSAL_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+      end
+      
+      if (~isempty(idPsal))
+         
+         data = eval(ncTrajParamXDataList{idPsal});
+         dataQc = eval(ncTrajParamXDataQcList{idPsal});
+         paramFillValue = ncTrajParamXFillValueList{idPsal};
+         idMeas = find( ...
+            (data ~= paramFillValue) & ...
+            ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+            (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
+         
+         % apply the test
+         dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
+         eval([ncTrajParamXDataQcList{idPsal} ' = dataQc;']);
+         
+         testDoneList(21) = 1;
+         testFailedList(21) = 1;
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 22: near-surface mixed air/water test
+%
+if (testFlagList(22) == 1)
+   
+   % list of parameters concerned by this test
+   test22ParameterList = [ ...
+      {'TEMP'} ...
+      {'TEMP2'} ...
+      {'TEMP_DOXY'} ...
+      {'TEMP_DOXY2'} ...
+      ];   
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      for idParam = 1:length(test22ParameterList)
+         paramName = test22ParameterList{idParam};
+         if (idD == 2)
+            paramName = [paramName '_ADJUSTED'];
+         end
+         
+         if (idD == 1)
+            % non adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamNameList;
+            ncTrajParamXDataList = ncTrajParamDataList;
+            ncTrajParamXDataQcList = ncTrajParamDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamFillValueList;
+            
+            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+         else
+            % adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamAdjNameList;
+            ncTrajParamXDataList = ncTrajParamAdjDataList;
+            ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+            
+            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+         end
+      
+         if (~isempty(idTemp))
+            
+            data = eval(ncTrajParamXDataList{idTemp});
+            dataQc = eval(ncTrajParamXDataQcList{idTemp});
+            paramFillValue = ncTrajParamXFillValueList{idTemp};
+            idMeas = find( ...
+               (data ~= paramFillValue) & ...
+               ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+               (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+               (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
+            
+            % apply the test
+            dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
+            eval([ncTrajParamXDataQcList{idTemp} ' = dataQc;']);
+            
+            testDoneList(22) = 1;
+            testFailedList(22) = 1;
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 6: global range test
 %
 if (testFlagList(6) == 1)
@@ -1413,243 +1656,6 @@ if (testFlagList(7) == 1)
                end
             end
             testDoneList(7) = 1;
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 15: grey list test
-%
-if (testFlagList(15) == 1)
-   
-   % read grey list file
-   fId = fopen(greyListPathFileName, 'r');
-   if (fId == -1)
-      fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
-         a_floatNum, greyListPathFileName);
-   else
-      fileContents = textscan(fId, '%s', 'delimiter', ',');
-      fclose(fId);
-      fileContents = fileContents{:};
-      if (rem(size(fileContents, 1), 7) ~= 0)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
-            a_floatNum, greyListPathFileName);
-      else
-         
-         greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
-         
-         % retrieve information for the current float
-         idF = find(strcmp(num2str(a_floatNum), greyListInfo(:, 1)) == 1);
-         
-         % apply the grey list information
-         for id = 1:length(idF)
-            
-            startDate = greyListInfo{idF(id), 3};
-            endDate = greyListInfo{idF(id), 4};
-            qcVal = greyListInfo{idF(id), 5};
-            
-            startDateJuld = datenum(startDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
-            endDateJuld = '';
-            if (~isempty(endDate))
-               endDateJuld = datenum(endDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
-            end
-            
-            for idD = 1:2
-               if (idD == 1)
-                  % non adjusted data processing
-                  
-                  % set the name list
-                  ncTrajParamXNameList = ncTrajParamNameList;
-                  ncTrajParamXDataList = ncTrajParamDataList;
-                  ncTrajParamXDataQcList = ncTrajParamDataQcList;
-                  ncTrajParamXFillValueList = ncTrajParamFillValueList;
-                  juldX = juld;
-                  juldXQc = juldQc;
-                  
-                  % retrieve grey listed parameter name
-                  param = greyListInfo{idF(id), 2};
-               else
-                  % adjusted data processing
-                  
-                  % set the name list
-                  ncTrajParamXNameList = ncTrajParamAdjNameList;
-                  ncTrajParamXDataList = ncTrajParamAdjDataList;
-                  ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
-                  ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
-                  juldX = juldAdj;
-                  juldXQc = juldAdjQc;
-
-                  % retrieve grey listed parameter adjusted name
-                  param = [greyListInfo{idF(id), 2} '_ADJUSTED'];
-               end
-               
-               cyclelist = [];
-               idFirstMeas = find( ...
-                  ((juldXQc == g_decArgo_qcStrGood)' | ...
-                  (juldXQc == g_decArgo_qcStrProbablyGood)') & ...
-                  (juldX >= startDateJuld));
-               if (~isempty(idFirstMeas))
-                  idFirstMeas = idFirstMeas(1);
-                  firstCycle = cycleNumber(idFirstMeas);
-                  
-                  lastCycle = [];
-                  if (~isempty(endDateJuld))
-                     idLastMeas = find( ...
-                        ((juldXQc == g_decArgo_qcStrGood)' | ...
-                        (juldXQc == g_decArgo_qcStrProbablyGood)') & ...
-                        (juldX <= endDateJuld));
-                     if (~isempty(idLastMeas))
-                        idLastMeas = idLastMeas(end);
-                        lastCycle = cycleNumber(idLastMeas);
-                     end
-                  end
-                  
-                  if (isempty(lastCycle))
-                     cyclelist = [firstCycle:max(cycleNumber)];
-                  else
-                     cyclelist = [firstCycle:lastCycle];
-                  end
-               end
-               if (~isempty(cyclelist))
-                  idParam = find(strcmp(param, ncTrajParamXNameList) == 1, 1);
-                  if (~isempty(idParam))
-                     data = eval(ncTrajParamXDataList{idParam});
-                     dataQc = eval(ncTrajParamXDataQcList{idParam});
-                     paramFillValue = ncTrajParamXFillValueList{idParam};
-                     
-                     idMeas = find( ...
-                        (data ~= paramFillValue) & ...
-                        ismember(cycleNumber, cyclelist));
-                     
-                     % apply the test
-                     dataQc(idMeas) = set_qc(dataQc(idMeas), qcVal);
-                     eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
-                     
-                     testDoneList(15) = 1;
-                     testFailedList(15) = 1;
-                  end
-               end
-            end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 21: near-surface unpumped CTD salinity test
-%
-if (testFlagList(21) == 1)
-   
-   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
-   for idD = 1:2
-      if (idD == 1)
-         % non adjusted data processing
-         
-         % set the name list
-         ncTrajParamXNameList = ncTrajParamNameList;
-         ncTrajParamXDataList = ncTrajParamDataList;
-         ncTrajParamXDataQcList = ncTrajParamDataQcList;
-         ncTrajParamXFillValueList = ncTrajParamFillValueList;
-         
-         idPsal = find(strcmp('PSAL', ncTrajParamXNameList) == 1, 1);
-      else
-         % adjusted data processing
-         
-         % set the name list
-         ncTrajParamXNameList = ncTrajParamAdjNameList;
-         ncTrajParamXDataList = ncTrajParamAdjDataList;
-         ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
-         ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
-         
-         idPsal = find(strcmp('PSAL_ADJUSTED', ncTrajParamXNameList) == 1, 1);
-      end
-      
-      if (~isempty(idPsal))
-         
-         data = eval(ncTrajParamXDataList{idPsal});
-         dataQc = eval(ncTrajParamXDataQcList{idPsal});
-         paramFillValue = ncTrajParamXFillValueList{idPsal};
-         idMeas = find( ...
-            (data ~= paramFillValue) & ...
-            ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
-            (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
-            (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-            (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-            (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
-         
-         % apply the test
-         dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
-         eval([ncTrajParamXDataQcList{idPsal} ' = dataQc;']);
-         
-         testDoneList(21) = 1;
-         testFailedList(21) = 1;
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 22: near-surface mixed air/water test
-%
-if (testFlagList(22) == 1)
-   
-   % list of parameters concerned by this test
-   test22ParameterList = [ ...
-      {'TEMP'} ...
-      {'TEMP2'} ...
-      {'TEMP_DOXY'} ...
-      {'TEMP_DOXY2'} ...
-      ];   
-   
-   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
-   for idD = 1:2
-      for idParam = 1:length(test22ParameterList)
-         paramName = test22ParameterList{idParam};
-         if (idD == 2)
-            paramName = [paramName '_ADJUSTED'];
-         end
-         
-         if (idD == 1)
-            % non adjusted data processing
-            
-            % set the name list
-            ncTrajParamXNameList = ncTrajParamNameList;
-            ncTrajParamXDataList = ncTrajParamDataList;
-            ncTrajParamXDataQcList = ncTrajParamDataQcList;
-            ncTrajParamXFillValueList = ncTrajParamFillValueList;
-            
-            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
-         else
-            % adjusted data processing
-            
-            % set the name list
-            ncTrajParamXNameList = ncTrajParamAdjNameList;
-            ncTrajParamXDataList = ncTrajParamAdjDataList;
-            ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
-            ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
-            
-            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
-         end
-      
-         if (~isempty(idTemp))
-            
-            data = eval(ncTrajParamXDataList{idTemp});
-            dataQc = eval(ncTrajParamXDataQcList{idTemp});
-            paramFillValue = ncTrajParamXFillValueList{idTemp};
-            idMeas = find( ...
-               (data ~= paramFillValue) & ...
-               ((measurementCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST) | ...
-               (measurementCode == g_MC_InAirSingleMeasRelativeToTST) | ...
-               (measurementCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-               (measurementCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-               (measurementCode == g_MC_InAirSingleMeasRelativeToTET)));
-            
-            % apply the test
-            dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
-            eval([ncTrajParamXDataQcList{idTemp} ' = dataQc;']);
-            
-            testDoneList(22) = 1;
-            testFailedList(22) = 1;
          end
       end
    end

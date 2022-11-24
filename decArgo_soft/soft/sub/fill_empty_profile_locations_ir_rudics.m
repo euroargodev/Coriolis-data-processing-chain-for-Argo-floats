@@ -203,6 +203,7 @@ global g_MC_Surface;
 global g_MC_LMT;
 
 % global default values
+global g_decArgo_ncDateDef;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
@@ -268,10 +269,10 @@ if (a_profStruct.date == g_decArgo_dateDef)
          tabMeas = a_tabTrajNMeas(idF(id)).tabMeas;
          idF2 = find([tabMeas.measCode] == g_MC_AET);
          if (~isempty(idF2))
-            if (~isempty(tabMeas(idF2).juldAdj))
+            if (~isempty(tabMeas(idF2).juldAdj) && (tabMeas(idF2).juldAdj ~= g_decArgo_ncDateDef))
                ascentEndDate = tabMeas(idF2).juldAdj;
                break
-            elseif (~isempty(tabMeas(idF2).juld))
+            elseif (~isempty(tabMeas(idF2).juld) && (tabMeas(idF2).juld ~= g_decArgo_ncDateDef))
                ascentEndDate = tabMeas(idF2).juld;
                break
             end
@@ -374,12 +375,22 @@ if (a_profStruct.date == g_decArgo_dateDef)
          (profNumList == a_profStruct.profileNumber));
       % anomaly management (we should have one idF at most but in case of anomaly,
       % we can have more than one, we then use the first one with the appropriate
-      % date)
+      % date except when the first ones are of the prelude, in that case we
+      % should choose the last one)
       juldFirstMessage = '';
-      for id = 1:length(idF)
-         if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
-            juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
-            break
+      if ((a_profStruct.cycleNumber == 0) && (a_profStruct.profileNumber == 0))
+         for id = length(idF):-1:1
+            if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
+               juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
+               break
+            end
+         end
+      else
+         for id = 1:length(idF)
+            if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
+               juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
+               break
+            end
          end
       end
       if (~isempty(juldFirstMessage))
@@ -394,12 +405,22 @@ if (a_profStruct.date == g_decArgo_dateDef)
             (profNumList == a_profStruct.profileNumber-1));
          % anomaly management (we should have one idF at most but in case of anomaly,
          % we can have more than one, we then use the first one with the appropriate
-         % date)
+         % date except when the first ones are of the prelude, in that case we
+         % should choose the last one)
          juldFirstMessage = '';
-         for id = 1:length(idF)
-            if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
-               juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
-               break
+         if ((a_profStruct.cycleNumber == 0) && (a_profStruct.profileNumber == 0))
+            for id = length(idF):-1:1
+               if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
+                  juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
+                  break
+               end
+            end
+         else
+            for id = 1:length(idF)
+               if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
+                  juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
+                  break
+               end
             end
          end
          if (~isempty(juldFirstMessage))
