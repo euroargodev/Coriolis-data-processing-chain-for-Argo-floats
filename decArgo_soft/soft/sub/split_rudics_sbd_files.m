@@ -25,8 +25,10 @@ global g_decArgo_janFirst1950InMatlab;
 
 
 % process the SBD files of the input directory
-sbdFiles = dir([a_inputDirName '/*.b*.sbd']);
-fprintf('%d SBD files to split\n', length(sbdFiles));
+sbdFiles = [dir([a_inputDirName '/*.b64']); ...
+   dir([a_inputDirName '/*.bin'])];
+
+fprintf('%d input files to split\n', length(sbdFiles));
 for idFile = 1:length(sbdFiles)
    
    sbdFileName = sbdFiles(idFile).name;
@@ -39,32 +41,40 @@ for idFile = 1:length(sbdFiles)
    sbdFileDate = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
    sbdFileSize = sbdFiles(idFile).bytes;
    
-   if (sbdFileSize > 0)
-      
-      if (rem(sbdFileSize, 140) == 0)
-         
-         fId = fopen(sbdFilePathName, 'r');
-         if (fId == -1)
-            fprintf('ERROR: Error while opening file : %s\n', ...
-               sbdFilePathName);
-         end
-         
-         [sbdData, ~] = fread(fId);
-         
-         fclose(fId);
-         
-         sbdData = reshape(sbdData, 140, size(sbdData, 1)/140)';
-         for idMsg = 1:size(sbdData, 1)
-            data = sbdData(idMsg, :);
-            if ~(isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1)))
-               save_mono_packet_sbd_files(data, sbdFileDate, loginNameFile, a_outputDirName, cyNumFile);
-            end
-         end
-      else
-         fprintf('DEC_WARNING: SBD file ignored because of unexpected size (%d bytes)  : %s\n', ...
-            sbdFileSize, ...
+   fId = fopen(sbdFilePathName, 'r');
+   if (fId == -1)
+      fprintf('ERROR: Error while opening file : %s\n', ...
+         sbdFilePathName);
+   end
+   sbdData = fread(fId);
+   fclose(fId);
+   
+   if (strcmp(sbdFileName(end-3:end), '.b64'))
+      idZ = find(sbdData == 0, 1, 'first');
+      if (any(sbdData(idZ:end) ~= 0))
+         fprintf('ERROR: Inconsistent data in file : %s\n', ...
             sbdFilePathName);
+         continue;
       end
+      sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
+   elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+      if (length(sbdData) == 1024)
+         sbdData = sbdData(1:980);
+      end
+   end
+   
+   if (rem(length(sbdData), 140) == 0)
+      sbdData = reshape(sbdData, 140, length(sbdData)/140)';
+      for idMsg = 1:size(sbdData, 1)
+         data = sbdData(idMsg, :);
+         if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
+            save_mono_packet_sbd_files(data, sbdFileDate, loginNameFile, a_outputDirName, cyNumFile);
+         end
+      end
+   else
+      fprintf('DEC_WARNING: input file ignored because of unexpected size (%d bytes)  : %s\n', ...
+         length(sbdData), ...
+         sbdFilePathName);
    end
 end
 

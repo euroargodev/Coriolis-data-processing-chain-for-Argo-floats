@@ -70,7 +70,6 @@ for idFile = 1:length(fileNameList)
          end
       end
    elseif (strcmp(a_listName, 'buffer'))
-      fileName = [fileName(1:end-4) '.sbd'];
       idF = find(strcmp(fileName, g_decArgo_bufFileList));
       if (length(idF) == 1)
          g_decArgo_bufFileList(idF) = [];

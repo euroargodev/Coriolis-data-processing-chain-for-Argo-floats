@@ -69,10 +69,11 @@ for idFile = 1:length(sbdFileList)
    sbdFile = sbdFileList{idFile};
    sbdFiles = dir([g_decArgo_archiveDirectory '/' sbdFile]);
    sbdFileName = sbdFiles(1).name;
-   sbdFileDate = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
+   idFUs = strfind(sbdFileName, '_');
+   sbdFileDate = datenum(sbdFileName(1:idFUs(2)-1), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
    
    o_fileName{end+1} = sbdFileName;
-   o_fileCycle(end+1) = str2num(sbdFileName(end-12:end-8));
+   o_fileCycle(end+1) = str2double(sbdFileName(idFUs(end)+1:end-4));
    o_fileDate(end+1) = sbdFileDate;
    o_fileSize(end+1) = sbdFiles(1).bytes;
 end

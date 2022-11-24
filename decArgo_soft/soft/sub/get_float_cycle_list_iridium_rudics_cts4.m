@@ -42,31 +42,42 @@ end
 
 existingCycles = [];
 if (g_decArgo_realtimeFlag == 0)
-   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/archive/' sprintf('*_%s_*.b*.sbd', a_floatLoginName)]);
+   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/archive/' sprintf('*_%s_*', a_floatLoginName)]);
    for idFile = 1:length(sbdFiles)
       sbdFileName = sbdFiles(idFile).name;
-      if (~isempty(strfind(sbdFileName, '.b64.sbd')))
-         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64.sbd');
-      else
-         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin.sbd');
+      errmsg = 'error';
+      if (strcmp(sbdFileName(end-3:end), '.b64'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
+      elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
       end
       if (isempty(errmsg))
          existingCycles = [existingCycles; id(end)];
       end
    end
 else
-   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/spool/' sprintf('*_%s_*.b*.sbd', a_floatLoginName)]);
+   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/spool/' sprintf('*_%s_*', a_floatLoginName)]);
    for idFile = 1:length(sbdFiles)
       sbdFileName = sbdFiles(idFile).name;
-      [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b*.sbd');
+      errmsg = 'error';
+      if (strcmp(sbdFileName(end-3:end), '.b64'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
+      elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
+      end
       if (isempty(errmsg))
          existingCycles = [existingCycles; id(end)];
       end
    end
-   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/buffer/' sprintf('*_%s_*.b*.sbd', a_floatLoginName)]);
+   sbdFiles = dir([iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/buffer/' sprintf('*_%s_*', a_floatLoginName)]);
    for idFile = 1:length(sbdFiles)
       sbdFileName = sbdFiles(idFile).name;
-      [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b*.sbd');
+      errmsg = 'error';
+      if (strcmp(sbdFileName(end-3:end), '.b64'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
+      elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+         [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
+      end
       if (isempty(errmsg))
          existingCycles = [existingCycles; id(end)];
       end

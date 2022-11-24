@@ -27,10 +27,10 @@ o_cyNumList = [];
 % process the file names
 for idFile = 1:length(a_fileNameleList)
    fileName = a_fileNameleList{idFile};
-   if (~isempty(strfind(fileName, '.b64.sbd')))
-      [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.b64.sbd');
+   if (strcmp(fileName(end-3:end), '.b64'))
+      [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.b64');
    else
-      [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.bin.sbd');
+      [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.bin');
    end
    if (isempty(errmsg))
       o_cyNumList(end+1) = id(end);

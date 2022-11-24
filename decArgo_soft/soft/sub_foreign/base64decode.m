@@ -44,13 +44,13 @@ if nargin<3, alg='java';  end
 if nargin<2, outfname=''; end
 
 %% if x happen to be a filename than read the file
-if (numel(x)<256)
-   if (exist(x, 'file') == 2)
-      fid = fopen(x,'rb');
-      x = fread(fid, 'uint8');
-      fclose(fid);
-   end
-end
+% if (numel(x)<256)
+%    if (exist(x, 'file') == 2)
+%       fid = fopen(x,'rb');
+%       x = fread(fid, 'uint8');
+%       fclose(fid);
+%    end
+% end
 x = uint8(x(:)); % unify format
 
 %% Perform conversion

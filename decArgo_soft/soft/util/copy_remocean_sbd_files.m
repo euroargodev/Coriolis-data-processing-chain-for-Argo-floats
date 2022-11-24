@@ -100,21 +100,15 @@ for idFloat = 1:nbFloats
       mkdir(floatOutputDirName);
    end
    
-   if (floatDecId ~= 111)
-      sbdFile = dir([inputDirName '/' logName '/' sprintf('*_%s_*.b*.sbd', logName)]);
-   else
-      sbdFile = dir([inputDirName '/' logName '/' sprintf('*_%s_*.bin', logName)]);
-   end
+   sbdFile = [dir([inputDirName '/' logName '/' sprintf('*_%s_*.b64', logName)]); ...
+      dir([inputDirName '/' logName '/' sprintf('*_%s_*.bin', logName)])];
+
    for idFile = 1:length(sbdFile)
       %    for idFile = 1:min(100,length(sbdFile))
       sbdFileName = sbdFile(idFile).name;
       sbdFilePathName = [inputDirName '/' logName '/' sbdFileName];
       
-      if (floatDecId ~= 111)
-         sbdFilePathNameOut = [floatOutputDirName '/' sbdFileName];
-      else
-         sbdFilePathNameOut = [floatOutputDirName '/' regexprep(sbdFileName, '.bin', '.bin.sbd')];
-      end
+      sbdFilePathNameOut = [floatOutputDirName '/' sbdFileName];
       if (exist(sbdFilePathNameOut, 'file') == 2)
          % when the file already exists, check (with its date) if it needs to be
          % updated

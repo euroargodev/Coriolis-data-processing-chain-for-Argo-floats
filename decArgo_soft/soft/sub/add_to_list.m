@@ -38,7 +38,6 @@ end
 if (strcmp(a_listName, 'spool'))
    g_decArgo_spoolFileList{end+1} = a_fileName;
 elseif (strcmp(a_listName, 'buffer'))
-   a_fileName = [a_fileName(1:end-4) '.sbd'];
    g_decArgo_bufFileList{end+1} = a_fileName;
 end
 

@@ -258,23 +258,22 @@ if (~a_floatDmFlag)
          % move the SBD files associated with the a_cycleList cycles into the
          % spool directory
          nbFiles = 0;
-         
-         %          fprintf('\n\nATTENTION: LIMITATION DES DONNEES\n\n\n');
-         %          a_cycleList = 0:5;
-         
          for idCy = 1:length(a_cycleList)
             
             cycleNum = a_cycleList(idCy);
-            sbdCyFiles = dir([g_decArgo_archiveDirectory '/' sprintf('*_%s_%05d.b*.sbd', ...
-               a_floatLoginName, cycleNum)]);
+            sbdCyFiles = [ ...
+               dir([g_decArgo_archiveDirectory '/' sprintf('*_%s_%05d.b64', ...
+               a_floatLoginName, cycleNum)]); ...
+               dir([g_decArgo_archiveDirectory '/' sprintf('*_%s_%05d.bin', ...
+               a_floatLoginName, cycleNum)])];
+            
             for idFile = 1:length(sbdCyFiles)
                
                sbdCyFileName = sbdCyFiles(idFile).name;
                
                cyIrJulD = datenum(sbdCyFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
-               
                if (cyIrJulD < a_launchDate)
-                  fprintf('BUFF_WARNING: Float #%d: SBD file "%s" ignored because dated before float launch date (%s)\n', ...
+                  fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
                      g_decArgo_floatNum, ...
                      sbdCyFileName, julian_2_gregorian_dec_argo(a_launchDate));
                   continue
@@ -297,7 +296,7 @@ if (~a_floatDmFlag)
          
          % duplicate the SBD files colleted with rsync into the archive directory
          fileIdList = find(g_decArgo_rsyncFloatWmoList == a_floatNum);
-         fprintf('RSYNC_INFO: Duplicating %d SBD files from rsync dir to float archive dir\n', ...
+         fprintf('RSYNC_INFO: Duplicating %d input files from rsync dir to float archive dir\n', ...
             length(fileIdList));
          
          for idF = 1:length(fileIdList)
@@ -312,7 +311,8 @@ if (~a_floatDmFlag)
          % completed during the previous run of the RT decoder)
          % move the SBD files from buffer to the archive directory
          if (~g_decArgo_virtualBuff)
-            fileList = dir([g_decArgo_bufferDirectory '*.sbd']);
+            fileList = [dir([g_decArgo_bufferDirectory '*.b64']); ...
+               dir([g_decArgo_bufferDirectory '*.bin'])];
             if (~isempty(fileList))
                fprintf('BUFF_INFO: Moving %d SBD files from float buffer dir to float archive dir\n', ...
                   length(fileList));
@@ -324,7 +324,8 @@ if (~a_floatDmFlag)
          end
          
          % move the SBD files from archive to the spool directory
-         fileList = dir([g_decArgo_archiveDirectory '*.sbd']);
+         fileList = [dir([g_decArgo_archiveDirectory '*.b64']); ...
+            dir([g_decArgo_archiveDirectory '*.bin'])];
          if (~isempty(fileList))
             fprintf('BUFF_INFO: Moving %d SBD mail files from float archive dir to float spool dir\n', ...
                length(fileList));
@@ -336,7 +337,7 @@ if (~a_floatDmFlag)
                cyIrJulD = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
 
                if (cyIrJulD < a_launchDate)
-                  fprintf('BUFF_WARNING: Float #%d: SBD file "%s" ignored because dated before float launch date (%s)\n', ...
+                  fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
                      g_decArgo_floatNum, ...
                      sbdFileName, julian_2_gregorian_dec_argo(a_launchDate));
                   continue
@@ -469,10 +470,6 @@ if (~a_floatDmFlag)
       
       % process the SBD files of the spool directory in chronological order
       for idSpoolFile = 1:length(tabAllFileNames)
-
-         %          if (strcmp(tabAllFileNames{idSpoolFile}, '130502_092221_lovbio010b_00022.b64.sbd'))
-         %             a=1
-         %          end
          
          % move the next file into the buffer directory
          if (g_decArgo_virtualBuff)
@@ -503,11 +500,13 @@ if (~a_floatDmFlag)
          % g_decArgo_phaseSurfWait phase. If so, all the buffer files but the
          % last received one (which is the second Iridium session one) are
          % processed together as 'old' files.
-         if (a_decoderId == 111)            
+         if (a_decoderId == 111)
+            
+            sbdFileName = tabAllFileNames{idSpoolFile};
             if (g_decArgo_virtualBuff)
-               sbdFilePathName = [g_decArgo_archiveDirectory '/' tabAllFileNames{idSpoolFile}];
+               sbdFilePathName = [g_decArgo_archiveDirectory '/' sbdFileName];
             else
-               sbdFilePathName = [g_decArgo_bufferDirectory '/' tabAllFileNames{idSpoolFile}];
+               sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
             end
             
             fId = fopen(sbdFilePathName, 'r');
@@ -516,18 +515,37 @@ if (~a_floatDmFlag)
                   g_decArgo_floatNum, ...
                   sbdFilePathName);
             end
-            
-            [sbdData, sbdDataCount] = fread(fId);
-            
+            sbdData = fread(fId);
             fclose(fId);
             
-            sbdDataData = [];
-            sbdData = reshape(sbdData, 140, size(sbdData, 1)/140)';
-            for idMsg = 1:size(sbdData, 1)
-               data = sbdData(idMsg, :);
-               if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
-                  sbdDataData = [sbdDataData; data];
+            if (strcmp(sbdFileName(end-3:end), '.b64'))
+               idZ = find(sbdData == 0, 1, 'first');
+               if (any(sbdData(idZ:end) ~= 0))
+                  fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
+                     g_decArgo_floatNum, ...
+                     sbdFilePathName);
                end
+               sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
+            elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+               if (length(sbdData) == 1024)
+                  sbdData = sbdData(1:980);
+               end
+            end
+            
+            sbdDataData = [];
+            if (rem(length(sbdData), 140) == 0)
+               sbdData = reshape(sbdData, 140, length(sbdData)/140)';
+               for idMsg = 1:size(sbdData, 1)
+                  data = sbdData(idMsg, :);
+                  if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
+                     sbdDataData = [sbdDataData; data];
+                  end
+               end
+            else
+               fprintf('DEC_WARNING: Float #%d: input file ignored because of unexpected size (%d bytes)  : %s\n', ...
+                  g_decArgo_floatNum, ...
+                  length(sbdData), ...
+                  sbdFilePathName);
             end
             
             idFloatTechDataPack = find(sbdDataData(:, 1) == 253);
@@ -660,6 +678,7 @@ if (~a_floatDmFlag)
          for idBufFile = 1:length(fileNameList)
             
             sbdFileName = fileNameList{idBufFile};
+            
             if (idBufFile == 1)
                g_decArgo_cycleNum = get_cycle_num_from_sbd_name_ir_rudics({sbdFileName});
             end
@@ -670,37 +689,45 @@ if (~a_floatDmFlag)
                sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
             end
             sbdFileDate = fileDateList(idBufFile);
-            sbdFileSize = fileSizeList(idBufFile);
             
-            if (sbdFileSize > 0)
-               
-               if (rem(sbdFileSize, 140) == 0)
-                  fId = fopen(sbdFilePathName, 'r');
-                  if (fId == -1)
-                     fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
-                        g_decArgo_floatNum, ...
-                        sbdFilePathName);
-                  end
-                  
-                  [sbdData, sbdDataCount] = fread(fId);
-                  
-                  fclose(fId);
-                  
-                  sbdData = reshape(sbdData, 140, size(sbdData, 1)/140)';
-                  for idMsg = 1:size(sbdData, 1)
-                     data = sbdData(idMsg, :);
-                     if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
-                        sbdDataData = [sbdDataData; data];
-                        sbdDataDate = [sbdDataDate; sbdFileDate];
-                     end
-                  end
-               else
-                  fprintf('DEC_WARNING: Float #%d: SBD file ignored because of unexpected size (%d bytes)  : %s\n', ...
+            fId = fopen(sbdFilePathName, 'r');
+            if (fId == -1)
+               fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
+                  g_decArgo_floatNum, ...
+                  sbdFilePathName);
+            end
+            sbdData = fread(fId);
+            fclose(fId);
+            
+            if (strcmp(sbdFileName(end-3:end), '.b64'))
+               idZ = find(sbdData == 0, 1, 'first');
+               if (any(sbdData(idZ:end) ~= 0))
+                  fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
                      g_decArgo_floatNum, ...
-                     sbdFileSize, ...
                      sbdFilePathName);
+                  continue;
                end
+               sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
+            elseif (strcmp(sbdFileName(end-3:end), '.bin'))
+               if (length(sbdData) == 1024)
+                  sbdData = sbdData(1:980);
+               end
+            end
                
+            if (rem(length(sbdData), 140) == 0)
+               sbdData = reshape(sbdData, 140, length(sbdData)/140)';
+               for idMsg = 1:size(sbdData, 1)
+                  data = sbdData(idMsg, :);
+                  if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
+                     sbdDataData = [sbdDataData; data];
+                     sbdDataDate = [sbdDataDate; sbdFileDate];
+                  end
+               end
+            else
+               fprintf('DEC_WARNING: Float #%d: input file ignored because of unexpected size (%d bytes)  : %s\n', ...
+                  g_decArgo_floatNum, ...
+                  length(sbdData), ...
+                  sbdFilePathName);
             end
          end
          
@@ -1150,42 +1177,55 @@ while (procDone == 0)
             end
          end
          sbdCyFileDate = sbdCyFileDateList(idFile);
-         sbdCyFileSize = sbdCyFileSizeList(idFile);
+         
+         fId = fopen(sbdCyFilePathName, 'r');
+         if (fId == -1)
+            fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
+               g_decArgo_floatNum, ...
+               sbdCyFilePathName);
+            continue;
+         end
+         sbdData = fread(fId);
+         fclose(fId);
+         
+         if (strcmp(sbdCyFileName(end-3:end), '.b64'))
+            idZ = find(sbdData == 0, 1, 'first');
+            if (any(sbdData(idZ:end) ~= 0))
+               fprintf('ERROR: Float #%d: Inconsistent data in file : %s\n', ...
+                  g_decArgo_floatNum, ...
+                  sbdCyFilePathName);
+               continue;
+            end
+            sbdData = double(base64decode(sbdData(1:idZ-1), '', 'matlab'));
+         elseif (strcmp(sbdCyFileName(end-3:end), '.bin'))
+            if (length(sbdData) == 1024)
+               sbdData = sbdData(1:980);
+            end
+         end
+         
+         if (rem(length(sbdData), 140) == 0)
+            sbdData = reshape(sbdData, 140, length(sbdData)/140)';
+            sbdCyFileSize = 0;
+            for idMsg = 1:size(sbdData, 1)
+               data = sbdData(idMsg, :);
+               if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
+                  sbdDataData = [sbdDataData; data];
+                  sbdDataDate = [sbdDataDate; sbdCyFileDate];
+                  sbdCyFileSize = sbdCyFileSize + 1;
+               end
+            end
+            sbdCyFileSize = sbdCyFileSize*140;
+         else
+            fprintf('DEC_WARNING: Float #%d: input file ignored because of unexpected size (%d bytes)  : %s\n', ...
+               g_decArgo_floatNum, ...
+               length(sbdData), ...
+               sbdCyFilePathName);
+            sbdCyFileSize = length(sbdData);
+         end
          
          sbdDataFileName = [sbdDataFileName; {sbdCyFileName}];
          sbdDataFileDate = [sbdDataFileDate; sbdCyFileDate];
          sbdDataFileSize = [sbdDataFileSize; sbdCyFileSize];
-         
-         if (sbdCyFileSize > 0)
-            
-            if (rem(sbdCyFileSize, 140) == 0)
-               fId = fopen(sbdCyFilePathName, 'r');
-               if (fId == -1)
-                  fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
-                     g_decArgo_floatNum, ...
-                     sbdCyFilePathName);
-               end
-               
-               [sbdData, sbdDataCount] = fread(fId);
-               
-               fclose(fId);
-               
-               sbdData = reshape(sbdData, 140, size(sbdData, 1)/140)';
-               for idMsg = 1:size(sbdData, 1)
-                  data = sbdData(idMsg, :);
-                  if ~((isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1))))
-                     sbdDataData = [sbdDataData; data];
-                     sbdDataDate = [sbdDataDate; sbdCyFileDate];
-                  end
-               end
-            else
-               fprintf('DEC_WARNING: Float #%d: SBD file ignored because of unexpected size (%d bytes)  : %s\n', ...
-                  g_decArgo_floatNum, ...
-                  sbdCyFileSize, ...
-                  sbdCyFilePathName);
-            end
-            
-         end
       end
       
       % output CSV file

@@ -40,14 +40,14 @@ ptn1 = 'f+++++++++';
 ptn2 = sprintf('%s/', a_floatLoginName);
 for idL = 1:length(logData)
    % we are looking for lines with the pattern:
-   % f+++++++++ floatLoginName/xxxxxx_xxxxxx_floatLoginName_xxxxx.b64.sbd
+   % f+++++++++ floatLoginName/xxxxxx_xxxxxx_floatLoginName_xxxxx.b64
    % or
-   % f+++++++++ floatLoginName/xxxxxx_xxxxxx_floatLoginName_xxxxx.bin.sbd
+   % f+++++++++ floatLoginName/xxxxxx_xxxxxx_floatLoginName_xxxxx.bin
    if (~isempty(strfind(infoData{idL}, ptn1)) && ~isempty(strfind(logData{idL}, ptn2)))
       line = logData{idL};
-      if (length(line) > 7)
-         if ((strncmp(line(end-7:end), '.b64.sbd', length('.b64.sbd')) == 1) || ...
-               (strncmp(line(end-7:end), '.bin.sbd', length('.bin.sbd')) == 1))
+      if (length(line) > 3)
+         if ((strncmp(line(end-3:end), '.b64', length('.b64')) == 1) || ...
+               (strncmp(line(end-3:end), '.bin', length('.bin')) == 1))
             
             filePathName = line;
             [path, fileName, ~] = fileparts(filePathName);
