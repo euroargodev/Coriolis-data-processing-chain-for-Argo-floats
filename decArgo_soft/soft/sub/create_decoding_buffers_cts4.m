@@ -45,6 +45,9 @@ global g_decArgo_floatFirmware;
 % global default values
 global g_decArgo_dateDef;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts4Ice;
+
 
 % maximum number of transmission sessions (after deep cycle) to look for
 % expected data
@@ -115,12 +118,13 @@ while (~stop)
 end
 
 % specific
-if (ismember(a_decoderId, [111, 113, 115]))
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4Ice))
    % sensor parameter packets of surface cycle have a bad cycle number
    % (cycle number + 1 would be expected)
    idSurfSensorParam = find((tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
+
 if (ismember(g_decArgo_floatNum, ...
       [2902263, 6903240, 2902241]))
    switch g_decArgo_floatNum         
@@ -181,12 +185,12 @@ sessionList = unique(tabSession);
 for sesNum = sessionList
 
    idForSession = find(tabSession == sesNum);
-   idFVectorTechStaTrans = find((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSatTrans) & ...
+   idFVectorTechSatTrans = find((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSatTrans) & ...
       (tabPackType(idForSession) == 253));
    idFVectorTechSurfWait = find((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSurfWait) & ...
       (tabPackType(idForSession) == 253));
-   if ((length(idFVectorTechStaTrans) > 1) || ...
-         ((length(idFVectorTechStaTrans) >= 1) && (length(idFVectorTechSurfWait) >= 1)))
+   if ((length(idFVectorTechSatTrans) > 1) || ...
+         ((length(idFVectorTechSatTrans) >= 1) && (length(idFVectorTechSurfWait) >= 1)))
       
       % delayed data transmitted during the session
       
@@ -274,7 +278,8 @@ for sesNum = sessionList
          deepExpected = 1;
       else
          % surface session
-         idForCheck = find((tabSession == sesNum) & ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]) & (tabDone == 0));
+         idForCheck = find((tabSession == sesNum) & (tabDone == 0) & ...
+            (ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]) | (tabPackType == 252)));
          deepExpected = 0;
       end
    end
@@ -321,12 +326,17 @@ for sesNum = sessionList
 end
 
 % specific
-if (ismember(a_decoderId, [111, 113, 115, 114]))
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4Ice))
    % sensor tech packets are transmitted again during surface cycle (remove
    % it from decoding buffers)
    idSurfSensorTech = find((tabPackType == 250) & (tabDeep == 0) & (tabCyNum > 0));
    tabRank(idSurfSensorTech) = -1;
 end
+
+% ignore vector pressure data transmitted during second Iridium session
+idSurfVectorPres = find((tabPackType == 252) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
+tabRank(idSurfVectorPres) = -1;
+
 % improved algorithm solved the delayed transmissions of floats:
 % 2902239 (partially, see below)
 % 2902264
@@ -341,7 +351,7 @@ end
 % 6903878
 % 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249, 6902906, 6903551, 3902122, 2902239, 6904111, 3902121]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -353,7 +363,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabRank(idDel) = -1;
          
       case 6902906
-         % during first and second Iridium session of cycle #115, 0, thefloat
+         % during first and second Iridium session of cycle #115, 0, the float
          % transmitted old memorized data
          idSession = find((tabCyNumRaw == 115) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
          idDel = find((tabSession == tabSession(idSession)) & (tabCyNumRaw ~= 115));
@@ -419,32 +429,6 @@ if (ismember(g_decArgo_floatNum, ...
          tabRank(idDel) = -1;
          tabDone(idDel) = 1;
          
-      case 6904111
-         % vector pressure received during second Iridium session
-         idBase = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
-         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 800));
-         tabRank(idVectorPres) = tabRank(idBase);
-         tabCyNum(idVectorPres) = tabCyNum(idBase);
-         tabDone(idVectorPres) = tabDone(idBase);
-         tabDelayed(idVectorPres) = tabDelayed(idBase);
-         tabCompleted(idVectorPres) = tabCompleted(idBase);
-
-         idBase = find((tabCyNumRaw == 25) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
-         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 2500));
-         tabRank(idVectorPres) = tabRank(idBase);
-         tabCyNum(idVectorPres) = tabCyNum(idBase);
-         tabDone(idVectorPres) = tabDone(idBase);
-         tabDelayed(idVectorPres) = tabDelayed(idBase);
-         tabCompleted(idVectorPres) = tabCompleted(idBase);
-
-         idBase = find((tabCyNumRaw == 31) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
-         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 3100));
-         tabRank(idVectorPres) = tabRank(idBase);
-         tabCyNum(idVectorPres) = tabCyNum(idBase);
-         tabDone(idVectorPres) = tabDone(idBase);
-         tabDelayed(idVectorPres) = tabDelayed(idBase);
-         tabCompleted(idVectorPres) = tabCompleted(idBase);
-
       case 3902121
          % during cycle (330, 0) the float transmitted again OCR raw data of
          % cycles (311, 0) to (329, 0)
