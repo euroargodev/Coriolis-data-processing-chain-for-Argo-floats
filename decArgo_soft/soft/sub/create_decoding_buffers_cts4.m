@@ -176,7 +176,7 @@ for sesNum = sessionList
    [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
    delayed = 0;
    
-   if (deep ~= deepExpected)
+   if ((completed == 1) && (deep ~= deepExpected))
       fprintf('\nERROR: Float #%d : session number %d : deep flag not consistent with expected one\n\n', ...
          g_decArgo_floatNum, sesNum);
    end
