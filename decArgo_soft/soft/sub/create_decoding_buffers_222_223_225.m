@@ -393,7 +393,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, ...
-      6903059, 6903109, 6903793, 6904236 6903046]))
+      6903059, 6903109, 6903793, 6904236 6903046 6903056 6903055]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -595,6 +595,24 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
+      case 6903056
+         % data packets transmitted twice in the first EOL session (cycle #240)
+         idBase = find(tabEolFlag ==1, 1, 'first');
+         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
+         idOk = find((tabSession == tabSession(idBase)) & ismember(tabPackType, [0 4]));
+         tabDeep(idOk) = 0;
+      case 6903055
+         % data packets transmitted twice in the first EOL session (cycle #249)
+         idBase = find(tabEolFlag ==1, 1, 'first');
+         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
+         idOk = find((tabSession == tabSession(idBase)) & ismember(tabPackType, [0 4]));
+         tabDeep(idOk) = 0;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS

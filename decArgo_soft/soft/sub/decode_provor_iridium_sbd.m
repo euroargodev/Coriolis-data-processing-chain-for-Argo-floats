@@ -448,12 +448,18 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % already received. We must ignore it to avoid generating a fake second
       % buffer for this cycle
       
-      if (ismember(g_decArgo_floatNum, [3901598, 3901854]))
+      % 3901875: co_20220620T123329Z_300234063906180_003509_000000_26912.txt
+      % contains data for cycle #213 that have already been transmitted
+      
+      if (ismember(g_decArgo_floatNum, [3901598, 3901854, 3901875]))
          if (g_decArgo_floatNum == 3901598)
             fileNameTodel = 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt';
          end
          if (g_decArgo_floatNum == 3901854)
             fileNameTodel = 'co_20200108T121507Z_300234063901300_001599_000000_6467.txt';
+         end
+         if (g_decArgo_floatNum == 3901875)
+            fileNameTodel = 'co_20220620T123329Z_300234063906180_003509_000000_26912.txt';
          end
          if (strcmp(tabAllFileNames{idSpoolFile}, fileNameTodel))
             remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
