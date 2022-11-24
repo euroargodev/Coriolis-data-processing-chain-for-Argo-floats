@@ -920,6 +920,12 @@ paramDataAdjustedError = repmat(paramFillValue, nbLev, 1);
 for idParam = 1:length(paramList)
    
    paramName = paramList{idParam};
+   if (~isfield(syntProfData, paramName))
+      fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter is not present in the output file\n', ...
+         g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
+         paramName);
+      continue;
+   end
    data = syntProfData.(paramName).value;
    idOk = find(~isnan(data));
    paramData(idOk, idParam) = data(idOk);
