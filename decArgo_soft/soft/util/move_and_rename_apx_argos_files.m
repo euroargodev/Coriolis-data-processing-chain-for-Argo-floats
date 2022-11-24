@@ -421,10 +421,15 @@ for idFile = 1:nbFiles
                cycleNumberCount = -1;
             end
             if (a_floatNum == 3901663)
-               % Apex float 3901663 (decId 1022) resets at sea after cycle #22
+               % Apex float 3901663 (decId 1022) resets at sea after cycle
+               % #22, cycle #3 (of second mission)
                offsetDate = gregorian_2_julian_dec_argo('2018/12/03 17:41:54');
+               offsetDate2 = gregorian_2_julian_dec_argo('2019/01/02 15:34:40');
                if (firstArgosMsgDate >= offsetDate)
                   cycleNumber = cycleNumber + 22;
+               end
+               if (firstArgosMsgDate >= offsetDate2)
+                  cycleNumber = cycleNumber + 3;
                end
             end
             
