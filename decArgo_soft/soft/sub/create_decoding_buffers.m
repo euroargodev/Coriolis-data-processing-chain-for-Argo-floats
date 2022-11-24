@@ -185,7 +185,7 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -197,6 +197,18 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230]))
          tabBase(id) = 0;
       case 6902814
          % packet type 0 4 5 transmitted after data packets
+         id = find((tabCyNum == 12) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
+      case 3901963
+         % packet type 0 4 5 transmitted after data packets
+         id = find((tabCyNum == 10) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
+         % 5 sessions are needed to transmit cycle #13
+         NB_SESSION_MAX = 5;
+         % this is not the base SBD of cycle #12 (because transmitted in
+         % delayed mode)
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
@@ -221,6 +233,7 @@ end
 rank = 1;
 sessionList = unique(tabSession);
 for sesNum = sessionList
+
    cyNum = tabCyNum(find(tabSession == sesNum, 1, 'first'));
    idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
    
@@ -234,6 +247,16 @@ for sesNum = sessionList
    if (any(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum)))
       idRemaining = find(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum));
       idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
+      
+      % specific
+      if (g_decArgo_floatNum == 3901963)
+         % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
+         % are not the first transmitted SBD
+         if (ismember(cyNum, [13 24 25]))
+            idStop = [];
+         end
+      end
+      
       if (~isempty(idStop))
          idRemaining = idRemaining(1:idStop-1);
       end
@@ -282,7 +305,6 @@ for sesNum = sessionList
    if (~isempty(idForSession))
       cyNumList = unique(tabCyNum(idForSession));
       for cyNum = cyNumList
-                  
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
