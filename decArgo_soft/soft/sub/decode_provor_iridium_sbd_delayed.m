@@ -377,8 +377,10 @@ if (g_decArgo_realtimeFlag)
       idFileList = find(mailFileRank == rankNum);
       cycleNumberList = unique(mailFileCyNum(idFileList));
       
-      fprintf('BUFFER #%d: processing %d sbd files\n', rankNum, length(idFileList));
+      fprintf('BUFFER #%d: processing %d sbd files\n', rankNum, length(unique(mailFileNameList(idFileList))));
       
+      [~, idUnique, ~] = unique(mailFileNameList(idFileList));
+      idFileList = idFileList(idUnique);
       for idF = 1:length(idFileList)
          
          % move the next file into the buffer directory
