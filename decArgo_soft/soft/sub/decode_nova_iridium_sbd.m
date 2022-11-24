@@ -648,6 +648,21 @@ if (g_decArgo_realtimeFlag)
 end
 for idSpoolFile = 1:length(tabAllFileNames)
    
+   % specific
+   if (g_decArgo_floatNum == 6903283)
+      if(strcmp(tabAllFileNames{idSpoolFile}, 'co_20190816T065643Z_300234062954200_001370_000000_4000.txt'))
+         % 6903283 #(2+1), #(3+1) ... #(84+1), #(255+1), #(256+1)
+         % float reset after #85
+         % #256 is surface cycle with cycle #255
+         % #257 is deep cycle with cycle #0 contaioning data of cycle #86
+         % we cannot use the #256 transmission => the corresponding GPS fix is
+         % not considered
+         % note that the dates of cycle #86 are not consistent due to float
+         % erroneous time (cycle start date)
+         continue
+      end
+   end
+   
    if (g_decArgo_realtimeFlag)
       bufferMailFileNames{end+1} = tabAllFileNames{idSpoolFile};
       bufferMailFileDates(end+1) = tabAllFileDates(idSpoolFile);
@@ -724,7 +739,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             end
          end
       end
-      
+            
       idNew = setdiff(1:length(tabFileNames), idOld);
       tabNewFileNames = tabFileNames(idNew);
       tabNewFileDates = tabFileDates(idNew);
@@ -831,10 +846,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
          % check if the buffer contents can be processed
          [okToProcess] = is_buffer_completed_ir_sbd_nva(0, a_decoderId);
          %       fprintf('Buffer completed : %d\n', okToProcess);
-         
+                  
          if ((okToProcess) || ...
                ((idSpoolFile == length(tabAllFileDates) && g_decArgo_processRemainingBuffers)))
-            
+                        
             if (g_decArgo_realtimeFlag)
                if (okToProcess)
                   write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames, bufferRank);

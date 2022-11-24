@@ -21,6 +21,8 @@ function nc_prof_adj_err_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\IN\NC_PROVOR_ARVOR_IRIDIUM\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\GDAC\provor_arvor_iridium_189\';
 %DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\IN\NC\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\GDAC\';
 
@@ -30,6 +32,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_TRAJ_DM_test.
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_5.46_5.74.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_6.11.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_2.11.1.S.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\listes\provor_arvor_iridium_189.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

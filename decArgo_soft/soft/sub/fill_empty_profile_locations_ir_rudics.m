@@ -31,11 +31,16 @@ o_tabProfiles = [];
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
+global g_decArgo_argosLatDef;
 
 % add date to not already dated profiles (due to missing float tech msg #253)
 for idProf = 1:length(a_tabProfiles)
-   if (a_tabProfiles(idProf).date == g_decArgo_dateDef)
-      a_tabProfiles(idProf) = add_profile_date(a_tabProfiles(idProf), a_tabTrajNMeas, a_tabTrajNCycle);
+   if ((a_tabProfiles(idProf).date == g_decArgo_dateDef) || ...
+         (a_tabProfiles(idProf).locationDate == g_decArgo_dateDef) || ...
+         (a_tabProfiles(idProf).locationLon == g_decArgo_argosLonDef) || ...
+         (a_tabProfiles(idProf).locationLat == g_decArgo_argosLatDef))
+      a_tabProfiles(idProf) = add_profile_date_and_location( ...
+         a_tabProfiles(idProf), a_tabTrajNMeas, a_tabTrajNCycle, a_tabProfiles);
    end
 end
 
@@ -162,7 +167,8 @@ return
 % using trajectory data.
 %
 % SYNTAX :
-%  [o_profStruct] = add_profile_date(a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle)
+%  [o_profStruct] = add_profile_date_and_location( ...
+%    a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll)
 %
 % INPUT PARAMETERS :
 %   a_profStruct    : input profile structure
@@ -179,8 +185,11 @@ return
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/11/2015 - RNU - creation
+%   06/19/2020 - RNU - update: use information from other profiles of the same
+%                      cycle
 % ------------------------------------------------------------------------------
-function [o_profStruct] = add_profile_date(a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle)
+function [o_profStruct] = add_profile_date_and_location( ...
+   a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll)
 
 % output parameters initialization
 o_profStruct = a_profStruct;
@@ -189,37 +198,65 @@ o_profStruct = a_profStruct;
 global g_MC_Launch;
 global g_MC_LMT;
 
+% global default values
+global g_decArgo_dateDef;
+global g_decArgo_argosLonDef;
+global g_decArgo_argosLatDef;
 
-% list of TRAJ cycle and profile numbers
-cycleNumList = [a_tabTrajNCycle.cycleNumber];
-profNumList = [a_tabTrajNCycle.profileNumber];
 
-if (a_profStruct.direction == 'A')
+% use the other profiles of the same cycle to fill missing dates and locations
+if ((a_profStruct.locationDate == g_decArgo_dateDef) || ...
+      (a_profStruct.locationLon == g_decArgo_argosLonDef) || ...
+      (a_profStruct.locationLat == g_decArgo_argosLatDef))
    
-   % ascending profile
-   % the date of the profile is the FMT of the current cycle
-   idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
-      (profNumList == a_profStruct.profileNumber));
-   % anomaly management (we should have one idF at most but in case of anomaly,
-   % we can have more than one, we then use the first one with the appropriate
-   % date)
-   juldFirstMessage = '';
-   for id = 1:length(idF)
-      if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
-         juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
-         break
+   idF = find(([a_profStructAll.cycleNumber] == a_profStruct.cycleNumber) & ...
+      ([a_profStructAll.profileNumber] == a_profStruct.profileNumber) & ...
+      ([a_profStructAll.direction] == a_profStruct.direction) & ...
+      ([a_profStructAll.locationDate] ~= g_decArgo_dateDef) & ...
+      ([a_profStructAll.locationLon] ~= g_decArgo_argosLonDef) & ...
+      ([a_profStructAll.locationLat] ~= g_decArgo_argosLatDef));
+   if (~isempty(idF))
+      locationDate = unique([a_profStructAll(idF).locationDate]);
+      locationLon = unique([a_profStructAll(idF).locationLon]);
+      locationLat = unique([a_profStructAll(idF).locationLat]);
+      locationQc = unique([a_profStructAll(idF).locationQc]);
+      if ((length(locationDate) == 1) && (length(locationLon) == 1) && ...
+            (length(locationLat) == 1) && (length(locationQc) == 1))
+         a_profStruct.locationDate = locationDate;
+         a_profStruct.locationLon = locationLon;
+         a_profStruct.locationLat = locationLat;
+         a_profStruct.locationQc = locationQc;
       end
    end
-   if (~isempty(juldFirstMessage))
-      a_profStruct.date = juldFirstMessage;
-   end
-else
+end
+
+% first: try to use the other profiles of the same cycle to fill missing profile dates
+if (a_profStruct.date == g_decArgo_dateDef)
    
-   % descending profile
-   % the date of the profile is the LMT of the previous cycle
-   if (a_profStruct.profileNumber > 0)
+   idF = find(([a_profStructAll.cycleNumber] == a_profStruct.cycleNumber) & ...
+      ([a_profStructAll.profileNumber] == a_profStruct.profileNumber) & ...
+      ([a_profStructAll.direction] == a_profStruct.direction) & ...
+      ([a_profStructAll.date] ~= g_decArgo_dateDef));
+   if (~isempty(idF))
+      profileDate = unique([a_profStructAll(idF).date]);
+      if (length(profileDate) == 1)
+         a_profStruct.date = profileDate;
+      end
+   end
+end
+
+if (a_profStruct.date == g_decArgo_dateDef)
+   
+   % list of TRAJ cycle and profile numbers
+   cycleNumList = [a_tabTrajNCycle.cycleNumber];
+   profNumList = [a_tabTrajNCycle.profileNumber];
+   
+   if (a_profStruct.direction == 'A')
+      
+      % ascending profile
+      % the date of the profile is the FMT of the current cycle
       idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
-         (profNumList == a_profStruct.profileNumber-1));
+         (profNumList == a_profStruct.profileNumber));
       % anomaly management (we should have one idF at most but in case of anomaly,
       % we can have more than one, we then use the first one with the appropriate
       % date)
@@ -235,57 +272,78 @@ else
       end
    else
       
-      % we try to find the previous cycle number but, if it has been missed, we
-      % can badly date the profile
-      if(a_profStruct.cycleNumber > 0)
-         
-         idF = find(cycleNumList == a_profStruct.cycleNumber-1);
-         if (~isempty(idF))
-            lastProfNumOfPrevCy = max(profNumList(idF));
-            % lastProfNumOfPrevCy is supposed to be the last profile of the
-            % previous cycle
-            idF2 = find((cycleNumList == a_profStruct.cycleNumber-1) & ...
-               (profNumList == lastProfNumOfPrevCy));
-            % anomaly management (we should have one idF at most but in case of anomaly,
-            % we can have more than one, we then use the first one with the appropriate
-            % date)
-            juldLastMessage = '';
-            for id = 1:length(idF2)
-               if (~isempty(a_tabTrajNCycle(idF2(id)).juldLastMessage))
-                  juldLastMessage = a_tabTrajNCycle(idF2(id)).juldLastMessage;
-                  break
-               end
+      % descending profile
+      % the date of the profile is the LMT of the previous cycle
+      if (a_profStruct.profileNumber > 0)
+         idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
+            (profNumList == a_profStruct.profileNumber-1));
+         % anomaly management (we should have one idF at most but in case of anomaly,
+         % we can have more than one, we then use the first one with the appropriate
+         % date)
+         juldFirstMessage = '';
+         for id = 1:length(idF)
+            if (~isempty(a_tabTrajNCycle(idF(id)).juldFirstMessage))
+               juldFirstMessage = a_tabTrajNCycle(idF(id)).juldFirstMessage;
+               break
             end
-            if (~isempty(juldLastMessage))
-               a_profStruct.date = juldLastMessage;
-            end
+         end
+         if (~isempty(juldFirstMessage))
+            a_profStruct.date = juldFirstMessage;
          end
       else
          
-         % the date of the descending #0 profile is the LMT of the prelude
-         % phase transmissions (if any) or the float launch date (otherwise)
-         outputCycleNumber = [a_tabTrajNMeas.outputCycleNumber];
-         cycleNumList = [a_tabTrajNMeas.cycleNumber];
-         profNumList = [a_tabTrajNMeas.profileNumber];
-         
-         idF = find((outputCycleNumber == 0) & (cycleNumList == -1) & ...
-               (profNumList == -1));
-         if (~isempty(idF))
-            % prelude phase transmissions
-            tabMeas = a_tabTrajNMeas(idF).tabMeas;
-            idF2 = find([tabMeas.measCode] == g_MC_LMT);
-            if (~isempty(idF2) && ~isempty(tabMeas(idF2).juld))
-               a_profStruct.date = tabMeas(idF2).juld;
+         % we try to find the previous cycle number but, if it has been missed, we
+         % can badly date the profile
+         if(a_profStruct.cycleNumber > 0)
+            
+            idF = find(cycleNumList == a_profStruct.cycleNumber-1);
+            if (~isempty(idF))
+               lastProfNumOfPrevCy = max(profNumList(idF));
+               % lastProfNumOfPrevCy is supposed to be the last profile of the
+               % previous cycle
+               idF2 = find((cycleNumList == a_profStruct.cycleNumber-1) & ...
+                  (profNumList == lastProfNumOfPrevCy));
+               % anomaly management (we should have one idF at most but in case of anomaly,
+               % we can have more than one, we then use the first one with the appropriate
+               % date)
+               juldLastMessage = '';
+               for id = 1:length(idF2)
+                  if (~isempty(a_tabTrajNCycle(idF2(id)).juldLastMessage))
+                     juldLastMessage = a_tabTrajNCycle(idF2(id)).juldLastMessage;
+                     break
+                  end
+               end
+               if (~isempty(juldLastMessage))
+                  a_profStruct.date = juldLastMessage;
+               end
             end
          else
-            idF = find((outputCycleNumber == -1) & (cycleNumList == -1) & ...
+            
+            % the date of the descending #0 profile is the LMT of the prelude
+            % phase transmissions (if any) or the float launch date (otherwise)
+            outputCycleNumber = [a_tabTrajNMeas.outputCycleNumber];
+            cycleNumList = [a_tabTrajNMeas.cycleNumber];
+            profNumList = [a_tabTrajNMeas.profileNumber];
+            
+            idF = find((outputCycleNumber == 0) & (cycleNumList == -1) & ...
                (profNumList == -1));
             if (~isempty(idF))
-               % float launch information
+               % prelude phase transmissions
                tabMeas = a_tabTrajNMeas(idF).tabMeas;
-               idF2 = find([tabMeas.measCode] == g_MC_Launch);
+               idF2 = find([tabMeas.measCode] == g_MC_LMT);
                if (~isempty(idF2) && ~isempty(tabMeas(idF2).juld))
                   a_profStruct.date = tabMeas(idF2).juld;
+               end
+            else
+               idF = find((outputCycleNumber == -1) & (cycleNumList == -1) & ...
+                  (profNumList == -1));
+               if (~isempty(idF))
+                  % float launch information
+                  tabMeas = a_tabTrajNMeas(idF).tabMeas;
+                  idF2 = find([tabMeas.measCode] == g_MC_Launch);
+                  if (~isempty(idF2) && ~isempty(tabMeas(idF2).juld))
+                     a_profStruct.date = tabMeas(idF2).juld;
+                  end
                end
             end
          end

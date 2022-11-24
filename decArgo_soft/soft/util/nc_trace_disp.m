@@ -27,7 +27,7 @@ global g_NTD_FLOAT_LIST;
 global g_NTD_DEFAULT_NB_PLOT_CYCLE;
 global g_NTD_NB_PLOT_CYCLE;
 global g_NTD_ISOBATH;
-global g_NTD_ISO_SRTM;
+global g_NTD_ISO_GEBCO;
 global g_NTD_PRINT;
 global g_NTD_QC;
 global g_NTD_LOAD_FLOAT;
@@ -62,7 +62,7 @@ fprintf('   d  : back to plot %d displacements per set\n', ...
    g_NTD_DEFAULT_NB_PLOT_CYCLE);
 fprintf('Misc:\n');
 fprintf('   i: plot useful isobath (ETOPO2)\n');
-fprintf('   s: switch between bathymetric atlas to plot isobath (ETOPO2 or SRTM30+)\n');
+fprintf('   s: switch between bathymetric atlas to plot isobath (ETOPO2 or GEBCO)\n');
 fprintf('   p: pdf output file generation\n');
 fprintf('   h: write help and current configuration\n');
 fprintf('Escape: exit\n\n');
@@ -71,7 +71,7 @@ fprintf('Escape: exit\n\n');
 g_NTD_ISOBATH = 0;
 
 % use the ETOPO2 atlas
-g_NTD_ISO_SRTM = 0;
+g_NTD_ISO_GEBCO = 0;
 
 % no pdf generation
 g_NTD_PRINT = 0;
@@ -158,7 +158,7 @@ global g_NTD_ID_CYCLE;
 global g_NTD_NB_CYCLE;
 global g_NTD_NB_PLOT_CYCLE;
 global g_NTD_ISOBATH;
-global g_NTD_ISO_SRTM;
+global g_NTD_ISO_GEBCO;
 global g_NTD_PRINT;
 global g_NTD_QC;
 global g_NTD_LOAD_FLOAT;
@@ -660,56 +660,44 @@ if (g_NTD_ISOBATH == 1)
       isoProfilLevels = [isoProfilLevels isoProfilLevels];
    end
 
-   if (g_NTD_ISO_SRTM == 0)
-      tic;
-      [elev, lon , lat] = get_srtm_elev(lonMin, lonMax, latMin, latMax);
-      ellapsedTime = toc;
-      fprintf('load srtm (Elapsed time is %.1f seconds)\n', ellapsedTime);
-   else
-      tic;
-      tic;[elev, lon , lat] = get_gebco_elev(lonMin, lonMax, latMin, latMax);
-      ellapsedTime = toc;
-      fprintf('load gebco (Elapsed time is %.1f seconds)\n', ellapsedTime);
-   end      
+   if (g_NTD_ISO_GEBCO == 0)
+      [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
+      if (~isempty(contourMatrix))
+         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (ETOPO)'}];
+      end
+
+      [contourMatrix, contourHdl] = m_etopo2('contour', [0:-100:-isoDerive]', 'g:');
+      if (~isempty(contourMatrix))
+         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+      end
+
+      [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_deepestPressure-30 -g_NTD_deepestPressure+30], 'r');
+      if (~isempty(contourMatrix))
+         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (ETOPO)'}];
+      end
+
+      [contourMatrix, contourHdl] = m_etopo2('contour', isoProfilLevels, 'r:');
+      if (~isempty(contourMatrix))
+         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+      end
       
-%       [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
-%       if (~isempty(contourMatrix))
-%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-%          g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (ETOPO)'}];
-%       end
-% 
-%       [contourMatrix, contourHdl] = m_etopo2('contour', [0:-100:-isoDerive]', 'g:');
-%       if (~isempty(contourMatrix))
-%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-%       end
-% 
-%       [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_deepestPressure-30 -g_NTD_deepestPressure+30], 'r');
-%       if (~isempty(contourMatrix))
-%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-%          g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (ETOPO)'}];
-%       end
-% 
-%       [contourMatrix, contourHdl] = m_etopo2('contour', isoProfilLevels, 'r:');
-%       if (~isempty(contourMatrix))
-%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-%       end
-%       
-%       [contourMatrix, contourHdl] = m_etopo2('contour', [0 0], 'k');
-%       if (~isempty(contourMatrix))
-%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-%          g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (ETOPO)'}];
-%       end
-%    else
-% %       [elev, lon , lat] = get_srtm_elev(lonMin, lonMax, latMin, latMax);
-%       [elev, lon , lat] = get_gebco_elev(lonMin, lonMax, latMin, latMax);
+      [contourMatrix, contourHdl] = m_etopo2('contour', [0 0], 'k');
+      if (~isempty(contourMatrix))
+         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (ETOPO)'}];
+      end
+   else
+      [elev, lon , lat] = get_gebco_elev_zone(lonMin, lonMax, latMin, latMax, '');
       
       [contourMatrix, contourHdl] = m_contour(lon, lat, elev, [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
       if (~isempty(contourMatrix))
          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (SRTM)'}];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (GEBCO)'}];
       end
 
       [contourMatrix, contourHdl] = m_contour(lon, lat, elev, [0:-100:-isoDerive]', 'b');
@@ -721,7 +709,7 @@ if (g_NTD_ISOBATH == 1)
       if (~isempty(contourMatrix))
          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (SRTM)'}];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (GEBCO)'}];
       end
 
       [contourMatrix, contourHdl] = m_contour(lon, lat, elev, isoProfilLevels, 'm');
@@ -732,10 +720,10 @@ if (g_NTD_ISOBATH == 1)
       [contourMatrix, contourHdl] = m_contour(lon, lat, elev, [0 0], 'k');
       if (~isempty(contourMatrix))
          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (SRTM)'}];
+         g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (GEBCO)'}];
       end
-      clear elev lon lat;
-%    end
+      clear elev lon lat
+   end
    
    fprintf('done\n');
 end
@@ -987,7 +975,7 @@ return
 %   - "d"         : back to plot the default number of displacements per set
 %   - "i"         : plot useful isobath (ETOPO2)
 %   - "s"         : switch between bathymetric atlas to plot isobath (ETOPO2 or
-%                   SRTM30+)
+%                   GEBCO)
 %   - "p"         : pdf output file generation
 %   - "h"         : write help and current configuration
 %   - escape      : exit
@@ -1019,7 +1007,7 @@ global g_NTD_NB_CYCLE;
 global g_NTD_DEFAULT_NB_PLOT_CYCLE;
 global g_NTD_NB_PLOT_CYCLE;
 global g_NTD_ISOBATH;
-global g_NTD_ISO_SRTM;
+global g_NTD_ISO_GEBCO;
 global g_NTD_PRINT;
 global g_NTD_QC;
 global g_NTD_LOAD_FLOAT;
@@ -1069,17 +1057,17 @@ elseif (strcmp(a_eventData.Key, 'leftarrow'))
 elseif (strcmp(a_eventData.Key, 'i'))
    g_NTD_ISOBATH = mod(g_NTD_ISOBATH+1, 2);
    if (g_NTD_ISOBATH == 0)
-      g_NTD_ISO_SRTM = 0;
+      g_NTD_ISO_GEBCO = 0;
    end
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
    display_current_config;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % switch between bathymetric atlas to plot isobath (ETOPO2 or SRTM30+)
+   % switch between bathymetric atlas to plot isobath (ETOPO2 or GEBCO)
 elseif (strcmp(a_eventData.Key, 's'))
    if (g_NTD_ISOBATH == 1)
-      g_NTD_ISO_SRTM = mod(g_NTD_ISO_SRTM+1, 2);
+      g_NTD_ISO_GEBCO = mod(g_NTD_ISO_GEBCO+1, 2);
       plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    end
    
@@ -1163,7 +1151,7 @@ elseif (strcmp(a_eventData.Key, 'h'))
       g_NTD_DEFAULT_NB_PLOT_CYCLE);
    fprintf('Misc:\n');
    fprintf('   i: plot useful isobath (ETOPO2)\n');
-   fprintf('   s: switch between bathymetric atlas to plot isobath (ETOPO2 or SRTM30+)\n');
+   fprintf('   s: switch between bathymetric atlas to plot isobath (ETOPO2 or GEBCO)\n');
    fprintf('   p: pdf output file generation\n');
    fprintf('   h: write help and current configuration\n');
    fprintf('Escape: exit\n\n');
@@ -1195,14 +1183,14 @@ function display_current_config
 
 global g_NTD_NB_PLOT_CYCLE;
 global g_NTD_ISOBATH;
-global g_NTD_ISO_SRTM;
+global g_NTD_ISO_GEBCO;
 global g_NTD_QC;
 
 fprintf('\nCurrent configuration:\n');
 fprintf('NB DISP / SET: %d\n', g_NTD_NB_PLOT_CYCLE);
 fprintf('QC           : %d\n', g_NTD_QC);
 fprintf('ISOBATH      : %d\n', g_NTD_ISOBATH);
-fprintf('ISOBATH SRTM : %d\n', g_NTD_ISO_SRTM);
+fprintf('ISOBATH GEBCO: %d\n', g_NTD_ISO_GEBCO);
 
 return
 

@@ -93,7 +93,7 @@ global g_decArgo_rtqcTest59;
 global g_decArgo_rtqcTest62;
 global g_decArgo_rtqcTest63;
 
-global g_decArgo_rtqcEtopoFile;
+global g_decArgo_rtqcGebcoFile;
 global g_decArgo_rtqcGreyList;
 
 global g_decArgo_add3Min;
@@ -169,7 +169,7 @@ configVar{end+1} = 'TEST059_NITRATE';
 configVar{end+1} = 'TEST062_BBP';
 configVar{end+1} = 'TEST063_CHLA';
 
-configVar{end+1} = 'TEST004_ETOPO2_FILE';
+configVar{end+1} = 'TEST004_GEBCO_FILE';
 configVar{end+1} = 'TEST015_GREY_LIST_FILE';
 
 configVar{end+1} = 'ADD_THREE_MINUTES';
@@ -304,7 +304,7 @@ if (o_inputError == 0)
    g_decArgo_rtqcTest63 = str2num(configVal{1});
    configVal(1) = [];
    
-   g_decArgo_rtqcEtopoFile = configVal{1};
+   g_decArgo_rtqcGebcoFile = configVal{1};
    configVal(1) = [];
    g_decArgo_rtqcGreyList = configVal{1};
    configVal(1) = [];
