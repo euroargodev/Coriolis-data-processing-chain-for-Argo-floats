@@ -1335,7 +1335,7 @@ switch (packType)
          
          % message data frame
          msgData = tabData(3:end);
-         
+
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -1376,7 +1376,11 @@ switch (packType)
          
          % message data frame
          msgData = tabData(21:end);
-         
+
+         if (all(msgData == 0))
+            continue
+         end
+
          decData = [];
          switch (sensorType)
             

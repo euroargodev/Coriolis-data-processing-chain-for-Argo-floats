@@ -341,7 +341,7 @@ end
 % 6903878
 % 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249, 6902906, 6903551, 3902122, 2902239, 6904111]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 6904111, 3902121]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -428,7 +428,30 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idVectorPres) = tabDone(idBase);
          tabDelayed(idVectorPres) = tabDelayed(idBase);
          tabCompleted(idVectorPres) = tabCompleted(idBase);
-         
+
+      case 3902121
+         % during cycle (330, 0) the float transmitted again OCR raw data of
+         % cycles (311, 0) to (329, 0)
+         idF330 = find((tabCyNumRaw == 330) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idDel = find((tabCyNumRaw ~= 330) & (tabSession == tabSession(idF330)));
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+
+         idF330 = find((tabCyNumRaw == 331) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idDel = find((tabSession == tabSession(idF330)) & ...
+            ~(((tabCyNumRaw == 331) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253)) | ...
+            ((tabCyNumRaw == 330) & (tabProfNumRaw == 0) & (tabPackType == 250))));
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+
+         % during cycle (331, 0) the float transmitted cycle (288, 0) messages
+         idF331 = find((tabCyNumRaw == 331) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idDel = find((tabCyNumRaw == 288) & (tabSession == tabSession(idF331)));
+         tabDone(idDel) = 1;
+
+         idF331 = find((tabCyNumRaw == 332) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idDel = find((tabCyNumRaw == 288) & (tabSession == tabSession(idF331)));
+         tabDone(idDel) = 1;
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
