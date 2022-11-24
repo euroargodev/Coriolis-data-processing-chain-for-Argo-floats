@@ -123,9 +123,6 @@ for idDir = 1:length(dacDir)
                for idFProf = 1:length(profDir)
                   
                   profFileName = profDir(idFProf).name;
-                  %                   if (strcmp(profFileName, 'D6900870_001.nc'))
-                  %                      a=1
-                  %                   end
                   
                   if (profFileName(1) == 'M')
                      continue

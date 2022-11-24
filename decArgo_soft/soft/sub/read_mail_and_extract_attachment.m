@@ -50,17 +50,6 @@ BOUNDARY2 = 'boundary=';
 SBD_FILE_NAME = 'filename=';
 BOUNDARY_END = '----------';
 
-% if (strcmp(a_fileName, 'co_20111030T120954Z_300034013303990_001664_000000_26298.txt'))
-%    a=1
-% end
-
-% if (strcmp(a_fileName, 'co_20160915T120529Z_300234063600090_000342_000000_10110.txt'))
-%    a=1
-% end
-% if (strcmp(a_fileName, 'co_20160915T120542Z_300234063600090_000343_000000_1107-9.txt'))
-%    a=1
-% end
-
 % mail file path name to process
 mailFilePathName = [a_inputDirName '/' a_fileName];
 

@@ -63,7 +63,7 @@ global g_decArgo_reportStruct;
 global g_decArgo_longNameOfParamAdjErr;
 
 % to store information on PARAM adjustment
-global g_decArgo_paramAdjInfo;
+global g_decArgo_paramProfAdjInfo;
 
 
 % verbose mode flag
@@ -1274,14 +1274,14 @@ for idProf = 1:length(tabProfiles)
             end
             
             % for decoder RT adjustments:
-            % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramAdjInfo
+            % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramProfAdjInfo
             % global variable
             if (~isempty(prof.rtParamAdjIdList))
                for idAdj = prof.rtParamAdjIdList
                   
                   % retrieve information on PARAM adjustment
-                  idF = find([g_decArgo_paramAdjInfo{:, 1}] == idAdj);
-                  paramAdjInfo = g_decArgo_paramAdjInfo(idF, :);
+                  idF = find([g_decArgo_paramProfAdjInfo{:, 1}] == idAdj);
+                  paramAdjInfo = g_decArgo_paramProfAdjInfo(idF, :);
                   paramName = paramAdjInfo{4};
                   
                   paramInfo = get_netcdf_param_attributes(paramName);
@@ -1333,6 +1333,28 @@ for idProf = 1:length(tabProfiles)
                         tabEquation = {[paramName '_ADJUSTED = ' paramName]};
                         tabCoefficient = {'Not applicable'};
                         tabComment = {'No adjustment performed (values duplicated)'};
+                        if (isempty(ncCreationDate))
+                           date = currentDate;
+                        else
+                           date = ncCreationDate;
+                        end
+                        tabDate = {date};
+                        
+                        % store calibration information for this profile
+                        profCalibInfo = [];
+                        profCalibInfo.profId = idP;
+                        profCalibInfo.param = tabParam;
+                        profCalibInfo.equation = tabEquation;
+                        profCalibInfo.coefficient = tabCoefficient;
+                        profCalibInfo.comment = tabComment;
+                        profCalibInfo.date = tabDate;
+                        calibInfo{end+1} = profCalibInfo;
+                     elseif (paramInfo.paramType == 'j')
+                        
+                        tabParam = {paramName};
+                        tabEquation = {'Not applicable'};
+                        tabCoefficient = {'Not applicable'};
+                        tabComment = {'Not applicable'};
                         if (isempty(ncCreationDate))
                            date = currentDate;
                         else

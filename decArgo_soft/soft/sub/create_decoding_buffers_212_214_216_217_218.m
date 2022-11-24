@@ -38,6 +38,9 @@ global g_decArgo_processRemainingBuffers;
 % ICE float firmware
 global g_decArgo_floatFirmware;
 
+% global default values
+global g_decArgo_dateDef;
+
 
 % maximum number of transmission sessions (after deep cycle) to look for
 % expected data
@@ -232,8 +235,9 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 ...
-      6903006 6901880 6902957]))
+if (ismember(g_decArgo_floatNum, [ ...
+      6902814, 6903230, 3901963, 6903265, 3901645, ...
+      6903006, 6901880, 6902957, 6902849, 6902853]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -349,6 +353,41 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 ...
          id = find(tabCyNum == 133);
          tabSession(id) = sessionNum122 + 11;
          tabBase(id) = 0;
+      case 6902849
+         % delayed transmission of second Iridium session of cycle #217, 221
+         id = find((tabCyNum == 217) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+         
+         id = find((tabCyNum == 221) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+      case 6902853
+         % delayed transmission cycle #219 (2 sessions)
+         id = find((tabCyNum == 219) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+         
+         % delayed transmission cycle #223 (2 sessions)
+         id = find((tabCyNum == 223) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
    end
 end
 
@@ -386,7 +425,8 @@ for sesNum = sessionList
       idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
       
       % specific
-      if (ismember(g_decArgo_floatNum, [3901963 6903256 6903230]))
+      if (ismember(g_decArgo_floatNum, [ ...
+            3901963, 6903256, 6903230]))
          switch g_decArgo_floatNum
             case 3901963
                % cycles #13, #24 and #25 are delayed and the packet types [0 4 5]
@@ -455,7 +495,7 @@ for sesNum = sessionList
    if (~isempty(idForSession))
       cyNumList = unique(tabCyNum(idForSession));
       for cyNum = cyNumList
-
+         
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
@@ -525,22 +565,23 @@ end
 
 % sort rank numbers according to SBD date
 % to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
-rank = 1;
-rankDoneList = [];
-for idL = 1:length(tabRank)
-   if (tabRank(idL) ~= -1)
-      if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
-         tabRankByDate(idL) = rank;
-         rankDoneList = [rankDoneList; tabRank(idL) rank];
-         rank = rank + 1;
-      else
-         tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
-      end
-   end
-end
+% rank = 1;
+% rankDoneList = [];
+% for idL = 1:length(tabRank)
+%    if (tabRank(idL) ~= -1)
+%       if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
+%          tabRankByDate(idL) = rank;
+%          rankDoneList = [rankDoneList; tabRank(idL) rank];
+%          rank = rank + 1;
+%       else
+%          tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
+%       end
+%    end
+% end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865, 6903264]))
+if (ismember(g_decArgo_floatNum, [ ...
+      6903772, 6903773, 3902137, 6903865, 6903264, 6903698]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -584,6 +625,14 @@ if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865, 6903264]))
          id = id(2);
          tabDeep(tabSession == tabSession(id)) = 0;
          idDel = find((tabSession == tabSession(id)) & ismember(tabPackType, [2 3 13 14]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
+      case 6903698
+         % data packets transmitted twice in the first EOL session
+         idBase = find(tabEolFlag ==1, 1, 'first');
+         tabDeep(tabSession == tabSession(idBase)) = 0;
+         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4 5]));
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;

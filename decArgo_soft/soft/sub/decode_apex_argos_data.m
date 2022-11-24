@@ -92,6 +92,12 @@ g_decArgo_presOffsetData = get_apx_pres_offset_init_struct;
 % array to store surface data of Argos floats
 global g_decArgo_floatSurfData;
 
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
+% Argos error ellipses storage
+global g_decArgo_addErrorEllipses;
+
 
 % inits for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -369,15 +375,27 @@ if (isempty(g_decArgo_outputCsvFileId))
       update_output_cycle_number_ir_sbd( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, [], o_tabTechAuxNMeas);
 
-   % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, g_decArgo_floatSurfData.launchDate, 1, a_decoderId);
-
+   if (g_decArgo_addErrorEllipses == 1)
+      % add Argos error ellipses
+      [o_tabTrajNMeas] = add_argos_error_ellipses(a_floatArgosId, o_tabTrajNMeas);
+   end
+   
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
 
    % create output float configuration
    [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames, a_decoderId);
+   
+   % perform PARAMETER adjustment
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, g_decArgo_floatSurfData.launchDate, 1, a_decoderId);
+
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
    
 end
 

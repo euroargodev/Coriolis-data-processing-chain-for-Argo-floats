@@ -88,10 +88,6 @@ for idP = 1:size(a_tabTech, 1)
    cycleNum = a_tabTech(idP, 4);
    profileNum = a_tabTech(idP, 5);
    
-   %    if (cycleNum == 19)
-   %       a=1
-   %    end
-   
    % set the current reference day for this cycle and prof number
    refDay = a_refDay;
    if (~isempty(g_decArgo_julD2FloatDayOffset))

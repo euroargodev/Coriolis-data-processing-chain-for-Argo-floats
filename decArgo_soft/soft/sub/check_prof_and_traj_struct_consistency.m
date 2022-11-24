@@ -510,6 +510,6 @@ for idNM = 1:length(a_tabTrajNMeas)
 end
 
 ellapsedTime = toc;
-fprintf('INFO: PROF-TRAJ CONSISTENCY: Elapsed time is %.1f seconds)\n', ellapsedTime);
+fprintf('INFO: PROF-TRAJ CONSISTENCY: Elapsed time is %.1f seconds\n', ellapsedTime);
 
 return

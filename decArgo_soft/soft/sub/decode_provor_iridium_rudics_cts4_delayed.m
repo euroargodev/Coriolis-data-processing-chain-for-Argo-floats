@@ -87,7 +87,6 @@ global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
 
 % decoder configuration values
-global g_decArgo_generateNcTraj;
 global g_decArgo_generateNcMeta;
 global g_decArgo_dirInputRsyncData;
 
@@ -135,6 +134,9 @@ g_decArgo_floatProgTab = [];
 % float configuration
 global g_decArgo_floatConfig;
 
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatLoginName '_' num2str(a_floatNum) '/'];
@@ -165,7 +167,7 @@ if (isempty(g_decArgo_floatConfig))
 end
 
 % add launch position and time in the TRAJ NetCDF file
-if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
+if (isempty(g_decArgo_outputCsvFileId))
    o_tabTrajNMeas = add_launch_data_ir_rudics;
 end
 
@@ -384,7 +386,14 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
    % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1, a_decoderId);
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_launchDate, 1, a_decoderId);
+
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
    
    if (g_decArgo_realtimeFlag == 1)
       

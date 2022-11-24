@@ -97,7 +97,6 @@ global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
 
 % decoder configuration values
-global g_decArgo_generateNcTraj;
 global g_decArgo_generateNcMeta;
 global g_decArgo_dirInputRsyncData;
 global g_decArgo_applyRtqc;
@@ -165,6 +164,9 @@ g_decArgo_needFullBufferInfo = PRINT_INFO_ON_NOT_COMPLETED_BUFFER;
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDurationIrSbd2;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDurationIrSbd2/24;
+
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
 
 
 % create the float directory
@@ -236,7 +238,7 @@ if (isempty(g_decArgo_floatConfig))
 end
 
 % add launch position and time in the TRAJ NetCDF file
-if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
+if (isempty(g_decArgo_outputCsvFileId))
    o_tabTrajNMeas = add_launch_data_ir_sbd2;
 end
 
@@ -867,10 +869,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % assign second Iridium session to end of previous cycle and merge first/last
    % msg and location times
-   if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
-      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
-         o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
-   end
+   [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
+      o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % add interpolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_sbd2(o_tabProfiles, g_decArgo_gpsData, ...
@@ -887,7 +887,19 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
       add_configuration_number_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+
+   % set cycle numbers to Iridium mail files data
+   update_mail_data_ir_rudics_sbd2(o_tabTrajNMeas);
    
+   % add Iridium location in trajectory data
+   [o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      add_iridium_locations_in_trajectory_data( ...
+      o_tabTrajNMeas, o_tabTrajNCycle, g_decArgo_iridiumMailData);
+   
+   % sort trajectory data structures according to the predefined
+   % measurement code order
+   [o_tabTrajNMeas] = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
+
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
@@ -901,7 +913,14 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
    % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1, a_decoderId);
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_launchDate, 1, a_decoderId);
+
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
    
    if (g_decArgo_realtimeFlag)
       
@@ -1420,7 +1439,7 @@ switch (a_decoderId)
          
          % sort trajectory data structures according to the predefined
          % measurement code order
-         [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+         [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
          
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
          o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

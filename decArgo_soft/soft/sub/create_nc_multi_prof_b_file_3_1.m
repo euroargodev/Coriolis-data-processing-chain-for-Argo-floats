@@ -57,7 +57,7 @@ global g_decArgo_reportStruct;
 global g_decArgo_longNameOfParamAdjErr;
 
 % to store information on PARAM adjustment
-global g_decArgo_paramAdjInfo;
+global g_decArgo_paramProfAdjInfo;
 
 
 % verbose mode flag
@@ -936,10 +936,10 @@ if (nbProfParam > 0)
       profDate = prof.date;
       if (profDate ~= g_decArgo_dateDef)
          netcdf.putVar(fCdf, juldVarId, profPos, 1, profDate);
-         if (isempty(prof.dateQc))
-            netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
-         else
+         if (~isempty(prof.dateQc))
             netcdf.putVar(fCdf, juldQcVarId, profPos, 1, prof.dateQc);
+         else
+            netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
          end
       else
          netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrMissing);
@@ -955,7 +955,11 @@ if (nbProfParam > 0)
          netcdf.putVar(fCdf, juldLocationVarId, profPos, 1, profLocationDate);
          netcdf.putVar(fCdf, latitudeVarId, profPos, 1, profLocationLat);
          netcdf.putVar(fCdf, longitudeVarId, profPos, 1, profLocationLon);
-         netcdf.putVar(fCdf, positionQcVarId, profPos, 1, profLocationQc);
+         if (~isempty(profLocationQc))
+            netcdf.putVar(fCdf, positionQcVarId, profPos, 1, profLocationQc);
+         else
+            netcdf.putVar(fCdf, positionQcVarId, profPos, 1, g_decArgo_qcStrNoQc);
+         end
       else
          netcdf.putVar(fCdf, positionQcVarId, profPos, 1, g_decArgo_qcStrMissing);
       end
@@ -1301,14 +1305,14 @@ if (nbProfParam > 0)
       end
       
       % for decoder RT adjustments:
-      % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramAdjInfo
+      % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramProfAdjInfo
       % global variable
       if (~isempty(prof.rtParamAdjIdList))
          for idAdj = prof.rtParamAdjIdList
             
             % retrieve information on PARAM adjustment
-            idF = find([g_decArgo_paramAdjInfo{:, 1}] == idAdj);
-            paramAdjInfo = g_decArgo_paramAdjInfo(idF, :);
+            idF = find([g_decArgo_paramProfAdjInfo{:, 1}] == idAdj);
+            paramAdjInfo = g_decArgo_paramProfAdjInfo(idF, :);
             paramName = paramAdjInfo{4};
 
             paramInfo = get_netcdf_param_attributes(paramName);

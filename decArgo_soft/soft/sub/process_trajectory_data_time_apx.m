@@ -64,6 +64,10 @@ global g_JULD_STATUS_9;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
+% to store information on adjustments
+global g_decArgo_paramTrajAdjInfo;
+global g_decArgo_paramTrajAdjId;
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FLOAT LAUNCH TIME AND POSITION
@@ -78,7 +82,7 @@ if (a_addLaunchData == 1)
       a_floatSurfData.launchDate, ...
       a_floatSurfData.launchLon, ...
       a_floatSurfData.launchLat, ...
-      ' ', ' ', '0', 0);
+      ' ', ' ', 0, 0);
    
    trajNMeasStruct.surfOnly = 1;
    
@@ -116,6 +120,21 @@ for idC = 1:length(cycleNumList)
       idTrajNCyStruct = length(o_tabTrajNCycle);
    end
    trajNCycleStruct = o_tabTrajNCycle(idTrajNCyStruct);
+   
+   idF = find(a_presOffsetData.cycleNumAdjPres == cycleNum, 1);
+   if (~isempty(idF))
+      presOffset = a_presOffsetData.presOffset(idF);
+      
+      param = 'PRES';
+      equation = 'PRES_ADJUSTED = PRES - Surface Pressure';
+      coefficient = ['For cycle #' num2str(cycleNum) ': Surface Pressure = ' num2str(presOffset) ' dbar'];
+      comment = 'Pressure adjusted in real time by using pressure offset at the sea surface';
+      
+      g_decArgo_paramTrajAdjInfo = [g_decArgo_paramTrajAdjInfo;
+         g_decArgo_paramTrajAdjId 0 cycleNum ...
+         {param} {equation} {coefficient} {comment} {''}];
+      g_decArgo_paramTrajAdjId = g_decArgo_paramTrajAdjId + 1;
+   end
    
    % determine DATA_MODE for the current cycle
    cycleDataMode = 'R';

@@ -34,11 +34,15 @@
    "GENERATE_NC_MULTI_PROF" : "0",
    "GENERATE_NC_MONO_PROF" : "2",
    "GENERATE_NC_TECH" : "2",
-   "GENERATE_NC_META" : "2",   
+   "GENERATE_NC_META" : "1",   
 
-   "ADD_THREE_MINUTES" : "0",
-   "CYCLE_2_SBD_DATA_FILE_NAME" : "",
-   "FLOAT_WITH_DAMPING_DISK_FILE_NAME" : "",
+   "GENERATE_NC_TRAJ_3_2" : "1",   
+   "DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE" : "C:/Users/jprannou/_DATA/OUT/nc_output_decArgo_rt2/",
+
+   "ADD_ARGOS_ERROR_ELLIPSES" : "0",   
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/mails/OUT_MAIL/",
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/spool/",
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/archive/",
 
    "APPLY_RTQC" : "1",
 
@@ -69,6 +73,8 @@
    "TEST062_BBP" : "1",
    "TEST063_CHLA" : "1",
 
-   "TEST004_ETOPO2_FILE" : "/home/coriolis_exp/dat/co03/bathy/ETOPO2v2g_i2_MSB.bin",
-   "TEST015_GREY_LIST_FILE" : "/home/coriolis_dev/val/spool/co05/co0508/ar_greylist.txt"
+   "TEST004_GEBCO_FILE" : "C:/Users/jprannou/_RNU/_ressources/GEBCO_2020/GEBCO_2020.nc",
+   "TEST015_GREY_LIST_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/ar_greylist.txt",
+
+   "ADD_THREE_MINUTES" : "0"
 }

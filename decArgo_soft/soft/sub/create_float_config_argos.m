@@ -34,10 +34,6 @@ g_decArgo_jsonMetaData = [];
 % float configuration
 global g_decArgo_floatConfig;
 
-% arrays to store RT offset information
-global g_decArgo_rtOffsetInfo;
-g_decArgo_rtOffsetInfo = [];
-
 % default values
 global g_decArgo_janFirst1950InMatlab;
 

@@ -118,6 +118,7 @@ DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
  FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\_LOG_AVEC_BUFF\not_in_dm_check_ko.txt';
  FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\_LOG\in_dm_check_ko.txt';
+ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts3_delayed_error.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';

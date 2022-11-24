@@ -117,6 +117,9 @@ g_decArgo_generateNcFlag = 1; % since there is no buffer we can process the data
 global g_decArgo_rsyncLogFileUnderProcessList;
 global g_decArgo_rsyncLogFileUsedList;
 
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatRudicsId) '_' num2str(a_floatNum) '/'];
@@ -426,8 +429,15 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatLaunchDate, 1, a_decoderId);
-   
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_floatLaunchDate, 1, a_decoderId);
+
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
+
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);

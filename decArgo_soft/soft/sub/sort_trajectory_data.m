@@ -45,6 +45,7 @@ if (~isempty(o_tabTrajNMeas))
       if (~isempty(mcOrderList))
          
          cycleNumList = unique([o_tabTrajNMeas.cycleNumber]);
+         cycleNumList(cycleNumList == -1) = [];
          for idC = 1:length(cycleNumList)
             cycleNum = cycleNumList(idC);
             

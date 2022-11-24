@@ -2,10 +2,10 @@
 % Compute derived parameters for Apex APF11 Iridium-SBD floats.
 %
 % SYNTAX :
-%  [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd, o_profRafos] = ...
+%  [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbb, o_profFlbbCd, o_profRafos] = ...
 %    compute_derived_parameters_apx_apf11_ir( ...
 %    a_profCtdPts, a_profCtdCp, a_profDo, ...
-%    a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
+%    a_profCtdPtsh, a_profCtdCpH, a_profFlbb, a_profFlbbCd, ...
 %    a_profRafos, ...
 %    a_cycleTimeData, a_decoderId)
 %
@@ -15,6 +15,7 @@
 %   a_profDo        : input O2 data
 %   a_profCtdPtsh   : input CTD_PTSH data
 %   a_profCtdCpH    : input CTD_CP_H data
+%   a_profFlbb      : input FLBB data
 %   a_profFlbbCd    : input FLBB_CD data
 %   a_profRafos     : input RAFOS data
 %   a_cycleTimeData : input cycle timings data
@@ -24,6 +25,7 @@
 %   o_profDo      : output O2 data
 %   o_profCtdPtsh : output CTD_PTSH data
 %   o_profCtdCpH  : output CTD_CP_H data
+%   o_profFlbb    : output FLBB data
 %   o_profFlbbCd  : output FLBB_CD data
 %   o_profRafos   : output RAFOS data
 %
@@ -35,10 +37,10 @@
 % RELEASES :
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd, o_profRafos] = ...
+function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbb, o_profFlbbCd, o_profRafos] = ...
    compute_derived_parameters_apx_apf11_ir( ...
    a_profCtdPts, a_profCtdCp, a_profDo, ...
-   a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
+   a_profCtdPtsh, a_profCtdCpH, a_profFlbb, a_profFlbbCd, ...
    a_profRafos, ...
    a_cycleTimeData, a_decoderId)
 
@@ -46,6 +48,7 @@ function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd, o_profRafos] = ..
 o_profDo = a_profDo;
 o_profCtdPtsh = a_profCtdPtsh;
 o_profCtdCpH = a_profCtdCpH;
+o_profFlbb = a_profFlbb;
 o_profFlbbCd = a_profFlbbCd;
 o_profRafos = a_profRafos;
 
@@ -153,6 +156,12 @@ switch (a_decoderId)
                            paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
                            paramDoxy.fillValue);
                         o_profDo.data(idPark, idDoxy) = doxyValues;
+                        
+                        if (isempty(o_profDo.ptsForDoxy))
+                           o_profDo.ptsForDoxy = repmat( ...
+                              [paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue], size(o_profDo.data, 1), 1);
+                        end
+                        o_profDo.ptsForDoxy(idPark, :) = ctdLinkData;
                      end
                      
                      % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
@@ -293,6 +302,12 @@ switch (a_decoderId)
                            paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
                            paramDoxy.fillValue);
                         o_profDo.data(idAscent, idDoxy) = doxyValues;
+                        
+                        if (isempty(o_profDo.ptsForDoxy))
+                           o_profDo.ptsForDoxy = repmat( ...
+                              [paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue], size(o_profDo.data, 1), 1);
+                        end
+                        o_profDo.ptsForDoxy(idAscent, :) = ctdIntData;
                      end
                      
                      % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
@@ -524,6 +539,187 @@ switch (a_decoderId)
                %                   o_profCtdCpH.dataAdj(:, idPhInSituFree) = phInSituFreeValues;
                %                   o_profCtdCpH.dataAdj(:, idPhInSituTotal) = phInSituTotalValues;
                %                end
+            end
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % CHLA & BBP700
+      
+      if (~isempty(o_profFlbb))
+         
+         paramChla = get_netcdf_param_attributes('CHLA');
+         paramBbp700 = get_netcdf_param_attributes('BBP700');
+         
+         paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramTemp = get_netcdf_param_attributes('TEMP');
+         paramSal = get_netcdf_param_attributes('PSAL');
+         paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
+         
+         % add CHLA and BBP700 to the FLBB profile
+         o_profFlbb.paramList = [o_profFlbb.paramList paramChla paramBbp700];
+         o_profFlbb.data = [o_profFlbb.data ...
+            ones(size(o_profFlbb.data, 1), 1)*paramChla.fillValue ...
+            ones(size(o_profFlbb.data, 1), 1)*paramBbp700.fillValue];
+         if (~isempty(o_profFlbb.dataAdj))
+            o_profFlbb.paramDataMode = [o_profFlbb.paramDataMode '  '];
+            o_profFlbb.dataAdj = [o_profFlbb.dataAdj ...
+               ones(size(o_profFlbb.dataAdj, 1), 1)*paramChla.fillValue ...
+               ones(size(o_profFlbb.dataAdj, 1), 1)*paramBbp700.fillValue];
+         end
+         
+         % CHLA
+         idFluorescenceChla = find(strcmp({o_profFlbb.paramList.name}, 'FLUORESCENCE_CHLA') == 1);
+         idChla = find(strcmp({o_profFlbb.paramList.name}, 'CHLA') == 1);
+         
+         if (~isempty(idFluorescenceChla) && ~isempty(idChla))
+            % compute CHLA
+            chlaValues = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+               o_profFlbb.data(:, idFluorescenceChla), ...
+               paramFluorescenceChla.fillValue, paramChla.fillValue);
+            o_profFlbb.data(:, idChla) = chlaValues;
+         end
+         
+         % BBP700
+         idPres = find(strcmp({o_profFlbb.paramList.name}, 'PRES') == 1);
+         idBetaBackscattering700 = find(strcmp({o_profFlbb.paramList.name}, 'BETA_BACKSCATTERING700') == 1);
+         idBbp700 = find(strcmp({o_profFlbb.paramList.name}, 'BBP700') == 1);
+         
+         if (~isempty(idPres) && ~isempty(idBetaBackscattering700) && ~isempty(idBbp700))
+            
+            % retrieve discrete PTS measurements from CTD_PTS and CTD_PTSH data
+            ctdData = [];
+            if (~isempty(a_profCtdPts))
+               ctdData = a_profCtdPts;
+            end
+            if (~isempty(a_profCtdPtsh))
+               if (isempty(ctdData))
+                  ctdData = a_profCtdPtsh;
+                  ctdData.data = ctdData.data(:, 1:3);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = ctdData.dataAdj(:, 1:3);
+                  end
+               else
+                  ctdData.dates = [ctdData.dates; a_profCtdPtsh.dates];
+                  ctdData.data = [ctdData.data; a_profCtdPtsh.data(:, 1:3)];
+                  [~, idSort] = sort(ctdData.dates);
+                  ctdData.dates = ctdData.dates(idSort);
+                  ctdData.data = ctdData.data(idSort, :);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = [ctdData.dataAdj; a_profCtdPtsh.dataAdj(:, 1:3)];
+                     ctdData.dataAdj = ctdData.dataAdj(idSort, :);
+                  end
+               end
+            end
+            
+            % compute BBP700 for drift phase measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci))
+               idPark = find(o_profFlbb.dates < a_cycleTimeData.ascentStartDateSci);
+               
+               if (length(idPark) > 1)
+                  
+                  if (~isempty(ctdData))
+                     
+                     % assign the CTD data at the times of the measurements
+                     % (timely closest association)
+                     ctdLinkData = assign_CTD_measurements(ctdData.dates, ctdData.data, o_profFlbb.dates(idPark));
+                     if (~isempty(ctdLinkData))
+                        
+                        % compute BBP700
+                        bbp700Values = compute_BBP700_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+                           o_profFlbb.data(idPark, idBetaBackscattering700), ...
+                           paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+                           ctdLinkData, ...
+                           paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+                        o_profFlbb.data(idPark, idBbp700) = bbp700Values;
+                     end
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute BBP700 parameter for subsurface drift measurements - BBP700 data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
+            end
+            
+            % compute BBP700 for profile measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci) && ...
+                  ~isempty(a_cycleTimeData.ascentEndDate))
+               idAscent = find(((o_profFlbb.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                  (o_profFlbb.dates <= a_cycleTimeData.ascentEndDate)));
+               
+               if (length(idAscent) > 1)
+                  
+                  % retrieve PTS measurements sampled suring ascent profile from
+                  % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                  ctdDataAscent = [];
+                  if (~isempty(ctdData))
+                     idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                        (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
+                     if (~isempty(idCtdAscent))
+                        ctdDataAscent = ctdData;
+                        ctdDataAscent.data = ctdDataAscent.data(idCtdAscent, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
+                        end
+                     end
+                  end
+                  if (~isempty(a_profCtdCp))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCp;
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                        end
+                     end
+                  end
+                  if (~isempty(a_profCtdCpH))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCpH;
+                        ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           ctdDataAscent.dataAdj = flipud(ctdDataAscent.dataAdj);
+                        end
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                        end
+                     end
+                  end
+                  
+                  if (~isempty(ctdDataAscent))
+                     
+                     % interpolate and extrapolate the CTD data at the pressures of the FLBB_CD
+                     % measurements
+                     ctdIntData = compute_interpolated_CTD_measurements( ...
+                        ctdDataAscent.data, o_profFlbb.data(idAscent, idPres), 'A');
+                     
+                     % compute BBP700
+                     bbp700Values = compute_BBP700_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+                        o_profFlbb.data(idAscent, idBetaBackscattering700), ...
+                        paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+                        [o_profFlbb.data(idAscent, idPres), ctdIntData(:, 2), ctdIntData(:, 3)], ...
+                        paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+                     o_profFlbb.data(idAscent, idBbp700) = bbp700Values;
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute BBP700 parameter for ascending profile measurements - BBP700 data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
             end
          end
       end
@@ -778,18 +974,7 @@ switch (a_decoderId)
          if (~isempty(idRawToa))
             
             % compute TOA from RAW_TOA
-            idF = find(o_profRafos.paramNumberWithSubLevels < idRawToa);
-            if (isempty(idF))
-               firstCol = idRawToa;
-            else
-               firstCol = idRawToa + sum(o_profRafos.paramNumberOfSubLevels(idF)) - length(idF);
-            end
-            idF = find(o_profRafos.paramNumberWithSubLevels == idRawToa);
-            if (isempty(idF))
-               lastCol = firstCol;
-            else
-               lastCol = firstCol + o_profRafos.paramNumberOfSubLevels(idF) - 1;
-            end
+            [~, firstCol, lastCol] = get_param_data_index(o_profRafos, 'RAW_TOA');
             toaValues = compute_TOA( ...
                o_profRafos.data(:, firstCol:lastCol), ...
                paramRafosRawToa.fillValue, paramRafosToa.fillValue);

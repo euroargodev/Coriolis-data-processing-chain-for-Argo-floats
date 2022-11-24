@@ -35,7 +35,15 @@
    "GENERATE_NC_MULTI_PROF" : "2",
    "GENERATE_NC_MONO_PROF" : "2",
    "GENERATE_NC_TECH" : "2",
-   "GENERATE_NC_META" : "2",     
+   "GENERATE_NC_META" : "1",   
+
+   "GENERATE_NC_TRAJ_3_2" : "1",   
+   "DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE" : "C:/Users/jprannou/_DATA/OUT/nc_output_decArgo_rt2/",
+
+   "ADD_ARGOS_ERROR_ELLIPSES" : "0",   
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/mails/OUT_MAIL/",
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/spool/",
+   "DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE" : "C:/Users/jprannou/_DATA/IN/ARGOS_ELLIPSES/web_service/ellipses_argos_ws_20210823/archive/",
 
    "APPLY_RTQC" : "1",
    

@@ -364,23 +364,24 @@ for cyNum = cyNumList
 end
 
 % sort rank numbers according to SBD date
-% to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
-rank = 1;
-rankDoneList = [];
-for idL = 1:length(tabRank)
-   if (tabRank(idL) ~= -1)
-      if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
-         tabRankByDate(idL) = rank;
-         rankDoneList = [rankDoneList; tabRank(idL) rank];
-         rank = rank + 1;
-      else
-         tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
-      end
-   end
-end
+% % to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
+% rank = 1;
+% rankDoneList = [];
+% for idL = 1:length(tabRank)
+%    if (tabRank(idL) ~= -1)
+%       if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
+%          tabRankByDate(idL) = rank;
+%          rankDoneList = [rankDoneList; tabRank(idL) rank];
+%          rank = rank + 1;
+%       else
+%          tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
+%       end
+%    end
+% end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6900791 6903064 6904067 6904068]))
+if (ismember(g_decArgo_floatNum, [ ...
+      6904068, 6900791, 6903064, 6904067, 6904068]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -437,6 +438,22 @@ if (ismember(g_decArgo_floatNum, [6900791 6903064 6904067 6904068]))
          tabRank(tabCyNum == 19) = tabRank(id);
          tabRankByCycle(tabCyNum == 19) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 19) = tabRankByDate(id);
+
+         % cycle #21, 23, 26 data are separated
+         id = find((tabCyNum == 21) & (tabBase == 1));
+         tabRank(tabCyNum == 21) = tabRank(id(1));
+         tabRankByCycle(tabCyNum == 21) = tabRankByCycle(id(1));
+         tabRankByDate(tabCyNum == 21) = tabRankByDate(id(1));
+         
+         id = find((tabCyNum == 23) & (tabBase == 1));
+         tabRank(tabCyNum == 23) = tabRank(id(1));
+         tabRankByCycle(tabCyNum == 23) = tabRankByCycle(id(1));
+         tabRankByDate(tabCyNum == 23) = tabRankByDate(id(1));
+         
+         id = find((tabCyNum == 26) & (tabBase == 1));
+         tabRank(tabCyNum == 26) = tabRank(id(1));
+         tabRankByCycle(tabCyNum == 26) = tabRankByCycle(id(1));
+         tabRankByDate(tabCyNum == 26) = tabRankByDate(id(1));
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS

@@ -103,6 +103,7 @@ for idProf = 1:length(a_tabProfiles)
       datedMeasStruct.dateList = profile.dateList;
       datedMeasStruct.dates = profile.dates;
       datedMeasStruct.data = profile.data;
+      datedMeasStruct.ptsForDoxy = profile.ptsForDoxy;
       datedMeasStruct.sensorNumber = profile.sensorNumber;
       
       if (profile.direction == 'D')
@@ -126,7 +127,7 @@ for idProf = 1:length(a_tabProfiles)
    end
 end
 
-% retrieve dated measurements
+% retrieve profile dated measurements
 for idProf = 1:length(a_tabProfiles)
    
    profile = a_tabProfiles(idProf);
@@ -144,6 +145,9 @@ for idProf = 1:length(a_tabProfiles)
    
    datedMeasStruct.dates = profile.dates(idDated);
    datedMeasStruct.data = profile.data(idDated, :);
+   if (~isempty(profile.ptsForDoxy))
+      datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(idDated, :);
+   end
    datedMeasStruct.sensorNumber = profile.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
@@ -151,6 +155,7 @@ for idProf = 1:length(a_tabProfiles)
    o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
 end
 
+% drift at park measurements
 for idDrift = 1:length(a_tabDrift)
    
    drift = a_tabDrift(idDrift);
@@ -163,11 +168,9 @@ for idDrift = 1:length(a_tabDrift)
    datedMeasStruct.paramNumberOfSubLevels = drift.paramNumberOfSubLevels;
    datedMeasStruct.dateList = drift.dateList;
    
-   dates = drift.dates;
-   idDated = find(dates ~= paramJuld.fillValue);
-   
-   datedMeasStruct.dates = drift.dates(idDated);
-   datedMeasStruct.data = drift.data(idDated, :);
+   datedMeasStruct.dates = drift.dates;
+   datedMeasStruct.data = drift.data;
+   datedMeasStruct.ptsForDoxy = drift.ptsForDoxy;
    datedMeasStruct.sensorNumber = drift.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
@@ -229,6 +232,9 @@ if (~isempty(profInfo))
          
          datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
          datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
+         if (~isempty(profile.ptsForDoxy))
+            datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(profInfo(idProfMax, 5), :);
+         end
          datedMeasStruct.sensorNumber = profile.sensorNumber;
          
          o_tabTrajIndex = [o_tabTrajIndex;
@@ -568,45 +574,6 @@ o_packDateStruct = struct( ...
    'cycleNumber', a_cycleNum, ...
    'profileNumber', a_profNum, ...
    'packetTime', '');
-
-return
-
-% ------------------------------------------------------------------------------
-% Get the basic structure to store dated measurements.
-%
-% SYNTAX :
-%  [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-%
-% INPUT PARAMETERS :
-%   a_cycleNum : cycle number
-%   a_profNum  : profile number
-%   a_phaseNum : phase number
-%
-% OUTPUT PARAMETERS :
-%   o_datedMeasStruct : initialized structure
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   03/06/2013 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-
-% output parameters initialization
-o_datedMeasStruct = struct( ...
-   'cycleNumber', a_cycleNum, ...
-   'profileNumber', a_profNum, ...
-   'phaseNumber', a_phaseNum, ...
-   'paramList', '', ...
-   'paramNumberWithSubLevels', '', ... % position, in the paramList of the parameters with a sublevel
-   'paramNumberOfSubLevels', '', ... % number of sublevels for the concerned parameter
-   'data', '', ...
-   'dateList', '', ...
-   'dates', '', ...
-   'sensorNumber', -1);
 
 return
 

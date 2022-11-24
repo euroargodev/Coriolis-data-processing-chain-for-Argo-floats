@@ -134,9 +134,7 @@ for idFloat = 1:nbFloats
    cycleList = unique(cycleList);
    
    for cyNum = cycleList
-      %       if (cyNum == 27)
-      %          a=1
-      %       end
+
       g_decArgo_cycleNum = cyNum;
       
       fileNames = dir([dirPathFileName '/' '*' num2str(floatNum) sprintf('_%03d_', cyNum) '*.msg']);

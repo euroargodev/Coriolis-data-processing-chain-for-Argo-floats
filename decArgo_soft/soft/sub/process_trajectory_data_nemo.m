@@ -75,10 +75,10 @@ global g_RPP_STATUS_1;
 % default values
 global g_decArgo_dateDef;
 
+% to store information on adjustments
+global g_decArgo_paramTrajAdjInfo;
+global g_decArgo_paramTrajAdjId;
 
-% if (a_cycleNum == 24)
-%    a=1
-% end
 
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
@@ -108,6 +108,16 @@ presOffset = [];
 idF = find(a_presOffsetData.cycleNumAdjPres == a_cycleNum, 1);
 if (~isempty(idF))
    presOffset = a_presOffsetData.presOffset(idF);
+   
+   param = 'PRES';
+   equation = 'PRES_ADJUSTED = PRES - Surface Pressure';
+   coefficient = ['For cycle #' num2str(a_cycleNum) ': Surface Pressure = ' num2str(presOffset) ' dbar'];
+   comment = 'Pressure adjusted in real time by using pressure offset at the sea surface';
+
+   g_decArgo_paramTrajAdjInfo = [g_decArgo_paramTrajAdjInfo;
+      g_decArgo_paramTrajAdjId 0 a_cycleNum ...
+      {param} {equation} {coefficient} {comment} {''}];
+   g_decArgo_paramTrajAdjId = g_decArgo_paramTrajAdjId + 1;
 end
 
 % data mode
@@ -723,6 +733,8 @@ end
 % GPS LOCATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+surfaceLocData = [];
+
 % unpack GPS data
 gpsLocCycleNum = a_gpsData{1};
 gpsLocDate = a_gpsData{4};
@@ -730,6 +742,7 @@ gpsLocLon = a_gpsData{5};
 gpsLocLat = a_gpsData{6};
 gpsLocQc = a_gpsData{7};
 
+% GPS data for the current cycle
 idF = find(gpsLocCycleNum == a_cycleNum);
 gpsCyLocDate = gpsLocDate(idF);
 gpsCyLocLon = gpsLocLon(idF);
@@ -744,7 +757,7 @@ for idFix = 1:length(gpsCyLocDate)
       'G', ...
       ' ', ...
       num2str(gpsCyLocQc(idFix)), 1);
-   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   surfaceLocData = [surfaceLocData; measStruct];
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -761,21 +774,32 @@ if (~isempty(a_iridiumData))
             a_iridiumData(idFix).unitLocationLon, ...
             a_iridiumData(idFix).unitLocationLat, ...
             'I', ...
-            0, ...
+            0, ... % no need to set a Qc, it will be set during RTQC
             a_iridiumData(idFix).cepRadius*1000, ...
             a_iridiumData(idFix).cepRadius*1000, ...
             '', ...
             ' ', ...
             1);
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         surfaceLocData = [surfaceLocData; measStruct];
       end
    end
    iridiumCyLocDate = [a_iridiumData(idFixForCycle).timeOfSessionJuld];
 end
 
+% sort the surface locations by date
+if (~isempty(surfaceLocData))
+   surfaceLocDates = [surfaceLocData.juld];
+   [~, idSort] = sort(surfaceLocDates);
+   surfaceLocData = surfaceLocData(idSort);
+   
+   % store the data
+   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; surfaceLocData];
+   surfaceLocData = [];
+end
+
 if (~isempty(gpsCyLocDate) || ~isempty(iridiumCyLocDate))
    locDates = [gpsCyLocDate' iridiumCyLocDate];
-
+   
    trajNCycleStruct.juldFirstLocation = min(locDates);
    trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
    

@@ -66,19 +66,7 @@ for idProf = 1:length(a_tabProfiles)
          profParam = parameterList(idParam);
          
          % retrieve the column(s) associated with the parameter data
-         idF = find(prof.paramNumberWithSubLevels < idParam);
-         if (isempty(idF))
-            firstCol = idParam;
-         else
-            firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
-         end
-         
-         idF = find(prof.paramNumberWithSubLevels == idParam);
-         if (isempty(idF))
-            lastCol = firstCol;
-         else
-            lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
-         end
+         [~, firstCol, lastCol] = get_param_data_index(prof, profParam.name);
          
          param = get_netcdf_param_attributes(profParam.name);
          paramData = prof.data(:, firstCol:lastCol);
@@ -132,19 +120,7 @@ for idNmeas = 1:length(a_tabTrajNMeas)
             measParam = parameterList(idParam);
             
             % retrieve the column(s) associated with the parameter data
-            idF = find(tabMeasOne.paramNumberWithSubLevels < idParam);
-            if (isempty(idF))
-               firstCol = idParam;
-            else
-               firstCol = idParam + sum(tabMeasOne.paramNumberOfSubLevels(idF)) - length(idF);
-            end
-            
-            idF = find(tabMeasOne.paramNumberWithSubLevels == idParam);
-            if (isempty(idF))
-               lastCol = firstCol;
-            else
-               lastCol = firstCol + tabMeasOne.paramNumberOfSubLevels(idF) - 1;
-            end
+            [~, firstCol, lastCol] = get_param_data_index(tabMeasOne, measParam.name);
             
             param = get_netcdf_param_attributes(measParam.name);
             measData = tabMeasOne.paramData(:, firstCol:lastCol);

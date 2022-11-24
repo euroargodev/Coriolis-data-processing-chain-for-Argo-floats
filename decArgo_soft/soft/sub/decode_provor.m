@@ -58,6 +58,7 @@ global g_decArgo_floatInformationFileName;
 global g_decArgo_dirInputJsonTechLabelFile;
 global g_decArgo_dirInputJsonConfLabelFile;
 global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj32;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
@@ -96,8 +97,10 @@ global g_decArgo_decIdCheckFlag;
 global g_decArgo_provorArvorHydraulicTypeCheckFlag;
 
 % to store information parameter RT adjustment
-global g_decArgo_paramAdjInfo;
-global g_decArgo_paramAdjId;
+global g_decArgo_paramProfAdjInfo;
+global g_decArgo_paramProfAdjId;
+global g_decArgo_paramTrajAdjInfo;
+global g_decArgo_paramTrajAdjId;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts4Ice;
@@ -136,8 +139,10 @@ for idFloat = 1:nbFloats
    g_decArgo_decIdCheckFlag = 0;
    g_decArgo_provorArvorHydraulicTypeCheckFlag = 0;
    
-   g_decArgo_paramAdjInfo = [];
-   g_decArgo_paramAdjId = 1;
+   g_decArgo_paramProfAdjInfo = [];
+   g_decArgo_paramProfAdjId = 1;
+   g_decArgo_paramTrajAdjInfo = [];
+   g_decArgo_paramTrajAdjId = 1;
    
    g_decArgo_addParamNbSampleCtd = 0;
    g_decArgo_addParamNbSampleSfet = 0;
@@ -407,6 +412,11 @@ for idFloat = 1:nbFloats
       % check consistency of PROF an TRAJ_NMEAS structures
       check_prof_and_traj_struct_consistency(tabProfiles, tabTrajNMeas)
       
+      if (g_decArgo_applyRtqc == 0)
+         % remove Qc values set by the decoder
+         [tabProfiles, tabTrajNMeas] = remove_data_qc(tabProfiles, tabTrajNMeas);
+      end
+      
       % save decoded data in NetCDF files
       
       % meta-data used in TRAJ, PROF and TECH NetCDF files
@@ -436,7 +446,7 @@ for idFloat = 1:nbFloats
       end
       
       % NetCDF TRAJ file
-      if ((g_decArgo_generateNcTraj ~= 0) && ~isempty(tabTrajNMeas))
+      if (((g_decArgo_generateNcTraj ~= 0) || (g_decArgo_generateNcTraj32 ~= 0)) && ~isempty(tabTrajNMeas))
          create_nc_traj_file(floatDecId, ...
             tabTrajNMeas, tabTrajNCycle, additionalMetaData);
       end

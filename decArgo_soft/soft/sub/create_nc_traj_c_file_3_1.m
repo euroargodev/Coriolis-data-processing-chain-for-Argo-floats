@@ -203,12 +203,12 @@ if (exist(ncPathFileName, 'file') == 2)
    end
    
    if ((VERBOSE_MODE == 1) || (VERBOSE_MODE == 2))
-      fprintf('Updating NetCDF TRAJECTORY file (%s) ...\n', ncFileName);
+      fprintf('Updating NetCDF TRAJECTORY 3.1 file (%s) ...\n', ncFileName);
    end
    
 else
    if ((VERBOSE_MODE == 1) || (VERBOSE_MODE == 2))
-      fprintf('Creating NetCDF TRAJECTORY file (%s) ...\n', ncFileName);
+      fprintf('Creating NetCDF TRAJECTORY 3.1 file (%s) ...\n', ncFileName);
    end
 end
 

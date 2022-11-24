@@ -13,7 +13,7 @@
 %
 % OUTPUT PARAMETERS :
 %
-% EXAMPLES : 
+% EXAMPLES :
 %
 % SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
@@ -25,7 +25,7 @@
 function decode_float_locations(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
    
@@ -91,6 +91,21 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % PROVOR CTS5 CONFIGURATION - START
+   
+   % rsync directory
+   DIR_INPUT_RSYNC_DATA_CTS5 = TBD;
+   
+   % spool directory
+   DIR_INPUT_SPOOL_DATA_CTS5 = TBD;
+   
+   % directory to store duplicated mail files
+   DIR_OUTPUT_DATA_CTS5 = TBD;
+   
+   % PROVOR CTS5 CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % CORIOLIS CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
@@ -110,7 +125,7 @@ else
    DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
    
    % maximum age of input files to consider (in hours)
-   MAX_FILE_AGE_IN_HOUR = 9999;
+   MAX_FILE_AGE_IN_HOUR = 365*24;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % IRIDIUM SBD CONFIGURATION - START
@@ -158,6 +173,21 @@ else
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % PROVOR CTS5 CONFIGURATION - START
+   
+   % rsync directory
+   DIR_INPUT_RSYNC_DATA_CTS5 = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS5\rsync_data\';
+   
+   % spool directory
+   DIR_INPUT_SPOOL_DATA_CTS5 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
+   
+   % directory to store duplicated mail files
+   DIR_OUTPUT_DATA_CTS5 = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   
+   % PROVOR CTS5 CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % JPR CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
@@ -165,6 +195,7 @@ end
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts4NotIce;
+global g_decArgo_decoderIdListNkeCts5;
 global g_decArgo_decoderIdListApexApf11IridiumRudics;
 
 % default values
@@ -180,6 +211,7 @@ decIdManagedList = [ ...
    213 ... % Provor-ARN-DO Iridium 5.74
    214 ... % Provor-ARN-DO-Ice Iridium 5.75
    g_decArgo_decoderIdListNkeCts4NotIce ... % no Ice versions of Provor CTS4
+   g_decArgo_decoderIdListNkeCts5 ... % all versions of Provor CTS5
    g_decArgo_decoderIdListApexApf11IridiumRudics ... % all versions of Apex APF11 Iridium Rudics
    ];
 
@@ -293,6 +325,14 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf11IridiumRudics))
       DIR_INPUT_SPOOL_DATA_APF11_RUDICS, ...
       DIR_OUTPUT_DATA_APF11_RUDICS, ...
       MAX_FILE_AGE_IN_HOUR);
+elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
+   duplicate_cts5_files_float_to_recover( ...
+      floatWmo, ...
+      floatPtt, ...
+      DIR_INPUT_RSYNC_DATA_CTS5, ...
+      DIR_INPUT_SPOOL_DATA_CTS5, ...
+      DIR_OUTPUT_DATA_CTS5, ...
+      MAX_FILE_AGE_IN_HOUR);
 else
    switch (floatDecId)
       case {203, 213, 214}
@@ -311,9 +351,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if (ismember(floatDecId, g_decArgo_decoderIdListNkeCts4NotIce))
-   [decodedDataTab] = decode_float_location_remocean_sbd(floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
+   [decodedDataTab] = decode_float_location_remocean_sbd(floatWmo, floatPtt, DIR_OUTPUT_DATA_REMOCEAN_SBD);
 elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf11IridiumRudics))
-   [decodedDataTab] = decode_float_location_apf11_rudics(floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
+   [decodedDataTab] = decode_float_location_apf11_rudics(floatWmo, floatPtt, DIR_OUTPUT_DATA_APF11_RUDICS);
+elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
+   [decodedDataTab] = decode_float_location_cts5(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_CTS5);
 else
    switch (floatDecId)
       case {203, 213, 214}
@@ -357,6 +399,68 @@ diary off;
 return
 
 % ------------------------------------------------------------------------------
+% Decode GPS location for PROVOR CTS5 floats.
+%
+% SYNTAX :
+%  [o_decodedDataTab] = decode_float_location_cts5(a_decoderId, a_floatNum, a_floatRudicsId, a_inputFileDir)
+%
+% INPUT PARAMETERS :
+%   a_decoderId    : float decoder Id
+%   a_floatNum     : float WMO number
+%   a_floatImei    : float Rudics Id
+%   a_inputFileDir : top directory of files to be decoded
+%
+% OUTPUT PARAMETERS :
+%   o_decodedData : GPS data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   07/09/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_decodedData] = decode_float_location_cts5(a_decoderId, a_floatNum, a_floatRudicsId, a_inputFileDir)
+
+% output parameters initialization
+o_decodedData = [];
+
+
+% set useful directories
+floatIriDirName = [a_inputFileDir '/' a_floatRudicsId '_' num2str(a_floatNum) '/'];
+archiveDirectory = [floatIriDirName 'archive/'];
+
+% process float files
+fileNames = [ ...
+   dir([archiveDirectory '*_autotest_*.txt']); ...
+   dir([archiveDirectory '*_technical*.txt']); ...
+   dir([archiveDirectory '*_default_*.txt']) ...
+   ];
+for idFile = 1:length(fileNames)
+   fileName = fileNames(idFile).name;
+   
+   % read technical file
+   [apmtTech, ~, ~, ~, ~] = read_apmt_technical([archiveDirectory fileName], a_decoderId);
+   
+   % store GPS data
+   if (~isempty(apmtTech))
+      if (isfield(apmtTech, 'GPS'))
+         
+         idF1 = find(strcmp(apmtTech.GPS.name, 'GPS location date'), 1);
+         idF2 = find(strcmp(apmtTech.GPS.name, 'GPS location longitude'), 1);
+         idF3 = find(strcmp(apmtTech.GPS.name, 'GPS location latitude'), 1);
+         if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+            o_decodedData = [o_decodedData; ...
+               [apmtTech.GPS.data{idF1} apmtTech.GPS.data{idF2} apmtTech.GPS.data{idF3}]];
+         end
+      end
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
 % Decode GPS location for Remocean floats.
 %
 % SYNTAX :
@@ -372,7 +476,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -406,7 +510,7 @@ for idFile = 1:length(sbdFiles)
    end
    sbdData = fread(fId);
    fclose(fId);
-            
+   
    if (strcmp(sbdFileName(end-3:end), '.b64'))
       idZ = find(sbdData == 0, 1, 'first');
       if (any(sbdData(idZ:end) ~= 0))
@@ -463,7 +567,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -566,7 +670,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -607,7 +711,7 @@ for idFile = 1:length(fileNames)
    if (isempty(events))
       continue
    end
-
+   
    % retrieve GPS data
    idEvts = find(strcmp({events.functionName}, 'GPS'));
    if (~isempty(idEvts))
@@ -637,7 +741,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -695,7 +799,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -755,7 +859,7 @@ for idMsg = 1:size(sbdDataTab, 1)
       
       % message data frame
       msgData = tabData(2:end);
-
+      
       switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -807,9 +911,9 @@ for idMsg = 1:size(sbdDataTab, 1)
             end
             gpsLocLon = signLon*(tabTech(54) + (tabTech(55) + ...
                tabTech(56)/10000)/60);
-
+            
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
-
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          case {213}
             % Provor-ARN-DO Iridium 5.74
@@ -831,7 +935,7 @@ for idMsg = 1:size(sbdDataTab, 1)
                ];
             % get item bits
             tabTech1 = get_bits(firstBit, tabNbBits, msgData);
-         
+            
             % GPS valid fix
             gpsValidFix = tabTech1(61);
             if (gpsValidFix == 0)
@@ -858,7 +962,7 @@ for idMsg = 1:size(sbdDataTab, 1)
                tabTech1(59)/10000)/60);
             
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
-
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          case {214}
             % Provor-ARN-DO-Ice Iridium 5.75

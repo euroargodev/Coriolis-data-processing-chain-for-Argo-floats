@@ -108,6 +108,10 @@ global g_decArgo_dateDef;
 % float configuration
 global g_decArgo_floatConfig;
 
+% to store information on adjustments
+global g_decArgo_paramTrajAdjInfo;
+global g_decArgo_paramTrajAdjId;
+
 
 % structure to store N_MEASUREMENT data
 trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
@@ -166,6 +170,16 @@ presOffset = [];
 idF = find(o_presOffsetData.cycleNumAdjPres == a_cycleNum, 1);
 if (~isempty(idF))
    presOffset = o_presOffsetData.presOffset(idF);
+   
+   param = 'PRES';
+   equation = 'PRES_ADJUSTED = PRES - Surface Pressure';
+   coefficient = ['For cycle #' num2str(a_cycleNum) ': Surface Pressure = ' num2str(presOffset) ' dbar'];
+   comment = 'Pressure adjusted in real time by using pressure offset at the sea surface';
+
+   g_decArgo_paramTrajAdjInfo = [g_decArgo_paramTrajAdjInfo;
+      g_decArgo_paramTrajAdjId 0 a_cycleNum ...
+      {param} {equation} {coefficient} {comment} {''}];
+   g_decArgo_paramTrajAdjId = g_decArgo_paramTrajAdjId + 1;
 end
 
 % data mode

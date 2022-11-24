@@ -364,7 +364,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -419,7 +419,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -511,7 +511,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -784,7 +784,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -920,7 +920,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1027,7 +1027,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1154,7 +1154,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1270,7 +1270,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1353,7 +1353,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1458,7 +1458,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1586,7 +1586,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1708,7 +1708,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end
@@ -1772,7 +1772,7 @@ switch (a_decoderId)
       for idL = 1:length(mandatoryConfigName)
          for idC = 1:length(configName)
             if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
-               mandatoryList = [mandatoryList idC];
+               mandatoryList = [mandatoryList; idC];
                if (idL < length(mandatoryConfigName))
                   break
                end

@@ -1415,7 +1415,7 @@ else
          derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
          
          % compute DOXY values
-         doxy = compute_drift_DOXY( ...
+         [doxy, ptsForDoxy] = compute_drift_DOXY( ...
             a_driftOptode.data(:, idF1), ...
             a_driftOptode.data(:, idF2), ...
             a_driftOptode.data(:, idF3), ...
@@ -1438,6 +1438,8 @@ else
          doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
          a_driftOptode.dataQc(:, end+1) = doxyQc;
          
+         a_driftOptode.ptsForDoxy = ptsForDoxy;
+         
          a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
       end
    end
@@ -1453,7 +1455,7 @@ return
 % Compute DOXY from the data provided by the OPTODE sensor.
 %
 % SYNTAX :
-%  [o_DOXY] = compute_drift_DOXY( ...
+%  [o_DOXY, o_ptsForDoxy] = compute_drift_DOXY( ...
 %    a_C1PHASE_DOXY, a_C2PHASE_DOXY, a_TEMP_DOXY, ...
 %    a_C1PHASE_DOXY_fillValue, a_C2PHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
 %    a_DOXY_fillValue, ...
@@ -1480,7 +1482,8 @@ return
 %   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
-%   o_DOXY    : output drift DOXY data
+%   o_DOXY       : output drift DOXY data
+%   o_ptsForDoxy : PTS data used to compute DOXY
 %
 % EXAMPLES :
 %
@@ -1490,7 +1493,7 @@ return
 % RELEASES :
 %   06/24/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_DOXY] = compute_drift_DOXY( ...
+function [o_DOXY, o_ptsForDoxy] = compute_drift_DOXY( ...
    a_C1PHASE_DOXY, a_C2PHASE_DOXY, a_TEMP_DOXY, ...
    a_C1PHASE_DOXY_fillValue, a_C2PHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
    a_DOXY_fillValue, ...
@@ -1501,6 +1504,7 @@ function [o_DOXY] = compute_drift_DOXY( ...
 
 % output parameters initialization
 o_DOXY = ones(length(a_C1PHASE_DOXY), 1)*a_DOXY_fillValue;
+o_ptsForDoxy = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -1530,7 +1534,8 @@ if (~isempty(ctdLinkData))
             a_PSAL_fillValue, ...
             a_DOXY_fillValue, ...
             a_driftOptode);
-         
+         o_ptsForDoxy = ctdLinkData;
+
       case {107, 109, 110, 111, 113, 114, 115, 121, 122, 124, 126, 127}
          
          % compute DOXY values using the Stern-Volmer equation
@@ -1549,7 +1554,8 @@ if (~isempty(ctdLinkData))
             a_PSAL_fillValue, ...
             a_DOXY_fillValue, ...
             a_driftOptode);
-         
+         o_ptsForDoxy = ctdLinkData;
+
       case {112, 123, 125}
          
          % compute DOXY values using the Aanderaa standard calibration method
@@ -1569,7 +1575,8 @@ if (~isempty(ctdLinkData))
             a_PSAL_fillValue, ...
             a_DOXY_fillValue, ...
             a_driftOptode);
-         
+         o_ptsForDoxy = ctdLinkData;
+
       otherwise
          fprintf('WARNING: Float #%d Cycle #%d Profile #%d: DOXY processing not implemented yet for decoderId #%d - DOXY drift measurements set to fill value\n', ...
             g_decArgo_floatNum, ...

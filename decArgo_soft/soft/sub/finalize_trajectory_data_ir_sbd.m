@@ -162,33 +162,36 @@ a_tabTrajNMeas(idDel) = [];
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
-      
+         
    idCyDeep = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 0));
    idCySurf = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 1));
    
    if (length(idCyDeep) == 1)
       if (~isempty(idCySurf))
          
-         % preserve only the FMT, LMT and GPS locations of the last surface
-         % record
-         idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_FMT);
-         idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_FMT);
-         a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
-         
-         idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_LMT);
-         idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_LMT);
-         a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
-         
-         idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_Surface);
-         idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_Surface);
-         a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = [];
-         a_tabTrajNMeas(idCyDeep).tabMeas = [a_tabTrajNMeas(idCyDeep).tabMeas; a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2)];
+         if (~isempty(a_tabTrajNMeas(idCyDeep).tabMeas) && ~isempty(a_tabTrajNMeas(idCySurf(end)).tabMeas))
+            
+            % preserve only the FMT, LMT and GPS locations of the last surface
+            % record
+            idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_FMT);
+            idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_FMT);
+            a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
+            
+            idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_LMT);
+            idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_LMT);
+            a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
+            
+            idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_Surface);
+            idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_Surface);
+            a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = [];
+            a_tabTrajNMeas(idCyDeep).tabMeas = [a_tabTrajNMeas(idCyDeep).tabMeas; a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2)];
+            
+            % sort trajectory data structures according to the predefined
+            % measurement code order
+            [a_tabTrajNMeas(idCyDeep)] = sort_trajectory_data(a_tabTrajNMeas(idCyDeep), a_decoderId);
+         end
          
          a_tabTrajNMeas(idCySurf) = [];
-         
-         % sort trajectory data structures according to the predefined
-         % measurement code order
-         [a_tabTrajNMeas(idCyDeep)] = sort_trajectory_data(a_tabTrajNMeas(idCyDeep), a_decoderId);
       end
    end
    
@@ -374,7 +377,7 @@ tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 tabCyNum = tabCyNum(find(tabCyNum >= 0));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
-   
+
    if (cycleNum == -1)
       % cycle number = -1 is used to store launch location and date only (no
       % need to add all the expected MCs)

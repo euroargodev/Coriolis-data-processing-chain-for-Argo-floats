@@ -39,7 +39,8 @@ o_profStruct = struct( ...
    'paramNumberWithSubLevels', '', ... % position, in the paramList of the parameters with a sublevel
    'paramNumberOfSubLevels', '', ... % number of sublevels for the concerned parameter
    'paramColumnNumber', '', ... % column number for each parameter data in the 'data' array
-   'data', [] ...
+   'data', [], ...
+   'ptsForDoxy', [] ... % to store PTS data used to compute DOXY
    );
 
 return

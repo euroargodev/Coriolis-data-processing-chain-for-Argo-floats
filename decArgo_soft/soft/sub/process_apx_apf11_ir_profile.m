@@ -14,7 +14,7 @@
 %  [o_ncProfile] = process_apx_apf11_ir_profile( ...
 %    a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, ...
-%    a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+%    a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
 %    a_cycleTimeData, ...
 %    a_cycleNum, a_presOffsetData)
 %
@@ -25,6 +25,7 @@
 %   a_profDo         : O2 data
 %   a_profCtdCp      : CTD_CP data
 %   a_profCtdCpH     : CTD_CP_H data
+%   a_profFlbb       : FLBB data
 %   a_profFlbbCd     : FLBB_CD data
 %   a_profOcr504I    : OCR_504I data
 %   a_profRamses     : RAMSES data
@@ -46,7 +47,7 @@
 function [o_ncProfile] = process_apx_apf11_ir_profile( ...
    a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, ...
-   a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+   a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
    a_cycleTimeData, ...
    a_cycleNum, a_presOffsetData)
 
@@ -64,6 +65,7 @@ if (isempty(a_profCtdPt) && ...
       isempty(a_profDo) && ...
       isempty(a_profCtdCp) && ...
       isempty(a_profCtdCpH) && ...
+      isempty(a_profFlbb) && ...
       isempty(a_profFlbbCd) && ...
       isempty(a_profOcr504I) && ...
       isempty(a_profRamses))
@@ -90,6 +92,7 @@ end
 profCtdPts = [];
 profCtdPtsh = [];
 profDo = [];
+profFlbb = [];
 profFlbbCd = [];
 profOcr504I = [];
 profRamses = [];
@@ -98,10 +101,11 @@ profIceCtdPt = [];
 profIceCtdPts = [];
 profIceCtdPtsh = [];
 profIceDo = [];
+profIceFlbb = [];
 profIceFlbbCd = [];
 profIceOcr504I = [];
 profIceRamses = [];
-for idS = 0:6
+for idS = 0:7
 
    if (idS == 0)
       inputData = a_profCtdPt;
@@ -117,6 +121,8 @@ for idS = 0:6
       inputData = a_profOcr504I;
    elseif (idS == 6)
       inputData = a_profRamses;
+   elseif (idS == 7)
+      inputData = a_profFlbb;
    end
    
    if (isempty(inputData))
@@ -151,6 +157,8 @@ for idS = 0:6
          profOcr504I = outputData;
       elseif (idS == 6)
          profRamses = outputData;
+      elseif (idS == 7)
+         profFlbb = outputData;
       end
       clear outputData
    end
@@ -188,6 +196,8 @@ for idS = 0:6
                profIceOcr504I = [profIceOcr504I; [idC 1 {outputData}]];
             elseif (idS == 6)
                profIceRamses = [profIceRamses; [idC 1 {outputData}]];
+            elseif (idS == 7)
+               profIceFlbb = [profIceFlbb; [idC 1 {outputData}]];
             end
             clear outputData
          end
@@ -221,6 +231,8 @@ for idS = 0:6
                profIceOcr504I = [profIceOcr504I; [idC 2 {outputData}]];
             elseif (idS == 6)
                profIceRamses = [profIceRamses; [idC 2 {outputData}]];
+            elseif (idS == 7)
+               profIceFlbb = [profIceFlbb; [idC 2 {outputData}]];
             end
             clear outputData
          end
@@ -232,6 +244,7 @@ end
 if (isempty(profCtdPts) && ...
       isempty(profCtdPtsh) && ...
       isempty(profDo) && ...
+      isempty(profFlbb) && ...
       isempty(profFlbbCd) && ...
       isempty(profOcr504I) && ...
       isempty(profRamses) && ...
@@ -241,6 +254,7 @@ if (isempty(profCtdPts) && ...
       isempty(profIceCtdPts) && ...
       isempty(profIceCtdPtsh) && ...
       isempty(profIceDo) && ...
+      isempty(profIceFlbb) && ...
       isempty(profIceFlbbCd) && ...
       isempty(profIceOcr504I) && ...
       isempty(profIceRamses) ...
@@ -251,6 +265,7 @@ end
 profCtdPtsStruct = [];
 profCtdPtshStruct = [];
 profDoStruct = [];
+profFlbbStruct = [];
 profFlbbCdStruct = [];
 profOcr504IStruct = [];
 profCtdCpStruct = [];
@@ -453,6 +468,53 @@ if (~isempty(profDo))
          profDoStruct.dataAdjQc = ones(size(profDoStruct.data))*g_decArgo_qcDef;
          profDoStruct.dataAdjQc(:, idPres) = g_decArgo_qcProbablyGood;
          profDoStruct.dataAdjQc(:, idMtime) = g_decArgo_qcProbablyGood;
+      end
+   end
+end
+
+% create a profile with FLBB data
+if (~isempty(profFlbb))
+   
+   % initialize a NetCDF profile structure and fill it with decoded profile data
+   profFlbbStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+   profFlbbStruct.sensorNumber = 4;
+   
+   % positioning system
+   profFlbbStruct.posSystem = 'GPS';
+   
+   % add parameter variables to the profile structure
+   profFlbbStruct.paramList = profFlbb.paramList;
+   profFlbbStruct.paramDataMode = profFlbb.paramDataMode;
+   
+   % add parameter data to the profile structure
+   profFlbbStruct.data = profFlbb.data;
+   profFlbbStruct.dataAdj = profFlbb.dataAdj;
+   
+   % add press offset data to the profile structure
+   profFlbbStruct.presOffset = presOffset;
+   
+   % add configuration mission number
+   profFlbbStruct.configMissionNumber = configMissionNumber;
+   
+   % add MTIME to data
+   if (~isempty(profFlbb.dateList))
+      if (any(profFlbb.dates ~= profFlbb.dateList.fillValue))
+         % we temporarily store JULD as MTIME (because profile date will be
+         % computed later)
+         mtimeData = profFlbb.dates;
+         mtimeData(find(mtimeData == profFlbb.dateList.fillValue)) = paramMtime.fillValue;
+      else
+         mtimeData = ones(size(profFlbb.data, 1), 1)*paramMtime.fillValue;
+      end
+      profFlbbStruct.paramList = [paramMtime profFlbbStruct.paramList];
+      if (~isempty(profFlbbStruct.paramDataMode))
+         profFlbbStruct.paramDataMode = [' ' profFlbbStruct.paramDataMode];
+      end
+      profFlbbStruct.data = cat(2, mtimeData, double(profFlbbStruct.data));
+      
+      if (~isempty(profFlbb.dataAdj))
+         mtimeDataAdj = ones(size(profFlbb.dataAdj, 1), 1)*paramMtime.fillValue;
+         profFlbbStruct.dataAdj = cat(2, mtimeDataAdj, double(profFlbbStruct.dataAdj));
       end
    end
 end
@@ -1122,6 +1184,24 @@ if (~isempty(profDoStruct))
    o_ncProfile = [o_ncProfile profDoStruct];
 end
 
+if (~isempty(profFlbbStruct))
+   
+   % get detailed description of the VSS
+   minMax = [{''} {''}];
+   description = create_vss_description_apx_apf11_ir(a_cycleNum, 'FLBB', '', minMax);
+   
+   % add vertical sampling scheme
+   profFlbbStruct.vertSamplingScheme = sprintf('Secondary sampling: discrete [%s]', description);
+   profFlbbStruct.primarySamplingProfileFlag = 0;
+   
+   % add bounce information
+   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+      profFlbbStruct.bounceFlag = 'BS';
+   end
+   
+   o_ncProfile = [o_ncProfile profFlbbStruct];
+end
+
 if (~isempty(profFlbbCdStruct))
    
    % get detailed description of the VSS
@@ -1185,12 +1265,13 @@ if (~isempty(profIceCtdPt) || ...
       ~isempty(profIceCtdPts) || ...
       ~isempty(profIceCtdPtsh) || ...
       ~isempty(profIceDo) || ...
+      ~isempty(profIceFlbb) || ...
       ~isempty(profIceFlbbCd) || ...
       ~isempty(profIceOcr504I) || ...
       ~isempty(profIceRamses) ...
       )
    
-   for idS = 0:6
+   for idS = 0:7
 
       if (idS == 0)
          profIce = profIceCtdPt;
@@ -1213,6 +1294,9 @@ if (~isempty(profIceCtdPt) || ...
       elseif (idS == 6)
          profIce = profIceRamses;
          sensorName = 'IRAD';
+      elseif (idS == 7)
+         profIce = profIceFlbb;
+         sensorName = 'FLBB';
       end
       
       if (isempty(profIce))

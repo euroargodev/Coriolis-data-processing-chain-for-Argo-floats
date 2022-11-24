@@ -163,20 +163,6 @@ global g_decArgo_floatConfig;
 
 ID_OFFSET = 1;
 
-% unpack GPS data
-gpsLocCycleNum = a_gpsData{1};
-gpsLocDate = a_gpsData{4};
-gpsLocLon = a_gpsData{5};
-gpsLocLat = a_gpsData{6};
-gpsLocQc = a_gpsData{7};
-
-% GPS data for the current cycle
-idF = find(gpsLocCycleNum == a_cycleNum);
-gpsCyLocDate = gpsLocDate(idF);
-gpsCyLocLon = gpsLocLon(idF);
-gpsCyLocLat = gpsLocLat(idF);
-gpsCyLocQc = gpsLocQc(idF);
-
 % structure to store N_MEASUREMENT data
 trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
 
@@ -251,11 +237,11 @@ if (~isempty(a_inAirDate))
 end
 
 if (a_deepCycle == 1)
-      
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % POSITIONING SYSTEM AND TRANSMISSION SYSTEM TIMES AND LOCATIONS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+   
    [firstMsgTime, lastMsgTime] = ...
       compute_first_last_msg_time_from_iridium_mail(a_iridiumMailData, a_cycleNum);
    
@@ -270,7 +256,25 @@ if (a_deepCycle == 1)
       trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
    end
    
-   % GPS locations
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % GPS LOCATIONS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   surfaceLocData = [];
+   
+   % unpack GPS data
+   gpsLocCycleNum = a_gpsData{1};
+   gpsLocDate = a_gpsData{4};
+   gpsLocLon = a_gpsData{5};
+   gpsLocLat = a_gpsData{6};
+   gpsLocQc = a_gpsData{7};
+   
+   idF = find(gpsLocCycleNum == a_cycleNum);
+   gpsCyLocDate = gpsLocDate(idF);
+   gpsCyLocLon = gpsLocLon(idF);
+   gpsCyLocLat = gpsLocLat(idF);
+   gpsCyLocQc = gpsLocQc(idF);
+   
    for idpos = 1:length(gpsCyLocDate)
       measStruct = create_one_meas_surface(g_MC_Surface, ...
          gpsCyLocDate(idpos), ...
@@ -279,14 +283,53 @@ if (a_deepCycle == 1)
          'G', ...
          ' ', ...
          num2str(gpsCyLocQc(idpos)), 1);
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      surfaceLocData = [surfaceLocData; measStruct];
    end
    
-   if (~isempty(gpsCyLocDate))
-      trajNCycleStruct.juldFirstLocation = gpsCyLocDate(1);
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % IRIDIUM LOCATIONS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   iridiumCyLocDate = [];
+   if (~isempty(a_iridiumMailData))
+      idFixForCycle = find([a_iridiumMailData.cycleNumber] == a_cycleNum);
+      for idFix = idFixForCycle
+         if (a_iridiumMailData(idFix).cepRadius ~= 0)
+            measStruct = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
+               a_iridiumMailData(idFix).timeOfSessionJuld, ...
+               a_iridiumMailData(idFix).unitLocationLon, ...
+               a_iridiumMailData(idFix).unitLocationLat, ...
+               'I', ...
+               0, ... % no need to set a Qc, it will be set during RTQC
+               a_iridiumMailData(idFix).cepRadius*1000, ...
+               a_iridiumMailData(idFix).cepRadius*1000, ...
+               '', ...
+               ' ', ...
+               1);
+            surfaceLocData = [surfaceLocData; measStruct];
+         end
+      end
+      iridiumCyLocDate = [a_iridiumMailData(idFixForCycle).timeOfSessionJuld];
+   end
+   
+   % sort the surface locations by date
+   if (~isempty(surfaceLocData))
+      surfaceLocDates = [surfaceLocData.juld];
+      [~, idSort] = sort(surfaceLocDates);
+      surfaceLocData = surfaceLocData(idSort);
+      
+      % store the data
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; surfaceLocData];
+      surfaceLocData = [];
+   end
+   
+   if (~isempty(gpsCyLocDate) || ~isempty(iridiumCyLocDate))
+      locDates = [gpsCyLocDate' iridiumCyLocDate];
+      
+      trajNCycleStruct.juldFirstLocation = min(locDates);
       trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
       
-      trajNCycleStruct.juldLastLocation = gpsCyLocDate(end);
+      trajNCycleStruct.juldLastLocation = max(locDates);
       trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
    end
    
@@ -582,7 +625,7 @@ if (a_deepCycle == 1)
          tabDur = [tabDur; a_evAct(idP, 5)];
          tabType = [tabType; 6];
       end
-         
+      
       for idP = 1:size(a_pumpAct, 1)
          tabDate = [tabDate; a_pumpAct(idP, 3) + g_decArgo_julD2FloatDayOffset];
          tabPres = [tabPres; a_pumpAct(idP, 4)];
@@ -596,7 +639,7 @@ if (a_deepCycle == 1)
          tabPres = tabPres(idSorted);
          tabDur = tabDur(idSorted);
          tabType = tabType(idSorted);
-
+         
          descentToParkEndDate = g_decArgo_dateDef;
          if (~isempty(a_descentToParkEndDate))
             descentToParkEndDate = a_descentToParkEndDate;
@@ -605,7 +648,7 @@ if (a_deepCycle == 1)
          if (~isempty(a_descentToProfStartDate))
             descentToProfStartDate = a_descentToProfStartDate;
          end
-
+         
          if (~isempty(a_transStartDate))
             
             tabRefDates = [ ...
@@ -702,7 +745,7 @@ if (a_deepCycle == 1)
                   
                   o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
                end
-            end            
+            end
          end
          if (isempty(o_tabTechNMeas.tabMeas))
             o_tabTechNMeas = [];
@@ -717,8 +760,8 @@ if (a_deepCycle == 1)
    % deepest bin of the descending and ascending profiles
    tabDescDeepestBin = [];
    tabDescDeepestBinPres = [];
-   tabAscDeepestBin = []; 
-   tabAscDeepestBinPres = []; 
+   tabAscDeepestBin = [];
+   tabAscDeepestBinPres = [];
    for idProf = 1:length(a_tabProfiles)
       profile = a_tabProfiles(idProf);
       if (profile.direction == 'A')
@@ -841,7 +884,7 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
    end
-      
+   
    if (~isempty(tabTech2) && (a_iceDetected == 0))
       
       % last pumped CTD measurement
@@ -894,7 +937,7 @@ if (a_deepCycle == 1)
    if (~isempty(tabTech1) && (tabTech1(12+ID_OFFSET) == 1))
       grounded = 'Y';
    end
-      
+   
    trajNCycleStruct.grounded = grounded;
    
 else
@@ -925,7 +968,25 @@ else
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; tabMeasStructInAir];
    end
    
-   % GPS locations
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % GPS LOCATIONS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   surfaceLocData = [];
+   
+   % unpack GPS data
+   gpsLocCycleNum = a_gpsData{1};
+   gpsLocDate = a_gpsData{4};
+   gpsLocLon = a_gpsData{5};
+   gpsLocLat = a_gpsData{6};
+   gpsLocQc = a_gpsData{7};
+   
+   idF = find(gpsLocCycleNum == a_cycleNum);
+   gpsCyLocDate = gpsLocDate(idF);
+   gpsCyLocLon = gpsLocLon(idF);
+   gpsCyLocLat = gpsLocLat(idF);
+   gpsCyLocQc = gpsLocQc(idF);
+   
    for idpos = 1:length(gpsCyLocDate)
       measStruct = create_one_meas_surface(g_MC_Surface, ...
          gpsCyLocDate(idpos), ...
@@ -934,14 +995,53 @@ else
          'G', ...
          ' ', ...
          num2str(gpsCyLocQc(idpos)), 1);
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      surfaceLocData = [surfaceLocData; measStruct];
    end
    
-   if (~isempty(gpsCyLocDate))
-      trajNCycleStruct.juldFirstLocation = gpsCyLocDate(1);
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % IRIDIUM LOCATIONS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   iridiumCyLocDate = [];
+   if (~isempty(a_iridiumMailData))
+      idFixForCycle = find([a_iridiumMailData.cycleNumber] == a_cycleNum);
+      for idFix = idFixForCycle
+         if (a_iridiumMailData(idFix).cepRadius ~= 0)
+            measStruct = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
+               a_iridiumMailData(idFix).timeOfSessionJuld, ...
+               a_iridiumMailData(idFix).unitLocationLon, ...
+               a_iridiumMailData(idFix).unitLocationLat, ...
+               'I', ...
+               0, ... % no need to set a Qc, it will be set during RTQC
+               a_iridiumMailData(idFix).cepRadius*1000, ...
+               a_iridiumMailData(idFix).cepRadius*1000, ...
+               '', ...
+               ' ', ...
+               1);
+            surfaceLocData = [surfaceLocData; measStruct];
+         end
+      end
+      iridiumCyLocDate = [a_iridiumMailData(idFixForCycle).timeOfSessionJuld];
+   end
+   
+   % sort the surface locations by date
+   if (~isempty(surfaceLocData))
+      surfaceLocDates = [surfaceLocData.juld];
+      [~, idSort] = sort(surfaceLocDates);
+      surfaceLocData = surfaceLocData(idSort);
+      
+      % store the data
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; surfaceLocData];
+      surfaceLocData = [];
+   end
+   
+   if (~isempty(gpsCyLocDate) || ~isempty(iridiumCyLocDate))
+      locDates = [gpsCyLocDate' iridiumCyLocDate];
+      
+      trajNCycleStruct.juldFirstLocation = min(locDates);
       trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
       
-      trajNCycleStruct.juldLastLocation = gpsCyLocDate(end);
+      trajNCycleStruct.juldLastLocation = max(locDates);
       trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
    end
    
@@ -957,13 +1057,13 @@ else
    end
    
    trajNMeasStruct.surfOnly = 1;
-
+   
    % clock offset
    trajNCycleStruct.clockOffset = floatClockDrift;
    trajNCycleStruct.dataMode = 'A';
-
+   
    trajNCycleStruct.surfOnly = 1;
-      
+   
 end
 
 % add configuration mission number

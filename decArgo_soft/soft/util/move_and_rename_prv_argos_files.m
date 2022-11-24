@@ -33,8 +33,8 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle_FINAL\'
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEP4\';
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEp4_FINAL\';
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\STEP4\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\STEP4_FINAL\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\TMP\STEP4\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\TMP\STEP4_FINAL\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -401,7 +401,115 @@ if (lastArgosMsgDate > launchDate)
       if (~isempty(decodedCycleNumber) && (decodedCycleNumber ~= -1))
          
          % the cycle number has been decoded from the transmitted data
-         cycleNumber = decodedCycleNumber;
+         if (decodedCycleNumber ~= 0)
+            cycleNumber = decodedCycleNumber;
+         else
+            
+            % the cycle number reported by the float is #0
+            % it can be the prelude or a EOL, we must use additional dates and
+            % information to set the correct cycle number
+                        
+            % multiple cycle durations only concern floats with a prelude phase
+            
+            % compute the duration of the cycle #1 (first deep cycle)
+            firstDeepCycleDuration = firstProfileEndDate - floatRefDay - ...
+               delayBeforeMission/1440 - preludeDuration/1440;
+            
+            % compute the duration of the transition cycle
+            surfTime = firstProfileEndDate - fix(firstProfileEndDate);
+            transitionCycleStartDate = surfTime + (nbCyclesFirstMission-1)*cycleDuration(1);
+            transitionCycleEndDate = fix(transitionCycleStartDate + cycleDuration(2)) + surfTime;
+            transitionCycleDuration = transitionCycleEndDate - transitionCycleStartDate;
+            
+            % try to use already computed cycles
+            idPrevCycle = find(g_util_lastMsgDate < firstArgosMsgDate);
+            if (~isempty(idPrevCycle))
+               idPrevCycle = idPrevCycle(end);
+               
+               if (g_util_cycleNumber(idPrevCycle) == 0)
+                  
+                  refDate = g_util_lastMsgDate(idPrevCycle);
+                  dates = [ ...
+                     refDate+firstDeepCycleDuration ...
+                     repmat(cycleDuration(1), 1, nbCyclesFirstMission-1) ...
+                     transitionCycleDuration ...
+                     repmat(cycleDuration(2), 1, 999)];
+                  for id = 2:length(dates)
+                     dates(id) = dates(id) + dates(id-1);
+                  end
+                  cycleNumbers = 1:length(dates);
+                  
+                  [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                  cycleNumber = cycleNumbers(idMin);
+                  
+               elseif ((g_util_cycleNumber(idPrevCycle) > 0) && (g_util_cycleNumber(idPrevCycle) < nbCyclesFirstMission))
+                  
+                  refDate = g_util_firstMsgDate(idPrevCycle);
+                  dates = [ ...
+                     refDate ...
+                     repmat(cycleDuration(1), 1, nbCyclesFirstMission-g_util_cycleNumber(idPrevCycle)) ...
+                     transitionCycleDuration ...
+                     repmat(cycleDuration(2), 1, 999)];
+                  for id = 2:length(dates)
+                     dates(id) = dates(id) + dates(id-1);
+                  end
+                  cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                  
+                  [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                  cycleNumber = cycleNumbers(idMin);
+                  
+               elseif (g_util_cycleNumber(idPrevCycle) == nbCyclesFirstMission)
+                  
+                  refDate = g_util_firstMsgDate(idPrevCycle);
+                  dates = [ ...
+                     refDate ...
+                     transitionCycleDuration ...
+                     repmat(cycleDuration(2), 1, 999)];
+                  for id = 2:length(dates)
+                     dates(id) = dates(id) + dates(id-1);
+                  end
+                  cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                  
+                  [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                  cycleNumber = cycleNumbers(idMin);
+                  
+               else
+                  
+                  refDate = g_util_firstMsgDate(idPrevCycle);
+                  dates = [ ...
+                     refDate ...
+                     repmat(cycleDuration(2), 1, 999)];
+                  for id = 2:length(dates)
+                     dates(id) = dates(id) + dates(id-1);
+                  end
+                  cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                  
+                  [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                  cycleNumber = cycleNumbers(idMin);
+                  
+               end
+               
+            else
+               
+               % use float meta-data
+               
+               dates = [ ...
+                  floatRefDay+delayBeforeMission/1440 ...
+                  preludeDuration/1440+firstDeepCycleDuration ...
+                  repmat(cycleDuration(1), 1, nbCyclesFirstMission-1) ...
+                  transitionCycleDuration ...
+                  repmat(cycleDuration(2), 1, 999)];
+               for id = 2:length(dates)
+                  dates(id) = dates(id) + dates(id-1);
+               end
+               cycleNumbers = 0:length(dates);
+               
+               [~, idMin] = min(abs(dates-firstArgosMsgDate));
+               cycleNumber = cycleNumbers(idMin);
+               
+            end
+         end
+         
       elseif (decodedCycleNumber == -1)
          
          diffArgosDataDates = diff(argosDataDate)*24;
@@ -418,10 +526,132 @@ if (lastArgosMsgDate > launchDate)
          end
          
          for idFile = 1:length(subFileNameList)
+            
+            cycleNumberFile = [];
+
             decodedCycleNumber = decode_cycle_number(subFileNameList{idFile}, ...
                a_floatNum, a_argosId, frameLen, floatDecId);
+            
             if (~isempty(decodedCycleNumber) && (decodedCycleNumber ~= -1))
-               cycleNumber = [cycleNumber decodedCycleNumber];
+               
+               % the cycle number has been decoded from the transmitted data
+               if (decodedCycleNumber ~= 0)
+                  cycleNumberFile = decodedCycleNumber;
+               else
+                  
+                  % the cycle number reported by the float is #0
+                  % it can be the prelude or a EOL, we must use additional dates and
+                  % information to set the correct cycle number
+                  
+                  % multiple cycle durations only concern floats with a prelude phase
+                  
+                  % compute the duration of the cycle #1 (first deep cycle)
+                  firstDeepCycleDuration = firstProfileEndDate - floatRefDay - ...
+                     delayBeforeMission/1440 - preludeDuration/1440;
+                  
+                  % compute the duration of the transition cycle
+                  surfTime = firstProfileEndDate - fix(firstProfileEndDate);
+                  transitionCycleStartDate = surfTime + (nbCyclesFirstMission-1)*cycleDuration(1);
+                  transitionCycleEndDate = fix(transitionCycleStartDate + cycleDuration(2)) + surfTime;
+                  transitionCycleDuration = transitionCycleEndDate - transitionCycleStartDate;
+                  
+                  % try to use already computed cycles
+                  idPrevCycle = find(g_util_lastMsgDate < firstArgosMsgDate);
+                  if (~isempty(idPrevCycle))
+                     idPrevCycle = idPrevCycle(end);
+                     
+                     if (g_util_cycleNumber(idPrevCycle) == 0)
+                        
+                        refDate = g_util_lastMsgDate(idPrevCycle);
+                        dates = [ ...
+                           refDate+firstDeepCycleDuration ...
+                           repmat(cycleDuration(1), 1, nbCyclesFirstMission-1) ...
+                           transitionCycleDuration ...
+                           repmat(cycleDuration(2), 1, 999)];
+                        for id = 2:length(dates)
+                           dates(id) = dates(id) + dates(id-1);
+                        end
+                        cycleNumbers = 1:length(dates);
+                        
+                        [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                        cycleNumberFile = cycleNumbers(idMin);
+                        
+                     elseif ((g_util_cycleNumber(idPrevCycle) > 0) && (g_util_cycleNumber(idPrevCycle) < nbCyclesFirstMission))
+                        
+                        refDate = g_util_firstMsgDate(idPrevCycle);
+                        dates = [ ...
+                           refDate ...
+                           repmat(cycleDuration(1), 1, nbCyclesFirstMission-g_util_cycleNumber(idPrevCycle)) ...
+                           transitionCycleDuration ...
+                           repmat(cycleDuration(2), 1, 999)];
+                        for id = 2:length(dates)
+                           dates(id) = dates(id) + dates(id-1);
+                        end
+                        cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                        
+                        [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                        cycleNumberFile = cycleNumbers(idMin);
+                        
+                     elseif (g_util_cycleNumber(idPrevCycle) == nbCyclesFirstMission)
+                        
+                        refDate = g_util_firstMsgDate(idPrevCycle);
+                        dates = [ ...
+                           refDate ...
+                           transitionCycleDuration ...
+                           repmat(cycleDuration(2), 1, 999)];
+                        for id = 2:length(dates)
+                           dates(id) = dates(id) + dates(id-1);
+                        end
+                        cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                        
+                        [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                        cycleNumberFile = cycleNumbers(idMin);
+                        
+                     else
+                        
+                        refDate = g_util_firstMsgDate(idPrevCycle);
+                        dates = [ ...
+                           refDate ...
+                           repmat(cycleDuration(2), 1, 999)];
+                        for id = 2:length(dates)
+                           dates(id) = dates(id) + dates(id-1);
+                        end
+                        cycleNumbers = g_util_cycleNumber(idPrevCycle):g_util_cycleNumber(idPrevCycle)+length(dates);
+                        
+                        [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                        cycleNumberFile = cycleNumbers(idMin);
+                        
+                     end
+                     
+                  else
+                     
+                     % use float meta-data
+                     
+                     dates = [ ...
+                        floatRefDay+delayBeforeMission/1440 ...
+                        preludeDuration/1440+firstDeepCycleDuration ...
+                        repmat(cycleDuration(1), 1, nbCyclesFirstMission-1) ...
+                        transitionCycleDuration ...
+                        repmat(cycleDuration(2), 1, 999)];
+                     for id = 2:length(dates)
+                        dates(id) = dates(id) + dates(id-1);
+                     end
+                     cycleNumbers = 0:length(dates);
+                     
+                     [~, idMin] = min(abs(dates-firstArgosMsgDate));
+                     cycleNumberFile = cycleNumbers(idMin);
+                     
+                  end
+               end
+               
+               if (~isempty(cycleNumberFile))
+                  cycleNumber = [cycleNumber cycleNumberFile];
+               else
+                  fprintf('ERROR: Float #%d: Cannot determine cycle number for file: %s\n', ...
+                     a_floatNum, subFileNameList{idFile});
+                  cycleNumber = [];
+                  break
+               end
             else
                fprintf('ERROR: Float #%d: Cannot determine cycle number for file: %s\n', ...
                   a_floatNum, subFileNameList{idFile});

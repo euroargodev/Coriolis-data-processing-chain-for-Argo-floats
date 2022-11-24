@@ -89,7 +89,6 @@ global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
 
 % decoder configuration values
-global g_decArgo_generateNcTraj;
 global g_decArgo_dirInputRsyncData;
 
 % rsync information
@@ -196,6 +195,9 @@ g_decArgo_fileTypeListCts5 = g_decArgo_provorCts5OseanFileTypeListAll;
 % float configuration
 global g_decArgo_floatConfig;
 
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatLoginName '_' num2str(a_floatNum) '/'];
@@ -251,7 +253,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % add launch position and time in the TRAJ NetCDF file
-if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
+if (isempty(g_decArgo_outputCsvFileId))
    o_tabTrajNMeas = add_launch_data_ir_rudics;
 end
 
@@ -351,12 +353,7 @@ for idFlCy = 1:length(floatCycleList)
    if (floatCyNum == g_decArgo_firstCycleNumFloat)
       g_decArgo_cycleNum = 0;
    end
-   
-   %    if (floatCyNum > 20)
-   %       a=1
-   %       break
-   %    end
-   
+      
    % get files to process
    idDel = [];
    expectedFileList = get_expected_file_list(floatCyNum, [], g_decArgo_filePrefixCts5, g_decArgo_firstCycleNumFloat);
@@ -697,8 +694,15 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1, a_decoderId);
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_launchDate, 1, a_decoderId);
 
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
+   
    if (g_decArgo_realtimeFlag == 1)
       
       % save the list of already processed rsync log files in the history
@@ -899,14 +903,6 @@ for typeNum = typeOrderList
       
       fileNamesForType = fileNames(idFileForType);
       for idFile = 1:length(fileNamesForType)
-         
-         %          if (strcmp(fileNamesForType{idFile}, '3a9e_156_01_technical.txt'))
-         %             a=1
-         %          end
-         
-         %          if ((g_decArgo_cycleNumFloat == 28) && (g_decArgo_patternNumFloat == 1))
-         %             a=1
-         %          end
          
          % manage split files
          [~, fileName, fileExtension] = fileparts(fileNamesForType{idFile});
@@ -1263,7 +1259,7 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
    
    % sort trajectory data structures according to the predefined
    % measurement code order
-   %    [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+   %    [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
    
    o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
    o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

@@ -87,7 +87,6 @@ global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
 
 % decoder configuration values
-global g_decArgo_generateNcTraj;
 global g_decArgo_dirInputRsyncData;
 global g_decArgo_applyRtqc;
 
@@ -178,7 +177,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % add launch position and time in the TRAJ NetCDF file
-if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
+if (isempty(g_decArgo_outputCsvFileId))
    o_tabTrajNMeas = add_launch_data_ir_sbd;
 end
 

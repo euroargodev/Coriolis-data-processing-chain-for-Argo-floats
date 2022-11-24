@@ -232,66 +232,68 @@ if (g_decArgo_realtimeFlag == 1)
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, '');
 end
+   
+% create list of mail files to decode
+realtimeFlagTmp = g_decArgo_realtimeFlag;
+g_decArgo_realtimeFlag = 0;
+[cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_decoderId);
+g_decArgo_realtimeFlag = realtimeFlagTmp;
 
-if (REPROCESS == 1)
+% store mail file information and extract attachment
+nbMailFiles = 0;
+for idFile = 1:length(cycleFileNameList)
    
-   % create list of mail files to decode
-   realtimeFlagTmp = g_decArgo_realtimeFlag;
-   g_decArgo_realtimeFlag = 0;
-   [cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_decoderId);
-   g_decArgo_realtimeFlag = realtimeFlagTmp;
+   mailFileName = cycleFileNameList{idFile};
+   cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
    
-   % store mail file information and extract attachment
-   nbMailFiles = 0;
-   for idFile = 1:length(cycleFileNameList)
-      
-      mailFileName = cycleFileNameList{idFile};
-      cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-      
-      if (cyIrJulD < a_floatLaunchDate)
-         fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
+   if (cyIrJulD < a_floatLaunchDate)
+      fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
+         g_decArgo_floatNum, ...
+         mailFileName, julian_2_gregorian_dec_argo(a_floatLaunchDate));
+      continue
+   end
+   
+   if (a_floatEndDate ~= g_decArgo_dateDef)
+      if (cyIrJulD > a_floatEndDate)
+         fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated after float end date (%s)\n', ...
             g_decArgo_floatNum, ...
-            mailFileName, julian_2_gregorian_dec_argo(a_floatLaunchDate));
+            mailFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
          continue
       end
-      
-      if (a_floatEndDate ~= g_decArgo_dateDef)
-         if (cyIrJulD > a_floatEndDate)
-            fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated after float end date (%s)\n', ...
-               g_decArgo_floatNum, ...
-               mailFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
-            continue
-         end
-      end
-      
-      nbMailFiles = nbMailFiles + 1;
-      
-      % extract the attachement
+   end
+   
+   nbMailFiles = nbMailFiles + 1;
+   
+   % extract the attachement
+   if (REPROCESS == 1)
       [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
          mailFileName, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
       g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
-      
-      if (g_decArgo_realtimeFlag == 1)
-         % update the report structure
-         g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {mailFileName}];
-      end
-      
+   else
+      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+         mailFileName, g_decArgo_archiveDirectory, []);
+      g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    end
-   fprintf('DEC_INFO: %d Iridium mail files to process\n', nbMailFiles);
    
-   % convert SBD files to raw .msg and .log ASCII files
-   [nbSbdFiles, nbAsciiFiles] = convert_sbd_files_apex_iridium_sbd(g_decArgo_archiveSbdDirectory, g_decArgo_archiveAsciiRawDirectory);
-   fprintf('DEC_INFO: %d SBD files to process\n', nbSbdFiles);
-   fprintf('DEC_INFO: %d raw .msg or .log files to process\n', nbAsciiFiles);
-   
-   % rename (and concat if needed) raw .msg and .log ASCII files so that they
-   % can be processed by the decoder
-   [nbMsgFiles, nbLogFiles] = duplicate_files_ir_sbd_apx( ...
-      a_floatNum, a_decoderId, a_floatLaunchDate, a_floatEndDate, ...
-      g_decArgo_archiveAsciiRawDirectory, g_decArgo_archiveAsciiDirectory);
-   fprintf('DEC_INFO: %d final .msg and %d final .log files to process\n', nbMsgFiles, nbLogFiles);
+   if (g_decArgo_realtimeFlag == 1)
+      % update the report structure
+      g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {mailFileName}];
+   end
    
 end
+fprintf('DEC_INFO: %d Iridium mail files to process\n', nbMailFiles);
+
+% convert SBD files to raw .msg and .log ASCII files
+[nbSbdFiles, nbAsciiFiles] = convert_sbd_files_apex_iridium_sbd(g_decArgo_archiveSbdDirectory, g_decArgo_archiveAsciiRawDirectory);
+fprintf('DEC_INFO: %d SBD files to process\n', nbSbdFiles);
+fprintf('DEC_INFO: %d raw .msg or .log files to process\n', nbAsciiFiles);
+
+% rename (and concat if needed) raw .msg and .log ASCII files so that they
+% can be processed by the decoder
+[nbMsgFiles, nbLogFiles] = duplicate_files_ir_sbd_apx( ...
+   a_floatNum, a_decoderId, a_floatLaunchDate, a_floatEndDate, ...
+   g_decArgo_archiveAsciiRawDirectory, g_decArgo_archiveAsciiDirectory);
+fprintf('DEC_INFO: %d final .msg and %d final .log files to process\n', nbMsgFiles, nbLogFiles);
 
 % retrieve RTC offset information from all existing log files
 [g_decArgo_clockOffset, cycleList] = get_clock_offset_apx_ir_sbd_apf9(a_floatNum, ...
@@ -515,12 +517,17 @@ end
 
 if (isempty(g_decArgo_outputCsvFileId))
    
+   % set cycle numbers to Iridium mail files data
+   update_mail_data_apx_ir_sbd(o_tabTrajNMeas);
+   
+   % add Iridium location in trajectory data
+   [o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      add_iridium_locations_in_trajectory_data( ...
+      o_tabTrajNMeas, o_tabTrajNCycle, g_decArgo_iridiumMailData);
+   
    % sort trajectory data structures according to the predefined
    % measurement code order
    o_tabTrajNMeas = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
-   
-   % set cycle numbers to Iridium mail files data
-   update_mail_data_apx_ir_sbd(o_tabTrajNMeas);
    
    % add profile date and location information
    o_tabProfiles = add_profile_date_and_location_apx_ir_sbd( ...

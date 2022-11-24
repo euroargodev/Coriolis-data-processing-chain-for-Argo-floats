@@ -4,7 +4,8 @@
 % SYNTAX :
 %  [o_miscInfo, o_techData, o_gpsData, ...
 %    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+%    o_profCtdCp, o_profCtdCpH, ...
+%    o_profFlbb, o_profFlbbCfg, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
 %    o_profRamses, ...
 %    o_profRafosRtc, o_profRafos, ...
 %    o_cycleTimeData] = ...
@@ -28,6 +29,8 @@
 %   o_profDo        : O2 data
 %   o_profCtdCp     : CTD_CP data
 %   o_profCtdCpH    : CTD_CP_H data
+%   o_profFlbb      : FLBB data
+%   o_profFlbbCfg   : FLBB_CFG data
 %   o_profFlbbCd    : FLBB_CD data
 %   o_profFlbbCdCfg : FLBB_CD_CFG data
 %   o_profOcr504I   : OCR_504I data
@@ -46,7 +49,8 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_techData, o_gpsData, ...
    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-   o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+   o_profCtdCp, o_profCtdCpH, ...
+   o_profFlbb, o_profFlbbCfg, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
    o_profRamses, ...
    o_profRafosRtc, o_profRafos, ...
    o_cycleTimeData] = ...
@@ -64,6 +68,8 @@ o_profCtdPtsh = [];
 o_profDo = [];
 o_profCtdCp = [];
 o_profCtdCpH = [];
+o_profFlbb = [];
+o_profFlbbCfg = [];
 o_profFlbbCd = [];
 o_profFlbbCdCfg = [];
 o_profRamses = [];
@@ -109,6 +115,8 @@ expectedFields = [ ...
    {'CTD_CP'} ...
    {'CTD_CP_H'} ...
    {'O2'} ...
+   {'FLBB'} ...
+   {'FLBB_CFG'} ...
    {'FLBB_CD'} ...
    {'FLBB_CD_CFG'} ...
    {'OCR_504I'} ...
@@ -149,6 +157,9 @@ ctdCp = [];
 ctdCpH = [];
 do = [];
 doId = [];
+flbb = [];
+flbbId = [];
+flbbCfg = [];
 flbbCd = [];
 flbbCdId = [];
 flbbCdCfg = [];
@@ -332,6 +343,13 @@ for idFile = 1:length(a_scienceLogFileList)
                      dataVal = data.(fieldName);
                      do = [do; dataVal(:, 2:end)];
                      doId = [doId; dataVal(:, 1)];
+                  case 'FLBB'
+                     dataVal = data.(fieldName);
+                     flbb = [flbb; dataVal(:, 2:end)];
+                     flbbId = [flbbId; dataVal(:, 1)];
+                  case 'FLBB_CFG'
+                     dataVal = data.(fieldName);
+                     flbbCfg = [flbbCfg; dataVal(:, 2:end)];
                   case 'FLBB_CD'
                      dataVal = data.(fieldName);
                      flbbCd = [flbbCd; dataVal(:, 2:end)];
@@ -426,13 +444,15 @@ end
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
 paramPres.cFormat = '%8.2f';
+paramPres.fortranFormat = 'F8.2';
 paramTemp = get_netcdf_param_attributes('TEMP');
 paramTemp.cFormat = '%10.4f';
+paramTemp.fortranFormat = 'F10.4';
 paramSal = get_netcdf_param_attributes('PSAL');
 paramSal.cFormat = '%10.4f';
+paramSal.fortranFormat = 'F10.4';
 
 paramVrsPh = get_netcdf_param_attributes('VRS_PH');
-paramVrsPh.cFormat = '%.6f';
 
 paramO2 = get_netcdf_param_attributes('O2');
 paramO2.cFormat = '%.5f';
@@ -441,19 +461,15 @@ paramAirSat = get_netcdf_param_attributes('AirSat');
 paramAirSat.cFormat = '%.5f';
 
 paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-paramTempDoxy.cFormat = '%.5f';
 
 paramCalPhase = get_netcdf_param_attributes('CalPhase');
 paramCalPhase.cFormat = '%.5f';
 
 paramTphaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
-paramTphaseDoxy.cFormat = '%.5f';
 
 paramC1phaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
-paramC1phaseDoxy.cFormat = '%.5f';
 
 paramC2phaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
-paramC2phaseDoxy.cFormat = '%.5f';
 
 paramC1Amp = get_netcdf_param_attributes('C1Amp');
 paramC1Amp.cFormat = '%.5f';
@@ -602,6 +618,36 @@ if (~isempty(ctdCpH))
    o_profCtdCpH.data(isnan(o_profCtdCpH.data(:, 5)), 5) = paramVrsPh.fillValue;
    g_decArgo_addParamNbSampleCtd = 1;
    g_decArgo_addParamNbSampleSfet = 1;
+end
+
+if (~isempty(flbb))
+   o_profFlbb = get_apx_profile_data_init_struct;
+   o_profFlbb.dateList = paramJuld;
+   o_profFlbb.dates = flbb(:, 1);
+   o_profFlbb.paramList = [paramPres paramFluorescenceChla paramBetaBackscattering700 paramThermSig];
+   o_profFlbb.data = [ones(size(flbb, 1), 1)*paramPres.fillValue flbb(:, 2:end)];
+   
+   if (any(isnan(o_profFlbb.dates)))
+      idNoDate = find(isnan(o_profFlbb.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated FLBB measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profFlbb.dates(isnan(o_profFlbb.dates)) = paramJuld.fillValue;
+   end
+end
+
+if (~isempty(flbbCfg))
+   o_profFlbbCfg = get_apx_profile_data_init_struct;
+   o_profFlbbCfg.dateList = paramJuld;
+   o_profFlbbCfg.dates = flbbCfg(:, 1);
+   o_profFlbbCfg.paramList = [paramPres paramChlWave paramBscWave];
+   o_profFlbbCfg.data = [ones(size(flbbCfg, 1), 1)*paramPres.fillValue flbbCfg(:, 2:end)];
+   
+   if (any(isnan(o_profFlbbCfg.dates)))
+      idNoDate = find(isnan(o_profFlbbCfg.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated FLBB_CFG measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profFlbbCfg.dates(isnan(o_profFlbbCfg.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(flbbCd))
@@ -777,7 +823,10 @@ if (~isempty(ramses) && ~isempty(ramsesSpectrum))
 end
 
 % add PRES for DO, FLBB, OCR and RAMSES data
-if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I) || ...
+if (~isempty(o_profDo) || ...
+      ~isempty(o_profFlbb)|| ...
+      ~isempty(o_profFlbbCd) || ...
+      ~isempty(o_profOcr504I) || ...
       ~isempty(o_profRamses))
    tabJuld = [];
    tabPres = [];
@@ -817,6 +866,10 @@ if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I) || .
          interpData = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
          o_profDo.data(~isnan(interpData), 1) = interpData(~isnan(interpData));
       end
+      if (~isempty(o_profFlbb))
+         o_profFlbb.data(:, 1) = interp1(tabJuld, tabPres, o_profFlbb.dates, 'linear');
+         o_profFlbb.data(isnan(o_profFlbb.data(:, 1)), 1) = paramPres.fillValue;
+      end
       if (~isempty(o_profFlbbCd))
          o_profFlbbCd.data(:, 1) = interp1(tabJuld, tabPres, o_profFlbbCd.dates, 'linear');
          o_profFlbbCd.data(isnan(o_profFlbbCd.data(:, 1)), 1) = paramPres.fillValue;
@@ -837,6 +890,9 @@ if (~isempty(o_profDo) && any(isnan(o_profDo.dates)))
    
    % gather all (Id, JULD, PRES) information
    presAll = allPresVal;
+   if (~isempty(flbbId))
+      presAll = [presAll; [flbbId o_profFlbb.dates double(o_profFlbb.data(:, 1))]];
+   end
    if (~isempty(flbbCdId))
       presAll = [presAll; [flbbCdId o_profFlbbCd.dates double(o_profFlbbCd.data(:, 1))]];
    end

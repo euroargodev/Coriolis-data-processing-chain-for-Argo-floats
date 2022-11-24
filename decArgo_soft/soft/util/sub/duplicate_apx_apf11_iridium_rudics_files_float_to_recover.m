@@ -35,13 +35,13 @@ end
 curUtcDate = now_utc;
 
 % create the output directory of this float
-floata_outputDirName = [a_outputDirName '/' a_floatLoginName '_' num2str(a_floatWmo)];
-if ~(exist(floata_outputDirName, 'dir') == 7)
-   mkdir(floata_outputDirName);
+floatOutputDirName = [a_outputDirName '/' a_floatLoginName '_' num2str(a_floatWmo)];
+if ~(exist(floatOutputDirName, 'dir') == 7)
+   mkdir(floatOutputDirName);
 end
-floata_outputDirName = [floata_outputDirName '/archive/'];
-if ~(exist(floata_outputDirName, 'dir') == 7)
-   mkdir(floata_outputDirName);
+floatOutputDirName = [floatOutputDirName '/archive/'];
+if ~(exist(floatOutputDirName, 'dir') == 7)
+   mkdir(floatOutputDirName);
 end
 
 % copy files from DIR_INPUT_RSYNC_DATA
@@ -52,20 +52,20 @@ for idFile = 1:length(floatFiles)
    floatFilePathName = [a_rsyncDir '/' a_floatLoginName '/' floatFileName];
    
    if ((curUtcDate - floatFiles(idFile).datenum) <= a_maxFileAge/24)
-      floatFilePathNameOut = [floata_outputDirName '/' floatFileName];
+      floatFilePathNameOut = [floatOutputDirName '/' floatFileName];
       if (exist(floatFilePathNameOut, 'file') == 2)
          % when the file already exists, check (with its date) if it needs to be
          % updated
          floatFileOut = dir(floatFilePathNameOut);
          if (~strcmp(floatFiles(idFile).date, floatFileOut.date))
-            copy_file(floatFilePathName, floata_outputDirName);
+            copy_file(floatFilePathName, floatOutputDirName);
             fprintf('%s => copy\n', floatFileName);
          else
             fprintf('%s => unchanged\n', floatFileName);
          end
       else
          % copy the file if it doesn't exist
-         copy_file(floatFilePathName, floata_outputDirName);
+         copy_file(floatFilePathName, floatOutputDirName);
          fprintf('%s => copy\n', floatFileName);
       end
    end
@@ -80,20 +80,20 @@ if (~isempty(a_spoolDir))
       floatFilePathName = [a_spoolDir '/' a_floatLoginName '/' floatFileName];
       
       if ((curUtcDate - floatFiles(idFile).datenum) <= a_maxFileAge/24)
-         floatFilePathNameOut = [floata_outputDirName '/' floatFileName];
+         floatFilePathNameOut = [floatOutputDirName '/' floatFileName];
          if (exist(floatFilePathNameOut, 'file') == 2)
             % when the file already exists, check (with its date) if it needs to be
             % updated
             floatFileOut = dir(floatFilePathNameOut);
             if (~strcmp(floatFiles(idFile).date, floatFileOut.date))
-               copy_file(floatFilePathName, floata_outputDirName);
+               copy_file(floatFilePathName, floatOutputDirName);
                fprintf('%s => copy\n', floatFileName);
             else
                fprintf('%s => unchanged\n', floatFileName);
             end
          else
             % copy the file if it doesn't exist
-            copy_file(floatFilePathName, floata_outputDirName);
+            copy_file(floatFilePathName, floatOutputDirName);
             fprintf('%s => copy\n', floatFileName);
          end
       end

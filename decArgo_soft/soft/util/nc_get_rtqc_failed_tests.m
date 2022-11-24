@@ -232,8 +232,8 @@ if (exist(a_ncPathFileName, 'file') == 2)
             if (~isempty(profHistoDate))
                if (size(profHistoDate, 1) > 1)
                   [~, idMax] = max(datenum(profHistoDate, 'yyyymmddHHMMSS'));
-                  profHistoDate = profHistoDate(idMax);
-                  profHistoQcTest = profHistoQcTest(idMax);
+                  profHistoDate = profHistoDate(idMax, :);
+                  profHistoQcTest = profHistoQcTest(idMax, :);
                end
                
                paramList = [];

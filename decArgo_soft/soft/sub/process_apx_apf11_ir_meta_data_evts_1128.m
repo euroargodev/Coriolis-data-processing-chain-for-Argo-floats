@@ -2,7 +2,7 @@
 % Get meta-data information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125_28(a_events)
+%  [o_metaData] = process_apx_apf11_ir_meta_data_evts_1128(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -16,9 +16,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/04/2020 - RNU - creation
+%   08/24/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125_28(a_events)
+function [o_metaData] = process_apx_apf11_ir_meta_data_evts_1128(a_events)
 
 % output parameters initialization
 o_metaData = [];
@@ -75,7 +75,7 @@ if (~isempty(events))
 end
 
 % get OCR useful information
-events = a_events(find(strcmp({a_events.functionName}, '504I')));
+events = a_events(find(strcmp({a_events.functionName}, '504U')));
 if (~isempty(events))
    o_metaData = process_apx_apf11_ir_meta_data_evts_ocr_v2(events, o_metaData);
 end

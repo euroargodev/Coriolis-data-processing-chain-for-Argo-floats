@@ -350,7 +350,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    formatVersion = strtrim(trajData{2*idVal}');
    
    % check the traj file format version
-   if (~strcmp(formatVersion, '3.1'))
+   if (~ismember(formatVersion, [{'3.1'} {'3.2'}]))
       fprintf('\n');
       fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);

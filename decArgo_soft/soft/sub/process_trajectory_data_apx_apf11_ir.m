@@ -6,11 +6,11 @@
 %    process_trajectory_data_apx_apf11_ir( ...
 %    a_cycleNum, ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+%    a_profCtdCp, a_profCtdCpH, a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
 %    a_profRafosRtc, a_profRafos, ...
 %    a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
 %    a_cycleTimeData, ...
-%    a_clockOffsetData, ...
+%    a_clockOffsetData, o_presOffsetData, ...
 %    a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 %
 % INPUT PARAMETERS :
@@ -22,6 +22,7 @@
 %   a_profDo          : O2 data
 %   a_profCtdCp       : CTD_CP data
 %   a_profCtdCpH      : CTD_CP_H data
+%   a_profFlbb        : FLBB data
 %   a_profFlbbCd      : FLBB_CD data
 %   a_profOcr504I     : OCR_504I data
 %   a_profRamses      : RAMSES data
@@ -33,6 +34,7 @@
 %   a_buoyancy        : buoyancy data
 %   a_cycleTimeData   : cycle timings data
 %   a_clockOffsetData : clock offset information
+%   a_presOffsetData  : input pressure offset information
 %   a_tabTrajNMeas    : input traj N_MEAS data
 %   a_tabTrajNCycle   : input traj N_CYCLE data
 %   a_tabTechNMeas    : input tech N_MEAS data
@@ -54,11 +56,11 @@ function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
    process_trajectory_data_apx_apf11_ir( ...
    a_cycleNum, ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+   a_profCtdCp, a_profCtdCpH, a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
    a_profRafosRtc, a_profRafos, ...
    a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
    a_cycleTimeData, ...
-   a_clockOffsetData, ...
+   a_clockOffsetData, o_presOffsetData, ...
    a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 
 % output parameters initialization
@@ -110,10 +112,10 @@ global g_decArgo_qcProbablyGood;
 % QC flag values (char)
 global g_decArgo_qcStrProbablyGood;
 
+% to store information on adjustments
+global g_decArgo_paramTrajAdjInfo;
+global g_decArgo_paramTrajAdjId;
 
-% if (a_cycleNum == 73)
-%    a=1
-% end
 
 % structure to store N_MEASUREMENT data
 trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
@@ -131,6 +133,26 @@ techNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
 % retrieve clock offset for this cycle
 cycleClockOffset = get_clock_offset_value_apx_apf11_ir(a_clockOffsetData, a_cycleTimeData);
 trajNCycleStruct.clockOffset = cycleClockOffset/86400;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PRES OFFSET
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% retrieve PRES offset for this cycle
+idF = find(o_presOffsetData.cycleNumAdjPres == a_cycleNum, 1);
+if (~isempty(idF))
+   presOffset = o_presOffsetData.presOffset(idF);
+   
+   param = 'PRES';
+   equation = 'PRES_ADJUSTED = PRES - Surface Pressure';
+   coefficient = ['For cycle #' num2str(a_cycleNum) ': Surface Pressure = ' num2str(presOffset) ' dbar'];
+   comment = 'Pressure adjusted in real time by using pressure offset at the sea surface';
+
+   g_decArgo_paramTrajAdjInfo = [g_decArgo_paramTrajAdjInfo;
+      g_decArgo_paramTrajAdjId 0 a_cycleNum ...
+      {param} {equation} {coefficient} {comment} {''}];
+   g_decArgo_paramTrajAdjId = g_decArgo_paramTrajAdjId + 1;
+end
 
 % data mode
 trajNCycleStruct.dataMode = 'A'; % because clock offset is supposed to be set for each cycle
@@ -477,8 +499,8 @@ if (~isempty(transEndDate))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CTD_P, CTD_PT, CTD_PTS, CTD_PTSH, O2, FLBB_CD, OCR_504I MEASUREMENTS (because
-% all are dated) stored with MC-10
+% CTD_P, CTD_PT, CTD_PTS, CTD_PTSH, O2, FLBB, FLBB_CD, OCR_504I, RAMSES, RAFOS,
+% MEASUREMENTS (because all are dated) stored with MC-10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 phaseDates = [];
@@ -527,7 +549,7 @@ end
 phaseMeasCode = phaseMeasCode(idSort);
 
 if (~isempty(phaseDates))
-   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'} {'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB'} {'FLBB_CD'} {'OCR_504I'} {'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}];
    for idML = 1:length(measList)
       doDataFlag = 0;
       switch (measList{idML})
@@ -557,6 +579,11 @@ if (~isempty(phaseDates))
             end
             profData = a_profDo;
             doDataFlag = 1;
+         case 'FLBB'
+            if (isempty(a_profFlbb))
+               continue
+            end
+            profData = a_profFlbb;
          case 'FLBB_CD'
             if (isempty(a_profFlbbCd))
                continue
@@ -635,17 +662,9 @@ if (~isempty(phaseDates))
             end
          end
          
-         %          if (measCode == 590)
-         %             a=1
-         %          end
-         
          for idM = 1:length(idData)
             idMeas = idData(idM);
             time = profData.dates(idMeas);
-            
-            %             if (strcmp(julian_2_gregorian_dec_argo(time), '2020/02/20 04:24:23'))
-            %                a=1
-            %             end
             
             timeAdj = g_decArgo_dateDef;
             if (~isempty(profData.datesAdj))
@@ -673,6 +692,9 @@ if (~isempty(phaseDates))
                measStruct.paramNumberWithSubLevels = profData.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = profData.paramNumberOfSubLevels;
                measStruct.paramData = profData.data(idMeas, :);
+               if (~isempty(profData.ptsForDoxy))
+                  measStruct.ptsForDoxy = profData.ptsForDoxy(idMeas, :);
+               end
                
                if (ismember(measList{idML}, [{'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}]))
                   measStruct.sensorNumber = 999;
@@ -730,7 +752,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
    paramDataMode = [];
    paramDataStruct = [];
    paramDataAdjStruct = [];
-   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'}];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB'} {'FLBB_CD'} {'OCR_504I'}];
    for idML = 1:length(measList)
       switch (measList{idML})
          case 'CTD_P'
@@ -758,6 +780,11 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                continue
             end
             profData = a_profDo;
+         case 'FLBB'
+            if (isempty(a_profFlbb))
+               continue
+            end
+            profData = a_profFlbb;
          case 'FLBB_CD'
             if (isempty(a_profFlbbCd))
                continue
@@ -855,7 +882,7 @@ if (~isempty(ascentStartDate) && ...
    presMaxTime = g_decArgo_dateDef;
    presMaxTimeAdj = g_decArgo_dateDef;
    idMax = [];
-   measList = [{'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'} {'CTD_CP'} {'CTD_CP_H'}];
+   measList = [{'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB'} {'FLBB_CD'} {'OCR_504I'} {'CTD_CP'} {'CTD_CP_H'}];
    for idML = 1:length(measList)
       switch (measList{idML})
          case 'CTD_PTS'
@@ -873,6 +900,11 @@ if (~isempty(ascentStartDate) && ...
                continue
             end
             profData = a_profDo;
+         case 'FLBB'
+            if (isempty(a_profFlbb))
+               continue
+            end
+            profData = a_profFlbb;
          case 'FLBB_CD'
             if (isempty(a_profFlbbCd))
                continue
@@ -959,6 +991,9 @@ if (~isempty(ascentStartDate) && ...
             measStruct.paramList = profMax.paramList;
             measStruct.paramDataMode = profMax.paramDataMode;
             measStruct.paramData = profMax.data(idMax, :);
+            if (~isempty(profMax.ptsForDoxy))
+               measStruct.ptsForDoxy = profMax.ptsForDoxy(idMax, :);
+            end
             if (~isempty(profMax.dataAdj))
                measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
                deleteFlag = 1;
@@ -984,6 +1019,9 @@ if (~isempty(ascentStartDate) && ...
          measStruct.paramList = profMax.paramList;
          measStruct.paramDataMode = profMax.paramDataMode;
          measStruct.paramData = profMax.data(idMax, :);
+         if (~isempty(profMax.ptsForDoxy))
+            measStruct.ptsForDoxy = profMax.ptsForDoxy(idMax, :);
+         end
          if (~isempty(profMax.dataAdj))
             measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
             deleteFlag = 1;
@@ -1428,7 +1466,10 @@ else
    gpsLocTimeToFix = a_gpsData{11};
 end
 
-% GPS data for the previous cycle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GPS LOCATIONS FOR THE PREVIOUS CYCLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if (a_cycleNum > 0)
    idF = find(gpsLocCycleNum == max(a_cycleNum-1, 0));
    if (~isempty(idF))
@@ -1636,7 +1677,10 @@ if (a_cycleNum > 0)
    end
 end
 
-% GPS data for the current cycle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GPS LOCATIONS FOR THE CURRENT CYCLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 idF = find(gpsLocCycleNum == a_cycleNum);
 gpsCyLocDate = gpsLocDate(idF);
 gpsCyLocLon = gpsLocLon(idF);

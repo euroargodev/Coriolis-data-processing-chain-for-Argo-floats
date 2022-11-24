@@ -114,6 +114,9 @@
 %   06/21/2021 - RNU - V 3.1: JULD_QC and JULD_ADJUSTED_QC should not be
 %                             initialized anymore (in APF11 DO profiles with the
 %                             timestamp issue, JULD_QC is set to '2'
+%   08/18/2021 - RNU - V 3.2: Minor modifications so that the same RTQC code can
+%                             be used on C and B TRAJ 3.1 files or on the unique
+%                             TRAJ 3.2 file
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -152,7 +155,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '3.1';
+g_decArgo_addRtqcToTrajVersion = '3.2';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -369,6 +372,7 @@ paramLon = get_netcdf_param_attributes('LONGITUDE');
 
 % retrieve the data from the core trajectory file
 wantedVars = [ ...
+   {'FORMAT_VERSION'} ...
    {'CYCLE_NUMBER_INDEX'} ...
    {'CONFIG_MISSION_NUMBER'} ...
    {'DATA_MODE'} ...
@@ -382,6 +386,7 @@ wantedVars = [ ...
    {'LONGITUDE'} ...
    {'POSITION_ACCURACY'} ...
    {'POSITION_QC'} ...
+   {'AXES_ERROR_ELLIPSE_MAJOR'} ...
    {'CYCLE_NUMBER'} ...
    {'MEASUREMENT_CODE'} ...
    {'TRAJECTORY_PARAMETERS'} ...
@@ -389,6 +394,7 @@ wantedVars = [ ...
 
 [ncTrajData] = get_data_from_nc_file(ncTrajInputFilePathName, wantedVars);
 
+ncTrajInputFileFormatVersion = str2double(get_data_from_name('FORMAT_VERSION', ncTrajData));
 cycleNumberIndex = get_data_from_name('CYCLE_NUMBER_INDEX', ncTrajData);
 configMissionNumber = get_data_from_name('CONFIG_MISSION_NUMBER', ncTrajData);
 dataMode = get_data_from_name('DATA_MODE', ncTrajData)';
@@ -401,10 +407,11 @@ juldAdjQc = get_data_from_name('JULD_ADJUSTED_QC', ncTrajData)';
 latitude = get_data_from_name('LATITUDE', ncTrajData);
 longitude = get_data_from_name('LONGITUDE', ncTrajData);
 positionAccuracy = get_data_from_name('POSITION_ACCURACY', ncTrajData)';
+axesErrorEllipseMajor = get_data_from_name('AXES_ERROR_ELLIPSE_MAJOR', ncTrajData);
 positionQc = get_data_from_name('POSITION_QC', ncTrajData)';
 cycleNumber = get_data_from_name('CYCLE_NUMBER', ncTrajData);
 measurementCode = get_data_from_name('MEASUREMENT_CODE', ncTrajData);
-
+   
 % create the list of parameters
 trajectoryParameters = get_data_from_name('TRAJECTORY_PARAMETERS', ncTrajData);
 [~, nParam] = size(trajectoryParameters);
@@ -467,6 +474,9 @@ for idParam = 1:length(ncTrajParamNameList)
    ncTrajParamFillValueList{end+1} = paramInfo.fillValue;
    
    data = get_data_from_name(paramName, ncTrajData);
+   if (size(data, 2) > 1)
+      data = permute(data, ndims(data):-1:1);
+   end
    nMeasCTrajFile = size(data, 1);
    dataQc = get_data_from_name(paramNameQc, ncTrajData)';
    
@@ -489,6 +499,9 @@ for idParam = 1:length(ncTrajParamAdjNameList)
    ncTrajParamAdjFillValueList{end+1} = paramInfo.fillValue;
    
    data = get_data_from_name(paramAdjName, ncTrajData);
+   if (size(data, 2) > 1)
+      data = permute(data, ndims(data):-1:1);
+   end
    dataQc = get_data_from_name(paramAdjNameQc, ncTrajData)';
    
    eval([paramAdjNameData ' = data;']);
@@ -498,131 +511,140 @@ end
 % retrieve the data from the B trajectory file
 if (bTrajFileFlag == 1)
    
-   wantedVars = [ ...
-      {'TRAJECTORY_PARAMETERS'} ...
-      ];
-
-   [ncBTrajData] = get_data_from_nc_file(ncBTrajInputFilePathName, wantedVars);
+   if (ncTrajInputFileFormatVersion < 3.2)
       
-   % create the list of parameters
-   trajectoryParametersB = get_data_from_name('TRAJECTORY_PARAMETERS', ncBTrajData);
-   [~, nParam] = size(trajectoryParametersB);
-   ncBTrajParamNameList = [];
-   ncBTrajParamAdjNameList = [];
-   for idParam = 1:nParam
-      paramName = deblank(trajectoryParametersB(:, idParam)');
-      if (~isempty(paramName))
-         ncBTrajParamNameList{end+1} = paramName;
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
-            ncBTrajParamAdjNameList = [ncBTrajParamAdjNameList ...
-               {[paramName '_ADJUSTED']} ...
-               ];
+      wantedVars = [ ...
+         {'TRAJECTORY_PARAMETERS'} ...
+         ];
+      
+      [ncBTrajData] = get_data_from_nc_file(ncBTrajInputFilePathName, wantedVars);
+      
+      % create the list of parameters
+      trajectoryParametersB = get_data_from_name('TRAJECTORY_PARAMETERS', ncBTrajData);
+      [~, nParam] = size(trajectoryParametersB);
+      ncBTrajParamNameList = [];
+      ncBTrajParamAdjNameList = [];
+      for idParam = 1:nParam
+         paramName = deblank(trajectoryParametersB(:, idParam)');
+         if (~isempty(paramName))
+            ncBTrajParamNameList{end+1} = paramName;
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
+               ncBTrajParamAdjNameList = [ncBTrajParamAdjNameList ...
+                  {[paramName '_ADJUSTED']} ...
+                  ];
+            end
          end
       end
-   end
-   ncBTrajParamNameList = unique(ncBTrajParamNameList);
-   ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES') == 1)) = [];
-   ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES2') == 1)) = [];
-   ncBTrajParamAdjNameList = unique(ncBTrajParamAdjNameList);
-   
-   % retrieve the data
-   ncBTrajParamNameQcList = [];
-   wantedVars = [];
-   for idParam = 1:length(ncBTrajParamNameList)
-      paramName = ncBTrajParamNameList{idParam};
-      paramNameQc = [paramName '_QC'];
-      ncBTrajParamNameQcList{end+1} = paramNameQc;
-      wantedVars = [ ...
-         wantedVars ...
-         {paramName} ...
-         {paramNameQc} ...
-         ];
-   end
-   ncBTrajParamAdjNameQcList = [];
-   for idParam = 1:length(ncBTrajParamAdjNameList)
-      paramAdjName = ncBTrajParamAdjNameList{idParam};
-      paramAdjNameQc = [paramAdjName '_QC'];
-      ncBTrajParamAdjNameQcList{end+1} = paramAdjNameQc;
-      wantedVars = [ ...
-         wantedVars ...
-         {paramAdjName} ...
-         {paramAdjNameQc} ...
-         ];
-   end
-   
-   [ncBTrajData] = get_data_from_nc_file(ncBTrajInputFilePathName, wantedVars);
-   
-   ncBTrajParamDataList = [];
-   ncBTrajParamDataQcList = [];
-   ncBTrajParamFillValueList = [];
-   for idParam = 1:length(ncBTrajParamNameList)
-      paramName = ncBTrajParamNameList{idParam};
-      paramNameData = lower(paramName);
-      ncBTrajParamDataList{end+1} = paramNameData;
-      paramNameQc = ncBTrajParamNameQcList{idParam};
-      paramNameQcData = lower(paramNameQc);
-      ncBTrajParamDataQcList{end+1} = paramNameQcData;
-      paramInfo = get_netcdf_param_attributes(paramName);
-      ncBTrajParamFillValueList{end+1} = paramInfo.fillValue;
+      ncBTrajParamNameList = unique(ncBTrajParamNameList);
+      ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES') == 1)) = [];
+      ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES2') == 1)) = [];
+      ncBTrajParamAdjNameList = unique(ncBTrajParamAdjNameList);
       
-      data = get_data_from_name(paramName, ncBTrajData);
-      if (size(data, 2) > 1)
-         data = permute(data, ndims(data):-1:1);
+      % retrieve the data
+      ncBTrajParamNameQcList = [];
+      wantedVars = [];
+      for idParam = 1:length(ncBTrajParamNameList)
+         paramName = ncBTrajParamNameList{idParam};
+         paramNameQc = [paramName '_QC'];
+         ncBTrajParamNameQcList{end+1} = paramNameQc;
+         wantedVars = [ ...
+            wantedVars ...
+            {paramName} ...
+            {paramNameQc} ...
+            ];
       end
-      dataQc = get_data_from_name(paramNameQc, ncBTrajData)';
-      nMeas = size(data, 1);
-      if (nMeas ~= nMeasCTrajFile)
-         nbLinesToAdd = nMeasCTrajFile - nMeas;
-         data = cat(1, data, ones(nbLinesToAdd, size(data, 2))*paramInfo.fillValue);
-         dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbLinesToAdd));
+      ncBTrajParamAdjNameQcList = [];
+      for idParam = 1:length(ncBTrajParamAdjNameList)
+         paramAdjName = ncBTrajParamAdjNameList{idParam};
+         paramAdjNameQc = [paramAdjName '_QC'];
+         ncBTrajParamAdjNameQcList{end+1} = paramAdjNameQc;
+         wantedVars = [ ...
+            wantedVars ...
+            {paramAdjName} ...
+            {paramAdjNameQc} ...
+            ];
       end
       
-      eval([paramNameData ' = data;']);
-      eval([paramNameQcData ' = dataQc;']);
-   end
-   ncBTrajParamAdjDataList = [];
-   ncBTrajParamAdjDataQcList = [];
-   ncBTrajParamAdjFillValueList = [];
-   for idParam = 1:length(ncBTrajParamAdjNameList)
-      paramAdjName = ncBTrajParamAdjNameList{idParam};
-      paramAdjNameData = lower(paramAdjName);
-      ncBTrajParamAdjDataList{end+1} = paramAdjNameData;
-      paramAdjNameQc = ncBTrajParamAdjNameQcList{idParam};
-      paramAdjNameQcData = lower(paramAdjNameQc);
-      ncBTrajParamAdjDataQcList{end+1} = paramAdjNameQcData;
-      adjPos = strfind(paramAdjName, '_ADJUSTED');
-      paramName = paramAdjName(1:adjPos-1);
-      paramInfo = get_netcdf_param_attributes(paramName);
-      ncBTrajParamAdjFillValueList{end+1} = paramInfo.fillValue;
+      [ncBTrajData] = get_data_from_nc_file(ncBTrajInputFilePathName, wantedVars);
       
-      data = get_data_from_name(paramAdjName, ncBTrajData);
-      if (size(data, 2) > 1)
-         data = permute(data, ndims(data):-1:1);
+      ncBTrajParamDataList = [];
+      ncBTrajParamDataQcList = [];
+      ncBTrajParamFillValueList = [];
+      for idParam = 1:length(ncBTrajParamNameList)
+         paramName = ncBTrajParamNameList{idParam};
+         paramNameData = lower(paramName);
+         ncBTrajParamDataList{end+1} = paramNameData;
+         paramNameQc = ncBTrajParamNameQcList{idParam};
+         paramNameQcData = lower(paramNameQc);
+         ncBTrajParamDataQcList{end+1} = paramNameQcData;
+         paramInfo = get_netcdf_param_attributes(paramName);
+         ncBTrajParamFillValueList{end+1} = paramInfo.fillValue;
+         
+         data = get_data_from_name(paramName, ncBTrajData);
+         if (size(data, 2) > 1)
+            data = permute(data, ndims(data):-1:1);
+         end
+         dataQc = get_data_from_name(paramNameQc, ncBTrajData)';
+         nMeas = size(data, 1);
+         if (nMeas ~= nMeasCTrajFile)
+            nbLinesToAdd = nMeasCTrajFile - nMeas;
+            data = cat(1, data, ones(nbLinesToAdd, size(data, 2))*paramInfo.fillValue);
+            dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbLinesToAdd));
+         end
+         
+         eval([paramNameData ' = data;']);
+         eval([paramNameQcData ' = dataQc;']);
       end
-      dataQc = get_data_from_name(paramAdjNameQc, ncBTrajData)';
-      nMeas = size(data, 1);
-      if (nMeas ~= nMeasCTrajFile)
-         nbLinesToAdd = nMeasCTrajFile - nMeas;
-         data = cat(1, data, ones(nbLinesToAdd, size(data, 2))*paramInfo.fillValue);
-         dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbLinesToAdd));
+      ncBTrajParamAdjDataList = [];
+      ncBTrajParamAdjDataQcList = [];
+      ncBTrajParamAdjFillValueList = [];
+      for idParam = 1:length(ncBTrajParamAdjNameList)
+         paramAdjName = ncBTrajParamAdjNameList{idParam};
+         paramAdjNameData = lower(paramAdjName);
+         ncBTrajParamAdjDataList{end+1} = paramAdjNameData;
+         paramAdjNameQc = ncBTrajParamAdjNameQcList{idParam};
+         paramAdjNameQcData = lower(paramAdjNameQc);
+         ncBTrajParamAdjDataQcList{end+1} = paramAdjNameQcData;
+         adjPos = strfind(paramAdjName, '_ADJUSTED');
+         paramName = paramAdjName(1:adjPos-1);
+         paramInfo = get_netcdf_param_attributes(paramName);
+         ncBTrajParamAdjFillValueList{end+1} = paramInfo.fillValue;
+         
+         data = get_data_from_name(paramAdjName, ncBTrajData);
+         if (size(data, 2) > 1)
+            data = permute(data, ndims(data):-1:1);
+         end
+         dataQc = get_data_from_name(paramAdjNameQc, ncBTrajData)';
+         nMeas = size(data, 1);
+         if (nMeas ~= nMeasCTrajFile)
+            nbLinesToAdd = nMeasCTrajFile - nMeas;
+            data = cat(1, data, ones(nbLinesToAdd, size(data, 2))*paramInfo.fillValue);
+            dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbLinesToAdd));
+         end
+         
+         eval([paramAdjNameData ' = data;']);
+         eval([paramAdjNameQcData ' = dataQc;']);
       end
       
-      eval([paramAdjNameData ' = data;']);
-      eval([paramAdjNameQcData ' = dataQc;']);
+      ncTrajParamNameList = [ncTrajParamNameList ncBTrajParamNameList];
+      ncTrajParamNameQcList = [ncTrajParamNameQcList ncBTrajParamNameQcList];
+      ncTrajParamDataList = [ncTrajParamDataList ncBTrajParamDataList];
+      ncTrajParamDataQcList = [ncTrajParamDataQcList ncBTrajParamDataQcList];
+      ncTrajParamFillValueList = [ncTrajParamFillValueList ncBTrajParamFillValueList];
+      
+      ncTrajParamAdjNameList = [ncTrajParamAdjNameList ncBTrajParamAdjNameList];
+      ncTrajParamAdjNameQcList = [ncTrajParamAdjNameQcList ncBTrajParamAdjNameQcList];
+      ncTrajParamAdjDataList = [ncTrajParamAdjDataList ncBTrajParamAdjDataList];
+      ncTrajParamAdjDataQcList = [ncTrajParamAdjDataQcList ncBTrajParamAdjDataQcList];
+      ncTrajParamAdjFillValueList = [ncTrajParamAdjFillValueList ncBTrajParamAdjFillValueList];
+   else
+      
+      fprintf('RTQC_ERROR: Float #%d: Found a trajectory nc file (%s) in version %g and a B trajectory nc file (%s) - the B trajectory nc file is ignored\n', ...
+         a_floatNum, a_ncTrajInputFilePathName, ncTrajInputFileFormatVersion, ncBTrajInputFilePathName);
+      bTrajFileFlag = 0;
+      
    end
-   
-   ncTrajParamNameList = [ncTrajParamNameList ncBTrajParamNameList];
-   ncTrajParamNameQcList = [ncTrajParamNameQcList ncBTrajParamNameQcList];
-   ncTrajParamDataList = [ncTrajParamDataList ncBTrajParamDataList];
-   ncTrajParamDataQcList = [ncTrajParamDataQcList ncBTrajParamDataQcList];
-   ncTrajParamFillValueList = [ncTrajParamFillValueList ncBTrajParamFillValueList];
-   
-   ncTrajParamAdjNameList = [ncTrajParamAdjNameList ncBTrajParamAdjNameList];
-   ncTrajParamAdjNameQcList = [ncTrajParamAdjNameQcList ncBTrajParamAdjNameQcList];
-   ncTrajParamAdjDataList = [ncTrajParamAdjDataList ncBTrajParamAdjDataList];
-   ncTrajParamAdjDataQcList = [ncTrajParamAdjDataQcList ncBTrajParamAdjDataQcList];
-   ncTrajParamAdjFillValueList = [ncTrajParamAdjFillValueList ncBTrajParamAdjFillValueList];
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -661,22 +683,37 @@ testFailedList = zeros(lastTestNum, 1);
 %    juldAdjQc(idNoDef) = g_decArgo_qcStrNoQc;
 % end
 
-% POSITION_QC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize POSITION_QC
 positionQc = repmat(g_decArgo_qcStrDef, size(positionQc));
-if (a_justAfterDecodingFlag == 1)
-   % initialize POSITION_QC to '0' except when equal to '8' and '9' (set by the
-   % decoder)
-   idNoDef = find((latitude ~= paramLat.fillValue) & ...
-      (longitude ~= paramLon.fillValue) & ...
-      (positionQc ~= g_decArgo_qcStrInterpolated)' & ...
-      (positionQc ~= g_decArgo_qcStrMissing)');
-else
-   % initialize POSITION_QC to '0'
-   idNoDef = find(latitude ~= paramLat.fillValue);
-end
-if (~isempty(idNoDef))
-   positionQc(idNoDef) = g_decArgo_qcStrNoQc;
-end
+
+% initialize POSITION_QC to '0' when a location is set
+idNoDef = find((juld ~= paramJuld.fillValue) & ...
+   (latitude ~= paramLat.fillValue) & ...
+   (longitude ~= paramLon.fillValue));
+positionQc(idNoDef) = g_decArgo_qcStrNoQc;
+
+% POSITION_QC of launch position should be set to g_decArgo_qcStrNoQc (see TRAJ
+% cookbook)
+% before being checked by tests #3 and #4
+
+% set Iridium POSITION_QC according to CEP radius
+% POSITION_QC = '1' if CEP radius < 5 km, POSITION_QC = '2' otherwise
+idGood = find((juld ~= paramJuld.fillValue) & ...
+   (latitude ~= paramLat.fillValue) & ...
+   (longitude ~= paramLon.fillValue) & ...
+   (positionAccuracy == 'I')' & ...
+   (axesErrorEllipseMajor < 5000));
+positionQc(idGood) = set_qc(positionQc(idGood), g_decArgo_qcStrGood);
+idProbablyGood = find((juld ~= paramJuld.fillValue) & ...
+   (latitude ~= paramLat.fillValue) & ...
+   (longitude ~= paramLon.fillValue) & ...
+   (positionAccuracy == 'I')' & ...
+   (axesErrorEllipseMajor >= 5000));
+positionQc(idProbablyGood) = set_qc(positionQc(idProbablyGood), g_decArgo_qcStrProbablyGood);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize <PARAM>_QC
 
 % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
 for idD = 1:2
@@ -894,8 +931,8 @@ if (testFlagList(20) == 1)
          (longitude(idMeasForCy) ~= paramLon.fillValue) & ...
          (juldQc(idMeasForCy) ~= g_decArgo_qcStrBad)' & ...
          (positionQc(idMeasForCy) ~= g_decArgo_qcStrBad)' & ...
-         (positionAccuracy(idMeasForCy) ~= ' ')' & ...
-         (positionAccuracy(idMeasForCy) ~= 'I')');
+         (positionAccuracy(idMeasForCy) ~= ' ')' & ... % to exclude launch location
+         (positionAccuracy(idMeasForCy) ~= 'I')'); % to exclude Iridium locations
       if (~isempty(idNoDef))
          
          lastLocDateOfPrevCycle = g_decArgo_dateDef;

@@ -443,10 +443,6 @@ for idFloat = 1:length(floatList)
          end
       end
       
-      %       if (floatNum == 1900658)
-      %          a=1
-      %       end
-      
       % use ANDRO meta-data
       idFUpTime = find(strcmp(confParamName, 'CONFIG_UpTime_hours'));
       idFDownTime = find(strcmp(confParamName, 'CONFIG_DownTime_hours'));

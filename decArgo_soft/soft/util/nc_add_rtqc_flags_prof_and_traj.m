@@ -28,7 +28,7 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % top directory of the output NetCDF files (should be set to '' if we want to
 % update the existing files
 DIR_OUTPUT_NC_FILES = ''; % update existing files
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\refonte_RTQC_20201113\DATA_OUT\NKE2\';
 
 % default list of floats to convert

@@ -90,6 +90,12 @@ global g_decArgo_floatConfig;
 % array to store surface data of Argos floats
 global g_decArgo_floatSurfData;
 
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
+% Argos error ellipses storage
+global g_decArgo_addErrorEllipses;
+
 
 % inits for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -1280,9 +1286,21 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
+   if (g_decArgo_addErrorEllipses == 1)
+      % add Argos error ellipses
+      [o_tabTrajNMeas] = add_argos_error_ellipses(a_floatArgosId, o_tabTrajNMeas);
+   end
+   
    % perform PARAMETER adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, g_decArgo_floatSurfData.launchDate, 0, a_decoderId);
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, g_decArgo_floatSurfData.launchDate, 0, a_decoderId);
 
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      % report profile PARAMETER adjustments in TRAJ data
+      [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
+   end
+   
    % set TET as cycle start time of the next cycle (only for post 2013 firmware)
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_argos( ...
       o_tabTrajNMeas, o_tabTrajNCycle);

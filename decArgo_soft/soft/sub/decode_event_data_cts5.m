@@ -62,11 +62,6 @@ global g_MC_TET;
 global g_MC_Grounded;
 
 
-% global g_decArgo_cycleNumFloat;
-% if (g_decArgo_cycleNumFloat == 85)
-%    a=1
-% end
-
 if (a_ptnNum == 0)
    return
 end

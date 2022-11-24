@@ -238,7 +238,7 @@ switch (a_decoderId)
          
          % sort trajectory data structures according to the predefined
          % measurement code order
-         [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+         [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
          
          tabBuffTrajNMeas = [tabBuffTrajNMeas tabTrajNMeas];
          tabBuffTrajNCycle = [tabBuffTrajNCycle tabTrajNCycle];

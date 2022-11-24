@@ -55,7 +55,10 @@ global g_decArgo_rtqcGreyList;
 global g_decArgo_calibInfo;
 
 % configuration values
+global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj32;
 global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_dirOutputTraj32NetcdfFile;
 
 % temporary trajectory data
 global g_rtqc_trajData;
@@ -288,7 +291,11 @@ g_rtqc_trajData = [];
 
 % retrieve the traj c file path name
 trajFileName = sprintf('%d_Rtraj.nc', floatNum);
-trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
+if (g_decArgo_generateNcTraj ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
+elseif (g_decArgo_generateNcTraj32 ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
+end
 if (exist(trajFilePathName, 'file') == 2)
    % define the tests to perform on trajectory data
    testToPerformList2 = [ ...
@@ -303,8 +310,6 @@ if (exist(trajFilePathName, 'file') == 2)
    add_rtqc_to_trajectory_file(floatNum, ...
       trajFilePathName, [], ...
       testToPerformList2, testMetaData, 1, 0, 1);
-else
-   trajFilePathName = '';
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,15 +386,34 @@ end
 % RTQC ON TRAJECTORY FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~isempty(trajFilePathName))
+if (g_decArgo_generateNcTraj ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
    
-   [~, fileName, fileExt] = fileparts(trajFilePathName);
-   fprintf('Applying RTQC to file %s\n', [fileName fileExt]);
+   if (exist(trajFilePathName, 'file') == 2)
+      
+      [~, fileName, fileExt] = fileparts(trajFilePathName);
+      fprintf('Applying RTQC to file (V3.1) %s\n', [fileName fileExt]);
+      
+      % perform RTQC on trajectory data
+      add_rtqc_to_trajectory_file(floatNum, ...
+         trajFilePathName, '', ...
+         testToPerformList, testMetaData, 0, 1, 1);
+   end
+end
 
-   % perform RTQC on trajectory data
-   add_rtqc_to_trajectory_file(floatNum, ...
-      trajFilePathName, '', ...
-      testToPerformList, testMetaData, 0, 1, 1);
+if (g_decArgo_generateNcTraj32 ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
+   
+   if (exist(trajFilePathName, 'file') == 2)
+      
+      [~, fileName, fileExt] = fileparts(trajFilePathName);
+      fprintf('Applying RTQC to file (V3.2) %s\n', [fileName fileExt]);
+      
+      % perform RTQC on trajectory data
+      add_rtqc_to_trajectory_file(floatNum, ...
+         trajFilePathName, '', ...
+         testToPerformList, testMetaData, 0, 1, 1);
+   end
 end
 
 return

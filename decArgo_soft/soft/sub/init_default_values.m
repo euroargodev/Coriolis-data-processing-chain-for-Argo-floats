@@ -483,7 +483,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '043i';
+g_decArgo_decoderVersion = '044a';
 
 % list of managed decoders
 
@@ -563,11 +563,10 @@ g_decArgo_decoderIdListBgcFloatNKE = [ ...
    g_decArgo_decoderIdListNkeCts5 ...
    g_decArgo_decoderIdListNkeMisc ...
    ];
-g_decArgo_decoderIdListBgcFloatApex = g_decArgo_decoderIdListApexIridium;
+g_decArgo_decoderIdListBgcFloatApex = g_decArgo_decoderIdListApexApf11Iridium;
 g_decArgo_decoderIdListBgcFloatAll = [ ...
    g_decArgo_decoderIdListBgcFloatNKE ...
-   g_decArgo_decoderIdListBgcFloatApex ...
-   g_decArgo_decoderIdListNavis];
+   g_decArgo_decoderIdListBgcFloatApex];
 
 % the floats that report profile dated levels are:
 % - all NKE floats

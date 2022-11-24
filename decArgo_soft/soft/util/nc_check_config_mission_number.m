@@ -164,7 +164,7 @@ for idFloat = 1:nbFloats
       end
       if (~isempty(ncTrajInputFilePathName))
          [formatVersion, configNumTraj] = get_config_mission_number(ncTrajInputFilePathName);
-         if (formatVersion ~= 3.1)
+         if ((formatVersion ~= 3.1) && (formatVersion ~= 3.2))
             fprintf('INFO: traj file version is %g (%s)\n', formatVersion, ncTrajInputFilePathName);
          else
             configNumListTraj = unique(configNumTraj);

@@ -52,7 +52,6 @@ NB_SESSION_MAX = 3;
 
 tabDate = [a_decodedData.fileDate];
 tabDiffDate = [-1 diff(tabDate)];
-tabCyProfPhaseList = {a_decodedData.cyProfPhaseList};
 tabCyNumOut = [a_decodedData.cyNumOut];
 tabCyNumFile = [a_decodedData.cyNumFile];
 tabCyNumRaw = [a_decodedData.cyNumRaw];
@@ -89,8 +88,10 @@ while (~stop)
    stopId = find( ...
       (tabPackType == 253) & ...
       (tabCyNum >= tabCyNum(startId)) & ...
-      (tabDate > (tabDate(startId))) ...
+      (tabDate > (tabDate(startId))) & ...
+      (tabDiffDate > 0) ...
       , 1);
+   
    if (~isempty(stopId))
       tabSession(startId:stopId-1) = sesNum;
       tabBase(startId) = 1;
@@ -121,26 +122,8 @@ if (ismember(a_decoderId, [111, 113, 115]))
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
 if (ismember(g_decArgo_floatNum, ...
-      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241, 6903026]))
-   switch g_decArgo_floatNum
-      case 6903026
-         % cycle #54 and #55 are transmitted together => set the second one to a
-         % different transmission session
-         startId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 250), 1, 'last');
-
-         startId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 248));
-         
-         tabSession(startId55:end) = tabSession(startId55:end) + 1;
-         tabBase(startId55) = 1;
-         tabDeep(startId55:stopId55) = 1;
-         
-         a_decodedData(startId55).cyProfPhaseList(6) = a_decodedData(startId54).cyProfPhaseList(6);
-         for id = startId54:stopId54
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
+      [2902263, 6903240, 2902241]))
+   switch g_decArgo_floatNum         
       case 2902263
          idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
          tabCyNum(idF) = tabCyNumRaw(idF)*100 + tabProfNumRaw(idF) + 1;
@@ -160,155 +143,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabExpNbDesc(idF) = 258 - 256;
          idF = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
          tabExpNbDesc(idF) = 278 - 256;
-
-      case 6903549
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId = find(tabSession == tabSession(startId), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 1;
-         
-         startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:42:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
-         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
-         for id = startId44:stopId44
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-      case 6903551
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:49:41')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId = find(tabSession == tabSession(startId), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 1;
-         
-         startId43 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:43:56')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId43 = find(tabSession == (tabSession(startId43)+1), 1, 'last');
-         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId43).cyProfPhaseList(6);
-         for id = startId43:stopId43
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-         idF = find(tabSession >= 129);
-         tabSession(idF) = tabSession(idF) + 1;
-         idF = find(((tabSession == 128) & (tabCyNum == 6500) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans)) | ...
-            ((tabSession == 128) & (tabCyNum == 6500) & (tabPackType == 252) & (tabPhaseNumRaw ~= g_decArgo_phaseSurfWait)) | ...
-            ((tabSession == 128) & (tabCyNum == 6500) & (tabPackType ~= 253) & (tabPackType ~= 252)));
-         tabSession(idF) = 129;
-         tabBase(idF(1)) = 1;
-         tabDeep(idF) = 1;
-         
-         idF = find(ismember(tabSession, 127:130));
-         for id = idF
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-         % two following cycle numbers are set only to avoid unused packets in
-         % the log file (these packet are not used because we don't know the
-         % reference date used in a "surface waiting period" phase to date a
-         % buoyancy action)
-         tabCyNum(18972:18973) = 6400;
-         tabCyNum(19275:19276) = 6500;
-         
-         % buoyancy action during the "surface session" data transmitted for an
-         % Ice deep cycle => unused
-         tabCyNum(21355:21356) = 7200;
-         tabCyNum(21662:21663) = 7300;
-         % FMT/LMT are erroneous in such case
-         idF = find(ismember(tabSession, [143:148]));
-         for id = idF
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-         % cycle 118 to 121 are transmitted together
-         tabBase(35408) = 1;
-         tabSession(35408:end) = tabSession(35408:end) + 1;
-         tabDeep(35408:35707) = 1;
-
-         tabBase(35718) = 1;
-         tabSession(35718:end) = tabSession(35718:end) + 1;
-         tabDeep(35718:36008) = 1;
-
-         tabBase(36019) = 1;
-         tabSession(36019:end) = tabSession(36019:end) + 1;
-         tabDeep(36019:36313) = 1;
-      
-         % FMT/LMT are erroneous in such case
-         for id = 35109:36018
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-         % three following cycle numbers are set only to avoid unused packets in
-         % the log file (these packet are not used because we don't know the
-         % reference date used in a "surface waiting period" phase to date a
-         % buoyancy action)
-         tabDone(35399:35400) = 1;
-         tabDone(35709:35710) = 1;
-         tabDone(36010:36011) = 1;
-
-      case 2902239
-         startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
-         stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 0;
-         
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:50:38')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId = find(tabSession == tabSession(startId), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 1;
-         
-         startId158 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:49:37')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId158 = find(tabSession == (tabSession(startId158)+1), 1, 'last');
-         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId158).cyProfPhaseList(6);
-         for id = startId158:stopId158
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-      case 2902264
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:54:48')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId = find(tabSession == tabSession(startId), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 1;
-         
-         startId125 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:53:45')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId125 = find(tabSession == (tabSession(startId125)+1), 1, 'last');
-         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId125).cyProfPhaseList(6);
-         for id = startId125:stopId125
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-      case 6903550
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 12:04:36')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         
-         startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 11:56:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
-         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
-         for id = startId44:stopId44
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
-      case 3902122
-         % transmission of second Iridium session of cycle 192, 0 failed => data
-         % transmitted with cycle 193, 0 ones
-         
-         % separate the data
-         startId = find((tabDate == gregorian_2_julian_dec_argo('2020/02/01 14:06:08')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId = find(tabSession == tabSession(startId), 1, 'last');
-         tabSession(startId:end) = tabSession(startId:end) + 1;
-         tabBase(startId) = 1;
-         tabDeep(startId:stopId) = 1;
-         
-         % update sbd file dates for FMT and LMT
-         stopId192_1 = find((tabDate == gregorian_2_julian_dec_argo('2020/01/27 10:15:59')), 1, 'last');
-         startId192_2 = find((tabDate == gregorian_2_julian_dec_argo('2020/02/01 14:06:08')) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
-         stopId192_2 = find(tabSession == tabSession(startId192_2), 1, 'last');
-         for id = startId192_2:stopId192_2
-            a_decodedData(id).cyProfPhaseList(6) = a_decodedData(stopId192_1).cyProfPhaseList(6);
-         end
-         
+                           
       case 2902241
          % error in transmitted data
          idDel = find((tabSession == 373) & (tabCyNum ~= 18600));
@@ -318,7 +153,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idDel) = 1;
          idDel = find((tabSession == 374) & (tabCyNum == 18600) & (tabPackType == 0));
          tabDone(idDel) = 1;
-
+         
    end
 end
 
@@ -344,16 +179,104 @@ end
 rank = 1;
 sessionList = unique(tabSession);
 for sesNum = sessionList
+
+   idForSession = find(tabSession == sesNum);
+   idFVectorTechStaTrans = find((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSatTrans) & ...
+      (tabPackType(idForSession) == 253));
+   idFVectorTechSurfWait = find((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSurfWait) & ...
+      (tabPackType(idForSession) == 253));
+   if ((length(idFVectorTechStaTrans) > 1) || ...
+         ((length(idFVectorTechStaTrans) >= 1) && (length(idFVectorTechSurfWait) >= 1)))
+      
+      % delayed data transmitted during the session
+      
+      baseList = idForSession( ...
+         ((tabPhaseNumRaw(idForSession) == g_decArgo_phaseSatTrans) | ...
+         (tabPhaseNumRaw(idForSession) == g_decArgo_phaseSurfWait)) & ...
+         (tabPackType(idForSession) == 253) ...
+         );
+      
+      % process delayed data
+      for idB = 1:length(baseList)-1
+         idBaseForSession = baseList(idB);
+         idForCheck = idBaseForSession:baseList(idB+1)-1;
+         if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
+            % deep session
+            deepExpected = 1;
+         else
+            % surface session
+            deepExpected = 0;
+         end
          
-   idBaseForSession = find((tabSession == sesNum) & (tabBase == 1) & (tabDone == 0), 1);
-   if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
-      % deep session
-      idForCheck = find((tabSession == sesNum) & (tabCyNum == tabCyNum(idBaseForSession)) & (tabDone == 0));
-      deepExpected = 1;
+         % check current session contents
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+         delayed = 1;
+         
+         if ((completed == 1) && (deep ~= deepExpected))
+            fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n\n', ...
+               g_decArgo_floatNum, sesNum);
+         end
+         
+         if (completed == 1)
+            
+            idF = idForCheck((tabDeep(idForCheck) == 0) & ismember(tabPackType(idForCheck), [248 249 253 254 255]));
+            tabCyNum(idF) = ((tabCyNum(idF)/100)+1)*100 + tabProfNumRaw(idF);
+            
+            tabRank(idForCheck) = rank;
+            rank = rank + 1;
+            tabDeep(idForCheck) = deep;
+            tabDone(idForCheck) = 1;
+            tabDelayed(idForCheck) = delayed;
+            tabCompleted(idForCheck) = 1;
+            tabGo(idForCheck) = 1;
+            
+            % modify cycle number of the second Iridum session expected files
+            if (deep == 0)
+               idSurf = idForCheck(ismember(tabPackType(idForCheck), [248 249 252 253 254 255]));
+               tabCyNum(idSurf) = max(tabCyNumRaw(idSurf)-1, 0)*100 + tabProfNumRaw(idSurf);
+            end
+            
+            % update sbd file dates for FMT and LMT
+            for id = idForCheck
+               a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+            end
+         else
+            % waiting for an example
+         end
+      end
+      
+      % process RT data
+      idBaseForSession = baseList(end);
+      idForCheck = idBaseForSession:idForSession(end);
+      if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
+         % deep session
+         deepExpected = 1;
+      else
+         % surface session
+         deepExpected = 0;
+      end
+      
+      % check current session contents
+      [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+      
+      if (completed == 1)
+         idF = idForCheck((tabDeep(idForCheck) == 0) & ismember(tabPackType(idForCheck), [248 249 253 254 255]));
+         tabCyNum(idF) = ((tabCyNum(idF)/100)+1)*100 + tabProfNumRaw(idF);
+         
+         tabDeep(idForCheck) = deep;
+      end
    else
-      % surface session
-      idForCheck = find((tabSession == sesNum) & ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]) & (tabDone == 0));
-      deepExpected = 0;
+      
+      idBaseForSession = find((tabSession == sesNum) & (tabBase == 1) & (tabDone == 0), 1);
+      if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
+         % deep session
+         idForCheck = find((tabSession == sesNum) & (tabCyNum == tabCyNum(idBaseForSession)) & (tabDone == 0));
+         deepExpected = 1;
+      else
+         % surface session
+         idForCheck = find((tabSession == sesNum) & ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]) & (tabDone == 0));
+         deepExpected = 0;
+      end
    end
    
    % check current session contents
@@ -364,23 +287,6 @@ for sesNum = sessionList
       fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n\n', ...
          g_decArgo_floatNum, sesNum);
    end
-   
-   % TO BE CHECKED AND UPDATED ONCE FIRST DELAYED TRANSMISSION OCCUR
-   %    % check data of following sessions (to get possibly unexpected packets such
-   %    % as pump or valve packets)
-   %    sessionListBis = sessionList(find(sessionList > sesNum));
-   %    if (any(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum)))
-   %       idRemaining = find(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum));
-   %       idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
-   %       if (~isempty(idStop))
-   %          idRemaining = idRemaining(1:idStop-1);
-   %       end
-   %       if (~isempty(idRemaining))
-   %          delayed = 2;
-   %          idForCheck = [idForCheck idRemaining];
-   %          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
-   %       end
-   %    end
    
    if (completed == 1)
       tabRank(idForCheck) = rank;
@@ -414,77 +320,28 @@ for sesNum = sessionList
    end
 end
 
-% TO BE CHECKED AND UPDATED ONCE FIRST DELAYED TRANSMISSION OCCUR
-% % process the remaining SBD
-% for sesNum = sessionList
-%    idForSession = find((tabSession == sesNum) & (tabDone == 0));
-%    if (~isempty(idForSession))
-%       cyNumList = unique(tabCyNum(idForSession));
-%       for cyNum = cyNumList
-%                   
-%          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
-%          
-%          % check current session contents
-%          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
-%          
-%          % check data of following sessions (to get possibly unexpected data such
-%          % as pump or valve packets)
-%          sessionListBis = sessionList(find(sessionList > sesNum));
-%          if (any(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum)))
-%             idRemaining = find(ismember(tabSession, sessionListBis) & (tabCyNum == cyNum));
-%             idStop = find(ismember(tabPackType(idRemaining), [0 4 5]), 1, 'first');
-%             if (~isempty(idStop))
-%                idRemaining = idRemaining(1:idStop-1);
-%             end
-%             if (~isempty(idRemaining))
-%                idForCheck = [idForCheck idRemaining];
-%                [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
-%             end
-%          end
-%          
-%          if (completed == 1)
-%             tabRank(idForCheck) = rank;
-%             rank = rank + 1;
-%             tabDeep(idForCheck) = deep;
-%             tabDone(idForCheck) = 1;
-%             tabDelayed(idForCheck) = 1;
-%             tabCompleted(idForCheck) = 1;
-%             tabGo(idForCheck) = 1;
-%          else
-%             sesNumDeep = min(tabSessionDeep(idForCheck));
-%             if ((max(tabSessionDeep) - sesNumDeep) >= NB_SESSION_MAX-1)
-%                tabRank(idForCheck) = rank;
-%                rank = rank + 1;
-%                tabDeep(idForCheck) = deep;
-%                tabDone(idForCheck) = 1;
-%                tabDelayed(idForCheck) = 1;
-%                tabCompleted(idForCheck) = 0;
-%                tabGo(idForCheck) = 1;
-%             else
-%                tabDeep(idForCheck) = deep;
-%                tabDone(idForCheck) = 1;
-%                if (g_decArgo_processRemainingBuffers)
-%                   tabRank(idForCheck) = rank;
-%                   rank = rank + 1;
-%                   tabDelayed(idForCheck) = 1;
-%                   tabCompleted(idForCheck) = 0;
-%                   tabGo(idForCheck) = 2;
-%                end
-%             end
-%          end
-%       end
-%    end
-% end
-
 % specific
-if (ismember(a_decoderId, [111, 113, 115]))
+if (ismember(a_decoderId, [111, 113, 115, 114]))
    % sensor tech packets are transmitted again during surface cycle (remove
    % it from decoding buffers)
    idSurfSensorTech = find((tabPackType == 250) & (tabDeep == 0) & (tabCyNum > 0));
    tabRank(idSurfSensorTech) = -1;
 end
+% improved algorithm solved the delayed transmissions of floats:
+% 2902239 (partially, see below)
+% 2902264
+% 6904134
+% 6903240
+% 6903549
+% 6903550
+% 6903575
+% 6903026
+% 6903875
+% 6903876
+% 6903878
+% 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249 6902906 6904134 6903240]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 6904111]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -509,100 +366,99 @@ if (ismember(g_decArgo_floatNum, ...
          tabRank(idDel) = -1;
          tabDone(idDel) = 1;
          
-      case 6904134
-         % second Iridium session of cycles #9 and #10 are sent with delayed
-         % data
+      case 6903551
+         % delayed session not identified
+         idBase = find((tabCyNumRaw == 64) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idSession = find(tabSession == tabSession(idBase));
+         tabDelayed(idSession) = 1;
+         for id = idSession
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
          
-         tabSessionDeep(3665:3669) = 9;
+      case 3902122
+         idFirst1 = find((tabCyNumRaw == 193) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idFirst2 = find((tabCyNumRaw == 193) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idLast1 = idFirst2 - 1;
+         idLast2 = find((tabCyNumRaw == 193) & (tabProfNumRaw == 0) & (tabPackType == 248));
          
-         tabBase(3670) = 1;
-         tabRank(3670:4037) = 20;
-         tabSession(3670:4037) = 20;
-         tabCyNumOut(3670:4037) = 10;
-         tabCyNum(3670:4037) = 1000;
-         tabDeep(3670:4037) = 1;
-         tabDone(3670:4037) = 1;
-         tabGo(3670:4037) = 1;
+         tabDelayed(idFirst1:idLast1) = 1;
+         tabCompleted(idFirst1:idLast1) = 1;
+         for id = idFirst1:idLast1
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
          
-         tabRank(4038) = 21;
-         tabSession(4038:4042) = 21;
-         tabSessionDeep(4038:4042) = 10;
-         tabGo(4038:4042) = 1;
+         tabRank(idFirst2:idLast2) = tabRank(idFirst2) + 1;
+         tabCyNum(idFirst2:idLast2) = 19300;
+         tabDeep(idFirst2:idLast2) = 1;
+         tabDone(idFirst2:idLast2) = 1;
+         tabDelayed(idFirst2:idLast2) = 0;
+         tabCompleted(idFirst2:idLast2) = 1;
+         tabGo(idFirst2:idLast2) = 0;
          
-         tabBase(4043) = 1;
-         tabRank(4043:4603) = 22;
-         tabSession(4043:4603) = 22;
-         tabCyNumOut(4043:4603) = 11;
-         tabCyNum(4043:4603) = 1100;
-         tabDeep(4043:4603) = 1;
-         tabDone(4043:4603) = 1;
-         tabGo(4043:4603) = 1;
-         
-         id = find(tabRank ~= -1);
-         id = setdiff(id, 1:4603);
-         tabRank(id) = tabRank(id) + 2;
-         id = find(tabSession ~= -1);
-         id = setdiff(id, 1:4603);
-         tabSession(id) = tabSession(id) + 2;
-         
-      case 6903240
-         % second Iridium session of cycle #255 s sent with delayed data
+         idF = find(tabRank(idLast2+1:end) ~= -1);
+         tabRank(idLast2+1+idF-1) = tabRank(idLast2+1+idF-1) + 1;
 
-         startId1 = find((tabCyNumRaw == 255) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
-         startId2 = find((tabCyNumRaw == 255) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
-         stopId1 = startId2 - 1;
-         
-         tabDeep(startId1:stopId1) = 0;
-         tabDelayed(startId1:stopId1) = 1;
-         tabCompleted(startId1:stopId1) = 1;
-         
-         startId3 = find((tabCyNumRaw == 256) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
-         stopId2 = startId3 - 1;
-         
-         tabBase(startId2) = 1;
-         tabCyNumOut(startId2) = 255;
-         tabCyNum(startId2) = 25500;
-         tabRank(startId2:stopId2) = tabRank(startId1) + 1;
-         tabDeep(startId2:stopId2) = 1;
-         tabDone(startId2:stopId2) = 1;
-         tabDelayed(startId2:stopId2) = 1;
-         tabCompleted(startId2:stopId2) = 1;
+      case 2902239
+         % sensor TECH transmitted twice (probably the second Iridium session
+         % for wich we didn't receive the vector TECH
+         idBase = find((tabCyNumRaw == 91) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idDel = find(tabSession == tabSession(idBase));
+         idDel = idDel(end-2:end);
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+         tabCompleted(tabSession == tabSession(idBase)) = 1;
 
-         startId4 = find((tabCyNumRaw == 256) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
+         % old data transmitted again during sessions 472 and 473
+         idBase = find((tabCyNumRaw == 237) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         idDel = find((tabSession == tabSession(idBase)) & (tabCyNumRaw ~= 237));
+         tabDone(idDel) = 1;
          
-         tabRank(startId3) = tabRank(stopId2) + 1;
-         idF = find(tabRank(startId4:end) ~= -1);
-         tabRank(idF+startId4-1) = tabRank(idF+startId4-1) + 1;
+         idBase = find((tabCyNumRaw == 238) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idDel = find(tabSession == tabSession(idBase));
+         idDel = setdiff(idDel, idBase);
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+         
+      case 6904111
+         % vector pressure sereived during second Iridium session
+         idBase = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 800));
+         tabRank(idVectorPres) = tabRank(idBase);
+         tabCyNum(idVectorPres) = tabCyNum(idBase);
+         tabDone(idVectorPres) = tabDone(idBase);
+         tabDelayed(idVectorPres) = tabDelayed(idBase);
+         tabCompleted(idVectorPres) = tabCompleted(idBase);
+         
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
-   %    if (~isempty(g_decArgo_outputCsvFileId))
-   %
-   %       % sort rank numbers according to cycle numbers
-   %       rank = 1;
-   %       cyNumList = unique(tabCyNum);
-   %       for cyNum = cyNumList
-   %          idForCy = find(tabCyNum == cyNum);
-   %          rankNumList = setdiff(unique(tabRank(idForCy)), -1);
-   %          for rankNum = rankNumList
-   %             idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
-   %             tabRankByCycle(idForRankCy) = rank;
-   %             rank = rank + 1;
-   %          end
-   %       end
-   %
-   %       % update tabCompleted array
-   %       sessionList = unique(tabSession);
-   %       for session = 1:length(sessionList)
-   %          idForCheck = find(tabSession == sessionList(session));
-   %
-   %          % check current session contents
-   %          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
-   %          if (completed == 1)
-   %             tabCompleted(idForCheck) = 1;
-   %          end
-   %       end
-   %    end
+   if (~isempty(g_decArgo_outputCsvFileId))
+      
+      % sort rank numbers according to cycle numbers
+      rank = 1;
+      cyNumList = unique(tabCyNum);
+      for cyNum = cyNumList
+         idForCy = find(tabCyNum == cyNum);
+         rankNumList = setdiff(unique(tabRank(idForCy)), -1);
+         for rankNum = rankNumList
+            idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
+            tabRankByCycle(idForRankCy) = rank;
+            rank = rank + 1;
+         end
+      end
+      
+      % update tabCompleted array
+      sessionList = unique(tabSession);
+      for session = 1:length(sessionList)
+         idForCheck = find(tabSession == sessionList(session));
+         
+         % check current session contents
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+         if (completed == 1)
+            tabCompleted(idForCheck) = 1;
+         end
+      end
+   end
 end
 
 % sort rank numbers according to cycle numbers
@@ -828,6 +684,7 @@ global g_decArgo_phaseDsc2Prof;
 global g_decArgo_phaseProfDrift;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
+global g_decArgo_phaseEndOfLife;
 
 
 % check buffer completion
@@ -892,12 +749,22 @@ if (~isempty(idVectorTech))
          for idS = 1:length(sensorList)
             if (sensorList(idS) == 2)
                if (nbSensorTechList(idS) ~= 2)
-                  o_whyStr{end+1} = sprintf('%d %s sensor tech packet(s) is missing', ...
-                     nbSensorTechList(idS)-2, get_sensor_desc(sensorList(idS)));
+                  if (nbSensorTechList(idS) < 2)
+                     o_whyStr{end+1} = sprintf('%d %s sensor tech packet(s) is missing', ...
+                        2-nbSensorTechList(idS), get_sensor_desc(sensorList(idS)));
+                  else
+                     o_whyStr{end+1} = sprintf('%d %s sensor tech packet(s) is unexpected', ...
+                        nbSensorTechList(idS)-2, get_sensor_desc(sensorList(idS)));
+                  end
                end
             else
                if (nbSensorTechList(idS) ~= 1)
-                  o_whyStr{end+1} = [get_sensor_desc(sensorList(idS)) ' sensor tech packet is missing'];
+                  if (nbSensorTechList(idS) < 1)
+                     o_whyStr{end+1} = [get_sensor_desc(sensorList(idS)) ' sensor tech packet is missing'];
+                  else
+                     o_whyStr{end+1} = sprintf('%d %s sensor tech packet(s) is unexpected', ...
+                        nbSensorTechList(idS)-1, get_sensor_desc(sensorList(idS)));
+                  end
                end
             end
          end
@@ -1006,6 +873,13 @@ if (~isempty(idVectorTech))
                end
             end
          end
+      end
+      
+   elseif (a_tabPhaseNum(a_idForCheck(idVectorTech)) == g_decArgo_phaseEndOfLife)
+
+      if (length(a_idForCheck) == 1)
+         o_completed = 1;
+         o_deep = 0;
       end
       
    end

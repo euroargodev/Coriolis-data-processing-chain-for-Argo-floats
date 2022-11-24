@@ -64,6 +64,14 @@ global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
 global g_decArgo_generateNcMeta;
 
+global g_decArgo_generateNcTraj32;
+global g_decArgo_dirOutputTraj32NetcdfFile;
+
+global g_decArgo_addErrorEllipses;
+global g_decArgo_dirInputErrorEllipsesMail;
+global g_decArgo_dirInputErrorEllipsesWsSpool;
+global g_decArgo_dirInputErrorEllipsesWsArchive;
+
 global g_decArgo_applyRtqc;
 
 global g_decArgo_rtqcTest1;
@@ -139,6 +147,14 @@ configVar{end+1} = 'GENERATE_NC_MULTI_PROF';
 configVar{end+1} = 'GENERATE_NC_MONO_PROF';
 configVar{end+1} = 'GENERATE_NC_TECH';
 configVar{end+1} = 'GENERATE_NC_META';
+
+configVar{end+1} = 'GENERATE_NC_TRAJ_3_2';
+configVar{end+1} = 'DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE';
+
+configVar{end+1} = 'ADD_ARGOS_ERROR_ELLIPSES';
+configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL';
+configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL';
+configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE';
 
 configVar{end+1} = 'APPLY_RTQC';
 
@@ -247,7 +263,31 @@ if (o_inputError == 0)
    configVal(1) = [];
    g_decArgo_generateNcMeta = str2num(configVal{1});
    configVal(1) = [];
+
+   g_decArgo_generateNcTraj32 = str2num(configVal{1});
+   configVal(1) = [];
+   g_decArgo_dirOutputTraj32NetcdfFile = configVal{1};
+   configVal(1) = [];
    
+   % if TRAJ 3.1 and TRAJ 3.2 files should be generated on the same output
+   % directory, we generate only the TRAJ 3.2 file
+   if ((g_decArgo_generateNcTraj ~= 0) && (g_decArgo_generateNcTraj32 ~= 0))
+      [dirOutputNetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputNetcdfFile);
+      [dirOutputTraj32NetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputTraj32NetcdfFile);
+      if (strcmp(dirOutputNetcdfFile, dirOutputTraj32NetcdfFile))
+         g_decArgo_generateNcTraj = 0;
+      end
+   end
+   
+   g_decArgo_addErrorEllipses = str2num(configVal{1});
+   configVal(1) = [];
+   g_decArgo_dirInputErrorEllipsesMail = configVal{1};
+   configVal(1) = [];
+   g_decArgo_dirInputErrorEllipsesWsSpool = configVal{1};
+   configVal(1) = [];
+   g_decArgo_dirInputErrorEllipsesWsArchive = configVal{1};
+   configVal(1) = [];
+
    g_decArgo_applyRtqc = str2num(configVal{1});
    configVal(1) = [];
    

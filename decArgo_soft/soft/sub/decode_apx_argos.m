@@ -69,10 +69,6 @@ global g_decArgo_floatNum;
 global g_decArgo_cycleNum;
 
 
-% if (a_cycleNum == 31)
-%    a=1
-% end
-
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

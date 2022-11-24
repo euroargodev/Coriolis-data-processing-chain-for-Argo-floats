@@ -55,6 +55,7 @@ surfMcList2 = [g_MC_AET ...
    g_MC_InAirSingleMeasRelativeToTET ...
    g_MC_TST g_MC_Surface g_MC_TET];
 trajCyNumList = unique([a_tabTrajNMeas.cycleNumber]);
+trajCyNumList(trajCyNumList == -1) = [];
 for idCy = 1:length(trajCyNumList)
    cyNum = trajCyNumList(idCy);
    
@@ -117,14 +118,23 @@ idFCy = find([g_decArgo_iridiumMailData.cycleNumber] == -1);
 tabCyNum = ones(size(idFCy))*-1;
 for id = 1:length(idFCy)
    idF1 = find(([g_decArgo_iridiumMailData.timeOfSessionJuld] < g_decArgo_iridiumMailData(idFCy(id)).timeOfSessionJuld) & ...
-      ([g_decArgo_iridiumMailData.cycleNumber] ~= -1));
+      ([g_decArgo_iridiumMailData.cycleNumber] ~= -1), 1, 'last');
    idF2 = find(([g_decArgo_iridiumMailData.timeOfSessionJuld] > g_decArgo_iridiumMailData(idFCy(id)).timeOfSessionJuld) & ...
-      ([g_decArgo_iridiumMailData.cycleNumber] ~= -1));
+      ([g_decArgo_iridiumMailData.cycleNumber] ~= -1), 1, 'first');
    if (~isempty(idF1) && ~isempty(idF2))
-      cyNumPrev = g_decArgo_iridiumMailData(idF1(end)).cycleNumber;
-      cyNumNext = g_decArgo_iridiumMailData(idF2(1)).cycleNumber;
+      cyNumPrev = g_decArgo_iridiumMailData(idF1).cycleNumber;
+      cyNumNext = g_decArgo_iridiumMailData(idF2).cycleNumber;
       if ((cyNumPrev ~= -1) && (cyNumNext ~= -1) && (cyNumNext - cyNumPrev == 2))
          tabCyNum(id) = cyNumPrev + 1;
+      end
+   elseif (~isempty(idF1))
+      % last cycle
+      cyNum = g_decArgo_iridiumMailData(idF1).cycleNumber;
+      idForCy = find([g_decArgo_iridiumMailData.cycleNumber] == cyNum);
+      if ((g_decArgo_iridiumMailData(idFCy(id)).timeOfSessionJuld - max([g_decArgo_iridiumMailData(idForCy).timeOfSessionJuld])) < MIN_SUB_CYCLE_DURATION_IN_DAYS)
+         tabCyNum(id) = cyNum;
+      else
+         tabCyNum(id) = cyNum + 1;
       end
    end
 end

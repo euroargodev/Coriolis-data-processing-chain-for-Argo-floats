@@ -279,7 +279,7 @@ o_tabTrajData = tabTrajDataAll;
 % fill value for JULD parameter
 paramJuld = get_netcdf_param_attributes('JULD');
 
-% retrieve dated measurements
+% retrieve profile dated measurements
 
 % don't consider profiles from raw data
 if (~isempty(a_tabProfiles))
@@ -311,6 +311,9 @@ for idProf = 1:length(a_tabProfiles)
    datedMeasStruct.dates = profile.dates(idDated);
    datedMeasStruct.datesAdj = profile.datesAdj(idDated);
    datedMeasStruct.data = profile.data(idDated, :);
+   if (~isempty(profile.ptsForDoxy))
+      datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(idDated, :);
+   end
    datedMeasStruct.sensorNumber = profile.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
@@ -318,6 +321,7 @@ for idProf = 1:length(a_tabProfiles)
    o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
 end
 
+% drift at park measurements
 for idDrift = 1:length(a_tabDrift)
    
    drift = a_tabDrift(idDrift);
@@ -332,6 +336,7 @@ for idDrift = 1:length(a_tabDrift)
    datedMeasStruct.dates = drift.dates;
    datedMeasStruct.datesAdj = drift.datesAdj;
    datedMeasStruct.data = drift.data;
+   datedMeasStruct.ptsForDoxy = drift.ptsForDoxy;
    datedMeasStruct.sensorNumber = drift.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
@@ -399,6 +404,9 @@ if (~isempty(profInfo))
          datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
          datedMeasStruct.datesAdj = profile.datesAdj(profInfo(idProfMax, 5));
          datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
+         if (~isempty(profile.ptsForDoxy))
+            datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(profInfo(idProfMax, 5), :);
+         end
          datedMeasStruct.sensorNumber = profile.sensorNumber;
          
          o_tabTrajIndex = [o_tabTrajIndex;
@@ -440,52 +448,13 @@ for idSurf = 1:length(a_tabSurf)
    surfMeasStruct.dates = surf.dates;
    surfMeasStruct.datesAdj = surf.datesAdj;
    surfMeasStruct.data = surf.data;
+   surfMeasStruct.ptsForDoxy = surf.ptsForDoxy;
    surfMeasStruct.sensorNumber = surf.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
       g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST surf.cycleNumber surf.profileNumber surf.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{surfMeasStruct}}];
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get the basic structure to store dated measurements.
-%
-% SYNTAX :
-%  [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-%
-% INPUT PARAMETERS :
-%   a_cycleNum : cycle number
-%   a_profNum  : profile number
-%   a_phaseNum : phase number
-%
-% OUTPUT PARAMETERS :
-%   o_datedMeasStruct : initialized structure
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   02/20/2017 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-
-% output parameters initialization
-o_datedMeasStruct = struct( ...
-   'cycleNumber', a_cycleNum, ...
-   'profileNumber', a_profNum, ...
-   'phaseNumber', a_phaseNum, ...
-   'paramList', '', ...
-   'paramNumberWithSubLevels', '', ... % position, in the paramList of the parameters with a sublevel
-   'paramNumberOfSubLevels', '', ... % number of sublevels for the concerned parameter
-   'data', '', ...
-   'dateList', '', ...
-   'dates', '', ...
-   'datesAdj', '', ...
-   'sensorNumber', -1);
 
 return
 

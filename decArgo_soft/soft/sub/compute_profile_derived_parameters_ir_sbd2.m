@@ -772,7 +772,7 @@ else
                derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
                
                % compute DOXY values
-               doxy = compute_profile_DOXY_301( ...
+               [doxy, ptsForDoxy] = compute_profile_DOXY_301( ...
                   a_profOptode.data(:, idF1), ...
                   a_profOptode.data(:, idF2), ...
                   a_profOptode.data(:, idF3), ...
@@ -792,6 +792,8 @@ else
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
                   doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                   a_profOptode.dataQc(:, end+1) = doxyQc;
+                  
+                  a_profOptode.ptsForDoxy = ptsForDoxy;
                else
                   a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
                   if (~isempty(a_profOptode.dataQc))
@@ -827,7 +829,8 @@ else
                derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
                
                % compute DOXY values
-               doxy = compute_profile_DOXY_302_303( ...
+               
+               [doxy, ptsForDoxy] = compute_profile_DOXY_302_303( ...
                   a_profOptode.data(:, idF1), ...
                   a_profOptode.data(:, idF2), ...
                   paramToDerive1.fillValue, ...
@@ -845,6 +848,8 @@ else
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
                   doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                   a_profOptode.dataQc(:, end+1) = doxyQc;
+                  
+                  a_profOptode.ptsForDoxy = ptsForDoxy;
                else
                   a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
                   if (~isempty(a_profOptode.dataQc))
@@ -873,7 +878,7 @@ return
 % Compute DOXY from the data provided by the OPTODE sensor.
 %
 % SYNTAX :
-%  [o_DOXY] = compute_profile_DOXY_301( ...
+%  [o_DOXY, o_ptsForDoxy] = compute_profile_DOXY_301( ...
 %    a_C1PHASE_DOXY, a_C2PHASE_DOXY, a_TEMP_DOXY, ...
 %    a_C1PHASE_DOXY_fillValue, a_C2PHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
 %    a_DOXY_fillValue, ...
@@ -894,7 +899,8 @@ return
 %   a_decoderId               : float decoder Id
 %
 % OUTPUT PARAMETERS :
-%   o_DOXY : output DOXY data
+%   o_DOXY       : output DOXY data
+%   o_ptsForDoxy : PTS data used to compute DOXY
 %
 % EXAMPLES :
 %
@@ -904,18 +910,19 @@ return
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_DOXY] = compute_profile_DOXY_301( ...
+function [o_DOXY, o_ptsForDoxy] = compute_profile_DOXY_301( ...
    a_C1PHASE_DOXY, a_C2PHASE_DOXY, a_TEMP_DOXY, ...
    a_C1PHASE_DOXY_fillValue, a_C2PHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
    a_DOXY_fillValue, ...
    a_DOXY_pres, a_ctdData, ...
    a_profOptode, a_decoderId)
 
-% current float WMO number
-global g_decArgo_floatNum;
-
 % output parameters initialization
 o_DOXY = ones(length(a_C1PHASE_DOXY), 1)*a_DOXY_fillValue;
+o_ptsForDoxy = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 
 paramPres = get_netcdf_param_attributes('PRES');
@@ -955,6 +962,7 @@ if (~isempty(ctdDataNoDef))
                paramPsal.fillValue, ...
                a_DOXY_fillValue, ...
                a_profOptode);
+            o_ptsForDoxy = ctdIntData;
 
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d Profile #%d: DOXY processing not implemented yet for decoderId #%d - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
@@ -1001,7 +1009,7 @@ return
 % Compute DOXY from the data provided by the OPTODE sensor.
 %
 % SYNTAX :
-%  [o_DOXY] = compute_profile_DOXY_302_303( ...
+%  [o_DOXY, o_ptsForDoxy] = compute_profile_DOXY_302_303( ...
 %    a_DPHASE_DOXY, a_TEMP_DOXY, ...
 %    a_DPHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
 %    a_DOXY_fillValue, ...
@@ -1020,7 +1028,8 @@ return
 %   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
-%   o_DOXY : output DOXY data
+%   o_DOXY       : output DOXY data
+%   o_ptsForDoxy : PTS data used to compute DOXY
 %
 % EXAMPLES :
 %
@@ -1030,18 +1039,19 @@ return
 % RELEASES :
 %   11/18/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_DOXY] = compute_profile_DOXY_302_303( ...
+function [o_DOXY, o_ptsForDoxy] = compute_profile_DOXY_302_303( ...
    a_DPHASE_DOXY, a_TEMP_DOXY, ...
    a_DPHASE_DOXY_fillValue, a_TEMP_DOXY_fillValue, ...
    a_DOXY_fillValue, ...
    a_DOXY_pres, a_ctdData, ...
    a_profOptode, a_decoderId)
 
-% current float WMO number
-global g_decArgo_floatNum;
-
 % output parameters initialization
 o_DOXY = ones(length(a_DPHASE_DOXY), 1)*a_DOXY_fillValue;
+o_ptsForDoxy = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 
 paramPres = get_netcdf_param_attributes('PRES');
@@ -1079,6 +1089,7 @@ if (~isempty(ctdDataNoDef))
                paramPsal.fillValue, ...
                a_DOXY_fillValue, ...
                a_profOptode);
+            o_ptsForDoxy = ctdIntData;
 
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d Profile #%d: DOXY processing not implemented yet for decoderId #%d - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...

@@ -223,7 +223,7 @@ for idFloat = 1:nbFloats
    formatVersion = strtrim(trajData{2*idVal}');
    
    % contrôle de la version
-   if (~strcmp(formatVersion, '3.1'))
+   if (~ismember(formatVersion, [{'3.1'} {'3.2'}]))
       fprintf('\n');
       fprintf('ERROR: Fichier de trajectoire (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);

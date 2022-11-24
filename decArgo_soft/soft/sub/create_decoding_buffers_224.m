@@ -353,19 +353,19 @@ end
 
 % sort rank numbers according to SBD date
 % to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
-rank = 1;
-rankDoneList = [];
-for idL = 1:length(tabRank)
-   if (tabRank(idL) ~= -1)
-      if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
-         tabRankByDate(idL) = rank;
-         rankDoneList = [rankDoneList; tabRank(idL) rank];
-         rank = rank + 1;
-      else
-         tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
-      end
-   end
-end
+% rank = 1;
+% rankDoneList = [];
+% for idL = 1:length(tabRank)
+%    if (tabRank(idL) ~= -1)
+%       if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
+%          tabRankByDate(idL) = rank;
+%          rankDoneList = [rankDoneList; tabRank(idL) rank];
+%          rank = rank + 1;
+%       else
+%          tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
+%       end
+%    end
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WRITE CYCLE INFORMATION

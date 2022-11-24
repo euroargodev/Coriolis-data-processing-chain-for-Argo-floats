@@ -21,12 +21,13 @@ function nc_traj_statistics(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/lists/rem_all.txt';
 
 % directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\users\RNU\Argo\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % default values initialization
 init_default_values;

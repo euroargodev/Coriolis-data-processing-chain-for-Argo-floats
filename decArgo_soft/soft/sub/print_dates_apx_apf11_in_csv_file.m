@@ -4,7 +4,8 @@
 % SYNTAX :
 %  print_dates_apx_apf11_in_csv_file( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, a_profRamses, ...
+%    a_profFlbb, a_profFlbbCfg, a_profFlbbCd, a_profFlbbCdCfg, ...
+%    a_profOcr504I, a_profRamses, ...
 %    a_profRafosRtc, a_profRafos, ...
 %    a_cycleTimeData, a_gpsData, ...
 %    a_grounding, a_buoyancy, a_vitalsData)
@@ -15,6 +16,8 @@
 %   a_profCtdPts    : CTD_PTS data
 %   a_profCtdPtsh   : CTD_PTSH data
 %   a_profDo        : O2 data
+%   a_profFlbb      : FLBB data
+%   a_profFlbbCfg   : FLBB_CFG data
 %   a_profFlbbCd    : FLBB_CD data
 %   a_profFlbbCdCfg : FLBB_CD_CFG data
 %   a_profOcr504I   : OCR_504I data
@@ -39,7 +42,8 @@
 % ------------------------------------------------------------------------------
 function print_dates_apx_apf11_in_csv_file( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, a_profRamses, ...
+   a_profFlbb, a_profFlbbCfg, a_profFlbbCd, a_profFlbbCdCfg, ...
+   a_profOcr504I, a_profRamses, ...
    a_profRafosRtc, a_profRafos, ...
    a_cycleTimeData, a_gpsData, ...
    a_grounding, a_buoyancy, a_vitalsData)
@@ -109,6 +113,26 @@ allTabCyNum = [allTabCyNum tabCyNum];
 [tabDate, tabDateAdj, ...
    tabPres, tabPresAdj, ...
    tabLabel, tabCyNum] = format_profile_dates(a_profDo, 'O2', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profFlbb, 'FLBB', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profFlbbCfg, 'FLBB_CFG', g_decArgo_cycleNum);
 allTabDate = [allTabDate tabDate];
 allTabDateAdj = [allTabDateAdj tabDateAdj];
 allTabPres = [allTabPres tabPres];
@@ -610,13 +634,8 @@ if (isfield(a_vitalsData, 'WD_CNT'))
 end
 
 % sort the collected dates in chronological order
-if (length(find(allTabDateAdj ~= g_decArgo_dateDef)) >= length(find(allTabDateAdj == g_decArgo_dateDef)))
-   [allTabDateAdj, idSorted] = sort(allTabDateAdj);
-   allTabDate = allTabDate(idSorted);
-else
-   [allTabDate, idSorted] = sort(allTabDate);
-   allTabDateAdj = allTabDateAdj(idSorted);
-end
+[allTabDate, idSorted] = sort(allTabDate);
+allTabDateAdj = allTabDateAdj(idSorted);
 allTabPres = allTabPres(idSorted);
 allTabPresAdj = allTabPresAdj(idSorted);
 allTabLabel = allTabLabel(idSorted);

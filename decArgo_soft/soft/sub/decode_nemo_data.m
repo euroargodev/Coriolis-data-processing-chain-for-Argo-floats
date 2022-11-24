@@ -210,10 +210,6 @@ for idCy = 1:length(a_cycleList)
    cycleNum = a_cycleList(idCy);
    g_decArgo_cycleNum = cycleNum;
    
-   %    if (cycleNum == 81)
-   %       a=1
-   %    end
-   
    fprintf('Cycle #%d\n', cycleNum);
    
    % cycle timings storage

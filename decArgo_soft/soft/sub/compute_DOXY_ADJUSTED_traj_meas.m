@@ -4,10 +4,11 @@
 % climatology.
 %
 % SYNTAX :
-%  [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED( ...
+%  [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED_traj_meas( ...
 %    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
 %    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-%    a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
+%    a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, ...
+%    a_trajNMeas, a_tabMeas, a_idMeas)   
 %
 % INPUT PARAMETERS :
 %   a_PRES           : input PRES data
@@ -26,7 +27,10 @@
 %   a_launchDate     : float launch date
 %   a_adjError       : error on PPOX_DOXY adjusted values
 %   a_adjDate        : start date to apply adjustment
-%   a_profOptode     : OPTODE profile structure
+%   a_trajNMeas      : measurement structure
+%   a_tabMeas        : associated cycle measurements
+%   a_idMeas         : index of current measurement in cycle measurements
+
 %
 % OUTPUT PARAMETERS :
 %   o_DOXY_ADJUSTED       : output DOXY adjusted data
@@ -38,12 +42,13 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/04/2019 - RNU - creation
+%   09/01/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED( ...
+function [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED_traj_meas( ...
    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-   a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
+   a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, ...
+   a_trajNMeas, a_tabMeas, a_idMeas)   
    
 % output parameters initialization
 o_DOXY_ADJUSTED = ones(length(a_DOXY), 1)*a_DOXY_fillValue;
@@ -70,7 +75,7 @@ global g_decArgo_doxy_202_205_304_pCoef2;
 global g_decArgo_doxy_202_205_304_pCoef3;
 
 % global default values
-global g_decArgo_dateDef;
+global g_decArgo_ncDateDef;
 
 
 if (isempty(a_PRES) || isempty(a_TEMP) || isempty(a_PSAL) || isempty(a_DOXY))
@@ -93,7 +98,7 @@ if (~isempty(idNoDef))
 
    % convert DOXY into DOXY_in_molar_units
    % units convertion (micromol/kg to micromol/L)
-   [measLon, measLat] = get_meas_location(a_profOptode.cycleNumber, a_profOptode.profileNumber, a_profOptode);
+   [measLon, measLat] = get_meas_location(a_trajNMeas.cycleNumber, a_trajNMeas.profileNumber, []);
    rho = potential_density_gsw(presValues, tempValues, psalValues, 0, measLon, measLat);
    rho = rho/1000;
    molarDoxyValues = doxyValues .* rho;
@@ -123,13 +128,73 @@ if (~isempty(idNoDef))
       );
    
    % adjust PPOX_DOXY
-   
-   if (a_profOptode.date ~= g_decArgo_dateDef)      
-      ppoxDoxyAdjValues = (a_slope * (1 + a_doDrift/100 * (a_profOptode.date-a_launchDate)/365) + a_doInclineT*tempValues) .* (ppoxDoxyValues + a_offset);
+   measDate = '';
+   if (~isempty(a_tabMeas.juldAdj) && (a_tabMeas.juldAdj ~= g_decArgo_ncDateDef))
+      measDate = a_tabMeas.juldAdj;
+   elseif (~isempty(a_tabMeas.juld) && (a_tabMeas.juld ~= g_decArgo_ncDateDef))
+      measDate = a_tabMeas.juld;
    else
-      fprintf('WARNING: Float #%d Cycle #%d%c: profile is not dated - DOXY_ADJUSTED set to FillValue\n', ...
+      for idM = 1:length(a_trajNMeas.tabMeas)
+         prevId = a_idMeas - idM;
+         nextId = a_idMeas + idM;
+         if ((prevId > 0) && (nextId <= length(a_trajNMeas.tabMeas)))
+            measDatePrev = '';
+            if (~isempty(a_trajNMeas.tabMeas(prevId).juldAdj) && (a_trajNMeas.tabMeas(prevId).juldAdj ~= g_decArgo_ncDateDef))
+               measDatePrev = a_trajNMeas.tabMeas(prevId).juldAdj;
+            elseif (~isempty(a_trajNMeas.tabMeas(prevId).juld) && (a_trajNMeas.tabMeas(prevId).juld ~= g_decArgo_ncDateDef))
+               measDatePrev = a_trajNMeas.tabMeas(prevId).juld;
+            end
+            measDateNext = '';
+            if (~isempty(a_trajNMeas.tabMeas(nextId).juldAdj) && (a_trajNMeas.tabMeas(nextId).juldAdj ~= g_decArgo_ncDateDef))
+               measDateNext = a_trajNMeas.tabMeas(nextId).juldAdj;
+            elseif (~isempty(a_trajNMeas.tabMeas(nextId).juld) && (a_trajNMeas.tabMeas(nextId).juld ~= g_decArgo_ncDateDef))
+               measDateNext = a_trajNMeas.tabMeas(nextId).juld;
+            end
+            if (~isempty(measDatePrev) && ~isempty(measDateNext))
+               measDate = measDatePrev + (measDateNext-measDatePrev)/2;
+               break
+            elseif (~isempty(measDatePrev))
+               measDate = measDatePrev;
+               break
+            elseif (~isempty(measDateNext))
+               measDate = measDateNext;
+               break
+            end
+         elseif (prevId > 0)
+            measDatePrev = '';
+            if (~isempty(a_trajNMeas.tabMeas(prevId).juldAdj) && (a_trajNMeas.tabMeas(prevId).juldAdj ~= g_decArgo_ncDateDef))
+               measDatePrev = a_trajNMeas.tabMeas(prevId).juldAdj;
+            elseif (~isempty(a_trajNMeas.tabMeas(prevId).juld) && (a_trajNMeas.tabMeas(prevId).juld ~= g_decArgo_ncDateDef))
+               measDatePrev = a_trajNMeas.tabMeas(prevId).juld;
+            end
+            if (~isempty(measDatePrev))
+               measDate = measDatePrev;
+               break
+            end
+         elseif (nextId <= length(a_trajNMeas.tabMeas))
+            measDateNext = '';
+            if (~isempty(a_trajNMeas.tabMeas(nextId).juldAdj) && (a_trajNMeas.tabMeas(nextId).juldAdj ~= g_decArgo_ncDateDef))
+               measDateNext = a_trajNMeas.tabMeas(nextId).juldAdj;
+            elseif (~isempty(a_trajNMeas.tabMeas(nextId).juld) && (a_trajNMeas.tabMeas(nextId).juld ~= g_decArgo_ncDateDef))
+               measDateNext = a_trajNMeas.tabMeas(nextId).juld;
+            end
+            if (~isempty(measDateNext))
+               measDate = measDateNext;
+               break
+            end
+         else
+            break
+         end
+      end
+   end
+
+   if (~isempty(measDate))
+      ppoxDoxyAdjValues = (a_slope * (1 + a_doDrift/100 * (measDate-a_launchDate)/365) + a_doInclineT*tempValues) .* (ppoxDoxyValues + a_offset);
+   else
+      fprintf('WARNING: Float #%d Cycle #%d: DOXY measurement is not dated - DOXY_ADJUSTED set to FillValue\n', ...
          g_decArgo_floatNum, ...
-         a_profOptode.outputCycleNumber, a_profOptode.direction);
+         a_trajNMeas.outputCycleNumber);
+      return
    end
    
    % convert PPOX_ADJUSTED into DOXY_ADJUSTED_in_molar_units_and_inside_conditions 
@@ -171,7 +236,7 @@ if (~isempty(idNoDef))
       
       % increase PPOX_DOXY_ADJUSTED_ERROR with time (1 mbar/year)
       if (~isempty(a_adjDate))
-         ppoxDoxyAdjErrValues = ppoxDoxyAdjErrValues + (a_profOptode.date - a_adjDate)/365;
+         ppoxDoxyAdjErrValues = ppoxDoxyAdjErrValues + (measDate - a_adjDate)/365;
       end
       
       % convert PPOX_ADJUSTED_ERROR into DOXY_ADJUSTED_ERROR_in_molar_units_and_inside_conditions

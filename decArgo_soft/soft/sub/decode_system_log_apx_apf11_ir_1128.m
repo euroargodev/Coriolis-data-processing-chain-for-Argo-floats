@@ -120,9 +120,9 @@ for idFile = 1:length(a_systemLogFileList)
          strcmp({events.functionName}, 'CTD') | ...
          strcmp({events.functionName}, 'OPT') | ...
          strcmp({events.functionName}, 'FLBB') | ...
-         strcmp({events.functionName}, '504I'));
+         strcmp({events.functionName}, '504U'));
       if (~isempty(idEvts))
-         metaData = process_apx_apf11_ir_meta_data_evts_1125_28(events(idEvts));
+         metaData = process_apx_apf11_ir_meta_data_evts_1128(events(idEvts));
          o_metaData = [o_metaData metaData];
       end
    end

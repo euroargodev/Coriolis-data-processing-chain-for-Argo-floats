@@ -69,6 +69,9 @@ for idProf = 1:length(a_tabProfiles)
    datedMeasStruct.dates = profile.dates(idDated);
    datedMeasStruct.datesAdj = profile.datesAdj(idDated);
    datedMeasStruct.data = profile.data(idDated, :);
+   if (~isempty(profile.ptsForDoxy))
+      datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(idDated, :);
+   end
    datedMeasStruct.sensorNumber = profile.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
@@ -137,6 +140,9 @@ if (~isempty(profInfo))
          datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
          datedMeasStruct.datesAdj = profile.datesAdj(profInfo(idProfMax, 5));
          datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);
+         if (~isempty(profile.ptsForDoxy))
+            datedMeasStruct.ptsForDoxy = profile.ptsForDoxy(profInfo(idProfMax, 5), :);
+         end
          datedMeasStruct.sensorNumber = profile.sensorNumber;
          
          o_tabTrajIndex = [o_tabTrajIndex;
@@ -145,45 +151,5 @@ if (~isempty(profInfo))
       end
    end
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get the basic structure to store dated measurements.
-%
-% SYNTAX :
-%  [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-%
-% INPUT PARAMETERS :
-%   a_cycleNum : cycle number
-%   a_profNum  : profile number
-%   a_phaseNum : phase number
-%
-% OUTPUT PARAMETERS :
-%   o_datedMeasStruct : initialized structure
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   02/20/2017 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_datedMeasStruct] = get_dated_meas_init_struct(a_cycleNum, a_profNum, a_phaseNum)
-
-% output parameters initialization
-o_datedMeasStruct = struct( ...
-   'cycleNumber', a_cycleNum, ...
-   'profileNumber', a_profNum, ...
-   'phaseNumber', a_phaseNum, ...
-   'paramList', '', ...
-   'paramNumberWithSubLevels', '', ... % position, in the paramList of the parameters with a sublevel
-   'paramNumberOfSubLevels', '', ... % number of sublevels for the concerned parameter
-   'data', '', ...
-   'dateList', '', ...
-   'dates', '', ...
-   'datesAdj', '', ...
-   'sensorNumber', -1);
 
 return

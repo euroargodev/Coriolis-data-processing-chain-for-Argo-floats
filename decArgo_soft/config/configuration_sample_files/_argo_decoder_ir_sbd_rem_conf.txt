@@ -133,6 +133,28 @@ GENERATE_NC_TECH = 1
 GENERATE_NC_META = 1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NETCDF OUTPUT TRAJ 3.2 FILE GENERATION (1 => generated, 0 => not generated)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+GENERATE_NC_TRAJ_3_2 = 0
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OUTPUT NETCDF TRAJ 3.2 FILE DIRECTORY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE  = C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ERROR ELLIPSES OF ARGOS LOCATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ADD_ARGOS_ERROR_ELLIPSES = 1
+
+DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL = C:\Users\jprannou\_DATA\IN\ARGOS_ELLIPSES\mails\OUT_MAIL\
+DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL = C:\Users\jprannou\_DATA\IN\ARGOS_ELLIPSES\web_service\ellipses_argos_ws_20210823\spool\
+DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE = C:\Users\jprannou\_DATA\IN\ARGOS_ELLIPSES\web_service\ellipses_argos_ws_20210823\archive\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % RTQC PROCESSING (1 => RTQC performed, 0 => RTQC not performed)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -172,7 +194,7 @@ TEST062_BBP = 1
 TEST063_CHLA = 1
 
 % additional information needed for some RTQC test
-TEST004_ETOPO2_FILE = C:\Users\jprannou\_RNU\Argo\_ressources\ETOPO2\ETOPO2v2g_i2_MSB.bin
+TEST004_GEBCO_FILE = C:\Users\jprannou\_RNU\_ressources\GEBCO_2020\GEBCO_2020.nc
 TEST015_GREY_LIST_FILE = C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt
 
 
