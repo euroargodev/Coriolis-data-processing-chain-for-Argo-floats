@@ -946,7 +946,7 @@ if (a_deepCycle == 1)
       % last pumped CTD measurement
       pres = sensor_2_value_for_pressure_201_203_215_216(tabTech2(10));
       temp = sensor_2_value_for_temperature_201_to_203_215_216(tabTech2(11));
-      psal = sensor_2_value_for_salinity_201_to_203_215_216(tabTech2(12));
+      psal = tabTech2(12)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_LastAscPumpedCtd;

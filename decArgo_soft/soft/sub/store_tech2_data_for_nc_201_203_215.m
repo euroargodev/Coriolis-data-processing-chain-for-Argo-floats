@@ -79,7 +79,7 @@ if (a_deepCycle == 1)
    
    pres = sensor_2_value_for_pressure_201_203_215_216(tabTech2(10));
    temp = sensor_2_value_for_temperature_201_to_203_215_216(tabTech2(11));
-   psal = sensor_2_value_for_salinity_201_to_203_215_216(tabTech2(12));
+   psal = tabTech2(12)/1000;
    if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 221];

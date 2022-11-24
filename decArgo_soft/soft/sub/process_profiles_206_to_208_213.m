@@ -128,7 +128,7 @@ switch (a_decoderId)
          tabTech = a_tabTech(end, :);
          pres = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
          temp = sensor_2_value_for_temperature_204_to_214(tabTech(17));
-         psal = sensor_2_value_for_salinity_210_to_214(tabTech(18));
+         psal = tabTech(18)/1000;
          if (any([pres temp psal] ~= 0))
             presCutOffProf = pres;
          end

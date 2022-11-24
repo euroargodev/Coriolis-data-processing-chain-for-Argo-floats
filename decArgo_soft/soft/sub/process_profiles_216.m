@@ -93,7 +93,7 @@ if (~isempty(a_tabTech2) && (a_iceDetected == 0))
    tabTech = a_tabTech2(end, :);
    pres = sensor_2_value_for_pressure_201_203_215_216(tabTech(11));
    temp = sensor_2_value_for_temperature_201_to_203_215_216(tabTech(12));
-   psal = sensor_2_value_for_salinity_201_to_203_215_216(tabTech(13));
+   psal = tabTech(13)/1000;
    if (any([pres temp psal] ~= 0))
       presCutOffProf = pres;
    end
