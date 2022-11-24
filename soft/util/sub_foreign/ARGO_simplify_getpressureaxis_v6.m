@@ -24,6 +24,9 @@ function synth=ARGO_simplify_getpressureaxis_v6(varargin)
 % 05.03.2018, updated
 % 19.04.2018, use b- and c- files instead of m-files
 % 15.06.2018, modify input to name/value pairs
+% 27.06.2018, make approach more robust: Union of PARAMETER and STATION_PARAMETERS, 
+%             only apply vertical offsets for sensors with data, be tolerant towards 
+%             older, pre-v3.1 meta files
 
 includeTSflag=0;
 addTSeverywhere=1;
@@ -66,41 +69,74 @@ fnamesind(~cellfun(@isempty,regexp(fnames,['^' fieldsuffixvarname{k} '$*'])))=0;
 fnamesind(~cellfun(@isempty,regexp(fnames,['^' fieldsuffixvarname{k} '[0-9]+$*'])))=0; % multiple variable
 fnamesind(~cellfun(@isempty,regexp(fnames,['^' fieldsuffixvarname{k} '_[0-9]+$*'])))=0; % multiple variable with underscore
 end
-fnamesind(ismember(fnames,'PARAMETER'))=0; % keep Parameters field, too: Used for N_PROF identification
+fnamesind(ismember(fnames,'PARAMETER'))=0; % keep PARAMETER field, too: Used for N_PROF identification
+fnamesind(ismember(fnames,'STATION_PARAMETERS'))=0; % keep STATION_PARAMETERS field, too: Used for backup N_PROF identification
 S=rmfield(S,fnames(fnamesind));
 
 C=lov_netcdf_pickprod(cfilepath); % load core file
 fnamec=setdiff(fieldnames(C),fieldnames(S)); % find core parameter names
 for i=1:length(fnamec), S.(fnamec{i})=C.(fnamec{i}); end % copy core data to bio data
-% and merge PARAMETER field (used for variable identification later on)
 % make sure first dimension is size of field (e.g. CS 1901348: 2nd
 % dimension)
 imain=find(size(C.PARAMETER.value)==16,1,'first');
 if imain==1 % keep everything like this, assume fliplr of 
-% 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING16);'
-elseif imain==length(size(C.PARAMETER.value)) % fliplr, assume inverted order of 
-% 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING16);'
-C.PARAMETER.value=permute(C.PARAMETER.value,imain:-1:1);
+    % 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING16);'
+elseif imain==ndims(C.PARAMETER.value) % fliplr, assume inverted order of 
+    % 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING16);'
+    C.PARAMETER.value=permute(C.PARAMETER.value,imain:-1:1);
 else % put STRING16 first and hope the rest falls into place
-disp(['Could not figure out N_DIMs order of core file PARAMETER field'])
-C.PARAMETER.value=permute(C.PARAMETER.value,[imain setdiff(1:ndims(C.PARAMETER.value),imain)]);
+    disp(['Could not figure out N_DIMs order of core file PARAMETER field'])
+    C.PARAMETER.value=permute(C.PARAMETER.value,[imain setdiff(1:ndims(C.PARAMETER.value),imain)]);
+end
+imain=find(size(C.STATION_PARAMETERS.value)==16,1,'first');
+if imain==1 % keep everything like this, assume fliplr of 
+    % 'char STATION_PARAMETERS(N_PROF, N_PARAM, STRING16);'
+elseif imain==ndims(C.STATION_PARAMETERS.value) % fliplr, assume inverted order of 
+    % 'char STATION_PARAMETERS(N_PROF, N_PARAM, STRING16);'
+    if imain>2, C.STATION_PARAMETERS.value=permute(C.STATION_PARAMETERS.value,(imain-1):-1:1);
+    elseif imain==2, C.STATION_PARAMETERS.value=C.STATION_PARAMETERS.value'; end % only 2 dims
+else % put STRING16 first and hope the rest falls into place
+    disp(['Could not figure out N_DIMs order of core file STATION_PARAMETERS field'])
+    C.STATION_PARAMETERS.value=permute(C.STATION_PARAMETERS.value,[imain setdiff(1:ndims(C.STATION_PARAMETERS.value),imain)]);
 end
 imain=find(size(S.PARAMETER.value)==64,1,'first');
 if imain==1 % keep everything like this, assume fliplr of 
-% 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING64);'
-elseif imain==length(size(S.PARAMETER.value)) % fliplr, assume inverted order of 
-% 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING64);'
-S.PARAMETER.value=permute(S.PARAMETER.value,imain:-1:1);
+    % 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING64);'
+elseif imain==ndims(S.PARAMETER.value) % fliplr, assume inverted order of 
+    % 'char PARAMETER(N_PROF, N_CALIB, N_PARAM, STRING64);'
+    S.PARAMETER.value=permute(S.PARAMETER.value,imain:-1:1);
 else % put STRING64 first and hope the rest falls into place
-disp(['Could not figure out N_DIMs order of bio file PARAMETER field'])
-S.PARAMETER.value=permute(S.PARAMETER.value,[imain setdiff(1:ndims(S.PARAMETER.value),imain)]);
+    disp(['Could not figure out N_DIMs order of bio file PARAMETER field'])
+    S.PARAMETER.value=permute(S.PARAMETER.value,[imain setdiff(1:ndims(S.PARAMETER.value),imain)]);
 end
+imain=find(size(S.STATION_PARAMETERS.value)==64,1,'first');
+if imain==1 % keep everything like this, assume fliplr of 
+    % 'char STATION_PARAMETERS(N_PROF, N_PARAM, STRING64);'
+elseif imain==ndims(S.STATION_PARAMETERS.value) % fliplr, assume inverted order of 
+    % 'char STATION_PARAMETERS(N_PROF, N_PARAM, STRING64);'
+    if imain>2, S.STATION_PARAMETERS.value=permute(S.STATION_PARAMETERS.value,(imain-1):-1:1); 
+    elseif imain==2, S.STATION_PARAMETERS.value=S.STATION_PARAMETERS.value'; end % only 2 dims
+else % put STRING64 first and hope the rest falls into place
+    disp(['Could not figure out N_DIMs order of bio file STATION_PARAMETERS field'])
+    S.STATION_PARAMETERS.value=permute(S.STATION_PARAMETERS.value,[imain setdiff(1:ndims(S.STATION_PARAMETERS.value),imain)]);
+end
+%%{
+% and merge PARAMETER and STATION_PARAMETERS field 
+% (used for variable identification later on)
 for i=1:size(C.PARAMETER.value,4) % cycle N_PROFs, use first N_CALIB (necessarily contains all bgc variables)
-    if isempty(char(strrep(cellstr(squeeze(S.PARAMETER.value(:,:,1,i))'),'PRES',''))) % only PRES -> core N_PROF
+    % check PARAMETER and STATION_PARAMETERS
+    inparams=union(cellstr(squeeze(S.PARAMETER.value(:,:,1,i))'),cellstr(squeeze(S.STATION_PARAMETERS.value(:,:,i))'));
+    inparamsC=union(cellstr(squeeze(C.PARAMETER.value(:,:,1,i))'),cellstr(squeeze(C.STATION_PARAMETERS.value(:,:,i))'));
+    if isempty(char(setdiff(inparams,{'PRES';'TEMP';'PSAL';''}))) % only PRES/TEMP/PSAL -> core N_PROF: Copy core parameters
         S.PARAMETER.value(1:size(C.PARAMETER.value(:,:,1,i),1),1:size(C.PARAMETER.value(:,:,1,i),2),1:size(C.PARAMETER.value(:,:,1,i),3),i)=C.PARAMETER.value(:,:,1,i);
-        S.PARAMETER_DATA_MODE.value(i,1:size(C.PARAMETER.value(:,:,1,i),2))=C.DATA_MODE.value(i);
+        %S.PARAMETER_DATA_MODE.value(i,1:size(C.PARAMETER.value(:,:,1,i),2))=C.DATA_MODE.value(i);
+    elseif isempty(char(strrep(inparamsC,'PRES',''))) % only PRES & bio -> bio N_PROF: Keep bio parameters
+        
+    else % core and bio N_PROF: Join core and bio parameters
+        S.PARAMETER.value(1:size(C.PARAMETER.value(:,:,1,i),1),size(S.PARAMETER.value(:,:,1,i),2)+(2:size(C.PARAMETER.value(:,:,1,i),2))-1,1:size(C.PARAMETER.value(:,:,1,i),3),i)=C.PARAMETER.value(:,2:end,1,i);
     end
 end
+%%}
 clear fnamec C fnames fnamesind
 
 % get bgcparams names and N_PROFs
@@ -109,7 +145,8 @@ bgcflag=false(1,noNPROFs);
 bgcparams=cell(1,noNPROFs);
 % check that there are params different than PRES, TEMP, PSAL in N_PROF
 for i=1:noNPROFs
-    bgcparams{i}=setdiff(cellstr(S.PARAMETER.value(:,:,1,i)'),{'PRES';'TEMP';'PSAL';''});
+    inparams=union(cellstr(S.PARAMETER.value(:,:,1,i)'),cellstr(S.STATION_PARAMETERS.value(:,:,i)')); % check PARAMETER and STATION_PARAMETERS
+    bgcparams{i}=setdiff(inparams,{'PRES';'TEMP';'PSAL';''});
     bgcflag(i)=~isempty(bgcparams{i});
 end
 % unique BGC parameters
@@ -140,7 +177,7 @@ end
 % check meta file for vertical pressure offsets
 C=[];
 %infields={'LAUNCH_CONFIG_PARAMETER_NAME';'LAUNCH_CONFIG_PARAMETER_VALUE';'CONFIG_MISSION_NUMBER';'CONFIG_PARAMETER_NAME';'CONFIG_PARAMETER_VALUE'};
-infields={'LAUNCH_CONFIG_PARAMETER_NAME';'LAUNCH_CONFIG_PARAMETER_VALUE';'PARAMETER';'PARAMETER_SENSOR'};
+infields={'LAUNCH_CONFIG_PARAMETER_NAME';'LAUNCH_CONFIG_PARAMETER_VALUE';'PARAMETER';'PARAMETER_SENSOR';'FORMAT_VERSION'};
 flagdone=false(1,size(S.PRES.value,2));
 try 
     C=lov_netcdf_pickprod(metafilepath,infields);
@@ -151,6 +188,7 @@ if isempty(C)
     disp(['Could not find meta file ' strtrim(S.PLATFORM_NUMBER.value(1,:)) '_meta.nc in current or parent folder.'])
 else
     if addoffsetflag
+        if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not have this field
     names=C.LAUNCH_CONFIG_PARAMETER_NAME.value;
     values=C.LAUNCH_CONFIG_PARAMETER_VALUE.value;
     %{
@@ -175,13 +213,14 @@ else
         % get short sensor names and vertical offsets
         cpnames=strrep(strrep(cellstr(lower(names(ind,:))),lower(cnames{1}),''),lower('CONFIG_'),'');
         voffset=values(ind);
-        % get which parameters in which n_profs
-        npnames=cell(1,size(S.PRES.value,2));
+        % get which parameters in which N_PROFs
+        npnames=cell(1,noNPROFs);
         for i=1:length(npnames)
-            dummy=cellstr(squeeze(S.PARAMETER.value(:,:,1,i))');
+            %dummy=cellstr(squeeze(S.PARAMETER.value(:,:,1,i))');
+            dummy=union(cellstr(S.PARAMETER.value(:,:,1,i)'),cellstr(S.STATION_PARAMETERS.value(:,:,i)'));
             npnames{i}=dummy(~cellfun(@isempty,dummy));
         end
-        % and match with profile n_profs
+        % and match with profile N_PROFs
         for i=1:length(cpnames)
             ind=strcmpi(cpnames{i},sensors);
             if ~any(ind), disp(['Could not identify short sensor name ' cpnames{i}])
@@ -189,36 +228,47 @@ else
                 synth=[];
                 return
             else
-                % find associated n_profs
-                numparams=zeros(size(npnames));
-                for j=1:length(npnames)
-                    if iscell(params{ind})
-                        numparams(j)=sum(cellfun(@(y)any(cellfun(@(x)~isempty(strfind(y,x)),params{ind})),npnames{j}));
-                    else % char
-                        numparams(j)=sum(cellfun(@(y)any(~isempty(strfind(y,params{ind}))),npnames{j}));
-                    end
+                % check that sensor is actually switched on during this cycle
+                if iscell(params{ind})
+                    flagpowered=any(cellfun(@(y)any(cellfun(@(x)~isempty(strfind(y,x)),params{ind})),ubgcparams));
+                else % char
+                	flagpowered=any(cellfun(@(y)any(~isempty(strfind(y,params{ind}))),ubgcparams));
                 end
-                if any(flagdone & logical(numparams)) % check wether done before
-                    disp(['N_PROF ' num2str(find(any(flagdone & logical(numparams)))) ' has got a vertical offset before - now a 2nd time? Please check!'])
-                    %keyboard
-                    synth=[];
-                    return
-                elseif ~any(logical(numparams)) % no n_prof identified
-                    disp(['Could not find associated nprof for ' cpnames{i} '? Please check!'])
-                    %keyboard
-                    synth=[];
-                    return
-                else
-                    % and apply offset
-                    S.PRES.value(:,logical(numparams))=S.PRES.value(:,logical(numparams))+voffset(i);
-                    flagdone=flagdone | logical(numparams);
-                end % apply only once
-            end % short sensor name known
+                if flagpowered
+                    % find associated N_PROFs
+                    numparams=zeros(size(npnames));
+                    for j=1:length(npnames)
+                        if iscell(params{ind})
+                            numparams(j)=sum(cellfun(@(y)any(cellfun(@(x)~isempty(strfind(y,x)),params{ind})),npnames{j}));
+                        else % char
+                            numparams(j)=sum(cellfun(@(y)any(~isempty(strfind(y,params{ind}))),npnames{j}));
+                        end
+                    end
+                    if any(flagdone & logical(numparams)) % check wether done before
+                        disp(['N_PROF ' num2str(find(any(flagdone & logical(numparams)))) ' has got a vertical offset before - now a 2nd time? Please check!'])
+                        %keyboard
+                        synth=[];
+                        return
+                    elseif ~any(logical(numparams)) % no N_PROF identified, but sensor is not switched off...!
+                        disp(['Could not find associated N_PROF for ' cpnames{i} '? Please check!'])
+                        %keyboard
+                        synth=[];
+                        return
+                    else
+                        % and apply offset
+                        S.PRES.value(:,logical(numparams))=S.PRES.value(:,logical(numparams))+voffset(i);
+                        flagdone=flagdone | logical(numparams);
+                    end % apply only once
+                end % sensor is not switched off
+            end % short sensor name known 
         end % cycle all found config names
     else
         if verbose, disp(['Found no verticalOffsets']), end
     end % config name found
-    end 
+        else
+            disp(['Could not find LAUNCH_CONFIG_PARAMETER_NAME in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). No vertical sensor offsets corrected.'])
+        end % LAUNCH_CONFIG_PARAMETER_NAME
+    end % addoffsetflag
 end % config file opened
 %}
 clear cnames dummy ind infields mission names values npnames numparams params sensors 
@@ -226,13 +276,34 @@ clear cnames dummy ind infields mission names values npnames numparams params se
 % rearrange nprofs according to priority (alphabetical by sensor name)
 nprofstr=cell(1,noNPROFs);
 params=cellstr(C.PARAMETER.value);
+if isfield(C,'PARAMETER_SENSOR') % not a very old meta file
 paramsensors=cellstr(C.PARAMETER_SENSOR.value);
 for i=1:noNPROFs
-    nprofstr{i}=strjoin(sort(paramsensors(ismember(params,setdiff(cellstr(S.PARAMETER.value(:,:,1,i)'),'')))),'_');
+    dummy=union(cellstr(S.PARAMETER.value(:,:,1,i)'),cellstr(S.STATION_PARAMETERS.value(:,:,i)'));
+    nprofstr{i}=strjoin(sort(paramsensors(ismember(params,setdiff(dummy,'')))),'_');
 end
 % and bring into order but keeping nprof 1 at first position
 [~,asort]=sort(nprofstr(2:end));asort=[1 asort+1];
+else % pre-v3.1 meta file
+    disp(['Could not find PARAMETER_SENSOR in meta file (FORMAT_VERSION ' C.FORMAT_VERSION.value '). Kept N_PROF order as in profile file.'])
+    asort=1:noNPROFs;
+end % define N_PROF priority
 clear C 
+
+% double check pressure inversion test in profile (in a simplistic way): 
+% Mustn't have repeated pressure levels with PRES_QC 0..3
+% sometimes not properly flagged, e.g., D5903712_149.nc
+pinversion=false(size(S.PRES.value));
+ind=~isnan(S.PRES.value) & ismember(S.PRES_QC.value,[0 1 2 3]);
+for i=1:size(S.PRES.value,2)
+    pinversion(ind(:,i),i)=[diff(S.PRES.value(ind(:,i),i))<=0;0];
+end
+%pinversion=pinversion & ismember(S.PRES_QC.value,[0 1 2 3]);
+if any(pinversion(:))
+    disp(['Found ' num2str(sum(pinversion(:))) ' levels with unflagged pressure inversions. Flag with PRES_QC=4.'])
+    S.PRES_QC.value(pinversion)=4;
+end
+clear pinversion ind
 
 % sort out pressure axis and which N_PROF to use
 % only use PRES_QC 0..3, ignore PRES_QC=4
@@ -269,6 +340,11 @@ if ~includeTSflag, inpres(:,~bgcflag)=FV; inpres(~bgcpresence)=FV; end
 % get unique pressures (with or without TEMP/PSAL-only levels; see above)
 %upres=unique(inpres(~isnan(inpres)));
 upres=unique(inpres(inpres~=FV));
+if isempty(upres)
+    disp(['Found BGC N_PROF(s) with b-parameter(s) ' strjoin(ubgcparams,' ') ', but without any PRES_QC=0..3. Don''t create synthetic profile.'])
+    synth=[];
+    return
+end
 % and check which pressure levels are present in which profile
 prespresent=false(length(upres),noNPROFs);
 for i=1:noNPROFs,prespresent(:,i)=ismember(upres,inpres(:,i));end
@@ -289,7 +365,7 @@ for i=1:noNPROFs
     if ~isempty(pres)
         if length(pres)>1
             dpres=diff(pres);
-            valdp(prespresent(:,i),i)=min([dpres(1);dpres],[dpres;dpres(end)]);
+            valdp(prespresent(:,i),i)=min(abs([dpres(1);dpres]),abs([dpres;dpres(end)]));
         else
             %valdp(prespresent(:,i),i)=0;
             valdp(prespresent(:,i),i)=NaN;
@@ -392,21 +468,24 @@ for i=1:length(ubgcparams)
     end
     % do not use <PARAM>_QC of 8 or FillValue
     yflagqc=ismember(yqc,[0 1 2 3 4 5]);
+    if ismember(ubgcparams{i},{'PRES'}), yflagnoFV=y~=FV; % double check PRES FV
+    else yflagnoFV=~isnan(y); end % and other FV (e.g., BR5900952_157, DOXY all NaN but QC=0)
     % except for CHLA_ADJUSTED...(otherwise no surface data:NPQ correction)
     %if ismember(ubgcparams{i},'CHLA'), yadjqc(yadjqc==8)=5; end
     yflagadjqc=ismember(yadjqc,[0 1 2 3 4 5]);
+    yflagadjnoFV=~isnan(yadj); % double check FV
     
     % clean up: only data of current parameter without QC 8, only pflag
-    x=xpres(xpresqc & yflagqc);
-    xadj=xpres(xpresqc & yflagadjqc);
+    x=xpres(xpresqc & yflagqc & yflagnoFV);
+    xadj=xpres(xpresqc & yflagadjqc & yflagadjnoFV);
     %xqc=xpresqc(xpresqc & yflagqc);
-    y=y(xpresqc & yflagqc);
-    yqc=yqc(xpresqc & yflagqc);
-    yadj=yadj(xpresqc & yflagadjqc);
-    yadjqc=yadjqc(xpresqc & yflagadjqc);
-    yadjerr=yadjerr(xpresqc & yflagadjqc);
-    overlapadj=overlap(xpresqc & yflagadjqc);
-    overlap=overlap(xpresqc & yflagqc);
+    y=y(xpresqc & yflagqc & yflagnoFV);
+    yqc=yqc(xpresqc & yflagqc & yflagnoFV);
+    yadj=yadj(xpresqc & yflagadjqc & yflagadjnoFV);
+    yadjqc=yadjqc(xpresqc & yflagadjqc & yflagadjnoFV);
+    yadjerr=yadjerr(xpresqc & yflagadjqc & yflagadjnoFV);
+    overlapadj=overlap(xpresqc & yflagadjqc & yflagadjnoFV);
+    overlap=overlap(xpresqc & yflagqc & yflagnoFV);
     yadjerrpresence=~all(isnan(yadjerr)); % error not mandatory for adjusted fields..
     
     

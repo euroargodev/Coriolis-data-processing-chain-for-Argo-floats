@@ -374,6 +374,13 @@ profDataTab = [];
 for idProfC = 1:length(profDataTabC)
    profData = profDataTabC(idProfC);
    for idProfB = 1:length(profDataTabB)
+      if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
+         fprintf('WARNING: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) => files ignored\n', ...
+            g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
+            length(profData.presData), ...
+            length(profDataTabB(idProfB).presData));
+         return;
+      end
       if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
          profDataB = profDataTabB(idProfB);
          profData.paramList = [profData.paramList profDataB.paramList];
