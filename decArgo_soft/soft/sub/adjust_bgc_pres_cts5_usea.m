@@ -70,37 +70,42 @@ end
 % resolution is mainly 1 dbar whereas it is 1 cbar for BCG pressures)
 % we also use CTD measurements (in case SYSTEM file is missing or unreadable)
 
-% retrieve pressure checks sampled during the drift phase
-presCheckEvt = cell2mat(g_decArgo_eventDataTraj)';
-presCheckMc = [presCheckEvt.measCode];
-idDrift = find(ismember(presCheckMc, [g_MC_DescProf, g_MC_DriftAtPark, g_MC_Desc2Prof, g_MC_DriftAtProf, g_MC_AscProf]));
-eventDataTrajDrift = g_decArgo_eventDataTraj(idDrift);
-presCheckDrift = cell2mat(eventDataTrajDrift)';
-groupList = [presCheckDrift.group];
-uGroupList = unique(groupList(find(groupList > 0)));
 presCheckJuld = [];
 presCheckPres = [];
-for idG = 1:length(uGroupList)
-   idF = find(groupList == uGroupList(idG));
-   if (length(idF) == 2)
-      juld = '';
-      pres = '';
-      for id = 1:2
-         if (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'JULD'))
-            juld = eventDataTrajDrift{idF(id)}.value;
-         elseif (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'PRES'))
-            pres = double(eventDataTrajDrift{idF(id)}.value);
+if (~isempty(g_decArgo_eventDataTraj))
+   
+   % retrieve pressure checks sampled during the drift phase
+   presCheckEvt = cell2mat(g_decArgo_eventDataTraj)';
+   presCheckMc = [presCheckEvt.measCode];
+   idDrift = find(ismember(presCheckMc, [g_MC_DescProf, g_MC_DriftAtPark, g_MC_Desc2Prof, g_MC_DriftAtProf, g_MC_AscProf]));
+   eventDataTrajDrift = g_decArgo_eventDataTraj(idDrift);
+   presCheckDrift = cell2mat(eventDataTrajDrift)';
+   groupList = [presCheckDrift.group];
+   uGroupList = unique(groupList(find(groupList > 0)));
+   presCheckJuld = [];
+   presCheckPres = [];
+   for idG = 1:length(uGroupList)
+      idF = find(groupList == uGroupList(idG));
+      if (length(idF) == 2)
+         juld = '';
+         pres = '';
+         for id = 1:2
+            if (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'JULD'))
+               juld = eventDataTrajDrift{idF(id)}.value;
+            elseif (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'PRES'))
+               pres = double(eventDataTrajDrift{idF(id)}.value);
+            end
+         end
+         if (~isempty(juld) && ~isempty(pres))
+            presCheckJuld = [presCheckJuld juld];
+            presCheckPres = [presCheckPres pres];
          end
       end
-      if (~isempty(juld) && ~isempty(pres))
-         presCheckJuld = [presCheckJuld juld];
-         presCheckPres = [presCheckPres pres];
-      end
    end
+   [~, idSort] = sort(presCheckJuld);
+   presCheckJuld = presCheckJuld(idSort);
+   presCheckPres = presCheckPres(idSort);
 end
-[~, idSort] = sort(presCheckJuld);
-presCheckJuld = presCheckJuld(idSort);
-presCheckPres = presCheckPres(idSort);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BGC DRIFT MEASURMENTS

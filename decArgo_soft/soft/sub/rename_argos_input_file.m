@@ -42,6 +42,12 @@ global g_decArgo_minNonTransDurForGhost;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% directory of json meta-data files
+global g_decArgo_dirInputJsonFloatMetaDataFile;
+
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 % minimum duration of the non-transmission periods for a given file (in hour)
 MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = g_decArgo_minNonTransDurForNewCycle;
 
@@ -155,6 +161,17 @@ else
    fprintf('ERROR: Inconsistent input Argos file name (%s)\n', inputArgosFileName);
    return
 end
+
+% read the json meta-data file for this float
+jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', floatNum)];
+
+if ~(exist(jsonInputFileName, 'file') == 2)
+   fprintf('ERROR: Json meta-data file not found: %s - nothing done\n', jsonInputFileName);
+   return
+end
+
+% read meta-data file
+g_decArgo_jsonMetaData = loadjson(jsonInputFileName);
 
 % specific
 if (floatNum == 6903816)
