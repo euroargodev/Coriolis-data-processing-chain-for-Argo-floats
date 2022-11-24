@@ -61,11 +61,11 @@ global g_decArgo_floatNum;
 global g_decArgo_calibInfo;
 
 % NITRATE coefficients
-global g_decArgo_nitrate_tCorr1;
-global g_decArgo_nitrate_tCorr2;
-global g_decArgo_nitrate_tCorr3;
-global g_decArgo_nitrate_tCorr4;
-global g_decArgo_nitrate_tCorr5;
+global g_decArgo_nitrate_a;
+global g_decArgo_nitrate_b;
+global g_decArgo_nitrate_c;
+global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_e;
 global g_decArgo_nitrate_opticalWavelengthOffset;
 
 global g_tempoJPR_nitrateFromFloat;
@@ -240,7 +240,7 @@ if (~isempty(idNoDef))
    absorbanceSw = -log10((tabUvIntensityNitrate - tabUvIntensityDarkNitrate) ./ tabUvIntensityRefNitrate);
 
    % Equation #2
-   tCorrCoef = [g_decArgo_nitrate_tCorr1 g_decArgo_nitrate_tCorr2 g_decArgo_nitrate_tCorr3 g_decArgo_nitrate_tCorr4 g_decArgo_nitrate_tCorr5];
+   tCorrCoef = [g_decArgo_nitrate_a g_decArgo_nitrate_b g_decArgo_nitrate_c g_decArgo_nitrate_d g_decArgo_nitrate_e];
    tCorr = polyval(tCorrCoef, (tabOpticalWavelengthUv - g_decArgo_nitrate_opticalWavelengthOffset)) .* (ctdData(:, 2) - tempCalNitrate);
    eSwaInsitu = tabESwaNitrate .* exp(tCorr);
 

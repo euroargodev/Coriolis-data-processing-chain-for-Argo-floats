@@ -62,11 +62,11 @@ global g_decArgo_qcStrInterpolated;  % '8'
 global g_decArgo_qcStrMissing;       % '9'
 
 % NITRATE coefficients
-global g_decArgo_nitrate_tCorr1;
-global g_decArgo_nitrate_tCorr2;
-global g_decArgo_nitrate_tCorr3;
-global g_decArgo_nitrate_tCorr4;
-global g_decArgo_nitrate_tCorr5;
+global g_decArgo_nitrate_a;
+global g_decArgo_nitrate_b;
+global g_decArgo_nitrate_c;
+global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_e;
 global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
@@ -194,7 +194,7 @@ idDef = sort([idDef; ...
 idNoDef = setdiff([1:size(tabUvIntensityNitrate, 1)], idDef)';
 
 if (~isempty(idNoDef))
-   
+
    profNitrateQc = o_profNitrateQc(idNoDef);
    tabUvIntensityNitrate = tabUvIntensityNitrate(idNoDef, :);
    tabUvIntensityDarkNitrate = tabUvIntensityDarkNitrate(idNoDef, :);
@@ -204,7 +204,7 @@ if (~isempty(idNoDef))
    tabPsal = tabPsal(idNoDef, :);
    tabPres = tabPres(idNoDef, :);
    ctdData = ctdIntData(idNoDef, :);
-   
+
    % check saturation of spectrophotometer
    for idL = 1:size(tabUvIntensityNitrate, 1)
       if (any(tabUvIntensityNitrate(idL, :) == 65535))
@@ -213,12 +213,12 @@ if (~isempty(idNoDef))
          profNitrateQc(idL) = set_qc(profNitrateQc(idL), g_decArgo_qcStrCorrectable);
       end
    end
-   
+
    % compute NITRATE
-   
+
    % Equation #1
    absorbanceSw = -log10((tabUvIntensityNitrate - tabUvIntensityDarkNitrate) ./ tabUvIntensityRefNitrate);
-   
+
    % check absorbance at 240 nm
    for idL = 1:size(absorbanceSw, 1)
       if ((absorbanceSw(idL, end) >= 0.8) && (absorbanceSw(idL, end) < 1.1))
@@ -231,20 +231,20 @@ if (~isempty(idNoDef))
          profNitrateQc(idL) = set_qc(profNitrateQc(idL), g_decArgo_qcStrBad);
       end
    end
-   
+
    % check RMS Error
-   
+
    % check that the 'fitlm' function is available in the Matlab configuration
    if (~isempty(which('fitlm')))
-      
+
       % Equation #2
-      tCorrCoef = [g_decArgo_nitrate_tCorr1 g_decArgo_nitrate_tCorr2 g_decArgo_nitrate_tCorr3 g_decArgo_nitrate_tCorr4 g_decArgo_nitrate_tCorr5];
+      tCorrCoef = [g_decArgo_nitrate_a g_decArgo_nitrate_b g_decArgo_nitrate_c g_decArgo_nitrate_d g_decArgo_nitrate_e];
       tCorr = polyval(tCorrCoef, (tabOpticalWavelengthUv - g_decArgo_nitrate_opticalWavelengthOffset)) .* (ctdData(:, 2) - tempCalNitrate);
       eSwaInsitu = tabESwaNitrate .* exp(tCorr);
 
       % Equation #4 (with the pressure effect taken into account)
       absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.026 * tabPres / 1000));
-      
+
       % Equation #5
       % solve:
       % A11*x1 + A12x2 + A13*X3 = B1
@@ -255,13 +255,13 @@ if (~isempty(idNoDef))
       % where A12 ... Ar2 = OPTICAL_WAVELENGTH_UV(r)
       % where A13 ... Ar3 = E_NITRATE(r)
       % then X3 = MOLAR_NITRATE
-      
+
       a = [tabOpticalWavelengthUv' tabENitrate'];
       for idL = 1:size(absorbanceCorNitrate, 1)
          b = absorbanceCorNitrate(idL, :)';
          if (all(imag(b) == 0))
             mdl = fitlm(double(a), double(b)); % both inputs should be double since R2020b
-            
+
             % check RMS Error
             rawResiduals = mdl.Residuals.Raw;
             fitErrorNitrate = sqrt(sum(rawResiduals.*rawResiduals)/size(absorbanceCorNitrate, 2));
@@ -274,12 +274,12 @@ if (~isempty(idNoDef))
             profNitrateQc(idL) = g_decArgo_qcStrMissing;
          end
       end
-      
+
    else
       fprintf('RTQC_WARNING: Float #%d Cycle #%d: the ''fitlm'' function is not available in your Matlab configuration - unable to perform ''RMS Error'' part of NITRATE RTQC specific test (Test #59)\n', ...
          a_floatNum, a_cyNum);
    end
-   
+
    % update NITRATE_QC
    o_profNitrateQc(idNoDef) = profNitrateQc;
 end
