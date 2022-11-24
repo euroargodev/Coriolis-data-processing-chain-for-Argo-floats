@@ -90,6 +90,9 @@ global g_decArgo_phaseParkDrift;
 % array to store ko sensor states
 global g_decArgo_koSensorState;
 
+% sensor list
+global g_decArgo_sensorList;
+
 
 % output parameters initialization
 o_cyProfPhaseList = [];
@@ -534,6 +537,13 @@ if (~isempty(a_tabSensors))
                case {0, 2}
                   % CTD (mean & raw)
                   
+                  if (~ismember(0, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 0);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -593,6 +603,13 @@ if (~isempty(a_tabSensors))
                   
                case {1}
                   % CTD (stDev & median)
+                  
+                  if (~ismember(0, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 0);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -655,6 +672,13 @@ if (~isempty(a_tabSensors))
                   
                case {3, 5}
                   % OXYGEN (mean & raw)
+                  
+                  if (~ismember(1, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 1);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -719,6 +743,13 @@ if (~isempty(a_tabSensors))
                   
                case {4}
                   % OXYGEN (stDev & median)
+                  
+                  if (~ismember(1, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 1);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -786,6 +817,13 @@ if (~isempty(a_tabSensors))
                case {9, 11}
                   % ECO3 (mean & raw)
                   
+                  if (~ismember(3, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 3);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -850,6 +888,13 @@ if (~isempty(a_tabSensors))
                   
                case {10}
                   % ECO3 (stDev & median)
+                  
+                  if (~ismember(3, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 3);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -916,6 +961,13 @@ if (~isempty(a_tabSensors))
                   
                case {12, 14}
                   % OCR (mean & raw)
+                  
+                  if (~ismember(2, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 2);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -985,6 +1037,13 @@ if (~isempty(a_tabSensors))
                   
                case {13}
                   % OCR (stDev & median)
+                  
+                  if (~ismember(2, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 2);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -1058,6 +1117,13 @@ if (~isempty(a_tabSensors))
                case {15, 17}
                   % FLNTU (mean & raw)
                   
+                  if (~ismember(4, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 4);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -1118,6 +1184,13 @@ if (~isempty(a_tabSensors))
                case {16}
                   % FLNTU (stDev & median)
                   
+                  if (~ismember(4, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 4);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -1177,6 +1250,13 @@ if (~isempty(a_tabSensors))
                case {18, 20}
                   % cROVER (mean & raw)
                   
+                  if (~ismember(5, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 5);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -1233,6 +1313,13 @@ if (~isempty(a_tabSensors))
                case {19}
                   % cRover (stDev & median)
                   
+                  if (~ismember(5, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 5);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -1284,6 +1371,13 @@ if (~isempty(a_tabSensors))
                   
                case {21, 23}
                   % SUNA (mean & raw)
+                  
+                  if (~ismember(6, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 6);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -1341,6 +1435,13 @@ if (~isempty(a_tabSensors))
                case {22}
                   % SUNA (stDev & median)
                   
+                  if (~ismember(6, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 6);
+                     continue;
+                  end
+                  
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
@@ -1392,6 +1493,13 @@ if (~isempty(a_tabSensors))
                   
                case {24, 25}
                   % SUNA (APF)
+                  
+                  if (~ismember(6, g_decArgo_sensorList))
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                        sensorDataType, 6);
+                     continue;
+                  end
                   
                   % first item bit number
                   firstBit = 1;
@@ -1484,6 +1592,16 @@ if (~isempty(a_tabSensors))
                continue;
             end
             
+            % sensor type
+            sensorType = tabSensors(idMes, 2);
+
+            if (~ismember(sensorType, g_decArgo_sensorList))
+               fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor TECH packet received (for sensor #%d which is not mounted on the float) => ignoring packet data\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  sensorType);
+               continue;
+            end
+            
             % message data frame
             msgData = tabSensors(idMes, 3:end);
             
@@ -1512,9 +1630,6 @@ if (~isempty(a_tabSensors))
             nbMeasAscZ4 = values(15);
             nbMeasAscZ5 = values(16);
             sensorState = values(17);
-            
-            % sensor type
-            sensorType = tabSensors(idMes, 2);
             
             if (a_procLevel == 0)
                g_decArgo_250TypeReceivedData = [g_decArgo_250TypeReceivedData; ...
