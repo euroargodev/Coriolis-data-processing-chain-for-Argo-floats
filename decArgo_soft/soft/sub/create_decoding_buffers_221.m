@@ -455,7 +455,8 @@ for cyNum = cyNumList
          elseif (tabDeep(idRankCy) == 0)
             deepStr = 'SURFACE CYCLE';
          end
-            
+         
+         delayedStr = 'UNKNOWN      ';
          if (tabDelayed(idRankCy) == 0)
             delayedStr = 'NOT DELAYED  ';
          elseif (tabDelayed(idRankCy) == 1)
