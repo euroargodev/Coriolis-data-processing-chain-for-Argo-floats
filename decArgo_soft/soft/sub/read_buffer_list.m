@@ -1,6 +1,5 @@
 % ------------------------------------------------------------------------------
-% Read, in the appropriate file, the rank of each file to be processed in
-% DM.
+% Read, in the appropriate file, the rank of each file to be processed in RT.
 %
 % SYNTAX :
 %  [o_fileNameList, o_fileRank, o_fileDate, o_fileCyNum, o_fileProfNum] = ...
@@ -30,6 +29,7 @@
 function [o_fileNameList, o_fileRank, o_fileDate, o_fileCyNum, o_fileProfNum] = ...
    read_buffer_list(a_floatNum, a_bufferFileDirName, a_fileDirName, a_allInfo)
 
+% output parameters initialization
 o_fileNameList = [];
 o_fileRank = [];
 o_fileDate = [];

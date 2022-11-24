@@ -3944,7 +3944,7 @@ switch (a_decoderId)
             o_paramResolution = '';
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
-            o_preCalibComment = '';
+            o_preCalibComment = 'Uncalibrated fluorescence from coloured dissolved organic matter sensor';
                         
          case {'CDOM'}
             

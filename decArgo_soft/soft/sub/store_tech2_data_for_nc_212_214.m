@@ -18,7 +18,7 @@
 % RELEASES :
 %   04/05/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle)
+function store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle, a_iceDetected)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -31,6 +31,13 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
+
+% to detect ICE mode activation
+global g_decArgo_7TypePacketReceivedCyNum;
+
+% list of cycle numbers and ice detection flag
+global g_decArgo_cycleNumListForIce;
+global g_decArgo_cycleNumListIceDetected;
 
 
 if (isempty(a_tabTech2))
@@ -98,7 +105,7 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 211];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(14+ID_OFFSET);
    
-   if (any(tabTech2((15:17)+ID_OFFSET) ~= 0))
+   if (any(tabTech2((15:17)+ID_OFFSET) ~= 0) && (a_iceDetected == 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 212];
       g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214(tabTech2(15+ID_OFFSET));
@@ -237,12 +244,15 @@ if (a_deepCycle == 1)
    
    % store ice detection flag reported in the tech msg only when ice detection
    % algorithm is enabled
-   [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-   iceUsed = get_config_value('CONFIG_IC00_', configNames, configValues);
-   if (~isempty(iceUsed) && (iceUsed ~= 0))
-      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-         g_decArgo_cycleNum 243];
-      g_decArgo_outputNcParamValue{end+1} = tabTech2(59+ID_OFFSET);
+   if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+      iceUsed = get_config_value('CONFIG_IC00_', configNames, configValues);
+      if (~isempty(iceUsed) && (iceUsed ~= 0))
+         
+         g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+            g_decArgo_cycleNum 1011];
+         g_decArgo_outputNcParamValue{end+1} = tabTech2(59+ID_OFFSET);
+      end
    end
    
 else

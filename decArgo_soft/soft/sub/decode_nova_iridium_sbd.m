@@ -438,7 +438,7 @@ for idBufFile = 1:length(tabAllSbdFileNames)
       
       delete(sbdFilePathName);
       if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabAllSbdFileNames{idBufFile}, 'buffer', 0);
+         remove_from_list_ir_sbd(tabAllSbdFileNames{idBufFile}, 'buffer', 0, 0);
       end
    end
 end
@@ -470,7 +470,7 @@ if (g_decArgo_realtimeFlag)
          % move the next file into the buffer directory
          if (g_decArgo_virtualBuff)
             add_to_list(mailFileNameList{idFileList(idF)}, 'buffer');
-            remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0);
+            remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 0);
          else
             move_files_ir_sbd(mailFileNameList(idFileList(idF)), ...
                g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
@@ -487,7 +487,7 @@ if (g_decArgo_realtimeFlag)
          g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
          if (attachmentFound == 0)
             if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1);
+               remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
             else
                move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
             end
@@ -535,7 +535,7 @@ if (g_decArgo_realtimeFlag)
       % move the processed files into the archive directory (and delete
       % the associated SBD files)
       if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabFileNames, 'buffer', 1);
+         remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
       else
          move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
       end
@@ -570,7 +570,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % move the next file into the buffer directory
    if (g_decArgo_virtualBuff)
       add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
-      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0);
+      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 0);
    else
       move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
    end
@@ -586,7 +586,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    if (attachmentFound == 0)
       if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1);
+         remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
       else
          move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
       end
@@ -675,7 +675,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % move the processed 'old' files into the archive directory (and delete the
       % associated SBD files)
       if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1);
+         remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1, 0);
       else
          move_files_ir_sbd(tabOldFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
       end
@@ -783,7 +783,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          % move the processed 'new' files into the archive directory (and delete
          % the associated SBD files)
          if (g_decArgo_virtualBuff)
-            remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1);
+            remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1, 0);
          else
             move_files_ir_sbd(tabNewFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
          end
@@ -837,7 +837,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             % move the processed 'new' files into the archive directory (and delete
             % the associated SBD files)
             if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(tabNewFileNames(1), 'buffer', 1);
+               remove_from_list_ir_sbd(tabNewFileNames(1), 'buffer', 1, 0);
             else
                move_files_ir_sbd(tabNewFileNames(1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
             end

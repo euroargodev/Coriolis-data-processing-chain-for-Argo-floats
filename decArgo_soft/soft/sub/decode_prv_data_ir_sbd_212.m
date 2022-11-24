@@ -3,27 +3,25 @@
 %
 % SYNTAX :
 %  [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-%    o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
-%    decode_prv_data_ir_sbd_212(a_tabData, a_tabDataDates, a_procLevel)
+%    o_floatParam1, o_floatParam2, o_cycleNumberList] = ...
+%    decode_prv_data_ir_sbd_212(a_tabData, a_tabDataDates, a_procLevel, a_cycleNumberList)
 %
 % INPUT PARAMETERS :
-%   a_tabData      : data frame to decode
-%   a_tabDataDates : corresponding dates of Iridium SBD
-%   a_procLevel    : processing level (0: collect only rough information, 1:
-%                    decode the data)
+%   a_tabData         : data frame to decode
+%   a_tabDataDates    : corresponding dates of Iridium SBD
+%   a_procLevel       : processing level (0: collect only rough information, 1:
+%                       decode the data)
+%   a_cycleNumberList : list of cycle to decode
 %
 % OUTPUT PARAMETERS :
-%   o_tabTech1     : decoded data of technical msg #1
-%   o_tabTech2     : decoded data of technical msg #2
-%   o_dataCTD      : decoded data from CTD
-%   o_evAct        : EV decoded data from hydraulic packet
-%   o_pumpAct      : pump decoded data from hydraulic packet
-%   o_floatParam1  : decoded parameter #1 data
-%   o_floatParam2  : decoded parameter #2 data
-%   o_irSessionNum : number of the Iridium session (1 or 2)
-%   o_deepCycle     : deep cycle flag (1 if it is a deep cycle 0 otherwise)
-%   o_resetDetected : reset detected flag (1 if a reset of the float has been
-%                     detected 0 otherwise)
+%   o_tabTech1        : decoded data of technical msg #1
+%   o_tabTech2        : decoded data of technical msg #2
+%   o_dataCTD         : decoded data from CTD
+%   o_evAct           : EV decoded data from hydraulic packet
+%   o_pumpAct         : pump decoded data from hydraulic packet
+%   o_floatParam1     : decoded parameter #1 data
+%   o_floatParam2     : decoded parameter #2 data
+%   o_cycleNumberList : list of decoded cycle numbers
 %
 % EXAMPLES :
 %
@@ -31,11 +29,11 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/05/2017 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-   o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
-   decode_prv_data_ir_sbd_212(a_tabData, a_tabDataDates, a_procLevel)
+   o_floatParam1, o_floatParam2, o_cycleNumberList] = ...
+   decode_prv_data_ir_sbd_212(a_tabData, a_tabDataDates, a_procLevel, a_cycleNumberList)
 
 % output parameters initialization
 o_tabTech1 = [];
@@ -45,21 +43,13 @@ o_evAct = [];
 o_pumpAct = [];
 o_floatParam1 = [];
 o_floatParam2 = [];
-o_irSessionNum = 0;
-o_deepCycle = [];
-o_resetDetected = 0;
+o_cycleNumberList = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
 
-% current cycle number
-global g_decArgo_cycleNum;
-
 % offset in cycle number (in case of reset of the float)
 global g_decArgo_cycleNumOffset;
-
-% last float reset date
-global g_decArgo_floatLastResetDate;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -69,6 +59,7 @@ global g_decArgo_tempCountsDef;
 global g_decArgo_salCountsDef;
 
 % arrays to store rough information on received data
+global g_decArgo_cycleList;
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
@@ -85,70 +76,22 @@ global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 
-% to detect ICE mode activation
+% to detect ICE mode activation (first cycle for which parameter packet #2 has
+% been received)
 global g_decArgo_7TypePacketReceivedCyNum;
 
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
 
-% clean multiple transmission
-% some messages could be transmitted more than once (Ex: 3901868 #13)
-if ((size(a_tabData, 1) ~= size(unique(a_tabData, 'rows'), 1)))
-   if (a_procLevel == 1)
-      fprintf('\n');
-   end
-   [uTabData, ia, ic] = unique(a_tabData, 'rows', 'stable');
-   for idMes = 1:size(uTabData, 1)
-      idEq = [];
-      for idM = 1:size(a_tabData, 1)
-         if (sum(uTabData(idMes, :) == a_tabData(idM, :)) == size(a_tabData, 2))
-            idEq = [idEq idM];
-         end
-      end
-      if (length(idEq) > 1)
-         % packet type
-         packType = a_tabData(idEq(1), 1);
-         if (packType == 0)
-            packetName = 'the technical packet #1';
-         elseif (packType == 4)
-            packetName = 'the technical packet #2';
-         elseif (packType == 5)
-            packetName = 'the parameter packet #1';
-         elseif (packType == 6)
-            packetName = 'the parameter packet #2';
-         elseif (packType == 7)
-            packetName = 'one hydraulic packet';
-         else
-            packetName = 'one data packet';
-         end
-         
-         if (a_procLevel == 1)
-            if (length(idEq) == 2)
-               fprintf('INFO: Float #%d: %s received twice => only one is decoded\n', ...
-                  g_decArgo_floatNum, ...
-                  packetName);
-            else
-               fprintf('INFO: Float #%d: %s received %d times => only one is decoded\n', ...
-                  g_decArgo_floatNum, ...
-                  packetName, ...
-                  length(idEq));
-            end
-         end
-      end
-   end
-   idDel = setdiff(1:size(a_tabData, 1), ia);
-   a_tabData = uTabData;
-   a_tabDataDates(idDel) = [];
-end
+% clean duplicates in received data
+[a_tabData, a_tabDataDates] = clean_duplicates_in_received_data_212_214( ...
+   a_tabData, a_tabDataDates, a_procLevel);
 
 % initialize information arrays
 init_counts;
 
 % decode packet data
-packetType7Received = 0;
-tabCycleNum = [];
-floatLastResetTime = [];
 for idMes = 1:size(a_tabData, 1)
    % packet type
    packType = a_tabData(idMes, 1);
@@ -161,11 +104,6 @@ for idMes = 1:size(a_tabData, 1)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 0
          % technical packet #1
-         
-         g_decArgo_0TypePacketReceivedFlag = 1;
-         if (a_procLevel == 0)
-            continue;
-         end
          
          % message data frame
          msgData = a_tabData(idMes, 2:end);
@@ -189,9 +127,23 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech1 = get_bits(firstBit, tabNbBits, msgData);
          
-         % store cycle number
-         tabCycleNum = [tabCycleNum tabTech1(1)];
+         cycleNum = tabTech1(1) + g_decArgo_cycleNumOffset;
          
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+         
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         g_decArgo_0TypePacketReceivedFlag(idFCy) = 1;
+
+         if (a_procLevel == 0)
+            continue;
+         end
+                  
          % compute the offset between float days and julian days
          startDateInfo = [tabTech1(5:7); tabTech1(9)];
          if (any(startDateInfo ~= 0))
@@ -249,7 +201,7 @@ for idMes = 1:size(a_tabData, 1)
             tabTech1(59)/10000)/60);
          
          o_tabTech1 = [o_tabTech1; ...
-            packType tabTech1(1:72)' floatTime gpsLocLon gpsLocLat sbdFileDate];
+            cycleNum packType tabTech1(1:72)' floatTime gpsLocLon gpsLocLat sbdFileDate];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 4
@@ -275,12 +227,41 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
                   
-         g_decArgo_4TypePacketReceivedFlag = 1;
-         g_decArgo_nbOf1Or8TypePacketExpected = tabTech2(3);
-         g_decArgo_nbOf2Or9TypePacketExpected = tabTech2(4);
-         g_decArgo_nbOf3Or10TypePacketExpected = tabTech2(5);
-         g_decArgo_nbOf13Or11TypePacketExpected = tabTech2(6);
-         g_decArgo_nbOf14Or12TypePacketExpected = tabTech2(7);
+         cycleNum = tabTech2(1) + g_decArgo_cycleNumOffset;
+
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+         
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         g_decArgo_4TypePacketReceivedFlag(idFCy) = 1;
+         
+         g_decArgo_nbOf1Or8TypePacketExpected(idFCy) = tabTech2(3);
+         g_decArgo_nbOf2Or9TypePacketExpected(idFCy) = tabTech2(4);
+         g_decArgo_nbOf3Or10TypePacketExpected(idFCy) = tabTech2(5);
+         g_decArgo_nbOf13Or11TypePacketExpected(idFCy) = tabTech2(6);
+         g_decArgo_nbOf14Or12TypePacketExpected(idFCy) = tabTech2(7);
+         
+         if (length(g_decArgo_nbOf1Or8TypePacketReceived) < idFCy)
+            g_decArgo_nbOf1Or8TypePacketReceived(idFCy) = 0;
+         end
+         if (length(g_decArgo_nbOf2Or9TypePacketReceived) < idFCy)
+            g_decArgo_nbOf2Or9TypePacketReceived(idFCy) = 0;
+         end
+         if (length(g_decArgo_nbOf3Or10TypePacketReceived) < idFCy)
+            g_decArgo_nbOf3Or10TypePacketReceived(idFCy) = 0;
+         end
+         if (length(g_decArgo_nbOf13Or11TypePacketReceived) < idFCy)
+            g_decArgo_nbOf13Or11TypePacketReceived(idFCy) = 0;
+         end
+         if (length(g_decArgo_nbOf14Or12TypePacketReceived) < idFCy)
+            g_decArgo_nbOf14Or12TypePacketReceived(idFCy) = 0;
+         end
+
          if (a_procLevel == 0)
             continue;
          end
@@ -295,45 +276,13 @@ for idMes = 1:size(a_tabData, 1)
          if ((tabTech2(21) > 1) && (tabTech2(30) == 5))
             tabTech2(28) = 256 - tabTech2(28);
          end
-         
-         % store last reset date
-         floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
-         
-         % store cycle number
-         tabCycleNum = [tabCycleNum tabTech2(1)];
-                  
-         % message and measurement counts are set to 0 for a surface cycle
-         if ((length(unique(tabTech2(3:6))) == 1) && (unique(tabTech2(3:6)) == 0))
-            o_deepCycle = 0;
-         else
-            o_deepCycle = 1;
-         end
 
          o_tabTech2 = [o_tabTech2; ...
-            packType tabTech2(1:59)' sbdFileDate];
+            cycleNum packType tabTech2(1:59)' sbdFileDate];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {1, 2, 3, 13, 14}
          % CTD packets
-         
-         if (packType == 1)
-            g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
-            o_deepCycle = 1;
-         elseif (packType == 2)
-            g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
-            o_deepCycle = 1;
-         elseif (packType == 3)
-            g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
-            o_deepCycle = 1;
-         elseif (packType == 13)
-            g_decArgo_nbOf13Or11TypePacketReceived = g_decArgo_nbOf13Or11TypePacketReceived + 1;
-            o_deepCycle = 1;
-         elseif (packType == 14)
-            g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
-         end
-         if (a_procLevel == 0)
-            continue;
-         end
          
          % message data frame
          msgData = a_tabData(idMes, 2:end);
@@ -349,16 +298,61 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          ctdValues = get_bits(firstBit, tabNbBits, msgData);
          
-         if (~any(ctdValues(2:end) ~= 0))
-            fprintf('WARNING: Float #%d, Cycle #%d: One empty packet type #%d has been received\n', ...
-               g_decArgo_floatNum, ctdValues(1), ...
-               packType);
+         cycleNum = ctdValues(1) + g_decArgo_cycleNumOffset;
+         
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         
+         if (packType == 1)
+            if (length(g_decArgo_nbOf1Or8TypePacketReceived) < idFCy)
+               g_decArgo_nbOf1Or8TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf1Or8TypePacketReceived(idFCy) = g_decArgo_nbOf1Or8TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 2)
+            if (length(g_decArgo_nbOf2Or9TypePacketReceived) < idFCy)
+               g_decArgo_nbOf2Or9TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf2Or9TypePacketReceived(idFCy) = g_decArgo_nbOf2Or9TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 3)
+            if (length(g_decArgo_nbOf3Or10TypePacketReceived) < idFCy)
+               g_decArgo_nbOf3Or10TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf3Or10TypePacketReceived(idFCy) = g_decArgo_nbOf3Or10TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 13)
+            if (length(g_decArgo_nbOf13Or11TypePacketReceived) < idFCy)
+               g_decArgo_nbOf13Or11TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf13Or11TypePacketReceived(idFCy) = g_decArgo_nbOf13Or11TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 14)
+            if (length(g_decArgo_nbOf14Or12TypePacketReceived) < idFCy)
+               g_decArgo_nbOf14Or12TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf14Or12TypePacketReceived(idFCy) = g_decArgo_nbOf14Or12TypePacketReceived(idFCy) + 1;
+            end
+         end
+         
+         if (a_procLevel == 0)
             continue;
          end
          
-         % store cycle number
-         tabCycleNum = [tabCycleNum ctdValues(1)];
-         
+         if (~any(ctdValues(2:end) ~= 0))
+            fprintf('WARNING: Float #%d, Cycle #%d: One empty packet type #%d has been received\n', ...
+               g_decArgo_floatNum, cycleNum, ...
+               packType);
+            continue;
+         end
+
          % there are 15 PTS measurements per packet
          
          % store raw data values
@@ -391,16 +385,11 @@ for idMes = 1:size(a_tabData, 1)
          end
          
          o_dataCTD = [o_dataCTD; ...
-            packType tabDate' ones(1, length(tabDate))*-1 tabPres' tabTemp' tabPsal'];
+            cycleNum packType ctdValues(1) tabDate' ones(1, length(tabDate))*-1 tabPres' tabTemp' tabPsal'];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 5
          % parameter packet #1
-         
-         g_decArgo_5TypePacketReceivedFlag = 1;
-         if (a_procLevel == 0)
-            continue;
-         end
          
          % message data frame
          msgData = a_tabData(idMes, 2:end);
@@ -415,34 +404,39 @@ for idMes = 1:size(a_tabData, 1)
             repmat(8, 1, 9) ...
             ];
          % get item bits
-         tabParam = get_bits(firstBit, tabNbBits, msgData);
+         tabParam1 = get_bits(firstBit, tabNbBits, msgData);
          
-         % store cycle number
-         tabCycleNum = [tabCycleNum tabParam(1)];
-                  
+         cycleNum = tabParam1(1) + g_decArgo_cycleNumOffset;
+         
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+         
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         g_decArgo_5TypePacketReceivedFlag(idFCy) = 1;
+
+         if (a_procLevel == 0)
+            continue;
+         end
+         
          % compute float time
-         floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
+         floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam1(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          
          % calibration coefficients
-         tabParam(66) = tabParam(66)/1000;
-         tabParam(67) = -tabParam(67);
+         tabParam1(66) = tabParam1(66)/1000;
+         tabParam1(67) = -tabParam1(67);
          
          o_floatParam1 = [o_floatParam1; ...
-            packType tabParam(1:67)' floatTime sbdFileDate];
+            cycleNum packType tabParam1(1:67)' floatTime sbdFileDate];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 7
          % parameter packet #2
          
-         g_decArgo_7TypePacketReceivedFlag = 1;
-         packetType7Received = 1;
-         if (a_procLevel == 0)
-            if (isempty(g_decArgo_7TypePacketReceivedCyNum))
-               g_decArgo_7TypePacketReceivedCyNum = -1;
-            end
-            continue;
-         end
-
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -455,30 +449,46 @@ for idMes = 1:size(a_tabData, 1)
             repmat(8, 1, 66) ...
             ];
          % get item bits
-         tabParam = get_bits(firstBit, tabNbBits, msgData);
-                  
-         % store cycle number
-         tabCycleNum = [tabCycleNum tabParam(1)];
+         tabParam2 = get_bits(firstBit, tabNbBits, msgData);
+         
+         cycleNum = tabParam2(1) + g_decArgo_cycleNumOffset;
+         
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+         
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         g_decArgo_7TypePacketReceivedFlag(idFCy) = 1;
+         
+         if (isempty(g_decArgo_7TypePacketReceivedCyNum) || ...
+               (g_decArgo_7TypePacketReceivedCyNum > cycleNum))
+            g_decArgo_7TypePacketReceivedCyNum = cycleNum;
+            fprintf('Float #%d, Cycle #%d: ICE mode activated at cycle %d\n', ...
+               g_decArgo_floatNum, cycleNum, ...
+               g_decArgo_7TypePacketReceivedCyNum);
+         end
+         
+         if (a_procLevel == 0)
+            continue;
+         end
                   
          % reference temperature (IC5)
-         tabParam(15) = twos_complement_dec_argo(tabParam(15), 16)/1000;
+         tabParam2(15) = twos_complement_dec_argo(tabParam2(15), 16)/1000;
          
          % compute float time
-         floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
+         floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam2(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
                   
          o_floatParam2 = [o_floatParam2; ...
-            packType tabParam(1:25)' floatTime sbdFileDate];         
+            cycleNum packType tabParam2(1:25)' floatTime sbdFileDate];         
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 6
          % EV or pump packet
          
-         if (a_procLevel == 0)
-            continue;
-         end
-         
-         g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
-
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -491,7 +501,29 @@ for idMes = 1:size(a_tabData, 1)
             repmat(8, 1, 2) ...
             ];
          % get item bits
-         tabHy = get_bits(firstBit, tabNbBits, msgData);
+         tabHy = get_bits(firstBit, tabNbBits, msgData);         
+         
+         cycleNum = tabHy(1) + g_decArgo_cycleNumOffset;
+         
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+         
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         
+         if (length(g_decArgo_nbOf6TypePacketReceived) < idFCy)
+            g_decArgo_nbOf6TypePacketReceived(idFCy) = 1;
+         else
+            g_decArgo_nbOf6TypePacketReceived(idFCy) = g_decArgo_nbOf6TypePacketReceived(idFCy) + 1;
+         end
+         
+         if (a_procLevel == 0)
+            continue;
+         end
          
          % there are 13 EV/pump actions per packet
          
@@ -510,10 +542,10 @@ for idMes = 1:size(a_tabData, 1)
                date = refDate+refTime/1440;
                if (type == 0)
                   o_evAct = [o_evAct; ...
-                     packType date pres duration];
+                     cycleNum packType tabHy(1) date pres duration];
                else
                   o_pumpAct = [o_pumpAct; ...
-                     packType date pres duration];
+                     cycleNum packType tabHy(1) date pres duration];
                end
             end
          end
@@ -525,46 +557,10 @@ for idMes = 1:size(a_tabData, 1)
    end
 end
 
+o_cycleNumberList = g_decArgo_cycleList;
+
 if (a_procLevel > 0)
-   
-   % manage float reset during mission at sea
-   if (~isempty(floatLastResetTime))
-      if (g_decArgo_floatLastResetDate < 0)
-         % initialization
-         g_decArgo_floatLastResetDate = floatLastResetTime;
-      else
-         if (floatLastResetTime ~= g_decArgo_floatLastResetDate)
-            fprintf('\nINFO: Float #%d: A reset has been performed at sea on %s\n', ...
-               g_decArgo_floatNum, julian_2_gregorian_dec_argo(floatLastResetTime));
-            
-            g_decArgo_floatLastResetDate = floatLastResetTime;
-            g_decArgo_cycleNumOffset = g_decArgo_cycleNum + 1;
-            o_resetDetected = 1;
-         end
-      end
-   end
-   
-   % set cycle number number
-   if (~isempty(tabCycleNum))
-      if (length(unique(tabCycleNum)) == 1)
-         
-         g_decArgo_cycleNum = unique(tabCycleNum) + g_decArgo_cycleNumOffset;
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
-         
-         if (packetType7Received)
-            if (isempty(g_decArgo_7TypePacketReceivedCyNum) || (g_decArgo_7TypePacketReceivedCyNum == -1))
-               g_decArgo_7TypePacketReceivedCyNum = g_decArgo_cycleNum;
-            end
-         end
-      else
-         fprintf('ERROR: Float #%d: Multiple cycle numbers have been received\n', ...
-            g_decArgo_floatNum);
-      end
-   else
-      fprintf('WARNING: Float #%d: Cycle number cannot be determined\n', ...
-         g_decArgo_floatNum);
-   end
-   
+
    % collect information on received packet types
    collect_received_packet_type_info;
 end
@@ -573,7 +569,7 @@ return;
 
 % ------------------------------------------------------------------------------
 % Initialize global flags and counters used to decide if a buffer is completed
-% or not.
+% or not for a given list of cycles.
 %
 % SYNTAX :
 %  init_counts
@@ -588,27 +584,17 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/05/2017 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function init_counts
 
-% current float WMO number
-global g_decArgo_floatNum;
-
-% float configuration
-global g_decArgo_floatConfig;
-
 % arrays to store rough information on received data
+global g_decArgo_cycleList;
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_7TypePacketExpectedFlag;
 global g_decArgo_7TypePacketReceivedFlag;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 global g_decArgo_nbOf1Or8TypePacketExpected;
 global g_decArgo_nbOf1Or8TypePacketReceived;
 global g_decArgo_nbOf2Or9TypePacketExpected;
@@ -621,71 +607,29 @@ global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 
-% to detect ICE mode activation
-global g_decArgo_7TypePacketReceivedCyNum;
-
 % initialize information arrays
-g_decArgo_0TypePacketReceivedFlag = 0;
-g_decArgo_4TypePacketReceivedFlag = 0;
-g_decArgo_5TypePacketReceivedFlag = 0;
-g_decArgo_7TypePacketReceivedFlag = 0;
-g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
-g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
-g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
-g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
-g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
-g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
-g_decArgo_nbOf1Or8TypePacketExpected = -1;
-g_decArgo_nbOf1Or8TypePacketReceived = 0;
-g_decArgo_nbOf2Or9TypePacketExpected = -1;
-g_decArgo_nbOf2Or9TypePacketReceived = 0;
-g_decArgo_nbOf3Or10TypePacketExpected = -1;
-g_decArgo_nbOf3Or10TypePacketReceived = 0;
-g_decArgo_nbOf13Or11TypePacketExpected = -1;
-g_decArgo_nbOf13Or11TypePacketReceived = 0;
-g_decArgo_nbOf14Or12TypePacketExpected = -1;
-g_decArgo_nbOf14Or12TypePacketReceived = 0;
-g_decArgo_nbOf6TypePacketReceived = 0;
-
-% items not concerned by this decoder
-g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
-g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
-g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
-
-% if one parameter packet #2 has been received, it means that the ICE mode is
-% activated
-if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
-   
-   % if IC0 = 0, the ice detection algorithm is disabled and parameter #2 packet
-   % (type 7) is not send by the float
-   
-   % retrieve configuration parameters
-   configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
-   configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
-   
-   % retrieve IC0 configuration value
-   idPos = find(strncmp('CONFIG_IC00_', configNames, length('CONFIG_IC00_')) == 1, 1);
-   if (~isempty(idPos))
-      iceNoSurfaceDelay = configValues(idPos, end);
-      if (iceNoSurfaceDelay == 0)
-         % ice detection algorithm is disabled => parameter packet #2 is not
-         % expected
-         g_decArgo_7TypePacketReceivedFlag = 1;
-      end
-   else
-      fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...
-         g_decArgo_floatNum);
-   end
-else
-   
-   % ICE mode is not activated => parameter packet #2 is not expected
-   g_decArgo_7TypePacketReceivedFlag = 1;
-end
+g_decArgo_cycleList = [];
+g_decArgo_0TypePacketReceivedFlag = [];
+g_decArgo_4TypePacketReceivedFlag = [];
+g_decArgo_5TypePacketReceivedFlag = [];
+g_decArgo_7TypePacketExpectedFlag = [];
+g_decArgo_7TypePacketReceivedFlag = [];
+g_decArgo_nbOf1Or8TypePacketExpected = [];
+g_decArgo_nbOf1Or8TypePacketReceived = [];
+g_decArgo_nbOf2Or9TypePacketExpected = [];
+g_decArgo_nbOf2Or9TypePacketReceived = [];
+g_decArgo_nbOf3Or10TypePacketExpected = [];
+g_decArgo_nbOf3Or10TypePacketReceived = [];
+g_decArgo_nbOf13Or11TypePacketExpected = [];
+g_decArgo_nbOf13Or11TypePacketReceived = [];
+g_decArgo_nbOf14Or12TypePacketExpected = [];
+g_decArgo_nbOf14Or12TypePacketReceived = [];
+g_decArgo_nbOf6TypePacketReceived = [];
 
 return;
 
 % ------------------------------------------------------------------------------
-% Collect information on received packet types
+% Collect information on received packet types.
 %
 % SYNTAX :
 %  collect_received_packet_type_info
@@ -700,24 +644,15 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   05/29/2017 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function collect_received_packet_type_info
-
-% current float WMO number
-global g_decArgo_floatNum;
-
-% float configuration
-global g_decArgo_floatConfig;
 
 % arrays to store rough information on received data
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
 global g_decArgo_7TypePacketReceivedFlag;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 global g_decArgo_nbOf1Or8TypePacketReceived;
 global g_decArgo_nbOf2Or9TypePacketReceived;
 global g_decArgo_nbOf3Or10TypePacketReceived;
@@ -732,10 +667,8 @@ global g_decArgo_nbAscentPacketsReceived;
 global g_decArgo_nbNearSurfacePacketsReceived;
 global g_decArgo_nbInAirPacketsReceived;
 global g_decArgo_nbHydraulicPacketsReceived;
-global g_decArgo_nbTechPacketsReceived;
 global g_decArgo_nbTech1PacketsReceived;
 global g_decArgo_nbTech2PacketsReceived;
-global g_decArgo_nbParmPacketsReceived;
 global g_decArgo_nbParm1PacketsReceived;
 global g_decArgo_nbParm2PacketsReceived;
 
@@ -749,26 +682,5 @@ g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
 g_decArgo_nbParm1PacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 g_decArgo_nbParm2PacketsReceived = g_decArgo_7TypePacketReceivedFlag;
-
-% if IC0 = 0, the ice detection algorithm is disabled and parameter #2 packet
-% (type 7) is not send by the float
-
-% retrieve configuration parameters
-configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
-configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
-
-% retrieve IC0 configuration value
-idPos = find(strncmp('CONFIG_IC00_', configNames, length('CONFIG_IC00_')) == 1, 1);
-if (~isempty(idPos))
-   iceNoSurfaceDelay = configValues(idPos, end);
-   if (iceNoSurfaceDelay == 0)
-      % ice detection algorithm is disabled => parameter packet #2 is not
-      % expected
-      g_decArgo_nbParm2PacketsReceived = -1;
-   end
-else
-   fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...
-      g_decArgo_floatNum);
-end
 
 return;

@@ -10,7 +10,7 @@
 %    o_nearSurfC1PhaseDoxy, o_nearSurfC2PhaseDoxy, o_nearSurfTempDoxy, ...
 %    o_inAirDate, o_inAirTransDate, o_inAirPres, o_inAirTemp, o_inAirSal, ...
 %    o_inAirC1PhaseDoxy, o_inAirC2PhaseDoxy, o_inAirTempDoxy] = ...
-%    create_prv_profile_213_214(a_dataCTDO, a_refDay)
+%    create_prv_profile_214(a_dataCTDO, a_refDay)
 %
 % INPUT PARAMETERS :
 %   a_dataCTDO : decoded data of the CTDO sensor
@@ -54,7 +54,7 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/07/2017 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_descProfDate, o_descProfPres, o_descProfTemp, o_descProfSal, ...
    o_descProfC1PhaseDoxy, o_descProfC2PhaseDoxy, o_descProfTempDoxy, ...
@@ -64,7 +64,7 @@ function [o_descProfDate, o_descProfPres, o_descProfTemp, o_descProfSal, ...
    o_nearSurfC1PhaseDoxy, o_nearSurfC2PhaseDoxy, o_nearSurfTempDoxy, ...
    o_inAirDate, o_inAirTransDate, o_inAirPres, o_inAirTemp, o_inAirSal, ...
    o_inAirC1PhaseDoxy, o_inAirC2PhaseDoxy, o_inAirTempDoxy] = ...
-   create_prv_profile_213_214(a_dataCTDO, a_refDay)
+   create_prv_profile_214(a_dataCTDO, a_refDay)
 
 % output parameters initialization
 o_descProfDate = [];
@@ -121,7 +121,7 @@ inAirSampPeriodSeconds = get_config_value('CONFIG_MC30', configNames, configValu
 for type = [8 10 11 12]
    idForType = find(a_dataCTDO(:, 1) == type);
    for idP = 1:length(idForType)
-      data = a_dataCTDO(idForType(idP), 2:end);
+      data = a_dataCTDO(idForType(idP), 3:end);
       for idMeas = 1:7
          date = g_decArgo_dateDef;
          dateTrans = 0;

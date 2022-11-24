@@ -58,6 +58,10 @@ global g_decArgo_ncDateDef;
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
 
+% list of cycle numbers and ice detection flag
+global g_decArgo_cycleNumListForIce;
+global g_decArgo_cycleNumListIceDetected;
+
 
 % when the transmission failed, only one mail file without attachment can be
 % received (Ex: 6903177 #3 and #11); these cycles have not been processed (since
@@ -191,20 +195,49 @@ end
 
 % assign cycle start time of the current cycle to the TET of the previous cycle
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
-for idCy = 1:length(tabCyNum)
-   cycleNum = tabCyNum(idCy);
-   
-   idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-   idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
-   if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
-      idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
-      if (~isempty(idCyPrec))
-         idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
-         if (~isempty(idF2))
-            
-            measStruct = create_one_meas_float_time(g_MC_TET, ...
-               a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
-            a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+if (isempty(g_decArgo_cycleNumListForIce))
+   for idCy = 1:length(tabCyNum)
+      cycleNum = tabCyNum(idCy);
+      
+      idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+      idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
+      if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
+         idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
+         if (~isempty(idCyPrec))
+            idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
+            if (~isempty(idF2))
+               
+               measStruct = create_one_meas_float_time(g_MC_TET, ...
+                  a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+               a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+            end
+         end
+      end
+   end
+else
+   % ICE floats
+   for idCy = 1:length(tabCyNum)
+      cycleNum = tabCyNum(idCy);
+      
+      idFCy = find(g_decArgo_cycleNumListForIce == cycleNum-1);
+      if (~isempty(idFCy))
+         if (g_decArgo_cycleNumListIceDetected(idFCy) == 1)
+            continue;
+         end
+      end
+      
+      idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+      idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
+      if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
+         idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
+         if (~isempty(idCyPrec))
+            idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
+            if (~isempty(idF2))
+               
+               measStruct = create_one_meas_float_time(g_MC_TET, ...
+                  a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+               a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+            end
          end
       end
    end

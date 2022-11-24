@@ -85,7 +85,7 @@ if (g_decArgo_virtualBuff)
                % move the mail file to the archive directory
                mailFileName = tabFileName{idToDel(idD)};
                fprintf('DEC_INFO: Ignoring duplicated mail file: %s\n', mailFileName);
-               remove_from_list_ir_sbd(mailFileName, 'spool', 0);
+               remove_from_list_ir_sbd(mailFileName, 'spool', 0, 0);
             end
          end
       end

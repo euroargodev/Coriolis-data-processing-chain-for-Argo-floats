@@ -556,7 +556,7 @@ if (a_procLevel > 0)
       end
    end
    
-   % set cycle number number
+   % set cycle number
    if (~isempty(tabCycleNum))
       if (length(unique(tabCycleNum)) == 1)
          

@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_parkDate, o_parkTransDate, ...
-%    o_parkPres, o_parkTemp, o_parkSal] = create_prv_drift_210_to_212(a_dataCTD, a_refDay)
+%    o_parkPres, o_parkTemp, o_parkSal] = create_prv_drift_212(a_dataCTD, a_refDay)
 %
 % INPUT PARAMETERS :
 %   a_dataCTD : decoded data of the CTD sensor
@@ -22,10 +22,10 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/04/2016 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_parkDate, o_parkTransDate, ...
-   o_parkPres, o_parkTemp, o_parkSal] = create_prv_drift_210_to_212(a_dataCTD, a_refDay)
+   o_parkPres, o_parkTemp, o_parkSal] = create_prv_drift_212(a_dataCTD, a_refDay)
 
 % output parameters initialization
 o_parkDate = [];
@@ -53,27 +53,27 @@ driftSampPeriodHours = get_config_value('CONFIG_MC09_', configNames, configValue
 
 idDrift = find(a_dataCTD(:, 1) == 2);
 for idP = 1:length(idDrift)
-   data = a_dataCTD(idDrift(idP), :);
+   data = a_dataCTD(idDrift(idP), 3:end);
    for idMeas = 1:15
       if (idMeas == 1)
-         data(idMeas+1) = data(idMeas+1) + a_refDay;
-         data(idMeas+1+15) = 1;
+         data(idMeas) = data(idMeas) + a_refDay;
+         data(idMeas+15) = 1;
       else
-         if ~((data(idMeas+1+15*2) == g_decArgo_presDef) && ...
-               (data(idMeas+1+15*3) == g_decArgo_tempDef) && ...
-               (data(idMeas+1+15*4) == g_decArgo_salDef))
-            data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
-            data(idMeas+1+15) = 0;
+         if ~((data(idMeas+15*2) == g_decArgo_presDef) && ...
+               (data(idMeas+15*3) == g_decArgo_tempDef) && ...
+               (data(idMeas+15*4) == g_decArgo_salDef))
+            data(idMeas) = data(idMeas-1) + driftSampPeriodHours/24;
+            data(idMeas+15) = 0;
          else
             break;
          end
       end
       
-      o_parkDate = [o_parkDate; data(idMeas+1)];
-      o_parkTransDate = [o_parkTransDate; data(idMeas+1+15)];
-      o_parkPres = [o_parkPres; data(idMeas+1+15*2)];
-      o_parkTemp = [o_parkTemp; data(idMeas+1+15*3)];
-      o_parkSal = [o_parkSal; data(idMeas+1+15*4)];
+      o_parkDate = [o_parkDate; data(idMeas)];
+      o_parkTransDate = [o_parkTransDate; data(idMeas+15)];
+      o_parkPres = [o_parkPres; data(idMeas+15*2)];
+      o_parkTemp = [o_parkTemp; data(idMeas+15*3)];
+      o_parkSal = [o_parkSal; data(idMeas+15*4)];
    end
 end
 

@@ -27,6 +27,7 @@ function init_float_config_prv_ir_sbd_212(a_launchDate)
 % g_decArgo_floatConfig.STATIC.VALUES
 
 % configuration used to store parameter message contents
+% g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES
 % g_decArgo_floatConfig.DYNAMIC_TMP.DATES
 % g_decArgo_floatConfig.DYNAMIC_TMP.NAMES
 % g_decArgo_floatConfig.DYNAMIC_TMP.VALUES
@@ -65,6 +66,10 @@ g_decArgo_rtOffsetInfo = [];
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% ICE float firmware
+global g_decArgo_floatFirmware;
+g_decArgo_floatFirmware = '';
+
 
 % create static configuration names
 configNames1 = [];
@@ -100,6 +105,10 @@ end
 
 % read meta-data file
 metaData = loadjson(jsonInputFileName);
+
+if (isfield(metaData, 'FIRMWARE_VERSION'))
+   g_decArgo_floatFirmware = strtrim(metaData.FIRMWARE_VERSION);
+end
 
 % fill the configuration values
 configValues1 = [];
@@ -225,6 +234,7 @@ g_decArgo_floatConfig.DYNAMIC.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC.VALUES = configValues2;
 g_decArgo_floatConfig.USE.CYCLE = [];
 g_decArgo_floatConfig.USE.CONFIG = [];
+g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES = -1;
 g_decArgo_floatConfig.DYNAMIC_TMP.DATES = a_launchDate;
 g_decArgo_floatConfig.DYNAMIC_TMP.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;

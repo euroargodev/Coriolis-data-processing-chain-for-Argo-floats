@@ -3,10 +3,11 @@
 % packet.
 %
 % SYNTAX :
-%  update_float_config_ir_sbd_212_214(a_floatParam)
+%  update_float_config_ir_sbd_212_214(a_floatParam, a_cycleNum)
 %
 % INPUT PARAMETERS :
 %   a_floatParam : parameter packet decoded data
+%   a_cycleNum   : associated cycle number
 %
 % OUTPUT PARAMETERS :
 %
@@ -16,9 +17,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/05/2017 - RNU - creation
+%   10/17/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function update_float_config_ir_sbd_212_214(a_floatParam)
+function update_float_config_ir_sbd_212_214(a_floatParam, a_cycleNum)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -277,10 +278,11 @@ if (~isnan(driftDepthIncrement) && (driftDepthIncrement ~= 0))
 end
 
 % update float configuration
+g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES = [g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES a_cycleNum];
 if (~isempty(floatParam1))
-g_decArgo_floatConfig.DYNAMIC_TMP.DATES = [g_decArgo_floatConfig.DYNAMIC_TMP.DATES floatParam1(end-1)];
+   g_decArgo_floatConfig.DYNAMIC_TMP.DATES = [g_decArgo_floatConfig.DYNAMIC_TMP.DATES floatParam1(end-1)];
 else
-g_decArgo_floatConfig.DYNAMIC_TMP.DATES = [g_decArgo_floatConfig.DYNAMIC_TMP.DATES floatParam2(end-1)];
+   g_decArgo_floatConfig.DYNAMIC_TMP.DATES = [g_decArgo_floatConfig.DYNAMIC_TMP.DATES floatParam2(end-1)];
 end
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = [g_decArgo_floatConfig.DYNAMIC_TMP.VALUES newConfig];
 

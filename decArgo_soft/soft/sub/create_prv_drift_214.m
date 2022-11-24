@@ -5,7 +5,7 @@
 %  [o_parkDate, o_parkTransDate, ...
 %    o_parkPres, o_parkTemp, o_parkSal, ...
 %    o_parkC1PhaseDoxy, o_parkC2PhaseDoxy, o_parkTempDoxy] = ...
-%    create_prv_drift_206_to_208_213_214(a_dataCTDO, a_refDay, a_decoderId)
+%    create_prv_drift_214(a_dataCTDO, a_refDay, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataCTDO  : CTDO decoded data
@@ -28,12 +28,12 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/03/2015 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_parkDate, o_parkTransDate, ...
    o_parkPres, o_parkTemp, o_parkSal, ...
    o_parkC1PhaseDoxy, o_parkC2PhaseDoxy, o_parkTempDoxy] = ...
-   create_prv_drift_206_to_208_213_214(a_dataCTDO, a_refDay, a_decoderId)
+   create_prv_drift_214(a_dataCTDO, a_refDay)
 
 % output parameters initialization
 o_parkDate = [];
@@ -44,9 +44,6 @@ o_parkSal = [];
 o_parkC1PhaseDoxy = [];
 o_parkC2PhaseDoxy = [];
 o_parkTempDoxy = [];
-
-% current float WMO number
-global g_decArgo_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
@@ -64,53 +61,38 @@ if (isempty(a_dataCTDO))
 end
 
 % retrieve the drift sampling period from the configuration
-driftSampPeriodHours = [];
-% select drift measurements
-idDrift = [];
 [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-switch (a_decoderId)
-   case {206, 207, 208} % Provor-DO Iridium 5.71 & 5.7 & 5.72
-      driftSampPeriodHours = get_config_value('CONFIG_PM06', configNames, configValues);
-      idDrift = find(a_dataCTDO(:, 1) == 2);
-   case {213, 214} 
-      % Provor-ARN-DO Iridium
-      % Provor-ARN-DO-Ice Iridium
-      driftSampPeriodHours = get_config_value('CONFIG_MC09_', configNames, configValues);
-      idDrift = find(a_dataCTDO(:, 1) == 9);
-   otherwise
-      fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve drfit sampling period for decoderId #%d\n', ...
-         g_decArgo_floatNum, ...
-         a_decoderId);
-end
+driftSampPeriodHours = get_config_value('CONFIG_MC09_', configNames, configValues);
 
+idDrift = find(a_dataCTDO(:, 1) == 9);
 for idP = 1:length(idDrift)
-   data = a_dataCTDO(idDrift(idP), :);
+   data = a_dataCTDO(idDrift(idP), 3:end);
    for idMeas = 1:7
       if (idMeas == 1)
-         data(idMeas+1) = data(idMeas+1) + a_refDay;
-         data(idMeas+1+7) = 1;
+         data(idMeas) = data(idMeas) + a_refDay;
+         data(idMeas+7) = 1;
       else
-         if ~((data(idMeas+1+7*2) == g_decArgo_presDef) && ...
-               (data(idMeas+1+7*3) == g_decArgo_tempDef) && ...
-               (data(idMeas+1+7*4) == g_decArgo_salDef) && ...
-               (data(idMeas+1+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
-               (data(idMeas+1+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
-               (data(idMeas+1+7*7) == g_decArgo_tempDoxyDef))
-            data(idMeas+1) = data(idMeas) + driftSampPeriodHours/24;
-            data(idMeas+1+7) = 0;
+         if ~((data(idMeas+7*2) == g_decArgo_presDef) && ...
+               (data(idMeas+7*3) == g_decArgo_tempDef) && ...
+               (data(idMeas+7*4) == g_decArgo_salDef) && ...
+               (data(idMeas+7*5) == g_decArgo_c1C2PhaseDoxyDef) && ...
+               (data(idMeas+7*6) == g_decArgo_c1C2PhaseDoxyDef) && ...
+               (data(idMeas+7*7) == g_decArgo_tempDoxyDef))
+            data(idMeas) = data(idMeas-1) + driftSampPeriodHours/24;
+            data(idMeas+7) = 0;
          else
             break;
          end
       end
       
-      o_parkDate = [o_parkDate; data(idMeas+1)];
-      o_parkTransDate = [o_parkTransDate; data(idMeas+1+7)];
-      o_parkPres = [o_parkPres; data(idMeas+1+7*2)];
-      o_parkTemp = [o_parkTemp; data(idMeas+1+7*3)];
-      o_parkSal = [o_parkSal; data(idMeas+1+7*4)];
-      o_parkC1PhaseDoxy = [o_parkC1PhaseDoxy; data(idMeas+1+7*5)];
-      o_parkC2PhaseDoxy = [o_parkC2PhaseDoxy; data(idMeas+1+7*6)];
-      o_parkTempDoxy = [o_parkTempDoxy; data(idMeas+1+7*7)];
+      o_parkDate = [o_parkDate; data(idMeas)];
+      o_parkTransDate = [o_parkTransDate; data(idMeas+7)];
+      o_parkPres = [o_parkPres; data(idMeas+7*2)];
+      o_parkTemp = [o_parkTemp; data(idMeas+7*3)];
+      o_parkSal = [o_parkSal; data(idMeas+7*4)];
+      o_parkC1PhaseDoxy = [o_parkC1PhaseDoxy; data(idMeas+7*5)];
+      o_parkC2PhaseDoxy = [o_parkC2PhaseDoxy; data(idMeas+7*6)];
+      o_parkTempDoxy = [o_parkTempDoxy; data(idMeas+7*7)];
    end
 end
 

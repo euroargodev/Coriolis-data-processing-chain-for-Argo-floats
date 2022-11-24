@@ -27,6 +27,7 @@ function init_float_config_prv_ir_sbd_214(a_launchDate)
 % g_decArgo_floatConfig.STATIC.VALUES
 
 % configuration used to store parameter message contents
+% g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES
 % g_decArgo_floatConfig.DYNAMIC_TMP.DATES
 % g_decArgo_floatConfig.DYNAMIC_TMP.NAMES
 % g_decArgo_floatConfig.DYNAMIC_TMP.VALUES
@@ -228,6 +229,7 @@ g_decArgo_floatConfig.DYNAMIC.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC.VALUES = configValues2;
 g_decArgo_floatConfig.USE.CYCLE = [];
 g_decArgo_floatConfig.USE.CONFIG = [];
+g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES = -1;
 g_decArgo_floatConfig.DYNAMIC_TMP.DATES = a_launchDate;
 g_decArgo_floatConfig.DYNAMIC_TMP.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;

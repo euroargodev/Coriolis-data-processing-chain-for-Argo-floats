@@ -2,7 +2,7 @@
 % Print dates in output CSV file.
 %
 % SYNTAX :
-%  print_dates_in_csv_file_210_to_214( ...
+%  print_dates_in_csv_file_212_214( ...
 %    a_cycleStartDate, ...
 %    a_descentToParkStartDate, ...
 %    a_firstStabDate, a_firstStabPres, ...
@@ -64,9 +64,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/04/2016 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_dates_in_csv_file_210_to_214( ...
+function print_dates_in_csv_file_212_214( ...
    a_cycleStartDate, ...
    a_descentToParkStartDate, ...
    a_firstStabDate, a_firstStabPres, ...
@@ -100,8 +100,6 @@ global g_decArgo_outputCsvFileId;
 % default values
 global g_decArgo_dateDef;
 global g_decArgo_presDef;
-global g_decArgo_presCountsDef;
-global g_decArgo_durationDef;
 
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
@@ -221,15 +219,15 @@ end
 
 % hydraulic actions
 for idP = 1:size(a_evAct, 1)
-   tabDate(end+1) = a_evAct(idP, 2) + g_decArgo_julD2FloatDayOffset;
+   tabDate(end+1) = a_evAct(idP, 3) + g_decArgo_julD2FloatDayOffset;
    tabLabel{end+1} = 'EV action';
-   tabPres(end+1) = a_evAct(idP, 3);
+   tabPres(end+1) = a_evAct(idP, 4);
 end
 
 for idP = 1:size(a_pumpAct, 1)
-   tabDate(end+1) = a_pumpAct(idP, 2) + g_decArgo_julD2FloatDayOffset;
+   tabDate(end+1) = a_pumpAct(idP, 3) + g_decArgo_julD2FloatDayOffset;
    tabLabel{end+1} = 'Pump action';
-   tabPres(end+1) = a_pumpAct(idP, 3);
+   tabPres(end+1) = a_pumpAct(idP, 4);
 end
    
 % sort the collected dates in chronological order

@@ -644,10 +644,18 @@
       "TECH_PARAM_DEC_ID" : "243",
       "TECH_PARAM_MSG_ID" : "59",
       "TECH_PARAM_MSG_LABEL" : "Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging)",
-      "TECH_PARAM_NAME" : "FLAG_IceDetected_NUMBER",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
       "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
    },
    "TECH_PARAM_82" :
+   {
+      "TECH_PARAM_DEC_ID" : "1011",
+      "TECH_PARAM_MSG_ID" : "59",
+      "TECH_PARAM_MSG_LABEL" : "Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging)",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceDetection_NUMBER",
+      "TECH_PARAM_DESCRIPTION" : "The ice detection flag reported by the float (0: no detection, 1: ISA detection, 2: satellite mask detection, 4: ascent hanging detection) - see float manual for details."
+   },
+   "TECH_PARAM_83" :
    {
       "TECH_PARAM_DEC_ID" : "1001",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -655,7 +663,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth)."
    },
-   "TECH_PARAM_83" :
+   "TECH_PARAM_84" :
    {
       "TECH_PARAM_DEC_ID" : "1002",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -663,7 +671,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the drift at park depth."
    },
-   "TECH_PARAM_84" :
+   "TECH_PARAM_85" :
    {
       "TECH_PARAM_DEC_ID" : "1003",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -671,7 +679,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface."
    },
-   "TECH_PARAM_85" :
+   "TECH_PARAM_86" :
    {
       "TECH_PARAM_DEC_ID" : "1004",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -679,7 +687,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_NearSurfaceIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the near surface measurement phase."
    },
-   "TECH_PARAM_86" :
+   "TECH_PARAM_87" :
    {
       "TECH_PARAM_DEC_ID" : "1005",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -687,7 +695,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_InAirIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the in air measurement phase."
    },
-   "TECH_PARAM_87" :
+   "TECH_PARAM_88" :
    {
       "TECH_PARAM_DEC_ID" : "1006",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -695,7 +703,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_HydraulicIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit hydraulic data recorded during the cycle."
    },
-   "TECH_PARAM_88" :
+   "TECH_PARAM_89" :
    {
       "TECH_PARAM_DEC_ID" : "1007",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -703,7 +711,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times technical message #1 has been received."
    },
-   "TECH_PARAM_89" :
+   "TECH_PARAM_90" :
    {
       "TECH_PARAM_DEC_ID" : "1008",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -711,7 +719,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times technical message #2 has been received."
    },
-   "TECH_PARAM_90" :
+   "TECH_PARAM_91" :
    {
       "TECH_PARAM_DEC_ID" : "1009",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -719,7 +727,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParameterMessage1Received_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times parameter message #1 has been received."
    },
-   "TECH_PARAM_91" :
+   "TECH_PARAM_92" :
    {
       "TECH_PARAM_DEC_ID" : "1010",
       "TECH_PARAM_MSG_ID" : "-1",

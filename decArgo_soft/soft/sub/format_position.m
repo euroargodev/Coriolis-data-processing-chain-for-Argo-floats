@@ -41,7 +41,7 @@ if ((a_longitude ~= g_decArgo_argosLonDef) && (a_latitude ~= g_decArgo_argosLatD
    a_longitude = abs(a_longitude);
    lonDeg = fix(a_longitude);
    lonMin = (a_longitude - lonDeg)*60;
-   o_longitudeStr = sprintf('%d ° %.3f %s', lonDeg, lonMin, lonStr);
+   o_longitudeStr = sprintf('%d deg %.3f %s', lonDeg, lonMin, lonStr);
    
    if (a_latitude < 0)
       latStr = 'S';
@@ -51,7 +51,7 @@ if ((a_longitude ~= g_decArgo_argosLonDef) && (a_latitude ~= g_decArgo_argosLatD
    a_latitude = abs(a_latitude);
    latDeg = fix(a_latitude);
    latMin = (a_latitude - latDeg)*60;
-   o_latitudeStr = sprintf('%d ° %.3f %s', latDeg, latMin, latStr);
+   o_latitudeStr = sprintf('%d deg %.3f %s', latDeg, latMin, latStr);
 end
 
 return;

@@ -68,15 +68,7 @@ switch (a_decoderId)
       update_float_config_ir_sbd_210_211_213(a_floatParam);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-   case {212, 214}
-      % Arvor-ARN-Ice Iridium
-      % Provor-ARN-DO-Ice Iridium
-      
-      update_float_config_ir_sbd_212_214(a_floatParam);
-      
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+            
    case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
       
       update_float_config_ir_sbd_215(a_floatParam);

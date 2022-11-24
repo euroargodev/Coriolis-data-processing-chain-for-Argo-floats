@@ -16,8 +16,8 @@
 %    o_firstGroundingDate, o_firstGroundingPres, ...
 %    o_secondGroundingDate, o_secondGroundingPres, ...
 %    o_eolStartDate, ...
-%    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres] = ...
-%    compute_prv_dates_210_to_214(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
+%    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, o_iceDetected] = ...
+%    compute_prv_dates_212_214(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
 %
 % INPUT PARAMETERS :
 %   a_tabTech1  : decoded data of technical msg #1
@@ -45,6 +45,10 @@
 %   o_eolStartDate             : EOL phase start date
 %   o_firstEmergencyAscentDate : first emergency ascent ascent date
 %   o_firstEmergencyAscentPres : first grounding pressure
+%   o_iceDetected              : ice detected value (-1: no information,
+%                                0: surfaced cycle, 1: ice detected, 2: no ice
+%                                detected but end of profile and transmission
+%                                session aborted because of ice algorithm)
 %
 % EXAMPLES :
 %
@@ -52,7 +56,7 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/04/2016 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_cycleStartDate, ...
    o_descentToParkStartDate, ...
@@ -68,8 +72,8 @@ function [o_cycleStartDate, ...
    o_firstGroundingDate, o_firstGroundingPres, ...
    o_secondGroundingDate, o_secondGroundingPres, ...
    o_eolStartDate, ...
-   o_firstEmergencyAscentDate, o_firstEmergencyAscentPres] = ...
-   compute_prv_dates_210_to_214(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
+   o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, o_iceDetected] = ...
+   compute_prv_dates_212_214(a_tabTech1, a_tabTech2, a_deepCycle, a_refDay)
 
 % output parameters initialization
 o_cycleStartDate = [];
@@ -91,6 +95,7 @@ o_secondGroundingPres = [];
 o_eolStartDate = [];
 o_firstEmergencyAscentDate = [];
 o_firstEmergencyAscentPres = [];
+o_iceDetected = -1;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -102,9 +107,22 @@ global g_decArgo_cycleNum;
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 
-% offset between float days and julian days
-global g_decArgo_julD2FloatDayOffset;
+% list of cycle numbers and ice detection flag
+global g_decArgo_cycleNumListForIce;
+global g_decArgo_cycleNumListIceDetected;
 
+% date of last ICE detection
+global g_decArgo_lastDetectionDate;
+
+
+if (a_deepCycle == 1)
+   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
+   if (isempty(idFCy))
+      idFCy = length(g_decArgo_cycleNumListForIce) + 1;
+   end
+   g_decArgo_cycleNumListForIce(idFCy) = g_decArgo_cycleNum;
+   g_decArgo_cycleNumListIceDetected(idFCy) = 0;
+end
 
 if (isempty(a_tabTech1) && isempty(a_tabTech1))
    return;
@@ -113,6 +131,92 @@ end
 ID_OFFSET = 1;
 
 cycleStartDateDay = g_decArgo_dateDef;
+
+% ice detection determination
+% technical message #1
+id1 = [];
+if (~isempty(a_tabTech1))
+   idF1 = find(a_tabTech1(:, 1) == 0);
+   if (length(idF1) == 1)
+      id1 = idF1(1);
+   end
+end
+% technical message #2
+id2 = [];
+if (~isempty(a_tabTech2))
+   idF2 = find(a_tabTech2(:, 1) == 4);
+   if (length(idF2) == 1)
+      id2 = idF2(1);
+   end
+end
+if (~isempty(id1) && ~isempty(id2))
+   gpsDate = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
+   iceDetectionFlag = a_tabTech2(id2, 59+ID_OFFSET);
+   if (iceDetectionFlag ~= 0)
+      % ice has been detected by the float
+      if (isempty(g_decArgo_lastDetectionDate) || (g_decArgo_lastDetectionDate < gpsDate))
+         g_decArgo_lastDetectionDate = gpsDate;
+      end
+      o_iceDetected = 1;
+   end
+   
+   % retrieve the IC0 configuration parameter
+   if (o_iceDetected == -1)
+      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+      ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
+      if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
+         o_iceDetected = 2;
+      else
+         o_iceDetected = 0;
+      end
+   end
+   
+   % check consitency with other information
+   gpsValidFix = a_tabTech1(id1, 61+ID_OFFSET);
+   gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
+   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
+      if (o_iceDetected == 0)
+         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %s\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, ...
+            iceDetectionFlag, gpsValidFix, gpsSessionDuration);
+      end
+   end
+elseif (~isempty(id1))
+   gpsDate = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
+   if (~isempty(g_decArgo_lastDetectionDate))
+      % retrieve the IC0 configuration parameter
+      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+      ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
+      if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
+         o_iceDetected = 2;
+      else
+         o_iceDetected = 0;
+      end
+   end
+   
+   % check consitency with other information
+   gpsValidFix = a_tabTech1(id1, 61+ID_OFFSET);
+   gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
+   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
+      if (o_iceDetected == 0)
+         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection: %d, GPS valid fix: %d, GPS session duration: %s\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, ...
+            o_iceDetected, gpsValidFix, gpsSessionDuration);
+      end
+   end
+elseif (~isempty(id2))
+   iceDetectionFlag = a_tabTech2(id2, 59+ID_OFFSET);
+   if (iceDetectionFlag ~= 0)
+      % ice has been detected by the float
+      o_iceDetected = 1;
+   end
+end
+
+% transmission session aborted during this cycle
+if (o_iceDetected ~= 0)
+   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
+   g_decArgo_cycleNumListIceDetected(idFCy) = 1;
+end
 
 % technical message #1
 idF1 = [];
@@ -132,7 +236,7 @@ elseif (length(idF1) == 1)
    if (a_deepCycle == 1)
       
       startDateInfo = [a_tabTech1(id, (5:7)+ID_OFFSET) a_tabTech1(id, 9+ID_OFFSET)];
-      if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
+      if (any(startDateInfo ~= 0))
          cycleStartDateDay = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, (5:7)+ID_OFFSET)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
          cycleStartHour = a_tabTech1(id, 9+ID_OFFSET);
          o_cycleStartDate = cycleStartDateDay + cycleStartHour/1440;
@@ -183,40 +287,56 @@ elseif (length(idF1) == 1)
             end
          end
       
-         transStartHour = a_tabTech1(id, 39+ID_OFFSET);
-         o_transStartDate = fix(o_gpsDate) +  transStartHour/1440;
-         if (o_transStartDate > o_gpsDate)
-            o_transStartDate = o_transStartDate - 1;
-         end
-         
-         % The transmission start date is provided by the float
-         % The ascend end date is considered at the crossing of the TC15 dbar
-         % threshold, after that the float waits 10 minutes before:
-         % 1- if IN AIR measurements are programmed:
-         %     + sampling NEAR SURFACE data (MC31 minutes)
-         %     + starting the final buoyancy acquisition (duration TC22 cseconds)
-         %     + sampling IN AIR data (MC31 minutes)
-         %     + starting transmission phase
-         % 2- if no IN AIR measurements are programmed:
-         %     + starting the final buoyancy acquisition (duration TC04 cseconds)
-         %     + starting transmission phase
-         
-         % retrieve IN AIR acquisition cycle periodicity
-         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-         inAirAcqPeriod = get_config_value('CONFIG_MC29_', configNames, configValues);
-         if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
+         if (o_iceDetected == 0)
+            transStartHour = a_tabTech1(id, 39+ID_OFFSET);
+            o_transStartDate = fix(o_gpsDate) +  transStartHour/1440;
+            if (o_transStartDate > o_gpsDate)
+               o_transStartDate = o_transStartDate - 1;
+            end
             
-            % cycle with IN AIR measurements
-            inAirAcqDurationMin = get_config_value('CONFIG_MC31_', configNames, configValues);
-            finalBuoyancyAcqSec = get_config_value('CONFIG_TC22_', configNames, configValues)/100;
+            % The transmission start date is provided by the float
+            % The ascend end date is considered at the crossing of the TC15 dbar
+            % threshold, after that the float waits 10 minutes before:
+            % 1- if IN AIR measurements are programmed:
+            %     + sampling NEAR SURFACE data (MC31 minutes)
+            %     + starting the final buoyancy acquisition (duration TC22 cseconds)
+            %     + sampling IN AIR data (MC31 minutes)
+            %     + starting transmission phase
+            % 2- if no IN AIR measurements are programmed:
+            %     + starting the final buoyancy acquisition (duration TC04 cseconds)
+            %     + starting transmission phase
             
-            o_ascentEndDate = o_transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - finalBuoyancyAcqSec/86400;
+            % retrieve IN AIR acquisition cycle periodicity
+            [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+            inAirAcqPeriod = get_config_value('CONFIG_MC29_', configNames, configValues);
+            if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
+               
+               % cycle with IN AIR measurements
+               inAirAcqDurationMin = get_config_value('CONFIG_MC31_', configNames, configValues);
+               finalBuoyancyAcqSec = get_config_value('CONFIG_TC22_', configNames, configValues)/100;
+               
+               o_ascentEndDate = o_transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - finalBuoyancyAcqSec/86400;
+            else
+               
+               % cycle without IN AIR measurements
+               finalBuoyancyAcqSec = get_config_value('CONFIG_TC04_', configNames, configValues)/100;
+               
+               o_ascentEndDate = o_transStartDate - 10/1440 - finalBuoyancyAcqSec/86400;
+            end
          else
             
-            % cycle without IN AIR measurements
-            finalBuoyancyAcqSec = get_config_value('CONFIG_TC04_', configNames, configValues)/100;
+            % we use "Transmission start time" a_tabTech1(id, 39+ID_OFFSET) as
+            % the AET
             
-            o_ascentEndDate = o_transStartDate - 10/1440 - finalBuoyancyAcqSec/86400;
+            % GPS date is float time at the moement of TECH packet creation
+            % GPS date is reliable (the day, month and year are provided) even
+            % if the float didn't surface
+            % we use it to compute AET
+            transStartHour = a_tabTech1(id, 39+ID_OFFSET);
+            o_ascentEndDate = fix(o_gpsDate) +  transStartHour/1440;
+            if (o_ascentEndDate > o_gpsDate)
+               o_ascentEndDate = o_ascentEndDate - 1;
+            end
          end
          
          ascentStartHour = a_tabTech1(id, 38+ID_OFFSET);

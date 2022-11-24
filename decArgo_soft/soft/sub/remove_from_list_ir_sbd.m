@@ -2,12 +2,14 @@
 % Remove a given item from a given virtual buffer list.
 %
 % SYNTAX :
-%  remove_from_list_ir_sbd(a_fileName, a_listName, a_updateXmlReportFlag)
+%  remove_from_list_ir_sbd(a_fileName, a_listName, ...
+%    a_updateXmlReportFlag, a_delayedDecoderFlag)
 %
 % INPUT PARAMETERS :
 %   a_fileName            : name of the file to be removed
 %   a_listName            : name of the virtual buffer list
 %   a_updateXmlReportFlag : update XML report flag
+%   a_delayedDecoderFlag  : 1 if delayed decoder, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -19,7 +21,8 @@
 % RELEASES :
 %   10/17/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function remove_from_list_ir_sbd(a_fileName, a_listName, a_updateXmlReportFlag)
+function remove_from_list_ir_sbd(a_fileName, a_listName, ...
+   a_updateXmlReportFlag, a_delayedDecoderFlag)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -65,8 +68,12 @@ for idFile = 1:length(fileNameList)
          g_decArgo_spoolFileList(idF) = [];
       else
          if (isempty(idF))
-            fprintf('BUFF_ERROR: Float #%d: remove_from_list_ir_sbd: cannot find ''%s'' in list ''%s''\n', ...
-               g_decArgo_floatNum, fileName, a_listName);
+            % for delayed decoders: if a mail is used in multiple buffers, it is
+            % removed from the spool buffer the first time it is used
+            if (~a_delayedDecoderFlag)
+               fprintf('BUFF_ERROR: Float #%d: remove_from_list_ir_sbd: cannot find ''%s'' in list ''%s''\n', ...
+                  g_decArgo_floatNum, fileName, a_listName);
+            end
          else
             fprintf('BUFF_ERROR: Float #%d: remove_from_list_ir_sbd: more than one ''%s'' in list ''%s''\n', ...
                g_decArgo_floatNum, fileName, a_listName);

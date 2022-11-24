@@ -2,7 +2,7 @@
 % Print hydraulic data in output CSV file.
 %
 % SYNTAX :
-%  print_hydraulic_data_in_csv_file_210_to_214(a_evAct, a_pumpAct)
+%  print_hydraulic_data_in_csv_file_212_214(a_evAct, a_pumpAct)
 %
 % INPUT PARAMETERS :
 %   a_evAct   : decoded hydraulic (EV) data
@@ -16,9 +16,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/04/2016 - RNU - creation
+%   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_hydraulic_data_in_csv_file_210_to_214(a_evAct, a_pumpAct)
+function print_hydraulic_data_in_csv_file_212_214(a_evAct, a_pumpAct)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -28,11 +28,6 @@ global g_decArgo_cycleNum;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
-
-% default values
-global g_decArgo_dateDef;
-global g_decArgo_presCountsDef;
-global g_decArgo_durationDef;
 
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
@@ -44,9 +39,9 @@ if (~isempty(a_evAct))
    evPres = [];
    evDur = [];
    for idP = 1:size(a_evAct, 1)
-      evDate = [evDate; a_evAct(idP, 2) + g_decArgo_julD2FloatDayOffset];
-      evPres = [evPres; a_evAct(idP, 3)];
-      evDur = [evDur; a_evAct(idP, 4)];
+      evDate = [evDate; a_evAct(idP, 3) + g_decArgo_julD2FloatDayOffset];
+      evPres = [evPres; a_evAct(idP, 4)];
+      evDur = [evDur; a_evAct(idP, 5)];
    end
    
    % sort the actions in chronological order
@@ -74,9 +69,9 @@ if (~isempty(a_pumpAct))
    pumpPres = [];
    pumpDur = [];
    for idP = 1:size(a_pumpAct, 1)
-      pumpDate = [pumpDate; a_pumpAct(idP, 2) + g_decArgo_julD2FloatDayOffset];
-      pumpPres = [pumpPres; a_pumpAct(idP, 3)];
-      pumpDur = [pumpDur; a_pumpAct(idP, 4)];
+      pumpDate = [pumpDate; a_pumpAct(idP, 3) + g_decArgo_julD2FloatDayOffset];
+      pumpPres = [pumpPres; a_pumpAct(idP, 4)];
+      pumpDur = [pumpDur; a_pumpAct(idP, 5)];
    end
    
    % sort the actions in chronological order
