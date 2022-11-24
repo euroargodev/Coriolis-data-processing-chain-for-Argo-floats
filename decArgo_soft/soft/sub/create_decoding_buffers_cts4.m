@@ -841,12 +841,6 @@ switch (a_sensorDataType)
       o_dataDesc = 'OCR stdev&media,';
    case 14
       o_dataDesc = 'OCR raw';
-   case 15
-      o_dataDesc = 'SEAFET mean';
-   case 16
-      o_dataDesc = 'SEAFET stdev&media,';
-   case 17
-      o_dataDesc = 'SEAFET raw';
    case 18
       o_dataDesc = 'cROVER mean';
    case 19
@@ -863,6 +857,12 @@ switch (a_sensorDataType)
       o_dataDesc = 'SUNA APF frame';
    case 25
       o_dataDesc = 'SUNA APF frame 2';
+   case 46
+      o_dataDesc = 'SEAFET mean';
+   case 47
+      o_dataDesc = 'SEAFET stdev&media,';
+   case 48
+      o_dataDesc = 'SEAFET raw';
    otherwise
       fprintf('WARNING: Nothing done yet in get_data_desc for sensorDataType #%d\n', ...
          a_sensorDataType);
@@ -1023,13 +1023,13 @@ switch (a_sensorType)
    case 2
       o_sensorDataTypeList = 12:14;
    case 3
-      if (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
+      if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
          o_sensorDataTypeList = 6:8;
-      else
+      elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
          o_sensorDataTypeList = 9:11;
       end
    case 4
-      o_sensorDataTypeList = 15:17;
+      o_sensorDataTypeList = 46:48;
    case 5
       o_sensorDataTypeList = 18:20;
    case 6

@@ -35,11 +35,26 @@ global g_decArgo_janFirst1950InMatlab;
 % float configuration
 global g_decArgo_floatConfig;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+
 
 % cycle, prof and phase number coded in the packet
 cycleNum = a_tabTech(a_dataIndex, 4);
 profNum = a_tabTech(a_dataIndex, 5);
 phaseNum = a_tabTech(a_dataIndex, 8);
+
+% set the current reference day
+refDay = a_refDay;
+if (~isempty(g_decArgo_julD2FloatDayOffset))
+   idF = find((g_decArgo_julD2FloatDayOffset(:, 1) == cycleNum) & ...
+      (g_decArgo_julD2FloatDayOffset(:, 2) == profNum));
+   if (~isempty(idF))
+      refDay = g_decArgo_julD2FloatDayOffset(idF, 3);
+   else
+      refDay = g_decArgo_julD2FloatDayOffset(end, 3);
+   end
+end
 
 % TECH: GENERAL INFORMATION
 
@@ -80,7 +95,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 7)/60);
 
 % Cycle start date
-cycleStartDate = a_refDay + a_tabTech(a_dataIndex, 6) + a_tabTech(a_dataIndex, 7)/1440;
+cycleStartDate = refDay + a_tabTech(a_dataIndex, 6) + a_tabTech(a_dataIndex, 7)/1440;
 g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    253 cycleNum profNum phaseNum 106];
 g_decArgo_outputNcParamValue{end+1} = ...
@@ -152,7 +167,7 @@ if (any(a_tabTech(a_dataIndex, 18:20) ~= 0))
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 19)/60);
    
    % Buoyancy inversion start date
-   buoyancyRedStartDate = a_refDay + a_tabTech(a_dataIndex, 18) + a_tabTech(a_dataIndex, 19)/1440;
+   buoyancyRedStartDate = refDay + a_tabTech(a_dataIndex, 18) + a_tabTech(a_dataIndex, 19)/1440;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       253 cycleNum profNum phaseNum 119];
    g_decArgo_outputNcParamValue{end+1} = ...
@@ -305,7 +320,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 53)/60);
 
 % Start buoyancy acquisition date
-buoyancyStartDate = a_refDay + a_tabTech(a_dataIndex, 52) + a_tabTech(a_dataIndex, 53)/1440;
+buoyancyStartDate = refDay + a_tabTech(a_dataIndex, 52) + a_tabTech(a_dataIndex, 53)/1440;
 g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    253 cycleNum profNum phaseNum 147];
 g_decArgo_outputNcParamValue{end+1} = ...
@@ -364,7 +379,7 @@ if (a_tabTech(a_dataIndex, 60) == 1)
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 63)/60);
    
    % Hanging date
-   buoyancyStartDate = a_refDay + a_tabTech(a_dataIndex, 62) + a_tabTech(a_dataIndex, 63)/1440;
+   buoyancyStartDate = refDay + a_tabTech(a_dataIndex, 62) + a_tabTech(a_dataIndex, 63)/1440;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       253 cycleNum profNum phaseNum 156];
    g_decArgo_outputNcParamValue{end+1} = ...
@@ -401,7 +416,7 @@ if (a_tabTech(a_dataIndex, 64) > 0)
    g_decArgo_outputNcParamValue{end+1} = a_tabTech(a_dataIndex, 68);
 
    % First emergency ascent date
-   firstEmergencyAscentDate = a_refDay + a_tabTech(a_dataIndex, 68) + a_tabTech(a_dataIndex, 65)/1440;
+   firstEmergencyAscentDate = refDay + a_tabTech(a_dataIndex, 68) + a_tabTech(a_dataIndex, 65)/1440;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       253 cycleNum profNum phaseNum 162];
    g_decArgo_outputNcParamValue{end+1} = ...

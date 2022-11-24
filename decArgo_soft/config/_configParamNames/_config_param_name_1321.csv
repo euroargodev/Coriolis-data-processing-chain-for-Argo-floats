@@ -61,3 +61,33 @@ CONFIG_PROFILE05;n/a;n/a;CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>Samp
 CONFIG_PROFILE06;n/a;n/a;CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SamplingPeriod_seconds;Sampling period for the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode.
 CONFIG_MEASURE01;n/a;n/a;CONFIG_<short_sensor_name>InAirMeasurementNumberOfSamples_NUMBER;"Number of measurements sampled before and after inflating the air bladder for the <short_sensor_name> sensor during the ""in air measurement"" phase."
 CONFIG_MEASURE02;n/a;n/a;CONFIG_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds;"Sampling period for the <short_sensor_name> sensor during the ""in air measurement"" phase."
+      CONFIG_PX_1_6_0_0_3;n/a;n/a;CONFIG_SunaApfFrameOutputPixelBegin_NUMBER;The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels.
+      CONFIG_PX_1_6_0_0_4;n/a;n/a;CONFIG_SunaApfFrameOutputPixelEnd_NUMBER;The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels.
+      CONFIG_PX_1_5_0_0_1;n/a;n/a;CONFIG_CroverInPumpedStream_LOGICAL;Bio Argo sensors can either be mounted separately to the Ctd or mounted within the Ctd pumped stream. Values: Yes = 1, No = 0
+      CONFIG_PX_1_5_0_0_6;n/a;n/a;CONFIG_CroverBeamAttenuationWavelength_nm;Wavelength of Crover for  Beam attenuation measurements (in nanometer)
+      CONFIG_PX_1_5_0_0_0;n/a;n/a;CONFIG_CroverVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_1_3_0_0_2;n/a;n/a;CONFIG_EcoBetaAngle_angularDeg;Angle of Beta measurements  (in degrees) 
+      CONFIG_PX_3_3_0_1_1;n/a;n/a;CONFIG_EcoBetaBandwidth1_nm;Bandwidth of EcoBeta  #1measurements (in nanometer).
+      CONFIG_PX_3_3_0_1_0;n/a;n/a;CONFIG_EcoBetaWavelength1_nm;Wavelength of Eco Beta  #1 measurements (in nanometer).
+      CONFIG_PX_2_3_1_0_3;n/a;n/a;CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm;Bandwidth of Eco for emission of Cdom fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_1_0_1;n/a;n/a;CONFIG_EcoCdomFluorescenceEmissionWavelength_nm;Wavelength of Eco for emission of Cdom fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_1_0_2;n/a;n/a;CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm;Bandwidth of Eco for excitation of Cdom fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_1_0_0;n/a;n/a;CONFIG_EcoCdomFluorescenceExcitationWavelength_nm;Wavelength of Eco for excitation of Cdom fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_0_0_3;n/a;n/a;CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm;Bandwidth of Eco for emission of Chla fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_0_0_1;n/a;n/a;CONFIG_EcoChlaFluorescenceEmissionWavelength_nm;Wavelength of Eco for emission of Chla fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_0_0_2;n/a;n/a;CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm;Bandwidth of Eco for excitation of Chla fluorescence measurements (in nanometer)
+      CONFIG_PX_2_3_0_0_0;n/a;n/a;CONFIG_EcoChlaFluorescenceExcitationWavelength_nm;Wavelength of Eco for excitation of Chla fluorescence measurements (in nanometer)
+      CONFIG_PX_1_3_0_0_0;n/a;n/a;CONFIG_EcoVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_3_2_0_1_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth1_nm;Bandwidth of Ocr DownIrr #1 measurements (in nanometer).
+      CONFIG_PX_3_2_0_2_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth2_nm;Bandwidth of Ocr DownIrr #2 measurements (in nanometer).
+      CONFIG_PX_3_2_0_3_3;n/a;n/a;CONFIG_OcrDownIrrBandwidth3_nm;Bandwidth of Ocr DownIrr #3 measurements (in nanometer).
+      CONFIG_PX_3_2_0_1_2;n/a;n/a;CONFIG_OcrDownIrrWavelength1_nm;Wavelength of Ocr DownIrr #1measurements (in nanometer).
+      CONFIG_PX_3_2_0_2_2;n/a;n/a;CONFIG_OcrDownIrrWavelength2_nm;Wavelength of Ocr DownIrr #2 measurements (in nanometer).
+      CONFIG_PX_3_2_0_3_2;n/a;n/a;CONFIG_OcrDownIrrWavelength3_nm;Wavelength of Ocr DownIrr #3 measurements (in nanometer).
+      CONFIG_PX_1_2_0_0_0;n/a;n/a;CONFIG_OcrVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_1_1_0_0_0;n/a;n/a;CONFIG_OptodeVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_1_1_0_0_7;n/a;n/a;CONFIG_OptodeMeasurementsInAir_LOGICAL;Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0
+      CONFIG_PX_1_1_0_0_8;n/a;n/a;CONFIG_OptodeTimePressureOffset_seconds;Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer
+      CONFIG_PX_1_6_0_0_0;n/a;n/a;CONFIG_SunaVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_1_6_0_0_5;n/a;n/a;CONFIG_SunaWithScoop_LOGICAL;Suna with scoop which redirects flow through Suna optics
+      CONFIG_PX_1_4_0_0_0;n/a;n/a;CONFIG_SfetVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure

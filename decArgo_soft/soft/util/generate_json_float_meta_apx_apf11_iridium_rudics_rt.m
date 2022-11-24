@@ -6,13 +6,15 @@
 %  generate_json_float_meta_apx_apf11_iridium_rudics_rt()
 %
 % INPUT PARAMETERS :
-%   'floatMetaFileName' : meta-data file exported from Coriolis data base
-%   'floatListFileName' : list of concerned floats
-%   'configDirName'     : directory of float configuration at launch files
-%   'outputJsonDirName' : directory of individual json float meta-data files
-%   'outputCsvDirName'  : directory to store the CSV file (when DB update is needed)
-%   'outputLogDirName'  : directory of log files
-%   'xmlReportDirName'  : directory of xml files
+%   'floatMetaFileName'  : meta-data file exported from Coriolis data base
+%   'sensorListFileName' : list of sensors mounted on floats
+%   'floatListFileName'  : list of concerned floats
+%   'calibFileName'      : list of calibration coefficient
+%   'configDirName'      : directory of float configuration at launch files
+%   'outputJsonDirName'  : directory of individual json float meta-data files
+%   'outputCsvDirName'   : directory to store the CSV file (when DB update is needed)
+%   'outputLogDirName'   : directory of log files
+%   'xmlReportDirName'   : directory of xml files
 %
 % OUTPUT PARAMETERS :
 %
@@ -28,7 +30,9 @@ function generate_json_float_meta_apx_apf11_iridium_rudics_rt(varargin)
 
 % input parameters
 global g_cogj_floatMetaFileName;
+global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
+global g_cogj_calibFileName;
 global g_cogj_configDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputCsvDirName;
@@ -79,7 +83,9 @@ try
       rudicsFlag = 0;
       generate_json_float_meta_apx_apf11_iridium_(...
          g_cogj_floatMetaFileName, ...
+         g_cogj_sensorListFileName, ...
          g_cogj_floatListFileName, ...
+         g_cogj_calibFileName, ...
          g_cogj_configDirName, ...
          g_cogj_outputJsonDirName, ...
          g_cogj_outputCsvDirName, ...
@@ -187,7 +193,9 @@ o_inputError = 0;
 o_logLines = [];
 
 global g_cogj_floatMetaFileName;
+global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
+global g_cogj_calibFileName;
 global g_cogj_configDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputCsvDirName;
@@ -195,7 +203,9 @@ global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
 
 g_cogj_floatMetaFileName = [];
+g_cogj_sensorListFileName = [];
 g_cogj_floatListFileName = [];
+g_cogj_calibFileName = [];
 g_cogj_configDirName = [];
 g_cogj_outputJsonDirName = [];
 g_cogj_outputCsvDirName = [];
@@ -222,8 +232,12 @@ if (~isempty(a_varargin))
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatMetaFileName'))
             g_cogj_floatMetaFileName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'sensorListFileName'))
+            g_cogj_sensorListFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'floatListFileName'))
             g_cogj_floatListFileName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'calibFileName'))
+            g_cogj_calibFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'configDirName'))
             g_cogj_configDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputJsonDirName'))
@@ -247,8 +261,18 @@ if (isempty(g_cogj_floatMetaFileName))
    o_inputError = 1;
    return
 end
+if (isempty(g_cogj_sensorListFileName))
+   o_logLines{end+1} = sprintf('ERROR: ''sensorListFileName'' input parameter is mandatory\n');
+   o_inputError = 1;
+   return
+end
 if (isempty(g_cogj_floatListFileName))
    o_logLines{end+1} = sprintf('ERROR: ''floatListFileName'' input parameter is mandatory\n');
+   o_inputError = 1;
+   return
+end
+if (isempty(g_cogj_calibFileName))
+   o_logLines{end+1} = sprintf('ERROR: ''calibFileName'' input parameter is mandatory\n');
    o_inputError = 1;
    return
 end
@@ -280,7 +304,9 @@ end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('floatMetaFileName: %s\n', g_cogj_floatMetaFileName);
+o_logLines{end+1} = sprintf('sensorListFileName: %s\n', g_cogj_sensorListFileName);
 o_logLines{end+1} = sprintf('floatListFileName: %s\n', g_cogj_floatListFileName);
+o_logLines{end+1} = sprintf('calibFileName    : %s\n', g_cogj_calibFileName);
 o_logLines{end+1} = sprintf('configDirName    : %s\n', g_cogj_configDirName);
 o_logLines{end+1} = sprintf('outputJsonDirName: %s\n', g_cogj_outputJsonDirName);
 o_logLines{end+1} = sprintf('outputCsvDirName : %s\n', g_cogj_outputCsvDirName);

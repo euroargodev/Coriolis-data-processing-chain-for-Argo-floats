@@ -42,6 +42,9 @@ if (~isempty(g_decArgo_rtOffsetInfo))
             ((a_coreDataFlag == 0) && (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c')))
          
          for idF = 1:length(g_decArgo_rtOffsetInfo.param)
+            if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, 'DOXY')) % DOXY RT adjustment is performed in compute_rt_adjusted_param
+               continue
+            end
             if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, profParam.name) == 1)
                tabDate = g_decArgo_rtOffsetInfo.date{idF};
                if (a_profile.date ~= g_decArgo_dateDef)

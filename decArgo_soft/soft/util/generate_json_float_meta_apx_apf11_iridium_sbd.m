@@ -20,18 +20,19 @@
 function generate_json_float_meta_apx_apf11_iridium_sbd()
 
 % meta-data file exported from Coriolis data base
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_Iridium-SBD_from_VB_20180410.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\float_metadata.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\Apex_APF11_Norway_DB_export.txt';
+
+% list of sensors mounted on floats
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
 % list of concerned floats
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.10.1.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.11.1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\apex_float_list.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.11.3_norway.txt';
+
+% calibration coefficient file
+CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_CalibCoef\calib_coef.txt';
 
 % directory of configuration files at launch
-% CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';
-CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\ConfigAtLaunch\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -56,7 +57,9 @@ fprintf('Log file: %s\n', logFileName);
 rudicsFlag = 0;
 generate_json_float_meta_apx_apf11_iridium_(...
    FLOAT_META_FILE_NAME, ...
+   SENSOR_LIST_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
+   CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
    OUTPUT_DIR_NAME, ...
    DIR_CSV_FILE, ...

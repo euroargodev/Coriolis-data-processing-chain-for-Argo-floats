@@ -3,12 +3,14 @@
 %
 % SYNTAX :
 %  [o_configNum] = config_exists_ir_sbd_argos( ...
-%    a_newConfig, a_configNum, a_configVal)
+%    a_newConfig, a_configNum, a_configVal, a_configIgnoreIds)
 %
 % INPUT PARAMETERS :
-%   a_newConfig : the new configuration to check
-%   a_configNum : existing configuration numbers
-%   a_configVal : existing configuration values
+%   a_newConfig       : the new configuration to check
+%   a_configNum       : existing configuration numbers
+%   a_configVal       : existing configuration values
+%   a_configIgnoreIds : existing configuration parameters that should be ignored
+%                       in the configuration comparison
 %
 % OUTPUT PARAMETERS :
 %   o_configNum : number of the configuration found (-1 if it does not exist)
@@ -22,10 +24,14 @@
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_configNum] = config_exists_ir_sbd_argos( ...
-   a_newConfig, a_configNum, a_configVal)
+   a_newConfig, a_configNum, a_configVal, a_configIgnoreIds)
 
 % output parameters initialization
 o_configNum = -1;
+
+% remove Ids to be ignored in the comparison
+a_newConfig(a_configIgnoreIds) = [];
+a_configVal(a_configIgnoreIds, :) = [];
 
 
 % look for the new configuration in the existing ones

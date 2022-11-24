@@ -44,11 +44,12 @@ switch (a_decoderId)
       % PROVOR APMT
       o_comment = 'PRES variable resolutions depend on measurement codes';
       
-   case {201, 202, 203, 215, 216}
+   case {201, 202, 203, 215, 216, 218}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
       % Arvor-Deep-Ice Iridium 5.65
+      % Arvor-Deep-Ice Iridium 5.66
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
    case {205, 204, 210, 211, 212, 213, 214, 217}

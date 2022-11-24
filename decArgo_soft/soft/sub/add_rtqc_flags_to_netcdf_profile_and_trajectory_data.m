@@ -150,7 +150,7 @@ if (test_to_perform('TEST023_DEEP_FLOAT', testToPerformList) == 1)
    % set the deep float flag
    idVal = find(strcmp('TEST023_DEEP_FLOAT_FLAG', testMetaData) == 1);
    if (~isempty(idVal))
-      if (ismember(a_decoderId, [201 202 203 215 216]))
+      if (ismember(a_decoderId, [201 202 203 215 216 218]))
          testMetaData{idVal+1} = 1;
       else
          testMetaData{idVal+1} = 0;

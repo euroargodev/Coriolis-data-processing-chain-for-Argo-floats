@@ -778,7 +778,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218}
       
       % Arvor deep 4000
       % Arvor deep 3500
@@ -792,6 +792,7 @@ switch (a_decoderId)
       % Arvor deep 4000 with "Near Surface" & "In Air" measurements
       % Arvor-Deep-Ice Iridium 5.65
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-Deep-Ice Iridium 5.66
       
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
@@ -1171,6 +1172,17 @@ switch (a_decoderId)
          if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
             missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      missionConfigName(idDel) = [];
+      missionConfigValue(idDel, :) = [];
+      
+      % clean piston configuration parameters from output Argo configuration
+      configNameToRemove = [{'CONFIG_PistonPark_COUNT'} {'CONFIG_PistonProfile_COUNT'}];
+      idDel = [];
+      for idC = 1:length(missionConfigName)
+         if (~isempty(find(strcmp(missionConfigName{idC}, configNameToRemove) == 1, 1)))
             idDel = [idDel; idC];
          end
       end

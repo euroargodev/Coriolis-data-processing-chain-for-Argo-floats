@@ -78,8 +78,10 @@ for idFile = 1:length(logFileList)
    end
 end
 
-[tabJuldUtc, idSort] = sort([tabRtcOffset.clockOffsetJuldUtc]);
-o_clockOffset.clockOffsetJuldUtc = tabJuldUtc;
-o_clockOffset.clockOffsetValue = [tabRtcOffset(idSort).clockOffsetValue];
+if (~isempty(tabRtcOffset))
+   [tabJuldUtc, idSort] = sort([tabRtcOffset.clockOffsetJuldUtc]);
+   o_clockOffset.clockOffsetJuldUtc = tabJuldUtc;
+   o_clockOffset.clockOffsetValue = [tabRtcOffset(idSort).clockOffsetValue];
+end
 
 return

@@ -34,6 +34,9 @@
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 %   09/25/2018 - RNU - V 1.3: added input parameters 'floatWmo', 'inputDirName'
 %                             and 'outputDirName'
+%   07/08/2019 - RNU - V 1.4: for NetCDF-4 files, use 'defVarFill' function
+%                             instead of 'putAtt' to define the fill Value of a
+%                             variable
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile(varargin)
 
@@ -46,15 +49,17 @@ global g_cocm_netCDF4FlagForMultiProf;
 g_cocm_netCDF4FlagForMultiProf = 1;
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = '';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
 DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
 % DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % top directory of output NetCDF files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -82,7 +87,7 @@ PRINT_CSV_FLAG = 0;
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.3';
+g_cocm_ncCreateMergedProfileVersion = '1.4';
 
 % current float and cycle identification
 global g_cocm_floatNum;

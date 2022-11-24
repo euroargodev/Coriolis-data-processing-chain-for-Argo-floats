@@ -356,8 +356,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = update_output_cycle_number_ir_sbd( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
 
-   % perform CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatSurfData.launchDate);
+   % perform DOXY, CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatSurfData.launchDate, 1);
 
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistency

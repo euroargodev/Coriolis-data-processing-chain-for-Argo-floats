@@ -24,7 +24,7 @@
 %   a_delay               : DELAI parameter (in hours)
 %   a_refDay              : reference day (day of the first descent)
 %   a_floatSurfData       : float surface data structure
-%   a_floatEndDate      : end date of the data to process
+%   a_floatEndDate        : end date of the data to process
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : decoded profiles
@@ -1272,6 +1272,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
+   % perform DOXY adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatSurfData.launchDate, 0);
+
    % set TET as cycle start time of the next cycle (only for post 2013 firmware)
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_argos( ...
       o_tabTrajNMeas, o_tabTrajNCycle);

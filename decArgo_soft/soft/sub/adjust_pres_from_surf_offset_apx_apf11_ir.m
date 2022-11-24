@@ -4,11 +4,11 @@
 %
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-%    o_profCtdCp, o_profCtdCpH, ...
+%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
 %    o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
 %    adjust_pres_from_surf_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profCtdCp, a_profCtdCpH, ...
+%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
 %    a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 %
 % INPUT PARAMETERS :
@@ -19,6 +19,8 @@
 %   a_profDo         : input O2 data
 %   a_profCtdCp      : input CTD_CP data
 %   a_profCtdCpH     : input CTD_CP_H data
+%   a_profFlbbCd     : input FLBB_CD data
+%   a_profOcr504I    : input OCR_504I data
 %   a_grounding      : input grounding data
 %   a_buoyancy       : input buoyancy data
 %   a_cycleTimeData  : input cycle timings data
@@ -32,6 +34,8 @@
 %   o_profDo         : output O2 data
 %   o_profCtdCp      : output CTD_CP data
 %   o_profCtdCpH     : output CTD_CP_H data
+%   o_profFlbbCd     : output FLBB_CD data
+%   o_profOcr504I    : output OCR_504I data
 %   o_grounding      : output grounding data
 %   o_buoyancy       : output buoyancy data
 %   o_cycleTimeData  : output cycle timings data
@@ -46,11 +50,11 @@
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-   o_profCtdCp, o_profCtdCpH, ...
+   o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
    o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
    adjust_pres_from_surf_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profCtdCp, a_profCtdCpH, ...
+   a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
    a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 
 % output parameters initialization
@@ -62,6 +66,8 @@ o_profCtdPtsh = a_profCtdPtsh;
 o_profDo = a_profDo;
 o_profCtdCp = a_profCtdCp;
 o_profCtdCpH = a_profCtdCpH;
+o_profFlbbCd = a_profFlbbCd;
+o_profOcr504I = a_profOcr504I;
 o_grounding = a_grounding;
 o_buoyancy = a_buoyancy;
 o_cycleTimeData = a_cycleTimeData;
@@ -106,6 +112,8 @@ if (~isempty(presOffset))
    o_profDo = adjust_profile(o_profDo, presOffset);
    o_profCtdCp = adjust_profile(o_profCtdCp, presOffset);
    o_profCtdCpH = adjust_profile(o_profCtdCpH, presOffset);
+   o_profFlbbCd = adjust_profile(o_profFlbbCd, presOffset);
+   o_profOcr504I = adjust_profile(o_profOcr504I, presOffset);
    
    for idG =1:size(o_grounding, 1)
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);

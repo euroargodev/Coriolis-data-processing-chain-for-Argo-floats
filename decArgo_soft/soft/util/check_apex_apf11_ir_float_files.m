@@ -24,6 +24,8 @@ function check_apex_apf11_ir_float_files(varargin)
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.10.1.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.11.1.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_2.11.3_norway.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % output directory
 DIR_WORK = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SBD\CHECK_DECODING\WORK\';
@@ -157,104 +159,104 @@ for idFloat = 1:nbFloats
 
    fprintf('\nTELEDYNE PROCESSING\n');
    
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % Teledyne processing
-   
-   % create Teledyne directory
-   teledyneDir = [floatOutputDir '\TELEDYNE\'];
-   if ~(exist(teledyneDir, 'dir') == 7)
-      mkdir(teledyneDir);
-   end
-   
-   % convert SBD files to float files
-   floatFileDir = [teledyneDir '\FLOAT_FILES\'];
-   if ~(exist(floatFileDir, 'dir') == 7)
-      mkdir(floatFileDir);
-      
-      fprintf('Duplicating SBD files to Teledyne code dir ...\n');
-      tic;
-      sbdFiles = dir([sbdFileDir '*.sbd']);
-      for iFile = 1:length(sbdFiles)
-         copy_file([sbdFileDir sbdFiles(iFile).name], DIR_TELEDYNE_CODE);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d SBD files duplicated (%.1f sec)\n', length(sbdFiles), ellapsedTime);
-      
-      fprintf('Converting SBD files to Teledyne float files ...\n');
-      tic;
-      cmd = ['cd ' DIR_TELEDYNE_CODE '& python stitch.py *.sbd'];
-      [status, cmdOut] = system(cmd);
-      if (status ~= 0)
-         fprintf('Anomaly while using stitch.py\n');
-      end
-      ellapsedTime = toc;
-      fprintf('=> done (%.1f sec)\n', ellapsedTime);
-      
-      fprintf('Retrieving float files to Teledyne float files dir ...\n');
-      tic;
-      floatFiles = [dir([DIR_TELEDYNE_CODE '*.txt']); dir([DIR_TELEDYNE_CODE '*.gz'])];
-      for iFile = 1:length(floatFiles)
-         move_file([DIR_TELEDYNE_CODE floatFiles(iFile).name], floatFileDir);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d float files retrieved (%.1f sec)\n', length(floatFiles), ellapsedTime);
-      
-      % remove processed SBD files
-      if (exist([DIR_TELEDYNE_CODE '\archive\'], 'dir') == 7)
-         rmdir([DIR_TELEDYNE_CODE '\archive\'], 's');
-      end
-      % remove processed SBD files
-      sbdFiles = dir([DIR_TELEDYNE_CODE '*.sbd']);
-      for iFile = 1:length(sbdFiles)
-         delete([DIR_TELEDYNE_CODE sbdFiles(iFile).name]);
-      end
-      
-      % uncompress .gz files
-      fprintf('Uncompressing float files in Teledyne float files dir ...\n');
-      tic;
-      gzFiles = dir([floatFileDir '*.gz']);
-      for iFile = 1:length(gzFiles)
-         gzFilePathName = [floatFileDir gzFiles(iFile).name];
-         gunzip(gzFilePathName);
-         delete(gzFilePathName);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d float files uncompressed (%.1f sec)\n', length(gzFiles), ellapsedTime);
-   else
-      fprintf('Teledyne float files exist\n');
-   end
-   
-   % created .csv files from bianry float files
-   asciiFileDir = [floatFileDir '\ASCII\'];
-   if ~(exist(asciiFileDir, 'dir') == 7)
-      mkdir(asciiFileDir);
-      
-      fprintf('Converting Teledyne binary float files to CSV ones ...\n');
-      tic;
-      binFiles = dir([floatFileDir '*.bin']);
-      for iFile = 1:length(binFiles)
-         move_file([floatFileDir binFiles(iFile).name], DIR_TELEDYNE_CODE);
-         cmd = ['cd ' DIR_TELEDYNE_CODE '& python apf11dec.py ' [DIR_TELEDYNE_CODE binFiles(iFile).name]];
-         [status, cmdOut] = system(cmd);
-         if (status ~= 0)
-            fprintf('Anomaly while applying apf11dec.py to %s\n', binFiles(iFile).name);
-         end
-         move_file([DIR_TELEDYNE_CODE binFiles(iFile).name], floatFileDir);
-         move_file([DIR_TELEDYNE_CODE regexprep(binFiles(iFile).name, '.bin', '.csv')], asciiFileDir);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d binary files converted (%.1f sec)\n', length(binFiles), ellapsedTime);
-      
-      % duplicate .txt files
-      txtFiles = dir([floatFileDir '*.txt']);
-      for iFile = 1:length(txtFiles)
-         copy_file([floatFileDir txtFiles(iFile).name], asciiFileDir);
-      end
-   else
-      fprintf('Teledyne ASCII float files exist\n');
-   end
-   
-   fprintf('\nARGO DECODER PROCESSING\n');
+   %    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %    % Teledyne processing
+   %
+   %    % create Teledyne directory
+   %    teledyneDir = [floatOutputDir '\TELEDYNE\'];
+   %    if ~(exist(teledyneDir, 'dir') == 7)
+   %       mkdir(teledyneDir);
+   %    end
+   %
+   %    % convert SBD files to float files
+   %    floatFileDir = [teledyneDir '\FLOAT_FILES\'];
+   %    if ~(exist(floatFileDir, 'dir') == 7)
+   %       mkdir(floatFileDir);
+   %
+   %       fprintf('Duplicating SBD files to Teledyne code dir ...\n');
+   %       tic;
+   %       sbdFiles = dir([sbdFileDir '*.sbd']);
+   %       for iFile = 1:length(sbdFiles)
+   %          copy_file([sbdFileDir sbdFiles(iFile).name], DIR_TELEDYNE_CODE);
+   %       end
+   %       ellapsedTime = toc;
+   %       fprintf('=> %d SBD files duplicated (%.1f sec)\n', length(sbdFiles), ellapsedTime);
+   %
+   %       fprintf('Converting SBD files to Teledyne float files ...\n');
+   %       tic;
+   %       cmd = ['cd ' DIR_TELEDYNE_CODE '& python stitch.py *.sbd'];
+   %       [status, cmdOut] = system(cmd);
+   %       if (status ~= 0)
+   %          fprintf('Anomaly while using stitch.py\n');
+   %       end
+   %       ellapsedTime = toc;
+   %       fprintf('=> done (%.1f sec)\n', ellapsedTime);
+   %
+   %       fprintf('Retrieving float files to Teledyne float files dir ...\n');
+   %       tic;
+   %       floatFiles = [dir([DIR_TELEDYNE_CODE '*.txt']); dir([DIR_TELEDYNE_CODE '*.gz'])];
+   %       for iFile = 1:length(floatFiles)
+   %          move_file([DIR_TELEDYNE_CODE floatFiles(iFile).name], floatFileDir);
+   %       end
+   %       ellapsedTime = toc;
+   %       fprintf('=> %d float files retrieved (%.1f sec)\n', length(floatFiles), ellapsedTime);
+   %
+   %       % remove processed SBD files
+   %       if (exist([DIR_TELEDYNE_CODE '\archive\'], 'dir') == 7)
+   %          rmdir([DIR_TELEDYNE_CODE '\archive\'], 's');
+   %       end
+   %       % remove processed SBD files
+   %       sbdFiles = dir([DIR_TELEDYNE_CODE '*.sbd']);
+   %       for iFile = 1:length(sbdFiles)
+   %          delete([DIR_TELEDYNE_CODE sbdFiles(iFile).name]);
+   %       end
+   %
+   %       % uncompress .gz files
+   %       fprintf('Uncompressing float files in Teledyne float files dir ...\n');
+   %       tic;
+   %       gzFiles = dir([floatFileDir '*.gz']);
+   %       for iFile = 1:length(gzFiles)
+   %          gzFilePathName = [floatFileDir gzFiles(iFile).name];
+   %          gunzip(gzFilePathName);
+   %          delete(gzFilePathName);
+   %       end
+   %       ellapsedTime = toc;
+   %       fprintf('=> %d float files uncompressed (%.1f sec)\n', length(gzFiles), ellapsedTime);
+   %    else
+   %       fprintf('Teledyne float files exist\n');
+   %    end
+   %
+   %    % created .csv files from bianry float files
+   %    asciiFileDir = [floatFileDir '\ASCII\'];
+   %    if ~(exist(asciiFileDir, 'dir') == 7)
+   %       mkdir(asciiFileDir);
+   %
+   %       fprintf('Converting Teledyne binary float files to CSV ones ...\n');
+   %       tic;
+   %       binFiles = dir([floatFileDir '*.bin']);
+   %       for iFile = 1:length(binFiles)
+   %          move_file([floatFileDir binFiles(iFile).name], DIR_TELEDYNE_CODE);
+   %          cmd = ['cd ' DIR_TELEDYNE_CODE '& python apf11dec.py ' [DIR_TELEDYNE_CODE binFiles(iFile).name]];
+   %          [status, cmdOut] = system(cmd);
+   %          if (status ~= 0)
+   %             fprintf('Anomaly while applying apf11dec.py to %s\n', binFiles(iFile).name);
+   %          end
+   %          move_file([DIR_TELEDYNE_CODE binFiles(iFile).name], floatFileDir);
+   %          move_file([DIR_TELEDYNE_CODE regexprep(binFiles(iFile).name, '.bin', '.csv')], asciiFileDir);
+   %       end
+   %       ellapsedTime = toc;
+   %       fprintf('=> %d binary files converted (%.1f sec)\n', length(binFiles), ellapsedTime);
+   %
+   %       % duplicate .txt files
+   %       txtFiles = dir([floatFileDir '*.txt']);
+   %       for iFile = 1:length(txtFiles)
+   %          copy_file([floatFileDir txtFiles(iFile).name], asciiFileDir);
+   %       end
+   %    else
+   %       fprintf('Teledyne ASCII float files exist\n');
+   %    end
+   %
+   %    fprintf('\nARGO DECODER PROCESSING\n');
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % Argo processing

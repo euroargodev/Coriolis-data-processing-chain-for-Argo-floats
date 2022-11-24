@@ -51,7 +51,7 @@ if (rem(fileSize, 100) == 0)
    sbdData = reshape(sbdData, 100, size(sbdData, 1)/100)';
    for idMsg = 1:size(sbdData, 1)
       data = sbdData(idMsg, :);
-      if (any(data ~= 0))
+      if (any(data ~= 0) && any(data ~= 26)) % historical SBD buffers were padded with 0, they are now padded with 0x1A = 26
          sbdDataTab = [sbdDataTab; data];
       end
    end
@@ -88,10 +88,18 @@ for idMsg = 1:size(sbdDataTab, 1)
          o_decodedData = [o_decodedData decodedData];         
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {216} % Arvor-Deep-Ice Iridium 5.65
+      case {216} % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_216(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate);
+         o_decodedData = [o_decodedData decodedData];
+            
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {218} % Arvor-Deep-Ice Iridium 5.66 (NKE version)
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_218(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate);
          o_decodedData = [o_decodedData decodedData];
             

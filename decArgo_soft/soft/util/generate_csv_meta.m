@@ -21,22 +21,7 @@
 function generate_csv_meta(varargin)
 
 % meta-data file exported from Coriolis data base
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ArvorARN\meta_provor_4.52_20150416.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
-
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta_updated.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
-
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
-
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_DeepIce_5.65_20180201.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export-3902101_Arvor-Ir-Do_5.46_from_VB_20180216.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\deep_norway_6903557.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -156,7 +141,7 @@ for idFloat = 1:nbFloats
    fprintf(fidOut, '%d;13;1;%s;PR_PROBE_CODE;%s\n', floatNum, wmoInstType, floatVersion);
    
    % get the list of sensors for this float
-   [sensorList] = get_sensor_list_cts4(floatDecId);
+   [sensorList] = get_sensor_list_from_decoder_id(floatDecId);
    if (isempty(sensorList))
       continue
    end
@@ -327,7 +312,7 @@ end
 return
 
 % ------------------------------------------------------------------------------
-function [o_sensorList] = get_sensor_list_cts4(a_decId)
+function [o_sensorList] = get_sensor_list_from_decoder_id(a_decId)
 
 o_sensorList = [];
 
@@ -338,7 +323,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -551,7 +536,7 @@ switch a_inputSensorName
                {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} ...
                ];
             
-         case {213, 214, 215, 216, 217}
+         case {213, 214, 215, 216, 217, 218}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...

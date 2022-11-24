@@ -44,6 +44,33 @@ if (~isempty(a_missionCfg))
    for id = 1:length(confParam)
       floatConfigLabel = confParam{id};
       floatConfigValue = misStruct.(floatConfigLabel);
+      
+      % manage 'AscentStartTimes' specificities
+      if (length(floatConfigValue) > 1)
+         if (strcmp(floatConfigLabel, 'AscentStartTimes'))
+            if (length(unique(floatConfigValue)) == 1)
+               floatConfigValue = floatConfigValue{1};
+            else
+               valueList = floatConfigValue;
+               idDel = find(strcmp(floatConfigValue, '-1'));
+               valueList(idDel) = [];
+               if (length(unique(valueList)) == 1)
+                  floatConfigValue = valueList{1};
+               else
+                  fprintf('ERROR: Float #%d Cycle #%d: Don''t know how to manage ''%s'' configuration multiple values\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum, ...
+                     floatConfName);
+               end
+            end
+         else
+            fprintf('ERROR: Float #%d Cycle #%d: Don''t know how to manage ''%s'' configuration multiple values\n', ...
+               g_decArgo_floatNum, ...
+               g_decArgo_cycleNum, ...
+               floatConfName);
+         end
+      end
+      
       [configName, configValue] = get_config(floatConfigLabel, floatConfigValue);
       if (~isempty(configName))
          idF = find(strcmp(configName, configNames));
@@ -146,7 +173,8 @@ end
 [newConfigNum] = config_exists_ir_sbd_argos( ...
    newConfigValues, ...
    g_decArgo_floatConfig.NUMBER, ...
-   g_decArgo_floatConfig.VALUES);
+   g_decArgo_floatConfig.VALUES, ...
+   g_decArgo_floatConfig.IGNORED_ID);
 
 % if configNum == -1 the new configuration doesn't exist
 % if configNum == 0 the new configuration is identical to launch configuration,

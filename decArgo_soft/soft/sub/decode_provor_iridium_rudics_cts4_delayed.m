@@ -112,6 +112,10 @@ g_decArgo_generateNcFlag = 0;
 % array to store GPS data
 global g_decArgo_gpsData;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+g_decArgo_julD2FloatDayOffset = [];
+
 % no sampled data mode
 global g_decArgo_noDataFlag;
 g_decArgo_noDataFlag = 0;
@@ -151,6 +155,14 @@ if (g_decArgo_realtimeFlag)
    end
 end
 
+% initialize float parameter configuration
+init_float_config_prv_ir_rudics_cts4(a_launchDate, a_decoderId);
+
+% add launch position and time in the TRAJ NetCDF file
+if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
+   o_tabTrajNMeas = add_launch_data_ir_rudics;
+end
+
 % inits for output NetCDF file
 decArgoConfParamNames = [];
 ncConfParamNames = [];
@@ -170,14 +182,6 @@ if (~isempty(g_decArgo_outputCsvFileId))
    header = ['WMO #; Cycle #; Profil #; Phase; Info type'];
    fprintf(g_decArgo_outputCsvFileId, '%s\n', header);
    print_phase_help_ir_rudics;
-end
-
-% initialize float parameter configuration
-init_float_config_prv_ir_rudics_cts4(a_launchDate, a_decoderId);
-
-% add launch position and time in the TRAJ NetCDF file
-if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
-   o_tabTrajNMeas = add_launch_data_ir_rudics;
 end
 
 if (~g_decArgo_realtimeFlag)
@@ -373,8 +377,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    % a buffer anomaly (more than one profile for a given profile number)
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
-   % perform CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+   % perform DOXY, CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1);
    
    if (g_decArgo_realtimeFlag == 1)
       

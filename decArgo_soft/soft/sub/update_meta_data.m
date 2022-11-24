@@ -29,7 +29,7 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 112 113 121 122 123 124 125 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 112 113 121 122 123 124 125 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 218 301 302 303];
 decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1022 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1121 1314 1321 1322];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002 2003];
@@ -859,8 +859,8 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 201, 203, 206, 121, 122, 123, 124, 125, 215, 216, 217}
-      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 215, 216, 217]))
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 201, 203, 206, 121, 122, 123, 124, 125, 215, 216, 217, 218}
+      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 215, 216, 217, 218]))
          paramList = [ ...
             {'TEMP_DOXY'} ...
             {'C1PHASE_DOXY'} ...
@@ -969,14 +969,17 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {1322}
-      paramList = [ ...
-         {'TEMP_DOXY'} ...
-         {'C1PHASE_DOXY'} ...
-         {'C2PHASE_DOXY'} ...
-         {'PPOX_DOXY'} ...
-         {'DOXY'} ...
-         ];
+   case {1322, 1121}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'TEMP_DOXY'} ...
+            {'C1PHASE_DOXY'} ...
+            {'C2PHASE_DOXY'} ...
+            {'PPOX_DOXY'} ...
+            {'DOXY'} ...
+            ];
+      end
 end
 
 % for a_decoderId = 201 we have 5.61 floats (with DO sensor) and 5.63 floats
@@ -1813,7 +1816,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 111, 113, 201, 203, 215, 216, 206, 213, 214, 121, 122, 124, 217, 1322}
+   case {107, 109, 110, 111, 113, 201, 203, 215, 216, 206, 213, 214, 121, 122, 124, 217, 1322, 1121, 218}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -2915,6 +2918,16 @@ switch (a_decoderId)
             {'DOWNWELLING_PAR'} ...
             ];
       end
+   case {1322}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'DOWN_IRRADIANCE380'} ...
+            {'DOWN_IRRADIANCE412'} ...
+            {'DOWN_IRRADIANCE490'} ...
+            {'DOWNWELLING_PAR'} ...
+            ];
+      end
 end
 
 % add parameter associated fields
@@ -2972,7 +2985,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       switch (a_paramName)
          
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -3163,7 +3176,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3252,7 +3265,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -3533,9 +3546,9 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303, 121, 122, 123, 124, 125, 1322}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+            any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
             {'FLUORESCENCE_CHLA'} ...
             {'CHLA'} ...
@@ -3609,7 +3622,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}
@@ -3892,7 +3905,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3957,7 +3970,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CDOM'}
@@ -4501,10 +4514,23 @@ function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {123, 1322}
+   case {121, 122, 123, 124, 125}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
+            {'VRS_PH'} ...
+            {'VK_PH'} ...
+            {'IK_PH'} ...
+            {'IB_PH'} ...
+            {'PH_IN_SITU_FREE'} ...
+            {'PH_IN_SITU_TOTAL'} ...
+            ];
+      end
+   case {1322, 111, 113}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'VRS_PH'} ...
             {'PH_IN_SITU_FREE'} ...
             {'PH_IN_SITU_TOTAL'} ...
             ];
@@ -4566,9 +4592,49 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {123}
+   case {121, 122, 123, 124, 125}
       switch (a_paramName)
          
+         case {'VRS_PH'}
+            o_param = 'VRS_PH';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'volt';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Voltage difference between reference and source from pH sensor (in volt)';
+
+         case {'VK_PH'}
+            o_param = 'VK_PH';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'volt';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Counter electrode voltage of pH sensor (in volt)';
+
+         case {'IK_PH'}
+            o_param = 'IK_PH';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'nanoampere';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Counter electrode current of pH sensor (in nanoampere)';
+
+         case {'IB_PH'}
+            o_param = 'IB_PH';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'nanoampere';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Base current of pH sensor (in nanoampere)';
+
          case {'PH_IN_SITU_FREE'}
             
             % get calibration information
@@ -4591,6 +4657,14 @@ switch (a_decoderId)
                transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
                transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
+               transPhF5 = [];
+               transPhF6 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5'))
+                  transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6'))
+                     transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+                  end
+               end
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
@@ -4602,10 +4676,17 @@ switch (a_decoderId)
             o_paramUnits = 'dimensionless';
             o_paramAccuracy = '0.005';
             o_paramResolution = '0.0004';
-            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
-            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
-               transPhK0, transPhK2, ...
-               transPhF1, transPhF2, transPhF3, transPhF4);
+            if (~isempty(transPhF5))
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            else
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4);
+            end
             o_preCalibComment = '';
             
          case {'PH_IN_SITU_TOTAL'}
@@ -4630,6 +4711,14 @@ switch (a_decoderId)
                transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
                transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
+               transPhF5 = [];
+               transPhF6 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5'))
+                  transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6'))
+                     transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+                  end
+               end
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
@@ -4641,16 +4730,34 @@ switch (a_decoderId)
             o_paramUnits = 'dimensionless';
             o_paramAccuracy = '0.005';
             o_paramResolution = '0.0004';
-            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL); Stotal=(0.14/96.062)*(PSAL/1.80655); Khso4=exp{[-4276.1/Tk+141.328-23.093*ln(Tk)]+[(-13856/Tk+324.57-47.986*ln(Tk))*IonS^0.5]+[(35474/Tk-771.54+114.723*ln(Tk))*IonS]-[2698/Tk*IonS^1.5]+[1776/Tk*IonS^2]+ln(1-0.001005*PSAL)}; deltaVHSO4=-18.03+0.0466*TEMP+0.000316*TEMP^2; KappaHSO4=(-4.53+0.09*TEMP)/1000; lnKhso4fac=(-deltaVHSO4+0.5*KappaHSO4*(PRES/10))*(PRES/10)/(R*10*Tk); Khso4TPS=Khso4*exp(lnKhso4fac); PH_IN_SITU_TOTAL=PH_IN_SITU_FREE-log10(1+Stotal/Khso4TPS)';
-            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
-               transPhK0, transPhK2, ...
-               transPhF1, transPhF2, transPhF3, transPhF4);
+            if (~isempty(transPhF5))
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            else
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4);
+            end
             o_preCalibComment = '';
       end
       
-   case {1322}
+   case {1322, 111, 113}
       switch (a_paramName)
          
+         case {'VRS_PH'}
+            o_param = 'VRS_PH';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'volt';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Voltage difference between reference and source from pH sensor (in volt)';
+            
+            
          case {'PH_IN_SITU_FREE'}
             
             % get calibration information
@@ -4675,8 +4782,14 @@ switch (a_decoderId)
                transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
                transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
-               transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
-               transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+               transPhF5 = [];
+               transPhF6 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5'))
+                  transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6'))
+                     transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+                  end
+               end
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
@@ -4688,10 +4801,17 @@ switch (a_decoderId)
             o_paramUnits = 'dimensionless';
             o_paramAccuracy = '0.005';
             o_paramResolution = '0.0004';
-            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
-            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
-               transPhK0, transPhK2, ...
-               transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            if (~isempty(transPhF5))
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            else
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4);
+            end
             o_preCalibComment = '';
             
          case {'PH_IN_SITU_TOTAL'}
@@ -4718,8 +4838,14 @@ switch (a_decoderId)
                transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
                transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
-               transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
-               transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+               transPhF5 = [];
+               transPhF6 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5'))
+                  transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6'))
+                     transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
+                  end
+               end
             else
                fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_TOTAL calibration information\n', ...
                   g_decArgo_floatNum);
@@ -4731,10 +4857,17 @@ switch (a_decoderId)
             o_paramUnits = 'dimensionless';
             o_paramAccuracy = '0.005';
             o_paramResolution = '0.0004';
-            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL); Stotal=(0.14/96.062)*(PSAL/1.80655); Khso4=exp{[-4276.1/Tk+141.328-23.093*ln(Tk)]+[(-13856/Tk+324.57-47.986*ln(Tk))*IonS^0.5]+[(35474/Tk-771.54+114.723*ln(Tk))*IonS]-[2698/Tk*IonS^1.5]+[1776/Tk*IonS^2]+ln(1-0.001005*PSAL)}; deltaVHSO4=-18.03+0.0466*TEMP+0.000316*TEMP^2; KappaHSO4=(-4.53+0.09*TEMP)/1000; lnKhso4fac=(-deltaVHSO4+0.5*KappaHSO4*(PRES/10))*(PRES/10)/(R*10*Tk); Khso4TPS=Khso4*exp(lnKhso4fac); PH_IN_SITU_TOTAL=PH_IN_SITU_FREE-log10(1+Stotal/Khso4TPS)';
-            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
-               transPhK0, transPhK2, ...
-               transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            if (~isempty(transPhF5))
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+            else
+               o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+               o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+                  transPhK0, transPhK2, ...
+                  transPhF1, transPhF2, transPhF3, transPhF4);
+            end
             o_preCalibComment = '';
       end
 end
@@ -4783,14 +4916,13 @@ if (~isempty(a_paramList))
       {'PREDEPLOYMENT_CALIB_COMMENT'} ...
       ];
    
-   floatparamList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(a_paramList)
-      idF = find(strcmp(a_paramList{idP}, floatparamList) == 1, 1);
+      idF = find(strcmp(a_paramList{idP}, struct2cell(o_metaData.PARAMETER)) == 1, 1);
       if (isempty(idF))
          fprintf('WARNING: Float #%d: adding ''%s'' to float parameter list\n', ...
             g_decArgo_floatNum, a_paramList{idP});
          
-         nbParam = length(floatparamList) + 1;
+         nbParam = length(struct2cell(o_metaData.PARAMETER)) + 1;
          o_metaData.PARAMETER.(['PARAMETER_' num2str(nbParam)]) = a_paramList{idP};
          for id = 1:length(fieldList)
             o_metaData.(fieldList{id}).([fieldList{id} '_' num2str(nbParam)]) = '';

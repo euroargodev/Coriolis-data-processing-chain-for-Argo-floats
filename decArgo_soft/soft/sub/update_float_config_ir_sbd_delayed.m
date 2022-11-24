@@ -34,14 +34,20 @@ switch (a_decoderId)
       % Arvor-ARN-Ice Iridium 5.45
       % Provor-ARN-DO-Ice Iridium 5.75
       % Arvor-ARN-DO-Ice Iridium 5.46
-
+      
       update_float_config_ir_sbd_212_214_217(a_floatParam, a_cycleNum);
       
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   case {216} % Arvor-Deep-Ice Iridium 5.65
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {216} % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)
       
       update_float_config_ir_sbd_216(a_floatParam, a_cycleNum);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {218} % Arvor-Deep-Ice Iridium 5.66 (NKE version)
+      
+      update_float_config_ir_sbd_218(a_floatParam, a_cycleNum);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to update configuration for decoderId #%d\n', ...

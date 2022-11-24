@@ -2,7 +2,7 @@
 % Add the dates of the drift measurements.
 %
 % SYNTAX :
-%  [o_dataCTD, o_dataOXY, o_dataFLBB] = ...
+%  [o_dataCTD, o_dataOXY, o_dataFLBB, o_measDates] = ...
 %    add_drift_meas_dates_ir_sbd2_301(a_dataCTD, a_dataOXY, a_dataFLBB)
 %
 % INPUT PARAMETERS :
@@ -11,9 +11,10 @@
 %   a_dataFLBB : input FLBB data
 %
 % OUTPUT PARAMETERS :
-%   o_dataCTD  : output CTD data
-%   o_dataOXY  : output OXY data
-%   o_dataFLBB : output FLBB data
+%   o_dataCTD   : output CTD data
+%   o_dataOXY   : output OXY data
+%   o_dataFLBB  : output FLBB data
+%   o_measDates : measurement dates transmitted by the float
 %
 % EXAMPLES :
 %
@@ -23,7 +24,7 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_dataCTD, o_dataOXY, o_dataFLBB] = ...
+function [o_dataCTD, o_dataOXY, o_dataFLBB, o_measDates] = ...
    add_drift_meas_dates_ir_sbd2_301(a_dataCTD, a_dataOXY, a_dataFLBB)
 
 % cycle phases
@@ -34,6 +35,7 @@ global g_decArgo_phaseParkDrift;
 o_dataCTD = [];
 o_dataOXY = [];
 o_dataFLBB = [];
+o_measDates = [];
 
 % unpack the input data
 a_dataCTDMean = a_dataCTD{1};
@@ -100,6 +102,7 @@ if (~isempty(a_dataCTDMeanDate))
          a_dataCTDMeanDate(idDrift(idL), 2), ...
          a_dataCTDMeanDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCTDMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataCTDStdMedDate))
    idDrift = find(a_dataCTDStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -109,6 +112,7 @@ if (~isempty(a_dataCTDStdMedDate))
          a_dataCTDStdMedDate(idDrift(idL), 2), ...
          a_dataCTDStdMedDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCTDStdMedDate(:, 1:4)];
 end
 
 if (~isempty(a_dataOXYMeanDate))
@@ -119,6 +123,7 @@ if (~isempty(a_dataOXYMeanDate))
          a_dataOXYMeanDate(idDrift(idL), 2), ...
          a_dataOXYMeanDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOXYMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataOXYStdMedDate))
    idDrift = find(a_dataOXYStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -128,6 +133,7 @@ if (~isempty(a_dataOXYStdMedDate))
          a_dataOXYStdMedDate(idDrift(idL), 2), ...
          a_dataOXYStdMedDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOXYStdMedDate(:, 1:4)];
 end
 
 if (~isempty(a_dataFLBBMeanDate))
@@ -138,6 +144,7 @@ if (~isempty(a_dataFLBBMeanDate))
          a_dataFLBBMeanDate(idDrift(idL), 2), ...
          a_dataFLBBMeanDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataFLBBMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataFLBBStdMedDate))
    idDrift = find(a_dataFLBBStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -147,6 +154,7 @@ if (~isempty(a_dataFLBBStdMedDate))
          a_dataFLBBStdMedDate(idDrift(idL), 2), ...
          a_dataFLBBStdMedDate(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataFLBBStdMedDate(:, 1:4)];
 end
 
 % store output data in cell arrays

@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR_IV float
       o_wmoInstType = '835';
       
-   case {201, 202, 203, 215, 216}
+   case {201, 202, 203, 215, 216, 218}
       % Arvor-D float
       o_wmoInstType = '838';
       

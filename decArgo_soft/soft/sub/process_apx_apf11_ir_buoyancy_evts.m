@@ -100,4 +100,29 @@ for idEv = 1:length(events)
    end
 end
 
+% buoyancy events
+idEvts = find(strcmp({a_events.functionName}, 'BuoyEngine'));
+events = a_events(idEvts);
+
+PATTERN_1 = 'Adjusting Buoyancy to';
+PATTERN_2 = 'Buoyancy Start Position:';
+for idEv = 1:length(events)
+   dataStr = events(idEv).message;
+   if (any(strfind(dataStr, PATTERN_1)))
+      pistonStop = str2double(dataStr(length(PATTERN_1)+1:end));
+      if (idEv < length(events))
+         dataStr2 = events(idEv+1).message;
+         if (any(strfind(dataStr2, PATTERN_2)))
+            pistonStart = str2double(dataStr2(length(PATTERN_2)+1:end));
+            if (pistonStop - pistonStart > 0)
+               pumpFlag = 1;
+            else
+               pumpFlag = 0;
+            end
+            o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef g_decArgo_presDef g_decArgo_presDef pumpFlag]];
+         end
+      end
+   end
+end
+
 return

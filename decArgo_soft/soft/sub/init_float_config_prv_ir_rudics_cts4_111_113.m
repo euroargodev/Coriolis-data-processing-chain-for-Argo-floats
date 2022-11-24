@@ -72,6 +72,27 @@ g_decArgo_floatFirmware = '';
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
+% initialize the configuration values with the json meta-data file
+
+% json meta-data file for this float
+jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
+
+if ~(exist(jsonInputFileName, 'file') == 2)
+   g_decArgo_floatConfig = [];
+   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
+   return
+end
+
+% read meta-data file
+metaData = loadjson(jsonInputFileName);
+
+% list of sensors mounted on the float
+sensorMountedOnFloat = [];
+if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+   sensorMountedOnFloat = jSensorNames';
+end
+
 % create static configuration names
 configNames1 = [];
 for id = 0:2 % only PI 3 to PI 7 are really dynamic
@@ -144,7 +165,11 @@ for idS = 0:6
       case 3
          lastId = 19;
       case 4
-         lastId = 13;
+         if (ismember('FLNTU', sensorMountedOnFloat))
+            lastId = 13;
+         elseif (ismember('TRANSISTOR_PH', sensorMountedOnFloat))
+            lastId = 6;
+         end
       case 5
          lastId = 6;
       case 6
@@ -154,20 +179,6 @@ for idS = 0:6
       configNames2{end+1} = sprintf('CONFIG_PC_%d_1_%d', idS, id);
    end
 end
-
-% initialize the configuration values with the json meta-data file
-
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
 
 if (isfield(metaData, 'FIRMWARE_VERSION'))
    g_decArgo_floatFirmware = strtrim(metaData.FIRMWARE_VERSION);
@@ -306,10 +317,8 @@ g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
 
 % fill the sensor list
 sensorList = [];
-sensorMountedOnFloat = [];
 if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
-   sensorMountedOnFloat = jSensorNames';
    for id = 1:length(jSensorNames)
       sensorName = jSensorNames{id};
       switch (sensorName)
@@ -320,15 +329,33 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
          case 'OCR'
             sensorList = [sensorList 2];
          case 'ECO2'
+            if (ismember(3, sensorList))
+               fprintf('ERROR: Float #%d: Sensor #3 is already in the list\n', ...
+                  g_decArgo_floatNum);
+            end
             sensorList = [sensorList 3];
          case 'ECO3'
+            if (ismember(3, sensorList))
+               fprintf('ERROR: Float #%d: Sensor #3 is already in the list\n', ...
+                  g_decArgo_floatNum);
+            end
             sensorList = [sensorList 3];
          case 'FLNTU'
+            if (ismember(4, sensorList))
+               fprintf('ERROR: Float #%d: Sensor #4 is already in the list\n', ...
+                  g_decArgo_floatNum);
+            end
             sensorList = [sensorList 4];
          case 'CROVER'
             sensorList = [sensorList 5];
          case 'SUNA'
             sensorList = [sensorList 6];
+         case 'TRANSISTOR_PH'
+            if (ismember(4, sensorList))
+               fprintf('ERROR: Float #%d: Sensor #4 is already in the list\n', ...
+                  g_decArgo_floatNum);
+            end
+            sensorList = [sensorList 4];
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...

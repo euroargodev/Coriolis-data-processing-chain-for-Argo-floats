@@ -1038,7 +1038,106 @@ switch (packType)
             decodedData.cyNumRaw = cycleNum;
             decodedData.profNumRaw = profNum;
             decodedData.phaseNumRaw = phaseNum;
+
+         case {46, 48}
+            % SEAFET (mean & raw)
             
+            if (~ismember(4, g_decArgo_sensorList))
+               fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  sensorDataType, 4);
+               return
+            end
+            
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [16 8 8 32 repmat([16 32], 1, 21) 32];
+            % get item bits
+            values = get_bits(firstBit, tabNbBits, msgData);
+            
+            % decode and store data values
+            cycleNum = values(1);
+            profNum = values(2);
+            phaseNum = values(3);
+            
+            measDate = ones(1, 21)*g_decArgo_dateDef;
+            measDate(1) = epoch2000_2_julian(values(4));
+            measDateTrans = zeros(1, 21);
+            
+            measPres = nan(1, 21);
+            measVref = nan(1, 21);
+            for idBin = 1:21
+               measPres(idBin) = values(2*(idBin-1)+5);
+               measVref(idBin) = twos_complement_dec_argo(values(2*(idBin-1)+6), 32);
+            end
+            measDateTrans(1) = 1;
+            measDateTrans(find((measPres == 0) & (measVref == 0))) = -1;
+            
+            decData{1} = [cycleNum profNum phaseNum measDate];
+            decData{2} = [cycleNum profNum phaseNum measDateTrans];
+            decData{3} = [cycleNum profNum phaseNum measPres];
+            decData{4} = [cycleNum profNum phaseNum measVref];
+            
+            cyProfPhaseList = [packType sensorDataType cycleNum profNum phaseNum a_sbdFileDate];
+            
+            decodedData.decData = decData;
+            decodedData.cyProfPhaseList = cyProfPhaseList;
+            decodedData.cyNumRaw = cycleNum;
+            decodedData.profNumRaw = profNum;
+            decodedData.phaseNumRaw = phaseNum;
+            
+         case {47}
+            % SEAFET (stDev & median)
+            
+            if (~ismember(4, g_decArgo_sensorList))
+               fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor DATA packet received (#%d while sensor #%d is not mounted on the float) => ignoring packet data\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  sensorDataType, 4);
+               return
+            end
+            
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [16 8 8 32 repmat([16 32 32], 1, 13)];
+            % get item bits
+            values = get_bits(firstBit, tabNbBits, msgData);
+            
+            % decode and store data values
+            cycleNum = values(1);
+            profNum = values(2);
+            phaseNum = values(3);
+            
+            measDate = ones(1, 13)*g_decArgo_dateDef;
+            measDate(1) = epoch2000_2_julian(values(4));
+            measDateTrans = zeros(1, 13);
+            
+            measPresMean = nan(1, 13);
+            measVrefStd = nan(1, 13);
+            measVrefMed = nan(1, 13);
+            for idBin = 1:13
+               measPresMean(idBin) = values(3*(idBin-1)+5);
+               measVrefStd(idBin) = values(3*(idBin-1)+6);
+               measVrefMed(idBin) = twos_complement_dec_argo(values(3*(idBin-1)+7), 32);
+            end
+            measDateTrans(1) = 1;
+            measDateTrans(find((measPresMean == 0) & (measVrefStd == 0) & (measVrefMed == 0))) = -1;
+            
+            decData{1} = [cycleNum profNum phaseNum measDate];
+            decData{2} = [cycleNum profNum phaseNum measDateTrans];
+            decData{3} = [cycleNum profNum phaseNum measPresMean];
+            decData{4} = [cycleNum profNum phaseNum measVrefStd];
+            decData{5} = [cycleNum profNum phaseNum measVrefMed];
+            
+            cyProfPhaseList = [packType sensorDataType cycleNum profNum phaseNum a_sbdFileDate];
+            
+            decodedData.decData = decData;
+            decodedData.cyProfPhaseList = cyProfPhaseList;
+            decodedData.cyNumRaw = cycleNum;
+            decodedData.profNumRaw = profNum;
+            decodedData.phaseNumRaw = phaseNum;
+
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for sensor data type #%d\n', ...
                g_decArgo_floatNum, ...
@@ -1119,6 +1218,15 @@ switch (packType)
          
          values(7:26) = typecast(uint32(values(7:26)), 'single');
          values(27:55) = nan;
+         
+         % for TRANSISTOR_PH Min/Max Vref is provided in uV and stored in
+         % mV
+         if (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+            if (values(1) == 4)
+               values(11) = values(11)/1000;
+               values(12) = values(12)/1000;
+            end
+         end
       end
       
       sensorType = values(1);
@@ -1406,7 +1514,7 @@ switch (packType)
                decData{19} = [cycleNum profNum measCoefScaleFactBackscat];
                decData{20} = [cycleNum profNum measCoefDarkCountBackscat];
                
-               if (any(strcmp('ECO3', g_decArgo_sensorMountedOnFloat) == 1))
+               if (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
                   decData{21} = [cycleNum profNum measCoefScaleFactCdom];
                   decData{22} = [cycleNum profNum measCoefDarkCountCdom];
                end
@@ -1414,40 +1522,77 @@ switch (packType)
                decodedData.decData = decData;
                
             case 4
-               % FLNTU
+               % FLNTU or SEAFET
                
-               % first item bit number
-               firstBit = 1;
-               % item bit lengths
-               tabNbBits = [repmat([32 16], 1, 2) 304];
-               % get item bits
-               values = get_bits(firstBit, tabNbBits, msgData);
-               
-               % decode and store data values
-               measCoefScaleChloro = typecast(uint32(swapbytes(uint32(values(1)))), 'single');
-               measDarkCountChloro = swapbytes(uint16(values(2)));
-               measCoefScaleTurbi = typecast(uint32(swapbytes(uint32(values(3)))), 'single');
-               measDarkCountTurbi = swapbytes(uint16(values(4)));
-               
-               decData{1} = [cycleNum profNum nbPackDesc];
-               decData{2} = [cycleNum profNum nbPackDrift];
-               decData{3} = [cycleNum profNum nbPackAsc];
-               decData{4} = [cycleNum profNum nbMeasDescZ1];
-               decData{5} = [cycleNum profNum nbMeasDescZ2];
-               decData{6} = [cycleNum profNum nbMeasDescZ3];
-               decData{7} = [cycleNum profNum nbMeasDescZ4];
-               decData{8} = [cycleNum profNum nbMeasDescZ5];
-               decData{9} = [cycleNum profNum nbMeasDrift];
-               decData{10} = [cycleNum profNum nbMeasAscZ1];
-               decData{11} = [cycleNum profNum nbMeasAscZ2];
-               decData{12} = [cycleNum profNum nbMeasAscZ3];
-               decData{13} = [cycleNum profNum nbMeasAscZ4];
-               decData{14} = [cycleNum profNum nbMeasAscZ5];
-               decData{15} = [cycleNum profNum sensorState];
-               decData{16} = [cycleNum profNum measCoefScaleChloro];
-               decData{17} = [cycleNum profNum measDarkCountChloro];
-               decData{18} = [cycleNum profNum measCoefScaleTurbi];
-               decData{19} = [cycleNum profNum measDarkCountTurbi];
+               if (ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
+      
+                  % FLNTU
+                  
+                  % first item bit number
+                  firstBit = 1;
+                  % item bit lengths
+                  tabNbBits = [repmat([32 16], 1, 2) 304];
+                  % get item bits
+                  values = get_bits(firstBit, tabNbBits, msgData);
+                  
+                  % decode and store data values
+                  measCoefScaleChloro = typecast(uint32(swapbytes(uint32(values(1)))), 'single');
+                  measDarkCountChloro = swapbytes(uint16(values(2)));
+                  measCoefScaleTurbi = typecast(uint32(swapbytes(uint32(values(3)))), 'single');
+                  measDarkCountTurbi = swapbytes(uint16(values(4)));
+                  
+                  decData{1} = [cycleNum profNum nbPackDesc];
+                  decData{2} = [cycleNum profNum nbPackDrift];
+                  decData{3} = [cycleNum profNum nbPackAsc];
+                  decData{4} = [cycleNum profNum nbMeasDescZ1];
+                  decData{5} = [cycleNum profNum nbMeasDescZ2];
+                  decData{6} = [cycleNum profNum nbMeasDescZ3];
+                  decData{7} = [cycleNum profNum nbMeasDescZ4];
+                  decData{8} = [cycleNum profNum nbMeasDescZ5];
+                  decData{9} = [cycleNum profNum nbMeasDrift];
+                  decData{10} = [cycleNum profNum nbMeasAscZ1];
+                  decData{11} = [cycleNum profNum nbMeasAscZ2];
+                  decData{12} = [cycleNum profNum nbMeasAscZ3];
+                  decData{13} = [cycleNum profNum nbMeasAscZ4];
+                  decData{14} = [cycleNum profNum nbMeasAscZ5];
+                  decData{15} = [cycleNum profNum sensorState];
+                  decData{16} = [cycleNum profNum measCoefScaleChloro];
+                  decData{17} = [cycleNum profNum measDarkCountChloro];
+                  decData{18} = [cycleNum profNum measCoefScaleTurbi];
+                  decData{19} = [cycleNum profNum measDarkCountTurbi];
+                  
+               elseif (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+                  
+                  % SEAFET
+                  
+                  % first item bit number
+                  firstBit = 1;
+                  % item bit lengths
+                  tabNbBits = [32 368];
+                  % get item bits
+                  values = get_bits(firstBit, tabNbBits, msgData);
+                  
+                  % decode and store data values
+                  measSensorSerialNum = swapbytes(uint32(values(1)));
+                  
+                  decData{1} = [cycleNum profNum nbPackDesc];
+                  decData{2} = [cycleNum profNum nbPackDrift];
+                  decData{3} = [cycleNum profNum nbPackAsc];
+                  decData{4} = [cycleNum profNum nbMeasDescZ1];
+                  decData{5} = [cycleNum profNum nbMeasDescZ2];
+                  decData{6} = [cycleNum profNum nbMeasDescZ3];
+                  decData{7} = [cycleNum profNum nbMeasDescZ4];
+                  decData{8} = [cycleNum profNum nbMeasDescZ5];
+                  decData{9} = [cycleNum profNum nbMeasDrift];
+                  decData{10} = [cycleNum profNum nbMeasAscZ1];
+                  decData{11} = [cycleNum profNum nbMeasAscZ2];
+                  decData{12} = [cycleNum profNum nbMeasAscZ3];
+                  decData{13} = [cycleNum profNum nbMeasAscZ4];
+                  decData{14} = [cycleNum profNum nbMeasAscZ5];
+                  decData{15} = [cycleNum profNum sensorState];
+                  decData{16} = [cycleNum profNum measSensorSerialNum];
+                  
+               end
                
                decodedData.decData = decData;
                

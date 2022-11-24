@@ -1309,7 +1309,7 @@ for idProf = 1:length(tabProfiles)
             dbAdjustedParamNameList = []; % for RT adjustments stored in the DB
             decAdjustedParamIdList = []; % for RT adjustments performed by the decoder
             decAdjustedParamNameList = []; % for RT adjustments performed by the decoder
-            specificAdjParamList = [{'CHLA'} {'NITRATE'}];
+            specificAdjParamList = [{'CHLA'} {'NITRATE'} {'DOXY'}];
             specificAdjParamFlag = zeros(size(specificAdjParamList));
             for idParam = 1:length(parameterList)
                

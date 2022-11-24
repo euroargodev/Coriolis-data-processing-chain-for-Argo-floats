@@ -96,7 +96,7 @@ end
 name = 'CONFIG_PX00';
 idPos = find(strcmp(name, configNames) == 1, 1);
 if (~isempty(idPos))
-   if (floatInternalCycleNumber > g_decArgo_firstDeepCycleNumber)
+   if (floatInternalCycleNumber + 1 > g_decArgo_firstDeepCycleNumber)
       
       direction = 0;
       if ((floatParam(14) == 0) && (floatParam(16) ~= 0))
@@ -113,7 +113,7 @@ if (~isempty(idPos))
 end
 
 % for the configuration of the first deep cycle
-if (floatInternalCycleNumber == g_decArgo_firstDeepCycleNumber)
+if (floatInternalCycleNumber + 1 == g_decArgo_firstDeepCycleNumber)
    
    % as the float always profiles during the first descent (at a 10 sec period)
    % when CONFIG_PM05 = 0 in the starting configuration, set it to 10 sec
@@ -129,7 +129,7 @@ end
 if (floatParam(43) ~= 1)
 
    % check cycle number VS PT16
-   if (mod(floatInternalCycleNumber, floatParam(41)) == 0)
+   if (mod(floatInternalCycleNumber + 1, floatParam(43)) == 0)
       % profile pressure is PT17
       idPos = find(strcmp(configNames, 'CONFIG_PM09') == 1, 1);
       if (~isempty(idPos))

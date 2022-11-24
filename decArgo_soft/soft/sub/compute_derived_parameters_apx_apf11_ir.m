@@ -2,10 +2,10 @@
 % Compute derived parameters for Apex APF11 Iridium-SBD floats.
 %
 % SYNTAX :
-%  [o_profDo, o_profCtdPtsh, o_profCtdCpH] = ...
+%  [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd] = ...
 %    compute_derived_parameters_apx_apf11_ir( ...
 %    a_profCtdPts, a_profCtdCp, a_profDo, ...
-%    a_profCtdPtsh, a_profCtdCpH, ...
+%    a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
 %    a_cycleTimeData, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -14,6 +14,7 @@
 %   a_profDo        : input O2 data
 %   a_profCtdPtsh   : input CTD_PTSH data
 %   a_profCtdCpH    : input CTD_CP_H data
+%   a_profFlbbCd    : input FLBB_CD data
 %   a_cycleTimeData : input cycle timings data
 %   a_decoderId     : float decoder Id
 %
@@ -21,6 +22,7 @@
 %   o_profDo      : output O2 data
 %   o_profCtdPtsh : output CTD_PTSH data
 %   o_profCtdCpH  : output CTD_CP_H data
+%   o_profFlbbCd  : output FLBB_CD data
 %
 % EXAMPLES :
 %
@@ -30,22 +32,32 @@
 % RELEASES :
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profDo, o_profCtdPtsh, o_profCtdCpH] = ...
+function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd] = ...
    compute_derived_parameters_apx_apf11_ir( ...
    a_profCtdPts, a_profCtdCp, a_profDo, ...
-   a_profCtdPtsh, a_profCtdCpH, ...
+   a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
    a_cycleTimeData, a_decoderId)
 
 % output parameters initialization
 o_profDo = a_profDo;
 o_profCtdPtsh = a_profCtdPtsh;
 o_profCtdCpH = a_profCtdCpH;
+o_profFlbbCd = a_profFlbbCd;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
 
 
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1322}
+   case {1121}
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % DOXY & PPOX_DOXY
       
       if (~isempty(o_profDo))
          
@@ -110,183 +122,196 @@ switch (a_decoderId)
                idPark = find(o_profDo.dates < a_cycleTimeData.ascentStartDateSci);
                
                if (length(idPark) > 1)
-                  
-                  % interpolate and extrapolate PTS data at the times of the OPTODE
-                  % measurements
-                  presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
-                     o_profDo.dates(idPark), 'linear', 'extrap');
-                  tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
-                     o_profDo.dates(idPark), 'linear', 'extrap');
-                  psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
-                     o_profDo.dates(idPark), 'linear', 'extrap');
-                  
-                  % compute DOXY
-                  doxyValues = compute_DOXY_1322( ...
-                     o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
-                     paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                     presData, tempData, psalData, ...
-                     paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                     paramDoxy.fillValue);
-                  o_profDo.data(idPark, idDoxy) = doxyValues;
-                  
-                  % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
-                  % Hamburg"
-                  % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
-                  % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
-                  % the calculation for the adjustment must involve the parameter itself
-                  % (e.g., with an offset or slope). If a different parameter used for
-                  % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
-                  % transitions onto the parameter itself and does not put it into mode
-                  % 'A'. The <PARAM> field is always calculated with other parameters in
-                  % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
-                  % "real"  parameter  adjustment  as  defined above.  A calculation
-                  % without  a  "real"  parameter  adjustment  but  involving  other
-                  % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
-                  % recorded in the BGC-Argofiles.
-                  
-                  % there is no need to compute derived parameters with PRES_ADJUSTED
-                  %                   if (~isempty(o_profDo.dataAdj))
-                  %
-                  %                      % interpolate and extrapolate PTS data at the times of the OPTODE
-                  %                      % measurements
-                  %                      presData = interp1(ctdData.dates, ctdData.dataAdj(:, 1), ...
-                  %                         o_profDo.dates(idPark), 'linear', 'extrap');
-                  %                      tempData = interp1(ctdData.dates, ctdData.dataAdj(:, 2), ...
-                  %                         o_profDo.dates(idPark), 'linear', 'extrap');
-                  %                      psalData = interp1(ctdData.dates, ctdData.dataAdj(:, 3), ...
-                  %                         o_profDo.dates(idPark), 'linear', 'extrap');
-                  %
-                  %                      % compute DOXY
-                  %                      doxyValues = compute_DOXY_1322( ...
-                  %                         o_profDo.dataAdj(idPark, idC1PhaseDoxy), o_profDo.dataAdj(idPark, idC2PhaseDoxy), o_profDo.dataAdj(idPark, idTempDoxy), ...
-                  %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                  %                         presData, tempData, psalData, ...
-                  %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                  %                         paramDoxy.fillValue);
-                  %                      o_profDo.dataAdj(idPark, idDoxy) = doxyValues;
-                  %                   end
+                  if (~isempty(ctdData))
+                     
+                     % interpolate and extrapolate PTS data at the times of the OPTODE
+                     % measurements
+                     presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     
+                     % compute DOXY
+                     doxyValues = compute_DOXY_1121_1322( ...
+                        o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
+                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                        presData, tempData, psalData, ...
+                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                        paramDoxy.fillValue);
+                     o_profDo.data(idPark, idDoxy) = doxyValues;
+                     
+                     % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                     % Hamburg"
+                     % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+                     % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                     % the calculation for the adjustment must involve the parameter itself
+                     % (e.g., with an offset or slope). If a different parameter used for
+                     % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                     % transitions onto the parameter itself and does not put it into mode
+                     % 'A'. The <PARAM> field is always calculated with other parameters in
+                     % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                     % "real"  parameter  adjustment  as  defined above.  A calculation
+                     % without  a  "real"  parameter  adjustment  but  involving  other
+                     % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                     % recorded in the BGC-Argofiles.
+                     
+                     % there is no need to compute derived parameters with PRES_ADJUSTED
+                     %                   if (~isempty(o_profDo.dataAdj))
+                     %
+                     %                      % interpolate and extrapolate PTS data at the times of the OPTODE
+                     %                      % measurements
+                     %                      presData = interp1(ctdData.dates, ctdData.dataAdj(:, 1), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      tempData = interp1(ctdData.dates, ctdData.dataAdj(:, 2), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdData.dates, ctdData.dataAdj(:, 3), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %
+                     %                      % compute DOXY
+                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                         o_profDo.dataAdj(idPark, idC1PhaseDoxy), o_profDo.dataAdj(idPark, idC2PhaseDoxy), o_profDo.dataAdj(idPark, idTempDoxy), ...
+                     %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                     %                         presData, tempData, psalData, ...
+                     %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                     %                         paramDoxy.fillValue);
+                     %                      o_profDo.dataAdj(idPark, idDoxy) = doxyValues;
+                     %                   end
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute DOXY parameter for subsurface drift measurements => DOXY data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
                end
             end
             
             % compute DOXY for profile measurements
             if (~isempty(a_cycleTimeData.ascentStartDateSci) && ...
-                  ~isempty(a_cycleTimeData.ascentEndDateSci))
+                  ~isempty(a_cycleTimeData.ascentEndDate))
                idAscent = find(((o_profDo.dates >= a_cycleTimeData.ascentStartDateSci) & ...
-                  (o_profDo.dates <= a_cycleTimeData.ascentEndDateSci)));
+                  (o_profDo.dates <= a_cycleTimeData.ascentEndDate)));
                
                if (length(idAscent) > 1)
                   
-                  % retrieve PTS measurements sampled suring ascent profile from
-                  % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
-                  ctdDataAscent = [];
-                  idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
-                     (ctdData.dates <= a_cycleTimeData.ascentEndDateSci)));
-                  if (~isempty(idCtdAscent))
-                     ctdDataAscent = ctdData;
-                     ctdDataAscent.data = ctdDataAscent.data(idCtdAscent, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
-                     end
-                  end
-                  if (~isempty(a_profCtdCp))
-                     if (isempty(ctdDataAscent))
-                        ctdDataAscent = a_profCtdCp;
-                     else
-                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                  if (~isempty(ctdData))
+                     
+                     % retrieve PTS measurements sampled suring ascent profile from
+                     % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                     ctdDataAscent = [];
+                     idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                        (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
+                     if (~isempty(idCtdAscent))
+                        ctdDataAscent = ctdData;
+                        ctdDataAscent.data = ctdDataAscent.data(idCtdAscent, :);
                         if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
                         end
                      end
-                  end
-                  if (~isempty(a_profCtdCpH))
-                     if (isempty(ctdDataAscent))
-                        ctdDataAscent = a_profCtdCpH;
-                        ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
-                        end
-                     else
-                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                     if (~isempty(a_profCtdCp))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCp;
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           end
                         end
                      end
-                  end
-                  
-                  if (~isempty(ctdDataAscent))
-                     [~, idSort] = sort(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idSort, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                     if (~isempty(a_profCtdCpH))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCpH;
+                           ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           end
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           end
+                        end
                      end
-                     [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                     
+                     if (~isempty(ctdDataAscent))
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                        end
+                        [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                        end
                      end
+                     
+                     % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     % measurements
+                     tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
+                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
+                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     
+                     % compute DOXY
+                     doxyValues = compute_DOXY_1121_1322( ...
+                        o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
+                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                        o_profDo.data(idAscent, idPres), tempData, psalData, ...
+                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                        paramDoxy.fillValue);
+                     o_profDo.data(idAscent, idDoxy) = doxyValues;
+                     
+                     % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                     % Hamburg"
+                     % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+                     % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                     % the calculation for the adjustment must involve the parameter itself
+                     % (e.g., with an offset or slope). If a different parameter used for
+                     % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                     % transitions onto the parameter itself and does not put it into mode
+                     % 'A'. The <PARAM> field is always calculated with other parameters in
+                     % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                     % "real"  parameter  adjustment  as  defined above.  A calculation
+                     % without  a  "real"  parameter  adjustment  but  involving  other
+                     % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                     % recorded in the BGC-Argofiles.
+                     
+                     % there is no need to compute derived parameters with PRES_ADJUSTED
+                     %                   if (~isempty(o_profDo.dataAdj))
+                     %
+                     %                      % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     %                      % measurements
+                     %                      tempData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 2), ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 3), ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
+                     %
+                     %                      % compute DOXY
+                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                         o_profDo.dataAdj(idAscent, idC1PhaseDoxy), o_profDo.dataAdj(idAscent, idC2PhaseDoxy), o_profDo.dataAdj(idAscent, idTempDoxy), ...
+                     %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), tempData, psalData, ...
+                     %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                     %                         paramDoxy.fillValue);
+                     %                      o_profDo.dataAdj(idAscent, idDoxy) = doxyValues;
+                     %                   end
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute DOXY parameter for ascending profile measurements => DOXY data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
                   end
-                  
-                  % interpolate and extrapolate TS data at the pressures of the OPTODE
-                  % measurements
-                  tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
-                     o_profDo.data(idAscent, idPres), 'linear', 'extrap');
-                  psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
-                     o_profDo.data(idAscent, idPres), 'linear', 'extrap');
-                  
-                  % compute DOXY
-                  doxyValues = compute_DOXY_1322( ...
-                     o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
-                     paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                     o_profDo.data(idAscent, idPres), tempData, psalData, ...
-                     paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                     paramDoxy.fillValue);
-                  o_profDo.data(idAscent, idDoxy) = doxyValues;
-                  
-                  % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
-                  % Hamburg"
-                  % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
-                  % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
-                  % the calculation for the adjustment must involve the parameter itself
-                  % (e.g., with an offset or slope). If a different parameter used for
-                  % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
-                  % transitions onto the parameter itself and does not put it into mode
-                  % 'A'. The <PARAM> field is always calculated with other parameters in
-                  % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
-                  % "real"  parameter  adjustment  as  defined above.  A calculation
-                  % without  a  "real"  parameter  adjustment  but  involving  other
-                  % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
-                  % recorded in the BGC-Argofiles.
-                  
-                  % there is no need to compute derived parameters with PRES_ADJUSTED
-                  %                   if (~isempty(o_profDo.dataAdj))
-                  %
-                  %                      % interpolate and extrapolate TS data at the pressures of the OPTODE
-                  %                      % measurements
-                  %                      tempData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 2), ...
-                  %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
-                  %                      psalData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 3), ...
-                  %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
-                  %
-                  %                      % compute DOXY
-                  %                      doxyValues = compute_DOXY_1322( ...
-                  %                         o_profDo.dataAdj(idAscent, idC1PhaseDoxy), o_profDo.dataAdj(idAscent, idC2PhaseDoxy), o_profDo.dataAdj(idAscent, idTempDoxy), ...
-                  %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                  %                         o_profDo.dataAdj(idAscent, idPres), tempData, psalData, ...
-                  %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                  %                         paramDoxy.fillValue);
-                  %                      o_profDo.dataAdj(idAscent, idDoxy) = doxyValues;
-                  %                   end
                end
             end
             
             % compute PPOX_DOXY for surface measurements
-            if (~isempty(a_cycleTimeData.ascentEndDateSci))
-               idSurf = find(o_profDo.dates > a_cycleTimeData.ascentEndDateSci);
+            if (~isempty(a_cycleTimeData.ascentEndDate))
+               idSurf = find(o_profDo.dates > a_cycleTimeData.ascentEndDate);
                
                if (~isempty(idSurf))
                   
                   % compute PPOX_DOXY
-                  ppoxDoxyValues = compute_PPOX_DOXY_1322( ...
+                  ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
                      o_profDo.data(idSurf, idC1PhaseDoxy), o_profDo.data(idSurf, idC2PhaseDoxy), o_profDo.data(idSurf, idTempDoxy), ...
                      paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                      o_profDo.data(idSurf, idPres), ...
@@ -313,7 +338,7 @@ switch (a_decoderId)
                   %                   if (~isempty(o_profDo.dataAdj))
                   %
                   %                      % compute PPOX_DOXY
-                  %                      ppoxDoxyValues = compute_PPOX_DOXY_1322( ...
+                  %                      ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
                   %                         o_profDo.dataAdj(idSurf, idC1PhaseDoxy), o_profDo.dataAdj(idSurf, idC2PhaseDoxy), o_profDo.dataAdj(idSurf, idTempDoxy), ...
                   %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                   %                         o_profDo.dataAdj(idSurf, idPres), ...
@@ -325,6 +350,307 @@ switch (a_decoderId)
             end
          end
       end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {1322}
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % DOXY & PPOX_DOXY
+      
+      if (~isempty(o_profDo))
+         
+         paramDoxy = get_netcdf_param_attributes('DOXY');
+         paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
+         paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         paramC1phaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
+         paramC2phaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramTemp = get_netcdf_param_attributes('TEMP');
+         paramPsal = get_netcdf_param_attributes('PSAL');
+         
+         % add DOXY and PPOX_DOXY to the DO profile
+         o_profDo.paramList = [o_profDo.paramList paramDoxy paramPpoxDoxy];
+         o_profDo.data = [o_profDo.data ...
+            ones(size(o_profDo.data, 1), 1)*paramDoxy.fillValue ...
+            ones(size(o_profDo.data, 1), 1)*paramPpoxDoxy.fillValue];
+         if (~isempty(o_profDo.dataAdj))
+            o_profDo.dataAdj = [o_profDo.dataAdj ...
+               ones(size(o_profDo.dataAdj, 1), 1)*paramDoxy.fillValue ...
+               ones(size(o_profDo.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
+         end
+         
+         idPres = find(strcmp({o_profDo.paramList.name}, 'PRES') == 1);
+         idC1PhaseDoxy = find(strcmp({o_profDo.paramList.name}, 'C1PHASE_DOXY') == 1);
+         idC2PhaseDoxy = find(strcmp({o_profDo.paramList.name}, 'C2PHASE_DOXY') == 1);
+         idTempDoxy = find(strcmp({o_profDo.paramList.name}, 'TEMP_DOXY') == 1);
+         idDoxy = find(strcmp({o_profDo.paramList.name}, 'DOXY') == 1);
+         idPpoxDoxy = find(strcmp({o_profDo.paramList.name}, 'PPOX_DOXY') == 1);
+         
+         if (~isempty(idPres) && ...
+               ~isempty(idC1PhaseDoxy) && ~isempty(idC2PhaseDoxy) && ...
+               ~isempty(idTempDoxy) && ~isempty(idDoxy) && ~isempty(idPpoxDoxy))
+            
+            % retrieve discrete PTS measurements from CTD_PTS and CTD_PTSH data
+            ctdData = [];
+            if (~isempty(a_profCtdPts))
+               ctdData = a_profCtdPts;
+            end
+            if (~isempty(a_profCtdPtsh))
+               if (isempty(ctdData))
+                  ctdData = a_profCtdPtsh;
+                  ctdData.data = ctdData.data(:, 1:3);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = ctdData.dataAdj(:, 1:3);
+                  end
+               else
+                  ctdData.dates = [ctdData.dates; a_profCtdPtsh.dates];
+                  ctdData.data = [ctdData.data; a_profCtdPtsh.data(:, 1:3)];
+                  [~, idSort] = sort(ctdData.dates);
+                  ctdData.dates = ctdData.dates(idSort);
+                  ctdData.data = ctdData.data(idSort, :);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = [ctdData.dataAdj; a_profCtdPtsh.dataAdj(:, 1:3)];
+                     ctdData.dataAdj = ctdData.dataAdj(idSort, :);
+                  end
+               end
+            end
+            
+            % compute DOXY for sub-surface measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci))
+               idPark = find(o_profDo.dates < a_cycleTimeData.ascentStartDateSci);
+               
+               if (length(idPark) > 1)
+                  if (~isempty(ctdData))
+                     
+                     % interpolate and extrapolate PTS data at the times of the OPTODE
+                     % measurements
+                     presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
+                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     
+                     % compute DOXY
+                     doxyValues = compute_DOXY_1121_1322( ...
+                        o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
+                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                        presData, tempData, psalData, ...
+                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                        paramDoxy.fillValue);
+                     o_profDo.data(idPark, idDoxy) = doxyValues;
+                     
+                     % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                     % Hamburg"
+                     % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+                     % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                     % the calculation for the adjustment must involve the parameter itself
+                     % (e.g., with an offset or slope). If a different parameter used for
+                     % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                     % transitions onto the parameter itself and does not put it into mode
+                     % 'A'. The <PARAM> field is always calculated with other parameters in
+                     % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                     % "real"  parameter  adjustment  as  defined above.  A calculation
+                     % without  a  "real"  parameter  adjustment  but  involving  other
+                     % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                     % recorded in the BGC-Argofiles.
+                     
+                     % there is no need to compute derived parameters with PRES_ADJUSTED
+                     %                   if (~isempty(o_profDo.dataAdj))
+                     %
+                     %                      % interpolate and extrapolate PTS data at the times of the OPTODE
+                     %                      % measurements
+                     %                      presData = interp1(ctdData.dates, ctdData.dataAdj(:, 1), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      tempData = interp1(ctdData.dates, ctdData.dataAdj(:, 2), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdData.dates, ctdData.dataAdj(:, 3), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %
+                     %                      % compute DOXY
+                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                         o_profDo.dataAdj(idPark, idC1PhaseDoxy), o_profDo.dataAdj(idPark, idC2PhaseDoxy), o_profDo.dataAdj(idPark, idTempDoxy), ...
+                     %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                     %                         presData, tempData, psalData, ...
+                     %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                     %                         paramDoxy.fillValue);
+                     %                      o_profDo.dataAdj(idPark, idDoxy) = doxyValues;
+                     %                   end
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute DOXY parameter for subsurface drift measurements => DOXY data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
+            end
+            
+            % compute DOXY for profile measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci) && ...
+                  ~isempty(a_cycleTimeData.ascentEndDate))
+               idAscent = find(((o_profDo.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                  (o_profDo.dates <= a_cycleTimeData.ascentEndDate)));
+               
+               if (length(idAscent) > 1)
+                  
+                  if (~isempty(ctdData))
+                     
+                     % retrieve PTS measurements sampled suring ascent profile from
+                     % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                     ctdDataAscent = [];
+                     idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                        (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
+                     if (~isempty(idCtdAscent))
+                        ctdDataAscent = ctdData;
+                        ctdDataAscent.data = ctdDataAscent.data(idCtdAscent, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
+                        end
+                     end
+                     if (~isempty(a_profCtdCp))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCp;
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           end
+                        end
+                     end
+                     if (~isempty(a_profCtdCpH))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCpH;
+                           ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           end
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           end
+                        end
+                     end
+                     
+                     if (~isempty(ctdDataAscent))
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                        end
+                        [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                        end
+                     end
+                     
+                     % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     % measurements
+                     tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
+                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
+                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     
+                     % compute DOXY
+                     doxyValues = compute_DOXY_1121_1322( ...
+                        o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
+                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                        o_profDo.data(idAscent, idPres), tempData, psalData, ...
+                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                        paramDoxy.fillValue);
+                     o_profDo.data(idAscent, idDoxy) = doxyValues;
+                     
+                     % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                     % Hamburg"
+                     % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+                     % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                     % the calculation for the adjustment must involve the parameter itself
+                     % (e.g., with an offset or slope). If a different parameter used for
+                     % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                     % transitions onto the parameter itself and does not put it into mode
+                     % 'A'. The <PARAM> field is always calculated with other parameters in
+                     % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                     % "real"  parameter  adjustment  as  defined above.  A calculation
+                     % without  a  "real"  parameter  adjustment  but  involving  other
+                     % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                     % recorded in the BGC-Argofiles.
+                     
+                     % there is no need to compute derived parameters with PRES_ADJUSTED
+                     %                   if (~isempty(o_profDo.dataAdj))
+                     %
+                     %                      % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     %                      % measurements
+                     %                      tempData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 2), ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdDataAscent.dataAdj(:, 1), ctdDataAscent.dataAdj(:, 3), ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
+                     %
+                     %                      % compute DOXY
+                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                         o_profDo.dataAdj(idAscent, idC1PhaseDoxy), o_profDo.dataAdj(idAscent, idC2PhaseDoxy), o_profDo.dataAdj(idAscent, idTempDoxy), ...
+                     %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                     %                         o_profDo.dataAdj(idAscent, idPres), tempData, psalData, ...
+                     %                         paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                     %                         paramDoxy.fillValue);
+                     %                      o_profDo.dataAdj(idAscent, idDoxy) = doxyValues;
+                     %                   end
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute DOXY parameter for ascending profile measurements => DOXY data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
+            end
+            
+            % compute PPOX_DOXY for surface measurements
+            if (~isempty(a_cycleTimeData.ascentEndDate))
+               idSurf = find(o_profDo.dates > a_cycleTimeData.ascentEndDate);
+               
+               if (~isempty(idSurf))
+                  
+                  % compute PPOX_DOXY
+                  ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
+                     o_profDo.data(idSurf, idC1PhaseDoxy), o_profDo.data(idSurf, idC2PhaseDoxy), o_profDo.data(idSurf, idTempDoxy), ...
+                     paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                     o_profDo.data(idSurf, idPres), ...
+                     paramPres.fillValue, ...
+                     paramPpoxDoxy.fillValue);
+                  o_profDo.data(idSurf, idPpoxDoxy) = ppoxDoxyValues;
+                  
+                  % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                  % Hamburg"
+                  % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
+                  % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                  % the calculation for the adjustment must involve the parameter itself
+                  % (e.g., with an offset or slope). If a different parameter used for
+                  % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                  % transitions onto the parameter itself and does not put it into mode
+                  % 'A'. The <PARAM> field is always calculated with other parameters in
+                  % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                  % "real"  parameter  adjustment  as  defined above.  A calculation
+                  % without  a  "real"  parameter  adjustment  but  involving  other
+                  % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                  % recorded in the BGC-Argofiles.
+                  
+                  % there is no need to compute derived parameters with PRES_ADJUSTED
+                  %                   if (~isempty(o_profDo.dataAdj))
+                  %
+                  %                      % compute PPOX_DOXY
+                  %                      ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
+                  %                         o_profDo.dataAdj(idSurf, idC1PhaseDoxy), o_profDo.dataAdj(idSurf, idC2PhaseDoxy), o_profDo.dataAdj(idSurf, idTempDoxy), ...
+                  %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                  %                         o_profDo.dataAdj(idSurf, idPres), ...
+                  %                         paramPres.fillValue, ...
+                  %                         paramPpoxDoxy.fillValue);
+                  %                      o_profDo.dataAdj(idSurf, idPpoxDoxy) = ppoxDoxyValues;
+                  %                   end
+               end
+            end
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % PH_IN_SITU_FREE & PH_IN_SITU_TOTAL
       
       if ((~isempty(o_profCtdPtsh)) || (~isempty(o_profCtdCpH)))
          
@@ -462,6 +788,205 @@ switch (a_decoderId)
                %                   o_profCtdCpH.dataAdj(:, idPhInSituTotal) = phInSituTotalValues;
                %                end
             end
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % CHLA & BBP700 & CDOM
+      
+      if (~isempty(o_profFlbbCd))
+         
+         paramChla = get_netcdf_param_attributes('CHLA');
+         paramBbp700 = get_netcdf_param_attributes('BBP700');
+         paramCdom = get_netcdf_param_attributes('CDOM');
+         
+         paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramTemp = get_netcdf_param_attributes('TEMP');
+         paramSal = get_netcdf_param_attributes('PSAL');
+         paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
+         paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
+         
+         % add CHLA, BBP700 and CDOM to the FLBBCD profile
+         o_profFlbbCd.paramList = [o_profFlbbCd.paramList paramChla paramBbp700 paramCdom];
+         o_profFlbbCd.data = [o_profFlbbCd.data ...
+            ones(size(o_profFlbbCd.data, 1), 1)*paramChla.fillValue ...
+            ones(size(o_profFlbbCd.data, 1), 1)*paramBbp700.fillValue ...
+            ones(size(o_profFlbbCd.data, 1), 1)*paramCdom.fillValue];
+         if (~isempty(o_profFlbbCd.dataAdj))
+            o_profFlbbCd.dataAdj = [o_profFlbbCd.dataAdj ...
+               ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramChla.fillValue ...
+               ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramBbp700.fillValue ...
+               ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramCdom.fillValue];
+         end
+         
+         % CHLA
+         idFluorescenceChla = find(strcmp({o_profFlbbCd.paramList.name}, 'FLUORESCENCE_CHLA') == 1);
+         idChla = find(strcmp({o_profFlbbCd.paramList.name}, 'CHLA') == 1);
+         
+         if (~isempty(idFluorescenceChla) && ~isempty(idChla))
+            % compute CHLA
+            chlaValues = compute_CHLA_105_to_112_121_to_125_1322( ...
+               o_profFlbbCd.data(:, idFluorescenceChla), ...
+               paramFluorescenceChla.fillValue, paramChla.fillValue);
+            o_profFlbbCd.data(:, idChla) = chlaValues;
+         end
+         
+         % BBP700
+         idBetaBackscattering700 = find(strcmp({o_profFlbbCd.paramList.name}, 'BETA_BACKSCATTERING700') == 1);
+         idBbp700 = find(strcmp({o_profFlbbCd.paramList.name}, 'BBP700') == 1);
+         
+         if (~isempty(idBetaBackscattering700) && ~isempty(idBbp700))
+            
+            % retrieve discrete PTS measurements from CTD_PTS and CTD_PTSH data
+            ctdData = [];
+            if (~isempty(a_profCtdPts))
+               ctdData = a_profCtdPts;
+            end
+            if (~isempty(a_profCtdPtsh))
+               if (isempty(ctdData))
+                  ctdData = a_profCtdPtsh;
+                  ctdData.data = ctdData.data(:, 1:3);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = ctdData.dataAdj(:, 1:3);
+                  end
+               else
+                  ctdData.dates = [ctdData.dates; a_profCtdPtsh.dates];
+                  ctdData.data = [ctdData.data; a_profCtdPtsh.data(:, 1:3)];
+                  [~, idSort] = sort(ctdData.dates);
+                  ctdData.dates = ctdData.dates(idSort);
+                  ctdData.data = ctdData.data(idSort, :);
+                  if (~isempty(ctdData.dataAdj))
+                     ctdData.dataAdj = [ctdData.dataAdj; a_profCtdPtsh.dataAdj(:, 1:3)];
+                     ctdData.dataAdj = ctdData.dataAdj(idSort, :);
+                  end
+               end
+            end
+            
+            % compute BBP700 for sub-surface measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci))
+               idPark = find(o_profFlbbCd.dates < a_cycleTimeData.ascentStartDateSci);
+               
+               if (length(idPark) > 1)
+                  if (~isempty(ctdData))
+                     
+                     % interpolate and extrapolate PTS data at the times of the OPTODE
+                     % measurements
+                     presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
+                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
+                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
+                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     
+                     % compute BBP700
+                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1322( ...
+                        o_profFlbbCd.data(idPark, idBetaBackscattering700), ...
+                        paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+                        [presData, tempData, psalData], ...
+                        paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+                     o_profFlbbCd.data(idPark, idBbp700) = bbp700Values;
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute BBP700 parameter for subsurface drift measurements => BBP700 data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
+            end
+            
+            % compute BBP700 for profile measurements
+            if (~isempty(a_cycleTimeData.ascentStartDateSci) && ...
+                  ~isempty(a_cycleTimeData.ascentEndDate))
+               idAscent = find(((o_profFlbbCd.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                  (o_profFlbbCd.dates <= a_cycleTimeData.ascentEndDate)));
+               
+               if (length(idAscent) > 1)
+                  
+                  if (~isempty(ctdData))
+                     
+                     % retrieve PTS measurements sampled suring ascent profile from
+                     % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                     ctdDataAscent = [];
+                     idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
+                        (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
+                     if (~isempty(idCtdAscent))
+                        ctdDataAscent = ctdData;
+                        ctdDataAscent.data = ctdDataAscent.data(idCtdAscent, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
+                        end
+                     end
+                     if (~isempty(a_profCtdCp))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCp;
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           end
+                        end
+                     end
+                     if (~isempty(a_profCtdCpH))
+                        if (isempty(ctdDataAscent))
+                           ctdDataAscent = a_profCtdCpH;
+                           ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           end
+                        else
+                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                           if (~isempty(ctdDataAscent.dataAdj))
+                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           end
+                        end
+                     end
+                     
+                     if (~isempty(ctdDataAscent))
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                        end
+                        [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                        ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                        end
+                     end
+                     
+                     % interpolate and extrapolate TS data at the pressures
+                     % of the FLBB_CD measurements
+                     tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
+                        o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
+                     psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
+                        o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
+                     
+                     % compute BBP700
+                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1322( ...
+                        o_profFlbbCd.data(idAscent, idBetaBackscattering700), ...
+                        paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+                        [o_profFlbbCd.data(idAscent, idPres), tempData, psalData], ...
+                        paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+                     o_profFlbbCd.data(idAscent, idBbp700) = bbp700Values;
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute BBP700 parameter for ascending profile measurements => BBP700 data set to fill value\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_cycleNum);
+                  end
+               end
+            end
+         end
+         
+         % CDOM
+         idFluorescenceCdom = find(strcmp({o_profFlbbCd.paramList.name}, 'FLUORESCENCE_CDOM') == 1);
+         idCdom = find(strcmp({o_profFlbbCd.paramList.name}, 'CDOM') == 1);
+         
+         if (~isempty(idFluorescenceCdom) && ~isempty(idCdom))
+            % compute CDOM
+            cdomValues = compute_CDOM_105_to_107_110_112_121_to_125_1322( ...
+               o_profFlbbCd.data(:, idFluorescenceCdom), ...
+               paramFluorescenceCdom.fillValue, paramCdom.fillValue);
+            o_profFlbbCd.data(:, idCdom) = cdomValues;
          end
       end
 end

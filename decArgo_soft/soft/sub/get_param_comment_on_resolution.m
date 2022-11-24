@@ -346,11 +346,12 @@ switch (a_decoderId)
             
       end
       
-   case {201, 202, 203, 215, 216}
+   case {201, 202, 203, 215, 216, 218}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
       % Arvor-Deep-Ice Iridium 5.65
+      % Arvor-Deep-Ice Iridium 5.66
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             

@@ -2,11 +2,13 @@
 % Perform real time adjustment on parameter profile data.
 %
 % SYNTAX :
-%  [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate)
+%  [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate, a_bgcFloatFlag)
 %
 % INPUT PARAMETERS :
-%   a_tabProfiles : input profile structures
-%   a_launchDate  : float launch date
+%   a_tabProfiles  : input profile structures
+%   a_launchDate   : float launch date
+%   a_bgcFloatFlag : BGC float flag (1: if float is a 'real' BGC float,
+%                    0: if only DOXY adjustment should be checked)
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : output profile structures
@@ -19,18 +21,294 @@
 % RELEASES :
 %   06/28/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate)
+function [o_tabProfiles] = compute_rt_adjusted_param(a_tabProfiles, a_launchDate, a_bgcFloatFlag)
 
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
 
 
-% perform CHLA RT adjustment
-[o_tabProfiles] = compute_rt_adjusted_chla(o_tabProfiles);
+% perform DOXY RT adjustment
+[o_tabProfiles] = compute_rt_adjusted_doxy(o_tabProfiles);
+
+if (a_bgcFloatFlag)
+   % perform CHLA RT adjustment
+   [o_tabProfiles] = compute_rt_adjusted_chla(o_tabProfiles);
+   
+   % perform NITRATE RT adjustment
+   [o_tabProfiles] = compute_rt_adjusted_nitrate(o_tabProfiles, a_launchDate);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Perform real time adjustment on DOXY profile data.
+%
+% SYNTAX :
+%  [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles : input profile structures
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles : output profile structures
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   07/03/2019 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+
+% arrays to store RT offset information
+global g_decArgo_rtOffsetInfo;
+
+% global default values
+global g_decArgo_dateDef;
+global g_decArgo_nbHourForProfDateCompInRtOffsetAdj;
+
+% to store information on DOXY adjustment
+global g_decArgo_paramAdjInfo;
 
 
-% perform NITRATE RT adjustment
-[o_tabProfiles] = compute_rt_adjusted_nitrate(o_tabProfiles, a_launchDate);
+% look for DOXY profiles
+noDoxyProfile = 1;
+for idProf = 1:length(o_tabProfiles)
+   if (any(strcmp({o_tabProfiles(idProf).paramList.name}, 'DOXY')))
+      noDoxyProfile = 0;
+      break
+   end
+end
+if (noDoxyProfile)
+   return
+end
+
+% retrieve information on DOXY adjustement in RT_OFFSET information of META.json file
+doSlope = [];
+doOffset = [];
+doDate = [];
+if (~isempty(g_decArgo_rtOffsetInfo))
+   for idF = 1:length(g_decArgo_rtOffsetInfo.param)
+      if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, 'DOXY'))
+         doSlope = g_decArgo_rtOffsetInfo.slope{idF};
+         doOffset = g_decArgo_rtOffsetInfo.value{idF};
+         doDate = g_decArgo_rtOffsetInfo.date{idF};
+         break
+      end
+   end
+end
+
+% adjust DOXY profiles
+if (~isempty(doSlope))
+   firstAdj = 1;
+   for idProf = 1:length(o_tabProfiles)
+      profile = o_tabProfiles(idProf);
+      if (any(strcmp({profile.paramList.name}, 'DOXY')) && ...
+            (profile.date ~= g_decArgo_dateDef) && ...
+            ((profile.date - g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate))
+         
+         % retrieve associated profiles (needed for 'real' BGC floats since
+         % PTS are in separate profiles)
+         idProfs = find(([o_tabProfiles.outputCycleNumber] == profile.outputCycleNumber) & ...
+            ([o_tabProfiles.direction] == profile.direction));
+         
+         % adjust DOXY for this profile
+         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset);
+         if (ok)
+            o_tabProfiles(idProf) = profile;
+            
+            % fill structure to store DOXY adjustment information
+            if (firstAdj)
+               g_decArgo_paramAdjInfo.DOXY = [];
+               firstAdj = 0;
+            end
+            if (profile.direction == 'A')
+               direction = 2;
+            else
+               direction = 1;
+            end
+            g_decArgo_paramAdjInfo.DOXY = [g_decArgo_paramAdjInfo.DOXY;
+               profile.outputCycleNumber direction ...
+               {'PPOX_DOXY_ADJUSTED = PPOX_DOXY * SLOPE + OFFSET'} ...
+               {sprintf('SLOPE = %g, OFFSET = %g', doSlope, doOffset)} ...
+               {'DOXY_ADJUSTED is estimated from an adjustment of PPOX_DOXY at surface on WOA climatology'}];
+         end
+      end
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Perform real time adjustment on one DOXY profile data.
+%
+% SYNTAX :
+%  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, a_slope, a_offset)
+%
+% INPUT PARAMETERS :
+%   a_profile     : input DOXY profile structure
+%   a_tabProfiles : profile structures with the same cycle number and
+%                   direction as the DOXY one
+%   a_slope       : slope to be used for PPOX_DOXY adjustment
+%   a_offset      : offset to be used for PPOX_DOXY adjustment
+%
+% OUTPUT PARAMETERS :
+%   o_ok      : 1 if the adjustment has been performed, 0 otherwise
+%   o_profile : output DOXY profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   07/03/2019 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, a_slope, a_offset)
+
+% output parameters initialization
+o_ok = 0;
+o_profile = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% QC flag values (numerical)
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% involved parameter information
+paramPres = get_netcdf_param_attributes('PRES');
+paramTemp = get_netcdf_param_attributes('TEMP');
+paramPsal = get_netcdf_param_attributes('PSAL');
+paramDoxy = get_netcdf_param_attributes('DOXY');
+
+% retrieve or interpolate PTS measurements
+presValues = [];
+tempValues = [];
+psalValues = [];
+doxyValues = [];
+idPres = find(strcmp({a_profile.paramList.name}, 'PRES'));
+idTemp = find(strcmp({a_profile.paramList.name}, 'TEMP'));
+idPsal = find(strcmp({a_profile.paramList.name}, 'PSAL'));
+idDoxy = find(strcmp({a_profile.paramList.name}, 'DOXY'));
+if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
+
+   % case of a PTSO float
+   presValues = a_profile.data(:, idPres);
+   tempValues = a_profile.data(:, idTemp);
+   psalValues = a_profile.data(:, idPsal);
+   doxyValues = a_profile.data(:, idDoxy);
+else
+   
+   % case of a 'real' BGC float
+   
+   % create a PTS profile by concatenating the near-surface and the primary
+   % sampling profiles
+   idNssProf = [];
+   idPsProf = [];
+   for idProf = 1:length(a_tabProfiles)
+      profile = a_tabProfiles(idProf);
+      if (strncmp(profile.vertSamplingScheme, 'Near-surface sampling:', length('Near-surface sampling:')))
+         idNssPres = find(strcmp({profile.paramList.name}, 'PRES'));
+         idNssTemp = find(strcmp({profile.paramList.name}, 'TEMP'));
+         idNssPsal = find(strcmp({profile.paramList.name}, 'PSAL'));
+         if (~isempty(idNssPres) && ~isempty(idNssTemp) && ~isempty(idNssPsal))
+            idNssProf = idProf;
+         end
+      elseif (strncmp(profile.vertSamplingScheme, 'Primary sampling:', length('Primary sampling:')))
+         idPsPres = find(strcmp({profile.paramList.name}, 'PRES'));
+         idPsTemp = find(strcmp({profile.paramList.name}, 'TEMP'));
+         idPsPsal = find(strcmp({profile.paramList.name}, 'PSAL'));
+         if (~isempty(idPsPres) && ~isempty(idPsTemp) && ~isempty(idPsPsal))
+            idPsProf = idProf;
+         end
+      end
+      if (~isempty(idNssProf) && ~isempty(idPsProf))
+         break
+      end
+   end
+
+   if (~isempty(idNssProf) && ~isempty(idPsProf))
+      ctdPresData = [a_tabProfiles(idPsProf).data(:, idPsPres); a_tabProfiles(idNssProf).data(:, idNssPres)];
+      ctdTempData = [a_tabProfiles(idPsProf).data(:, idPsTemp); a_tabProfiles(idNssProf).data(:, idNssTemp)];
+      ctdPsalData = [a_tabProfiles(idPsProf).data(:, idPsPsal); a_tabProfiles(idNssProf).data(:, idNssPsal)];
+   elseif (~isempty(idPsProf))
+      ctdPresData = a_tabProfiles(idPsProf).data(:, idPsPres);
+      ctdTempData = a_tabProfiles(idPsProf).data(:, idPsTemp);
+      ctdPsalData = a_tabProfiles(idPsProf).data(:, idPsPsal);
+   elseif (~isempty(idNssProf))
+      ctdPresData = a_tabProfiles(idNssProf).data(:, idNssPres);
+      ctdTempData = a_tabProfiles(idNssProf).data(:, idNssTemp);
+      ctdPsalData = a_tabProfiles(idNssProf).data(:, idNssPsal);
+   else
+      ctdPresData = [];
+      ctdTempData = [];
+      ctdPsalData = [];
+   end
+      
+   % clean fill values
+   idNoDefPts = find((ctdPresData ~= paramPres.fillValue) & ...
+      (ctdTempData ~= paramTemp.fillValue) & ...
+      (ctdPsalData ~= paramPsal.fillValue));
+   
+   ctdPresData = ctdPresData(idNoDefPts);
+   ctdTempData = ctdTempData(idNoDefPts);
+   ctdPsalData = ctdPsalData(idNoDefPts);
+   
+   if (~isempty(ctdPresData))
+      
+      % interpolate and extrapolate the PTS data at the pressures of the
+      % DOXY measurements
+      ctdIntData = compute_interpolated_CTD_measurements(...
+         [ctdPresData ctdTempData ctdPsalData], a_profile.data(:, idPres));
+      
+      presValues = ctdIntData(:, 1);
+      tempValues = ctdIntData(:, 2);
+      psalValues = ctdIntData(:, 3);
+      doxyValues = a_profile.data(:, idDoxy);
+   else
+      fprintf('WARNING: Float #%d Cycle #%d%c: unable to find the associated CTD profile to adjust DOXY parameter => DOXY data cannot be adjusted\n', ...
+         g_decArgo_floatNum, ...
+         a_profile.outputCycleNumber, a_profile.direction);
+   end
+end
+
+if (~isempty(presValues))
+   
+   % adjust DOXY data
+   doxyAdjValues = compute_DOXY_ADJUSTED( ...
+      presValues, tempValues, psalValues, doxyValues, ...
+      paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, paramDoxy.fillValue, ...
+      a_slope, a_offset);
+   
+   % create array for adjusted data
+   profile = a_profile;
+   if (isempty(profile.dataAdj))
+      paramFillValue = [];
+      for idParam = 1:length(profile.paramList)
+         paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
+         paramFillValue = [paramFillValue paramInfo.fillValue];
+      end
+      profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+      profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
+   end
+   
+   % store adjusted data
+   idNoDef = find(doxyAdjValues ~= paramDoxy.fillValue);
+   profile.dataAdj(:, idDoxy) = doxyAdjValues;
+   profile.dataAdjQc(idNoDef, idDoxy) = g_decArgo_qcNoQc;
+   
+   % output parameters
+   o_ok = 1;
+   o_profile = profile;
+end
 
 return
 
@@ -69,9 +347,8 @@ g_decArgo_paramAdjInfo.CHLA = [];
 
 
 % adjust CHLA data
-paramChla = get_netcdf_param_attributes('CHLA');
-for idProf = 1:length(a_tabProfiles)
-   profile = a_tabProfiles(idProf);
+for idProf = 1:length(o_tabProfiles)
+   profile = o_tabProfiles(idProf);
    if (any(strcmp({profile.paramList.name}, 'CHLA')))
       
       % create array for adjusted data
@@ -108,13 +385,14 @@ for idProf = 1:length(a_tabProfiles)
          end
       end
       chlaData = profile.data(:, idChla);
+      paramChla = get_netcdf_param_attributes('CHLA');
       idNoDef = find(chlaData ~= paramChla.fillValue);
       
       chlaDataAdj = chlaData;
       chlaDataAdj(idNoDef) = chlaDataAdj(idNoDef)/2;
       profile.dataAdj(:, idChla) = chlaDataAdj;
       profile.dataAdjQc(idNoDef, idChla) = g_decArgo_qcNoQc;
-      a_tabProfiles(idProf) = profile;
+      o_tabProfiles(idProf) = profile;
       
       % fill structure to store CHLA adjustment information
       if (profile.direction == 'A')
@@ -129,9 +407,6 @@ for idProf = 1:length(a_tabProfiles)
          {'Real-time CHLA adjustment following recommendations of Roesler et al., 2017 (https://doi.org/10.1002/lom3.10185)'}];
    end
 end
-
-% update output parameters
-o_tabProfiles = a_tabProfiles;
 
 return
 
@@ -178,6 +453,18 @@ g_decArgo_paramAdjInfo.NITRATE = [];
 % verbose mode flag
 VERBOSE_MODE = 0;
 
+
+% look for NITRATE profiles
+noNitrateProfile = 1;
+for idProf = 1:length(a_tabProfiles)
+   if (any(strcmp({a_tabProfiles(idProf).paramList.name}, 'NITRATE')))
+      noNitrateProfile = 0;
+      break
+   end
+end
+if (noNitrateProfile)
+   return
+end
 
 % number of days after launch date to update med_Offset value
 TWO_MONTH_IN_DAYS = double(365/6);

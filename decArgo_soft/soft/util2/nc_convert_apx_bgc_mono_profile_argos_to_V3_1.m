@@ -76,7 +76,10 @@ refNcBFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V
 refNcBFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part2.nc';
 
 % list of corrected cycle numbers
-corCyNumFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\misc_info/link_from_nc_to_dep.txt';
+corCyNumFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\misc_info/corCyNum.txt';
+
+% list of nc 2 DEP link
+ncToDepFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\misc_info/link_from_nc_to_dep.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
@@ -172,6 +175,9 @@ refBFileSchema = [refBFileSchema ncinfo(refNcBFileName2)];
 % read list of corrected cycle number
 corCyNumData = load(corCyNumFile);
 
+% read list of nc 2 DEP link
+ncToDepLinkData = load(ncToDepFile);
+
 % read list of profile times and locations from DEP files
 profTimeAndLocData = load(profTimeAndLoc);
 
@@ -229,7 +235,7 @@ for idFloat = 1:nbFloats
       % ascending profile
       [ok, comment] = convert_mono_profile_to_V3_1(profFileName, ...
          profFilePathNameOutput, refCFileSchema, refBFileSchema, ...
-         metaData, corCyNumData, profTimeAndLocData, VERBOSE);
+         metaData, corCyNumData, ncToDepLinkData, profTimeAndLocData, VERBOSE);
    end
    
 end
@@ -248,7 +254,7 @@ return
 % SYNTAX :
 %  [o_ok, o_comment] = convert_mono_profile_to_V3_1( ...
 %    a_inputFileName, a_outputFileName, a_refCFileSchema, a_refBFileSchema, ...
-%    a_metaData, a_corCyNumData, a_profTimeAndLocData, a_verbose)
+%    a_metaData, a_corCyNumData, a_ncToDepLinkData, a_profTimeAndLocData, a_verbose)
 %
 % INPUT PARAMETERS :
 %   a_inputFileName      : mono-profile NetCDF input file name
@@ -257,6 +263,7 @@ return
 %   a_refBFileSchema     : NetCDF schema of the V3.1 'b' file
 %   a_metaData           : meta-data from nc V3.1 file
 %   a_corCyNumData       : corrected cycle number data
+%   a_ncToDepLinkData    : information to link nc and DEP cycles
 %   a_profTimeAndLocData : profile time and location (from DEP file)
 %   a_verbose            : verbose mode flag
 %
@@ -274,7 +281,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_ok, o_comment] = convert_mono_profile_to_V3_1( ...
    a_inputFileName, a_outputFileName, a_refCFileSchema, a_refBFileSchema, ...
-   a_metaData, a_corCyNumData, a_profTimeAndLocData, a_verbose)
+   a_metaData, a_corCyNumData, a_ncToDepLinkData, a_profTimeAndLocData, a_verbose)
 
 % output parameters initialization
 o_ok = 0;
@@ -304,7 +311,7 @@ end
 [o_ok, o_comment] = convert_file(a_inputFileName, ...
    a_outputFileName, str2num(inputFileFormatVersionStr), ...
    a_refCFileSchema, a_refBFileSchema, ...
-   a_metaData, a_corCyNumData, a_profTimeAndLocData, a_verbose);
+   a_metaData, a_corCyNumData, a_ncToDepLinkData, a_profTimeAndLocData, a_verbose);
 
 if (o_ok == 0)
    fprintf('%s', o_comment);
@@ -320,7 +327,7 @@ return
 %  [o_ok, o_comment] = convert_file( ...
 %    a_inputFileName, a_outputFileName, a_inputFileFormatVersion, ...
 %    a_refCFileSchema, a_refBFileSchema, ...
-%    a_metaData, a_corCyNumData, a_profTimeAndLocData, a_verbose)
+%    a_metaData, a_corCyNumData, a_ncToDepLinkData, a_profTimeAndLocData, a_verbose)
 %
 % INPUT PARAMETERS :
 %   a_inputFileName          : mono-profile NetCDF input file name
@@ -330,6 +337,7 @@ return
 %   a_refBFileSchema         : NetCDF schema of the V3.1 'b' file
 %   a_metaData               : meta-data from nc V3.1 file
 %   a_corCyNumData           : corrected cycle number data
+%   a_ncToDepLinkData        : information to link nc and DEP cycles
 %   a_profTimeAndLocData     : profile time and location (from DEP file)
 %   a_verbose                : verbose mode flag
 %
@@ -348,7 +356,7 @@ return
 function [o_ok, o_comment] = convert_file( ...
    a_inputFileName, a_outputFileName, a_inputFileFormatVersion, ...
    a_refCFileSchema, a_refBFileSchema, ...
-   a_metaData, a_corCyNumData, a_profTimeAndLocData, a_verbose)
+   a_metaData, a_corCyNumData, a_ncToDepLinkData, a_profTimeAndLocData, a_verbose)
 
 % output parameters initialization
 o_ok = 0;
@@ -448,6 +456,30 @@ elseif (a_inputFileFormatVersion == 3.0)
       ];
 end
 [inputData] = get_data_from_nc_file(a_inputFileName, wantedInputVars);
+
+% modify CYCLE_NUMBER if needed
+idVal = find(strcmp('PLATFORM_NUMBER', inputData(1:2:end)) == 1, 1);
+platformNumber = str2double(inputData{2*idVal}');
+idValCyNum = find(strcmp('CYCLE_NUMBER', inputData(1:2:end)) == 1, 1);
+cyNum = unique(inputData{2*idValCyNum});
+cyNumOri = cyNum;
+cyNumCor = [];
+if (~isempty(a_corCyNumData))
+   idF = find((a_corCyNumData(:, 1) == platformNumber) & (a_corCyNumData(:, 2) == cyNum));
+   if (~isempty(idF))
+      
+      % modify CYCLE_NUMBER in the data
+      cyNumCor = a_corCyNumData(idF, 3);
+      cyNumCor = ones(size(inputData{2*idValCyNum}))*cyNumCor;
+      inputData{2*idValCyNum} = cyNumCor;
+      cyNumCor = unique(cyNumCor);
+      
+      % modify CYCLE_NUMBER in the file name
+      [filePath, fileName, fileExt] = fileparts(a_outputFileName);
+      fileName = regexprep(fileName, sprintf('_%03d', cyNum), sprintf('_%03d', cyNumCor));
+      a_outputFileName = [filePath filesep fileName fileExt];
+   end
+end
 
 % get the N_PROF, N_CALIB and N_PARAM dimensions
 idVal = find(strcmp('PARAMETER', inputData(1:2:end)) == 1, 1);
@@ -1597,17 +1629,13 @@ for idParam = 1:length(paramlist)
 end
 
 % check JULD, JULD_LOCATION, LATITUDE and LONGITUDE against DEP file ones
-idVal = find(strcmp('PLATFORM_NUMBER', inputData(1:2:end)) == 1, 1);
-platformNumber = str2double(inputData{2*idVal}');
-idVal = find(strcmp('CYCLE_NUMBER', inputData(1:2:end)) == 1, 1);
-cyNum = inputData{2*idVal};
-if (~isempty(a_corCyNumData))
-   idF = find((a_corCyNumData(:, 1) == platformNumber) & (a_corCyNumData(:, 2) == cyNum));
-   if ~(isempty(idF) || (a_corCyNumData(idF, 3) == -1))
+if (~isempty(a_ncToDepLinkData))
+   idF = find((a_ncToDepLinkData(:, 1) == platformNumber) & (a_ncToDepLinkData(:, 2) == cyNumOri));
+   if ~(isempty(idF) || (a_ncToDepLinkData(idF, 3) == -1))
       
       % DEP cycle number
-      corCyNum = a_corCyNumData(idF, 3);
-      
+      depCyNum = a_ncToDepLinkData(idF, 3);
+            
       DIFF_MIN_JULD_HOURS = 24;
       DIFF_MIN_POS_METERS = 500;
       
@@ -1625,7 +1653,7 @@ if (~isempty(a_corCyNumData))
       positionQc = inputData{2*idVal};
       
       idFDepInfo = find((a_profTimeAndLocData(:,1) == platformNumber) & ...
-         (a_profTimeAndLocData(:,2) == corCyNum) & ...
+         (a_profTimeAndLocData(:,2) == depCyNum) & ...
          (a_profTimeAndLocData(:,3) == 1)); % ascent profile
       if (~isempty(idFDepInfo))
          depJulD = a_profTimeAndLocData(idFDepInfo,4);
@@ -1639,7 +1667,7 @@ if (~isempty(a_corCyNumData))
          
          if (juld ~= julParam.fillValue)
             if (abs(juld - depJulD) > DIFF_MIN_JULD_HOURS/24)
-               fprintf('WARNING: Float #%d Cycle #%d: %.1f hours difference in JULD\n', ...
+               fprintf('WARNING: Float #%d Cycle #%d: %.1f hours difference in JULD (between DEP and input NetCDF)\n', ...
                   platformNumber, cyNum, abs(juld - depJulD)*24);
             end
             juld = depJulD;
@@ -1647,7 +1675,7 @@ if (~isempty(a_corCyNumData))
          end
          if (juldLocation ~= julParam.fillValue)
             if (abs(juldLocation - depJulDLocation) > DIFF_MIN_JULD_HOURS/24)
-               fprintf('WARNING: Float #%d Cycle #%d: %.1f hours difference in JULD_LOCATION\n', ...
+               fprintf('WARNING: Float #%d Cycle #%d: %.1f hours difference in JULD_LOCATION (between DEP and input NetCDF)\n', ...
                   platformNumber, cyNum, abs(juldLocation - depJulDLocation)*24);
             end
             juldLocation = depJulDLocation;
@@ -1656,7 +1684,7 @@ if (~isempty(a_corCyNumData))
                (longitude ~= longitudeParam.fillValue))
             dist = distance_lpo([latitude depLatitude], [longitude depLongitude]);
             if (dist > DIFF_MIN_POS_METERS)
-               fprintf('WARNING: Float #%d Cycle #%d: %d meters difference in profile location\n', ...
+               fprintf('WARNING: Float #%d Cycle #%d: %d meters difference in profile location (between DEP and input NetCDF)\n', ...
                   platformNumber, cyNum, round(dist));
             end
             latitude = depLatitude;
@@ -2779,7 +2807,7 @@ if (~isempty(floatWmo) && ~isempty(dacFormatId) && ~isempty(metaConfMisNum))
    corCycleNumber = a_cycleNumber;
    if (~isempty(a_corCyNumData))
       idF = find((a_corCyNumData(:, 1) == floatWmo) & (a_corCyNumData(:, 2) == a_cycleNumber));
-      if (isempty(idF) || (a_corCyNumData(idF, 3) == -1))
+      if (isempty(idF))
          %          fprintf('INFO: Float %d: Corrected cycle number not found for cycle number #%d => no correction done + ''comment'' global attribute added\n', ...
          %             floatWmo, a_cycleNumber);
          o_noCorCyNum = 1;

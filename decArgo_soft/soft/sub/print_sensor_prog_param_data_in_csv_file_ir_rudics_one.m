@@ -32,6 +32,10 @@ global g_decArgo_floatNum;
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
+
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; sensor prog param; Packet time; %s\n', ...
    g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
    julian_2_gregorian_dec_argo(a_floatProgSensor(a_dataIndex, 1)));
@@ -68,7 +72,11 @@ else
       case 3
          lastId = 19;
       case 4
-         lastId = 13;
+         if (ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
+            lastId = 13;
+         elseif (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+            lastId = 6;
+         end
       case 5
          lastId = 6;
       case 6
@@ -77,11 +85,11 @@ else
    
    for id = 0:lastId
       name = sprintf('CONFIG_PC_%d_1_%d', a_floatProgSensor(a_dataIndex, 2), id);
-
+      
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; sensor prog param; %s; %g\n', ...
          g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(-1), ...
          name, a_floatProgSensor(a_dataIndex, id+8));
    end
 end
-   
+
 return

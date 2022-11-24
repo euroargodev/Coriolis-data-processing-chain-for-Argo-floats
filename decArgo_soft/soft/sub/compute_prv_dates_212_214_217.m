@@ -168,6 +168,7 @@ if (~isempty(id1) && ~isempty(id2))
    
    % retrieve the IC0 configuration parameter
    if (o_iceDetected == -1)
+      configNames = [];
       if (a_deepCycle == 1)
          [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
          ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
@@ -186,6 +187,12 @@ if (~isempty(id1) && ~isempty(id2))
                break
             end
             cyNum = cyNum - 1;
+         end
+         if (isempty(configNames))
+            % there is no configuration assigned yet
+            % retrieve the last temporary one
+            configNames = g_decArgo_floatConfig.DYNAMIC_TMP.NAMES;
+            configValues = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(:, end);
          end
          ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
          if (~isempty(ic0Value))

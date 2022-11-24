@@ -1404,7 +1404,11 @@ for idParam = 1:length(paramList)
    
    netcdf.putAtt(fCdf, profileParamQcVarId, 'long_name', sprintf('Global quality flag of %s profile', paramName));
    netcdf.putAtt(fCdf, profileParamQcVarId, 'conventions', 'Argo reference table 2a');
-   netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
+   if (g_cocs_netCDF4FlagForMonoProf)
+      netcdf.defVarFill(fCdf, profileParamQcVarId, false, ' ')
+   else
+      netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
+   end
 end
 
 % PARAM profile
@@ -1429,7 +1433,11 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramVarId, 'standard_name', paramInfo.standardName);
       end
       if (~isempty(paramInfo.fillValue))
-         netcdf.putAtt(fCdf, paramVarId, '_FillValue', paramInfo.fillValue);
+         if (g_cocs_netCDF4FlagForMonoProf)
+            netcdf.defVarFill(fCdf, paramVarId, false, paramInfo.fillValue)
+         else
+            netcdf.putAtt(fCdf, paramVarId, '_FillValue', paramInfo.fillValue);
+         end
       end
       if (~isempty(paramInfo.units))
          netcdf.putAtt(fCdf, paramVarId, 'units', paramInfo.units);
@@ -1468,7 +1476,11 @@ for idParam = 1:length(paramList)
       
       netcdf.putAtt(fCdf, paramQcVarId, 'long_name', 'quality flag');
       netcdf.putAtt(fCdf, paramQcVarId, 'conventions', 'Argo reference table 2');
-      netcdf.putAtt(fCdf, paramQcVarId, '_FillValue', ' ');
+      if (g_cocs_netCDF4FlagForMonoProf)
+         netcdf.defVarFill(fCdf, paramQcVarId, false, ' ')
+      else
+         netcdf.putAtt(fCdf, paramQcVarId, '_FillValue', ' ');
+      end
    else
       fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramQcName);
@@ -1482,9 +1494,13 @@ for idParam = 1:length(paramList)
          paramDPresVarId = netcdf.defVar(fCdf, paramDPresName, paramPresInfo.paramNcType, fliplr([nProfDimId nLevelsDimId]));
          
          netcdf.putAtt(fCdf, paramDPresVarId, 'long_name', [paramName ' pressure displacement from original sampled value']);
-
+         
          if (~isempty(paramInfo.fillValue))
-            netcdf.putAtt(fCdf, paramDPresVarId, '_FillValue', paramPresInfo.fillValue);
+            if (g_cocs_netCDF4FlagForMonoProf)
+               netcdf.defVarFill(fCdf, paramDPresVarId, false, paramPresInfo.fillValue)
+            else
+               netcdf.putAtt(fCdf, paramDPresVarId, '_FillValue', paramPresInfo.fillValue);
+            end
          end
          if (~isempty(paramInfo.units))
             netcdf.putAtt(fCdf, paramDPresVarId, 'units', paramPresInfo.units);
@@ -1511,7 +1527,11 @@ for idParam = 1:length(paramList)
          netcdf.putAtt(fCdf, paramAdjVarId, 'standard_name', paramInfo.standardName);
       end
       if (~isempty(paramInfo.fillValue))
-         netcdf.putAtt(fCdf, paramAdjVarId, '_FillValue', paramInfo.fillValue);
+         if (g_cocs_netCDF4FlagForMonoProf)
+            netcdf.defVarFill(fCdf, paramAdjVarId, false, paramInfo.fillValue)
+         else
+            netcdf.putAtt(fCdf, paramAdjVarId, '_FillValue', paramInfo.fillValue);
+         end
       end
       if (~isempty(paramInfo.units))
          netcdf.putAtt(fCdf, paramAdjVarId, 'units', paramInfo.units);
@@ -1550,7 +1570,11 @@ for idParam = 1:length(paramList)
       
       netcdf.putAtt(fCdf, paramAdjQcVarId, 'long_name', 'quality flag');
       netcdf.putAtt(fCdf, paramAdjQcVarId, 'conventions', 'Argo reference table 2');
-      netcdf.putAtt(fCdf, paramAdjQcVarId, '_FillValue', ' ');
+      if (g_cocs_netCDF4FlagForMonoProf)
+         netcdf.defVarFill(fCdf, paramAdjQcVarId, false, ' ')
+      else
+         netcdf.putAtt(fCdf, paramAdjQcVarId, '_FillValue', ' ');
+      end
    else
       fprintf('ERROR: Float #%d Cycle #%d%c: Parameter ''%s'' already exists in the nc file\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, paramAdjQcName);
@@ -1567,7 +1591,11 @@ for idParam = 1:length(paramList)
       
       netcdf.putAtt(fCdf, paramAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
       if (~isempty(paramInfo.fillValue))
-         netcdf.putAtt(fCdf, paramAdjErrVarId, '_FillValue', paramInfo.fillValue);
+         if (g_cocs_netCDF4FlagForMonoProf)
+            netcdf.defVarFill(fCdf, paramAdjErrVarId, false, paramInfo.fillValue)
+         else
+            netcdf.putAtt(fCdf, paramAdjErrVarId, '_FillValue', paramInfo.fillValue);
+         end
       end
       if (~isempty(paramInfo.units))
          netcdf.putAtt(fCdf, paramAdjErrVarId, 'units', paramInfo.units);
@@ -2319,7 +2347,11 @@ for idProf = 1:length(a_profData)
          
          netcdf.putAtt(fCdf, profileParamQcVarId, 'long_name', sprintf('Global quality flag of %s profile', paramName));
          netcdf.putAtt(fCdf, profileParamQcVarId, 'conventions', 'Argo reference table 2a');
-         netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
+         if (g_cocs_netCDF4FlagForMultiProf)
+            netcdf.defVarFill(fCdf, profileParamQcVarId, false, ' ')
+         else
+            netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
+         end
       end
    end
    
@@ -2344,7 +2376,11 @@ for idProf = 1:length(a_profData)
             netcdf.putAtt(fCdf, paramVarId, 'standard_name', paramInfo.standardName);
          end
          if (~isempty(paramInfo.fillValue))
-            netcdf.putAtt(fCdf, paramVarId, '_FillValue', paramInfo.fillValue);
+            if (g_cocs_netCDF4FlagForMultiProf)
+               netcdf.defVarFill(fCdf, paramVarId, false, paramInfo.fillValue)
+            else
+               netcdf.putAtt(fCdf, paramVarId, '_FillValue', paramInfo.fillValue);
+            end
          end
          if (~isempty(paramInfo.units))
             netcdf.putAtt(fCdf, paramVarId, 'units', paramInfo.units);
@@ -2380,7 +2416,11 @@ for idProf = 1:length(a_profData)
          
          netcdf.putAtt(fCdf, paramQcVarId, 'long_name', 'quality flag');
          netcdf.putAtt(fCdf, paramQcVarId, 'conventions', 'Argo reference table 2');
-         netcdf.putAtt(fCdf, paramQcVarId, '_FillValue', ' ');
+         if (g_cocs_netCDF4FlagForMultiProf)
+            netcdf.defVarFill(fCdf, paramQcVarId, false, ' ')
+         else
+            netcdf.putAtt(fCdf, paramQcVarId, '_FillValue', ' ');
+         end
       end
       
       % parameter displacement variable and attributes
@@ -2393,7 +2433,11 @@ for idProf = 1:length(a_profData)
             netcdf.putAtt(fCdf, paramDPresVarId, 'long_name', [paramName ' pressure displacement from original sampled value']);
             
             if (~isempty(paramInfo.fillValue))
-               netcdf.putAtt(fCdf, paramDPresVarId, '_FillValue', paramPresInfo.fillValue);
+               if (g_cocs_netCDF4FlagForMultiProf)
+                  netcdf.defVarFill(fCdf, paramDPresVarId, false, paramPresInfo.fillValue)
+               else
+                  netcdf.putAtt(fCdf, paramDPresVarId, '_FillValue', paramPresInfo.fillValue);
+               end
             end
             if (~isempty(paramInfo.units))
                netcdf.putAtt(fCdf, paramDPresVarId, 'units', paramPresInfo.units);
@@ -2417,7 +2461,11 @@ for idProf = 1:length(a_profData)
             netcdf.putAtt(fCdf, paramAdjVarId, 'standard_name', paramInfo.standardName);
          end
          if (~isempty(paramInfo.fillValue))
-            netcdf.putAtt(fCdf, paramAdjVarId, '_FillValue', paramInfo.fillValue);
+            if (g_cocs_netCDF4FlagForMultiProf)
+               netcdf.defVarFill(fCdf, paramAdjVarId, false, paramInfo.fillValue)
+            else
+               netcdf.putAtt(fCdf, paramAdjVarId, '_FillValue', paramInfo.fillValue);
+            end
          end
          if (~isempty(paramInfo.units))
             netcdf.putAtt(fCdf, paramAdjVarId, 'units', paramInfo.units);
@@ -2453,7 +2501,11 @@ for idProf = 1:length(a_profData)
          
          netcdf.putAtt(fCdf, paramAdjQcVarId, 'long_name', 'quality flag');
          netcdf.putAtt(fCdf, paramAdjQcVarId, 'conventions', 'Argo reference table 2');
-         netcdf.putAtt(fCdf, paramAdjQcVarId, '_FillValue', ' ');
+         if (g_cocs_netCDF4FlagForMultiProf)
+            netcdf.defVarFill(fCdf, paramAdjQcVarId, false, ' ')
+         else
+            netcdf.putAtt(fCdf, paramAdjQcVarId, '_FillValue', ' ');
+         end
       end
       
       % parameter adjusted error variable and attributes
@@ -2467,7 +2519,11 @@ for idProf = 1:length(a_profData)
          
          netcdf.putAtt(fCdf, paramAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
          if (~isempty(paramInfo.fillValue))
-            netcdf.putAtt(fCdf, paramAdjErrVarId, '_FillValue', paramInfo.fillValue);
+            if (g_cocs_netCDF4FlagForMultiProf)
+               netcdf.defVarFill(fCdf, paramAdjErrVarId, false, paramInfo.fillValue)
+            else
+               netcdf.putAtt(fCdf, paramAdjErrVarId, '_FillValue', paramInfo.fillValue);
+            end
          end
          if (~isempty(paramInfo.units))
             netcdf.putAtt(fCdf, paramAdjErrVarId, 'units', paramInfo.units);

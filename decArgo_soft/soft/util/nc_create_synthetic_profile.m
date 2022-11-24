@@ -39,6 +39,9 @@
 %                             instead of 1.5 so that nc_create_synthetic_profile_rt
 %                             and nc_create_synthetic_profile_rt share the same
 %                             version number
+%   07/08/2019 - RNU - V 1.7: for NetCDF-4 files, use 'defVarFill' function
+%                             instead of 'putAtt' to define the fill Value of a
+%                             variable
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -51,8 +54,8 @@ global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = '';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
 DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
@@ -88,7 +91,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.6 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.7 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

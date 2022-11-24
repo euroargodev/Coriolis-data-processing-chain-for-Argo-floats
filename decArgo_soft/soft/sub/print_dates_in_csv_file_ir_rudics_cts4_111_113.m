@@ -17,7 +17,7 @@
 %    a_firstEmerAscentDate, a_firstEmergencyAscentPres, ...
 %    a_dataCTD, a_dataOXY, a_dataOCR, ...
 %    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-%    a_dataCROVER, a_dataSUNA, ...
+%    a_dataCROVER, a_dataSUNA, a_dataSEAFET, ...
 %    a_gpsData)
 %
 % INPUT PARAMETERS :
@@ -47,6 +47,7 @@
 %   a_dataFLNTU                : decoded FLNTU data
 %   a_dataCROVER               : decoded cROVER data
 %   a_dataSUNA                 : decoded SUNA data
+%   dataSEAFET                 : decoded SEAFET data
 %   a_gpsData                  : information on GPS locations
 %
 % OUTPUT PARAMETERS :
@@ -74,7 +75,7 @@ function print_dates_in_csv_file_ir_rudics_cts4_111_113( ...
    a_firstEmerAscentDate, a_firstEmergencyAscentPres, ...
    a_dataCTD, a_dataOXY, a_dataOCR, ...
    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-   a_dataCROVER, a_dataSUNA, ...
+   a_dataCROVER, a_dataSUNA, a_dataSEAFET, ...
    a_gpsData)
 
 % current float WMO number
@@ -198,6 +199,26 @@ if (~isempty(a_dataSUNAAPF2))
    a_dataSUNAAPF2DateTrans = a_dataSUNAAPF2{2};
    a_dataSUNAAPF2CTDPres = a_dataSUNAAPF2{3};
 end
+
+a_dataSEAFETMean = a_dataSEAFET{1};
+a_dataSEAFETRaw = a_dataSEAFET{2};
+a_dataSEAFETStdMed = a_dataSEAFET{3};
+
+a_dataSEAFETMeanDate = a_dataSEAFETMean{1};
+a_dataSEAFETMeanDateTrans = a_dataSEAFETMean{2};
+a_dataSEAFETMeanPres = a_dataSEAFETMean{3};
+a_dataSEAFETMeanVref = a_dataSEAFETMean{4};
+
+a_dataSEAFETStdMedDate = a_dataSEAFETStdMed{1};
+a_dataSEAFETStdMedDateTrans = a_dataSEAFETStdMed{2};
+a_dataSEAFETStdMedPresMean = a_dataSEAFETStdMed{3};
+a_dataSEAFETStdMedVrefStd = a_dataSEAFETStdMed{4};
+a_dataSEAFETStdMedVrefMed = a_dataSEAFETStdMed{5};
+
+a_dataSEAFETRawDate = a_dataSEAFETRaw{1};
+a_dataSEAFETRawDateTrans = a_dataSEAFETRaw{2};
+a_dataSEAFETRawPres = a_dataSEAFETRaw{3};
+a_dataSEAFETRawVref = a_dataSEAFETRaw{4};
 
 a_gpsLocCycleNum = a_gpsData{1};
 a_gpsLocProfNum = a_gpsData{2};
@@ -364,7 +385,7 @@ if (~isempty(a_dataFLNTURawDate))
 end
 
 if (~isempty(a_dataCROVERMeanDate))
-   for idC = 4:size(a_dataFLNTURawDate, 2)
+   for idC = 4:size(a_dataCROVERMeanDate, 2)
       tabDataCycle = [tabDataCycle; a_dataCROVERMeanDate(:, 1)];
       tabDataProf = [tabDataProf; a_dataCROVERMeanDate(:, 2)];
       tabDataPhase = [tabDataPhase; a_dataCROVERMeanDate(:, 3)];
@@ -388,7 +409,7 @@ if (~isempty(a_dataCROVERRawDate))
 end
 
 if (~isempty(a_dataSUNAMeanDate))
-   for idC = 4:size(a_dataCROVERRawDate, 2)
+   for idC = 4:size(a_dataSUNAMeanDate, 2)
       tabDataCycle = [tabDataCycle; a_dataSUNAMeanDate(:, 1)];
       tabDataProf = [tabDataProf; a_dataSUNAMeanDate(:, 2)];
       tabDataPhase = [tabDataPhase; a_dataSUNAMeanDate(:, 3)];
@@ -408,6 +429,30 @@ if (~isempty(a_dataSUNARawDate))
       tabDataDate = [tabDataDate; a_dataSUNARawDate(:, idC)];
       tabDataDateTrans = [tabDataDateTrans; a_dataSUNARawDateTrans(:, idC)];
       tabDataPres = [tabDataPres; a_dataSUNARawPres(:, idC)];
+   end
+end
+
+if (~isempty(a_dataSEAFETMeanDate))
+   for idC = 4:size(a_dataSEAFETMeanDate, 2)
+      tabDataCycle = [tabDataCycle; a_dataSEAFETMeanDate(:, 1)];
+      tabDataProf = [tabDataProf; a_dataSEAFETMeanDate(:, 2)];
+      tabDataPhase = [tabDataPhase; a_dataSEAFETMeanDate(:, 3)];
+      tabDataType = [tabDataType; ones(size(a_dataSEAFETMeanDate, 1), 1)*46];
+      tabDataDate = [tabDataDate; a_dataSEAFETMeanDate(:, idC)];
+      tabDataDateTrans = [tabDataDateTrans; a_dataSEAFETMeanDateTrans(:, idC)];
+      tabDataPres = [tabDataPres; a_dataSEAFETMeanPres(:, idC)];
+   end
+end
+
+if (~isempty(a_dataSEAFETRawDate))
+   for idC = 4:size(a_dataSEAFETRawDate, 2)
+      tabDataCycle = [tabDataCycle; a_dataSEAFETRawDate(:, 1)];
+      tabDataProf = [tabDataProf; a_dataSEAFETRawDate(:, 2)];
+      tabDataPhase = [tabDataPhase; a_dataSEAFETRawDate(:, 3)];
+      tabDataType = [tabDataType; ones(size(a_dataSEAFETRawDate, 1), 1)*48];
+      tabDataDate = [tabDataDate; a_dataSEAFETRawDate(:, idC)];
+      tabDataDateTrans = [tabDataDateTrans; a_dataSEAFETRawDateTrans(:, idC)];
+      tabDataPres = [tabDataPres; a_dataSEAFETRawPres(:, idC)];
    end
 end
 

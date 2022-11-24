@@ -44,15 +44,33 @@ for idEv = 1:length(events)
       startTime = evt.timestamp;
       o_cycleTimeData.preludeStartDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_1)) || any(strfind(dataStr, PATTERN_DESCENT_TO_PARK_2)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
       o_cycleTimeData.descentStartDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_PARK_START)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
       o_cycleTimeData.parkStartDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_DEEP_DESCENT_START)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
       o_cycleTimeData.parkEndDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_ASCENT_START_1)) || any(strfind(dataStr, PATTERN_ASCENT_START_2)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
       o_cycleTimeData.ascentStartDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_ASCENT_END)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
       o_cycleTimeData.ascentEndDateSys = evt.timestamp;
+      if (isempty(o_cycleTimeData.ascentEndDate))
+         o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSys;
+      end
    end
 end
 
@@ -72,20 +90,20 @@ end
 PATTERN_TRANSMISSION_START = 'Found sky.';
 
 events = a_events(find(strcmp({a_events.functionName}, 'sky_search')));
-firstTime = [];
+firstTimeAfterAED = [];
 for idEv = 1:length(events)
    evt = events(idEv);
    dataStr = evt.message;
    if (any(strfind(dataStr, PATTERN_TRANSMISSION_START)))
-      if ((isempty(firstTime) || (firstTime > evt.timestamp)) && ...
-            ((isempty(startTime)) || (startTime < evt.timestamp))) % to not consider times before STARTUP_DATE
-         firstTime = evt.timestamp;
+      if ((isempty(firstTimeAfterAED) || (firstTimeAfterAED > evt.timestamp)) && ...
+            ((isempty(startTime)) || (startTime < evt.timestamp))) % to not consider times before AED
+         firstTimeAfterAED = evt.timestamp;
       end
    end
 end
-if (~isempty(firstTime))
-   if (isempty(o_cycleTimeData.transStartDate) || (o_cycleTimeData.transStartDate > firstTime))
-      o_cycleTimeData.transStartDate = firstTime;
+if (~isempty(firstTimeAfterAED))
+   if (isempty(o_cycleTimeData.transStartDate) || (o_cycleTimeData.transStartDate > firstTimeAfterAED))
+      o_cycleTimeData.transStartDate = firstTimeAfterAED;
    end
 end
 
@@ -99,7 +117,7 @@ for idEv = 1:length(events)
    dataStr = evt.message;
    if (any(strfind(dataStr, PATTERN_TRANSMISSION_END)))
       if ((isempty(lastTime) || (lastTime < evt.timestamp)) && ...
-            ((isempty(startTime)) || (startTime < evt.timestamp))) % to not consider times before STARTUP_DATE
+            ((isempty(startTime)) || (startTime < evt.timestamp))) % to not consider times before AED
          lastTime = evt.timestamp;
       end
    end

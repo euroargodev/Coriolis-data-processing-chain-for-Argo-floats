@@ -31,11 +31,26 @@ global g_decArgo_outputNcParamValue;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+
 
 % cycle, prof and phase number coded in the packet
 cycleNum = a_tabTech(a_dataIndex, 4);
 profNum = a_tabTech(a_dataIndex, 5);
 phaseNum = a_tabTech(a_dataIndex, 8);
+
+% set the current reference day
+refDay = a_refDay;
+if (~isempty(g_decArgo_julD2FloatDayOffset))
+   idF = find((g_decArgo_julD2FloatDayOffset(:, 1) == cycleNum) & ...
+      (g_decArgo_julD2FloatDayOffset(:, 2) == profNum));
+   if (~isempty(idF))
+      refDay = g_decArgo_julD2FloatDayOffset(idF, 3);
+   else
+      refDay = g_decArgo_julD2FloatDayOffset(end, 3);
+   end
+end
 
 % TECH: GENERAL INFORMATION
 
@@ -76,7 +91,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 7)/60);
 
 % Cycle start date
-cycleStartDate = a_refDay + a_tabTech(a_dataIndex, 6) + a_tabTech(a_dataIndex, 7)/1440;
+cycleStartDate = refDay + a_tabTech(a_dataIndex, 6) + a_tabTech(a_dataIndex, 7)/1440;
 g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    253 cycleNum profNum phaseNum 104];
 g_decArgo_outputNcParamValue{end+1} = ...
@@ -147,7 +162,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 19)/60);
 
 % Descent to park start date (in TRAJ)
-% descentToParkStartDate = a_refDay + a_tabTech(a_dataIndex, 18) + a_tabTech(a_dataIndex, 19)/1440;
+% descentToParkStartDate = refDay + a_tabTech(a_dataIndex, 18) + a_tabTech(a_dataIndex, 19)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 117];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -164,7 +179,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 21)/60);
 
 % First stabilization date (in TRAJ)
-% firstStabDate = a_refDay + a_tabTech(a_dataIndex, 20) + a_tabTech(a_dataIndex, 21)/1440;
+% firstStabDate = refDay + a_tabTech(a_dataIndex, 20) + a_tabTech(a_dataIndex, 21)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 120];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -186,7 +201,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 23)/60);
 
 % Descent to park end date (in TRAJ)
-% descentToParkEndDate = a_refDay + a_tabTech(a_dataIndex, 22) + a_tabTech(a_dataIndex, 23)/1440;
+% descentToParkEndDate = refDay + a_tabTech(a_dataIndex, 22) + a_tabTech(a_dataIndex, 23)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 124];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -252,7 +267,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 35)/60);
 
 % Descent to prof start date (in TRAJ)
-% descentToProfStartDate = a_refDay + a_tabTech(a_dataIndex, 34) + a_tabTech(a_dataIndex, 35)/1440;
+% descentToProfStartDate = refDay + a_tabTech(a_dataIndex, 34) + a_tabTech(a_dataIndex, 35)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 136];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -269,7 +284,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 37)/60);
 
 % Descent to prof end date (in TRAJ)
-% descentToProfEndDate = a_refDay + a_tabTech(a_dataIndex, 36) + a_tabTech(a_dataIndex, 37)/1440;
+% descentToProfEndDate = refDay + a_tabTech(a_dataIndex, 36) + a_tabTech(a_dataIndex, 37)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 139];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -335,7 +350,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 48)/60);
 
 % Ascent start date (in TRAJ)
-% ascentStartDate = a_refDay + a_tabTech(a_dataIndex, 47) + a_tabTech(a_dataIndex, 48)/1440;
+% ascentStartDate = refDay + a_tabTech(a_dataIndex, 47) + a_tabTech(a_dataIndex, 48)/1440;
 % g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 %    253 cycleNum profNum phaseNum 151];
 % g_decArgo_outputNcParamValue{end+1} = ...
@@ -352,7 +367,7 @@ g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
 g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 50)/60);
 
 % Start buoyancy acquisition date
-buoyancyStartDate = a_refDay + a_tabTech(a_dataIndex, 49) + a_tabTech(a_dataIndex, 50)/1440;
+buoyancyStartDate = refDay + a_tabTech(a_dataIndex, 49) + a_tabTech(a_dataIndex, 50)/1440;
 g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    253 cycleNum profNum phaseNum 154];
 g_decArgo_outputNcParamValue{end+1} = ...
@@ -408,7 +423,7 @@ if (a_tabTech(a_dataIndex, 52) == 1)
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 55)/60);
    
    % Grounding date (in TRAJ)
-   %    groundingDate = a_refDay + a_tabTech(a_dataIndex, 54) + a_tabTech(a_dataIndex, 55)/1440;
+   %    groundingDate = refDay + a_tabTech(a_dataIndex, 54) + a_tabTech(a_dataIndex, 55)/1440;
    %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
    %       253 cycleNum profNum phaseNum 162];
    %    g_decArgo_outputNcParamValue{end+1} = ...
@@ -441,7 +456,7 @@ if (a_tabTech(a_dataIndex, 56) > 0)
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(a_dataIndex, 57)/60);
 
    % First emergency ascent date
-   firstEmergencyAscentDate = a_refDay + a_tabTech(a_dataIndex, 60) + a_tabTech(a_dataIndex, 57)/1440;
+   firstEmergencyAscentDate = refDay + a_tabTech(a_dataIndex, 60) + a_tabTech(a_dataIndex, 57)/1440;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       253 cycleNum profNum phaseNum 166];
    g_decArgo_outputNcParamValue{end+1} = ...

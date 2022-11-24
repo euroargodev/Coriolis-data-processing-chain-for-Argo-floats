@@ -26,11 +26,10 @@ calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_confi
 % SUNA output pixel numbers decoded from data
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
+% list of sensors mounted on floats
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+
 % meta-data file exported from Coriolis data base
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_pH_Float.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 
 % directory to store the log and csv files
@@ -122,6 +121,9 @@ fclose(fId);
 
 outputPixelData = reshape(outputPixelData, 3, size(outputPixelData, 1)/3)';
 
+% get sensor list
+[wmoSensorList, nameSensorList] = get_sensor_list(SENSOR_LIST_FILE_NAME);
+
 % read meta file
 fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
@@ -155,8 +157,16 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    
    % get the list of sensors for this float
-   [sensorList] = get_sensor_list_cts5(floatNum);
-   if (isempty(sensorList))
+   idSensor = find(wmoSensorList == floatNum);
+   if (isempty(idSensor))
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+         floatNum, SENSOR_LIST_FILE_NAME);
+      continue
+   end
+   sensorList = nameSensorList(idSensor);
+   if (length(sensorList) ~= length(unique(sensorList)))
+      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+         floatNum, SENSOR_LIST_FILE_NAME);
       continue
    end
    

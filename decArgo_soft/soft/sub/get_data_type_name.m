@@ -120,6 +120,15 @@ switch (a_dataTypeNumber)
    case 42
       o_dataTypeName = 'SEAPOINT raw';
 
+   case 46
+      o_dataTypeName = 'SEAFET mean';
+
+   case 47
+      o_dataTypeName = 'SEAFET stDev & med';
+
+   case 48
+      o_dataTypeName = 'SEAFET raw';
+
    otherwise
       o_dataTypeName = 'UNKNOWN data type';
 end

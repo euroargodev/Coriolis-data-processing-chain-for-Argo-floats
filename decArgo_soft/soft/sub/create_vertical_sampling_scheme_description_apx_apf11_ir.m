@@ -127,7 +127,7 @@ switch (a_firstSensorName)
          end
       end
       
-   case {'PTS', 'PTSH', 'OPT'}
+   case {'PTS', 'PTSH', 'OPT', 'FLBB', 'IRAD'}
       
       configPrefix = ['CONFIG_SAMPLE_ASCENT_' a_firstSensorName];
       idF = find(strcmp(configNames, [configPrefix '_NumberOfZones']));

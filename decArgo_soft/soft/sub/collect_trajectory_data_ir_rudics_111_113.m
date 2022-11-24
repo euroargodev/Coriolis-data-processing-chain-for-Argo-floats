@@ -79,6 +79,9 @@ global g_decArgo_cycleNum;
 % phase of received data
 global g_decArgo_receivedDataPhase;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+
 
 % fill value for JULD parameter
 paramJuld = get_netcdf_param_attributes('JULD');
@@ -378,11 +381,23 @@ for idPack = 1:size(a_tabTech, 1)
    packProfileNumber = a_tabTech(idPack, 5);
    packPhaseNumber = a_tabTech(idPack, 8);
    
+   % set the current reference day
+   refDay = a_refDay;
+   if (~isempty(g_decArgo_julD2FloatDayOffset))
+      idF = find((g_decArgo_julD2FloatDayOffset(:, 1) == packCycleNumber) & ...
+         (g_decArgo_julD2FloatDayOffset(:, 2) == packProfileNumber));
+      if (~isempty(idF))
+         refDay = g_decArgo_julD2FloatDayOffset(idF, 3);
+      else
+         refDay = g_decArgo_julD2FloatDayOffset(end, 3);
+      end
+   end
+   
    trajFromTechStruct = get_traj_from_tech_init_struct(packCycleNumber, ...
       packProfileNumber, packPhaseNumber);
    
    [trajFromTechStruct] = collect_traj_data_from_float_tech_ir_rudics_111_113( ...
-      trajFromTechStruct, a_tabTech(idPack, :), a_refDay);
+      trajFromTechStruct, a_tabTech(idPack, :), refDay);
    
    o_tabTrajIndex = [o_tabTrajIndex;
       253  packCycleNumber packProfileNumber packPhaseNumber];

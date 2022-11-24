@@ -4,17 +4,18 @@
 %
 % SYNTAX :
 %  generate_json_float_meta_prv_cts4_ir_sbd_( ...
-%    a_floatMetaFileName, a_floatListFileName, ...
+%    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
 %    a_calibFileName, a_configDirName, ...
 %    a_outputDirName)
 %
 % INPUT PARAMETERS :
-%   a_floatMetaFileName : meta-data file exported from Coriolis data base
-%   a_floatListFileName : list of concerned floats
-%   a_calibFileName     : list of calibartion coefficient (retrieved from
-%                         decoded data)
-%   a_configDirName     : directory of float configuration at launch files
-%   a_outputDirName     : directory of individual json float meta-data files
+%   a_floatMetaFileName  : meta-data file exported from Coriolis data base
+%   a_sensorListFileName : list of sensors mounted on floats
+%   a_floatListFileName  : list of concerned floats
+%   a_calibFileName      : list of calibration coefficient (retrieved from
+%                          decoded data)
+%   a_configDirName      : directory of float configuration at launch files
+%   a_outputDirName      : directory of individual json float meta-data files
 %
 % OUTPUT PARAMETERS :
 %
@@ -28,7 +29,7 @@
 %   09/04/2017 - RNU - RT version added
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_prv_cts4_ir_sbd_( ...
-   a_floatMetaFileName, a_floatListFileName, ...
+   a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
    a_calibFileName, a_configDirName, ...
    a_outputDirName)
 
@@ -41,6 +42,13 @@ fprintf('Generating json meta-data files from input file: \n FLOAT_META_FILE_NAM
 
 if ~(exist(a_floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', a_floatMetaFileName);
+   return
+end
+
+fprintf('Using sensor list from file: \n SENSOR_LIST_FILE_NAME = %s\n', a_sensorListFileName);
+
+if ~(exist(a_sensorListFileName, 'file') == 2)
+   fprintf('ERROR: Sensor list file not found: %s\n', a_sensorListFileName);
    return
 end
 
@@ -119,6 +127,9 @@ calibData = calibData{:};
 fclose(fId);
 
 calibData = reshape(calibData, 4, size(calibData, 1)/4)';
+
+% get sensor list
+[wmoSensorList, nameSensorList] = get_sensor_list(a_sensorListFileName);
 
 % get the mapping structure
 metaBddStruct = get_meta_bdd_struct();
@@ -312,7 +323,18 @@ for idFloat = 1:length(floatList)
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
-   sensorList = get_sensor_list_cts4(floatNum);
+   idSensor = find(wmoSensorList == floatNum);
+   if (isempty(idSensor))
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+         floatNum, a_sensorListFileName);
+      continue
+   end
+   sensorList = nameSensorList(idSensor);
+   if (length(sensorList) ~= length(unique(sensorList)))
+      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+         floatNum, a_sensorListFileName);
+      continue
+   end
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
    
    % add the calibration coefficients for FLBB sensor (coming from the

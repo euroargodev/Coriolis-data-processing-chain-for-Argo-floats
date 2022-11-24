@@ -3,21 +3,22 @@
 %
 % SYNTAX :
 %  [o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO2, o_dataECO3, o_dataFLNTU, ...
-%    o_dataCROVER, o_dataSUNA] = ...
+%    o_dataCROVER, o_dataSUNA, o_dataSEAFET, o_measDates] = ...
 %    add_drift_meas_dates_ir_rudics_111_113(a_decoderId, ...
 %    a_dataCTD, a_dataOXY, a_dataOCR, ...
 %    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-%    a_dataCROVER, a_dataSUNA)
+%    a_dataCROVER, a_dataSUNA, a_dataSEAFET)
 %
 % INPUT PARAMETERS :
 %   a_dataCTD    : input CTD data
 %   a_dataOXY    : input OXY data
 %   a_dataOCR    : input OCR data
-%   o_dataECO2   : input ECO2 data
+%   a_dataECO2   : input ECO2 data
 %   a_dataECO3   : input ECO3 data
 %   a_dataFLNTU  : input FLNTU data
 %   a_dataCROVER : input cROVER data
 %   a_dataSUNA   : input SUNA data
+%   a_dataSEAFET : input SEAFET data
 %
 % OUTPUT PARAMETERS :
 %   a_decoderId  : float decoder Id
@@ -29,6 +30,8 @@
 %   o_dataFLNTU  : output FLNTU data
 %   o_dataCROVER : output cROVER data
 %   o_dataSUNA   : output SUNA data
+%   o_dataSEAFET : output SEAFET data
+%   o_measDates  : measurement dates transmitted by the float
 %
 % EXAMPLES :
 %
@@ -39,11 +42,11 @@
 %   03/19/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO2, o_dataECO3, o_dataFLNTU, ...
-   o_dataCROVER, o_dataSUNA] = ...
+   o_dataCROVER, o_dataSUNA, o_dataSEAFET, o_measDates] = ...
    add_drift_meas_dates_ir_rudics_111_113(a_decoderId, ...
    a_dataCTD, a_dataOXY, a_dataOCR, ...
    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-   a_dataCROVER, a_dataSUNA)
+   a_dataCROVER, a_dataSUNA, a_dataSEAFET)
             
 % cycle phases
 global g_decArgo_phaseParkDrift;
@@ -58,6 +61,8 @@ o_dataECO3 = [];
 o_dataFLNTU = [];
 o_dataCROVER = [];
 o_dataSUNA = [];
+o_dataSEAFET = [];
+o_measDates = [];
 
 % unpack the input data
 a_dataCTDMean = a_dataCTD{1};
@@ -293,6 +298,27 @@ if (~isempty(a_dataSUNAAPF2))
    a_dataSUNAAPF2OutSpec = a_dataSUNAAPF2{13};
 end
 
+a_dataSEAFETMean = a_dataSEAFET{1};
+a_dataSEAFETRaw = a_dataSEAFET{2};
+a_dataSEAFETStdMed = a_dataSEAFET{3};
+
+a_dataSEAFETMeanDate = a_dataSEAFETMean{1};
+a_dataSEAFETMeanDateTrans = a_dataSEAFETMean{2};
+a_dataSEAFETMeanPres = a_dataSEAFETMean{3};
+a_dataSEAFETMeanVref = a_dataSEAFETMean{4};
+
+a_dataSEAFETStdMedDate = a_dataSEAFETStdMed{1};
+a_dataSEAFETStdMedDateTrans = a_dataSEAFETStdMed{2};
+a_dataSEAFETStdMedPresMean = a_dataSEAFETStdMed{3};
+a_dataSEAFETStdMedVrefStd = a_dataSEAFETStdMed{4};
+a_dataSEAFETStdMedVrefMed = a_dataSEAFETStdMed{5};
+
+a_dataSEAFETRawDate = a_dataSEAFETRaw{1};
+a_dataSEAFETRawDateTrans = a_dataSEAFETRaw{2};
+a_dataSEAFETRawPres = a_dataSEAFETRaw{3};
+a_dataSEAFETRawVref = a_dataSEAFETRaw{4};
+
+
 % find first pressure measurement
 presList = [];
 dateList = [];
@@ -330,6 +356,7 @@ if (~isempty(a_dataCTDMeanDate))
          a_dataCTDMeanDate(idDrift(idL), 1), a_dataCTDMeanDate(idDrift(idL), 2), ...
          a_dataCTDMeanDate(idDrift(idL), 4:end), a_dataCTDMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCTDMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataCTDStdMedDate))
    idDrift = find(a_dataCTDStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -338,6 +365,7 @@ if (~isempty(a_dataCTDStdMedDate))
          a_dataCTDStdMedDate(idDrift(idL), 1), a_dataCTDStdMedDate(idDrift(idL), 2), ...
          a_dataCTDStdMedDate(idDrift(idL), 4:end), a_dataCTDStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCTDStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataCTDRawDate))
    idDrift = find(a_dataCTDRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -346,6 +374,7 @@ if (~isempty(a_dataCTDRawDate))
          a_dataCTDRawDate(idDrift(idL), 1), a_dataCTDRawDate(idDrift(idL), 2), ...
          a_dataCTDRawDate(idDrift(idL), 4:end), a_dataCTDRawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCTDRawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -385,6 +414,7 @@ if (~isempty(a_dataOXYMeanDate))
          a_dataOXYMeanDate(idDrift(idL), 1), a_dataOXYMeanDate(idDrift(idL), 2), ...
          a_dataOXYMeanDate(idDrift(idL), 4:end), a_dataOXYMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOXYMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataOXYStdMedDate))
    idDrift = find(a_dataOXYStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -393,6 +423,7 @@ if (~isempty(a_dataOXYStdMedDate))
          a_dataOXYStdMedDate(idDrift(idL), 1), a_dataOXYStdMedDate(idDrift(idL), 2), ...
          a_dataOXYStdMedDate(idDrift(idL), 4:end), a_dataOXYStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOXYStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataOXYRawDate))
    idDrift = find(a_dataOXYRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -401,6 +432,7 @@ if (~isempty(a_dataOXYRawDate))
          a_dataOXYRawDate(idDrift(idL), 1), a_dataOXYRawDate(idDrift(idL), 2), ...
          a_dataOXYRawDate(idDrift(idL), 4:end), a_dataOXYRawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOXYRawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -440,6 +472,7 @@ if (~isempty(a_dataOCRMeanDate))
          a_dataOCRMeanDate(idDrift(idL), 1), a_dataOCRMeanDate(idDrift(idL), 2), ...
          a_dataOCRMeanDate(idDrift(idL), 4:end), a_dataOCRMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOCRMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataOCRStdMedDate))
    idDrift = find(a_dataOCRStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -448,6 +481,7 @@ if (~isempty(a_dataOCRStdMedDate))
          a_dataOCRStdMedDate(idDrift(idL), 1), a_dataOCRStdMedDate(idDrift(idL), 2), ...
          a_dataOCRStdMedDate(idDrift(idL), 4:end), a_dataOCRStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOCRStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataOCRRawDate))
    idDrift = find(a_dataOCRRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -456,6 +490,7 @@ if (~isempty(a_dataOCRRawDate))
          a_dataOCRRawDate(idDrift(idL), 1), a_dataOCRRawDate(idDrift(idL), 2), ...
          a_dataOCRRawDate(idDrift(idL), 4:end), a_dataOCRRawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataOCRRawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -495,6 +530,7 @@ if (~isempty(a_dataECO2MeanDate))
          a_dataECO2MeanDate(idDrift(idL), 1), a_dataECO2MeanDate(idDrift(idL), 2), ...
          a_dataECO2MeanDate(idDrift(idL), 4:end), a_dataECO2MeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO2MeanDate(:, 1:4)];
 end
 if (~isempty(a_dataECO2StdMedDate))
    idDrift = find(a_dataECO2StdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -503,6 +539,7 @@ if (~isempty(a_dataECO2StdMedDate))
          a_dataECO2StdMedDate(idDrift(idL), 1), a_dataECO2StdMedDate(idDrift(idL), 2), ...
          a_dataECO2StdMedDate(idDrift(idL), 4:end), a_dataECO2StdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO2StdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataECO2RawDate))
    idDrift = find(a_dataECO2RawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -511,6 +548,7 @@ if (~isempty(a_dataECO2RawDate))
          a_dataECO2RawDate(idDrift(idL), 1), a_dataECO2RawDate(idDrift(idL), 2), ...
          a_dataECO2RawDate(idDrift(idL), 4:end), a_dataECO2RawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO2RawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -550,6 +588,7 @@ if (~isempty(a_dataECO3MeanDate))
          a_dataECO3MeanDate(idDrift(idL), 1), a_dataECO3MeanDate(idDrift(idL), 2), ...
          a_dataECO3MeanDate(idDrift(idL), 4:end), a_dataECO3MeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO3MeanDate(:, 1:4)];
 end
 if (~isempty(a_dataECO3StdMedDate))
    idDrift = find(a_dataECO3StdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -558,6 +597,7 @@ if (~isempty(a_dataECO3StdMedDate))
          a_dataECO3StdMedDate(idDrift(idL), 1), a_dataECO3StdMedDate(idDrift(idL), 2), ...
          a_dataECO3StdMedDate(idDrift(idL), 4:end), a_dataECO3StdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO3StdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataECO3RawDate))
    idDrift = find(a_dataECO3RawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -566,6 +606,7 @@ if (~isempty(a_dataECO3RawDate))
          a_dataECO3RawDate(idDrift(idL), 1), a_dataECO3RawDate(idDrift(idL), 2), ...
          a_dataECO3RawDate(idDrift(idL), 4:end), a_dataECO3RawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataECO3RawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -605,6 +646,7 @@ if (~isempty(a_dataFLNTUMeanDate))
          a_dataFLNTUMeanDate(idDrift(idL), 1), a_dataFLNTUMeanDate(idDrift(idL), 2), ...
          a_dataFLNTUMeanDate(idDrift(idL), 4:end), a_dataFLNTUMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataFLNTUMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataFLNTUStdMedDate))
    idDrift = find(a_dataFLNTUStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -613,6 +655,7 @@ if (~isempty(a_dataFLNTUStdMedDate))
          a_dataFLNTUStdMedDate(idDrift(idL), 1), a_dataFLNTUStdMedDate(idDrift(idL), 2), ...
          a_dataFLNTUStdMedDate(idDrift(idL), 4:end), a_dataFLNTUStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataFLNTUStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataFLNTURawDate))
    idDrift = find(a_dataFLNTURawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -621,6 +664,7 @@ if (~isempty(a_dataFLNTURawDate))
          a_dataFLNTURawDate(idDrift(idL), 1), a_dataFLNTURawDate(idDrift(idL), 2), ...
          a_dataFLNTURawDate(idDrift(idL), 4:end), a_dataFLNTURawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataFLNTURawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -660,6 +704,7 @@ if (~isempty(a_dataCROVERMeanDate))
          a_dataCROVERMeanDate(idDrift(idL), 1), a_dataCROVERMeanDate(idDrift(idL), 2), ...
          a_dataCROVERMeanDate(idDrift(idL), 4:end), a_dataCROVERMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCROVERMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataCROVERStdMedDate))
    idDrift = find(a_dataCROVERStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -668,6 +713,7 @@ if (~isempty(a_dataCROVERStdMedDate))
          a_dataCROVERStdMedDate(idDrift(idL), 1), a_dataCROVERStdMedDate(idDrift(idL), 2), ...
          a_dataCROVERStdMedDate(idDrift(idL), 4:end), a_dataCROVERStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCROVERStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataCROVERRawDate))
    idDrift = find(a_dataCROVERRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -676,6 +722,7 @@ if (~isempty(a_dataCROVERRawDate))
          a_dataCROVERRawDate(idDrift(idL), 1), a_dataCROVERRawDate(idDrift(idL), 2), ...
          a_dataCROVERRawDate(idDrift(idL), 4:end), a_dataCROVERRawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataCROVERRawDate(:, 1:4)];
 end
 
 % find first pressure measurement
@@ -731,6 +778,7 @@ if (~isempty(a_dataSUNAMeanDate))
          a_dataSUNAMeanDate(idDrift(idL), 1), a_dataSUNAMeanDate(idDrift(idL), 2), ...
          a_dataSUNAMeanDate(idDrift(idL), 4:end), a_dataSUNAMeanPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataSUNAMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAStdMedDate))
    idDrift = find(a_dataSUNAStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -739,6 +787,7 @@ if (~isempty(a_dataSUNAStdMedDate))
          a_dataSUNAStdMedDate(idDrift(idL), 1), a_dataSUNAStdMedDate(idDrift(idL), 2), ...
          a_dataSUNAStdMedDate(idDrift(idL), 4:end), a_dataSUNAStdMedPresMean(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataSUNAStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNARawDate))
    idDrift = find(a_dataSUNARawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -747,6 +796,7 @@ if (~isempty(a_dataSUNARawDate))
          a_dataSUNARawDate(idDrift(idL), 1), a_dataSUNARawDate(idDrift(idL), 2), ...
          a_dataSUNARawDate(idDrift(idL), 4:end), a_dataSUNARawPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataSUNARawDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAAPFDate))
    idDrift = find(a_dataSUNAAPFDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -755,6 +805,7 @@ if (~isempty(a_dataSUNAAPFDate))
          a_dataSUNAAPFDate(idDrift(idL), 1), a_dataSUNAAPFDate(idDrift(idL), 2), ...
          a_dataSUNAAPFDate(idDrift(idL), 4:end), a_dataSUNAAPFCTDPres(idDrift(idL), 4:end));
    end
+   o_measDates = [o_measDates; a_dataSUNAAPFDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAAPF2))
    if (~isempty(a_dataSUNAAPF2Date))
@@ -765,6 +816,65 @@ if (~isempty(a_dataSUNAAPF2))
             a_dataSUNAAPF2Date(idDrift(idL), 4:end), a_dataSUNAAPF2CTDPres(idDrift(idL), 4:end));
       end
    end
+   o_measDates = [o_measDates; a_dataSUNAAPF2Date(:, 1:4)];
+end
+
+% find first pressure measurement
+presList = [];
+dateList = [];
+if (~isempty(a_dataSEAFETMeanDate))
+   idDrift = find(a_dataSEAFETMeanDate(:, 3) == g_decArgo_phaseParkDrift);
+   if (~isempty(idDrift))
+      presList = [presList; a_dataSEAFETMeanPres(idDrift, 4)];
+      dateList = [dateList; a_dataSEAFETMeanDate(idDrift, 4)];
+   end
+end
+if (~isempty(a_dataSEAFETStdMedDate))
+   idDrift = find(a_dataSEAFETStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
+   if (~isempty(idDrift))
+      presList = [presList; a_dataSEAFETStdMedPresMean(idDrift, 4)];
+      dateList = [dateList; a_dataSEAFETStdMedDate(idDrift, 4)];
+   end
+end
+if (~isempty(a_dataSEAFETRawDate))
+   idDrift = find(a_dataSEAFETRawDate(:, 3) == g_decArgo_phaseParkDrift);
+   if (~isempty(idDrift))
+      presList = [presList; a_dataSEAFETRawPres(idDrift, 4)];
+      dateList = [dateList; a_dataSEAFETRawDate(idDrift, 4)];
+   end
+end
+if (~isempty(presList))
+   [~, idMin] = min(dateList);
+   firstPres = presList(idMin);
+   firstPres = sensor_2_value_for_pressure_ir_rudics_sbd2(firstPres, a_decoderId);
+end
+% add the drift measurement dates
+if (~isempty(a_dataSEAFETMeanDate))
+   idDrift = find(a_dataSEAFETMeanDate(:, 3) == g_decArgo_phaseParkDrift);
+   for idL = 1:length(idDrift)
+      [a_dataSEAFETMeanDate(idDrift(idL), 4:end)] = compute_drift_dates_ir_rudics_111_113(5, firstPres, ...
+         a_dataSEAFETMeanDate(idDrift(idL), 1), a_dataSEAFETMeanDate(idDrift(idL), 2), ...
+         a_dataSEAFETMeanDate(idDrift(idL), 4:end), a_dataSEAFETMeanPres(idDrift(idL), 4:end));
+   end
+   o_measDates = [o_measDates; a_dataSEAFETMeanDate(:, 1:4)];
+end
+if (~isempty(a_dataSEAFETStdMedDate))
+   idDrift = find(a_dataSEAFETStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
+   for idL = 1:length(idDrift)
+      [a_dataSEAFETStdMedDate(idDrift(idL), 4:end)] = compute_drift_dates_ir_rudics_111_113(5, firstPres, ...
+         a_dataSEAFETStdMedDate(idDrift(idL), 1), a_dataSEAFETStdMedDate(idDrift(idL), 2), ...
+         a_dataSEAFETStdMedDate(idDrift(idL), 4:end), a_dataSEAFETStdMedPresMean(idDrift(idL), 4:end));
+   end
+   o_measDates = [o_measDates; a_dataSEAFETStdMedDate(:, 1:4)];
+end
+if (~isempty(a_dataSEAFETRawDate))
+   idDrift = find(a_dataSEAFETRawDate(:, 3) == g_decArgo_phaseParkDrift);
+   for idL = 1:length(idDrift)
+      [a_dataSEAFETRawDate(idDrift(idL), 4:end)] = compute_drift_dates_ir_rudics_111_113(5, firstPres, ...
+         a_dataSEAFETRawDate(idDrift(idL), 1), a_dataSEAFETRawDate(idDrift(idL), 2), ...
+         a_dataSEAFETRawDate(idDrift(idL), 4:end), a_dataSEAFETRawPres(idDrift(idL), 4:end));
+   end
+   o_measDates = [o_measDates; a_dataSEAFETRawDate(:, 1:4)];
 end
 
 % store output data in cell arrays
@@ -1001,5 +1111,25 @@ o_dataSUNA{2} = o_dataSUNARaw;
 o_dataSUNA{3} = o_dataSUNAStdMed;
 o_dataSUNA{4} = o_dataSUNAAPF;
 o_dataSUNA{5} = o_dataSUNAAPF2;
+
+o_dataSEAFETMean{1} = a_dataSEAFETMeanDate;
+o_dataSEAFETMean{2} = a_dataSEAFETMeanDateTrans;
+o_dataSEAFETMean{3} = a_dataSEAFETMeanPres;
+o_dataSEAFETMean{4} = a_dataSEAFETMeanVref;
+
+o_dataSEAFETRaw{1} = a_dataSEAFETRawDate;
+o_dataSEAFETRaw{2} = a_dataSEAFETRawDateTrans;
+o_dataSEAFETRaw{3} = a_dataSEAFETRawPres;
+o_dataSEAFETRaw{4} = a_dataSEAFETRawVref;
+
+o_dataSEAFETStdMed{1} = a_dataSEAFETStdMedDate;
+o_dataSEAFETStdMed{2} = a_dataSEAFETStdMedDateTrans;
+o_dataSEAFETStdMed{3} = a_dataSEAFETStdMedPresMean;
+o_dataSEAFETStdMed{4} = a_dataSEAFETStdMedVrefStd;
+o_dataSEAFETStdMed{5} = a_dataSEAFETStdMedVrefMed;
+
+o_dataSEAFET{1} = o_dataSEAFETMean;
+o_dataSEAFET{2} = o_dataSEAFETRaw;
+o_dataSEAFET{3} = o_dataSEAFETStdMed;
 
 return

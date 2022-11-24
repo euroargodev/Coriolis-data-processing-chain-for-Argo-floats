@@ -36,7 +36,7 @@ DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_avant_PARAM_SURF\';
 % DIR_INPUT_NEW_NC_FILES = 'H:\archive_201708\coriolis\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
-% DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_from_DEP\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

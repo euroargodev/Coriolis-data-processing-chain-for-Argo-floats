@@ -37,6 +37,9 @@ global g_decArgo_rtOffsetInfo;
 
                   
 for idF = 1:length(g_decArgo_rtOffsetInfo.param)
+   if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, 'DOXY')) % DOXY RT adjustment is performed in compute_rt_adjusted_param
+      continue
+   end
    if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, a_param.name) == 1)
       tabSlope = g_decArgo_rtOffsetInfo.slope{idF};
       tabValue = g_decArgo_rtOffsetInfo.value{idF};

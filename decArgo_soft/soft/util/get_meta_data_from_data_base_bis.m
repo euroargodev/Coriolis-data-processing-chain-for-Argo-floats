@@ -27,7 +27,7 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\exportJPR_5900A04_from_VB_20170825.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\exportJPR_ArvorDeep_from_VB_20170825.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\DB_export_Finland_From_VB_20180904.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Export\DB_export_NEMO_from_VB_20170911.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Export\DB_export_NEMO_from_VB_20170911.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_from_VB_20170912.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DB_Export_APEX_Poland_from_vb_20171020.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DB_Export_APEX_Poland_from_vb_20171020.txt';
@@ -46,8 +46,12 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Exp
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Finland_APF11_Rudics_from_VB_20181023.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\Reste_a_basculer_en_3.1\Apex_013108_042408_111509\float_metadata.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\Reste_a_basculer_en_3.1\Apex_013108_042408_111509\float_metadata.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\Apex_APF11_Norway_DB_export.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_pts\float_metadata_pts.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
@@ -56,8 +60,6 @@ floatListFileName = '';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % directory to store the log and csv file
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 
@@ -75,7 +77,7 @@ if (fidOut == -1)
    return
 end
 
-header = ['Trans system; Activity flag; Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
+header = ['PI Name; Trans system; Activity flag; Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
 fprintf(fidOut, '%s\n', header);
 
 % read meta file
@@ -117,6 +119,7 @@ end
 
 % process the floats
 tabFloatNum = [];
+tabPiName = [];
 tabTransSystem = [];
 tabActivity = [];
 tabDataCenter = [];
@@ -146,6 +149,13 @@ for idFloat = 1:length(floatList)
       transSystem = paramValueList{idForWmo(idTransSystem)};
    end
    tabTransSystem{end+1} = transSystem;
+   
+   idPiName = find(strcmp(paramCodeList(idForWmo), 'PI_NAME') == 1, 1);
+   piName = '';
+   if (~isempty(idPiName))
+      piName = paramValueList{idForWmo(idPiName)};
+   end
+   tabPiName{end+1} = piName;
    
    idActivityFlag = find(strcmp(paramCodeList(idForWmo), 'PF_ACTIVITY_FLAG') == 1, 1);
    activityFlag = '';
@@ -270,6 +280,7 @@ for idTS = 1:length(refTransSystem)
          (strcmp(tabCoVersion, refCoVersion{idCV}) == 1));
       [~, idSort] = sort([tabFloatNum{idF}]);
       tabFloatNum(idF) = tabFloatNum(idF(idSort));
+      tabPiName(idF) = tabPiName(idF(idSort));
       tabTransSystem(idF) = tabTransSystem(idF(idSort));
       tabActivity(idF) = tabActivity(idF(idSort));
       tabDataCenter(idF) = tabDataCenter(idF(idSort));
@@ -287,8 +298,8 @@ for idTS = 1:length(refTransSystem)
       
       for idL = 1:length(idF)
          id = idF(idL);
-         fprintf(fidOut, '%s; %s; %s;''%s; %s; %g; %s; %s; %d; ; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
-            tabTransSystem{id}, tabActivity{id}, tabDataCenter{id}, tabCoVersion{id}, tabSerialNum{id}, ...
+         fprintf(fidOut, '%s; %s; %s; %s;''%s; %s; %g; %s; %s; %d; ; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
+            tabPiName{id}, tabTransSystem{id}, tabActivity{id}, tabDataCenter{id}, tabCoVersion{id}, tabSerialNum{id}, ...
             str2num(tabCycleTime{id})/24, tabParkPres{id}, tabProfPres{id}, ...
             tabFloatNum{id}, tabPtt{id}, tabCycleTime{id}, tabDriftPeriod{id}, ...
             tabLaunchDate{id}, tabLaunchLon{id}, tabLaunchLat{id}, ...

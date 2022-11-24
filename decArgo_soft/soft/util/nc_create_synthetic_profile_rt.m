@@ -52,6 +52,9 @@
 %                             add information on concerned float when a mandatory parameter is missing
 %   27/11/2018 - RNU - V 1.5: includes version 18.02.2019 for ARGO_simplified_profile
 %   04/15/2019 - RNU - V 1.6: correction of previous version
+%   07/08/2019 - RNU - V 1.7: for NetCDF-4 files, use 'defVarFill' function
+%                             instead of 'putAtt' to define the fill Value of a
+%                             variable
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -113,7 +116,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.6 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.7 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

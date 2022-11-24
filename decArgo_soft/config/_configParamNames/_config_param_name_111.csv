@@ -104,6 +104,8 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 660;251;Max chlorophyll of FLNTU;CONFIG_FlntuMaxTransmittedChlaFluorescence_COUNT;Minimum value of transmitted <sensor short name> Fluorescence of <param> measurements (in counts).
 661;251;Min turbidity of FLNTU;CONFIG_FlntuMaxTransmittedTurbidity_COUNT;Maximum value of transmitted Flntu turbidity measurements (in counts).
 662;251;Max turbidity of FLNTU;CONFIG_FlntuMinTransmittedTurbidity_COUNT;Minimum value of transmitted Flntu turbidity measurements (in counts).
+688;251;Min VRS_PH of SEAFET;CONFIG_AUX_SfetMinTransmittedVrsPh_mV;Minimum value of transmitted VRS_PH measurements sampled by the Seafet sensor (in volts).
+689;251;Max VRS_PH of SEAFET;CONFIG_AUX_SfetMaxTransmittedVrsPh_mV;Maximum value of transmitted VRS_PH measurements sampled by the Seafet sensor (in volts).
 673;251;Min beam attenuation of CROVER;CONFIG_CroverMinTransmittedBeamAttenuation_m^-1 ;Minimum value of transmitted Crover beam attenuation measurements (in 1/m).
 674;251;Max beam attenuation of CROVER;CONFIG_CroverMaxTransmittedBeamAttenuation_m^-1 ;Maximum value of transmitted Crover beam attenuation measurements (in 1/m).
 680;251;"« APF Frame » transmission of SUNA (""nitrate concentration"" = 0, ""spectrum APF frame"" = 1)";CONFIG_SunaDataType_NUMBER;Type of transmitted data from te Suna sensor (0 : nitrate concentration, 1 : APF frame spectrum).
@@ -143,3 +145,4 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 111008;-1;Not in float user manual;CONFIG_OptodeTimePressureOffset_seconds;Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer
 116000;-1;Not in float user manual;CONFIG_SunaVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
 116005;-1;Not in float user manual;CONFIG_SunaWithScoop_LOGICAL;Suna with scoop which redirects flow through Suna optics
+114000;-1;Not in float user manual;CONFIG_SfetVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure

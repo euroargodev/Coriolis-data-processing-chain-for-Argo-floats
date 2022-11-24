@@ -121,6 +121,21 @@ switch (a_decoderId)
          otherwise
             o_packetName = 'one data packet';
       end
+   case {218}
+      switch (a_packType)
+         case 0
+            o_packetName = 'one technical packet #1';
+         case 4
+            o_packetName = 'one technical packet #2';
+         case 5
+            o_packetName = 'one parameter packet #1';
+         case 6
+            o_packetName = 'one hydraulic packet';
+         case 7
+            o_packetName = 'one parameter packet #2';
+         otherwise
+            o_packetName = 'one data packet';
+      end
    otherwise
       fprintf('WARNING: Nothing done yet in get_packet_name for decoderId #%d\n', ...
          a_decoderId);

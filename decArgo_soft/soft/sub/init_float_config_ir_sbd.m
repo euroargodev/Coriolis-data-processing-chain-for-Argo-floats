@@ -93,9 +93,15 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {216} % Arvor-deep 4000 with NS&IA and Ice
+   case {216} % Arvor-deep 4000 with NS&IA and Ice (IFREMER version)
       
       init_float_config_prv_ir_sbd_216(a_launchDate);
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {218} % Arvor-deep 4000 with NS&IA and Ice (NKE version)
+      
+      init_float_config_prv_ir_sbd_218(a_launchDate);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

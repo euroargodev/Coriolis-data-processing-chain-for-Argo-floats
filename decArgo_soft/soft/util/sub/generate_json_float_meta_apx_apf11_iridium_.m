@@ -4,16 +4,19 @@
 %
 % SYNTAX :
 %  generate_json_float_meta_apx_apf11_iridium_( ...
-%    a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
+%    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
+%    a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
 %
 % INPUT PARAMETERS :
-%   a_floatMetaFileName : meta-data file exported from Coriolis data base
-%   a_floatListFileName : list of concerned floats
-%   a_configDirName     : directory of float configuration at launch files
-%   a_outputDirName     : directory of individual json float meta-data files
-%   a_csvDirName        : directory to store the CSV file (when DB update is needed)
-%   a_rudicsFlag        : 1 if it is a RUDICS transmission, 0 for a SBD
-%                         transmission
+%   a_floatMetaFileName  : meta-data file exported from Coriolis data base
+%   a_sensorListFileName : list of sensors mounted on floats
+%   a_floatListFileName  : list of concerned floats
+%   a_calibFileName      : list of calibration coefficient
+%   a_configDirName      : directory of float configuration at launch files
+%   a_outputDirName      : directory of individual json float meta-data files
+%   a_csvDirName         : directory to store the CSV file (when DB update is needed)
+%   a_rudicsFlag         : 1 if it is a RUDICS transmission, 0 for a SBD
+%                          transmission
 %
 % OUTPUT PARAMETERS :
 %
@@ -26,7 +29,8 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_apx_apf11_iridium_( ...
-   a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
+   a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
+   a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -43,10 +47,24 @@ if ~(exist(a_floatMetaFileName, 'file') == 2)
    return
 end
 
+fprintf('Using sensor list from file: \n SENSOR_LIST_FILE_NAME = %s\n', a_sensorListFileName);
+
+if ~(exist(a_sensorListFileName, 'file') == 2)
+   fprintf('ERROR: Sensor list file not found: %s\n', a_sensorListFileName);
+   return
+end
+
 fprintf('Generating json meta-data files for floats of the list: \n FLOAT_LIST_FILE_NAME = %s\n', a_floatListFileName);
 
 if ~(exist(a_floatListFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_floatListFileName);
+   return
+end
+
+fprintf('Calibration coefficient file: \n CALIB_FILE_NAME = %s\n', a_calibFileName);
+
+if ~(exist(a_calibFileName, 'file') == 2)
+   fprintf('ERROR: Float file list not found: %s\n', a_calibFileName);
    return
 end
 
@@ -101,6 +119,21 @@ fileContents = regexprep(fileContents, '"', '');
 
 metaData = reshape(fileContents, 5, size(fileContents, 1)/5)';
 metaData(:,4)=(cellfun(@strtrim, metaData(:, 4), 'UniformOutput', 0))';
+
+% read calib file
+fId = fopen(a_calibFileName, 'r');
+if (fId == -1)
+   fprintf('ERROR: Unable to open file: %s\n', a_calibFileName);
+   return
+end
+calibData = textscan(fId, '%s');
+calibData = calibData{:};
+fclose(fId);
+
+calibData = reshape(calibData, 4, size(calibData, 1)/4)';
+
+% get sensor list
+[wmoSensorList, nameSensorList] = get_sensor_list(a_sensorListFileName);
 
 % get the mapping structure
 metaBddStruct = get_meta_bdd_struct();
@@ -184,7 +217,7 @@ for idFloat = 1:length(floatList)
    
    % check if the float version is concerned by this tool
    if (a_rudicsFlag == 0)
-      if (~ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'}]))
+      if (~ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'}]))
          fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
             floatNum, dacFormatId);
          continue
@@ -301,12 +334,36 @@ for idFloat = 1:length(floatList)
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
-   sensorList = get_sensor_list_apex_apf11(floatNum);
+   idSensor = find(wmoSensorList == floatNum);
+   if (isempty(idSensor))
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+         floatNum, a_sensorListFileName);
+      continue
+   end
+   sensorList = nameSensorList(idSensor);
+   if (length(sensorList) ~= length(unique(sensorList)))
+      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+         floatNum, a_sensorListFileName);
+      continue
+   end
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
+   
+   % add the calibration coefficients for ECO3 and OCR sensors (coming from the
+   % a_calibFileName)
+   
+   idF = find(strcmp(calibData(:, 1), num2str(floatNum)) == 1);
+   dataStruct = [];
+   for id = 1:length(idF)
+      fieldName1 = calibData{idF(id), 2};
+      %       dataStruct.(fieldName1) = [];
+      fieldName2 = calibData{idF(id), 3};
+      dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
+   end
+   metaStruct.CALIBRATION_COEFFICIENT = dataStruct;   
    
    % add the calibration coefficients for OPTODE sensor (coming from the data base)
    switch (dacFormatId)
-      case {'2.11.1.S'}
+      case {'2.11.1.S', '2.11.3.S', '2.11.3.R'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -389,7 +446,31 @@ for idFloat = 1:length(floatList)
       for idC = 1:length(confNames)
          bddConfName = [];
          floatConfName = confNames{idC};
-         floatConfValue = confData.(floatConfName){:};
+         if (strcmp(floatConfName, 'iridium')) % see 6903699 & 6903700
+            continue
+         end
+         if (length(confData.(floatConfName)) > 1)
+            if (strcmp(floatConfName, 'AscentStartTimes'))
+               if (length(unique(confData.(floatConfName))) == 1)
+                  floatConfValue = confData.(floatConfName){1};
+               else
+                  valueList = confData.(floatConfName);
+                  idDel = find(strcmp(confData.(floatConfName), '-1'));
+                  valueList(idDel) = [];
+                  if (length(unique(valueList)) == 1)
+                     floatConfValue = valueList{1};
+                  else
+                     fprintf('ERROR: Float #%d: don''t know how to manage ''%s'' configuration multiple values\n', ...
+                        floatNum, floatConfName);
+                  end
+               end
+            else
+               fprintf('ERROR: Float #%d: don''t know how to manage ''%s'' configuration multiple values\n', ...
+                  floatNum, floatConfName);
+            end
+         else
+            floatConfValue = confData.(floatConfName){:};
+         end
          if (strcmpi(floatConfValue, 'on'))
             floatConfValue = 'yes';
          end
@@ -496,85 +577,64 @@ for idFloat = 1:length(floatList)
    if (isempty(configBddStruct))
       continue
    end
-   configBddStructNames = fieldnames(configBddStruct);
-   metaStruct.CONFIG_PARAMETER_NAME = configBddStructNames;
    
-   nbConfig = 1;
-   configParamVal = cell(length(configBddStructNames), nbConfig);
-   configRepRate = cell(1, nbConfig);
-   for idConf = 1:nbConfig
-      configRepRate{1, idConf} = '1';
-      for idBSN = 1:length(configBddStructNames)
-         configBddStructName = configBddStructNames{idBSN};
-         configBddStructValue = configBddStruct.(configBddStructName);
-         if (~isempty(configBddStructValue))
-            
-            %             if (strcmp(configBddStructValue, 'CYCLE_TIME') == 1)
-            %                idF1 = find(strcmp(configBddStructNames, 'CONFIG_DOWN_DownTime'));
-            %                idF2 = find(strcmp(configBddStructNames, 'CONFIG_UP_UpTime'));
-            %                if (~isempty(idF1) && ~isempty(idF2))
-            %                   idF3 = find(strcmp(metaData(idForWmo, 5), configBddStruct.(configBddStructNames{idF1})));
-            %                   idF4 = find(strcmp(metaData(idForWmo, 5), configBddStruct.(configBddStructNames{idF2})));
-            %                   if (~isempty(idF3) && ~isempty(idF4))
-            %                      downTime = str2double(metaData{idForWmo(idF3), 4});
-            %                      upTime = str2double(metaData{idForWmo(idF4), 4});
-            %                      configParamVal{idBSN, idConf} = num2str((downTime+upTime)/60);
-            %                   end
-            %                end
-            %                continue
-            %             end
-            
-            idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1);
-            if (~isempty(idF))
-               dimLev = dimLevlist(idForWmo(idF));
-               idDim = find(dimLev == idConf, 1);
-               if ((isempty(idDim)) && (idConf > 1))
-                  idDim = 1;
-               elseif ((isempty(idDim)) && (idConf == 1))
-                  fprintf('ERROR\n');
-               end
-               
-               if (strcmp(configBddStructValue, 'DIRECTION'))
-                  bddValue = metaData{idForWmo(idF(idDim)), 4};
-                  if (~isempty(bddValue))
-                     if (bddValue == 'A')
-                        configParamVal{idBSN, idConf} = '1';
-                     elseif (bddValue == 'B')
-                        configParamVal{idBSN, idConf} = '3';
-                     elseif (bddValue == 'D')
-                        configParamVal{idBSN, idConf} = '2';
-                     else
-                        fprintf('ERROR: inconsistent BDD value (''%s'') for ''%s'' information => not considered\n', ...
-                           bddValue, 'DIRECTION');
-                     end
-                  end
-               elseif (strcmp(configBddStructValue, 'ActivateRecoveryModeFlag') || ...
-                     strcmp(configBddStructValue, 'DEEP_PROFILE_FIRST') || ...
-                     strcmp(configBddStructValue, 'LeakDetectFlag') || ...
-                     strcmp(configBddStructValue, 'PreludeSelfTestFlag'))
-                  bddValue = metaData{idForWmo(idF(idDim)), 4};
-                  if (~isempty(bddValue))
-                     if ((strcmpi(bddValue, 'yes')) || (strcmpi(bddValue, 'y')))
-                        configParamVal{idBSN, idConf} = '1';
-                     elseif ((strcmpi(bddValue, 'no')) || (strcmpi(bddValue, 'n')))
-                        configParamVal{idBSN, idConf} = '0';
-                     else
-                        fprintf('ERROR: inconsistent BDD value (''%s'') for ''%s'' information => not considered\n', ...
-                           bddValue, configBddStructValue);
-                     end
-                  end
-               else
-                  configParamVal{idBSN, idConf} = metaData{idForWmo(idF(idDim)), 4};
-               end
-               
+   configBddStructNames = fieldnames(configBddStruct);
+   configParamVal = cell(length(configBddStructNames), 1);
+   configRepRate = {'1'};
+   for idBSN = 1:length(configBddStructNames)
+      configBddStructName = configBddStructNames{idBSN};
+      configBddStructValue = configBddStruct.(configBddStructName);
+      if (~isempty(configBddStructValue))
+         
+         idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1, 1);
+         if (~isempty(idF))
+            dimLev = dimLevlist(idForWmo(idF));
+            idDim = find(dimLev == 1, 1);
+            if (isempty(idDim))
+               idDim = 1;
             end
-         else
-            % if we want to use default values if the information is
-            % missing in the database
+            
+            if (strcmp(configBddStructValue, 'DIRECTION'))
+               bddValue = metaData{idForWmo(idF), 4};
+               if (~isempty(bddValue))
+                  if (bddValue == 'A')
+                     configParamVal{idBSN} = '1';
+                  elseif (bddValue == 'B')
+                     configParamVal{idBSN} = '3';
+                  elseif (bddValue == 'D')
+                     configParamVal{idBSN} = '2';
+                  else
+                     fprintf('ERROR: inconsistent BDD value (''%s'') for ''%s'' information => not considered\n', ...
+                        bddValue, 'DIRECTION');
+                  end
+               end
+            elseif (strcmp(configBddStructValue, 'ActivateRecoveryModeFlag') || ...
+                  strcmp(configBddStructValue, 'DEEP_PROFILE_FIRST') || ...
+                  strcmp(configBddStructValue, 'LeakDetectFlag') || ...
+                  strcmp(configBddStructValue, 'PreludeSelfTestFlag'))
+               bddValue = metaData{idForWmo(idF), 4};
+               if (~isempty(bddValue))
+                  if ((strcmpi(bddValue, 'yes')) || (strcmpi(bddValue, 'y')))
+                     configParamVal{idBSN} = '1';
+                  elseif ((strcmpi(bddValue, 'no')) || (strcmpi(bddValue, 'n')))
+                     configParamVal{idBSN} = '0';
+                  else
+                     fprintf('ERROR: inconsistent BDD value (''%s'') for ''%s'' information => not considered\n', ...
+                        bddValue, configBddStructValue);
+                  end
+               end
+            else
+               configParamVal{idBSN} = metaData{idForWmo(idF), 4};
+            end
+            
          end
+      else
+         % if we want to use default values if the information is
+         % missing in the database
       end
    end
    
+   metaStruct.CONFIG_PARAMETER_NAME = configBddStructNames;
    metaStruct.CONFIG_REPETITION_RATE = configRepRate;
    metaStruct.CONFIG_PARAMETER_VALUE = configParamVal;
    
@@ -583,6 +643,83 @@ for idFloat = 1:length(floatList)
       [configSampName, configSampVal] = create_sampling_configuration(sampleConfData);
       metaStruct.CONFIG_PARAMETER_NAME = [metaStruct.CONFIG_PARAMETER_NAME; configSampName'];
       metaStruct.CONFIG_PARAMETER_VALUE = [metaStruct.CONFIG_PARAMETER_VALUE; configSampVal'];
+   end
+   
+      % add static configuration parameters stored in the data base
+   dbConfigParamName = [ ...
+      {'SUNA_APF_OUTPUT_PIXEL_BEGIN'} ...
+      {'SUNA_APF_OUTPUT_PIXEL_END'} ...
+      {'CROVER_IN_PUMPED_STREAM'} ...
+      {'CROVER_BEAM_ATT_WAVELENGTH'} ...
+      {'CROVER_VERTICAL_PRES_OFFSET'} ...
+      {'ECO_BETA_ANGLE'} ...
+      {'ECO_BETA_BANDWIDTH'} ...
+      {'ECO_BETA_WAVELENGTH'} ...
+      {'ECO_CDOM_FLUO_EMIS_BANDWIDTH'} ...
+      {'ECO_CDOM_FLUO_EMIS_WAVELENGTH'} ...
+      {'ECO_CDOM_FLUO_EXCIT_BANDWIDTH'} ...
+      {'ECO_CDOM_FLUO_EXCIT_WAVELENGTH'} ...
+      {'ECO_CHLA_FLUO_EMIS_BANDWIDTH'} ...
+      {'ECO_CHLA_FLUO_EMIS_WAVELENGTH'} ...
+      {'ECO_CHLA_FLUO_EXCIT_BANDWIDTH'} ...
+      {'ECO_CHLA_FLUO_EXCIT_WAVELENGTH'} ...
+      {'ECO_VERTICAL_PRES_OFFSET'} ...
+      {'OCR_DOWN_IRR_BANDWIDTH'} ...
+      {'OCR_DOWN_IRR_WAVELENGTH'} ...
+      {'OCR_VERTICAL_PRES_OFFSET'} ...
+      {'OPTODE_VERTICAL_PRES_OFFSET'} ...
+      {'OPTODE_IN_AIR_MEASUREMENT'} ...
+      {'OPTODE_TIME_PRESSURE_OFFSET'} ...
+      {'SUNA_VERTICAL_PRES_OFFSET'} ...
+      {'SUNA_WITH_SCOOP'} ...
+      {'SEAFET_VERTICAL_PRES_OFFSET'} ...
+      ];
+   
+   configParamCode = [ ...
+      {'CONFIG_PX_1_6_0_0_3'} ...
+      {'CONFIG_PX_1_6_0_0_4'} ...
+      {'CONFIG_PX_1_5_0_0_1'} ...
+      {'CONFIG_PX_1_5_0_0_6'} ...
+      {'CONFIG_PX_1_5_0_0_0'} ...
+      {'CONFIG_PX_1_3_0_0_2'} ...
+      {'CONFIG_PX_3_3_0_<I>_1'} ...
+      {'CONFIG_PX_3_3_0_<I>_0'} ...
+      {'CONFIG_PX_2_3_1_0_3'} ...
+      {'CONFIG_PX_2_3_1_0_1'} ...
+      {'CONFIG_PX_2_3_1_0_2'} ...
+      {'CONFIG_PX_2_3_1_0_0'} ...
+      {'CONFIG_PX_2_3_0_0_3'} ...
+      {'CONFIG_PX_2_3_0_0_1'} ...
+      {'CONFIG_PX_2_3_0_0_2'} ...
+      {'CONFIG_PX_2_3_0_0_0'} ...
+      {'CONFIG_PX_1_3_0_0_0'} ...
+      {'CONFIG_PX_3_2_0_<I>_3'} ...
+      {'CONFIG_PX_3_2_0_<I>_2'} ...
+      {'CONFIG_PX_1_2_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_7'} ...
+      {'CONFIG_PX_1_1_0_0_8'} ...
+      {'CONFIG_PX_1_6_0_0_0'} ...
+      {'CONFIG_PX_1_6_0_0_5'} ...
+      {'CONFIG_PX_1_4_0_0_0'} ...
+      ];
+   
+   for idConfParam = 1:length(dbConfigParamName)
+      [dbConfigParamNames, dbConfigParamValues] = get_conf_param( ...
+         dbConfigParamName{idConfParam}, configParamCode{idConfParam}, ...
+         metaData, idForWmo, dimLevlist);
+      if (~isempty(dbConfigParamNames))
+         for id = 1:length(dbConfigParamValues)
+            if ((strcmpi(dbConfigParamValues{id}, 'yes')) || (strcmpi(dbConfigParamValues{id}, 'y')))
+               dbConfigParamValues{id} = '1';
+            elseif ((strcmpi(dbConfigParamValues{id}, 'no')) || (strcmpi(dbConfigParamValues{id}, 'n')))
+               dbConfigParamValues{id} = '0';
+            end
+         end
+         
+         metaStruct.CONFIG_PARAMETER_NAME = [metaStruct.CONFIG_PARAMETER_NAME; dbConfigParamNames];
+         metaStruct.CONFIG_PARAMETER_VALUE = [metaStruct.CONFIG_PARAMETER_VALUE; dbConfigParamValues];
+      end
    end
    
    % RT_OFFSET
@@ -694,7 +831,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -743,7 +880,8 @@ switch (a_dacFormatId)
          'CONFIG_TBP_MaxAirBladderPressure', 'MissionCfgMaxAirBladderPressure', ...
          'CONFIG_FEXT_PistonFullExtension', 'FullyExtendedPistonPos', ...
          'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos', ...
-         'CONFIG_COP_CtdCutOffPressure', 'CTD_CUT_OFF_PRESSURE');
+         'CONFIG_COP_CtdCutOffPressure', 'CTD_CUT_OFF_PRESSURE' ...
+      );
    otherwise
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_apx_apf11_iridium_ for dacFormatId %s\n', a_dacFormatId);
 end
@@ -777,7 +915,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...
@@ -1072,6 +1210,65 @@ switch (a_techName)
       o_techId = 2384;
    otherwise
       fprintf('WARNING: Nothing done yet in get_tech_id for tech name %s\n', a_techName);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Get static configuration parameters from data base
+%
+% SYNTAX :
+%  [a_configParamNames, a_configParamValues] = get_conf_param( ...
+%    a_dbName, a_confName, ...
+%    a_metaData, a_idForWmo, a_dimLevlist)
+%
+% INPUT PARAMETERS :
+%   a_dbName     : names in the DB
+%   a_confName   : names in the decoder
+%   a_metaData   : DB meta-data information
+%   a_idForWmo   : DB meta-data information
+%   a_dimLevlist : DB meta-data information
+%
+% OUTPUT PARAMETERS :
+%   a_configParamNames  : list of configuration parameter names
+%   a_configParamValues : list of configuration parameter values
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/17/2013 - RNU - creation
+%   09/01/2017 - RNU - RT version added
+% ------------------------------------------------------------------------------
+function [a_configParamNames, a_configParamValues] = get_conf_param( ...
+   a_dbName, a_confName, ...
+   a_metaData, a_idForWmo, a_dimLevlist)
+
+a_configParamNames = [];
+a_configParamValues = [];
+
+idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName) == 1);
+if (~isempty(idF))
+   
+   pattern = '<I>';
+   idPos = strfind(a_confName, pattern);
+   
+   if (isempty(idPos))
+      a_configParamNames = {a_confName};
+      a_configParamValues = a_metaData(a_idForWmo(idF), 4);
+   else
+      dimLev = a_dimLevlist(a_idForWmo(idF));
+      [~, idSort] = sort(dimLev);
+      
+      a_configParamNames = cell(length(dimLev), 1);
+      a_configParamValues = cell(length(dimLev), 1);
+      for id = 1:length(dimLev)
+         a_configParamNames{id, 1} = [a_confName(1:idPos-1) num2str(dimLev(id)) a_confName(idPos+length(pattern):end)];
+         a_configParamValues{id, 1} = a_metaData{a_idForWmo(idF(idSort(id))), 4};
+      end
+   end
 end
 
 return

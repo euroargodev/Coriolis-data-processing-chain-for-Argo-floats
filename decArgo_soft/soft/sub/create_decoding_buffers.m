@@ -754,6 +754,32 @@ switch (a_decoderId)
             fprintf('WARNING: Unknown packet type #%d for decoderId #%d\n', ...
                a_packType, a_decoderId);
       end
+   case {218}
+      switch (a_packType)
+         case 0
+            o_packTypeDesc = 'Tech#1';
+         case {1, 8}
+            o_packTypeDesc = 'Desc meas';
+         case {2, 9}
+            o_packTypeDesc = 'Drift meas';
+         case {3, 10}
+            o_packTypeDesc = 'Asc meas';
+         case 4
+            o_packTypeDesc = 'Tech#2';
+         case 5
+            o_packTypeDesc = 'Prog#1';
+         case 6
+            o_packTypeDesc = 'Hydrau';
+         case 7
+            o_packTypeDesc = 'Prog#2';
+         case {11, 13}
+            o_packTypeDesc = 'NS meas';
+         case {12, 14}
+            o_packTypeDesc = 'IA meas';
+         otherwise
+            fprintf('WARNING: Unknown packet type #%d for decoderId #%d\n', ...
+               a_packType, a_decoderId);
+      end
    otherwise
       fprintf('WARNING: Nothing done yet in get_pack_type_desc for decoderId #%d\n', ...
          a_decoderId);

@@ -60,7 +60,7 @@ if (a_cycleNum > 0)
    parkStartDate = a_cycleTimeData.parkStartDateSci;
    parkEndDate = a_cycleTimeData.parkEndDateSci;
    ascentStartDate = a_cycleTimeData.ascentStartDateSci;
-   ascentEndDate = a_cycleTimeData.ascentEndDateSci;
+   ascentEndDate = a_cycleTimeData.ascentEndDate;
    if (~isempty(descentStartDate) && ~isempty(parkStartDate) && ...
          ~isempty(parkEndDate) && ~isempty(ascentStartDate) && ~isempty(ascentEndDate))
       cycleTime = [descentStartDate parkStartDate parkEndDate ascentStartDate ascentEndDate];

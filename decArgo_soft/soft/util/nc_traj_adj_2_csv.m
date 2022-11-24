@@ -21,6 +21,7 @@ function nc_traj_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
 
 % default list of floats to convert
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_032213.txt';

@@ -29,16 +29,12 @@ showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloat
 % SUNA output pixel numbers decoded from data
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
+% list of sensors mounted on floats
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+
 % meta-data file exported from Coriolis data base
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_from_VB_20180222.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_lot2_from_VB_20180319.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_BioIndia_6.11_from_VB_20180319.txt';
-dataBaseFileName = 'C:\Users\jprannou\Desktop\TEMP\new_rem_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_20190604.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -144,6 +140,9 @@ fclose(fId);
 
 outputPixelData = reshape(outputPixelData, 3, size(outputPixelData, 1)/3)';
 
+% get sensor list
+[wmoSensorList, nameSensorList] = get_sensor_list(SENSOR_LIST_FILE_NAME);
+
 % read meta file
 fprintf('Processing file: %s\n', dataBaseFileName);
 fId = fopen(dataBaseFileName, 'r');
@@ -177,8 +176,16 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    
    % get the list of sensors for this float
-   [sensorList] = get_sensor_list_cts4(floatNum);
-   if (isempty(sensorList))
+   idSensor = find(wmoSensorList == floatNum);
+   if (isempty(idSensor))
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+         floatNum, SENSOR_LIST_FILE_NAME);
+      continue
+   end
+   sensorList = nameSensorList(idSensor);
+   if (length(sensorList) ~= length(unique(sensorList)))
+      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+         floatNum, SENSOR_LIST_FILE_NAME);
       continue
    end
    
@@ -360,6 +367,12 @@ switch a_inputSensorName
       o_sensorDimLevel = [801];
       o_sensorMaker = [{'SEAPOINT'}];
       o_sensorModel = [{'SEAPOINT_TURBIDITY_METER'}];
+
+   case 'TRANSISTOR_PH'
+      o_sensorName = {'TRANSISTOR_PH'};
+      o_sensorDimLevel = [901];
+      o_sensorMaker = {'SBE'};
+      o_sensorModel = {'SEAFET'};
 
    otherwise
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
@@ -638,8 +651,11 @@ for idSensor = 1:length(a_sensorList)
             {''} ...
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
-            get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);              
-
+            get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
+         
+      case 'TRANSISTOR_PH'
+         % nothing yet
+         
       otherwise
          fprintf('ERROR: No sensor misc information for %s\n', a_sensorList{idSensor});
    end
@@ -1150,6 +1166,24 @@ switch a_inputSensorName
       o_paramUnits = [ ...
          {'volt'}...
          {'ntu'}...
+         ];
+      
+   case 'TRANSISTOR_PH'
+      o_paramName = [ ...
+         {'VRS_PH'} ...
+         {'PH_IN_SITU_FREE'} ...
+         {'PH_IN_SITU_TOTAL'} ...
+         ];
+      o_paramDimLevel = [901 902 903];
+      o_paramSensor = [ ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         ];
+      o_paramUnits = [ ...
+         {'volt'} ...
+         {'dimensionless'} ...
+         {'dimensionless'} ...
          ];
 
    otherwise

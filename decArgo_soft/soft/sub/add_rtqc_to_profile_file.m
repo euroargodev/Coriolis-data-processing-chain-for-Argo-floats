@@ -4811,8 +4811,14 @@ if (~isempty(g_rtqc_trajData))
                         end
                      end
                      if (found == 0)
-                        fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
-                           a_floatNum, idMeas);
+                        % print the following warning for <PARAM> parameters 
+                        % only because <PARAM>_ADJUSTED parameter
+                        % measurements may be computed from RT adjustment
+                        % (not performed on TRAJ data)
+                        if (idD == 1)
+                           fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
+                              a_floatNum, idMeas);
+                        end
                      end
                   end
                end

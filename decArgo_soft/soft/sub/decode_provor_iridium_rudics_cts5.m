@@ -628,7 +628,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       for idL = 1:size(tabCyclesToProcessAgain, 1)
          cyNum = tabCyclesToProcessAgain(idL, 1);
          profNum = tabCyclesToProcessAgain(idL, 2);
-         
+
          g_decArgo_cycleNumFloat = cyNum;
          g_decArgo_cycleNumFloatStr = num2str(cyNum);
          g_decArgo_patternNumFloat = profNum;
@@ -707,8 +707,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    % consistency
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
-   % perform CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+   % perform DOXY, CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1);
 
    if (g_decArgo_realtimeFlag == 1)
       
@@ -904,6 +904,10 @@ for typeNum = typeOrderList
       
       fileNamesForType = fileNames(idFileForType);
       for idFile = 1:length(fileNamesForType)
+         
+         %          if (strcmp(fileNamesForType{idFile}, '3a9e_156_01_technical.txt'))
+         %             a=1
+         %          end
          
          %          if ((g_decArgo_cycleNumFloat == 28) && (g_decArgo_patternNumFloat == 1))
          %             a=1

@@ -20,12 +20,12 @@
 % ------------------------------------------------------------------------------
 function select_data_files()
 
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_pts_all.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_36.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
-inputDirName = 'E:\201902-ArgoData\coriolis\';
-inputDirName = 'C:\Users\jprannou\_DATA\coriolis\';
+inputDirName = 'C:\Users\jprannou\_DATA\201905-ArgoData\coriolis\';
+inputDirName = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 
 fprintf('Floats from list: %s\n', floatListFileName);
 floatList = load(floatListFileName);

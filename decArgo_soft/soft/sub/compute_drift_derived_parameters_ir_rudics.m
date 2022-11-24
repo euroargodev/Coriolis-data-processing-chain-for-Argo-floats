@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Compute drift derived parameters and add them in the drift measurements 
+% Compute drift derived parameters and add them in the drift measurements
 % profile structures.
 %
 % SYNTAX :
@@ -81,20 +81,20 @@ if (~isempty(driftInfo))
       a_tabDrift(driftInfo(idSensor2(idP), 1)) = compute_drift_derived_parameters_for_OCR(a_tabDrift(driftInfo(idSensor2(idP), 1)));
    end
    
-   if (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
-   
+   if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
+      
       % compute ECO2 derived parameters
       idSensor3 = find((driftInfo(:, 2) == 3) & (driftInfo(:, 3) == 0));
       for idP = 1:length(idSensor3)
          profEco2 = a_tabDrift(driftInfo(idSensor3(idP), 1));
          
          % look for the associated CTD profile
-         profCtd = [];
+         driftCtd = [];
          idF = find((driftInfo(:, 2) == 0) & ...
             (driftInfo(:, 4) == profEco2.cycleNumber) & ...
             (driftInfo(:, 5) == profEco2.profileNumber));
          if (length(idF) == 1)
-            profCtd = a_tabDrift(driftInfo(idF, 1));
+            driftCtd = a_tabDrift(driftInfo(idF, 1));
          else
             if (isempty(idF))
                fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD drift measurement profile to compute BBP drift measurements of ECO2 sensor => BBP drift measurements set to fill value\n', ...
@@ -110,10 +110,10 @@ if (~isempty(driftInfo))
             end
          end
          a_tabDrift(driftInfo(idSensor3(idP), 1)) = compute_drift_derived_parameters_for_ECO2( ...
-            profEco2, profCtd);
+            profEco2, driftCtd);
       end
       
-   else
+   elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
       
       % compute ECO3 derived parameters
       % V1 START
@@ -127,12 +127,12 @@ if (~isempty(driftInfo))
          profEco3 = a_tabDrift(driftInfo(idSensor3(idP), 1));
          
          % look for the associated CTD profile
-         profCtd = [];
+         driftCtd = [];
          idF = find((driftInfo(:, 2) == 0) & ...
             (driftInfo(:, 4) == profEco3.cycleNumber) & ...
             (driftInfo(:, 5) == profEco3.profileNumber));
          if (length(idF) == 1)
-            profCtd = a_tabDrift(driftInfo(idF, 1));
+            driftCtd = a_tabDrift(driftInfo(idF, 1));
          else
             if (isempty(idF))
                fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD drift measurement profile to compute BBP drift measurements of ECO3 sensor => BBP drift measurements set to fill value\n', ...
@@ -148,7 +148,7 @@ if (~isempty(driftInfo))
             end
          end
          a_tabDrift(driftInfo(idSensor3(idP), 1)) = compute_drift_derived_parameters_for_ECO3( ...
-            profEco3, profCtd);
+            profEco3, driftCtd);
       end
    end
    
@@ -167,7 +167,7 @@ if (~isempty(driftInfo))
       % FOR PROVOR CTS5:
       % the CTD PTS values are provided with the SUNA data. As P values come
       % from the CTD, they differ from the SUNA measurement ones. We then
-      % decided to store PTS in a dedicated drift profile 
+      % decided to store PTS in a dedicated drift profile
       % thus the PTS data sent with SUNA data are stored in a dedicated drift
       % profile associated to sensor number 6
       % these data are used only if CTD sensor drift profile is not available
@@ -245,6 +245,46 @@ if (~isempty(driftInfo))
       a_tabDrift(driftInfo(idSensor6(idD), 1)) = compute_drift_derived_parameters_for_SUNA( ...
          driftSuna, driftCtd, a_decoderId);
    end
+   
+   % compute TRANSISTOR_PH derived parameters
+   idSensorPh = [];
+   if (a_decoderId <= 120)
+      % PROVOR CTS4 float => sensor #4
+      if (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+         idSensorPh = find((driftInfo(:, 2) == 4) & (driftInfo(:, 3) == 0));
+      end
+   else
+      % PROVOR CTS5 float => sensor #7
+      idSensorPh = find((driftInfo(:, 2) == 7) & (driftInfo(:, 3) == 0));
+   end
+   for idD = 1:length(idSensorPh)
+      driftTransPh = a_tabDrift(driftInfo(idSensorPh(idD), 1));
+      
+      % look for the associated CTD drift measurements
+      driftCtd = [];
+      idF = find((driftInfo(:, 2) == 0) & ...
+         (driftInfo(:, 4) == driftTransPh.cycleNumber) & ...
+         (driftInfo(:, 5) == driftTransPh.profileNumber));
+      if (length(idF) == 1)
+         driftCtd = a_tabDrift(driftInfo(idF, 1));
+      else
+         if (isempty(idF))
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD drift measurement profile to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL drift measurements of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL drift measurements set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               driftTransPh.cycleNumber, ...
+               driftTransPh.profileNumber);
+         else
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD drift measurement profiles have been found to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL drift measurements of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL drift measurements set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               driftTransPh.cycleNumber, ...
+               driftTransPh.profileNumber, ...
+               length(idF));
+         end
+      end
+      a_tabDrift(driftInfo(idSensorPh(idD), 1)) = ...
+         compute_drift_derived_parameters_for_TRANSISTOR_PH( ...
+         driftTransPh, driftCtd);
+   end
 end
 
 % update output parameters
@@ -309,7 +349,7 @@ for idP = 1:length(paramToDeriveList)
       downIrr380Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downIrr380Qc;
-
+      
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
    end
 end
@@ -456,7 +496,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_125( ...
+      chla = compute_CHLA_105_to_112_121_to_125_1322( ...
          a_driftEco2.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -652,7 +692,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_125( ...
+      chla = compute_CHLA_105_to_112_121_to_125_1322( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -806,7 +846,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_125( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_125_1322( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -884,10 +924,10 @@ o_BBP = ones(length(a_BETA_BACKSCATTERING), 1)*a_BBP_fillValue;
 
 % assign the CTD data to the OPTODE measurements (timely closest association)
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_BBP_dates);
-if (~isempty(ctdLinkData))   
-      
+if (~isempty(ctdLinkData))
+   
    if (a_lambda == 700)
-      o_BBP = compute_BBP700_105_to_112_121_to_125( ...
+      o_BBP = compute_BBP700_105_to_112_121_to_125_1322( ...
          a_BETA_BACKSCATTERING, ...
          a_BETA_BACKSCATTERING_fillValue, ...
          a_BBP_fillValue, ...
@@ -961,8 +1001,8 @@ for idD = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idD});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
-
-      chla = compute_CHLA_105_to_112_121_to_125( ...
+      
+      chla = compute_CHLA_105_to_112_121_to_125_1322( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -973,7 +1013,7 @@ for idD = 1:length(paramToDeriveList)
       chlaQc = ones(size(a_driftEco3.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftEco3.dataQc(:, end+1) = chlaQc;
-
+      
       a_driftEco3.paramList = [a_driftEco3.paramList derivedParam];
    end
 end
@@ -991,7 +1031,7 @@ for idD = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idD});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
       
-      bbp700 = compute_BBP700_105_to_112_121_to_125_V1( ...
+      bbp700 = compute_BBP700_105_to_112_121_to_125_1322_V1( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1049,7 +1089,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_125( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_125_1322( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1124,7 +1164,7 @@ else
    ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
 end
 
-% if the fitlm Matlab function is available, compute NITRATE data from 
+% if the fitlm Matlab function is available, compute NITRATE data from
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
    if (~ismember(a_decoderId, [110, 113]))
@@ -1315,16 +1355,20 @@ paramNameList = {a_driftOptode.paramList.name};
 if (isempty(a_driftCtd))
    
    % we have not been able to retrieve the associated CTD profile
-   derivedParamList = [ ...
-      {'DOXY'} ...
-      ];
-   for idP = 1:length(derivedParamList)
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      a_driftOptode.data(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*derivedParam.fillValue;
-      if (~isempty(a_driftOptode.dataQc))
-         a_driftOptode.dataQc(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
+   if (ismember('C1PHASE_DOXY', paramNameList) && ...
+         ismember('C2PHASE_DOXY', paramNameList) && ...
+         ismember('TEMP_DOXY', paramNameList))
+      derivedParamList = [ ...
+         {'DOXY'} ...
+         ];
+      for idP = 1:length(derivedParamList)
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         a_driftOptode.data(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*derivedParam.fillValue;
+         if (~isempty(a_driftOptode.dataQc))
+            a_driftOptode.dataQc(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
       end
-      a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
    end
 else
    
@@ -1450,7 +1494,7 @@ global g_decArgo_floatNum;
 
 % assign the CTD data to the OPTODE measurements (timely closest association)
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_DOXY_dates);
-if (~isempty(ctdLinkData))   
+if (~isempty(ctdLinkData))
    
    switch (a_decoderId)
       
@@ -1472,7 +1516,7 @@ if (~isempty(ctdLinkData))
             a_PSAL_fillValue, ...
             a_DOXY_fillValue, ...
             a_driftOptode);
-
+         
       case {107, 109, 110, 111, 113, 121, 122, 124}
          
          % compute DOXY values using the Stern-Volmer equation
@@ -1491,7 +1535,7 @@ if (~isempty(ctdLinkData))
             a_PSAL_fillValue, ...
             a_DOXY_fillValue, ...
             a_driftOptode);
-
+         
       case {112, 123, 125}
          
          % compute DOXY values using the Aanderaa standard calibration method
@@ -1518,8 +1562,249 @@ if (~isempty(ctdLinkData))
             a_driftOptode.cycleNumber, ...
             a_driftOptode.profileNumber, ...
             a_decoderId);
-
+         
    end
 end
-               
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the TRANSISTOR_PH sensor.
+%
+% SYNTAX :
+%  [o_driftTransPh] = compute_drift_derived_parameters_for_TRANSISTOR_PH( ...
+%    a_driftTRansPh, a_driftCtd)
+%
+% INPUT PARAMETERS :
+%   a_driftTRansPh : input TRANSISTOR_PH drift profile structure
+%   a_driftCtd     : input CTD drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_driftTransPh : output TRANSISTOR_PH drift profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/11/2019 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_driftTransPh] = compute_drift_derived_parameters_for_TRANSISTOR_PH( ...
+   a_driftTRansPh, a_driftCtd)
+
+% output parameters initialization
+o_driftTransPh = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_driftTRansPh.paramList.name};
+
+if (isempty(a_driftCtd))
+   
+   % we have not been able to retrieve the associated CTD profile
+   if (ismember('VRS_PH', paramNameList))
+      derivedParamList = [ ...
+         {'PH_IN_SITU_FREE'} ...
+         {'PH_IN_SITU_TOTAL'} ...
+         ];
+      for idP = 1:length(derivedParamList)
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         a_driftTRansPh.data(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*derivedParam.fillValue;
+         if (~isempty(a_driftTRansPh.dataQc))
+            a_driftTRansPh.dataQc(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_driftTRansPh.paramList = [a_driftTRansPh.paramList derivedParam];
+      end
+   end
+   
+else
+   
+   % retrieve measured CTD data
+   paramNameListCtd = {a_driftCtd.paramList.name};
+   presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
+   tempId = find(strcmp('TEMP', paramNameListCtd) == 1, 1);
+   psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
+   ctdMeasDates = a_driftCtd.dates;
+   ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
+
+   % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data and add them in the
+   % profile structure
+   paramToDeriveList = [ ...
+      {'VRS_PH'} ...
+      ];
+   derivedParamList = [ ...
+      {'PH_IN_SITU_FREE'} ...
+      {'PH_IN_SITU_TOTAL'} ...
+      ];
+   paramPres = get_netcdf_param_attributes('PRES');
+   paramTemp = get_netcdf_param_attributes('TEMP');
+   paramPsal = get_netcdf_param_attributes('PSAL');
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+         derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+         derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+         
+         % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
+         [phInSituFree, phInSituTotal] = compute_drift_PH( ...
+            a_driftTRansPh.data(:, idF), ...
+            paramToDerive.fillValue, ...
+            derivedParam1.fillValue, ...
+            derivedParam2.fillValue, ...
+            a_driftTRansPh.dates, ...
+            ctdMeasDates, ctdMeasData, ...
+            paramPres.fillValue, ...
+            paramTemp.fillValue, ...
+            paramPsal.fillValue, ...
+            a_driftTRansPh);
+         
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam1 = find(strcmp({a_driftTRansPh.paramList.name}, derivedParamList{idP, 1}), 1);
+         if (isempty(idFDerivedParam1))
+            a_driftTRansPh.data(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*derivedParam1.fillValue;
+            if (isempty(a_driftTRansPh.dataQc))
+               a_driftTRansPh.dataQc = ones(size(a_driftTRansPh.data))*g_decArgo_qcDef;
+            else
+               a_driftTRansPh.dataQc(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_driftTRansPh.paramList = [a_driftTRansPh.paramList derivedParam1];
+            derivedParam1Id = size(a_driftTRansPh.data, 2);
+         else
+            if (isempty(a_driftTRansPh.paramNumberWithSubLevels))
+               derivedParam1Id = idFDerivedParam1;
+            else
+               idF = find(a_driftTRansPh.paramNumberWithSubLevels < idFDerivedParam1);
+               if (isempty(idF))
+                  derivedParam1Id = idFDerivedParam1;
+               else
+                  derivedParam1Id = idFDerivedParam1 + sum(a_driftTRansPh.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+            end
+         end
+         
+         idFDerivedParam2 = find(strcmp({a_driftTRansPh.paramList.name}, derivedParamList{idP, 2}), 1);
+         if (isempty(idFDerivedParam2))
+            a_driftTRansPh.data(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*derivedParam2.fillValue;
+            if (isempty(a_driftTRansPh.dataQc))
+               a_driftTRansPh.dataQc = ones(size(a_driftTRansPh.data))*g_decArgo_qcDef;
+            else
+               a_driftTRansPh.dataQc(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_driftTRansPh.paramList = [a_driftTRansPh.paramList derivedParam2];
+            derivedParam2Id = size(a_driftTRansPh.data, 2);
+         else
+            if (isempty(a_driftTRansPh.paramNumberWithSubLevels))
+               derivedParam2Id = idFDerivedParam2;
+            else
+               idF = find(a_driftTRansPh.paramNumberWithSubLevels < idFDerivedParam2);
+               if (isempty(idF))
+                  derivedParam2Id = idFDerivedParam2;
+               else
+                  derivedParam2Id = idFDerivedParam2 + sum(a_driftTRansPh.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+            end
+         end
+         
+         if (~isempty(phInSituFree))
+            a_driftTRansPh.data(:, derivedParam1Id) = phInSituFree;
+            phInSituFreeQc = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
+            phInSituFreeQc(find(phInSituFree ~= derivedParam1.fillValue)) = g_decArgo_qcNoQc;
+            a_driftTRansPh.dataQc(:, derivedParam1Id) = phInSituFreeQc;
+         end
+         
+         if (~isempty(phInSituTotal))
+            a_driftTRansPh.data(:, derivedParam2Id) = phInSituTotal;
+            phInSituFreeQc = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
+            phInSituFreeQc(find(phInSituTotal ~= derivedParam2.fillValue)) = g_decArgo_qcNoQc;
+            a_driftTRansPh.dataQc(:, derivedParam2Id) = phInSituFreeQc;
+         end
+      end
+   end
+end
+
+% update output parameters
+a_driftTRansPh.derived = 1;
+o_driftTransPh = a_driftTRansPh;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL from the data provided by the
+% TRANSISTOR_PH sensor.
+%
+% SYNTAX :
+%  [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_drift_PH( ...
+%    a_VRS_PH, ...
+%    a_VRS_PH_fillValue, ...
+%    a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+%    a_VRS_PH_dates, ...
+%    a_ctdDates, a_ctdData, ...
+%    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, ...
+%    a_driftTransPh)
+%
+% INPUT PARAMETERS :
+%   a_VRS_PH                     : input VRS_PH data
+%   a_VRS_PH_fillValue           : fill value for input VRS_PH data
+%   a_PH_IN_SITU_FREE_fillValue  : fill value for output PH_IN_SITU_FREE data
+%   a_PH_IN_SITU_TOTAL_fillValue : fill value for output PH_IN_SITU_TOTAL data
+%   a_VRS_PH_dates               : dates of VRS_PH data
+%   a_ctdDates                   : dates of ascociated CTD (P, T, S) data
+%   a_ctdData                    : ascociated CTD (P, T, S) data
+%   a_PRES_fillValue             : fill value for input PRES data
+%   a_TEMP_fillValue             : fill value for input TEMP data
+%   a_PSAL_fillValue             : fill value for input PSAL data
+%   a_driftTransPh               : input TRANSISTOR_PH drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_PH_IN_SITU_FREE  : output PH_IN_SITU_FREE data
+%   o_PH_IN_SITU_TOTAL : output PH_IN_SITU_TOTAL data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/11/2019 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_drift_PH( ...
+   a_VRS_PH, ...
+   a_VRS_PH_fillValue, ...
+   a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+   a_VRS_PH_dates, ...
+   a_ctdDates, a_ctdData, ...
+   a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, ...
+   a_driftTransPh)
+
+% output parameters initialization
+o_PH_IN_SITU_FREE = ones(length(a_VRS_PH), 1)*a_PH_IN_SITU_FREE_fillValue;
+o_PH_IN_SITU_TOTAL = ones(length(a_VRS_PH), 1)*a_PH_IN_SITU_TOTAL_fillValue;
+
+
+% assign the CTD data to the OPTODE measurements (timely closest association)
+ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_VRS_PH_dates);
+if (~isempty(ctdLinkData))
+   
+   % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
+   [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_PH_111_113_123( ...
+      a_VRS_PH, ...
+      a_VRS_PH_fillValue, ...
+      ctdLinkData(:, 1), ...
+      ctdLinkData(:, 2), ...
+      ctdLinkData(:, 3), ...
+      a_PRES_fillValue, ...
+      a_TEMP_fillValue, ...
+      a_PSAL_fillValue, ...
+      a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+      a_driftTransPh);
+end
+
 return

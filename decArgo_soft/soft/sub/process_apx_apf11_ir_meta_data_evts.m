@@ -61,7 +61,7 @@ for idEv = 1:length(events)
    if (any(strfind(dataStr, PATTERN_STARTUP_DATE)))
       
       value = datestr(evt.timestamp+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
-
+      
       idF = [];
       if (~isempty(o_metaData))
          idF = find(strcmp({o_metaData.metaConfigLabel}, 'STARTUP_DATE'));
@@ -84,6 +84,17 @@ end
 % get CTD useful information
 PATTERN_START = 'CTD|';
 events = a_events(find(strcmp({a_events.functionName}, 'test')));
+for idEv = 1:length(events)
+   evt = events(idEv);
+   dataStr = evt.message;
+   if (strncmp(dataStr, PATTERN_START, length(PATTERN_START)))
+      o_metaData = get_meta(dataStr, o_metaData);
+   end
+end
+
+% get Optode useful information
+PATTERN_START = 'Optode ';
+events = a_events(find(strcmp({a_events.functionName}, 'log_test_results')));
 for idEv = 1:length(events)
    evt = events(idEv);
    dataStr = evt.message;
@@ -313,12 +324,14 @@ PATTERN_USED = [ ...
    {'PTHA0'} {'CTD_PRES_CALIB_COEF_PTHA0'}; ...
    {'PTHA1'} {'CTD_PRES_CALIB_COEF_PTHA1'}; ...
    {'PTHA2'} {'CTD_PRES_CALIB_COEF_PTHA2'} ...
+   %    {'Optode PhaseCoef:'} {'AANDERAA_OPTODE_PHASE_COEF_'}; ...
+   %    {'Optode SVUFoilCoef:'} {'AANDERAA_OPTODE_COEF_'} ...
    ];
 
 idF = cellfun(@(x) strfind(a_eventdata, x), PATTERN_USED(:, 1), 'UniformOutput', 0);
 idF = find(~cellfun(@isempty, idF) == 1);
 if (~isempty(idF))
-
+   
    metaId = PATTERN_USED{idF, 2};
    switch (metaId)
       case 'CTD_MODEL'
@@ -363,22 +376,24 @@ if (~isempty(idF))
          end
          
       case 'CTD_SERIAL_NUMBER'
-         idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
-         value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
-         idF3 = [];
-         if (~isempty(o_metaData))
-            idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'CTD_SERIAL_NUMBER'));
-         end
-         if (isempty(idF3))
-            metaData = get_apx_meta_data_init_struct(1);
-            metaData.metaConfigLabel = 'CTD_SERIAL_NUMBER';
-            metaData.techParamCode = 'SENSOR_SERIAL_NO';
-            metaData.techParamId = 411;
-            metaData.techParamValue = value;
-            o_metaData = [o_metaData metaData];
-         else
-            if (~strcmp(o_metaData(idF3).techParamValue, value))
-               o_metaData(idF3).techParamValue = value;
+         if (strncmp(a_eventdata, 'Serial Number:', length('Serial Number:')))
+            idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
+            value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
+            idF3 = [];
+            if (~isempty(o_metaData))
+               idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'CTD_SERIAL_NUMBER'));
+            end
+            if (isempty(idF3))
+               metaData = get_apx_meta_data_init_struct(1);
+               metaData.metaConfigLabel = 'CTD_SERIAL_NUMBER';
+               metaData.techParamCode = 'SENSOR_SERIAL_NO';
+               metaData.techParamId = 411;
+               metaData.techParamValue = value;
+               o_metaData = [o_metaData metaData];
+            else
+               if (~strcmp(o_metaData(idF3).techParamValue, value))
+                  o_metaData(idF3).techParamValue = value;
+               end
             end
          end
          
@@ -703,7 +718,7 @@ if (~isempty(idF))
                o_metaData(idF3).techParamValue = value;
             end
          end
-
+         
       case 'CTD_PRES_CALIB_COEF_PA0'
          idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
          value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
@@ -944,13 +959,212 @@ if (~isempty(idF))
             end
          end
          
+         %       case 'OPTODE_SERIAL_NUMBER'
+         %          idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
+         %          value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
+         %          idF3 = [];
+         %          if (~isempty(o_metaData))
+         %             idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'OPTODE_SERIAL_NUMBER'));
+         %          end
+         %          if (isempty(idF3))
+         %             metaData = get_apx_meta_data_init_struct(1);
+         %             metaData.metaConfigLabel = 'OPTODE_SERIAL_NUMBER';
+         %             metaData.techParamCode = 'SENSOR_SERIAL_NO';
+         %             metaData.techParamId = 411;
+         %             metaData.techParamValue = value;
+         %             o_metaData = [o_metaData metaData];
+         %          else
+         %             if (~strcmp(o_metaData(idF3).techParamValue, value))
+         %                o_metaData(idF3).techParamValue = value;
+         %             end
+         %          end
+         
+         %       case 'AANDERAA_OPTODE_PHASE_COEF_'
+         %          idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
+         %          value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
+         %          idSep = strfind(value, ' ');
+         %          if (length(idSep) == 3)
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_PHASE_COEF_0'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_PHASE_COEF_0';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_PHASE_COEF_0';
+         %                metaData.techParamId = 1647;
+         %                metaData.techParamValue = value(1:idSep(1)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(1:idSep(1)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_PHASE_COEF_1'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_PHASE_COEF_1';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_PHASE_COEF_1';
+         %                metaData.techParamId = 1648;
+         %                metaData.techParamValue = value(idSep(1)+1:idSep(2)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(1)+1:idSep(2)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_PHASE_COEF_2'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_PHASE_COEF_2';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_PHASE_COEF_2';
+         %                metaData.techParamId = 1649;
+         %                metaData.techParamValue = value(idSep(2)+1:idSep(3)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(2)+1:idSep(3)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_PHASE_COEF_3'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_PHASE_COEF_3';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_PHASE_COEF_3';
+         %                metaData.techParamId = 1650;
+         %                metaData.techParamValue = value(idSep(3)+1:end);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(3)+1:end);
+         %             end
+         %          end
+         %
+         %       case 'AANDERAA_OPTODE_COEF_'
+         %          idF2 = strfind(a_eventdata, PATTERN_USED{idF, 1});
+         %          value = strtrim(a_eventdata(idF2+length(PATTERN_USED{idF, 1})+1:end));
+         %          idSep = strfind(value, ' ');
+         %          if (length(idSep) == 6)
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_0'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_0';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_0';
+         %                metaData.techParamId = 1362;
+         %                metaData.techParamValue = value(1:idSep(1)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(1:idSep(1)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_1'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_1';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_1';
+         %                metaData.techParamId = 1363;
+         %                metaData.techParamValue = value(idSep(1)+1:idSep(2)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(1)+1:idSep(2)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_2'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_2';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_2';
+         %                metaData.techParamId = 1364;
+         %                metaData.techParamValue = value(idSep(2)+1:idSep(3)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(2)+1:idSep(3)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_3'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_3';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_3';
+         %                metaData.techParamId = 1365;
+         %                metaData.techParamValue = value(idSep(3)+1:idSep(4)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(3)+1:idSep(4)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_4'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_4';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_4';
+         %                metaData.techParamId = 1366;
+         %                metaData.techParamValue = value(idSep(4)+1:idSep(5)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(4)+1:idSep(5)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_5'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_5';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_5';
+         %                metaData.techParamId = 1367;
+         %                metaData.techParamValue = value(idSep(5)+1:idSep(6)-1);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(5)+1:idSep(6)-1);
+         %             end
+         %
+         %             idF3 = [];
+         %             if (~isempty(o_metaData))
+         %                idF3 = find(strcmp({o_metaData.metaConfigLabel}, 'AANDERAA_OPTODE_COEF_6'));
+         %             end
+         %             if (isempty(idF3))
+         %                metaData = get_apx_meta_data_init_struct(1);
+         %                metaData.metaConfigLabel = 'AANDERAA_OPTODE_COEF_6';
+         %                metaData.techParamCode = 'AANDERAA_OPTODE_COEF_6';
+         %                metaData.techParamId = 1368;
+         %                metaData.techParamValue = value(idSep(6)+1:end);
+         %                o_metaData = [o_metaData metaData];
+         %             else
+         %                o_metaData(idF3).techParamValue = value(idSep(6)+1:end);
+         %             end
+         %          end
+         
       otherwise
          fprintf('WARNING: Float #%d Cycle #%d: Not managed meta information ''%s''\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum, ...
             metaId);
    end
-
+   
 end
 
 return

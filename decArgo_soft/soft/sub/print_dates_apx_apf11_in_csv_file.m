@@ -4,6 +4,7 @@
 % SYNTAX :
 %  print_dates_apx_apf11_in_csv_file( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+%    a_profFlbbCd, a_profOcr504I, ...
 %    a_cycleTimeData, a_gpsData, ...
 %    a_grounding, a_buoyancy, a_vitalsData)
 %
@@ -13,6 +14,8 @@
 %   a_profCtdPts    : CTD_PTS data
 %   a_profCtdPtsh   : CTD_PTSH data
 %   a_profDo        : O2 data
+%   a_profFlbbCd    : FLBB_CD data
+%   a_profOcr504I   : OCR_504I data
 %   a_cycleTimeData : cycle timings data
 %   a_gpsData       : GPS data
 %   a_grounding     : grounding data
@@ -31,6 +34,7 @@
 % ------------------------------------------------------------------------------
 function print_dates_apx_apf11_in_csv_file( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+   a_profFlbbCd, a_profOcr504I, ...
    a_cycleTimeData, a_gpsData, ...
    a_grounding, a_buoyancy, a_vitalsData)
          
@@ -99,6 +103,26 @@ allTabCyNum = [allTabCyNum tabCyNum];
 [tabDate, tabDateAdj, ...
    tabPres, tabPresAdj, ...
    tabLabel, tabCyNum] = format_profile_dates(a_profDo, 'O2', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profFlbbCd, 'FLBB_CD', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profOcr504I, 'OCR_504I', g_decArgo_cycleNum);
 allTabDate = [allTabDate tabDate];
 allTabDateAdj = [allTabDateAdj tabDateAdj];
 allTabPres = [allTabPres tabPres];

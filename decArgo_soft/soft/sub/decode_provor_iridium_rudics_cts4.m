@@ -133,6 +133,10 @@ g_decArgo_generateNcFlag = 0;
 % array to store GPS data
 global g_decArgo_gpsData;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+g_decArgo_julD2FloatDayOffset = [];
+
 % no sampled data mode
 global g_decArgo_noDataFlag;
 g_decArgo_noDataFlag = 0;
@@ -966,8 +970,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    % a buffer anomaly (more than one profile for a given profile number)
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
-   % perform CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+   % perform DOXY, CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1);
    
    if (g_decArgo_realtimeFlag == 1)
       
@@ -1215,7 +1219,7 @@ while (procDone == 0)
             % add dates to drift measurements
             [dataCTD, dataOXY, dataOCR, ...
                dataECO3, dataFLNTU, ...
-               dataCROVER, dataSUNA] = ...
+               dataCROVER, dataSUNA, measDates] = ...
                add_drift_meas_dates_ir_rudics_105_to_110_112(a_decoderId, ...
                dataCTD, dataOXY, dataOCR, ...
                dataECO3, dataFLNTU, ...
@@ -1234,7 +1238,7 @@ while (procDone == 0)
                transStartDate, ...
                firstEmerAscentDate] = ...
                compute_prv_dates_ir_rudics_105_to_110_112_sbd2(tabTech, ...
-               floatClockDrift, a_refDay);
+               floatClockDrift, a_refDay, measDates);
             
             % decode configuration data (251, 254 and 255 msg types)
             [cyProfPhaseListConfig, ...

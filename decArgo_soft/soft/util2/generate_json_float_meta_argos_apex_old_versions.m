@@ -21,13 +21,13 @@ function generate_json_float_meta_argos_apex_old_versions
 
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_pts\float_metadata_pts.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_pts_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
 
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);

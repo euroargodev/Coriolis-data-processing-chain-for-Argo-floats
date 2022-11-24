@@ -80,6 +80,8 @@ if (ismember(a_decoderId, [1121 1321 1322]))
       {'PTSH'} {'Ph'}; ...
       {'PH'} {'Ph'}; ...
       {'OPT'} {'Optode'}; ...
+      {'FLBB'} {'Eco'}; ...
+      {'IRAD'} {'Ocr'}; ...
    ];
 end
 
@@ -89,8 +91,10 @@ if (~isempty(a_decArgoConfParamNames))
    idDel = [];
    for idConfParam = 1:length(finalConfigName)
       finalConfigNameShort = finalConfigName{idConfParam};
-      idFUs = strfind(finalConfigNameShort, '_');
-      finalConfigNameShort = finalConfigNameShort(1:idFUs(2)-1);
+      if (~strncmp(finalConfigNameShort, 'CONFIG_PX_', length('CONFIG_PX_')))
+         idFUs = strfind(finalConfigNameShort, '_');
+         finalConfigNameShort = finalConfigNameShort(1:idFUs(2)-1);
+      end
       idF = find(strcmp(finalConfigNameShort, a_decArgoConfParamNames) == 1);
       if (~isempty(idF))
          finalConfigName{idConfParam} = a_ncConfParamNames{idF};

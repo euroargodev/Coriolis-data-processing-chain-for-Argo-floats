@@ -6,14 +6,15 @@
 %  generate_json_float_meta_prv_cts4_ir_sbd_rt(varargin)
 %
 % INPUT PARAMETERS :
-%   'floatMetaFileName' : meta-data file exported from Coriolis data base
-%   'floatListFileName' : list of concerned floats
-%   'calibFileName'     : list of calibartion coefficient (retrieved from
-%                         decoded data)
-%   'configDirName'     : directory of float configuration at launch files
-%   'outputJsonDirName' : directory of individual json float meta-data files
-%   'outputLogDirName'  : directory of log files
-%   'xmlReportDirName'  : directory of xml files
+%   'floatMetaFileName'  : meta-data file exported from Coriolis data base
+%   'sensorListFileName' : list of sensors mounted on floats
+%   'floatListFileName'  : list of concerned floats
+%   'calibFileName'      : list of calibration coefficient (retrieved from
+%                          decoded data)
+%   'configDirName'      : directory of float configuration at launch files
+%   'outputJsonDirName'  : directory of individual json float meta-data files
+%   'outputLogDirName'   : directory of log files
+%   'xmlReportDirName'   : directory of xml files
 %
 % OUTPUT PARAMETERS :
 %
@@ -30,6 +31,7 @@ function generate_json_float_meta_prv_cts4_ir_sbd_rt(varargin)
 
 % input parameters
 global g_cogj_floatMetaFileName;
+global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_calibFileName;
 global g_cogj_configDirName;
@@ -80,6 +82,7 @@ try
       % generate JSON meta-data files
       generate_json_float_meta_prv_cts4_ir_sbd_(...
          g_cogj_floatMetaFileName, ...
+         g_cogj_sensorListFileName, ...
          g_cogj_floatListFileName, ...
          g_cogj_calibFileName, ...
          g_cogj_configDirName, ...
@@ -187,6 +190,7 @@ o_inputError = 0;
 o_logLines = [];
 
 global g_cogj_floatMetaFileName;
+global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_calibFileName;
 global g_cogj_configDirName;
@@ -195,6 +199,7 @@ global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
 
 g_cogj_floatMetaFileName = [];
+g_cogj_sensorListFileName = [];
 g_cogj_floatListFileName = [];
 g_cogj_calibFileName = [];
 g_cogj_configDirName = [];
@@ -222,6 +227,8 @@ if (~isempty(a_varargin))
       for id = 1:2:length(a_varargin)
          if (strcmpi(a_varargin{id}, 'floatMetaFileName'))
             g_cogj_floatMetaFileName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'sensorListFileName'))
+            g_cogj_sensorListFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'floatListFileName'))
             g_cogj_floatListFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'calibFileName'))
@@ -244,6 +251,11 @@ end
 % all expected parameters are mandatory
 if (isempty(g_cogj_floatMetaFileName))
    o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory\n');
+   o_inputError = 1;
+   return
+end
+if (isempty(g_cogj_sensorListFileName))
+   o_logLines{end+1} = sprintf('ERROR: ''sensorListFileName'' input parameter is mandatory\n');
    o_inputError = 1;
    return
 end
@@ -280,6 +292,7 @@ end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('floatMetaFileName: %s\n', g_cogj_floatMetaFileName);
+o_logLines{end+1} = sprintf('sensorListFileName: %s\n', g_cogj_sensorListFileName);
 o_logLines{end+1} = sprintf('floatListFileName: %s\n', g_cogj_floatListFileName);
 o_logLines{end+1} = sprintf('calibFileName: %s\n', g_cogj_calibFileName);
 o_logLines{end+1} = sprintf('configDirName: %s\n', g_cogj_configDirName);

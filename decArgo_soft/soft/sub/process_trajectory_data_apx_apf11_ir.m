@@ -2,14 +2,15 @@
 % Process trajectory data.
 %
 % SYNTAX :
-%  [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_apf11_ir( ...
+%  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+%    process_trajectory_data_apx_apf11_ir( ...
 %    a_cycleNum, ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profCtdCp, a_profCtdCpH, ...
+%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
 %    a_gpsData, a_grounding, a_buoyancy, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData, ...
-%    a_tabTrajNMeas, a_tabTrajNCycle)
+%    a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 %
 % INPUT PARAMETERS :
 %   a_cycleNum        : current cycle number
@@ -20,6 +21,8 @@
 %   a_profDo          : O2 data
 %   a_profCtdCp       : CTD_CP data
 %   a_profCtdCpH      : CTD_CP_H data
+%   a_profFlbbCd      : FLBB_CD data
+%   a_profOcr504I     : OCR_504I data
 %   a_gpsData         : GPS data
 %   a_grounding       : grounding data
 %   a_buoyancy        : buoyancy data
@@ -27,10 +30,12 @@
 %   a_clockOffsetData : clock offset information
 %   a_tabTrajNMeas    : input traj N_MEAS data
 %   a_tabTrajNCycle   : input traj N_CYCLE data
+%   a_tabTechNMeas    : input tech N_MEAS data
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : output traj N_MEAS data
 %   o_tabTrajNCycle : output traj N_CYCLE data
+%   o_tabTechNMeas  : output tech N_MEAS data
 %
 % EXAMPLES :
 %
@@ -40,18 +45,20 @@
 % RELEASES :
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_apf11_ir( ...
+function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+   process_trajectory_data_apx_apf11_ir( ...
    a_cycleNum, ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profCtdCp, a_profCtdCpH, ...
+   a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
    a_gpsData, a_grounding, a_buoyancy, ...
    a_cycleTimeData, ...
    a_clockOffsetData, ...
-   a_tabTrajNMeas, a_tabTrajNCycle)
+   a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 
 % output parameters initialization
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
+o_tabTechNMeas = a_tabTechNMeas;
 
 % global measurement codes
 global g_MC_DST;
@@ -94,6 +101,9 @@ trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
 % structure to store N_CYCLE data
 trajNCycleStruct = get_traj_n_cycle_init_struct(a_cycleNum, -1);
 
+% structure to store N_MEASUREMENT technical data
+techNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CLOCK OFFSET
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,6 +122,8 @@ trajNCycleStruct.dataMode = 'A'; % because clock offset is supposed to be set fo
 paramPres = get_netcdf_param_attributes('PRES');
 paramGpsTimeToFix = get_netcdf_param_attributes('GPS_TIME_TO_FIX');
 paramGpsNbSat = get_netcdf_param_attributes('GPS_NB_SATELLITE');
+paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
+paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
 
 descentStartDate = a_cycleTimeData.descentStartDateSci;
 descentStartAdjDate = a_cycleTimeData.descentStartAdjDateSci;
@@ -145,7 +157,7 @@ continuousProfileEndDate = a_cycleTimeData.continuousProfileEndDateSci;
 continuousProfileEndAdjDate = a_cycleTimeData.continuousProfileEndAdjDateSci;
 continuousProfileEndPres = a_cycleTimeData.continuousProfileEndPresSci;
 continuousProfileEndAdjPres = a_cycleTimeData.continuousProfileEndAdjPresSci;
-ascentEndDate = a_cycleTimeData.ascentEndDateSci;
+ascentEndDate = a_cycleTimeData.ascentEndDate;
 ascentEndAdjDate = a_cycleTimeData.ascentEndAdjDateSci;
 ascentEndPres = a_cycleTimeData.ascentEndPresSci;
 ascentEndAdjPres = a_cycleTimeData.ascentEndAdjPresSci;
@@ -430,8 +442,8 @@ if (~isempty(transEndDate))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CTD_P, CTD_PT, CTD_PTS, CTD_PTSH, O2 MEASUREMENTS (because all are dated)
-% stored with MC-10
+% CTD_P, CTD_PT, CTD_PTS, CTD_PTSH, O2, FLBB_CD, OCR_504I MEASUREMENTS (because
+% all are dated) stored with MC-10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 phaseDates = [];
@@ -480,7 +492,7 @@ end
 phaseMeasCode = phaseMeasCode(idSort);
 
 if (~isempty(phaseDates))
-   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'}];
    for idML = 1:length(measList)
       doDataFlag = 0;
       switch (measList{idML})
@@ -510,6 +522,16 @@ if (~isempty(phaseDates))
             end
             profData = a_profDo;
             doDataFlag = 1;
+         case 'FLBB_CD'
+            if (isempty(a_profFlbbCd))
+               continue
+            end
+            profData = a_profFlbbCd;
+         case 'OCR_504I'
+            if (isempty(a_profOcr504I))
+               continue
+            end
+            profData = a_profOcr504I;
       end
       
       for idPhase = 1:length(phaseDates)+1
@@ -578,7 +600,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
    paramList = [];
    paramDataStruct = [];
    paramDataAdjStruct = [];
-   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'}];
    for idML = 1:length(measList)
       switch (measList{idML})
          case 'CTD_P'
@@ -606,6 +628,16 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                continue
             end
             profData = a_profDo;
+         case 'FLBB_CD'
+            if (isempty(a_profFlbbCd))
+               continue
+            end
+            profData = a_profFlbbCd;
+         case 'OCR_504I'
+            if (isempty(a_profOcr504I))
+               continue
+            end
+            profData = a_profOcr504I;
       end
       
       idData = find((profData.dates >= parkStartDate) & ...
@@ -679,7 +711,7 @@ if (~isempty(ascentStartDate) && ...
    presMaxTime = g_decArgo_dateDef;
    presMaxTimeAdj = g_decArgo_dateDef;
    idMax = [];
-   measList = [{'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'CTD_CP'} {'CTD_CP_H'}];
+   measList = [{'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'} {'CTD_CP'} {'CTD_CP_H'}];
    for idML = 1:length(measList)
       switch (measList{idML})
          case 'CTD_PTS'
@@ -697,6 +729,16 @@ if (~isempty(ascentStartDate) && ...
                continue
             end
             profData = a_profDo;
+         case 'FLBB_CD'
+            if (isempty(a_profFlbbCd))
+               continue
+            end
+            profData = a_profFlbbCd;
+         case 'OCR_504I'
+            if (isempty(a_profOcr504I))
+               continue
+            end
+            profData = a_profOcr504I;
          case 'CTD_CP'
             if (isempty(a_profCtdCp))
                continue
@@ -845,12 +887,21 @@ if (~isempty(a_buoyancy))
             timeAdj, ...
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
+            measStructTechNMeas = measStruct;
             measStruct.paramList = paramPres;
             measStruct.paramData = a_buoyancy(idBuoy, 3);
             if (a_buoyancy(idBuoy, 4) ~= g_decArgo_presDef)
                measStruct.paramDataAdj = a_buoyancy(idBuoy, 4);
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            
+            if (a_buoyancy(idBuoy, 5) == 0)
+               measStructTechNMeas.paramList = paramValveFlag;
+            else
+               measStructTechNMeas.paramList = paramPumpFlag;
+            end
+            measStructTechNMeas.paramData = 1;
+            techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStructTechNMeas];
          end
       end
    end
@@ -1234,6 +1285,7 @@ end
 if (~isempty(trajNMeasStruct.tabMeas))
    o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStruct];
    o_tabTrajNCycle = [o_tabTrajNCycle; trajNCycleStruct];
+   o_tabTechNMeas = [o_tabTechNMeas; techNMeasStruct];
 end
 
 return

@@ -4,10 +4,10 @@
 % SYNTAX :
 %  [o_cyProfPhaseList, ...
 %    o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO2, o_dataECO3, o_dataFLNTU, ...
-%    o_dataCROVER, o_dataSUNA, ...
+%    o_dataCROVER, o_dataSUNA, o_dataSEAFET, ...
 %    o_sensorTechCTD, o_sensorTechOPTODE, o_sensorTechOCR, ...
-%    o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechCROVER, ...
-%    o_sensorTechSUNA, ...
+%    o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechSEAFET, ...
+%    o_sensorTechCROVER, o_sensorTechSUNA, ...
 %    o_tabTech, o_floatPres, ...
 %    o_floatProgRudics, o_floatProgTech, o_floatProgParam, o_floatProgSensor] = ...
 %    get_decoded_data_cts4(a_decDataTab, a_decoderId)
@@ -27,12 +27,14 @@
 %   o_dataFLNTU        : decoded FLNTU data
 %   o_dataCROVER       : decoded cROVER data
 %   o_dataSUNA         : decoded SUNA data
+%   o_dataSEAFET       : decoded SEAFET data
 %   o_sensorTechCTD    : decoded CTD technical data
 %   o_sensorTechOPTODE : decoded OXY technical data
 %   o_sensorTechOCR    : decoded OCR technical data
 %   o_sensorTechECO2   : decoded ECO2 technical data
 %   o_sensorTechECO3   : decoded ECO3 technical data
 %   o_sensorTechFLNTU  : decoded FLNTU technical data
+%   o_sensorTechSEAFET : decoded SEAFET technical data
 %   o_sensorTechCROVER : decoded cROVER technical data
 %   o_sensorTechSUNA   : decoded SUNA technical data
 %   o_tabTech          : decoded float technical data
@@ -52,10 +54,10 @@
 % ------------------------------------------------------------------------------
 function [o_cyProfPhaseList, ...
    o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO2, o_dataECO3, o_dataFLNTU, ...
-   o_dataCROVER, o_dataSUNA, ...
+   o_dataCROVER, o_dataSUNA, o_dataSEAFET, ...
    o_sensorTechCTD, o_sensorTechOPTODE, o_sensorTechOCR, ...
-   o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechCROVER, ...
-   o_sensorTechSUNA, ...
+   o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechSEAFET, ...
+   o_sensorTechCROVER, o_sensorTechSUNA, ...
    o_tabTech, o_floatPres, ...
    o_floatProgRudics, o_floatProgTech, o_floatProgParam, o_floatProgSensor] = ...
    get_decoded_data_cts4(a_decDataTab, a_decoderId)
@@ -80,6 +82,7 @@ o_dataOCR = [];
 o_dataFLNTU = [];
 o_dataCROVER = [];
 o_dataSUNA = [];
+o_dataSEAFET = [];
 
 o_sensorTechCTD = [];
 o_sensorTechOPTODE = [];
@@ -87,6 +90,7 @@ o_sensorTechOCR = [];
 o_sensorTechECO2 = [];
 o_sensorTechECO3 = [];
 o_sensorTechFLNTU = [];
+o_sensorTechSEAFET = [];
 o_sensorTechCROVER = [];
 o_sensorTechSUNA = [];
 
@@ -297,6 +301,22 @@ o_dataSUNAAPF2SensorNitra = [];
 o_dataSUNAAPF2AbsFitRes = [];
 o_dataSUNAAPF2OutSpec = [];
 
+o_dataSEAFETMeanDate = [];
+o_dataSEAFETMeanDateTrans = [];
+o_dataSEAFETMeanPres = [];
+o_dataSEAFETMeanVref = [];
+
+o_dataSEAFETRawDate = [];
+o_dataSEAFETRawDateTrans = [];
+o_dataSEAFETRawPres = [];
+o_dataSEAFETRawVref = [];
+
+o_dataSEAFETStdMedDate = [];
+o_dataSEAFETStdMedDateTrans = [];
+o_dataSEAFETStdMedPresMean = [];
+o_dataSEAFETStdMedVrefStd = [];
+o_dataSEAFETStdMedVrefMed = [];
+
 o_sensorTechCTDNbPackDesc = [];
 o_sensorTechCTDNbPackDrift = [];
 o_sensorTechCTDNbPackAsc = [];
@@ -426,6 +446,23 @@ o_sensorTechFLNTUCoefScaleChloro = [];
 o_sensorTechFLNTUDarkCountChloro = [];
 o_sensorTechFLNTUCoefScaleTurbi = [];
 o_sensorTechFLNTUDarkCountTurbi = [];
+
+o_sensorTechSEAFETNbPackDesc = [];
+o_sensorTechSEAFETNbPackDrift = [];
+o_sensorTechSEAFETNbPackAsc = [];
+o_sensorTechSEAFETNbMeasDescZ1 = [];
+o_sensorTechSEAFETNbMeasDescZ2 = [];
+o_sensorTechSEAFETNbMeasDescZ3 = [];
+o_sensorTechSEAFETNbMeasDescZ4 = [];
+o_sensorTechSEAFETNbMeasDescZ5 = [];
+o_sensorTechSEAFETNbMeasDrift = [];
+o_sensorTechSEAFETNbMeasAscZ1 = [];
+o_sensorTechSEAFETNbMeasAscZ2 = [];
+o_sensorTechSEAFETNbMeasAscZ3 = [];
+o_sensorTechSEAFETNbMeasAscZ4 = [];
+o_sensorTechSEAFETNbMeasAscZ5 = [];
+o_sensorTechSEAFETSensorState = [];
+o_sensorTechSEAFETSensorSerialNum = [];
 
 o_sensorTechCROVERNbPackDesc = [];
 o_sensorTechCROVERNbPackDrift = [];
@@ -759,6 +796,30 @@ switch (a_decoderId)
                         o_dataSUNAAPF2AbsFitRes = cat(1, o_dataSUNAAPF2AbsFitRes, decData{12});
                         o_dataSUNAAPF2OutSpec = cat(1, o_dataSUNAAPF2OutSpec, decData{13});
                      end
+                     
+                  case {46, 48}
+                     % SEAFET (mean & raw)
+                     
+                     if (sensorDataType == 46)
+                        o_dataSEAFETMeanDate = cat(1, o_dataSEAFETMeanDate, decData{1});
+                        o_dataSEAFETMeanDateTrans = cat(1, o_dataSEAFETMeanDateTrans, decData{2});
+                        o_dataSEAFETMeanPres = cat(1, o_dataSEAFETMeanPres, decData{3});
+                        o_dataSEAFETMeanVref = cat(1, o_dataSEAFETMeanVref, decData{4});
+                     elseif (sensorDataType == 48)
+                        o_dataSEAFETRawDate = cat(1, o_dataSEAFETRawDate, decData{1});
+                        o_dataSEAFETRawDateTrans = cat(1, o_dataSEAFETRawDateTrans, decData{2});
+                        o_dataSEAFETRawPres = cat(1, o_dataSEAFETRawPres, decData{3});
+                        o_dataSEAFETRawVref = cat(1, o_dataSEAFETRawVref, decData{4});
+                     end
+                     
+                  case {47}
+                     % SEAFET (stDev & median)
+                     
+                     o_dataSEAFETStdMedDate = cat(1, o_dataSEAFETStdMedDate, decData{1});
+                     o_dataSEAFETStdMedDateTrans = cat(1, o_dataSEAFETStdMedDateTrans, decData{2});
+                     o_dataSEAFETStdMedPresMean = cat(1, o_dataSEAFETStdMedPresMean, decData{3});
+                     o_dataSEAFETStdMedVrefStd = cat(1, o_dataSEAFETStdMedVrefStd, decData{4});
+                     o_dataSEAFETStdMedVrefMed = cat(1, o_dataSEAFETStdMedVrefMed, decData{5});                     
                end
                
             case 248
@@ -867,7 +928,7 @@ switch (a_decoderId)
                   case 3
                      % ECO2 or ECO3
                      
-                     if (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
+                     if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
                         
                         % ECO2
                         o_sensorTechECO2NbPackDesc = cat(1, o_sensorTechECO2NbPackDesc, decData{1});
@@ -890,7 +951,8 @@ switch (a_decoderId)
                         o_sensorTechECO2CoefDarkCountChloroA = cat(1, o_sensorTechECO2CoefDarkCountChloroA, decData{18});
                         o_sensorTechECO2CoefScaleFactBackscat = cat(1, o_sensorTechECO2CoefScaleFactBackscat, decData{19});
                         o_sensorTechECO2CoefDarkCountBackscat = cat(1, o_sensorTechECO2CoefDarkCountBackscat, decData{20});
-                     else
+                        
+                     elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
                         
                         % ECO3
                         o_sensorTechECO3NbPackDesc = cat(1, o_sensorTechECO3NbPackDesc, decData{1});
@@ -918,27 +980,51 @@ switch (a_decoderId)
                      end
                      
                   case 4
-                     % FLNTU
+                     % FLNTU or SEAFET
                      
-                     o_sensorTechFLNTUNbPackDesc = cat(1, o_sensorTechFLNTUNbPackDesc, decData{1});
-                     o_sensorTechFLNTUNbPackDrift = cat(1, o_sensorTechFLNTUNbPackDrift, decData{2});
-                     o_sensorTechFLNTUNbPackAsc = cat(1, o_sensorTechFLNTUNbPackAsc, decData{3});
-                     o_sensorTechFLNTUNbMeasDescZ1 = cat(1, o_sensorTechFLNTUNbMeasDescZ1, decData{4});
-                     o_sensorTechFLNTUNbMeasDescZ2 = cat(1, o_sensorTechFLNTUNbMeasDescZ2, decData{5});
-                     o_sensorTechFLNTUNbMeasDescZ3 = cat(1, o_sensorTechFLNTUNbMeasDescZ3, decData{6});
-                     o_sensorTechFLNTUNbMeasDescZ4 = cat(1, o_sensorTechFLNTUNbMeasDescZ4, decData{7});
-                     o_sensorTechFLNTUNbMeasDescZ5 = cat(1, o_sensorTechFLNTUNbMeasDescZ5, decData{8});
-                     o_sensorTechFLNTUNbMeasDrift = cat(1, o_sensorTechFLNTUNbMeasDrift, decData{9});
-                     o_sensorTechFLNTUNbMeasAscZ1 = cat(1, o_sensorTechFLNTUNbMeasAscZ1, decData{10});
-                     o_sensorTechFLNTUNbMeasAscZ2 = cat(1, o_sensorTechFLNTUNbMeasAscZ2, decData{11});
-                     o_sensorTechFLNTUNbMeasAscZ3 = cat(1, o_sensorTechFLNTUNbMeasAscZ3, decData{12});
-                     o_sensorTechFLNTUNbMeasAscZ4 = cat(1, o_sensorTechFLNTUNbMeasAscZ4, decData{13});
-                     o_sensorTechFLNTUNbMeasAscZ5 = cat(1, o_sensorTechFLNTUNbMeasAscZ5, decData{14});
-                     o_sensorTechFLNTUSensorState = cat(1, o_sensorTechFLNTUSensorState, decData{15});
-                     o_sensorTechFLNTUCoefScaleChloro = cat(1, o_sensorTechFLNTUCoefScaleChloro, decData{16});
-                     o_sensorTechFLNTUDarkCountChloro = cat(1, o_sensorTechFLNTUDarkCountChloro, decData{17});
-                     o_sensorTechFLNTUCoefScaleTurbi = cat(1, o_sensorTechFLNTUCoefScaleTurbi, decData{18});
-                     o_sensorTechFLNTUDarkCountTurbi = cat(1, o_sensorTechFLNTUDarkCountTurbi, decData{19});
+                     if (ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
+
+                        % FLNTU
+                        o_sensorTechFLNTUNbPackDesc = cat(1, o_sensorTechFLNTUNbPackDesc, decData{1});
+                        o_sensorTechFLNTUNbPackDrift = cat(1, o_sensorTechFLNTUNbPackDrift, decData{2});
+                        o_sensorTechFLNTUNbPackAsc = cat(1, o_sensorTechFLNTUNbPackAsc, decData{3});
+                        o_sensorTechFLNTUNbMeasDescZ1 = cat(1, o_sensorTechFLNTUNbMeasDescZ1, decData{4});
+                        o_sensorTechFLNTUNbMeasDescZ2 = cat(1, o_sensorTechFLNTUNbMeasDescZ2, decData{5});
+                        o_sensorTechFLNTUNbMeasDescZ3 = cat(1, o_sensorTechFLNTUNbMeasDescZ3, decData{6});
+                        o_sensorTechFLNTUNbMeasDescZ4 = cat(1, o_sensorTechFLNTUNbMeasDescZ4, decData{7});
+                        o_sensorTechFLNTUNbMeasDescZ5 = cat(1, o_sensorTechFLNTUNbMeasDescZ5, decData{8});
+                        o_sensorTechFLNTUNbMeasDrift = cat(1, o_sensorTechFLNTUNbMeasDrift, decData{9});
+                        o_sensorTechFLNTUNbMeasAscZ1 = cat(1, o_sensorTechFLNTUNbMeasAscZ1, decData{10});
+                        o_sensorTechFLNTUNbMeasAscZ2 = cat(1, o_sensorTechFLNTUNbMeasAscZ2, decData{11});
+                        o_sensorTechFLNTUNbMeasAscZ3 = cat(1, o_sensorTechFLNTUNbMeasAscZ3, decData{12});
+                        o_sensorTechFLNTUNbMeasAscZ4 = cat(1, o_sensorTechFLNTUNbMeasAscZ4, decData{13});
+                        o_sensorTechFLNTUNbMeasAscZ5 = cat(1, o_sensorTechFLNTUNbMeasAscZ5, decData{14});
+                        o_sensorTechFLNTUSensorState = cat(1, o_sensorTechFLNTUSensorState, decData{15});
+                        o_sensorTechFLNTUCoefScaleChloro = cat(1, o_sensorTechFLNTUCoefScaleChloro, decData{16});
+                        o_sensorTechFLNTUDarkCountChloro = cat(1, o_sensorTechFLNTUDarkCountChloro, decData{17});
+                        o_sensorTechFLNTUCoefScaleTurbi = cat(1, o_sensorTechFLNTUCoefScaleTurbi, decData{18});
+                        o_sensorTechFLNTUDarkCountTurbi = cat(1, o_sensorTechFLNTUDarkCountTurbi, decData{19});
+                        
+                     elseif (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+                        
+                        % SEAFET
+                        o_sensorTechSEAFETNbPackDesc = cat(1, o_sensorTechSEAFETNbPackDesc, decData{1});
+                        o_sensorTechSEAFETNbPackDrift = cat(1, o_sensorTechSEAFETNbPackDrift, decData{2});
+                        o_sensorTechSEAFETNbPackAsc = cat(1, o_sensorTechSEAFETNbPackAsc, decData{3});
+                        o_sensorTechSEAFETNbMeasDescZ1 = cat(1, o_sensorTechSEAFETNbMeasDescZ1, decData{4});
+                        o_sensorTechSEAFETNbMeasDescZ2 = cat(1, o_sensorTechSEAFETNbMeasDescZ2, decData{5});
+                        o_sensorTechSEAFETNbMeasDescZ3 = cat(1, o_sensorTechSEAFETNbMeasDescZ3, decData{6});
+                        o_sensorTechSEAFETNbMeasDescZ4 = cat(1, o_sensorTechSEAFETNbMeasDescZ4, decData{7});
+                        o_sensorTechSEAFETNbMeasDescZ5 = cat(1, o_sensorTechSEAFETNbMeasDescZ5, decData{8});
+                        o_sensorTechSEAFETNbMeasDrift = cat(1, o_sensorTechSEAFETNbMeasDrift, decData{9});
+                        o_sensorTechSEAFETNbMeasAscZ1 = cat(1, o_sensorTechSEAFETNbMeasAscZ1, decData{10});
+                        o_sensorTechSEAFETNbMeasAscZ2 = cat(1, o_sensorTechSEAFETNbMeasAscZ2, decData{11});
+                        o_sensorTechSEAFETNbMeasAscZ3 = cat(1, o_sensorTechSEAFETNbMeasAscZ3, decData{12});
+                        o_sensorTechSEAFETNbMeasAscZ4 = cat(1, o_sensorTechSEAFETNbMeasAscZ4, decData{13});
+                        o_sensorTechSEAFETNbMeasAscZ5 = cat(1, o_sensorTechSEAFETNbMeasAscZ5, decData{14});
+                        o_sensorTechSEAFETSensorState = cat(1, o_sensorTechSEAFETSensorState, decData{15});
+                        o_sensorTechSEAFETSensorSerialNum = cat(1, o_sensorTechSEAFETSensorSerialNum, decData{16});
+                     end
                      
                   case 5
                      % CROVER
@@ -1255,6 +1341,26 @@ o_dataSUNA{3} = o_dataSUNAStdMed;
 o_dataSUNA{4} = o_dataSUNAAPF;
 o_dataSUNA{5} = o_dataSUNAAPF2;
 
+o_dataSEAFETMean{1} = o_dataSEAFETMeanDate;
+o_dataSEAFETMean{2} = o_dataSEAFETMeanDateTrans;
+o_dataSEAFETMean{3} = o_dataSEAFETMeanPres;
+o_dataSEAFETMean{4} = o_dataSEAFETMeanVref;
+
+o_dataSEAFETRaw{1} = o_dataSEAFETRawDate;
+o_dataSEAFETRaw{2} = o_dataSEAFETRawDateTrans;
+o_dataSEAFETRaw{3} = o_dataSEAFETRawPres;
+o_dataSEAFETRaw{4} = o_dataSEAFETRawVref;
+
+o_dataSEAFETStdMed{1} = o_dataSEAFETStdMedDate;
+o_dataSEAFETStdMed{2} = o_dataSEAFETStdMedDateTrans;
+o_dataSEAFETStdMed{3} = o_dataSEAFETStdMedPresMean;
+o_dataSEAFETStdMed{4} = o_dataSEAFETStdMedVrefStd;
+o_dataSEAFETStdMed{5} = o_dataSEAFETStdMedVrefMed;
+
+o_dataSEAFET{1} = o_dataSEAFETMean;
+o_dataSEAFET{2} = o_dataSEAFETRaw;
+o_dataSEAFET{3} = o_dataSEAFETStdMed;
+
 o_sensorTechCTD{1} = o_sensorTechCTDNbPackDesc;
 o_sensorTechCTD{2} = o_sensorTechCTDNbPackDrift;
 o_sensorTechCTD{3} = o_sensorTechCTDNbPackAsc;
@@ -1384,6 +1490,23 @@ o_sensorTechFLNTU{16} = o_sensorTechFLNTUCoefScaleChloro;
 o_sensorTechFLNTU{17} = o_sensorTechFLNTUDarkCountChloro;
 o_sensorTechFLNTU{18} = o_sensorTechFLNTUCoefScaleTurbi;
 o_sensorTechFLNTU{19} = o_sensorTechFLNTUDarkCountTurbi;
+
+o_sensorTechSEAFET{1} = o_sensorTechSEAFETNbPackDesc;
+o_sensorTechSEAFET{2} = o_sensorTechSEAFETNbPackDrift;
+o_sensorTechSEAFET{3} = o_sensorTechSEAFETNbPackAsc;
+o_sensorTechSEAFET{4} = o_sensorTechSEAFETNbMeasDescZ1;
+o_sensorTechSEAFET{5} = o_sensorTechSEAFETNbMeasDescZ2;
+o_sensorTechSEAFET{6} = o_sensorTechSEAFETNbMeasDescZ3;
+o_sensorTechSEAFET{7} = o_sensorTechSEAFETNbMeasDescZ4;
+o_sensorTechSEAFET{8} = o_sensorTechSEAFETNbMeasDescZ5;
+o_sensorTechSEAFET{9} = o_sensorTechSEAFETNbMeasDrift;
+o_sensorTechSEAFET{10} = o_sensorTechSEAFETNbMeasAscZ1;
+o_sensorTechSEAFET{11} = o_sensorTechSEAFETNbMeasAscZ2;
+o_sensorTechSEAFET{12} = o_sensorTechSEAFETNbMeasAscZ3;
+o_sensorTechSEAFET{13} = o_sensorTechSEAFETNbMeasAscZ4;
+o_sensorTechSEAFET{14} = o_sensorTechSEAFETNbMeasAscZ5;
+o_sensorTechSEAFET{15} = o_sensorTechSEAFETSensorState;
+o_sensorTechSEAFET{16} = o_sensorTechSEAFETSensorSerialNum;
 
 o_sensorTechCROVER{1} = o_sensorTechCROVERNbPackDesc;
 o_sensorTechCROVER{2} = o_sensorTechCROVERNbPackDrift;

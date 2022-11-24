@@ -7,11 +7,12 @@
 %    a_cyProfPhaseList, ...
 %    a_dataCTD, a_dataOXY, a_dataOCR, ...
 %    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-%    a_dataCROVER, a_dataSUNA, ...
+%    a_dataCROVER, a_dataSUNA, a_dataSEAFET, ...
 %    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, ...
 %    a_sensorTechCTD, a_sensorTechOPTODE, a_sensorTechOCR, ...
 %    a_sensorTechECO2, a_sensorTechECO3, ...
-%    a_sensorTechFLNTU, a_sensorTechCROVER, a_sensorTechSUNA)
+%    a_sensorTechFLNTU, a_sensorTechSEAFET, ...
+%    a_sensorTechCROVER, a_sensorTechSUNA)
 %
 % INPUT PARAMETERS :
 %   a_decoderId              : float decoder Id
@@ -25,6 +26,7 @@
 %   a_dataFLNTU              : decoded FLNTU data
 %   a_dataCROVER             : decoded cROVER data
 %   a_dataSUNA               : decoded SUNA data
+%   a_dataSEAFET             : decoded SEAFET data
 %   a_descentToParkStartDate : descent to park start date
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
@@ -34,6 +36,7 @@
 %   a_sensorTechECO2         : ECO2 technical data
 %   a_sensorTechECO3         : ECO3 technical data
 %   a_sensorTechFLNTU        : FLNTU technical data
+%   a_sensorTechSEAFET       : SEAFET technical data
 %   a_sensorTechCROVER       : CROVER technical data
 %   a_sensorTechSUNA         : SUNA technical data
 %
@@ -54,11 +57,12 @@ function [o_tabProfiles, o_tabDrift] = process_profiles_ir_rudics_cts4_111_113( 
    a_cyProfPhaseList, ...
    a_dataCTD, a_dataOXY, a_dataOCR, ...
    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
-   a_dataCROVER, a_dataSUNA, ...
+   a_dataCROVER, a_dataSUNA, a_dataSEAFET, ...
    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, ...
    a_sensorTechCTD, a_sensorTechOPTODE, a_sensorTechOCR, ...
    a_sensorTechECO2, a_sensorTechECO3, ...
-   a_sensorTechFLNTU, a_sensorTechCROVER, a_sensorTechSUNA)
+   a_sensorTechFLNTU, a_sensorTechSEAFET, ...
+   a_sensorTechCROVER, a_sensorTechSUNA)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -110,6 +114,11 @@ a_dataSUNAStdMed = a_dataSUNA{3};
 a_dataSUNAAPF = a_dataSUNA{4};
 a_dataSUNAAPF2 = a_dataSUNA{5};
 
+a_dataSEAFETMean = a_dataSEAFET{1};
+a_dataSEAFETRaw = a_dataSEAFET{2};
+a_dataSEAFETStdMed = a_dataSEAFET{3};
+
+
 % consider only sensor data
 idData = find(a_cyProfPhaseList(:, 1) == 0);
 dataCyProfPhaseList = a_cyProfPhaseList(idData, :);
@@ -121,7 +130,7 @@ for idDataType = 1:length(dataTypeList)
    
    % the stDev & median data are associated with mean data
    % SUNA APF2 (dataType == 25) is processed with SUNA APF (dataType == 24)
-   if (ismember(dataType, [1 4 7 10 13 16 19 22 25]))
+   if (ismember(dataType, [1 4 7 10 13 16 19 22 25 47]))
       continue
    end
    
@@ -268,6 +277,20 @@ for idDataType = 1:length(dataTypeList)
                a_gpsData, a_sensorTechSUNA);
          end
          
+      case 46
+         % SEAFET (mean & stDev & median)
+         [prof, drift] = process_profile_ir_rudics_SEAFET_mean_stdMed( ...
+            a_dataSEAFETMean, a_dataSEAFETStdMed, ...
+            a_descentToParkStartDate, a_ascentEndDate, ...
+            a_gpsData, a_sensorTechSEAFET, a_decoderId);
+         
+      case 48
+         % SEAFET (raw)
+         [prof, drift] = process_profile_ir_rudics_SEAFET_raw( ...
+            a_dataSEAFETRaw, ...
+            a_descentToParkStartDate, a_ascentEndDate, ...
+            a_gpsData, a_sensorTechSEAFET, a_decoderId);
+
       otherwise
          fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for processing profiles with data type #%d\n', ...
             g_decArgo_floatNum, ...

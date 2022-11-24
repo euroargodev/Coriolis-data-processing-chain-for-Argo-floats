@@ -8,7 +8,8 @@
 %    a_dataCTD, a_dataOXY, ...
 %    a_dataECO2, a_dataECO3, ...
 %    a_dataOCR, a_dataFLNTU, ...
-%    a_dataCROVER, a_dataSUNA)
+%    a_dataCROVER, a_dataSUNA,...
+%    a_dataSEAFET)
 %
 % INPUT PARAMETERS :
 %   a_decoderId            : float decoder Id
@@ -23,6 +24,7 @@
 %   a_dataFLNTU            : FLNTU data
 %   a_dataCROVER           : cROVER data
 %   a_dataSUNA             : SUNA data
+%   a_dataSEAFET           : SEAFET data
 %
 % OUTPUT PARAMETERS :
 %
@@ -40,7 +42,8 @@ function print_data_in_csv_file_ir_rudics_cts4_111_113( ...
    a_dataCTD, a_dataOXY, ...
    a_dataECO2, a_dataECO3, ...
    a_dataOCR, a_dataFLNTU, ...
-   a_dataCROVER, a_dataSUNA)
+   a_dataCROVER, a_dataSUNA,...
+   a_dataSEAFET)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -83,6 +86,10 @@ a_dataSUNAStdMed = a_dataSUNA{3};
 a_dataSUNAAPF = a_dataSUNA{4};
 a_dataSUNAAPF2 = a_dataSUNA{5};
 
+a_dataSEAFETMean = a_dataSEAFET{1};
+a_dataSEAFETRaw = a_dataSEAFET{2};
+a_dataSEAFETStdMed = a_dataSEAFET{3};
+
 % packet type 0
 dataCyProfPhaseList = a_cyProfPhaseList(a_cyProfPhaseIndexList, :);
 cycleList = unique(dataCyProfPhaseList(:, 3));
@@ -109,7 +116,7 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
          dataType = dataTypeList(idDataType);
          
          % the stDev & median data are printed with the mean data
-         if (ismember(dataType, [1 4 7 10 13 16 19 22]))
+         if (ismember(dataType, [1 4 7 10 13 16 19 22 47]))
             continue
          end
          
@@ -233,6 +240,18 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                   cycleNum, profNum, phaseNum, ...
                   dataSUNAAPF, info);
                
+            case 46
+               % SEAFET (mean & stDev & median)
+               print_data_in_csv_file_ir_rudics_SEAFET_mean_stdMed( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataSEAFETMean, a_dataSEAFETStdMed);
+               
+            case 48
+               % SEAFET (raw)
+               print_data_in_csv_file_ir_rudics_SEAFET_raw( ...
+                  a_decoderId, cycleNum, profNum, phaseNum, ...
+                  a_dataSEAFETRaw);
+
             otherwise
                fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...
                   g_decArgo_floatNum, ...

@@ -3,7 +3,8 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_techData, o_gpsData, ...
-%    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
+%    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
+%    o_cycleTimeData] = ...
 %    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 %
 % INPUT PARAMETERS :
@@ -18,6 +19,7 @@
 %   o_profCtdPt     : CTD_PT data
 %   o_profCtdPts    : CTD_PTS data
 %   o_profCtdCp     : CTD_CP data
+%   o_profDo        : O2 data
 %   o_cycleTimeData : cycle timings data
 %
 % EXAMPLES :
@@ -29,7 +31,8 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_techData, o_gpsData, ...
-   o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
+   o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
+   o_cycleTimeData] = ...
    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 
 % output parameters initialization
@@ -40,6 +43,7 @@ o_profCtdP = [];
 o_profCtdPt = [];
 o_profCtdPts = [];
 o_profCtdCp = [];
+o_profDo = [];
 o_cycleTimeData = a_cycleTimeData;
 
 % current float WMO number
@@ -66,6 +70,7 @@ expectedFields = [ ...
    {'CTD_PT'} ...
    {'CTD_PTS'} ...
    {'CTD_CP'} ...
+   {'O2'} ...
    ];
 
 usedMessages = [ ...
@@ -91,6 +96,7 @@ ctdP = [];
 ctdPt = [];
 ctdPts = [];
 ctdCp = [];
+do = [];
 for idFile = 1:length(a_scienceLogFileList)
 
    sciFilePathName = a_scienceLogFileList{idFile};
@@ -145,6 +151,7 @@ for idFile = 1:length(a_scienceLogFileList)
                                  o_cycleTimeData.continuousProfileEndDateSci = msg{idM, 1};
                               case 8
                                  o_cycleTimeData.ascentEndDateSci = msg{idM, 1};
+                                 o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSci;
                               otherwise
                                  fprintf('WARNING: Float #%d Cycle #%d: Message #%d is not managed => ignored\n', ...
                                     g_decArgo_floatNum, g_decArgo_cycleNum, msgId);
@@ -210,6 +217,8 @@ for idFile = 1:length(a_scienceLogFileList)
                      ctdPts = [ctdPts; data.(fieldName)];
                   case 'CTD_CP'
                      ctdCp = [ctdCp; data.(fieldName)];
+                  case 'O2'
+                     do = [do; data.(fieldName)];
                end
             else
                fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
@@ -241,6 +250,48 @@ paramSal = get_netcdf_param_attributes('PSAL');
 paramSal.cFormat = '%10.4f';
 paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
 
+paramO2 = get_netcdf_param_attributes('TEMP_DOXY');
+paramO2.name = 'O2';
+paramO2.units = '';
+paramO2.cFormat = '%.5f';
+
+paramAirSat = get_netcdf_param_attributes('TEMP_DOXY');
+paramAirSat.name = 'AirSat';
+paramAirSat.units = '';
+paramAirSat.cFormat = '%.5f';
+
+paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+paramTempDoxy.cFormat = '%.5f';
+
+paramCalPhase = get_netcdf_param_attributes('TEMP_DOXY');
+paramCalPhase.name = 'CalPhase';
+paramCalPhase.units = '';
+paramCalPhase.cFormat = '%.5f';
+
+paramTphaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
+paramTphaseDoxy.cFormat = '%.5f';
+
+paramC1phaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
+paramC1phaseDoxy.cFormat = '%.5f';
+
+paramC2phaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
+paramC2phaseDoxy.cFormat = '%.5f';
+
+paramC1Amp = get_netcdf_param_attributes('TEMP_DOXY');
+paramC1Amp.name = 'C1Amp';
+paramC1Amp.units = '';
+paramC1Amp.cFormat = '%.5f';
+
+paramC2Amp = get_netcdf_param_attributes('TEMP_DOXY');
+paramC2Amp.name = 'C2Amp';
+paramC2Amp.units = '';
+paramC2Amp.cFormat = '%.5f';
+
+paramRawTemp = get_netcdf_param_attributes('TEMP_DOXY');
+paramRawTemp.name = 'RawTemp';
+paramRawTemp.units = '';
+paramRawTemp.cFormat = '%.5f';
+
 if (~isempty(ctdP))
    o_profCtdP = get_apx_profile_data_init_struct;
    o_profCtdP.dateList = paramJuld;
@@ -271,6 +322,58 @@ if (~isempty(ctdCp))
    %    o_profCtdCp.dates = ctdCp(:, 1);
    o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSample];
    o_profCtdCp.data = ctdCp(:, 2:end);
+end
+
+if (~isempty(do))
+   o_profDo = get_apx_profile_data_init_struct;
+   o_profDo.dateList = paramJuld;
+   o_profDo.dates = do(:, 1);
+   o_profDo.paramList = [paramPres paramO2 paramAirSat paramTempDoxy ...
+      paramCalPhase paramTphaseDoxy paramC1phaseDoxy paramC2phaseDoxy ...
+      paramC1Amp paramC2Amp paramRawTemp];
+   o_profDo.data = [ones(size(do, 1), 1)*paramPres.fillValue do(:, 2:end)];
+   o_profDo.data(isnan(o_profDo.data(:, 4)), 4) = paramTempDoxy.fillValue;
+   o_profDo.data(isnan(o_profDo.data(:, 7)), 7) = paramC1phaseDoxy.fillValue;
+   o_profDo.data(isnan(o_profDo.data(:, 8)), 8) = paramC2phaseDoxy.fillValue;
+end
+
+% add PRES for DO data
+if (~isempty(o_profDo))
+   tabJuld = [];
+   tabPres = [];
+   if (~isempty(o_profCtdP))
+      tabJuld = [tabJuld; o_profCtdP.dates];
+      tabPres = [tabPres; o_profCtdP.data];
+   end
+   if (~isempty(o_profCtdPt))
+      tabJuld = [tabJuld; o_profCtdPt.dates];
+      tabPres = [tabPres; o_profCtdPt.data(:, 1)];
+   end
+   if (~isempty(o_profCtdPts))
+      tabJuld = [tabJuld; o_profCtdPts.dates];
+      tabPres = [tabPres; o_profCtdPts.data(:, 1)];
+   end
+   idDel = find(tabPres == paramPres.fillValue);
+   tabJuld(idDel) = [];
+   tabPres(idDel) = [];
+   
+   if (~isempty(tabPres))
+      [tabJuld, idSort] = sort(tabJuld);
+      tabPres = tabPres(idSort);
+      
+      idJuldEq = find(diff(tabJuld) == 0);
+      if (~isempty(idJuldEq))
+         tabJuld(idJuldEq) = [];
+         tabPres(idJuldEq) = [];
+      end
+   end
+   
+   if (~isempty(tabPres))
+      if (~isempty(o_profDo))
+         o_profDo.data(:, 1) = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
+         o_profDo.data(isnan(o_profDo.data(:, 1)), 1) = paramPres.fillValue;
+      end
+   end
 end
 
 % add cycle times associated pressures (from CTD_P measurements)

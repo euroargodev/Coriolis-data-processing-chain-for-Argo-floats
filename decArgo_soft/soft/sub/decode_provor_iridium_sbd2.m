@@ -126,6 +126,10 @@ g_decArgo_generateNcFlag = 0;
 % array to store GPS data
 global g_decArgo_gpsData;
 
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
+g_decArgo_julD2FloatDayOffset = [];
+
 % no sampled data mode
 global g_decArgo_noDataFlag;
 g_decArgo_noDataFlag = 0;
@@ -999,8 +1003,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    % a buffer anomaly (more than one profile for a given profile number)
    [o_tabProfiles] = check_profile_ir_rudics_sbd2(o_tabProfiles);
    
-   % perform CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate);
+   % perform DOXY, CHLA and NITRATE adjustment
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1);
 
    if (g_decArgo_realtimeFlag)
       
@@ -1203,7 +1207,7 @@ switch (a_decoderId)
       update_mail_data_ir_sbd2(a_mailFileNameList, cyProfPhaseList);
       
       % add dates to drift measurements
-      [dataCTD, dataOXY, dataFLBB] = ...
+      [dataCTD, dataOXY, dataFLBB, measDates] = ...
          add_drift_meas_dates_ir_sbd2_301(dataCTD, dataOXY, dataFLBB);
       
       % set drift of float RTC
@@ -1219,7 +1223,7 @@ switch (a_decoderId)
          transStartDate, ...
          firstEmerAscentDate] = ...
          compute_prv_dates_ir_rudics_105_to_110_112_sbd2(tabTech, ...
-         floatClockDrift, a_refDay);
+         floatClockDrift, a_refDay, measDates);
       
       % decode configuration data (251, 254 and 255 msg types)
       [cyProfPhaseListConfig, ...
@@ -1391,7 +1395,7 @@ switch (a_decoderId)
       update_mail_data_ir_sbd2(a_mailFileNameList, cyProfPhaseList);
 
       % add dates to drift measurements
-      [dataCTD, dataOXY, dataFLNTU, dataCYCLOPS, dataSEAPOINT] = ...
+      [dataCTD, dataOXY, dataFLNTU, dataCYCLOPS, dataSEAPOINT, measDates] = ...
          add_drift_meas_dates_ir_sbd2_302_303(dataCTD, dataOXY, dataFLNTU, dataCYCLOPS, dataSEAPOINT);
       
       % set drift of float RTC
@@ -1407,7 +1411,7 @@ switch (a_decoderId)
          transStartDate, ...
          firstEmerAscentDate] = ...
          compute_prv_dates_ir_rudics_105_to_110_112_sbd2(tabTech, ...
-         floatClockDrift, a_refDay);
+         floatClockDrift, a_refDay, measDates);
       
       % decode configuration data (251, 254 and 255 msg types)
       [cyProfPhaseListConfig, ...

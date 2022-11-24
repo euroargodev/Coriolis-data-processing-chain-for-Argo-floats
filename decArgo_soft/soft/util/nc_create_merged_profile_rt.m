@@ -52,6 +52,9 @@
 %   10/10/2018 - RNU - V 1.4: floatBTrajFileName is optional
 %   27/11/2018 - RNU - V 1.5: use the provided XML file name to create log file name
 %                             add information on concerned float when a mandatory parameter is missing
+%   07/08/2019 - RNU - V 1.6: for NetCDF-4 files, use 'defVarFill' function
+%                             instead of 'putAtt' to define the fill Value of a
+%                             variable
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile_rt(varargin)
 
@@ -117,7 +120,7 @@ g_cocm_reportData.outputMMultiProfFile = [];
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.4';
+g_cocm_ncCreateMergedProfileVersion = '1.6';
 
 % current float and cycle identification
 global g_cocm_floatNum;

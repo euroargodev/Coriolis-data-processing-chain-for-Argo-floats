@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO3, o_dataFLNTU, ...
-%    o_dataCROVER, o_dataSUNA] = ...
+%    o_dataCROVER, o_dataSUNA, o_measDates] = ...
 %    add_drift_meas_dates_ir_rudics_105_to_110_112(a_decoderId, ...
 %    a_dataCTD, a_dataOXY, a_dataOCR, a_dataECO3, ...
 %    a_dataFLNTU, a_dataCROVER, a_dataSUNA)
@@ -26,6 +26,7 @@
 %   o_dataFLNTU  : output FLNTU data
 %   o_dataCROVER : output cROVER data
 %   o_dataSUNA   : output SUNA data
+%   o_measDates  : measurement dates transmitted by the float
 %
 % EXAMPLES :
 %
@@ -36,7 +37,7 @@
 %   07/16/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO3, o_dataFLNTU, ...
-   o_dataCROVER, o_dataSUNA] = ...
+   o_dataCROVER, o_dataSUNA, o_measDates] = ...
    add_drift_meas_dates_ir_rudics_105_to_110_112(a_decoderId, ...
    a_dataCTD, a_dataOXY, a_dataOCR, a_dataECO3, ...
    a_dataFLNTU, a_dataCROVER, a_dataSUNA)
@@ -53,6 +54,7 @@ o_dataOCR = [];
 o_dataFLNTU = [];
 o_dataCROVER = [];
 o_dataSUNA = [];
+o_measDates = [];
 
 % unpack the input data
 a_dataCTDMean = a_dataCTD{1};
@@ -272,6 +274,7 @@ if (~isempty(a_dataCTDMeanDate))
          a_dataCTDMeanDate(idDrift(idL), 1), a_dataCTDMeanDate(idDrift(idL), 2), ...
          a_dataCTDMeanDate(idDrift(idL), 4:end), a_dataCTDMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCTDMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataCTDStdMedDate))
    idDrift = find(a_dataCTDStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -280,6 +283,7 @@ if (~isempty(a_dataCTDStdMedDate))
          a_dataCTDStdMedDate(idDrift(idL), 1), a_dataCTDStdMedDate(idDrift(idL), 2), ...
          a_dataCTDStdMedDate(idDrift(idL), 4:end), a_dataCTDStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCTDStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataCTDRawDate))
    idDrift = find(a_dataCTDRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -288,6 +292,7 @@ if (~isempty(a_dataCTDRawDate))
          a_dataCTDRawDate(idDrift(idL), 1), a_dataCTDRawDate(idDrift(idL), 2), ...
          a_dataCTDRawDate(idDrift(idL), 4:end), a_dataCTDRawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCTDRawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataOXYMeanDate))
@@ -297,6 +302,7 @@ if (~isempty(a_dataOXYMeanDate))
          a_dataOXYMeanDate(idDrift(idL), 1), a_dataOXYMeanDate(idDrift(idL), 2), ...
          a_dataOXYMeanDate(idDrift(idL), 4:end), a_dataOXYMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOXYMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataOXYStdMedDate))
    idDrift = find(a_dataOXYStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -305,6 +311,7 @@ if (~isempty(a_dataOXYStdMedDate))
          a_dataOXYStdMedDate(idDrift(idL), 1), a_dataOXYStdMedDate(idDrift(idL), 2), ...
          a_dataOXYStdMedDate(idDrift(idL), 4:end), a_dataOXYStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOXYStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataOXYRawDate))
    idDrift = find(a_dataOXYRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -313,6 +320,7 @@ if (~isempty(a_dataOXYRawDate))
          a_dataOXYRawDate(idDrift(idL), 1), a_dataOXYRawDate(idDrift(idL), 2), ...
          a_dataOXYRawDate(idDrift(idL), 4:end), a_dataOXYRawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOXYRawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataECO3MeanDate))
@@ -322,6 +330,7 @@ if (~isempty(a_dataECO3MeanDate))
          a_dataECO3MeanDate(idDrift(idL), 1), a_dataECO3MeanDate(idDrift(idL), 2), ...
          a_dataECO3MeanDate(idDrift(idL), 4:end), a_dataECO3MeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataECO3MeanDate(:, 1:4)];
 end
 if (~isempty(a_dataECO3StdMedDate))
    idDrift = find(a_dataECO3StdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -330,6 +339,7 @@ if (~isempty(a_dataECO3StdMedDate))
          a_dataECO3StdMedDate(idDrift(idL), 1), a_dataECO3StdMedDate(idDrift(idL), 2), ...
          a_dataECO3StdMedDate(idDrift(idL), 4:end), a_dataECO3StdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataECO3StdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataECO3RawDate))
    idDrift = find(a_dataECO3RawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -338,6 +348,7 @@ if (~isempty(a_dataECO3RawDate))
          a_dataECO3RawDate(idDrift(idL), 1), a_dataECO3RawDate(idDrift(idL), 2), ...
          a_dataECO3RawDate(idDrift(idL), 4:end), a_dataECO3RawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataECO3RawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataOCRMeanDate))
@@ -347,6 +358,7 @@ if (~isempty(a_dataOCRMeanDate))
          a_dataOCRMeanDate(idDrift(idL), 1), a_dataOCRMeanDate(idDrift(idL), 2), ...
          a_dataOCRMeanDate(idDrift(idL), 4:end), a_dataOCRMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOCRMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataOCRStdMedDate))
    idDrift = find(a_dataOCRStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -355,6 +367,7 @@ if (~isempty(a_dataOCRStdMedDate))
          a_dataOCRStdMedDate(idDrift(idL), 1), a_dataOCRStdMedDate(idDrift(idL), 2), ...
          a_dataOCRStdMedDate(idDrift(idL), 4:end), a_dataOCRStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOCRStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataOCRRawDate))
    idDrift = find(a_dataOCRRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -363,6 +376,7 @@ if (~isempty(a_dataOCRRawDate))
          a_dataOCRRawDate(idDrift(idL), 1), a_dataOCRRawDate(idDrift(idL), 2), ...
          a_dataOCRRawDate(idDrift(idL), 4:end), a_dataOCRRawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataOCRRawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataFLNTUMeanDate))
@@ -372,6 +386,7 @@ if (~isempty(a_dataFLNTUMeanDate))
          a_dataFLNTUMeanDate(idDrift(idL), 1), a_dataFLNTUMeanDate(idDrift(idL), 2), ...
          a_dataFLNTUMeanDate(idDrift(idL), 4:end), a_dataFLNTUMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataFLNTUMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataFLNTUStdMedDate))
    idDrift = find(a_dataFLNTUStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -380,6 +395,7 @@ if (~isempty(a_dataFLNTUStdMedDate))
          a_dataFLNTUStdMedDate(idDrift(idL), 1), a_dataFLNTUStdMedDate(idDrift(idL), 2), ...
          a_dataFLNTUStdMedDate(idDrift(idL), 4:end), a_dataFLNTUStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataFLNTUStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataFLNTURawDate))
    idDrift = find(a_dataFLNTURawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -388,6 +404,7 @@ if (~isempty(a_dataFLNTURawDate))
          a_dataFLNTURawDate(idDrift(idL), 1), a_dataFLNTURawDate(idDrift(idL), 2), ...
          a_dataFLNTURawDate(idDrift(idL), 4:end), a_dataFLNTURawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataFLNTURawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataCROVERMeanDate))
@@ -397,6 +414,7 @@ if (~isempty(a_dataCROVERMeanDate))
          a_dataCROVERMeanDate(idDrift(idL), 1), a_dataCROVERMeanDate(idDrift(idL), 2), ...
          a_dataCROVERMeanDate(idDrift(idL), 4:end), a_dataCROVERMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCROVERMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataCROVERStdMedDate))
    idDrift = find(a_dataCROVERStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -405,6 +423,7 @@ if (~isempty(a_dataCROVERStdMedDate))
          a_dataCROVERStdMedDate(idDrift(idL), 1), a_dataCROVERStdMedDate(idDrift(idL), 2), ...
          a_dataCROVERStdMedDate(idDrift(idL), 4:end), a_dataCROVERStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCROVERStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataCROVERRawDate))
    idDrift = find(a_dataCROVERRawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -413,6 +432,7 @@ if (~isempty(a_dataCROVERRawDate))
          a_dataCROVERRawDate(idDrift(idL), 1), a_dataCROVERRawDate(idDrift(idL), 2), ...
          a_dataCROVERRawDate(idDrift(idL), 4:end), a_dataCROVERRawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataCROVERRawDate(:, 1:4)];
 end
 
 if (~isempty(a_dataSUNAMeanDate))
@@ -422,6 +442,7 @@ if (~isempty(a_dataSUNAMeanDate))
          a_dataSUNAMeanDate(idDrift(idL), 1), a_dataSUNAMeanDate(idDrift(idL), 2), ...
          a_dataSUNAMeanDate(idDrift(idL), 4:end), a_dataSUNAMeanPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataSUNAMeanDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAStdMedDate))
    idDrift = find(a_dataSUNAStdMedDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -430,6 +451,7 @@ if (~isempty(a_dataSUNAStdMedDate))
          a_dataSUNAStdMedDate(idDrift(idL), 1), a_dataSUNAStdMedDate(idDrift(idL), 2), ...
          a_dataSUNAStdMedDate(idDrift(idL), 4:end), a_dataSUNAStdMedPresMean(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataSUNAStdMedDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNARawDate))
    idDrift = find(a_dataSUNARawDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -438,6 +460,7 @@ if (~isempty(a_dataSUNARawDate))
          a_dataSUNARawDate(idDrift(idL), 1), a_dataSUNARawDate(idDrift(idL), 2), ...
          a_dataSUNARawDate(idDrift(idL), 4:end), a_dataSUNARawPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataSUNARawDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAAPFDate))
    idDrift = find(a_dataSUNAAPFDate(:, 3) == g_decArgo_phaseParkDrift);
@@ -446,6 +469,7 @@ if (~isempty(a_dataSUNAAPFDate))
          a_dataSUNAAPFDate(idDrift(idL), 1), a_dataSUNAAPFDate(idDrift(idL), 2), ...
          a_dataSUNAAPFDate(idDrift(idL), 4:end), a_dataSUNAAPFCTDPres(idDrift(idL), 4:end), a_decoderId);
    end
+   o_measDates = [o_measDates; a_dataSUNAAPFDate(:, 1:4)];
 end
 if (~isempty(a_dataSUNAAPF2))
    if (~isempty(a_dataSUNAAPF2Date))
@@ -455,6 +479,7 @@ if (~isempty(a_dataSUNAAPF2))
             a_dataSUNAAPF2Date(idDrift(idL), 1), a_dataSUNAAPF2Date(idDrift(idL), 2), ...
             a_dataSUNAAPF2Date(idDrift(idL), 4:end), a_dataSUNAAPF2CTDPres(idDrift(idL), 4:end), a_decoderId);
       end
+      o_measDates = [o_measDates; a_dataSUNAAPF2Date(:, 1:4)];
    end
 end
 

@@ -3,14 +3,15 @@
 %
 % SYNTAX :
 %  print_file_info_in_csv_file_apx_apf11( ...
-%    a_scienceLogFileList, a_vitalsLogFileList, ...
-%    a_systemLogFileList, a_criticalLogFileList)
+%    a_scienceLogFileList, a_vitalsLogFileList, a_systemLogFileList, ...
+%    a_criticalLogFileList, a_productionLogFileList)
 %
 % INPUT PARAMETERS :
-%   a_scienceLogFileList : list of science_log files
-%   a_vitalsLogFileList : list of vitals_log files
-%   a_systemLogFileList : list of system_log files
+%   a_scienceLogFileList  : list of science_log files
+%   a_vitalsLogFileList   : list of vitals_log files
+%   a_systemLogFileList   : list of system_log files
 %   a_criticalLogFileList : list of critical_log files
+%   a_criticalLogFileList : list of production_log files
 %
 % OUTPUT PARAMETERS :
 %
@@ -23,8 +24,8 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_file_info_in_csv_file_apx_apf11( ...
-   a_scienceLogFileList, a_vitalsLogFileList, ...
-   a_systemLogFileList, a_criticalLogFileList)
+   a_scienceLogFileList, a_vitalsLogFileList, a_systemLogFileList, ...
+   a_criticalLogFileList, a_productionLogFileList)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -35,6 +36,12 @@ global g_decArgo_cycleNum;
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
+
+for id = 1:length(a_productionLogFileList)
+   [~, fileName, ext] = fileparts(a_productionLogFileList{id});
+   fprintf(g_decArgo_outputCsvFileId, '%d; %d; File info; Sci; -; production_log data file name; %s\n', ...
+      g_decArgo_floatNum, g_decArgo_cycleNum, [fileName ext]);
+end
 
 for id = 1:length(a_scienceLogFileList)
    [~, fileName, ext] = fileparts(a_scienceLogFileList{id});

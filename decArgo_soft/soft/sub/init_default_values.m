@@ -42,6 +42,7 @@ global g_decArgo_turbiCountsDef;
 global g_decArgo_turbiVoltCountsDef;
 global g_decArgo_concNitraCountsDef;
 global g_decArgo_coefAttCountsDef;
+global g_decArgo_vrsPhCountsDef;
 global g_decArgo_molarDoxyCountsDef;
 global g_decArgo_tPhaseDoxyCountsDef;
 global g_decArgo_c1C2PhaseDoxyCountsDef;
@@ -73,6 +74,7 @@ global g_decArgo_turbiDef;
 global g_decArgo_turbiVoltDef;
 global g_decArgo_concNitraDef;
 global g_decArgo_coefAttDef;
+global g_decArgo_vrsPhDef;
 global g_decArgo_fluorescenceChlaDef;
 global g_decArgo_betaBackscattering700Def;
 global g_decArgo_tempCpuChlaDef;
@@ -434,6 +436,7 @@ g_decArgo_turbiCountsDef = 99999;
 g_decArgo_turbiVoltCountsDef = 99999;
 g_decArgo_concNitraCountsDef = 999e+036; % max = 3.40282346e+038
 g_decArgo_coefAttCountsDef = 99999;
+g_decArgo_vrsPhCountsDef = 99999;
 g_decArgo_molarDoxyCountsDef = 99999;
 g_decArgo_tPhaseDoxyCountsDef = 99999;
 g_decArgo_c1C2PhaseDoxyCountsDef = 99999;
@@ -465,6 +468,7 @@ g_decArgo_turbiDef = 9999.9;
 g_decArgo_turbiVoltDef = 9.999;
 g_decArgo_concNitraDef = 9.99e+038;
 g_decArgo_coefAttDef = 99.999;
+g_decArgo_vrsPhDef = 99.999999;
 g_decArgo_fluorescenceChlaDef = 9999;
 g_decArgo_betaBackscattering700Def = 9999;
 g_decArgo_tempCpuChlaDef = 999;
@@ -497,7 +501,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '029d';
+g_decArgo_decoderVersion = '030a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float

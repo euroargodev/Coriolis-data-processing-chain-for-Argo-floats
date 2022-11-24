@@ -132,43 +132,43 @@ for idFloat = 1:nbFloats
    
    fprintf('\nTELEDYNE PROCESSING\n');
    
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % Teledyne processing
-   
-   % create Teledyne directory
-   teledyneDir = [floatOutputDir '\TELEDYNE\'];
-   if ~(exist(teledyneDir, 'dir') == 7)
-      mkdir(teledyneDir);
-   end
-   
-   % convert SBD files to float files
-   teledyneFloatFileDir = [teledyneDir '\FLOAT_FILES\'];
-   if ~(exist(teledyneFloatFileDir, 'dir') == 7)
-      mkdir(teledyneFloatFileDir);
-      
-      fprintf('Duplicating float files to Teledyne dir ...\n');
-      tic;
-      floatFiles = dir([floatFileDir '*.gz']);
-      for iFile = 1:length(floatFiles)
-         copy_file([floatFileDir floatFiles(iFile).name], teledyneFloatFileDir);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d float files duplicated (%.1f sec)\n', length(floatFiles), ellapsedTime);
-      
-      % uncompress .gz files
-      fprintf('Uncompressing float files in Teledyne float files dir ...\n');
-      tic;
-      gzFiles = dir([teledyneFloatFileDir '*.gz']);
-      for iFile = 1:length(gzFiles)
-         gzFilePathName = [teledyneFloatFileDir gzFiles(iFile).name];
-         gunzip(gzFilePathName);
-         delete(gzFilePathName);
-      end
-      ellapsedTime = toc;
-      fprintf('=> %d float files uncompressed (%.1f sec)\n', length(gzFiles), ellapsedTime);
-   else
-      fprintf('Teledyne float files exist\n');
-   end
+%    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    % Teledyne processing
+%    
+%    % create Teledyne directory
+%    teledyneDir = [floatOutputDir '\TELEDYNE\'];
+%    if ~(exist(teledyneDir, 'dir') == 7)
+%       mkdir(teledyneDir);
+%    end
+%    
+%    % convert SBD files to float files
+%    teledyneFloatFileDir = [teledyneDir '\FLOAT_FILES\'];
+%    if ~(exist(teledyneFloatFileDir, 'dir') == 7)
+%       mkdir(teledyneFloatFileDir);
+%       
+%       fprintf('Duplicating float files to Teledyne dir ...\n');
+%       tic;
+%       floatFiles = dir([floatFileDir '*.gz']);
+%       for iFile = 1:length(floatFiles)
+%          copy_file([floatFileDir floatFiles(iFile).name], teledyneFloatFileDir);
+%       end
+%       ellapsedTime = toc;
+%       fprintf('=> %d float files duplicated (%.1f sec)\n', length(floatFiles), ellapsedTime);
+%       
+%       % uncompress .gz files
+%       fprintf('Uncompressing float files in Teledyne float files dir ...\n');
+%       tic;
+%       gzFiles = dir([teledyneFloatFileDir '*.gz']);
+%       for iFile = 1:length(gzFiles)
+%          gzFilePathName = [teledyneFloatFileDir gzFiles(iFile).name];
+%          gunzip(gzFilePathName);
+%          delete(gzFilePathName);
+%       end
+%       ellapsedTime = toc;
+%       fprintf('=> %d float files uncompressed (%.1f sec)\n', length(gzFiles), ellapsedTime);
+%    else
+%       fprintf('Teledyne float files exist\n');
+%    end
    
    % created .csv files from bianry float files
    asciiFileDir = [teledyneFloatFileDir '\ASCII\'];

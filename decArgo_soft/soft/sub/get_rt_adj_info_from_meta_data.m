@@ -35,7 +35,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.date = [];
    
    rtData = a_metaData.RT_OFFSET;
-   params = unique(struct2cell(rtData.PARAM));
+   params = unique(struct2cell(rtData.PARAM), 'stable');
    for idParam = 1:length(params)
       param = params{idParam};
       fieldNames = fields(rtData.PARAM);

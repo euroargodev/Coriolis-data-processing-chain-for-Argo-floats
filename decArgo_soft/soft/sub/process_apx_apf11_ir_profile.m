@@ -14,6 +14,7 @@
 %  [o_ncProfile] = process_apx_apf11_ir_profile( ...
 %    a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, ...
+%    a_profFlbbCd, a_profOcr504I, ...
 %    a_cycleTimeData, ...
 %    a_cycleNum, a_presOffsetData)
 %
@@ -23,6 +24,8 @@
 %   a_profDo         : O2 data
 %   a_profCtdCp      : CTD_CP data
 %   a_profCtdCpH     : CTD_CP_H data
+%   a_profFlbbCd     : FLBB_CD data
+%   a_profOcr504I    : OCR_504I data
 %   a_cycleTimeData  : cycle timings data
 %   a_cycleNum       : cycle number
 %   a_presOffsetData : pressure offset data structure
@@ -41,6 +44,7 @@
 function [o_ncProfile] = process_apx_apf11_ir_profile( ...
    a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, ...
+   a_profFlbbCd, a_profOcr504I, ...
    a_cycleTimeData, ...
    a_cycleNum, a_presOffsetData)
 
@@ -52,7 +56,9 @@ if (isempty(a_profCtdPts) && ...
       isempty(a_profCtdPtsh) && ...
       isempty(a_profDo) && ...
       isempty(a_profCtdCp) && ...
-      isempty(a_profCtdCpH))
+      isempty(a_profCtdCpH) && ...
+      isempty(a_profFlbbCd) && ...
+      isempty(a_profOcr504I))
    return
 end
 
@@ -73,7 +79,9 @@ end
 profCtdPts = [];
 profCtdPtsh = [];
 profDo = [];
-for idS = 1:3
+profFlbbCd = [];
+profOcr504I = [];
+for idS = 1:5
    outputData = [];
    if (idS == 1)
       inputData = a_profCtdPts;
@@ -81,14 +89,18 @@ for idS = 1:3
       inputData = a_profCtdPtsh;
    elseif (idS == 3)
       inputData = a_profDo;
+   elseif (idS == 4)
+      inputData = a_profFlbbCd;
+   elseif (idS == 5)
+      inputData = a_profOcr504I;
    end
    
    if (~isempty(inputData) && ...
          ~isempty(a_cycleTimeData.ascentStartDateSci) && ...
-         ~isempty(a_cycleTimeData.ascentEndDateSci) && ...
-         any((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDateSci)))
+         ~isempty(a_cycleTimeData.ascentEndDate) && ...
+         any((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDate)))
       outputData = inputData;
-      idProfMeas = find(((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDateSci)) == 1);
+      idProfMeas = find(((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDate)) == 1);
       outputData.data = outputData.data(idProfMeas, :);
       if (~isempty(outputData.dataAdj))
          outputData.dataAdj = outputData.dataAdj(idProfMeas, :);
@@ -105,12 +117,18 @@ for idS = 1:3
       profCtdPtsh = outputData;
    elseif (idS == 3)
       profDo = outputData;
+   elseif (idS == 4)
+      profFlbbCd = outputData;
+   elseif (idS == 5)
+      profOcr504I = outputData;
    end
 end
 
 if (isempty(profCtdPts) && ...
       isempty(profCtdPtsh) && ...
       isempty(profDo) && ...
+      isempty(profFlbbCd) && ...
+      isempty(profOcr504I) && ...
       isempty(a_profCtdCp) && ...
       isempty(a_profCtdCpH))
    return
@@ -119,6 +137,8 @@ end
 profCtdPtsStruct = [];
 profCtdPtshStruct = [];
 profDoStruct = [];
+profFlbbCdStruct = [];
+profOcr504IStruct = [];
 profCtdCpStruct = [];
 profCtdCpAuxStruct = [];
 profCtdCpHStruct = [];
@@ -281,7 +301,7 @@ if (~isempty(profCtdPtsh))
    end
 end
 
-% create a profile with O2 data
+% create a profile with OPTODE data
 if (~isempty(profDo))
    
    % initialize a NetCDF profile structure and fill it with decoded profile data
@@ -334,6 +354,120 @@ if (~isempty(profDo))
             mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
          end
          profDoStruct.dataAdj = cat(2, mtimeDataAdj, double(profDoStruct.dataAdj));
+      end
+   end
+end
+
+% create a profile with FLBBCD data
+if (~isempty(profFlbbCd))
+   
+   % initialize a NetCDF profile structure and fill it with decoded profile data
+   profFlbbCdStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+   profFlbbCdStruct.sensorNumber = 4;
+   
+   % positioning system
+   profFlbbCdStruct.posSystem = 'GPS';
+   
+   % add parameter variables to the profile structure
+   profFlbbCdStruct.paramList = profFlbbCd.paramList;
+   
+   % add parameter data to the profile structure
+   profFlbbCdStruct.data = profFlbbCd.data;
+   profFlbbCdStruct.dataAdj = profFlbbCd.dataAdj;
+   
+   % add press offset data to the profile structure
+   profFlbbCdStruct.presOffset = presOffset;
+   
+   % add configuration mission number
+   profFlbbCdStruct.configMissionNumber = configMissionNumber;
+   
+   % add MTIME to data
+   if (~isempty(profFlbbCd.dateList))
+      if (any(profFlbbCd.dates ~= profFlbbCd.dateList.fillValue))
+         % we temporarily store JULD as MTIME (because profile date will be
+         % computed later)
+         mtimeData = profFlbbCd.dates;
+         mtimeData(find(mtimeData == profFlbbCd.dateList.fillValue)) = paramMtime.fillValue;
+      else
+         mtimeData = ones(size(profFlbbCd.data, 1), 1)*paramMtime.fillValue;
+      end
+      profFlbbCdStruct.paramList = [paramMtime profFlbbCdStruct.paramList];
+      profFlbbCdStruct.data = cat(2, mtimeData, double(profFlbbCdStruct.data));
+      
+      if (~isempty(profFlbbCd.dataAdj))
+         if (any(profFlbbCd.datesAdj ~= profFlbbCd.dateList.fillValue))
+            % we temporarily store JULD as MTIME (because profile date will be
+            % computed later)
+            if (~isempty(profFlbbCd.datesAdj))
+               mtimeDataAdj = profFlbbCd.datesAdj;
+               mtimeDataAdj(find(mtimeDataAdj == profFlbbCd.dateList.fillValue)) = paramMtime.fillValue;
+            elseif (~isempty(profFlbbCd.dates))
+               mtimeDataAdj = profFlbbCd.dates;
+               mtimeDataAdj(find(mtimeDataAdj == profFlbbCd.dateList.fillValue)) = paramMtime.fillValue;
+            else
+               mtimeDataAdj = ones(size(profFlbbCd.dataAdj, 1), 1)*paramMtime.fillValue;
+            end
+         else
+            mtimeDataAdj = ones(size(profFlbbCd.dataAdj, 1), 1)*paramMtime.fillValue;
+         end
+         profFlbbCdStruct.dataAdj = cat(2, mtimeDataAdj, double(profFlbbCdStruct.dataAdj));
+      end
+   end
+end
+
+% create a profile with OCR540I data
+if (~isempty(profOcr504I))
+   
+   % initialize a NetCDF profile structure and fill it with decoded profile data
+   profOcr504IStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+   profOcr504IStruct.sensorNumber = 2;
+   
+   % positioning system
+   profOcr504IStruct.posSystem = 'GPS';
+   
+   % add parameter variables to the profile structure
+   profOcr504IStruct.paramList = profOcr504I.paramList;
+   
+   % add parameter data to the profile structure
+   profOcr504IStruct.data = profOcr504I.data;
+   profOcr504IStruct.dataAdj = profOcr504I.dataAdj;
+   
+   % add press offset data to the profile structure
+   profOcr504IStruct.presOffset = presOffset;
+   
+   % add configuration mission number
+   profOcr504IStruct.configMissionNumber = configMissionNumber;
+   
+   % add MTIME to data
+   if (~isempty(profOcr504I.dateList))
+      if (any(profOcr504I.dates ~= profOcr504I.dateList.fillValue))
+         % we temporarily store JULD as MTIME (because profile date will be
+         % computed later)
+         mtimeData = profOcr504I.dates;
+         mtimeData(find(mtimeData == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
+      else
+         mtimeData = ones(size(profOcr504I.data, 1), 1)*paramMtime.fillValue;
+      end
+      profOcr504IStruct.paramList = [paramMtime profOcr504IStruct.paramList];
+      profOcr504IStruct.data = cat(2, mtimeData, double(profOcr504IStruct.data));
+      
+      if (~isempty(profOcr504I.dataAdj))
+         if (any(profOcr504I.datesAdj ~= profOcr504I.dateList.fillValue))
+            % we temporarily store JULD as MTIME (because profile date will be
+            % computed later)
+            if (~isempty(profOcr504I.datesAdj))
+               mtimeDataAdj = profOcr504I.datesAdj;
+               mtimeDataAdj(find(mtimeDataAdj == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
+            elseif (~isempty(profOcr504I.dates))
+               mtimeDataAdj = profOcr504I.dates;
+               mtimeDataAdj(find(mtimeDataAdj == profOcr504I.dateList.fillValue)) = paramMtime.fillValue;
+            else
+               mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
+            end
+         else
+            mtimeDataAdj = ones(size(profOcr504I.dataAdj, 1), 1)*paramMtime.fillValue;
+         end
+         profOcr504IStruct.dataAdj = cat(2, mtimeDataAdj, double(profOcr504IStruct.dataAdj));
       end
    end
 end
@@ -882,6 +1016,32 @@ if (~isempty(profDoStruct))
    profDoStruct.primarySamplingProfileFlag = 0;
    
    o_ncProfile = [o_ncProfile profDoStruct];
+end
+
+if (~isempty(profFlbbCdStruct))
+   
+   % get detailed description of the VSS
+   minMax = [{''} {''}];
+   description = create_vertical_sampling_scheme_description_apx_apf11_ir(a_cycleNum, 'FLBB', '', minMax);
+   
+   % add vertical sampling scheme
+   profFlbbCdStruct.vertSamplingScheme = sprintf('Secondary sampling: discrete [%s]', description);
+   profFlbbCdStruct.primarySamplingProfileFlag = 0;
+   
+   o_ncProfile = [o_ncProfile profFlbbCdStruct];
+end
+
+if (~isempty(profOcr504IStruct))
+   
+   % get detailed description of the VSS
+   minMax = [{''} {''}];
+   description = create_vertical_sampling_scheme_description_apx_apf11_ir(a_cycleNum, 'IRAD', '', minMax);
+   
+   % add vertical sampling scheme
+   profOcr504IStruct.vertSamplingScheme = sprintf('Secondary sampling: discrete [%s]', description);
+   profOcr504IStruct.primarySamplingProfileFlag = 0;
+   
+   o_ncProfile = [o_ncProfile profOcr504IStruct];
 end
 
 return

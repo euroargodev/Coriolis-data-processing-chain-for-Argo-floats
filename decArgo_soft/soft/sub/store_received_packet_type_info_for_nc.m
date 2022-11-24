@@ -257,8 +257,52 @@ switch (a_decoderId)
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1009];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;      
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;   
+      
+   case {218}
 
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1001];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1002];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1003];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1004];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1005];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1006];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1007];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm1PacketsReceived;      
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1008];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived;
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1009];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;
+      
+      if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+         g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+            g_decArgo_cycleNum 1016];
+         g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm2PacketsReceived;
+      end
+      
    otherwise
       fprintf('WARNING: Received packet type information is not defined yet for decoderId #%d\n', a_decoderId);
 end

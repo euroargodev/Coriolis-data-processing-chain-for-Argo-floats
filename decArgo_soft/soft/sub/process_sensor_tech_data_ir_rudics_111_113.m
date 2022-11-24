@@ -6,7 +6,8 @@
 %    a_decoderId, a_cyProfPhaseList, a_cyProfPhaseIndexList, ...
 %    a_sensorTechCTD, a_sensorTechOPTODE, a_sensorTechOCR, ...
 %    a_sensorTechECO2, a_sensorTechECO3, ...
-%    a_sensorTechFLNTU, a_sensorTechCROVER, a_sensorTechSUNA)
+%    a_sensorTechFLNTU, a_sensorTechSEAFET, ...
+%    a_sensorTechCROVER, a_sensorTechSUNA)
 %
 % INPUT PARAMETERS :
 %   a_decoderId            : float decoder Id
@@ -18,7 +19,8 @@
 %   a_sensorTechOCR        : OCR technical data
 %   a_sensorTechECO2       : ECO2 technical data
 %   a_sensorTechECO3       : ECO3 technical data
-%   a_sensorTechFLNTU      : FLNTU technical data
+%   a_sensorTechFLNTU      : decoded FLNTU technical data
+%   a_sensorTechSEAFET     : decoded SEAFET technical data
 %   a_sensorTechCROVER     : cROVER technical data
 %   a_sensorTechSUNA       : SUNA technical data
 %
@@ -36,7 +38,8 @@ function process_sensor_tech_data_ir_rudics_111_113( ...
    a_decoderId, a_cyProfPhaseList, a_cyProfPhaseIndexList, ...
    a_sensorTechCTD, a_sensorTechOPTODE, a_sensorTechOCR, ...
    a_sensorTechECO2, a_sensorTechECO3, ...
-   a_sensorTechFLNTU, a_sensorTechCROVER, a_sensorTechSUNA)
+   a_sensorTechFLNTU, a_sensorTechSEAFET, ...
+   a_sensorTechCROVER, a_sensorTechSUNA)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -106,14 +109,14 @@ for idCyPr = 1:size(cycleProfList, 1)
                
             case 3
                % same code but input differ if ECO2 or ECO3
-               if (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
+               if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
                   % ECO2
                   if (~isempty(dataIndexList))
                      process_sensor_tech_data_ir_rudics_ECO2_ECO3( ...
                         cycleNum, profNum, dataIndexList, ...
                         a_sensorTechECO2);
                   end
-               else
+               elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
                   % ECO3
                   if (~isempty(dataIndexList))
                      process_sensor_tech_data_ir_rudics_ECO2_ECO3( ...
@@ -123,16 +126,25 @@ for idCyPr = 1:size(cycleProfList, 1)
                end
                
             case 4
-               fprintf('WARNING: Float #%d Cycle #%d: FLNTU is implemented but not used before checked\n', ...
-                  g_decArgo_floatNum, ...
-                  g_decArgo_cycleNum);
-               if (0)
+               % FLNTU or SEAFET
+               if (ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
                   % FLNTU
-                  if (~isempty(dataIndexList))
-                     process_sensor_tech_data_ir_rudics_sbd2_FLNTU( ...
-                        cycleNum, profNum, dataIndexList, ...
-                        a_sensorTechFLNTU);
+                  fprintf('WARNING: Float #%d Cycle #%d: FLNTU is implemented but not used before checked\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum);
+                  if (0)
+                     % FLNTU
+                     if (~isempty(dataIndexList))
+                        process_sensor_tech_data_ir_rudics_sbd2_FLNTU( ...
+                           cycleNum, profNum, dataIndexList, ...
+                           a_sensorTechFLNTU);
+                     end
                   end
+               elseif (ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
+                  % SEAFET
+                  process_sensor_tech_data_ir_rudics_SEAFET( ...
+                     cycleNum, profNum, dataIndexList, ...
+                     a_sensorTechSEAFET);
                end
                
             case 5

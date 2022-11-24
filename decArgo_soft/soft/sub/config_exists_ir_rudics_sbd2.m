@@ -6,11 +6,11 @@
 %    a_newConfig, a_configNum, a_configVal, a_configIgnoreIds)
 %
 % INPUT PARAMETERS :
-%   a_newConfig : the new configuration to check
-%   a_configNum : existing configuration numbers
-%   a_configVal : existing configuration values
-%   a_configVal : existing configuration parameters that should be ignored in
-%                 the configuration comparison
+%   a_newConfig       : the new configuration to check
+%   a_configNum       : existing configuration numbers
+%   a_configVal       : existing configuration values
+%   a_configIgnoreIds : existing configuration parameters that should be ignored
+%                       in the configuration comparison
 %
 % OUTPUT PARAMETERS :
 %   o_configNum : number of the configuration found (-1 if it does not exist)

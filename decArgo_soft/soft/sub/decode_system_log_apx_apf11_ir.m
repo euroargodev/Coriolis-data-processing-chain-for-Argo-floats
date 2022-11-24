@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
-%    o_gpsData, o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
+%    o_gpsData, o_grounding, o_miscEvts, o_cycleTimeData, o_cycleTimeData, o_presOffsetData] = ...
 %    decode_system_log_apx_apf11_ir(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
 %
 % INPUT PARAMETERS :
@@ -21,6 +21,7 @@
 %   o_gpsData        : GPS data from system_log files
 %   o_grounding      : grounding data
 %   o_buoyancy       : buoyancy data
+%   o_miscEvts       : raw misc events
 %   o_cycleTimeData  : cycle timings data
 %   o_presOffsetData : pressure offset information
 %
@@ -33,7 +34,7 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
-   o_gpsData, o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
+   o_gpsData, o_grounding, o_buoyancy, o_miscEvts, o_cycleTimeData, o_presOffsetData] = ...
    decode_system_log_apx_apf11_ir(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
 
 % output parameters initialization
@@ -45,6 +46,7 @@ o_techData = a_techData;
 o_gpsData = [];
 o_grounding = [];
 o_buoyancy = [];
+o_miscEvts = [];
 o_presOffsetData = a_presOffsetData;
 o_cycleTimeData = a_cycleTimeData;
 
@@ -109,23 +111,24 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT'));
    if (~isempty(idEvts))
       pressureOffset = process_apx_apf11_ir_pres_offset_evts(events(idEvts));
-
-      dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
-      dataStruct.label = 'Pressure offset';
-      dataStruct.value = pressureOffset(2);
-      dataStruct.format = '%.2f';
-      o_miscInfo{end+1} = dataStruct;
-      
-      dataStruct = get_apx_tech_data_init_struct(1);
-      dataStruct.label = 'Pressure offset';
-      dataStruct.techId = 1004;
-      dataStruct.value = num2str(pressureOffset(2));
-      dataStruct.cyNum = g_decArgo_cycleNum;
-      o_techData{end+1} = dataStruct;
-
-      if (~any([o_presOffsetData.cycleNum] == g_decArgo_cycleNum))
-         o_presOffsetData.cycleNum(end+1) = g_decArgo_cycleNum;
-         o_presOffsetData.cyclePresOffset(end+1) = pressureOffset(2);
+      if (~isempty(pressureOffset))
+         dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
+         dataStruct.label = 'Pressure offset';
+         dataStruct.value = pressureOffset(2);
+         dataStruct.format = '%.2f';
+         o_miscInfo{end+1} = dataStruct;
+         
+         dataStruct = get_apx_tech_data_init_struct(1);
+         dataStruct.label = 'Pressure offset';
+         dataStruct.techId = 1004;
+         dataStruct.value = num2str(pressureOffset(2));
+         dataStruct.cyNum = g_decArgo_cycleNum;
+         o_techData{end+1} = dataStruct;
+         
+         if (~any([o_presOffsetData.cycleNum] == g_decArgo_cycleNum))
+            o_presOffsetData.cycleNum(end+1) = g_decArgo_cycleNum;
+            o_presOffsetData.cyclePresOffset(end+1) = pressureOffset(2);
+         end
       end
    end
    
@@ -158,8 +161,13 @@ for idFile = 1:length(a_systemLogFileList)
    end
    
    % buoyancy activity
+   % events depend on float version:
+   % PARK|Adjusting Buoyancy & ASCENT|Adjusting Buoyancy
+   % or
+   % BuoyEngine|Adjusting Buoyancy
    idEvts = find(strcmp({events.functionName}, 'PARK') | ...
-      strcmp({events.functionName}, 'ASCENT'));
+      strcmp({events.functionName}, 'ASCENT') | ...
+      strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))
       buoyancy = process_apx_apf11_ir_buoyancy_evts(events(idEvts));
       o_buoyancy = [o_buoyancy; buoyancy];
@@ -170,6 +178,16 @@ for idFile = 1:length(a_systemLogFileList)
    if (~isempty(idEvts))
       gpsData = process_apx_apf11_ir_gps_evts(events(idEvts));
       o_gpsData = [o_gpsData; gpsData];
+   end
+   
+   % misc events
+   if (~isempty(g_decArgo_outputCsvFileId))
+      idEvts = find(strcmp({events.functionName}, 'Float ID') | ...
+         strcmp({events.functionName}, 'test') | ...
+         strcmp({events.functionName}, 'log_test_results'));
+      if (~isempty(idEvts))
+         o_miscEvts = [o_miscEvts events(idEvts)];
+      end
    end
 end
 

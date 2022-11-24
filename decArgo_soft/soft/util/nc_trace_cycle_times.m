@@ -31,53 +31,15 @@ global g_NTCT_FLOAT_ID;
 
 % top directory of NetCDF files to plot (TRAJ and META)
 g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
-% g_NTCT_NC_DIR = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
-% g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
-% g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 % top directory of NetCDF auxiliary files to plot (TECH_AUX)
 g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
-% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
-% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
-% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 % directory to store pdf output
 g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.75.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_bodc.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.65.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_rudics.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_sbd.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.44_5.45_mocca_andro_iridium.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_4.52_mocca_andro_argos.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TestNr022019\cts3_ir_1.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -477,6 +439,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          {'JULD_ADJUSTED'} ...
          {'VALVE_ACTION_DURATION'} ...
          {'VALVE_ACTION_FLAG'} ...
+         {'PUMP_ACTION_DURATION'} ...
+         {'PUMP_ACTION_FLAG'} ...
          {'CYCLE_NUMBER_MEAS'} ...
          {'MEASUREMENT_CODE'} ...
          ];
@@ -500,16 +464,28 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       idVal = find(strcmp('VALVE_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
       valveActFlag = techAuxData{2*idVal};
       
+      idVal = find(strcmp('PUMP_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
+      pumpActDuration = techAuxData{2*idVal};
+      
+      idVal = find(strcmp('PUMP_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
+      pumpActFlag = techAuxData{2*idVal};
+      
       % merge JULD and JULD_ADJUSTED
       idF = find(juldTechAdj ~= 999999);
       juldTech(idF) = juldTechAdj(idF);
       juldTech(find(juldTech == 999999)) = g_dateDef;
       
-      % get valva action information
-      if (~ischar(valveActDuration))
-         valveAct = valveActDuration;
-      else
+      % get valve information
+      if (~isempty(valveActFlag))
          valveAct = valveActFlag;
+      elseif (~isempty(pumpActFlag))
+         valveAct = pumpActFlag;
+         valveAct(find(valveAct == 1)) = -1;
+      elseif (~isempty(valveActDuration))
+         valveAct = valveActDuration;
+      elseif (~isempty(pumpActDuration))
+         valveAct = pumpActDuration;
+         valveAct(find(valveAct ~= -1)) = -1;
       end
    end
    
@@ -519,7 +495,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
    
    % buoyancy activitity
-   idF = find(ismember(measCode, [g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf]));
+   idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf])); % 239 = 250-11 for Apex
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
    
    g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
@@ -540,11 +516,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    
    if (~isempty(valveAct))
       for idC = 1:length(g_NTCT_cycles)
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInDescToPark));
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [239 g_MC_SpyInDescToPark]));
          if (~isempty(idF))
             g_NTCT_SpyInDescToPark_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyInDescToPark_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToPark));
+            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [239 g_MC_SpyInDescToPark]));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -800,6 +776,10 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FMT));
       if (~isempty(idF))
+         if (length(idF) > 1)
+            % icicicic
+            idF = idF(1)
+         end
          g_NTCT_FMT_juld(idC) = juld(idF);
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LMT));
@@ -1676,5 +1656,61 @@ function [o_text] = data_cursor_output(a_src, a_eventData)
 pos = get(a_eventData, 'Position');
 o_text = {['Time: ', julian_2_gregorian_dec_argo(pos(1))],...
    ['Pres: ',num2str(pos(2)) ' dbar']};
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve data from NetCDF file.
+%
+% SYNTAX :
+%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+%
+% INPUT PARAMETERS :
+%   a_ncPathFileName : NetCDF file name
+%   a_wantedVars     : NetCDF variables to retrieve from the file
+%
+% OUTPUT PARAMETERS :
+%   o_ncData : retrieved data
+%
+% EXAMPLES :
+%
+% SEE ALSO : 
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/15/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+
+% output parameters initialization
+o_ncData = [];
+
+
+if (exist(a_ncPathFileName, 'file') == 2)
+   
+   % open NetCDF file
+   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
+   if (isempty(fCdf))
+      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      return
+   end
+   
+   % retrieve variables from NetCDF file
+   for idVar = 1:length(a_wantedVars)
+      varName = a_wantedVars{idVar};
+      
+      if (var_is_present_dec_argo(fCdf, varName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+         o_ncData = [o_ncData {varName} {varValue}];
+      else
+         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
+         %             varName, a_ncPathFileName);
+         o_ncData = [o_ncData {varName} {''}];
+      end
+      
+   end
+   
+   netcdf.close(fCdf);
+end
 
 return

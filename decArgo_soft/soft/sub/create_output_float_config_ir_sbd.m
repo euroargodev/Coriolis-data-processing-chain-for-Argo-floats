@@ -53,7 +53,7 @@ switch (a_decoderId)
       
       %nothing for Nova floats
 
-   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216}
+   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218}
       
       % use CONFIG_PT20 to fill CONFIG_PX02 = CONFIG_PT20 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_PT20') == 1, 1);
@@ -77,6 +77,50 @@ switch (a_decoderId)
             if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
                finalConfigValue(idPos2, :) = 4095;
             end
+         end
+         
+      elseif (a_decoderId == 218)
+
+         if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+            
+            % when ice mode is activated
+            
+            % if ice detection is used for at least one cycle, set ice float mandatory
+            % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
+            idPos1 = find(strcmp(finalConfigName, 'CONFIG_PG00') == 1, 1);
+            idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX05') == 1, 1);
+            if (~isempty(idPos1) && ~isempty(idPos2))
+               iceUsed = finalConfigValue(idPos1, :);
+               if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
+                  finalConfigValue(idPos2, :) = 4095;
+               end
+            end
+            
+            %             % when ice detection is used, replace TC19 by IC10
+            %             idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+            %             idPos2 = find(strcmp(finalConfigName, 'CONFIG_TC19_') == 1, 1);
+            %             idPos3 = find(strcmp(finalConfigName, 'CONFIG_IC10_') == 1, 1);
+            %             if (~isempty(idPos1) && ~isempty(idPos2))
+            %                iceUsed = finalConfigValue(idPos1, :);
+            %                idF = find(iceUsed ~= 0);
+            %                finalConfigValue(idPos2, idF) = finalConfigValue(idPos3, idF);
+            %                finalConfigValue(idPos3, :) = nan;
+            %             end
+         else
+            
+            % when ice mode is not activated
+            
+            % remove ice configuration parameters from final configuration
+            idDel = [];
+            for id = 0:15
+               name = sprintf('CONFIG_PG%02d', id);
+               idPos = find(strcmp(finalConfigName, name) == 1, 1);
+               if (~isempty(idPos))
+                  idDel = [idDel; idPos];
+               end
+            end
+            finalConfigName(idDel) = [];
+            finalConfigValue(idDel, :) = [];
          end
       end
       

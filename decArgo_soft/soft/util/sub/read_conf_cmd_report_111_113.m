@@ -52,6 +52,8 @@ for id = 1:length(a_sensorList)
          sensorList = [sensorList 5];
       case 'SUNA'
          sensorList = [sensorList 6];
+      case 'TRANSISTOR_PH'
+         sensorList = [sensorList 4];
       otherwise
          fprintf('ERROR: Unknown sensor name %s\n', sensorName);
    end

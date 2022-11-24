@@ -32,6 +32,9 @@ global g_decArgo_floatNum;
 % directory of json meta-data files
 global g_decArgo_dirInputJsonFloatMetaDataFile;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
@@ -89,9 +92,20 @@ if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
    configValues(idF1) = configValues(idF2) + configValues(idF3);
 end
 
+% create the list of index of dynamic configuration parameters ignored when
+% looking for existing configuration
+configNameToIgnore = [{'CONFIG_PPP_ParkPistonPosition'} {'CONFIG_TPP_ProfilePistonPosition'}];
+listIdParamToIgnore = [];
+for idC = 1:length(configNames)
+   if (~isempty(find(strcmp(configNames{idC}, configNameToIgnore) == 1, 1)))
+      listIdParamToIgnore = [listIdParamToIgnore; idC];
+   end
+end
+
 % store the configuration
 g_decArgo_floatConfig = [];
 g_decArgo_floatConfig.NAMES = configNames;
+g_decArgo_floatConfig.IGNORED_ID = listIdParamToIgnore;
 g_decArgo_floatConfig.VALUES = configValues;
 g_decArgo_floatConfig.NUMBER = 0;
 g_decArgo_floatConfig.USE.CYCLE = [];
@@ -113,6 +127,13 @@ if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
    end
 end
 
+% store the sensor list
+g_decArgo_sensorMountedOnFloat = [];
+if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   jSensorNames = struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
+   g_decArgo_sensorMountedOnFloat = jSensorNames';
+end
+   
 % create the tabDoxyCoef array
 if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    if (any(strcmp(struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'OPTODE')))
