@@ -657,6 +657,9 @@ global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
+global g_decArgo_13Or11TypePacketExpected;
+global g_decArgo_14Or12TypePacketExpected;
+
 
 % initialize information arrays
 g_decArgo_0TypePacketReceivedFlag = 0;
@@ -689,6 +692,9 @@ g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 
 g_decArgo_nbOf13Or11TypePacketExpected = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = 0;
+
+g_decArgo_13Or11TypePacketExpected = 0;
+g_decArgo_14Or12TypePacketExpected = 0;
 
 return;
 
