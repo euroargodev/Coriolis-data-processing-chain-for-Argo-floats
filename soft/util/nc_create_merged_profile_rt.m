@@ -21,6 +21,7 @@
 %   optional parameters:
 %      outputLogDirName     : LOG file directory name
 %      xmlReportDirName     : XML file directory name
+%      xmlReportFileName    : XML file name
 %      monoProfRefFileName  : M mono-profile reference file path name
 %      multiProfRefFileName : M multi-profile reference file path name
 %
@@ -76,6 +77,7 @@ global g_cocm_multiProfRefFile;
 global g_cocm_outputDirName;
 global g_cocm_outputLogDirName;
 global g_cocm_outputXmlReportDirName;
+global g_cocm_outputXmlReportFileName;
 
 % DOM node of XML report
 global g_cocm_xmlReportDOMNode;
@@ -105,11 +107,18 @@ global g_cocm_printCsv;
 g_cocm_printCsv = 0;
 
 
+% startTime
+ticStartTime = tic;
+
+% store the start time of the run
+currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
+
 % set default values
 g_cocm_outputLogDirName = DIR_LOG_FILE;
 g_cocm_outputXmlReportDirName = DIR_XML_FILE;
 g_cocm_monoProfRefFile = MONO_PROF_REF_PROFILE_FILE;
 g_cocm_multiProfRefFile = MULTI_PROF_REF_PROFILE_FILE;
+g_cocm_outputXmlReportFileName = ['nc_create_merged_profile_rt_' currentTime '.xml'];
 
 % default values initialization
 init_default_values;
@@ -120,13 +129,7 @@ init_measurement_codes;
 logFileName = [];
 status = 'nok';
 try
-   
-   % startTime
-   ticStartTime = tic;
-   
-   % store the start time of the run
-   currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
-   
+      
    % init the XML report
    init_xml_report(currentTime);
    
@@ -195,9 +198,9 @@ end
 
 % create the XML report path file name
 if (~isempty(g_cocm_outputXmlReportDirName))
-   xmlFileName = [g_cocm_outputXmlReportDirName '/nc_create_merged_profile_rt_' currentTime '.xml'];
+   xmlFileName = [g_cocm_outputXmlReportDirName '/' g_cocm_outputXmlReportFileName];
 else
-   xmlFileName = [tempdir '/nc_create_merged_profile_rt_' currentTime '.xml'];
+   xmlFileName = [tempdir '/' g_cocm_outputXmlReportFileName];
 end
 
 % save the XML report
@@ -292,6 +295,7 @@ global g_cocm_multiProfRefFile;
 global g_cocm_outputDirName;
 global g_cocm_outputLogDirName;
 global g_cocm_outputXmlReportDirName;
+global g_cocm_outputXmlReportFileName;
 
 
 g_cocm_floatCProfFileName = '';
@@ -337,6 +341,8 @@ if (~isempty(a_varargin))
             g_cocm_outputLogDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'xmlReportDirName'))
             g_cocm_outputXmlReportDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'xmlReportFileName'))
+            g_cocm_outputXmlReportFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'monoProfRefFileName'))
             g_cocm_monoProfRefFile = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'multiProfRefFileName'))
@@ -453,6 +459,7 @@ o_logLines{end+1} = sprintf('createMultiProfFlag  : %s\n', g_cocm_createMultiPro
 o_logLines{end+1} = sprintf('outputDirName        : %s\n', g_cocm_outputDirName);
 o_logLines{end+1} = sprintf('outputLogDirName     : %s\n', g_cocm_outputLogDirName);
 o_logLines{end+1} = sprintf('xmlReportDirName     : %s\n', g_cocm_outputXmlReportDirName);
+o_logLines{end+1} = sprintf('xmlReportFileName    : %s\n', g_cocm_outputXmlReportFileName);
 o_logLines{end+1} = sprintf('monoProfRefFileName  : %s\n', g_cocm_monoProfRefFile);
 o_logLines{end+1} = sprintf('multiProfRefFileName : %s\n', g_cocm_multiProfRefFile);
 o_logLines{end+1} = sprintf('\n');
