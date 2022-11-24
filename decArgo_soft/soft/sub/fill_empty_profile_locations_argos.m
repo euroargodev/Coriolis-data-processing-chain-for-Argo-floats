@@ -142,6 +142,12 @@ for idProf = 1:length(a_tabProfiles)
                   g_decArgo_floatNum, ...
                   profile.cycleNumber);
             end
+         else
+            % retrieve 2 previous profile locations
+            idF1 = find([a_tabProfiles.date] < profile.date);
+            [~, idSort] = sort([a_tabProfiles(idF1).cycleNumber]);
+            
+
          end
       end
    end

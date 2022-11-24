@@ -20,7 +20,7 @@
 function nc_trace_disp(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 global g_NTD_NC_DIR;
 global g_NTD_PDF_DIR;

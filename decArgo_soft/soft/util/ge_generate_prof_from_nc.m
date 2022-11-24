@@ -26,33 +26,10 @@ global g_decArgo_janFirst1950InMatlab;
 init_default_values;
 
 % default list of floats to process
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_4.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.2.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_24.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_19.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_25.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.02.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.01.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_6.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.4.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.1.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_28.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.3.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.03.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_13.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_23.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.04.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_46.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11.1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 
 % directory of input NetCDF files
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
 
 % directory of output KML file
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -102,7 +79,7 @@ else
    name = sprintf('_%d', floatList);
 end
 
-kmlFileName = ['ge_generate_prof_from_nc' name '.kml'];
+kmlFileName = ['ge_generate_prof_from_nc' name '_' ident '.kml'];
 kmzFileName = [kmlFileName(1:end-4) '.kmz'];
 outputFileName = [DIR_OUTPUT_KML_FILES kmlFileName];
 
@@ -240,6 +217,7 @@ for idFloat = 1:nbFloats
          {'LATITUDE'} ...
          {'LONGITUDE'} ...
          {'POSITION_QC'} ...
+         {'POSITIONING_SYSTEM'} ...
          {'JULD'} ...
          {'CYCLE_NUMBER'} ...
          {'DIRECTION'} ...
@@ -266,6 +244,8 @@ for idFloat = 1:nbFloats
       longitude = profData{2*idVal};
       idVal = find(strcmp('POSITION_QC', profData(1:2:end)) == 1, 1);
       positionQc = profData{2*idVal};
+      idVal = find(strcmp('POSITIONING_SYSTEM', profData(1:2:end)) == 1, 1);
+      positioningSystem = profData{2*idVal}';
       idVal = find(strcmp('JULD', profData(1:2:end)) == 1, 1);
       juld = profData{2*idVal};
       idVal = find(strcmp('CYCLE_NUMBER', profData(1:2:end)) == 1, 1);
@@ -280,6 +260,7 @@ for idFloat = 1:nbFloats
       latitude(idBad) = [];
       longitude(idBad) = [];
       positionQc(idBad) = [];
+      positioningSystem(idBad, :) = [];
       juld(idBad) = [];
       cycleNumber(idBad) = [];
       direction(idBad) = [];
@@ -293,6 +274,8 @@ for idFloat = 1:nbFloats
             sprintf('LOCATION (lon, lat): %8.3f, %7.3f\n', longitude(idProf), latitude(idProf))];
          posDescription = [posDescription, ...
             sprintf('POSITION QC : %c\n', positionQc(idProf))];
+         posDescription = [posDescription, ...
+            sprintf('POSITIONING_SYSTEM : %s\n', strtrim(positioningSystem(idProf, :)))];
          posDescription = [posDescription, ...
             sprintf('JULD : %s\n', julian_2_gregorian_dec_argo(juld(idProf)))];
          posDescription = [posDescription, ...

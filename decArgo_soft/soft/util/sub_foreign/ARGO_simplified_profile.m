@@ -42,6 +42,8 @@ function synthfull=ARGO_simplified_profile(varargin)
 %             PRES_ADJUSTED do not get a QC of '8' either, add file name to
 %             all info messages, correct treatment of levels with QC '4' in
 %             adjusted fields, add bgcFloatFlag as optional input
+% 01.04.2022, gap data do not get a QC of '8' if either bounding point has
+%             QC '0', PRES/PRES_ADJUSTED do not get a QC of '8' either
 
 % output CSV file information
 global g_cocs_fidCsvFile;
@@ -1168,7 +1170,8 @@ for i=1:length(ubgcparams)
             % assign QC flag to gap in a series points
             %synth.([ubgcparams{i} '_QC']).value(inomatch & ~iremove)=8;
             %fillind=inomatch & ~iremove & ~ismember(synth.([ubgcparams{i} '_QC']).value,[3 4]);
-            fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_QC']).value,[3 4]) | isnan(synth.(ubgcparams{i} ).value));
+            %fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_QC']).value,[3 4]) | isnan(synth.(ubgcparams{i} ).value));
+            fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_QC']).value,[0 3 4]) | isnan(synth.(ubgcparams{i} ).value));
             synth.([ubgcparams{i} '_QC']).value(fillind)=8;
         end % PRES (int32) or not (double)
         clear y yqc uind inomatch iremove fillind
@@ -1302,7 +1305,8 @@ for i=1:length(ubgcparams)
         % assign QC flag to gap in a series points
         %synth.([ubgcparams{i} '_ADJUSTED_QC']).value(inomatch & ~iremove)=8;
         %fillind=inomatch & ~iremove & ~ismember(synth.([ubgcparams{i} '_ADJUSTED_QC']).value,[3 4]);
-        fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_ADJUSTED_QC']).value,[3 4]) | isnan(synth.([ubgcparams{i} '_ADJUSTED']).value));
+        %fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_ADJUSTED_QC']).value,[3 4]) | isnan(synth.([ubgcparams{i} '_ADJUSTED']).value));
+        fillind=inomatch & ~iremove & ~(ismember(synth.([ubgcparams{i} '_ADJUSTED_QC']).value,[0 3 4]) | isnan(synth.([ubgcparams{i} '_ADJUSTED']).value));
         if ~ismember(ubgcparams{i},{'PRES'}) % don't tap with '8' for PRES_ADJUSTED: location, not really data
         synth.([ubgcparams{i} '_ADJUSTED_QC']).value(fillind)=8;
         end

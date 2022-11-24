@@ -39,7 +39,15 @@ o_tabTrajNCycle = a_tabTrajNCycle;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeIridiumDeep;
+global g_decArgo_decoderIdListNkeIridiumRbr;
 
+
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+   % perform PSAL RT adjustment of RBR floats
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+      compute_rt_adjusted_psal_for_rbr_float( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
+end
 
 if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
    % perform PSAL RT adjustment of Deep floats
@@ -64,6 +72,446 @@ if (a_notOnlyDoxyFlag)
    
    % perform NITRATE RT adjustment
    [o_tabProfiles] = compute_rt_adjusted_nitrate(o_tabProfiles, a_launchDate);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Perform real time adjustment on PSAL profile data for RBR floats.
+%
+% SYNTAX :
+%  [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+%    compute_rt_adjusted_psal_for_rbr_float(a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles   : input profile structures
+%   a_tabTrajNMeas  : input N_MEASUREMENT trajectory data
+%   a_tabTrajNCycle : input N_CYCLE trajectory data
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles   : output profile structures
+%   o_tabTrajNMeas  : output N_MEASUREMENT trajectory data
+%   o_tabTrajNCycle : output N_CYCLE trajectory data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   04/01/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
+   compute_rt_adjusted_psal_for_rbr_float(a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+o_tabTrajNMeas = a_tabTrajNMeas;
+o_tabTrajNCycle = a_tabTrajNCycle;
+
+% QC flag values (numerical)
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+% to store information on adjustments
+global g_decArgo_paramProfAdjInfo;
+global g_decArgo_paramProfAdjId;
+
+% TRAJ 3.2 file generation flag
+global g_decArgo_generateNcTraj32;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% list of pre-april 2021 RBR floats
+global g_decArgo_rbrPreApril2021FloatList;
+
+
+% from "Argo Quality Control Manual for CTD and Trajectory Data, Version 3.6, 23
+% March 2022"
+
+% retrieve new calibration coefficients for pre-april 2021 RBRs
+coefX2Old = 1.8732e-6;
+coefX3Old = -7.7689e-10;
+coefX4Old = 1.4890e-13;
+[coefX2New, coefX3New, coefX4New] = get_rbr_compressibility_coef(g_decArgo_floatNum);
+ctCoeff = 9.7e-3;
+
+% involved parameter information
+paramPres = get_netcdf_param_attributes('PRES');
+paramTemp = get_netcdf_param_attributes('TEMP');
+paramPsal = get_netcdf_param_attributes('PSAL');
+paramTempCndc = get_netcdf_param_attributes('TEMP_CNDC');
+
+% basic adjustment information for NetCDF files
+% for N_CALIB = 1
+if (isempty(coefX2New))
+   if (ismember(g_decArgo_floatNum, g_decArgo_rbrPreApril2021FloatList))
+      equation1 = 'not applicable';
+      coefficient1 = 'not applicable';
+      comment1 = 'Pre-April2021 RBR CTD. No new compressibility coefficients available.';
+   else
+      equation1 = 'not applicable';
+      coefficient1 = 'not applicable';
+      comment1 = 'Post-April2021 RBR CTD. No compressibility correction needed.';
+   end
+else
+   equation1 = 'new conductivity = original conductivity * (1 + X2old*PRES + X3old*PRES^2 + X4old*PRES^3) / (1 + X2new*PRES_ADJUSTED + X3new*PRES_ADJUSTED^2 + X4new*PRES_ADJUSTED^3)';
+   coefficient1 = sprintf('X2old = 1.8732e-6, X3old = -7.7689e-10, X4old = 1.4890e-13, X2new = %g, X3new = %g, X4new = %g', coefX2New, coefX3New, coefX4New);
+   comment1 = 'Pre-April2021 RBR CTD. Salinity re-computed by using new compressibility coefficients provided by RBR.';
+end
+
+% for N_CALIB = 2
+equation2 = 'PSAL_ADJUSTED = gsw_SP_from_C(Cadj, TEMP_ADJUSTED + TEMP_longanomaly, PRES_ADJUSTED), TEMP_longanomaly = ctcoeff * (TEMP_CNDC - TEMP), Cadj is from re-computed salinity due to pressure effects.';
+coefficient2 = 'ctcoeff = 9.7e-3';
+comment2 = 'Long timescale thermal inertia correction applied to RBR salinity.';
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adjust profile data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for idProf = 1:length(o_tabProfiles)
+   profile = o_tabProfiles(idProf);
+   if (any(strcmp({profile.paramList.name}, 'PSAL')))
+      
+      % retrieve PTS and PT_ADJUSTED values
+      idPres = find(strcmp({profile.paramList.name}, 'PRES'));
+      idTemp = find(strcmp({profile.paramList.name}, 'TEMP'));
+      idPsal = find(strcmp({profile.paramList.name}, 'PSAL'));
+      idTempCndc = find(strcmp({profile.paramList.name}, 'TEMP_CNDC'));
+      
+      presValues = profile.data(:, idPres);
+      tempValues = profile.data(:, idTemp);
+      psalValues = profile.data(:, idPsal);
+      tempCndcValues = profile.data(:, idTempCndc);
+      
+      presAdjValues = presValues;
+      tempAdjValues = tempValues;
+      if (~isempty(profile.paramDataMode))
+         if (profile.paramDataMode(idPres) == 'A')
+            presAdjValues = profile.dataAdj(:, idPres);
+         end
+         if (profile.paramDataMode(idTemp) == 'A')
+            tempAdjValues = profile.dataAdj(:, idTemp);
+         end
+      end
+      
+      % clean fill values
+      idNoDefPts = find((presValues ~= paramPres.fillValue) & ...
+         (presAdjValues ~= paramPres.fillValue) & ...
+         (tempValues ~= paramTemp.fillValue) & ...
+         (tempAdjValues ~= paramTemp.fillValue) & ...
+         (psalValues ~= paramPsal.fillValue) & ...
+         (tempCndcValues ~= paramTempCndc.fillValue));
+      presValues = presValues(idNoDefPts);
+      presAdjValues = presAdjValues(idNoDefPts);
+      tempValues = tempValues(idNoDefPts);
+      tempAdjValues = tempAdjValues(idNoDefPts);
+      psalValues = psalValues(idNoDefPts);
+      tempCndcValues = tempCndcValues(idNoDefPts);
+      
+      if (~isempty(presValues) && ~isempty(tempValues) && ~isempty(psalValues) && ...
+            ~isempty(presAdjValues) && ~isempty(tempAdjValues) && ~isempty(tempCndcValues))
+         
+         % STEP 1
+
+         % compute original conductivity
+         coValues = gsw_C_from_SP(psalValues, tempValues, presValues);
+         
+         % compute new conductivity,
+         if (~isempty(coefX2New))
+            cnewValues = coValues .* ...
+               (1 + (coefX2Old + (coefX3Old + coefX4Old.*presValues).*presValues).*presValues) ./ ...
+               (1 + (coefX2New + (coefX3New + coefX4New.*presAdjValues).*presAdjValues).*presAdjValues);
+         else
+            cnewValues = coValues;
+         end
+
+         % compute new salinity,
+         PSAL_ADJUSTED_Padj = gsw_SP_from_C(cnewValues, tempAdjValues, presAdjValues);
+         %          PSAL_ADJUSTED_Padj(isnan(PSAL_ADJUSTED_Padj)) = paramPsal.fillValue;
+
+         % STEP 2
+
+         % calculate conductivity
+         cadj = gsw_C_from_SP(PSAL_ADJUSTED_Padj, tempAdjValues, presAdjValues);
+
+         % compute TEMP_longanomaly
+         TEMP_longanomaly = ctCoeff * (tempCndcValues - tempValues);
+
+         % use TEMP_longanomaly to compute salinity PSAL_ADJUSTED_Padj_CTM
+         PSAL_ADJUSTED_Padj_CTM = gsw_SP_from_C(cadj, tempAdjValues+TEMP_longanomaly, presAdjValues);
+         PSAL_ADJUSTED_Padj_CTM(isnan(PSAL_ADJUSTED_Padj_CTM)) = paramPsal.fillValue;
+
+         psalAjValues = PSAL_ADJUSTED_Padj_CTM;
+         
+         % create array for adjusted data
+         paramFillValue = get_prof_param_fill_value(profile);
+         if (isempty(profile.dataAdj))
+            profile.paramDataMode = repmat(' ', 1, length(profile.paramList));
+            profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+         end
+         if (isempty(profile.dataAdjQc))
+            profile.dataAdjQc = ones(size(profile.dataAdj, 1), length(profile.paramList))*g_decArgo_qcDef;
+         end
+         if (isempty(profile.dataAdjError))
+            profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
+         end
+         
+         % store adjusted data
+         profile.paramDataMode(idPsal) = 'A';
+         profile.dataAdj(idNoDefPts, idPsal) = psalAjValues;
+         
+         idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
+         profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
+
+         % store information for SCIENTIFIC_CALIB section
+                           
+         % store profile adjustment information for NetCDF file
+         if (profile.direction == 'A')
+            direction = 2;
+         else
+            direction = 1;
+         end
+
+         % for N_CALIB = 1
+         profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramProfAdjId];
+         g_decArgo_paramProfAdjInfo = [g_decArgo_paramProfAdjInfo;
+            g_decArgo_paramProfAdjId profile.outputCycleNumber direction ...
+            {'PSAL'} {equation1} {coefficient1} {comment1} {''}];
+         g_decArgo_paramProfAdjId = g_decArgo_paramProfAdjId + 1;
+
+         % for N_CALIB = 2
+         profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramProfAdjId];
+         g_decArgo_paramProfAdjInfo = [g_decArgo_paramProfAdjInfo;
+            g_decArgo_paramProfAdjId profile.outputCycleNumber direction ...
+            {'PSAL'} {equation2} {coefficient2} {comment2} {''}];
+         g_decArgo_paramProfAdjId = g_decArgo_paramProfAdjId + 1;
+
+         o_tabProfiles(idProf) = profile;
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adjust trajectory data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if (g_decArgo_generateNcTraj32 ~= 0)
+
+   adjFlag = 0;
+   for idNMeas = 1:length(o_tabTrajNMeas)
+      for idMeas = 1:length(o_tabTrajNMeas(idNMeas).tabMeas)
+
+         tabMeas = o_tabTrajNMeas(idNMeas).tabMeas(idMeas);
+         if (~isempty(tabMeas.paramList) && ...
+               any(strcmp({tabMeas.paramList.name}, 'PSAL')))
+
+            % retrieve PTS and PT_ADJUSTED values
+            idPres = find(strcmp({tabMeas.paramList.name}, 'PRES'));
+            idTemp = find(strcmp({tabMeas.paramList.name}, 'TEMP'));
+            idTempCndc = find(strcmp({tabMeas.paramList.name}, 'TEMP_CNDC'));
+
+            presValues = tabMeas.paramData(:, idPres);
+            tempValues = tabMeas.paramData(:, idTemp);
+            psalValues = tabMeas.paramData(:, idPsal);
+            tempCndcValues = tabMeas.paramData(:, idTempCndc);
+
+            presAdjValues = presValues;
+            tempAdjValues = tempValues;
+            if (~isempty(tabMeas.paramDataMode))
+               if (tabMeas.paramDataMode(idPres) == 'A')
+                  presAdjValues = tabMeas.paramDataAdj(:, idPres);
+               end
+               if (tabMeas.paramDataMode(idTemp) == 'A')
+                  tempAdjValues = tabMeas.paramDataAdj(:, idTemp);
+               end
+            end
+
+            % clean fill values
+            idNoDefPts = find((presValues ~= paramPres.fillValue) & ...
+               (presAdjValues ~= paramPres.fillValue) & ...
+               (tempValues ~= paramTemp.fillValue) & ...
+               (tempAdjValues ~= paramTemp.fillValue) & ...
+               (psalValues ~= paramPsal.fillValue) & ...
+               (tempCndcValues ~= paramTempCndc.fillValue));
+            presValues = presValues(idNoDefPts);
+            presAdjValues = presAdjValues(idNoDefPts);
+            tempValues = tempValues(idNoDefPts);
+            tempAdjValues = tempAdjValues(idNoDefPts);
+            psalValues = psalValues(idNoDefPts);
+            tempCndcValues = tempCndcValues(idNoDefPts);
+
+            if (~isempty(presValues) && ~isempty(tempValues) && ~isempty(psalValues) && ...
+                  ~isempty(presAdjValues) && ~isempty(tempAdjValues) && ~isempty(tempCndcValues))
+
+               % STEP 1
+
+               % compute original conductivity
+               coValues = gsw_C_from_SP(psalValues, tempValues, presValues);
+
+               % compute new conductivity,
+               if (~isempty(coefX2New))
+                  cnewValues = coValues .* ...
+                     (1 + (coefX2Old + (coefX3Old + coefX4Old.*presValues).*presValues).*presValues) ./ ...
+                     (1 + (coefX2New + (coefX3New + coefX4New.*presAdjValues).*presAdjValues).*presAdjValues);
+               else
+                  cnewValues = coValues;
+               end
+
+               % compute new salinity,
+               PSAL_ADJUSTED_Padj = gsw_SP_from_C(cnewValues, tempAdjValues, presAdjValues);
+               %          PSAL_ADJUSTED_Padj(isnan(PSAL_ADJUSTED_Padj)) = paramPsal.fillValue;
+
+               % STEP 2
+
+               % calculate conductivity
+               cadj = gsw_C_from_SP(PSAL_ADJUSTED_Padj, tempAdjValues, presAdjValues);
+
+               % compute TEMP_longanomaly
+               TEMP_longanomaly = ctCoeff * (tempCndcValues - tempValues);
+
+               % use TEMP_longanomaly to compute salinity PSAL_ADJUSTED_Padj_CTM
+               PSAL_ADJUSTED_Padj_CTM = gsw_SP_from_C(cadj, tempAdjValues+TEMP_longanomaly, presAdjValues);
+
+               psalAjValues = PSAL_ADJUSTED_Padj_CTM;
+               psalAjValues(isnan(psalAjValues)) = paramPsal.fillValue;
+
+               % create array for adjusted data
+               paramFillValue = get_prof_param_fill_value(tabMeas);
+               if (isempty(tabMeas.paramDataAdj))
+                  tabMeas.paramDataMode = repmat(' ', 1, length(tabMeas.paramList));
+                  tabMeas.paramDataAdj = repmat(double(paramFillValue), size(tabMeas.paramData, 1), 1);
+               end
+               if (isempty(tabMeas.paramDataAdjQc))
+                  tabMeas.paramDataAdjQc = ones(size(tabMeas.paramDataAdj, 1), length(tabMeas.paramList))*g_decArgo_qcDef;
+               end
+               if (isempty(tabMeas.paramDataAdjError))
+                  tabMeas.paramDataAdjError = repmat(double(paramFillValue), size(tabMeas.paramData, 1), 1);
+               end
+
+               % store adjusted data
+               tabMeas.paramDataMode(idPsal) = 'A';
+               tabMeas.paramDataAdj(idNoDefPts, idPsal) = psalAjValues;
+
+               idNoDef = find(tabMeas.paramDataAdj(:, idPsal) ~= paramPsal.fillValue);
+               tabMeas.paramDataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
+
+               o_tabTrajNMeas(idNMeas).tabMeas(idMeas) = tabMeas;
+               adjFlag = 1;
+
+               % store trajectory adjustment information for NetCDF file
+               store_traj_adj_info(4, o_tabTrajNMeas(idNMeas).outputCycleNumber, ...
+                  'PSAL', equation1, coefficient1, comment1, '');
+
+               store_traj_adj_info(5, o_tabTrajNMeas(idNMeas).outputCycleNumber, ...
+                  'PSAL', equation2, coefficient2, comment2, '');
+            end
+         end
+      end
+   end
+
+   % update DATA_MODE
+   if (adjFlag)
+      if (any([o_tabTrajNCycle.dataMode] ~= 'A'))
+         idCyList = find([o_tabTrajNCycle.dataMode] ~= 'A');
+         for idCy = 1:length(idCyList)
+            idStruct = find([o_tabTrajNMeas.outputCycleNumber] == o_tabTrajNCycle(idCyList(idCy)).outputCycleNumber); % nominal case: only one
+            for idS = 1:length(idStruct)
+               tabTrajNMeas = o_tabTrajNMeas(idStruct(idS));
+               if (any([tabTrajNMeas.tabMeas.paramDataMode] == 'A'))
+                  o_tabTrajNCycle(idCyList(idCy)).dataMode = 'A';
+                  break
+               end
+            end
+         end
+      end
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve new compressibility coefficients provided by RBR for pre-april 2021
+% RBRs.
+%
+% SYNTAX :
+%  [o_coefX2New, o_coefX3New, o_coefX4New] = get_rbr_compressibility_coef(a_wmoNumber)
+%
+% INPUT PARAMETERS :
+%   a_wmoNumber : float WMO number
+%
+% OUTPUT PARAMETERS :
+%   o_coefX2New              : new compressibility coefficient #2
+%   o_coefX3New              : new compressibility coefficient #3
+%   o_coefX4New              : new compressibility coefficient #4
+%   o_preApril2021RbrWmoList : list of Coriolis pre-april 2021 RBR floats
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   04/01/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_coefX2New, o_coefX3New, o_coefX4New] = get_rbr_compressibility_coef(a_wmoNumber)
+
+% output parameters initialization
+o_coefX2New = '';
+o_coefX3New = '';
+o_coefX4New = '';
+
+% set new compressibility coefficients provided by RBR for pre-april 2021 RBR
+% the 11 following Coriolis floats are mentionned in
+% https://github.com/ArgoDMQC/RBRargo_DMQC/blob/main/RBRargo3_compressibility_table.csv
+% even if no new compressibility coefficients are provided for 3 of them
+switch (a_wmoNumber)
+   case 6903075
+      o_coefX2New = 1.8597e-06;
+      o_coefX3New = -5.9107e-10;
+      o_coefX4New = 9.4870e-14;
+   case 6903076
+      o_coefX2New = 1.5541e-06;
+      o_coefX3New = -4.9395e-10;
+      o_coefX4New = 7.9281e-14;
+   case 6903077
+      o_coefX2New = 1.5803e-06;
+      o_coefX3New = -5.0228e-10;
+      o_coefX4New = 8.0617e-14;
+   case 6903078
+      o_coefX2New = 1.4406e-06;
+      o_coefX3New = -4.5788e-10;
+      o_coefX4New = 7.3491e-14;
+   case 6903709
+      o_coefX2New = '';
+      o_coefX3New = '';
+      o_coefX4New = '';
+   case 6903710
+      o_coefX2New = '';
+      o_coefX3New = '';
+      o_coefX4New = '';
+   case 6904101
+      o_coefX2New = '';
+      o_coefX3New = '';
+      o_coefX4New = '';
+   case 6904104
+      o_coefX2New = 1.5803e-06;
+      o_coefX3New = 5.0228e-10;
+      o_coefX4New = 8.0617e-14;
+   case 6904102
+      o_coefX2New = 1.4668e-06;
+      o_coefX3New = -4.6620e-10;
+      o_coefX4New = 7.4827e-14;
+   case 6904103
+      o_coefX2New = 1.4493e-06;
+      o_coefX3New = -4.6065e-10;
+      o_coefX4New = 7.3936e-14;
+   case 6904105
+      o_coefX2New = 1.4144e-06;
+      o_coefX3New = -4.4955e-10;
+      o_coefX4New = 7.2155e-14;
 end
 
 return

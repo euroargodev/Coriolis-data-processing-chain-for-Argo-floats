@@ -74,7 +74,11 @@ minLon = min(lon);
 maxLon = max(lon);
 
 for idP = 1:length(a_lat)
-   
+
+   if (isnan(a_lat(idP)) || isnan(a_lon(idP)))
+      continue
+   end
+
    idLigStart = find(lat <= a_lat(idP), 1, 'last');
    if (isempty(idLigStart))
       idLigStart = 1;
@@ -140,23 +144,25 @@ for idP = 1:length(a_lat)
       %       lonVal = cat(1, lonVal1, lonVal2);
       clear elev1 elev2
    end
-   
-   if (size(elev, 1) == 2)
-      if (size(elev, 2) == 2)
-         o_elev(idP, 1) = elev(2, 1);
-         o_elev(idP, 2) = elev(1, 1);
-         o_elev(idP, 3) = elev(2, 2);
-         o_elev(idP, 4) = elev(1, 2);
+
+   if (~isempty(elev))
+      if (size(elev, 1) == 2)
+         if (size(elev, 2) == 2)
+            o_elev(idP, 1) = elev(2, 1);
+            o_elev(idP, 2) = elev(1, 1);
+            o_elev(idP, 3) = elev(2, 2);
+            o_elev(idP, 4) = elev(1, 2);
+         else
+            o_elev(idP, 1) = elev(2);
+            o_elev(idP, 2) = elev(1);
+         end
       else
-         o_elev(idP, 1) = elev(2);
-         o_elev(idP, 2) = elev(1);
-      end
-   else
-      if (size(elev, 2) == 2)
-         o_elev(idP, 1) = elev(1, 1);
-         o_elev(idP, 3) = elev(1, 2);
-      else
-         o_elev(idP, 1) = elev;
+         if (size(elev, 2) == 2)
+            o_elev(idP, 1) = elev(1, 1);
+            o_elev(idP, 3) = elev(1, 2);
+         else
+            o_elev(idP, 1) = elev;
+         end
       end
    end
    

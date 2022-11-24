@@ -98,7 +98,9 @@ else
    name = sprintf('_%d', floatList);
 end
 
-kmlFileName = ['ge_generate_traj_from_nc_all' name '_CEP_MIN_AVG_' ident '.kml'];
+% kmlFileName = ['ge_generate_traj_from_nc_all' name '_CEP_MIN_AVG_' ident '.kml'];
+kmlFileName = ['ge_generate_traj_from_nc_all' name '_' ident '.kml'];
+% kmlFileName = ['ge_generate_traj_from_nc_all' name '_ARGO_' ident '.kml'];
 kmzFileName = [kmlFileName(1:end-4) '.kmz'];
 outputFileName = [DIR_OUTPUT_KML_FILES kmlFileName];
 
@@ -481,19 +483,19 @@ for idFloat = 1:nbFloats
             %             errorEllipseMajCy = errorEllipseMajCy(idOk);
 
             % on ne garde que les positions avec le CEP min
-            minCep = min(errorEllipseMajCy);
-            idOk = find(errorEllipseMajCy == minCep);
-            juldCy = juldCy(idOk);
-            longitudeCy = longitudeCy(idOk);
-            latitudeCy = latitudeCy(idOk);
-            errorEllipseMajCy = errorEllipseMajCy(idOk);
+            %             minCep = min(errorEllipseMajCy);
+            %             idOk = find(errorEllipseMajCy == minCep);
+            %             juldCy = juldCy(idOk);
+            %             longitudeCy = longitudeCy(idOk);
+            %             latitudeCy = latitudeCy(idOk);
+            %             errorEllipseMajCy = errorEllipseMajCy(idOk);
 
             % on effectue une moyenne pondérée des positions
-            weight = 1./(errorEllipseMajCy.*errorEllipseMajCy);
-            juldCy = mean(juldCy);
-            longitudeCy = sum(longitudeCy.*weight)/sum(weight);
-            latitudeCy = sum(latitudeCy.*weight)/sum(weight);
-            errorEllipseMajCy = errorEllipseMajCy(1);
+            %             weight = 1./(errorEllipseMajCy.*errorEllipseMajCy);
+            %             juldCy = mean(juldCy);
+            %             longitudeCy = sum(longitudeCy.*weight)/sum(weight);
+            %             latitudeCy = sum(latitudeCy.*weight)/sum(weight);
+            %             errorEllipseMajCy = errorEllipseMajCy(1);
 
             % POSITIONS Iridium
 

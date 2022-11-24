@@ -20,7 +20,7 @@
 function nc_trace_cycle_times(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 global g_NTCT_NC_DIR;
 global g_NTCT_NC_DIR_AUX;
@@ -63,6 +63,7 @@ else
 
    % default list of floats to plot
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts5_usea.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_20220321_nke_argos_asfar.txt';
 
    % JPR CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

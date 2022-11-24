@@ -34,11 +34,12 @@
 %                                    Arvor-Deep-Ice Iridium 5.6
 %                                    Provor-ARN-DO-Ice Iridium 5.76
 %                                    CTS4 Ice
+%   03/24/2022 - RNU - 2 rsync directories are available for PROVOR CTS5 floats
 % ------------------------------------------------------------------------------
 function decode_float_locations(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 0;
+CORIOLIS_CONFIGURATION_FLAG = 1;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
 
@@ -122,7 +123,8 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    % PROVOR CTS5 CONFIGURATION - START
 
    % rsync directory
-   DIR_INPUT_RSYNC_DATA_CTS5 = '/home/coriolis_exp/spool/co01/co0101/co010115/archive/cycle/';
+   DIR_INPUT_RSYNC_DATA_CTS5_1 = '/home/coriolis_exp/spool/co01/co0101/co010115/archive/cycle/';
+   DIR_INPUT_RSYNC_DATA_CTS5_2 = '/home/coriolis_exp/spool/co01/co0101/co010111/rsync/';
 
    % spool directory
    DIR_INPUT_SPOOL_DATA_CTS5 = '';
@@ -219,7 +221,8 @@ else
    % PROVOR CTS5 CONFIGURATION - START
 
    % rsync directory
-   DIR_INPUT_RSYNC_DATA_CTS5 = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS5\rsync_data\';
+   DIR_INPUT_RSYNC_DATA_CTS5_1 = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS5\rsync_data\';
+   DIR_INPUT_RSYNC_DATA_CTS5_2 = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS5\rsync_data2\';
 
    % spool directory
    DIR_INPUT_SPOOL_DATA_CTS5 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
@@ -399,7 +402,8 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
    duplicate_cts5_files_float_to_recover( ...
       floatWmo, ...
       floatPtt, ...
-      DIR_INPUT_RSYNC_DATA_CTS5, ...
+      DIR_INPUT_RSYNC_DATA_CTS5_1, ...
+      DIR_INPUT_RSYNC_DATA_CTS5_2, ...
       DIR_INPUT_SPOOL_DATA_CTS5, ...
       DIR_OUTPUT_DATA_CTS5, ...
       MAX_FILE_AGE_IN_HOUR);

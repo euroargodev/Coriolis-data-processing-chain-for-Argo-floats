@@ -34,7 +34,7 @@ o_lon = [];
 o_lat = [];
 
 if (isempty(a_gebcoFileName))
-   a_gebcoFileName = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2020\GEBCO_2020.nc';
+   a_gebcoFileName = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2021\GEBCO_2021.nc';
 end
 
 

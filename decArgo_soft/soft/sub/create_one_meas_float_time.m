@@ -40,6 +40,7 @@ global g_decArgo_qcStrMissing;
 
 % global time status
 global g_JULD_STATUS_fill_value;
+global g_JULD_STATUS_3;
 
 
 o_measStruct.measCode = a_measCode;
@@ -50,7 +51,7 @@ if (a_time ~= g_decArgo_dateDef)
          o_measStruct.juldStatus = a_timeStatus;
          o_measStruct.juldQc = g_decArgo_qcStrNoQc;
          o_measStruct.juldAdj = a_time;
-         o_measStruct.juldAdjStatus = a_timeStatus;
+         o_measStruct.juldAdjStatus = g_JULD_STATUS_3;
          o_measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
       else
          o_measStruct.juld = a_time;

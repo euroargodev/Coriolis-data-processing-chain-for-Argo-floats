@@ -200,6 +200,11 @@
 %                             trajectory
 %   01/03/2022 - RNU - V 5.7: Exclude NaN values from get_gebco_elev_point
 %                             output
+%   04/04/2022 - RNU - V 5.8: Updated to cope with version 3.6 of Argo Quality 
+%                             Control Manual for CTD and Trajectory Data
+%                             TEST #24: set PSAL_QC = '3' for pre-april 2021 RBR
+%                             floats (list g_decArgo_rbrPreApril2021FloatList)
+%                             TEST #19: revised version of Deeepest Pressure Test
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -234,12 +239,15 @@ global g_decArgo_decoderIdListDeepFloat;
 global g_decArgo_decoderIdListBgcFloatAll;
 global g_decArgo_decoderIdListProfWithDatedLev;
 
+% list of pre-april 2021 RBR floats
+global g_decArgo_rbrPreApril2021FloatList;
+
 % temporary trajectory data
 global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.7';
+g_decArgo_addRtqcToProfileVersion = '5.8';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -340,6 +348,7 @@ expectedTestList = [ ...
    {'TEST021_NS_UNPUMPED_SALINITY'} ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
    {'TEST023_DEEP_FLOAT'} ...
+   {'TEST024_RBR_FLOAT'} ...
    {'TEST025_MEDD'} ...
    {'TEST057_DOXY'} ...
    {'TEST059_NITRATE'} ...
@@ -481,7 +490,7 @@ if (testFlagList(15) == 1)
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
          a_floatNum);
       testFlagList(15) = 0;
    end
@@ -627,12 +636,12 @@ if (testFlagList(21) == 1)
       if (~isempty(testMetaId))
          ncMetaPathFileName = a_testMetaData{testMetaId+1};
          if ~(exist(ncMetaPathFileName, 'file') == 2)
-            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found - test #19 not performed\n', ...
+            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found - test #21 not performed\n', ...
                a_floatNum, ncMetaPathFileName);
             testFlagList(21) = 0;
          end
       else
-         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 - test #19 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #21 - test #21 not performed\n', ...
             a_floatNum);
          testFlagList(21) = 0;
       end
@@ -725,6 +734,84 @@ if (testFlagList(23) == 1)
       fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag information needed to perform test #23 - test #23 not performed\n', ...
          a_floatNum);
       testFlagList(23) = 0;
+   end
+end
+
+if (testFlagList(24) == 1)
+   % for pre-april 2021 RBR floats, we need the nc meta-data file path name
+   testMetaId = find(strcmp('TEST024_METADA_DATA_FILE', a_testMetaData) == 1);
+   if (~isempty(testMetaId))
+      ncMetaPathFileName = a_testMetaData{testMetaId+1};
+      if ~(exist(ncMetaPathFileName, 'file') == 2)
+         fprintf('RTQC_WARNING: TEST024: Float #%d: Nc meta-data file (%s) not found - test #24 not performed\n', ...
+            a_floatNum, ncMetaPathFileName);
+         testFlagList(24) = 0;
+      end
+   else
+      fprintf('RTQC_WARNING: TEST024: Float #%d: Nc meta-data file needed to perform test #24 - test #24 not performed\n', ...
+         a_floatNum);
+      testFlagList(24) = 0;
+   end
+
+   if (testFlagList(24) == 1)
+      % retrieve information from NetCDF meta file
+      wantedVars = [ ...
+         {'PARAMETER'} ...
+         {'PARAMETER_SENSOR'} ...
+         {'SENSOR'} ...
+         {'SENSOR_MODEL'} ...
+         ];
+
+      % retrieve information from NetCDF meta file
+      [ncMetaData] = get_data_from_nc_file(ncMetaPathFileName, wantedVars);
+
+      if (isempty(parameterMeta))
+         parameterMeta = [];
+         idVal = find(strcmp('PARAMETER', ncMetaData) == 1);
+         if (~isempty(idVal))
+            parameterMetaTmp = ncMetaData{idVal+1}';
+
+            for id = 1:size(parameterMetaTmp, 1)
+               parameterMeta{end+1} = deblank(parameterMetaTmp(id, :));
+            end
+         end
+      end
+
+      if (isempty(parameterSensorMeta))
+         parameterSensorMeta = [];
+         idVal = find(strcmp('PARAMETER_SENSOR', ncMetaData) == 1);
+         if (~isempty(idVal))
+            parameterSensorMetaTmp = ncMetaData{idVal+1}';
+
+            for id = 1:size(parameterSensorMetaTmp, 1)
+               parameterSensorMeta{end+1} = deblank(parameterSensorMetaTmp(id, :));
+            end
+         end
+      end
+
+      if (isempty(sensorMeta))
+         sensorMeta = [];
+         idVal = find(strcmp('SENSOR', ncMetaData) == 1);
+         if (~isempty(idVal))
+            sensorMetaTmp = ncMetaData{idVal+1}';
+
+            for id = 1:size(sensorMetaTmp, 1)
+               sensorMeta{end+1} = deblank(sensorMetaTmp(id, :));
+            end
+         end
+      end
+
+      if (isempty(sensorModelMeta))
+         sensorModelMeta = [];
+         idVal = find(strcmp('SENSOR_MODEL', ncMetaData) == 1);
+         if (~isempty(idVal))
+            sensorModelMetaTmp = ncMetaData{idVal+1}';
+
+            for id = 1:size(sensorModelMetaTmp, 1)
+               sensorModelMeta{end+1} = deblank(sensorModelMetaTmp(id, :));
+            end
+         end
+      end
    end
 end
 
@@ -2007,7 +2094,7 @@ if (testFlagList(19) == 1)
                            % apply the test
                            if (~isempty(idToFlag))
                               idToFlagParam = idNoDef(find(ismember(idNoDef, idToFlag) == 1));
-                              paramDataQc(idProf, idToFlagParam) = set_qc(paramDataQc(idProf, idToFlagParam), g_decArgo_qcStrBad);
+                              paramDataQc(idProf, idToFlagParam) = set_qc(paramDataQc(idProf, idToFlagParam), g_decArgo_qcStrCorrectable);
                               dataStruct.(paramDataQcName) = paramDataQc;
                               
                               testFailedList(19, idProf) = 1;
@@ -4100,6 +4187,72 @@ if (testFlagList(23) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 24: pre-april 2021 RBR floats
+%
+if (testFlagList(24) == 1)
+
+   % Specific test:
+   % set PSAL_QC = '3' for pre-april 2021 RBR salinity
+
+   if (ismember(a_floatNum, g_decArgo_rbrPreApril2021FloatList))
+
+      % list of parameters concerned by this test
+      test24ParameterList1 = [ ...
+         {'PSAL'} ...
+         {'PSAL2'} ...
+         ];
+
+      % get the name of PSAL parameter assigned to RBR sensor
+      rbrPsalName = [];
+      for idP = 1:length(test24ParameterList1)
+         paramName = test24ParameterList1{idP};
+         idF = find(strcmp(paramName, parameterMeta) == 1, 1);
+         if (~isempty(idF))
+            paramSensor = parameterSensorMeta{idF};
+            % retrieve the sensor model of this parameter
+            idF = find(strcmp(paramSensor, sensorMeta) == 1, 1);
+            if (~isempty(idF))
+               paramSensorModel = sensorModelMeta(idF);
+               if (strncmp(paramSensorModel, 'RBR', length('RBR')))
+                  rbrPsalName{end+1} = paramName;
+               end
+            end
+         end
+      end
+
+      if (~isempty(rbrPsalName))
+
+         for idP = 1:length(rbrPsalName)
+            paramName = rbrPsalName{idP};
+
+            for idProf = 1:length(juld)
+
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, 'R');
+
+               if (~isempty(paramData))
+
+                  profParam = paramData(idProf, :);
+
+                  % initialize Qc flags (with QC = '3')
+                  idNoDefParam = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
+                  dataStruct.(paramDataQcName) = paramDataQc;
+
+                  testDoneList(24, idProf) = 1;
+                  testDoneListForTraj{24, idProf} = [testDoneListForTraj{24, idProf} idNoDefParam];
+
+                  testFailedList(24, idProf) = 1;
+                  testFailedListForTraj{24, idProf} = [testFailedListForTraj{24, idProf} idNoDefParam];
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 57: DOXY specific test
 %
 if (testFlagList(57) == 1)
@@ -5199,11 +5352,11 @@ end
 testDoneListCFile = testDoneList;
 testDoneListCFile([11 57 59 62 63], :) = 0;
 testDoneListBFile = testDoneList;
-testDoneListBFile([8 14], :) = 0;
+testDoneListBFile([8 14 24 25], :) = 0;
 testFailedListCFile = testFailedList;
 testFailedListCFile([11 57 59 62 63], :) = 0;
 testFailedListBFile = testFailedList;
-testFailedListBFile([8 14], :) = 0;
+testFailedListBFile([8 14 24 25], :) = 0;
 
 % compute the report hex values
 testDoneCHex = repmat({''}, length(juld), 1);
@@ -6145,7 +6298,7 @@ return
 
 % ------------------------------------------------------------------------------
 % Compute the new threshold for test #19 along the following rules:
-%   - 10% for profile pressures deeper than 1000 dbar
+%   - profile pressure + 100 dbars for profile pressures deeper than 1000 dbar
 %   - for profile pressures shallower than 1000 dbar, the coefficient varies
 %     linearly between 10% at 1000 dbar and 150% at 10 dbar
 %
@@ -6164,13 +6317,13 @@ return
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   05/17/2019 - RNU - creation
+%   04/04/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_maxPres] = compute_max_pres_for_rtqc_test19(a_profilePressure)
 
 if (a_profilePressure >= 1000)
-   % 10 % for profile pressures deeper than 1000 dbar
-   o_maxPres = a_profilePressure*1.1;
+   % profile pressure + 100 dbars for profile pressures deeper than 1000 dbar
+   o_maxPres = a_profilePressure + 100;
 else
    % for profile pressures shallower than 1000 dbar, the coefficient will
    % vary linearly between 150 % at 10 dbar and 10 % at 1000 dbar

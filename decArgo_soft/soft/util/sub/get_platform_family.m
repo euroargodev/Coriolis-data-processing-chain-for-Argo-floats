@@ -72,6 +72,10 @@ switch (a_decoderId)
    case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       % Apex APF11
       o_platformFamily = 'FLOAT';
+
+   case {1010}
+      % Apex APF9
+      o_platformFamily = 'FLOAT';
       
    otherwise
       fprintf('ERROR: Float #%d: No platform family assigned to decoderId #%d\n', ...
