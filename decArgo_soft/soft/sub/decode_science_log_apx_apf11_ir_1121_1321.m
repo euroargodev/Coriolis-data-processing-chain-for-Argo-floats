@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_miscInfo, o_techData, o_gpsData, ...
 %    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
-%    o_cycleTimeData] = ...
+%    o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
 %    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 %
 % INPUT PARAMETERS :
@@ -20,6 +20,8 @@
 %   o_profCtdPts    : CTD_PTS data
 %   o_profCtdCp     : CTD_CP data
 %   o_profDo        : O2 data
+%   o_profFlbbCd    : FLBB_CD data
+%   o_profOcr504I   : OCR_504I data
 %   o_cycleTimeData : cycle timings data
 %
 % EXAMPLES :
@@ -32,7 +34,7 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_techData, o_gpsData, ...
    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
-   o_cycleTimeData] = ...
+   o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 
 % output parameters initialization
@@ -44,6 +46,9 @@ o_profCtdPt = [];
 o_profCtdPts = [];
 o_profCtdCp = [];
 o_profDo = [];
+o_profFlbbCd = [];
+o_profOcr504I = [];
+
 o_cycleTimeData = a_cycleTimeData;
 
 % current float WMO number
@@ -71,6 +76,8 @@ expectedFields = [ ...
    {'CTD_PTS'} ...
    {'CTD_CP'} ...
    {'O2'} ...
+   {'FLBB_CD'} ...
+   {'OCR_504I'} ...
    ];
 
 usedMessages = [ ...
@@ -97,6 +104,8 @@ ctdPt = [];
 ctdPts = [];
 ctdCp = [];
 do = [];
+flbbCd = [];
+ocr504I = [];
 for idFile = 1:length(a_scienceLogFileList)
 
    sciFilePathName = a_scienceLogFileList{idFile};
@@ -229,6 +238,10 @@ for idFile = 1:length(a_scienceLogFileList)
                      ctdCp = [ctdCp; data.(fieldName)];
                   case 'O2'
                      do = [do; data.(fieldName)];
+                  case 'FLBB_CD'
+                     flbbCd = [flbbCd; data.(fieldName)];
+                  case 'OCR_504I'
+                     ocr504I = [ocr504I; data.(fieldName)];
                end
             else
                fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
@@ -302,6 +315,40 @@ paramRawTemp.name = 'RawTemp';
 paramRawTemp.units = '';
 paramRawTemp.cFormat = '%.5f';
 
+paramChlWave = get_netcdf_param_attributes('TEMP_DOXY');
+paramChlWave.name = 'chl_wave';
+paramChlWave.units = '';
+paramChlWave.cFormat = '%d';
+
+paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
+
+paramBscWave = get_netcdf_param_attributes('TEMP_DOXY');
+paramBscWave.name = 'bsc_wave';
+paramBscWave.units = '';
+paramBscWave.cFormat = '%d';
+
+paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
+
+paramCdWave = get_netcdf_param_attributes('TEMP_DOXY');
+paramCdWave.name = 'cd_wave';
+paramCdWave.units = '';
+paramCdWave.cFormat = '%d';
+
+paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
+
+paramThermSig = get_netcdf_param_attributes('TEMP_DOXY');
+paramThermSig.name = 'therm_sig';
+paramThermSig.units = '';
+paramThermSig.cFormat = '%d';
+
+paramDownIrradiance380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
+
+paramDownIrradiance412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
+
+paramDownIrradiance490 = get_netcdf_param_attributes('DOWN_IRRADIANCE490');
+
+paramDownwellingPar = get_netcdf_param_attributes('DOWNWELLING_PAR');
+
 if (~isempty(ctdP))
    o_profCtdP = get_apx_profile_data_init_struct;
    o_profCtdP.dateList = paramJuld;
@@ -347,7 +394,26 @@ if (~isempty(do))
    o_profDo.data(isnan(o_profDo.data(:, 8)), 8) = paramC2phaseDoxy.fillValue;
 end
 
-% add PRES for DO data
+if (~isempty(flbbCd))
+   o_profFlbbCd = get_apx_profile_data_init_struct;
+   o_profFlbbCd.dateList = paramJuld;
+   o_profFlbbCd.dates = flbbCd(:, 1);
+   o_profFlbbCd.paramList = [paramPres paramChlWave paramFluorescenceChla paramBscWave ...
+      paramBetaBackscattering700 paramCdWave paramFluorescenceCdom paramThermSig];
+   o_profFlbbCd.data = [ones(size(flbbCd, 1), 1)*paramPres.fillValue flbbCd(:, 2:end)];
+end
+
+if (~isempty(ocr504I))
+   o_profOcr504I = get_apx_profile_data_init_struct;
+   o_profOcr504I.dateList = paramJuld;
+   o_profOcr504I.dates = ocr504I(:, 1);
+   o_profOcr504I.paramList = [paramPres ...
+      paramDownIrradiance380 paramDownIrradiance412 ...
+      paramDownIrradiance490 paramDownwellingPar];
+   o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
+end
+
+% add PRES for DO, FLBB and OCR data
 if (~isempty(o_profDo))
    tabJuld = [];
    tabPres = [];
@@ -382,6 +448,14 @@ if (~isempty(o_profDo))
       if (~isempty(o_profDo))
          o_profDo.data(:, 1) = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
          o_profDo.data(isnan(o_profDo.data(:, 1)), 1) = paramPres.fillValue;
+      end
+      if (~isempty(o_profFlbbCd))
+         o_profFlbbCd.data(:, 1) = interp1(tabJuld, tabPres, o_profFlbbCd.dates, 'linear');
+         o_profFlbbCd.data(isnan(o_profFlbbCd.data(:, 1)), 1) = paramPres.fillValue;
+      end
+      if (~isempty(o_profOcr504I))
+         o_profOcr504I.data(:, 1) = interp1(tabJuld, tabPres, o_profOcr504I.dates, 'linear');
+         o_profOcr504I.data(isnan(o_profOcr504I.data(:, 1)), 1) = paramPres.fillValue;
       end
    end
 end
