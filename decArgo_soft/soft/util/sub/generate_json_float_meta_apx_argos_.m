@@ -217,7 +217,7 @@ for idFloat = 1:length(floatList)
    % calibration information
    
    switch (dacFormatId)
-      case {'093008', '021208', '082807', '090810'}
+      case {'093008', '021208', '090810'}
          idF = find(strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_', length('AANDERAA_OPTODE_COEF_')) == 1);
          calibDataDb = [];
          for id = 1:length(idF)
@@ -240,6 +240,49 @@ for idFloat = 1:length(floatList)
          end
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end
+      case {'082807'}
+         idF = find(strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_', length('AANDERAA_OPTODE_COEF_')) == 1);
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = char(metaData(idForWmo(idF(id)), 5));
+            if (length(calibName) == 24)
+               fieldName = ['CCoef' calibName(end-1:end)];
+               calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+            else
+               if (strcmp(calibName, 'AANDERAA_OPTODE_COEF_A'))
+                  fieldName = 'PhaseCoef0';
+               elseif (strcmp(calibName, 'AANDERAA_OPTODE_COEF_B'))
+                  fieldName = 'PhaseCoef1';
+               elseif (strcmp(calibName, 'AANDERAA_OPTODE_COEF_C'))
+                  fieldName = 'PhaseCoef2';
+               elseif (strcmp(calibName, 'AANDERAA_OPTODE_COEF_D'))
+                  fieldName = 'PhaseCoef3';
+               end
+               calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+            end
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end
+         idF = find((strncmp(metaData(idForWmo, 5), 'FLNTU_Chlorophyll', length('FLNTU_Chlorophyll')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'FLNTU_Turbidity', length('FLNTU_Turbidity')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = char(metaData(idForWmo(idF(id)), 5));
+            if (strcmp(calibName, 'FLNTU_ChlorophyllScaleFactor'))
+               fieldName = 'ScaleFactChloroA';
+            elseif (strcmp(calibName, 'FLNTU_ChlorophyllDarkCount'))
+               fieldName = 'DarkCountChloroA';
+            elseif (strcmp(calibName, 'FLNTU_TurbidityScaleFactor'))
+               fieldName = 'ScaleFactTurbi';
+            elseif (strcmp(calibName, 'FLNTU_TurbidityDarkCount'))
+               fieldName = 'DarkCountTurbi';
+            end
+            calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.FLNTU = calibDataDb;
          end
       case {'032213'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...

@@ -225,7 +225,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
             if (isfield(calibData, fieldName))
                tabDoxyCoef(1, id+1) = calibData.(fieldName);
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
@@ -234,13 +234,13 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
             if (isfield(calibData, fieldName))
                tabDoxyCoef(2, id+1) = calibData.(fieldName);
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
          g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
       else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
       end
    end
 end

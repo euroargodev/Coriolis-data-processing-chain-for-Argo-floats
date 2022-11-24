@@ -136,18 +136,62 @@ end
 
 if (~isempty(a_parkData))
    
-   measStruct = get_traj_one_meas_init_struct();
-   measStruct.measCode = g_MC_DriftAtPark;
-   measStruct.paramList = a_parkData.paramList;
-   measStruct.paramData = a_parkData.data;
-   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   if (ismember(a_decoderId, [1014])) % remove 'BLUE_REF' and 'NTU_REF' from parking data
+      
+      idPres = find(strcmp({a_parkData.paramList.name}, 'PRES') == 1, 1);
+      idBlueRef = find(strcmp({a_parkData.paramList.name}, 'BLUE_REF') == 1, 1);
+      idNtuRef = find(strcmp({a_parkData.paramList.name}, 'NTU_REF') == 1, 1);
+      
+      % create a new measurement
+      newMeas = a_parkData;
+      
+      newMeas.paramList = a_parkData.paramList([idPres idBlueRef idNtuRef]);
+      
+      newMeas.data = a_parkData.data(:, [idPres idBlueRef idNtuRef]);
+      newMeas.dataRed = a_parkData.dataRed(:, [idPres idBlueRef idNtuRef]);
+      if (~isempty(a_parkData.dataAdj))
+         newMeas.dataAdj = a_parkData.dataAdj(:, [idPres idBlueRef idNtuRef]);
+      end
+      
+      measStruct = get_traj_one_meas_init_struct();
+      measStruct.sensorNumber = 1000; % so that it will be stored in TRAJ_AUX file
+      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.paramList = newMeas.paramList;
+      measStruct.paramData = newMeas.data;
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      
+      % clean the current measurement
+      a_parkData.paramList([idBlueRef idNtuRef]) = [];
+      
+      a_parkData.data(:, [idBlueRef idNtuRef]) = [];
+      a_parkData.dataRed(:, [idBlueRef idNtuRef]) = [];
+      if (~isempty(a_parkData.dataAdj))
+         a_parkData.dataAdj(:, [idBlueRef idNtuRef]) = [];
+      end
+      
+      measStruct = get_traj_one_meas_init_struct();
+      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.paramList = a_parkData.paramList;
+      measStruct.paramData = a_parkData.data;
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   else
+      
+      measStruct = get_traj_one_meas_init_struct();
+      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.paramList = a_parkData.paramList;
+      measStruct.paramData = a_parkData.data;
+      if (~isempty(a_parkData.dataAdj))
+         measStruct.paramDataAdj = a_parkData.dataAdj;
+      end
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % REPRESENTATIVE PARKING MEASUREMENTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (ismember(a_decoderId, [1013, 1015]))
+if (ismember(a_decoderId, [1013, 1015])) % mean PTS is not provided for these floats => we use the park measurement
    if (~isempty(a_parkData))
       
       measStruct = get_traj_one_meas_init_struct();
@@ -233,12 +277,50 @@ end
 
 if (~isempty(a_surfData))
    
-   for idMeas = 1:size(a_surfData.data, 1)
-      measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_InAirSeriesOfMeas;
-      measStruct.paramList = a_surfData.paramList;
-      measStruct.paramData = a_surfData.data(idMeas, :);
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   if (ismember(a_decoderId, [1014])) % remove 'BLUE_REF' and 'NTU_REF' from surface data
+      
+      idPres = find(strcmp({a_surfData.paramList.name}, 'PRES') == 1, 1);
+      idBlueRef = find(strcmp({a_surfData.paramList.name}, 'BLUE_REF') == 1, 1);
+      idNtuRef = find(strcmp({a_surfData.paramList.name}, 'NTU_REF') == 1, 1);
+      
+      for idMeas = 1:size(a_surfData.data, 1)
+
+         % create a new measurement
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.sensorNumber = 1000; % so that it will be stored in TRAJ_AUX file
+         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.paramList = a_surfData.paramList([idPres idBlueRef idNtuRef]);
+         measStruct.paramData = a_surfData.data(idMeas, [idPres idBlueRef idNtuRef]);
+         if (~isempty(a_surfData.dataAdj))
+            measStruct.paramDataAdj = a_surfData.dataAdj(idMeas, [idPres idBlueRef idNtuRef]);
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         
+         % clean the current measurement
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.paramList = a_surfData.paramList;
+         measStruct.paramList([idBlueRef idNtuRef]) = [];
+         measStruct.paramData = a_surfData.data(idMeas, :);
+         measStruct.paramData([idBlueRef idNtuRef]) = [];
+         if (~isempty(a_surfData.dataAdj))
+            measStruct.paramDataAdj = a_surfData.dataAdj(idMeas, :);
+            measStruct.paramDataAdj([idBlueRef idNtuRef]) = [];
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
+   else
+      
+      for idMeas = 1:size(a_surfData.data, 1)
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_InAirSeriesOfMeas;
+         measStruct.paramList = a_surfData.paramList;
+         measStruct.paramData = a_surfData.data(idMeas, :);
+         if (~isempty(a_surfData.dataAdj))
+            measStruct.paramDataAdj = a_surfData.dataAdj(idMeas, :);
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
    end
 end
 
@@ -279,6 +361,9 @@ if (~isempty(a_profData))
             
             % add parameter data to the structure
             measStruct.paramData = profile.data(idDeepest, :);
+            if (~isempty(profile.dataAdj))
+               measStruct.paramDataAdj = profile.dataAdj(idDeepest, :);
+            end
             
             tabAscDeepestBin = [tabAscDeepestBin; measStruct];
             tabAscDeepestBinPres = [tabAscDeepestBinPres; profile.data(idDeepest, idPres)];
@@ -287,8 +372,43 @@ if (~isempty(a_profData))
    end
    
    if (~isempty(tabAscDeepestBin))
+      
       [~, idMax] = max(tabAscDeepestBinPres);
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; tabAscDeepestBin(idMax)];
+      tabAscDeepestBin = tabAscDeepestBin(idMax);
+      
+      if (ismember(a_decoderId, [1014])) % remove 'BLUE_REF' and 'NTU_REF' from parking data
+
+         idPres = find(strcmp({tabAscDeepestBin.paramList.name}, 'PRES') == 1, 1);
+         idBlueRef = find(strcmp({tabAscDeepestBin.paramList.name}, 'BLUE_REF') == 1, 1);
+         idNtuRef = find(strcmp({tabAscDeepestBin.paramList.name}, 'NTU_REF') == 1, 1);
+         
+         % create a new measurement
+         newMeas = tabAscDeepestBin;
+         
+         newMeas.sensorNumber = 1000; % so that it will be stored in TRAJ_AUX file
+         
+         newMeas.paramList = tabAscDeepestBin.paramList([idPres idBlueRef idNtuRef]);
+         
+         newMeas.paramData = tabAscDeepestBin.paramData(:, [idPres idBlueRef idNtuRef]);
+         if (~isempty(tabAscDeepestBin.paramDataAdj))
+            newMeas.paramDataAdj = tabAscDeepestBin.paramDataAdj(:, [idPres idBlueRef idNtuRef]);
+         end
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; newMeas];
+
+         % clean the current measurement
+         tabAscDeepestBin.paramList([idBlueRef idNtuRef]) = [];
+         
+         tabAscDeepestBin.paramData(:, [idBlueRef idNtuRef]) = [];
+         if (~isempty(tabAscDeepestBin.paramDataAdj))
+            tabAscDeepestBin.paramDataAdj(:, [idBlueRef idNtuRef]) = [];
+         end
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; tabAscDeepestBin];
+      else
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; tabAscDeepestBin];
+      end
    end
 end
 

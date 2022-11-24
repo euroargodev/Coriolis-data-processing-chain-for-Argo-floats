@@ -38,8 +38,8 @@ return;
 %  [o_ncConfig] = create_output_float_config(a_decArgoConfParamNames, a_ncConfParamNames)
 %
 % INPUT PARAMETERS :
-% a_decArgoConfParamNames : internal configuration parameter names
-% a_ncConfParamNames      : NetCDF configuration parameter names
+%   a_decArgoConfParamNames : internal configuration parameter names
+%   a_ncConfParamNames      : NetCDF configuration parameter names
 %
 % OUTPUT PARAMETERS :
 % o_ncConfig : NetCDF configuration

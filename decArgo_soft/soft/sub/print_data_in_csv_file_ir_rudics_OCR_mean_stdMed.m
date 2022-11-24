@@ -3,10 +3,11 @@
 %
 % SYNTAX :
 %  print_data_in_csv_file_ir_rudics_OCR_mean_stdMed( ...
-%    a_cycleNum, a_profNum, a_phaseNum, ...
+%    a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataOCRMean, a_dataOCRStdMed)
 %
 % INPUT PARAMETERS :
+%   a_decoderId     : float decoder Id
 %   a_cycleNum      : cycle number of the packet
 %   a_profNum       : profile number of the packet
 %   a_phaseNum      : phase number of the packet
@@ -24,7 +25,7 @@
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_data_in_csv_file_ir_rudics_OCR_mean_stdMed( ...
-   a_cycleNum, a_profNum, a_phaseNum, ...
+   a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataOCRMean, a_dataOCRStdMed)
 
 % current float WMO number
@@ -95,7 +96,7 @@ if (isempty(idDataStdMed))
       (dataMean(:, 5) == 0) & (dataMean(:, 6) == 0) & (dataMean(:, 7) == 0));
    dataMean(idDel, :) = [];
 
-   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
+   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3), a_decoderId);
    paramDOWN_IRRADIANCE380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
    dataMean(:, 8) = compute_DOWN_IRRADIANCE380_105_to_110_121_122(dataMean(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
    paramDOWN_IRRADIANCE412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
@@ -205,7 +206,7 @@ else
          end
       end
 
-      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
+      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId);
 
       paramDOWN_IRRADIANCE380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
       data(:, 16) = compute_DOWN_IRRADIANCE380_105_to_110_121_122(data(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);

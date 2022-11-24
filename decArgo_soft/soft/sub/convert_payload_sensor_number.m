@@ -54,6 +54,8 @@ switch a_payloadSensorNum
       elseif (ismember(105, g_decArgo_sensorList))
          o_argoSensorNum = 105;
       end
+   case 6 % BGC: PHSEABIRD_UART6 Not BGC: unused
+      o_argoSensorNum = 7;
    case 7 % BGC: Optode Not BGC: Tilt => 106
       if (ismember(1, g_decArgo_sensorList))
          o_argoSensorNum = 1;

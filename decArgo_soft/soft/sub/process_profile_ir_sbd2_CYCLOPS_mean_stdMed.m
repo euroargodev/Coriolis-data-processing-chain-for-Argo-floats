@@ -4,7 +4,8 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_sbd2_CYCLOPS_mean_stdMed( ...
 %    a_dataCYCLOPSMean, a_dataCYCLOPSStdMed, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCYCLOPS)
+%    a_descentToParkStartDate, a_ascentEndDate, ...
+%    a_gpsData, a_iridiumMailData, a_sensorTechCYCLOPS, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataCYCLOPSMean        : mean CYCLOPS data
@@ -13,6 +14,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechCYCLOPS      : CYCLOPS technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -29,7 +31,7 @@
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_sbd2_CYCLOPS_mean_stdMed( ...
    a_dataCYCLOPSMean, a_dataCYCLOPSStdMed, ...
    a_descentToParkStartDate, a_ascentEndDate, ...
-   a_gpsData, a_iridiumMailData, a_sensorTechCYCLOPS)
+   a_gpsData, a_iridiumMailData, a_sensorTechCYCLOPS, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -126,7 +128,7 @@ for idCy = 1:length(cycleNumList)
                   paramChloro = get_netcdf_param_attributes('FLUORESCENCE_VOLTAGE_CHLA');
                   
                   % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2));
+                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
                   dataMean(:, 3) = sensor_2_value_for_chloroA_volt_303(dataMean(:, 3));
                   
                   % convert decoder default values to netCDF fill values
@@ -215,7 +217,7 @@ for idCy = 1:length(cycleNumList)
                      paramChloroMed = get_netcdf_param_attributes('FLUORESCENCE_VOLTAGE_CHLA_MED');
                      
                      % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                      data(:, 3) = sensor_2_value_for_chloroA_volt_303(data(:, 3));
                      data(:, 4) = sensor_2_value_for_chloroA_volt_303(data(:, 4));
                      data(:, 5) = sensor_2_value_for_chloroA_volt_303(data(:, 5));

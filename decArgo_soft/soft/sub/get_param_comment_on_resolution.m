@@ -328,7 +328,7 @@ switch (a_decoderId)
             
       end
       
-   case {121, 122}
+   case {121, 122, 123}
       % PROVOR CTS5
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -381,10 +381,11 @@ switch (a_decoderId)
             
       end
       
-   case {201, 202, 203, 215}
+   case {201, 202, 203, 215, 216}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
+      % Arvor-Deep-Ice Iridium 5.65
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             

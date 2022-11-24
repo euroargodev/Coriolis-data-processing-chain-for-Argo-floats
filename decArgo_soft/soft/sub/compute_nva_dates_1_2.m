@@ -294,10 +294,10 @@ if (size(a_tabTech, 1) == 1)
                o_descentToProfEndDateAdj = o_descentToProfEndDate - get_nva_clock_offset(o_descentToProfEndDate, g_decArgo_cycleNum, o_floatClockDrift, o_cycleStartDateAdj, o_gpsDateAdj);
             end
             
-            o_descentToProfStartDate = fix(o_descentToProfEndDateAdj) + a_tabTech(id, 3+ID_OFFSET)/24 - floatClockDrift;
+            o_descentToProfStartDate = fix(o_descentToProfEndDateAdj) + a_tabTech(id, 3+ID_OFFSET)/24;
             o_descentToProfStartDateAdj = o_descentToProfStartDate - get_nva_clock_offset(o_descentToProfStartDate, g_decArgo_cycleNum, o_floatClockDrift, o_cycleStartDateAdj, o_gpsDateAdj);
             if (o_descentToProfStartDateAdj > o_descentToProfEndDateAdj)
-               o_descentToProfStartDate = fix(o_descentToProfEndDateAdj) + a_tabTech(id, 3+ID_OFFSET)/24 - floatClockDrift - 1;
+               o_descentToProfStartDate = fix(o_descentToProfEndDateAdj) + a_tabTech(id, 3+ID_OFFSET)/24 - 1;
                o_descentToProfStartDateAdj = o_descentToProfStartDate - get_nva_clock_offset(o_descentToProfStartDate, g_decArgo_cycleNum, o_floatClockDrift, o_cycleStartDateAdj, o_gpsDateAdj);
             end
          end

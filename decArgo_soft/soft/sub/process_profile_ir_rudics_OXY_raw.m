@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_OXY_raw( ...
 %    a_dataOXYRaw, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataOXYRaw             : raw OXY data
@@ -13,6 +13,7 @@
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechOPTODE       : OPTODE technical data
 %   a_sensorTechCTD          : CTD technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -28,7 +29,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_OXY_raw( ...
    a_dataOXYRaw, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -165,7 +166,7 @@ for idCy = 1:length(cycleNumList)
                   paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
                   
                   % convert counts to values
-                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                   data(:, 3) = sensor_2_value_for_C1C2phase_ir_rudics_sbd2(data(:, 3));
                   data(:, 4) = sensor_2_value_for_C1C2phase_ir_rudics_sbd2(data(:, 4));
                   data(:, 5) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 5));

@@ -72,7 +72,12 @@ global g_decArgo_bPhaseDoxyDef;
 global g_decArgo_tempDoxyDef;
 global g_decArgo_doxyDef;
 global g_decArgo_janFirst1970InJulD;
-global g_decArgo_presCountsDef;
+global g_decArgo_blueRefDef;
+global g_decArgo_fluorescenceChlaDef;
+global g_decArgo_ntuRefDef;
+global g_decArgo_sideScatteringTurbidityDef;
+global g_decArgo_chloroADef;
+global g_decArgo_turbiDef;
 
 % global time status
 global g_JULD_STATUS_9;
@@ -875,29 +880,31 @@ for idL = 1:size(a_sensorData, 1)
       paramSal = get_netcdf_param_attributes('PSAL');
       paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
       paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-      paramDoxy = get_netcdf_param_attributes('DOXY');
       paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
-      paramBlueRef = get_netcdf_param_attributes('IFREMER_TEMPORARY_BLUE_REF');
-      paramFSig = get_netcdf_param_attributes('IFREMER_TEMPORARY_F_SIG');
-      paramNtuRef = get_netcdf_param_attributes('IFREMER_TEMPORARY_NTU_REF');
-      paramNtuSig = get_netcdf_param_attributes('IFREMER_TEMPORARY_NTU_SIG');
-      
+      paramDoxy = get_netcdf_param_attributes('DOXY');
+      paramBlueRef = get_netcdf_param_attributes('BLUE_REF');
+      paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
+      paramChla = get_netcdf_param_attributes('CHLA');
+      paramNtuRef = get_netcdf_param_attributes('NTU_REF');
+      paramSideScatteringTurbidity = get_netcdf_param_attributes('SIDE_SCATTERING_TURBIDITY');
+      paramTurbidity = get_netcdf_param_attributes('TURBIDITY');
+
       % data sampled at the surface
       surfPres = [];
       surfBPhaseDoxy = [];
       surfTempDoxy = [];
       surfBlueRef = [];
-      surfFSig = [];
+      surfFluorescenceChla = [];
       surfNtuRef = [];
-      surfNtuSig = [];
+      surfSideScatteringTurbidity = [];
       for id = 1:length(idListFB)
          surfPres = [surfPres; sensor_2_value_for_apex_apf9_pressure(decDataBis(id, 4), g_decArgo_presDef)];
          surfBPhaseDoxy = [surfBPhaseDoxy; sensor_2_value_for_apex_apf9_bPhaseDoxy(decDataBis(id, 5), g_decArgo_bPhaseDoxyDef)];
          surfTempDoxy = [surfTempDoxy; sensor_2_value_for_apex_apf9_tempDoxy(decDataBis(id, 6), g_decArgo_tempDoxyDef)];
-         surfBlueRef = [surfBlueRef; sensor_2_value_for_apex_apf9_unknown(decDataBis(id, 7), g_decArgo_presCountsDef)];
-         surfFSig = [surfFSig; sensor_2_value_for_apex_apf9_unknown(decDataBis(id, 8), g_decArgo_presCountsDef)];
-         surfNtuRef = [surfNtuRef; sensor_2_value_for_apex_apf9_unknown(decDataBis(id, 9), g_decArgo_presCountsDef)];
-         surfNtuSig = [surfNtuSig; sensor_2_value_for_apex_apf9_unknown(decDataBis(id, 10), g_decArgo_presCountsDef)];
+         surfBlueRef = [surfBlueRef; decDataBis(id, 7)];
+         surfFluorescenceChla = [surfFluorescenceChla; decDataBis(id, 8)];
+         surfNtuRef = [surfNtuRef; decDataBis(id, 9)];
+         surfSideScatteringTurbidity = [surfSideScatteringTurbidity; decDataBis(id, 10)];
       end
       
       % compute PPOX_DOXY
@@ -908,15 +915,27 @@ for idL = 1:size(a_sensorData, 1)
          g_decArgo_presDef, ...
          g_decArgo_doxyDef);
       
+      % compute CHLA
+      surfChla = compute_CHLA_302_303_1014( ...
+         surfFluorescenceChla, ...
+         g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
+      
+      % compute TURBIDITY
+      surfTurbidity = compute_TURBIDITY_302_303_1014( ...
+         surfSideScatteringTurbidity, ...
+         g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);
+      
       % convert decoder default values to netCDF fill values
       surfPres(find(surfPres == g_decArgo_presDef)) = paramPres.fillValue;
       surfBPhaseDoxy(find(surfBPhaseDoxy == g_decArgo_bPhaseDoxyDef)) = paramBPhaseDoxy.fillValue;
       surfTempDoxy(find(surfTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
       surfDoxy(find(surfDoxy == g_decArgo_doxyDef)) = paramPpoxDoxy.fillValue;
-      surfBlueRef(find(surfBlueRef == g_decArgo_presCountsDef)) = paramBlueRef.fillValue;
-      surfFSig(find(surfFSig == g_decArgo_presCountsDef)) = paramFSig.fillValue;
-      surfNtuRef(find(surfNtuRef == g_decArgo_presCountsDef)) = paramNtuRef.fillValue;
-      surfNtuSig(find(surfNtuSig == g_decArgo_presCountsDef)) = paramNtuSig.fillValue;
+      surfBlueRef(find(surfBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
+      surfFluorescenceChla(find(surfFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
+      surfChla(find(surfChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      surfNtuRef(find(surfNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
+      surfSideScatteringTurbidity(find(surfSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
+      surfTurbidity(find(surfTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
       
       % store surface data
       o_surfData = get_apx_profile_data_init_struct;
@@ -924,25 +943,28 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_surfData.paramList = [paramPres ...
          paramBPhaseDoxy paramTempDoxy paramPpoxDoxy ...
-         paramBlueRef paramFSig paramNtuRef paramNtuSig];
+         paramBlueRef paramFluorescenceChla paramChla ...
+         paramNtuRef paramSideScatteringTurbidity paramTurbidity];
       
       % add parameter data to the data structure
-      o_surfData.data = [surfPres surfBPhaseDoxy surfTempDoxy surfDoxy ...
-         surfBlueRef surfFSig surfNtuRef surfNtuSig];
+      o_surfData.data = [surfPres ...
+         surfBPhaseDoxy surfTempDoxy surfDoxy ...
+         surfBlueRef surfFluorescenceChla surfChla ...
+         surfNtuRef surfSideScatteringTurbidity surfTurbidity];
       
       % add parameter data redundancy to the profile structure
       o_surfData.dataRed = ones(size(o_surfData.data));
-      
+
       % data sampled at end of the park phase
       parkTemp = sensor_2_value_for_apex_apf9_temperature(decData(11), g_decArgo_tempDef);
       parkSal = sensor_2_value_for_apex_apf9_salinity(decData(12), g_decArgo_salDef);
       parkPres = sensor_2_value_for_apex_apf9_pressure(decData(13), g_decArgo_presDef);
       parkBPhaseDoxy = sensor_2_value_for_apex_apf9_bPhaseDoxy(decData(14), g_decArgo_bPhaseDoxyDef);
       parkTempDoxy = sensor_2_value_for_apex_apf9_tempDoxy(decData(15), g_decArgo_tempDoxyDef);
-      parkBlueRef = sensor_2_value_for_apex_apf9_unknown(decData(16), g_decArgo_presCountsDef);
-      parkFSig = sensor_2_value_for_apex_apf9_unknown(decData(17), g_decArgo_presCountsDef);
-      parkNtuRef = sensor_2_value_for_apex_apf9_unknown(decData(18), g_decArgo_presCountsDef);
-      parkNtuSig = sensor_2_value_for_apex_apf9_unknown(decData(19), g_decArgo_presCountsDef);
+      parkBlueRef = decData(16);
+      parkFluorescenceChla = decData(17);
+      parkNtuRef = decData(18);
+      parkSideScatteringTurbidity = decData(19);
       
       % compute DOXY
       parkDoxy = compute_DOXY_1006_1008_1014_1016(parkBPhaseDoxy, parkTempDoxy, ...
@@ -950,6 +972,16 @@ for idL = 1:size(a_sensorData, 1)
          parkPres, parkTemp, parkSal, ...
          g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
          g_decArgo_doxyDef);
+      
+      % compute CHLA
+      parkChla = compute_CHLA_302_303_1014( ...
+         parkFluorescenceChla, ...
+         g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
+      
+      % compute TURBIDITY
+      parkTurbidity = compute_TURBIDITY_302_303_1014( ...
+         parkSideScatteringTurbidity, ...
+         g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);      
 
       % convert decoder default values to netCDF fill values
       parkPres(find(parkPres == g_decArgo_presDef)) = paramPres.fillValue;
@@ -958,10 +990,11 @@ for idL = 1:size(a_sensorData, 1)
       parkBPhaseDoxy(find(parkBPhaseDoxy == g_decArgo_bPhaseDoxyDef)) = paramBPhaseDoxy.fillValue;
       parkTempDoxy(find(parkTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
       parkDoxy(find(parkDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
-      parkBlueRef(find(parkBlueRef == g_decArgo_presCountsDef)) = paramBlueRef.fillValue;
-      parkFSig(find(parkFSig == g_decArgo_presCountsDef)) = paramFSig.fillValue;
-      parkNtuRef(find(parkNtuRef == g_decArgo_presCountsDef)) = paramNtuRef.fillValue;
-      parkNtuSig(find(parkNtuSig == g_decArgo_presCountsDef)) = paramNtuSig.fillValue;
+      parkBlueRef(find(parkBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
+      parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
+      parkNtuRef(find(parkNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
+      parkSideScatteringTurbidity(find(parkSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
+      parkTurbidity(find(parkTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
       
       % store park data
       o_parkData = get_apx_profile_data_init_struct;
@@ -969,15 +1002,17 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_parkData.paramList = [paramPres paramTemp paramSal ...
          paramBPhaseDoxy paramTempDoxy paramDoxy ...
-         paramBlueRef paramFSig paramNtuRef paramNtuSig];
+         paramBlueRef paramFluorescenceChla paramChla ...
+         paramNtuRef paramSideScatteringTurbidity paramTurbidity];
       
       % add parameter data to the data structure
       o_parkData.data = [parkPres parkTemp parkSal ...
          parkBPhaseDoxy parkTempDoxy parkDoxy ...
-         parkBlueRef parkFSig parkNtuRef parkNtuSig];
+         parkBlueRef parkFluorescenceChla parkChla ...
+         parkNtuRef parkSideScatteringTurbidity parkTurbidity];
       
       % add parameter data redundancy to the profile structure
-      o_parkData.dataRed = repmat(msgRed, 1, 10);
+      o_parkData.dataRed = repmat(msgRed, 1, 12);
       
    else
       
@@ -1039,9 +1074,9 @@ if (nbLev > 0)
    profBPhaseDoxy = [];
    profTempDoxy = [];
    profBlueRef = [];
-   profFSig = [];
+   profFluorescenceChla = [];
    profNtuRef = [];
-   profNtuSig = [];
+   profSideScatteringTurbidity = [];
    for idLev = 1:nbLev
       id = (idLev-1)*NB_PARAM;
       if ((receivedData(id+1) == 65535) && (decData(id+1) ~= 65535))
@@ -1073,22 +1108,22 @@ if (nbLev > 0)
       if ((receivedData(id+6) == 4095) && (decData(id+6) ~= 4095))
          blueRef = decData(id+6);
       else
-         blueRef = g_decArgo_presCountsDef;
+         blueRef = g_decArgo_blueRefDef;
       end
       if ((receivedData(id+7) == 4095) && (decData(id+7) ~= 4095))
-         fSig = decData(id+7);
+         fluorescenceChla = decData(id+7);
       else
-         fSig = g_decArgo_presCountsDef;
+         fluorescenceChla = g_decArgo_fluorescenceChlaDef;
       end
       if ((receivedData(id+8) == 4095) && (decData(id+8) ~= 4095))
          ntuRef = decData(id+8);
       else
-         ntuRef = g_decArgo_presCountsDef;
+         ntuRef = g_decArgo_ntuRefDef;
       end
       if ((receivedData(id+9) == 4095) && (decData(id+9) ~= 4095))
-         ntuSig = decData(id+9);
+         sideScatteringTurbidity = decData(id+9);
       else
-         ntuSig = g_decArgo_presCountsDef;
+         sideScatteringTurbidity = g_decArgo_sideScatteringTurbidityDef;
       end
       
       profPres = [profPres; pres];
@@ -1099,9 +1134,9 @@ if (nbLev > 0)
       profTempDoxy = [profTempDoxy; tempDoxy];
       
       profBlueRef = [profBlueRef; blueRef];
-      profFSig = [profFSig; fSig];
+      profFluorescenceChla = [profFluorescenceChla; fluorescenceChla];
       profNtuRef = [profNtuRef; ntuRef];
-      profNtuSig = [profNtuSig; ntuSig];
+      profSideScatteringTurbidity = [profSideScatteringTurbidity; sideScatteringTurbidity];
       
    end
    
@@ -1124,9 +1159,9 @@ if (nbLev > 0)
    profBPhaseDoxyRed = redData(4:NB_PARAM:end);
    profTempDoxyRed = redData(5:NB_PARAM:end);
    profBlueRefRed = redData(6:NB_PARAM:end);
-   profFSigRed = redData(7:NB_PARAM:end);
+   profFluorescenceChlaRed = redData(7:NB_PARAM:end);
    profNtuRefRed = redData(8:NB_PARAM:end);
-   profNtuSigRed = redData(9:NB_PARAM:end);
+   profSideScatteringTurbidityRed = redData(9:NB_PARAM:end);
    
    % clean profile data
    if (profileLength >= 0)
@@ -1136,9 +1171,9 @@ if (nbLev > 0)
       profBPhaseDoxy(profileLength+1:end) = [];
       profTempDoxy(profileLength+1:end) = [];
       profBlueRef(profileLength+1:end) = [];
-      profFSig(profileLength+1:end) = [];
+      profFluorescenceChla(profileLength+1:end) = [];
       profNtuRef(profileLength+1:end) = [];
-      profNtuSig(profileLength+1:end) = [];
+      profSideScatteringTurbidity(profileLength+1:end) = [];
       
       profPresRed(profileLength+1:end) = [];
       profTempRed(profileLength+1:end) = [];
@@ -1146,9 +1181,9 @@ if (nbLev > 0)
       profBPhaseDoxyRed(profileLength+1:end) = [];
       profTempDoxyRed(profileLength+1:end) = [];
       profBlueRefRed(profileLength+1:end) = [];
-      profFSigRed(profileLength+1:end) = [];
+      profFluorescenceChlaRed(profileLength+1:end) = [];
       profNtuRefRed(profileLength+1:end) = [];
-      profNtuSigRed(profileLength+1:end) = [];
+      profSideScatteringTurbidityRed(profileLength+1:end) = [];
    else
       % the profile length is unknown, we keep only ascending pressures for the
       % profile
@@ -1168,9 +1203,9 @@ if (nbLev > 0)
          profBPhaseDoxy(profileLength2+1:end) = [];
          profTempDoxy(profileLength2+1:end) = [];
          profBlueRef(profileLength2+1:end) = [];
-         profFSig(profileLength2+1:end) = [];
+         profFluorescenceChla(profileLength2+1:end) = [];
          profNtuRef(profileLength2+1:end) = [];
-         profNtuSig(profileLength2+1:end) = [];
+         profSideScatteringTurbidity(profileLength2+1:end) = [];
          
          profPresRed(profileLength2+1:end) = [];
          profTempRed(profileLength2+1:end) = [];
@@ -1178,9 +1213,9 @@ if (nbLev > 0)
          profBPhaseDoxyRed(profileLength2+1:end) = [];
          profTempDoxyRed(profileLength2+1:end) = [];
          profBlueRefRed(profileLength2+1:end) = [];
-         profFSigRed(profileLength2+1:end) = [];
+         profFluorescenceChlaRed(profileLength2+1:end) = [];
          profNtuRefRed(profileLength2+1:end) = [];
-         profNtuSigRed(profileLength2+1:end) = [];
+         profSideScatteringTurbidityRed(profileLength2+1:end) = [];
       end
             
       % try to identify auxiliary engineering data start byte
@@ -1206,19 +1241,19 @@ if (nbLev > 0)
       (profSal == g_decArgo_salDef) & ...
       (profBPhaseDoxy == g_decArgo_bPhaseDoxyDef) & ...
       (profTempDoxy == g_decArgo_tempDoxyDef) & ...
-      (profBlueRef == g_decArgo_presCountsDef) & ...
-      (profFSig == g_decArgo_presCountsDef) & ...
-      (profNtuRef == g_decArgo_presCountsDef) & ...
-      (profNtuSig == g_decArgo_presCountsDef)));
+      (profBlueRef == g_decArgo_blueRefDef) & ...
+      (profFluorescenceChla == g_decArgo_fluorescenceChlaDef) & ...
+      (profNtuRef == g_decArgo_ntuRefDef) & ...
+      (profSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)));
    profPres(idDel) = [];
    profTemp(idDel) = [];
    profSal(idDel) = [];
    profBPhaseDoxy(idDel) = [];
    profTempDoxy(idDel) = [];
    profBlueRef(idDel) = [];
-   profFSig(idDel) = [];
+   profFluorescenceChla(idDel) = [];
    profNtuRef(idDel) = [];
-   profNtuSig(idDel) = [];
+   profSideScatteringTurbidity(idDel) = [];
    
    profPresRed(idDel) = [];
    profTempRed(idDel) = [];
@@ -1226,9 +1261,9 @@ if (nbLev > 0)
    profBPhaseDoxyRed(idDel) = [];
    profTempDoxyRed(idDel) = [];
    profBlueRefRed(idDel) = [];
-   profFSigRed(idDel) = [];
+   profFluorescenceChlaRed(idDel) = [];
    profNtuRefRed(idDel) = [];
-   profNtuSigRed(idDel) = [];
+   profSideScatteringTurbidityRed(idDel) = [];
    
    % initialize profile data structure
    o_profData = get_apx_profile_data_init_struct;
@@ -1245,10 +1280,12 @@ if (nbLev > 0)
    paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
    paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
    paramDoxy = get_netcdf_param_attributes('DOXY');
-   paramBlueRef = get_netcdf_param_attributes('IFREMER_TEMPORARY_BLUE_REF');
-   paramFSig = get_netcdf_param_attributes('IFREMER_TEMPORARY_F_SIG');
-   paramNtuRef = get_netcdf_param_attributes('IFREMER_TEMPORARY_NTU_REF');
-   paramNtuSig = get_netcdf_param_attributes('IFREMER_TEMPORARY_NTU_SIG');
+   paramBlueRef = get_netcdf_param_attributes('BLUE_REF');
+   paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
+   paramChla = get_netcdf_param_attributes('CHLA');
+   paramNtuRef = get_netcdf_param_attributes('NTU_REF');
+   paramSideScatteringTurbidity = get_netcdf_param_attributes('SIDE_SCATTERING_TURBIDITY');
+   paramTurbidity = get_netcdf_param_attributes('TURBIDITY');
    
    % compute DOXY
    profDoxy = compute_DOXY_1006_1008_1014_1016(profBPhaseDoxy, profTempDoxy, ...
@@ -1259,6 +1296,20 @@ if (nbLev > 0)
    
    profDoxyRed = min([profPresRed profTempRed profSalRed profBPhaseDoxyRed], [], 2);
    
+   % compute CHLA
+   profChla = compute_CHLA_302_303_1014( ...
+      profFluorescenceChla, ...
+      g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
+   
+   profChlaRed = profFluorescenceChlaRed;
+   
+   % compute TURBIDITY
+   profTurbidity = compute_TURBIDITY_302_303_1014( ...
+      profSideScatteringTurbidity, ...
+      g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);
+   
+   profTurbidityRed = profSideScatteringTurbidityRed;
+
    % convert decoder default values to netCDF fill values
    profPres(find(profPres == g_decArgo_presDef)) = paramPres.fillValue;
    profTemp(find(profTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
@@ -1266,25 +1317,30 @@ if (nbLev > 0)
    profBPhaseDoxy(find(profBPhaseDoxy == g_decArgo_bPhaseDoxyDef)) = paramBPhaseDoxy.fillValue;
    profTempDoxy(find(profTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
    profDoxy(find(profDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
-   profBlueRef(find(profBlueRef == g_decArgo_presCountsDef)) = paramBlueRef.fillValue;
-   profFSig(find(profFSig == g_decArgo_presCountsDef)) = paramFSig.fillValue;
-   profNtuRef(find(profNtuRef == g_decArgo_presCountsDef)) = paramNtuRef.fillValue;
-   profNtuSig(find(profNtuSig == g_decArgo_presCountsDef)) = paramNtuSig.fillValue;
+   profBlueRef(find(profBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
+   profFluorescenceChla(find(profFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
+   profChla(find(profChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+   profNtuRef(find(profNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
+   profSideScatteringTurbidity(find(profSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
+   profTurbidity(find(profTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
    
    % add parameter variables to the profile structure
    o_profData.paramList = [paramPres paramTemp paramSal ...
       paramBPhaseDoxy paramTempDoxy paramDoxy ...
-      paramBlueRef paramFSig paramNtuRef paramNtuSig];
+      paramBlueRef paramFluorescenceChla paramChla ...
+      paramNtuRef paramSideScatteringTurbidity paramTurbidity];
    
    % add parameter data to the profile structure
    o_profData.data = [profPres profTemp profSal ...
       profBPhaseDoxy profTempDoxy profDoxy ...
-      profBlueRef profFSig profNtuRef profNtuSig];
+      profBlueRef profFluorescenceChla profChla ...
+      profNtuRef profSideScatteringTurbidity profTurbidity];
    
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed ...
       profBPhaseDoxyRed profTempDoxyRed profDoxyRed ...
-      profBlueRefRed profFSigRed profNtuRefRed profNtuSigRed];
+      profBlueRefRed profFluorescenceChlaRed profChlaRed ...
+      profNtuRefRed profSideScatteringTurbidityRed profTurbidityRed];
 end
 
 % decode auxiliary engineering data

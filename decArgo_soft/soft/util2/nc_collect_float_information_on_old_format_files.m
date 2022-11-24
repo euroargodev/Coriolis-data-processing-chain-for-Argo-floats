@@ -1,25 +1,25 @@
-% % ------------------------------------------------------------------------------
-% % Retrieve information from META and TRAJ files of an Argo monthly snapshot.
-% %
-% % SYNTAX :
-% %   nc_collect_float_information_on_old_format_files
-% %
-% % INPUT PARAMETERS :
-% %
-% % OUTPUT PARAMETERS :
-% %
-% % EXAMPLES :
-% %
-% % SEE ALSO :
-% % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% % ------------------------------------------------------------------------------
-% % RELEASES :
-% %   03/06/2017 - RNU - creation
-% % ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Retrieve information from META and TRAJ files of an Argo monthly snapshot.
+%
+% SYNTAX :
+%   nc_collect_float_information_on_old_format_files
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/06/2017 - RNU - creation
+% ------------------------------------------------------------------------------
 function nc_collect_float_information_on_old_format_files(varargin)
 
 % top directory of input NetCDF mono-profile files
-DIR_INPUT_NC_FILES = 'H:\archive_201708\';
+DIR_INPUT_NC_FILES = 'H:\archive_201801\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

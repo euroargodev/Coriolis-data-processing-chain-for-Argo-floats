@@ -225,7 +225,7 @@ o_chlaAdjInfo.deltaDepthDark = DELTA_DEPTH_DARK;
 
 % compute CHLA_ADJUSTED
 o_profChlaAdj = ones(size(a_profChla))*a_chlaDataFillValue;
-o_profChlaAdjQc = ones(size(a_profFluoChlaQc))*g_decArgo_qcStrDef;
+o_profChlaAdjQc = repmat(g_decArgo_qcStrDef, size(a_profFluoChlaQc));
 
 % BEGIN - see 6900796 #83
 idDef = find((a_profFluoChla == a_fluoChlaDataFillValue) & (a_profPresFluoChla ~= a_presFluoChlaDataFillValue));
@@ -319,5 +319,9 @@ if (~isempty(mld) && (mldFlag == 0))
       end
    end
 end
+
+% assign CHLA QC values to CHLA_ADJUSTED QC that have not been set 
+idDef = find(o_profChlaAdjQc == g_decArgo_qcStrDef);
+o_profChlaAdjQc(idDef) = o_profChlaQc(idDef);
 
 return;

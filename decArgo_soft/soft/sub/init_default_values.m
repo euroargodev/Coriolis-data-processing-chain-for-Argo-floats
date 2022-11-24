@@ -1,4 +1,3 @@
-
 % ------------------------------------------------------------------------------
 % Initialize global default values.
 %
@@ -77,6 +76,9 @@ global g_decArgo_coefAttDef;
 global g_decArgo_fluorescenceChlaDef;
 global g_decArgo_betaBackscattering700Def;
 global g_decArgo_tempCpuChlaDef;
+global g_decArgo_blueRefDef;
+global g_decArgo_ntuRefDef;
+global g_decArgo_sideScatteringTurbidityDef;
 
 global g_decArgo_CHLADef;
 global g_decArgo_PARTICLE_BACKSCATTERINGDef;
@@ -465,6 +467,9 @@ g_decArgo_coefAttDef = 99.999;
 g_decArgo_fluorescenceChlaDef = 9999;
 g_decArgo_betaBackscattering700Def = 9999;
 g_decArgo_tempCpuChlaDef = 999;
+g_decArgo_blueRefDef = 99999;
+g_decArgo_ntuRefDef = 99999;
+g_decArgo_sideScatteringTurbidityDef = 99999;
 
 g_decArgo_CHLADef = 99999;
 g_decArgo_PARTICLE_BACKSCATTERINGDef = 99999;
@@ -491,7 +496,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '016h';
+g_decArgo_decoderVersion = '017a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float

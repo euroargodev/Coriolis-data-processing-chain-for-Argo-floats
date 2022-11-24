@@ -3,7 +3,7 @@
 % give list of cycles.
 %
 % SYNTAX :
-%  [o_cycleNumberList, o_bufferCompleted] = check_received_sbd_files( ...
+%  [o_cycleNumberList, o_bufferCompleted, o_firstDateNextBuffer] = check_received_sbd_files( ...
 %    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, a_cycleNumberList, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -15,8 +15,10 @@
 %   a_decoderId        : float decoder Id
 %
 % OUTPUT PARAMETERS :
-%   o_cycleNumberList : list of cycles
-%   o_bufferCompleted : completed buffer flags for associated list of cycles
+%   o_cycleNumberList     : list of cycles
+%   o_bufferCompleted     : completed buffer flags for associated list of cycles
+%   o_firstDateNextBuffer : first date of the data that must be processed in a
+%                           next buffer
 %
 % EXAMPLES :
 %
@@ -26,12 +28,13 @@
 % RELEASES :
 %   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleNumberList, o_bufferCompleted] = check_received_sbd_files( ...
+function [o_cycleNumberList, o_bufferCompleted, o_firstDateNextBuffer] = check_received_sbd_files( ...
    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, a_cycleNumberList, a_decoderId)
 
 % output parameters initialization
 o_cycleNumberList = [];
 o_bufferCompleted = [];
+o_firstDateNextBuffer = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -105,10 +108,16 @@ switch (a_decoderId)
       % decode the collected data
       decode_prv_data_ir_sbd_212(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
       
-   case {214} % % Provor-ARN-DO-Ice Iridium 5.75
+   case {214} % Provor-ARN-DO-Ice Iridium 5.75
       
       % decode the collected data
       decode_prv_data_ir_sbd_214(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
+
+   case {216} % Arvor-Deep-Ice Iridium 5.65
+      
+      % decode the collected data
+      [~, ~, ~, ~, ~, ~, ~, ~, o_firstDateNextBuffer] = ...
+         decode_prv_data_ir_sbd_216(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
 
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in check_received_sbd_files for decoderId #%d\n', ...

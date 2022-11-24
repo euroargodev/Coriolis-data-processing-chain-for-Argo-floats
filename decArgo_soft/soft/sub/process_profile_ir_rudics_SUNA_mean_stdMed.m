@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_SUNA_mean_stdMed( ...
 %    a_dataSUNAMean, a_dataSUNAStdMed, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataSUNAMean           : mean SUNA data
@@ -13,6 +13,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechSUNA         : SUNA technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -28,7 +29,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_SUNA_mean_stdMed( ...
    a_dataSUNAMean, a_dataSUNAStdMed, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -126,7 +127,7 @@ for idCy = 1:length(cycleNumList)
                   paramConcNitra = get_netcdf_param_attributes('MOLAR_NITRATE');
                   
                   % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2));
+                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
                   dataMean(:, 3) = sensor_2_value_for_concNitra_ir_rudics(dataMean(:, 3));
                   
                   % convert decoder default values to netCDF fill values
@@ -216,7 +217,7 @@ for idCy = 1:length(cycleNumList)
                      paramConcNitraMed = get_netcdf_param_attributes('MOLAR_NITRATE_MED');
                      
                      % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                      data(:, 3) = sensor_2_value_for_concNitra_ir_rudics(data(:, 3));
                      data(:, 4) = sensor_2_value_for_concNitra_ir_rudics(data(:, 4));
                      data(:, 5) = sensor_2_value_for_concNitra_ir_rudics(data(:, 5));

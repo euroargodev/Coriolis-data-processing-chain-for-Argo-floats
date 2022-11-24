@@ -409,7 +409,7 @@ for idFlCy = 1:length(floatCycleList)
       % assign the current configuration to the current cycle and pattern
       %       set_float_config_ir_rudics_cts5(floatCyNum, 0);
    end
-   
+      
    if (~isempty(fileToProcess))
       fprintf('\nDEC_INFO: Float #%d: Processing cycle #%d (float cycle #%d)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, floatCyNum);

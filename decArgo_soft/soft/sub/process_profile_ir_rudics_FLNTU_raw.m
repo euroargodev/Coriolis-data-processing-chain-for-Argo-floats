@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_FLNTU_raw( ...
 %    a_dataFLNTURaw, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechFLNTU)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechFLNTU, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataFLNTURaw           : raw FLNTU data
@@ -12,6 +12,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechFLNTU        : FLNTU technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -27,7 +28,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_FLNTU_raw( ...
    a_dataFLNTURaw, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechFLNTU)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechFLNTU, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -102,7 +103,7 @@ for idCy = 1:length(cycleNumList)
                   paramTurbi = get_netcdf_param_attributes('SIDE_SCATTERING_TURBIDITY');
                   
                   % convert decoder default values to netCDF fill values
-                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                   data(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 3));
                   data(:, 4) = sensor_2_value_for_turbi_ir_rudics(data(:, 4));
                   

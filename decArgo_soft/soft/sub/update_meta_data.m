@@ -29,8 +29,8 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 122 201 202 203 204 205 206 208 209 210 211 212 213 214 215 301 302 303];
-decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1016 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 122 123 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 301 302 303];
+decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002];
 decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
@@ -98,9 +98,11 @@ if (isfield(o_metaData, 'PARAMETER'))
          end
          
          for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+            if (isfield(o_metaData, fieldList{idF}))
+               if (isempty(o_metaData.(fieldList{idF})))
+                  for id = 1:length(paramList)
+                     o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+                  end
                end
             end
          end
@@ -256,7 +258,6 @@ if (isfield(o_metaData, 'PARAMETER'))
       end
    end   
    
-   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update NITRATE meta-data
    
@@ -397,6 +398,53 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end   
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % update PH meta-data
+   
+   [o_metaData] = update_parameter_list_ph(o_metaData, a_decoderId);
+   
+   paramList = struct2cell(o_metaData.PARAMETER);
+   for idP = 1:length(paramList)
+      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ph(paramList{idP}, a_decoderId);
+      if (~isempty(param))
+         
+         % check meta data length
+         FORMAT_SIZE = 4096;
+         if (length(preCalibEq) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
+            preCalibEq = preCalibEq(1:FORMAT_SIZE);
+         end
+         if (length(preCalibCoef) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
+            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
+         end
+         if (length(preCalibComment) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
+            preCalibComment = preCalibComment(1:FORMAT_SIZE);
+         end
+         
+         for idF = 1:length(fieldList)
+            if (isempty(o_metaData.(fieldList{idF})))
+               for id = 1:length(paramList)
+                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+               end
+            end
+         end
+         
+         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
+         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
+         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
+         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
+         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
+         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
+         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
+      end
+   end
    
 else
    fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information => parameter information cannot be updated\n', ...
@@ -558,8 +606,8 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 201, 203, 206, 121, 122, 215}
-      if (ismember(a_decoderId, [106 107 109 110 213]))
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 201, 203, 206, 121, 122, 123, 215, 216}
+      if (ismember(a_decoderId, [106 107 109 110 213 215 216]))
          if (ismember(a_decoderId, [213 214]))
          
             % retrieve configuration parameters
@@ -573,6 +621,21 @@ switch (a_decoderId)
             if (~isempty(idPos))
                optodeInAirMeasFlag = configValues(idPos, end);
             end
+            
+         elseif (ismember(a_decoderId, [215 216]))
+
+            % retrieve configuration parameters
+            configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
+            configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
+            
+            % retrieve PX04 configuration value (to get if the optode is mounted
+            % on an additional stick)
+            optodeInAirMeasFlag = [];
+            idPos = find(strncmp('CONFIG_PX04', configNames, length('CONFIG_PX04')) == 1, 1);
+            if (~isempty(idPos))
+               optodeInAirMeasFlag = configValues(idPos, end);
+            end
+            
          else
             
             optodeInAirMeasFlag = get_static_config_value('CONFIG_PX_1_1_0_0_7', 0);
@@ -1623,7 +1686,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {208}
+   case {208, 123}
       % CASE_202_205_303
       switch (a_paramName)
          
@@ -1773,7 +1836,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 201, 203, 215, 206, 213, 214, 121, 122}
+   case {107, 109, 110, 201, 203, 215, 216, 206, 213, 214, 121, 122}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -2967,7 +3030,7 @@ function [o_metaData] = update_parameter_list_radiometric(a_metaData, a_decoderI
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 121, 122}
+   case {105, 106, 107, 108, 109, 110, 121, 122, 123}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3038,7 +3101,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 121, 122}
+   case {105, 106, 107, 108, 109, 110, 121, 122, 123}
       switch (a_paramName)
          
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -3229,7 +3292,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 121, 122}
+   case {105, 106, 107, 110, 121, 122, 123}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3317,7 +3380,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 121, 122}
+   case {105, 106, 107, 110, 121, 122, 123}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -3582,7 +3645,7 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 301, 302, 303, 121, 122}
+   case {105, 106, 107, 108, 109, 110, 301, 302, 303, 121, 122, 123}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3594,6 +3657,11 @@ switch (a_decoderId)
       paramList = [ ...
          {'FLUORESCENCE_CHLA'} ...
          {'TEMP_CPU_CHLA'} ...
+         {'CHLA'} ...
+         ];
+   case {1014}
+      paramList = [ ...
+         {'FLUORESCENCE_CHLA'} ...
          {'CHLA'} ...
          ];
 end
@@ -3653,7 +3721,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 121, 122}
+   case {105, 106, 107, 108, 109, 110, 121, 122, 123}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}
@@ -3839,6 +3907,65 @@ switch (a_decoderId)
             end
 
       end
+      
+   case {1014}
+      switch (a_paramName)
+         
+         case {'FLUORESCENCE_CHLA'}
+            o_param = 'FLUORESCENCE_CHLA';
+            o_paramSensor = 'FLUOROMETER_CHLA';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
+                        
+         case {'CHLA'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
+                  isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
+                  isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
+               scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
+               darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
+               darkCountChloroA_O = [];
+               if (isfield(g_decArgo_calibInfo.FLNTU, 'darkCountChloroA_O'))
+                  darkCountChloroA_O = double(g_decArgo_calibInfo.FLNTU.darkCountChloroA_O);
+               end
+            else
+               fprintf('WARNING: Float #%d: inconsistent CHLA calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            if (isempty(darkCountChloroA_O))
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = 'No DARK_CHLA_O provided';
+            else
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA_O)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g, DARK_CHLA_O=%g', ...
+                  scaleFactChloroA, darkCountChloroA, darkCountChloroA_O);
+               o_preCalibComment = '';
+            end
+
+      end      
 end
 
 return;
@@ -3868,7 +3995,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 121, 122}
+   case {105, 106, 107, 110, 121, 122, 123}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3933,7 +4060,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 121, 122}
+   case {105, 106, 107, 110, 121, 122, 123}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CDOM'}
@@ -4021,7 +4148,7 @@ function [o_metaData] = update_parameter_list_nitrate(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 109, 121, 122}
+   case {105, 106, 107, 109, 121, 122, 123}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -4114,7 +4241,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 109, 110, 121, 122}
+   case {105, 106, 107, 109, 110, 121, 122, 123}
       switch (a_paramName)
          
          case {'UV_INTENSITY_NITRATE'}
@@ -4433,6 +4560,181 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Relative humidity inside the SUNA sensor (If > 50% There is a leak)';
+      end
+end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Update parameter list for ph associated parameters.
+%
+% SYNTAX :
+%  [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_metaData  : input meta-data to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_metaData : output updated meta-data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/23/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
+
+paramList = [];
+switch (a_decoderId)
+   case {123}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'PH_IN_SITU_FREE'} ...
+            {'PH_IN_SITU_TOTAL'} ...
+            ];
+      end
+end
+
+% add parameter associated fields
+o_metaData = generate_parameter_fields(a_metaData, paramList);
+
+return;
+
+% ------------------------------------------------------------------------------
+% Update meta-data for ph associated parameters.
+%
+% SYNTAX :
+%  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ph(a_paramName, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_paramName : input parameter to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_param           : output updated PARAMETER information
+%   o_paramSensor     : output updated PARAMETER_SENSOR information
+%   o_paramUnits      : output updated PARAMETER_UNITS information
+%   o_paramAccuracy   : output updated PARAMETER_ACCURACY information
+%   o_paramResolution : output updated PARAMETER_RESOLUTION information
+%   o_preCalibEq      : output updated PREDEPLOYMENT_CALIB_EQUATION information
+%   o_preCalibCoef    : output updated PREDEPLOYMENT_CALIB_COEFFICIENT information
+%   o_preCalibComment : output updated PARAMETER_ACCURACY information
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/23/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ph(a_paramName, a_decoderId)
+
+% output parameters initialization
+o_param = '';
+o_paramSensor = '';
+o_paramUnits = '';
+o_paramAccuracy = '';
+o_paramResolution = '';
+o_preCalibEq = '';
+o_preCalibCoef = '';
+o_preCalibComment = '';
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% arrays to store calibration information
+global g_decArgo_calibInfo;
+
+
+switch (a_decoderId)
+   case {123}
+      switch (a_paramName)
+                                 
+         case {'PH_IN_SITU_FREE'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f1')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f2')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f3')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f4')))
+               transPhK0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k0);
+               transPhK2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2);
+               transPhF0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f0);
+               transPhF1 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f1);
+               transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
+               transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
+               transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
+            else
+               fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'PH_IN_SITU_FREE';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'dimensionless';
+            o_paramAccuracy = '0.005';
+            o_paramResolution = '0.0001';
+            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+               transPhK0, transPhK2, ...
+               transPhF1, transPhF2, transPhF3, transPhF4);
+            o_preCalibComment = '';
+            
+         case {'PH_IN_SITU_TOTAL'}
+            
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('WARNING: Float #%d: missing PH_IN_SITU_TOTAL calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f1')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f2')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f3')) && ...
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f4')))
+               transPhK0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k0);
+               transPhK2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2);
+               transPhF0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f0);
+               transPhF1 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f1);
+               transPhF2 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f2);
+               transPhF3 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f3);
+               transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
+            else
+               fprintf('WARNING: Float #%d: inconsistent PH_IN_SITU_TOTAL calibration information\n', ...
+                  g_decArgo_floatNum);
+               return;
+            end
+            
+            o_param = 'PH_IN_SITU_TOTAL';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'dimensionless';
+            o_paramAccuracy = '0.005';
+            o_paramResolution = '0.0001';
+            o_preCalibEq = 'k0T=k0+k2*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL); Stotal=(0.14/96.062)*(PSAL/1.80655); Khso4=exp{[-4276.1/Tk+141.328-23.093*ln(Tk)]+[(-13856/Tk+324.57-47.986*ln(Tk))*IonS^0.5]+[(35474/Tk-771.54+114.723*ln(Tk))*IonS]-[2698/Tk*IonS^1.5]+[1776/Tk*IonS^2]+ln(1-0.001005*PSAL)}; deltaVHSO4=-18.03+0.0466*TEMP+0.000316*TEMP^2; KappaHSO4=(-4.53+0.09*TEMP)/1000; lnKhso4fac=(-deltaVHSO4+0.5*KappaHSO4*(PRES/10))*(PRES/10)/(R*10*Tk); Khso4TPS=Khso4*exp(lnKhso4fac); PH_IN_SITU_TOTAL=PH_IN_SITU_FREE-log10(1+Stotal/Khso4TPS)';
+            o_preCalibCoef = sprintf('R=8.31446; F=96485; k0=%g, k2=%g; f1=%g, f2=%g, f3=%g, f4=%g', ...
+               transPhK0, transPhK2, ...
+               transPhF1, transPhF2, transPhF3, transPhF4);
+            o_preCalibComment = '';
       end
 end
 

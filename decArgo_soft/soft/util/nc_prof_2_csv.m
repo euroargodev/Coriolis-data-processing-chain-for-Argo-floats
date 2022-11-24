@@ -125,6 +125,9 @@ for idFloat = 1:nbFloats
          for idFile = 1:length(ncFiles)
             
             ncFileName = ncFiles(idFile).name;
+            if (ncFileName(1) == 'S')
+               continue;
+            end
             ncFilePathName = [ncFileDir '/' ncFileName];
             
             outputFileName = [ncFileName(1:end-3) '.csv'];
@@ -148,6 +151,9 @@ for idFloat = 1:nbFloats
          for idFile = 1:length(ncFiles)
             
             ncFileName = ncFiles(idFile).name;
+            if (ncFileName(1) == 'S')
+               continue;
+            end
             ncFilePathName = [ncAuxFileDir '/' ncFileName];
             
             outputFileName = [ncFileName(1:end-3) '.csv'];

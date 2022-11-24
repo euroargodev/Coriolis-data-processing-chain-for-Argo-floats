@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ECO3_raw_105_to_107_110( ...
 %    a_dataECO3Raw, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataECO3Raw            : raw ECO3 data
@@ -12,6 +12,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechECO3         : ECO3 technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -27,7 +28,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ECO3_raw_105_to_107_110( ...
    a_dataECO3Raw, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -109,7 +110,7 @@ for idCy = 1:length(cycleNumList)
                   paramCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
 
                   % convert counts to values
-                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                   data(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 3));
                   data(:, 4) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 4));
                   data(:, 5) = sensor_2_value_for_cdom_ir_rudics(data(:, 5));

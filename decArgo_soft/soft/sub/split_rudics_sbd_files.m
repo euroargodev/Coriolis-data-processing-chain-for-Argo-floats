@@ -23,6 +23,7 @@ function split_rudics_sbd_files(a_inputDirName, a_outputDirName)
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+
 % process the SBD files of the input directory
 sbdFiles = dir([a_inputDirName '/*.b*.sbd']);
 fprintf('%d SBD files to split\n', length(sbdFiles));

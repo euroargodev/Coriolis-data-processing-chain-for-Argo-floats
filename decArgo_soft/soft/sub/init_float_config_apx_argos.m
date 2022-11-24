@@ -108,7 +108,7 @@ if (ismember(a_decoderId, [1006 1008 1014 1016]))
          if (isfield(calibData, fieldName))
             tabPhaseCoef(id+1) = calibData.(fieldName);
          else
-            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             return;
          end
       end
@@ -119,7 +119,7 @@ if (ismember(a_decoderId, [1006 1008 1014 1016]))
             if (isfield(calibData, fieldName))
                tabDoxyCoef(idI+1, idJ+1) = calibData.(fieldName);
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
@@ -141,7 +141,7 @@ if (ismember(a_decoderId, [1006 1008 1014 1016]))
          g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef = tabDoxyTempCoef;
       end
    else
-      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
    end
 elseif (ismember(a_decoderId, [1009]))
       
@@ -165,7 +165,7 @@ elseif (ismember(a_decoderId, [1009]))
          if (isfield(calibData, fieldName))
             tabDoxyCoef(1, id+1) = calibData.(fieldName);
          else
-            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             return;
          end
       end
@@ -174,7 +174,7 @@ elseif (ismember(a_decoderId, [1009]))
          if (isfield(calibData, fieldName))
             tabDoxyCoef(2, id+1) = calibData.(fieldName);
          else
-            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             return;
          end
       end
@@ -194,7 +194,7 @@ elseif (ismember(a_decoderId, [1009]))
          g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef = tabDoxyTempCoef;
       end
    else
-      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
    end
 elseif (ismember(a_decoderId, [1013 1015]))
    
@@ -217,58 +217,13 @@ elseif (ismember(a_decoderId, [1013 1015]))
                if (isfield(calibData, fieldName))
                   tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
                else
-                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                   return;
                end
             end
             g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
          end
       end
-   end
-   
-   % create the tabPhaseCoef, tabDoxyCoef and arrays
-   if (isfield(g_decArgo_calibInfo, 'OPTODE'))
-      calibData = g_decArgo_calibInfo.OPTODE;
-
-      tabDoxyCoef = [];
-      
-      % TBD
-      
-%       for id = 0:3
-%          fieldName = ['PhaseCoef' num2str(id)];
-%          if (isfield(calibData, fieldName))
-%             tabDoxyCoef(1, id+1) = calibData.(fieldName);
-%          else
-%             fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-%             return;
-%          end
-%       end
-%       for id = 0:6
-%          fieldName = ['SVUFoilCoef' num2str(id)];
-%          if (isfield(calibData, fieldName))
-%             tabDoxyCoef(2, id+1) = calibData.(fieldName);
-%          else
-%             fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-%             return;
-%          end
-%       end
-      g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
-      
-%       tabDoxyTempCoef = [];
-%       for id = 0:5
-%          fieldName = ['TempCoef' num2str(id)];
-%          if (isfield(calibData, fieldName))
-%             tabDoxyTempCoef(1, id+1) = calibData.(fieldName);
-%          else
-%             tabDoxyTempCoef = [];
-%             break;
-%          end
-%       end
-%       if (~isempty(tabDoxyTempCoef))
-%          g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef = tabDoxyTempCoef;
-%       end
-%    else
-%       fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
    end
 end
 

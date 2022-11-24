@@ -3,10 +3,11 @@
 %
 % SYNTAX :
 %  print_data_in_csv_file_ECO3_raw_108_109( ...
-%    a_cycleNum, a_profNum, a_phaseNum, ...
+%    a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataECO3Raw)
 %
 % INPUT PARAMETERS :
+%   a_decoderId   : float decoder Id
 %   a_cycleNum    : cycle number of the packet
 %   a_profNum     : profile number of the packet
 %   a_phaseNum    : phase number of the packet
@@ -23,7 +24,7 @@
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_data_in_csv_file_ECO3_raw_108_109( ...
-   a_cycleNum, a_profNum, a_phaseNum, ...
+   a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataECO3Raw)
 
 % current float WMO number
@@ -68,7 +69,7 @@ idDel = find((data(:, 3) == 0) & (data(:, 4) == 0) & ...
    (data(:, 5) == 0) & (data(:, 6) == 0));
 data(idDel, :) = [];
 
-data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
+data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId);
 data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
 data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
 data(:, 6) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 6));

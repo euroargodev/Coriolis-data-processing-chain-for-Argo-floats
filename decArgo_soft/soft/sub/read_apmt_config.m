@@ -52,9 +52,14 @@ end
 fclose(fId);
 
 % delete the part of the file padded with 0x1A
-uLastLine = unique(data{end});
-if ((length(uLastLine) == 1) && (uLastLine == hex2dec('1a')))
-   data(end) = [];
+stop = 0;
+while(~stop && ~isempty(data))
+   uLastLine = unique(data{end});
+   if ((length(uLastLine) == 1) && (uLastLine == hex2dec('1a')))
+      data(end) = [];
+   else
+      stop = 1;
+   end
 end
 
 % parse the data according to expected sections

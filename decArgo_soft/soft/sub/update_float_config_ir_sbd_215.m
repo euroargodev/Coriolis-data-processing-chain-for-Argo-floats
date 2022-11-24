@@ -146,7 +146,7 @@ for id = [0 2 3 6 12 13]
       newConfig(idPos) = newConfig(idPos)*10;
    end
 end
-for id = [4]
+for id = [4 32]
    name = sprintf('CONFIG_PT%02d', id);
    idPos = find(strcmp(name, configNames) == 1, 1);
    if (~isempty(idPos))

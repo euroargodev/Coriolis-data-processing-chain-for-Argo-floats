@@ -4320,7 +4320,7 @@ if (~isempty(g_rtqc_trajData))
             for id = 1:length(idTrajFromProf)
                found = 0;
                idMeas = idTrajFromProf(id);
-               if any(dataTraj(idMeas, :) ~= dataTrajFillValue)
+               if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
                   for idProf = 1:size(profNmeasXIndex, 2)
                      profData = dataProf{idProf};
                      for idLev = 1:size(profNmeasXIndex, 3)
@@ -4348,7 +4348,7 @@ if (~isempty(g_rtqc_trajData))
                      % adjusted => we will try to link the measurements again
                      % without considering PSAL
                      % CHLA_ADJUSTED values may also differ (if they have been
-                     % adjusted during RTQC on pofiles) => => we will try to
+                     % adjusted during RTQC on profiles) => we will try to
                      % link the measurements again without considering
                      % CHLA_ADJUSTED
                      ignoreListId = [];

@@ -133,16 +133,16 @@ if (~isempty(presOffset))
       end
    end
    
-   o_profData = adjust_profile(o_profData, presOffset, a_decoderId);
-   o_profNstData = adjust_profile(o_profNstData, presOffset, a_decoderId);
-   o_parkData = adjust_profile(o_parkData, presOffset, a_decoderId);
-   o_astData = adjust_profile(o_astData, presOffset, a_decoderId);
-   o_surfData = adjust_profile(o_surfData, presOffset, a_decoderId);
+   o_profData = adjust_profile(o_profData, presOffset, [], a_decoderId);
+   o_profNstData = adjust_profile(o_profNstData, presOffset, [], a_decoderId);
+   o_parkData = adjust_profile(o_parkData, presOffset, [], a_decoderId);
+   o_astData = adjust_profile(o_astData, presOffset, [], a_decoderId);
+   o_surfData = adjust_profile(o_surfData, presOffset, o_profData, a_decoderId);
    
    if (~isempty(o_timeData))
       idCycleStruct = find([o_timeData.cycleNum] == a_cycleNum);
       if (~isempty(idCycleStruct))
-         o_timeData.cycleTime(idCycleStruct).descPresMark = adjust_profile(o_timeData.cycleTime(idCycleStruct).descPresMark, round(presOffset/10)*10, a_decoderId);
+         o_timeData.cycleTime(idCycleStruct).descPresMark = adjust_profile(o_timeData.cycleTime(idCycleStruct).descPresMark, round(presOffset/10)*10, [], a_decoderId);
       end
    end
    
@@ -154,11 +154,13 @@ return;
 % Adjust PRES measurements of a given profile.
 %
 % SYNTAX :
-%  [o_profData] = adjust_profile(a_profData, a_presOffset, a_decoderId)
+%  [o_profData] = adjust_profile(a_profData, a_presOffset, a_ctdData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_profData   : profile data to adjust
 %   a_presOffset : pressure offset
+%   a_ctdData    : CTD profile data (used for surface data when TS are needed
+%                  but not available (for BBP700)
 %   a_decoderId  : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -172,7 +174,7 @@ return;
 % RELEASES :
 %   11/02/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profData] = adjust_profile(a_profData, a_presOffset, a_decoderId)
+function [o_profData] = adjust_profile(a_profData, a_presOffset, a_ctdData, a_decoderId)
 
 % output parameters initialization
 o_profData = a_profData;
@@ -372,7 +374,33 @@ if (~isempty(o_profData))
             idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
             idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
             idBetaBackscattering700 = find(strcmp({profParamList.name}, 'BETA_BACKSCATTERING700') == 1, 1);
+            ptsDataAdj = [];
             if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idBetaBackscattering700))
+               ptsDataAdj = profDataAdj(:, [idPres idTemp idPsal]);
+            else
+               if (~isempty(a_ctdData))
+                  idPres = find(strcmp({profParamList.name}, 'PRES') == 1, 1);
+                  idTemp = find(strcmp({a_ctdData.paramList.name}, 'TEMP') == 1, 1);
+                  idPsal = find(strcmp({a_ctdData.paramList.name}, 'PSAL') == 1, 1);
+                  
+                  if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
+                     
+                     paramTemp = get_netcdf_param_attributes('TEMP');
+                     paramSal = get_netcdf_param_attributes('PSAL');
+
+                     idLev = find((a_ctdData.dataAdj(:, idTemp) ~= paramTemp.fillValue) & ...
+                        (a_ctdData.dataAdj(:, idPsal) ~= paramSal.fillValue));
+                     if (~isempty(idLev))
+                        idLev = idLev(end);
+                        ptsDataAdj = [profDataAdj(:, idPres) ...
+                           ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idTemp) ...
+                           ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idPsal)];
+                     end
+                  end
+               end
+            end
+            
+            if (~isempty(ptsDataAdj))
                
                paramPres = get_netcdf_param_attributes('PRES');
                paramTemp = get_netcdf_param_attributes('TEMP');
@@ -384,7 +412,7 @@ if (~isempty(o_profData))
                   profDataAdj(:, idBetaBackscattering700), ...
                   paramBetaBackscattering700.fillValue, ...
                   paramBbp700.fillValue, ...
-                  profDataAdj(:, [idPres idTemp idPsal]), ...
+                  ptsDataAdj, ...
                   paramPres.fillValue, ...
                   paramTemp.fillValue, ...
                   paramSal.fillValue);

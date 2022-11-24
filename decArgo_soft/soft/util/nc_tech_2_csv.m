@@ -515,8 +515,8 @@ if (nTechMeas > 0)
    end
    
    paramName = [];
-   paramFormats = '; %d; %d';
-   paramQcFormats = '; %c; %c';
+   paramFormats = repmat('; %d', 1, nTechMeasParam);
+   paramQcFormats = repmat('; %c', 1, nTechMeasParam);
    paramData = [];
    paramQcData = [];
    for idParam = 1:nTechMeasParam

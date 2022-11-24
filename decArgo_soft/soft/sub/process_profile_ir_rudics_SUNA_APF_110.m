@@ -1,30 +1,31 @@
-% % ------------------------------------------------------------------------------
-% % Create profile of SUNA APF frame sensor data.
-% %
-% % SYNTAX :
-% %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_SUNA_APF_110( ...
-% %    a_dataSUNAAPF, ...
-% %    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA)
-% %
-% % INPUT PARAMETERS :
-% %   a_dataSUNAAPF            : SUNA (APF frame) data
-% %   a_descentToParkStartDate : descent to park start date
-% %   a_ascentEndDate          : ascent end date
-% %   a_gpsData                : information on GPS locations
-% %   a_sensorTechSUNA         : SUNA technical data
-% %
-% % OUTPUT PARAMETERS :
-% %   o_tabProfiles : created output profiles
-% %   o_tabDrift    : created output drift measurement profiles
-% %
-% % EXAMPLES :
-% %
-% % SEE ALSO :
-% % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% % ------------------------------------------------------------------------------
-% % RELEASES :
-% %   02/22/2013 - RNU - creation
-% % ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Create profile of SUNA APF frame sensor data.
+%
+% SYNTAX :
+%  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_SUNA_APF_110( ...
+%    a_dataSUNAAPF, a_dataSUNAAPF2, ...
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA)
+%
+% INPUT PARAMETERS :
+%   a_dataSUNAAPF            : SUNA (APF frame) data (part 1)
+%   a_dataSUNAAPF2           : SUNA (APF frame) data (part 2)
+%   a_descentToParkStartDate : descent to park start date
+%   a_ascentEndDate          : ascent end date
+%   a_gpsData                : information on GPS locations
+%   a_sensorTechSUNA         : SUNA technical data
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles : created output profiles
+%   o_tabDrift    : created output drift measurement profiles
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/22/2013 - RNU - creation
+% ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_SUNA_APF_110( ...
    a_dataSUNAAPF, a_dataSUNAAPF2, ...
    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechSUNA)

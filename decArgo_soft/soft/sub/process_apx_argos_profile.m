@@ -90,4 +90,45 @@ for idP = 1:length(profiles)
    
 end
 
+% set profiles with 'BLUE_REF' and 'NTU_REF' parameter to AUX files
+if (ismember(a_decoderId, [1014]))
+   
+   addProfiles = [];
+   for idP = 1:length(o_ncProfile)
+      
+      profStruct = o_ncProfile(idP);
+      
+      if (any(ismember('BLUE_REF', {profStruct.paramList.name})))
+         
+         idPres = find(strcmp({profStruct.paramList.name}, 'PRES') == 1, 1);
+         idBlueRef = find(strcmp({profStruct.paramList.name}, 'BLUE_REF') == 1, 1);
+         idNtuRef = find(strcmp({profStruct.paramList.name}, 'NTU_REF') == 1, 1);
+         
+         % create a new profile
+         newProf = profStruct;
+         newProf.sensorNumber = newProf.sensorNumber + 1000; % so that it will be stored in PROF_AUX file
+         
+         newProf.paramList = profStruct.paramList([idPres idBlueRef idNtuRef]);
+         
+         newProf.data = profStruct.data(:, [idPres idBlueRef idNtuRef]);
+         if (~isempty(profStruct.dataAdj))
+            newProf.dataAdj = profStruct.dataAdj(:, [idPres idBlueRef idNtuRef]);
+         end
+         
+         % clean the current profile
+         profStruct.paramList([idBlueRef idNtuRef]) = [];
+         
+         profStruct.data(:, [idBlueRef idNtuRef]) = [];
+         if (~isempty(profStruct.dataAdj))
+            profStruct.dataAdj(:, [idBlueRef idNtuRef]) = [];
+         end
+         
+         o_ncProfile(idP) = profStruct;
+         addProfiles = [addProfiles newProf];
+      end
+   end
+   
+   o_ncProfile = [o_ncProfile addProfiles];
+end
+
 return;

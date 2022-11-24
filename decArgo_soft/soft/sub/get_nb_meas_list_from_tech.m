@@ -59,6 +59,12 @@ switch (a_decoderId)
       nbMeasAscShallow = a_tabTech(8);
       nbMeasAscDeep = a_tabTech(9);
       
+   case {216}
+      nbMeasDescShallow = a_tabTech(6);
+      nbMeasDescDeep = a_tabTech(7);
+      nbMeasAscShallow = a_tabTech(9);
+      nbMeasAscDeep = a_tabTech(10);
+      
    case {204, 205, 206, 207, 208, 209}
       nbMeasDescShallow = a_tabTech(36);
       nbMeasDescDeep = a_tabTech(37);

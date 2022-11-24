@@ -349,8 +349,20 @@ if (a_procLevel > 0)
             end
             
          else
-            fprintf('ERROR: Float #%d: Multiple cycle numbers have been received\n', ...
-               g_decArgo_floatNum);
+            cycleListStr = sprintf('%d ', unique(tabCycleNum));
+            if (isempty(o_dataCTD))
+               fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (no CTD data lost)\n', ...
+                  g_decArgo_floatNum, cycleListStr(1:end-1));
+            else
+               fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
+                  g_decArgo_floatNum, cycleListStr(1:end-1));
+            end
+            
+            o_tabTech = [];
+            o_dataCTD = [];
+            o_dataHydrau = [];
+            o_dataAck = [];
+            o_deepCycle = [];
          end
       else
          fprintf('WARNING: Float #%d: Cycle number cannot be determined\n', ...

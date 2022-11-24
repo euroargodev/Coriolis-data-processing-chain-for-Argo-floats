@@ -51,6 +51,9 @@ global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
 
+% global time status
+global g_JULD_STATUS_fill_value;
+
 
 MC_LIST = [ ...
    {g_MC_DST} {'juldDescentStart'} {'juldDescentStartStatus'}; ...
@@ -98,6 +101,38 @@ for idNCy = 1:length(o_tabTrajNCycle)
                fprintf('WARNING: Float #%d Cycle #%d: MC=%d is present %d times in the decoded data\n', ...
                   g_decArgo_floatNum, cycleNum, ...
                   measCode, length(idF));
+               
+               % the file should be processed in DM, however we must choose on
+               % of the measurements to prevent the decoding from crashing
+               
+               % from 6901651 anomaly
+               if (measCode == g_MC_TST)
+                  if (any([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef))
+                     idF2 = find([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef);
+                     juld = trajNMeas.tabMeas(idF(idF2(1))).juldAdj;
+                     juldStatus = trajNMeas.tabMeas(idF(1)).juldAdjStatus;
+                  elseif (any([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef))
+                     idF2 = find([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef);
+                     juld = trajNMeas.tabMeas(idF(idF2(1))).juld;
+                     juldStatus = trajNMeas.tabMeas(idF(1)).juldStatus;
+                  else
+                     juld = g_decArgo_ncDateDef;
+                     juldStatus = g_JULD_STATUS_fill_value;
+                  end
+               elseif (measCode == g_MC_TST)
+                  if (any([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef))
+                     idF2 = find([trajNMeas.tabMeas(idF).juldAdj] ~= g_decArgo_ncDateDef);
+                     juld = trajNMeas.tabMeas(idF(idF2(end))).juldAdj;
+                     juldStatus = trajNMeas.tabMeas(idF(end)).juldAdjStatus;
+                  elseif (any([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef))
+                     idF2 = find([trajNMeas.tabMeas(idF).juld] ~= g_decArgo_ncDateDef);
+                     juld = trajNMeas.tabMeas(idF(idF2(end))).juld;
+                     juldStatus = trajNMeas.tabMeas(idF(end)).juldStatus;
+                  else
+                     juld = g_decArgo_ncDateDef;
+                     juldStatus = g_JULD_STATUS_fill_value;
+                  end
+               end
             end
             if (isempty(juldFinal) || (juldFinal == g_decArgo_ncDateDef))
                juldFinal = juld;

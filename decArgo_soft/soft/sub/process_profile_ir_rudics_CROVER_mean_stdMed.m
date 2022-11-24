@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_CROVER_mean_stdMed( ...
 %    a_dataCROVERMean, a_dataCROVERStdMed, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCROVER)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCROVER, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataCROVERMean         : mean cROVER data
@@ -13,6 +13,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechCROVER       : cROVER technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -28,7 +29,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_CROVER_mean_stdMed( ...
    a_dataCROVERMean, a_dataCROVERStdMed, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCROVER)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCROVER, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -127,7 +128,7 @@ for idCy = 1:length(cycleNumList)
                   paramAttCoef = get_netcdf_param_attributes('CP660');
                   
                   % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2));
+                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
                   dataMean(:, 3) = sensor_2_value_for_coefAtt_ir_rudics(dataMean(:, 3));
                   
                   % convert decoder default values to netCDF fill values
@@ -222,7 +223,7 @@ for idCy = 1:length(cycleNumList)
                      paramAttCoefMed = get_netcdf_param_attributes('CP660_MED');
                      
                      % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                      data(:, 3) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 3));
                      data(:, 4) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 4));
                      data(:, 5) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 5));

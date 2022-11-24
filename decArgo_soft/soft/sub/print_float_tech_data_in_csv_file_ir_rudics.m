@@ -3,10 +3,12 @@
 %
 % SYNTAX :
 %  print_float_tech_data_in_csv_file_ir_rudics( ...
+%    a_decoderId, ...
 %    a_cyProfPhaseList, a_cyProfPhaseIndexList, ...
 %    a_tabTech)
 %
 % INPUT PARAMETERS :
+%   a_decoderId            : float decoder Id
 %   a_cyProfPhaseList      : information (cycle #, prof #, phase #) on each
 %                            received packet
 %   a_cyProfPhaseIndexList : index list of the data to print
@@ -23,6 +25,7 @@
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_float_tech_data_in_csv_file_ir_rudics( ...
+   a_decoderId, ...
    a_cyProfPhaseList, a_cyProfPhaseIndexList, ...
    a_tabTech)
 
@@ -73,7 +76,7 @@ for idCy = 1:length(cyleList)
             if (~isempty(dataIndexList))
                for idP = 1:length(dataIndexList)
                   print_float_tech_data_in_csv_file_ir_rudics_one( ...
-                     cycleNum, profNum, phaseNum, dataIndexList(idP), ...
+                     a_decoderId, cycleNum, profNum, phaseNum, dataIndexList(idP), ...
                      a_tabTech);
                end
             end

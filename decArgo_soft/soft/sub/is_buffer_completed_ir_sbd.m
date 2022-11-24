@@ -58,14 +58,14 @@ global g_decArgo_14Or12TypePacketExpected;
 if (a_decoderId == 215)
    
    % as the number of "Near Surface" or "In Air" CTD(O) expected packets is not
-   % reported in the TECH messages, we never set the buffer completed if such
-   % packets are expected
+   % reported in the TECH messages, we set the number of expected packets to its
+   % maximum value (i.e. 3)
    
-   if (a_whyFlag == 0)
-      if ((g_decArgo_13Or11TypePacketExpected == 1) || (g_decArgo_14Or12TypePacketExpected == 1))
-         o_completed = 0;
-         return;
-      end
+   if (g_decArgo_13Or11TypePacketExpected == 1)
+      g_decArgo_nbOf13Or11TypePacketExpected = 3;
+   end
+   if (g_decArgo_14Or12TypePacketExpected == 1)
+      g_decArgo_nbOf14Or12TypePacketExpected = 3;
    end
 end
 
@@ -126,6 +126,18 @@ else
                fprintf('BUFF_INFO: Float #%d: %d ascent data packets are missing\n', ...
                   g_decArgo_floatNum, ...
                   g_decArgo_nbOf3Or10TypePacketExpected-g_decArgo_nbOf3Or10TypePacketReceived);
+            end
+         end
+         if (a_decoderId == 215)
+            if (g_decArgo_nbOf13Or11TypePacketExpected ~= g_decArgo_nbOf13Or11TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d near surface data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf13Or11TypePacketExpected-g_decArgo_nbOf13Or11TypePacketReceived);
+            end
+            if (g_decArgo_nbOf14Or12TypePacketExpected ~= g_decArgo_nbOf14Or12TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d in air data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf14Or12TypePacketExpected-g_decArgo_nbOf14Or12TypePacketReceived);
             end
          end
          

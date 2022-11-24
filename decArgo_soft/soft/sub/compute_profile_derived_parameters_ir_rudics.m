@@ -200,6 +200,40 @@ if (~isempty(profInfo))
       a_tabProfiles(profInfo(idSensor6(idP), 1)) = compute_profile_derived_parameters_for_SUNA( ...
          profSuna, profCtd, a_decoderId);
    end
+   
+   % compute TRANSISTOR_PH derived parameters
+   idSensor7 = find((profInfo(:, 2) == 7) & (profInfo(:, 3) == 0));
+   for idP = 1:length(idSensor7)
+      profTransPh = a_tabProfiles(profInfo(idSensor7(idP), 1));
+      
+      % look for the associated CTD profile
+      profCtd = [];
+      idF = find((profInfo(:, 2) == 0) & ...
+         (profInfo(:, 4) == profTransPh.cycleNumber) & ...
+         (profInfo(:, 5) == profTransPh.profileNumber) & ...
+         (profInfo(:, 6) == profTransPh.phaseNumber));
+      if (length(idF) == 1)
+         profCtd = a_tabProfiles(profInfo(idF, 1));
+      else
+         if (isempty(idF))
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD profile to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL parameters for ''%c'' profile of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               profTransPh.cycleNumber, ...
+               profTransPh.profileNumber, ...
+               profTransPh.direction);
+         else
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD profiles have been found to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL parameters for ''%c'' profile of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               profTransPh.cycleNumber, ...
+               profTransPh.profileNumber, ...
+               length(idF), ...
+               profTransPh.direction);
+         end
+      end
+      a_tabProfiles(profInfo(idSensor7(idP), 1)) = ...
+         compute_profile_derived_parameters_for_TRANSISTOR_PH( ...
+         profTransPh, profCtd);
+   end   
 end
 
 % update output parameters
@@ -260,7 +294,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profOcr.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profOcr.dataQc))
@@ -301,7 +335,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profOcr.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profOcr.dataQc))
@@ -342,7 +376,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profOcr.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profOcr.dataQc))
@@ -383,7 +417,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profOcr.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profOcr.dataQc))
@@ -466,7 +500,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profEco3.dataQc))
@@ -506,7 +540,7 @@ if (isempty(a_profCtd))
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
          
-         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
          if (isempty(idFDerivedParam))
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
             if (isempty(a_profEco3.dataQc))
@@ -554,7 +588,7 @@ else
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
          
-         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
          if (isempty(idFDerivedParam))
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
             if (isempty(a_profEco3.dataQc))
@@ -603,7 +637,7 @@ else
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
          
-         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
          if (isempty(idFDerivedParam))
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
             if (isempty(a_profEco3.dataQc))
@@ -647,7 +681,7 @@ for idP = 1:length(paramToDeriveList)
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
       
-      idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+      idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_profEco3.dataQc))
@@ -1137,7 +1171,7 @@ else
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
          
-         idFDerivedParam = find(strcmp([a_profSuna.paramList.name], derivedParamList{idP}), 1);
+         idFDerivedParam = find(strcmp({a_profSuna.paramList.name}, derivedParamList{idP}), 1);
          if (isempty(idFDerivedParam))
             a_profSuna.data(:, end+1) = ones(size(a_profSuna.data, 1), 1)*derivedParam.fillValue;
             a_profSuna.paramList = [a_profSuna.paramList derivedParam];
@@ -1271,7 +1305,7 @@ else
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
          
-         idFDerivedParam = find(strcmp([a_profOptode.paramList.name], derivedParamList{idP}), 1);
+         idFDerivedParam = find(strcmp({a_profOptode.paramList.name}, derivedParamList{idP}), 1);
          if (isempty(idFDerivedParam))
             a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
             if (isempty(a_profOptode.dataQc))
@@ -1415,6 +1449,26 @@ if (~isempty(ctdDataNoDef))
                a_DOXY_fillValue, ...
                a_profOptode);
             
+         case {123}
+            
+            % compute DOXY values using the Aanderaa standard calibration method
+            % + an additional two-point adjustment
+            o_DOXY(idNoNan) = compute_DOXY_123( ...
+               a_C1PHASE_DOXY(idNoNan), ...
+               a_C2PHASE_DOXY(idNoNan), ...
+               a_TEMP_DOXY(idNoNan), ...
+               a_C1PHASE_DOXY_fillValue, ...
+               a_C2PHASE_DOXY_fillValue, ...
+               a_TEMP_DOXY_fillValue, ...
+               ctdIntData(idNoNan, 1), ...
+               ctdIntData(idNoNan, 2), ...
+               ctdIntData(idNoNan, 3), ...
+               paramPres.fillValue, ...
+               paramTemp.fillValue, ...
+               paramPsal.fillValue, ...
+               a_DOXY_fillValue, ...
+               a_profOptode);
+            
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d Profile #%d: DOXY processing not implemented yet for decoderId #%d => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                g_decArgo_floatNum, ...
@@ -1454,7 +1508,270 @@ else
    
 end
 
-% return;
+return;
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the TRANSISTOR_PH sensor.
+%
+% SYNTAX :
+%  [o_profTransPh] = compute_profile_derived_parameters_for_TRANSISTOR_PH( ...
+%    a_profTransPh, a_profCtd)
+%
+% INPUT PARAMETERS :
+%   a_profTransPh : input TRANSISTOR_PH profile structure
+%   a_profCtd     : input CTD profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_profTransPh : output TRANSISTOR_PH profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/23/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_profTransPh] = compute_profile_derived_parameters_for_TRANSISTOR_PH( ...
+   a_profTransPh, a_profCtd)
+
+% output parameters initialization
+o_profTransPh = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_profTransPh.paramList.name};
+
+if (isempty(a_profCtd))
+   
+   % we have not been able to retrieve the associated CTD profile
+   derivedParamList = [ ...
+      {'PH_IN_SITU_FREE'} ...
+      {'PH_IN_SITU_TOTAL'} ...
+      ];
+   for idP = 1:length(derivedParamList)
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      a_profTransPh.data(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*derivedParam.fillValue;
+      if (~isempty(a_profTransPh.dataQc))
+         a_profTransPh.dataQc(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*g_decArgo_qcDef;
+      end
+      a_profTransPh.paramList = [a_profTransPh.paramList derivedParam];
+   end
+   
+else
+   
+   % get the CTD profile data
+   paramNameListCtd = {a_profCtd.paramList.name};
+   presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
+   tempId = find(strcmp('TEMP', paramNameListCtd) == 1, 1);
+   psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
+   ctdMeasData = a_profCtd.data(:, [presId tempId psalId]);
+   
+   % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data and add them in the
+   % profile structure
+   paramToDeriveList = [ ...
+      {'VRS_PH'} ...
+      ];
+   derivedParamList = [ ...
+      {'PH_IN_SITU_FREE'} ...
+      {'PH_IN_SITU_TOTAL'} ...
+      ];
+   for idP = 1:size(paramToDeriveList, 1)
+      idF = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+         derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+         derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+         
+         [phInSituFree, phInSituTotal] = compute_profile_PH( ...
+            a_profTransPh.data(:, idF), ...
+            paramToDerive.fillValue, ...
+            derivedParam1.fillValue, ...
+            derivedParam2.fillValue, ...
+            a_profTransPh.data(:, 1), ...
+            ctdMeasData, ...
+            a_profTransPh);
+
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam1 = find(strcmp({a_profTransPh.paramList.name}, derivedParamList{idP, 1}), 1);
+         if (isempty(idFDerivedParam1))
+            a_profTransPh.data(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*derivedParam1.fillValue;
+            if (isempty(a_profTransPh.dataQc))
+               a_profTransPh.dataQc = ones(size(a_profTransPh.data))*g_decArgo_qcDef;
+            else
+               a_profTransPh.dataQc(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profTransPh.paramList = [a_profTransPh.paramList derivedParam1];
+            derivedParam1Id = size(a_profTransPh.data, 2);
+         else
+            if (isempty(a_profTransPh.paramNumberWithSubLevels))
+               derivedParam1Id = idFDerivedParam1;
+            else
+               idF = find(a_profTransPh.paramNumberWithSubLevels < idFDerivedParam1);
+               if (isempty(idF))
+                  derivedParam1Id = idFDerivedParam1;
+               else
+                  derivedParam1Id = idFDerivedParam1 + sum(a_profTransPh.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+            end
+         end
+         
+         idFDerivedParam2 = find(strcmp({a_profTransPh.paramList.name}, derivedParamList{idP, 2}), 1);
+         if (isempty(idFDerivedParam2))
+            a_profTransPh.data(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*derivedParam2.fillValue;
+            if (isempty(a_profTransPh.dataQc))
+               a_profTransPh.dataQc = ones(size(a_profTransPh.data))*g_decArgo_qcDef;
+            else
+               a_profTransPh.dataQc(:, end+1) = ones(size(a_profTransPh.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profTransPh.paramList = [a_profTransPh.paramList derivedParam2];
+            derivedParam2Id = size(a_profTransPh.data, 2);
+         else
+            if (isempty(a_profTransPh.paramNumberWithSubLevels))
+               derivedParam2Id = idFDerivedParam2;
+            else
+               idF = find(a_profTransPh.paramNumberWithSubLevels < idFDerivedParam2);
+               if (isempty(idF))
+                  derivedParam2Id = idFDerivedParam2;
+               else
+                  derivedParam2Id = idFDerivedParam2 + sum(a_profTransPh.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+            end
+         end
+         
+         if (~isempty(phInSituFree))
+            a_profTransPh.data(:, derivedParam1Id) = phInSituFree;
+            phInSituFreeQc = ones(size(a_profTransPh.data, 1), 1)*g_decArgo_qcDef;
+            phInSituFreeQc(find(phInSituFree ~= derivedParam1.fillValue)) = g_decArgo_qcNoQc;
+            a_profTransPh.dataQc(:, derivedParam1Id) = phInSituFreeQc;
+         end
+
+         if (~isempty(phInSituTotal))
+            a_profTransPh.data(:, derivedParam2Id) = phInSituTotal;
+            phInSituFreeQc = ones(size(a_profTransPh.data, 1), 1)*g_decArgo_qcDef;
+            phInSituFreeQc(find(phInSituTotal ~= derivedParam2.fillValue)) = g_decArgo_qcNoQc;
+            a_profTransPh.dataQc(:, derivedParam2Id) = phInSituFreeQc;
+         end
+      end
+   end
+end
+
+% update output parameters
+a_profTransPh.derived = 1;
+o_profTransPh = a_profTransPh;
+
+return;
+
+% ------------------------------------------------------------------------------
+% Compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL from the data provided by the
+% TRANSISTOR_PH sensor.
+% 
+% SYNTAX :
+%  [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_profile_PH( ...
+%    a_VRS_PH, ...
+%    a_VRS_PH_fillValue, ...
+%    a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+%    a_VRS_PH_pres, a_ctdData, ...
+%    a_profTransPh)
+% 
+% INPUT PARAMETERS :
+%   a_VRS_PH                     : input VRS_PH data
+%   a_VRS_PH_fillValue           : fill value for input VRS_PH data
+%   a_PH_IN_SITU_FREE_fillValue  : fill value for output PH_IN_SITU_FREE data
+%   a_PH_IN_SITU_TOTAL_fillValue : fill value for output PH_IN_SITU_TOTAL data
+%   a_VRS_PH_pres                : pressure levels of VRS_PH data
+%   a_ctdData                    : ascociated CTD (P, T, S) data
+%   a_profTransPh                : input TRANSISTOR_PH profile structure
+% 
+% OUTPUT PARAMETERS :
+%   o_PH_IN_SITU_FREE  : output PH_IN_SITU_FREE data
+%   o_PH_IN_SITU_TOTAL : output PH_IN_SITU_TOTAL data
+% 
+% EXAMPLES :
+% 
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/23/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_profile_PH( ...
+   a_VRS_PH, ...
+   a_VRS_PH_fillValue, ...
+   a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+   a_VRS_PH_pres, a_ctdData, ...
+   a_profTransPh)
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% output parameters initialization
+o_PH_IN_SITU_FREE = ones(length(a_VRS_PH), 1)*a_PH_IN_SITU_FREE_fillValue;
+o_PH_IN_SITU_TOTAL = ones(length(a_VRS_PH), 1)*a_PH_IN_SITU_TOTAL_fillValue;
+
+
+paramPres = get_netcdf_param_attributes('PRES');
+paramTemp = get_netcdf_param_attributes('TEMP');
+paramPsal = get_netcdf_param_attributes('PSAL');
+idNoDef = find((a_ctdData(:, 1) ~= paramPres.fillValue) & ...
+   (a_ctdData(:, 2) ~= paramTemp.fillValue) & ...
+   (a_ctdData(:, 3) ~= paramPsal.fillValue));
+ctdDataNoDef = a_ctdData(idNoDef, :);
+if (~isempty(ctdDataNoDef))
+   
+   % interpolate and extrapolate the CTD data at the pressures of the
+   % TRANSISTOR_PH measurements
+   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_VRS_PH_pres, 0);
+   if (~isempty(ctdIntData))
+      
+      idNoNan = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));
+      
+      % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
+      [o_PH_IN_SITU_FREE(idNoNan), o_PH_IN_SITU_TOTAL(idNoNan)] = compute_PH_123( ...
+         a_VRS_PH(idNoNan), ...
+         a_VRS_PH_fillValue, ...
+         ctdIntData(idNoNan, 1), ...
+         ctdIntData(idNoNan, 2), ...
+         ctdIntData(idNoNan, 3), ...
+         paramPres.fillValue, ...
+         paramTemp.fillValue, ...
+         paramPsal.fillValue, ...
+         a_PH_IN_SITU_FREE_fillValue, a_PH_IN_SITU_TOTAL_fillValue, ...
+         a_profTransPh);
+
+   else
+      
+      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: no available interpolated CTD data to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL parameters for ''%c'' profile of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
+         g_decArgo_floatNum, ...
+         a_profTransPh.cycleNumber, ...
+         a_profTransPh.profileNumber, ...
+         a_profTransPh.direction);
+      
+      % update output parameters
+      o_PH_IN_SITU_FREE = [];
+      o_PH_IN_SITU_TOTAL = [];
+
+   end
+   
+else
+   
+   fprintf('WARNING: Float #%d Cycle #%d Profile #%d: no available CTD data to compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL parameters for ''%c'' profile of TRANSISTOR_PH sensor => PH_IN_SITU_FREE and PH_IN_SITU_TOTAL data set to fill value\n', ...
+      g_decArgo_floatNum, ...
+      a_profTransPh.cycleNumber, ...
+      a_profTransPh.profileNumber, ...
+      a_profTransPh.direction);
+   
+   % update output parameters
+   o_PH_IN_SITU_FREE = [];
+   o_PH_IN_SITU_TOTAL = [];
+   
+end
 
 % ------------------------------------------------------------------------------
 % START - IMPLEMENTATION OF THE PREVIOUS SPECIFICATIONS - START

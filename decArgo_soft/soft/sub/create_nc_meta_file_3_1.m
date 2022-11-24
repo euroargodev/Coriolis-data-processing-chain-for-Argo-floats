@@ -503,7 +503,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
 
-   case {121, 122}
+   case {121, 122, 123}
       
       % CTS5 floats
       
@@ -704,7 +704,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
 
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216}
       
       % Arvor deep 4000
       % Arvor deep 3500
@@ -716,6 +716,7 @@ switch (a_decoderId)
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor deep 4000 with "Near Surface" & "In Air" measurements
+      % Arvor-Deep-Ice Iridium 5.65
       
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);

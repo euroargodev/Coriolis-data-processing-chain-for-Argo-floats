@@ -205,9 +205,9 @@ for idCy = 1:length(a_cycleList)
    cycleNum = a_cycleList(idCy);
    g_decArgo_cycleNum = cycleNum;
    
-   %    if (cycleNum < 100)
-   %       continue;
-   %    end
+%    if (cycleNum > 10)
+%       continue;
+%    end
    
    fprintf('Cycle #%d\n', cycleNum);
    

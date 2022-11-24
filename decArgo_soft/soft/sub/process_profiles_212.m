@@ -76,8 +76,11 @@ if (~isempty(a_tabTech2) && (a_iceDetected == 0))
          size(a_tabTech2, 1));
    end
    tabTech = a_tabTech2(end, :);
-   if (any(tabTech(16:18) ~= 0))
-      presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+   pres = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+   temp = sensor_2_value_for_temperature_204_to_214(tabTech(17));
+   psal = sensor_2_value_for_salinity_210_to_214(tabTech(18));
+   if (any([pres temp psal] ~= 0))
+      presCutOffProf = pres;
    end
 end
 if (isempty(presCutOffProf))

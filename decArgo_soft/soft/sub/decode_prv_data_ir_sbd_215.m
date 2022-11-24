@@ -74,6 +74,7 @@ global g_decArgo_nbOf3Or10TypePacketReceived;
 global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
+global g_decArgo_nbOf7TypePacketReceived;
 global g_decArgo_13Or11TypePacketExpected;
 global g_decArgo_14Or12TypePacketExpected;
 
@@ -112,67 +113,6 @@ for idMes = 1:size(a_tabData, 1)
       case 0
          % float technical #1 packet
          
-         g_decArgo_0TypePacketReceivedFlag = 1;
-         if (a_procLevel == 0)
-            
-            % as the number of "Near Surface" or "In Air" CTD(O) expected
-            % packets is not reported in the TECH messages, we can only
-            % determine if such packets are expected or not
-            
-            % message data frame
-            msgData = a_tabData(idMes, 2:end);
-            
-            % first item bit number
-            firstBit = 1;
-            % item bit lengths
-            tabNbBits = [ ...
-               16 ...
-               8 8 8 16 16 16 8 8 ...
-               16 16 16 8 8 16 16 ...
-               8 8 8 16 16 8 8 ...
-               16 16 8 8 16 ...
-               8 8 8 8 16 16 ...
-               16 16 8 ...
-               8 8 8  repmat(8, 1, 9) ...
-               8 8 16 8 8 8 16 8 8 16 8 ...
-               repmat(8, 1, 2) ...
-               repmat(8, 1, 7) ...
-               16 8 16 ...
-               repmat(8, 1, 4) ...
-               ];
-            % get item bits
-            tabTech = get_bits(firstBit, tabNbBits, msgData);
-            
-            cycleNum = tabTech(1);
-            
-            g_decArgo_13Or11TypePacketExpected = 0;
-            g_decArgo_14Or12TypePacketExpected = 0;
-            if (cycleNum == 0)
-               g_decArgo_13Or11TypePacketExpected = 0;
-               g_decArgo_14Or12TypePacketExpected = 1;
-            else
-               pt33Value =  nan;
-               idPos = find(strcmp('CONFIG_PT33', g_decArgo_floatConfig.DYNAMIC_TMP.NAMES) == 1, 1);
-               if (~isempty(idPos))
-                  pt33Value = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(idPos, end);
-               end
-               if (~isnan(pt33Value))
-                  if (pt33Value == 0)
-                     g_decArgo_13Or11TypePacketExpected = 0;
-                     g_decArgo_14Or12TypePacketExpected = 0;
-                  elseif (pt33Value == 1)
-                     g_decArgo_13Or11TypePacketExpected = 1;
-                     g_decArgo_14Or12TypePacketExpected = 1;
-                  elseif (mod(cycleNum, pt33Value) == 0)
-                     g_decArgo_13Or11TypePacketExpected = 1;
-                     g_decArgo_14Or12TypePacketExpected = 1;
-                  end
-               end
-            end
-            
-            continue;
-         end
-         
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -196,6 +136,40 @@ for idMes = 1:size(a_tabData, 1)
             ];
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
+         
+         % as the number of "Near Surface" or "In Air" CTD(O) expected
+         % packets is not reported in the TECH messages, we can only
+         % determine if such packets are expected or not
+         cycleNum = tabTech(1);
+         
+         g_decArgo_0TypePacketReceivedFlag = 1;
+         g_decArgo_13Or11TypePacketExpected = 0;
+         g_decArgo_14Or12TypePacketExpected = 0;
+         if (cycleNum == 0)
+            g_decArgo_13Or11TypePacketExpected = 0;
+            g_decArgo_14Or12TypePacketExpected = 1;
+         else
+            pt33Value = nan;
+            idPos = find(strcmp('CONFIG_PT33', g_decArgo_floatConfig.DYNAMIC_TMP.NAMES) == 1, 1);
+            if (~isempty(idPos))
+               pt33Value = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(idPos, end);
+            end
+            if (~isnan(pt33Value))
+               if (pt33Value == 0)
+                  g_decArgo_13Or11TypePacketExpected = 0;
+                  g_decArgo_14Or12TypePacketExpected = 0;
+               elseif (pt33Value == 1)
+                  g_decArgo_13Or11TypePacketExpected = 1;
+                  g_decArgo_14Or12TypePacketExpected = 1;
+               elseif (mod(cycleNum, pt33Value) == 0)
+                  g_decArgo_13Or11TypePacketExpected = 1;
+                  g_decArgo_14Or12TypePacketExpected = 1;
+               end
+            end
+         end
+         if (a_procLevel == 0)
+            continue;
+         end
          
          % set float cycle number
          g_decArgo_cycleNum = tabTech(1);
@@ -472,7 +446,11 @@ for idMes = 1:size(a_tabData, 1)
             continue;
          end
          
-         g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
+         if (packType == 6)
+            g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
+         else
+            g_decArgo_nbOf7TypePacketReceived = g_decArgo_nbOf7TypePacketReceived + 1;
+         end
          
          % message data frame
          msgData = a_tabData(idMes, 2:end);
@@ -572,7 +550,7 @@ if (a_procLevel ~= 0)
    if (g_decArgo_generateNcTech ~= 0)
       if (~isempty(o_tabTech))
          idFTech1 = find(o_tabTech(:, 1) == 0);
-         store_tech1_data_for_nc_201_to_203_215(o_tabTech(idFTech1, :), o_deepCycle);
+         store_tech1_data_for_nc_201_to_203_215_216(o_tabTech(idFTech1, :), o_deepCycle);
          idFTech2 = find(o_tabTech(:, 1) == 4);
          store_tech2_data_for_nc_201_203_215(o_tabTech(idFTech2, :), o_deepCycle, a_decoderId);
       end
@@ -657,6 +635,7 @@ global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
+global g_decArgo_nbOf7TypePacketReceived;
 global g_decArgo_13Or11TypePacketExpected;
 global g_decArgo_14Or12TypePacketExpected;
 
@@ -682,6 +661,7 @@ g_decArgo_nbOf13Or11TypePacketReceived = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = -1;
 g_decArgo_nbOf14Or12TypePacketReceived = 0;
 g_decArgo_nbOf6TypePacketReceived = 0;
+g_decArgo_nbOf7TypePacketReceived = 0;
 
 % items not concerned by this decoder
 g_decArgo_7TypePacketReceivedFlag = 1;
@@ -732,6 +712,7 @@ global g_decArgo_nbOf3Or10TypePacketReceived;
 global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
+global g_decArgo_nbOf7TypePacketReceived;
 
 % array ro store statistics on received packets
 global g_decArgo_nbDescentPacketsReceived;
@@ -752,7 +733,7 @@ g_decArgo_nbParkPacketsReceived = g_decArgo_nbOf2Or9TypePacketReceived;
 g_decArgo_nbAscentPacketsReceived = g_decArgo_nbOf3Or10TypePacketReceived;
 g_decArgo_nbNearSurfacePacketsReceived = g_decArgo_nbOf13Or11TypePacketReceived;
 g_decArgo_nbInAirPacketsReceived = g_decArgo_nbOf14Or12TypePacketReceived;
-g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbOf6TypePacketReceived;
+g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbOf6TypePacketReceived + g_decArgo_nbOf7TypePacketReceived;
 g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
 g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;

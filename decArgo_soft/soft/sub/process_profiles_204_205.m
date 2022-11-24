@@ -70,8 +70,11 @@ if (~isempty(a_tabTech))
          size(a_tabTech, 1));
    end
    tabTech = a_tabTech(end, :);
-   if (any(tabTech(41:43) ~= 0))
-      presCutOffProf = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+   pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+   temp = sensor_2_value_for_temperature_204_to_214(tabTech(42));
+   psal = tabTech(43)/1000;
+   if (any([pres temp psal] ~= 0))
+      presCutOffProf = pres;
    end
 end
 if (isempty(presCutOffProf))

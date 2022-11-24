@@ -342,6 +342,38 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
+         
+      case {'7.03'}
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = char(metaData(idForWmo(idF(id)), 5));
+            if (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+               fieldName = ['TempCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1)
+               fieldName = ['ConcCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1)
+               fieldName = ['FoilCoefA' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_A')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1)
+               fieldName = ['FoilCoefB' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_B')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1)
+               fieldName = ['FoilPolyDegT' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_T')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1)
+               fieldName = ['FoilPolyDegO' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_O')+1:end)];
+            end
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end         
    end
    
    % add the calibration information for SUNA sensor
@@ -387,6 +419,25 @@ for idFloat = 1:length(floatList)
             floatList(idFloat));
       end
       
+   end
+   
+   % add the calibration information for TRANSISTOR_PH sensor
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH') == 1))
+      
+      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_')) == 1));
+      phCalibData = [];
+      for id = 1:length(idF)
+         calibName = metaData{idForWmo(idF(id)), 5};
+         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')) == 1)
+            fieldName = ['k' calibName(end)];
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')) == 1)
+            fieldName = ['f' calibName(end)];
+         end
+         phCalibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
+      end
+      if (~isempty(phCalibData))
+         metaStruct.CALIBRATION_COEFFICIENT.TRANSISTOR_PH = phCalibData;
+      end
    end
    
    % configuration parameters

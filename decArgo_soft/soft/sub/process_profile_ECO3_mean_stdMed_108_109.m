@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_108_109( ...
 %    a_dataECO3Mean, a_dataECO3StdMed, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataECO3Mean           : mean ECO3 data
@@ -13,6 +13,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechECO3         : ECO3 technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -28,7 +29,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_108_109( ...
    a_dataECO3Mean, a_dataECO3StdMed, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -138,7 +139,7 @@ for idCy = 1:length(cycleNumList)
                   paramBackscatter532 = get_netcdf_param_attributes('BETA_BACKSCATTERING532');
 
                   % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2));
+                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
                   dataMean(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(dataMean(:, 3));
                   dataMean(:, 4) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 4));
                   dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
@@ -251,7 +252,7 @@ for idCy = 1:length(cycleNumList)
                      paramBackscatter532Med = get_netcdf_param_attributes('BETA_BACKSCATTERING532_MED');
                                        
                      % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                      data(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 3));
                      data(:, 4) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 4));
                      data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));

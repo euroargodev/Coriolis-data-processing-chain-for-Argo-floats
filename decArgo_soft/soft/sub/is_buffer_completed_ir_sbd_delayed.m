@@ -74,8 +74,6 @@ switch (a_decoderId)
          zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_4TypePacketReceivedFlag))];
       g_decArgo_5TypePacketReceivedFlag = [g_decArgo_5TypePacketReceivedFlag ...
          zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_5TypePacketReceivedFlag))];
-      g_decArgo_5TypePacketReceivedFlag = [g_decArgo_5TypePacketReceivedFlag ...
-         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_5TypePacketReceivedFlag))];
       g_decArgo_nbOf1Or8TypePacketExpected = [g_decArgo_nbOf1Or8TypePacketExpected ...
          ones(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf1Or8TypePacketExpected))*-1];
       g_decArgo_nbOf1Or8TypePacketReceived = [g_decArgo_nbOf1Or8TypePacketReceived ...
@@ -311,6 +309,195 @@ switch (a_decoderId)
                   (length(g_decArgo_nbOf14Or12TypePacketReceived) < length(g_decArgo_cycleList)) || ...
                   (length(g_decArgo_nbOf14Or12TypePacketExpected) < length(g_decArgo_cycleList)))
                fprintf('BUFF_INFO: Float #%d Cycle #%d: information on number of in air data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            elseif (g_decArgo_nbOf14Or12TypePacketReceived(cyId) ~= g_decArgo_nbOf14Or12TypePacketExpected(cyId))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: %d in air data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId), ...
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId)-g_decArgo_nbOf14Or12TypePacketReceived(cyId));
+            end
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {216} % Arvor-Deep-Ice Iridium 5.65
+      
+      % adjust the size of the variables
+      g_decArgo_0TypePacketReceivedFlag = [g_decArgo_0TypePacketReceivedFlag ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_0TypePacketReceivedFlag))];
+      g_decArgo_4TypePacketReceivedFlag = [g_decArgo_4TypePacketReceivedFlag ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_4TypePacketReceivedFlag))];
+      g_decArgo_5TypePacketReceivedFlag = [g_decArgo_5TypePacketReceivedFlag ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_5TypePacketReceivedFlag))];
+      g_decArgo_nbOf1Or8TypePacketExpected = [g_decArgo_nbOf1Or8TypePacketExpected ...
+         ones(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf1Or8TypePacketExpected))*-1];
+      g_decArgo_nbOf1Or8TypePacketReceived = [g_decArgo_nbOf1Or8TypePacketReceived ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf1Or8TypePacketReceived))];
+      g_decArgo_nbOf2Or9TypePacketExpected = [g_decArgo_nbOf2Or9TypePacketExpected ...
+         ones(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf2Or9TypePacketExpected))*-1];
+      g_decArgo_nbOf2Or9TypePacketReceived = [g_decArgo_nbOf2Or9TypePacketReceived ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf2Or9TypePacketReceived))];
+      g_decArgo_nbOf3Or10TypePacketExpected = [g_decArgo_nbOf3Or10TypePacketExpected ...
+         ones(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf3Or10TypePacketExpected))*-1];
+      g_decArgo_nbOf3Or10TypePacketReceived = [g_decArgo_nbOf3Or10TypePacketReceived ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf3Or10TypePacketReceived))];
+      g_decArgo_nbOf13Or11TypePacketExpected = zeros(1, length(g_decArgo_cycleList))*-1;
+      g_decArgo_nbOf13Or11TypePacketReceived = [g_decArgo_nbOf13Or11TypePacketReceived ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf13Or11TypePacketReceived))];
+      g_decArgo_nbOf14Or12TypePacketExpected = zeros(1, length(g_decArgo_cycleList))*-1;
+      g_decArgo_nbOf14Or12TypePacketReceived = [g_decArgo_nbOf14Or12TypePacketReceived ...
+         zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf14Or12TypePacketReceived))];
+      
+      % we must know if Near Surface or In Air packets are expected at each
+      % cycle and, if so, we set the number of expected Near Surface or In Air
+      % packets to 3 (max allowed number) because we have no information about
+      % that (as these counts are not reported in the TECH data)
+      for cyId = 1:length(g_decArgo_cycleList)
+         cycleNum = g_decArgo_cycleList(cyId);
+         
+         % retrieve CONFIG_PT33 configuration value
+         pt33Value = '';
+         
+         % from configuration data
+         idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == cycleNum);
+         if (~isempty(idUsedConf))
+            configNumber = unique(g_decArgo_floatConfig.USE.CONFIG(idUsedConf));
+            idConf = find(g_decArgo_floatConfig.DYNAMIC.NUMBER == configNumber);
+            configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
+            configValues = g_decArgo_floatConfig.DYNAMIC.VALUES(:, idConf);
+            
+            idPt33Pos = find(strncmp('CONFIG_PT33', configNames, length('CONFIG_PT33')) == 1, 1);
+            if (~isempty(idPt33Pos))
+               pt33Value = configValues(idPt33Pos);
+            end
+         end
+         
+         % from temporary configuration data
+         if (isempty(pt33Value))
+            idUsedConf = find(g_decArgo_floatConfig.DYNAMIC_TMP.CYCLES == cycleNum-1);
+            if (~isempty(idUsedConf))
+               
+               % retrieve the data of the concerned configuration
+               configNames = g_decArgo_floatConfig.DYNAMIC_TMP.NAMES;
+               configValues = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(:, idUsedConf);
+               
+               idPt33Pos = find(strncmp('CONFIG_PT33', configNames, length('CONFIG_PT33')) == 1, 1);
+               if (~isempty(idPt33Pos))
+                  pt33Value = configValues(idPt33Pos);
+               end
+            end
+         end
+            
+         if (~isempty(pt33Value))
+            if (~isnan(pt33Value))
+               if (pt33Value == 0)
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 0;
+               elseif (pt33Value == 1)
+                  if (cycleNum == 0)
+                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
+                  else
+                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 3;
+                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
+                  end
+               elseif (mod(cycleNum, pt33Value) == 0)
+                  if (cycleNum == 0)
+                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
+                  else
+                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 3;
+                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
+                  end
+               end
+            else
+               fprintf('ERROR: Float #%d: ''CONFIG_PT33'' is nan for cycle #%d => check configuration data\n', ...
+                  g_decArgo_floatNum, cycleNum);
+            end
+         else
+            fprintf('ERROR: Float #%d: ''CONFIG_PT33'' is empty for cycle #%d => check configuration data\n', ...
+               g_decArgo_floatNum, cycleNum);
+         end
+      end
+      
+      if (a_whyFlag == 0)
+         
+         o_cycleNumberList = g_decArgo_cycleList;
+         o_bufferCompleted = zeros(size(o_cycleNumberList));
+         for cyId = 1:length(g_decArgo_cycleList)
+            if ( ...
+                  (g_decArgo_0TypePacketReceivedFlag(cyId) == 1) && ...
+                  (g_decArgo_4TypePacketReceivedFlag(cyId) == 1) && ...
+                  (g_decArgo_5TypePacketReceivedFlag(cyId) == 1) && ...
+                  (g_decArgo_nbOf1Or8TypePacketExpected(cyId) == g_decArgo_nbOf1Or8TypePacketReceived(cyId)) && ...
+                  (g_decArgo_nbOf2Or9TypePacketExpected(cyId) == g_decArgo_nbOf2Or9TypePacketReceived(cyId)) && ...
+                  (g_decArgo_nbOf3Or10TypePacketExpected(cyId) == g_decArgo_nbOf3Or10TypePacketReceived(cyId)) && ...
+                  (g_decArgo_nbOf13Or11TypePacketExpected(cyId) == g_decArgo_nbOf13Or11TypePacketReceived(cyId)) && ...
+                  (g_decArgo_nbOf14Or12TypePacketExpected(cyId) == g_decArgo_nbOf14Or12TypePacketReceived(cyId)))
+               
+               o_bufferCompleted(cyId) = 1;
+            end
+         end
+         
+      else
+         
+         for cyId = 1:length(g_decArgo_cycleList)
+            if (isempty(g_decArgo_0TypePacketReceivedFlag) || ...
+                  (length(g_decArgo_0TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
+                  (g_decArgo_0TypePacketReceivedFlag(cyId) ~= 1))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: Technical #1 packet is missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            end
+            if (isempty(g_decArgo_4TypePacketReceivedFlag) || ...
+                  (length(g_decArgo_4TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
+                  (g_decArgo_4TypePacketReceivedFlag(cyId) ~= 1))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: Technical #2 packet is missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            end
+            if (isempty(g_decArgo_5TypePacketReceivedFlag) || ...
+                  (length(g_decArgo_5TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
+                  (g_decArgo_5TypePacketReceivedFlag(cyId) ~= 1))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: Parameter packet #1 is missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            end
+            if (isempty(g_decArgo_nbOf1Or8TypePacketReceived) ||...
+                  isempty(g_decArgo_nbOf1Or8TypePacketExpected) || ...
+                  (length(g_decArgo_nbOf1Or8TypePacketReceived) < length(g_decArgo_cycleList)) || ...
+                  (length(g_decArgo_nbOf1Or8TypePacketExpected) < length(g_decArgo_cycleList)))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: information on number of descent data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            elseif (g_decArgo_nbOf1Or8TypePacketReceived(cyId) ~= g_decArgo_nbOf1Or8TypePacketExpected(cyId))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: %d descent data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId), ...
+                  g_decArgo_nbOf1Or8TypePacketExpected(cyId)-g_decArgo_nbOf1Or8TypePacketReceived(cyId));
+            end
+            if (isempty(g_decArgo_nbOf2Or9TypePacketReceived) ||...
+                  isempty(g_decArgo_nbOf2Or9TypePacketExpected) || ...
+                  (length(g_decArgo_nbOf2Or9TypePacketReceived) < length(g_decArgo_cycleList)) || ...
+                  (length(g_decArgo_nbOf2Or9TypePacketExpected) < length(g_decArgo_cycleList)))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: information on number of drift data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            elseif (g_decArgo_nbOf2Or9TypePacketReceived(cyId) ~= g_decArgo_nbOf2Or9TypePacketExpected(cyId))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: %d drift data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId), ...
+                  g_decArgo_nbOf2Or9TypePacketExpected(cyId)-g_decArgo_nbOf2Or9TypePacketReceived(cyId));
+            end
+            if (isempty(g_decArgo_nbOf13Or11TypePacketReceived) ||...
+                  isempty(g_decArgo_nbOf13Or11TypePacketExpected) || ...
+                  (length(g_decArgo_nbOf13Or11TypePacketReceived) < length(g_decArgo_cycleList)) || ...
+                  (length(g_decArgo_nbOf13Or11TypePacketExpected) < length(g_decArgo_cycleList)))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: information on number of ascent data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId));
+            elseif (g_decArgo_nbOf13Or11TypePacketReceived(cyId) ~= g_decArgo_nbOf13Or11TypePacketExpected(cyId))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: %d near surface data packets are missing\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleList(cyId), ...
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId)-g_decArgo_nbOf13Or11TypePacketReceived(cyId));
+            end
+            if (isempty(g_decArgo_nbOf14Or12TypePacketReceived) ||...
+                  isempty(g_decArgo_nbOf14Or12TypePacketExpected) || ...
+                  (length(g_decArgo_nbOf14Or12TypePacketReceived) < length(g_decArgo_cycleList)) || ...
+                  (length(g_decArgo_nbOf14Or12TypePacketExpected) < length(g_decArgo_cycleList)))
+               fprintf('BUFF_INFO: Float #%d Cycle #%d: information on number of ascent data packets are missing\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleList(cyId));
             elseif (g_decArgo_nbOf14Or12TypePacketReceived(cyId) ~= g_decArgo_nbOf14Or12TypePacketExpected(cyId))
                fprintf('BUFF_INFO: Float #%d Cycle #%d: %d in air data packets are missing\n', ...

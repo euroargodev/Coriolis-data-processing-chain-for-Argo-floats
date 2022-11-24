@@ -774,7 +774,10 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       % last pumped CTD measurement
-      if (any(tabTech2(10:12) ~= 0))
+      pres = sensor_2_value_for_pressure_201_203_215_216(tabTech2(10));
+      temp = sensor_2_value_for_temperature_201_to_203_215_216(tabTech2(11));
+      psal = sensor_2_value_for_salinity_201_to_203_215_216(tabTech2(12));
+      if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_LastAscPumpedCtd;
          if (any(tabTech2(13:15) ~= 0) && any(tabTech2(13:15) ~= 65535))
@@ -787,13 +790,10 @@ if (a_deepCycle == 1)
             paramDoxy = get_netcdf_param_attributes('DOXY');
             measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
             
-            pres = sensor_2_value_for_pressure_201_203_215(tabTech2(10));
-            temp = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
-            psal = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
-            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_215(tabTech2(13));
-            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_215(tabTech2(14));
-            tempDoxy = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_215(tabTech2(15));
-            doxy = compute_DOXY_201_203_206_209_213_214_215(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
+            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_216(tabTech2(13));
+            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_216(tabTech2(14));
+            tempDoxy = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_216(tabTech2(15));
+            doxy = compute_DOXY_201_203_206_209_213_to_216(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
             measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
             
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -803,9 +803,6 @@ if (a_deepCycle == 1)
             paramSal = get_netcdf_param_attributes('PSAL');
             measStruct.paramList = [paramPres paramTemp paramSal];
             
-            pres = sensor_2_value_for_pressure_201_203_215(tabTech2(10));
-            temp = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
-            psal = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
             measStruct.paramData = [pres temp psal];
             
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

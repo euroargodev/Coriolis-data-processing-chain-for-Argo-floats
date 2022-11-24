@@ -200,6 +200,7 @@ for idCy = 1:length(tabCyNum)
             if (~isempty(g_decArgo_timeData))
                idCyclePrecStruct = find([g_decArgo_timeData.cycleNum] == cycleNum-1);
                if (~isempty(idCyclePrecStruct))
+                  idCyclePrecStruct = idCyclePrecStruct(end);
                   cyclePrecTimeStruct = g_decArgo_timeData.cycleTime(idCyclePrecStruct);
                end
             end

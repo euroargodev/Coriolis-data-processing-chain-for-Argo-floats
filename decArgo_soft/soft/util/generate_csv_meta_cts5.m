@@ -29,7 +29,8 @@ outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_pH_Float.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -289,6 +290,12 @@ switch a_inputSensorName
       o_sensorDimLevel = [601];
       o_sensorMaker = {'SATLANTIC'};
       o_sensorModel = {'SUNA_V2'};
+      
+   case 'TRANSISTOR_PH'
+      o_sensorName = {'TRANSISTOR_PH'};
+      o_sensorDimLevel = [701];
+      o_sensorMaker = {'SBE'};
+      o_sensorModel = {'SEAFET'};
 
    otherwise
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
@@ -408,6 +415,9 @@ for idSensor = 1:length(a_sensorList)
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
             get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
+         
+      case 'TRANSISTOR_PH'
+         % nothing yet
 
       otherwise
          fprintf('ERROR: No sensor misc information for %s\n', a_sensorList{idSensor});
@@ -744,6 +754,33 @@ switch a_inputSensorName
          {'micromole/kg'} ...
          ];
 
+   case 'TRANSISTOR_PH'
+      o_paramName = [ ...
+         {'VRS_PH'} ...
+         {'VK_PH'} ...
+         {'IK_PH'} ...
+         {'IB_PH'} ...
+         {'PH_IN_SITU_FREE'} ...
+         {'PH_IN_SITU_TOTAL'} ...
+         ];
+      o_paramDimLevel = [701 702 703 704 705 706];
+      o_paramSensor = [ ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         {'TRANSISTOR_PH'} ...
+         ];
+      o_paramUnits = [ ...
+         {'volt'} ...
+         {'volt'} ...
+         {'nanoampere'} ...
+         {'nanoampere'} ...
+         {'dimensionless'} ...
+         {'dimensionless'} ...
+         ];
+      
    otherwise
       fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputSensorName);
 end
@@ -791,6 +828,15 @@ if (~isempty(idF1))
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramAccuracy = '2';
          fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'VRS_PH'))
+         o_paramAccuracy = '0.000030';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'PH_IN_SITU_TOTAL'))
+         o_paramAccuracy = '0.005';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'PH_IN_SITU_FREE'))
+         o_paramAccuracy = '0.005';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
       end
    end
    
@@ -814,6 +860,15 @@ if (~isempty(idF1))
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramResolution = '0.01';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'VRS_PH'))
+         o_paramResolution = '0.000001';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'PH_IN_SITU_TOTAL'))
+         o_paramResolution = '0.0001';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'PH_IN_SITU_FREE'))
+         o_paramResolution = '0.0001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       end
    end

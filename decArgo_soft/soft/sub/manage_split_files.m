@@ -32,7 +32,7 @@ global g_decArgo_floatNum;
 % ANOMALY in V1.06.010 AMPT version concerning payload data file:
 % sometimes the information '#01' is missing in the name of the first splitted file
 % Ex: 003a_009_01_payload.bin, 003a_009_01_payload#02.bin
-if (a_decoderId == 122)
+if (ismember(a_decoderId, [122 123]))
    for idFilePtn = 1:length(a_inputFileName)
       if (any(strfind(a_inputFileName{idFilePtn}, '_payload*.bin')))
          files = dir([a_inputFilePath{idFilePtn} '/' a_inputFileName{idFilePtn}]);

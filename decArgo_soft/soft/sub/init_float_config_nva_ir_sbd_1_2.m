@@ -256,13 +256,13 @@ switch (a_decoderId)
             if (isfield(calibData, fieldName))
                tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
          g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
       else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
       end
       
 end

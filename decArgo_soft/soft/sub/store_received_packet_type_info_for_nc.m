@@ -225,6 +225,46 @@ switch (a_decoderId)
          g_decArgo_cycleNum 1009];
       g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;
       
+   case {216}
+      
+      idFCy = find(g_decArgo_cycleList == g_decArgo_cycleNum);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1001];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1002];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1003];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1004];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1005];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1006];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1007];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParmPacketsReceived(idFCy);      
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1008];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived(idFCy);
+      
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1009];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived(idFCy);      
+
    otherwise
       fprintf('WARNING: Received packet type information is not defined yet for decoderId #%d\n', a_decoderId);
 end

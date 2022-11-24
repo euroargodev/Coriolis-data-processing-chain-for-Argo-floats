@@ -89,6 +89,12 @@ switch (a_decoderId)
    case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
       
       init_float_config_prv_ir_sbd_215(a_launchDate);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {216} % Arvor-deep 4000 with NS&IA and Ice
+      
+      init_float_config_prv_ir_sbd_216(a_launchDate);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

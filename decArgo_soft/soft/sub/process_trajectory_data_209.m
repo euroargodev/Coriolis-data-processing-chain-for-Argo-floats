@@ -726,7 +726,10 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       % last pumped CTD measurement
-      if (any(tabTech(41:43) ~= 0))
+      pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+      temp = sensor_2_value_for_temperature_204_to_214(tabTech(42));
+      psal = tabTech(43)/1000;
+      if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_LastAscPumpedCtd;
          
@@ -734,10 +737,6 @@ if (a_deepCycle == 1)
          paramTemp = get_netcdf_param_attributes('TEMP');
          paramSal = get_netcdf_param_attributes('PSAL');
          measStruct.paramList = [paramPres paramTemp paramSal];
-         
-         pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
-         temp = sensor_2_value_for_temperature_204_to_214(tabTech(42));
-         psal = tabTech(43)/1000;
          
          measStruct.paramData = [pres temp psal];
          

@@ -3,10 +3,11 @@
 %
 % SYNTAX :
 %  print_data_in_csv_file_ir_rudics_SUNA_mean_stdMed( ...
-%    a_cycleNum, a_profNum, a_phaseNum, ...
+%    a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataSUNAMean, a_dataSUNAStdMed)
 %
 % INPUT PARAMETERS :
+%   a_decoderId      : float decoder Id
 %   a_cycleNum       : cycle number of the packet
 %   a_profNum        : profile number of the packet
 %   a_phaseNum       : phase number of the packet
@@ -24,7 +25,7 @@
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_data_in_csv_file_ir_rudics_SUNA_mean_stdMed( ...
-   a_cycleNum, a_profNum, a_phaseNum, ...
+   a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataSUNAMean, a_dataSUNAStdMed)
 
 % current float WMO number
@@ -80,7 +81,7 @@ if (isempty(idDataStdMed))
    idDel = find((dataMean(:, 3) == 0) & (dataMean(:, 4) == 0));
    dataMean(idDel, :) = [];
 
-   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
+   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3), a_decoderId);
    dataMean(:, 4) = sensor_2_value_for_concNitra_ir_rudics(dataMean(:, 4));
    
    for idL = 1:size(dataMean, 1)
@@ -158,7 +159,7 @@ else
          end
       end
 
-      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
+      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId);
       data(:, 4) = sensor_2_value_for_concNitra_ir_rudics(data(:, 4));
       data(:, 5) = sensor_2_value_for_concNitra_ir_rudics(data(:, 5));
       data(:, 6) = sensor_2_value_for_concNitra_ir_rudics(data(:, 6));

@@ -27,10 +27,12 @@ function process_argos_data_apx(varargin)
 
 % directory of input Argos files (all the files in only one directory)
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
 DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori_out\';
+DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -78,72 +80,72 @@ end
 logFile = [DIR_LOG_FILE '/' 'process_argos_data_apx' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
-
-% create output directory
-if (exist(DIR_OUTPUT, 'dir') == 7)
-   fprintf('INFO: Removing directory: %s\n', DIR_OUTPUT);
-   rmdir(DIR_OUTPUT, 's');
-end
-mkdir(DIR_OUTPUT);
-fprintf('INFO: Creating directory: %s\n', DIR_OUTPUT);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 1: split the data by satellite passes
-fprintf('STEP 1: split the data by satellite passes\n');
-dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
-[ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
-if (ok == 0)
-   fprintf('ERROR: In step1 => exit\n');
-   return;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 2: delete identical satellite passes
-fprintf('\nSTEP 2: delete identical satellite passes\n');
-dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
-% duplicate the input directory in the output one
-copyfile(dirOutStep1, dirOutStep2);
-[ok] = delete_double_argos_split_bis(dirOutStep2);
-if (ok == 0)
-   fprintf('ERROR: In step2 => exit\n');
-   return;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 3: create cycle files
-fprintf('\nSTEP 3: create cycle files\n');
-dirOutStep3 = [DIR_OUTPUT '/STEP3/'];
-[ok] = create_argos_cycle_files_bis(floatList, dirOutStep2, dirOutStep3);
-if (ok == 0)
-   fprintf('ERROR: In step3 => exit\n');
-   return;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 4: correct CLS headers (number of lines in the satellite pass)
-fprintf('\nSTEP 4: correct CLS headers\n');
-dirOutStep4 = [DIR_OUTPUT '/STEP4/'];
-[ok] = co_cls_correct_argos_raw_file_bis(dirOutStep3, dirOutStep4);
-if (ok == 0)
-   fprintf('ERROR: In step4 => exit\n');
-   return;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 5: identify cycle files
-fprintf('\nSTEP 5: identify cycle files\n');
+% 
+% % create output directory
+% if (exist(DIR_OUTPUT, 'dir') == 7)
+%    fprintf('INFO: Removing directory: %s\n', DIR_OUTPUT);
+%    rmdir(DIR_OUTPUT, 's');
+% end
+% mkdir(DIR_OUTPUT);
+% fprintf('INFO: Creating directory: %s\n', DIR_OUTPUT);
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 1: split the data by satellite passes
+% fprintf('STEP 1: split the data by satellite passes\n');
+% dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
+% [ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
+% if (ok == 0)
+%    fprintf('ERROR: In step1 => exit\n');
+%    return;
+% end
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 2: delete identical satellite passes
+% fprintf('\nSTEP 2: delete identical satellite passes\n');
+% dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
+% % duplicate the input directory in the output one
+% copyfile(dirOutStep1, dirOutStep2);
+% [ok] = delete_double_argos_split_bis(dirOutStep2);
+% if (ok == 0)
+%    fprintf('ERROR: In step2 => exit\n');
+%    return;
+% end
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 3: create cycle files
+% fprintf('\nSTEP 3: create cycle files\n');
+% dirOutStep3 = [DIR_OUTPUT '/STEP3/'];
+% [ok] = create_argos_cycle_files_bis(floatList, dirOutStep2, dirOutStep3);
+% if (ok == 0)
+%    fprintf('ERROR: In step3 => exit\n');
+%    return;
+% end
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 4: correct CLS headers (number of lines in the satellite pass)
+% fprintf('\nSTEP 4: correct CLS headers\n');
+% dirOutStep4 = [DIR_OUTPUT '/STEP4/'];
+% [ok] = co_cls_correct_argos_raw_file_bis(dirOutStep3, dirOutStep4);
+% if (ok == 0)
+%    fprintf('ERROR: In step4 => exit\n');
+%    return;
+% end
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % STEP 5: identify cycle files
+% fprintf('\nSTEP 5: identify cycle files\n');
 dirOutStep5 = [DIR_OUTPUT '/STEP5/'];
-mkdir(dirOutStep5);
-% create temporary directory
-mkdir([dirOutStep5 '/IN/']);
-% duplicate the input directory in the output one
-copyfile(dirOutStep4, [dirOutStep5 '/IN/']);
-[ok] = move_and_rename_apx_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
-if (ok == 0)
-   fprintf('ERROR: In step5 => exit\n');
-   return;
-end
-rmdir([dirOutStep5 '/IN/'], 's');
+% mkdir(dirOutStep5);
+% % create temporary directory
+% mkdir([dirOutStep5 '/IN/']);
+% % duplicate the input directory in the output one
+% copyfile(dirOutStep4, [dirOutStep5 '/IN/']);
+% [ok] = move_and_rename_apx_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
+% if (ok == 0)
+%    fprintf('ERROR: In step5 => exit\n');
+%    return;
+% end
+% rmdir([dirOutStep5 '/IN/'], 's');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 6: delete ghost messages
@@ -151,7 +153,7 @@ fprintf('\nSTEP 6: delete ghost messages\n');
 dirOutStep6 = [DIR_OUTPUT '/FINAL/'];
 % mkdir(dirOutStep6);
 % % duplicate the input directory in the output one
-% copyfile(dirOutStep5, dirOutStep6);
+copyfile(dirOutStep5, dirOutStep6);
 [ok] = clean_ghost_in_apx_argos_cycle_files_bis(floatList, dirOutStep6);
 if (ok == 0)
    fprintf('ERROR: In step6 => exit\n');

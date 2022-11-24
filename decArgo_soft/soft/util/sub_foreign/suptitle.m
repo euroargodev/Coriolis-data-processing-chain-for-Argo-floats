@@ -106,10 +106,10 @@ set(gcf,'nextplot',np);
 axes(haold);
 
 % fix legend if one exists
-legH = legend;
-if ~isempty(legH)
-    axes(legH);
-end
+% legH = legend;
+% if ~isempty(legH)
+%     axes(legH);
+% end
 
 if nargout,
 	hout=ht;

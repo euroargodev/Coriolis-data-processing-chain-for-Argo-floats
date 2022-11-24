@@ -421,180 +421,186 @@ for sensorNum = sensorList
 end
 
 % store ISA information
-configNames = [];
-configValues = [];
-for idIsa = 1:length(dataIsa)
-   isaData = dataIsa{idIsa};
-   configNamePrefix = 'CONFIG_PAYLOAD_ISA_';
+if (~isempty(dataIsa))
+   configNames = [];
+   configValues = [];
+   for idIsa = 1:length(dataIsa)
+      isaData = dataIsa{idIsa};
+      configNamePrefix = 'CONFIG_PAYLOAD_ISA_';
+      
+      % spring inhibition ascend end pressure
+      configName = [configNamePrefix 'P00_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.SPR_INHIB.trig;
+      
+      % spring inhibition delay since last ISA detection
+      configName = [configNamePrefix 'P01_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.SPR_INHIB.last;
+      
+      % ISA algorithm storing data start pressure
+      configName = [configNamePrefix 'P02_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.trig/100;
+      
+      % ISA algorithm storing data stop pressure
+      configName = [configNamePrefix 'P03_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.stop/100;
+      
+      % ISA algorithm storing data sampling period
+      configName = [configNamePrefix 'P04_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.period/100;
+      
+      % ISA algorithm start pres
+      configName = [configNamePrefix 'P05_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.ISA_DEPTH.p;
+      
+      % ISA algorithm reference temperature
+      configName = [configNamePrefix 'P06_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.TC.a;
+      
+      % ISA algorithm salinity coefficient
+      configName = [configNamePrefix 'P07_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = isaData.TC.b;
+      
+      % ISA algorithm applicable month
+      configName = [configNamePrefix 'P08_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = bin2dec(regexprep(isaData.ACTIF.month, ',', ''));
+   end
    
-   % spring inhibition ascend end pressure
-   configName = [configNamePrefix 'P00_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.SPR_INHIB.trig;
+   % count number of ascent phases
+   nbAscentPhases = max(infoAcq(find(infoAcq(:, 2) == 6), 3));
+   configNames{end+1} = [configNamePrefix 'P09'];
+   configValues(end+1) = nbAscentPhases;
    
-   % spring inhibition delay since last ISA detection
-   configName = [configNamePrefix 'P01_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.SPR_INHIB.last;
-   
-   % ISA algorithm storing data start pressure 
-   configName = [configNamePrefix 'P02_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.trig/100;
-   
-   % ISA algorithm storing data stop pressure 
-   configName = [configNamePrefix 'P03_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.stop/100;
-   
-   % ISA algorithm storing data sampling period
-   configName = [configNamePrefix 'P04_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.period/100;
-   
-   % ISA algorithm start pres
-   configName = [configNamePrefix 'P05_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.ISA_DEPTH.p;
-   
-   % ISA algorithm reference temperature
-   configName = [configNamePrefix 'P06_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.TC.a;
-   
-   % ISA algorithm salinity coefficient
-   configName = [configNamePrefix 'P07_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = isaData.TC.b;
-   
-   % ISA algorithm applicable month
-   configName = [configNamePrefix 'P08_' sprintf('%d', isaData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = bin2dec(regexprep(isaData.ACTIF.month, ',', ''));
+   o_configNames = cat(2, o_configNames, configNames);
+   o_configValues = cat(2, o_configValues, configValues);
 end
-
-% count number of ascent phases
-nbAscentPhases = max(infoAcq(find(infoAcq(:, 2) == 6), 3));
-configNames{end+1} = [configNamePrefix 'P09'];
-configValues(end+1) = nbAscentPhases;
-
-o_configNames = cat(2, o_configNames, configNames);
-o_configValues = cat(2, o_configValues, configValues);
 
 % store AID information
-configNames = [];
-configValues = [];
-for idAid = 1:length(dataAid)
-   aidData = dataAid{idAid};
-   configNamePrefix = 'CONFIG_PAYLOAD_AID_';
+if (~isempty(dataAid))
+   configNames = [];
+   configValues = [];
+   for idAid = 1:length(dataAid)
+      aidData = dataAid{idAid};
+      configNamePrefix = 'CONFIG_PAYLOAD_AID_';
+      
+      % AID algorithm start pressure
+      configName = [configNamePrefix 'P00_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.trig/100;
+      
+      % AID algorithm stop pressure
+      configName = [configNamePrefix 'P01_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.stop/100;
+      
+      % AID algorithm sampling period
+      configName = [configNamePrefix 'P02_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.period/100;
+      
+      % AID algorithm next measurement reach
+      configName = [configNamePrefix 'P03_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.NEXT_MEASURE.reach;
+      
+      % AID algorithm next measurement margin
+      configName = [configNamePrefix 'P04_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.NEXT_MEASURE.margin;
+      
+      % AID algorithm number of distance meas
+      configName = [configNamePrefix 'P05_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.SUBSAMPLING.rate;
+      
+      % AID algorithm linear correction
+      configName = [configNamePrefix 'P06_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.corlin;
+      
+      % AID algorithm dbar to meter coefficien
+      configName = [configNamePrefix 'P07_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.rhog;
+      
+      % AID algorithm min threshold for valid meas
+      configName = [configNamePrefix 'P08_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.distmax;
+      
+      % AID algorithm max diff between distance meas
+      configName = [configNamePrefix 'P09_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.deltadistmax;
+      
+      % AID algorithm min draught
+      configName = [configNamePrefix 'P10_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.temin;
+      
+      % AID algorithm min number of detections
+      configName = [configNamePrefix 'P11_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.nrep;
+      
+      % AID algorithm max draught difference for detection
+      configName = [configNamePrefix 'P12_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.deltarep;
+      
+      % AID algorithm max distance to target to abort ascent
+      configName = [configNamePrefix 'P13_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = aidData.PARAMS.abortdist;
+      
+      % AID algorithm applicable month
+      configName = [configNamePrefix 'P14_' sprintf('%d', aidData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = bin2dec(regexprep(aidData.ACTIF.month, ',', ''));
+   end
    
-   % AID algorithm start pressure
-   configName = [configNamePrefix 'P00_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.trig/100;
+   % add number of ascent phases
+   configNames{end+1} = [configNamePrefix 'P15'];
+   configValues(end+1) = nbAscentPhases;
    
-   % AID algorithm stop pressure 
-   configName = [configNamePrefix 'P01_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.stop/100;
-   
-   % AID algorithm sampling period 
-   configName = [configNamePrefix 'P02_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.period/100;
-   
-   % AID algorithm next measurement reach 
-   configName = [configNamePrefix 'P03_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.NEXT_MEASURE.reach;
-   
-   % AID algorithm next measurement margin 
-   configName = [configNamePrefix 'P04_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.NEXT_MEASURE.margin;
-   
-   % AID algorithm number of distance meas 
-   configName = [configNamePrefix 'P05_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.SUBSAMPLING.rate;
-   
-   % AID algorithm linear correction 
-   configName = [configNamePrefix 'P06_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.corlin;
-   
-   % AID algorithm dbar to meter coefficien
-   configName = [configNamePrefix 'P07_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.rhog;
-   
-   % AID algorithm min threshold for valid meas
-   configName = [configNamePrefix 'P08_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.distmax;
-   
-   % AID algorithm max diff between distance meas
-   configName = [configNamePrefix 'P09_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.deltadistmax;
-   
-   % AID algorithm min draught
-   configName = [configNamePrefix 'P10_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.temin;
-   
-   % AID algorithm min number of detections
-   configName = [configNamePrefix 'P11_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.nrep;
-   
-   % AID algorithm max draught difference for detection
-   configName = [configNamePrefix 'P12_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.deltarep;
-
-   % AID algorithm max distance to target to abort ascent
-   configName = [configNamePrefix 'P13_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = aidData.PARAMS.abortdist;
-   
-   % AID algorithm applicable month
-   configName = [configNamePrefix 'P14_' sprintf('%d', aidData.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = bin2dec(regexprep(aidData.ACTIF.month, ',', ''));
+   o_configNames = cat(2, o_configNames, configNames);
+   o_configValues = cat(2, o_configValues, configValues);
 end
-
-% add number of ascent phases
-configNames{end+1} = [configNamePrefix 'P15'];
-configValues(end+1) = nbAscentPhases;
-
-o_configNames = cat(2, o_configNames, configNames);
-o_configValues = cat(2, o_configValues, configValues);
 
 % store AC1 information
-configNames = [];
-configValues = [];
-for idAc1 = 1:length(dataAc1)
-   ac1Data = dataAc1{idAc1};
-   configNamePrefix = 'CONFIG_PAYLOAD_AC1_';
+if (~isempty(dataAc1))
+   configNames = [];
+   configValues = [];
+   for idAc1 = 1:length(dataAc1)
+      ac1Data = dataAc1{idAc1};
+      configNamePrefix = 'CONFIG_PAYLOAD_AC1_';
+      
+      % Pressure to abort ascent
+      configName = [configNamePrefix 'P00_' sprintf('%d', ac1Data.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = ac1Data.trig/100;
+      
+      % Applicable month
+      configName = [configNamePrefix 'P01_' sprintf('%d', ac1Data.PHASE_NUM)];
+      configNames{end+1} = configName;
+      configValues(end+1) = bin2dec(regexprep(ac1Data.ACTIF.month, ',', ''));
+   end
    
-   % Pressure to abort ascent
-   configName = [configNamePrefix 'P00_' sprintf('%d', ac1Data.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = ac1Data.trig/100;
+   % add number of ascent phases
+   configNames{end+1} = [configNamePrefix 'P02'];
+   configValues(end+1) = nbAscentPhases;
    
-   % Applicable month
-   configName = [configNamePrefix 'P01_' sprintf('%d', ac1Data.PHASE_NUM)];
-   configNames{end+1} = configName;
-   configValues(end+1) = bin2dec(regexprep(ac1Data.ACTIF.month, ',', ''));
+   o_configNames = cat(2, o_configNames, configNames);
+   o_configValues = cat(2, o_configValues, configValues);
 end
-
-% add number of ascent phases
-configNames{end+1} = [configNamePrefix 'P02'];
-configValues(end+1) = nbAscentPhases;
-
-o_configNames = cat(2, o_configNames, configNames);
-o_configValues = cat(2, o_configValues, configValues);
 
 % duplicate all payload configuration names from CONFIG_PAYLOAD_xxx to
 % CONFIG_PAYLOAD_USED_xxx without the phase number (<i>)

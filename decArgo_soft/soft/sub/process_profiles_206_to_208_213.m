@@ -87,8 +87,11 @@ switch (a_decoderId)
                size(a_tabTech, 1));
          end
          tabTech = a_tabTech(end, :);
-         if (any(tabTech(41:43) ~= 0))
-            presCutOffProf = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+         pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+         temp = sensor_2_value_for_temperature_204_to_214(tabTech(42));
+         psal = tabTech(43)/1000;
+         if (any([pres temp psal] ~= 0))
+            presCutOffProf = pres;
          end
       end
       if (isempty(presCutOffProf))
@@ -123,8 +126,11 @@ switch (a_decoderId)
                size(a_tabTech, 1));
          end
          tabTech = a_tabTech(end, :);
-         if (any(tabTech(16:18) ~= 0))
-            presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+         pres = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+         temp = sensor_2_value_for_temperature_204_to_214(tabTech(17));
+         psal = sensor_2_value_for_salinity_210_to_214(tabTech(18));
+         if (any([pres temp psal] ~= 0))
+            presCutOffProf = pres;
          end
       end
       if (isempty(presCutOffProf))

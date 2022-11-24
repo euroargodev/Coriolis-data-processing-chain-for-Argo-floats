@@ -60,7 +60,7 @@ for idP = 1:length(a_tabProfiles)
             threshold1 = get_config_value('CONFIG_PM10', configNames, configValues);
             thickSurf = get_config_value('CONFIG_PM11', configNames, configValues);
             thickBottom = get_config_value('CONFIG_PM12', configNames, configValues);
-         case {201, 202, 203, 205, 206, 207, 208, 209, 215}
+         case {201, 202, 203, 205, 206, 207, 208, 209, 215, 216}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_PM05', configNames, configValues);
             ascSamplingPeriod = get_config_value('CONFIG_PM07', configNames, configValues);

@@ -41,7 +41,7 @@ switch (a_decoderId)
       % PROVOR REMOCEAN
       o_platformFamily = 'FLOAT';
       
-   case {121, 122}
+   case {121, 122, 123}
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       

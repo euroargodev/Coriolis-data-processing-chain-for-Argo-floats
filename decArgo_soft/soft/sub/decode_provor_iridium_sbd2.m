@@ -1158,10 +1158,10 @@ switch (a_decoderId)
       set_float_config_ir_sbd2(cyProfPhaseList, a_floatSoftVersion, a_decoderId);
       
       % keep only new GPS locations (acquired during a surface phase)
-      [tabTech] = clean_gps_data_ir_rudics_sbd2(tabTech);
+      [tabTech] = clean_gps_data_ir_rudics_105_to_110_sbd2(tabTech);
       
       % store GPS data
-      store_gps_data_ir_rudics_sbd2(tabTech);
+      store_gps_data_ir_rudics_105_to_110_sbd2(tabTech);
       
       % assign a cycle and profile numbers to Iridium mails currently processed
       update_mail_data_ir_sbd2(a_mailFileNameList, cyProfPhaseList);
@@ -1182,7 +1182,7 @@ switch (a_decoderId)
          ascentStartDate, ascentEndDate, ...
          transStartDate, ...
          firstEmerAscentDate] = ...
-         compute_prv_dates_ir_rudics_sbd2(tabTech, ...
+         compute_prv_dates_ir_rudics_105_to_110_sbd2(tabTech, ...
          floatClockDrift, a_refDay);
       
       % decode configuration data (251, 254 and 255 msg types)
@@ -1346,10 +1346,10 @@ switch (a_decoderId)
       set_float_config_ir_sbd2(cyProfPhaseList, a_floatSoftVersion, a_decoderId);
       
       % keep only new GPS locations (acquired during a surface phase)
-      [tabTech] = clean_gps_data_ir_rudics_sbd2(tabTech);
+      [tabTech] = clean_gps_data_ir_rudics_105_to_110_sbd2(tabTech);
       
       % store GPS data
-      store_gps_data_ir_rudics_sbd2(tabTech);
+      store_gps_data_ir_rudics_105_to_110_sbd2(tabTech);
       
       % assign a cycle and profile numbers to Iridium mails currently processed
       update_mail_data_ir_sbd2(a_mailFileNameList, cyProfPhaseList);
@@ -1370,7 +1370,7 @@ switch (a_decoderId)
          ascentStartDate, ascentEndDate, ...
          transStartDate, ...
          firstEmerAscentDate] = ...
-         compute_prv_dates_ir_rudics_sbd2(tabTech, ...
+         compute_prv_dates_ir_rudics_105_to_110_sbd2(tabTech, ...
          floatClockDrift, a_refDay);
       
       % decode configuration data (251, 254 and 255 msg types)

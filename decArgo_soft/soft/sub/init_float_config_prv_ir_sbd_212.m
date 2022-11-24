@@ -85,11 +85,11 @@ end
 for id = 0:25
    configNames2{end+1} = sprintf('CONFIG_TC%02d_', id);
 end
-for id = 0:3
-   configNames2{end+1} = sprintf('CONFIG_PX%02d_', id);
-end
 for id = 0:15
    configNames2{end+1} = sprintf('CONFIG_IC%02d_', id);
+end
+for id = 0:3
+   configNames2{end+1} = sprintf('CONFIG_PX%02d_', id);
 end
 
 % initialize the configuration values with the json meta-data file

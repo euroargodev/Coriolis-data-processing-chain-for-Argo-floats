@@ -69,6 +69,10 @@ g_decArgo_rtOffsetInfo = [];
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% ICE float firmware
+global g_decArgo_floatFirmware;
+g_decArgo_floatFirmware = '';
+
 
 % create static configuration names
 configNames1 = [];
@@ -84,13 +88,12 @@ end
 for id = 0:25
    configNames2{end+1} = sprintf('CONFIG_TC%02d_', id);
 end
-for id = 0:4
-   configNames2{end+1} = sprintf('CONFIG_PX%02d_', id);
-end
 for id = 0:15
    configNames2{end+1} = sprintf('CONFIG_IC%02d_', id);
 end
-
+for id = 0:5
+   configNames2{end+1} = sprintf('CONFIG_PX%02d_', id);
+end
 % initialize the configuration values with the json meta-data file
 
 % json meta-data file for this float
@@ -104,6 +107,10 @@ end
 
 % read meta-data file
 metaData = loadjson(jsonInputFileName);
+
+if (isfield(metaData, 'FIRMWARE_VERSION'))
+   g_decArgo_floatFirmware = strtrim(metaData.FIRMWARE_VERSION);
+end
 
 % fill the configuration values
 configValues1 = [];
@@ -293,7 +300,7 @@ if (isfield(g_decArgo_calibInfo, 'OPTODE'))
       if (isfield(calibData, fieldName))
          tabDoxyCoef(1, id+1) = calibData.(fieldName);
       else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
          return;
       end
    end
@@ -302,13 +309,13 @@ if (isfield(g_decArgo_calibInfo, 'OPTODE'))
       if (isfield(calibData, fieldName))
          tabDoxyCoef(2, id+1) = calibData.(fieldName);
       else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
          return;
       end
    end
    g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
 else
-   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
 end
 
 return;

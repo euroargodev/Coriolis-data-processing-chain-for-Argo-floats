@@ -5,7 +5,7 @@
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_sbd2_FLBB_mean_stdMed( ...
 %    a_dataFLBBMean, a_dataFLBBStdMed, ...
 %    a_descentToParkStartDate, a_ascentEndDate, ...
-%    a_gpsData, a_iridiumMailData, a_sensorTechFLBB)
+%    a_gpsData, a_iridiumMailData, a_sensorTechFLBB, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataFLBBMean           : mean FLBB data
@@ -15,6 +15,7 @@
 %   a_gpsData                : information on GPS locations
 %   a_iridiumMailData        : information on Iridium locations
 %   a_sensorTechFLBB         : FLBB technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -31,7 +32,7 @@
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_sbd2_FLBB_mean_stdMed( ...
    a_dataFLBBMean, a_dataFLBBStdMed, ...
    a_descentToParkStartDate, a_ascentEndDate, ...
-   a_gpsData, a_iridiumMailData, a_sensorTechFLBB)
+   a_gpsData, a_iridiumMailData, a_sensorTechFLBB, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -135,7 +136,7 @@ for idCy = 1:length(cycleNumList)
                   paramBackscatter700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
 
                   % convert counts to values
-                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2));
+                  dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
                   dataMean(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(dataMean(:, 3));
                   dataMean(:, 4) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 4));
                   
@@ -237,7 +238,7 @@ for idCy = 1:length(cycleNumList)
                      paramBackscatter700Med = get_netcdf_param_attributes('BETA_BACKSCATTERING700_MED');
                      
                      % convert counts to values
-                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                     data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                      data(:, 3) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 3));
                      data(:, 4) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 4));
                      data(:, 5) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 5));

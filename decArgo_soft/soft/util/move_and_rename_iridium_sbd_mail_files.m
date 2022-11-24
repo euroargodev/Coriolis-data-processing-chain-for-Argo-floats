@@ -25,12 +25,14 @@ INPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message_refused\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_data_rt\300234061653240\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\sbd_incoming\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\sbd_incoming\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\POPSTAR\co012204\archive\message\';
 
 % output directory
 OUTPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message_renamed\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_data_rt\300234061653240_out\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\justin\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\justin\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\POPSTAR\IN\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 

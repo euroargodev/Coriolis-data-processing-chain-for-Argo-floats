@@ -649,6 +649,7 @@ return;
 function collect_received_packet_type_info
 
 % arrays to store rough information on received data
+global g_decArgo_cycleList;
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
@@ -672,15 +673,38 @@ global g_decArgo_nbTech2PacketsReceived;
 global g_decArgo_nbParm1PacketsReceived;
 global g_decArgo_nbParm2PacketsReceived;
 
+
+% adjust the size of the variables
+g_decArgo_0TypePacketReceivedFlag = [g_decArgo_0TypePacketReceivedFlag ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_0TypePacketReceivedFlag))];
+g_decArgo_4TypePacketReceivedFlag = [g_decArgo_4TypePacketReceivedFlag ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_4TypePacketReceivedFlag))];
+g_decArgo_5TypePacketReceivedFlag = [g_decArgo_5TypePacketReceivedFlag ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_5TypePacketReceivedFlag))];
+g_decArgo_7TypePacketReceivedFlag = [g_decArgo_7TypePacketReceivedFlag ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_7TypePacketReceivedFlag))];
+g_decArgo_nbOf1Or8TypePacketReceived = [g_decArgo_nbOf1Or8TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf1Or8TypePacketReceived))];
+g_decArgo_nbOf2Or9TypePacketReceived = [g_decArgo_nbOf2Or9TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf2Or9TypePacketReceived))];
+g_decArgo_nbOf3Or10TypePacketReceived = [g_decArgo_nbOf3Or10TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf3Or10TypePacketReceived))];
+g_decArgo_nbOf13Or11TypePacketReceived = [g_decArgo_nbOf13Or11TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf13Or11TypePacketReceived))];
+g_decArgo_nbOf14Or12TypePacketReceived = [g_decArgo_nbOf14Or12TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf14Or12TypePacketReceived))];
+g_decArgo_nbOf6TypePacketReceived = [g_decArgo_nbOf6TypePacketReceived ...
+   zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf6TypePacketReceived))];
+
+g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
+g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
+g_decArgo_nbParm1PacketsReceived = g_decArgo_5TypePacketReceivedFlag;
+g_decArgo_nbParm2PacketsReceived = g_decArgo_7TypePacketReceivedFlag;
 g_decArgo_nbDescentPacketsReceived = g_decArgo_nbOf1Or8TypePacketReceived;
 g_decArgo_nbParkPacketsReceived = g_decArgo_nbOf2Or9TypePacketReceived;
 g_decArgo_nbAscentPacketsReceived = g_decArgo_nbOf3Or10TypePacketReceived;
 g_decArgo_nbNearSurfacePacketsReceived = g_decArgo_nbOf13Or11TypePacketReceived;
 g_decArgo_nbInAirPacketsReceived = g_decArgo_nbOf14Or12TypePacketReceived;
 g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbOf6TypePacketReceived;
-g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
-g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
-g_decArgo_nbParm1PacketsReceived = g_decArgo_5TypePacketReceivedFlag;
-g_decArgo_nbParm2PacketsReceived = g_decArgo_7TypePacketReceivedFlag;
 
 return;

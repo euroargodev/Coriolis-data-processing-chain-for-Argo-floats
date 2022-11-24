@@ -87,8 +87,11 @@ if (~isempty(a_tabTech))
       end
       
       tabTech = a_tabTech(idF2(end), :);
-      if (any(tabTech(10:12) ~= 0))
-         presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(10));
+      pres = sensor_2_value_for_pressure_202_210_to_214(tabTech(10));
+      temp = sensor_2_value_for_temperature_201_to_203_215_216(tabTech(11));
+      psal = sensor_2_value_for_salinity_201_to_203_215_216(tabTech(12));
+      if (any([pres temp psal] ~= 0))
+         presCutOffProf = pres;
       end
    end
 end

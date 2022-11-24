@@ -670,9 +670,9 @@ for idL = 1:size(a_sensorData, 1)
       paramFrequencyDoxy = get_netcdf_param_attributes('FREQUENCY_DOXY');
       paramDoxy = get_netcdf_param_attributes('DOXY');
       paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-      paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
       paramTempCpuChla = get_netcdf_param_attributes('TEMP_CPU_CHLA');
       paramChla = get_netcdf_param_attributes('CHLA');
+      paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
       paramBbp700 = get_netcdf_param_attributes('BBP700');
       
       % data sampled at the surface
@@ -693,31 +693,29 @@ for idL = 1:size(a_sensorData, 1)
          g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
 
       % compute BBP700
-      %       surfBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
-      %          surfBetaBackscattering700, ...
-      %          g_decArgo_betaBackscattering700Def, g_decArgo_backscatDef, ...
-      %          [surfPres ? ?], g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef);
-
+      % surface BBP700 will be computed later (once the profile is decoded
+      % because we need TEMP and PSAL for that)
+      surfBbp700 = ones(size(surfPres))*paramBbp700.fillValue;
+      
       % convert decoder default values to netCDF fill values
       surfPres(find(surfPres == g_decArgo_presDef)) = paramPres.fillValue;
       surfFluorescenceChla(find(surfFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
       surfBetaBackscattering700(find(surfBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       surfTempCpuChla(find(surfTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       surfChla(find(surfChla == g_decArgo_chloroADef)) = paramChla.fillValue;
-      %       surfBbp700(find(surfBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
 
       % store surface data
       o_surfData = get_apx_profile_data_init_struct;
       
       % add parameter variables to the data structure
       o_surfData.paramList = [paramPres ...
-         paramFluorescenceChla paramBetaBackscattering700 paramTempCpuChla ...
-         paramChla];
+         paramFluorescenceChla paramTempCpuChla paramChla ...
+         paramBetaBackscattering700 paramBbp700];
       
       % add parameter data to the data structure
       o_surfData.data = [surfPres ...
-         surfFluorescenceChla surfBetaBackscattering700 surfTempCpuChla ...
-         surfChla];
+         surfFluorescenceChla  surfTempCpuChla surfChla ...
+         surfBetaBackscattering700 surfBbp700];
       
       % add parameter data redundancy to the profile structure
       o_surfData.dataRed = ones(size(o_surfData.data));      
@@ -756,9 +754,9 @@ for idL = 1:size(a_sensorData, 1)
       parkFrequencyDoxy(find(parkFrequencyDoxy == g_decArgo_frequencyDoxyDef)) = paramFrequencyDoxy.fillValue;
       parkDoxy(find(parkDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
       parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
-      parkBetaBackscattering700(find(parkBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       parkTempCpuChla(find(parkTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       parkChla(find(parkChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      parkBetaBackscattering700(find(parkBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       parkBbp700(find(parkBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
       
       % store park data
@@ -767,14 +765,14 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_parkData.paramList = [paramPres paramTemp paramSal ...
          paramFrequencyDoxy paramDoxy ...
-         paramFluorescenceChla paramBetaBackscattering700 paramTempCpuChla ...
-         paramChla paramBbp700];
+         paramFluorescenceChla paramTempCpuChla paramChla ...
+         paramBetaBackscattering700 paramBbp700];
       
       % add parameter data to the data structure
       o_parkData.data = [parkPres parkTemp parkSal ...
          parkFrequencyDoxy parkDoxy ...
-         parkFluorescenceChla parkBetaBackscattering700 parkTempCpuChla ...
-         parkChla parkBbp700];
+         parkFluorescenceChla parkTempCpuChla parkChla ...
+         parkBetaBackscattering700 parkBbp700];
       
       % add parameter data redundancy to the profile structure
       o_parkData.dataRed = repmat(msgRed, 1, 10);      
@@ -1016,9 +1014,9 @@ if (nbLev > 0)
    paramFrequencyDoxy = get_netcdf_param_attributes('FREQUENCY_DOXY');
    paramDoxy = get_netcdf_param_attributes('DOXY');
    paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-   paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
    paramTempCpuChla = get_netcdf_param_attributes('TEMP_CPU_CHLA');
    paramChla = get_netcdf_param_attributes('CHLA');
+   paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
    paramBbp700 = get_netcdf_param_attributes('BBP700');
    
    % compute DOXY
@@ -1027,8 +1025,8 @@ if (nbLev > 0)
       profPres, profTemp, profSal, ...
       g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef, ...
       g_decArgo_doxyDef);
-   
-   profDoxyRed = min([profPresRed profTempRed profSalRed profFrequencyDoxy], [], 2);
+
+   profDoxyRed = min([profPresRed profTempRed profSalRed profFrequencyDoxyRed], [], 2);
 
    % compute CHLA
    profChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
@@ -1052,28 +1050,52 @@ if (nbLev > 0)
    profFrequencyDoxy(find(profFrequencyDoxy == g_decArgo_frequencyDoxyDef)) = paramFrequencyDoxy.fillValue;
    profDoxy(find(profDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
    profFluorescenceChla(find(profFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
-   profBetaBackscattering700(find(profBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
    profTempCpuChla(find(profTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
    profChla(find(profChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+   profBetaBackscattering700(find(profBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
    profBbp700(find(profBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
 
    % add parameter variables to the profile structure
    o_profData.paramList = [paramPres paramTemp paramSal ...
       paramFrequencyDoxy paramDoxy ...
-      paramFluorescenceChla paramBetaBackscattering700 paramTempCpuChla ...
-      paramChla paramBbp700];
+      paramFluorescenceChla paramTempCpuChla paramChla ...
+      paramBetaBackscattering700 paramBbp700];
    
    % add parameter data to the profile structure
    o_profData.data = [profPres profTemp profSal ...
       profFrequencyDoxy profDoxy ...
-      profFluorescenceChla profBetaBackscattering700 profTempCpuChla ...
-      profChla profBbp700];
+      profFluorescenceChla profTempCpuChla profChla ...
+      profBetaBackscattering700 profBbp700];
    
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed ...
       profFrequencyDoxyRed profDoxyRed ...
-      profFluorescenceChlaRed profBetaBackscattering700Red profTempCpuChlaRed ...
-      profChlaRed profBbp700Red];
+      profFluorescenceChlaRed profTempCpuChlaRed profChlaRed ...
+      profBetaBackscattering700Red profBbp700Red];
+   
+   % compute and add BBP700 value to surface data
+   if (~isempty(o_surfData))
+      
+      idLev = find((profTemp ~= paramTemp.fillValue) & (profSal ~= paramSal.fillValue));
+      if (~isempty(idLev))
+         idLev = idLev(end);
+         
+         ctd = [o_surfData.data(:, 1) ...
+            ones(size(o_surfData.data, 1), 1)*profTemp(idLev) ...
+            ones(size(o_surfData.data, 1), 1)*profSal(idLev)];
+         
+         % compute BBP700
+         surfBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+            o_surfData.data(:, 5), ...
+            g_decArgo_betaBackscattering700Def, g_decArgo_backscatDef, ...
+            ctd, g_decArgo_presDef, g_decArgo_tempDef, g_decArgo_salDef);
+         
+         % convert decoder default values to netCDF fill values
+         surfBbp700(find(surfBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
+         
+         o_surfData.data(:, 6) = surfBbp700;
+      end
+   end
 end
 
 % decode auxiliary engineering data

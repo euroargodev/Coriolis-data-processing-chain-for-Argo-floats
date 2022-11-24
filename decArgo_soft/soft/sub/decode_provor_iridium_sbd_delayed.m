@@ -154,9 +154,6 @@ global g_decArgo_rsyncLogFileUsedList;
 global g_decArgo_minSubSurfaceCycleDuration;
 MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
 
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
-
 % to detect ICE mode activation
 global g_decArgo_7TypePacketReceivedCyNum;
 g_decArgo_7TypePacketReceivedCyNum = [];
@@ -196,22 +193,11 @@ if (g_decArgo_realtimeFlag)
       mkdir(g_decArgo_historyDirectory);
    end
 end
-if (g_decArgo_virtualBuff)
-   g_decArgo_archiveSbdDirectory = [floatIriDirName 'archive/sbd/'];
-   if (exist(g_decArgo_archiveSbdDirectory, 'dir') == 7)
-      rmdir(g_decArgo_archiveSbdDirectory, 's');
-   end
-   mkdir(g_decArgo_archiveSbdDirectory);
-else
-   g_decArgo_spoolDirectory = [floatIriDirName 'spool/'];
-   if ~(exist(g_decArgo_spoolDirectory, 'dir') == 7)
-      mkdir(g_decArgo_spoolDirectory);
-   end
-   g_decArgo_bufferDirectory = [floatIriDirName 'buffer/'];
-   if ~(exist(g_decArgo_bufferDirectory, 'dir') == 7)
-      mkdir(g_decArgo_bufferDirectory);
-   end
+g_decArgo_archiveSbdDirectory = [floatIriDirName 'archive/sbd/'];
+if (exist(g_decArgo_archiveSbdDirectory, 'dir') == 7)
+   rmdir(g_decArgo_archiveSbdDirectory, 's');
 end
+mkdir(g_decArgo_archiveSbdDirectory);
 
 % inits for output NetCDF file
 decArgoConfParamNames = [];
@@ -271,11 +257,7 @@ if (~g_decArgo_realtimeFlag)
          end
       end
       
-      if (g_decArgo_virtualBuff)
-         add_to_list(mailFileName, 'spool');
-      else
-         move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
-      end
+      add_to_list(mailFileName, 'spool');
       nbFiles = nbFiles + 1;
    end
    
@@ -296,22 +278,6 @@ else
          g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
       [pathstr, mailFileName, ext] = fileparts(mailFilePathName);
       duplicate_files_ir({[mailFileName ext]}, pathstr, g_decArgo_archiveDirectory);
-   end
-   
-   % some mail files can be present in the buffer (if the final buffer was not
-   % completed during the previous run of the RT decoder)
-   % move the mail files from buffer to the archive directory (and delete the
-   % associated SBD files)
-   if (~g_decArgo_virtualBuff)
-      fileList = dir([g_decArgo_bufferDirectory '*.txt']);
-      if (~isempty(fileList))
-         fprintf('BUFF_INFO: Moving %d Iridium mail files from float buffer dir to float archive dir (and deleting associated SBD files)\n', ...
-            length(fileList));
-         for idF = 1:length(fileList)
-            fileName = fileList(idF).name;
-            move_files_ir_sbd({fileName}, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 0, 1);
-         end
-      end
    end
    
    % move the mail files from archive to the spool directory
@@ -342,11 +308,7 @@ else
             end
          end
          
-         if (g_decArgo_virtualBuff)
-            add_to_list(mailFileName, 'spool');
-         else
-            move_files_ir_sbd({mailFileName}, g_decArgo_archiveDirectory, g_decArgo_spoolDirectory, 0, 0);
-         end
+         add_to_list(mailFileName, 'spool');
          nbFiles = nbFiles + 1;
       end
       
@@ -363,145 +325,99 @@ end
 % ignore duplicated mail files (move duplicates in the archive directory)
 ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirectory);
 
-if (g_decArgo_realtimeFlag)
-   
-   % process mail files according to stored buffers
-
-   % read the buffer list file
-   [mailFileNameList, mailFileRank, mailFileCyNum] = ...
-      read_buffer_list_delayed(a_floatNum, g_decArgo_historyDirectory);
-
-   uRank = sort(unique(mailFileRank));
-   for idRk = 1:length(uRank)
-      rankNum = uRank(idRk);
-      idFileList = find(mailFileRank == rankNum);
-      cycleNumberList = unique(mailFileCyNum(idFileList));
-      
-      fprintf('BUFFER #%d: processing %d sbd files\n', rankNum, length(unique(mailFileNameList(idFileList))));
-      
-      [~, idUnique, ~] = unique(mailFileNameList(idFileList));
-      idFileList = idFileList(idUnique);
-      for idF = 1:length(idFileList)
-         
-         % move the next file into the buffer directory
-         if (g_decArgo_virtualBuff)
-            add_to_list(mailFileNameList{idFileList(idF)}, 'buffer');
-            remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 1);
-         else
-            move_files_ir_sbd(mailFileNameList(idFileList(idF)), ...
-               g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
-         end
-         
-         % extract the attachement
-         if (g_decArgo_virtualBuff)
-            [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-               mailFileNameList{idFileList(idF)}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-         else
-            [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-               mailFileNameList{idFileList(idF)}, g_decArgo_bufferDirectory, g_decArgo_bufferDirectory);
-         end
-         g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
-         if (attachmentFound == 0)
-            if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 1);
-            else
-               move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-            end
-         end
-      end
-      
-      % process the files of the buffer directory
-      
-      % retrieve information on the files in the buffer
-      if (g_decArgo_virtualBuff)
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = ...
-            get_list_files_info_ir_sbd('buffer', '');
-      else
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = ...
-            get_dir_files_info_ir_sbd(g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-      end
-      
-      [o_tabProfiles, ...
-         o_tabTrajNMeas, o_tabTrajNCycle, ...
-         o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-         decode_sbd_files_delayed( ...
-         tabFileNames, tabFileDates, tabFileSizes, ...
-         a_decoderId, a_refDay, cycleNumberList, 0, 0, ...
-         o_tabProfiles, ...
-         o_tabTrajNMeas, o_tabTrajNCycle, ...
-         o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
-      
-      % move the processed files into the archive directory (and delete
-      % the associated SBD files)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 1);
-      else
-         move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-      end
-   end
-end
+% if (g_decArgo_realtimeFlag)
+%
+%    % process mail files according to stored buffers
+%
+%    % read the buffer list file
+%    [mailFileNameList, mailFileRank, mailFileCyNum] = ...
+%       read_buffer_list_delayed(a_floatNum, g_decArgo_historyDirectory);
+%
+%    uRank = sort(unique(mailFileRank));
+%    for idRk = 1:length(uRank)
+%       rankNum = uRank(idRk);
+%       idFileList = find(mailFileRank == rankNum);
+%       cycleNumberList = unique(mailFileCyNum(idFileList));
+%
+%       fprintf('BUFFER #%d: processing %d sbd files\n', rankNum, length(unique(mailFileNameList(idFileList))));
+%
+%       [~, idUnique, ~] = unique(mailFileNameList(idFileList));
+%       idFileList = idFileList(idUnique);
+%       for idF = 1:length(idFileList)
+%
+%          % move the next file into the buffer directory
+%          add_to_list(mailFileNameList{idFileList(idF)}, 'buffer');
+%          remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'spool', 0, 1);
+%
+%          % extract the attachement
+%          [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+%             mailFileNameList{idFileList(idF)}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
+%          g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
+%          if (attachmentFound == 0)
+%             remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 1);
+%          end
+%       end
+%
+%       % process the files of the buffer directory
+%
+%       % retrieve information on the files in the buffer
+%       [tabFileNames, ~, tabFileDates, tabFileSizes] = ...
+%          get_list_files_info_ir_sbd('buffer', '');
+%
+%       [o_tabProfiles, ...
+%          o_tabTrajNMeas, o_tabTrajNCycle, ...
+%          o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
+%          decode_sbd_files_delayed( ...
+%          tabFileNames, tabFileDates, tabFileSizes, ...
+%          a_decoderId, a_refDay, cycleNumberList, 0, 0, ...
+%          o_tabProfiles, ...
+%          o_tabTrajNMeas, o_tabTrajNCycle, ...
+%          o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
+%
+%       % move the processed files into the archive directory (and delete
+%       % the associated SBD files)
+%       remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 1);
+%    end
+% end
 
 % retrieve information on spool directory contents
-if (g_decArgo_virtualBuff)
-   [tabAllFileNames, ~, tabAllFileDates, ~] = ...
-      get_list_files_info_ir_sbd('spool', '');
-else
-   [tabAllFileNames, ~, tabAllFileDates, ~] = ...
-      get_dir_files_info_ir_sbd(g_decArgo_spoolDirectory, a_floatImei, 'txt', '');
-end
+[tabAllFileNames, ~, tabAllFileDates, ~] = ...
+   get_list_files_info_ir_sbd('spool', '');
 
 % process the mail files of the spool directory in chronological order
-if (g_decArgo_realtimeFlag)
-   bufferRank = 1;
-   if (~isempty(mailFileRank))
-      bufferRank = max(mailFileRank) + 1;
-   end
-   bufferMailFileNames = [];
-end
+% if (g_decArgo_realtimeFlag)
+%    bufferRank = 1;
+%    if (~isempty(mailFileRank))
+%       bufferRank = max(mailFileRank) + 1;
+%    end
+%    bufferMailFileNames = [];
+% end
 cycleNumberListToIgnore = [];
 for idSpoolFile = 1:length(tabAllFileNames)
-      
+   
    % move the next file into the buffer directory
-   if (g_decArgo_virtualBuff)
-      add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
-      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 1);
-   else
-      move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
-   end
+   add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
+   remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 1);
    
    % extract the attachement
-   if (g_decArgo_virtualBuff)
-      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-         tabAllFileNames{idSpoolFile}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-   else
-      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
-         tabAllFileNames{idSpoolFile}, g_decArgo_bufferDirectory, g_decArgo_bufferDirectory);
-   end
+   [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+      tabAllFileNames{idSpoolFile}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
    g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    if (attachmentFound == 0)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 1);
-      else
-         move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
-      end
-      if (g_decArgo_realtimeFlag)
-         bufferMailFileNames{end+1} = tabAllFileNames{idSpoolFile};
-      end
+      remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 1);
+      %       if (g_decArgo_realtimeFlag)
+      %          bufferMailFileNames{end+1} = tabAllFileNames{idSpoolFile};
+      %       end
       if (idSpoolFile < length(tabAllFileNames))
          continue;
       end
    end
-
+   
    % process the files of the buffer
    
    % retrieve information on the files in the buffer
-   if (g_decArgo_virtualBuff)
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-         'buffer', '');
-   else
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-         g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-   end
+   [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+      'buffer', '');
    
    % assign a transmission number to the files in the buffer
    tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
@@ -512,28 +428,30 @@ for idSpoolFile = 1:length(tabAllFileNames)
       
       % retrieve information about the first transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
-      [cycleNumberListTrans1, bufferCompletedTrans1] = check_received_sbd_files( ...
+      [cycleNumberListTrans1, bufferCompletedTrans1, ~] = check_received_sbd_files( ...
          tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
       
       % check that missing data of the first transmission have been received in
       % the second transmission
       idFilesTrans1And2 = find((tabFileTransNums == 1) | (tabFileTransNums == 2));
       cycleNumberNotCompletedList = cycleNumberListTrans1(find(bufferCompletedTrans1 == 0));
-      [cycleNumberList, bufferCompleted] = check_received_sbd_files( ...
+      [cycleNumberList, bufferCompleted, ~] = check_received_sbd_files( ...
          tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), cycleNumberNotCompletedList, a_decoderId);
       
       % process cycle numbers of the first transmission
-      if (any(bufferCompleted == 0) && ~strcmp(g_decArgo_floatFirmware, '5900A03'))
-         cycleNumberNotCompletedList = cycleNumberList(find(bufferCompleted == 0));
-         cycleListStr = sprintf('%d,', cycleNumberNotCompletedList);
-         
-         % all data to be transmitted should be received since firmware version
-         % 5900A04
-         fprintf('ERROR: Float #%d: this should never occur (for firmware >= 5900A04): missing data for cycle(s): %s => processing received data\n', ...
-            g_decArgo_floatNum, ...
-            cycleListStr(1:end-1));
+      if (ismember(a_decoderId, [212 214]))
+         if (any(bufferCompleted == 0) && ~strcmp(g_decArgo_floatFirmware, '5900A03'))
+            cycleNumberNotCompletedList = cycleNumberList(find(bufferCompleted == 0));
+            cycleListStr = sprintf('%d,', cycleNumberNotCompletedList);
+            
+            % all data to be transmitted should be received since firmware version
+            % 5900A04
+            fprintf('ERROR: Float #%d: this should never occur (for firmware >= 5900A04): missing data for cycle(s): %s => processing received data\n', ...
+               g_decArgo_floatNum, ...
+               cycleListStr(1:end-1));
+         end
       end
-         
+      
       [o_tabProfiles, ...
          o_tabTrajNMeas, o_tabTrajNCycle, ...
          o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
@@ -545,29 +463,20 @@ for idSpoolFile = 1:length(tabAllFileNames)
          o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
       cycleNumberListToIgnore = cycleNumberListTrans1;
       
-      if (g_decArgo_realtimeFlag)
-         bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1And2)];
-         write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
-         bufferRank = bufferRank + 1;
-         bufferMailFileNames = [];
-      end
+      %       if (g_decArgo_realtimeFlag)
+      %          bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1And2)];
+      %          write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
+      %          bufferRank = bufferRank + 1;
+      %          bufferMailFileNames = [];
+      %       end
       
       % move the first transmission files into the archive directory
       % (and delete the associated SBD files)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-      else
-         move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-      end
+      remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
       
       % retrieve information on the files in the buffer
-      if (g_decArgo_virtualBuff)
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-            'buffer', '');
-      else
-         [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-            g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-      end
+      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+         'buffer', '');
       
       % assign a transmission number to the files in the buffer
       tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
@@ -578,7 +487,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       
       % retrieve information about the first transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
-      [cycleNumberListTrans1, bufferCompletedTrans1] = check_received_sbd_files( ...
+      [cycleNumberListTrans1, bufferCompletedTrans1, ~] = check_received_sbd_files( ...
          tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
       
       % ignore data of cycleNumberListToIgnore list (they have been already
@@ -588,7 +497,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       bufferCompletedTrans1(idF) = [];
       
       if (~any(bufferCompletedTrans1 == 0))
-
+         
          % the buffer of the first transmission is completed
          [o_tabProfiles, ...
             o_tabTrajNMeas, o_tabTrajNCycle, ...
@@ -600,29 +509,20 @@ for idSpoolFile = 1:length(tabAllFileNames)
             o_tabTrajNMeas, o_tabTrajNCycle, ...
             o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
          
-         if (g_decArgo_realtimeFlag)
-            bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1)];
-            write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
-            bufferRank = bufferRank + 1;
-            bufferMailFileNames = [];
-         end
-                  
+         %          if (g_decArgo_realtimeFlag)
+         %             bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1)];
+         %             write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
+         %             bufferRank = bufferRank + 1;
+         %             bufferMailFileNames = [];
+         %          end
+         
          % move the first transmission files into the archive directory
          % (and delete the associated SBD files)
-         if (g_decArgo_virtualBuff)
-            remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-         else
-            move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-         end
+         remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
          
          % retrieve information on the files in the buffer
-         if (g_decArgo_virtualBuff)
-            [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-               'buffer', '');
-         else
-            [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-               g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-         end
+         [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+            'buffer', '');
          
          % assign a transmission number to the files in the buffer
          tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
@@ -632,9 +532,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
          % the buffer of the first transmission is not completed check with the
          % second transmission data
          idFilesTrans1And2 = find((tabFileTransNums == 1) | (tabFileTransNums == 2));
-         [cycleNumberListTrans1And2, bufferCompletedTrans1And2] = check_received_sbd_files( ...
+         [cycleNumberListTrans1And2, bufferCompletedTrans1And2, ~] = check_received_sbd_files( ...
             tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), cycleNumberListTrans1, a_decoderId);
-      
+         
          % ignore data of cycleNumberListToIgnore list (they have been
          % already processed)
          idF = find(ismember(cycleNumberListTrans1And2, cycleNumberListToIgnore) == 1);
@@ -654,30 +554,21 @@ for idSpoolFile = 1:length(tabAllFileNames)
                o_tabTrajNMeas, o_tabTrajNCycle, ...
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
             cycleNumberListToIgnore = cycleNumberListTrans1;
-                    
-            if (g_decArgo_realtimeFlag)
-               bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1And2)];
-               write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
-               bufferRank = bufferRank + 1;
-               bufferMailFileNames = [];
-            end
+            
+            %             if (g_decArgo_realtimeFlag)
+            %                bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1And2)];
+            %                write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
+            %                bufferRank = bufferRank + 1;
+            %                bufferMailFileNames = [];
+            %             end
             
             % move the first transmission files into the archive directory
             % (and delete the associated SBD files)
-            if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-            else
-               move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-            end
+            remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
             
             % retrieve information on the files in the buffer
-            if (g_decArgo_virtualBuff)
-               [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-                  'buffer', '');
-            else
-               [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-                  g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-            end
+            [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+               'buffer', '');
             
             % assign a transmission number to the files in the buffer
             tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
@@ -698,23 +589,14 @@ for idSpoolFile = 1:length(tabAllFileNames)
                   o_tabTrajNMeas, o_tabTrajNCycle, ...
                   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
                cycleNumberListToIgnore = cycleNumberListTrans1;
-                              
+               
                % move the first transmission files into the archive directory
                % (and delete the associated SBD files)
-               if (g_decArgo_virtualBuff)
-                  remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-               else
-                  move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-               end
+               remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
                
                % retrieve information on the files in the buffer
-               if (g_decArgo_virtualBuff)
-                  [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-                     'buffer', '');
-               else
-                  [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-                     g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-               end
+               [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+                  'buffer', '');
                
                % assign a transmission number to the files in the buffer
                tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
@@ -732,73 +614,82 @@ for idSpoolFile = 1:length(tabAllFileNames)
       
       % retrieve information about the transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
-      [cycleNumberListTrans1, bufferCompletedTrans1] = check_received_sbd_files( ...
+      [cycleNumberListTrans1, bufferCompletedTrans1, firstDateNextBuffer] = check_received_sbd_files( ...
          tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
       
-      % ignore data of cycleNumberListToIgnore list (they have been already
-      % processed)
-      idF = find(ismember(cycleNumberListTrans1, cycleNumberListToIgnore) == 1);
-      cycleNumberListTrans1(idF) = [];
-      bufferCompletedTrans1(idF) = [];
+      nbLoops = 1;
+      if (~isempty(firstDateNextBuffer))
+         nbLoops = 2;
+      end
       
-      if (~any(bufferCompletedTrans1 == 0))
-
-         % the buffer of the transmission is completed
-         [o_tabProfiles, ...
-            o_tabTrajNMeas, o_tabTrajNCycle, ...
-            o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-            decode_sbd_files_delayed( ...
-            tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
-            a_decoderId, a_refDay, cycleNumberListTrans1, 0, (length(cycleNumberListTrans1) > 1), ...
-            o_tabProfiles, ...
-            o_tabTrajNMeas, o_tabTrajNCycle, ...
-            o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
-                  
-         if (g_decArgo_realtimeFlag)
-            bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1)];
-            write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
-            bufferRank = bufferRank + 1;
-            bufferMailFileNames = [];
+      for idL = 1:nbLoops
+         
+         idFiles = 1:length(idFilesTrans1);
+         if (~isempty(firstDateNextBuffer))
+            if (idL == 1)
+               idFiles = find(tabFileDates(idFilesTrans1) < firstDateNextBuffer);
+            else
+               idFiles = find(tabFileDates(idFilesTrans1) >= firstDateNextBuffer);
+            end
          end
          
-         % move the first transmission files into the archive directory
-         % (and delete the associated SBD files)
-         if (g_decArgo_virtualBuff)
-            remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-         else
-            move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-         end
+         % ignore data of cycleNumberListToIgnore list (they have been already
+         % processed)
+         idF = find(ismember(cycleNumberListTrans1, cycleNumberListToIgnore) == 1);
+         cycleNumberListTrans1(idF) = [];
+         bufferCompletedTrans1(idF) = [];
          
-      else
-         
-         if ((~g_decArgo_realtimeFlag) && (idSpoolFile == length(tabAllFileNames)))
+         if (~any(bufferCompletedTrans1 == 0))
             
-            % with the PI decoder process all received data even if the
-            % buffer is not completed
+            % the buffer of the transmission is completed
             [o_tabProfiles, ...
                o_tabTrajNMeas, o_tabTrajNCycle, ...
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
                decode_sbd_files_delayed( ...
-               tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
-               a_decoderId, a_refDay, cycleNumberListTrans1, 1, (length(cycleNumberListTrans1) > 1), ...
+               tabFileNames(idFilesTrans1(idFiles)), tabFileDates(idFilesTrans1(idFiles)), tabFileSizes(idFilesTrans1(idFiles)), ...
+               a_decoderId, a_refDay, cycleNumberListTrans1, 0, (length(cycleNumberListTrans1) > 1), ...
                o_tabProfiles, ...
                o_tabTrajNMeas, o_tabTrajNCycle, ...
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
-                        
+            
+            %             if (g_decArgo_realtimeFlag)
+            %                bufferMailFileNames = [bufferMailFileNames tabFileNames(idFilesTrans1(idFiles))];
+            %                write_buffer_list_ir_sbd_delayed(a_floatNum, bufferRank, bufferMailFileNames, cycleNumberListTrans1);
+            %                bufferRank = bufferRank + 1;
+            %                bufferMailFileNames = [];
+            %             end
+            
             % move the first transmission files into the archive directory
             % (and delete the associated SBD files)
-            if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(tabFileNames(idFilesTrans1), 'buffer', 1, 1);
-            else
-               move_files_ir_sbd(tabFileNames(idFilesTrans1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-            end
+            remove_from_list_ir_sbd(tabFileNames(idFilesTrans1(idFiles)), 'buffer', 1, 1);
+            
          else
-            % the buffer of the first transmission is not completed
-            % additional data is needed
-            continue;
+            
+            if ((~g_decArgo_realtimeFlag) && (idSpoolFile == length(tabAllFileNames)))
+               
+               % with the PI decoder process all received data even if the
+               % buffer is not completed
+               [o_tabProfiles, ...
+                  o_tabTrajNMeas, o_tabTrajNCycle, ...
+                  o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
+                  decode_sbd_files_delayed( ...
+                  tabFileNames(idFilesTrans1(idFiles)), tabFileDates(idFilesTrans1(idFiles)), tabFileSizes(idFilesTrans1(idFiles)), ...
+                  a_decoderId, a_refDay, cycleNumberListTrans1, 1, (length(cycleNumberListTrans1) > 1), ...
+                  o_tabProfiles, ...
+                  o_tabTrajNMeas, o_tabTrajNCycle, ...
+                  o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
+               
+               % move the first transmission files into the archive directory
+               % (and delete the associated SBD files)
+               remove_from_list_ir_sbd(tabFileNames(idFilesTrans1(idFiles)), 'buffer', 1, 1);
+            else
+               % the buffer of the first transmission is not completed
+               % additional data is needed
+               continue;
+            end
          end
       end
-   end   
+   end
 end
 
 if (isempty(g_decArgo_outputCsvFileId))
@@ -823,7 +714,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistency
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
-
+   
    % add ICE detected flag in TECH variables and finalize TECH data
    [o_tabNcTechIndex, o_tabNcTechVal] = finalize_technical_data_ir_sbd( ...
       o_tabNcTechIndex, o_tabNcTechVal, a_decoderId);
@@ -845,8 +736,6 @@ if (isempty(g_decArgo_outputCsvFileId))
    end
 end
 
-if (g_decArgo_virtualBuff)
-   rmdir(g_decArgo_archiveSbdDirectory, 's');
-end
+rmdir(g_decArgo_archiveSbdDirectory, 's');
 
 return;

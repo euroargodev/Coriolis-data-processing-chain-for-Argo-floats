@@ -39,16 +39,29 @@ global g_decArgo_outputNcParamId;
 
 
 % add ICE detected flag
-if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
-
-   % ICE mode is activated
+if (ismember(a_decoderId, [212 214]))
+   if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+      
+      % ICE mode is activated
+      for idCy = 1:length(g_decArgo_cycleNumListForIce)
+         cycleNumber = g_decArgo_cycleNumListForIce(idCy);
+         iceDetectedBitValue = compute_ice_detected_bit_value(cycleNumber, ...
+            g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
+         
+         o_tabNcTechIndex = [o_tabNcTechIndex;
+            cycleNumber 243];
+         o_tabNcTechVal{end+1} = iceDetectedBitValue;
+      end
+   end
+elseif (ismember(a_decoderId, [216]))
+   % ICE mode is supposed to be activated
    for idCy = 1:length(g_decArgo_cycleNumListForIce)
       cycleNumber = g_decArgo_cycleNumListForIce(idCy);
       iceDetectedBitValue = compute_ice_detected_bit_value(cycleNumber, ...
          g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
       
       o_tabNcTechIndex = [o_tabNcTechIndex;
-         cycleNumber 243];
+         cycleNumber 233];
       o_tabNcTechVal{end+1} = iceDetectedBitValue;
    end
 end

@@ -3,7 +3,8 @@
 % them.
 %
 % SYNTAX :
-%  [o_sbdFileNameList, o_sbdFileRank, o_sbdFileDate, o_sbdFileCyNum, o_sbdFileProfNum] = ...
+%  [o_sbdFileNameList, o_sbdFileRank, o_sbdFileDate, ...
+%    o_sbdFileCyNum, o_sbdFileProfNum, o_sbdFileDataType] = ...
 %    create_buffers(a_dirName, a_launchDate, a_floatEndDate, a_fidTxt, a_fidCsv)
 %
 % INPUT PARAMETERS :
@@ -19,6 +20,7 @@
 %   o_sbdFileDate     : date of SBD files to process
 %   o_sbdFileCyNum    : cycle number of SBD files to process
 %   o_sbdFileProfNum  : profile number of SBD files to process
+%   o_sbdFileDataType : packet type of SBD files to process
 %
 % EXAMPLES :
 %
@@ -28,7 +30,8 @@
 % RELEASES :
 %   02/04/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_sbdFileNameList, o_sbdFileRank, o_sbdFileDate, o_sbdFileCyNum, o_sbdFileProfNum] = ...
+function [o_sbdFileNameList, o_sbdFileRank, o_sbdFileDate, ...
+   o_sbdFileCyNum, o_sbdFileProfNum, o_sbdFileDataType] = ...
    create_buffers(a_dirName, a_launchDate, a_floatEndDate, a_fidTxt, a_fidCsv)
 
 o_sbdFileNameList = [];
@@ -36,6 +39,7 @@ o_sbdFileRank = [];
 o_sbdFileDate = [];
 o_sbdFileCyNum = [];
 o_sbdFileProfNum = [];
+o_sbdFileDataType = [];
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -46,6 +50,8 @@ global g_decArgo_dateDef;
 tabName = [];
 tabInfo = [];
 sbdFiles = dir([a_dirName '/*.sbd']);
+% [~, idSort] = sort([sbdFiles.datenum]);
+% sbdFiles = sbdFiles(idSort);
 for idFile = 1:length(sbdFiles)
    
    sbdFileName = sbdFiles(idFile).name;
@@ -67,11 +73,29 @@ for idFile = 1:length(sbdFiles)
    else
       profile = str2num(profileStr);
    end
-   
+   phaseStr = sbdFileName(idFUs(5)+1:idFUs(6)-1);
+   if (strcmp(phaseStr, 'xx'))
+      phase = -1;
+   else
+      phase = str2num(phaseStr);
+   end
+   sensorStr = sbdFileName(idFUs(6)+1:idFUs(7)-1);
+   if (strcmp(sensorStr, 'x'))
+      sensor = -1;
+   else
+      sensor = str2num(sensorStr);
+   end
+   sensorDataTypeStr = sbdFileName(idFUs(7)+1:idFUs(8)-1);
+   if (strcmp(sensorDataTypeStr, 'xx'))
+      sensorDataType = -1;
+   else
+      sensorDataType = str2num(sensorDataTypeStr);
+   end
+
    sbdFilePathName = [a_dirName '/' sbdFileName];
    tabName{end+1} = sbdFilePathName;
    tabInfo = [tabInfo;
-      [idFile -1 date type cycle profile]];
+      [idFile -1 date type cycle profile phase sensor sensorDataType]];
 end
 
 % sort files and associated information by date
@@ -421,7 +445,7 @@ fprintf('DEC_INFO: %d files are not assigned\n', idNotAssigned);
 % generate CSV output file
 if (~isempty(a_fidCsv))
    
-   header = 'Rank; File #; File; Cycle #; Profile #; Data type; Diff dates';
+   header = 'Rank;File #;File;Cycle #;Profile #;Data type;Phase #;Sensor #;Sensor data type #;Diff dates';
    fprintf(a_fidCsv, '%s\n', header);
    
    diffDates = diff(tabInfoOri(:, 3))*24;
@@ -457,9 +481,10 @@ if (~isempty(a_fidCsv))
          unusedMark = '';
       end
       
-      fprintf(a_fidCsv, '%d; %d; %s; %d; %d; %d; %s; %s; %s\n', ...
+      fprintf(a_fidCsv, '%d; %d; %s; %d; %d; %d; %d; %d; %d; %s; %s; %s\n', ...
          fileRank, idFile, [fileName fileExt], ...
          tabInfoOri(idFile, 5), tabInfoOri(idFile, 6), tabInfoOri(idFile, 4), ...
+         tabInfoOri(idFile, 7), tabInfoOri(idFile, 8), tabInfoOri(idFile, 9), ...
          diffDateStr, diffDateMark, unusedMark);
    end
 end
@@ -487,6 +512,7 @@ o_sbdFileRank = tabInfo(:, 2);
 o_sbdFileDate = tabInfo(:, 3);
 o_sbdFileCyNum = tabInfo(:, 5);
 o_sbdFileProfNum = tabInfo(:, 6);
+o_sbdFileDataType = tabInfo(:, 4);
 
 return;
 

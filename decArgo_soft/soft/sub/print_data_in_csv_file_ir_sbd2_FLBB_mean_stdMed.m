@@ -3,10 +3,11 @@
 %
 % SYNTAX :
 %  print_data_in_csv_file_ir_sbd2_FLBB_mean_stdMed( ...
-%    a_cycleNum, a_profNum, a_phaseNum, ...
+%    a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataFLBBMean, a_dataFLBBStdMed)
 %
 % INPUT PARAMETERS :
+%   a_decoderId      : float decoder Id
 %   a_cycleNum       : cycle number of the packet
 %   a_profNum        : profile number of the packet
 %   a_phaseNum       : phase number of the packet
@@ -24,7 +25,7 @@
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_data_in_csv_file_ir_sbd2_FLBB_mean_stdMed( ...
-   a_cycleNum, a_profNum, a_phaseNum, ...
+   a_decoderId, a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataFLBBMean, a_dataFLBBStdMed)
 
 % current float WMO number
@@ -89,7 +90,7 @@ if (isempty(idDataStdMed))
       (dataMean(:, 5) == 0));
    dataMean(idDel, :) = [];
 
-   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
+   dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3), a_decoderId);
    dataMean(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(dataMean(:, 4));
    dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
    paramCHLA = get_netcdf_param_attributes('CHLA');
@@ -180,7 +181,7 @@ else
          end
       end
 
-      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
+      data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId);
       data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
       data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
       data(:, 6) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 6));

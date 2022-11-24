@@ -2,7 +2,8 @@
 % Read, in the appropriate file, the rank of each file to be processed in RT.
 %
 % SYNTAX :
-%  [o_fileNameList, o_fileRank, o_fileDate, o_fileCyNum, o_fileProfNum] = ...
+%  [o_fileNameList, o_fileRank, o_fileDate, ...
+%    o_fileCyNum, o_fileProfNum, o_sbdFileDataType] = ...
 %    read_buffer_list(a_floatNum, a_bufferFileDirName, a_fileDirName, a_allInfo)
 %
 % INPUT PARAMETERS :
@@ -12,11 +13,12 @@
 %   a_allInfo           : retrieve also o_fileDate, o_fileCyNum and o_fileProfNum
 %
 % OUTPUT PARAMETERS :
-%   o_fileNameList : name of files to process
-%   o_fileRank     : rank of files to process
-%   o_fileDate     : date of files to process
-%   o_fileCyNum    : cycle number of files to process
-%   o_fileProfNum  : profile number of files to process
+%   o_fileNameList    : name of files to process
+%   o_fileRank        : rank of files to process
+%   o_fileDate        : date of files to process
+%   o_fileCyNum       : cycle number of files to process
+%   o_fileProfNum     : profile number of files to process
+%   o_sbdFileDataType : packet type of SBD files to process
 %
 % EXAMPLES :
 %
@@ -26,7 +28,8 @@
 % RELEASES :
 %   04/02/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_fileNameList, o_fileRank, o_fileDate, o_fileCyNum, o_fileProfNum] = ...
+function [o_fileNameList, o_fileRank, o_fileDate, ...
+   o_fileCyNum, o_fileProfNum, o_sbdFileDataType] = ...
    read_buffer_list(a_floatNum, a_bufferFileDirName, a_fileDirName, a_allInfo)
 
 % output parameters initialization
@@ -35,6 +38,7 @@ o_fileRank = [];
 o_fileDate = [];
 o_fileCyNum = [];
 o_fileProfNum = [];
+o_sbdFileDataType = [];
 
 global g_decArgo_janFirst1950InMatlab;
 
@@ -64,6 +68,8 @@ if (exist(bufferListFileName, 'file') == 2)
          dateStr = fileName(idFUs(1)+1:idFUs(2)-1);
          date = datenum(dateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
          
+         dataType = str2num(fileName(idFUs(2)+1:idFUs(3)-1));
+
          cycleStr = fileName(idFUs(3)+1:idFUs(4)-1);
          if (strcmp(cycleStr, 'xxx'))
             cycle = -1;
@@ -81,6 +87,7 @@ if (exist(bufferListFileName, 'file') == 2)
          o_fileDate(idFile) = date;
          o_fileCyNum(idFile) = cycle;
          o_fileProfNum(idFile) = profile;
+         o_sbdFileDataType(idFile) = dataType;
       end
       filePathName = fileName;
       if (~isempty(a_fileDirName))

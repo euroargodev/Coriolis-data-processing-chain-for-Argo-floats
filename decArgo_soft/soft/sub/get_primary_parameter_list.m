@@ -73,7 +73,7 @@ switch (a_decoderId)
          {'PSAL_MED'} ...
          ];
       
-   case {121, 122}
+   case {121, 122, 123}
 
       % CTS5 floats
       o_paramList = [ ...
@@ -91,7 +91,7 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {201, 202, 203, 206, 207, 208, 213, 214}
+   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216}
       
       % Arvor Deep
       % Provor-DO Iridium

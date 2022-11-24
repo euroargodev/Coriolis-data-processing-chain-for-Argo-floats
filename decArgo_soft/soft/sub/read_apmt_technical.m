@@ -436,8 +436,8 @@ switch (a_decoderId)
    case {121}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_121;
 
-   case {122}
-      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122;
+   case {122, 123}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122_123;
 
    otherwise
       fprintf('ERROR: init_tech_info_struct: Don''t know how to parse APMT technical data for techId #%d\n', ...
@@ -1520,7 +1520,7 @@ return;
 % Get the basic structure to read APMT technical data.
 %
 % SYNTAX :
-%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122
+%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122_123
 %
 % INPUT PARAMETERS :
 %
@@ -1536,7 +1536,7 @@ return;
 % RELEASES :
 %   09/14/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122
+function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_122_123
 
 % output parameters initialization
 o_techSectionList = [];

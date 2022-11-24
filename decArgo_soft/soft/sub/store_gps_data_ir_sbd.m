@@ -64,12 +64,13 @@ if (~isempty(a_tabTech))
       for idP = 1:length(idPos)
       switch (a_decoderId)
          
-         case {201, 202, 203, 215} 
+         case {201, 202, 203, 215, 216} 
             % Arvor-deep 4000
             % Arvor-deep 3500
             % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
+            % Arvor-Deep-Ice Iridium 5.65
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
-            
+
          case {205, 204, 206, 207, 208, 209}
             % Arvor Iridium 5.41 & 5.42 & 5.4
             % Provor-DO Iridium 5.71 & 5.7 & 5.72

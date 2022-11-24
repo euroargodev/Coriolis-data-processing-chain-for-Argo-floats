@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_CTD_raw( ...
 %    a_dataCTDRaw, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCTD)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCTD, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_dataCTDRaw             : raw CTD data
@@ -12,6 +12,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechCTD          : CTD technical data
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -27,7 +28,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_CTD_raw( ...
    a_dataCTDRaw, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCTD)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechCTD, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -167,7 +168,7 @@ for idCy = 1:length(cycleNumList)
                   paramSal = get_netcdf_param_attributes('PSAL');
                   
                   % convert counts to values
-                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2));
+                  data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                   data(:, 3) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 3));
                   data(:, 4) = sensor_2_value_for_salinity_ir_rudics_sbd2(data(:, 4));
                   

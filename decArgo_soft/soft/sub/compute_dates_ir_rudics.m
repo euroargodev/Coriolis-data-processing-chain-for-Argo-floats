@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_date] = compute_dates_ir_rudics( ...
-%    a_sensorNum, a_cycleNum, a_profNum, a_date, a_pressure)
+%    a_sensorNum, a_cycleNum, a_profNum, a_date, a_pressure, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_sensorNum : sensor number
@@ -11,6 +11,7 @@
 %   a_profNum   : profile number
 %   a_date      : input dates
 %   a_pressure  : drift measurement pressures
+%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_date : output dates
@@ -24,7 +25,7 @@
 %   07/16/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_date] = compute_dates_ir_rudics( ...
-   a_sensorNum, a_cycleNum, a_profNum, a_date, a_pressure)
+   a_sensorNum, a_cycleNum, a_profNum, a_date, a_pressure, a_decoderId)
 
 % output parameters initialization
 o_date = a_date;
@@ -39,7 +40,7 @@ global g_decArgo_dateDef;
    config_get_drift_sampling_periods_ir_rudics(a_sensorNum, a_cycleNum, a_profNum);
 
 % add date to drift measurement
-a_pressure = sensor_2_value_for_pressure_ir_rudics_sbd2(a_pressure);
+a_pressure = sensor_2_value_for_pressure_ir_rudics_sbd2(a_pressure, a_decoderId);
 for id = 1:length(a_pressure)-1
    
    press = a_pressure(id);

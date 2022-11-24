@@ -2,11 +2,12 @@
 % Store technical message #2 data for output NetCDF file.
 %
 % SYNTAX :
-%  store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle)
+%  store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle, a_iceDetected)
 %
 % INPUT PARAMETERS :
-%   a_tabTech2  : decoded technical data
-%   a_deepCycle : deep cycle flag
+%   a_tabTech2    : decoded technical data
+%   a_deepCycle   : deep cycle flag
+%   a_iceDetected : ice detected flag
 %
 % OUTPUT PARAMETERS :
 %
@@ -34,10 +35,6 @@ global g_decArgo_outputNcParamValue;
 
 % to detect ICE mode activation
 global g_decArgo_7TypePacketReceivedCyNum;
-
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
 
 
 if (isempty(a_tabTech2))
@@ -105,10 +102,13 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 211];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(14+ID_OFFSET);
    
-   if (any(tabTech2((15:17)+ID_OFFSET) ~= 0) && (a_iceDetected == 0))
+   pres = sensor_2_value_for_pressure_202_210_to_214(tabTech2(15+ID_OFFSET));
+   temp = sensor_2_value_for_temperature_204_to_214(tabTech2(16+ID_OFFSET));
+   psal = sensor_2_value_for_salinity_210_to_214(tabTech2(17+ID_OFFSET));
+   if (any([pres temp psal] ~= 0) && (a_iceDetected == 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 212];
-      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214(tabTech2(15+ID_OFFSET));
+      g_decArgo_outputNcParamValue{end+1} = pres;
    end
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;

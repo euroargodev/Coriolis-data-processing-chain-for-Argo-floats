@@ -185,7 +185,8 @@ for idC = 1:length(cycleNumList)
    if (~isempty(measStruct))
       % add PET meas
       if (~isempty(trajNMeasStruct.tabMeas))
-         idDriftMeas = find([trajNMeasStruct.tabMeas.measCode] == g_MC_DriftAtPark);
+         idDriftMeas = find(([trajNMeasStruct.tabMeas.measCode] == g_MC_DriftAtPark) & ...
+            ([trajNMeasStruct.tabMeas.sensorNumber] < 1000));
          if (~isempty(idDriftMeas))
             measStruct.paramList = trajNMeasStruct.tabMeas(idDriftMeas).paramList;
             measStruct.paramData = trajNMeasStruct.tabMeas(idDriftMeas).paramData;

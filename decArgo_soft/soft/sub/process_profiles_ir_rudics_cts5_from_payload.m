@@ -261,6 +261,7 @@ managedSensornameList = [ ...
    {'OCR504ICSW'} ...
    {'SUNA'} ...
    {'Optode'} ...
+   {'PHSEABIRD_UART6'} ...
    ];
 idToDel = [];
 for idP = 1:length(payloadProfiles)
@@ -484,6 +485,29 @@ for idP = 1:length(payloadProfiles)
                   size(payloadProfile.data, 2) - length(payloadProfile.paramNameDecArgo);
             end
          end
+      case 7 % TRANSISTOR_PH
+         if (~isempty(payloadProfile.subSamplingNum))
+            switch payloadProfile.subSamplingNum
+               case {g_decArgo_treatRaw, g_decArgo_treatAverage}
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
+                     {'VRS_PH'} {'VK_PH'} {'IK_PH'} {'IB_PH'}};
+               case g_decArgo_treatMedian
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
+                     {'VRS_PH_MED'} {'VK_PH_MED'} {'IK_PH_MED'} {'IB_PH_MED'}};
+               case g_decArgo_treatMax
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
+                     {'VRS_PH_MAX'} {'VK_PH_MAX'} {'IK_PH_MAX'} {'IB_PH_MAX'}};
+               case g_decArgo_treatMin
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
+                     {'VRS_PH_MIN'} {'VK_PH_MIN'} {'IK_PH_MIN'} {'IB_PH_MIN'}};
+               case g_decArgo_treatStDev
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
+                     {'VRS_PH_STD'} {'VK_PH_STD'} {'IK_PH_STD'} {'IB_PH_STD'}};
+            end
+         else
+            payloadProfile.paramNameDecArgo = {{'JULD'} ...
+               {'VRS_PH'} {'VK_PH'} {'IK_PH'} {'IB_PH'}};
+         end         
    end
    
    payloadProfiles(idP) = payloadProfile;

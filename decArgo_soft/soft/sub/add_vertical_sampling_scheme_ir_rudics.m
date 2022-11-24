@@ -474,13 +474,12 @@ for idP = 1:length(a_tabProfiles)
                vssText = [vssText ' mixed [' description ']'];
          end
          
-         if (prof.sensorNumber == 0)
-            % CTD profile
-            a_tabProfiles(idP).vertSamplingScheme = vssText;
-         elseif (prof.sensorNumber == 1)
+         if (prof.sensorNumber == 1)
             % DOXY profile
             vssTextSecondary = regexprep(vssText, 'Primary sampling:', 'Secondary sampling:');
             a_tabProfiles(idP).vertSamplingScheme = vssTextSecondary;
+         else
+            a_tabProfiles(idP).vertSamplingScheme = vssText;
          end
       end
    end

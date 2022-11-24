@@ -68,10 +68,10 @@ configNames2 = [];
 for id = [0:3 5:17]
    configNames2{end+1} = sprintf('CONFIG_PM%02d', id);
 end
-for id = [0:15 18 20:35]
+for id = 0:35
    configNames2{end+1} = sprintf('CONFIG_PT%02d', id);
 end
-for id = [0 2]
+for id = 0:4
    configNames2{end+1} = sprintf('CONFIG_PX%02d', id);
 end
 
@@ -158,6 +158,24 @@ if (~isempty(idPos))
    end
 end
 
+% CTD and profile cut-off pressure
+confName = 'CONFIG_PT20';
+idPosPt20 = find(strncmp(confName, configNames2, length(confName)) == 1, 1);
+if (~isnan(configValues2(idPosPt20)))
+   ctdPumpSwitchOffPres = configValues2(idPosPt20);
+else
+   ctdPumpSwitchOffPres = 5;
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+      g_decArgo_floatNum, ctdPumpSwitchOffPres);
+end
+
+confName = 'CONFIG_PX01';
+idPosPx01 = find(strncmp(confName, configNames2, length(confName)) == 1, 1);
+configValues2(idPosPx01) = ctdPumpSwitchOffPres;
+confName = 'CONFIG_PX02';
+idPosPx02 = find(strncmp(confName, configNames2, length(confName)) == 1, 1);
+configValues2(idPosPx02) = ctdPumpSwitchOffPres + 0.5;
+
 % store the configuration
 g_decArgo_floatConfig = [];
 g_decArgo_floatConfig.STATIC.NAMES = configNames1';
@@ -225,7 +243,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
             if (isfield(calibData, fieldName))
                tabDoxyCoef(1, id+1) = calibData.(fieldName);
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
@@ -234,13 +252,13 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
             if (isfield(calibData, fieldName))
                tabDoxyCoef(2, id+1) = calibData.(fieldName);
             else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                return;
             end
          end
          g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
       else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
       end
    end
 end

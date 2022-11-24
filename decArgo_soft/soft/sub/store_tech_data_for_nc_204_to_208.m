@@ -163,19 +163,13 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 129];
    g_decArgo_outputNcParamValue{end+1} = tabTech(40);
    
-   if (any(tabTech(41:43) ~= 0))
+   pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+   temp = sensor_2_value_for_temperature_204_to_214(tabTech(42));
+   psal = tabTech(43)/1000;
+   if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 145];
-      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_204_to_209(tabTech(41));
-      
-      % the two following items have moved to TRAJ file
-      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      %       g_decArgo_cycleNum 146];
-      %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_temperature_204_to_214(tabTech(42));
-      %
-      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      %       g_decArgo_cycleNum 147];
-      %    g_decArgo_outputNcParamValue{end+1} = tabTech(43)/1000;
+      g_decArgo_outputNcParamValue{end+1} = pres;
    end
 
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;

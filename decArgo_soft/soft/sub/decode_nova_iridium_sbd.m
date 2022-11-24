@@ -1046,6 +1046,9 @@ switch (a_decoderId)
       g_decArgo_cycleNum = -1;
       [tabTech, dataCTD, dataHydrau, dataAck, deepCycle] = ...
          decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      if (g_decArgo_cycleNum == -1)
+         return;
+      end
       
       if (g_decArgo_ackPacket == 0)
          fprintf('Cyle #%d\n', g_decArgo_cycleNum);
@@ -1251,6 +1254,9 @@ switch (a_decoderId)
       g_decArgo_cycleNum = -1;
       [tabTech, dataCTDO, dataHydrau, dataAck, deepCycle] = ...
          decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      if (g_decArgo_cycleNum == -1)
+         return;
+      end
       
       if (~isempty(a_completedBuffer))
          
