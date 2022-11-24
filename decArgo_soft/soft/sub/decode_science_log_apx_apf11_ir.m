@@ -799,6 +799,21 @@ end
 if (~isempty(ramses) && ~isempty(ramsesSpectrum))
    
    % merge ramses and ramsesSpectrum data
+
+   % data set can be inconsistent (see 7900589 #100)
+   if (~isempty(setdiff(ramsesSpectrum(:, 1), ramses(:, 1))))
+      idToDel = find(ismember(ramsesSpectrum(:, 1) , setdiff(ramsesSpectrum(:, 1), ramses(:, 1))));
+      fprintf('WARNING: Float #%d Cycle #%d: %d meas of RAMSES spectrum are missing in RAMSES - removed from data set\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idToDel));
+      ramsesSpectrum(idToDel, :) = [];
+   end
+   if (~isempty(setdiff(ramses(:, 1), ramsesSpectrum(:, 1))))
+      idToDel = find(ismember(ramses(:, 1) , setdiff(ramses(:, 1), ramsesSpectrum(:, 1))));
+      fprintf('WARNING: Float #%d Cycle #%d: %d meas of RAMSES are missing in RAMSES spectrum - removed from data set\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idToDel));
+      ramses(idToDel, :) = [];
+   end
+
    dates = unique([ramses(:, 1) ramsesSpectrum(:, 1)]);
    data = nan(length(dates), size(ramses, 2)+size(ramsesSpectrum, 2)-2);
    idF = find(ramses(:, 1) == dates);

@@ -485,7 +485,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release
-g_decArgo_decoderVersion = '049b';
+g_decArgo_decoderVersion = '049c';
 % list of managed decoders
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -647,6 +647,8 @@ g_decArgo_provorCts5UseaFileTypeListRsync = [ ...
    {'_suna'} {'.hex'}; ... % CTS5-USEA
    {'_ramses'} {'.hex'}; ... % CTS5-USEA
    {'_mpe'} {'.hex'}; ... % CTS5-USEA
+   {'_hydroc_c'} {'.hex'}; ... % CTS5-USEA
+   {'_hydroc_m'} {'.hex'}; ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
@@ -672,6 +674,8 @@ g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
    {'*_suna*.hex'} ... % CTS5-USEA
    {'*_ramses*.hex'} ... % CTS5-USEA
    {'*_mpe*.hex'} ... % CTS5-USEA
+   {'*_hydroc_c*.hex'} ... % CTS5-USEA
+   {'*_hydroc_m*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeList = [ ...
@@ -694,6 +698,8 @@ g_decArgo_provorCts5UseaFileTypeList = [ ...
    {'*_suna*.hex'} ... % CTS5-USEA
    {'*_ramses*.hex'} ... % CTS5-USEA
    {'*_mpe*.hex'} ... % CTS5-USEA
+   {'*_hydroc_c*.hex'} ... % CTS5-USEA
+   {'*_hydroc_m*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5OseanFileTypeListAll = [ ...
@@ -727,6 +733,8 @@ g_decArgo_provorCts5UseaFileTypeListAll = [ ...
    {16} {'*_opus_lgt*.hex'} {'_%u_%u_opus_lgt'} {20} {'_%03d_%02d_opus_lgt*.hex'}; ...
    {17} {'*_ramses*.hex'} {'_%u_%u_ramses'} {18} {'_%03d_%02d_ramses*.hex'}; ...
    {18} {'*_mpe*.hex'} {'_%u_%u_mpe'} {15} {'_%03d_%02d_mpe*.hex'}; ...
+   {19} {'*_hydroc_c*.hex'} {'_%u_%u_hydroc_c'} {20} {'_%03d_%02d_hydroc_c*.hex'}; ...
+   {20} {'*_hydroc_m*.hex'} {'_%u_%u_hydroc_m'} {20} {'_%03d_%02d_hydroc_m*.hex'}; ...
    ];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
