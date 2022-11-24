@@ -3,11 +3,13 @@
 % been received) for a given list of cycle numbers.
 %
 % SYNTAX :
-%  [o_cycleNumberList, o_bufferCompleted] = is_buffer_completed_ir_sbd_delayed(a_whyFlag, a_decoderId)
+%  [o_cycleNumberList, o_bufferCompleted] = ...
+%    is_buffer_completed_ir_sbd_delayed(a_whyFlag, a_cycleDecodingDoneList, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_whyFlag   : print information on incompleted buffers
-%   a_decoderId : float decoder Id
+%   a_whyFlag               : print information on incompleted buffers
+%   a_cycleDecodingDoneList : list of already decoded cycles
+%   a_decoderId             : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cycleNumberList : list of cycle numbers data in the buffer
@@ -21,7 +23,8 @@
 % RELEASES :
 %   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleNumberList, o_bufferCompleted] = is_buffer_completed_ir_sbd_delayed(a_whyFlag, a_decoderId)
+function [o_cycleNumberList, o_bufferCompleted] = ...
+   is_buffer_completed_ir_sbd_delayed(a_whyFlag, a_cycleDecodingDoneList, a_decoderId)
 
 % output parameters initialization
 o_cycleNumberList = [];
@@ -63,9 +66,10 @@ switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   case {212, 214}
+   case {212, 214, 217}
       % Arvor-ARN-Ice Iridium 5.45
       % Provor-ARN-DO-Ice Iridium 5.75
+      % Arvor-ARN-DO-Ice Iridium 5.46
       
       % adjust the size of the variables
       g_decArgo_0TypePacketReceivedFlag = [g_decArgo_0TypePacketReceivedFlag ...
@@ -349,14 +353,19 @@ switch (a_decoderId)
          zeros(1, length(g_decArgo_cycleList)-length(g_decArgo_nbOf14Or12TypePacketReceived))];
       
       % we must know if Near Surface or In Air packets are expected at each
-      % cycle and, if so, we set the number of expected Near Surface or In Air
-      % packets to 3 (max allowed number) because we have no information about
-      % that (as these counts are not reported in the TECH data)
+      % cycle and, if so, we compute (from PT30 et PT 31) the number of expected
+      % Near Surface or In Air packets (3 being the max allowed number); this
+      % should be done because we have no information about that (as these
+      % counts are not reported in the TECH data)
       for cyId = 1:length(g_decArgo_cycleList)
          cycleNum = g_decArgo_cycleList(cyId);
          
-         % retrieve CONFIG_PT33 configuration value
-         pt33Value = '';
+         % retrieve configuration values
+         pm16Value = nan;
+         pt21Value = nan;
+         pt30Value = nan;
+         pt31Value = nan;
+         pt33Value = nan;
          
          % from configuration data
          idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == cycleNum);
@@ -366,6 +375,22 @@ switch (a_decoderId)
             configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
             configValues = g_decArgo_floatConfig.DYNAMIC.VALUES(:, idConf);
             
+            idPm16Pos = find(strncmp('CONFIG_PM16', configNames, length('CONFIG_PM16')) == 1, 1);
+            if (~isempty(idPm16Pos))
+               pm16Value = configValues(idPm16Pos);
+            end
+            idPt21Pos = find(strncmp('CONFIG_PT21', configNames, length('CONFIG_PT21')) == 1, 1);
+            if (~isempty(idPt21Pos))
+               pt21Value = configValues(idPt21Pos);
+            end
+            idPt30Pos = find(strncmp('CONFIG_PT30', configNames, length('CONFIG_PT30')) == 1, 1);
+            if (~isempty(idPt30Pos))
+               pt30Value = configValues(idPt30Pos);
+            end
+            idPt31Pos = find(strncmp('CONFIG_PT31', configNames, length('CONFIG_PT31')) == 1, 1);
+            if (~isempty(idPt31Pos))
+               pt31Value = configValues(idPt31Pos);
+            end
             idPt33Pos = find(strncmp('CONFIG_PT33', configNames, length('CONFIG_PT33')) == 1, 1);
             if (~isempty(idPt33Pos))
                pt33Value = configValues(idPt33Pos);
@@ -381,41 +406,80 @@ switch (a_decoderId)
                configNames = g_decArgo_floatConfig.DYNAMIC_TMP.NAMES;
                configValues = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(:, idUsedConf);
                
+               idPm16Pos = find(strncmp('CONFIG_PM16', configNames, length('CONFIG_PM16')) == 1, 1);
+               if (~isempty(idPm16Pos))
+                  pm16Value = configValues(idPm16Pos);
+               end
+               idPt21Pos = find(strncmp('CONFIG_PT21', configNames, length('CONFIG_PT21')) == 1, 1);
+               if (~isempty(idPt21Pos))
+                  pt21Value = configValues(idPt21Pos);
+               end
+               idPt30Pos = find(strncmp('CONFIG_PT30', configNames, length('CONFIG_PT30')) == 1, 1);
+               if (~isempty(idPt30Pos))
+                  pt30Value = configValues(idPt30Pos);
+               end
+               idPt31Pos = find(strncmp('CONFIG_PT31', configNames, length('CONFIG_PT31')) == 1, 1);
+               if (~isempty(idPt31Pos))
+                  pt31Value = configValues(idPt31Pos);
+               end
                idPt33Pos = find(strncmp('CONFIG_PT33', configNames, length('CONFIG_PT33')) == 1, 1);
                if (~isempty(idPt33Pos))
                   pt33Value = configValues(idPt33Pos);
                end
             end
          end
-            
-         if (~isempty(pt33Value))
-            if (~isnan(pt33Value))
-               if (pt33Value == 0)
-                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
-                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 0;
-               elseif (pt33Value == 1)
-                  if (cycleNum == 0)
-                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
-                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
-                  else
-                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 3;
-                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
-                  end
-               elseif (mod(cycleNum, pt33Value) == 0)
-                  if (cycleNum == 0)
-                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
-                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
-                  else
-                     g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 3;
-                     g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 3;
-                  end
+         
+         % compute number of expected Near Surface or In Air packets
+         nbOf14Or12TypePacketExpected = 3;
+         if (~isnan(pm16Value) && ~isnan(pt21Value) && ~isnan(pt30Value) && ~isnan(pt31Value))
+            if (pm16Value == 0) % no second iridium session
+               if (pt21Value == 1)
+                  % PTSO data
+                  nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/7), 3);
+               else
+                  % PTS data
+                  nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/15), 3);
                end
-            else
-               fprintf('ERROR: Float #%d: ''CONFIG_PT33'' is nan for cycle #%d => check configuration data\n', ...
-                  g_decArgo_floatNum, cycleNum);
+            else % one second Iridium session
+               if (~ismember(cycleNum, a_cycleDecodingDoneList))
+                  % it is the transmission session
+                  if (pt21Value == 1)
+                     % PTSO data
+                     nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/7), 3);
+                  else
+                     % PTS data
+                     nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/15), 3);
+                  end
+               else
+                  % it is the second Iridium session => no Near Surface or In Air packets
+                  nbOf14Or12TypePacketExpected = 0;
+               end
+            end
+         end
+         
+         if (~isnan(pt33Value))
+            if (pt33Value == 0)
+               g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+               g_decArgo_nbOf14Or12TypePacketExpected(cyId) = 0;
+            elseif (pt33Value == 1)
+               if (cycleNum == 0)
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+               else
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+               end
+            elseif (mod(cycleNum, pt33Value) == 0)
+               if (cycleNum == 0)
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = 0;
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+               else
+                  g_decArgo_nbOf13Or11TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+                  g_decArgo_nbOf14Or12TypePacketExpected(cyId) = nbOf14Or12TypePacketExpected;
+               end
             end
          else
-            fprintf('ERROR: Float #%d: ''CONFIG_PT33'' is empty for cycle #%d => check configuration data\n', ...
+            fprintf('ERROR: Float #%d: ''CONFIG_PT33'' is not defined for cycle #%d => check configuration data\n', ...
                g_decArgo_floatNum, cycleNum);
          end
       end

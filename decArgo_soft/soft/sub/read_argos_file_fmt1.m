@@ -45,6 +45,11 @@ o_argosDataData = [];
 argosLocNbLines = [];
 argosDataSat = [];
 argosDataOcc = [];
+nbVal = 1;
+argosDataDateTmp = [];
+argosDataDataTmp = [];
+argosDataSatTmp = [];
+argosDataOccTmp = [];
 for id = 1:length(a_fileName)
 
    fileName = a_fileName{id};
@@ -157,13 +162,30 @@ for id = 1:length(a_fileName)
                nbSensor = length(sensor);
                sensor(1+nbSensor:count+nbSensor) = val(1:count);
 
+%                if (length(sensor) == a_frameLength)
+%                   % store date and data Argos message
+%                   o_argosDataDate = [o_argosDataDate; date];
+%                   o_argosDataData = [o_argosDataData; [sensor(1:end)]];
+%                   argosDataSat = [argosDataSat satellite];
+%                   argosDataOcc = [argosDataOcc dataOcc];
+%                   date = [];
+%                   sensor = [];
+%                end
+               
                if (length(sensor) == a_frameLength)
                   % store date and data Argos message
-                  o_argosDataDate = [o_argosDataDate; date];
-                  o_argosDataData = [o_argosDataData; [sensor(1:end)]];
-                  argosDataSat = [argosDataSat satellite];
-                  argosDataOcc = [argosDataOcc dataOcc];
+                  if (nbVal > size(argosDataDataTmp, 1))
+                     argosDataDateTmp = cat(1, argosDataDateTmp, nan(1000, 1));
+                     argosDataDataTmp = cat(1, argosDataDataTmp, nan(1000, length(sensor)));
+                     argosDataSatTmp = cat(1, argosDataSatTmp, repmat('', 1000, 1));
+                     argosDataOccTmp = cat(1, argosDataOccTmp, nan(1000, 1));
+                  end
+                  argosDataDateTmp(nbVal) = date;
+                  argosDataDataTmp(nbVal, :) = sensor(1:end);
+                  argosDataSatTmp(nbVal) = satellite;
+                  argosDataOccTmp(nbVal) = dataOcc;
                   date = [];
+                  clear sensor;
                   sensor = [];
                end
             end
@@ -175,6 +197,14 @@ for id = 1:length(a_fileName)
 
    fclose(fId);
 end
+o_argosDataDate = argosDataDateTmp(1:nbVal-1);
+o_argosDataData = argosDataDataTmp(1:nbVal-1, :);
+argosDataSat = argosDataSatTmp(1:nbVal-1);
+argosDataOcc = argosDataOccTmp(1:nbVal-1);
+clear argosDataDateTmp;
+clear argosDataDataTmp;
+clear argosDataSatTmp;
+clear argosDataOccTmp;
 
 % locations post-processing
 

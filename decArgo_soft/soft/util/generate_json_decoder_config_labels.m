@@ -39,7 +39,7 @@ decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNam
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_212.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_214.csv';
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_214.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_215.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_216.csv';
 
@@ -187,7 +187,7 @@ else
       case {213}
          decIdList = [213];
       case {214}
-         decIdList = [214];
+         decIdList = [214 217];
       case {215}
          decIdList = [215];
       case {216}
@@ -230,7 +230,7 @@ else
          decIdList = [1201];
 
       case {2001}
-         decIdList = [2001 2002];
+         decIdList = [2001 2002 2003];
 
       otherwise
          fprintf('ERROR: Unknown decId list associate to decId #%d\n', decId);

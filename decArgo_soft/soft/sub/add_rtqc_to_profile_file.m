@@ -101,6 +101,13 @@
 %   03/22/2017 - RNU - V 3.1: - add RTQC test #62 for BBP
 %                             - management of erroneous Remocean SUNA data
 %                              (N_VALUES differ between Prof and Traj files)
+%   02/15/2018 - RNU - V 3.2: - during "REPORT PROFILE QC IN TRAJECTORY DATA",
+%                               the link is done with non adjusted data only.
+%                               This is necessary because many parameters will
+%                               be adjusted in RT (with parameters stored in the
+%                               Coriolis DB) and the se adjustments are
+%                               performed on PROF data only (i.e. not on TRAJ
+%                               data).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -132,7 +139,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.1';
+g_decArgo_addRtqcToProfileVersion = '3.2';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -4202,11 +4209,6 @@ if (~isempty(g_rtqc_trajData))
          ncProfParamXDataList = ncParamDataList;
          ncTrajParamXDataList = g_rtqc_trajData.ncTrajParamDataList;
          ncParamXFillValueList = g_rtqc_trajData.ncTrajParamFillValueList;
-         paramList = [ ...
-            {'PRES'} ...
-            {'TEMP'} ...
-            {'PSAL'} ...
-            ];
       else
          % adjusted data processing
          
@@ -4215,167 +4217,113 @@ if (~isempty(g_rtqc_trajData))
          ncProfParamXDataList = ncParamAdjDataList;
          ncTrajParamXDataList = g_rtqc_trajData.ncTrajParamAdjDataList;
          ncParamXFillValueList = g_rtqc_trajData.ncTrajParamAdjFillValueList;
-         paramList = [ ...
-            {'PRES_ADJUSTED'} ...
-            {'TEMP_ADJUSTED'} ...
-            {'PSAL_ADJUSTED'} ...
-            {'CHLA_ADJUSTED'} ...
-            ];         
       end
             
       % create the sorted list of profile and trajectory common parameters
       ncProfTrajXNameList = intersect(ncProfParamXNameList, ncTrajParamXNameList);
       
-      % put PRES, TEMP and PSAL on top of the list (for debugging purposes and
-      % to ignore PSAL if the link cannot be done (see below))
-      sortListId = [];
-      for idP = 1:length(paramList)
-         idParam = find(strcmp(paramList{idP}, ncProfTrajXNameList) == 1, 1);
-         if (idParam ~= idP)
-            tmp = ncProfTrajXNameList(idP);
-            ncProfTrajXNameList(idP) = ncProfTrajXNameList(idParam);
-            ncProfTrajXNameList(idParam) = tmp;
-         end
-         if (~isempty(idParam))
-            sortListId = [sortListId idP];
-         end
-      end
-      
-      % collect prof and traj data
-      
-      % collect profile data
-      dataProf = [];
-      dimNValuesProf = [];
-      for idProf = 1:length(juld)
-         dataBis = [];
-         for idP = 1:length(ncProfTrajXNameList)
-            idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
-            data = eval(ncProfParamXDataList{idParam});
-            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
-               dimNValuesProf = [dimNValuesProf size(data, 3)];
-            end
-            if (ndims(data) == 3)
-               dataBis = [dataBis permute(data(idProf, :, :), [2 3 1])];
-            else
-               dataBis = [dataBis data(idProf, :)'];
-            end
-         end
-         dataProf{idProf} = dataBis;
-      end
-      dimNValuesProf = unique(dimNValuesProf);
-      
-      % collect traj data
-      dataTraj = [];
-      dataTrajFillValue = [];
-      for idP = 1:length(ncProfTrajXNameList)
-         idParam = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
-         data = g_rtqc_trajData.(ncTrajParamXDataList{idParam});
-         if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
-            dimNValuesTraj = size(data, 2);
-            if (dimNValuesTraj > dimNValuesProf)
-               % anomaly in Remocean floats (Ex:6901440 #10)
-               % N_VALUES = 45 for some profiles instead of 42
-               % => N_VALUES = 45 in traj file => we do not consider additional
-               % data
-               data = data(:, 1:dimNValuesProf);
-               fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file => additional TRAJ data are ignored in the comparison\n', ...
-                  a_floatNum, dimNValuesProf, dimNValuesTraj);
-            end
-         end
-         dataFillValue = ncParamXFillValueList{idParam};
-         dataTraj = [dataTraj data];
-         dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
-      end
-      
-      % link profile and trajectory data for concerned MC
-      if (floatDecoderId < 1000) || ((floatDecoderId > 2000) && (floatDecoderId < 3000))
-         % NKE, NOVA, DOVA floats
-         if (direction(1) == 'A')
-            profMeasCode = [g_MC_AscProfDeepestBin g_MC_AscProf];
-         else
-            profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
-         end
-      elseif ((floatDecoderId > 1000) && (floatDecoderId < 2000))
-         % Apex floats
-         if (direction(1) == 'A')
-            profMeasCode = g_MC_AscProfDeepestBin;
-         else
-            profMeasCode = [];
-         end
-      else
-         fprintf('RTQC_ERROR: Float #%d: PROF to TRAJ link rules not implemented for decoder Id #%d\n', ...
-            a_floatNum, floatDecoderId);
-         continue;
-      end
-      
-      profNmeasXIndex = [];
-      if (~isempty(profMeasCode))
+      % as RT adjustments (stored in the data-base) are applied on PROF data
+      % only (not on TRAJ data) we should link PROF and TRAJ data with non
+      % adjusted data only
+      if (idD == 1)
          
-         profNmeasXIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
-         if ((idD == 1) || ((idD == 2) && (dataModeCFile(1) ~= 'R')))
-            uCycleNumber = unique(cycleNumber);
-            idTrajFromProf = find( ...
-               (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
-               (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
-            for id = 1:length(idTrajFromProf)
-               found = 0;
-               idMeas = idTrajFromProf(id);
-               if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
-                  for idProf = 1:size(profNmeasXIndex, 2)
-                     profData = dataProf{idProf};
-                     for idLev = 1:size(profNmeasXIndex, 3)
-                        if (~any(profData(idLev, :) ~= dataTraj(idMeas, :)))
-                           idLength = 1;
-                           while ((idLength <= size(profNmeasXIndex, 1)) && ...
-                                 (profNmeasXIndex(idLength, idProf, idLev) ~= 0))
-                              idLength = idLength + 1;
-                           end
-                           if (idLength > size(profNmeasXIndex, 1))
-                              profNmeasXIndex = cat(1, profNmeasXIndex, ...
-                                 zeros(1, length(dataProf), size(dataProf{1}, 1)));
-                           end
-                           profNmeasXIndex(idLength, idProf, idLev) = idMeas;
-                           found = 1;
-                           break;
-                        end
-                     end
-                     if (found == 1)
-                        break;
-                     end
-                  end
-                  if (found == 0)
-                     % most of the time the link fails because PSAL has been
-                     % adjusted => we will try to link the measurements again
-                     % without considering PSAL
-                     % CHLA_ADJUSTED values may also differ (if they have been
-                     % adjusted during RTQC on profiles) => we will try to
-                     % link the measurements again without considering
-                     % CHLA_ADJUSTED
-                     ignoreListId = [];
-                     if (any(sortListId == 3))
-                        ignoreListId = [ignoreListId 3];
-                     end
-                     if (any(sortListId == 4))
-                        ignoreListId = [ignoreListId 4];
-                     end
+         % collect prof and traj data
+         
+         % collect profile data
+         dataProf = [];
+         dimNValuesProf = [];
+         for idProf = 1:length(juld)
+            dataBis = [];
+            for idP = 1:length(ncProfTrajXNameList)
+               idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
+               data = eval(ncProfParamXDataList{idParam});
+               if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+                  dimNValuesProf = [dimNValuesProf size(data, 3)];
+               end
+               if (ndims(data) == 3)
+                  dataBis = [dataBis permute(data(idProf, :, :), [2 3 1])];
+               else
+                  dataBis = [dataBis data(idProf, :)'];
+               end
+            end
+            dataProf{idProf} = dataBis;
+         end
+         dimNValuesProf = unique(dimNValuesProf);
+         
+         % collect traj data
+         dataTraj = [];
+         dataTrajFillValue = [];
+         for idP = 1:length(ncProfTrajXNameList)
+            idParam = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
+            data = g_rtqc_trajData.(ncTrajParamXDataList{idParam});
+            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+               dimNValuesTraj = size(data, 2);
+               if (dimNValuesTraj > dimNValuesProf)
+                  % anomaly in Remocean floats (Ex:6901440 #10)
+                  % N_VALUES = 45 for some profiles instead of 42
+                  % => N_VALUES = 45 in traj file => we do not consider additional
+                  % data
+                  data = data(:, 1:dimNValuesProf);
+                  fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file => additional TRAJ data are ignored in the comparison\n', ...
+                     a_floatNum, dimNValuesProf, dimNValuesTraj);
+               end
+            end
+            dataFillValue = ncParamXFillValueList{idParam};
+            dataTraj = [dataTraj data];
+            dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
+         end
+         
+         % link profile and trajectory data for concerned MC
+         profNmeasXIndex = [];
+         
+         if (floatDecoderId < 1000) || ((floatDecoderId > 2000) && (floatDecoderId < 3000))
+            % NKE, NOVA, DOVA floats
+            if (direction(1) == 'A')
+               profMeasCode = [g_MC_AscProfDeepestBin g_MC_AscProf];
+            else
+               profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
+            end
+         elseif ((floatDecoderId > 1000) && (floatDecoderId < 2000))
+            % Apex floats
+            if (direction(1) == 'A')
+               profMeasCode = g_MC_AscProfDeepestBin;
+            else
+               profMeasCode = [];
+            end
+         else
+            fprintf('RTQC_ERROR: Float #%d: PROF to TRAJ link rules not implemented for decoder Id #%d\n', ...
+               a_floatNum, floatDecoderId);
+            continue;
+         end
+         
+         if (~isempty(profMeasCode))
+            
+            profNmeasXIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
+            if ((idD == 1) || ((idD == 2) && (dataModeCFile(1) ~= 'R')))
+               uCycleNumber = unique(cycleNumber);
+               idTrajFromProf = find( ...
+                  (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
+                  (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
+               for id = 1:length(idTrajFromProf)
+                  found = 0;
+                  idMeas = idTrajFromProf(id);
+                  if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
                      for idProf = 1:size(profNmeasXIndex, 2)
                         profData = dataProf{idProf};
                         for idLev = 1:size(profNmeasXIndex, 3)
-                           if ((size(profData, 2) > 2) && (size(dataTraj, 2) > 2))
-                              if (~any(profData(idLev, setdiff(1:end, ignoreListId)) ~= dataTraj(idMeas, setdiff(1:end, ignoreListId))))
-                                 idLength = 1;
-                                 while ((idLength <= size(profNmeasXIndex, 1)) && ...
-                                       (profNmeasXIndex(idLength, idProf, idLev) ~= 0))
-                                    idLength = idLength + 1;
-                                 end
-                                 if (idLength > size(profNmeasXIndex, 1))
-                                    profNmeasXIndex = cat(1, profNmeasXIndex, ...
-                                       zeros(1, length(dataProf), size(dataProf{1}, 1)));
-                                 end
-                                 profNmeasXIndex(idLength, idProf, idLev) = idMeas;
-                                 found = 1;
-                                 break;
+                           if (~any(profData(idLev, :) ~= dataTraj(idMeas, :)))
+                              idLength = 1;
+                              while ((idLength <= size(profNmeasXIndex, 1)) && ...
+                                    (profNmeasXIndex(idLength, idProf, idLev) ~= 0))
+                                 idLength = idLength + 1;
                               end
+                              if (idLength > size(profNmeasXIndex, 1))
+                                 profNmeasXIndex = cat(1, profNmeasXIndex, ...
+                                    zeros(1, length(dataProf), size(dataProf{1}, 1)));
+                              end
+                              profNmeasXIndex(idLength, idProf, idLev) = idMeas;
+                              found = 1;
+                              break;
                            end
                         end
                         if (found == 1)

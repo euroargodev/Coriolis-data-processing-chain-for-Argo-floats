@@ -57,6 +57,10 @@ switch (a_decoderId)
       % Provor-DO Iridium
       o_platformType = 'PROVOR';
             
+   case {217}
+      % ARVOR-DO Iridium
+      o_platformType = 'ARVOR';
+      
    case {302, 303}
       % Arvor CM
       o_platformType = 'ARVOR_C';
@@ -74,7 +78,7 @@ switch (a_decoderId)
       % Navis
       o_platformType = 'NAVIS_A';
       
-   case {2001, 2002}
+   case {2001, 2002, 2003}
       % Nova & Dova
       o_platformType = 'NOVA';
       

@@ -54,6 +54,9 @@ global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_13Or11TypePacketExpected;
 global g_decArgo_14Or12TypePacketExpected;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 if (a_decoderId == 215)
    
@@ -61,11 +64,44 @@ if (a_decoderId == 215)
    % reported in the TECH messages, we set the number of expected packets to its
    % maximum value (i.e. 3)
    
+   % retrieve configuration values
+   pt21Value = nan;
+   pt30Value = nan;
+   pt31Value = nan;
+         
+   configNames = g_decArgo_floatConfig.DYNAMIC_TMP.NAMES;
+   configValues = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(:, end);
+   
+   idPt21Pos = find(strncmp('CONFIG_PT21', configNames, length('CONFIG_PT21')) == 1, 1);
+   if (~isempty(idPt21Pos))
+      pt21Value = configValues(idPt21Pos);
+   end
+   idPt30Pos = find(strncmp('CONFIG_PT30', configNames, length('CONFIG_PT30')) == 1, 1);
+   if (~isempty(idPt30Pos))
+      pt30Value = configValues(idPt30Pos);
+   end
+   idPt31Pos = find(strncmp('CONFIG_PT31', configNames, length('CONFIG_PT31')) == 1, 1);
+   if (~isempty(idPt31Pos))
+      pt31Value = configValues(idPt31Pos);
+   end
+
+   % compute number of expected Near Surface or In Air packets
+   nbOf14Or12TypePacketExpected = 3;
+   if (~isnan(pt21Value) && ~isnan(pt30Value) && ~isnan(pt31Value))
+      if (pt21Value == 1)
+         % PTSO data
+         nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/7), 3);
+      else
+         % PTS data
+         nbOf14Or12TypePacketExpected = min(ceil(pt31Value*60/pt30Value/15), 3);
+      end
+   end
+   
    if (g_decArgo_13Or11TypePacketExpected == 1)
-      g_decArgo_nbOf13Or11TypePacketExpected = 3;
+      g_decArgo_nbOf13Or11TypePacketExpected = nbOf14Or12TypePacketExpected;
    end
    if (g_decArgo_14Or12TypePacketExpected == 1)
-      g_decArgo_nbOf14Or12TypePacketExpected = 3;
+      g_decArgo_nbOf14Or12TypePacketExpected = nbOf14Or12TypePacketExpected;
    end
 end
 

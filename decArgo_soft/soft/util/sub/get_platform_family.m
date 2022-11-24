@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       
-   case {201, 202, 203, 215}
+   case {201, 202, 203, 215, 216}
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
@@ -57,9 +57,17 @@ switch (a_decoderId)
       % Provor-DO Iridium
       o_platformFamily = 'FLOAT';
             
+   case {217}
+      % Arvor-DO Iridium
+      o_platformFamily = 'FLOAT';
+            
    case {302, 303}
       % Arvor CM
       o_platformFamily = 'FLOAT_COASTAL';
+      
+   case {2001, 2002, 2003}
+      % NOVA & DOVA
+      o_platformFamily = 'FLOAT';
       
    otherwise
       fprintf('ERROR: Float #%d: No platform family assigned to decoderId #%d\n', ...

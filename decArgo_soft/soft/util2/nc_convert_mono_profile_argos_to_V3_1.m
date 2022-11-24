@@ -966,7 +966,7 @@ netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
 
 % set the resolution attribute to the JULD and JULD_LOCATION parameters
 % assign time resolution for each float transmission type
-profJulDLocRes = double(1/5184000); % 1 second
+profJulDLocRes = double(1/86400); % 1 second
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(a_vssInfoStruct.dacFormatId);
 if (var_is_present_dec_argo(fCdf, 'JULD'))
    juldVarId = netcdf.inqVarID(fCdf, 'JULD');
@@ -2258,7 +2258,7 @@ netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
 
 % set the resolution attribute to the JULD and JULD_LOCATION parameters
 % assign time resolution for each float transmission type
-profJulDLocRes = double(1/5184000); % 1 second
+profJulDLocRes = double(1/86400); % 1 second
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(a_vssInfoStruct.dacFormatId);
 if (var_is_present_dec_argo(fCdf, 'JULD'))
    juldVarId = netcdf.inqVarID(fCdf, 'JULD');

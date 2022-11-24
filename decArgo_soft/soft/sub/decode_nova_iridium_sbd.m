@@ -158,6 +158,10 @@ g_decArgo_preDecodedData = [];
 % to use virtual buffers instead of directories
 global g_decArgo_virtualBuff;
 
+% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+global g_decArgo_finalEolMode;
+g_decArgo_finalEolMode = 0;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -363,6 +367,8 @@ else
 end
 
 % decode all received housekeeping messages to collect SBDT information
+fprintf('INFO: Float #%d: First decoding of all housekeeping messages to collect SBDT information\n', ...
+   g_decArgo_floatNum);
 
 % extract the attachement of the mail files of the spool directory and store
 % them in the buffer directory
@@ -419,21 +425,46 @@ for idBufFile = 1:length(tabAllSbdFileNames)
       
       info = get_bits(1, 8, sbdData);
       if (info == 1)
-         % first item bit number
-         firstBit = 1;
-         % item bit lengths
-         tabNbBits = [ ...
-            8 ...
-            repmat(16, 1, 7) ...
-            repmat(8, 1, 12) ...
-            16 8 16 8 16 8 8 ...
-            16 16 repmat(8, 1, 10) 32 32 8 16 8 8 8 16 8 8 8 16 8 ...
-            ];
-         % get item bits
-         tabTech = get_bits(firstBit, tabNbBits, sbdData);
          
-         g_decArgo_preDecodedData.cycleNum = [g_decArgo_preDecodedData.cycleNum tabTech(32)];
-         g_decArgo_preDecodedData.sbdt = [g_decArgo_preDecodedData.sbdt 2*tabTech(52)];
+         switch (a_decoderId)
+                        
+            case {2001, 2002} % Nova 1.0, Dova 2.0
+               
+               % first item bit number
+               firstBit = 1;
+               % item bit lengths
+               tabNbBits = [ ...
+                  8 ...
+                  repmat(16, 1, 7) ...
+                  repmat(8, 1, 12) ...
+                  16 8 16 8 16 8 8 ...
+                  16 16 repmat(8, 1, 10) 32 32 8 16 8 8 8 16 8 8 8 16 8 ...
+                  ];
+               % get item bits
+               tabTech = get_bits(firstBit, tabNbBits, sbdData);
+               
+               g_decArgo_preDecodedData.cycleNum = [g_decArgo_preDecodedData.cycleNum tabTech(32)];
+               g_decArgo_preDecodedData.sbdt = [g_decArgo_preDecodedData.sbdt 2*tabTech(52)];
+                              
+            case {2003} % Nova 0.9
+               
+               % first item bit number
+               firstBit = 1;
+               % item bit lengths
+               tabNbBits = [ ...
+                  8 16 ...
+                  repmat(8, 1, 6) ...
+                  repmat(8, 1, 12) ...
+                  16 8 16 8 16 8 8 ...
+                  16 16 repmat(8, 1, 9) 32 32 repmat(8, 1, 11) ...
+                  ];
+               % get item bits
+               tabTech = get_bits(firstBit, tabNbBits, sbdData);
+               
+               g_decArgo_preDecodedData.cycleNum = [g_decArgo_preDecodedData.cycleNum tabTech(32)];
+               g_decArgo_preDecodedData.sbdt = [g_decArgo_preDecodedData.sbdt 2*tabTech(51)];
+               
+         end
       end
       
       delete(sbdFilePathName);
@@ -505,13 +536,47 @@ if (g_decArgo_realtimeFlag)
             get_dir_files_info_ir_sbd(g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
       end
       
-      % process the buffer files
-      [tabProfiles, ...
-         tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
-         decode_sbd_files( ...
-         tabFileNames, tabFileDates, tabFileSizes, ...
-         a_decoderId, a_launchDate, []);
+      % check if the EOL anomaly occured in this buffer
+      
+      % read SBD data
+      [~, sbdDataData] = read_nova_iridium_sbd( ...
+         tabFileNames, tabFileDates, tabFileSizes, 0);
+
+      % manage EOL anomaly (housekeeping packets of different cycle numbers
+      % and expecting 1 hydraulic packet never transmitted Ex: 6903192)
+      eolAnomaly = 0;
+      
+      if (~isempty(sbdDataData) && (length(find(sbdDataData(:, 1) == 1)) > 1) && (~any(sbdDataData(:, 1) ~= 1)))
+         
+         cycleNumbers = decode_cycle_number_nva_data_ir_sbd(sbdDataData);
+         if (length(unique(cycleNumbers)) > 1)
+            
+            uCycleNumbers = unique(cycleNumbers);
+            fprintf('INFO: Float #%d cycle #%d: EOL anomaly detected (cycle #%d housekeeping packet in the same buffer)\n', ...
+               g_decArgo_floatNum, uCycleNumbers(1), uCycleNumbers(2));
+            eolAnomaly = 1;
+         end
+      end
+            
+      if (~eolAnomaly)
+         
+         % process all buffer files
+         [tabProfiles, ...
+            tabTrajNMeas, tabTrajNCycle, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+            decode_sbd_files( ...
+            tabFileNames, tabFileDates, tabFileSizes, ...
+            a_decoderId, a_launchDate, []);
+      else
+         
+         % process the first file of the buffer
+         [tabProfiles, ...
+            tabTrajNMeas, tabTrajNCycle, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+            decode_sbd_files( ...
+            tabFileNames(1), tabFileDates(1), tabFileSizes(1), ...
+            a_decoderId, a_launchDate, []);
+      end
       
       if (~isempty(tabProfiles))
          o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -534,10 +599,18 @@ if (g_decArgo_realtimeFlag)
       
       % move the processed files into the archive directory (and delete
       % the associated SBD files)
-      if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
+      if (~eolAnomaly)
+         if (g_decArgo_virtualBuff)
+            remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
+         else
+            move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+         end
       else
-         move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+         if (g_decArgo_virtualBuff)
+            remove_from_list_ir_sbd(tabFileNames(1), 'buffer', 1, 0);
+         else
+            move_files_ir_sbd(tabFileNames(1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+         end
       end
    end
 end
@@ -585,6 +658,12 @@ for idSpoolFile = 1:length(tabAllFileNames)
    end
    g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    if (attachmentFound == 0)
+%       if (g_decArgo_realtimeFlag)
+%          write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(end), bufferRank);
+%          % bufferRank = bufferRank + 1; % following ones should have the same rank
+%          bufferMailFileNames(end) = [];
+%          bufferMailFileDates(end) = [];
+%       end
       if (g_decArgo_virtualBuff)
          remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
       else
@@ -594,172 +673,67 @@ for idSpoolFile = 1:length(tabAllFileNames)
          continue;
       end
    end
+   
+   if (g_decArgo_finalEolMode ~= 1)
       
-   % process the files of the buffer directory
-   
-   % retrieve information on the files in the buffer
-   if (g_decArgo_virtualBuff)
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
-         'buffer', '');
-   else
-      [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
-         g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
-   end
-   
-   % create the 'old' and 'new' file lists
-   tabOldFileNames = [];
-   tabOldFileDates = [];
-   tabOldFileSizes = [];
-   idOld = [];
-   if (~isempty(find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS, 1)))
-      idOld = find((tabFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS));
-      if (~isempty(idOld))
-         tabOldFileNames = tabFileNames(idOld);
-         tabOldFileDates = tabFileDates(idOld);
-         tabOldFileSizes = tabFileSizes(idOld);
-      end
-      if (g_decArgo_realtimeFlag)
-         idOld2 = find((bufferMailFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS));
-         if (~isempty(idOld2))
-            write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
-            bufferRank = bufferRank + 1;
-            bufferMailFileNames(idOld2) = [];
-            bufferMailFileDates(idOld2) = [];
-         end
-      end
-   end
-   
-   idNew = setdiff(1:length(tabFileNames), idOld);
-   tabNewFileNames = tabFileNames(idNew);
-   tabNewFileDates = tabFileDates(idNew);
-   tabNewFileSizes = tabFileSizes(idNew);
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % process the 'old' files
-   if (VERBOSE_MODE_BUFF == 1)
-      for iFile = 1:length(tabOldFileNames)
-         fprintf('BUFF_WARNING: Float #%d: processing ''old'' file %s (#%d of the %d files in the set)\n', ...
-            g_decArgo_floatNum, ...
-            tabOldFileNames{iFile}, iFile, length(tabOldFileNames));
-      end
-   end
-   
-   if (~isempty(tabOldFileNames))
-      [tabProfiles, ...
-         tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
-         decode_sbd_files( ...
-         tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
-         a_decoderId, a_launchDate, 0);
+      % nominal case
+
+      % process the files of the buffer directory
       
-      if (~isempty(tabProfiles))
-         o_tabProfiles = [o_tabProfiles tabProfiles];
-      end
-      if (~isempty(tabTrajNMeas))
-         o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
-      end
-      if (~isempty(tabTrajNCycle))
-         o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
-      end
-      if (~isempty(tabNcTechIndex))
-         o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
-      end
-      if (~isempty(tabNcTechVal))
-         o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
-      end
-      if (~isempty(tabTechNMeas))
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
-      end
-      %       end
-      
-      % move the processed 'old' files into the archive directory (and delete the
-      % associated SBD files)
+      % retrieve information on the files in the buffer
       if (g_decArgo_virtualBuff)
-         remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1, 0);
+         [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+            'buffer', '');
       else
-         move_files_ir_sbd(tabOldFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
-      end
-   end
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % check if the 'new' files can be processed
-   
-   % initialize information arrays
-   g_decArgo_1TypePacketReceived = 0;
-   g_decArgo_5TypePacketReceived = 0;
-   g_decArgo_nbOf2To4TypePacketExpected = -1;
-   g_decArgo_nbOf10To29TypePacketExpected = -1;
-   g_decArgo_nbOf30To49TypePacketExpected = -1;
-   g_decArgo_nbOf50To55TypePacketExpected = -1;
-   g_decArgo_nbOf2To4TypePacketReceived = 0;
-   g_decArgo_nbOf10To29TypePacketReceived = 0;
-   g_decArgo_nbOf30To49TypePacketReceived = 0;
-   g_decArgo_nbOf50To55TypePacketReceived = 0;
-   
-   % read SBD data
-   [sbdDataDate, sbdDataData] = read_nova_iridium_sbd( ...
-      tabNewFileNames, tabNewFileDates, tabNewFileSizes, 0);
-
-   % roughly check the received data
-   if (~isempty(sbdDataData))
-      
-      switch (a_decoderId)
-         
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         
-         case {2001} % Nova 1.0
-            
-            % decode the collected data
-            decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-         case {2002} % Dova 2.0
-            
-            % decode the collected data
-            decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            
-         otherwise
-            fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
-               g_decArgo_floatNum, ...
-               a_decoderId);
+         [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
+            g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
       end
       
-      % check if the buffer contents can be processed
-      [okToProcess] = is_buffer_completed_ir_sbd_nva(0, a_decoderId);
-      %       fprintf('Buffer completed : %d\n', okToProcess);
-      
-      if ((okToProcess) || ...
-            ((idSpoolFile == length(tabAllFileDates) && (~g_decArgo_realtimeFlag))))
-
+      % create the 'old' and 'new' file lists
+      tabOldFileNames = [];
+      tabOldFileDates = [];
+      tabOldFileSizes = [];
+      idOld = [];
+      if (~isempty(find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS, 1)))
+         idOld = find((tabFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS));
+         if (~isempty(idOld))
+            tabOldFileNames = tabFileNames(idOld);
+            tabOldFileDates = tabFileDates(idOld);
+            tabOldFileSizes = tabFileSizes(idOld);
+         end
          if (g_decArgo_realtimeFlag)
-            if (okToProcess)
-               write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames, bufferRank);
+            idOld2 = find((bufferMailFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS));
+            if (~isempty(idOld2))
+               write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
                bufferRank = bufferRank + 1;
-               bufferMailFileNames = [];
-               bufferMailFileDates = [];
+               bufferMailFileNames(idOld2) = [];
+               bufferMailFileDates(idOld2) = [];
             end
          end
-         
-         % process the 'new' files
-         if (VERBOSE_MODE_BUFF == 1)
-            if ((okToProcess == 1) || (idSpoolFile < length(tabAllFileDates)))
-               fprintf('BUFF_INFO: Float #%d: Processing %d SBD files:\n', ...
-                  g_decArgo_floatNum, ...
-                  length(tabNewFileNames));
-            else
-               fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files:\n', ...
-                  g_decArgo_floatNum, ...
-                  length(tabNewFileNames));
-            end
+      end
+      
+      idNew = setdiff(1:length(tabFileNames), idOld);
+      tabNewFileNames = tabFileNames(idNew);
+      tabNewFileDates = tabFileDates(idNew);
+      tabNewFileSizes = tabFileSizes(idNew);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % process the 'old' files
+      if (VERBOSE_MODE_BUFF == 1)
+         for iFile = 1:length(tabOldFileNames)
+            fprintf('BUFF_WARNING: Float #%d: processing ''old'' file %s (#%d of the %d files in the set)\n', ...
+               g_decArgo_floatNum, ...
+               tabOldFileNames{iFile}, iFile, length(tabOldFileNames));
          end
-         
+      end
+      
+      if (~isempty(tabOldFileNames))
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
             tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
             decode_sbd_files( ...
-            tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
-            a_decoderId, a_launchDate, okToProcess);
+            tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
+            a_decoderId, a_launchDate, 0);
          
          if (~isempty(tabProfiles))
             o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -779,41 +753,103 @@ for idSpoolFile = 1:length(tabAllFileNames)
          if (~isempty(tabTechNMeas))
             o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
          end
+         %       end
          
-         % move the processed 'new' files into the archive directory (and delete
-         % the associated SBD files)
+         % move the processed 'old' files into the archive directory (and delete the
+         % associated SBD files)
          if (g_decArgo_virtualBuff)
-            remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1, 0);
+            remove_from_list_ir_sbd(tabOldFileNames, 'buffer', 1, 0);
          else
-            move_files_ir_sbd(tabNewFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+            move_files_ir_sbd(tabOldFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
          end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % check if the 'new' files can be processed
+      
+      % initialize information arrays
+      g_decArgo_1TypePacketReceived = 0;
+      g_decArgo_5TypePacketReceived = 0;
+      g_decArgo_nbOf2To4TypePacketExpected = -1;
+      g_decArgo_nbOf10To29TypePacketExpected = -1;
+      g_decArgo_nbOf30To49TypePacketExpected = -1;
+      g_decArgo_nbOf50To55TypePacketExpected = -1;
+      g_decArgo_nbOf2To4TypePacketReceived = 0;
+      g_decArgo_nbOf10To29TypePacketReceived = 0;
+      g_decArgo_nbOf30To49TypePacketReceived = 0;
+      g_decArgo_nbOf50To55TypePacketReceived = 0;
+      
+      % read SBD data
+      [sbdDataDate, sbdDataData] = read_nova_iridium_sbd( ...
+         tabNewFileNames, tabNewFileDates, tabNewFileSizes, 0);
+      
+      % roughly check the received data
+      if (~isempty(sbdDataData))
          
-      else
-         
-         % manage EOL anomaly (housekeeping packets of different cycle numbers
-         % and expecting 1 hydraulic packet never transmitted Ex: 6903192)
-         eolAnomaly = 0;
-         
-         if ((length(find(sbdDataData(:, 1) == 1)) > 1) && (~any(sbdDataData(:, 1) ~= 1)))
+         switch (a_decoderId)
             
-            cycleNumbers = decode_cycle_number_nva_data_ir_sbd(sbdDataData);       
-            if (length(unique(cycleNumbers)) > 1)
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            case {2001} % Nova 1.0
                
-               uCycleNumbers = unique(cycleNumbers);
-               fprintf('INFO: Float #%d cycle #%d: EOL anomaly detected (cycle #%d housekeeping packet in the same buffer)\n', ...
-                  g_decArgo_floatNum, uCycleNumbers(1), uCycleNumbers(2));
-               eolAnomaly = 1;
-            end
+               % decode the collected data
+               decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+               
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               
+            case {2002} % Dova 2.0
+               
+               % decode the collected data
+               decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+               
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               
+            case {2003} % Nova 0.9
+               
+               % decode the collected data
+               decode_nva_data_ir_sbd_2003(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+               
+            otherwise
+               fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
+                  g_decArgo_floatNum, ...
+                  a_decoderId);
          end
          
-         if (eolAnomaly)
+         % check if the buffer contents can be processed
+         [okToProcess] = is_buffer_completed_ir_sbd_nva(0, a_decoderId);
+         %       fprintf('Buffer completed : %d\n', okToProcess);
+         
+         if ((okToProcess) || ...
+               ((idSpoolFile == length(tabAllFileDates) && (~g_decArgo_realtimeFlag))))
+            
+            if (g_decArgo_realtimeFlag)
+               if (okToProcess)
+                  write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames, bufferRank);
+                  bufferRank = bufferRank + 1;
+                  bufferMailFileNames = [];
+                  bufferMailFileDates = [];
+               end
+            end
+            
+            % process the 'new' files
+            if (VERBOSE_MODE_BUFF == 1)
+               if ((okToProcess == 1) || (idSpoolFile < length(tabAllFileDates)))
+                  fprintf('BUFF_INFO: Float #%d: Processing %d SBD files:\n', ...
+                     g_decArgo_floatNum, ...
+                     length(tabNewFileNames));
+               else
+                  fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files:\n', ...
+                     g_decArgo_floatNum, ...
+                     length(tabNewFileNames));
+               end
+            end
             
             [tabProfiles, ...
                tabTrajNMeas, tabTrajNCycle, ...
                tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                decode_sbd_files( ...
-               tabNewFileNames(1), tabNewFileDates(1), tabNewFileSizes(1), ...
-               a_decoderId, a_launchDate, 0);
+               tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
+               a_decoderId, a_launchDate, okToProcess);
             
             if (~isempty(tabProfiles))
                o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -837,10 +873,138 @@ for idSpoolFile = 1:length(tabAllFileNames)
             % move the processed 'new' files into the archive directory (and delete
             % the associated SBD files)
             if (g_decArgo_virtualBuff)
-               remove_from_list_ir_sbd(tabNewFileNames(1), 'buffer', 1, 0);
+               remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1, 0);
             else
-               move_files_ir_sbd(tabNewFileNames(1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+               move_files_ir_sbd(tabNewFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
             end
+            
+         else
+            
+            % manage EOL anomaly (housekeeping packets of different cycle numbers
+            % and expecting 1 hydraulic packet never transmitted Ex: 6903192)
+            eolAnomaly = 0;
+            
+            if ((length(find(sbdDataData(:, 1) == 1)) > 1) && (~any(sbdDataData(:, 1) ~= 1)))
+               
+               cycleNumbers = decode_cycle_number_nva_data_ir_sbd(sbdDataData);
+               if (length(unique(cycleNumbers)) > 1)
+                  
+                  uCycleNumbers = unique(cycleNumbers);
+                  fprintf('INFO: Float #%d cycle #%d: EOL anomaly detected (cycle #%d housekeeping packet in the same buffer)\n', ...
+                     g_decArgo_floatNum, uCycleNumbers(1), uCycleNumbers(2));
+                  eolAnomaly = 1;
+               end
+            end
+            
+            if (eolAnomaly)
+               
+               if (g_decArgo_realtimeFlag)
+                  idF = find(strcmp(regexprep(tabNewFileNames(1), '.sbd', '.txt'), bufferMailFileNames));
+                  write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(1:idF), bufferRank);
+                  bufferRank = bufferRank + 1;
+                  bufferMailFileNames(1:idF) = [];
+                  bufferMailFileDates(1:idF) = [];
+               end
+               
+               [tabProfiles, ...
+                  tabTrajNMeas, tabTrajNCycle, ...
+                  tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+                  decode_sbd_files( ...
+                  tabNewFileNames(1), tabNewFileDates(1), tabNewFileSizes(1), ...
+                  a_decoderId, a_launchDate, 0);
+               
+               if (~isempty(tabProfiles))
+                  o_tabProfiles = [o_tabProfiles tabProfiles];
+               end
+               if (~isempty(tabTrajNMeas))
+                  o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
+               end
+               if (~isempty(tabTrajNCycle))
+                  o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
+               end
+               if (~isempty(tabNcTechIndex))
+                  o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
+               end
+               if (~isempty(tabNcTechVal))
+                  o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+               end
+               if (~isempty(tabTechNMeas))
+                  o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+               end
+               
+               % move the processed 'new' files into the archive directory (and delete
+               % the associated SBD files)
+               if (g_decArgo_virtualBuff)
+                  remove_from_list_ir_sbd(tabNewFileNames(1), 'buffer', 1, 0);
+               else
+                  move_files_ir_sbd(tabNewFileNames(1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+               end
+            end
+         end
+      end
+      
+   else
+      
+      % when final EOL mode is detected we process all remaining files together
+      
+      if (idSpoolFile == length(tabAllFileNames))
+         
+         % retrieve information on the files in the buffer
+         if (g_decArgo_virtualBuff)
+            [tabFileNames, ~, tabFileDates, tabFileSizes] = get_list_files_info_ir_sbd( ...
+               'buffer', '');
+         else
+            [tabFileNames, ~, tabFileDates, tabFileSizes] = get_dir_files_info_ir_sbd( ...
+               g_decArgo_bufferDirectory, a_floatImei, 'sbd', '');
+         end
+         
+         % store buffer information
+         if (g_decArgo_realtimeFlag)
+               write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames, bufferRank);
+               % bufferRank = bufferRank + 1; % following ones should have the same rank
+               bufferMailFileNames = [];
+               bufferMailFileDates = [];
+         end
+         
+         % process all the remaining files
+         if (VERBOSE_MODE_BUFF == 1)
+            fprintf('BUFF_INFO: Float #%d: Final EOL mode detected => processing %d SBD files:\n', ...
+               g_decArgo_floatNum, ...
+               length(tabFileNames));
+         end
+         
+         [tabProfiles, ...
+            tabTrajNMeas, tabTrajNCycle, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+            decode_sbd_files( ...
+            tabFileNames, tabFileDates, tabFileSizes, ...
+            a_decoderId, a_launchDate, 1);
+         
+         if (~isempty(tabProfiles))
+            o_tabProfiles = [o_tabProfiles tabProfiles];
+         end
+         if (~isempty(tabTrajNMeas))
+            o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
+         end
+         if (~isempty(tabTrajNCycle))
+            o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
+         end
+         if (~isempty(tabNcTechIndex))
+            o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
+         end
+         if (~isempty(tabNcTechVal))
+            o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+         end
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         end
+         
+         % move the processed files into the archive directory (and delete
+         % the associated SBD files)
+         if (g_decArgo_virtualBuff)
+            remove_from_list_ir_sbd(tabFileNames, 'buffer', 1, 0);
+         else
+            move_files_ir_sbd(tabFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
          end
       end
    end
@@ -1015,7 +1179,7 @@ switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   case {2001} % Nova 1.0
+   case {2001, 2003} % Nova 1.0 & 0.9
             
       if (isempty(a_completedBuffer) || (a_completedBuffer == 0))
          
@@ -1032,7 +1196,11 @@ switch (a_decoderId)
          g_decArgo_nbOf50To55TypePacketReceived = 0;
          
          % roughly check the received data
-         decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+         if (a_decoderId == 2001)
+            decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+         else
+            decode_nva_data_ir_sbd_2003(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
+         end
          
          if (isempty(a_completedBuffer))
             % print what is missing in the buffer
@@ -1044,8 +1212,13 @@ switch (a_decoderId)
       
       % decode the collected data
       g_decArgo_cycleNum = -1;
-      [tabTech, dataCTD, dataHydrau, dataAck, deepCycle] = ...
-         decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      if (a_decoderId == 2001)
+         [tabTech, dataCTD, dataHydrau, dataAck, deepCycle] = ...
+            decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      else
+         [tabTech, dataCTD, dataHydrau, dataAck, deepCycle] = ...
+            decode_nva_data_ir_sbd_2003(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      end
       if (g_decArgo_cycleNum == -1)
          return;
       end
@@ -1084,64 +1257,85 @@ switch (a_decoderId)
       update_mail_data_ir_sbd_nva(a_sbdFileNameList, a_decoderId);
       
       % compute the main dates of the cycle
-      [cycleStartDate, cycleStartDateAdj, ...
-         descentToParkStartDate, descentToParkStartDateAdj, ...
-         firstStabDate, firstStabDateAdj, firstStabPres, ...
-         descentToParkEndDate, descentToParkEndDateAdj, ...
-         descentToProfStartDate, descentToProfStartDateAdj, ...
-         descentToProfEndDate, descentToProfEndDateAdj, ...
-         ascentStartDate, ascentStartDateAdj, ...
-         ascentEndDate, ascentEndDateAdj, ...
-         gpsDate, gpsDateAdj, ...
-         firstMessageDate, lastMessageDate, ...
-         floatClockDrift] = compute_nva_dates_1_2(tabTech, deepCycle);
-      
-      % store GPS data and compute JAMSTEC QC for the GPS locations of the
-      % current cycle
-      store_gps_data_ir_sbd_nva(tabTech);
+      if (a_decoderId == 2001)
+         [cycleStartDate, cycleStartDateAdj, ...
+            descentToParkStartDate, descentToParkStartDateAdj, ...
+            firstStabDate, firstStabDateAdj, firstStabPres, ...
+            descentToParkEndDate, descentToParkEndDateAdj, ...
+            descentToProfStartDate, descentToProfStartDateAdj, ...
+            descentToProfEndDate, descentToProfEndDateAdj, ...
+            ascentStartDate, ascentStartDateAdj, ...
+            ascentEndDate, ascentEndDateAdj, ...
+            gpsDate, gpsDateAdj, ...
+            firstMessageDate, lastMessageDate, ...
+            floatClockDrift] = compute_nva_dates_2001_2002(tabTech, deepCycle);
+      else
+         [cycleStartDate, cycleStartDateAdj, ...
+            descentToParkStartDate, descentToParkStartDateAdj, ...
+            firstStabDate, firstStabDateAdj, firstStabPres, ...
+            descentToParkEndDate, descentToParkEndDateAdj, ...
+            descentToProfStartDate, descentToProfStartDateAdj, ...
+            descentToProfEndDate, descentToProfEndDateAdj, ...
+            ascentStartDate, ascentStartDateAdj, ...
+            ascentEndDate, ascentEndDateAdj, ...
+            gpsDate, gpsDateAdj, ...
+            firstMessageDate, lastMessageDate, ...
+            floatClockDrift] = compute_nva_dates_2003(tabTech, deepCycle);
+      end
+               
+      % store GPS data
+      if (a_decoderId == 2001)
+         store_gps_data_ir_sbd_nva_2001_2002(tabTech);
+      else
+         store_gps_data_ir_sbd_nva_2003(tabTech);
+      end
       
       % create descending and ascending profiles
       [descProfDate, descProfDateAdj, descProfPres, descProfTemp, descProfSal, ...
          ascProfDate, ascProfDateAdj, ascProfPres, ascProfTemp, ascProfSal] = ...
-         create_nva_profile_2001(dataCTD, descentToParkStartDateAdj, ascentStartDateAdj);
+         create_nva_profile_2001_2003(dataCTD, descentToParkStartDateAdj, ascentStartDateAdj);
       
       % create drift data set
       [parkDate, parkDateAdj, parkTransDate, ...
          parkPres, parkTemp, parkSal] = ...
-         create_nva_drift_2001(dataCTD, descentToParkEndDateAdj, descentToProfStartDateAdj, tabTech);
+         create_nva_drift_2001_2003(dataCTD, descentToParkEndDateAdj, descentToProfStartDateAdj, tabTech);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
          % output CSV file
                   
          % print float technical messages in CSV file
-         print_tech_data_in_csv_file_2001(tabTech, a_decoderId);
+         if (a_decoderId == 2001)
+            print_tech_data_in_csv_file_2001(tabTech, a_decoderId);
+         else
+            print_tech_data_in_csv_file_2003(tabTech, a_decoderId);
+         end
          
          % print dated data in CSV file
-         print_dates_in_csv_file_nva_1_2( ...
+         print_dates_in_csv_file_nva( ...
             descProfDate, descProfDateAdj, descProfPres, ...
             parkDate, parkDateAdj, parkPres, ...
             ascProfDate, ascProfDateAdj, ascProfPres, ...
             dataHydrau);
          
          % print descending profile in CSV file
-         print_descending_profile_in_csv_file_2001( ...
+         print_descending_profile_in_csv_file_2001_2003( ...
             descProfDate, descProfDateAdj, descProfPres, descProfTemp, descProfSal);
          
          % print drift measurements in CSV file
-         print_drift_measurements_in_csv_file_2001( ...
+         print_drift_measurements_in_csv_file_2001_2003( ...
             parkDate, parkDateAdj, parkTransDate, ...
             parkPres, parkTemp, parkSal);
          
          % print ascending profile in CSV file
-         print_ascending_profile_in_csv_file_2001( ...
+         print_ascending_profile_in_csv_file_2001_2003( ...
             ascProfDate, ascProfDateAdj, ascProfPres, ascProfTemp, ascProfSal);
          
          % print hydraulic data in CSV file
-         print_hydrau_data_in_csv_file_nva_1_2(dataHydrau, cycleStartDate, floatClockDrift);
+         print_hydrau_data_in_csv_file_nva(dataHydrau, cycleStartDate, floatClockDrift);
          
          % print acknowlegment data in CSV file
-         print_ack_data_in_csv_file_nva_1_2(dataAck);
+         print_ack_data_in_csv_file_nva(dataAck);
          
       else
          
@@ -1154,7 +1348,7 @@ switch (a_decoderId)
          tabProfiles = [];
          if (~isempty(dataCTD))
             
-            [tabProfiles] = process_profiles_2001( ...
+            [tabProfiles] = process_profiles_2001_2003( ...
                descProfDate, descProfDateAdj, descProfPres, descProfTemp, descProfSal, ...
                ascProfDate, ascProfDateAdj, ascProfPres, ascProfTemp, ascProfSal, ...
                g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
@@ -1191,7 +1385,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_2001( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_2001_2003( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             tabTech, ...
@@ -1314,11 +1508,11 @@ switch (a_decoderId)
          ascentEndDate, ascentEndDateAdj, ...
          gpsDate, gpsDateAdj, ...
          firstMessageDate, lastMessageDate, ...
-         floatClockDrift] = compute_nva_dates_1_2(tabTech, deepCycle);
+         floatClockDrift] = compute_nva_dates_2001_2002(tabTech, deepCycle);
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd_nva(tabTech);
+      store_gps_data_ir_sbd_nva_2001_2002(tabTech);
       
       % create descending and ascending profiles
       [descProfDate, descProfDateAdj, descProfPres, descProfTemp, descProfSal, descProfTempDoxy, descProfPhaseDelayDoxy, ...
@@ -1354,7 +1548,7 @@ switch (a_decoderId)
          print_tech_data_in_csv_file_2002(tabTech, a_decoderId);
          
          % print dated data in CSV file
-         print_dates_in_csv_file_nva_1_2( ...
+         print_dates_in_csv_file_nva( ...
             descProfDate, descProfDateAdj, descProfPres, ...
             parkDate, parkDateAdj, parkPres, ...
             ascProfDate, ascProfDateAdj, ascProfPres, ...
@@ -1377,10 +1571,10 @@ switch (a_decoderId)
             ascProfTempDoxy, ascProfPhaseDelayDoxy, ascProfDoxy);
          
          % print hydraulic data in CSV file
-         print_hydrau_data_in_csv_file_nva_1_2(dataHydrau, cycleStartDate, floatClockDrift);
+         print_hydrau_data_in_csv_file_nva(dataHydrau, cycleStartDate, floatClockDrift);
          
          % print acknowlegment data in CSV file
-         print_ack_data_in_csv_file_nva_1_2(dataAck);
+         print_ack_data_in_csv_file_nva(dataAck);
          
       else
          

@@ -138,15 +138,29 @@ global g_decArgo_timeData;
 % QC flag values (char)
 global g_decArgo_qcStrMissing;
 
+% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+global g_decArgo_finalEolMode;
+
+
 ID_OFFSET = 1;
 
+% we don't update GPS position QC for TRAJ data (it is done when processing
+% profile data (to locate the profils) but in EOL mode there is no need to do it
+% because we will apply RTQC to TRAJ file)
+
+% update GPS position QC information if needed
+% if (any((a_gpsData{1} ~= -1) & (a_gpsData{7} == 0)))
+%    gpsData = update_gps_position_qc_ir_sbd;
+% else
+   gpsData = a_gpsData;
+% end
 
 % unpack GPS data
-gpsLocCycleNum = a_gpsData{1};
-gpsLocDate = a_gpsData{4};
-gpsLocLon = a_gpsData{5};
-gpsLocLat = a_gpsData{6};
-gpsLocQc = a_gpsData{7};
+gpsLocCycleNum = gpsData{1};
+gpsLocDate = gpsData{4};
+gpsLocLon = gpsData{5};
+gpsLocLat = gpsData{6};
+gpsLocQc = gpsData{7};
 
 % GPS data for the current cycle
 idF = find(gpsLocCycleNum == a_cycleNum);
@@ -173,7 +187,7 @@ trajNCycleStruct = get_traj_n_cycle_init_struct(a_cycleNum, -1);
 % retrieve technical message data
 tabTech = [];
 if (~isempty(a_tabTech))
-   if (size(a_tabTech, 1) > 1)
+   if ((g_decArgo_finalEolMode == 0) && (size(a_tabTech, 1) > 1))
       fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer => using the last one\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
          size(a_tabTech, 1));
@@ -874,6 +888,10 @@ else
             ' ', ...
             num2str(gpsCyLocQc(idpos)), 1);
          idF = find([cycleTimeStructBis.gpsTimeAdj] == gpsCyLocDate(idpos));
+         if (length(idF) > 1)
+            [~, idMin] = min(abs(idpos - idF));
+            idF = idF(idMin);
+         end
          if (~isempty(cycleTimeStructBis(idF).clockDrift))
             measStruct.juld = measStruct.juld + (cycleTimeStructBis(idF).gpsTime-cycleTimeStructBis(idF).gpsTimeAdj);
             measStruct.juldStatus = g_JULD_STATUS_2;

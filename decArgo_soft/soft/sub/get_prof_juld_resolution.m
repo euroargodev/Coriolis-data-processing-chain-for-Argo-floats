@@ -78,7 +78,7 @@ switch (a_floatTransType)
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
         
-         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216}
+         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217}
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
@@ -88,6 +88,10 @@ switch (a_floatTransType)
          case {2001, 2002}
             o_profJuldRes = double(1/86400); % 1 second
             
+         case {2003}
+            o_profJuldRes = double(6/1440); % 6 minutes
+            o_profJulDComment = 'JULD resolution is 6 minutes, except when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
+
          otherwise
             fprintf('WARNING: No JULD profile resolution defined yet for float transmission type #%d and decoder Id #%d\n', ...
                a_floatTransType, a_decoderId);

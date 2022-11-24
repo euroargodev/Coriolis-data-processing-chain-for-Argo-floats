@@ -49,7 +49,7 @@ for idField = 1:length(confDataFieldNames)
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       case {105, 106, 107, 108, 109, 110, 121, 122, 123}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
-      case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216}
+      case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       case {301, 302, 303}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
@@ -62,7 +62,7 @@ for idField = 1:length(confDataFieldNames)
             1109, 1110, 1111, 1112, 1113, 1201, 1314}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
          
-      case {2001, 2002}
+      case {2001, 2002, 2003}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       otherwise
          fprintf('WARNING: Nothing done yet in get_nc_config_parameters_json for decoderId #%d\n', a_decoderId);

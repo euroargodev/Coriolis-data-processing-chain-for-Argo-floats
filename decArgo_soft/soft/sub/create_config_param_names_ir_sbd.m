@@ -391,8 +391,9 @@ switch (a_decoderId)
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
       end
       
-   case {214}
-      % Provor-ARN-DO-Ice Iridium
+   case {214, 217}
+      % Provor-ARN-DO-Ice Iridium 5.75
+      % Arvor-ARN-DO-Ice Iridium 5.46
       
       for id = [0 4:10 17:27 29:31]
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
@@ -533,7 +534,7 @@ switch (a_decoderId)
          end
       end
       
-   case {2001, 2002} % Nova, Dova
+   case {2001, 2002, 2003} % Nova, Dova
       
       for id = [0:9 12:14]
          decConfNames{end+1} = sprintf('CONFIG_PM%02d', id);

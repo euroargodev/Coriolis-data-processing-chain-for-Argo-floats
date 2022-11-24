@@ -50,19 +50,31 @@ if (~isempty(idFCyNum))
    lonList = [a_iridiumMailData(idFCyNum).unitLocationLon];
    radiusList = [a_iridiumMailData(idFCyNum).cepRadius];
    
-   weight = 1./(radiusList.*radiusList);
-   o_locDate = mean(timeList);
-   o_locLon = sum(lonList.*weight)/sum(weight);
-   o_locLat = sum(latList.*weight)/sum(weight);
-   if (mean(radiusList) < 5)
-      o_locQc = g_decArgo_qcStrGood;
-   else
-      o_locQc = g_decArgo_qcStrProbablyGood;
+   % NOVA/DOVA Iridium data (recieved from Paul Lane in CSV files) have CEP
+   % Radius set to 0
+   idDel = find(radiusList == 0);
+   if (~isempty(idDel))
+      timeList(idDel) = [];
+      latList(idDel) = [];
+      lonList(idDel) = [];
+      radiusList(idDel) = [];
    end
    
-   o_lastCycleFlag = 0;
-   if (a_cycleNumber == max([a_iridiumMailData.cycleNumber]))
-      o_lastCycleFlag = 1;
+   if (~isempty(timeList))
+      weight = 1./(radiusList.*radiusList);
+      o_locDate = mean(timeList);
+      o_locLon = sum(lonList.*weight)/sum(weight);
+      o_locLat = sum(latList.*weight)/sum(weight);
+      if (mean(radiusList) < 5)
+         o_locQc = g_decArgo_qcStrGood;
+      else
+         o_locQc = g_decArgo_qcStrProbablyGood;
+      end
+      
+      o_lastCycleFlag = 0;
+      if (a_cycleNumber == max([a_iridiumMailData.cycleNumber]))
+         o_lastCycleFlag = 1;
+      end
    end
 end
 

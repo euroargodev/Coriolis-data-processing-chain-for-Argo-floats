@@ -68,7 +68,7 @@ elseif (a_whyFlag == 1)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {2001, 2002} % Nova, Dova
+      case {2001, 2002, 2003} % Nova, Dova
          
          if (g_decArgo_1TypePacketReceived == 0)
             fprintf('BUFF_INFO: Float #%d: Technical packet #1 is missing\n', ...

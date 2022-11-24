@@ -127,12 +127,14 @@ switch (a_decoderId)
          end
       end
       
-   case {214} % Provor-ARN-DO-Ice Iridium 5.75
+   case {214, 217}
+      % Provor-ARN-DO-Ice Iridium 5.75
+      % Arvor-ARN-DO-Ice Iridium 5.46
       
       % decode the collected data
-      decode_prv_data_ir_sbd_214(a_tabData, a_tabDataDates, 0, []);
+      decode_prv_data_ir_sbd_214_217(a_tabData, a_tabDataDates, 0, []);
       o_cyList = g_decArgo_cycleList;
-
+      
       for cyId = 1:length(g_decArgo_cycleList)
          cyInfoStr = '';
          

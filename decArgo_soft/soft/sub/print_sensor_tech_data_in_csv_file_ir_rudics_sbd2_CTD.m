@@ -33,9 +33,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110, 301}
+   case {105, 106, 107, 109, 110, 301, 302, 303}
       
-      print_sensor_tech_data_in_csv_file_ir_rudics_105_2_110_sbd2_CTD( ...
+      print_sensor_tech_data_in_csv_file_ir_rudics_sbd2_bis_CTD( ...
          a_cycleNum, a_profNum, a_dataIndexList, ...
          a_sensorTechCTD);
 

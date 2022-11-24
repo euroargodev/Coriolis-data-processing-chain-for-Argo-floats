@@ -225,38 +225,6 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 % create_csv_to_print_config_ir_sbd('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
-if (isfield(metaData, 'RT_OFFSET'))
-   g_decArgo_rtOffsetInfo.param = [];
-   g_decArgo_rtOffsetInfo.value = [];
-   g_decArgo_rtOffsetInfo.date = [];
-
-   rtData = metaData.RT_OFFSET;
-   params = unique(struct2cell(rtData.PARAM));
-   for idParam = 1:length(params)
-      param = params{idParam};
-      fieldNames = fields(rtData.PARAM);
-      tabValue = [];
-      tabDate = [];
-      for idF = 1:length(fieldNames)
-         fieldName = fieldNames{idF};
-         if (strcmp(rtData.PARAM.(fieldName), param) == 1)
-            idPos = strfind(fieldName, '_');
-            paramNum = fieldName(idPos+1:end);
-            value = str2num(rtData.VALUE.(['VALUE_' paramNum]));
-            tabValue = [tabValue value];
-            date = rtData.DATE.(['DATE_' paramNum]);
-            date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-            tabDate = [tabDate date];
-         end
-      end
-      [tabDate, idSorted] = sort(tabDate);
-      tabValue = tabValue(idSorted);
-      
-      % store the RT offsets
-      g_decArgo_rtOffsetInfo.param{end+1} = param;
-      g_decArgo_rtOffsetInfo.value{end+1} = tabValue;
-      g_decArgo_rtOffsetInfo.date{end+1} = tabDate;
-   end
-end
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
 
 return;

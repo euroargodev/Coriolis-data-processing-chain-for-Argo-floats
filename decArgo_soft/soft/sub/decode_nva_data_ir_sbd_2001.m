@@ -77,6 +77,9 @@ NB_MEAS_MAX_NOVA = g_decArgo_maxCTDSampleInNovaDataPacket;
 global g_decArgo_eolMode;
 g_decArgo_eolMode = 0;
 
+% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+global g_decArgo_finalEolMode;
+
 
 % decode packet data
 tabCycleNum = [];
@@ -121,8 +124,12 @@ for idMes = 1:size(a_tabData, 1)
          tabCycleNum = [tabCycleNum tabTech(30)];
          
          % determine if it is a deep cycle
-         if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
-            o_deepCycle = 1;
+         if (g_decArgo_finalEolMode == 0)
+            if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
+               o_deepCycle = 1;
+            else
+               o_deepCycle = 0;
+            end
          else
             o_deepCycle = 0;
          end
@@ -268,6 +275,7 @@ for idMes = 1:size(a_tabData, 1)
          tabTemp = ones(NB_MEAS_MAX_NOVA, 1)*g_decArgo_tempCountsDef;
          tabPsal = ones(NB_MEAS_MAX_NOVA, 1)*g_decArgo_salCountsDef;
          for idM = 1:nbMeas
+            
             if (idM > 1)
                measDate = g_decArgo_dateDef;
             else
@@ -275,9 +283,14 @@ for idMes = 1:size(a_tabData, 1)
             end
             
             tabDate(idM) = measDate;
-            tabPres(idM) = tabData(3*(idM-1)+5);
-            tabTemp(idM) = tabData(3*(idM-1)+4);
-            tabPsal(idM) = tabData(3*(idM-1)+3);
+            
+            if ~((tabData(3*(idM-1)+5) == 65306) && ...
+                  (tabData(3*(idM-1)+4) == 0) && ...
+                  (tabData(3*(idM-1)+3) == 55536))
+               tabPres(idM) = tabData(3*(idM-1)+5);
+               tabTemp(idM) = tabData(3*(idM-1)+4);
+               tabPsal(idM) = tabData(3*(idM-1)+3);
+            end
          end
          
          o_dataCTD = [o_dataCTD; ...
@@ -292,9 +305,9 @@ end
 
 % convert data counts to physical values
 if (~isempty(o_dataCTD))
-   o_dataCTD(:, 4+NB_MEAS_MAX_NOVA:4+2*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_pressure_nva_1_2(o_dataCTD(:, 4+NB_MEAS_MAX_NOVA:4+2*NB_MEAS_MAX_NOVA-1));
-   o_dataCTD(:, 4+2*NB_MEAS_MAX_NOVA:4+3*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_temperature_nva_1_2(o_dataCTD(:, 4+2*NB_MEAS_MAX_NOVA:4+3*NB_MEAS_MAX_NOVA-1));
-   o_dataCTD(:, 4+3*NB_MEAS_MAX_NOVA:4+4*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_salinity_nva_1_2(o_dataCTD(:, 4+3*NB_MEAS_MAX_NOVA:4+4*NB_MEAS_MAX_NOVA-1));
+   o_dataCTD(:, 4+NB_MEAS_MAX_NOVA:4+2*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_pressure_nva(o_dataCTD(:, 4+NB_MEAS_MAX_NOVA:4+2*NB_MEAS_MAX_NOVA-1));
+   o_dataCTD(:, 4+2*NB_MEAS_MAX_NOVA:4+3*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_temperature_nva(o_dataCTD(:, 4+2*NB_MEAS_MAX_NOVA:4+3*NB_MEAS_MAX_NOVA-1));
+   o_dataCTD(:, 4+3*NB_MEAS_MAX_NOVA:4+4*NB_MEAS_MAX_NOVA-1) = sensor_2_value_for_salinity_nva(o_dataCTD(:, 4+3*NB_MEAS_MAX_NOVA:4+4*NB_MEAS_MAX_NOVA-1));
 end
 
 % set cycle number and store tech data for nc output
@@ -330,9 +343,10 @@ if (a_procLevel > 0)
             
             % EOL mode
             if ((g_decArgo_cycleNum == g_decArgo_cycleNumPrev) && ...
-                  ~any(o_tabTech([20 22 24]) ~= 0))
+                  (~isempty(o_tabTech) && ~any(o_tabTech([20 22 24]) ~= 0)))
                o_deepCycle = 0;
                g_decArgo_eolMode = 1;
+               g_decArgo_finalEolMode = 1;
                %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...
                %                   g_decArgo_floatNum, g_decArgo_cycleNum);
             end
@@ -341,6 +355,7 @@ if (a_procLevel > 0)
                g_decArgo_cycleNum = 256;
                o_deepCycle = 0;
                g_decArgo_eolMode = 1;
+               g_decArgo_finalEolMode = 1;
             end
             
             % output NetCDF files
@@ -350,19 +365,38 @@ if (a_procLevel > 0)
             
          else
             cycleListStr = sprintf('%d ', unique(tabCycleNum));
-            if (isempty(o_dataCTD))
-               fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (no CTD data lost)\n', ...
-                  g_decArgo_floatNum, cycleListStr(1:end-1));
-            else
-               fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
-                  g_decArgo_floatNum, cycleListStr(1:end-1));
-            end
             
-            o_tabTech = [];
-            o_dataCTD = [];
-            o_dataHydrau = [];
-            o_dataAck = [];
-            o_deepCycle = [];
+            if (g_decArgo_finalEolMode == 0)
+               
+               if (isempty(o_dataCTD))
+                  fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (no CTD data lost)\n', ...
+                     g_decArgo_floatNum, cycleListStr(1:end-1));
+               else
+                  fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
+                     g_decArgo_floatNum, cycleListStr(1:end-1));
+               end
+               
+               o_tabTech = [];
+               o_dataCTD = [];
+               o_dataHydrau = [];
+               o_dataAck = [];
+               o_deepCycle = [];
+            else
+               
+               if (isempty(o_dataCTD))
+                  fprintf('WARNING: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (no CTD data lost)\n', ...
+                     g_decArgo_floatNum, cycleListStr(1:end-1));
+               else
+                  fprintf('WARNING: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
+                     g_decArgo_floatNum, cycleListStr(1:end-1));
+               end
+               
+               o_dataCTD = [];
+               o_dataHydrau = [];
+               o_dataAck = [];
+               o_deepCycle = 0;
+               g_decArgo_cycleNum = 256;
+            end
          end
       else
          fprintf('WARNING: Float #%d: Cycle number cannot be determined\n', ...

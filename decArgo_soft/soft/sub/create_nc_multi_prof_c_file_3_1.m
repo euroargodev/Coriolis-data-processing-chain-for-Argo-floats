@@ -78,7 +78,11 @@ if (isempty(a_tabProfiles))
 end
 
 % assign time resolution for each float transmission type
-profJulDLocRes = double(1/5184000); % 1 second
+if (a_decoderId == 2003)
+   profJulDLocRes = double(6/1440); % 6 minutes
+else
+   profJulDLocRes = double(1/86400); % 1 second
+end
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(g_decArgo_floatTransType, a_decoderId);
 
 % collect information on core primary sampling profiles

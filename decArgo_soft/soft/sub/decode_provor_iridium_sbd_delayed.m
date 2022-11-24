@@ -152,7 +152,6 @@ global g_decArgo_rsyncLogFileUsedList;
 
 % minimum duration of a subsurface period
 global g_decArgo_minSubSurfaceCycleDuration;
-MIN_SUB_CYCLE_DURATION_IN_DAYS = g_decArgo_minSubSurfaceCycleDuration/24;
 
 % to detect ICE mode activation
 global g_decArgo_7TypePacketReceivedCyNum;
@@ -325,6 +324,7 @@ end
 % ignore duplicated mail files (move duplicates in the archive directory)
 ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirectory);
 
+% WE DON'T USE ANY MORE REPLAY WITH PREDEFINED BUFFERS FOR DELAYED DECODER
 % if (g_decArgo_realtimeFlag)
 %
 %    % process mail files according to stored buffers
@@ -384,6 +384,11 @@ ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirector
 [tabAllFileNames, ~, tabAllFileDates, ~] = ...
    get_list_files_info_ir_sbd('spool', '');
 
+% retrieved (from "cycle duration" and "second Iridium session waiting time")
+% the min duration between two transmission phases
+minDeltaTransMinutes = compute_min_delta_trans(tabAllFileNames, a_decoderId);
+minDeltaTransMinutes = min(minDeltaTransMinutes, g_decArgo_minSubSurfaceCycleDuration*60);
+
 % process the mail files of the spool directory in chronological order
 % if (g_decArgo_realtimeFlag)
 %    bufferRank = 1;
@@ -421,7 +426,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       'buffer', '');
    
    % assign a transmission number to the files in the buffer
-   tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
+   tabFileTransNums = set_file_trans_num(tabFileDates, minDeltaTransMinutes/1440);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % look for missing data (this should theoretically never occur anymore)
@@ -430,17 +435,19 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % retrieve information about the first transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
       [cycleNumberListTrans1, bufferCompletedTrans1, ~] = check_received_sbd_files( ...
-         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
+         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
+         [], cycleDecodingDone, a_decoderId);
       
       % check that missing data of the first transmission have been received in
       % the second transmission
       idFilesTrans1And2 = find((tabFileTransNums == 1) | (tabFileTransNums == 2));
       cycleNumberNotCompletedList = cycleNumberListTrans1(find(bufferCompletedTrans1 == 0));
       [cycleNumberList, bufferCompleted, ~] = check_received_sbd_files( ...
-         tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), cycleNumberNotCompletedList, a_decoderId);
+         tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), ...
+         cycleNumberNotCompletedList, cycleDecodingDone, a_decoderId);
       
       % process cycle numbers of the first transmission
-      if (ismember(a_decoderId, [212 214]))
+      if (ismember(a_decoderId, [212 214 216 217]))
          if (any(bufferCompleted == 0) && ~strcmp(g_decArgo_floatFirmware, '5900A03'))
             cycleNumberNotCompletedList = cycleNumberList(find(bufferCompleted == 0));
             for idCy = 1:length(cycleNumberNotCompletedList)
@@ -474,7 +481,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
             decode_sbd_files_delayed( ...
             tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), ...
-            a_decoderId, a_refDay, cycleNumberListTrans1, any(bufferCompleted == 0), 1, ...
+            a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, any(bufferCompleted == 0), 1, ...
             o_tabProfiles, ...
             o_tabTrajNMeas, o_tabTrajNCycle, ...
             o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
@@ -498,7 +505,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          'buffer', '');
       
       % assign a transmission number to the files in the buffer
-      tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
+      tabFileTransNums = set_file_trans_num(tabFileDates, minDeltaTransMinutes/1440);
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,7 +514,8 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % retrieve information about the first transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
       [cycleNumberListTrans1, bufferCompletedTrans1, ~] = check_received_sbd_files( ...
-         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
+         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
+         [], cycleDecodingDone, a_decoderId);
       
       % ignore data of cycleNumberListToIgnore list (they have been already
       % processed)
@@ -523,7 +531,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
             decode_sbd_files_delayed( ...
             tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
-            a_decoderId, a_refDay, cycleNumberListTrans1, 0, 0, ...
+            a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, 0, 0, ...
             o_tabProfiles, ...
             o_tabTrajNMeas, o_tabTrajNCycle, ...
             o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
@@ -545,7 +553,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             'buffer', '');
          
          % assign a transmission number to the files in the buffer
-         tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
+         tabFileTransNums = set_file_trans_num(tabFileDates, minDeltaTransMinutes/1440);
          
       else
          
@@ -553,7 +561,8 @@ for idSpoolFile = 1:length(tabAllFileNames)
          % second transmission data
          idFilesTrans1And2 = find((tabFileTransNums == 1) | (tabFileTransNums == 2));
          [cycleNumberListTrans1And2, bufferCompletedTrans1And2, ~] = check_received_sbd_files( ...
-            tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), cycleNumberListTrans1, a_decoderId);
+            tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), ...
+            cycleNumberListTrans1, cycleDecodingDone, a_decoderId);
          
          % ignore data of cycleNumberListToIgnore list (they have been
          % already processed)
@@ -569,7 +578,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
                decode_sbd_files_delayed( ...
                tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), ...
-               a_decoderId, a_refDay, cycleNumberListTrans1, 0, 1, ...
+               a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, 0, 1, ...
                o_tabProfiles, ...
                o_tabTrajNMeas, o_tabTrajNCycle, ...
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
@@ -592,7 +601,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                'buffer', '');
             
             % assign a transmission number to the files in the buffer
-            tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
+            tabFileTransNums = set_file_trans_num(tabFileDates, minDeltaTransMinutes/1440);
             
          else
             
@@ -605,7 +614,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
                   decode_sbd_files_delayed( ...
                   tabFileNames(idFilesTrans1And2), tabFileDates(idFilesTrans1And2), tabFileSizes(idFilesTrans1And2), ...
-                  a_decoderId, a_refDay, cycleNumberListTrans1, 1, 1, ...
+                  a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, 1, 1, ...
                   o_tabProfiles, ...
                   o_tabTrajNMeas, o_tabTrajNCycle, ...
                   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
@@ -621,7 +630,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                   'buffer', '');
                
                % assign a transmission number to the files in the buffer
-               tabFileTransNums = set_file_trans_num(tabFileDates, MIN_SUB_CYCLE_DURATION_IN_DAYS);
+               tabFileTransNums = set_file_trans_num(tabFileDates, minDeltaTransMinutes/1440);
             else
                % the buffer of the first transmission is not completed
                % additional data is needed
@@ -637,7 +646,8 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % retrieve information about the transmission
       idFilesTrans1 = find(tabFileTransNums == 1);
       [cycleNumberListTrans1, bufferCompletedTrans1, firstDateNextBuffer] = check_received_sbd_files( ...
-         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), [], a_decoderId);
+         tabFileNames(idFilesTrans1), tabFileDates(idFilesTrans1), tabFileSizes(idFilesTrans1), ...
+         [], cycleDecodingDone, a_decoderId);
       
       nbLoops = 1;
       if (~isempty(firstDateNextBuffer))
@@ -669,7 +679,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
                decode_sbd_files_delayed( ...
                tabFileNames(idFilesTrans1(idFiles)), tabFileDates(idFilesTrans1(idFiles)), tabFileSizes(idFilesTrans1(idFiles)), ...
-               a_decoderId, a_refDay, cycleNumberListTrans1, 0, (length(cycleNumberListTrans1) > 1), ...
+               a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, 0, (length(cycleNumberListTrans1) > 1), ...
                o_tabProfiles, ...
                o_tabTrajNMeas, o_tabTrajNCycle, ...
                o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);
@@ -697,7 +707,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
                   decode_sbd_files_delayed( ...
                   tabFileNames(idFilesTrans1(idFiles)), tabFileDates(idFilesTrans1(idFiles)), tabFileSizes(idFilesTrans1(idFiles)), ...
-                  a_decoderId, a_refDay, cycleNumberListTrans1, 1, (length(cycleNumberListTrans1) > 1), ...
+                  a_decoderId, a_refDay, cycleNumberListTrans1, cycleDecodingDone, 1, (length(cycleNumberListTrans1) > 1), ...
                   o_tabProfiles, ...
                   o_tabTrajNMeas, o_tabTrajNCycle, ...
                   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas);

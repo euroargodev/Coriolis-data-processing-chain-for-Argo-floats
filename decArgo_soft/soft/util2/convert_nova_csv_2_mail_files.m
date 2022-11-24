@@ -20,11 +20,11 @@
 function convert_nova_csv_2_mail_files
 
 % directory of input CSV files
-DIR_INPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA_CSV\BSH_Ifremer\';
-DIR_INPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA_CSV\from_paul_lane_20171204\';
+DIR_INPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA\data_csv\';
+DIR_INPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA\data_csv2\';
 
 % directory of output mail files
-DIR_OUTPUT_MAIL_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA_CSV\OUT_20171204\';
+DIR_OUTPUT_MAIL_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA\mail_from_data_csv2\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -85,7 +85,7 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
          %       timeOfSession = datenum(sessionDate, 'dd-mmm-yy');
          timeOfSession = datenum(sessionDate, 'yyyy-mm-dd HH:MM:SS');
          dataHex = regexprep(dataL{11}, '"', '');
-         
+                  
          outputDirName = [DIR_OUTPUT_MAIL_FILES '/' imei];
          if ~(exist(outputDirName, 'dir') == 7)
             mkdir(outputDirName);
@@ -108,6 +108,12 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
          if (fIdOut == -1)
             fprintf('ERROR: Error while creating file : %s\n', outputFilePathName);
             return;
+         end
+         
+         if (str2num(msgSize) ~= length(dataHex)/2)
+            fprintf('WARNING: Message Size is %d bytes whereas it should be %d bytes => corrected in output file : %s\n', ...
+               str2num(msgSize), length(dataHex)/2, outputFilePathName);
+            msgSize = num2str(length(dataHex)/2);
          end
          
          fprintf(fIdOut, '%% mail file generated at Coriolis, with ''convert_nova_csv_2_mail_files'' tool, from CSV data files provided by Paul Lane (plane@metocean.com)\n');

@@ -48,7 +48,7 @@ finalConfigValue = inputConfigValue;
 
 switch (a_decoderId)
    
-   case {2001, 2002}
+   case {2001, 2002, 2003}
       
       %nothing for Nova floats
 
@@ -90,7 +90,7 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-   case {212, 214}
+   case {212, 214, 217}
       
       % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);

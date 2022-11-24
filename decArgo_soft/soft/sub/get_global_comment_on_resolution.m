@@ -51,12 +51,13 @@ switch (a_decoderId)
       % Arvor-Deep-Ice Iridium 5.65
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210, 211, 212, 213, 214}
+   case {205, 204, 210, 211, 212, 213, 214, 217}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
       % ARVOR-ARN-Ice Iridium
       % PROVOR-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
+      % Arvor-ARN-DO-Ice Iridium 5.46
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
    case {209}
@@ -84,7 +85,7 @@ switch (a_decoderId)
       % Navis
       o_comment = 'PRES variable resolution depends on measurement codes';
       
-   case {2001, 2002}
+   case {2001, 2002, 2003}
       % Nova, Dova
       o_comment = 'JULD and PRES variable resolution depends on measurement codes';
 

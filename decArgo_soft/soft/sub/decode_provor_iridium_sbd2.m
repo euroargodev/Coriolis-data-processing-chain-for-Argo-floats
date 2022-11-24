@@ -716,10 +716,10 @@ if (~a_floatDmFlag)
                         g_decArgo_floatNum, ...
                         length(tabNewFileNames));
                   end
-                  for idF = 1:length(tabNewFileNames)
-                     fprintf('BUFF_INFO:    - File #%d: %s\n', ...
-                        idF, tabNewFileNames{idF});
-                  end
+                  %                   for idF = 1:length(tabNewFileNames)
+                  %                      fprintf('BUFF_INFO:    - File #%d: %s\n', ...
+                  %                         idF, tabNewFileNames{idF});
+                  %                   end
                   if (size(cycleProfToProcess, 2) > 1)
                      for idM = 1:size(cycleProfToProcess, 1)
                         cycle = cycleProfToProcess(idM, 1);

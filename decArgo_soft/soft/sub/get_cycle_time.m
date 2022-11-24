@@ -27,7 +27,7 @@ o_cycleDuration = [];
 
 switch (a_decoderId)
    
-   case {2001, 2002} % Nova, Dova
+   case {2001, 2002, 2003} % Nova, Dova
       
       [configNames, configValues] = get_float_config_ir_sbd(a_cycleNumber);
       o_cycleDuration = get_config_value('CONFIG_PM00', configNames, configValues);

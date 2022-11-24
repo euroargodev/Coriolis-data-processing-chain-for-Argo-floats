@@ -44,12 +44,19 @@ global g_decArgo_argosLonDef;
 global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
 
 
+% update GPS position QC information if needed
+if (any((a_gpsData{1} ~= -1) & (a_gpsData{7} == 0)))
+   gpsData = update_gps_position_qc_ir_sbd;
+else
+   gpsData = a_gpsData;
+end
+
 % unpack the GPS data
-gpsLocCycleNum = a_gpsData{1};
-gpsLocDate = a_gpsData{4};
-gpsLocLon = a_gpsData{5};
-gpsLocLat = a_gpsData{6};
-gpsLocQc = a_gpsData{7};
+gpsLocCycleNum = gpsData{1};
+gpsLocDate = gpsData{4};
+gpsLocLon = gpsData{5};
+gpsLocLat = gpsData{6};
+gpsLocQc = gpsData{7};
       
 for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);

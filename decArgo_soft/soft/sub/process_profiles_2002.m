@@ -72,17 +72,20 @@ global g_decArgo_tempDoxyDef;
 global g_decArgo_phaseDelayDoxyDef;
 global g_decArgo_doxyDef;
 
+% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+global g_decArgo_finalEolMode;
+
 
 if (isempty(a_tabTech))
    return;
 end
 
-if (size(a_tabTech, 1) > 1)
-   fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer => using the last one\n', ...
+if ((g_decArgo_finalEolMode == 0) && (size(a_tabTech, 1) > 1))
+   fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer => using the first one\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(a_tabTech, 1));
 end
-tabTech = a_tabTech(end, :);
+tabTech = a_tabTech(1, :);
 presCutOffProf = 2;
 
 % process the descending and ascending profiles
@@ -139,7 +142,7 @@ for idProf = 1:2
       tabTempDoxy = a_ascProfTempDoxy;
       tabPhaseDelayDoxy = a_ascProfPhaseDelayDoxy;
       tabDoxy = a_ascProfDoxy;
-
+      
       % update the profile completed flag
       nbMeaslist = [];
       if (~isempty(tabTech))
@@ -156,7 +159,7 @@ for idProf = 1:2
       primarySamplingProfileFlag = 1;
       profStruct = get_profile_init_struct(g_decArgo_cycleNum, -1, -1, primarySamplingProfileFlag);
       profStruct.sensorNumber = 0;
-
+      
       % profile direction
       if (idProf == 1)
          profStruct.direction = 'D';
@@ -176,7 +179,7 @@ for idProf = 1:2
       paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
       paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY');
       paramDoxy = get_netcdf_param_attributes('DOXY');
-
+      
       % convert decoder default values to netCDF fill values
       tabDate(find(tabDate == g_decArgo_dateDef)) = paramJuld.fillValue;
       tabDateAdj(find(tabDateAdj == g_decArgo_dateDef)) = paramJuld.fillValue;
@@ -196,7 +199,7 @@ for idProf = 1:2
       profStruct.data = [tabPres tabTemp tabSal tabTempDoxy tabPhaseDelayDoxy tabDoxy];
       profStruct.dates = tabDate;
       profStruct.datesAdj = tabDateAdj;
-
+      
       % measurement dates
       if (any(tabDateAdj ~= paramJuld.fillValue))
          dates = tabDateAdj;
@@ -213,7 +216,7 @@ for idProf = 1:2
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_215_2001_2002( ...
+      [profStruct] = add_profile_date_and_location_201_to_215_2001_to_2003( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

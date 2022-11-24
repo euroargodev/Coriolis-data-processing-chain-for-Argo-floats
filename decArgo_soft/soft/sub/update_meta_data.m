@@ -29,10 +29,10 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 122 123 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 301 302 303];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 122 123 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
 decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
 decoderIdListNavis = [1201];
-decoderIdListNova = [2001 2002];
+decoderIdListNova = [2001 2002 2003];
 decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
 % only to check that the function has been updated for each new decoder
 if (~ismember(a_decoderId, decoderIdList))
@@ -606,9 +606,9 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 201, 203, 206, 121, 122, 123, 215, 216}
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 201, 203, 206, 121, 122, 123, 215, 216, 217}
       if (ismember(a_decoderId, [106 107 109 110 213 215 216]))
-         if (ismember(a_decoderId, [213 214]))
+         if (ismember(a_decoderId, [213 214 217]))
          
             % retrieve configuration parameters
             configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
@@ -1836,7 +1836,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 201, 203, 215, 216, 206, 213, 214, 121, 122}
+   case {107, 109, 110, 201, 203, 215, 216, 206, 213, 214, 121, 122, 217}
       % CASE_202_205_304
       switch (a_paramName)
          

@@ -91,11 +91,12 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216}
+   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217}
       
       % Arvor Deep
       % Provor-DO Iridium
       % Provor-ARN-DO-Ice Iridium
+      % Arvor-ARN-DO-Ice Iridium 5.46
       o_paramList = [ ...
          {'PRES'} ...
          {'TEMP'} ...
@@ -232,7 +233,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
 
-   case {2001}
+   case {2001, 2003}
 
       % Nova
       o_paramList = [ ...

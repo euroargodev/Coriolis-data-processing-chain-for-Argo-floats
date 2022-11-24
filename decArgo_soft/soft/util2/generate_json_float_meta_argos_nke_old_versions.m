@@ -529,17 +529,30 @@ for idFloat = 1:length(floatList)
          fieldName = ['PARAM_' num2str(dimLevel)];
          rtOffsetParam.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
+      rtOffsetSlope = [];
       rtOffsetValue = [];
       idF = find(strcmp(metaData(idForWmo, 5), 'CALIB_RT_COEFFICIENT') == 1);
       for id = 1:length(idF)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
-         fieldName = ['VALUE_' num2str(dimLevel)];
-         value = metaData{idForWmo(idF(id)), 4};
-         idPos = strfind(value, 'a0=');
-         if (~isempty(idPos))
-            rtOffsetValue.(fieldName) = value(idPos+3:end);
+         fieldNameValue = ['VALUE_' num2str(dimLevel)];
+         fieldNameSlope = ['SLOPE_' num2str(dimLevel)];
+         coefStrOri = metaData{idForWmo(idF(id)), 4};
+         coefStr = regexprep(coefStrOri, ' ', '');
+         idPos1 = strfind(coefStr, 'a1=');
+         idPos2 = strfind(coefStr, ',a0=');
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+3:idPos2-1);
+            rtOffsetValue.(fieldNameValue) = coefStr(idPos2+4:end);
+            [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
+            [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
+            if ((statusSlope == 0) || (statusValue == 0))
+               fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
+                  floatList(idFloat), coefStrOri);
+               return;
+            end
          else
-            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d => exit\n', floatNum);
+            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
+               floatList(idFloat), coefStrOri);
             return;
          end
       end
@@ -551,6 +564,7 @@ for idFloat = 1:length(floatList)
          rtOffsetDate.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
       rtOffsetData.PARAM = rtOffsetParam;
+      rtOffsetData.SLOPE = rtOffsetSlope;
       rtOffsetData.VALUE = rtOffsetValue;
       rtOffsetData.DATE = rtOffsetDate;
       

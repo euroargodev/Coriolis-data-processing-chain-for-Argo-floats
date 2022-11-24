@@ -148,8 +148,12 @@ for idFloat = 1:length(floatList)
    end
    
    % PTT / IMEI specific processing
-   if (~isempty(metaStruct.IMEI))
-      metaStruct.PTT = metaStruct.IMEI;
+   %    if (~isempty(metaStruct.IMEI))
+   %       metaStruct.PTT = metaStruct.IMEI;
+   %    end
+   if (~isempty(metaStruct.PTT) && (length(metaStruct.PTT) >= 7))
+      metaStruct.IMEI = metaStruct.PTT;
+      metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
    end
    
    %    idF = find(strcmp(metaData(idForWmo, 5), 'PTT') == 1, 1);
@@ -240,7 +244,7 @@ for idFloat = 1:length(floatList)
    end
    configBddStructNames = fieldnames(configBddStruct);
    
-   if (ismember(dacFormatId, [{'5.43'} {'5.44'} {'5.45'} {'5.75'}]))
+   if (ismember(dacFormatId, [{'5.43'} {'5.44'} {'5.45'} {'5.75'} {'5.46'}]))
       
       nbConfig = 1;
       configParamVal = cell(length(configStructNames), nbConfig);
@@ -468,7 +472,7 @@ for idFloat = 1:length(floatList)
             
             metaStruct.CALIBRATION_COEFFICIENT = calibrationCoefficient;
          end
-      case {'5.61', '5.62', '5.64', '5.65', '5.71', '5.73', '5.74', '5.75'}
+      case {'5.61', '5.62', '5.64', '5.65', '5.71', '5.73', '5.74', '5.75', '5.46'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -554,17 +558,30 @@ for idFloat = 1:length(floatList)
          fieldName = ['PARAM_' num2str(dimLevel)];
          rtOffsetParam.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
+      rtOffsetSlope = [];
       rtOffsetValue = [];
       idF = find(strcmp(metaData(idForWmo, 5), 'CALIB_RT_COEFFICIENT') == 1);
       for id = 1:length(idF)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
-         fieldName = ['VALUE_' num2str(dimLevel)];
-         value = metaData{idForWmo(idF(id)), 4};
-         idPos = strfind(value, 'a0=');
-         if (~isempty(idPos))
-            rtOffsetValue.(fieldName) = value(idPos+3:end);
+         fieldNameValue = ['VALUE_' num2str(dimLevel)];
+         fieldNameSlope = ['SLOPE_' num2str(dimLevel)];
+         coefStrOri = metaData{idForWmo(idF(id)), 4};
+         coefStr = regexprep(coefStrOri, ' ', '');
+         idPos1 = strfind(coefStr, 'a1=');
+         idPos2 = strfind(coefStr, ',a0=');
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+3:idPos2-1);
+            rtOffsetValue.(fieldNameValue) = coefStr(idPos2+4:end);
+            [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
+            [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
+            if ((statusSlope == 0) || (statusValue == 0))
+               fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
+                  floatList(idFloat), coefStrOri);
+               return;
+            end
          else
-            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d => exit\n', floatList(idFloat));
+            fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
+               floatList(idFloat), coefStrOri);
             return;
          end
       end
@@ -576,6 +593,7 @@ for idFloat = 1:length(floatList)
          rtOffsetDate.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
       rtOffsetData.PARAM = rtOffsetParam;
+      rtOffsetData.SLOPE = rtOffsetSlope;
       rtOffsetData.VALUE = rtOffsetValue;
       rtOffsetData.DATE = rtOffsetDate;
       
@@ -1225,7 +1243,7 @@ switch (a_dacFormatId)
          'CONFIG_PX03_OptodeVerticalOffset', '', ...
          'CONFIG_PX04_OptodeAdditionalStick', '');
       
-   case {'5.75'}
+   case {'5.75', '5.46'}
       o_configStruct = struct( ...
          'CONFIG_MC00_NumberOfCycles', '300', ...
          'CONFIG_MC01_NbCyclesFirstMission', '300', ...
@@ -1944,7 +1962,7 @@ switch (a_dacFormatId)
          'CONFIG_PX03_OptodeVerticalOffset', 'OPTODE_VERTICAL_PRES_OFFSET', ...
          'CONFIG_PX04_OptodeAdditionalStick', 'OPTODE_ADDITIONAL_STICK');
       
-   case {'5.75'}
+   case {'5.75', '5.46'}
       o_configStruct = struct( ...
          'CONFIG_MC00_NumberOfCycles', 'CONFIG_MaxCycles_NUMBER', ...
          'CONFIG_MC01_NbCyclesFirstMission', 'NB_CYCLE_FIRST_MISSION', ...

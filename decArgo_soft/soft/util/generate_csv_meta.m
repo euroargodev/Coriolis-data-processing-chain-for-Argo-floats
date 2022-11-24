@@ -22,8 +22,8 @@ function generate_csv_meta(varargin)
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ArvorARN\meta_provor_4.52_20150416.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ArvorARN\meta_provor_4.52_20150416.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
 
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta.txt';
@@ -32,8 +32,11 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_
 
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_DeepIce_5.65_20180201.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export-3902101_Arvor-Ir-Do_5.46_from_VB_20180216.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -335,7 +338,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -535,7 +538,7 @@ switch a_inputSensorName
                {'degree'} {'micromole/kg'} {'millibar'} ...
                ];
             
-         case {201, 202, 203, 206, 207, 208, 213, 214, 215}
+         case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...
@@ -583,7 +586,7 @@ switch a_inputSensorName
                ];
             
          otherwise
-            fprintf('ERROR: Unknown OPTODE sensor parameter list for decId #%d => nothing done for this float\n', a_decId);
+            fprintf('ERROR: Unknown OPTODE2 sensor parameter list for decId #%d => nothing done for this float\n', a_decId);
       end
       
    otherwise

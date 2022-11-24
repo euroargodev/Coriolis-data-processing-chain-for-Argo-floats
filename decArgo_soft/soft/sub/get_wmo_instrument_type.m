@@ -33,7 +33,7 @@ switch (a_decoderId)
       % Provor, Seabird conductivity sensor
       o_wmoInstType = '841';
       
-   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212}
+   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 217}
       % Arvor, Seabird conductivity sensor
       o_wmoInstType = '844';
       
@@ -64,7 +64,7 @@ switch (a_decoderId)
       % Navis-A Float
       o_wmoInstType = '863';
       
-   case {2001, 2002}
+   case {2001, 2002, 2003}
       % Nova & Dova float
       o_wmoInstType = '865';
       

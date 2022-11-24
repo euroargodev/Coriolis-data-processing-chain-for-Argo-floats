@@ -71,13 +71,13 @@ switch (a_decoderId)
       nbMeasAscShallow = a_tabTech(39);
       nbMeasAscDeep = a_tabTech(40);
       
-   case {210, 211, 212, 213, 214}
+   case {210, 211, 212, 213, 214, 217}
       nbMeasDescShallow = a_tabTech(9);
       nbMeasDescDeep = a_tabTech(10);
       nbMeasAscShallow = a_tabTech(12);
       nbMeasAscDeep = a_tabTech(13);
       
-   case {2001, 2002}
+   case {2001, 2002, 2003}
       nbMeasDescShallow = 0;
       nbMeasDescDeep = a_tabTech(19);
       nbMeasAscShallow = 0;

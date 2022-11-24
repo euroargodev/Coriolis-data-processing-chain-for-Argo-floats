@@ -140,7 +140,7 @@ switch (a_decoderId)
          g_decArgo_cycleNum 1009];
       g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParmPacketsReceived;
       
-   case {212, 214}
+   case {212, 214, 217}
       
       idFCy = find(g_decArgo_cycleList == g_decArgo_cycleNum);
          

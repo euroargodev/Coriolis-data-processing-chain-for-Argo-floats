@@ -4,15 +4,17 @@
 %
 % SYNTAX :
 %  [o_cycleNumberList, o_bufferCompleted, o_firstDateNextBuffer] = check_received_sbd_files( ...
-%    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, a_cycleNumberList, a_decoderId)
+%    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
+%    a_cycleNumberList, a_cycleDecodingDoneList, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_sbdFileNameList  : list of SBD file names
-%   a_sbdFileDateList  : list of SBD file dates
-%   a_sbdFileSizeList  : list of SBD file sizes
-%   a_cycleNumberList  : list of cycles for which the consistency should be
-%                        checked
-%   a_decoderId        : float decoder Id
+%   a_sbdFileNameList       : list of SBD file names
+%   a_sbdFileDateList       : list of SBD file dates
+%   a_sbdFileSizeList       : list of SBD file sizes
+%   a_cycleNumberList       : list of cycles for which the consistency should be
+%                             checked
+%   a_cycleDecodingDoneList : list of already decoded cycles
+%   a_decoderId             : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cycleNumberList     : list of cycles
@@ -29,7 +31,8 @@
 %   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_cycleNumberList, o_bufferCompleted, o_firstDateNextBuffer] = check_received_sbd_files( ...
-   a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, a_cycleNumberList, a_decoderId)
+   a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
+   a_cycleNumberList, a_cycleDecodingDoneList, a_decoderId)
 
 % output parameters initialization
 o_cycleNumberList = [];
@@ -108,10 +111,12 @@ switch (a_decoderId)
       % decode the collected data
       decode_prv_data_ir_sbd_212(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
       
-   case {214} % Provor-ARN-DO-Ice Iridium 5.75
+   case {214, 217}
+      % Provor-ARN-DO-Ice Iridium 5.75
+      % Arvor-ARN-DO-Ice Iridium 5.46
       
       % decode the collected data
-      decode_prv_data_ir_sbd_214(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
+      decode_prv_data_ir_sbd_214_217(sbdDataData, sbdDataDate, 0, a_cycleNumberList);
 
    case {216} % Arvor-Deep-Ice Iridium 5.65
       
@@ -125,6 +130,6 @@ switch (a_decoderId)
          a_decoderId);
 end
 
-[o_cycleNumberList, o_bufferCompleted] = is_buffer_completed_ir_sbd_delayed(0, a_decoderId);
+[o_cycleNumberList, o_bufferCompleted] = is_buffer_completed_ir_sbd_delayed(0, a_cycleDecodingDoneList, a_decoderId);
 
 return;

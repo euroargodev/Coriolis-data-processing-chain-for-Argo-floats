@@ -79,10 +79,11 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {214}
-      % Provor-ARN-DO-Ice Iridium
+   case {214, 217}
+      % Provor-ARN-DO-Ice Iridium 5.75
+      % Arvor-ARN-DO-Ice Iridium 5.46
       
-      init_float_config_prv_ir_sbd_214(a_launchDate);
+      init_float_config_prv_ir_sbd_214_217(a_launchDate);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
@@ -98,9 +99,9 @@ switch (a_decoderId)
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {2001, 2002} % Nova, Dova
+   case {2001, 2002, 2003} % Nova, Dova
       
-      init_float_config_nva_ir_sbd_1_2(a_launchDate, a_decoderId);
+      init_float_config_nva_ir_sbd(a_launchDate, a_decoderId);
 
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to initialize configuration for decoderId #%d\n', ...

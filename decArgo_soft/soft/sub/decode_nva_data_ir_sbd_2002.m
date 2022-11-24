@@ -79,6 +79,9 @@ NB_MEAS_MAX_DOVA = g_decArgo_maxCTDOSampleInDovaDataPacket;
 global g_decArgo_eolMode;
 g_decArgo_eolMode = 0;
 
+% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+global g_decArgo_finalEolMode;
+
 
 % decode packet data
 tabCycleNum = [];
@@ -123,8 +126,12 @@ for idMes = 1:size(a_tabData, 1)
          tabCycleNum = [tabCycleNum tabTech(30)];
          
          % determine if it is a deep cycle
-         if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
-            o_deepCycle = 1;
+         if (g_decArgo_finalEolMode == 0)
+            if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
+               o_deepCycle = 1;
+            else
+               o_deepCycle = 0;
+            end
          else
             o_deepCycle = 0;
          end
@@ -299,9 +306,9 @@ end
 
 % convert data counts to physical values
 if (~isempty(o_dataCTDO))
-   o_dataCTDO(:, 4+NB_MEAS_MAX_DOVA:4+2*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_pressure_nva_1_2(o_dataCTDO(:, 4+NB_MEAS_MAX_DOVA:4+2*NB_MEAS_MAX_DOVA-1));
-   o_dataCTDO(:, 4+2*NB_MEAS_MAX_DOVA:4+3*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_temperature_nva_1_2(o_dataCTDO(:, 4+2*NB_MEAS_MAX_DOVA:4+3*NB_MEAS_MAX_DOVA-1));
-   o_dataCTDO(:, 4+3*NB_MEAS_MAX_DOVA:4+4*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_salinity_nva_1_2(o_dataCTDO(:, 4+3*NB_MEAS_MAX_DOVA:4+4*NB_MEAS_MAX_DOVA-1));
+   o_dataCTDO(:, 4+NB_MEAS_MAX_DOVA:4+2*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_pressure_nva(o_dataCTDO(:, 4+NB_MEAS_MAX_DOVA:4+2*NB_MEAS_MAX_DOVA-1));
+   o_dataCTDO(:, 4+2*NB_MEAS_MAX_DOVA:4+3*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_temperature_nva(o_dataCTDO(:, 4+2*NB_MEAS_MAX_DOVA:4+3*NB_MEAS_MAX_DOVA-1));
+   o_dataCTDO(:, 4+3*NB_MEAS_MAX_DOVA:4+4*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_salinity_nva(o_dataCTDO(:, 4+3*NB_MEAS_MAX_DOVA:4+4*NB_MEAS_MAX_DOVA-1));
    o_dataCTDO(:, 4+4*NB_MEAS_MAX_DOVA:4+5*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_temp_doxy_nva_2(o_dataCTDO(:, 4+4*NB_MEAS_MAX_DOVA:4+5*NB_MEAS_MAX_DOVA-1));
    o_dataCTDO(:, 4+5*NB_MEAS_MAX_DOVA:4+6*NB_MEAS_MAX_DOVA-1) = sensor_2_value_for_phase_delay_doxy_nva_2(o_dataCTDO(:, 4+5*NB_MEAS_MAX_DOVA:4+6*NB_MEAS_MAX_DOVA-1));
 end
@@ -342,6 +349,7 @@ if (a_procLevel > 0)
                   ~any(o_tabTech([20 22 24]) ~= 0))
                o_deepCycle = 0;
                g_decArgo_eolMode = 1;
+               g_decArgo_finalEolMode = 1;
                %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...
                %                   g_decArgo_floatNum, g_decArgo_cycleNum);
             end
@@ -350,6 +358,7 @@ if (a_procLevel > 0)
                g_decArgo_cycleNum = 256;
                o_deepCycle = 0;
                g_decArgo_eolMode = 1;
+               g_decArgo_finalEolMode = 1;
             end
             
             % output NetCDF files
