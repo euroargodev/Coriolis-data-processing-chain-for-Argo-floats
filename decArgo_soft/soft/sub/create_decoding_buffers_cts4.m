@@ -161,6 +161,7 @@ end
 rank = 1;
 sessionList = unique(tabSession);
 for sesNum = sessionList
+
    idBaseForSession = find((tabSession == sesNum) & (tabBase == 1), 1);
    if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
       % deep session
@@ -177,7 +178,7 @@ for sesNum = sessionList
    delayed = 0;
    
    if ((completed == 1) && (deep ~= deepExpected))
-      fprintf('\nERROR: Float #%d : session number %d : deep flag not consistent with expected one\n\n', ...
+      fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n\n', ...
          g_decArgo_floatNum, sesNum);
    end
    
