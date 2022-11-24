@@ -36,7 +36,7 @@ o_lastMsgTime = g_decArgo_dateDef;
 
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880, 6903230]))
+if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880, 6903230, 3901997]))
    switch g_decArgo_floatNum
       case 6903230
          if (ismember(a_cycleNumber, [12 44]))
@@ -153,6 +153,21 @@ if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880, 6903230]))
                   end
                   return
             end
+         end
+      case 3901997
+         if (ismember(a_cycleNumber, [1 2]))
+            if (a_cycleNumber == 1)
+               idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+               timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+               o_firstMsgTime = timeList(1);
+               o_lastMsgTime = timeList(1);
+            elseif (a_cycleNumber == 2)
+               idFCyNum1 = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+               idFCyNum2 = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
+               o_firstMsgTime = min([a_iridiumMailData(idFCyNum1).timeOfSessionJuld]);
+               o_lastMsgTime = max([a_iridiumMailData(idFCyNum2).timeOfSessionJuld]);
+            end
+            return
          end
    end
 end

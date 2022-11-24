@@ -202,6 +202,18 @@ for idE = 1:length(idEol)
    end
 end
 
+% specific
+if (ismember(g_decArgo_floatNum, [3901997]))
+   switch g_decArgo_floatNum
+      case 3901997
+         % some cycle #1 data transmitted in a second session
+         id1 = find((tabCyNum == 1) & (tabBase == 1));
+         id2 = find((tabCyNum == 2) & (tabBase == 1));
+         id3 = find((tabSession == tabSession(id2)) & (tabCyNum == 1));
+         tabSession(id3) = tabSession(id1);
+   end
+end
+
 % consider only session after a deep cycle (to use NB_SESSION_MAX)
 tabSessionDeep = tabSession;
 sessionList = unique(tabSession);
