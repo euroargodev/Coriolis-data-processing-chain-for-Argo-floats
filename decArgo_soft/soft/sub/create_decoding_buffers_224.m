@@ -70,6 +70,7 @@ tabDate = [a_decodedData.fileDate];
 tabDiffDate = [-1 diff(tabDate)];
 tabCyNumRaw = [a_decodedData.cyNumRaw];
 tabCyNum = tabCyNumRaw;
+tabIrSession = [a_decodedData.irSession];
 tabPackType = [a_decodedData.packType];
 tabEolFlag = [a_decodedData.eolFlag];
 tabResetDate = [a_decodedData.resetDate];
@@ -79,10 +80,8 @@ tabExpNbDrift = [a_decodedData.expNbDrift];
 tabExpNbAsc = [a_decodedData.expNbAsc];
 
 tabRankByCycle = ones(size(tabPackType))*-1;
-tabRankByDate = ones(size(tabPackType))*-1;
 tabResetFlag = zeros(size(tabPackType));
 tabSession = ones(size(tabPackType))*-1;
-tabSessionDeep = ones(size(tabPackType))*-1;
 tabBase = zeros(size(tabPackType));
 tabRank = ones(size(tabPackType))*-1;
 tabDeep = ones(size(tabPackType))*-1;
@@ -169,7 +168,7 @@ while (~stop)
    end
 end
 
-% the base pachet of the session (packet type 0 4 5) may have been delayed
+% the base packet of the session (packet type 0 4 5) may have been delayed
 % (Ex: float 6902814 #12)
 % => add new session when delay between transmissions exceeds 0.5 day
 ONE_DAY = 1;
@@ -226,7 +225,7 @@ for sesNum = sessionList
    idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
    
    % check current session contents
-   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
    delayed = 0;
    
    % check data of following sessions (to get possibly unexpected data such
@@ -242,7 +241,7 @@ for sesNum = sessionList
       if (~isempty(idRemaining))
          delayed = 2;
          idForCheck = [idForCheck idRemaining];
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
       end
    end
    
@@ -287,7 +286,7 @@ for sesNum = sessionList
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
          
          % check data of following sessions (to get possibly unexpected data such
          % as pump or valve packets)
@@ -300,7 +299,7 @@ for sesNum = sessionList
             end
             if (~isempty(idRemaining))
                idForCheck = [idForCheck idRemaining];
-               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
             end
          end
          
@@ -338,6 +337,72 @@ for sesNum = sessionList
    end
 end
 
+% the data are transmitted twice in case of EOL (data transmitted again during
+% the first EOL transmission, except perhaps if it occured during a deep cycle
+% (emergency ascend) ?)
+idEol = find(tabEolFlag == 1);
+eolCyNumList = unique(tabCyNum(idEol));
+for cyNum = eolCyNumList
+   idFirstEol = find((tabEolFlag == 1) & (tabCyNum == cyNum), 1, 'first');
+   if (~isempty(idFirstEol))
+      % get nominal transmission session of data for the same cycle
+      idPrevTrans = find((tabCyNum == tabCyNum(idFirstEol)) & (tabIrSession == 0) & (tabEolFlag == 0), 1, 'last');
+      if (~isempty(idPrevTrans))
+         % check that the data have alreay be transmitted and the buffer is
+         % completed
+         if (tabCompleted(idPrevTrans))
+            % ignore the data of the EOL transmission
+            idAll = find(tabRank == tabRank(idFirstEol));
+            tabDeep(idAll) = 0;
+            idDel = find(~ismember(tabPackType(idAll), [0 4 5 7]));
+            tabRank(idAll(idDel)) = -1;
+         end
+      end
+   end
+end
+
+% in EOL mode param packet are sometimes transmitted twice (Ex: 6903703 #114),
+% keep only the last transmitted one
+eolRankNumList = unique(tabRank(idEol));
+for rankNum = eolRankNumList
+   idAll = find(tabRank == rankNum);
+   idType5 = find(tabPackType(idAll) == 5);
+   if (length(idType5) > 1)
+      tabRank(idAll(idType5(1:end-1))) = -1;
+   end
+   idType7 = find(tabPackType(idAll) == 7);
+   if (length(idType7) > 1)
+      tabRank(idAll(idType7(1:end-1))) = -1;
+   end
+end
+
+% in case of delayed transmission, second Iridium session packets are also
+% delayed, set them to a dedicated buffer
+tabRankOld = tabRank;
+rankNumList = unique(tabRankOld);
+for rankNum = rankNumList
+   if (rankNum > 0)
+      idAll = find(tabRankOld == rankNum);
+      if (any(tabIrSession(idAll) == 0) && any(tabIrSession(idAll) == 1))
+         % packets of the second Iridium session
+         id2 = idAll(tabIrSession(idAll) == 1);
+         idType5 = idAll(tabPackType(idAll) == 5);
+         idType5 = idType5(idType5 > max(id2));
+         id2 = [id2 idType5];
+         idType7 = idAll(tabPackType(idAll) == 7);
+         idType7 = idType7(idType7 > max(id2));
+         id2 = [id2 idType7];
+         % packets of the first Iridium session
+         id1 = setdiff(idAll, id2);
+
+         tabRank(tabRank > rankNum) = tabRank(tabRank > rankNum) + 1;
+         tabRank(id2) = tabRank(id2) + 1;
+         tabDeep(id1) = 1;
+         tabGo(idAll) = 1;
+      end
+   end
+end
+
 % sort rank numbers according to cycle numbers
 rank = 1;
 cyNumList = unique(tabCyNum);
@@ -351,21 +416,18 @@ for cyNum = cyNumList
    end
 end
 
-% sort rank numbers according to SBD date
-% to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
-% rank = 1;
-% rankDoneList = [];
-% for idL = 1:length(tabRank)
-%    if (tabRank(idL) ~= -1)
-%       if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
-%          tabRankByDate(idL) = rank;
-%          rankDoneList = [rankDoneList; tabRank(idL) rank];
-%          rank = rank + 1;
-%       else
-%          tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
-%       end
-%    end
-% end
+% update tabCompleted array
+cyNumList = unique(tabRankByCycle);
+cyNumList(cyNumList < 0) = [];
+for cyNum = 1:length(cyNumList)
+   idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+
+   % check current session contents
+   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 1);
+   if (completed == 1)
+      tabCompleted(idForCheck) = 1;
+   end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WRITE CYCLE INFORMATION
@@ -423,7 +485,7 @@ for cyNum = cyNumList
             length(idForRankCy), deepStr, delayedStr, completedStr, sessionListStr, piDecStr);
          
          if (tabCompleted(idRankCy) == 0)
-            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 1);
+            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 1, 0);
             for idL = 1:length(why)
                fprintf('   -> %s\n', why{idL});
             end
@@ -483,8 +545,6 @@ tabCyNumCell = num2cell(tabCyNum);
 [o_decodedData.cyNum] = deal(tabCyNumCell{:});
 tabRankByCycleCell = num2cell(tabRankByCycle);
 [o_decodedData.rankByCycle] = deal(tabRankByCycleCell{:});
-tabRankByDateCell = num2cell(tabRankByDate);
-[o_decodedData.rankByDate] = deal(tabRankByDateCell{:});
 tabDeepCell = num2cell(tabDeep);
 [o_decodedData.deep] = deal(tabDeepCell{:});
 tabResetFlagCell = num2cell(tabResetFlag);
@@ -505,7 +565,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
       fId = fopen(csvFilepathName, 'wt');
       if (fId ~= -1)
          
-         header = '#;Rank;RnkByCycle;RnkByDate;Session;SesDeep;Base;Date;DiffDate;Eol;CyNum;Deep;Done;Delayed;Completed;Go;PackType;ExpNbDesc;tabExpNbDrift;tabExpNbAsc;CyNumRaw;ResetDate;ResetFlag;OffsetDate;PackTypeInfo';
+         header = '#;Rank;RnkByCycle;Session;SesDeep;Base;Date;DiffDate;Eol;CyNum;IrSession;Deep;Done;Delayed;Completed;Go;PackType;ExpNbDesc;tabExpNbDrift;tabExpNbAsc;CyNumRaw;ResetDate;ResetFlag;OffsetDate;PackTypeInfo';
          fprintf(fId, '%s\n', header);
          
          for idL = 1:length(tabPackType)
@@ -528,11 +588,10 @@ if (~isempty(g_decArgo_outputCsvFileId))
                resetDate = julian_2_gregorian_dec_argo(tabResetDate(idL));
             end
             
-            fprintf(fId, '%d;%d;%d;%d;%d;%d;%d;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%s;%d;%d;%s\n', ...
+            fprintf(fId, '%d;%d;%d;%d;%d;%d;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%s;%d;%d;%s\n', ...
                idL, ...
                tabRank(idL), ...
                tabRankByCycle(idL), ...
-               tabRankByDate(idL), ...
                tabSession(idL), ...
                tabSessionDeep(idL), ...
                tabBase(idL), ...
@@ -540,6 +599,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
                diffDate, ...
                tabEolFlag(idL), ...
                tabCyNum(idL), ...
+               tabIrSession(idL), ...
                tabDeep(idL), ...
                tabDone(idL), ...
                tabDelayed(idL), ...
@@ -571,7 +631,7 @@ return
 % SYNTAX :
 %  [o_completed, o_deep, o_whyStr] = check_buffer( ...
 %    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-%    a_decoderId, a_cycleNum, a_whyFlag)
+%    a_decoderId, a_cycleNum, a_whyFlag, a_msgFlag)
 %
 % INPUT PARAMETERS :
 %   a_idForCheck    : Id list of SBD to be checked
@@ -582,6 +642,7 @@ return
 %   a_decoderId     : float decoder Id
 %   a_cycleNum      : cycle number
 %   a_whyFlag       : if set to 1, print why the buffer is not completed
+%   a_msgFlag       : if set to 1, print inconsistencies in buffer contents
 %
 % OUTPUT PARAMETERS :
 %   o_completed : 1 if the buffer is completed, 0 otherwise
@@ -599,7 +660,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_completed, o_deep, o_whyStr] = check_buffer( ...
    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-   a_decoderId, a_cycleNum, a_whyFlag)
+   a_decoderId, a_cycleNum, a_whyFlag, a_msgFlag)
 
 % output parameter initialization
 o_completed = 0;
@@ -624,15 +685,15 @@ idPackDrift = find((a_tabPackType(a_idForCheck) == 2) | (a_tabPackType(a_idForCh
 idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForCheck) == 10) | (a_tabPackType(a_idForCheck) == 17) | (a_tabPackType(a_idForCheck) == 22));
 
 if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
-   if (length(idPackTech1) > 1)
+   if ((length(idPackTech1) > 1) && a_msgFlag)
       fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
          g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
    end
-   if (length(idPackTech2) > 1)
+   if ((length(idPackTech2) > 1) && a_msgFlag)
       fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
          g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
    end
-   if (length(idPackProg) > 1)
+   if ((length(idPackProg) > 1) && a_msgFlag)
       fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
          g_decArgo_floatNum, a_cycleNum, length(idPackProg));
    end

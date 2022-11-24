@@ -115,6 +115,7 @@ tabDate = [a_decodedData.fileDate];
 tabDiffDate = [-1 diff(tabDate)];
 tabCyNumRaw = [a_decodedData.cyNumRaw];
 tabCyNum = tabCyNumRaw;
+tabIrSession = [a_decodedData.irSession];
 tabPackType = [a_decodedData.packType];
 tabEolFlag = [a_decodedData.eolFlag];
 tabResetDate = [a_decodedData.resetDate];
@@ -124,10 +125,8 @@ tabExpNbDrift = [a_decodedData.expNbDrift];
 tabExpNbAsc = [a_decodedData.expNbAsc];
 
 tabRankByCycle = ones(size(tabPackType))*-1;
-tabRankByDate = ones(size(tabPackType))*-1;
 tabResetFlag = zeros(size(tabPackType));
 tabSession = ones(size(tabPackType))*-1;
-tabSessionDeep = ones(size(tabPackType))*-1;
 tabBase = zeros(size(tabPackType));
 tabRank = ones(size(tabPackType))*-1;
 tabDeep = ones(size(tabPackType))*-1;
@@ -447,7 +446,7 @@ for sesNum = sessionList
    idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
    
    % check current session contents
-   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
    delayed = 0;
    
    % check data of following sessions (to get possibly unexpected data such
@@ -486,7 +485,7 @@ for sesNum = sessionList
       if (~isempty(idRemaining))
          delayed = 2;
          idForCheck = [idForCheck idRemaining];
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
       end
    end
    
@@ -532,7 +531,7 @@ for sesNum = sessionList
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
          
          % check data of following sessions (to get possibly unexpected data such
          % as pump or valve packets)
@@ -545,7 +544,7 @@ for sesNum = sessionList
             end
             if (~isempty(idRemaining))
                idForCheck = [idForCheck idRemaining];
-               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 0);
             end
          end
          
@@ -583,6 +582,74 @@ for sesNum = sessionList
    end
 end
 
+bufUpdatedFlag = 0;
+
+% the data are transmitted twice in case of EOL (data transmitted again during
+% the first EOL transmission, except perhaps if it occured during a deep cycle
+% (emergency ascend) ?)
+idEol = find(tabEolFlag == 1);
+eolCyNumList = unique(tabCyNum(idEol));
+for cyNum = eolCyNumList
+   idFirstEol = find((tabEolFlag == 1) & (tabCyNum == cyNum), 1, 'first');
+   if (~isempty(idFirstEol))
+      % get nominal transmission session of data for the same cycle
+      idPrevTrans = find((tabCyNum == tabCyNum(idFirstEol)) & (tabIrSession == 0) & (tabEolFlag == 0), 1, 'last');
+      if (~isempty(idPrevTrans))
+         % check that the data have alreay be transmitted and the buffer is
+         % completed
+         if (tabCompleted(idPrevTrans))
+            % ignore the data of the EOL transmission
+            idAll = find(tabRank == tabRank(idFirstEol));
+            tabDeep(idAll) = 0;
+            idDel = find(~ismember(tabPackType(idAll), [0 4 5 7]));
+            tabRank(idAll(idDel)) = -1;
+         end
+      end
+   end
+end
+
+% in EOL mode param packet are sometimes transmitted twice (Ex: 6903703 #114),
+% keep only the last transmitted one
+eolRankNumList = unique(tabRank(idEol));
+for rankNum = eolRankNumList
+   idAll = find(tabRank == rankNum);
+   idType5 = find(tabPackType(idAll) == 5);
+   if (length(idType5) > 1)
+      tabRank(idAll(idType5(1:end-1))) = -1;
+   end
+   idType7 = find(tabPackType(idAll) == 7);
+   if (length(idType7) > 1)
+      tabRank(idAll(idType7(1:end-1))) = -1;
+   end
+end
+
+% in case of delayed transmission, second Iridium session packets are also
+% delayed, set them to a dedicated buffer
+tabRankOld = tabRank;
+rankNumList = unique(tabRankOld);
+for rankNum = rankNumList
+   if (rankNum > 0)
+      idAll = find(tabRankOld == rankNum);
+      if (any(tabIrSession(idAll) == 0) && any(tabIrSession(idAll) == 1))
+         % packets of the second Iridium session
+         id2 = idAll(tabIrSession(idAll) == 1);
+         idType5 = idAll(tabPackType(idAll) == 5);
+         idType5 = idType5(idType5 > max(id2));
+         id2 = [id2 idType5];
+         idType7 = idAll(tabPackType(idAll) == 7);
+         idType7 = idType7(idType7 > max(id2));
+         id2 = [id2 idType7];
+         % packets of the first Iridium session
+         id1 = setdiff(idAll, id2);
+
+         tabRank(tabRank > rankNum) = tabRank(tabRank > rankNum) + 1;
+         tabRank(id2) = tabRank(id2) + 1;
+         tabDeep(id1) = 1;
+         tabGo(idAll) = 1;
+      end
+   end
+end
+
 % sort rank numbers according to cycle numbers
 rank = 1;
 cyNumList = unique(tabCyNum);
@@ -596,90 +663,16 @@ for cyNum = cyNumList
    end
 end
 
-% sort rank numbers according to SBD date
-% to compare CSV output (SHOULD NOT BE USED TO PROCESS NC DATA!)
-% rank = 1;
-% rankDoneList = [];
-% for idL = 1:length(tabRank)
-%    if (tabRank(idL) ~= -1)
-%       if (isempty(rankDoneList) || ~any(rankDoneList(:,1) == tabRank(idL)))
-%          tabRankByDate(idL) = rank;
-%          rankDoneList = [rankDoneList; tabRank(idL) rank];
-%          rank = rank + 1;
-%       else
-%          tabRankByDate(idL) = rankDoneList(find(rankDoneList(:,1) == tabRank(idL), 1), 2);
-%       end
-%    end
-% end
-
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
-      6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522, ...
-      6902989, 6903774, 3901644, 6903010, 6902938, 6903777]))
+      6903865, 6903771, 7900543, 6900790, 6901880, 6903229, 6902802, 7900522, ...
+      6903774, 3901644, 6903010, 6902938, 6903777]))
    switch g_decArgo_floatNum
-      case 6903772
-         % the float have been set to EOL at cycle #99, however the data of this
-         % cycle has been sent twice
-         id = find((tabCyNum == 99) & (tabPackType == 0));
-         id = find(tabSession == tabSession(id(2)));
-         tabDeep(id) = 0;
-         id = find((tabSession == tabSession(id(2))) & (tabPackType == 3));
-         tabRank(id) = -1;
-         tabRankByCycle(id) = -1;
-         tabRankByDate(id) = -1;
-      case 6903773
-         % the float has switched to EOL at cycle #87, however the data of this
-         % cycle has been sent twice
-         id = find((tabCyNum == 87) & (tabPackType == 0));
-         id = find(tabSession == tabSession(id(2)));
-         tabDeep(id) = 0;
-         id = find((tabSession == tabSession(id(2))) & (tabPackType == 3));
-         tabRank(id) = -1;
-         tabRankByCycle(id) = -1;
-         tabRankByDate(id) = -1;
-      case 3902137
-         % the float has switched to EOL at cycle #465, however the data of this
-         % cycle has been sent twice
-         id = find((tabCyNum == 465) & (tabPackType == 0));
-         id = find(tabSession == tabSession(id(2)));
-         tabDeep(id) = 0;
-         id = find((tabSession == tabSession(id(2))) & (ismember(tabPackType, [1 2 3 13 14])));
-         tabRank(id) = -1;
-         tabRankByCycle(id) = -1;
-         tabRankByDate(id) = -1;
       case 6903865
          % cycle #58 data are separated
          id = find((tabCyNum == 58) & (tabBase == 1));
          tabRank(tabCyNum == 58) = tabRank(id);
          tabRankByCycle(tabCyNum == 58) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 58) = tabRankByDate(id);   
-      case 6903264
-         % data of last cycle before EOL (#500) is transmitted twice
-         id = find((tabCyNum == 500) & (tabBase == 1));
-         id = id(2);
-         tabDeep(tabSession == tabSession(id)) = 0;
-         idDel = find((tabSession == tabSession(id)) & ismember(tabPackType, [2 3 13 14]));
-         tabRank(idDel) = -1;
-         tabRankByCycle(idDel) = -1;
-         tabRankByDate(idDel) = -1;
-      case 6903698
-         % data packets transmitted twice in the first EOL session of cycles
-         % #410 and #425
-         idEol = find((tabEolFlag == 1) & (tabCyNum == 410));
-         idBase = idEol(1);
-         tabDeep(tabSession == tabSession(idBase)) = 0;
-         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4 5]));
-         tabRank(idDel) = -1;
-         tabRankByCycle(idDel) = -1;
-         tabRankByDate(idDel) = -1;
-         idEol = find((tabEolFlag == 1) & (tabCyNum == 425));
-         idBase = idEol(1);
-         tabDeep(tabSession == tabSession(idBase)) = 0;
-         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4 5]));
-         tabRank(idDel) = -1;
-         tabRankByCycle(idDel) = -1;
-         tabRankByDate(idDel) = -1;
       case 6903771
          % tech#1, tech#2 and prog#1 packets are transmitted twice at cycle #60
          idDel = find((tabCyNum == 60) & (tabPackType == 0), 1, 'first');
@@ -689,34 +682,29 @@ if (ismember(g_decArgo_floatNum, [ ...
          idDel = [idDel id];
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
-         tabRankByDate(idDel) = -1;
       case 7900543
          % cycle #42 data are separated
          id = find((tabCyNum == 42) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 42) = tabRank(id);
          tabRankByCycle(tabCyNum == 42) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 42) = tabRankByDate(id);   
          tabDeep(tabCyNum == 42) = 1;   
          % cycle #59 data are separated
          id = find((tabCyNum == 59) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 59) = tabRank(id);
          tabRankByCycle(tabCyNum == 59) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 59) = tabRankByDate(id);   
          % cycle #62 data are separated
          id = find((tabCyNum == 62) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 62) = tabRank(id);
          tabRankByCycle(tabCyNum == 62) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 62) = tabRankByDate(id);   
       case 6900790
          % cycle #107 data are separated
          id = find((tabCyNum == 107) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 107) = tabRank(id);
          tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 107) = tabRankByDate(id);   
          tabDeep(tabCyNum == 107) = 1;
          tabDelayed(tabCyNum == 107) = 1;
       case 6901880
@@ -726,7 +714,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = find((tabCyNum == 101) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF101(1));
          tabRankByCycle(id) = tabRankByCycle(idF101(1));
-         tabRankByDate(id) = tabRankByDate(idF101(1)); 
          tabSession(idF101) = tabSession(idF101(1));
          tabCompleted(idF101) = 1;
          % cycle #116 in 2 sessions
@@ -735,7 +722,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = find((tabCyNum == 116) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF116(1));
          tabRankByCycle(id) = tabRankByCycle(idF116(1));
-         tabRankByDate(id) = tabRankByDate(idF116(1)); 
          tabSession(idF116) = tabSession(idF116(1));
          tabCompleted(idF116) = 1;
          % cycle #120 in 2 sessions
@@ -744,12 +730,10 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = find((tabCyNum == 120) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF120(1));
          tabRankByCycle(id) = tabRankByCycle(idF120(1));
-         tabRankByDate(id) = tabRankByDate(idF120(1)); 
          tabSession(idF120) = tabSession(idF120(1));
          idF120 = find(tabCyNum == 120);
          tabRank(idF120) = tabRank(idF120(1));
          tabRankByCycle(idF120) = tabRankByCycle(idF120(1));
-         tabRankByDate(idF120) = tabRankByDate(idF120(1)); 
          tabSession(idF120) = tabSession(idF120(1));
          tabCompleted(idF120) = 1;
       case 6903229
@@ -759,49 +743,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          idF120 = find(tabCyNum == 120);
          tabRank(idF120) = tabRank(idRef120);
          tabRankByCycle(idF120) = tabRankByCycle(idRef120);
-         tabRankByDate(idF120) = tabRankByDate(idRef120); 
-      case 6903795
-         % cycle #57 set EOL cmd => data transmitted twice (float recovered)
-         idStart = find((tabCyNum == 57) & (tabEolFlag == 1) & (tabPackType == 0));
-         idStart = idStart(1);
-         idStop = find((tabCyNum == 57) & (tabDeep == 0) & (tabPackType == 0));
-         idStop = idStop(1) - 1;
-         tabRank(idStart:idStop) = -1;
-         tabRankByCycle(idStart:idStop) = -1;
-         tabRankByDate(idStart:idStop) = -1;
-
-         % 2 Prog #2 packets in one EOL buffer
-         idType7 = find((tabCyNum == 57) & (tabPackType == 7));
-         nbElts = hist(tabRank(idType7), unique(tabRank(idType7)));
-         idF = find(nbElts > 1);
-         tabRank(idType7(idF)) = -1;
-         tabRankByCycle(idType7(idF)) = -1;
-         tabRankByDate(idType7(idF)) = -1;
-      case 6903703
-         % cycle #114 set EOL cmd => data transmitted twice (float recovered)
-         idStart = find((tabCyNum == 114) & (tabEolFlag == 1) & (tabPackType == 0));
-         idStart = idStart(1);
-         idStop = find((tabCyNum == 114) & (tabDeep == 0) & (tabPackType == 0));
-         idStop = idStop(1) - 1;
-         tabRank(idStart:idStop) = -1;
-         tabRankByCycle(idStart:idStop) = -1;
-         tabRankByDate(idStart:idStop) = -1;
-         % during EOL some transmissions are with multiple PARAM packets
-         idF = find(tabEolFlag == 1);
-         for id = 1:length(idF)
-            idProg1 = find((tabRank == tabRank(idF(id))) & (tabPackType == 5));
-            if (length(idProg1) > 1)
-               tabRank(idProg1(2:end)) = -1;
-               tabRankByCycle(idProg1(2:end)) = -1;
-               tabRankByDate(idProg1(2:end)) = -1;
-            end
-            idProg2 = find((tabRank == tabRank(idF(id))) & (tabPackType == 7));
-            if (length(idProg2) > 1)
-               tabRank(idProg2(2:end)) = -1;
-               tabRankByCycle(idProg2(2:end)) = -1;
-               tabRankByDate(idProg2(2:end)) = -1;
-            end
-         end
       case 6902802
          % for delayed cycles #134 to 140, second Iridium session are also
          % transmitted, they should be in dedicated buffers
@@ -846,85 +787,20 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idF:end) = tabRank(idF:end) + offset;
          offset = unique(tabRankByCycle(idCy1)) - tabRankByCycle(idF) + 1;
          tabRankByCycle(idF:end) = tabRankByCycle(idF:end) + offset;
-      case 6902861
-         % for delayed cycle #129, second Iridium session is also
-         % transmitted, it should be in dedicated buffer
-         idF = find((tabCyNum == 128) & (tabPackType == 0));
-         rank128 = tabRank(idF(2));
-         rankByCycle128 = tabRankByCycle(idF(2));
-         idF = find((tabCyNum == 129) & (tabPackType == 0));
-         id129_1 = idF(1);
-         id129_2 = idF(2);
-         tabRank(id129_1:id129_2-1) = rank128 + 1;
-         tabRankByCycle(id129_1:id129_2-1) = rankByCycle128 + 1;
-         tabDeep(id129_1:id129_2-1) = 1;
-         idF = find(tabCyNum == 129);
-         tabRank(id129_2:idF(end)) = rank128 + 2;
-         tabRankByCycle(id129_2:idF(end)) = rankByCycle128 + 2;
-         tabGo(idF) = 1;
-         idF = find((tabCyNum == 130) & (tabPackType == 0));
-         id130_1 = idF(1);
-         id130_2 = idF(2);
-         tabRank(id130_1:id129_1-1) = rank128 + 3;
-         tabRankByCycle(id130_1:id129_1-1) = rankByCycle128 + 3;
-         tabRank(id130_2:end) = tabRank(id130_2:end) + 2;
-         tabRankByCycle(id130_2:end) = tabRankByCycle(id130_2:end) + 1;
       case 7900522
          % cycle #107 in 2 sessions
          id = find((tabCyNum == 107) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 107) = tabRank(id);
          tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 107) = tabRankByDate(id);   
          tabSession(tabCyNum == 107) = tabSession(id);   
          tabCompleted(tabCyNum == 107) = 1;
-      case 6902989
-         % for delayed cycle #115, second Iridium session is also
-         % transmitted, it should be in dedicated buffer
-         id115 = find(tabCyNum == 115);
-         idF = find((tabCyNum == 115) & (tabPackType == 0));
-         id115_2 = idF(2);
-         tabDeep(id115(1):id115_2-1) = 1;
-         tabCompleted(id115(1):id115_2-1) = 1;
-         tabGo(id115(1):id115_2-1) = 1;
-
-         rank115 = tabRank(id115(1));
-         rankByCycle115 = tabRankByCycle(id115(1));
-         idShift = find(tabRank > rank115);
-         tabRank(idShift) = tabRank(idShift) + 1;
-         idShift = find(tabRankByCycle > rankByCycle115);
-         tabRankByCycle(idShift) = tabRankByCycle(idShift) + 1;
-         tabRank(id115_2:id115(end)) = rank115 + 1;
-         tabRankByCycle(id115_2:id115(end)) = rankByCycle115 + 1;
-         tabGo(id115_2:id115(end)) = 1;
-         tabCompleted(id115_2:id115(end)) = 1;
-
-         % for delayed cycle #116, second Iridium session is also
-         % transmitted, it should be in dedicated buffer
-         id116 = find(tabCyNum == 116);
-         idF = find((tabCyNum == 116) & (tabPackType == 0));
-         id116_2 = idF(2);
-         tabDeep(id116(1):id116_2-1) = 1;
-         tabCompleted(id116(1):id116_2-1) = 1;
-         tabGo(id116(1):id116_2-1) = 1;
-
-         rank116 = tabRank(id116(1));
-         rankByCycle116 = tabRankByCycle(id116(1));
-         idShift = find(tabRank > rank116);
-         tabRank(idShift) = tabRank(idShift) + 1;
-         idShift = find(tabRankByCycle > rankByCycle116);
-         tabRankByCycle(idShift) = tabRankByCycle(idShift) + 1;
-         tabRank(id116_2:id116(end)) = rank116 + 1;
-         tabRankByCycle(id116_2:id116(end)) = rankByCycle116 + 1;
-         tabGo(id116_2:id116(end)) = 1;
-         tabCompleted(id116_2:id116(end)) = 1;
       case 6903774
          % cycle #83 data are separated
          id = find(tabCyNum == 83);
          id = id(1);
          tabRank(tabCyNum == 83) = tabRank(id);
          tabRankByCycle(tabCyNum == 83) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 83) = tabRankByDate(id);   
          tabSession(tabCyNum == 83) = tabSession(id);   
          tabCompleted(tabCyNum == 83) = 1;
       case 3901644
@@ -933,7 +809,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = id(1);
          tabRank(tabCyNum == 126) = tabRank(id);
          tabRankByCycle(tabCyNum == 126) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 126) = tabRankByDate(id);   
          tabSession(tabCyNum == 126) = tabSession(id);   
          tabSessionDeep(tabCyNum == 126) = tabSessionDeep(id);   
          tabCompleted(tabCyNum == 126) = 1;
@@ -943,7 +818,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          idDataKo = find((tabCyNum == 60) & (tabPackType == 3), 1, 'last');
          tabRank(idDataKo) = tabRank(idRank60);
          tabRankByCycle(idDataKo) = tabRankByCycle(idRank60);
-         tabRankByDate(idDataKo) = tabRankByDate(idRank60);
          idSecondIs = find((tabCyNum == 60) & (tabPackType == 0), 1, 'last');
          tabDeep(tabRank == tabRank(idSecondIs)) = 0;  
       case 6902938
@@ -972,22 +846,18 @@ if (ismember(g_decArgo_floatNum, [ ...
             tabRankByCycle(idDel) = -1;
          end
    end
+end
 
-   % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
-   if (~isempty(g_decArgo_outputCsvFileId))
+% update tabCompleted array
+cyNumList = unique(tabRankByCycle);
+cyNumList(cyNumList < 0) = [];
+for cyNum = 1:length(cyNumList)
+   idForCheck = find(tabRankByCycle == cyNumList(cyNum));
 
-      % update tabCompleted array
-      cyNumList = unique(tabRankByCycle);
-      cyNumList(cyNumList < 0) = [];
-      for cyNum = 1:length(cyNumList)
-         idForCheck = find(tabRankByCycle == cyNumList(cyNum));
-
-         % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
-         if (completed == 1)
-            tabCompleted(idForCheck) = 1;
-         end
-      end
+   % check current session contents
+   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 1);
+   if (completed == 1)
+      tabCompleted(idForCheck) = 1;
    end
 end
 
@@ -1047,7 +917,7 @@ for cyNum = cyNumList
             length(idForRankCy), deepStr, delayedStr, completedStr, sessionListStr, piDecStr);
          
          if (tabCompleted(idRankCy) == 0)
-            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 1);
+            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 1, 0);
             for idL = 1:length(why)
                fprintf('   -> %s\n', why{idL});
             end
@@ -1107,8 +977,6 @@ tabCyNumCell = num2cell(tabCyNum);
 [o_decodedData.cyNum] = deal(tabCyNumCell{:});
 tabRankByCycleCell = num2cell(tabRankByCycle);
 [o_decodedData.rankByCycle] = deal(tabRankByCycleCell{:});
-tabRankByDateCell = num2cell(tabRankByDate);
-[o_decodedData.rankByDate] = deal(tabRankByDateCell{:});
 tabDeepCell = num2cell(tabDeep);
 [o_decodedData.deep] = deal(tabDeepCell{:});
 tabResetFlagCell = num2cell(tabResetFlag);
@@ -1129,7 +997,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
       fId = fopen(csvFilepathName, 'wt');
       if (fId ~= -1)
          
-         header = '#;Rank;RnkByCycle;RnkByDate;Session;SesDeep;Base;Date;DiffDate;Eol;CyNum;Deep;Done;Delayed;Completed;Go;PackType;ExpNbDesc;tabExpNbDrift;tabExpNbAsc;CyNumRaw;ResetDate;ResetFlag;OffsetDate;PackTypeInfo';
+         header = '#;Rank;RnkByCycle;Session;SesDeep;Base;Date;DiffDate;Eol;CyNum;IrSession;Deep;Done;Delayed;Completed;Go;PackType;ExpNbDesc;tabExpNbDrift;tabExpNbAsc;CyNumRaw;ResetDate;ResetFlag;OffsetDate;PackTypeInfo';
          fprintf(fId, '%s\n', header);
          
          for idL = 1:length(tabPackType)
@@ -1152,11 +1020,10 @@ if (~isempty(g_decArgo_outputCsvFileId))
                resetDate = julian_2_gregorian_dec_argo(tabResetDate(idL));
             end
                         
-            fprintf(fId, '%d;%d;%d;%d;%d;%d;%d;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%s;%d;%d;%s\n', ...
+            fprintf(fId, '%d;%d;%d;%d;%d;%d;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%s;%d;%d;%s\n', ...
                idL, ...
                tabRank(idL), ...
                tabRankByCycle(idL), ...
-               tabRankByDate(idL), ...
                tabSession(idL), ...
                tabSessionDeep(idL), ...
                tabBase(idL), ...
@@ -1164,6 +1031,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
                diffDate, ...
                tabEolFlag(idL), ...
                tabCyNum(idL), ...
+               tabIrSession(idL), ...
                tabDeep(idL), ...
                tabDone(idL), ...
                tabDelayed(idL), ...
@@ -1195,7 +1063,7 @@ return
 % SYNTAX :
 %  [o_completed, o_deep, o_whyStr] = check_buffer( ...
 %    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-%    a_decoderId, a_cycleNum, a_whyFlag)
+%    a_decoderId, a_cycleNum, a_whyFlag, a_msgFlag)
 %
 % INPUT PARAMETERS :
 %   a_idForCheck    : Id list of SBD to be checked
@@ -1206,6 +1074,7 @@ return
 %   a_decoderId     : float decoder Id
 %   a_cycleNum      : cycle number
 %   a_whyFlag       : if set to 1, print why the buffer is not completed
+%   a_msgFlag       : if set to 1, print inconsistencies in buffer contents
 %
 % OUTPUT PARAMETERS :
 %   o_completed : 1 if the buffer is completed, 0 otherwise
@@ -1223,7 +1092,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_completed, o_deep, o_whyStr] = check_buffer( ...
    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, ...
-   a_decoderId, a_cycleNum, a_whyFlag)
+   a_decoderId, a_cycleNum, a_whyFlag, a_msgFlag)
 
 % output parameter initialization
 o_completed = 0;
@@ -1248,26 +1117,17 @@ idPackDrift = find((a_tabPackType(a_idForCheck) == 2) | (a_tabPackType(a_idForCh
 idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForCheck) == 10));
 
 if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
-   if (length(idPackTech1) > 1)
-      % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
-         fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
-            g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
-      end
+   if ((length(idPackTech1) > 1) && a_msgFlag)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
    end
-   if (length(idPackTech2) > 1)
-      % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
-         fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
-            g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
-      end
+   if ((length(idPackTech2) > 1) && a_msgFlag)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
    end
-   if (length(idPackProg) > 1)
-      % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
-         fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
-            g_decArgo_floatNum, a_cycleNum, length(idPackProg));
-      end
+   if ((length(idPackProg) > 1) && a_msgFlag)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackProg));
    end
    return
 end
