@@ -106,6 +106,7 @@ global g_decArgo_minNumMsgForProcessing;
 global g_decArgo_minSubSurfaceCycleDuration;
 global g_decArgo_minSubSurfaceCycleDurationIrSbd2;
 global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
+global g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate;
 
 % cycle phases
 global g_decArgo_phasePreMission;
@@ -501,7 +502,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '032i';
+g_decArgo_decoderVersion = '033a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -528,6 +529,11 @@ g_decArgo_minNumMsgForProcessing = 5;
 % maximum time difference (in days) between 2 GPS locations used to replace
 % Iridium profile locations by interpolated GPS profile locations
 g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc = 30;
+
+% for delayed decoders: interval, before float launch date to consider float
+% configuration messages of the prelude phase (when they are transmitted before
+% float launch date)
+g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate = 6/24; % in days
 
 g_decArgo_phasePreMission = 0;
 g_decArgo_phaseSurfWait = 1;

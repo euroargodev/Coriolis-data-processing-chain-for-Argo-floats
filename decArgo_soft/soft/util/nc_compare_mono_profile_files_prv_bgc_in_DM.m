@@ -27,6 +27,7 @@ DIR_INPUT_BASE_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_updated\';
 DIR_INPUT_BASE_NC_FILES = 'E:\DM_3.1\coriolis_csio_incois_kordi_nmdis\';
 DIR_INPUT_BASE_NC_FILES = 'E:\archive_201505\coriolis\selected\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\OLD\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\BASE\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos_sans_EOL\';
@@ -34,6 +35,7 @@ DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos\';
 DIR_INPUT_NEW_NC_FILES = 'E:\nc_output_decPrv_argos_20150129\';
 DIR_INPUT_NEW_NC_FILES = 'E:\archive_201510\201510-ArgoData\DATA\coriolis\selected\\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\NEW\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\NEW\';
 
 
 % directory to store the log and the csv files
@@ -45,7 +47,7 @@ FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_all_with_DM_bis_20151003.txt';
 
 % flag to print data measurements (when different) in the log file
-PRINT_DIFF_DATA_FLAG = 1;
+PRINT_DIFF_DATA_FLAG = 0;
 
 % default values
 global g_dateDef;
@@ -57,7 +59,7 @@ g_janFirst1950InMatlab = datenum('1950-01-01 00:00:00', 'yyyy-mm-dd HH:MM:SS');
 SHIFT_DATE = 712224;
 
 % half interval for profile fit
-INTERVAL_HOUR = 10;
+INTERVAL_HOUR = 0.5;
 INTERVAL_DAY = INTERVAL_HOUR/24;
 
 % first profile date to stop the comparison (leave it empty if you don't want
@@ -123,13 +125,13 @@ fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    return
 end
-header = ['; ; ; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF;' ...
-   'BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; ' ...
-   'NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW'];
+header = ['; ; ; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF;' ...
+   'BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; ' ...
+   'NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW'];
 fprintf(fidOut, '%s\n', header);
-header = ['Line; WMO; Dir; CyNum; Date; Pos; Mode; Cut; Lev; Data; Vers;' ...
-   'CyNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers; ' ...
-   'CyNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers'];
+header = ['Line; WMO; Dir; CyNum; ProfNum; Date; Pos; Mode; Cut; Lev; Data; Vers;' ...
+   'CyNum; ProfNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers; ' ...
+   'CyNum; ProfNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers'];
 fprintf(fidOut, '%s\n', header);
 
 % process the floats
@@ -141,12 +143,12 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
 
    % retrieve profile dates and numbers of both sets
-   [descProfNumBase, descProfDateBase, descProfLocDateBase, ...
-      ascProfNumBase, ascProfDateBase, ascProfLocDateBase] = ...
+   [descCyNumBase, descProfNumBase, descProfDateBase, descProfLocDateBase, ...
+      ascCyNumBase, ascProfNumBase, ascProfDateBase, ascProfLocDateBase] = ...
       get_nc_profile_dates(DIR_INPUT_BASE_NC_FILES, floatNum, 'Base');
 
-   [descProfNumNew, descProfDateNew, descProfLocDateNew, ...
-      ascProfNumNew, ascProfDateNew, ascProfLocDateNew] = ...
+   [descCyNumNew, descProfNumNew, descProfDateNew, descProfLocDateNew, ...
+      ascCyNumNew, ascProfNumNew, ascProfDateNew, ascProfLocDateNew] = ...
       get_nc_profile_dates(DIR_INPUT_NEW_NC_FILES, floatNum, 'New');
    
    % only dated profiles are used
@@ -155,8 +157,9 @@ for idFloat = 1:nbFloats
    idNotDated = find(descProfDateBase == g_dateDef);
    if (~isempty(idNotDated))
       fprintf('WARNING: Not dated Base descent profile (ignored):');
-      fprintf(' %d', descProfNumBase(idNotDated));
+      fprintf(' %d', descCyNumBase(idNotDated));
       fprintf('\n');
+      descCyNumBase(idNotDated) = [];
       descProfNumBase(idNotDated) = [];
       descProfDateBase(idNotDated) = [];
    end
@@ -166,8 +169,9 @@ for idFloat = 1:nbFloats
    idNotDated = find(ascProfDateBase == g_dateDef);
    if (~isempty(idNotDated))
       fprintf('WARNING: Not dated Base ascent profile (ignored):');
-      fprintf(' %d', ascProfNumBase(idNotDated));
+      fprintf(' %d', ascCyNumBase(idNotDated));
       fprintf('\n');
+      ascCyNumBase(idNotDated) = [];
       ascProfNumBase(idNotDated) = [];
       ascProfDateBase(idNotDated) = [];
    end
@@ -177,8 +181,9 @@ for idFloat = 1:nbFloats
    idNotDated = find(descProfDateNew == g_dateDef);
    if (~isempty(idNotDated))
       fprintf('WARNING: Not dated new descent profile (ignored):');
-      fprintf(' %d', descProfNumNew(idNotDated));
+      fprintf(' %d', descCyNumNew(idNotDated));
       fprintf('\n');
+      descCyNumNew(idNotDated) = [];
       descProfNumNew(idNotDated) = [];
       descProfDateNew(idNotDated) = [];
    end
@@ -188,8 +193,9 @@ for idFloat = 1:nbFloats
    idNotDated = find(ascProfDateNew == g_dateDef);
    if (~isempty(idNotDated))
       fprintf('WARNING: Not dated new ascent profile (ignored):');
-      fprintf(' %d', ascProfNumNew(idNotDated));
+      fprintf(' %d', ascCyNumNew(idNotDated));
       fprintf('\n');
+      ascCyNumNew(idNotDated) = [];
       ascProfNumNew(idNotDated) = [];
       ascProfDateNew(idNotDated) = [];
    end
@@ -212,21 +218,25 @@ for idFloat = 1:nbFloats
    if (firstJuldToStopComparison ~= g_dateDef)
       if (~isempty(find(descProfDateBase >= firstJuldToStopComparison, 1)))
          idDel = find(descProfDateBase >= firstJuldToStopComparison);
+         descCyNumBase(idDel) = [];
          descProfNumBase(idDel) = [];
          descProfDateBase(idDel) = [];
       end
       if (~isempty(find(descProfDateNew >= firstJuldToStopComparison, 1)))
          idDel = find(descProfDateNew >= firstJuldToStopComparison);
+         descCyNumNew(idDel) = [];
          descProfNumNew(idDel) = [];
          descProfDateNew(idDel) = [];
       end
       if (~isempty(find(ascProfDateBase >= firstJuldToStopComparison, 1)))
          idDel = find(ascProfDateBase >= firstJuldToStopComparison);
+         ascCyNumBase(idDel) = [];
          ascProfNumBase(idDel) = [];
          ascProfDateBase(idDel) = [];
       end
       if (~isempty(find(ascProfDateNew >= firstJuldToStopComparison, 1)))
          idDel = find(ascProfDateNew >= firstJuldToStopComparison);
+         ascCyNumNew(idDel) = [];
          ascProfNumNew(idDel) = [];
          ascProfDateNew(idDel) = [];
       end
@@ -237,64 +247,105 @@ for idFloat = 1:nbFloats
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      
    % try to link the 2 sets according to profile dates
-   descProfNumBase2New = ones(length(descProfNumBase), 1)*-1;
-   for idProf = 1:length(descProfNumBase)
+   descCyNumBase2New = ones(length(descCyNumBase), 1)*-1;
+   descProfNumBase2New = ones(length(descCyNumBase), 1)*-1;
+   for idProf = 1:length(descCyNumBase)
       profDateBase = descProfDateBase(idProf);
       
       % look for the corresponding New profile
       idF = find(abs(descProfDateNew - profDateBase) <= INTERVAL_DAY);
       if (length(idF) == 1)
+         descCyNumBase2New(idProf) = descCyNumNew(idF);
          descProfNumBase2New(idProf) = descProfNumNew(idF);
-         
+         descCyNumNew(idF) = [];
          descProfNumNew(idF) = [];
          descProfDateNew(idF) = [];
       elseif (length(idF) > 1)
-         [~, idMin] = min(abs(descProfDateNew - profDateBase));
-         descProfNumBase2New(idProf) = descProfNumNew(idMin);
-         
-         numbers = sprintf(' #%d', descProfNumNew(idF));
-         fprintf('WARNING: %d descent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
-            length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
-         
-         descProfNumNew(idMin) = [];
-         descProfDateNew(idMin) = [];
+         profNumBase = descProfNumBase(idProf);
+         idF2 = find(descProfNumNew(idF) == profNumBase);
+         if (length(idF2) == 1)
+            idF = idF(idF2);
+            descCyNumBase2New(idProf) = descCyNumNew(idF);
+            descProfNumBase2New(idProf) = descProfNumNew(idF);
+            descCyNumNew(idF) = [];
+            descProfNumNew(idF) = [];
+            descProfDateNew(idF) = [];
+         elseif (length(idF2) > 1)
+            fprintf('ERROR: Float %d cycle #%d descending prof #%d: inconsistent data (there are %d NEW profiles within %d hours interval around BASE profile)) => link not done\n', ...
+               floatNum, descCyNumBase(idProf), descProfNumBase(idProf), ...
+               length(idF2), INTERVAL_HOUR);
+            fprintf('ERROR: Float %d cycle #%d descending prof #%d: BASE profile date: %s\n', ...
+               floatNum, descCyNumBase(idProf), descProfNumBase(idProf), ...
+               julian_2_gregorian(profDateBase));
+            dateList = julian_2_gregorian(descProfDateNew(idF(idF2)));
+            dateListStr = cellstr(dateList);
+            dateListStr = sprintf('%s; ', dateListStr{:});
+            fprintf('ERROR: Float %d cycle #%d descending prof #%d: NEW profile dates: %s\n\n', ...
+               floatNum, descCyNumBase(idProf), descProfNumBase(idProf), ...
+               dateListStr(1:end-2));
+         end
       end
    end
    
    % process the remaining New profiles
-   for idProf = 1:length(descProfNumNew)
+   for idProf = 1:length(descCyNumNew)
+      cyNumNew = descCyNumNew(idProf);
       profNumNew = descProfNumNew(idProf);
       profDateNew = descProfDateNew(idProf);
       
       % find the right place (chronological order) to store the remaining
       % profile
-      idF = find(descProfDateBase < profDateNew);
+      idF = find(descProfDateBase < profDateNew, 1, 'last');
       if (~isempty(idF))
-         if (idF(end) < length(descProfDateBase))
-            descProfNumBase(idF(end)+2:end+1) = descProfNumBase(idF(end)+1:end);
-            descProfDateBase(idF(end)+2:end+1) = descProfDateBase(idF(end)+1:end);
-            descProfNumBase2New(idF(end)+2:end+1) = descProfNumBase2New(idF(end)+1:end);
+         idF2 = find((descCyNumBase2New == cyNumNew) & (descProfNumBase2New < profNumNew), 1, 'last');
+         if (isempty(idF2))
+            idF2 = idF;
          end
-         descProfNumBase(idF(end)+1) = -1;
-         descProfDateBase(idF(end)+1) = profDateNew;
-         descProfNumBase2New(idF(end)+1) = profNumNew;
+         descCyNumBase(idF2+2:end+1) = descCyNumBase(idF2+1:end);
+         descProfNumBase(idF2+2:end+1) = descProfNumBase(idF2+1:end);
+         descProfDateBase(idF2+2:end+1) = descProfDateBase(idF2+1:end);
+         descCyNumBase2New(idF2+2:end+1) = descCyNumBase2New(idF2+1:end);
+         descProfNumBase2New(idF2+2:end+1) = descProfNumBase2New(idF2+1:end);
+         
+         descCyNumBase(idF2+1) = -1;
+         descProfNumBase(idF2+1) = -1;
+         descProfDateBase(idF2+1) = profDateNew;
+         descCyNumBase2New(idF2+1) = cyNumNew;
+         descProfNumBase2New(idF2+1) = profNumNew;
       else
-         descProfNumBase = [-1; descProfNumBase];
-         descProfDateBase = [profDateNew; descProfDateBase];
-         descProfNumBase2New = [profNumNew; descProfNumBase2New];
+         idF2 = find((descCyNumBase2New == cyNumNew) & (descProfNumBase2New < profNumNew), 1, 'last');
+         if (~isempty(idF2))
+            descCyNumBase(idF2+2:end+1) = descCyNumBase(idF2+1:end);
+            descProfNumBase(idF2+2:end+1) = descProfNumBase(idF2+1:end);
+            descProfDateBase(idF2+2:end+1) = descProfDateBase(idF2+1:end);
+            descCyNumBase2New(idF2+2:end+1) = descCyNumBase2New(idF2+1:end);
+            descProfNumBase2New(idF2+2:end+1) = descProfNumBase2New(idF2+1:end);
+            
+            descCyNumBase(idF2+1) = -1;
+            descProfNumBase(idF2+1) = -1;
+            descProfDateBase(idF2+1) = profDateNew;
+            descCyNumBase2New(idF2+1) = cyNumNew;
+            descProfNumBase2New(idF2+1) = profNumNew;
+         else
+            descCyNumBase = [-1; descCyNumBase];
+            descProfNumBase = [-1; descProfNumBase];
+            descProfDateBase = [profDateNew; descProfDateBase];
+            descCyNumBase2New = [cyNumNew; descCyNumBase2New];
+            descProfNumBase2New = [profNumNew; descProfNumBase2New];
+         end 
       end         
    end
    
    % compare the mono-profile files
-   for idProf = 1:length(descProfNumBase)
+   for idProf = 1:length(descCyNumBase)
       
-      if (descProfNumBase(idProf) == -1)
+      if (descCyNumBase(idProf) == -1)
          
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descProfNumBase2New(idProf))];
+            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descCyNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
             profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descProfNumBase2New(idProf))];
+               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descCyNumBase2New(idProf))];
             if ~(exist(profFileNameNew, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameNew);
                continue
@@ -304,37 +355,37 @@ for idFloat = 1:nbFloats
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG);
          
-         for idProf2 = 1:length(profLocDate)
-            
-            fprintf(fidOut, '%d; %d; D; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               descProfNumBase2New(idProf), ...
-               julian_2_gregorian(profDate(idProf2)), ...
-               julian_2_gregorian(profLocDate(idProf2)), profLon(idProf2), profLat(idProf2), ...
-               profMode(idProf2), profCut(idProf2), profNbLevels(idProf2), fileVersion);
-            lineNum = lineNum + 1;
-            
-            if (PRINT_DIFF_DATA_FLAG == 1)
-               fprintf('Float %d cycle #%d prof #%d: descent profile only in NEW set (N_LEVELS = %d)\n', ...
-                  floatNum, descProfNumBase2New(idProf), idProf2, profNbLevels(idProf2));
-               nbCol = size(dataStr{idProf2}, 2);
-               pattern = repmat(' ', 1, nbCol);
-               fprintf('FLAG: %s | NEW (%s)\n', pattern, paramStr{idProf2});
-               for idLev = 1:size(dataStr{idProf2}, 1)
-                  diffFlag = 1;
-                  fprintf('  %d : %s | %s\n', ...
-                     diffFlag, pattern, dataStr{idProf2}(idLev, :));
-               end
+         profIdInNew = descProfNumBase2New(idProf);
+         
+         fprintf(fidOut, '%d; %d; D; -1; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; ; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            descCyNumBase2New(idProf), ...
+            descProfNumBase2New(idProf), ...
+            julian_2_gregorian(profDate(profIdInNew)), ...
+            julian_2_gregorian(profLocDate(profIdInNew)), profLon(profIdInNew), profLat(profIdInNew), ...
+            profMode(profIdInNew), profCut(profIdInNew), profNbLevels(profIdInNew), fileVersion);
+         lineNum = lineNum + 1;
+         
+         if (PRINT_DIFF_DATA_FLAG == 1)
+            fprintf('Float %d cycle #%d prof #%d: descent profile only in NEW set (N_LEVELS = %d)\n', ...
+               floatNum, descCyNumBase2New(idProf), profIdInNew, profNbLevels(profIdInNew));
+            nbCol = size(dataStr{profIdInNew}, 2);
+            pattern = repmat(' ', 1, nbCol);
+            fprintf('FLAG: %s | NEW (%s)\n', pattern, paramStr{profIdInNew});
+            for idLev = 1:size(dataStr{profIdInNew}, 1)
+               diffFlag = 1;
+               fprintf('  %d : %s | %s\n', ...
+                  diffFlag, pattern, dataStr{profIdInNew}(idLev, :));
             end
          end
                   
-      elseif (descProfNumBase2New(idProf) == -1)
+      elseif (descCyNumBase2New(idProf) == -1)
          
          profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descProfNumBase(idProf))];
+            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descCyNumBase(idProf))];
          if ~(exist(profFileNameBase, 'file') == 2)
             profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descProfNumBase(idProf))];
+               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descCyNumBase(idProf))];
             if ~(exist(profFileNameBase, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameBase);
                continue
@@ -344,38 +395,38 @@ for idFloat = 1:nbFloats
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG);
          
-         for idProf2 = 1:length(profLocDate)
-            
-            fprintf(fidOut, '%d; %d; D; -1; -1; -1; -1; -1; -1; -1; -1; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               descProfNumBase(idProf), ...
-               julian_2_gregorian(profDate(idProf2)), ...
-               julian_2_gregorian(profLocDate(idProf2)), profLon(idProf2), profLat(idProf2), ...
-               profMode(idProf2), profCut(idProf2), profNbLevels(idProf2), fileVersion);
-            lineNum = lineNum + 1;
-            
-            if (PRINT_DIFF_DATA_FLAG == 1)
-               fprintf('Float %d cycle #%d prof #%d: descent profile only in BASE set (N_LEVELS = %d)\n', ...
-                  floatNum, descProfNumBase(idProf), idProf2, profNbLevels(idProf2));
-               nbCol = size(dataStr{idProf2}, 2);
-               fprintf('FLAG: BASE (%s) %s |\n', ...
-                  paramStr{idProf2}, ...
-                  repmat(' ', 1, nbCol-length('BASE')-1-length(paramStr{idProf2})-3));
-               for idLev = 1:size(dataStr{idProf2}, 1)
-                  diffFlag = 1;
-                  fprintf('  %d : %s |\n', ...
-                     diffFlag, dataStr{idProf2}(idLev, :));
-               end
+         profIdInBase = descProfNumBase(idProf);
+         
+         fprintf(fidOut, '%d; %d; D; -1; -1; -1; -1; -1; -1; -1; -1; -1; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            descCyNumBase(idProf), ...
+            descProfNumBase(idProf), ...
+            julian_2_gregorian(profDate(profIdInBase)), ...
+            julian_2_gregorian(profLocDate(profIdInBase)), profLon(profIdInBase), profLat(profIdInBase), ...
+            profMode(profIdInBase), profCut(profIdInBase), profNbLevels(profIdInBase), fileVersion);
+         lineNum = lineNum + 1;
+         
+         if (PRINT_DIFF_DATA_FLAG == 1)
+            fprintf('Float %d cycle #%d prof #%d: descent profile only in BASE set (N_LEVELS = %d)\n', ...
+               floatNum, descCyNumBase(idProf), profIdInBase, profNbLevels(profIdInBase));
+            nbCol = size(dataStr{profIdInBase}, 2);
+            fprintf('FLAG: BASE (%s) %s |\n', ...
+               paramStr{profIdInBase}, ...
+               repmat(' ', 1, nbCol-length('BASE')-1-length(paramStr{profIdInBase})-3));
+            for idLev = 1:size(dataStr{profIdInBase}, 1)
+               diffFlag = 1;
+               fprintf('  %d : %s |\n', ...
+                  diffFlag, dataStr{profIdInBase}(idLev, :));
             end
          end
          
       else
          
          profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descProfNumBase(idProf))];
+            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descCyNumBase(idProf))];
          if ~(exist(profFileNameBase, 'file') == 2)
             profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descProfNumBase(idProf))];
+               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descCyNumBase(idProf))];
             if ~(exist(profFileNameBase, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameBase);
                continue
@@ -386,10 +437,10 @@ for idFloat = 1:nbFloats
             get_nc_profile_info(profFileNameBase, 1);
 
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descProfNumBase2New(idProf))];
+            sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descCyNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
             profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descProfNumBase2New(idProf))];
+               sprintf('/%d/profiles/D%d_%03dD.nc', floatNum, floatNum, descCyNumBase2New(idProf))];
             if ~(exist(profFileNameNew, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameNew);
                continue
@@ -400,96 +451,102 @@ for idFloat = 1:nbFloats
             get_nc_profile_info(profFileNameNew, 1);
          
          % create the comparison flags
-         for idProf2 = 1:length(profDateBase)
-            
-            cycleNumFlag = 0;
-            if (descProfNumBase(idProf) ~= descProfNumBase2New(idProf))
-               cycleNumFlag = 1;
-            end
-            profDateFlag = 0;
-            if (strcmp(julian_2_gregorian(profDateBase(idProf2)), julian_2_gregorian(profDateNew(idProf2))) == 0)
-               profDateFlag = 1;
-            end
-            profPosFlag = 0;
-            if ((strcmp(julian_2_gregorian(profLocDateBase(idProf2)), julian_2_gregorian(profLocDateNew(idProf2))) == 0) || ...
-                  (strcmp(sprintf('%.3f', profLonBase(idProf2)), sprintf('%.3f', profLonNew(idProf2))) == 0) || ...
-                  (strcmp(sprintf('%.3f', profLatBase(idProf2)), sprintf('%.3f', profLatNew(idProf2))) == 0))
-               profPosFlag = 1;
-            end
-            profModeFlag = 0;
-            if (profModeBase(idProf2) ~= profModeNew(idProf2))
-               profModeFlag = 1;
-            end
-            profCutFlag = 0;
-            if (profCutBase(idProf2) ~= profCutNew(idProf2))
-               profCutFlag = 1;
-            end
-            profNbLevFlag = 0;
-            if (profNbLevelsBase(idProf2) ~= profNbLevelsNew(idProf2))
-               profNbLevFlag = 1;
-            end
-            profDataFlag = profNbLevFlag;
-            if (profDataFlag == 0)
-               for idLev = 1:size(dataStrBase{idProf2}, 1)
-                  if (~strcmp(dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :)))
-                     profDataFlag = 1;
-                     break
-                  end
-               end
-            end
-            if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
-               fprintf('Float %d cycle #%d prof #%d: descent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
-                  floatNum, descProfNumBase(idProf), idProf2, ...
-                  profNbLevelsBase(idProf2), profNbLevelsNew(idProf2));
-               nbCol = size(dataStrBase{idProf2}, 2);
-               fprintf('FLAG: BASE (%s) %s | NEW (%s)\n', ...
-                  paramStrBase{idProf2}, ...
-                  repmat(' ', 1, nbCol-length('BASE')-1-length(paramStrBase{idProf2})-3), ...
-                  paramStrNew{idProf2});
-               nbLevBoth = min(size(dataStrBase{idProf2}, 1), size(dataStrNew{idProf2}, 1));
-               for idLev = 1:nbLevBoth
-                  diffFlag = 0;
-                  if (~strcmp(dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :)))
-                     diffFlag = 1;
-                  end
-                  fprintf('  %d : %s | %s\n', ...
-                     diffFlag, dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :));
-               end
-               if (size(dataStrBase{idProf2}, 1) > nbLevBoth)
-                  for idLev = nbLevBoth+1:size(dataStrBase{idProf2}, 1)
-                     diffFlag = 1;
-                     fprintf('  %d : %s |\n', ...
-                        diffFlag, dataStrBase{idProf2}(idLev, :));
-                  end
-               else
-                  pattern = repmat(' ', 1, nbCol);
-                  for idLev = nbLevBoth+1:size(dataStrNew{idProf2}, 1)
-                     diffFlag = 1;
-                     fprintf('  %d : %s | %s\n', ...
-                        diffFlag, pattern, dataStrNew{idProf2}(idLev, :));
-                  end
-               end
-            end
-            fileVersionFlag = 0;
-            if (strcmp(fileVersionBase, fileVersionNew) == 0)
-               fileVersionFlag = 1;
-            end
-            
-            fprintf(fidOut, '%d; %d; D; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               cycleNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
-               profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
-               descProfNumBase(idProf), ...
-               julian_2_gregorian(profDateBase(idProf2)), ...
-               julian_2_gregorian(profLocDateBase(idProf2)), profLonBase(idProf2), profLatBase(idProf2), ...
-               profModeBase(idProf2), profCutBase(idProf2), profNbLevelsBase(idProf2), fileVersionBase, ...
-               descProfNumBase2New(idProf), ...
-               julian_2_gregorian(profDateNew(idProf2)), ...
-               julian_2_gregorian(profLocDateNew(idProf2)), profLonNew(idProf2), profLatNew(idProf2), ...
-               profModeNew(idProf2), profCutNew(idProf2), profNbLevelsNew(idProf2), fileVersionNew);
-            lineNum = lineNum + 1;
-            
+         profIdInBase = descProfNumBase(idProf);
+         profIdInNew = descProfNumBase2New(idProf);
+         
+         cycleNumFlag = 0;
+         if (descCyNumBase(idProf) ~= descCyNumBase2New(idProf))
+            cycleNumFlag = 1;
          end
+         profNumFlag = 0;
+         if (descProfNumBase(idProf) ~= descProfNumBase2New(idProf))
+            profNumFlag = 1;
+         end
+         profDateFlag = 0;
+         if (strcmp(julian_2_gregorian(profDateBase(profIdInBase)), julian_2_gregorian(profDateNew(profIdInNew))) == 0)
+            profDateFlag = 1;
+         end
+         profPosFlag = 0;
+         if ((strcmp(julian_2_gregorian(profLocDateBase(profIdInBase)), julian_2_gregorian(profLocDateNew(profIdInNew))) == 0) || ...
+               (strcmp(sprintf('%.3f', profLonBase(profIdInBase)), sprintf('%.3f', profLonNew(profIdInNew))) == 0) || ...
+               (strcmp(sprintf('%.3f', profLatBase(profIdInBase)), sprintf('%.3f', profLatNew(profIdInNew))) == 0))
+            profPosFlag = 1;
+         end
+         profModeFlag = 0;
+         if (profModeBase(profIdInBase) ~= profModeNew(profIdInNew))
+            profModeFlag = 1;
+         end
+         profCutFlag = 0;
+         if (profCutBase(profIdInBase) ~= profCutNew(profIdInNew))
+            profCutFlag = 1;
+         end
+         profNbLevFlag = 0;
+         if (profNbLevelsBase(profIdInBase) ~= profNbLevelsNew(profIdInNew))
+            profNbLevFlag = 1;
+         end
+         profDataFlag = profNbLevFlag;
+         if (profDataFlag == 0)
+            for idLev = 1:size(dataStrBase{profIdInBase}, 1)
+               if (~strcmp(dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :)))
+                  profDataFlag = 1;
+                  break
+               end
+            end
+         end
+         if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
+            fprintf('Float %d cycle #%d prof #%d: descent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
+               floatNum, descCyNumBase(idProf), profIdInBase, ...
+               profNbLevelsBase(profIdInBase), profNbLevelsNew(profIdInNew));
+            nbCol = size(dataStrBase{profIdInBase}, 2);
+            fprintf('FLAG: BASE (%s) %s | NEW (%s)\n', ...
+               paramStrBase{profIdInBase}, ...
+               repmat(' ', 1, nbCol-length('BASE')-1-length(paramStrBase{profIdInBase})-3), ...
+               paramStrNew{profIdInNew});
+            nbLevBoth = min(size(dataStrBase{profIdInBase}, 1), size(dataStrNew{profIdInNew}, 1));
+            for idLev = 1:nbLevBoth
+               diffFlag = 0;
+               if (~strcmp(dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :)))
+                  diffFlag = 1;
+               end
+               fprintf('  %d : %s | %s\n', ...
+                  diffFlag, dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :));
+            end
+            if (size(dataStrBase{profIdInBase}, 1) > nbLevBoth)
+               for idLev = nbLevBoth+1:size(dataStrBase{profIdInBase}, 1)
+                  diffFlag = 1;
+                  fprintf('  %d : %s |\n', ...
+                     diffFlag, dataStrBase{profIdInBase}(idLev, :));
+               end
+            else
+               pattern = repmat(' ', 1, nbCol);
+               for idLev = nbLevBoth+1:size(dataStrNew{profIdInNew}, 1)
+                  diffFlag = 1;
+                  fprintf('  %d : %s | %s\n', ...
+                     diffFlag, pattern, dataStrNew{profIdInNew}(idLev, :));
+               end
+            end
+         end
+         fileVersionFlag = 0;
+         if (strcmp(fileVersionBase, fileVersionNew) == 0)
+            fileVersionFlag = 1;
+         end
+         
+         fprintf(fidOut, '%d; %d; D; %d; %d; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            cycleNumFlag, profNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
+            profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
+            descCyNumBase(idProf), ...
+            descProfNumBase(idProf), ...
+            julian_2_gregorian(profDateBase(profIdInBase)), ...
+            julian_2_gregorian(profLocDateBase(profIdInBase)), profLonBase(profIdInBase), profLatBase(profIdInBase), ...
+            profModeBase(profIdInBase), profCutBase(profIdInBase), profNbLevelsBase(profIdInBase), fileVersionBase, ...
+            descCyNumBase2New(idProf), ...
+            descProfNumBase2New(idProf), ...
+            julian_2_gregorian(profDateNew(profIdInNew)), ...
+            julian_2_gregorian(profLocDateNew(profIdInNew)), profLonNew(profIdInNew), profLatNew(profIdInNew), ...
+            profModeNew(profIdInNew), profCutNew(profIdInNew), profNbLevelsNew(profIdInNew), fileVersionNew);
+         lineNum = lineNum + 1;
+         
       end
    end
 
@@ -498,65 +555,105 @@ for idFloat = 1:nbFloats
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    % try to link the 2 sets according to profile dates
-   ascProfNumBase2New = ones(length(ascProfNumBase), 1)*-1;
-   for idProf = 1:length(ascProfNumBase)
-      profNumBase = ascProfNumBase(idProf);
+   ascCyNumBase2New = ones(length(ascCyNumBase), 1)*-1;
+   ascProfNumBase2New = ones(length(ascCyNumBase), 1)*-1;
+   for idProf = 1:length(ascCyNumBase)
       profDateBase = ascProfDateBase(idProf);
       
       % look for the corresponding New profile
       idF = find(abs(ascProfDateNew - profDateBase) <= INTERVAL_DAY);
       if (length(idF) == 1)
+         ascCyNumBase2New(idProf) = ascCyNumNew(idF);
          ascProfNumBase2New(idProf) = ascProfNumNew(idF);
-         
+         ascCyNumNew(idF) = [];
          ascProfNumNew(idF) = [];
          ascProfDateNew(idF) = [];
       elseif (length(idF) > 1)
-         [~, idMin] = min(abs(ascProfDateNew - profDateBase));
-         ascProfNumBase2New(idProf) = ascProfNumNew(idMin);
-         
-         numbers = sprintf(' #%d', ascProfNumNew(idF));
-         fprintf('WARNING: %d ascent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
-            length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
-         
-         ascProfNumNew(idMin) = [];
-         ascProfDateNew(idMin) = [];
+         profNumBase = ascProfNumBase(idProf);
+         idF2 = find(ascProfNumNew(idF) == profNumBase);
+         if (length(idF2) == 1)
+            idF = idF(idF2);
+            ascCyNumBase2New(idProf) = ascCyNumNew(idF);
+            ascProfNumBase2New(idProf) = ascProfNumNew(idF);
+            ascCyNumNew(idF) = [];
+            ascProfNumNew(idF) = [];
+            ascProfDateNew(idF) = [];
+         elseif (length(idF2) > 1)
+            fprintf('ERROR: Float %d cycle #%d ascending prof #%d: inconsistent data (there are %d NEW profiles within %d hours interval around BASE profile)) => link not done\n', ...
+               floatNum, ascCyNumBase(idProf), ascProfNumBase(idProf), ...
+               length(idF2), INTERVAL_HOUR);
+            fprintf('ERROR: Float %d cycle #%d ascending prof #%d: BASE profile date: %s\n', ...
+               floatNum, ascCyNumBase(idProf), ascProfNumBase(idProf), ...
+               julian_2_gregorian(profDateBase));
+            dateList = julian_2_gregorian(ascProfDateNew(idF(idF2)));
+            dateListStr = cellstr(dateList);
+            dateListStr = sprintf('%s; ', dateListStr{:});
+            fprintf('ERROR: Float %d cycle #%d ascending prof #%d: NEW profile dates: %s\n\n', ...
+               floatNum, ascCyNumBase(idProf), ascProfNumBase(idProf), ...
+               dateListStr(1:end-2));
+         end
       end
    end
 
    % process the remaining New profiles
-   for idProf = 1:length(ascProfNumNew)
+   for idProf = 1:length(ascCyNumNew)
+      cyNumNew = ascCyNumNew(idProf);
       profNumNew = ascProfNumNew(idProf);
       profDateNew = ascProfDateNew(idProf);
       
       % find the right place (chronological order) to store the remaining
       % profile
-      idF = find(ascProfDateBase < profDateNew);
+      idF = find(ascProfDateBase < profDateNew, 1, 'last');
       if (~isempty(idF))
-         if (idF(end) < length(ascProfDateBase))
-            ascProfNumBase(idF(end)+2:end+1) = ascProfNumBase(idF(end)+1:end);
-            ascProfDateBase(idF(end)+2:end+1) = ascProfDateBase(idF(end)+1:end);
-            ascProfNumBase2New(idF(end)+2:end+1) = ascProfNumBase2New(idF(end)+1:end);
+         idF2 = find((ascCyNumBase2New == cyNumNew) & (ascProfNumBase2New < profNumNew), 1, 'last');
+         if (isempty(idF2))
+            idF2 = idF;
          end
-         ascProfNumBase(idF(end)+1) = -1;
-         ascProfDateBase(idF(end)+1) = profDateNew;
-         ascProfNumBase2New(idF(end)+1) = profNumNew;
+         ascCyNumBase(idF2+2:end+1) = ascCyNumBase(idF2+1:end);
+         ascProfNumBase(idF2+2:end+1) = ascProfNumBase(idF2+1:end);
+         ascProfDateBase(idF2+2:end+1) = ascProfDateBase(idF2+1:end);
+         ascCyNumBase2New(idF2+2:end+1) = ascCyNumBase2New(idF2+1:end);
+         ascProfNumBase2New(idF2+2:end+1) = ascProfNumBase2New(idF2+1:end);
+         
+         ascCyNumBase(idF2+1) = -1;
+         ascProfNumBase(idF2+1) = -1;
+         ascProfDateBase(idF2+1) = profDateNew;
+         ascCyNumBase2New(idF2+1) = cyNumNew;
+         ascProfNumBase2New(idF2+1) = profNumNew;
       else
-         ascProfNumBase = [-1; ascProfNumBase];
-         ascProfDateBase = [profDateNew; ascProfDateBase];
-         ascProfNumBase2New = [profNumNew; ascProfNumBase2New];
+         idF2 = find((ascCyNumBase2New == cyNumNew) & (ascProfNumBase2New < profNumNew), 1, 'last');
+         if (~isempty(idF2))
+            ascCyNumBase(idF2+2:end+1) = ascCyNumBase(idF2+1:end);
+            ascProfNumBase(idF2+2:end+1) = ascProfNumBase(idF2+1:end);
+            ascProfDateBase(idF2+2:end+1) = ascProfDateBase(idF2+1:end);
+            ascCyNumBase2New(idF2+2:end+1) = ascCyNumBase2New(idF2+1:end);
+            ascProfNumBase2New(idF2+2:end+1) = ascProfNumBase2New(idF2+1:end);
+            
+            ascCyNumBase(idF2+1) = -1;
+            ascProfNumBase(idF2+1) = -1;
+            ascProfDateBase(idF2+1) = profDateNew;
+            ascCyNumBase2New(idF2+1) = cyNumNew;
+            ascProfNumBase2New(idF2+1) = profNumNew;
+         else
+            ascCyNumBase = [-1; ascCyNumBase];
+            ascProfNumBase = [-1; ascProfNumBase];
+            ascProfDateBase = [profDateNew; ascProfDateBase];
+            ascCyNumBase2New = [cyNumNew; ascCyNumBase2New];
+            ascProfNumBase2New = [profNumNew; ascProfNumBase2New];
+         end
       end         
    end
    
    % compare the mono-profile files
-   for idProf = 1:length(ascProfNumBase)
-      
-      if (ascProfNumBase(idProf) == -1)
+   for idProf = 1:length(ascCyNumBase)
+
+      if (ascCyNumBase(idProf) == -1)
          
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascProfNumBase2New(idProf))];
+            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascCyNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
             profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascProfNumBase2New(idProf))];
+               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascCyNumBase2New(idProf))];
             if ~(exist(profFileNameNew, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameNew);
                continue
@@ -566,37 +663,37 @@ for idFloat = 1:nbFloats
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG);
          
-         for idProf2 = 1:length(profDateBase)
-            
-            fprintf(fidOut, '%d; %d; A; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               ascProfNumBase2New(idProf), ...
-               julian_2_gregorian(profDate(idProf2)), ...
-               julian_2_gregorian(profLocDate(idProf2)), profLon(idProf2), profLat(idProf2), ...
-               profMode(idProf2), profCut(idProf2), profNbLevels(idProf2), fileVersion);
-            lineNum = lineNum + 1;
-            
-            if (PRINT_DIFF_DATA_FLAG == 1)
-               fprintf('Float %d cycle #%d prof #%d: ascent profile only in NEW set (N_LEVELS = %d)\n', ...
-                  floatNum, ascProfNumBase2New(idProf), idProf2, profNbLevels(idProf2));
-               nbCol = size(dataStr{idProf2}, 2);
-               pattern = repmat(' ', 1, nbCol);
-               fprintf('FLAG: %s | NEW (%s)\n', pattern, paramStr{idProf2});
-               for idLev = 1:size(dataStr{idProf2}, 1)
-                  diffFlag = 1;
-                  fprintf('  %d : %s | %s\n', ...
-                     diffFlag, pattern, dataStr{idProf2}(idLev, :));
-               end
+         profIdInNew = ascProfNumBase2New(idProf);
+         
+         fprintf(fidOut, '%d; %d; A; -1; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; ; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            ascCyNumBase2New(idProf), ...
+            ascProfNumBase2New(idProf), ...
+            julian_2_gregorian(profDate(profIdInNew)), ...
+            julian_2_gregorian(profLocDate(profIdInNew)), profLon(profIdInNew), profLat(profIdInNew), ...
+            profMode(profIdInNew), profCut(profIdInNew), profNbLevels(profIdInNew), fileVersion);
+         lineNum = lineNum + 1;
+         
+         if (PRINT_DIFF_DATA_FLAG == 1)
+            fprintf('Float %d cycle #%d prof #%d: ascent profile only in NEW set (N_LEVELS = %d)\n', ...
+               floatNum, ascCyNumBase2New(idProf), profIdInNew, profNbLevels(profIdInNew));
+            nbCol = size(dataStr{profIdInNew}, 2);
+            pattern = repmat(' ', 1, nbCol);
+            fprintf('FLAG: %s | NEW (%s)\n', pattern, paramStr{profIdInNew});
+            for idLev = 1:size(dataStr{profIdInNew}, 1)
+               diffFlag = 1;
+               fprintf('  %d : %s | %s\n', ...
+                  diffFlag, pattern, dataStr{profIdInNew}(idLev, :));
             end
          end
          
-      elseif (ascProfNumBase2New(idProf) == -1)
+      elseif (ascCyNumBase2New(idProf) == -1)
          
          profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascProfNumBase(idProf))];
+            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascCyNumBase(idProf))];
          if ~(exist(profFileNameBase, 'file') == 2)
             profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascProfNumBase(idProf))];
+               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascCyNumBase(idProf))];
             if ~(exist(profFileNameBase, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameBase);
                continue
@@ -606,38 +703,38 @@ for idFloat = 1:nbFloats
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG);
          
-         for idProf2 = 1:length(profDateBase)
-            
-            fprintf(fidOut, '%d; %d; A; -1; -1; -1; -1; -1; -1; -1; -1; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               ascProfNumBase(idProf), ...
-               julian_2_gregorian(profDate(idProf2)), ...
-               julian_2_gregorian(profLocDate(idProf2)), profLon(idProf2), profLat(idProf2), ...
-               profMode(idProf2), profCut(idProf2), profNbLevels(idProf2), fileVersion);
-            lineNum = lineNum + 1;
-            
-            if (PRINT_DIFF_DATA_FLAG == 1)
-               fprintf('Float %d cycle #%d prof #%d: ascent profile only in BASE set (N_LEVELS = %d)\n', ...
-                  floatNum, ascProfNumBase(idProf), idProf2, profNbLevels(idProf2));
-               nbCol = size(dataStr{idProf2}, 2);
-               fprintf('FLAG: BASE (%s) %s |\n', ...
-                  paramStr{idProf2}, ...
-                  repmat(' ', 1, nbCol-length('BASE')-1-length(paramStr{idProf2})-3));
-               for idLev = 1:size(dataStr{idProf2}, 1)
-                  diffFlag = 1;
-                  fprintf('  %d : %s |\n', ...
-                     diffFlag, dataStr{idProf2}(idLev, :));
-               end
+         profIdInBase = ascProfNumBase(idProf);
+         
+         fprintf(fidOut, '%d; %d; A; -1; -1; -1; -1; -1; -1; -1; -1; -1; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            ascCyNumBase(idProf), ...
+            ascProfNumBase(idProf), ...
+            julian_2_gregorian(profDate(profIdInBase)), ...
+            julian_2_gregorian(profLocDate(profIdInBase)), profLon(profIdInBase), profLat(profIdInBase), ...
+            profMode(profIdInBase), profCut(profIdInBase), profNbLevels(profIdInBase), fileVersion);
+         lineNum = lineNum + 1;
+         
+         if (PRINT_DIFF_DATA_FLAG == 1)
+            fprintf('Float %d cycle #%d prof #%d: ascent profile only in BASE set (N_LEVELS = %d)\n', ...
+               floatNum, ascCyNumBase(idProf), profIdInBase, profNbLevels(profIdInBase));
+            nbCol = size(dataStr{profIdInBase}, 2);
+            fprintf('FLAG: BASE (%s) %s |\n', ...
+               paramStr{profIdInBase}, ...
+               repmat(' ', 1, nbCol-length('BASE')-1-length(paramStr{profIdInBase})-3));
+            for idLev = 1:size(dataStr{profIdInBase}, 1)
+               diffFlag = 1;
+               fprintf('  %d : %s |\n', ...
+                  diffFlag, dataStr{profIdInBase}(idLev, :));
             end
          end
          
       else
          
          profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascProfNumBase(idProf))];
+            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascCyNumBase(idProf))];
          if ~(exist(profFileNameBase, 'file') == 2)
             profFileNameBase = [DIR_INPUT_BASE_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascProfNumBase(idProf))];
+               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascCyNumBase(idProf))];
             if ~(exist(profFileNameBase, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameBase);
                continue
@@ -649,10 +746,10 @@ for idFloat = 1:nbFloats
             get_nc_profile_info(profFileNameBase, 1);
 
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascProfNumBase2New(idProf))];
+            sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascCyNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
             profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
-               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascProfNumBase2New(idProf))];
+               sprintf('/%d/profiles/D%d_%03d.nc', floatNum, floatNum, ascCyNumBase2New(idProf))];
             if ~(exist(profFileNameNew, 'file') == 2)
                fprintf('WARNING: expected file name is missing (%s)\n', profFileNameNew);
                continue
@@ -664,96 +761,101 @@ for idFloat = 1:nbFloats
             get_nc_profile_info(profFileNameNew, 1);
          
          % create the comparison flags
-         for idProf2 = 1:length(profDateBase)
-            
-            cycleNumFlag = 0;
-            if (ascProfNumBase(idProf) ~= ascProfNumBase2New(idProf))
-               cycleNumFlag = 1;
-            end
-            profDateFlag = 0;
-            if (strcmp(julian_2_gregorian(profDateBase(idProf2)), julian_2_gregorian(profDateNew(idProf2))) == 0)
-               profDateFlag = 1;
-            end
-            profPosFlag = 0;
-            if ((strcmp(julian_2_gregorian(profLocDateBase(idProf2)), julian_2_gregorian(profLocDateNew(idProf2))) == 0) || ...
-                  (strcmp(sprintf('%.3f', profLonBase(idProf2)), sprintf('%.3f', profLonNew(idProf2))) == 0) || ...
-                  (strcmp(sprintf('%.3f', profLatBase(idProf2)), sprintf('%.3f', profLatNew(idProf2))) == 0))
-               profPosFlag = 1;
-            end
-            profModeFlag = 0;
-            if (profModeBase(idProf2) ~= profModeNew(idProf2))
-               profModeFlag = 1;
-            end
-            profCutFlag = 0;
-            if (profCutBase(idProf2) ~= profCutNew(idProf2))
-               profCutFlag = 1;
-            end
-            profNbLevFlag = 0;
-            if (profNbLevelsBase(idProf2) ~= profNbLevelsNew(idProf2))
-               profNbLevFlag = 1;
-            end
-            profDataFlag = profNbLevFlag;
-            if (profDataFlag == 0)
-               for idLev = 1:size(dataStrBase{idProf2}, 1)
-                  if (~strcmp(dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :)))
-                     profDataFlag = 1;
-                     break
-                  end
-               end
-            end
-            if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
-               fprintf('Float %d cycle #%d prof #%d: ascent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
-                  floatNum, ascProfNumBase(idProf), idProf2, ...
-                  profNbLevelsBase(idProf2), profNbLevelsNew(idProf2));
-               nbCol = size(dataStrBase{idProf2}, 2);
-               fprintf('FLAG: BASE (%s) %s | NEW (%s)\n', ...
-                  paramStrBase{idProf2}, ...
-                  repmat(' ', 1, nbCol-length('BASE')-1-length(paramStrBase{idProf2})-3), ...
-                  paramStrNew{idProf2});
-               nbLevBoth = min(size(dataStrBase{idProf2}, 1), size(dataStrNew{idProf2}, 1));
-               for idLev = 1:nbLevBoth
-                  diffFlag = 0;
-                  if (~strcmp(dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :)))
-                     diffFlag = 1;
-                  end
-                  fprintf('  %d : %s | %s\n', ...
-                     diffFlag, dataStrBase{idProf2}(idLev, :), dataStrNew{idProf2}(idLev, :));
-               end
-               if (size(dataStrBase{idProf2}, 1) > nbLevBoth)
-                  for idLev = nbLevBoth+1:size(dataStrBase{idProf2}, 1)
-                     diffFlag = 1;
-                     fprintf('  %d : %s |\n', ...
-                        diffFlag, dataStrBase{idProf2}(idLev, :));
-                  end
-               else
-                  pattern = repmat(' ', 1, nbCol);
-                  for idLev = nbLevBoth+1:size(dataStrNew{idProf2}, 1)
-                     diffFlag = 1;
-                     fprintf('  %d : %s | %s\n', ...
-                        diffFlag, pattern, dataStrNew{idProf2}(idLev, :));
-                  end
-               end
-            end
-            fileVersionFlag = 0;
-            if (strcmp(fileVersionBase, fileVersionNew) == 0)
-               fileVersionFlag = 1;
-            end
-            
-            fprintf(fidOut, '%d; %d; A; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
-               lineNum, floatNum, ...
-               cycleNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
-               profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
-               ascProfNumBase(idProf), ...
-               julian_2_gregorian(profDateBase(idProf2)), ...
-               julian_2_gregorian(profLocDateBase(idProf2)), profLonBase(idProf2), profLatBase(idProf2), ...
-               profModeBase(idProf2), profCutBase(idProf2), profNbLevelsBase(idProf2), fileVersionBase, ...
-               ascProfNumBase2New(idProf), ...
-               julian_2_gregorian(profDateNew(idProf2)), ...
-               julian_2_gregorian(profLocDateNew(idProf2)), profLonNew(idProf2), profLatNew(idProf2), ...
-               profModeNew(idProf2), profCutNew(idProf2), profNbLevelsNew(idProf2), fileVersionNew);
-            lineNum = lineNum + 1;
-            
+         profIdInBase = ascProfNumBase(idProf);
+         profIdInNew = ascProfNumBase2New(idProf);
+         
+         cycleNumFlag = 0;
+         if (ascCyNumBase(idProf) ~= ascCyNumBase2New(idProf))
+            cycleNumFlag = 1;
          end
+         profNumFlag = 0;
+         if (ascProfNumBase(idProf) ~= ascProfNumBase2New(idProf))
+            profNumFlag = 1;
+         end
+         profDateFlag = 0;
+         if (strcmp(julian_2_gregorian(profDateBase(profIdInBase)), julian_2_gregorian(profDateNew(profIdInNew))) == 0)
+            profDateFlag = 1;
+         end
+         profPosFlag = 0;
+         if ((strcmp(julian_2_gregorian(profLocDateBase(profIdInBase)), julian_2_gregorian(profLocDateNew(profIdInNew))) == 0) || ...
+               (strcmp(sprintf('%.3f', profLonBase(profIdInBase)), sprintf('%.3f', profLonNew(profIdInNew))) == 0) || ...
+               (strcmp(sprintf('%.3f', profLatBase(profIdInBase)), sprintf('%.3f', profLatNew(profIdInNew))) == 0))
+            profPosFlag = 1;
+         end
+         profModeFlag = 0;
+         if (profModeBase(profIdInBase) ~= profModeNew(profIdInNew))
+            profModeFlag = 1;
+         end
+         profCutFlag = 0;
+         if (profCutBase(profIdInBase) ~= profCutNew(profIdInNew))
+            profCutFlag = 1;
+         end
+         profNbLevFlag = 0;
+         if (profNbLevelsBase(profIdInBase) ~= profNbLevelsNew(profIdInNew))
+            profNbLevFlag = 1;
+         end
+         profDataFlag = profNbLevFlag;
+         if (profDataFlag == 0)
+            for idLev = 1:size(dataStrBase{profIdInBase}, 1)
+               if (~strcmp(dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :)))
+                  profDataFlag = 1;
+                  break
+               end
+            end
+         end
+         if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
+            fprintf('Float %d cycle #%d prof #%d: ascent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
+               floatNum, ascCyNumBase(idProf), profIdInBase, ...
+               profNbLevelsBase(profIdInBase), profNbLevelsNew(profIdInNew));
+            nbCol = size(dataStrBase{profIdInBase}, 2);
+            fprintf('FLAG: BASE (%s) %s | NEW (%s)\n', ...
+               paramStrBase{profIdInBase}, ...
+               repmat(' ', 1, nbCol-length('BASE')-1-length(paramStrBase{profIdInBase})-3), ...
+               paramStrNew{profIdInNew});
+            nbLevBoth = min(size(dataStrBase{profIdInBase}, 1), size(dataStrNew{profIdInNew}, 1));
+            for idLev = 1:nbLevBoth
+               diffFlag = 0;
+               if (~strcmp(dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :)))
+                  diffFlag = 1;
+               end
+               fprintf('  %d : %s | %s\n', ...
+                  diffFlag, dataStrBase{profIdInBase}(idLev, :), dataStrNew{profIdInNew}(idLev, :));
+            end
+            if (size(dataStrBase{profIdInBase}, 1) > nbLevBoth)
+               for idLev = nbLevBoth+1:size(dataStrBase{profIdInBase}, 1)
+                  diffFlag = 1;
+                  fprintf('  %d : %s |\n', ...
+                     diffFlag, dataStrBase{profIdInBase}(idLev, :));
+               end
+            else
+               pattern = repmat(' ', 1, nbCol);
+               for idLev = nbLevBoth+1:size(dataStrNew{profIdInNew}, 1)
+                  diffFlag = 1;
+                  fprintf('  %d : %s | %s\n', ...
+                     diffFlag, pattern, dataStrNew{profIdInNew}(idLev, :));
+               end
+            end
+         end
+         fileVersionFlag = 0;
+         if (strcmp(fileVersionBase, fileVersionNew) == 0)
+            fileVersionFlag = 1;
+         end
+         
+         fprintf(fidOut, '%d; %d; A; %d; %d; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+            lineNum, floatNum, ...
+            cycleNumFlag, profNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
+            profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
+            ascCyNumBase(idProf), ...
+            ascProfNumBase(idProf), ...
+            julian_2_gregorian(profDateBase(profIdInBase)), ...
+            julian_2_gregorian(profLocDateBase(profIdInBase)), profLonBase(profIdInBase), profLatBase(profIdInBase), ...
+            profModeBase(profIdInBase), profCutBase(profIdInBase), profNbLevelsBase(profIdInBase), fileVersionBase, ...
+            ascCyNumBase2New(idProf), ...
+            ascProfNumBase2New(idProf), ...
+            julian_2_gregorian(profDateNew(profIdInNew)), ...
+            julian_2_gregorian(profLocDateNew(profIdInNew)), profLonNew(profIdInNew), profLatNew(profIdInNew), ...
+            profModeNew(profIdInNew), profCutNew(profIdInNew), profNbLevelsNew(profIdInNew), fileVersionNew);
+         lineNum = lineNum + 1;
       end
    end   
    
@@ -776,8 +878,8 @@ return
 % Retrieve information on profile dates of a mono-profile NetCDF file.
 %
 % SYNTAX :
-%  [o_descProfNum, o_descProfDate, o_descProfLocDate, ...
-%    o_ascProfNum, o_ascProfDate, o_ascProfLocDate] = ...
+%  [o_descCyNum, o_descProfNum, o_descProfDate, o_descProfLocDate, ...
+%    o_ascCyNum, o_ascProfNum, o_ascProfDate, o_ascProfLocDate] = ...
 %    get_nc_profile_dates(a_ncDirName, a_floatNum, a_commentStr)
 %
 % INPUT PARAMETERS :
@@ -786,9 +888,11 @@ return
 %   a_commentStr : additional information (for comment only)
 %
 % OUTPUT PARAMETERS :
+%   o_descCyNum       : descent cycle numbers
 %   o_descProfNum     : descent profile numbers
 %   o_descProfDate    : descent profile dates
 %   o_descProfLocDate : descent profile location dates
+%   o_ascCyNum        : ascent cycle numbers
 %   o_ascProfNum      : ascent profile numbers
 %   o_ascProfDate     : ascent profile dates
 %   o_ascProfLocDate  : ascent profile location dates
@@ -801,14 +905,16 @@ return
 % RELEASES :
 %   03/26/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_descProfNum, o_descProfDate, o_descProfLocDate, ...
-   o_ascProfNum, o_ascProfDate, o_ascProfLocDate] = ...
+function [o_descCyNum, o_descProfNum, o_descProfDate, o_descProfLocDate, ...
+   o_ascCyNum, o_ascProfNum, o_ascProfDate, o_ascProfLocDate] = ...
    get_nc_profile_dates(a_ncDirName, a_floatNum, a_commentStr)
 
 % output parameters initialization
+o_descCyNum = [];
 o_descProfNum = [];
 o_descProfDate = [];
 o_descProfLocDate = [];
+o_ascCyNum = [];
 o_ascProfNum = [];
 o_ascProfDate = [];
 o_ascProfLocDate = [];
@@ -818,49 +924,19 @@ global g_dateDef;
 
 
 % extract profile dates in mono-profile NetCDF files
+cyNum = [];
 profNum = [];
 profDir = [];
 profDate = [];
 profLocDate = [];
 monoProfDirName = [a_ncDirName sprintf('/%d/profiles/', a_floatNum)];
-if (strcmp(a_commentStr, 'Base'))
-   lastCycle = -1;
-   monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
-   monoProfFiles = dir(monoProfFileName);
-   for idFile = 1:length(monoProfFiles)
-      fileName = monoProfFiles(idFile).name;
-      idF = strfind(fileName, '_');
-      cyNum = str2num(fileName(idF+1:end-3));
-      lastCycle = max([lastCycle cyNum]);
-   end
-   monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
-else
-   lastCycle = -1;
-   monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
-   monoProfFiles = dir(monoProfFileName);
-   for idFile = 1:length(monoProfFiles)
-      fileName = monoProfFiles(idFile).name;
-      idF = strfind(fileName, '_');
-      cyNum = str2num(fileName(idF+1:end-3));
-      lastCycle = max([lastCycle cyNum]);
-   end
-   monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
-end
-monoProfFiles = dir(monoProfFileName);
+
+monoProfFileNameR = [monoProfDirName sprintf('R%d_*.nc', a_floatNum)];
+monoProfFileNameD = [monoProfDirName sprintf('D%d_*.nc', a_floatNum)];
+monoProfFiles = [dir(monoProfFileNameR); dir(monoProfFileNameD)];
 for idFile = 1:length(monoProfFiles)
     
    fileName = monoProfFiles(idFile).name;
-   
-   % do not consider b file (if exists)
-   if (fileName(1) == 'B')
-      continue
-   end
-   
-   idF = strfind(fileName, '_');
-   cyNum = str2num(fileName(idF+1:idF+3));
-   if (cyNum > lastCycle)
-      continue
-   end
    
    profFileName = [monoProfDirName fileName];
 
@@ -907,24 +983,10 @@ for idFile = 1:length(monoProfFiles)
                length(uJulD), a_commentStr, profFileName);
             continue
          end
-           
-         if (length(uJulD) ~= length(julD))
-            % delete duplicated information
-            for id1 = 1:length(uJulD)
-               idF = find(idC == id1);
-               if (length(idF) > 1)
-                  for id2 = length(idF):-1:2
-                     cycleNumber(idF(id2)) = [];
-                     direction(idF(id2)) = [];
-                     julD(idF(id2)) = [];
-                     julDLocation(idF(id2)) = [];
-                  end
-               end
-            end
-         end
-         
-         profNum = [profNum; cycleNumber];
-         profDir = [profDir direction];
+                    
+         cyNum = [cyNum; cycleNumber];
+         profNum = [profNum; (1:length(cycleNumber))'];
+         profDir = [profDir; direction];
          profDate = [profDate; julD];
          profLocDate = [profLocDate; julDLocation];
          
@@ -948,6 +1010,7 @@ for idFile = 1:length(monoProfFiles)
          netcdf.close(fCdf);
          continue
       end
+      netcdf.close(fCdf);
    end
 end
 
@@ -958,10 +1021,12 @@ end
 
 % output parameters
 idDesc = find(profDir == 'D');
+o_descCyNum = cyNum(idDesc);
 o_descProfNum = profNum(idDesc);
 o_descProfDate = profDate(idDesc);
 o_descProfLocDate = profLocDate(idDesc);
 idAsc = find(profDir == 'A');
+o_ascCyNum = cyNum(idAsc);
 o_ascProfNum = profNum(idAsc);
 o_ascProfDate = profDate(idAsc);
 o_ascProfLocDate = profLocDate(idAsc);
@@ -1096,105 +1161,105 @@ if (exist(a_profFilePathName, 'file') == 2)
       o_profLat = latitude;
       o_profMode = dataMode;
       o_fileVersion = version;
-
-      if (a_dataFlag == 1)
+      
+      % consider also b file if exists
+      [pathstr, name, ext] = fileparts(a_profFilePathName);
+      bProfFilePathNames = dir([pathstr '/B*' name(2:end) ext]);
+      if (~isempty(bProfFilePathNames))
          
-         % consider also b file if exists
-         [pathstr, name, ext] = fileparts(a_profFilePathName);
-         bProfFilePathNames = dir([pathstr '/B*' name(2:end) ext]);
-         if (~isempty(bProfFilePathNames))
-            
-            bProfFilePathName = [pathstr '/' bProfFilePathNames(1).name];
-            
-            % open NetCDF file
-            fCdfB = netcdf.open(bProfFilePathName, 'NC_NOWRITE');
-            if (isempty(fCdfB))
-               fprintf('ERROR: Unable to open NetCDF input file: %s\n', bProfFilePathName);
-               return
-            end
+         bProfFilePathName = [pathstr '/' bProfFilePathNames(1).name];
          
-            % collect the station parameter list
-            stationParameters = netcdf.getVar(fCdfB, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
-            [~, nParam, nProfBfile] = size(stationParameters);
-            if (nProfBfile ~= nProf)
-               fprintf('ERROR: N_PROF in C file (%d) differ from N_PROF in B file (%d)\n', nProf, nProfBfile);
-               return
-            end
-            for idProf = 1:nProf
-               for idParam = 1:nParam
-                  paramName = deblank(stationParameters(:, idParam, idProf)');
-                  if (~isempty(paramName))
-                     if (~strcmp(paramName, 'PRES'))
-                        paramForProf{idProf, end+1} = paramName;
-                     end
+         % open NetCDF file
+         fCdfB = netcdf.open(bProfFilePathName, 'NC_NOWRITE');
+         if (isempty(fCdfB))
+            fprintf('ERROR: Unable to open NetCDF input file: %s\n', bProfFilePathName);
+            return
+         end
+         
+         % collect the station parameter list
+         stationParameters = netcdf.getVar(fCdfB, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
+         [~, nParam, nProfBfile] = size(stationParameters);
+         if (nProfBfile ~= nProf)
+            fprintf('ERROR: N_PROF in C file (%d) differ from N_PROF in B file (%d)\n', nProf, nProfBfile);
+            return
+         end
+         for idProf = 1:nProf
+            for idParam = 1:nParam
+               paramName = deblank(stationParameters(:, idParam, idProf)');
+               if (~isempty(paramName))
+                  if (~strcmp(paramName, 'PRES'))
+                     paramForProf{idProf, end+1} = paramName;
                   end
                end
             end
          end
-         
-         % clean empty parameter names
-         paramForProf2 = [];
-         for idProf = 1:nProf
-            paramNames = paramForProf(idProf, :);
-            paramNames(find(cellfun(@(x) isempty(x), paramNames))) = [];
-            paramForProf2{idProf} = paramNames;
-            paramStr = sprintf('%s, ', paramNames{:});
-            paramStr(end-1:end) = [];
-            o_paramStr{idProf} = paramStr;
-         end
-
-         % collect parameter data
-         dataFormat = [];
-         dataFillValue = [];
-         data = [];
-         for idProf = 1:length(paramForProf2)
-            paramList = paramForProf2{idProf};
-            formatList = [];
-            fillValueList = [];
-            dataParam = [];
-            for idParam = 1:length(paramList)
-               paramStr = paramList{idParam};
-               
-               if (ismember(paramStr, [{'PRES'} {'TEMP'} {'PSAL'}]))
-                  paramData = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramStr));
-                  paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), 'C_format');
-                  paramFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), '_FillValue');
-               else
-                  paramData = netcdf.getVar(fCdfB, netcdf.inqVarID(fCdfB, paramStr));
-                  paramFormat = netcdf.getAtt(fCdfB, netcdf.inqVarID(fCdfB, paramStr), 'C_format');
-                  paramFillVal = netcdf.getAtt(fCdfB, netcdf.inqVarID(fCdfB, paramStr), '_FillValue');
-               end
-               
-               if (~strcmp(paramStr, 'UV_INTENSITY_NITRATE'))
-                  formatList = [formatList ' ' paramFormat];
-                  fillValueList = [fillValueList paramFillVal];
-                  dataParam = [dataParam paramData(:, idProf)];
-               else
-                  [nValues, ~, ~] = size(paramData);
-                  formatList = [formatList repmat([' ' paramFormat], 1, nValues)];
-                  fillValueList = [fillValueList repmat(paramFillVal, 1, nValues)];
-                  dataParam = [dataParam paramData(:, :, idProf)'];
-               end
+      end
+      
+      % clean empty parameter names
+      paramForProf2 = [];
+      for idProf = 1:nProf
+         paramNames = paramForProf(idProf, :);
+         paramNames(find(cellfun(@(x) isempty(x), paramNames))) = [];
+         paramForProf2{idProf} = paramNames;
+         paramStr = sprintf('%s, ', paramNames{:});
+         paramStr(end-1:end) = [];
+         o_paramStr{idProf} = paramStr;
+      end
+      
+      % collect parameter data
+      dataFormat = [];
+      dataFillValue = [];
+      data = [];
+      for idProf = 1:length(paramForProf2)
+         paramList = paramForProf2{idProf};
+         formatList = [];
+         fillValueList = [];
+         dataParam = [];
+         for idParam = 1:length(paramList)
+            paramStr = paramList{idParam};
+            
+            if (ismember(paramStr, [{'PRES'} {'TEMP'} {'PSAL'}]))
+               paramData = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramStr));
+               paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), 'C_format');
+               paramFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), '_FillValue');
+            else
+               paramData = netcdf.getVar(fCdfB, netcdf.inqVarID(fCdfB, paramStr));
+               paramFormat = netcdf.getAtt(fCdfB, netcdf.inqVarID(fCdfB, paramStr), 'C_format');
+               paramFillVal = netcdf.getAtt(fCdfB, netcdf.inqVarID(fCdfB, paramStr), '_FillValue');
             end
             
-            dataFormat{idProf} = formatList;
-            dataFillValue{idProf} = fillValueList;
-            data{idProf} = dataParam;
-         end
-         for idProf = 1:length(data)
-            profFillValue = dataFillValue{idProf};
-            profData = data{idProf};
-            idToDel = [];
-            for idLev = 1:size(profData, 1)
-               profDataLev = profData(idLev, :);
-               if (~any(profDataLev ~= profFillValue))
-                  idToDel = [idToDel; idLev];
-               end
+            if (~strcmp(paramStr, 'UV_INTENSITY_NITRATE'))
+               formatList = [formatList ' ' paramFormat];
+               fillValueList = [fillValueList paramFillVal];
+               dataParam = [dataParam paramData(:, idProf)];
+            else
+               [nValues, ~, ~] = size(paramData);
+               formatList = [formatList repmat([' ' paramFormat], 1, nValues)];
+               fillValueList = [fillValueList repmat(paramFillVal, 1, nValues)];
+               dataParam = [dataParam paramData(:, :, idProf)'];
             end
-            profData(idToDel, :) = [];
-            data{idProf} = profData;
-            o_profNbLevels(idProf) = size(profData, 1);
          end
+         
+         dataFormat{idProf} = formatList;
+         dataFillValue{idProf} = fillValueList;
+         data{idProf} = dataParam;
+      end
+      for idProf = 1:length(data)
+         profFillValue = dataFillValue{idProf};
+         profData = data{idProf};
+         idToDel = [];
+         for idLev = 1:size(profData, 1)
+            profDataLev = profData(idLev, :);
+            if (~any(profDataLev ~= profFillValue))
+               idToDel = [idToDel; idLev];
+            end
+         end
+         profData(idToDel, :) = [];
+         data{idProf} = profData;
+         o_profNbLevels(idProf) = size(profData, 1);
+      end
+      
+      if (a_dataFlag == 1)
          
          % report parameter data as string
          dataStr = [];
@@ -1217,9 +1282,9 @@ if (exist(a_profFilePathName, 'file') == 2)
             end
             dataStr{idProf} = profDataStr;
          end
-
+         
          o_dataStr = dataStr;
-      
+         
       end
       
    else

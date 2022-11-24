@@ -79,10 +79,10 @@ if (~isempty(a_tabTech))
                % Arvor-2DO Iridium 5.73
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
                
-            case {210, 211, 212, 213, 214, 217}
+            case {210, 211, 212, 222, 213, 214, 217}
                % Arvor-ARN Iridium
                % Arvor-ARN-Ice Iridium
-               % Provor-ARN-DO Iridium
+               % Provor-ARN-DO Iridium 5.45 & 5.47
                % Provor-ARN-DO-Ice Iridium 5.75
                % Arvor-ARN-DO-Ice Iridium 5.46
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);

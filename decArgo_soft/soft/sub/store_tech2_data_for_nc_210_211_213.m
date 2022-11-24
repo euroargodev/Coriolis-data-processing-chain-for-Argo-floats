@@ -98,8 +98,8 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 211];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(14+ID_OFFSET);
    
-   pres = sensor_2_value_for_pressure_202_210_to_214_217(tabTech2(15+ID_OFFSET));
-   temp = sensor_2_value_for_temperature_204_to_214_217_219_220(tabTech2(16+ID_OFFSET));
+   pres = sensor_2_value_for_pressure_202_210_to_214_217_222(tabTech2(15+ID_OFFSET));
+   temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222(tabTech2(16+ID_OFFSET));
    psal = tabTech2(17+ID_OFFSET)/1000;
    if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
@@ -161,7 +161,7 @@ if (a_deepCycle == 1)
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 224];
-      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214_217(tabTech2(34+ID_OFFSET));
+      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214_217_222(tabTech2(34+ID_OFFSET));
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 225];

@@ -75,6 +75,7 @@ global g_decArgo_dateDef;
 
 % decoder configuration values
 global g_decArgo_iridiumDataDirectory;
+global g_decArgo_processRemainingBuffers;
 
 % SBD sub-directories
 global g_decArgo_spoolDirectory;
@@ -833,7 +834,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          %       fprintf('Buffer completed : %d\n', okToProcess);
          
          if ((okToProcess) || ...
-               ((idSpoolFile == length(tabAllFileDates) && (~g_decArgo_realtimeFlag))))
+               ((idSpoolFile == length(tabAllFileDates) && g_decArgo_processRemainingBuffers)))
             
             if (g_decArgo_realtimeFlag)
                if (okToProcess)

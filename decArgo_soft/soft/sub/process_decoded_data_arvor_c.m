@@ -137,11 +137,11 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 2:25)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 2:25));
-         [dataCTD(:, 26:49)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 26:49));
+         [dataCTD(:, 26:49)] = sensor_2_value_for_temperature_204_to_214_217_219_220_222(dataCTD(:, 26:49));
          if (a_decoderId == 219)
             [dataCTD(:, 50:73)] = sensor_2_value_for_salinity_219(dataCTD(:, 50:73));
          else
-            [dataCTD(:, 50:73)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTD(:, 50:73));
+            [dataCTD(:, 50:73)] = sensor_2_value_for_salinity_210_to_214_217_220_222(dataCTD(:, 50:73));
          end
       end
       

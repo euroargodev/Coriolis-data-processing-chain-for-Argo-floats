@@ -42,6 +42,9 @@ global g_decArgo_outputCsvFileId;
 global g_decArgo_floatListFileName;
 global g_decArgo_dirOutputLogFile;
 
+global g_decArgo_processRemainingBuffers;
+g_decArgo_processRemainingBuffers = 1;
+
 
 % create list of floats to be decoded
 if (nargin == 0)

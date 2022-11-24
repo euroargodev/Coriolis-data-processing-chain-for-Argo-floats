@@ -406,7 +406,7 @@ for idFloat = 1:length(floatList)
    % retrieve configuration names and values at launch from configuration
    % commands report files
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
-   [configParamNames, configParamValues] = read_conf_cmd_report_flbb(configReportFileName, sensorList);
+   [configParamNames, configParamValues] = read_conf_cmd_report_flbb(configReportFileName, sensorList, floatNum);
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);
    if (~isempty(idF))

@@ -71,9 +71,7 @@ global g_decArgo_gpsData;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
-g_decArgo_virtualBuff = 1;
+% for virtual buffers management
 global g_decArgo_spoolFileList;
 global g_decArgo_bufFileList;
 
@@ -275,7 +273,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (ismember(floatDecId, [212 214 216 217 218 221]))
+      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221]))
          % ICE floats
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
@@ -284,7 +282,7 @@ for idFloat = 1:nbFloats
             floatNum, floatCycleList, ...
             floatDecId, str2num(floatArgosId), ...
             floatLaunchDate, floatRefDay, floatEndDate);
-      elseif (ismember(floatDecId, [219 220]))
+      elseif (ismember(floatDecId, [219, 220]))
          % Arvor-C floats
          % specific code because, even if they are not ice floats we must
          % decode them in delayed mode to efficiently process EOL data (Ex

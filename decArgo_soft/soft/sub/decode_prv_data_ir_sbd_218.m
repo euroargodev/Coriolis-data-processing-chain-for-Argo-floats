@@ -2,12 +2,14 @@
 % Decode PROVOR packet data.
 %
 % SYNTAX :
-%  [o_decodedData] = decode_prv_data_ir_sbd_218(a_tabData, a_sbdFileName, a_sbdFileDate)
+%  [o_decodedData] = decode_prv_data_ir_sbd_218( ...
+%    a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_tabData     : data packet to decode
 %   a_sbdFileName : SBD file name
 %   a_sbdFileName : SBD file date
+%   a_launchDate  : float launch date
 %
 % OUTPUT PARAMETERS :
 %   o_decodedData : decoded data
@@ -20,7 +22,8 @@
 % RELEASES :
 %   07/02/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decodedData] = decode_prv_data_ir_sbd_218(a_tabData, a_sbdFileName, a_sbdFileDate)
+function [o_decodedData] = decode_prv_data_ir_sbd_218( ...
+   a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
 
 % output parameters initialization
 o_decodedData = [];
@@ -41,6 +44,13 @@ global g_decArgo_tempDoxyCountsDef;
 % packet type
 packType = a_tabData(1);
 
+% consider only parameter packets for data received before launch date
+if (a_sbdFileDate < a_launchDate)
+   if (~ismember(packType, [5, 7]))
+      return
+   end
+end
+
 % message data frame
 msgData = a_tabData(2:end);
 
@@ -55,7 +65,7 @@ decodedData.packType = packType;
 
 switch (packType)
    
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 0
       % technical packet #1
             
@@ -112,7 +122,7 @@ switch (packType)
       decodedData.cyNumRaw = cycleNum;
       decodedData.eolFlag = eolFlag;
 
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 4
       % technical packet #2
             
@@ -146,7 +156,7 @@ switch (packType)
       decodedData.expNbDrift = tabTech2(4);
       decodedData.expNbAsc = tabTech2(5);
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {1, 2, 3, 13, 14}
       % CTD packets
             
@@ -207,7 +217,7 @@ switch (packType)
       decodedData.decData = {dataCTD};
       decodedData.cyNumRaw = cycleNum;
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {8, 9, 10, 11, 12}
       % CTDO packets
             
@@ -280,7 +290,7 @@ switch (packType)
       decodedData.decData = {dataCTDO};
       decodedData.cyNumRaw = cycleNum;
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 5
       % parameter packet #1
             
@@ -310,7 +320,7 @@ switch (packType)
       decodedData.decData = {floatParam1};
       decodedData.cyNumRaw = cycleNum;
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 7
       % parameter packet #2
       
@@ -338,7 +348,7 @@ switch (packType)
       decodedData.decData = {floatParam2};
       decodedData.cyNumRaw = cycleNum;      
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 6
       % EV or pump packet
       
@@ -390,6 +400,11 @@ switch (packType)
          g_decArgo_floatNum, ...
          packType);
       return
+end
+
+% parameter packets received before launch date are assigned to cycle number -1
+if (a_sbdFileDate < a_launchDate)
+   decodedData.cyNumRaw = -1;
 end
 
 o_decodedData = decodedData;

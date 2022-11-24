@@ -116,7 +116,6 @@ end
 if (isempty(presCutOffProf))
    
    % retrieve the CTD pump cut-off pressure from the configuration
-   presCutOffProf = [];
    [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
    ctpPumpSwitchOffPres = get_config_value('CONFIG_PX01', configNames, configValues);
    if (~isempty(ctpPumpSwitchOffPres))
@@ -317,7 +316,7 @@ for idProf = 1:3
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_220_2001_to_2003( ...
+      [profStruct] = add_profile_date_and_location_201_to_220_222_2001_to_2003( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          descentToParkStartDate, ascentEndDate, transStartDate);
       

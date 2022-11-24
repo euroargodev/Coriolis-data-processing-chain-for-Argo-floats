@@ -53,7 +53,7 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
       %          a_tabCoef(5, 1:28) = [FoilPolyDegO0 FoilPolyDegO1 ... FoilPolyDegO27]
       %          a_tabCoef(6, 1:2) = [ConcCoef0 ConcCoef1]
       
-      if (ismember(a_decoderId, [28 29 106 202 207 208 301]))
+      if (ismember(a_decoderId, [28, 29, 106, 202, 207, 208, 301]))
          % as tempValues come from the CTD or from TEMP_DOXY, we don't use TempCoefI, so
          tabDoxyCoef(2, 1:6) = [0 1 0 0 0 0];
       end

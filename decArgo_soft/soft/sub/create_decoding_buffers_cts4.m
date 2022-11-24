@@ -33,6 +33,7 @@ global g_decArgo_outputCsvFileId;
 
 % configuration values
 global g_decArgo_dirOutputCsvFile;
+global g_decArgo_processRemainingBuffers;
 
 % cycle phases
 global g_decArgo_phaseSurfWait;
@@ -40,9 +41,6 @@ global g_decArgo_phaseSatTrans;
 
 % ICE float firmware
 global g_decArgo_floatFirmware;
-
-% RT processing flag
-global g_decArgo_realtimeFlag;
 
 % global default values
 global g_decArgo_dateDef;
@@ -122,96 +120,112 @@ if (ismember(a_decoderId, [111, 113]))
    idSurfSensorParam = find((tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
-if (g_decArgo_floatNum == 2902263)
-   idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
-   tabCyNum(idF) = tabCyNumRaw(idF)*100 + tabProfNumRaw(idF) + 1;
-end
-if (g_decArgo_floatNum == 6903240)
-   idF = find((tabCyNumRaw == 2) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 338 - 256;
-   idF = find((tabCyNumRaw == 3) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 316 - 256;
-   idF = find((tabCyNumRaw == 4) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 346 - 256;
-   idF = find((tabCyNumRaw == 5) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 336 - 256;
-   idF = find((tabCyNumRaw == 6) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 358 - 256;
-   idF = find((tabCyNumRaw == 7) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 258 - 256;
-   idF = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
-   tabExpNbDesc(idF) = 278 - 256;
-end
-if (g_decArgo_floatNum == 6903549)
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId = find(tabSession == tabSession(startId), 1, 'last');
-   tabSession(startId:end) = tabSession(startId:end) + 1;
-   tabBase(startId) = 1;
-   tabDeep(startId:stopId) = 1;
-   
-   startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:42:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
-   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
-   for id = startId44:stopId44
-      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-   end
-end
-if (g_decArgo_floatNum == 6903551)
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:49:41')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId = find(tabSession == tabSession(startId), 1, 'last');
-   tabSession(startId:end) = tabSession(startId:end) + 1;
-   tabBase(startId) = 1;
-   tabDeep(startId:stopId) = 1;
-   
-   startId43 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:43:56')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId43 = find(tabSession == (tabSession(startId43)+1), 1, 'last');
-   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId43).cyProfPhaseList(6);
-   for id = startId43:stopId43
-      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-   end
-end
-if (g_decArgo_floatNum == 2902239)
-   startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
-   stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');
-   tabSession(startId:end) = tabSession(startId:end) + 1;
-   tabBase(startId) = 1;
-   tabDeep(startId:stopId) = 0;
-   
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:50:38')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId = find(tabSession == tabSession(startId), 1, 'last');
-   tabSession(startId:end) = tabSession(startId:end) + 1;
-   tabBase(startId) = 1;
-   tabDeep(startId:stopId) = 1;
-   
-   startId158 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:49:37')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId158 = find(tabSession == (tabSession(startId158)+1), 1, 'last');
-   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId158).cyProfPhaseList(6);
-   for id = startId158:stopId158
-      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-   end
-end
-if (g_decArgo_floatNum == 2902264)
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:54:48')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId = find(tabSession == tabSession(startId), 1, 'last');
-   tabSession(startId:end) = tabSession(startId:end) + 1;
-   tabBase(startId) = 1;
-   tabDeep(startId:stopId) = 1;
-   
-   startId125 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:53:45')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId125 = find(tabSession == (tabSession(startId125)+1), 1, 'last');
-   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId125).cyProfPhaseList(6);
-   for id = startId125:stopId125
-      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-   end
-end
-if (g_decArgo_floatNum == 6903550)
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 12:04:36')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   
-   startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 11:56:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-   stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
-   a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
-   for id = startId44:stopId44
-      a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+if (ismember(g_decArgo_floatNum, ...
+      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122]))
+   switch g_decArgo_floatNum
+      case 2902263
+         idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
+         tabCyNum(idF) = tabCyNumRaw(idF)*100 + tabProfNumRaw(idF) + 1;
+      case 6903240
+         idF = find((tabCyNumRaw == 2) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 338 - 256;
+         idF = find((tabCyNumRaw == 3) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 316 - 256;
+         idF = find((tabCyNumRaw == 4) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 346 - 256;
+         idF = find((tabCyNumRaw == 5) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 336 - 256;
+         idF = find((tabCyNumRaw == 6) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 358 - 256;
+         idF = find((tabCyNumRaw == 7) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 258 - 256;
+         idF = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
+         tabExpNbDesc(idF) = 278 - 256;
+      case 6903549
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId = find(tabSession == tabSession(startId), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 1;
+         
+         startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:42:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
+         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
+         for id = startId44:stopId44
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+      case 6903551
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:49:41')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId = find(tabSession == tabSession(startId), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 1;
+         
+         startId43 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:43:56')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId43 = find(tabSession == (tabSession(startId43)+1), 1, 'last');
+         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId43).cyProfPhaseList(6);
+         for id = startId43:stopId43
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+      case 2902239
+         startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
+         stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 0;
+         
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:50:38')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId = find(tabSession == tabSession(startId), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 1;
+         
+         startId158 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:49:37')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId158 = find(tabSession == (tabSession(startId158)+1), 1, 'last');
+         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId158).cyProfPhaseList(6);
+         for id = startId158:stopId158
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+      case 2902264
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:54:48')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId = find(tabSession == tabSession(startId), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 1;
+         
+         startId125 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 17:53:45')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId125 = find(tabSession == (tabSession(startId125)+1), 1, 'last');
+         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId125).cyProfPhaseList(6);
+         for id = startId125:stopId125
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+      case 6903550
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 12:04:36')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         
+         startId44 = find((tabDate == gregorian_2_julian_dec_argo('2019/12/22 11:56:25')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId44 = find(tabSession == (tabSession(startId44)+1), 1, 'last');
+         a_decodedData(startId).cyProfPhaseList(6) = a_decodedData(startId44).cyProfPhaseList(6);
+         for id = startId44:stopId44
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+      case 3902122
+         % transmission of second Iridium session of cycle 192, 0 failed => data
+         % transmitted with cycle 193, 0 ones
+         
+         % separate the data
+         startId = find((tabDate == gregorian_2_julian_dec_argo('2020/02/01 14:06:08')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         stopId = find(tabSession == tabSession(startId), 1, 'last');
+         tabSession(startId:end) = tabSession(startId:end) + 1;
+         tabBase(startId) = 1;
+         tabDeep(startId:stopId) = 1;
+         
+         % update sbd file dates for FMT and LMT
+         stopId192_1 = find((tabDate == gregorian_2_julian_dec_argo('2020/01/27 10:15:59')), 1, 'last');
+         startId192_2 = find((tabDate == gregorian_2_julian_dec_argo('2020/02/01 14:06:08')) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
+         stopId192_2 = find(tabSession == tabSession(startId192_2), 1, 'last');
+         for id = startId192_2:stopId192_2
+            a_decodedData(id).cyProfPhaseList(6) = a_decodedData(stopId192_1).cyProfPhaseList(6);
+         end
    end
 end
 
@@ -296,7 +310,7 @@ for sesNum = sessionList
       else
          %          tabDeep(idForCheck) = deep;
          tabDone(idForCheck) = 1;
-         if (~g_decArgo_realtimeFlag)
+         if (g_decArgo_processRemainingBuffers)
             tabRank(idForCheck) = rank;
             rank = rank + 1;
             tabDelayed(idForCheck) = delayed;
@@ -356,7 +370,7 @@ end
 %             else
 %                tabDeep(idForCheck) = deep;
 %                tabDone(idForCheck) = 1;
-%                if (~g_decArgo_realtimeFlag)
+%                if (g_decArgo_processRemainingBuffers)
 %                   tabRank(idForCheck) = rank;
 %                   rank = rank + 1;
 %                   tabDelayed(idForCheck) = 1;
@@ -455,7 +469,7 @@ for idCy = 1:length(cyNumList)
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH PI DECODER';
+            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d: FloatCy #%3d FloatProf #%2d: %4d SBD - %s - %s - %s%s%s\n', ...

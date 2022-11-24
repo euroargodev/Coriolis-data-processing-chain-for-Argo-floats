@@ -482,6 +482,7 @@ function [o_tabTrajNMeas] = merge_one_first_last_msg_time( ...
 % output parameters initialization
 o_tabTrajNMeas = [];
 
+
 % process first/last msg time
 firstLastJuld = [];
 firstLastJuldId1 = [];

@@ -56,6 +56,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 
 % répertoire des fichiers NetCDF
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -268,7 +269,7 @@ for idFloat = 1:nbFloats
 
    % on ne conserve que les positions Argos du fichier trajectoires (i.e. celles
    % qui ont une localisation)
-   idF = find(measCode == g_MC_Surface);
+   idF = find((measCode == g_MC_Surface) & (positionAccuracy ~= 'I'));
    if (~isempty(idF))
       cycleNumber = cycleNumber(idF);
       juld = juld(idF);

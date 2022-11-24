@@ -49,6 +49,9 @@ global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
 global g_decArgo_generateNcMeta;
 
+global g_decArgo_processRemainingBuffers;
+g_decArgo_processRemainingBuffers = 1;
+
 
 % create list of floats to be decoded
 if (nargin == 0)

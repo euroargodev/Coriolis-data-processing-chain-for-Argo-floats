@@ -15,6 +15,7 @@
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/18/2019 - RNU - creation
+%   12/20/2019 - RNU - version without using external configuration file
 % ------------------------------------------------------------------------------
 function find_missing_momsn
 
@@ -23,16 +24,21 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % choose to check RSYNC_DATA or IRIDIUM_DATA directory
 % if CHECK_RSYNC_DATA = 1, we will check all email files stored in the
-% RSYNC_DATA directory
-% if CHECK_RSYNC_DATA = 0, we will check all useful email files of IRIDIUM_DATA
-% that concern floats of the (provor/apex/nemo)_float_info set in the
-% _argo_decoder_conf.txt file
+% RSYNC_DATA_DIRECTORY directory
+% if CHECK_RSYNC_DATA = 0, we will check all useful email files of
+% the IRIDIUM_DATA_DIRECTORY directory that concern floats of the
+% FLOAT_INFORMATION_FILE_NAME file
 CHECK_RSYNC_DATA = 1;
 
-% when CHECK_RSYNC_DATA = 1, set the RSYNC_DATA directory path name in the
-% following variable
+% if CHECK_RSYNC_DATA = 1
+% provide the RSYNC_DATA_DIRECTORY directory to check
 RSYNC_DATA_DIRECTORY = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS3\rsync_data\';
-% RSYNC_DATA_DIRECTORY = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS3\rsync_data\6902798\';
+
+% if CHECK_RSYNC_DATA = 0
+% provide the IRIDIUM_DATA_DIRECTORY directory to check and the 
+% FLOAT_INFORMATION_FILE_NAME file to use
+IRIDIUM_DATA_DIRECTORY = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\';
+FLOAT_INFORMATION_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\_provor_floats_information_co.txt';
 
 % default values initialization
 init_default_values;
@@ -41,14 +47,40 @@ init_default_values;
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 
-% mode processing flags
-global g_decArgo_realtimeFlag;
-global g_decArgo_delayedModeFlag;
-
 
 logFile = [DIR_LOG_FILE '/' 'find_missing_momsn_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
+
+% check inputs
+if (CHECK_RSYNC_DATA == 1)
+
+   if ~(exist(RSYNC_DATA_DIRECTORY, 'dir') == 7)
+      fprintf('ERROR: Directory not found: %s\n', RSYNC_DATA_DIRECTORY);
+      return
+   end
+   
+   fprintf('Find missing MOMSN in the emails of the directory:\n');
+   fprintf(' RSYNC_DATA_DIRECTORY = %s\n\n', RSYNC_DATA_DIRECTORY);
+   
+else
+   
+   if ~(exist(IRIDIUM_DATA_DIRECTORY, 'dir') == 7)
+      fprintf('ERROR: Directory not found: %s\n', IRIDIUM_DATA_DIRECTORY);
+      return
+   end
+   
+   if ~(exist(FLOAT_INFORMATION_FILE_NAME, 'file') == 2)
+      fprintf('ERROR: File not found: %s\n', FLOAT_INFORMATION_FILE_NAME);
+      return
+   end
+   
+   fprintf('Find missing MOMSN in the emails of the directory:\n');
+   fprintf(' IRIDIUM_DATA_DIRECTORY = %s\n', IRIDIUM_DATA_DIRECTORY);
+   fprintf('According to float info file::\n');
+   fprintf(' FLOAT_INFORMATION_FILE_NAME = %s\n\n', FLOAT_INFORMATION_FILE_NAME);
+
+end
 
 % create the CSV output file
 outputFileName = [DIR_LOG_FILE '/' 'find_missing_momsn_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
@@ -107,31 +139,19 @@ if (CHECK_RSYNC_DATA == 1)
    end
    
 else
-   
-   % configuration parameters
-   configVar = [];
-   configVar{end+1} = 'FLOAT_INFORMATION_FILE_NAME';
-   configVar{end+1} = 'IRIDIUM_DATA_DIRECTORY';
-   
-   % get configuration parameters
-   g_decArgo_realtimeFlag = 0;
-   g_decArgo_delayedModeFlag = 0;
-   [configVal, ~, ~] = get_config_dec_argo(configVar, []);
-   floatInformationFileName = configVal{1};
-   iridiumDataDir = configVal{2};
-   
+      
    % read the list to associate a WMO number to a login name
    [floatWmoList, ~, ~, ~, ~, ~, ~, launchDateList, ~, ~, ~, endDateList, ~] = ...
-      get_floats_info(floatInformationFileName);
+      get_floats_info(FLOAT_INFORMATION_FILE_NAME);
    if (isempty(floatWmoList))
       return
    end
    
-   imeiDirs = dir(iridiumDataDir);
+   imeiDirs = dir(IRIDIUM_DATA_DIRECTORY);
    for idDir = 1:length(imeiDirs)
       
       imeiDirName = imeiDirs(idDir).name;
-      imeiDirPathName = [iridiumDataDir '/' imeiDirName '/archive/'];
+      imeiDirPathName = [IRIDIUM_DATA_DIRECTORY '/' imeiDirName '/archive/'];
       if ((exist(imeiDirPathName, 'dir') == 7) && ~strcmp(imeiDirName, '.') && ~strcmp(imeiDirName, '..'))
          
          idFUs = strfind(imeiDirName, '_');

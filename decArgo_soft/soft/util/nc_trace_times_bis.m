@@ -35,14 +35,17 @@ global g_NTT_CT_UPDATE_DATA_SET;
 
 % top directory of NetCDF files to plot
 % g_NTT_NC_DIR = 'E:\201905-ArgoData\coriolis\';
-% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
+g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\TRAJ_DM\IN\NC\';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_TRAJ_DM_test.txt';
 
 % display help information on available commands
 display_help;

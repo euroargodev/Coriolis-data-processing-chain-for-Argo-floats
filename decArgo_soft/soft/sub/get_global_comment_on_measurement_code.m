@@ -333,10 +333,10 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];
       
-   case {210, 211, 212, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217}
       % Provor/Arvor Iridium with "NS & IA"
       % Arvor-ARN Iridium
-      % Arvor-ARN-Ice Iridium
+      % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
@@ -1013,7 +1013,7 @@ global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTET;
 
 
-apexApf11IrDecoderIdList = [1121 1321 1322];
+apexApf11IrDecoderIdList = [1121, 1321, 1322];
 
 if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
 

@@ -24,6 +24,7 @@ floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldV
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_36.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\tmp.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11_a_refaire_20200103.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
@@ -31,6 +32,7 @@ jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertA
 % NetCDF meta-data file output directory
 % ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20200103\OUT\';
 % ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_from_DEP\';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);

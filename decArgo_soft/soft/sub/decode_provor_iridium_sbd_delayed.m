@@ -167,6 +167,9 @@ global g_decArgo_floatConfig;
 global g_decArgo_clockOffset;
 g_decArgo_clockOffset = get_clock_offset_prv_ir_init_struct;
 
+% delay to recover config messages before launch date
+global g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -241,11 +244,15 @@ if (~g_decArgo_realtimeFlag)
       mailFileName = a_cycleFileNameList{idFile};
       cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
-      if (cyIrJulD < a_launchDate)
+      if (cyIrJulD < a_launchDate - g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate)
          fprintf('BUFF_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
             g_decArgo_floatNum, ...
             mailFileName, julian_2_gregorian_dec_argo(a_launchDate));
          continue
+      elseif (cyIrJulD < a_launchDate)
+         fprintf('BUFF_WARNING: Float #%d: mail file "%s" processed for parameter packets only\n', ...
+            g_decArgo_floatNum, ...
+            mailFileName);
       end
       
       if (a_floatEndDate ~= g_decArgo_dateDef)
@@ -292,11 +299,15 @@ else
          mailFileName = fileList(idF).name;
          cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
          
-         if (cyIrJulD < a_launchDate)
+         if (cyIrJulD < a_launchDate - g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate)
             fprintf('BUFF_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
                g_decArgo_floatNum, ...
                mailFileName, julian_2_gregorian_dec_argo(a_launchDate));
             continue
+         elseif (cyIrJulD < a_launchDate)
+            fprintf('BUFF_WARNING: Float #%d: mail file "%s" processed for parameter packets only\n', ...
+               g_decArgo_floatNum, ...
+               mailFileName);
          end
          
          if (a_floatEndDate ~= g_decArgo_dateDef)
@@ -352,7 +363,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    
    % decode SBD file
    sbdFileName = regexprep(curMailFile, '.txt', '.sbd');
-   decodedData = decode_sbd_file(sbdFileName, curMailFileDate, a_decoderId);
+   decodedData = decode_sbd_file(sbdFileName, curMailFileDate, a_decoderId, a_launchDate);
    decodedDataTab = [decodedDataTab decodedData];
    
    % move the current file into the archive directory

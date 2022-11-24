@@ -73,7 +73,7 @@ global g_decArgo_7TypePacketReceivedCyNum;
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {212} % Arvor-ARN-Ice Iridium
+   case {212, 222} % Arvor-ARN-Ice Iridium
       
       g_decArgo_nbDescentPacketsReceived = 0;
       g_decArgo_nbParkPacketsReceived = 0;

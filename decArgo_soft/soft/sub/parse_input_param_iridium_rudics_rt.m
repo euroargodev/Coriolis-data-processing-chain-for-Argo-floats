@@ -124,6 +124,10 @@ if ((floatDecId > 1000) && (floatDecId < 2000))
       floatLoginName = sprintf('%04d', str2double(floatLoginName));
    end
 end
+if ((floatDecId > 3000) && (floatDecId < 4000))
+   % NEMO floats
+   floatLoginName = sprintf('%04d', str2double(floatLoginName));
+end
 g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
 
 % check the corresponding directories and files
@@ -202,7 +206,10 @@ for idFile = 1:length(ryncLogList)
       end
    elseif ((floatDecId > 1000) && (floatDecId < 2000))
       % APEX Iridium RUDICS & NAVIS floats
-      floatFiles = parse_rsync_log_ir_rudics_apex(ryncLogList{idFile}, floatLoginName);
+      floatFiles = parse_rsync_log_ir_rudics_apex_nemo(ryncLogList{idFile}, floatLoginName);
+   elseif ((floatDecId > 3000) && (floatDecId < 4000))
+      % NEMO floats
+      floatFiles = parse_rsync_log_ir_rudics_apex_nemo(ryncLogList{idFile}, floatLoginName);
    end   
    if (~isempty(floatFiles))
       tabFloatSbdFiles = [tabFloatSbdFiles floatFiles];

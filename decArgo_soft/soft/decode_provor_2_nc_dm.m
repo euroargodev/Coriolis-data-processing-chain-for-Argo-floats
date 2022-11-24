@@ -49,6 +49,9 @@ g_decArgo_reportData = [];
 % global input parameter information
 global g_decArgo_xmlReportFileName;
 
+global g_decArgo_processRemainingBuffers;
+g_decArgo_processRemainingBuffers = 1;
+
 
 logFileName = [];
 

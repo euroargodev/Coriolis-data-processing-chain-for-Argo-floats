@@ -33,12 +33,10 @@ global g_decArgo_outputCsvFileId;
 
 % configuration values
 global g_decArgo_dirOutputCsvFile;
+global g_decArgo_processRemainingBuffers;
 
 % ICE float firmware
 global g_decArgo_floatFirmware;
-
-% RT processing flag
-global g_decArgo_realtimeFlag;
 
 % clock offset storage
 global g_decArgo_clockOffset;
@@ -47,6 +45,25 @@ global g_decArgo_clockOffset;
 % maximum number of transmission sessions (after deep cycle) to look for
 % expected data
 NB_SESSION_MAX = 3;
+
+% remove unused parameter packets transmitted before launch date
+tabPackType = [a_decodedData.packType];
+tabCyNum = [a_decodedData.cyNumRaw];
+idPackProg = find(ismember(tabPackType, [5, 7]) & (tabCyNum == 0));
+if (~isempty(idPackProg))
+   % parameter packets have been received after launch date remove pre-launch
+   % transmitted data
+   idDel = find(tabCyNum == -1);
+else
+   % use only the last transmitted parameter packets
+   idPackType5 = find(tabPackType == 5, 1, 'last');
+   idPackType7 = find(tabPackType == 7, 1, 'last');
+   idF = find(tabCyNum == -1);
+   idDel = setdiff(idF, [idPackType5, idPackType7]);
+end
+a_decodedData(idDel) = [];
+clear tabPackType;
+clear tabCyNum;
 
 tabFileName = {a_decodedData.fileName};
 tabDate = [a_decodedData.fileDate];
@@ -307,7 +324,7 @@ for sesNum = sessionList
       else
          tabDeep(idForCheck) = deep;
          tabDone(idForCheck) = 1;
-         if (~g_decArgo_realtimeFlag)
+         if (g_decArgo_processRemainingBuffers)
             tabRank(idForCheck) = rank;
             rank = rank + 1;
             tabDelayed(idForCheck) = delayed;
@@ -367,7 +384,7 @@ for sesNum = sessionList
             else
                tabDeep(idForCheck) = deep;
                tabDone(idForCheck) = 1;
-               if (~g_decArgo_realtimeFlag)
+               if (g_decArgo_processRemainingBuffers)
                   tabRank(idForCheck) = rank;
                   rank = rank + 1;
                   tabDelayed(idForCheck) = 1;
@@ -456,7 +473,7 @@ for cyNum = cyNumList
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH PI DECODER';
+            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d : %3d SBD - %s - %s - %s%s%s\n', ...

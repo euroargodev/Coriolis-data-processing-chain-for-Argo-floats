@@ -47,6 +47,12 @@ switch (a_decoderId)
       
       [o_decodedData] = create_decoding_buffers_221(a_decodedData, a_decoderId);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {222} % Arvor-ARN-Ice Iridium 5.47
+      
+      [o_decodedData] = create_decoding_buffers_222(a_decodedData, a_decoderId);
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to create decoding buffers for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

@@ -76,7 +76,7 @@ for idP = 1:length(a_tabProfiles)
                threshold3 = prof.additionnalBottomThreshold;
                thickBottom2 = 1;
             end
-         case {210, 211, 212, 213, 214, 217}
+         case {210, 211, 212, 222, 213, 214, 217}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_MC08_', configNames, configValues);
             ascSamplingPeriod = get_config_value('CONFIG_MC10_', configNames, configValues);

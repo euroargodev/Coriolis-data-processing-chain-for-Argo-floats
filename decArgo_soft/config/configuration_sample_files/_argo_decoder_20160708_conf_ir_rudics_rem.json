@@ -29,6 +29,8 @@
    "DIR_OUTPUT_XML_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/ir_rudics_remocean/xml/",
    "DIR_OUTPUT_NETCDF_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/ir_rudics_remocean/nc/",
 
+   "PROCESS_REMAINING_BUFFERS" : "0",    
+	  
    "GENERATE_NC_TRAJ" : "2",
    "GENERATE_NC_MULTI_PROF" : "0",
    "GENERATE_NC_MONO_PROF" : "2",

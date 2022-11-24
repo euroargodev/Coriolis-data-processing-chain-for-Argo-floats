@@ -103,6 +103,7 @@ global g_decArgo_generateNcTraj;
 global g_decArgo_generateNcMeta;
 global g_decArgo_dirInputRsyncData;
 global g_decArgo_applyRtqc;
+global g_decArgo_processRemainingBuffers;
 
 % rsync information
 global g_decArgo_rsyncFloatWmoList;
@@ -720,7 +721,7 @@ if (~a_floatDmFlag)
             end
                         
             if ((okToProcess) || ...
-                  ((idSpoolFile == length(tabAllFileDates) && (~g_decArgo_realtimeFlag))))
+                  ((idSpoolFile == length(tabAllFileDates) && g_decArgo_processRemainingBuffers)))
                
                if (g_decArgo_realtimeFlag)
                   if (okToProcess)

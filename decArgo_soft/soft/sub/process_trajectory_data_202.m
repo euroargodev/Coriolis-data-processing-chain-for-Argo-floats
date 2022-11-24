@@ -781,7 +781,7 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217(tabTech2(10));
+      pres = sensor_2_value_for_pressure_202_210_to_214_217_222(tabTech2(10));
       temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech2(11));
       psal = tabTech2(12)/1000;
       if (any([pres temp psal] ~= 0))

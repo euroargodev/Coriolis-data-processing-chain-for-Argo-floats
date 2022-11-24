@@ -47,7 +47,7 @@ function [o_dataCTD, o_dataOXY, o_dataOCR, o_dataECO2, o_dataECO3, o_dataFLNTU, 
    a_dataCTD, a_dataOXY, a_dataOCR, ...
    a_dataECO2, a_dataECO3, a_dataFLNTU, ...
    a_dataCROVER, a_dataSUNA, a_dataSEAFET)
-            
+
 % cycle phases
 global g_decArgo_phaseParkDrift;
 

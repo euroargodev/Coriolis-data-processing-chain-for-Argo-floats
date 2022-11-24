@@ -33,20 +33,45 @@ global g_decArgo_outputCsvFileId;
 
 % configuration values
 global g_decArgo_dirOutputCsvFile;
+global g_decArgo_processRemainingBuffers;
 
 % ICE float firmware
 global g_decArgo_floatFirmware;
-
-% RT processing flag
-global g_decArgo_realtimeFlag;
 
 
 % maximum number of transmission sessions (after deep cycle) to look for
 % expected data
 NB_SESSION_MAX = 3;
 
+% remove unused parameter packets transmitted before launch date
+tabPackType = [a_decodedData.packType];
+tabCyNum = [a_decodedData.cyNumRaw];
+if (a_decoderId == 216)
+   idPackProg = find((tabPackType == 5) & (tabCyNum == 0));
+else
+   idPackProg = find(ismember(tabPackType, [5, 7]) & (tabCyNum == 0));
+end
+if (~isempty(idPackProg))
+   % parameter packets have been received after launch date remove pre-launch
+   % transmitted data
+   idDel = find(tabCyNum == -1);
+else
+   % use only the last transmitted parameter packets
+   idPackType5 = find(tabPackType == 5, 1, 'last');
+   if (a_decoderId == 216)
+      idPackType7 = [];
+   else
+      idPackType7 = find(tabPackType == 7, 1, 'last');
+   end
+   idF = find(tabCyNum == -1);
+   idDel = setdiff(idF, [idPackType5, idPackType7]);
+end
+a_decodedData(idDel) = [];
+clear tabPackType;
+clear tabCyNum;
+
 % specific
-if (ismember(g_decArgo_floatNum, [3902104 7900510]))
+if (ismember(g_decArgo_floatNum, [3902104 7900510 3902101]))
    switch g_decArgo_floatNum
       case 3902104
          % the float transmitted cycle #51 twice
@@ -61,6 +86,18 @@ if (ismember(g_decArgo_floatNum, [3902104 7900510]))
       case 7900510
          % the float transmitted twice packets types 0, 4 and 5 of cycle #27
          idDel = find([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2019/09/08 06:03:48'));
+         a_decodedData(idDel) = [];
+      case 3902101
+         % the float transmitted twice packets types 10 of cycle #373 in second
+         % Iridium session
+         idPackType4 = find(([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:23:19')) & ...
+            ([a_decodedData.packType] == 4));
+         a_decodedData(idPackType4).expNbAsc = 0;
+         idDel = find( ...
+            (([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:23:39')) | ...
+            ([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:23:51')) | ...
+            ([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:24:03'))) & ...
+            ([a_decodedData.packType] == 10));
          a_decodedData(idDel) = [];
    end
 end
@@ -189,7 +226,7 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -216,6 +253,19 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645]))
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+         % cycles 66 to 68 are surface cycles transmitted in delayed
+         id = find((tabCyNum == 66) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 66) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 67) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 67) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 68) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 68) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
       case 6903265
          % surface message types [0 4 5] of cycles 100 to 110 were
          % transmitted in the same session #102, we must separate them by
@@ -227,6 +277,14 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645]))
       case 3901645
          % packet type 0 4 5 transmitted after data packets
          id = find((tabCyNum == 31) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
+      case 6903006
+         % packet type 0 4 5 transmitted after data packets
+         id = find((tabCyNum == 105) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
+         id = find((tabCyNum == 107) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
    end
@@ -255,7 +313,7 @@ for sesNum = sessionList
    idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
    
    % check current session contents
-   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, 0);
    delayed = 0;
    
    % check data of following sessions (to get possibly unexpected data such
@@ -287,7 +345,7 @@ for sesNum = sessionList
       if (~isempty(idRemaining))
          delayed = 2;
          idForCheck = [idForCheck idRemaining];
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, 0);
       end
    end
    
@@ -312,7 +370,7 @@ for sesNum = sessionList
       else
          tabDeep(idForCheck) = deep;
          tabDone(idForCheck) = 1;
-         if (~g_decArgo_realtimeFlag)
+         if (g_decArgo_processRemainingBuffers)
             tabRank(idForCheck) = rank;
             rank = rank + 1;
             tabDelayed(idForCheck) = delayed;
@@ -329,10 +387,11 @@ for sesNum = sessionList
    if (~isempty(idForSession))
       cyNumList = unique(tabCyNum(idForSession));
       for cyNum = cyNumList
+
          idForCheck = find((tabSession == sesNum) & (tabCyNum == cyNum));
          
          % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, 0);
          
          % check data of following sessions (to get possibly unexpected data such
          % as pump or valve packets)
@@ -345,7 +404,7 @@ for sesNum = sessionList
             end
             if (~isempty(idRemaining))
                idForCheck = [idForCheck idRemaining];
-               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+               [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, 0);
             end
          end
          
@@ -370,7 +429,7 @@ for sesNum = sessionList
             else
                tabDeep(idForCheck) = deep;
                tabDone(idForCheck) = 1;
-               if (~g_decArgo_realtimeFlag)
+               if (g_decArgo_processRemainingBuffers)
                   tabRank(idForCheck) = rank;
                   rank = rank + 1;
                   tabDelayed(idForCheck) = 1;
@@ -459,7 +518,7 @@ for cyNum = cyNumList
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH PI DECODER';
+            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d : %3d SBD - %s - %s - %s%s%s\n', ...
@@ -467,7 +526,7 @@ for cyNum = cyNumList
             length(idForRankCy), deepStr, delayedStr, completedStr, sessionListStr, piDecStr);
          
          if (tabCompleted(idRankCy) == 0)
-            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 1);
+            [~, ~, why] = check_buffer(idForRankCy, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, 1);
             for idL = 1:length(why)
                fprintf('   -> %s\n', why{idL});
             end
@@ -581,7 +640,7 @@ return
 %
 % SYNTAX :
 %  [o_completed, o_deep, o_whyStr] = check_buffer( ...
-%    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, a_whyFlag)
+%    a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, a_decoderId, a_whyFlag)
 %
 % INPUT PARAMETERS :
 %   a_idForCheck    : Id list of SBD to be checked
@@ -589,6 +648,7 @@ return
 %   a_tabExpNbDesc  : expected number of descending data packets
 %   a_tabExpNbDrift : expected number of drift data packets
 %   a_tabExpNbAsc   : expected number of ascending data packets
+%   a_decoderId     : float decoder Id
 %   a_whyFlag       : if set to 1, print why the buffer is not completed
 %
 % OUTPUT PARAMETERS :
@@ -606,7 +666,7 @@ return
 %   12/17/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_completed, o_deep, o_whyStr] = check_buffer( ...
-   a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, a_whyFlag)
+   a_idForCheck, a_tabPackType, a_tabExpNbDesc, a_tabExpNbDrift, a_tabExpNbAsc, a_decoderId, a_whyFlag)
 
 % output parameter initialization
 o_completed = 0;
@@ -618,6 +678,11 @@ o_whyStr = '';
 idPackTech1 = find(a_tabPackType(a_idForCheck) == 0);
 idPackTech2 = find(a_tabPackType(a_idForCheck) == 4);
 idPackProg = find(a_tabPackType(a_idForCheck) == 5);
+% for 5.47 floats, float parameter message is transmitted only when a parameter
+% has been modified
+if (a_decoderId == 222)
+   idPackProg = -1;
+end
 idPackDesc = find((a_tabPackType(a_idForCheck) == 1) | (a_tabPackType(a_idForCheck) == 8));
 idPackDrift = find((a_tabPackType(a_idForCheck) == 2) | (a_tabPackType(a_idForCheck) == 9));
 idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForCheck) == 10));
@@ -726,7 +791,7 @@ function [o_packTypeDesc] = get_pack_type_desc(a_packType, a_decoderId)
 o_packTypeDesc = '';
 
 switch (a_decoderId)
-   case {212, 214, 217}
+   case {212, 222, 214, 217}
       switch (a_packType)
          case 0
             o_packTypeDesc = 'Tech#1';

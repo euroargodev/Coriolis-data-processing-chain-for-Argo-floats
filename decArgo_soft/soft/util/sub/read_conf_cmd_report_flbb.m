@@ -3,11 +3,12 @@
 % 
 % SYNTAX :
 %  [o_confParamNames, o_confParamValues] = read_conf_cmd_report_flbb( ...
-%    a_configReportFileName, a_sensorList)
+%    a_configReportFileName, a_sensorList, a_floatNum)
 % 
 % INPUT PARAMETERS :
 %   a_configReportFileName : predeployment configuration sheet file name
 %   a_sensorList           : list of the sensors mounted on the float
+%   a_floatNum             : float WMO number
 % 
 % OUTPUT PARAMETERS :
 %   o_confParamNames  : configuration parameter names
@@ -22,7 +23,7 @@
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_confParamNames, o_confParamValues] = read_conf_cmd_report_flbb( ...
-   a_configReportFileName, a_sensorList)
+   a_configReportFileName, a_sensorList, a_floatNum)
 
 % output parameters initialization
 o_confParamNames = [];
@@ -45,7 +46,7 @@ for id = 1:length(a_sensorList)
       case 'FLNTU'
          sensorList = [sensorList 4];
       otherwise
-         fprintf('ERROR: Unknown sensor name %s\n', sensorName);
+         fprintf('ERROR: Float #%d: Unknown sensor name %s\n', a_floatNum, sensorName);
    end
 end
 sensorList = sort(sensorList);
@@ -93,12 +94,12 @@ end
 
 % read the configuration file
 if ~(exist(a_configReportFileName, 'file') == 2)
-   fprintf('WARNING: Input file not found: %s\n', a_configReportFileName);
+   fprintf('WARNING: Float #%d: Input file not found: %s\n', a_floatNum, a_configReportFileName);
 else
 
    fId = fopen(a_configReportFileName, 'r');
    if (fId == -1)
-      fprintf('ERROR: Error while opening file: %s\n', a_configReportFileName);
+      fprintf('ERROR: Float #%d: Error while opening file: %s\n', a_floatNum, a_configReportFileName);
       return
    end
    
@@ -283,10 +284,10 @@ o_confParamNames(idToDel) = [];
 o_confParamValues(idToDel) = [];
 
 if (length(o_confParamNames) ~= 104+(29*length(sensorList))+(nbSpecific))
-   fprintf('WARNING: Number of config parameters (%d) different from expected (%d)\n', ...
-      length(o_confParamNames), 104+(29*length(sensorList))+(nbSpecific));
+   fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
+      a_floatNum, length(o_confParamNames), 104+(29*length(sensorList))+(nbSpecific));
 else
-   fprintf('INFO: %d config parameters\n', length(o_confParamNames));
+   fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
 end
 
 % sort the configuration names

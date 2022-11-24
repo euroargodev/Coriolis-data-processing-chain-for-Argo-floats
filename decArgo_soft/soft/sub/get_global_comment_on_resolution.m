@@ -53,10 +53,10 @@ switch (a_decoderId)
       % Arvor-Deep-Ice Iridium 5.67
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210, 211, 212, 213, 214, 217, 219, 220}
+   case {205, 204, 210, 211, 212, 222, 213, 214, 217, 219, 220}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
-      % ARVOR-ARN-Ice Iridium
+      % ARVOR-ARN-Ice Iridium 5.45 & 5.47
       % PROVOR-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46

@@ -25,6 +25,9 @@ function [o_unusedVarargin, o_inputError] = init_config_values(a_varargin)
 o_unusedVarargin = [];
 o_inputError = 0;
 
+% mode processing flags
+global g_decArgo_realtimeFlag;
+
 % global configuration values
 global g_decArgo_floatListFileName;
 global g_decArgo_expectedCycleList;
@@ -52,6 +55,8 @@ global g_decArgo_dirOutputLogFile;
 global g_decArgo_dirOutputCsvFile;
 global g_decArgo_dirOutputXmlFile;
 global g_decArgo_dirOutputNetcdfFile;
+
+global g_decArgo_processRemainingBuffers;
 
 global g_decArgo_generateNcTraj;
 global g_decArgo_generateNcMultiProf;
@@ -123,6 +128,10 @@ configVar{end+1} = 'DIR_OUTPUT_LOG_FILE';
 configVar{end+1} = 'DIR_OUTPUT_CSV_FILE';
 configVar{end+1} = 'DIR_OUTPUT_XML_FILE';
 configVar{end+1} = 'DIR_OUTPUT_NETCDF_FILE';
+
+if (g_decArgo_realtimeFlag)
+   configVar{end+1} = 'PROCESS_REMAINING_BUFFERS';
+end
 
 configVar{end+1} = 'GENERATE_NC_TRAJ';
 configVar{end+1} = 'GENERATE_NC_MULTI_PROF';
@@ -220,6 +229,11 @@ if (o_inputError == 0)
    configVal(1) = [];
    g_decArgo_dirOutputNetcdfFile = configVal{1};
    configVal(1) = [];
+   
+   if (g_decArgo_realtimeFlag)
+      g_decArgo_processRemainingBuffers = str2num(configVal{1});
+      configVal(1) = [];
+   end
    
    g_decArgo_generateNcTraj = str2num(configVal{1});
    configVal(1) = [];

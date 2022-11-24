@@ -186,7 +186,7 @@ switch (a_decoderId)
       
       % set drift of float RTC
       floatClockDrift = 0;
-      
+
       % compute the main dates of the cycle
       [cycleStartDate, buoyancyRedStartDate, ...
          descentToParkStartDate, ...

@@ -33,7 +33,7 @@ switch (a_decoderId)
       % Provor, Seabird conductivity sensor
       o_wmoInstType = '841';
       
-   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 217}
+   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 222, 217}
       % Arvor, Seabird conductivity sensor
       o_wmoInstType = '844';
       

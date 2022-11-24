@@ -519,9 +519,9 @@ for idFloat = 1:length(floatList)
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
    if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}]))
       configDefaultFilename = [a_configDirName '/defaultConfiguration_v1.txt'];
-      [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList);
+      [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList, floatNum);
    else
-      [configParamNames, configParamValues] = read_conf_cmd_report_111_113(configReportFileName, sensorList);
+      [configParamNames, configParamValues] = read_conf_cmd_report_111_113(configReportFileName, sensorList, floatNum);
    end
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);

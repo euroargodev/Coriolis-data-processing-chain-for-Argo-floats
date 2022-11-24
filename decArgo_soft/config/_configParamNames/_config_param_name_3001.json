@@ -1,29 +1,13 @@
 {
    "CONF_PARAM_1" :
    {
-      "CONF_PARAM_DEC_ID" : "CONFIG_piston_counts_max",
-      "CONF_PARAM_LABEL" : "piston_max_count",
-      "CONF_PARAM_DEFINITION" : "Piston position at inflated oil bladder (for maximum depth)",
-      "CONF_PARAM_NAME" : "CONFIG_PistonFullRetraction_COUNT",
-      "CONF_PARAM_DESCRIPTION" : "- "
-   },
-   "CONF_PARAM_2" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_piston_counts_min",
-      "CONF_PARAM_LABEL" : "piston_min_count",
-      "CONF_PARAM_DEFINITION" : "Piston position at deflated oil bladder (for surface).",
-      "CONF_PARAM_NAME" : "CONFIG_PistonFullExtension_COUNT",
-      "CONF_PARAM_DESCRIPTION" : "- "
-   },
-   "CONF_PARAM_3" :
-   {
       "CONF_PARAM_DEC_ID" : "CONFIG_profile_pressure",
       "CONF_PARAM_LABEL" : "nominal_profile_depth or pressure_profile_depth",
       "CONF_PARAM_DEFINITION" : "Profile pressure in dbar/10",
       "CONF_PARAM_NAME" : "CONFIG_ProfilePressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "profile pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
-   "CONF_PARAM_4" :
+   "CONF_PARAM_2" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_parking_pressure",
       "CONF_PARAM_LABEL" : "nominal_drift_depth",
@@ -31,15 +15,7 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
-   "CONF_PARAM_5" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_transmission_time_max",
-      "CONF_PARAM_LABEL" : "transmission_time",
-      "CONF_PARAM_DEFINITION" : "Transmission time in minutes",
-      "CONF_PARAM_NAME" : "CONFIG_TransmissionMinTime_minutes",
-      "CONF_PARAM_DESCRIPTION" : "The time the float will remain on the surface transmitting its data at the end of each cycle. At lower latitudes you may wish to increase the value of this parameter to increase the probability of reception of all of your data."
-   },
-   "CONF_PARAM_6" :
+   "CONF_PARAM_3" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_parking_sample_interval",
       "CONF_PARAM_LABEL" : "parking_sample_time",
@@ -47,92 +23,12 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkSamplingPeriod_minutes",
       "CONF_PARAM_DESCRIPTION" : "specifies sampling period during the park phase, e.g. for APEX floats could be hourly or for ARVOR floats 12 hourly, for SOLO/SOLOII floats this definition is: P,T,S is sampled during drift (park) every CONFIG_ParkSamplingPeriod_hours, e.g. every 2 hours."
    },
-   "CONF_PARAM_7" :
+   "CONF_PARAM_4" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_mission_cycle_time",
       "CONF_PARAM_LABEL" : "cycle_time",
-      "CONF_PARAM_DEFINITION" : "Mission cycle time in minutes.",
-      "CONF_PARAM_NAME" : "CONFIG_CycleTime_minutes",
+      "CONF_PARAM_DEFINITION" : "Mission cycle time in hours.",
+      "CONF_PARAM_NAME" : "CONFIG_CycleTime_hours",
       "CONF_PARAM_DESCRIPTION" : "For APEX and ARVOR floats this is the total duration of one cycle, usually 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value."
-   },
-   "CONF_PARAM_8" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_descent_mode",
-      "CONF_PARAM_LABEL" : "descent_mode",
-      "CONF_PARAM_DEFINITION" : "Use last piston position until this profile number.",
-      "CONF_PARAM_NAME" : "CONFIG_ProfileWhereChangePistonPosition_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Use last piston position until this profile number"
-   },
-   "CONF_PARAM_9" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_profile_abortion",
-      "CONF_PARAM_LABEL" : "start_recovery",
-      "CONF_PARAM_DEFINITION" : "Enter recovery mode after this profile number.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_ProfileWhereEnterRecoveryMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Enter recovery mode after this profile number."
-   },
-   "CONF_PARAM_10" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_descent_speed",
-      "CONF_PARAM_LABEL" : "descent_speed",
-      "CONF_PARAM_DEFINITION" : "Descent speed during downcast in mm/s.",
-      "CONF_PARAM_NAME" : "CONFIG_DescentSpeed_mm/s",
-      "CONF_PARAM_DESCRIPTION" : "Descent speed during downcast (can be used to estimate the time to descent from parking pressure to profile pressure)"
-   },
-   "CONF_PARAM_11" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_ice_temperature",
-      "CONF_PARAM_LABEL" : "ice_detection_temperature_threshold",
-      "CONF_PARAM_DEFINITION" : "Ice temperature in [degree Cetsius/leS].",
-      "CONF_PARAM_NAME" : "CONFIG_IceDetection_degC",
-      "CONF_PARAM_DESCRIPTION" : "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
-   },
-   "CONF_PARAM_12" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_recovery_transmission",
-      "CONF_PARAM_LABEL" : "recovery_transmission",
-      "CONF_PARAM_DEFINITION" : "Maximum transmission time for recovery message in [minutes].",
-      "CONF_PARAM_NAME" : "CONFIG_TransmissionMaxTimeforRecoveryMessage_minutes",
-      "CONF_PARAM_DESCRIPTION" : "Maximum transmission time for recovery messages in [minutes]"
-   },
-   "CONF_PARAM_13" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_recovery_delay",
-      "CONF_PARAM_LABEL" : "recovery_no_transmission",
-      "CONF_PARAM_DEFINITION" : "Delay time between recovery messages in [minutes]",
-      "CONF_PARAM_NAME" : "CONFIG_TimeDelaybetweenRecoveryMessage_minutes",
-      "CONF_PARAM_DESCRIPTION" : "Delay time between recovery messages in [minutes]"
-   },
-   "CONF_PARAM_14" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_down_time",
-      "CONF_PARAM_LABEL" : "down_time",
-      "CONF_PARAM_DEFINITION" : "- ",
-      "CONF_PARAM_NAME" : "CONFIG_DownTime_minutes",
-      "CONF_PARAM_DESCRIPTION" : "preset duration of the down time (start of descent to start of ascent) - changed from : CONFIG_DownTimeInterval_hours and CONFIG_DownTimeOut"
-   },
-   "CONF_PARAM_15" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_up_time",
-      "CONF_PARAM_LABEL" : "up_time",
-      "CONF_PARAM_DEFINITION" : "- ",
-      "CONF_PARAM_NAME" : "CONFIG_UpTime_hours",
-      "CONF_PARAM_DESCRIPTION" : "preset duration of the 'up' time (start of ascent to start of descent) - changed from : CONFIG_UpTimeInterval_hours and CONFIG_UpTimeOut"
-   },
-   "CONF_PARAM_16" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_transmission_repetition_rate",
-      "CONF_PARAM_LABEL" : "transmission_repetition_rate",
-      "CONF_PARAM_DEFINITION" : "- ",
-      "CONF_PARAM_NAME" : "CONFIG_TransmissionRepetitionPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "transmission repetition rate, metadata for most floats - may be variable for two-way communication"
-   },
-   "CONF_PARAM_17" :
-   {
-      "CONF_PARAM_DEC_ID" : "CONFIG_max_departure_from_drift_depth",
-      "CONF_PARAM_LABEL" : "max_departure_from_drift_depth",
-      "CONF_PARAM_DEFINITION" : "- ",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_Unknown_Unknown",
-      "CONF_PARAM_DESCRIPTION" : "- "
    }
 }

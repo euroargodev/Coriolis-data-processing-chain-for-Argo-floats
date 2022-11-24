@@ -135,7 +135,7 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-   case {212, 214, 217}
+   case {212, 222, 214, 217}
       
       % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);
@@ -153,7 +153,7 @@ switch (a_decoderId)
          % if ice detection is used for at least one cycle, set ice float mandatory
          % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
          idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
-         if (a_decoderId == 212)
+         if (ismember(a_decoderId, [212, 222]))
             idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
          else
             idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX05_') == 1, 1);

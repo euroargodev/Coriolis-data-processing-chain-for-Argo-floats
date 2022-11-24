@@ -3,12 +3,13 @@
 %
 % SYNTAX :
 %  [o_confParamNames, o_confParamValues] = read_conf_cmd_report_105_to_110_112( ...
-%    a_configReportFileName, a_configDefaultFilename, a_sensorList)
+%    a_configReportFileName, a_configDefaultFilename, a_sensorList, a_floatNum)
 %
 % INPUT PARAMETERS :
-%   a_configReportFileName : predeployment configuration sheet file name
+%   a_configReportFileName  : predeployment configuration sheet file name
 %   a_configDefaultFilename : default configuration file name
-%   a_sensorList : list of the sensors mounted on the float
+%   a_sensorList            : list of the sensors mounted on the float
+%   a_floatNum              : float WMO number
 %
 % OUTPUT PARAMETERS :
 %   o_confParamNames  : configuration parameter names
@@ -23,7 +24,7 @@
 %   07/16/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_confParamNames, o_confParamValues] = read_conf_cmd_report_105_to_110_112( ...
-   a_configReportFileName, a_configDefaultFilename, a_sensorList)
+   a_configReportFileName, a_configDefaultFilename, a_sensorList, a_floatNum)
 
 % output parameters initialization
 o_confParamNames = [];
@@ -52,7 +53,7 @@ for id = 1:length(a_sensorList)
       case 'SUNA'
          sensorList = [sensorList 6];
       otherwise
-         fprintf('ERROR: Unknown sensor name %s\n', sensorName);
+         fprintf('ERROR: Float #%d: Unknown sensor name %s\n', a_floatNum, sensorName);
    end
 end
 sensorList = sort(sensorList);
@@ -118,7 +119,7 @@ end
 % read the default configuration file
 fId = fopen(a_configDefaultFilename, 'r');
 if (fId == -1)
-   fprintf('ERROR: Error while opening file: %s\n', a_configDefaultFilename);
+   fprintf('ERROR: Float #%d: Error while opening file: %s\n', a_floatNum, a_configDefaultFilename);
    return
 end
 
@@ -186,12 +187,12 @@ fclose(fId);
 
 % read the configuration file
 if ~(exist(a_configReportFileName, 'file') == 2)
-   fprintf('WARNING: Input file not found: %s => using the default configuration\n', a_configReportFileName);
+   fprintf('WARNING: Float #%d: Input file not found: %s => using the default configuration\n', a_floatNum, a_configReportFileName);
 else
    
    fId = fopen(a_configReportFileName, 'r');
    if (fId == -1)
-      fprintf('ERROR: Error while opening file: %s\n', a_configReportFileName);
+      fprintf('ERROR: Float #%d: Error while opening file: %s\n', a_floatNum, a_configReportFileName);
       return
    end
    
@@ -270,7 +271,7 @@ else
          if (~isempty(errmsg) || (count ~= 3))
             [val, count, errmsg, nextindex] = sscanf(line2, 'PARAM SENSOR Measure: Sensor No%d Specific parameter No%d Value: %f');
             if (~isempty(errmsg) || (count ~= 3))
-               fprintf('PARSING_WARNING: Cannot parse line #%d: %s\n', lineNum, line);
+               fprintf('PARSING_WARNING: Float #%d: Cannot parse line #%d: %s\n', a_floatNum, lineNum, line);
             else
                if (~ismember(val(1), sensorList))
                   continue
@@ -388,10 +389,10 @@ o_confParamNames(idToDel) = [];
 o_confParamValues(idToDel) = [];
 
 if (length(o_confParamNames) ~= 112+(49*length(sensorList))+(nbSpecific))
-   fprintf('WARNING: Number of config parameters (%d) different from expected (%d)\n', ...
-      length(o_confParamNames), 112+(49*length(sensorList))+(nbSpecific));
+   fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
+      a_floatNum, length(o_confParamNames), 112+(49*length(sensorList))+(nbSpecific));
 else
-   fprintf('INFO: %d config parameters\n', length(o_confParamNames));
+   fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
 end
 
 % sort the configuration names

@@ -17,7 +17,7 @@
 %    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
 %    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
 %    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-%    a_evAct, a_pumpAct, a_iceDetected, a_decoderId)
+%    a_evAct, a_pumpAct, a_iceDetected)
 %
 % INPUT PARAMETERS :
 %   a_cycleNum               : current cycle number
@@ -59,7 +59,6 @@
 %   a_evAct                  : decoded hydraulic (EV) data
 %   a_pumpAct                : decoded hydraulic (pump) data
 %   a_iceDetected            : ice detected flag
-%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -89,7 +88,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_
    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-   a_evAct, a_pumpAct, a_iceDetected, a_decoderId)
+   a_evAct, a_pumpAct, a_iceDetected)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -846,8 +845,8 @@ if (a_deepCycle == 1)
    if (~isempty(tabTech2) && (a_iceDetected == 0))
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temperature_204_to_214_217_219_220(tabTech2(16+ID_OFFSET));
+      pres = sensor_2_value_for_pressure_202_210_to_214_217_222(tabTech2(15+ID_OFFSET));
+      temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222(tabTech2(16+ID_OFFSET));
       psal = tabTech2(17+ID_OFFSET)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();

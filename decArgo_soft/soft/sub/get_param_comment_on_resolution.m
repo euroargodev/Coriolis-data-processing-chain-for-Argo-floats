@@ -501,9 +501,10 @@ switch (a_decoderId)
             
       end
       
-   case {210, 211, 212, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217}
       % ARVOR ARN Iridium
       % PROVOR ARN DO Iridium
+      % Provor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
       switch (a_paramName)

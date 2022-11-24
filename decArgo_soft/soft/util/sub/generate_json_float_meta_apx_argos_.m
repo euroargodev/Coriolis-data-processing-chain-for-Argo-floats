@@ -491,25 +491,25 @@ for idFloat = 1:length(floatList)
       end
    end
    
-   %    % we create all configuration from data base information
-   %    nbConfig = 1;
-   %    idFRepRate = find(strcmp(metaData(idForWmo, 5), 'REPETITION_RATE') == 1);
-   %    if (~isempty(idFRepRate))
-   %       repRate = str2num(metaData(idForWmo(idFRepRate), 4));
-   %       if (repRate > 1)
-   %          nbConfig = nbConfig + 1;
-   %          fprintf('Multi conf: %d\n', floatNum);
-   %       end
-   %    end
-   %    dpfFloat = 0;
-   %    idFDpf = find(strcmp(metaData(idForWmo, 5), 'DPF_FLOAT') == 1);
-   %    if (~isempty(idFDpf))
-   %       dpfFloat = str2num(metaData(idForWmo(idFDpf), 4));
-   %       if (dpfFloat == 1)
-   %          nbConfig = nbConfig + 1;
-   %          fprintf('DPF float: %d\n', floatNum);
-   %       end
-   %    end
+%       % we create all configuration from data base information
+%       nbConfig = 1;
+%       idFRepRate = find(strcmp(metaData(idForWmo, 5), 'REPETITION_RATE') == 1);
+%       if (~isempty(idFRepRate))
+%          repRate = str2num(metaData(idForWmo(idFRepRate), 4));
+%          if (repRate > 1)
+%             nbConfig = nbConfig + 1;
+%             fprintf('Multi conf: %d\n', floatNum);
+%          end
+%       end
+%       dpfFloat = 0;
+%       idFDpf = find(strcmp(metaData(idForWmo, 5), 'DPF_FLOAT') == 1);
+%       if (~isempty(idFDpf))
+%          dpfFloat = str2num(metaData(idForWmo(idFDpf), 4));
+%          if (dpfFloat == 1)
+%             nbConfig = nbConfig + 1;
+%             fprintf('DPF float: %d\n', floatNum);
+%          end
+%       end
 
    metaStruct.CONFIG_REPETITION_RATE = configRepRate;
    metaStruct.CONFIG_PARAMETER_VALUE = configParamVal;

@@ -31,9 +31,7 @@ global g_decArgo_outputCsvFileId;
 
 % configuration values
 global g_decArgo_dirOutputCsvFile;
-
-% RT processing flag
-global g_decArgo_realtimeFlag;
+global g_decArgo_processRemainingBuffers;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -124,8 +122,7 @@ for cyNum = cyNumList
    if (cyNum == cyNumList(end))
       if (tabCompleted(idForCy(1)) == 0)
          if (~any((tabPackType(idForCy) == 0) & (tabDeep(idForCy) == 0)))
-            if (~g_decArgo_realtimeFlag)
-               % processed with PI decoder
+            if (g_decArgo_processRemainingBuffers)
                tabGo(idForCy) = 2;
             else
                if ((now_utc-g_decArgo_janFirst1950InMatlab) > max(tabDate(idForCy)) + ONE_DAY)
@@ -171,7 +168,7 @@ for cyNum = cyNumList
       
       piDecStr = '';
       if (tabGo(idCy) == 2)
-         piDecStr = ' => DECODED WITH PI DECODER';
+         piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
       elseif (tabGo(idCy) == 3)
          piDecStr = ' => DECODED (TOO OLD)';
       end

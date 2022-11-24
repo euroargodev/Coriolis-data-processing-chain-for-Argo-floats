@@ -71,9 +71,7 @@ global g_decArgo_gpsData;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
-% to use virtual buffers instead of directories
-global g_decArgo_virtualBuff;
-g_decArgo_virtualBuff = 1;
+% for virtual buffers management
 global g_decArgo_spoolFileList;
 g_decArgo_spoolFileList = [];
 global g_decArgo_bufFileList;

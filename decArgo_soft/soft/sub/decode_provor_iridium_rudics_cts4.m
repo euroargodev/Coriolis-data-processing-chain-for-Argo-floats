@@ -80,6 +80,7 @@ global g_decArgo_dateDef;
 
 % decoder configuration values
 global g_decArgo_iridiumDataDirectory;
+global g_decArgo_processRemainingBuffers;
 
 % SBD sub-directories
 global g_decArgo_spoolDirectory;
@@ -708,7 +709,7 @@ if (~a_floatDmFlag)
             [okToProcess, cycleProfToProcess] = is_buffer_completed_ir_rudics_cts4_105_to_110_112;
             
             if ((okToProcess == 1) || ...
-                  ((g_decArgo_realtimeFlag == 0) && (idSpoolFile == length(tabAllFileDates))))
+                  (g_decArgo_processRemainingBuffers && (idSpoolFile == length(tabAllFileDates))))
                
                % process the 'new' files
                if (VERBOSE_MODE_BUFF == 1)

@@ -22,6 +22,7 @@ function generate_csv_meta(varargin)
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\deep_norway_6903557.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\5900A05_DBexport.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -319,7 +320,7 @@ o_sensorList = [];
 % get the list of sensors for this float
 switch a_decId
    
-   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211, 212}
+   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211, 212, 222}
       % CTD floats
       o_sensorList = [{'CTD'}];
       

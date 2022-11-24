@@ -124,7 +124,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {204, 205, 210, 211, 212, 219, 220}
+   case {204, 205, 210, 211, 212, 222, 219, 220}
 
       % Arvor Iridium
       % Arvor-C Iridium

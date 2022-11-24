@@ -2,12 +2,14 @@
 % Read and decode SBD data file.
 %
 % SYNTAX :
-%  [o_decodedData] = decode_sbd_file(a_sbdFileName, a_sbdFileDate, a_decoderId)
+%  [o_decodedData] = decode_sbd_file( ...
+%    a_sbdFileName, a_sbdFileDate, a_decoderId, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_sbdFileName : SBD file name
 %   a_sbdFileName : SBD file date
 %   a_decoderId   : float decoder Id
+%   a_launchDate  : float launch date
 %
 % OUTPUT PARAMETERS :
 %   o_decodedData : decoded data
@@ -20,7 +22,8 @@
 % RELEASES :
 %   12/17/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decodedData] = decode_sbd_file(a_sbdFileName, a_sbdFileDate, a_decoderId)
+function [o_decodedData] = decode_sbd_file( ...
+   a_sbdFileName, a_sbdFileDate, a_decoderId, a_launchDate)
 
 % output parameters initialization
 o_decodedData = [];
@@ -70,11 +73,11 @@ for idMsg = 1:size(sbdDataTab, 1)
    switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {212} % Arvor-ARN-Ice Iridium
+      case {212} % Arvor-ARN-Ice Iridium 5.45
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_212(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +87,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_214_217(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];         
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +95,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_216(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +103,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_218(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +111,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_221(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,6 +120,14 @@ for idMsg = 1:size(sbdDataTab, 1)
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_219_220(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate);
+         o_decodedData = [o_decodedData decodedData];
+         
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {222} % Arvor-ARN-Ice Iridium 5.47
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_222(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
       otherwise

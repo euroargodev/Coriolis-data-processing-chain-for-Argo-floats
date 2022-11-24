@@ -150,7 +150,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 13)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 13);
@@ -211,7 +211,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 10)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 10);
@@ -265,7 +265,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 7)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 7);
@@ -330,7 +330,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 21)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 21);
@@ -382,7 +382,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                       
+            
             measDate = ones(1, 16)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 16);
@@ -441,7 +441,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 16)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 16);
@@ -496,7 +496,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 11)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 11);
@@ -561,7 +561,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 7)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 7);
@@ -619,7 +619,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 3)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 3);
@@ -690,7 +690,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 21)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 21);
@@ -741,7 +741,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 16)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 16);
@@ -799,7 +799,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 21)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 21);
@@ -847,7 +847,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 16)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 16);
@@ -898,7 +898,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 21)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 21);
@@ -946,7 +946,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             measDate = ones(1, 16)*g_decArgo_dateDef;
             measDate(1) = epoch2000_2_julian(values(4));
             measDateTrans = zeros(1, 16);
@@ -997,7 +997,7 @@ switch (packType)
             cycleNum = values(1);
             profNum = values(2);
             phaseNum = values(3);
-                        
+            
             dataSUNAAPFDate = [cycleNum profNum phaseNum epoch2000_2_julian(values(4))];
             dataSUNAAPFDateTrans = [cycleNum profNum phaseNum 1];
             dataSUNAAPFCTDPres = [cycleNum profNum phaseNum double(typecast(uint32(values(5)), 'single'))];
@@ -1038,7 +1038,7 @@ switch (packType)
             decodedData.cyNumRaw = cycleNum;
             decodedData.profNumRaw = profNum;
             decodedData.phaseNumRaw = phaseNum;
-
+            
          case {46, 48}
             % SEAFET (mean & raw)
             
@@ -1137,7 +1137,7 @@ switch (packType)
             decodedData.cyNumRaw = cycleNum;
             decodedData.profNumRaw = profNum;
             decodedData.phaseNumRaw = phaseNum;
-
+            
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for sensor data type #%d\n', ...
                g_decArgo_floatNum, ...
@@ -1165,7 +1165,7 @@ switch (packType)
       cycleNum = values(7);
       profNum = values(8);
       phaseNum = -1;
-            
+      
       % packet date
       packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', values(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
@@ -1233,7 +1233,7 @@ switch (packType)
       cycleNum = values(3);
       profNum = values(4);
       phaseNum = values(5);
-            
+      
       % packet date
       packJulD = epoch2000_2_julian(values(6));
       
@@ -1304,7 +1304,7 @@ switch (packType)
          nbMeasAscZ4 = values(15);
          nbMeasAscZ5 = values(16);
          sensorState = values(17);
-                  
+         
          cyProfPhaseList = [250 sensorType cycleNum profNum -1 a_sbdFileDate];
          
          decodedData.cyProfPhaseList = cyProfPhaseList;
@@ -1433,7 +1433,7 @@ switch (packType)
                   measCoefLambda2A0 = get_double_from_little_endian(values(21:28));
                   measCoefLambda2A1 = get_double_from_little_endian(values(29:36));
                   measCoefLambda2Lm = typecast(uint32(swapbytes(uint32(values(37)))), 'single');
-
+                  
                   decData{17} = [cycleNum profNum measCoefLambda1A0];
                   decData{18} = [cycleNum profNum measCoefLambda1A1];
                   decData{19} = [cycleNum profNum measCoefLambda1Lm];
@@ -1456,7 +1456,7 @@ switch (packType)
                   measCoefParA0 = get_double_from_little_endian(values(21:28));
                   measCoefParA1 = get_double_from_little_endian(values(29:36));
                   measCoefParLm = typecast(uint32(swapbytes(uint32(values(37)))), 'single');
-
+                  
                   decData{17} = [cycleNum profNum nan];
                   decData{18} = [cycleNum profNum nan];
                   decData{19} = [cycleNum profNum nan];
@@ -1525,7 +1525,7 @@ switch (packType)
                % FLNTU or SEAFET
                
                if (ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
-      
+                  
                   % FLNTU
                   
                   % first item bit number
@@ -1702,7 +1702,7 @@ switch (packType)
       
       % decode and store data values
       cycleNum = values(1);
-            
+      
       for idBin = 1:19
          profNum = values(6*(idBin-1)+3);
          phaseNum = values(6*(idBin-1)+2);
@@ -1769,7 +1769,7 @@ switch (packType)
       cycleNum = values(9);
       profNum = values(10);
       phaseNum = values(13);
-            
+      
       % packet date
       packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', values(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
@@ -1838,7 +1838,7 @@ switch (packType)
       cycleNum = values(7);
       profNum = values(8);
       phaseNum = -1;
-            
+      
       % packet date
       packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', values(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
@@ -1875,7 +1875,7 @@ switch (packType)
       cycleNum = values(7);
       profNum = values(8);
       phaseNum = -1;
-            
+      
       % packet date
       packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', values(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
