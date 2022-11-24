@@ -1,0 +1,337 @@
+{
+   "ARGO_USER_MANUAL_VERSION" : "3.1", 
+   "PLATFORM_NUMBER" : "6902688", 
+   "PTT" : "150948", 
+   "IMEI" : "", 
+   "TRANS_SYSTEM" : [ 
+      {
+      "TRANS_SYSTEM_1" : "ARGOS"
+      }
+   ],
+   "TRANS_SYSTEM_ID" : [ 
+      {
+      "TRANS_SYSTEM_ID_1" : "2412"
+      }
+   ],
+   "TRANS_FREQUENCY" : [ 
+      {
+      "TRANS_FREQUENCY_1" : "401 653 000"
+      }
+   ],
+   "POSITIONING_SYSTEM" : [ 
+      {
+      "POSITIONING_SYSTEM_1" : "ARGOS"
+      }
+   ],
+   "PLATFORM_FAMILY" : "FLOAT", 
+   "PLATFORM_TYPE" : "ARVOR", 
+   "PLATFORM_MAKER" : "NKE", 
+   "FIRMWARE_VERSION" : "5605B05", 
+   "MANUAL_VERSION" : "33-16-026", 
+   "FLOAT_SERIAL_NO" : "OIN-15-AR-DO-02", 
+   "STANDARD_FORMAT_ID" : "102003", 
+   "DAC_FORMAT_ID" : "4.54", 
+   "WMO_INST_TYPE" : "844", 
+   "PROJECT_NAME" : "MOOSE", 
+   "DATA_CENTRE" : "IF", 
+   "PI_NAME" : "Laurent COPPOLA", 
+   "ANOMALY" : "", 
+   "BATTERY_TYPE" : "Lithium", 
+   "BATTERY_PACKS" : "2 WILPA1621A", 
+   "CONTROLLER_BOARD_TYPE_PRIMARY" : "I535", 
+   "CONTROLLER_BOARD_TYPE_SECONDARY" : "", 
+   "CONTROLLER_BOARD_SERIAL_NO_PRIMARY" : "C142455-0053", 
+   "CONTROLLER_BOARD_SERIAL_NO_SECONDARY" : "", 
+   "SPECIAL_FEATURES" : "", 
+   "FLOAT_OWNER" : "LOV", 
+   "OPERATING_INSTITUTION" : "Ifremer", 
+   "CUSTOMISATION" : "", 
+   "LAUNCH_DATE" : "21/05/2016 17:05:00", 
+   "LAUNCH_LATITUDE" : "43.4164", 
+   "LAUNCH_LONGITUDE" : "7.8659", 
+   "LAUNCH_QC" : "1", 
+   "START_DATE" : "22/05/2016 02:00:00", 
+   "START_DATE_QC" : "1", 
+   "STARTUP_DATE" : "", 
+   "STARTUP_DATE_QC" : "", 
+   "DEPLOYMENT_PLATFORM" : "ATALANTE", 
+   "DEPLOYMENT_CRUISE_ID" : "", 
+   "DEPLOYMENT_REFERENCE_STATION_ID" : "No", 
+   "END_MISSION_DATE" : "", 
+   "END_MISSION_STATUS" : "", 
+   "CONFIG_PARAMETER_NAME" : [ 
+      {
+      "CONFIG_PARAMETER_NAME_1" : "CONFIG_MC0_NumberOfCycles",
+      "CONFIG_PARAMETER_NAME_2" : "CONFIG_MC1_NbCyclesFirstMission",
+      "CONFIG_PARAMETER_NAME_3" : "CONFIG_MC2_CyclePeriod1",
+      "CONFIG_PARAMETER_NAME_4" : "CONFIG_MC3_CyclePeriod2",
+      "CONFIG_PARAMETER_NAME_5" : "CONFIG_MC002_CyclePeriod",
+      "CONFIG_PARAMETER_NAME_6" : "CONFIG_MC010_DriftDepth",
+      "CONFIG_PARAMETER_NAME_7" : "CONFIG_MC011_ProfileDepth",
+      "CONFIG_PARAMETER_NAME_8" : "CONFIG_MC4_ReferenceDay",
+      "CONFIG_PARAMETER_NAME_9" : "CONFIG_MC5_EstimatedSurfaceTime",
+      "CONFIG_PARAMETER_NAME_10" : "CONFIG_MC6_DelayBeforeMission",
+      "CONFIG_PARAMETER_NAME_11" : "CONFIG_MC7_DescentSamplingPeriod",
+      "CONFIG_PARAMETER_NAME_12" : "CONFIG_MC8_DriftSamplingPeriod",
+      "CONFIG_PARAMETER_NAME_13" : "CONFIG_MC9_AscentSamplingPeriod",
+      "CONFIG_PARAMETER_NAME_14" : "CONFIG_MC10_DriftDepth1",
+      "CONFIG_PARAMETER_NAME_15" : "CONFIG_MC11_ProfileDepth1",
+      "CONFIG_PARAMETER_NAME_16" : "CONFIG_MC12_DriftDepth2",
+      "CONFIG_PARAMETER_NAME_17" : "CONFIG_MC13_ProfileDepth2",
+      "CONFIG_PARAMETER_NAME_18" : "CONFIG_MC14_ThresholdSurfaceMiddlePressure",
+      "CONFIG_PARAMETER_NAME_19" : "CONFIG_MC15_ThresholdMiddleBottomPressure",
+      "CONFIG_PARAMETER_NAME_20" : "CONFIG_MC16_ThicknessOfTheSurfaceSlices",
+      "CONFIG_PARAMETER_NAME_21" : "CONFIG_MC17_ThicknessOfTheMiddleSlices",
+      "CONFIG_PARAMETER_NAME_22" : "CONFIG_MC18_ThicknessOfTheBottomSlices",
+      "CONFIG_PARAMETER_NAME_23" : "CONFIG_MC21_GroundingMode",
+      "CONFIG_PARAMETER_NAME_24" : "CONFIG_MC22_GroundingSwitchPressureAdjustment",
+      "CONFIG_PARAMETER_NAME_25" : "CONFIG_MC24_OptodeType",
+      "CONFIG_PARAMETER_NAME_26" : "CONFIG_AC0_ArgosTransmissionPeriod",
+      "CONFIG_PARAMETER_NAME_27" : "CONFIG_AC1_ArgosEolPeriod",
+      "CONFIG_PARAMETER_NAME_28" : "CONFIG_AC2_Retransmission",
+      "CONFIG_PARAMETER_NAME_29" : "CONFIG_AC3_ArgosTransmissionDuration",
+      "CONFIG_PARAMETER_NAME_30" : "CONFIG_AC6_PreludeDuration",
+      "CONFIG_PARAMETER_NAME_31" : "CONFIG_TC0_SurfaceValveMaxTimeAdditionalActions",
+      "CONFIG_PARAMETER_NAME_32" : "CONFIG_TC1_OilVolumeMaxPerValveAction",
+      "CONFIG_PARAMETER_NAME_33" : "CONFIG_TC2_PumpActionMaxTimeReposition",
+      "CONFIG_PARAMETER_NAME_34" : "CONFIG_TC3_PumpActionMaxTimeAscent",
+      "CONFIG_PARAMETER_NAME_35" : "CONFIG_TC4_PumpActionTimeBuoyancyAcquisition",
+      "CONFIG_PARAMETER_NAME_36" : "CONFIG_TC5_PressureTargetToleranceForStabilisation",
+      "CONFIG_PARAMETER_NAME_37" : "CONFIG_TC6_PressureMaxBeforeEmergencyAscent",
+      "CONFIG_PARAMETER_NAME_38" : "CONFIG_TC7_BuoyancyReductionFirstThreshold",
+      "CONFIG_PARAMETER_NAME_39" : "CONFIG_TC8_BuoyancyReductionSecondThreshold",
+      "CONFIG_PARAMETER_NAME_40" : "CONFIG_TC9_NumberOfOutOfTolerancePresBeforeReposition",
+      "CONFIG_PARAMETER_NAME_41" : "CONFIG_TC10_OilVolumeMinForGroundingDetection",
+      "CONFIG_PARAMETER_NAME_42" : "CONFIG_TC11_GroundingModeMinPresThreshold",
+      "CONFIG_PARAMETER_NAME_43" : "CONFIG_TC12_PressureTargetToleranceDuringDrift",
+      "CONFIG_PARAMETER_NAME_44" : "CONFIG_TC13_CTDPowerAcquisitionMode",
+      "CONFIG_PARAMETER_NAME_45" : "CONFIG_TC14_SecondProfilePressureRepetitionRate",
+      "CONFIG_PARAMETER_NAME_46" : "CONFIG_TC15_SecondProfilePressure",
+      "CONFIG_PARAMETER_NAME_47" : "CONFIG_TC16_AverageDescentSpeed",
+      "CONFIG_PARAMETER_NAME_48" : "CONFIG_TC17_ParkPressureIncrementBetweenCycles",
+      "CONFIG_PARAMETER_NAME_49" : "CONFIG_TC18_CTDPumpCutOffPressure",
+      "CONFIG_PARAMETER_NAME_50" : "CONFIG_TC20_EndOfAscentPressure",
+      "CONFIG_PARAMETER_NAME_51" : "CONFIG_TC21_AverageAscentSpeed",
+      "CONFIG_PARAMETER_NAME_52" : "CONFIG_TC22_PressureCheckPeriodDuringAscent",
+      "CONFIG_PARAMETER_NAME_53" : "CONFIG_TC23_MinPressureDiffForPumpAction",
+      "CONFIG_PARAMETER_NAME_54" : "CONFIG_TC26_DelayBeforeResetOffsetCmd",
+      "CONFIG_PARAMETER_NAME_55" : "CONFIG_TC27_InternalPressureCalibrationCoef1",
+      "CONFIG_PARAMETER_NAME_56" : "CONFIG_TC28_InternalPressureCalibrationCoef2",
+      "CONFIG_PARAMETER_NAME_57" : "CONFIG_PX0_Direction",
+      "CONFIG_PARAMETER_NAME_58" : "CONFIG_PX1_CtdCutOffPressure",
+      "CONFIG_PARAMETER_NAME_59" : "CONFIG_PX2_ProfileCutOffPressure"
+      }
+   ],
+   "CONFIG_PARAMETER_VALUE" : [ 
+      {
+      "CONFIG_PARAMETER_VALUE_1" : "500",
+      "CONFIG_PARAMETER_VALUE_2" : "500",
+      "CONFIG_PARAMETER_VALUE_3" : "5",
+      "CONFIG_PARAMETER_VALUE_4" : "5",
+      "CONFIG_PARAMETER_VALUE_5" : "5",
+      "CONFIG_PARAMETER_VALUE_6" : "1000",
+      "CONFIG_PARAMETER_VALUE_7" : "2000",
+      "CONFIG_PARAMETER_VALUE_8" : "2",
+      "CONFIG_PARAMETER_VALUE_9" : "6",
+      "CONFIG_PARAMETER_VALUE_10" : "0",
+      "CONFIG_PARAMETER_VALUE_11" : "0",
+      "CONFIG_PARAMETER_VALUE_12" : "12",
+      "CONFIG_PARAMETER_VALUE_13" : "10",
+      "CONFIG_PARAMETER_VALUE_14" : "1000",
+      "CONFIG_PARAMETER_VALUE_15" : "2000",
+      "CONFIG_PARAMETER_VALUE_16" : "1000",
+      "CONFIG_PARAMETER_VALUE_17" : "2000",
+      "CONFIG_PARAMETER_VALUE_18" : "10",
+      "CONFIG_PARAMETER_VALUE_19" : "200",
+      "CONFIG_PARAMETER_VALUE_20" : "1",
+      "CONFIG_PARAMETER_VALUE_21" : "10",
+      "CONFIG_PARAMETER_VALUE_22" : "25",
+      "CONFIG_PARAMETER_VALUE_23" : "0",
+      "CONFIG_PARAMETER_VALUE_24" : "100",
+      "CONFIG_PARAMETER_VALUE_25" : "1",
+      "CONFIG_PARAMETER_VALUE_26" : "40",
+      "CONFIG_PARAMETER_VALUE_27" : "100",
+      "CONFIG_PARAMETER_VALUE_28" : "32",
+      "CONFIG_PARAMETER_VALUE_29" : "10",
+      "CONFIG_PARAMETER_VALUE_30" : "180",
+      "CONFIG_PARAMETER_VALUE_31" : "800",
+      "CONFIG_PARAMETER_VALUE_32" : "11",
+      "CONFIG_PARAMETER_VALUE_33" : "290",
+      "CONFIG_PARAMETER_VALUE_34" : "720",
+      "CONFIG_PARAMETER_VALUE_35" : "24000",
+      "CONFIG_PARAMETER_VALUE_36" : "30",
+      "CONFIG_PARAMETER_VALUE_37" : "2100",
+      "CONFIG_PARAMETER_VALUE_38" : "1",
+      "CONFIG_PARAMETER_VALUE_39" : "7",
+      "CONFIG_PARAMETER_VALUE_40" : "2",
+      "CONFIG_PARAMETER_VALUE_41" : "36",
+      "CONFIG_PARAMETER_VALUE_42" : "200",
+      "CONFIG_PARAMETER_VALUE_43" : "50",
+      "CONFIG_PARAMETER_VALUE_44" : "1",
+      "CONFIG_PARAMETER_VALUE_45" : "1",
+      "CONFIG_PARAMETER_VALUE_46" : "2000",
+      "CONFIG_PARAMETER_VALUE_47" : "25",
+      "CONFIG_PARAMETER_VALUE_48" : "0",
+      "CONFIG_PARAMETER_VALUE_49" : "5",
+      "CONFIG_PARAMETER_VALUE_50" : "10",
+      "CONFIG_PARAMETER_VALUE_51" : "90",
+      "CONFIG_PARAMETER_VALUE_52" : "2",
+      "CONFIG_PARAMETER_VALUE_53" : "10",
+      "CONFIG_PARAMETER_VALUE_54" : "0",
+      "CONFIG_PARAMETER_VALUE_55" : "1.346",
+      "CONFIG_PARAMETER_VALUE_56" : "-33.16",
+      "CONFIG_PARAMETER_VALUE_57" : "1",
+      "CONFIG_PARAMETER_VALUE_58" : "5",
+      "CONFIG_PARAMETER_VALUE_59" : "5.5"
+      }
+   ],
+   "CONFIG_MISSION_NUMBER" : [ 
+   ],
+   "CONFIG_MISSION_COMMENT" : [ 
+   ],
+   "CONFIG_REPETITION_RATE" : [ 
+      {
+      "CONFIG_REPETITION_RATE_1" : "1"
+      }
+   ],
+   "SENSOR" : [ 
+      {
+      "SENSOR_1" : "CTD_PRES",
+      "SENSOR_2" : "CTD_TEMP",
+      "SENSOR_3" : "CTD_CNDC",
+      "SENSOR_4" : "OPTODE_DOXY"
+      }
+   ],
+   "SENSOR_MAKER" : [ 
+      {
+      "SENSOR_MAKER_1" : "SBE",
+      "SENSOR_MAKER_2" : "SBE",
+      "SENSOR_MAKER_3" : "SBE",
+      "SENSOR_MAKER_4" : "AANDERAA"
+      }
+   ],
+   "SENSOR_MODEL" : [ 
+      {
+      "SENSOR_MODEL_1" : "SBE41CP",
+      "SENSOR_MODEL_2" : "SBE41CP",
+      "SENSOR_MODEL_3" : "SBE41CP",
+      "SENSOR_MODEL_4" : "AANDERAA_OPTODE_4330   "
+      }
+   ],
+   "SENSOR_SERIAL_NO" : [ 
+      {
+      "SENSOR_SERIAL_NO_1" : "7961",
+      "SENSOR_SERIAL_NO_2" : "7961",
+      "SENSOR_SERIAL_NO_3" : "7961",
+      "SENSOR_SERIAL_NO_4" : "1145"
+      }
+   ],
+   "PARAMETER" : [ 
+      {
+      "PARAMETER_1" : "PRES",
+      "PARAMETER_2" : "TEMP",
+      "PARAMETER_3" : "PSAL",
+      "PARAMETER_4" : "DOXY",
+      "PARAMETER_5" : "TPHASE_DOXY",
+      "PARAMETER_6" : "PPOX_DOXY"
+      }
+   ],
+   "PREDEPLOYMENT_CALIB_EQUATION" : [ 
+      {
+      "PREDEPLOYMENT_CALIB_EQUATION_1" : "n/a",
+      "PREDEPLOYMENT_CALIB_EQUATION_2" : "n/a",
+      "PREDEPLOYMENT_CALIB_EQUATION_3" : "n/a",
+      "PREDEPLOYMENT_CALIB_EQUATION_4" : "n/a",
+      "PREDEPLOYMENT_CALIB_EQUATION_5" : "n/a",
+      "PREDEPLOYMENT_CALIB_EQUATION_6" : "n/a"
+      }
+   ],
+   "PREDEPLOYMENT_CALIB_COEFFICIENT" : [ 
+      {
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_1" : "n/a",
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_2" : "n/a",
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_3" : "n/a",
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_4" : "n/a",
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_5" : "n/a",
+      "PREDEPLOYMENT_CALIB_COEFFICIENT_6" : "n/a"
+      }
+   ],
+   "PREDEPLOYMENT_CALIB_COMMENT" : [ 
+      {
+      "PREDEPLOYMENT_CALIB_COMMENT_1" : "",
+      "PREDEPLOYMENT_CALIB_COMMENT_2" : "",
+      "PREDEPLOYMENT_CALIB_COMMENT_3" : "",
+      "PREDEPLOYMENT_CALIB_COMMENT_4" : "",
+      "PREDEPLOYMENT_CALIB_COMMENT_5" : "",
+      "PREDEPLOYMENT_CALIB_COMMENT_6" : ""
+      }
+   ],
+   "CALIBRATION_COEFFICIENT" : [ 
+      {
+      "OPTODE" :
+         {
+            "SVUFoilCoef0" : 0.00302235,
+            "SVUFoilCoef1" : 0.000128093,
+            "SVUFoilCoef2" : 0.00000247372,
+            "SVUFoilCoef3" : 233.167,
+            "SVUFoilCoef4" : -0.37125,
+            "SVUFoilCoef5" : -57.0938,
+            "SVUFoilCoef6" : 4.5321,
+            "PhaseCoef0" : 0,
+            "PhaseCoef1" : 1,
+            "PhaseCoef2" : 0,
+            "PhaseCoef3" : 0
+         }
+      }
+   ],
+   "CALIB_RT_PARAMETER" : [ 
+   ],
+   "CALIB_RT_EQUATION" : [ 
+   ],
+   "CALIB_RT_COEFFICIENT" : [ 
+   ],
+   "CALIB_RT_COMMENT" : [ 
+   ],
+   "CALIB_RT_DATE" : [ 
+   ],
+   "PARAMETER_SENSOR" : [ 
+      {
+      "PARAMETER_SENSOR_1" : "CTD_PRES",
+      "PARAMETER_SENSOR_2" : "CTD_TEMP",
+      "PARAMETER_SENSOR_3" : "CTD_CNDC",
+      "PARAMETER_SENSOR_4" : "OPTODE_DOXY",
+      "PARAMETER_SENSOR_5" : "OPTODE_DOXY",
+      "PARAMETER_SENSOR_6" : "OPTODE_DOXY"
+      }
+   ],
+   "PARAMETER_UNITS" : [ 
+      {
+      "PARAMETER_UNITS_1" : "decibar",
+      "PARAMETER_UNITS_2" : "degree_Celsius",
+      "PARAMETER_UNITS_3" : "psu",
+      "PARAMETER_UNITS_4" : "micromole/kg",
+      "PARAMETER_UNITS_5" : "degree",
+      "PARAMETER_UNITS_6" : "millibar"
+      }
+   ],
+   "PARAMETER_ACCURACY" : [ 
+      {
+      "PARAMETER_ACCURACY_1" : "2.4",
+      "PARAMETER_ACCURACY_2" : "0.002",
+      "PARAMETER_ACCURACY_3" : "0.005",
+      "PARAMETER_ACCURACY_4" : "0.1",
+      "PARAMETER_ACCURACY_5" : "",
+      "PARAMETER_ACCURACY_6" : ""
+      }
+   ],
+   "PARAMETER_RESOLUTION" : [ 
+      {
+      "PARAMETER_RESOLUTION_1" : "0.1",
+      "PARAMETER_RESOLUTION_2" : "0.001",
+      "PARAMETER_RESOLUTION_3" : "0.001",
+      "PARAMETER_RESOLUTION_4" : "0.001",
+      "PARAMETER_RESOLUTION_5" : "",
+      "PARAMETER_RESOLUTION_6" : ""
+      }
+   ]
+}

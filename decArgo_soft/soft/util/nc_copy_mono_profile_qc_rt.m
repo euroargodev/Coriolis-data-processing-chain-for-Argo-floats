@@ -62,6 +62,15 @@
 %                             copied from input Qc file  ones.
 %   10/20/2015 - RNU - V 2.9: when a D c-file to be updated is found, the
 %                             associated b-file can be in D or in R mode.
+%   07/11/2016 - RNU - V 3.0: new management of HISTORY information:
+%                             - existing HISTORY information of input files is
+%                             kept
+%                             - HISTORY information of QC file (reporting
+%                             Coriolis SCOOP tool actions) is copied in 'c'
+%                             or 'b' files (according to HISTORY_PARAMETER
+%                             information)
+%                             - a last HISTORY step is added to report the use
+%                             of the current tool (COCQ)
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_qc_rt(varargin)
 
@@ -79,7 +88,7 @@ g_cocq_realtimeFlag = 1;
 
 % program version
 global g_cocq_ncCopyMonoProfileQcVersion;
-g_cocq_ncCopyMonoProfileQcVersion = '2.9';
+g_cocq_ncCopyMonoProfileQcVersion = '3.0';
 
 % DOM node of XML report
 global g_cocq_xmlReportDOMNode;
@@ -89,20 +98,20 @@ global g_cocq_reportData;
 g_cocq_reportData = [];
 
 % top directory of input NetCDF files containing the Qc values
-DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20151120\in\';
+DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\dbqc\';
 
 % top directory of input NetCDF files to be updated (executive DAC, thus top
 % directory of the DAC name directories)
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20151120\ref\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\edac\';
 
 % top directory of output NetCDF updated files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20151120\out\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\out\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % directory to store the xml report
-DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
+DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
 
 % default values initialization
 init_default_values;
@@ -290,6 +299,7 @@ if (exist(DIR_OUTPUT_NC_FILES, 'dir') == 7)
 end
 if (exist(DIR_INPUT_NC_FILES, 'dir') == 7)
    % check the sub-directories of the executive DAC
+   % there is one directory for each DAC (with the name of the DAC)
    dirNames = dir(DIR_INPUT_NC_FILES);
    for idDir = 1:length(dirNames)
       dirName = dirNames(idDir).name;
@@ -341,31 +351,41 @@ for idFloat = 1:nbFloats
       for idDir = 1:length(inputDirList)
          filePathName = [inputDirList{idDir} subPath 'D' inputProfFileName];
          if (exist(filePathName, 'file') == 2)
-            inputProfCFilePathName = filePathName;
+            if (isempty(inputProfCFilePathName))
+               inputProfCFilePathName = filePathName;
+            end
             filePathName = [inputDirList{idDir} subPath 'BD' inputProfFileName];
             if (exist(filePathName, 'file') == 2)
-               inputProfBFilePathName = filePathName;
+               if (isempty(inputProfBFilePathName))
+                  inputProfBFilePathName = filePathName;
+               end
             else
                filePathName = [inputDirList{idDir} subPath 'BR' inputProfFileName];
                if (exist(filePathName, 'file') == 2)
-                  inputProfBFilePathName = filePathName;
-               end
-            end
-            break;
-         else
-            filePathName = [inputDirList{idDir} subPath 'R' inputProfFileName];
-            if (exist(filePathName, 'file') == 2)
-               inputProfCFilePathName = filePathName;
-               filePathName = [inputDirList{idDir} subPath 'BD' inputProfFileName];
-               if (exist(filePathName, 'file') == 2)
-                  inputProfBFilePathName = filePathName;
-               else
-                  filePathName = [inputDirList{idDir} subPath 'BR' inputProfFileName];
-                  if (exist(filePathName, 'file') == 2)
+                  if (isempty(inputProfBFilePathName))
                      inputProfBFilePathName = filePathName;
                   end
                end
-               break;
+            end
+         else
+            filePathName = [inputDirList{idDir} subPath 'R' inputProfFileName];
+            if (exist(filePathName, 'file') == 2)
+               if (isempty(inputProfCFilePathName))
+                  inputProfCFilePathName = filePathName;
+               end
+               filePathName = [inputDirList{idDir} subPath 'BD' inputProfFileName];
+               if (exist(filePathName, 'file') == 2)
+                  if (isempty(inputProfBFilePathName))
+                     inputProfBFilePathName = filePathName;
+                  end
+               else
+                  filePathName = [inputDirList{idDir} subPath 'BR' inputProfFileName];
+                  if (exist(filePathName, 'file') == 2)
+                     if (isempty(inputProfBFilePathName))
+                        inputProfBFilePathName = filePathName;
+                     end
+                  end
+               end
             end
          end
       end
@@ -517,7 +537,8 @@ for idFloat = 1:nbFloats
       if (~isempty(bDataIdInput))
          bDataIdInputFinal = bDataIdInput{profNumToUpdate};
       end
-      [ok] = nc_update_file(qcProfFilePathName, ...
+      [ok, updatedCFile, updatedBFile] = ...
+         nc_update_file(qcProfFilePathName, ...
          outputProfCFilePathName, outputProfBFilePathName, profNumToUpdate, ...
          cDataIdQc{:}, bDataIdQc{:}, cDataIdInput{profNumToUpdate}, bDataIdInputFinal, ...
          paramListQc);
@@ -525,36 +546,41 @@ for idFloat = 1:nbFloats
       if (ok == 1)
          % if the update succeeded move the file(s) in the DIR_OUTPUT_NC_FILES
          % directory
-         % create the directory
-         if ~(exist([DIR_OUTPUT_NC_FILES subPath], 'dir') == 7)
-            mkdir([DIR_OUTPUT_NC_FILES subPath]);
-         end
-         [~, fileName, fileExtension] = fileparts(outputProfCFilePathName);
-         finalOutputProfCFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
-         movefile(outputProfCFilePathName, finalOutputProfCFilePathName);
-         
-         if (~isempty(outputProfBFilePathName))
-            [~, fileName, fileExtension] = fileparts(outputProfBFilePathName);
-            finalOutputProfBFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
-            movefile(outputProfBFilePathName, finalOutputProfBFilePathName);
-         end
-         
-         fprintf('INFO: Qc file contents successfully reported into prof #%d of c file [Qc file: %s] [c file: %s]\n', ...
-            profNumToUpdate, qcProfFilePathName, finalOutputProfCFilePathName);
-         
-         if (g_cocq_realtimeFlag == 1)
-            g_cocq_reportStruct.input_ok = [g_cocq_reportStruct.input_ok {qcProfFilePathName}];
-            g_cocq_reportStruct.output_ok = [g_cocq_reportStruct.output_ok {finalOutputProfCFilePathName}];
-            g_cocq_reportStruct.profNum_ok = [g_cocq_reportStruct.profNum_ok {profNumToUpdate}];
-         end
-         if (~isempty(outputProfBFilePathName))
-            fprintf('INFO: Qc file contents successfully reported into prof #%d of b file [Qc file: %s] [b file: %s]\n', ...
-               profNumToUpdate, qcProfFilePathName, finalOutputProfBFilePathName);
+         if ((updatedCFile == 1) || (updatedBFile == 1))
             
-            if (g_cocq_realtimeFlag == 1)
-               g_cocq_reportStruct.input_ok = [g_cocq_reportStruct.input_ok {qcProfFilePathName}];
-               g_cocq_reportStruct.output_ok = [g_cocq_reportStruct.output_ok {finalOutputProfBFilePathName}];
-               g_cocq_reportStruct.profNum_ok = [g_cocq_reportStruct.profNum_ok {profNumToUpdate}];
+            % create the directory
+            if ~(exist([DIR_OUTPUT_NC_FILES subPath], 'dir') == 7)
+               mkdir([DIR_OUTPUT_NC_FILES subPath]);
+            end
+            
+            if (updatedCFile == 1)
+               [~, fileName, fileExtension] = fileparts(outputProfCFilePathName);
+               finalOutputProfCFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
+               movefile(outputProfCFilePathName, finalOutputProfCFilePathName);
+               
+               fprintf('INFO: Qc file contents successfully reported into prof #%d of c file [Qc file: %s] [c file: %s]\n', ...
+                  profNumToUpdate, qcProfFilePathName, finalOutputProfCFilePathName);
+               
+               if (g_cocq_realtimeFlag == 1)
+                  g_cocq_reportStruct.input_ok = [g_cocq_reportStruct.input_ok {qcProfFilePathName}];
+                  g_cocq_reportStruct.output_ok = [g_cocq_reportStruct.output_ok {finalOutputProfCFilePathName}];
+                  g_cocq_reportStruct.profNum_ok = [g_cocq_reportStruct.profNum_ok {profNumToUpdate}];
+               end
+            end
+            
+            if (updatedBFile == 1)
+               [~, fileName, fileExtension] = fileparts(outputProfBFilePathName);
+               finalOutputProfBFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
+               movefile(outputProfBFilePathName, finalOutputProfBFilePathName);
+               
+               fprintf('INFO: Qc file contents successfully reported into prof #%d of b file [Qc file: %s] [b file: %s]\n', ...
+                  profNumToUpdate, qcProfFilePathName, finalOutputProfBFilePathName);
+               
+               if (g_cocq_realtimeFlag == 1)
+                  g_cocq_reportStruct.input_ok = [g_cocq_reportStruct.input_ok {qcProfFilePathName}];
+                  g_cocq_reportStruct.output_ok = [g_cocq_reportStruct.output_ok {finalOutputProfBFilePathName}];
+                  g_cocq_reportStruct.profNum_ok = [g_cocq_reportStruct.profNum_ok {profNumToUpdate}];
+               end
             end
          end
       else
@@ -856,7 +882,8 @@ return;
 % exists).
 %
 % SYNTAX :
-%  [o_ok] = nc_update_file(a_qcFileName, ...
+%  [o_ok, o_outputCFileName, o_outputBFileName] = ...
+%    nc_update_file(a_qcFileName, ...
 %    a_outputCFileName, a_outputBFileName, a_profNumToUpdate, ...
 %    a_qcCDataId, a_qcBDataId, a_outputCDataId, a_outputBDataId, o_paramListQc)
 %
@@ -872,7 +899,9 @@ return;
 %   o_paramListQc     : list of Qc file parameter names
 %
 % OUTPUT PARAMETERS :
-%   o_ok : success flag (1 if Ok, 0 otherwise)
+%   o_ok           : success flag (1 if Ok, 0 otherwise)
+%   o_updatedCFile : updated c file flag
+%   o_updatedBFile : updated b file flag
 %
 % EXAMPLES :
 %
@@ -882,12 +911,15 @@ return;
 % RELEASES :
 %   07/18/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = nc_update_file(a_qcFileName, ...
+function [o_ok, o_updatedCFile, o_updatedBFile] = ...
+   nc_update_file(a_qcFileName, ...
    a_outputCFileName, a_outputBFileName, a_profNumToUpdate, ...
    a_qcCDataId, a_qcBDataId, a_outputCDataId, a_outputBDataId, o_paramListQc)
 
 % output parameters initialization
 o_ok = 0;
+o_updatedCFile = 0;
+o_updatedBFile = 0;
 
 % program version
 global g_cocq_ncCopyMonoProfileQcVersion;
@@ -926,7 +958,7 @@ for idParam = 1:length(o_paramListQc)
       ];
 end
 [qcData] = get_data_from_nc_file(a_qcFileName, wantedQcVars);
-
+                  
 % update output c and b files
 
 profPos = a_profNumToUpdate-1;
@@ -980,7 +1012,7 @@ for idType = 1:2
          end
       end
    end
-   
+
    % update JULD_QC
    idVal = find(strcmp('JULD_QC', qcData) == 1, 1);
    qcJuldQc = qcData{idVal+1};
@@ -990,13 +1022,14 @@ for idType = 1:2
    idVal = find(strcmp('POSITION_QC', qcData) == 1, 1);
    qcPositionQc = qcData{idVal+1};
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'POSITION_QC'), profPos, 1, qcPositionQc);
-   
+      
    % update profile and parameter Qc
    sufixList = [{'_QC'} {'_ADJUSTED_QC'}];
    for idParam = 1:length(o_paramListQc)
       paramNamePrefix = o_paramListQc{idParam};
-            
+      
       for idS = 1:length(sufixList)
+         
          paramName = [paramNamePrefix sufixList{idS}];
          
          if (var_is_present(fCdf, paramName))
@@ -1049,84 +1082,138 @@ for idType = 1:2
       end
    end
    
-   % copy HISTORY information in c output file
-   nHistory = 0;
-   histoItemList = [ ...
-      {'HISTORY_INSTITUTION'} ...
-      {'HISTORY_STEP'} ...
-      {'HISTORY_SOFTWARE'} ...
-      {'HISTORY_SOFTWARE_RELEASE'} ...
-      {'HISTORY_REFERENCE'} ...
-      {'HISTORY_DATE'} ...
-      {'HISTORY_ACTION'} ...
-      {'HISTORY_PARAMETER'} ...
-      {'HISTORY_QCTEST'} ...
-      ];
-   for idHI = 1:length(histoItemList)
-      histoItemParamName = histoItemList{idHI};
-      
-      idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
-      inputValue = qcData{idVal+1};
-      
-      if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
-         % been seen for unknown reason) the variables are not present in the
-         % input Qc file
-         [~, ~, nHistory] = size(inputValue);
-         for idHisto = 1:nHistory
-            data = inputValue(:, 1, idHisto)';
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
-               fliplr([idHisto-1 profPos 0]), ...
-               fliplr([1 1 length(data)]), data');
-         end
-      end
+   % retrieve the current HISTORY Id of the output file
+   currentHistoId = 0;
+   outputHistoryInstitution = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'));
+   if (~isempty(outputHistoryInstitution))
+      currentHistoId = size(outputHistoryInstitution, 3);
    end
    
-   histoItemList = [ ...
-      {'HISTORY_START_PRES'} ...
-      {'HISTORY_STOP_PRES'} ...
-      {'HISTORY_PREVIOUS_VALUE'} ...
-      ];
-   for idHI = 1:length(histoItemList)
-      histoItemParamName = histoItemList{idHI};
+   % copy HISTORY information from QC file to c or b output file depending on
+   % concerned parameter
+   idF = find(strcmp('HISTORY_PARAMETER', qcData) == 1, 1);
+   historyParameter = qcData{idF+1};
+   for idHistory = 1:size(historyParameter, 3)
+      for idProf = 1:size(historyParameter, 2) % size(historyParameter, 2) = 1 (only one Coriolis 'station' is concerned by the Qc reported in each file)
+         paramName = historyParameter(:, idProf, idHistory)';
+         paramName = strtrim(paramName);
+         if (~isempty(paramName))
+            
+            % use HISTORY_PARAMETER to decide if output file HISTORY information
+            % should be updated
+            copyHistory = 0;
+            if (strcmp(paramName, 'DAT$') || strcmp(paramName, 'POS$'))
+               % if JULD_QC has been modified, it is reported in HISTORY
+               % information through HISTORY_PARAMETER='DAT$'
+               % if POSITION_QC has been modified, it is reported in HISTORY
+               % information through HISTORY_PARAMETER='POS$'
+               copyHistory = 1;
+            else
+               paramInfo = get_netcdf_param_attributes(paramName);
+               if (((paramInfo.paramType == 'c') && (idType == 1)) || ...
+                     ((paramInfo.paramType ~= 'c') && (idType == 2)))
+                  copyHistory = 1;
+               end
+            end
       
-      idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
-      inputValue = qcData{idVal+1};
-      
-      if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
-         % been seen for unknown reason) the variables are not present in the
-         % input Qc file
-         [~, nHistory] = size(inputValue);
-         for idHisto = 1:nHistory
-            data = inputValue(1, idHisto);
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
-               fliplr([idHisto-1 profPos]), ...
-               fliplr([1 1]), data);
+            % update output file HISTORY information
+            if (copyHistory == 1)
+               
+               % the current output file should be updated
+               histoItemList = [ ...
+                  {'HISTORY_INSTITUTION'} ...
+                  {'HISTORY_STEP'} ...
+                  {'HISTORY_SOFTWARE'} ...
+                  {'HISTORY_SOFTWARE_RELEASE'} ...
+                  {'HISTORY_REFERENCE'} ...
+                  {'HISTORY_DATE'} ...
+                  {'HISTORY_ACTION'} ...
+                  {'HISTORY_PARAMETER'} ...
+                  {'HISTORY_QCTEST'} ...
+                  ];
+               for idHI = 1:length(histoItemList)
+                  histoItemParamName = histoItemList{idHI};
+                  
+                  idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
+                  inputValue = qcData{idVal+1};
+                  if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
+                     % been seen for unknown reason) the variables are not present in the
+                     % input Qc file
+                     data = inputValue(:, idProf, idHistory)';
+                     data = strtrim(data);
+                     if (~isempty(data))
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
+                           fliplr([currentHistoId profPos 0]), ...
+                           fliplr([1 1 length(data)]), data');
+                     end
+                  end
+               end
+               
+               histoItemList = [ ...
+                  {'HISTORY_START_PRES'} ...
+                  {'HISTORY_STOP_PRES'} ...
+                  {'HISTORY_PREVIOUS_VALUE'} ...
+                  ];
+               for idHI = 1:length(histoItemList)
+                  histoItemParamName = histoItemList{idHI};
+                  
+                  idVal = find(strcmp(histoItemParamName, qcData) == 1, 1);
+                  inputValue = qcData{idVal+1};
+                  if (~isempty(inputValue)) % if N_HISTORY = 0 (should not happen but has
+                     % been seen for unknown reason) the variables are not present in the
+                     % input Qc file
+                     data = inputValue(idProf, idHistory);
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, histoItemParamName), ...
+                        fliplr([currentHistoId profPos]), ...
+                        fliplr([1 1]), data);
+                  end
+               end
+               currentHistoId = currentHistoId + 1;
+               
+               if (idType == 1)
+                  o_updatedCFile = 1;
+               else
+                  o_updatedBFile = 1;
+               end
+            end
          end
       end
    end
    
    % add history information that concerns the current program
-   currentHistoId = nHistory;
-   dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
-   value = 'IF';
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-      fliplr([currentHistoId profPos 0]), ...
-      fliplr([1 1 length(value)]), value');
-   value = 'COCQ';
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-      fliplr([currentHistoId profPos 0]), ...
-      fliplr([1 1 length(value)]), value');
-   value = g_cocq_ncCopyMonoProfileQcVersion;
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-      fliplr([currentHistoId profPos 0]), ...
-      fliplr([1 1 length(value)]), value');
-   value = dateUpdate;
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-      fliplr([currentHistoId profPos 0]), ...
-      fliplr([1 1 length(value)]), value');
-   
-   % update the update date of the Output file
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+   if (((idType == 1) && (o_updatedCFile == 1)) || ...
+         ((idType == 2) && (o_updatedBFile == 1)))
+      
+      dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
+      value = 'IF';
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+         fliplr([currentHistoId profPos 0]), ...
+         fliplr([1 1 length(value)]), value');
+      value = 'COCQ';
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+         fliplr([currentHistoId profPos 0]), ...
+         fliplr([1 1 length(value)]), value');
+      value = g_cocq_ncCopyMonoProfileQcVersion;
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+         fliplr([currentHistoId profPos 0]), ...
+         fliplr([1 1 length(value)]), value');
+      value = dateUpdate;
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+         fliplr([currentHistoId profPos 0]), ...
+         fliplr([1 1 length(value)]), value');
+      
+      % update the update date of the Output file
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+      
+      % update the 'history' global attribute of the Output file
+      creationDate = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
+      globalHistoryText = [ ...
+         datestr(datenum(creationDate', 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; ' ...
+         datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COCQ (V' num2str(g_cocq_ncCopyMonoProfileQcVersion) ') tool)'];
+      netcdf.reDef(fCdf);
+      netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), 'history', globalHistoryText);
+      netcdf.endDef(fCdf);
+   end
    
    netcdf.close(fCdf);
 end

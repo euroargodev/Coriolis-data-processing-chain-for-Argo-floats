@@ -1,0 +1,17 @@
+{
+   "WMO" : "3901850",
+   "PTT" : "xxxxxxxxxxxxxxx",
+   "FLOAT_TYPE" : "PROVOR",
+   "DECODER_VERSION" : "5.43",
+   "DECODER_ID" : "210",
+   "FRAME_LENGTH" : "-1",
+   "CYCLE_LENGTH" : "240",
+   "DRIFT_SAMPLING_PERIOD" : "12",
+   "DELAI" : "-1",
+   "LAUNCH_DATE" : "20160624164500",
+   "LAUNCH_LON" : "12.235",
+   "LAUNCH_LAT" : "73.507",
+   "END_DECODING_DATE" : "99999999999999",
+   "REFERENCE_DAY" : "20160624",
+   "DM_FLAG" : "0"
+}
