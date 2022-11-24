@@ -34,6 +34,9 @@ global g_decArgo_filePrefixCts5;
 % mode processing flags
 global g_decArgo_realtimeFlag;
 
+% list of CTS5 files
+global g_decArgo_provorCts5UseaFileTypeList;
+
 
 if (g_decArgo_realtimeFlag == 1)
    return
@@ -51,25 +54,7 @@ fileDir = [iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/archive/'];
 g_decArgo_filePrefixCts5 = get_file_prefix_cts5(fileDir);
 
 % type of files to consider
-fileTypeList = [ ...
-   {'*_apmt*.ini'} ...
-   {'*_autotest_*.txt'} ...
-   {'*_technical*.txt'} ...
-   {'*_default_*.txt'} ...
-   {'*_sbe41*.hex'} ...
-   {'*_payload*.bin'} ...
-   {'*_metadata*.xml'} ... % CTS5-USEA
-   {'*_do*.hex'} ... % CTS5-USEA
-   {'*_eco*.hex'} ... % CTS5-USEA
-   {'*_ocr*.hex'} ... % CTS5-USEA
-   {'*_opus_blk*.hex'} ... % CTS5-USEA
-   {'*_opus_lgt*.hex'} ... % CTS5-USEA
-   {'*_uvp6_blk*.hex'} ... % CTS5-USEA
-   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA
-   {'*_crover*.hex'} ... % CTS5-USEA
-   {'*_sbeph*.hex'} ... % CTS5-USEA
-   {'*_suna*.hex'} ... % CTS5-USEA
-   ];
+fileTypeList = g_decArgo_provorCts5UseaFileTypeList;
 
 fileDir = [iriDirName '/' a_floatLoginName '_' num2str(a_floatNum) '/archive/'];
 existingCycles = [];

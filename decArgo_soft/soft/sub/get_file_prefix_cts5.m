@@ -23,27 +23,12 @@ function [o_filePrefix] = get_file_prefix_cts5(a_dirName)
 % output parameters initialization
 o_filePrefix = [];
 
+% list of CTS5 files
+global g_decArgo_provorCts5UseaFileTypeList;
+
 
 % type of files to consider
-fileTypeList = [ ...
-   {'*_apmt*.ini'} ...
-   {'*_autotest_*.txt'} ...
-   {'*_technical*.txt'} ...
-   {'*_default_*.txt'} ...
-   {'*_sbe41*.hex'} ...
-   {'*_payload*.bin'} ...
-   {'*_metadata*.xml'} ... % CTS5-USEA
-   {'*_do*.hex'} ... % CTS5-USEA
-   {'*_eco*.hex'} ... % CTS5-USEA
-   {'*_ocr*.hex'} ... % CTS5-USEA
-   {'*_opus_blk*.hex'} ... % CTS5-USEA
-   {'*_opus_lgt*.hex'} ... % CTS5-USEA
-   {'*_uvp6_blk*.hex'} ... % CTS5-USEA
-   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA
-   {'*_crover*.hex'} ... % CTS5-USEA
-   {'*_sbeph*.hex'} ... % CTS5-USEA
-   {'*_suna*.hex'} ... % CTS5-USEA
-   ];
+fileTypeList = g_decArgo_provorCts5UseaFileTypeList;
 
 fileNamePrefix = [];
 for idType = 1:length(fileTypeList)

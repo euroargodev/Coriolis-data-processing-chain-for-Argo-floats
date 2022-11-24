@@ -28,30 +28,12 @@ global g_decArgo_janFirst1950InMatlab;
 % default values initialization
 init_default_values;
 
+% list of CTS5 files
+global g_decArgo_provorCts5UseaFileTypeListCopy;
+
 
 % type of files to copy
-fileTypeList = [ ...
-   {'*_apmt*.ini'} ...
-   {'*_payload*.xml'} ...
-   {'_payload_*.txt'} ...
-   {'*_autotest_*.txt'} ...
-   {'*_technical*.txt'} ...
-   {'*_default_*.txt'} ...
-   {'*_sbe41*.hex'} ...
-   {'*_payload*.bin'} ...
-   {'*_system_*.hex'} ...
-   {'*_metadata*.xml'} ... % CTS5-USEA
-   {'*_do*.hex'} ... % CTS5-USEA
-   {'*_eco*.hex'} ... % CTS5-USEA
-   {'*_ocr*.hex'} ... % CTS5-USEA
-   {'*_opus_blk*.hex'} ... % CTS5-USEA
-   {'*_opus_lgt*.hex'} ... % CTS5-USEA
-   {'*uvp6_blk*.hex'} ... % CTS5-USEA
-   {'*_uvp6_lpm*.hex'} ... % CTS5-USEA
-   {'*_crover*.hex'} ... % CTS5-USEA
-   {'*_sbeph*.hex'} ... % CTS5-USEA
-   {'*_suna*.hex'} ... % CTS5-USEA
-   ];
+fileTypeList = g_decArgo_provorCts5UseaFileTypeListCopy;
 
 % configuration parameters
 configVar = [];
