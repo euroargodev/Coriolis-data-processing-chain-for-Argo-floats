@@ -533,18 +533,70 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
       case 6903109
-         % cycle #5 deep cycle data AND secodn Iridium session data delyed
-         idRef = find((tabCyNum == 5) & (tabBase == 1));
-         idSet1 = find(tabCyNum == 5);
-         idSet2 = find((tabCyNum == 5) & ((tabPackType == 0) | (tabPackType == 4)));
-         idSet2 = idSet2(end-1:end);
-         idSet1 = setdiff(idSet1, idSet2);
-         tabRank(idSet1) = tabRank(idRef);
-         tabRankByCycle(idSet1) = tabRankByCycle(idRef);
-         tabRankByDate(idSet1) = tabRankByDate(idRef);
-         tabSession(idSet1) = tabSession(idRef);
-         tabSessionDeep(idSet1) = tabSessionDeep(idRef);
+         % cycle #5 deep cycle data AND second Iridium session data delayed
+         idSet = find(tabCyNum == 5);
+         idSet1 = idSet(1:end-2);
+         idSet2 = idSet(end-1:end);
+         tabRank(idSet1) = tabRank(idSet1(1));
+         tabRankByCycle(idSet1) = tabRankByCycle(idSet1(1));
+         tabRankByDate(idSet1) = tabRankByDate(idSet1(1));
+         rankRef = tabRank(idSet(end));
+         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
+         rankRef = tabRankByCycle(idSet(end));
+         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
+         rankRef = tabRankByDate(idSet(end));
+         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
+         tabRank(idSet2) = tabRank(idSet2) + 1;
+         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
+         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
          tabDeep(idSet2) = 0;
+         
+         % cycle #28-30 deep cycle data AND second Iridium session data delayed
+         idSet = find(tabCyNum == 28);
+         tabGo(idSet) = 1;
+         idSet2 = idSet(end-1:end);
+         idSet1 = setdiff(idSet, idSet2);
+         tabDeep(idSet1) = 1;
+         rankRef = tabRank(idSet(end));
+         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
+         rankRef = tabRankByCycle(idSet(end));
+         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
+         rankRef = tabRankByDate(idSet(end));
+         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
+         tabRank(idSet2) = tabRank(idSet2) + 1;
+         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
+         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
+         tabCompleted(idSet2) = 1;
+
+         idSet = find(tabCyNum == 29);
+         tabGo(idSet) = 1;
+         idSet2 = idSet(end-1:end);
+         idSet1 = setdiff(idSet, idSet2);
+         tabDeep(idSet1) = 1;
+         rankRef = tabRank(idSet(end));
+         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
+         rankRef = tabRankByCycle(idSet(end));
+         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
+         rankRef = tabRankByDate(idSet(end));
+         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
+         tabRank(idSet2) = tabRank(idSet2) + 1;
+         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
+         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
+
+         idSet = find(tabCyNum == 30);
+         tabGo(idSet) = 1;
+         idSet2 = idSet(end-1:end);
+         idSet1 = setdiff(idSet, idSet2);
+         tabDeep(idSet1) = 1;
+         rankRef = tabRank(idSet(end));
+         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
+         rankRef = tabRankByCycle(idSet(end));
+         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
+         rankRef = tabRankByDate(idSet(end));
+         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
+         tabRank(idSet2) = tabRank(idSet2) + 1;
+         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
+         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
       case 6903793
          % data packets transmitted twice in the first EOL session (float
          % recovered)
@@ -904,15 +956,20 @@ idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForChec
 
 if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
    if (length(idPackTech1) > 1)
-      % specific to float #6904236
-      if (g_decArgo_floatNum ~= 6904236)
+      % specific
+      if (~ismember(g_decArgo_floatNum, [ ...
+            6904236, 6903109]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
       end
    end
    if (length(idPackTech2) > 1)
-      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
-         g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
+      % specific
+      if (~ismember(g_decArgo_floatNum, [ ...
+            6903109]))
+         fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
+            g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
+      end
    end
    if (length(idPackProg) > 1)
       fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...

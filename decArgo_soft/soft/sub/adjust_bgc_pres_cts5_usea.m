@@ -72,40 +72,40 @@ end
 
 presCheckJuld = [];
 presCheckPres = [];
-if (~isempty(g_decArgo_eventDataTraj))
-   
-   % retrieve pressure checks sampled during the drift phase
-   presCheckEvt = cell2mat(g_decArgo_eventDataTraj)';
-   presCheckMc = [presCheckEvt.measCode];
-   idDrift = find(ismember(presCheckMc, [g_MC_DescProf, g_MC_DriftAtPark, g_MC_Desc2Prof, g_MC_DriftAtProf, g_MC_AscProf]));
-   eventDataTrajDrift = g_decArgo_eventDataTraj(idDrift);
-   presCheckDrift = cell2mat(eventDataTrajDrift)';
-   groupList = [presCheckDrift.group];
-   uGroupList = unique(groupList(find(groupList > 0)));
-   presCheckJuld = [];
-   presCheckPres = [];
-   for idG = 1:length(uGroupList)
-      idF = find(groupList == uGroupList(idG));
-      if (length(idF) == 2)
-         juld = '';
-         pres = '';
-         for id = 1:2
-            if (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'JULD'))
-               juld = eventDataTrajDrift{idF(id)}.value;
-            elseif (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'PRES'))
-               pres = double(eventDataTrajDrift{idF(id)}.value);
-            end
-         end
-         if (~isempty(juld) && ~isempty(pres))
-            presCheckJuld = [presCheckJuld juld];
-            presCheckPres = [presCheckPres pres];
-         end
-      end
-   end
-   [~, idSort] = sort(presCheckJuld);
-   presCheckJuld = presCheckJuld(idSort);
-   presCheckPres = presCheckPres(idSort);
-end
+% if (~isempty(g_decArgo_eventDataTraj))
+%    
+%    % retrieve pressure checks sampled during the drift phase
+%    presCheckEvt = cell2mat(g_decArgo_eventDataTraj)';
+%    presCheckMc = [presCheckEvt.measCode];
+%    idDrift = find(ismember(presCheckMc, [g_MC_DescProf, g_MC_DriftAtPark, g_MC_Desc2Prof, g_MC_DriftAtProf, g_MC_AscProf]));
+%    eventDataTrajDrift = g_decArgo_eventDataTraj(idDrift);
+%    presCheckDrift = cell2mat(eventDataTrajDrift)';
+%    groupList = [presCheckDrift.group];
+%    uGroupList = unique(groupList(find(groupList > 0)));
+%    presCheckJuld = [];
+%    presCheckPres = [];
+%    for idG = 1:length(uGroupList)
+%       idF = find(groupList == uGroupList(idG));
+%       if (length(idF) == 2)
+%          juld = '';
+%          pres = '';
+%          for id = 1:2
+%             if (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'JULD'))
+%                juld = eventDataTrajDrift{idF(id)}.value;
+%             elseif (strcmp(eventDataTrajDrift{idF(id)}.paramName, 'PRES'))
+%                pres = double(eventDataTrajDrift{idF(id)}.value);
+%             end
+%          end
+%          if (~isempty(juld) && ~isempty(pres))
+%             presCheckJuld = [presCheckJuld juld];
+%             presCheckPres = [presCheckPres pres];
+%          end
+%       end
+%    end
+%    [~, idSort] = sort(presCheckJuld);
+%    presCheckJuld = presCheckJuld(idSort);
+%    presCheckPres = presCheckPres(idSort);
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BGC DRIFT MEASURMENTS
@@ -129,7 +129,7 @@ for idProf = 1:size(profInfo, 1)
       else
          tabDriftCtd = [];
       end
-      [o_tabDrift(profInfo(idProf, 1)), doneForProf] = adjust_bgc_pres(o_tabDrift(profInfo(idProf, 1)), tabDriftCtd, presCheckJuld, presCheckPres);
+      [o_tabDrift(profInfo(idProf, 1)), doneForProf] = adjust_bgc_pres_drift(o_tabDrift(profInfo(idProf, 1)), tabDriftCtd, presCheckJuld, presCheckPres);
       if (doneForProf == 1)
          doneForDrift = 1;
       end
@@ -184,7 +184,7 @@ if (~isempty(profInfo))
                   tabProfileCtd = [];
                end
 
-               [o_tabProfiles(profInfo(idProf, 1)), doneForProf] = adjust_bgc_pres_all(o_tabProfiles(profInfo(idProf, 1)), tabProfileCtd, presCheckJuld, presCheckPres);
+               [o_tabProfiles(profInfo(idProf, 1)), doneForProf] = adjust_bgc_pres_profile(o_tabProfiles(profInfo(idProf, 1)), tabProfileCtd, presCheckJuld, presCheckPres);
 
                if (doneForProf == 1)
 
@@ -227,7 +227,7 @@ return
 % Only inconsistent pressures are adjusted.
 %
 % SYNTAX :
-%  [o_drift, o_done] = adjust_bgc_pres(a_drift, a_driftCtd, a_presCheckJuld, a_presCheckPres)
+%  [o_drift, o_done] = adjust_bgc_pres_drift(a_drift, a_driftCtd, a_presCheckJuld, a_presCheckPres)
 %
 % INPUT PARAMETERS :
 %   a_drift         : input BGC drift profile structures
@@ -247,7 +247,7 @@ return
 % RELEASES :
 %   08/18/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_drift, o_done] = adjust_bgc_pres(a_drift, a_driftCtd, a_presCheckJuld, a_presCheckPres)
+function [o_drift, o_done] = adjust_bgc_pres_drift(a_drift, a_driftCtd, a_presCheckJuld, a_presCheckPres)
 
 % output parameters initialization
 o_drift = [];
@@ -335,11 +335,12 @@ o_drift = a_drift;
 return
 
 % ------------------------------------------------------------------------------
-% Adjust PRES values of SUNA measurements with time interpolated CTD ones.
+% Adjust PRES values of SUNA measurements with CTD timely closest ones.
 % Used CTD PRES are from PTS measurements or from pressure checks.
 %
 % SYNTAX :
-%  [o_profile, o_done] = adjust_bgc_pres_all(a_profile, a_profileCtd, a_presCheckJuld, a_presCheckPres)
+%  [o_profile, o_done] = adjust_bgc_pres_profile(a_profile, a_profileCtd, ...
+%    a_presCheckJuld, a_presCheckPres)
 %
 % INPUT PARAMETERS :
 %   a_profile      : input BGC profile structures
@@ -359,14 +360,15 @@ return
 % RELEASES :
 %   08/18/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profile, o_done] = adjust_bgc_pres_all(a_profile, a_profileCtd, a_presCheckJuld, a_presCheckPres)
+function [o_profile, o_done] = adjust_bgc_pres_profile(a_profile, a_profileCtd, ...
+   a_presCheckJuld, a_presCheckPres)
 
 % output parameters initialization
 o_profile = [];
 o_done = 0;
 
 
-% add CTD drift pressures and times to pressure checks data
+% add CTD profile pressures and times to pressure checks data
 if (~isempty(a_profileCtd))
 
    idPres = find(strcmp({a_profileCtd.paramList.name}, 'PRES') == 1, 1);
@@ -382,7 +384,7 @@ end
 
 if (~isempty(a_presCheckPres))
 
-   % get BGC drift pressures and times
+   % get BGC profile pressures and times
    bgcPres = [];
    bgcTimes = [];
    idPres = find(strcmp({a_profile.paramList.name}, 'PRES') == 1, 1);
@@ -391,19 +393,14 @@ if (~isempty(a_presCheckPres))
       bgcTimes = a_profile.dates;
    end
 
-   % adjust BGC drift pressures with timely closest pressure checks pressures
+   % adjust BGC pressures with timely closest CTD ones
    if (~isempty(bgcPres))
 
-      [~, idUnique, ~] = unique(a_presCheckJuld);
-      a_presCheckJuld = a_presCheckJuld(idUnique);
-      a_presCheckPres = a_presCheckPres(idUnique);
-
-      bgcPresAdj = interp1(a_presCheckJuld, a_presCheckPres, bgcTimes, 'linear');
-      bgcPresAdj = round(bgcPresAdj*10)/10;
-
-      paramPres = get_netcdf_param_attributes('PRES');
-      bgcPresAdj(isnan(bgcPresAdj)) = paramPres.fillValue;
-
+      bgcPresAdj = nan(size(bgcPres));
+      for idP = 1:length(bgcPres)
+         [~, idMin] = min(abs(bgcTimes(idP) - a_presCheckJuld));
+         bgcPresAdj(idP) = a_presCheckPres(idMin);
+      end
       if (isempty(a_profile.dataAdj))
          a_profile.paramDataMode = repmat(' ', 1, length(a_profile.paramList));
          paramFillValue = get_prof_param_fill_value(a_profile);
@@ -418,87 +415,5 @@ end
 
 % update output parameters
 o_profile = a_profile;
-
-return
-
-% ------------------------------------------------------------------------------
-% Adjust PRES values of BGC measurements with CTD timely closest ones.
-%
-% SYNTAX :
-%  [o_drift, o_done] = adjust_bgc_pres(a_drift, a_driftCtd)
-%
-% INPUT PARAMETERS :
-%   a_tabDrift : input BGC drift profile structures
-%   a_driftCtd : input CTD drift profile structures
-%
-% OUTPUT PARAMETERS :
-%   o_tabDrift : output BGC drift profile structures
-%   o_done     : adjustment done flag
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/12/2022 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_drift, o_done] = adjust_bgc_pres_obsolete(a_drift, a_driftCtd)
-
-% output parameters initialization
-o_drift = [];
-o_done = 0;
-
-
-% get CTD drift pressures and times
-ctdPres = [];
-ctdTimes = [];
-idPres = find(strcmp({a_driftCtd.paramList.name}, 'PRES') == 1, 1);
-if (~isempty(idPres))
-   ctdPres = a_driftCtd.data(:, idPres);
-   if (~isempty(a_driftCtd.datesAdj))
-      ctdTimes = a_driftCtd.datesAdj;
-   else
-      ctdTimes = a_driftCtd.dates;
-   end
-end
-
-if (~isempty(ctdPres))
-
-   % get BGC drift pressures and times
-   bgcPres = [];
-   bgcTimes = [];
-   idPres = find(strcmp({a_drift.paramList.name}, 'PRES') == 1, 1);
-   if (~isempty(idPres))
-      bgcPres = a_drift.data(:, idPres);
-      if (~isempty(a_drift.datesAdj))
-         bgcTimes = a_drift.datesAdj;
-      else
-         bgcTimes = a_drift.dates;
-      end
-   end
-
-   % adjust BGC drift pressures with timely closest CTD drift pressure
-   if (~isempty(bgcPres))
-
-      bgcPresAdj = nan(size(bgcPres));
-      for idP = 1:length(bgcPres)
-         [~, idMin] = min(abs(bgcTimes(idP) - ctdTimes));
-         bgcPresAdj(idP) = ctdPres(idMin);
-      end
-      if (isempty(a_drift.dataAdj))
-         a_drift.paramDataMode = repmat(' ', 1, length(a_drift.paramList));
-         paramFillValue = get_prof_param_fill_value(a_drift);
-         a_drift.dataAdj = repmat(double(paramFillValue), size(a_drift.data, 1), 1);
-      end
-
-      a_drift.dataAdj(:, idPres) = bgcPresAdj;
-      a_drift.paramDataMode(idPres) = 'A';
-      o_done = 1;
-   end
-end
-
-% update output parameters
-o_drift = a_drift;
 
 return
