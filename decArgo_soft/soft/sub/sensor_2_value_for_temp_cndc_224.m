@@ -32,6 +32,12 @@ o_tempCndcValues = a_tempCndcCounts;
 idDef = find(a_tempCndcCounts == g_decArgo_tempCountsDef);
 o_tempCndcValues(idDef) = ones(length(idDef), 1)*g_decArgo_tempDef;
 idNoDef = find(a_tempCndcCounts ~= g_decArgo_tempCountsDef);
-o_tempCndcValues(idNoDef) = twos_complement_dec_argo(o_tempCndcValues(idNoDef), 16)/1000 - 5;
+
+% issue in TEMP_CNDC coding: we use the range ]27.767 ; 45.000] °C as TEMP_CNDC
+% values cannot be in the ]-37.768 ; -20.535] interval
+idKo = find(o_tempCndcValues(idNoDef) > 32767 & o_tempCndcValues(idNoDef) <= 50000); % 32767 = hex2dec('7FFF'), 50000 corresponds to 45°C
+idOk = find(o_tempCndcValues(idNoDef) <= 32767 | o_tempCndcValues(idNoDef) > 50000);
+o_tempCndcValues(idNoDef(idOk)) = twos_complement_dec_argo(o_tempCndcValues(idNoDef(idOk)), 16)/1000 - 5;
+o_tempCndcValues(idNoDef(idKo)) = o_tempCndcValues(idNoDef(idKo))/1000 - 5;
 
 return
