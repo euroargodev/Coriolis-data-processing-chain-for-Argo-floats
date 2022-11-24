@@ -151,7 +151,9 @@ switch(a_floatNum)
    case 6902829
       % file 3aa9_system_00116.hex should not be kept
       delFile = dir([a_outputDir '/3aa9_system_00116_*.hex']);
-      move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      if (~isempty(delFile))
+         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      end
 end
 
 return

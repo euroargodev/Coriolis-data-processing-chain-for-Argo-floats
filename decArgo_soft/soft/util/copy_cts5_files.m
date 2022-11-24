@@ -166,8 +166,10 @@ for idFloat = 1:nbFloats
          % file 013b_system_00007#01.hex is not the first part of
          % 013b_system_00007.hex => only 013b_system_00007#02.hex should be kept
          delFile = dir([floatOutputDirName '/013b_system_00007#01*.hex']);
-         move_file([floatOutputDirName '/' delFile.name], unusedDirName);
-         fprintf('MISC: %s => not used\n', delFile.name);
+         if (~isempty(delFile))
+            move_file([floatOutputDirName '/' delFile.name], unusedDirName);
+            fprintf('MISC: %s => not used\n', delFile.name);
+         end
          % 013b_system_00007#02.hex should be renamed 013b_system_00007#02.hex
          movFile = dir([floatOutputDirName '/013b_system_00007#02*.hex']);
          move_file([floatOutputDirName '/' movFile.name], ...
@@ -206,8 +208,10 @@ for idFloat = 1:nbFloats
       case 6902829
          % file 3aa9_system_00116.hex should not be kept
          delFile = dir([floatOutputDirName '/3aa9_system_00116_*.hex']);
-         move_file([floatOutputDirName '/' delFile.name], unusedDirName);
-         fprintf('MISC: %s => not used\n', delFile.name);
+         if (~isempty(delFile))
+            move_file([floatOutputDirName '/' delFile.name], unusedDirName);
+            fprintf('MISC: %s => not used\n', delFile.name);
+         end
    end
 end
 
