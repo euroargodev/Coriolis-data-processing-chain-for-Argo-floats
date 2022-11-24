@@ -143,6 +143,7 @@ string32DimId = netcdf.defDim(fCdf, 'STRING32', 32);
 string16DimId = netcdf.defDim(fCdf, 'STRING16', 16);
 string8DimId = netcdf.defDim(fCdf, 'STRING8', 8);
 string4DimId = netcdf.defDim(fCdf, 'STRING4', 4);
+string2DimId = netcdf.defDim(fCdf, 'STRING2', 2);
 
 if (nbFloatMetaData == 0)
    nbFloatMetaData = 1;
@@ -244,6 +245,12 @@ netcdf.putAtt(fCdf, floatSerialNoVarId, 'long_name', 'Serial number of the float
 netcdf.putAtt(fCdf, floatSerialNoVarId, '_FillValue', ' ');
 floatNcVarId = [floatNcVarId; floatSerialNoVarId];
 floatNcVarName{end+1} = 'FLOAT_SERIAL_NO';
+
+dataCentreVarId = netcdf.defVar(fCdf, 'DATA_CENTRE', 'NC_CHAR', string2DimId);
+netcdf.putAtt(fCdf, dataCentreVarId, 'long_name', 'Data centre in charge of float data processing');
+netcdf.putAtt(fCdf, dataCentreVarId, '_FillValue', ' ');
+floatNcVarId = [floatNcVarId; dataCentreVarId];
+floatNcVarName{end+1} = 'DATA_CENTRE';
 
 % float misc. meta-data
 floatMetaDataNameVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_NAME', 'NC_CHAR', fliplr([nFloatMetaDataDimId string128DimId]));

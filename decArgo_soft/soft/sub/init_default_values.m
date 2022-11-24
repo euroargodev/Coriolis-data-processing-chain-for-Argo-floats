@@ -21,6 +21,7 @@ function init_default_values(varargin)
 
 % global default values
 global g_decArgo_dateDef;
+global g_decArgo_epochDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 global g_decArgo_ncDateDef;
@@ -54,6 +55,7 @@ global g_decArgo_salDef;
 global g_decArgo_cndcDef;
 global g_decArgo_molarDoxyDef;
 global g_decArgo_mlplDoxyDef;
+global g_decArgo_nbSampleDef;
 global g_decArgo_c1C2PhaseDoxyDef;
 global g_decArgo_bPhaseDoxyDef;
 global g_decArgo_tPhaseDoxyDef;
@@ -72,7 +74,7 @@ global g_decArgo_turbiDef;
 global g_decArgo_turbiVoltDef;
 global g_decArgo_concNitraDef;
 global g_decArgo_coefAttDef;
-global g_decArgo_florescenceChlaDef;
+global g_decArgo_fluorescenceChlaDef;
 global g_decArgo_betaBackscattering700Def;
 global g_decArgo_tempCpuChlaDef;
 
@@ -386,6 +388,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 % global default values initialization
 g_decArgo_dateDef = 99999.99999999;
+g_decArgo_epochDef = 9999999999;
 g_decArgo_argosLonDef = 999.999;
 g_decArgo_argosLatDef = 99.999;
 g_decArgo_ncDateDef = 999999;
@@ -419,6 +422,7 @@ g_decArgo_salDef = 99.999;
 g_decArgo_cndcDef = 99.9999;
 g_decArgo_molarDoxyDef = 999;
 g_decArgo_mlplDoxyDef = 999;
+g_decArgo_nbSampleDef = 99999;
 g_decArgo_c1C2PhaseDoxyDef = 999.999;
 g_decArgo_bPhaseDoxyDef = 999.999;
 g_decArgo_tPhaseDoxyDef = 999.999;
@@ -437,7 +441,7 @@ g_decArgo_turbiDef = 9999.9;
 g_decArgo_turbiVoltDef = 9.999;
 g_decArgo_concNitraDef = 9.99e+038;
 g_decArgo_coefAttDef = 99.999;
-g_decArgo_florescenceChlaDef = 9999;
+g_decArgo_fluorescenceChlaDef = 9999;
 g_decArgo_betaBackscattering700Def = 9999;
 g_decArgo_tempCpuChlaDef = 999;
 
@@ -466,7 +470,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '012a';
+g_decArgo_decoderVersion = '012b';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
