@@ -24,23 +24,30 @@ function [o_floatFiles] = parse_rsync_log_ir_rudics_apex_nemo(a_rsyncLogName, a_
 % output parameters initialization
 o_floatFiles = [];
 
-
 % read the log file and store the useful information
 fId = fopen(a_rsyncLogName, 'r');
 if (fId == -1)
    fprintf('ERROR: Unable to open file: %s\n', a_rsyncLogName);
    return
 end
-logData = textscan(fId, '%s');
-logData = logData{:};
+logData = textscan(fId, '%s %s');
+% logData = logData{:};
+infoData = logData{1};
+logData = logData{2};
 fclose(fId);
 
-ptn = sprintf('%s/%s', a_floatRudicsId, a_floatRudicsId);
+ptn1 = sprintf('%s/%s.', a_floatRudicsId, a_floatRudicsId);
+ptn2 = '>f+++++++++';
+ptn3 = sprintf('%s.', a_floatRudicsId);
+% we are looking for lines with the pattern:
+% floatRudicsId/floatRudicsId.* or >f+++++++++ floatRudicsId.*
 for idL = 1:length(logData)
-   line = logData{idL};
-   % we are looking for lines with the pattern: floatRudicsId/floatRudicsId_*
-   if (strncmp(line, ptn, length(ptn)))
-      o_floatFiles{end+1} = line;
+   col1 = infoData{idL};
+   col2 = logData{idL};
+   if (strncmp(col1, ptn1, length(ptn1)))
+      o_floatFiles{end+1} = col1;
+   elseif (strncmp(col1, ptn2, length(ptn2)) && any(strfind(col2, ptn3)))
+      o_floatFiles{end+1} = sprintf('%s/%s', a_floatRudicsId, col2);
    end
 end
 

@@ -596,7 +596,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
-      6900790, 6901880, 6903229]))
+      6900790, 6901880, 6903229, 6903795]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -706,24 +706,41 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idF120) = tabRank(idRef120);
          tabRankByCycle(idF120) = tabRankByCycle(idRef120);
          tabRankByDate(idF120) = tabRankByDate(idRef120); 
+      case 6903795
+         % cycle #57 data transmitted twice (float recovered)
+         idStart = find((tabCyNum == 57) & (tabEolFlag == 1) & (tabPackType == 0));
+         idStart = idStart(1);
+         idStop = find((tabCyNum == 57) & (tabDeep == 0) & (tabPackType == 0));
+         idStop = idStop(1) - 1;
+         tabRank(idStart:idStop) = -1;
+         tabRankByCycle(idStart:idStop) = -1;
+         tabRankByDate(idStart:idStop) = -1;
+
+         % 2 Prog #2 packets in one EOL buffer
+         idType7 = find((tabCyNum == 57) & (tabPackType == 7));
+         nbElts = hist(tabRank(idType7), unique(tabRank(idType7)));
+         idF = find(nbElts > 1);
+         tabRank(idType7(idF)) = -1;
+         tabRankByCycle(idType7(idF)) = -1;
+         tabRankByDate(idType7(idF)) = -1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
-   if (~isempty(g_decArgo_outputCsvFileId))
-
-      % update tabCompleted array
-      cyNumList = unique(tabRankByCycle);
-      cyNumList(cyNumList < 0) = [];
-      for cyNum = 1:length(cyNumList)
-         idForCheck = find(tabRankByCycle == cyNumList(cyNum));
-
-         % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
-         if (completed == 1)
-            tabCompleted(idForCheck) = 1;
-         end
-      end
-   end
+%    if (~isempty(g_decArgo_outputCsvFileId))
+% 
+%       % update tabCompleted array
+%       cyNumList = unique(tabRankByCycle);
+%       cyNumList(cyNumList < 0) = [];
+%       for cyNum = 1:length(cyNumList)
+%          idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+% 
+%          % check current session contents
+%          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+%          if (completed == 1)
+%             tabCompleted(idForCheck) = 1;
+%          end
+%       end
+%    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

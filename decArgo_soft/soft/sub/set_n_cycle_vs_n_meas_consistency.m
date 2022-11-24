@@ -58,7 +58,7 @@ global g_JULD_STATUS_fill_value;
 
 % if only launch information is stored in the data TRAJ structure, we will not
 % generate TRAJ file
-if ((length(a_tabTrajNMeas) == 1) && (length(a_tabTrajNMeas(1).tabMeas) == 1))
+if ((length(o_tabTrajNMeas) == 1) && (length(o_tabTrajNMeas(1).tabMeas) == 1))
    o_tabTrajNMeas = [];
    o_tabTrajNCycle = [];
    return
@@ -67,16 +67,33 @@ end
 % remove cycles with no TRAJ data information (Ex: 3902105 #54, under Ice with
 % no data => only TECH information)
 idNMeasToDelete = [];
-idNCyToDelete = [];
-for idCy = 1:length(a_tabTrajNMeas)
-   if (isempty(a_tabTrajNMeas(idCy).tabMeas))
+for idCy = 1:length(o_tabTrajNMeas)
+   if (isempty(o_tabTrajNMeas(idCy).tabMeas))
       idNMeasToDelete = [idNMeasToDelete idCy];
-      idF = find([o_tabTrajNCycle.outputCycleNumber] == a_tabTrajNMeas(idCy).outputCycleNumber);
-      idNCyToDelete = [idNCyToDelete idF];
    end
 end
-a_tabTrajNMeas(idNMeasToDelete) = [];
+o_tabTrajNMeas(idNMeasToDelete) = [];
+
+idNCyToDelete = [];
+for idCy = 1:length(o_tabTrajNCycle)
+   if (~any([o_tabTrajNMeas.outputCycleNumber] == o_tabTrajNCycle(idCy).outputCycleNumber))
+      idNCyToDelete = [idNCyToDelete idCy];
+   end
+end
 o_tabTrajNCycle(idNCyToDelete) = [];
+
+% previous version
+% idNMeasToDelete = [];
+% idNCyToDelete = [];
+% for idCy = 1:length(o_tabTrajNMeas)
+%    if (isempty(o_tabTrajNMeas(idCy).tabMeas))
+%       idNMeasToDelete = [idNMeasToDelete idCy];
+%       idF = find([o_tabTrajNCycle.outputCycleNumber] == o_tabTrajNMeas(idCy).outputCycleNumber);
+%       idNCyToDelete = [idNCyToDelete idF];
+%    end
+% end
+% o_tabTrajNMeas(idNMeasToDelete) = [];
+% o_tabTrajNCycle(idNCyToDelete) = [];
 
 % check N_CYCLE data
 MC_LIST = [ ...
@@ -99,7 +116,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    trajNCycle = o_tabTrajNCycle(idNCy);
    cycleNum = trajNCycle.outputCycleNumber;
 
-   idFNMeas = find([a_tabTrajNMeas.outputCycleNumber] == cycleNum);
+   idFNMeas = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
    % check consistency for MC_LIST items
    for idMc = 1:size(MC_LIST, 1)
       measCode = MC_LIST{idMc, 1};
@@ -108,7 +125,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
       juldFinal = [];
       juldStatusFinal = [];
       for idNMeas = 1:length(idFNMeas)
-         trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
+         trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));
          trajNMeas.tabMeas([trajNMeas.tabMeas.sensorNumber] > 100) = []; % bounce cycles have theri DST, DET, AST and AET stored in TRAJ_AUX
          if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == measCode))
             idF = find([trajNMeas.tabMeas.measCode] == measCode);
@@ -188,7 +205,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    juld = [];
    juldStatus = [];
    for idNMeas = 1:length(idFNMeas)
-      trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
+      trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));
       if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == g_MC_Surface))
          idFSurf = find([trajNMeas.tabMeas.measCode] == g_MC_Surface);
          for idSurf = 1:length(idFSurf)
@@ -250,7 +267,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    % check consistency for GROUNDED
    grdFlag = 0;
    for idNMeas = 1:length(idFNMeas)
-      trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
+      trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));
       if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == g_MC_Grounded))
          grdFlag = 1;
       end

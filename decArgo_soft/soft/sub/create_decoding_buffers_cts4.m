@@ -351,7 +351,7 @@ tabRank(idSurfVectorPres) = -1;
 % 6903878
 % 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -452,6 +452,45 @@ if (ismember(g_decArgo_floatNum, ...
          idF331 = find((tabCyNumRaw == 332) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
          idDel = find((tabCyNumRaw == 288) & (tabSession == tabSession(idF331)));
          tabDone(idDel) = 1;
+
+      case 2902242
+         % emergency ascent during cycle (254, 0)
+         idPrev = find((tabCyNumRaw == 254) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         idFirst = find((tabCyNumRaw == 1) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
+         idFirst = idFirst(2);
+
+         idLast = find((tabCyNumRaw == 2) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         idLast = idLast(2) - 1;
+
+         tabRank(idFirst:idLast) = tabRank(idPrev) + 1;
+         tabDone(idFirst:idLast) = 1;
+         tabCompleted(idFirst:idLast) = 1;
+         tabCyNumRaw(idFirst:idLast) = 254;
+         tabCyNumOut(idFirst:idLast) = 254;
+         tabCyNum(idFirst:idLast) = 25400;
+
+         tabDeep(idFirst:idLast) = 1;
+         tabDone(idFirst:idLast) = 1;
+         tabDelayed(idFirst:idLast) = 0;
+         tabCompleted(idFirst:idLast) = 1;
+
+         for id = idFirst:idLast
+            a_decodedData(id) = modify_cycle_num(a_decodedData(id), 254);
+         end
+
+         idNext = idLast + 1;
+         idF2 = find(tabRank(idNext:end) ~= -1);
+         idF2 = idF2 + idNext - 1;
+         tabRank(idF2) = tabRank(idF2) + 1;
+
+         idF = find((tabCyNumRaw == 2) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         idF = idF(2);
+         tabCompleted(idF) = 1;
+         tabCyNumRaw(idF) = 255;
+         tabCyNumOut(idF) = 254;
+         tabCyNum(idF) = 25400;
+
+         a_decodedData(idF) = modify_cycle_num(a_decodedData(idF), 255);
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
@@ -1242,6 +1281,64 @@ switch (a_sensorType)
    otherwise
       fprintf('WARNING: Nothing done yet in get_sensor_data_type_list for sensorType #%d\n', ...
          a_sensorType);
+end
+
+return
+
+% % ------------------------------------------------------------------------------
+% % Convert packet type number into description string.
+% %
+% % SYNTAX :
+% %  [o_packTypeDesc] = get_pack_type_desc( ...
+% %    a_packType, a_sensorType, a_sensorDataType, a_phaseNum, a_decoderId)
+% %
+% % INPUT PARAMETERS :
+% %   a_packType       : packet type number
+% %   a_sensorType     : packet sensor type number
+% %   a_sensorDataType : packet sensor data type number
+% %   a_phaseNum       : packet phase number
+% %   a_decoderId      : float decoder Id
+% %
+% % OUTPUT PARAMETERS :
+% %   o_packTypeDesc : packet type description
+% %
+% % EXAMPLES :
+% %
+% % SEE ALSO :
+% % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% % ------------------------------------------------------------------------------
+% % RELEASES :
+% %   01/10/2019 - RNU - creation
+% % ------------------------------------------------------------------------------
+function [o_decodedData] = modify_cycle_num(a_decodedData, a_newCyNum)
+
+% output parameter initialization
+o_decodedData = a_decodedData;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+
+% apply offset to cycle number and profile number in data stuctures
+o_decodedData.cyNumFile = a_newCyNum;
+o_decodedData.cyNumRaw = a_newCyNum;
+o_decodedData.cyProfPhaseList(3) = a_newCyNum;
+
+switch (o_decodedData.packType)
+   case 250
+      for id = 1:length(o_decodedData.decData)
+         o_decodedData.decData{id}(1) = a_newCyNum;
+      end
+   case 252
+      o_decodedData.decData{1}(1) = a_newCyNum;
+      o_decodedData.decData{2}(1) = a_newCyNum;
+      o_decodedData.decData{3}(1) = a_newCyNum;
+      o_decodedData.decData{4}(1) = a_newCyNum;
+   case 253
+      o_decodedData.decData(4) = a_newCyNum;
+   otherwise
+      fprintf('ERROR: Float #%d : packet type #%d not managed yet in ''modify_cycle_num'' function\n', ...
+         g_decArgo_floatNum, o_decodedData.packType);
 end
 
 return

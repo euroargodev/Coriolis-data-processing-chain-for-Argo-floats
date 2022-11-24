@@ -63,6 +63,9 @@ function [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_ir_rudics_111
 o_tabTrajIndex = [];
 o_tabTrajData = [];
 
+% default values
+global g_decArgo_dateDef;
+
 % cycle phases
 global g_decArgo_phaseBuoyRed;
 global g_decArgo_phaseDsc2Prk;
@@ -292,7 +295,10 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                   descentToProfStartDate = a_descentToProfStartDate(idTechToUse, 5);
                   descentToProfEndDate = a_descentToProfEndDate(idTechToUse, 5);
                   ascentStartDate = a_ascentStartDate(idTechToUse, 5);
-                  ascentEndDate = a_ascentEndDate(idTechToUse, 5) + 10/1440;
+                  ascentEndDate = a_ascentEndDate(idTechToUse, 5);
+                  if (ascentEndDate ~= g_decArgo_dateDef)
+                     ascentEndDate = ascentEndDate + 10/1440;
+                  end
                   transStartDate = a_transStartDate(idTechToUse, 5);
 
                   for id = 1:length(idPack)
@@ -328,7 +334,7 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                               get_phase_name(phaseNum));
                      end
                      
-                     if (~isempty(refDate))
+                     if (~isempty(refDate) && (refDate ~= g_decArgo_dateDef))
                         
                         datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
                            profNum, phaseNum);

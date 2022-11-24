@@ -367,6 +367,20 @@ for idP = 1:size(a_tabTech, 1)
    firstStabPres = g_decArgo_presDef;
    if (any(a_tabTech(idP, [23 24 29]) ~= 0))
       firstStabDate = refDay + a_tabTech(idP, 23) + a_tabTech(idP, 24)/1440;
+
+      % in case of emergency ascent first stabilization date can be 0
+      % (ex: 2902242 (254, 0)
+      % use packet time to set firstEmergencyAscentDate
+      if (a_tabTech(idP, 64) > 0)
+         if (any(a_tabTech(idP, [65 66 68]) ~= 0) && (a_tabTech(idP, 23) == 0))
+            packTime  = a_tabTech(idP, 1);
+            firstStabDate = fix(packTime) + a_tabTech(idP, 24)/1440;
+            if (firstStabDate > packTime)
+               firstStabDate = firstStabDate - 1;
+            end
+         end
+      end
+
       firstStabPres = a_tabTech(idP, 29)*10;
    end
    o_firstStabDate = [o_firstStabDate; ...
@@ -465,11 +479,25 @@ for idP = 1:size(a_tabTech, 1)
          % day number is coded on one byte only => manage possible roll over of
          % first emergency ascent day
          firstEmergencyAscentDay = a_tabTech(idP, 68);
-         while ((refDay + firstEmergencyAscentDay + a_tabTech(idP, 65)/1440) < cycleStartDate)
-            firstEmergencyAscentDay = firstEmergencyAscentDay + 256;
+
+         % in case of emergency ascent cycle start date can be 0 (ex: 2902242
+         % (254, 0)
+         if (cycleStartDate ~= g_decArgo_dateDef)
+            while ((refDay + firstEmergencyAscentDay + a_tabTech(idP, 65)/1440) < cycleStartDate)
+               firstEmergencyAscentDay = firstEmergencyAscentDay + 256;
+            end
+            firstEmergencyAscentDate = refDay + firstEmergencyAscentDay + a_tabTech(idP, 65)/1440;
+         else
+            if (firstEmergencyAscentDay == 0)
+               % use packet time to set firstEmergencyAscentDate
+               packTime  = a_tabTech(idP, 1);
+               firstEmergencyAscentDate = fix(packTime) + a_tabTech(idP, 65)/1440;
+               if (firstEmergencyAscentDate > packTime)
+                  firstEmergencyAscentDate = firstEmergencyAscentDate - 1;
+               end
+            end
          end
-         firstEmergencyAscentDate = refDay + firstEmergencyAscentDay + a_tabTech(idP, 65)/1440;
-         
+
          firstEmergencyAscentPres = a_tabTech(idP, 66)*10;
       end
    end

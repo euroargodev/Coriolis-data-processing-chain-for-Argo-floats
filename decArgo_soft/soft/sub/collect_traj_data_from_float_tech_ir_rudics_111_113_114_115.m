@@ -63,6 +63,19 @@ end
 % First stabilization date and pres
 if (any(a_tabTech([23 24 29]) ~= 0))
    firstStabDate = a_refDay + a_tabTech(23) + a_tabTech(24)/1440;
+
+   % in case of emergency ascent first stabilization date can be 0
+   % (ex: 2902242 (254, 0)
+   % use packet time to set firstEmergencyAscentDate
+   if (a_tabTech(64) > 0)
+      if (any(a_tabTech([65 66 68]) ~= 0) && (a_tabTech(23) == 0))
+         packTime  = a_tabTech(1);
+         firstStabDate = fix(packTime) + a_tabTech(24)/1440;
+         if (firstStabDate > packTime)
+            firstStabDate = firstStabDate - 1;
+         end
+      end
+   end
    o_trajFromTechStruct.firstStabDate = firstStabDate;
    
    firstStabPres = a_tabTech(29)*10;
