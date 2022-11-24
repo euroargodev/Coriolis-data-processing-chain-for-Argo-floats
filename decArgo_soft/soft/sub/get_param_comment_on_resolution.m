@@ -532,8 +532,9 @@ switch (a_decoderId)
             
       end
       
-   case {210, 211}
+   case {210, 211, 212, 213}
       % ARVOR ARN Iridium
+      % PROVOR ARN DO Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             

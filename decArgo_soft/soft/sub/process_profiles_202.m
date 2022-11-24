@@ -87,7 +87,7 @@ if (~isempty(a_tabTech))
       end
       
       tabTech = a_tabTech(idF2(end), :);
-      presCutOffProf = sensor_2_value_for_pressure_202_210_211(tabTech(10));
+      presCutOffProf = sensor_2_value_for_pressure_202_210_to_213(tabTech(10));
    end
 end
 if (isempty(presCutOffProf))
@@ -275,7 +275,7 @@ for idProf = 1:3
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_211_2001_2002( ...
+      [profStruct] = add_profile_date_and_location_201_to_213_2001_2002( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

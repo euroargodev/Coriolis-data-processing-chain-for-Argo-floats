@@ -29,13 +29,16 @@ function generate_json_decoder_config_labels()
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_31.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_32.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_201.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_202.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_204.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_205.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_212.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_301.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_302.csv';
@@ -150,10 +153,12 @@ else
          decIdList = [31];
       case {32}
          decIdList = [32];
+         
       case {105}
          decIdList = [105, 106, 107, 109, 110];
       case {121}
          decIdList = [121];
+         
       case {201}
          decIdList = [201, 203];
       case {202}
@@ -162,16 +167,21 @@ else
          decIdList = [204];
       case {205}
          decIdList = [205];
+      case {206}
+         decIdList = [206, 207, 208, 209];
+      case {210}
+         decIdList = [210, 211];
+      case {212}
+         decIdList = [212];
+      case {213}
+         decIdList = [213];
+
       case {301}
          decIdList = [301];
       case {302}
          decIdList = [302];
       case {303}
          decIdList = [303];
-      case {206}
-         decIdList = [206, 207, 208, 209];
-      case {210}
-         decIdList = [210, 211];
          
       case {1001}
          decIdList = [1001 1005 1007 1009 1010 1016];

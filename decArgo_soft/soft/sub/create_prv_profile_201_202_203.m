@@ -70,10 +70,10 @@ global g_decArgo_julD2FloatDayOffset;
 
 
 if (~isempty(a_dataCTD))
-   for idT = [1 3]
-      idDesc = find(a_dataCTD(:, 1) == idT);
-      for idP = 1:length(idDesc)
-         data = a_dataCTD(idDesc(idP), :);
+   for type = [1 3]
+      idForType = find(a_dataCTD(:, 1) == type);
+      for idP = 1:length(idForType)
+         data = a_dataCTD(idForType(idP), :);
          for idMeas = 1:15
             if (idMeas == 1)
                data(idMeas+1) = data(idMeas+1) + g_decArgo_julD2FloatDayOffset;
@@ -85,7 +85,7 @@ if (~isempty(a_dataCTD))
                end
             end
             
-            if (idT == 1)
+            if (type == 1)
                o_descProfDate = [o_descProfDate; data(idMeas+1)];
                o_descProfPres = [o_descProfPres; data(idMeas+1+15*2)];
                o_descProfTemp = [o_descProfTemp; data(idMeas+1+15*3)];
@@ -102,10 +102,10 @@ if (~isempty(a_dataCTD))
 end
 
 if (~isempty(a_dataCTDO))
-   for idT = [8 10]
-      idDesc = find(a_dataCTDO(:, 1) == idT);
-      for idP = 1:length(idDesc)
-         data = a_dataCTDO(idDesc(idP), :);
+   for type = [8 10]
+      idForType = find(a_dataCTDO(:, 1) == type);
+      for idP = 1:length(idForType)
+         data = a_dataCTDO(idForType(idP), :);
          for idMeas = 1:7
             if (idMeas == 1)
                data(idMeas+1) = data(idMeas+1) + g_decArgo_julD2FloatDayOffset;
@@ -120,7 +120,7 @@ if (~isempty(a_dataCTDO))
                end
             end
             
-            if (idT == 8)
+            if (type == 8)
                o_descProfDate = [o_descProfDate; data(idMeas+1)];
                o_descProfPres = [o_descProfPres; data(idMeas+1+7*2)];
                o_descProfTemp = [o_descProfTemp; data(idMeas+1+7*3)];

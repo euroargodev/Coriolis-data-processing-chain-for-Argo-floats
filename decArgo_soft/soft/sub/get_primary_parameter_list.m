@@ -91,7 +91,7 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {201, 202, 203, 206, 207, 208}
+   case {201, 202, 203, 206, 207, 208, 213}
       
       % Arvor Deep
       % Provor-DO Iridium
@@ -121,7 +121,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {204, 205, 210, 211}
+   case {204, 205, 210, 211, 212}
 
       % Arvor Iridium
       o_paramList = [ ...

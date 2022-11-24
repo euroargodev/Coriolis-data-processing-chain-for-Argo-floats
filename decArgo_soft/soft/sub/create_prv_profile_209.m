@@ -88,10 +88,10 @@ switch (optodeType)
    case 2
       % CTD only
       
-      for idT = [1 3]
-         idDesc = find(a_dataCTDO(:, 1) == idT);
-         for idP = 1:length(idDesc)
-            data = a_dataCTDO(idDesc(idP), :);
+      for type = [1 3]
+         idForType = find(a_dataCTDO(:, 1) == type);
+         for idP = 1:length(idForType)
+            data = a_dataCTDO(idForType(idP), :);
             for idMeas = 1:15
                if (idMeas == 1)
                   data(idMeas+1) = data(idMeas+1) + a_refDay;
@@ -103,7 +103,7 @@ switch (optodeType)
                   end
                end
                
-               if (idT == 1)
+               if (type == 1)
                   o_descProfDate = [o_descProfDate; data(idMeas+1)];
                   o_descProfPres = [o_descProfPres; data(idMeas+1+15*2)];
                   o_descProfTemp = [o_descProfTemp; data(idMeas+1+15*3)];
@@ -120,10 +120,10 @@ switch (optodeType)
    case 1
       % CTD + Aanderaa 4330
       
-      for idT = [8 10]
-         idDesc = find(a_dataCTDO(:, 1) == idT);
-         for idP = 1:length(idDesc)
-            data = a_dataCTDO(idDesc(idP), :);
+      for type = [8 10]
+         idForType = find(a_dataCTDO(:, 1) == type);
+         for idP = 1:length(idForType)
+            data = a_dataCTDO(idForType(idP), :);
             for idMeas = 1:7
                if (idMeas == 1)
                   data(idMeas+1) = data(idMeas+1) + a_refDay;
@@ -138,7 +138,7 @@ switch (optodeType)
                   end
                end
                
-               if (idT == 8)
+               if (type == 8)
                   o_descProfDate = [o_descProfDate; data(idMeas+1)];
                   o_descProfPres = [o_descProfPres; data(idMeas+1+7*2)];
                   o_descProfTemp = [o_descProfTemp; data(idMeas+1+7*3)];
@@ -161,10 +161,10 @@ switch (optodeType)
    case 4
       % CTD + SBE 63
       
-      for idT = [11 13]
-         idDesc = find(a_dataCTDO(:, 1) == idT);
-         for idP = 1:length(idDesc)
-            data = a_dataCTDO(idDesc(idP), :);
+      for type = [11 13]
+         idForType = find(a_dataCTDO(:, 1) == type);
+         for idP = 1:length(idForType)
+            data = a_dataCTDO(idForType(idP), :);
             for idMeas = 1:9
                if (idMeas == 1)
                   data(idMeas+1) = data(idMeas+1) + a_refDay;
@@ -178,7 +178,7 @@ switch (optodeType)
                   end
                end
                
-               if (idT == 11)
+               if (type == 11)
                   o_descProfDate = [o_descProfDate; data(idMeas+1)];
                   o_descProfPres = [o_descProfPres; data(idMeas+1+9*2)];
                   o_descProfTemp = [o_descProfTemp; data(idMeas+1+9*3)];
@@ -199,10 +199,10 @@ switch (optodeType)
    case 5
       % CTD + Aanderaa 4330 + SBE 63
       
-      for idT = [14 16]
-         idDesc = find(a_dataCTDO(:, 1) == idT);
-         for idP = 1:length(idDesc)
-            data = a_dataCTDO(idDesc(idP), :);
+      for type = [14 16]
+         idForType = find(a_dataCTDO(:, 1) == type);
+         for idP = 1:length(idForType)
+            data = a_dataCTDO(idForType(idP), :);
             for idMeas = 1:5
                if (idMeas == 1)
                   data(idMeas+1) = data(idMeas+1) + a_refDay;
@@ -219,7 +219,7 @@ switch (optodeType)
                   end
                end
                
-               if (idT == 14)
+               if (type == 14)
                   o_descProfDate = [o_descProfDate; data(idMeas+1)];
                   o_descProfPres = [o_descProfPres; data(idMeas+1+5*2)];
                   o_descProfTemp = [o_descProfTemp; data(idMeas+1+5*3)];

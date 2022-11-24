@@ -170,7 +170,7 @@ if (a_deepCycle == 1)
    % the two following items have moved to TRAJ file
    %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
    %       g_decArgo_cycleNum 146];
-   %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_temperature_204_to_211(tabTech(42));
+   %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_temperature_204_to_213(tabTech(42));
    %
    %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
    %       g_decArgo_cycleNum 147];

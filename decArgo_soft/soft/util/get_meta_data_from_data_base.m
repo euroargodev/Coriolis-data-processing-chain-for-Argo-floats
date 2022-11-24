@@ -29,6 +29,9 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_export_apex102015_20161006.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\DBexport_ArvorIce_5.45.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Provor_Do_Ir-5.74\DBexport_CTS3DO_5.74.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\apex_rudics_meta_20170412.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';

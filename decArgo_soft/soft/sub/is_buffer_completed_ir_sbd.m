@@ -32,6 +32,7 @@ global g_decArgo_floatNum;
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_7TypePacketReceivedFlag;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
 global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
@@ -54,6 +55,7 @@ global g_decArgo_nbOf14Or12TypePacketReceived;
 if ((g_decArgo_0TypePacketReceivedFlag == 1) && ...
       (g_decArgo_4TypePacketReceivedFlag == 1) && ...
       (g_decArgo_5TypePacketReceivedFlag == 1) && ...
+      (g_decArgo_7TypePacketReceivedFlag == 1) && ...
       (g_decArgo_nbOf1Or8Or11Or14TypePacketExpected == g_decArgo_nbOf1Or8Or11Or14TypePacketReceived) && ...
       (g_decArgo_nbOf2Or9Or12Or15TypePacketExpected == g_decArgo_nbOf2Or9Or12Or15TypePacketReceived) && ...
       (g_decArgo_nbOf3Or10Or13Or16TypePacketExpected == g_decArgo_nbOf3Or10Or13Or16TypePacketReceived) && ...
@@ -163,8 +165,9 @@ elseif (a_whyFlag == 1)
             end
          end
          
-      case {210, 211}
+      case {210, 211, 213}
          % Arvor-ARN Iridium
+         % Provor-ARN-DO Iridium
 
          if (g_decArgo_0TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Technical #1 packet is missing\n', ...
@@ -176,6 +179,53 @@ elseif (a_whyFlag == 1)
          end
          if (g_decArgo_5TypePacketReceivedFlag == 0)
             fprintf('BUFF_INFO: Float #%d: Parameter packet is missing\n', ...
+               g_decArgo_floatNum);
+         end
+         if (g_decArgo_4TypePacketReceivedFlag == 1)
+            if (g_decArgo_nbOf1Or8TypePacketExpected ~= g_decArgo_nbOf1Or8TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d descent data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf1Or8TypePacketExpected-g_decArgo_nbOf1Or8TypePacketReceived);
+            end
+            if (g_decArgo_nbOf2Or9TypePacketExpected ~= g_decArgo_nbOf2Or9TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d drift data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf2Or9TypePacketExpected-g_decArgo_nbOf2Or9TypePacketReceived);
+            end
+            if (g_decArgo_nbOf3Or10TypePacketExpected ~= g_decArgo_nbOf3Or10TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d ascent data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf3Or10TypePacketExpected-g_decArgo_nbOf3Or10TypePacketReceived);
+            end
+            if (g_decArgo_nbOf13Or11TypePacketExpected ~= g_decArgo_nbOf13Or11TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d near surface data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf13Or11TypePacketExpected-g_decArgo_nbOf13Or11TypePacketReceived);
+            end
+            if (g_decArgo_nbOf14Or12TypePacketExpected ~= g_decArgo_nbOf14Or12TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d in air data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf14Or12TypePacketExpected-g_decArgo_nbOf14Or12TypePacketReceived);
+            end
+         end
+         
+      case {212}
+         % Arvor-ARN-Ice Iridium
+
+         if (g_decArgo_0TypePacketReceivedFlag == 0)
+            fprintf('BUFF_INFO: Float #%d: Technical #1 packet is missing\n', ...
+               g_decArgo_floatNum);
+         end
+         if (g_decArgo_4TypePacketReceivedFlag == 0)
+            fprintf('BUFF_INFO: Float #%d: Technical #2 packet is missing\n', ...
+               g_decArgo_floatNum);
+         end
+         if (g_decArgo_5TypePacketReceivedFlag == 0)
+            fprintf('BUFF_INFO: Float #%d: Parameter packet #1 is missing\n', ...
+               g_decArgo_floatNum);
+         end
+         if (g_decArgo_7TypePacketReceivedFlag == 0)
+            fprintf('BUFF_INFO: Float #%d: Parameter packet #2 is missing\n', ...
                g_decArgo_floatNum);
          end
          if (g_decArgo_4TypePacketReceivedFlag == 1)

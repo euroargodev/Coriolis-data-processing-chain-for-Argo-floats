@@ -27,6 +27,7 @@ floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_P
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_6902665.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\1901181AndFriends_meta_20161208.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170331\new_argos_meta.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -35,6 +36,7 @@ floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_argos_all.tx
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.52.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170331\new_argos.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
@@ -119,7 +121,7 @@ refFloatList = load(floatListFileName);
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [3901000];
 % floatList = [6901881];
-floatList = [1901180 1901181 1901182];
+% floatList = [6901607];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))

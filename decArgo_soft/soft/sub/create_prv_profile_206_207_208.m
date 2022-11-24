@@ -70,10 +70,10 @@ if (isempty(a_dataCTDO))
    return;
 end
 
-for idT = [1 3]
-   idDesc = find(a_dataCTDO(:, 1) == idT);
-   for idP = 1:length(idDesc)
-      data = a_dataCTDO(idDesc(idP), :);
+for type = [1 3]
+   idForType = find(a_dataCTDO(:, 1) == type);
+   for idP = 1:length(idForType)
+      data = a_dataCTDO(idForType(idP), :);
       for idMeas = 1:7
          if (idMeas == 1)
             data(idMeas+1) = data(idMeas+1) + a_refDay;
@@ -88,7 +88,7 @@ for idT = [1 3]
             end
          end
          
-         if (idT == 1)
+         if (type == 1)
             o_descProfDate = [o_descProfDate; data(idMeas+1)];
             o_descProfPres = [o_descProfPres; data(idMeas+1+7*2)];
             o_descProfTemp = [o_descProfTemp; data(idMeas+1+7*3)];

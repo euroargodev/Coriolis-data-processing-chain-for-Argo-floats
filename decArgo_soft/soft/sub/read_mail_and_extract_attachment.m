@@ -39,7 +39,10 @@ MESSAGE_SIZE = 'Message Size (bytes):';
 UNIT_LOCATION = 'Unit Location:';
 CEP_RADIUS = 'CEPradius =';
 
+% in Arvor 5.45 data received from Massimo Pacciaroni <float.ogs@gmail.com>
+% boundary definition is provided without '"'
 BOUNDARY = 'boundary="';
+BOUNDARY2 = 'boundary=';
 % 01/19/2016: in co_20151217T000434Z_300234060350130_001113_000000_6279.txt,
 % 001114, 001115, 001116 and 001117 attachment file name is provided without '"'
 % (Ex: filename=300234060350130_001113.sbd;)
@@ -83,12 +86,17 @@ while 1
       break;
    end
    lineNum = lineNum + 1;
-   
+      
    % collect information
    if (~isempty(strfind(line, BOUNDARY)))
       idPos = strfind(line, BOUNDARY);
       boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
       boundaryCode = regexprep(boundaryCode, '-', '');
+      boundaryDone = 1;
+   end
+   if (~isempty(strfind(line, BOUNDARY2)) && (boundaryDone == 0)) % use the first boundary only
+      idPos = strfind(line, BOUNDARY2);
+      boundaryCode = strtrim(line(idPos+length(BOUNDARY2):end));
       boundaryDone = 1;
    end
    if (timeOfSessionDone == 0)

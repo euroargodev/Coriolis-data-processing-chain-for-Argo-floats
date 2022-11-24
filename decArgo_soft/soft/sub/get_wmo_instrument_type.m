@@ -29,11 +29,11 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208}
+   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213}
       % Provor, Seabird conductivity sensor
       o_wmoInstType = '841';
       
-   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211}
+   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212}
       % Arvor, Seabird conductivity sensor
       o_wmoInstType = '844';
       

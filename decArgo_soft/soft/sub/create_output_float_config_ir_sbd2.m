@@ -2,7 +2,8 @@
 % Create the final configuration that will be used in the meta.nc file.
 %
 % SYNTAX :
-%  [o_ncConfig] = create_output_float_config_ir_sbd2(a_decArgoConfParamNames, a_ncConfParamNames, a_decoderId)
+%  [o_ncConfig] = create_output_float_config_ir_sbd2( ...
+%    a_decArgoConfParamNames, a_ncConfParamNames, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_decArgoConfParamNames : internal configuration parameter names
@@ -20,7 +21,8 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncConfig] = create_output_float_config_ir_sbd2(a_decArgoConfParamNames, a_ncConfParamNames, a_decoderId)
+function [o_ncConfig] = create_output_float_config_ir_sbd2( ...
+   a_decArgoConfParamNames, a_ncConfParamNames, a_decoderId)
 
 % output parameters initialization
 o_ncConfig = [];

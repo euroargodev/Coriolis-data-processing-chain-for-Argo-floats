@@ -29,7 +29,7 @@ floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_me
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\test_6901764.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
-floatMetaFileName = 'C:\Users\jprannou\Desktop\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 

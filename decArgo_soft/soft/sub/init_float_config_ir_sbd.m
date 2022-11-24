@@ -70,6 +70,18 @@ switch (a_decoderId)
       
       init_float_config_ir_sbd_210_211(a_launchDate);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {212} % Arvor-ARN-Ice Iridium
+      
+      init_float_config_ir_sbd_212(a_launchDate);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {213} % Provor-ARN-DO Iridium
+      
+      init_float_config_ir_sbd_213(a_launchDate);
+      
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to initialize configuration for decoderId #%d\n', ...

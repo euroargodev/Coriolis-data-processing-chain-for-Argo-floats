@@ -28,7 +28,7 @@ function generate_json_decoder_tech_labels()
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_31.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_32.csv';
 
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_105.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_105.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
@@ -37,7 +37,8 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_209.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_301.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_302.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_210.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_210.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_212.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
@@ -149,10 +150,12 @@ else
          decIdList = [31];
       case {32}
          decIdList = [32];
-      case {121}
-         decIdList = [121];
+         
       case {105}
          decIdList = [105, 106, 107, 109, 110];
+      case {121}
+         decIdList = [121];
+
       case {201}
          decIdList = [201, 202];
       case {203}
@@ -162,7 +165,10 @@ else
       case {209}
          decIdList = [209];
       case {210}
-         decIdList = [210, 211];
+         decIdList = [210, 211, 213];
+      case {212}
+         decIdList = [212];
+         
       case {301}
          decIdList = [301];
       case {302}
@@ -199,7 +205,6 @@ else
          decIdList = [2001];
       case {2002}
          decIdList = [2002];
-
          
       otherwise
          fprintf('ERROR: Unknown decId list associate to decId #%d\n', decId);

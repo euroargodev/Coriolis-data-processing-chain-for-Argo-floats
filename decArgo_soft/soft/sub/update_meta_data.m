@@ -29,7 +29,7 @@ global g_decArgo_floatNum;
 
 
 % list of decoder Ids implemented in the current decoder
-decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 201 202 203 204 205 206 208 209 210 211 301 302 303];
+decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 121 201 202 203 204 205 206 208 209 210 211 212 213 301 302 303];
 decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1016];
 decoderIdListNova = [2001 2002];
 decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNova];
@@ -67,12 +67,12 @@ if (isfield(o_metaData, 'PARAMETER'))
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update CTD meta-data
    
-   [o_metaData] = update_parameter_list_ctd(o_metaData, a_decoderId);
+   [o_metaData] = update_parameter_list_ctd(o_metaData);
    
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP}, a_decoderId);
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP});
       if (~isempty(param))
          
          % check meta data length
@@ -405,11 +405,10 @@ return;
 % Update parameter list for ctd associated parameters.
 %
 % SYNTAX :
-%  [o_metaData] = update_parameter_list_ctd(a_metaData, a_decoderId)
+%  [o_metaData] = update_parameter_list_ctd(a_metaData)
 %
 % INPUT PARAMETERS :
 %   a_metaData  : input meta-data to be updated
-%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_metaData : output updated meta-data
@@ -422,7 +421,7 @@ return;
 % RELEASES :
 %   03/24/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_metaData] = update_parameter_list_ctd(a_metaData, a_decoderId)
+function [o_metaData] = update_parameter_list_ctd(a_metaData)
 
 paramList = [ ...
    {'PRES'} ...
@@ -440,11 +439,10 @@ return;
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
-%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_param           : output updated PARAMETER information
@@ -465,7 +463,7 @@ return;
 %   03/27/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName)
 
 % output parameters initialization
 o_param = '';
@@ -537,6 +535,9 @@ return;
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_oxygen(a_metaData, a_decoderId)
 
+% float configuration
+global g_decArgo_floatConfig;
+
 paramList = [];
 switch (a_decoderId)
    case {4, 19, 25}
@@ -553,9 +554,25 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 107, 109, 110, 201, 203, 206, 121}
-      if (ismember(a_decoderId, [106 107 109 110]))
-         optodeInAirMeasFlag = get_static_config_value('CONFIG_PX_1_1_0_0_7', 0);
+   case {106, 301, 202, 207, 208, 213, 107, 109, 110, 201, 203, 206, 121}
+      if (ismember(a_decoderId, [106 107 109 110 213]))
+         if (a_decoderId == 213)
+         
+            % retrieve configuration parameters
+            configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
+            configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
+            
+            % retrieve PX04 configuration value (to get if the optode is mounted
+            % on an additional stick)
+            optodeInAirMeasFlag = [];
+            idPos = find(strncmp('CONFIG_PX04_', configNames, length('CONFIG_PX04_')) == 1, 1);
+            if (~isempty(idPos))
+               optodeInAirMeasFlag = configValues(idPos, end);
+            end
+         else
+            
+            optodeInAirMeasFlag = get_static_config_value('CONFIG_PX_1_1_0_0_7', 0);
+         end
          if (isempty(optodeInAirMeasFlag) || (optodeInAirMeasFlag == 0))
             paramList = [ ...
                {'TEMP_DOXY'} ...
@@ -1688,7 +1705,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 201, 203, 206, 121}
+   case {107, 109, 110, 201, 203, 206, 213, 121}
       % CASE_202_205_304
       switch (a_paramName)
          

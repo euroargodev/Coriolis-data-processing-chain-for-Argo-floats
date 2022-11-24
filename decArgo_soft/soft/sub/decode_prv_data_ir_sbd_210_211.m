@@ -113,7 +113,7 @@ if ((size(a_tabData, 1) ~= size(unique(a_tabData, 'rows'), 1)))
          elseif (packType == 5)
             packetName = 'the parameter packet';
          elseif (packType == 6)
-            packetName = 'one EV/pump action packet';
+            packetName = 'one hydraulic packet';
          else
             packetName = 'one data packet';
          end
@@ -302,6 +302,9 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
          
+         % float 3901863 has been programmed with no CTD acquisition during 2
+         % cycles => we cannot manage that for a subsurface cycle (detection of
+         % surface/subsurface cycle is done with the number of CTD packets)
          if ((g_decArgo_floatNum == 3901863) && ...
                ~isempty(g_decArgo_cycleNum) && ...
                ismember(g_decArgo_cycleNum, [20 21]) && ismember(tabTech2(1), [10 11]))
@@ -325,7 +328,7 @@ for idMes = 1:size(a_tabData, 1)
          tabCycleNum = [tabCycleNum tabTech2(1)];
                   
          % message and measurement counts are set to 0 for a surface cycle
-         if ((length(unique(tabTech2(3:14))) == 1) && (unique(tabTech2(3:14)) == 0))
+         if ((length(unique(tabTech2(3:6))) == 1) && (unique(tabTech2(3:6)) == 0))
             o_deepCycle = 0;
          else
             o_deepCycle = 1;
@@ -338,16 +341,18 @@ for idMes = 1:size(a_tabData, 1)
       case {1, 2, 3, 13, 14}
          % CTD packets
          
-         o_deepCycle = 1;
-         
          if (packType == 1)
             g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
+            o_deepCycle = 1;
          elseif (packType == 2)
             g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
+            o_deepCycle = 1;
          elseif (packType == 3)
             g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
+            o_deepCycle = 1;
          elseif (packType == 13)
             g_decArgo_nbOf13Or11TypePacketReceived = g_decArgo_nbOf13Or11TypePacketReceived + 1;
+            o_deepCycle = 1;
          elseif (packType == 14)
             g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
          end
@@ -368,6 +373,13 @@ for idMes = 1:size(a_tabData, 1)
             ];
          % get item bits
          ctdValues = get_bits(firstBit, tabNbBits, msgData);
+         
+         if (~any(ctdValues(2:end) ~= 0))
+            fprintf('WARNING: Float #%d, Cycle #%d: One empty packet type #%d has been received\n', ...
+               g_decArgo_floatNum, ctdValues(1), ...
+               packType);
+            continue;
+         end
          
          % store cycle number
          tabCycleNum = [tabCycleNum ctdValues(1)];
@@ -578,6 +590,7 @@ function init_counts
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_7TypePacketReceivedFlag;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
 global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
@@ -617,6 +630,8 @@ g_decArgo_nbOf14Or12TypePacketExpected = -1;
 g_decArgo_nbOf14Or12TypePacketReceived = 0;
 
 % items not concerned by this decoder
+g_decArgo_7TypePacketReceivedFlag = 1;
+
 g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
 g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
 g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;

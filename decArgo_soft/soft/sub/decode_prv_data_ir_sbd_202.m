@@ -425,7 +425,7 @@ for idMes = 1:size(a_tabData, 1)
             
             if ~((refTime == 0) && (pres == 0) && (duration == 0))
                tabDate = [tabDate; refDate+refTime/1440];
-               tabPres = [tabPres; pres];
+               tabPres = [tabPres; twos_complement_dec_argo(pres, 16)];
                tabDuration = [tabDuration; duration];
                nbAct = nbAct + 1;
             else
@@ -529,6 +529,7 @@ function init_counts
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
 global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_7TypePacketReceivedFlag;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
 global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
 global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
@@ -568,6 +569,8 @@ g_decArgo_nbOf14Or12TypePacketExpected = -1;
 g_decArgo_nbOf14Or12TypePacketReceived = 0;
 
 % items not concerned by this decoder
+g_decArgo_7TypePacketReceivedFlag = 1;
+
 g_decArgo_nbOf1Or8TypePacketExpected = 0;
 g_decArgo_nbOf2Or9TypePacketExpected = 0;
 g_decArgo_nbOf3Or10TypePacketExpected = 0;

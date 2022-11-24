@@ -49,11 +49,11 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209, 210, 211}
+   case {205, 204, 209, 210, 211, 212}
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       
-   case {206, 207, 208}
+   case {206, 207, 208, 213}
       % Provor-DO Iridium
       o_platformType = 'PROVOR';
             

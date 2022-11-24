@@ -60,7 +60,7 @@ if (~isempty(g_decArgo_gpsData))
       measStruct.juldStatus = g_JULD_STATUS_4;
       measStruct.juldQc = g_decArgo_qcStrNoQc;
       measStruct.juldAdj = gpsLocDate(idLaunch);
-      measStruct.juldStatus = g_JULD_STATUS_4;
+      measStruct.juldAdjStatus = g_JULD_STATUS_4;
       measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
       measStruct.latitude = gpsLocLat(idLaunch);
       measStruct.longitude = gpsLocLon(idLaunch);

@@ -118,11 +118,15 @@ for idP = 1:length(a_ctdData)
    if (phaseNum == g_decArgo_phaseAscProf)
       if (~isempty(subSurfaceId))
          % use the sub surface point transmitted in the CTD data
-         o_subSurfaceMeas = a_ctdData{subSurfaceId}.data;
-         profStruct.presCutOffProf = o_subSurfaceMeas(2);
-         profStruct.subSurfMeasReceived = 1;
-         o_presCutOffProf = o_subSurfaceMeas(2);
-      else
+         subSurfaceMeas = a_ctdData{subSurfaceId}.data;
+         if (any(subSurfaceMeas(2:end) ~= 0)) % subsurface PTS == 0 when not set (when the float didn't reach P > pump cut-off P)
+            profStruct.presCutOffProf = subSurfaceMeas(2);
+            profStruct.subSurfMeasReceived = 1;
+            o_presCutOffProf = subSurfaceMeas(2);
+            o_subSurfaceMeas = subSurfaceMeas;
+         end
+      end
+      if (profStruct.subSurfMeasReceived == 0)
          % get the pressure cut-off for CTD ascending profile (from the
          % configuration)
          configPresCutOffProf = config_get_value_ir_rudics_cts5(g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, 'CONFIG_APMT_SENSOR_01_P54');

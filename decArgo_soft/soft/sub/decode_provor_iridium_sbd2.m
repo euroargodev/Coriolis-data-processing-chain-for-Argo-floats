@@ -946,7 +946,8 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = cut_ctd_profile_ir_sbd2(o_tabProfiles);
    
    % create output float configuration
-   [o_structConfig] = create_output_float_config_ir_sbd2(decArgoConfParamNames, ncConfParamNames, a_decoderId);
+   [o_structConfig] = create_output_float_config_ir_sbd2( ...
+      decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    % add configuration number and output cycle number
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...

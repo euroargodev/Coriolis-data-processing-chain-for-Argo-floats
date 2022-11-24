@@ -839,7 +839,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % create output float configuration
-   [o_structConfig] = create_output_float_config_ir_sbd(decArgoConfParamNames, ncConfParamNames);
+   [o_structConfig] = create_output_float_config_ir_sbd( ...
+      decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    if (g_decArgo_realtimeFlag)
       
