@@ -717,6 +717,12 @@ if (~isempty(doSlope))
       end
       
       % basic adjustment information for NetCDF files
+      % default equation (same as for case '1_1', '1_2', '2_1', '2_2' or '3_2')
+      equation = ['PPOX=f(DOXY), ' ...
+         'PPOX_DOXY_ADJUSTED=(SLOPE*(1+DRIFT/100*(profile_date_juld-launch_date_juld)/365)+INCLINE_T*TEMP)*(PPOX_DOXY+OFFSET), ' ...
+         'DOXY_ADJUSTED=f(PPOX_DOXY_ADJUSTED)'];
+      coefficient = sprintf('OFFSET = %.2f, SLOPE = %.4f, DRIFT = %.3f, INCLINE_T = %.6f, launch_date_juld = %s', ...
+         doOffset, doSlope, doDrift, doInclineT, datestr(a_launchDate + g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS'));
       if (~isnan(doAdjError))
          switch (doAdjErrMethod)
             case {'1_1', '1_2', '2_1', '2_2', '3_2'}

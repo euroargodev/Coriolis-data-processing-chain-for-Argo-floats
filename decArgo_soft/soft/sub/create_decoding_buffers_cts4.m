@@ -351,7 +351,7 @@ tabRank(idSurfVectorPres) = -1;
 % 6903878
 % 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242, 3902124]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -491,6 +491,21 @@ if (ismember(g_decArgo_floatNum, ...
          tabCyNum(idF) = 25400;
 
          a_decodedData(idF) = modify_cycle_num(a_decodedData(idF), 255);
+
+      case 3902124
+         % during cycle (333, 0) the float transmitted multiple data with bad
+         % cycle number
+         idDone = find((tabRank == -1));
+         tabDone(idDone) = 1;
+
+         % during cycle (333, 0) second Iridium session useless data are also
+         % transmitted
+         idF = find((tabCyNumRaw == 334) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idDel = find(tabRank == tabRank(idF));
+         idDel(1) = [];
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
