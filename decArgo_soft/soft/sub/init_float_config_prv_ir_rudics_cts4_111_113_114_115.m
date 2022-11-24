@@ -407,10 +407,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                   end
                end
                g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
-            else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             end
-            
       end
       
       % create the NITRATE calibration arrays
