@@ -463,7 +463,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '041a';
+g_decArgo_decoderVersion = '041b';
 
 % list of managed decoders
 
@@ -534,13 +534,16 @@ g_decArgo_decoderIdListAll = [ ...
    g_decArgo_decoderIdListNemo];
 
 % DEEP float decoders
-g_decArgo_decoderIdListDeepFloat = [201:203 215 216 218 221];
+g_decArgo_decoderIdListDeepFloat = g_decArgo_decoderIdListNkeIridiumDeep;
 
 % BGC float decoders (each sensor has is own PRES axis, i.e. need to interpolate
 % the CTD data when needed by a BGC parameter)
-g_decArgo_decoderIdListBgcFloatNKE = [105:107 109:113 121:126];
+g_decArgo_decoderIdListBgcFloatNKE = [ ...
+   g_decArgo_decoderIdListNkeCts4 ...
+   g_decArgo_decoderIdListNkeCts5 ...
+   g_decArgo_decoderIdListNkeMisc ...
+   ];
 g_decArgo_decoderIdListBgcFloatApex = g_decArgo_decoderIdListApexIridium;
-
 g_decArgo_decoderIdListBgcFloatAll = [ ...
    g_decArgo_decoderIdListBgcFloatNKE ...
    g_decArgo_decoderIdListBgcFloatApex ...
