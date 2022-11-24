@@ -35,6 +35,10 @@
 %   09/25/2018 - RNU - V 1.3: added input parameters 'floatWmo', 'inputDirName'
 %                             and 'outputDirName'
 %   02/27/2019 - RNU - V 1.4: includes version 18.02.2019 for ARGO_simplified_profile
+%   04/15/2019 - RNU - V 1.6: correction of previous version (set to 1.6
+%                             instead of 1.5 so that nc_create_synthetic_profile_rt
+%                             and nc_create_synthetic_profile_rt share the same
+%                             version number
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -55,6 +59,7 @@ DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\aoml\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -83,7 +88,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.4 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.6 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

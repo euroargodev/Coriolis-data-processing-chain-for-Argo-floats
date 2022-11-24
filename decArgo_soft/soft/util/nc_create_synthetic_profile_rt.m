@@ -51,6 +51,7 @@
 %   27/11/2018 - RNU - V 1.4: use the provided XML file name to create log file name
 %                             add information on concerned float when a mandatory parameter is missing
 %   27/11/2018 - RNU - V 1.5: includes version 18.02.2019 for ARGO_simplified_profile
+%   04/15/2019 - RNU - V 1.6: correction of previous version
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -63,24 +64,24 @@ global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
 
 % default directory to store the LOG file
-DIR_LOG_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\log\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default directory to store the XML file
-DIR_XML_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\xml\';
+DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
 
 % default base name of the temporary directory 
-DIR_TMP = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\TMP\';
+DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocs_netCDF4FlagForMonoProf)
-   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
+   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
 else
-   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
+   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
 end
 if (g_cocs_netCDF4FlagForMultiProf)
-   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
+   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
 else
-   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
+   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
 end
 
 % input parameters
@@ -112,7 +113,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.5 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.6 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
