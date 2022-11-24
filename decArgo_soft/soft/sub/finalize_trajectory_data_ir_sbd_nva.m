@@ -105,7 +105,7 @@ if (~isempty(g_decArgo_iridiumMailData))
          end
          cyNum = cyNum - 1;
       end
-
+      
       % First Message Time
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
@@ -136,7 +136,7 @@ idDelFinal = [];
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
-      
+   
    idCyDeep = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 0));
    idCySurf = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 1));
    
@@ -186,7 +186,7 @@ a_tabTrajNMeas(idDelFinal) = [];
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
-      
+   
    idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
    idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
    if (~isempty(idF1))
@@ -247,7 +247,7 @@ if (~isempty(a_tabTrajNCycle))
       
       idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 0));
       idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
-
+      
       if (length(idCyDeep) > 1)
          fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records - only the first one is considered\n', ...
             g_decArgo_floatNum, cycleNum, ...
@@ -312,58 +312,60 @@ end
 % update EOL cycle (cycle number 256)
 % compute an averaged of clock offsets and apply it to all GPS times
 if (~isempty(a_tabTrajNMeas))
-   idEolCy = find([a_tabTrajNMeas.cycleNumber] == 256);
-   idEolCy2 = [];
-   if (~isempty(a_tabTrajNCycle))
-      idEolCy2 = find([a_tabTrajNCycle.cycleNumber] == 256);
-   end
-   if (~isempty(idEolCy))
-      idFSurf = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_Surface);
-      tabClockOffset = [];
-      for idS = 1:length(idFSurf)
-         if ((a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef) && ...
-               (~isempty(a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj)) && ...
-               (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj ~= g_decArgo_ncDateDef))
-            tabClockOffset = [tabClockOffset ...
-               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
-               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj];
-         end
+   if (max([a_tabTrajNMeas.cycleNumber]) == 256)
+      idEolCy = find([a_tabTrajNMeas.cycleNumber] == 256);
+      idEolCy2 = [];
+      if (~isempty(a_tabTrajNCycle))
+         idEolCy2 = find([a_tabTrajNCycle.cycleNumber] == 256);
       end
-      if (~isempty(tabClockOffset))
-         tabClockOffset = round(mean(tabClockOffset*86400))/86400;
+      if (~isempty(idEolCy))
+         idFSurf = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_Surface);
+         tabClockOffset = [];
          for idS = 1:length(idFSurf)
-            if (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef)
-               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj = ...
+            if ((a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef) && ...
+                  (~isempty(a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj)) && ...
+                  (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj ~= g_decArgo_ncDateDef))
+               tabClockOffset = [tabClockOffset ...
                   a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
-                  tabClockOffset;
-               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdjStatus = g_JULD_STATUS_2;
+                  a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj];
             end
          end
-         if (~isempty(idEolCy2))
-            a_tabTrajNCycle(idEolCy2).juldFirstLocation = min([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
-            a_tabTrajNCycle(idEolCy2).juldLastLocation = max([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
-            a_tabTrajNCycle(idEolCy2).clockOffset = tabClockOffset;
-            a_tabTrajNCycle(idEolCy2).dataMode = 'A';
-         end
-         idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_FMT);
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
-         if (~isempty(idEolCy2))
-            a_tabTrajNCycle(idEolCy2).juldFirstMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
-         end
-         idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_LMT);
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
-         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
-            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
-         if (~isempty(idEolCy2))
-            a_tabTrajNCycle(idEolCy2).juldLastMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
+         if (~isempty(tabClockOffset))
+            tabClockOffset = round(mean(tabClockOffset*86400))/86400;
+            for idS = 1:length(idFSurf)
+               if (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef)
+                  a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj = ...
+                     a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
+                     tabClockOffset;
+                  a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdjStatus = g_JULD_STATUS_2;
+               end
+            end
+            if (~isempty(idEolCy2))
+               a_tabTrajNCycle(idEolCy2).juldFirstLocation = min([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
+               a_tabTrajNCycle(idEolCy2).juldLastLocation = max([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
+               a_tabTrajNCycle(idEolCy2).clockOffset = tabClockOffset;
+               a_tabTrajNCycle(idEolCy2).dataMode = 'A';
+            end
+            idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_FMT);
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
+            if (~isempty(idEolCy2))
+               a_tabTrajNCycle(idEolCy2).juldFirstMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
+            end
+            idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_LMT);
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
+            if (~isempty(idEolCy2))
+               a_tabTrajNCycle(idEolCy2).juldLastMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
+            end
          end
       end
    end
