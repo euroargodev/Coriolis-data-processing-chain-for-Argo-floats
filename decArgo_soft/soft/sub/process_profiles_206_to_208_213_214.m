@@ -87,7 +87,9 @@ switch (a_decoderId)
                size(a_tabTech, 1));
          end
          tabTech = a_tabTech(end, :);
-         presCutOffProf = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+         if (any(tabTech(41:43) ~= 0))
+            presCutOffProf = sensor_2_value_for_pressure_204_to_209(tabTech(41));
+         end
       end
       if (isempty(presCutOffProf))
          
@@ -121,7 +123,9 @@ switch (a_decoderId)
                size(a_tabTech, 1));
          end
          tabTech = a_tabTech(end, :);
-         presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+         if (any(tabTech(16:18) ~= 0))
+            presCutOffProf = sensor_2_value_for_pressure_202_210_to_214(tabTech(16));
+         end
       end
       if (isempty(presCutOffProf))
          

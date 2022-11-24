@@ -64,8 +64,23 @@ global g_decArgo_treatAverageAndStDev;
 % get the pressure cut-off for CTD ascending profile (from the CTD technical
 % data)
 presCutOffProfFromTech = [];
-if (~isempty(a_sensorTechCTD) && ~isempty(a_sensorTechCTD{17}))
-   presCutOffProfFromTech = a_sensorTechCTD{17};
+if (~isempty(a_sensorTechCTD) && ...
+      ~isempty(a_sensorTechCTD{17}) && ~isempty(a_sensorTechCTD{18}) && ~isempty(a_sensorTechCTD{19}))
+   
+   a_sensorTechCTDSubPres = a_sensorTechCTD{17};
+   a_sensorTechCTDSubTemp = a_sensorTechCTD{18};
+   a_sensorTechCTDSubSal = a_sensorTechCTD{19};
+   
+   idDel = [];
+   for idP = 1:size(a_sensorTechCTDSubPres, 1)
+      if  ~(any([a_sensorTechCTDSubPres(idP, 3) ...
+            a_sensorTechCTDSubTemp(idP, 3) ...
+            a_sensorTechCTDSubSal(idP, 3)] ~= 0))
+         idDel = [idDel idP];
+      end
+   end
+   a_sensorTechCTDSubPres(idDel, :) = [];
+   presCutOffProfFromTech = a_sensorTechCTDSubPres;
 end
 
 % unpack the input data
@@ -114,7 +129,8 @@ for idCy = 1:length(cycleNumList)
                         profStruct.presCutOffProf = presCutOffProfFromTech(idPresCutOffProf(1), 3);
                      end
                   end
-               else
+               end
+               if (profStruct.presCutOffProf == g_decArgo_presDef)
                   % get the pressure cut-off for CTD ascending profile (from the
                   % configuration)
                   [configPC0112] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_12');

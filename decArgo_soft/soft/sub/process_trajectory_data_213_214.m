@@ -884,20 +884,21 @@ if (a_deepCycle == 1)
    if (~isempty(tabTech2))
       
       % last pumped CTD measurement
-      measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_LastAscPumpedCtd;
-      paramPres = get_netcdf_param_attributes('PRES');
-      paramTemp = get_netcdf_param_attributes('TEMP');
-      paramSal = get_netcdf_param_attributes('PSAL');
-      measStruct.paramList = [paramPres paramTemp paramSal];
-      
-      pres = sensor_2_value_for_pressure_202_210_to_214(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temperature_204_to_214(tabTech2(16+ID_OFFSET));
-      psal = sensor_2_value_for_salinity_210_to_214(tabTech2(17+ID_OFFSET));
-      measStruct.paramData = [pres temp psal];
-      
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+      if (any(tabTech2((15:17)+ID_OFFSET) ~= 0))
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_LastAscPumpedCtd;
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramTemp = get_netcdf_param_attributes('TEMP');
+         paramSal = get_netcdf_param_attributes('PSAL');
+         measStruct.paramList = [paramPres paramTemp paramSal];
+         
+         pres = sensor_2_value_for_pressure_202_210_to_214(tabTech2(15+ID_OFFSET));
+         temp = sensor_2_value_for_temperature_204_to_214(tabTech2(16+ID_OFFSET));
+         psal = sensor_2_value_for_salinity_210_to_214(tabTech2(17+ID_OFFSET));
+         measStruct.paramData = [pres temp psal];
+         
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
    end
    
    % grounding information

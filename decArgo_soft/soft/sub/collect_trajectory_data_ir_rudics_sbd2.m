@@ -429,19 +429,24 @@ sensorTechCTDSubTemp = a_sensorTechCTD{18};
 sensorTechCTDSubSal = a_sensorTechCTD{19};
 for idPack = 1:size(sensorTechCTDSubPres, 1)
    
-   packCycleNumber = sensorTechCTDSubPres(idPack, 1);
-   packProfileNumber = sensorTechCTDSubPres(idPack, 2);
-   
-   trajFromCtdTechStruct = get_traj_from_ctd_tech_init_struct(packCycleNumber, ...
-      packProfileNumber);
-
-   trajFromCtdTechStruct.subsurface_pres = sensorTechCTDSubPres(idPack, 3);
-   trajFromCtdTechStruct.subsurface_temp = sensorTechCTDSubTemp(idPack, 3);
-   trajFromCtdTechStruct.subsurface_psal = sensorTechCTDSubSal(idPack, 3);
-
-   o_tabTrajIndex = [o_tabTrajIndex;
-      250  packCycleNumber packProfileNumber -1];
-   o_tabTrajData = [o_tabTrajData; {trajFromCtdTechStruct}];
+   if (any([sensorTechCTDSubPres(idPack, 3) ...
+         sensorTechCTDSubTemp(idPack, 3) ...
+         sensorTechCTDSubSal(idPack, 3)] ~= 0))
+      
+      packCycleNumber = sensorTechCTDSubPres(idPack, 1);
+      packProfileNumber = sensorTechCTDSubPres(idPack, 2);
+      
+      trajFromCtdTechStruct = get_traj_from_ctd_tech_init_struct(packCycleNumber, ...
+         packProfileNumber);
+      
+      trajFromCtdTechStruct.subsurface_pres = sensorTechCTDSubPres(idPack, 3);
+      trajFromCtdTechStruct.subsurface_temp = sensorTechCTDSubTemp(idPack, 3);
+      trajFromCtdTechStruct.subsurface_psal = sensorTechCTDSubSal(idPack, 3);
+      
+      o_tabTrajIndex = [o_tabTrajIndex;
+         250  packCycleNumber packProfileNumber -1];
+      o_tabTrajData = [o_tabTrajData; {trajFromCtdTechStruct}];
+   end
 end
 
 % create IN AIR measurement profile (PPOX_DOXY)

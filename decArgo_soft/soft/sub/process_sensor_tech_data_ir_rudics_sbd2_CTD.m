@@ -213,21 +213,24 @@ for id = 1:length(idPack)
    end
 
    % "Subsurface" P
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
-      250 a_cycleNum a_profNum -1 208];
-   g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubPres(idP, 3);
-   
-   % the two following items have moved to TRAJ file
-   %    % "Subsurface" T
-   %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
-   %       250 a_cycleNum a_profNum -1 209];
-   %    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubTemp(idP, 3);
-   %
-   %    % "Subsurface" S
-   %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
-   %       250 a_cycleNum a_profNum -1 210];
-   %    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubSal(idP, 3);
-   
+   if (any([a_sensorTechCTDSubPres(idP, 3) ...
+         a_sensorTechCTDSubTemp(idP, 3) ...
+         a_sensorTechCTDSubSal(idP, 3)] ~= 0))
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
+         250 a_cycleNum a_profNum -1 208];
+      g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubPres(idP, 3);
+      
+      % the two following items have moved to TRAJ file
+      %    % "Subsurface" T
+      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
+      %       250 a_cycleNum a_profNum -1 209];
+      %    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubTemp(idP, 3);
+      %
+      %    % "Subsurface" S
+      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
+      %       250 a_cycleNum a_profNum -1 210];
+      %    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCTDSubSal(idP, 3);
+   end
 end
 
 return;

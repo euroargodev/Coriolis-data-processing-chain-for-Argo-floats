@@ -76,19 +76,21 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 207];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(9);
    
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 221];
-   g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214(tabTech2(10));
+   if (any(tabTech2(10:12) ~= 0))
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 221];
+      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214(tabTech2(10));
+      
+      % the two following items have moved to TRAJ file
+      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      %       g_decArgo_cycleNum 222];
+      %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
+      %
+      %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      %       g_decArgo_cycleNum 223];
+      %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
+   end
    
-   % the two following items have moved to TRAJ file
-   %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-   %       g_decArgo_cycleNum 222];
-   %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_temperature_201_to_203_215(tabTech2(11));
-   %
-   %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-   %       g_decArgo_cycleNum 223];
-   %    g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_salinity_201_to_203_215(tabTech2(12));
-
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 208];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(16);
