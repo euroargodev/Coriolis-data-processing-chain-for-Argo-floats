@@ -81,9 +81,11 @@ evtTimeList = [events.timestamp];
 uEvtTimeList = unique(evtTimeList);
 if (length(unique(uEvtTimeList)) > 1)
    nbElts = hist(evtTimeList, uEvtTimeList);
-   [maxVal, maxId] = max(fliplr(nbElts)); % fliplr to catch the oldest one if more than one is provided
-   maxId = length(nbElts) - maxId + 1;
-   events = events(find([events.timestamp] == uEvtTimeList(maxId)));
+   if (length(unique(nbElts)) == 1) % be sure all configuration is repeated at different dates (not the case for 7900588 #23 for example)
+      [maxVal, maxId] = max(fliplr(nbElts)); % fliplr to catch the oldest one if more than one is provided
+      maxId = length(nbElts) - maxId + 1;
+      events = events(find([events.timestamp] == uEvtTimeList(maxId)));
+   end
 end
 configStruct = [];
 for idEv = 1:length(events)

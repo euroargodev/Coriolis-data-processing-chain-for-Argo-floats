@@ -35,6 +35,7 @@ global g_decArgo_qcStrNoQc;
 % configuration values
 global g_decArgo_dirOutputTraj32NetcdfFile;
 global g_decArgo_applyRtqc;
+global g_decArgo_dirOutputNetcdfFile;
 
 % decoder version
 global g_decArgo_decoderVersion;
@@ -2292,9 +2293,15 @@ netcdf.close(fCdf);
 % end
 
 if ((g_decArgo_realtimeFlag == 1) || (g_decArgo_delayedModeFlag == 1) || (g_decArgo_applyRtqc == 1))
-   % store information for the XML report
-   g_decArgo_reportStruct.outputTrajFiles = [g_decArgo_reportStruct.outputTrajFiles ...
-      {ncPathFileName}];
+   
+   % store information for the XML report (only if TRAJ 3.2 is in the NetCDF
+   % common directory (Laure's requirement)
+   [dirOutputNetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputNetcdfFile);
+   [dirOutputTraj32NetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputTraj32NetcdfFile);
+   if (strcmp(dirOutputNetcdfFile, dirOutputTraj32NetcdfFile))
+      g_decArgo_reportStruct.outputTrajFiles = [g_decArgo_reportStruct.outputTrajFiles ...
+         {ncPathFileName}];
+   end
 end
 
 fprintf('... NetCDF TRAJECTORY file created\n');
