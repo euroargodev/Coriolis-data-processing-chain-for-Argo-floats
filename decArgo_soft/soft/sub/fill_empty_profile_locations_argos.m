@@ -126,9 +126,11 @@ for idProf = 1:length(a_tabProfiles)
          
          if (nextLocDate ~= g_decArgo_dateDef)
             % interpolate the locations
-            interpLocLon = interp1q([prevLocDate; nextLocDate], [prevLocLon; nextLocLon], profile.date);
-            interpLocLat = interp1q([prevLocDate; nextLocDate], [prevLocLat; nextLocLat], profile.date);
-            
+            [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
+               prevLocDate, prevLocLon, prevLocLat, ...
+               nextLocDate, nextLocLon, nextLocLat, ...
+               profile.date);
+
             if (~isnan(interpLocLon))
                % assign the interpolated location to the profile
                a_tabProfiles(idProf).locationDate = profile.date;

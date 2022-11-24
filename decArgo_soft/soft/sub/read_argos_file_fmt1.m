@@ -179,7 +179,7 @@ end
 % locations post-processing
 
 % longitudes must be in the [-180, 180[ interval
-id = find(o_argosLocLon > 180);
+id = find(o_argosLocLon >= 180);
 o_argosLocLon(id) = o_argosLocLon(id) - 360;
 
 % sort output data

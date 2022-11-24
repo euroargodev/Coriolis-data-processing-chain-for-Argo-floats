@@ -91,7 +91,7 @@ for idL = 1:nbLoc
 end
 
 o_argosLocLon = argosLon(idLoc);
-id = find(o_argosLocLon > 180);
+id = find(o_argosLocLon >= 180);
 o_argosLocLon(id) = o_argosLocLon(id) - 360;
 
 o_argosLocLat = argosLat(idLoc);         

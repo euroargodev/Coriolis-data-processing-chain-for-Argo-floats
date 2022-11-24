@@ -114,9 +114,11 @@ if (prevLocDate ~= g_decArgo_dateDef)
    if (curLocDate ~= g_decArgo_dateDef)
       % interpolate the positions
       o_profLocDate = a_profDate;
-      o_profLocLon = interp1q([prevLocDate; curLocDate], [prevLocLon; curLocLon], a_profDate);
-      o_profLocLat = interp1q([prevLocDate; curLocDate], [prevLocLat; curLocLat], a_profDate);
-      
+      [o_profLocLon, o_profLocLat] = interpolate_between_2_locations(...
+         prevLocDate, prevLocLon, prevLocLat, ...
+         curLocDate, curLocLon, curLocLat, ...
+         a_profDate);
+
       if (isnan(o_profLocLon))
          o_profLocDate = [];
          o_profLocLon = [];

@@ -66,13 +66,13 @@ switch (a_decoderId)
       % Apex Argos
       o_platformType = 'APEX';
       
-   case {2001}
-      % Nova
+   case {2001, 2002}
+      % Nova & Dova
       o_platformType = 'NOVA';
       
-   case {2002}
-      % Dova
-      o_platformType = 'DOVA';
+      %    case {2002}
+      %       % Dova
+      %       o_platformType = 'DOVA';
       
    otherwise
       o_platformType = '';

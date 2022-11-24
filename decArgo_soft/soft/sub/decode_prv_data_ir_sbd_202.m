@@ -145,19 +145,26 @@ for idMes = 1:size(a_tabData, 1)
          
          % compute the offset between float days and julian days
          startDateInfo = [tabTech(2:4); tabTech(6)];
-         if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
+         if (any(startDateInfo ~= 0))
             cycleStartDateDay = datenum(sprintf('%02d%02d%02d', tabTech(2:4)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
             if (~isempty(g_decArgo_julD2FloatDayOffset))
                if (g_decArgo_julD2FloatDayOffset ~= cycleStartDateDay - tabTech(5))
-                  fprintf('ERROR: Float #%d: Shift in float day (previous offset = %d, new offset = %d)\n', ...
+                  prevOffsetGregDate = julian_2_gregorian_dec_argo(g_decArgo_julD2FloatDayOffset);
+                  prevOffsetGregDate = prevOffsetGregDate(1:10);
+                  newOffsetGregDate = julian_2_gregorian_dec_argo(cycleStartDateDay - tabTech(5));
+                  newOffsetGregDate = newOffsetGregDate(1:10);
+                  fprintf('ERROR: Float #%d Cycle #%d: Shift in float day (previous offset = %d (%s), new offset = %d (%s))\n', ...
                      g_decArgo_floatNum, ...
+                     tabTech(1), ...
                      g_decArgo_julD2FloatDayOffset, ...
-                     cycleStartDateDay - tabTech(5));
+                     prevOffsetGregDate, ...
+                     cycleStartDateDay - tabTech(5), ...
+                     newOffsetGregDate);
                end
             end
             g_decArgo_julD2FloatDayOffset = cycleStartDateDay - tabTech(5);
          end
-         
+
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(38:43)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          

@@ -58,13 +58,13 @@ switch (a_decoderId)
       % Webb Research, Seabird sensor
       o_wmoInstType = '846';
       
-   case {2001}
-      % Nova float
+   case {2001, 2002}
+      % Nova & Dova float
       o_wmoInstType = '865';
       
-   case {2002}
-      % Dova float
-      o_wmoInstType = '869';
+      %    case {2002}
+      %       % Dova float
+      %       o_wmoInstType = '869';
       
    otherwise
       o_wmoInstType = '';

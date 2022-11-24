@@ -128,8 +128,10 @@ end
 if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
    
    % interpolate the locations
-   interpLocLon = interp1q([prevLocDate; nextLocDate], [prevLocLon; nextLocLon], a_profStruct.date);
-   interpLocLat = interp1q([prevLocDate; nextLocDate], [prevLocLat; nextLocLat], a_profStruct.date);
+   [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
+      prevLocDate, prevLocLon, prevLocLat, ...
+      nextLocDate, nextLocLon, nextLocLat, ...
+      a_profStruct.date);
    
    if (~isnan(interpLocLon))
       % assign the interpolated location to the profile
