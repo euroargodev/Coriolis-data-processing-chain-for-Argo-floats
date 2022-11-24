@@ -560,6 +560,9 @@ if (a_deepCycle == 1)
       
       % grounding information
       grounded = 'N';
+      if (a_tabTech1(18) > 0)
+         grounded = 'Y';
+      end      
       if (a_firstGroundingDate ~= g_decArgo_dateDef)
          measStruct = create_one_meas_float_time(g_MC_Grounded, a_firstGroundingDate, g_JULD_STATUS_2, floatClockDrift);
          paramPres = get_netcdf_param_attributes('PRES');
