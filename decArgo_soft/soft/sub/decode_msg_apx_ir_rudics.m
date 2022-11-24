@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_miscInfo, o_configInfo, o_techInfo, o_techData, ...
 %    o_pMarkData, o_driftData, o_parkData, o_parkDataEng, ...
-%    o_profLrData, o_profHrData, ...
+%    o_profLrData, o_profHrData, o_profEndDate, ...
 %    o_nearSurfData, o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfData, ...
 %    o_gpsData, o_gpsInfo, ...
 %    o_presOffsetData] = ...
@@ -26,6 +26,7 @@
 %   o_parkDataEng             : park data from engineering data
 %   o_profLrData              : profile LR data
 %   o_profHrData              : profile HR data
+%   o_profEndDate             : profile end date
 %   o_nearSurfData            : NS data
 %   o_surfDataBladderDeflated : surface data (bladder deflated)
 %   o_surfDataBladderInflated : surface data (bladder inflated)
@@ -44,7 +45,7 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_configInfo, o_techInfo, o_techData, ...
    o_pMarkData, o_driftData, o_parkData, o_parkDataEng, ...
-   o_profLrData, o_profHrData, ...
+   o_profLrData, o_profHrData, o_profEndDate, ...
    o_nearSurfData, o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfData, ...
    o_gpsData, o_gpsInfo, ...
    o_presOffsetData] = ...
@@ -61,6 +62,7 @@ o_parkData = [];
 o_parkDataEng = [];
 o_profLrData = [];
 o_profHrData = [];
+o_profEndDate = [];
 o_nearSurfData = [];
 o_surfDataBladderDeflated = [];
 o_surfDataBladderInflated = [];
@@ -130,21 +132,22 @@ for idFile = 1:length(a_msgFileList)
    
    if (idFile == length(a_msgFileList))
       if (~isempty(profInfoDataStr))
-         profLrInfo = parse_apx_ir_rudics_profile_info(profInfoDataStr);
+         profInfo = parse_apx_ir_rudics_profile_info(profInfoDataStr);
          
-         if (isfield(profLrInfo, 'CyNum'))
+         if (isfield(profInfo, 'CyNum'))
             dataStruct = get_apx_misc_data_init_struct('Profile', [], [], []);
             dataStruct.label = 'Profile number';
-            dataStruct.value = profLrInfo.CyNum;
+            dataStruct.value = profInfo.CyNum;
             dataStruct.format = '%s';
             o_miscInfo{end+1} = dataStruct;
          end
-         if (isfield(profLrInfo, 'ProfTime'))
+         if (isfield(profInfo, 'ProfTime'))
             dataStruct = get_apx_misc_data_init_struct('Profile', [], [], []);
-            dataStruct.label = 'Profile LR terminated date';
-            dataStruct.value = julian_2_gregorian_dec_argo(profLrInfo.ProfTime);
+            dataStruct.label = 'Profile terminated date';
+            dataStruct.value = julian_2_gregorian_dec_argo(profInfo.ProfTime);
             dataStruct.format = '%s';
             o_miscInfo{end+1} = dataStruct;
+            o_profEndDate = profInfo.ProfTime;
          end
       end
    end

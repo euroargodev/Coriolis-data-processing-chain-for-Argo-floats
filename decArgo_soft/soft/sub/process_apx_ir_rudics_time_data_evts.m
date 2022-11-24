@@ -222,6 +222,18 @@ if (any(strcmp({a_events.cmd}, 'SurfaceDetect()')))
    end
 end
 
+if (any(strcmp({a_events.cmd}, 'ProfileTerminate()')))
+   
+   idEvts = find(strcmp({a_events.cmd}, 'ProfileTerminate()'));
+   events = a_events(idEvts);
+   
+   for idEv = 1:length(events)
+      %    fprintf('''%s''\n', dataStr);
+      
+      o_timeData.ascentEnd2Date = events(idEv).time;
+   end
+end
+
 if (any(strcmp({a_events.cmd}, 'login()')))
    
    idEvts = find(strcmp({a_events.cmd}, 'login()'));

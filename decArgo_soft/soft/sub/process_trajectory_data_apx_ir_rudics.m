@@ -11,6 +11,7 @@
 %    a_nearSurfData, ...
 %    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
 %    a_timeDataLog, a_gpsData, ...
+%    a_profEndDateMsg, a_profEndAdjDateMsg, ...
 %    a_clockOffsetData, o_presOffsetData, ...
 %    a_tabTrajNMeas, a_tabTrajNCycle, ...
 %    a_configExistFlag, a_decoderId)
@@ -31,6 +32,8 @@
 %   a_surfDataMsg             : surface data from engineering data
 %   a_timeDataLog             : cycle timings from log file
 %   a_gpsData                 : GPS data
+%   a_profEndDateMsg          : profile end date
+%   a_profEndAdjDateMsg       : profile end adjusted date
 %   a_clockOffsetData         : clock offset information
 %   a_presOffsetData          : input pressure offset information
 %   a_tabTrajNMeas            : input traj N_MEAS data
@@ -59,6 +62,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir_rudi
    a_nearSurfData, ...
    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
    a_timeDataLog, a_gpsData, ...
+   a_profEndDateMsg, a_profEndAdjDateMsg, ...
    a_clockOffsetData, o_presOffsetData, ...
    a_tabTrajNMeas, a_tabTrajNCycle, ...
    a_configExistFlag, a_decoderId)
@@ -170,6 +174,7 @@ end
 
 cycleStartDate = g_decArgo_dateDef;
 cycleStartAdjDate = g_decArgo_dateDef;
+aetSet = 0;
 if (~isempty(a_timeDataLog))
    
    % Cycle Start Time
@@ -364,6 +369,28 @@ if (~isempty(a_timeDataLog))
          
          trajNCycleStruct.juldAscentEnd = nCycleTime;
          trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
+         aetSet = 1;
+      end
+   end
+   if (aetSet == 0)
+      if (~isempty(a_timeDataLog.ascentEnd2Date))
+         time = a_timeDataLog.ascentEnd2Date;
+         timeAdj = g_decArgo_dateDef;
+         if (~isempty(a_timeDataLog.ascentEnd2AdjDate))
+            timeAdj = a_timeDataLog.ascentEnd2AdjDate;
+         end
+         [measStruct, nCycleTime] = create_one_meas_float_time_bis( ...
+            g_MC_AET, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStruct))
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            
+            trajNCycleStruct.juldAscentEnd = nCycleTime;
+            trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
+            aetSet = 1;
+         end
       end
    end
    
@@ -505,6 +532,27 @@ if (~isempty(a_timeDataLog))
             trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_2;
          end
       end      
+   end
+end
+
+if (aetSet == 0)
+   if (~isempty(a_profEndDateMsg))
+      time = a_profEndDateMsg;
+      timeAdj = g_decArgo_dateDef;
+      if (~isempty(a_profEndAdjDateMsg))
+         timeAdj = a_profEndAdjDateMsg;
+      end
+      [measStruct, nCycleTime] = create_one_meas_float_time_bis( ...
+         g_MC_AET, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (~isempty(measStruct))
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         
+         trajNCycleStruct.juldAscentEnd = nCycleTime;
+         trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
+      end
    end
 end
 

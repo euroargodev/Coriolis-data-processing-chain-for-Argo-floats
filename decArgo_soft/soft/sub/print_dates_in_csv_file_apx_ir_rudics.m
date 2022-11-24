@@ -10,6 +10,9 @@
 %    a_nearSurfData, ...
 %    a_surfDataBladderDeflated, a_surfDataBladderInflated, ...
 %    a_timeDataLog, ...
+%    a_profEndDateMsg, a_profEndAdjDateMsg, ...
+%    a_gpsDataLog, a_gpsDataMsg)
+%
 %    a_gpsDataLog, a_gpsDataMsg)
 %
 % INPUT PARAMETERS :
@@ -22,6 +25,8 @@
 %   a_surfDataBladderDeflated : surface data (bladder deflated)
 %   a_surfDataBladderInflated : surface data (bladder inflated)
 %   a_timeDataLog             : cycle timings from log file
+%   a_profEndDateMsg          : profile end date
+%   a_profEndAdjDateMsg       : profile end adjusted date
 %   a_gpsDataLog              : GPS data from log file
 %   a_gpsDataMsg              : GPS data from msg file
 %
@@ -43,6 +48,7 @@ function print_dates_in_csv_file_apx_ir_rudics( ...
    a_nearSurfData, ...
    a_surfDataBladderDeflated, a_surfDataBladderInflated, ...
    a_timeDataLog, ...
+   a_profEndDateMsg, a_profEndAdjDateMsg, ...
    a_gpsDataLog, a_gpsDataMsg)
 
 % current float WMO number
@@ -285,9 +291,31 @@ if (~isempty(a_timeDataLog))
       if (isempty(a_timeDataLog.ascentEndAdjPres))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
       end
-      allTabLabel = [allTabLabel {'ASCENT END'}];
+      allTabLabel = [allTabLabel {'ASCENT END (log.SurfaceDetect)'}];
       allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
    end
+   if (~isempty(a_timeDataLog.ascentEnd2Date))
+      allTabDate = [allTabDate a_timeDataLog.ascentEnd2Date];
+      allTabDateAdj = [allTabDateAdj a_timeDataLog.ascentEnd2AdjDate];
+      if (isempty(a_timeDataLog.ascentEnd2AdjDate))
+         allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+      end
+      allTabPres = [allTabPres g_decArgo_presDef];
+      allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+      allTabLabel = [allTabLabel {'ASCENT END (log.ProfileTerminate)'}];
+      allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end
+   if (~isempty(a_profEndDateMsg))
+      allTabDate = [allTabDate a_profEndDateMsg];
+      allTabDateAdj = [allTabDateAdj a_profEndAdjDateMsg];
+      if (isempty(a_profEndAdjDateMsg))
+         allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+      end
+      allTabPres = [allTabPres g_decArgo_presDef];
+      allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+      allTabLabel = [allTabLabel {'ASCENT END (msg.ProfileTerminate)'}];
+      allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end   
    if (~isempty(a_timeDataLog.transStartDate))
       allTabDate = [allTabDate a_timeDataLog.transStartDate];
       allTabDateAdj = [allTabDateAdj a_timeDataLog.transStartAdjDate];
