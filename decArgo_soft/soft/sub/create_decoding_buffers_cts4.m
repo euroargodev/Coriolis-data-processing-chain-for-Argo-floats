@@ -53,6 +53,28 @@ global g_decArgo_decoderIdListNkeCts4Ice;
 % expected data
 NB_SESSION_MAX = 3;
 
+% specific
+if (ismember(g_decArgo_floatNum, ...
+      [6903247]))
+   switch g_decArgo_floatNum
+      case 6903247
+         % the float has been reset at sea and cycle numbers started from 1
+         tabDate = [a_decodedData.fileDate];
+         tabCyNumFile = [a_decodedData.cyNumFile];
+         tabCyNumRaw = [a_decodedData.cyNumRaw];
+         afterResetDate1 = gregorian_2_julian_dec_argo('2022/07/16 00:00:00');
+         % be sure that cycle numbers are always less than 294 after reset
+         if (any((tabDate > afterResetDate1) & ((tabCyNumFile >= 294) | (tabCyNumRaw >= 294))))
+            fprintf('ERROR: Float #%d: float data cannot be processed => add for an update of the create_decoding_buffers_cts4 code\n', ...
+               g_decArgo_floatNum);
+         else
+            afterResetDate2 = gregorian_2_julian_dec_argo('2022/07/15 12:00:00');
+            idSet = find(tabDate > afterResetDate2);
+            a_decodedData(idSet) = update_cycle_number(a_decodedData(idSet), 294);
+         end
+   end
+end
+
 tabDate = [a_decodedData.fileDate];
 tabDiffDate = [-1 diff(tabDate)];
 tabCyNumOut = [a_decodedData.cyNumOut];
@@ -1363,6 +1385,97 @@ switch (o_decodedData.packType)
    otherwise
       fprintf('ERROR: Float #%d : packet type #%d not managed yet in ''modify_cycle_num'' function\n', ...
          g_decArgo_floatNum, o_decodedData.packType);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Update cycle number in decoded data.
+%
+% SYNTAX :
+%  [o_decodedData] = update_cycle_number(a_decodedData, a_CyNumOffset)
+%
+% INPUT PARAMETERS :
+%   a_decodedData : input decoded data
+%   a_CyNumOffset : offset in cycle numbers
+%
+% OUTPUT PARAMETERS :
+%   o_decodedData : output decoded data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   11/04/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_decodedData] = update_cycle_number(a_decodedData, a_CyNumOffset)
+
+% output parameters initialization
+o_decodedData = a_decodedData;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+
+for id = 1:length(o_decodedData)
+
+   decodedData = o_decodedData(id);
+
+   if (decodedData.cyProfPhaseList(3) < a_CyNumOffset)
+      decodedData.cyProfPhaseList(3) = decodedData.cyProfPhaseList(3) + a_CyNumOffset;
+   end
+   if (decodedData.cyNumRaw < a_CyNumOffset)
+      decodedData.cyNumRaw = decodedData.cyNumRaw + a_CyNumOffset;
+   end
+   if (decodedData.cyNumFile < a_CyNumOffset)
+      decodedData.cyNumFile = decodedData.cyNumFile + a_CyNumOffset;
+   end
+
+   switch (decodedData.packType)
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {0, 247, 250, 252}
+         % sensor data
+         % grounding data
+         % sensor tech data
+         % float pressure data
+
+         for idDec = 1:length(decodedData.decData)
+            decData = decodedData.decData{idDec};
+            if (decData(1) < a_CyNumOffset)
+               decData(1) = decData(1) + a_CyNumOffset;
+            end
+            decodedData.decData{idDec} = decData;
+         end
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {248, 254, 255}
+         % RUDICS parameters
+         % float prog technical data
+         % float prog param data
+
+         if (decodedData.decData(2) < a_CyNumOffset)
+            decodedData.decData(2) = decodedData.decData(2) + a_CyNumOffset;
+         end
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {249, 253}
+         % sensor parameters
+         % float technical data
+
+         if (decodedData.decData(4) < a_CyNumOffset)
+            decodedData.decData(4) = decodedData.decData(4) + a_CyNumOffset;
+         end
+
+      otherwise
+         fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d\n', ...
+            g_decArgo_floatNum, ...
+            decodedData.packType);
+   end
+
+   o_decodedData(id) = decodedData;
 end
 
 return
