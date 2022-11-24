@@ -1835,12 +1835,12 @@ if (a_rtVersionFlag == 0)
    
    if (~isempty(g_cogj_csvFileCoefId))
       fclose(g_cogj_csvFileCoefId);
-      g_cogj_csvFileCoefId = -1;
+      g_cogj_csvFileCoefId = '';
    end
    
    if (~isempty(g_cogj_csvFileBddId))
       fclose(g_cogj_csvFileBddId);
-      g_cogj_csvFileBddId = -1;
+      g_cogj_csvFileBddId = '';
    end
 else
    % for RT version
