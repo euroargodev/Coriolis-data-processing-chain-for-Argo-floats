@@ -233,7 +233,7 @@ for idProf = 1:length(tabProfiles)
                g_decArgo_floatNum, outputCycleNumber);
          end
          ncPathFileName = [outputDirName  ncFileName];
-
+         
          % check if the file need to be created
          generate = 1;
          if (g_decArgo_floatTransType == 1)
@@ -324,6 +324,12 @@ for idProf = 1:length(tabProfiles)
                      differ = 0;
                      for idP = 1:nbProfToStore
                         profPos = idP-1+profShiftIfNoPrimary;
+                        if (profPos+1 > length(ncProfLev))
+                           % new pofiles should be added in the file
+                           differ = 1;
+                           break;
+                        end
+                        
                         prof = tabProfiles(idProfInFile(idP));
                         
                         % profile parameter data
