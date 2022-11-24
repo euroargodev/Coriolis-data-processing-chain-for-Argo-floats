@@ -2,7 +2,7 @@
 % Create the RAMSES2 profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift, o_tabSurf] = ...
+%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
 %    process_profile_ir_rudics_cts5_usea_ramses2(a_ramses2Data, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
@@ -11,9 +11,10 @@
 %   a_gpsData     : GPS data
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles : created output profiles
-%   o_tabDrift    : created output drift measurement profiles
-%   o_tabSurf     : created output surface measurement profiles
+%   o_tabProfiles  : created output profiles
+%   o_tabDrift     : created output drift measurement profiles
+%   o_tabDesc2Prof : created output descent 2 prof measurement profiles
+%   o_tabSurf      : created output surface measurement profiles
 %
 % EXAMPLES :
 %
@@ -23,7 +24,7 @@
 % RELEASES :
 %   06/30/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift, o_tabSurf] = ...
+function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
    process_profile_ir_rudics_cts5_usea_ramses2(a_ramses2Data, a_timeData, a_gpsData)
 
 % output parameters initialization
@@ -44,6 +45,7 @@ global g_decArgo_patternNumFloat;
 % cycle phases
 global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
+global g_decArgo_phaseDsc2Prof;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
 
@@ -51,13 +53,14 @@ global g_decArgo_phaseSatTrans;
 global g_decArgo_treatRaw;
 global g_decArgo_treatDecimatedRaw;
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
+global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_DW;
 
@@ -76,10 +79,12 @@ for idP = 1:length(a_ramses2Data)
    
    if (phaseId == g_decArgo_cts5PhaseDescent)
       phaseNum = g_decArgo_phaseDsc2Prk;
-   elseif (phaseId == g_decArgo_cts5PhaseAscent)
-      phaseNum = g_decArgo_phaseAscProf;
    elseif (phaseId == g_decArgo_cts5PhasePark)
       phaseNum = g_decArgo_phaseParkDrift;
+   elseif (phaseId == g_decArgo_cts5PhaseDeepProfile)
+      phaseNum = g_decArgo_phaseDsc2Prof;
+   elseif (phaseId == g_decArgo_cts5PhaseAscent)
+      phaseNum = g_decArgo_phaseAscProf;
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
       phaseNum = g_decArgo_phaseSatTrans;
    else
@@ -164,6 +169,8 @@ for idP = 1:length(a_ramses2Data)
       % add profile additional information
       if (phaseNum == g_decArgo_phaseParkDrift)
          o_tabDrift = [o_tabDrift profStruct];
+      elseif (phaseNum == g_decArgo_phaseDsc2Prof)
+         o_tabDesc2Prof = [o_tabDesc2Prof profStruct];
       elseif (phaseNum == g_decArgo_phaseSatTrans)
          o_tabSurf = [o_tabSurf profStruct];
       else

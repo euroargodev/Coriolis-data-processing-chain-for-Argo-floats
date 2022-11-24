@@ -221,7 +221,7 @@ global g_decArgo_maxCTDSampleInNovaDataPacket;
 % max number of CTDO samples in one DOVA sensor data packet
 global g_decArgo_maxCTDOSampleInDovaDataPacket;
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
@@ -229,7 +229,7 @@ global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;
@@ -486,7 +486,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release
-g_decArgo_decoderVersion = '052g';
+g_decArgo_decoderVersion = '052h';
 
 % list of managed decoders
 
@@ -938,7 +938,7 @@ g_decArgo_maxCTDSampleInNovaDataPacket = 55;
 % max number of CTDO samples in one DOVA sensor data packet (340 bytes max)
 g_decArgo_maxCTDOSampleInDovaDataPacket = 33;
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 g_decArgo_cts5PhaseDescent = 1;
 g_decArgo_cts5PhasePark = 2;
 g_decArgo_cts5PhaseDeepProfile = 3;
@@ -946,7 +946,7 @@ g_decArgo_cts5PhaseShortPark = 4;
 g_decArgo_cts5PhaseAscent = 5;
 g_decArgo_cts5PhaseSurface = 6;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 g_decArgo_cts5Treat_AM_SD_MD = 1; % mean + st dev + median
 g_decArgo_cts5Treat_AM_SD = 2; % mean + st dev
 g_decArgo_cts5Treat_AM_MD = 3; % mean + median

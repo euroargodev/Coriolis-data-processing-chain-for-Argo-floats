@@ -1188,7 +1188,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtCtd))
 
       % create profiles (as they are transmitted)
-      [tabProfilesCtd, tabDriftCtd, tabDesc2Prof, tabSurfCtd, o_subSurfaceMeas] = ...
+      [tabProfilesCtd, tabDriftCtd, tabDesc2ProfCtd, tabSurfCtd, o_subSurfaceMeas] = ...
          process_profile_ir_rudics_cts5_usea_ctd(apmtCtd, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1199,7 +1199,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesCtd];
       o_tabDrift = [o_tabDrift tabDriftCtd];
-      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2Prof];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfCtd];
       o_tabSurf = [o_tabSurf tabSurfCtd];
    end
 
@@ -1207,7 +1207,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtDo))
 
       % create profiles (as they are transmitted)
-      [tabProfilesDo, tabDriftDo, tabSurfDo] = ...
+      [tabProfilesDo, tabDriftDo, tabDesc2ProfDo, tabSurfDo] = ...
          process_profile_ir_rudics_cts5_usea_do(apmtDo, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1218,6 +1218,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesDo];
       o_tabDrift = [o_tabDrift tabDriftDo];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfDo];
       o_tabSurf = [o_tabSurf tabSurfDo];
    end
 
@@ -1225,7 +1226,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtOcr))
 
       % create profiles (as they are transmitted)
-      [tabProfilesOcr, tabDriftOcr, tabSurfOcr] = ...
+      [tabProfilesOcr, tabDriftOcr, tabDesc2ProfOcr, tabSurfOcr] = ...
          process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1236,6 +1237,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesOcr];
       o_tabDrift = [o_tabDrift tabDriftOcr];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfOcr];
       o_tabSurf = [o_tabSurf tabSurfOcr];
    end
 
@@ -1243,7 +1245,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtEco))
 
       % create profiles (as they are transmitted)
-      [tabProfilesEco, tabDriftEco, tabSurfEco] = ...
+      [tabProfilesEco, tabDriftEco, tabDesc2ProfEco, tabSurfEco] = ...
          process_profile_ir_rudics_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1254,6 +1256,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesEco];
       o_tabDrift = [o_tabDrift tabDriftEco];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfEco];
       o_tabSurf = [o_tabSurf tabSurfEco];
    end
 
@@ -1261,7 +1264,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtSbeph))
 
       % create profiles (as they are transmitted)
-      [tabProfilesSbeph, tabDriftSbeph, tabSurfSbeph] = ...
+      [tabProfilesSbeph, tabDriftSbeph, tabDesc2ProfSbeph, tabSurfSbeph] = ...
          process_profile_ir_rudics_cts5_usea_sbeph(apmtSbeph, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1272,6 +1275,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesSbeph];
       o_tabDrift = [o_tabDrift tabDriftSbeph];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfSbeph];
       o_tabSurf = [o_tabSurf tabSurfSbeph];
    end
 
@@ -1279,7 +1283,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtCrover))
 
       % create profiles (as they are transmitted)
-      [tabProfilesCrover, tabDriftCrover, tabSurfCrover] = ...
+      [tabProfilesCrover, tabDriftCrover, tabDesc2ProfCrover, tabSurfCrover] = ...
          process_profile_ir_rudics_cts5_usea_crover(apmtCrover, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1290,6 +1294,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesCrover];
       o_tabDrift = [o_tabDrift tabDriftCrover];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfCrover];
       o_tabSurf = [o_tabSurf tabSurfCrover];
    end
 
@@ -1297,7 +1302,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtSuna))
 
       % create profiles (as they are transmitted)
-      [tabProfilesSuna, tabDriftSuna, tabSurfSuna] = ...
+      [tabProfilesSuna, tabDriftSuna, tabDesc2ProfSuna, tabSurfSuna] = ...
          process_profile_ir_rudics_cts5_usea_suna(apmtSuna, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1308,6 +1313,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesSuna];
       o_tabDrift = [o_tabDrift tabDriftSuna];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfSuna];
       o_tabSurf = [o_tabSurf tabSurfSuna];
    end
 
@@ -1315,7 +1321,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtUvpLpm))
 
       % create profiles (as they are transmitted)
-      [tabProfilesUvpLpm, tabDriftUvpLpm, tabSurfUvpLpm] = ...
+      [tabProfilesUvpLpm, tabDriftUvpLpm, tabDesc2ProfUvpLpm, tabSurfUvpLpm] = ...
          process_profile_ir_rudics_cts5_usea_uvp_lpm(apmtUvpLpm, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1326,6 +1332,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesUvpLpm];
       o_tabDrift = [o_tabDrift tabDriftUvpLpm];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfUvpLpm];
       o_tabSurf = [o_tabSurf tabSurfUvpLpm];
    end
 
@@ -1333,7 +1340,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtUvpLpmV2))
 
       % create profiles (as they are transmitted)
-      [tabProfilesUvpLpmV2, tabDriftUvpLpmV2, tabSurfUvpLpmV2] = ...
+      [tabProfilesUvpLpmV2, tabDriftUvpLpmV2, tabDesc2ProfUvpLpmV2, tabSurfUvpLpmV2] = ...
          process_profile_ir_rudics_cts5_usea_uvp_lpm_v2(apmtUvpLpmV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1344,6 +1351,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesUvpLpmV2];
       o_tabDrift = [o_tabDrift tabDriftUvpLpmV2];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfUvpLpmV2];
       o_tabSurf = [o_tabSurf tabSurfUvpLpmV2];
    end
 
@@ -1351,7 +1359,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtUvpBlack))
 
       % create profiles (as they are transmitted)
-      [tabProfilesUvpBlack, tabDriftUvpBlack, tabSurfUvpBlack] = ...
+      [tabProfilesUvpBlack, tabDriftUvpBlack, tabDesc2ProfUvpBlack, tabSurfUvpBlack] = ...
          process_profile_ir_rudics_cts5_usea_uvp_black(apmtUvpBlack, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1362,6 +1370,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesUvpBlack];
       o_tabDrift = [o_tabDrift tabDriftUvpBlack];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfUvpBlack];
       o_tabSurf = [o_tabSurf tabSurfUvpBlack];
    end
 
@@ -1369,7 +1378,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtUvpBlackV2))
 
       % create profiles (as they are transmitted)
-      [tabProfilesUvpBlackV2, tabDriftUvpBlackV2, tabSurfUvpBlackV2] = ...
+      [tabProfilesUvpBlackV2, tabDriftUvpBlackV2, tabDesc2ProfUvpBlackV2, tabSurfUvpBlackV2] = ...
          process_profile_ir_rudics_cts5_usea_uvp_black_v2(apmtUvpBlackV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1380,6 +1389,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesUvpBlackV2];
       o_tabDrift = [o_tabDrift tabDriftUvpBlackV2];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfUvpBlackV2];
       o_tabSurf = [o_tabSurf tabSurfUvpBlackV2];
    end
 
@@ -1387,7 +1397,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtUvpTaxoV2))
 
       % create profiles (as they are transmitted)
-      [tabProfilesUvpTaxoV2, tabDriftUvpTaxoV2, tabSurfUvpTaxoV2] = ...
+      [tabProfilesUvpTaxoV2, tabDriftUvpTaxoV2, tabDesc2ProfUvpTaxoV2, tabSurfUvpTaxoV2] = ...
          process_profile_ir_rudics_cts5_usea_uvp_taxo_v2(apmtUvpTaxoV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1398,6 +1408,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesUvpTaxoV2];
       o_tabDrift = [o_tabDrift tabDriftUvpTaxoV2];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfUvpTaxoV2];
       o_tabSurf = [o_tabSurf tabSurfUvpTaxoV2];
    end
 
@@ -1405,7 +1416,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtOpusLight))
 
       % create profiles (as they are transmitted)
-      [tabProfilesOpusLight, tabDriftOpusLight, tabSurfOpusLight] = ...
+      [tabProfilesOpusLight, tabDriftOpusLight, tabDesc2ProfOpusLight, tabSurfOpusLight] = ...
          process_profile_ir_rudics_cts5_usea_opus_light(apmtOpusLight, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1416,6 +1427,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesOpusLight];
       o_tabDrift = [o_tabDrift tabDriftOpusLight];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfOpusLight];
       o_tabSurf = [o_tabSurf tabSurfOpusLight];
    end
 
@@ -1423,7 +1435,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtOpusBlack))
 
       % create profiles (as they are transmitted)
-      [tabProfilesOpusBlack, tabDriftOpusBlack, tabSurfOpusBlack] = ...
+      [tabProfilesOpusBlack, tabDriftOpusBlack, tabDesc2ProfOpusBlack, tabSurfOpusBlack] = ...
          process_profile_ir_rudics_cts5_usea_opus_black(apmtOpusBlack, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1434,6 +1446,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesOpusBlack];
       o_tabDrift = [o_tabDrift tabDriftOpusBlack];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfOpusBlack];
       o_tabSurf = [o_tabSurf tabSurfOpusBlack];
    end
 
@@ -1441,7 +1454,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtRamses))
 
       % create profiles (as they are transmitted)
-      [tabProfilesRamses, tabDriftRamses, tabSurfRamses] = ...
+      [tabProfilesRamses, tabDriftRamses, tabDesc2ProfRamses, tabSurfRamses] = ...
          process_profile_ir_rudics_cts5_usea_ramses(apmtRamses, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1452,6 +1465,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesRamses];
       o_tabDrift = [o_tabDrift tabDriftRamses];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfRamses];
       o_tabSurf = [o_tabSurf tabSurfRamses];
    end
 
@@ -1459,7 +1473,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtRamses2))
 
       % create profiles (as they are transmitted)
-      [tabProfilesRamses2, tabDriftRamses2, tabSurfRamses2] = ...
+      [tabProfilesRamses2, tabDriftRamses2, tabDesc2ProfRamses2, tabSurfRamses2] = ...
          process_profile_ir_rudics_cts5_usea_ramses2(apmtRamses2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1470,6 +1484,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesRamses2];
       o_tabDrift = [o_tabDrift tabDriftRamses2];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfRamses2];
       o_tabSurf = [o_tabSurf tabSurfRamses2];
    end
 
@@ -1477,7 +1492,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtMpe))
 
       % create profiles (as they are transmitted)
-      [tabProfilesMpe, tabDriftMpe, tabSurfMpe] = ...
+      [tabProfilesMpe, tabDriftMpe, tabDesc2ProfMpe, tabSurfMpe] = ...
          process_profile_ir_rudics_cts5_usea_mpe(apmtMpe, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1488,6 +1503,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesMpe];
       o_tabDrift = [o_tabDrift tabDriftMpe];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfMpe];
       o_tabSurf = [o_tabSurf tabSurfMpe];
    end
 
@@ -1495,7 +1511,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtHydrocM) || ~isempty(apmtHydrocC))
 
       % create profiles (as they are transmitted)
-      [tabProfilesHydroc, tabDriftHydroc, tabSurfHydroc] = ...
+      [tabProfilesHydroc, tabDriftHydroc, tabDesc2ProfHydroc, tabSurfHydroc] = ...
          process_profile_ir_rudics_cts5_usea_hydroc(apmtHydrocM, apmtHydrocC, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1506,6 +1522,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesHydroc];
       o_tabDrift = [o_tabDrift tabDriftHydroc];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfHydroc];
       o_tabSurf = [o_tabSurf tabSurfHydroc];
    end
 
@@ -1513,7 +1530,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtImuRaw))
 
       % create profiles (as they are transmitted)
-      [tabProfilesImuRaw, tabDriftImuRaw, tabSurfImuRaw] = ...
+      [tabProfilesImuRaw, tabDriftImuRaw, tabDesc2ProfImuRaw, tabSurfImuRaw] = ...
          process_profile_ir_rudics_cts5_usea_imu_raw(apmtImuRaw, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1524,6 +1541,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesImuRaw];
       o_tabDrift = [o_tabDrift tabDriftImuRaw];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfImuRaw];
       o_tabSurf = [o_tabSurf tabSurfImuRaw];
    end
 
@@ -1531,7 +1549,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtImuTiltHeading))
 
       % create profiles (as they are transmitted)
-      [tabProfilesImuTiltHeading, tabDriftImuTiltHeading, tabSurfImuTiltHeading] = ...
+      [tabProfilesImuTiltHeading, tabDriftImuTiltHeading, tabDesc2ProfImuTiltHeading, tabSurfImuTiltHeading] = ...
          process_profile_ir_rudics_cts5_usea_imu_tilt_heading(apmtImuTiltHeading, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1542,6 +1560,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesImuTiltHeading];
       o_tabDrift = [o_tabDrift tabDriftImuTiltHeading];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfImuTiltHeading];
       o_tabSurf = [o_tabSurf tabSurfImuTiltHeading];
    end
 
@@ -1549,7 +1568,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(apmtImuWave))
 
       % create profiles (as they are transmitted)
-      [tabProfilesImuWave, tabDriftImuWave, tabSurfImuWave] = ...
+      [tabProfilesImuWave, tabDriftImuWave, tabDesc2ProfImuWave, tabSurfImuWave] = ...
          process_profile_ir_rudics_cts5_usea_imu_wave(apmtImuWave, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
@@ -1560,6 +1579,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       o_tabProfiles = [o_tabProfiles tabProfilesImuWave];
       o_tabDrift = [o_tabDrift tabDriftImuWave];
+      o_tabDesc2Prof = [o_tabDesc2Prof tabDesc2ProfImuWave];
       o_tabSurf = [o_tabSurf tabSurfImuWave];
    end
 
@@ -1570,6 +1590,9 @@ if (isempty(g_decArgo_outputCsvFileId))
 
    % compute derived parameters of the park phase
    [o_tabDrift] = compute_drift_derived_parameters_ir_rudics(o_tabDrift, a_decoderId);
+
+   % compute derived parameters of the deep profiles
+   [o_tabDesc2Prof] = compute_profile_derived_parameters_ir_rudics(o_tabDesc2Prof, a_decoderId);
 
    % compute derived parameters of the surface phase
    [o_tabSurf] = compute_surface_derived_parameters_ir_rudics_cts5(o_tabSurf, a_decoderId);

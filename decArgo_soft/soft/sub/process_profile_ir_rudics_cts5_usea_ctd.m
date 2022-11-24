@@ -13,7 +13,7 @@
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : created output profiles
 %   o_tabDrift       : created output drift measurement profiles
-%   o_tabDrift       : created output descent 2 prof measurement profiles
+%   o_tabDesc2Prof   : created output descent 2 prof measurement profiles
 %   o_tabSurf        : created output surface measurement profiles
 %   o_subSurfaceMeas : created output sub surface measurement point
 %
@@ -60,14 +60,14 @@ global g_decArgo_treatAverageAndStDev;
 global g_decArgo_treatAverageAndMedian;
 global g_decArgo_treatAverageAndStDevAndMedian;
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;
