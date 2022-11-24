@@ -137,14 +137,14 @@ for idP = 1:length(o_tabProfiles)
          % set the profile updated flag if no GPS fix has been received during
          % the last cycle of the current decoding session (used to detect when a
          % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-         if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-            if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
-               if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
-                     (a_gpsLocCycleNum(end) == prof.cycleNumber))
-                  prof.updated = 1;
-               end
-            end
-         end
+         %          if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+         %             if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
+         %                if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
+         %                      (a_gpsLocCycleNum(end) == prof.cycleNumber))
+         %                   prof.updated = 1;
+         %                end
+         %             end
+         %          end
 
          % a GPS fix exists
          [~, idMin] = min(a_gpsLocDate(idPosToUse));

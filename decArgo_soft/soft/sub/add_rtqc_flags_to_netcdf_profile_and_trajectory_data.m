@@ -352,6 +352,7 @@ end
 
 % sort the file names so that descent profiles will be processed before
 % ascent associated one
+monoProfList = sort(monoProfList);
 for idFile = 1:length(monoProfList)
    descFileName = monoProfList{idFile};
    if (strcmp(descFileName(end-3:end), 'D.nc'))

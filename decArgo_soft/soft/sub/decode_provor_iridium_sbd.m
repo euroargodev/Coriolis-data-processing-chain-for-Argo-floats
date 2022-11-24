@@ -1049,7 +1049,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -1306,7 +1306,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -1570,7 +1570,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -1813,7 +1813,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -2057,7 +2057,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -2365,7 +2365,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -2696,7 +2696,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -2937,7 +2937,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle
@@ -3220,7 +3220,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % assign the current configuration to the decoded cycle

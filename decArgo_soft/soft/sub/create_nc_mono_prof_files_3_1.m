@@ -25,10 +25,23 @@ function create_nc_mono_prof_files_3_1( ...
    a_decoderId, a_tabProfiles, a_metaDataFromJson)
 
 % create the c files
-create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
+[cFileInfo] = create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, []);
 
 % create the b files
-create_nc_mono_prof_b_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson);
+[bParamFlag] = create_nc_mono_prof_b_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileInfo);
+
+% check that no B-PROF files have been generated without their associated C-PROF
+% files
+% note that this should not theoretically happen (because PRES is present in
+% all profiles), however this happended when the FillValue of a parameter is
+% modified (the B-PROF file may need to be generated but not the C-PROF file).
+if (bParamFlag == 1)
+   [cFileToCreate] = get_missing_c_prof_files;
+
+   if (~isempty(cFileToCreate))
+      create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileToCreate);
+   end
+end
 
 fprintf('... NetCDF MONO-PROFILE files created\n');
 

@@ -335,7 +335,7 @@ for idFlCy = 1:length(floatCycleList)
 
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
    end
 
@@ -436,7 +436,7 @@ for idFlCy = 1:length(floatCycleList)
 
                if (g_decArgo_realtimeFlag == 1)
                   % update the reports structure cycle list
-                  g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+                  g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
                end
             end
             g_decArgo_patternNumFloat = floatPtnNum;

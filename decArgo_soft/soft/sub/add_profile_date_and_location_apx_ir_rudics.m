@@ -146,14 +146,14 @@ for idP = 1:length(o_tabProfiles)
          % set the profile updated flag if no GPS fix has been received during
          % the last cycle of the current decoding session (used to detect when a
          % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-         if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-            if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
-               if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
-                     (a_gpsLocCycleNum(end) == prof.cycleNumber))
-                  prof.updated = 1;
-               end
-            end
-         end
+         %          if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+         %             if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
+         %                if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
+         %                      (a_gpsLocCycleNum(end) == prof.cycleNumber))
+         %                   prof.updated = 1;
+         %                end
+         %             end
+         %          end
          
          % a GPS fix exists
          [~, idMin] = min(a_gpsLocDate(idPosToUse));
@@ -212,16 +212,16 @@ for idP = 1:length(o_tabProfiles)
                   % interpolated thanks to a new GPS received during the last
                   % cycle of the current decoding session (used to detect when a
                   % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-                  if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-                     idNext = find(a_gpsLocDate == nextLocDate);
-                     idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
-                     if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
-                        if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
-                              (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
-                           prof.updated = 1;
-                        end
-                     end
-                  end
+                  %                   if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+                  %                      idNext = find(a_gpsLocDate == nextLocDate);
+                  %                      idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
+                  %                      if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
+                  %                         if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
+                  %                               (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
+                  %                            prof.updated = 1;
+                  %                         end
+                  %                      end
+                  %                   end
                else
                   fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
                      g_decArgo_floatNum, ...
@@ -241,14 +241,14 @@ for idP = 1:length(o_tabProfiles)
          % set the profile updated flag if no GPS fix has been received during
          % the last cycle of the current decoding session (used to detect when a
          % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-         if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-            if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
-               if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
-                     (a_gpsLocCycleNum(end) == prof.cycleNumber))
-                  prof.updated = 1;
-               end
-            end
-         end
+         %          if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+         %             if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
+         %                if ((any(a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))) || ...
+         %                      (a_gpsLocCycleNum(end) == prof.cycleNumber))
+         %                   prof.updated = 1;
+         %                end
+         %             end
+         %          end
          
          % a GPS fix exists
          [~, idMin] = min(a_gpsLocDate(idPosToUse));
@@ -304,16 +304,16 @@ for idP = 1:length(o_tabProfiles)
                      % interpolated thanks to a new GPS received during the last
                      % cycle of the current decoding session (used to detect when a
                      % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-                     if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-                        idNext = find(a_gpsLocDate == currentLocDate);
-                        idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
-                        if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
-                           if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
-                                 (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
-                              prof.updated = 1;
-                           end
-                        end
-                     end
+                     %                      if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+                     %                         idNext = find(a_gpsLocDate == currentLocDate);
+                     %                         idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
+                     %                         if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
+                     %                            if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
+                     %                                  (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
+                     %                               prof.updated = 1;
+                     %                            end
+                     %                         end
+                     %                      end
                   else
                      fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
                         g_decArgo_floatNum, ...
@@ -372,16 +372,16 @@ for idP = 1:length(o_tabProfiles)
                   % interpolated thanks to a new GPS received during the last
                   % cycle of the current decoding session (used to detect when a
                   % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
-                  if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
-                     idNext = find(a_gpsLocDate == nextLocDate);
-                     idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
-                     if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
-                        if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
-                              (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
-                           prof.updated = 1;
-                        end
-                     end
-                  end
+                  %                   if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+                  %                      idNext = find(a_gpsLocDate == nextLocDate);
+                  %                      idPosUsed = find((a_gpsLocCycleNum == a_gpsLocCycleNum(idNext)) & (a_gpsLocQc == 1));
+                  %                      if (~any(a_gpsLocReceivedCyNum(idPosUsed) == a_gpsLocCycleNum(idNext)))
+                  %                         if ((any(a_gpsLocReceivedCyNum(idPosUsed) == max(a_gpsLocCycleNum))) || ...
+                  %                               (a_gpsLocCycleNum(end) == a_gpsLocCycleNum(idNext)))
+                  %                            prof.updated = 1;
+                  %                         end
+                  %                      end
+                  %                   end
                else
                   fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
                      g_decArgo_floatNum, ...

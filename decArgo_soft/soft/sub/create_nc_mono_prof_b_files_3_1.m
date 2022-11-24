@@ -2,7 +2,7 @@
 % Create NetCDF MONO-PROFILE b files.
 %
 % SYNTAX :
-%  create_nc_mono_prof_b_files_3_1( ...
+%  [o_bParamFlag] = create_nc_mono_prof_b_files_3_1( ...
 %    a_decoderId, a_tabProfiles, a_metaDataFromJson)
 %
 % INPUT PARAMETERS :
@@ -10,8 +10,10 @@
 %   a_tabProfiles      : decoded profiles
 %   a_metaDataFromJson : additional information retrieved from JSON meta-data
 %                        file
+%   a_bFileToCreate    : information on C-PROF files that should be generated
 %
 % OUTPUT PARAMETERS :
+%   o_bParamFlag : B parameters flag
 %
 % EXAMPLES :
 %
@@ -21,8 +23,11 @@
 % RELEASES :
 %   06/16/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function create_nc_mono_prof_b_files_3_1( ...
-   a_decoderId, a_tabProfiles, a_metaDataFromJson)
+function [o_bParamFlag] = create_nc_mono_prof_b_files_3_1( ...
+   a_decoderId, a_tabProfiles, a_metaDataFromJson, a_bFileToCreate)
+
+% output parameters initialization
+o_bParamFlag = 1;
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
@@ -97,6 +102,7 @@ for idProf = 1:length(a_tabProfiles)
    end
 end
 if (bFileNeeded == 0)
+   o_bParamFlag = 0;
    return
 end
 
@@ -364,6 +370,33 @@ for idProf = 1:length(tabProfiles)
             end
          end
 
+         % some files should be generated from input parameter list
+         if (generate == 0)
+            if (~isempty(a_bFileToCreate))
+               if (any((a_bFileToCreate(:, 1) == outputCycleNumber) & (a_bFileToCreate(:, 2) == direction)))
+                  generate = 1;
+               end
+            end
+         end
+
+         % some profile positions may have been updated
+         if (generate == 0)
+            if (exist(ncPathFileName, 'file') == 2)
+
+               % retrieve profile location of the nc file
+               ncProfLoc = get_nc_profile_location(ncPathFileName);
+
+               % compare profile location
+               prof = tabProfiles(idProfInFile(1));
+               profLoc = sprintf('%s %.3f %.3f %c %s', ...
+                  julian_2_gregorian_dec_argo(prof.locationDate), ...
+                  prof.locationLat, prof.locationLon, prof.locationQc, prof.posSystem);
+               if (~strcmp(profLoc, ncProfLoc))
+                  generate = 1;
+               end
+            end
+         end
+         
          % the data of one cycle can be in consecutive rsync log files
          % to check if the file need to be created we should then compare profile
          % levels

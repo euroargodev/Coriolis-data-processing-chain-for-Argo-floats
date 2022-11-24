@@ -308,7 +308,7 @@ fprintf('DEC_INFO: %d final .msg and %d final .log files to process\n', nbMsgFil
 
 if (g_decArgo_realtimeFlag == 1)
    % update the report structure
-   g_decArgo_reportStruct.cycleList = cycleList;
+   g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, cycleList);
 end
 
 % decode msg and log file of the cycle list

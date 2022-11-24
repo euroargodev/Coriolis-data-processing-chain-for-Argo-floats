@@ -1126,12 +1126,12 @@ switch (a_decoderId)
          end
          g_decArgo_firstDeepCycleDone = 1;
       end
-      
+
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
-      
+
       % update float configuration for the next cycles
       if (~isempty(dataAck))
          update_float_config_ir_sbd_nva(dataAck);
@@ -1370,7 +1370,7 @@ switch (a_decoderId)
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
-         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+         g_decArgo_reportStruct = add_cycle_number_in_report_struct(g_decArgo_reportStruct, g_decArgo_cycleNum);
       end
       
       % update float configuration for the next cycles

@@ -232,9 +232,6 @@ if (any(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
          elseif (profPosSystem(idF) == 3)
             o_tabProfiles(profList(idP)).posSystem = 'NONE';
          end
-
-         % to update the associated NetCDF file
-         o_tabProfiles(profList(idP)).updated = 1;
       end
    end
 end

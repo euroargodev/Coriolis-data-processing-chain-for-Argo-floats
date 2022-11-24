@@ -2,16 +2,18 @@
 % Create NetCDF MONO-PROFILE c files.
 %
 % SYNTAX :
-%  create_nc_mono_prof_c_files_3_1( ...
-%    a_decoderId, a_tabProfiles, a_metaDataFromJson)
+%  [o_cFileInfo] = create_nc_mono_prof_c_files_3_1( ...
+%    a_decoderId, a_tabProfiles, a_metaDataFromJson, a_cFileToCreate)
 %
 % INPUT PARAMETERS :
 %   a_decoderId        : float decoder Id
 %   a_tabProfiles      : decoded profiles
 %   a_metaDataFromJson : additional information retrieved from JSON meta-data
 %                        file
+%   a_cFileToCreate    : information on C-PROF files that should be generated
 %
 % OUTPUT PARAMETERS :
+%   o_cFileInfo : information on generated C-PROF files
 %
 % EXAMPLES :
 %
@@ -21,8 +23,11 @@
 % RELEASES :
 %   06/15/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function create_nc_mono_prof_c_files_3_1( ...
-   a_decoderId, a_tabProfiles, a_metaDataFromJson)
+function [o_cFileInfo] = create_nc_mono_prof_c_files_3_1( ...
+   a_decoderId, a_tabProfiles, a_metaDataFromJson, a_cFileToCreate)
+
+% output parameters initialization
+o_cFileInfo = [];
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
@@ -308,6 +313,33 @@ for idProf = 1:length(tabProfiles)
 
                   fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: no strategy to generate or not profile NetCDF files - generating all profile fles\n', ...
                      g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber);
+               end
+            end
+         end
+
+         % some files should be generated from input parameter list
+         if (generate == 0)
+            if (~isempty(a_cFileToCreate))
+               if (any((a_cFileToCreate(:, 1) == outputCycleNumber) & (a_cFileToCreate(:, 2) == direction)))
+                  generate = 1;
+               end
+            end
+         end
+
+         % some profile positions may have been updated
+         if (generate == 0)
+            if (exist(ncPathFileName, 'file') == 2)
+
+               % retrieve profile location of the nc file
+               ncProfLoc = get_nc_profile_location(ncPathFileName);
+
+               % compare profile location
+               prof = tabProfiles(idProfInFile(1));
+               profLoc = sprintf('%s %.3f %.3f %c %s', ...
+                  julian_2_gregorian_dec_argo(prof.locationDate), ...
+                  prof.locationLat, prof.locationLon, prof.locationQc, prof.posSystem);
+               if (~strcmp(profLoc, ncProfLoc))
+                  generate = 1;
                end
             end
          end
@@ -1553,5 +1585,7 @@ if (~isempty(a_tabAuxProfiles))
    create_nc_mono_prof_aux_files( ...
       a_decoderId, a_tabAuxProfiles, a_metaDataFromJson, generatedProfList);
 end
+
+o_cFileInfo = generatedProfList;
 
 return
