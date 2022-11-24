@@ -154,6 +154,20 @@ switch(a_floatNum)
       if (~isempty(delFile))
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end
+      
+   case 6902968
+      % file 4279_047_00_payload.xml doesn't contain configuration at
+      % launch for UVP sensor => we should use file _payload_190528_073923.xml
+      delFile = dir([a_outputDir '/4279_047_00_payload_*.xml']);
+      if (~isempty(delFile))
+         inFile = dir([a_inputDir '/_payload_190528_073923.xml']);
+         if (~isempty(inFile))
+            move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+            outFile = [a_outputDir '/4279_047_00_payload_' ...
+               datestr(datenum(inFile.date, 'dd-mmmm-yyyy HH:MM:SS'), 'yyyymmddHHMMSS') '.xml'];
+            copy_file([a_inputDir '/' inFile.name], outFile);
+         end
+      end
 end
 
 return

@@ -212,6 +212,16 @@ for idFloat = 1:nbFloats
             move_file([floatOutputDirName '/' delFile.name], unusedDirName);
             fprintf('MISC: %s => not used\n', delFile.name);
          end
+         
+      case 6902968
+         % file 4279_047_00_payload.xml doesn't contain configuration at
+         % launch for UVP sensor => we should use file _payload_190528_073923.xml
+         inFile = dir([inputDirName '/' loginName '/_payload_190528_073923.xml']);
+         outFile = [floatOutputDirName '/4279_047_00_payload.xml'];
+         if (~isempty(inFile))
+            copy_file([inputDirName '/' loginName '/' inFile.name], outFile);
+            fprintf('MISC: %s replaced by %s\n', outFile, [inputDirName '/' loginName '/' inFile.name]);
+         end
    end
 end
 
