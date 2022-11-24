@@ -50,7 +50,7 @@ switch (a_decoderId)
       idDef = find(a_presCounts == g_decArgo_presCountsDef);
       o_presValues(idDef) = ones(length(idDef), 1)*g_decArgo_presDef;
       idNoDef = find(a_presCounts ~= g_decArgo_presCountsDef);
-      o_presValues(idNoDef) = o_presValues(idNoDef)/10 - 10;
+      o_presValues(idNoDef) = o_presValues(idNoDef)/10 - 100;
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in sensor_2_value_for_pressure_ir_rudics_sbd2 for decoderId #%d\n', ...

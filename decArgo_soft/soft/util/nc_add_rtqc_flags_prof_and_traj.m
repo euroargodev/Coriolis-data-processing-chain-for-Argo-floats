@@ -323,27 +323,29 @@ for idFloat = 1:nbFloats
             if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                if (~isempty(metaData.CALIBRATION_COEFFICIENT))
                   fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
-                  idF = find((strcmp(fieldNames, 'ECO3') == 1) | (strcmp(fieldNames, 'FLBB') == 1));
+                  idF = find((strcmp(fieldNames, 'ECO2') == 1) | ...
+                     (strcmp(fieldNames, 'ECO3') == 1) | ...
+                     (strcmp(fieldNames, 'FLBB') == 1));
                   if (length(idF) == 1)
-                     eco3CalibStruct = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
-                     fieldNames = fields(eco3CalibStruct);
+                     ecoCalibStruct = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+                     fieldNames = fields(ecoCalibStruct);
                      idF = find(strcmp(fieldNames, 'DarkCountChloroA') == 1);
                      if (length(idF) == 1)
                         idVal = find(strcmp('TEST063_DARK_CHLA', testMetaData) == 1);
                         if (~isempty(idVal))
-                           testMetaData{idVal+1} = eco3CalibStruct.(fieldNames{idF});
+                           testMetaData{idVal+1} = ecoCalibStruct.(fieldNames{idF});
                         end
                      else
-                        fprintf('ERROR: TEST063: Unable to find ''DarkCountChloroA'' in Json ECO3/FLBB calibration information\n');
+                        fprintf('ERROR: TEST063: Unable to find ''DarkCountChloroA'' in Json ECO2/ECO3/FLBB calibration information\n');
                      end
                      idF = find(strcmp(fieldNames, 'ScaleFactChloroA') == 1);
                      if (length(idF) == 1)
                         idVal = find(strcmp('TEST063_SCALE_CHLA', testMetaData) == 1);
                         if (~isempty(idVal))
-                           testMetaData{idVal+1} = eco3CalibStruct.(fieldNames{idF});
+                           testMetaData{idVal+1} = ecoCalibStruct.(fieldNames{idF});
                         end
                      else
-                        fprintf('ERROR: TEST063: Unable to find ''ScaleFactChloroA'' in Json ECO3/FLBB calibration information\n');
+                        fprintf('ERROR: TEST063: Unable to find ''ScaleFactChloroA'' in Json ECO2/ECO3/FLBB calibration information\n');
                      end
                   end
                end

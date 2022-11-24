@@ -486,8 +486,7 @@ if (g_decArgo_realtimeFlag)
    % process mail files according to stored buffers
 
    % read the buffer list file
-   [mailFileNameList, mailFileRank, ~, ~, ~] = ...
-      read_buffer_list(a_floatNum, g_decArgo_historyDirectory, '', 0);
+   [mailFileNameList, mailFileRank] = read_buffer_list(a_floatNum, g_decArgo_historyDirectory);
    
    uRank = sort(unique(mailFileRank));
    for idRk = 1:length(uRank)

@@ -45,7 +45,7 @@ tic;
 % process the list of allowed conf labels
 [~, labels, ~] = xlsread(ALLOWED_CONF_LABEL_FILE);
 labelList = [];
-templateList = [{'<PARAM>'} {'<param>'} {'<sensorshortname>'} {'<shortsensorname>'} {'<I>'} {'<N>'} {'<N+1>'} {'<D>'} ];
+templateList = [{'<PARAM>'} {'<param>'} {'<sensor_short_name>'} {'<short_sensor_name>'} {'<I>'} {'<N>'} {'<N+1>'} {'<D>'} ];
 for id = 1:length(labels)
    label = strtrim(labels{id});
    idF = strfind(label, '_');

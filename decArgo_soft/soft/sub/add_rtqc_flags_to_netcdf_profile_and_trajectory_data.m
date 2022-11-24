@@ -179,7 +179,14 @@ if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
    darkCountBackscatter700_O = [];
    darkCountBackscatter532_O = [];
    if (~isempty(g_decArgo_calibInfo))
-      if (isfield(g_decArgo_calibInfo, 'ECO3'))
+      if (isfield(g_decArgo_calibInfo, 'ECO2'))
+         if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700_O'))
+            darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter700_O);
+         end
+         if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter532_O'))
+            darkCountBackscatter532_O = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter532_O);
+         end
+      elseif (isfield(g_decArgo_calibInfo, 'ECO3'))
          if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700_O'))
             darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700_O);
          end
@@ -215,7 +222,16 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
    scaleFactorChla = '';
    darKCountChla = '';
    if (~isempty(g_decArgo_calibInfo))
-      if (isfield(g_decArgo_calibInfo, 'ECO3'))
+      if (isfield(g_decArgo_calibInfo, 'ECO2'))
+         if ((isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA')) && ...
+               (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA')))
+            scaleFactorChla = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
+            darKCountChla = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
+         else
+            fprintf('RTQC_WARNING: Float #%d: inconsistent ECO2 sensor calibration information\n', ...
+               floatNum);
+         end
+      elseif (isfield(g_decArgo_calibInfo, 'ECO3'))
          if ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA')) && ...
                (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA')))
             scaleFactorChla = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);

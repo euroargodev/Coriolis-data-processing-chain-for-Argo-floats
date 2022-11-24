@@ -224,7 +224,7 @@ for idMes = 1:size(a_tabData, 1)
          end
          
          % pressure sensor offset
-         tabTech1(47) = twos_complement_dec_argo(tabTech1(47), 8);
+         tabTech1(47) = twos_complement_dec_argo(tabTech1(47), 8)/10;
          
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech1(41:46)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;

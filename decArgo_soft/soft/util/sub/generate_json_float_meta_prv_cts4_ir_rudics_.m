@@ -338,7 +338,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
-      case {'5.92', '6.01', '5.93'}
+      case {'5.92', '5.93', '6.01', '6.11'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -412,8 +412,12 @@ for idFloat = 1:length(floatList)
    % retrieve configuration names and values at launch from configuration
    % commands report files
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
-   configDefaultFilename = [a_configDirName '/defaultConfiguration.txt'];
-   [configParamNames, configParamValues] = read_conf_cmd_report(configReportFileName, configDefaultFilename, sensorList);
+   if (~strcmp(dacFormatId, '6.11'))
+      configDefaultFilename = [a_configDirName '/defaultConfiguration_v1.txt'];
+      [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110(configReportFileName, configDefaultFilename, sensorList);
+   else
+      [configParamNames, configParamValues] = read_conf_cmd_report_111(configReportFileName, sensorList);
+   end
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);
    if (~isempty(idF))

@@ -13,7 +13,6 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 109;253; Real Time Clock state;FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
 110;253; Buoyancy reduction start day (relative to mission start day);CLOCK_InitialValveActionDescentToPark_FloatDay;Time in the day when the float first activated the valve during its descent
 111;253; Buoyancy reduction start hour (resolution: 1 minute);CLOCK_InitialValveActionDescentToPark_HHMM;Time in the day when the float first activated the valve during its descent
-112;253;;CLOCK_InitialValveActionDescentToPark_YYYYMMDDHHMMSS;Time in the day when the float first activated the valve during its descent
 113;253; EV timing opening (in minutes);TIME_ValveActionsAtSurface_minutes;duration of the basic valve actions which is computed by the float from preceding cycles
 114;253; Number of valve actions at the surface;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
 115;253; Descent to parking depth start day (relative to mission start day);CLOCK_StartDescentToPark_FloatDay;time after the crossing  the gap threshold 
@@ -62,5 +61,5 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 204;250; Nb points in drift;NUMBER_Park<Sensor>SamplesInternal_COUNT;Park  measurements - Internal counter
 205;250;Ascent, nb points zone 1;NUMBER_<Sensor>AscentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <Sensor> in the depth zone #<Z> during the ascent from the profile depth to the surface. Depth zone number: <Z> = 1..5
 206;250;"""X"" type status sensor (1: normal, 0 if problem)";FLAG_<Sensor>Status_LOGICAL;The <Sensor> is OK (Yes/No).
-207;250;Pressure offset (surface);PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
+207;250;Pressure offset (surface);PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
 208;250;"Pressure ""subsurface""";PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).

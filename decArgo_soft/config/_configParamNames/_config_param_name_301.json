@@ -316,96 +316,96 @@
       "CONF_PARAM_DEC_ID" : "500",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the descent to parking pressure in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DescentToParkPresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_41" :
    {
       "CONF_PARAM_DEC_ID" : "501",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the drift at parking pressure in the depth zone #<Z> (in minutes).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DriftAtParkPresSamplingPeriod_minutes",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at parking pressure in the depth zone #<N> (in minutes)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DriftAtParkPresSamplingPeriod_minutes",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_42" :
    {
       "CONF_PARAM_DEC_ID" : "502",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the descent to profile pressure in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DescentToProfilePresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_43" :
    {
       "CONF_PARAM_DEC_ID" : "503",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the drift at profile pressure in the depth zone #<Z> (in minutes).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DriftAtProfilePresSamplingPeriod_minutes",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at profile pressure in the depth zone #<N> (in minutes)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DriftAtProfilePresSamplingPeriod_minutes",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_44" :
    {
       "CONF_PARAM_DEC_ID" : "504",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the ascending profile in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>AscentSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the ascending profile in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_45" :
    {
       "CONF_PARAM_DEC_ID" : "505",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Power acquisition mode of the <Sensor> in the depth zone #<Z> (0 : none, 2 : pulsed, 3 : continuous).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short sensor name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
    "CONF_PARAM_46" :
    {
       "CONF_PARAM_DEC_ID" : "506",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Data processing output of the <Sensor> in the depth zone #<Z> (0 : raw, 1 : average, 7 : average/median/standard deviation).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short sensor name> in the depth zone #<N> (0 : raw, 1 : average, 7 : average/median/standard deviation)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N> (0 : raw, 1 : average, 7 : average/median/standard deviation)."
    },
    "CONF_PARAM_47" :
    {
       "CONF_PARAM_DEC_ID" : "508",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Slices thickness for <Sensor> in the depth zone #<Z> (in dbars).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>SlicesThickness_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short sensor name> in the depth zone #<N> (in dbars)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> (in dbars)."
    },
    "CONF_PARAM_48" :
    {
       "CONF_PARAM_DEC_ID" : "509",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Threshold between depth zone #1 and depth zone #2 for <Sensor> (in dbars).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short sensor name>  (in dbars)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name>  (in dbars)."
    },
    "CONF_PARAM_49" :
    {
       "CONF_PARAM_DEC_ID" : "600",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Time, needed after the CTD sensor is powered ON, to provide its first sample (in milli-seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>WarmUpTime_msec",
-      "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short sensor name> is powered ON, to provide its first sample (in milli-seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>WarmUpTime_msec",
+      "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short_sensor_name> is powered ON, to provide its first sample (in milli-seconds)."
    },
    "CONF_PARAM_50" :
    {
       "CONF_PARAM_DEC_ID" : "601",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Minimum waiting time needed by the CTD sensor between a switch OFF and a switch ON (in milli-seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>PowerSwitchDelayMin_msec",
-      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short sensor name> between a switch OFF and a switch ON (in milli-seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec",
+      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON (in milli-seconds)."
    },
    "CONF_PARAM_51" :
    {
       "CONF_PARAM_DEC_ID" : "602",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Rank of the first valid sample provided by the CTD sensor (0 is the rank of the first sample).",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>FirstValidSample_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short sensor name> (0 is the rank of the first sample)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short_sensor_name> (0 is the rank of the first sample)."
    },
    "CONF_PARAM_52" :
    {

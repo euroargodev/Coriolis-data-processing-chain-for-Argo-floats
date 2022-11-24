@@ -155,7 +155,7 @@ if (a_deepCycle == 1)
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 124];
-   g_decArgo_outputNcParamValue{end+1} = twos_complement_dec_argo(tabTech1(45), 8)/10;
+   g_decArgo_outputNcParamValue{end+1} = tabTech1(45);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 125];

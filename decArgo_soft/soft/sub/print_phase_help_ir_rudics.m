@@ -42,7 +42,7 @@ global g_decArgo_phaseEndOfProf;
 global g_decArgo_phaseEndOfLife;
 global g_decArgo_phaseEmergencyAsc;
 global g_decArgo_phaseUserDialog;
-
+global g_decArgo_phaseBuoyInv;
 
 fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; PHASE ACRONYMS\n', ...
    g_decArgo_floatNum, get_phase_name(-1));
@@ -81,6 +81,8 @@ fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Emergenc
    g_decArgo_floatNum, get_phase_name(-1),get_phase_name(g_decArgo_phaseEmergencyAsc));
 fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : User dialog mode\n', ...
    g_decArgo_floatNum, get_phase_name(-1),get_phase_name(g_decArgo_phaseUserDialog));
+fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Buoyancy inversion\n', ...
+   g_decArgo_floatNum, get_phase_name(-1),get_phase_name(g_decArgo_phaseBuoyInv));
 fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Not applicable (no associated phase)\n', ...
    g_decArgo_floatNum, get_phase_name(-1),get_phase_name(-1));
 fprintf(g_decArgo_outputCsvFileId, '%d; -; -; %s; info phase help; %s : Erroneous transmitted phase #\n', ...

@@ -43,10 +43,13 @@ switch (a_dataTypeNumber)
       o_dataTypeName = 'OXY raw';
       
    case 6
-      o_dataTypeName = 'FLBB mean';
-      
+      o_dataTypeName = 'ECO2 mean';
+
    case 7
-      o_dataTypeName = 'FLBB stDev & med';
+      o_dataTypeName = 'ECO2 stDev & med';
+
+   case 8
+      o_dataTypeName = 'ECO2 raw';
       
    case 9
       o_dataTypeName = 'ECO3 mean';

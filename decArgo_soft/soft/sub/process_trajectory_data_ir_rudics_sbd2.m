@@ -110,6 +110,7 @@ global g_decArgo_argosLonDef;
 
 % global measurement codes
 global g_MC_Launch;
+global g_MC_CycleStart;
 global g_MC_DST;
 global g_MC_FST;
 global g_MC_SpyInDescToPark;
@@ -283,6 +284,11 @@ for idCyc = 1:length(cycleNumList)
                idPackTech = idPackTech(end);
             end
             
+            % buoyancy reduction start date
+            measStruct = create_one_meas_float_time(g_MC_CycleStart, a_tabTrajData{idPackTech}.buoyancyRedStartDate, g_JULD_STATUS_2, 0);
+            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+
             % descent to park start time
             measStruct = create_one_meas_float_time(g_MC_DST, a_tabTrajData{idPackTech}.descentToParkStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;

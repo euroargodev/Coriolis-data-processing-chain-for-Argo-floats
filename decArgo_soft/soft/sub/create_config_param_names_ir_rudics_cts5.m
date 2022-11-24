@@ -87,7 +87,7 @@ for idConfig = 1:length(configInfoList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, (idZ-1)*9 + paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
-                  [{'<short sensor name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)}]);
+                  [{'<short_sensor_name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)}]);
                ncConfNames{end+1} = paramName;
             end
          end
@@ -98,7 +98,7 @@ for idConfig = 1:length(configInfoList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, (idZ-1) + paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
-                  [{'<short sensor name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);
+                  [{'<short_sensor_name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);
                ncConfNames{end+1} = paramName;
             end
          end
@@ -108,7 +108,7 @@ for idConfig = 1:length(configInfoList)
             decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, paramNumList(idP));
             idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
             paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
-               [{'<short sensor name>'} {apmtSensorList{idS}}]);
+               [{'<short_sensor_name>'} {apmtSensorList{idS}}]);
             ncConfNames{end+1} = paramName;
          end
          if (idS == 1)
@@ -189,10 +189,10 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
          phaseNum = str2num(configName(posSensor+9:posSensor+10));
          if (ismember(phaseNum, vpList))
             paramId = paramIdListSensorVp(find(paramNumListSensorVp == paramNum, 1));
-            templateName = '<vertical phase name>';
+            templateName = '<vertical_phase_name>';
          elseif (ismember(phaseNum, hpList))
             paramId = paramIdListSensorHp(find(paramNumListSensorHp == paramNum, 1));
-            templateName = '<horizontal phase name>';
+            templateName = '<horizontal_phase_name>';
          end
          decConfNames{end+1} = configName;
          idParamName = find(g_decArgo_outputNcConfParamId == paramId);
@@ -203,21 +203,21 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
          switch (paramNum)
             case {0}
                paramName = create_param_name_ir_rudics_sbd2(paramName, ...
-                  [{'<short sensor name>'} {payloadSensorList{sensorNumId, 2}} ...
+                  [{'<short_sensor_name>'} {payloadSensorList{sensorNumId, 2}} ...
                   {templateName} {phaseName{phaseNum}}]);
             case {1, 2, 3, 4, 5, 6}
                if (ismember(phaseNum, vpList))
                   idFUs = strfind(configName, '_');
                   depthZoneNum = configName(idFUs(7)+1:end);
                   paramName = create_param_name_ir_rudics_sbd2(paramName, ...
-                     [{'<short sensor name>'} {payloadSensorList{sensorNumId, 2}} ...
+                     [{'<short_sensor_name>'} {payloadSensorList{sensorNumId, 2}} ...
                      {templateName} {phaseName{phaseNum}} ...
                      {'<N>'} {depthZoneNum}]);
                elseif (ismember(phaseNum, hpList))
                   idFUs = strfind(configName, '_');
                   samplingSchemeNum = configName(idFUs(7)+1:end);
                   paramName = create_param_name_ir_rudics_sbd2(paramName, ...
-                     [{'<short sensor name>'} {payloadSensorList{sensorNumId, 2}} ...
+                     [{'<short_sensor_name>'} {payloadSensorList{sensorNumId, 2}} ...
                      {templateName} {phaseName{phaseNum}} ...
                      {'<S>'} {samplingSchemeNum}]);
                end
@@ -227,7 +227,7 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
                   depthZoneNum = configName(idFUs(7)+1:idFUs(8)-1);
                   subSamplingNum = configName(idFUs(8)+1:end);
                   paramName = create_param_name_ir_rudics_sbd2(paramName, ...
-                     [{'<short sensor name>'} {payloadSensorList{sensorNumId, 2}} ...
+                     [{'<short_sensor_name>'} {payloadSensorList{sensorNumId, 2}} ...
                      {templateName} {phaseName{phaseNum}} ...
                      {'<N>'} {depthZoneNum} ...
                      {'<SubS>'} {subSamplingNum}]);
@@ -236,7 +236,7 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
                   samplingSchemeNum = configName(idFUs(7)+1:idFUs(8)-1);
                   subSamplingNum = configName(idFUs(8)+1:end);
                   paramName = create_param_name_ir_rudics_sbd2(paramName, ...
-                     [{'<short sensor name>'} {payloadSensorList{sensorNumId, 2}} ...
+                     [{'<short_sensor_name>'} {payloadSensorList{sensorNumId, 2}} ...
                      {templateName} {phaseName{phaseNum}} ...
                      {'<S>'} {samplingSchemeNum} ...
                      {'<SubS>'} {subSamplingNum}]);

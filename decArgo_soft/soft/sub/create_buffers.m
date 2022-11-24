@@ -445,7 +445,7 @@ fprintf('DEC_INFO: %d files are not assigned\n', idNotAssigned);
 % generate CSV output file
 if (~isempty(a_fidCsv))
    
-   header = 'Rank;File #;File;Cycle #;Profile #;Data type;Phase #;Sensor #;Sensor data type #;Diff dates';
+   header = 'Rank;File #;File;Cor cycle; Cor profile;Cycle #;Profile #;Data type;Phase #;Sensor #;Sensor data type #;Diff dates';
    fprintf(a_fidCsv, '%s\n', header);
    
    diffDates = diff(tabInfoOri(:, 3))*24;
@@ -481,7 +481,7 @@ if (~isempty(a_fidCsv))
          unusedMark = '';
       end
       
-      fprintf(a_fidCsv, '%d; %d; %s; %d; %d; %d; %d; %d; %d; %s; %s; %s\n', ...
+      fprintf(a_fidCsv, '%d; %d; %s; -1; -1; %d; %d; %d; %d; %d; %d; %s; %s; %s\n', ...
          fileRank, idFile, [fileName fileExt], ...
          tabInfoOri(idFile, 5), tabInfoOri(idFile, 6), tabInfoOri(idFile, 4), ...
          tabInfoOri(idFile, 7), tabInfoOri(idFile, 8), tabInfoOri(idFile, 9), ...
@@ -500,7 +500,7 @@ if (~isempty(a_fidTxt))
          fileRank = tabInfoOri(idFile, 2);
       end
       
-      fprintf(a_fidTxt, '%d %s\n', ...
+      fprintf(a_fidTxt, '%d %s -1 -1\n', ...
          fileRank, [fileName fileExt]);
    end
 end

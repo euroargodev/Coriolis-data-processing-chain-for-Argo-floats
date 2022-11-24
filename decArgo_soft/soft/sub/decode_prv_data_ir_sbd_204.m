@@ -144,7 +144,10 @@ for idMes = 1:size(a_tabData, 1)
             g_decArgo_cycleNum = floatCycleNumber - g_decArgo_cycleNumShift;
          end
          fprintf('cyle #%d\n', g_decArgo_cycleNum);
-         
+
+         % pressure sensor offset
+         tabTech(49) = twos_complement_dec_argo(tabTech(49), 8)/10;
+
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(43:48)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          

@@ -37,6 +37,7 @@ end
 tabDec = fliplr(tabDec);
 o_qcTestHex = dec2hex(tabDec)';
 
+% BE CAREFUL
 % we cannot use dec2hex(sum(2^testNumber)) because, even if it seems to work,
 % it overflows integer max value
 %

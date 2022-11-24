@@ -56,6 +56,7 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 
 % sensor list
 global g_decArgo_sensorList;
+global g_decArgo_sensorMountedOnFloat;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
@@ -99,8 +100,10 @@ metaData = loadjson(jsonInputFileName);
 % fill the sensor list
 apmtSensorList = [];
 payloadSensorList = [];
+sensorMountedOnFloat = [];
 if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+   sensorMountedOnFloat = jSensorNames';
    for id = 1:length(jSensorNames)
       sensorName = jSensorNames{id};
       % for BGC sensors, we use the sensor numbers already defined for CTS4 floats
@@ -148,6 +151,7 @@ end
 
 % store the sensor list
 g_decArgo_sensorList = [apmtSensorList payloadSensorList];
+g_decArgo_sensorMountedOnFloat = sensorMountedOnFloat;
 
 % retrieve the number of the first cycle to process
 if (isfield(metaData, 'FIRST_CYCLE_TO_PROCESS'))

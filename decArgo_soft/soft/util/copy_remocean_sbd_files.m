@@ -82,6 +82,14 @@ for idFloat = 1:nbFloats
       return;
    end
    
+   % find the decoder ID of the float
+   idF = find(floatNum == numWmo);
+   if (isempty(idF))
+      fprintf('No decoder Id for float : %d\n', floatNum);
+      return;
+   end
+   floatDecId = listDecId(idF);
+   
    % create the output directory of this float
    floatOutputDirName = [outputDirName '/' logName '_' floatNumStr];
    if ~(exist(floatOutputDirName, 'dir') == 7)
@@ -92,26 +100,34 @@ for idFloat = 1:nbFloats
       mkdir(floatOutputDirName);
    end
    
-   sbdFile = dir([inputDirName '/' logName '/' sprintf('*_%s_*.b*.sbd', logName)]);
+   if (floatDecId ~= 111)
+      sbdFile = dir([inputDirName '/' logName '/' sprintf('*_%s_*.b*.sbd', logName)]);
+   else
+      sbdFile = dir([inputDirName '/' logName '/' sprintf('*_%s_*.bin', logName)]);
+   end
    for idFile = 1:length(sbdFile)
       %    for idFile = 1:min(100,length(sbdFile))
       sbdFileName = sbdFile(idFile).name;
       sbdFilePathName = [inputDirName '/' logName '/' sbdFileName];
       
-      sbdFilePathNameOut = [floatOutputDirName '/' sbdFileName];
+      if (floatDecId ~= 111)
+         sbdFilePathNameOut = [floatOutputDirName '/' sbdFileName];
+      else
+         sbdFilePathNameOut = [floatOutputDirName '/' regexprep(sbdFileName, '.bin', '.bin.sbd')];
+      end
       if (exist(sbdFilePathNameOut, 'file') == 2)
          % when the file already exists, check (with its date) if it needs to be
          % updated
          sbdFileOut = dir(sbdFilePathNameOut);
          if (~strcmp(sbdFile(idFile).date, sbdFileOut.date))
-            copy_file(sbdFilePathName, floatOutputDirName);
+            copy_file(sbdFilePathName, sbdFilePathNameOut);
             fprintf('%s => copy\n', sbdFileName);
          else
             fprintf('%s => unchanged\n', sbdFileName);
          end
       else
          % copy the file if it doesn't exist
-         copy_file(sbdFilePathName, floatOutputDirName);
+         copy_file(sbdFilePathName, sbdFilePathNameOut);
          fprintf('%s => copy\n', sbdFileName);
       end
    end

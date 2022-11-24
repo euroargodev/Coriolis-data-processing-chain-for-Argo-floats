@@ -77,6 +77,9 @@ switch (a_phaseNumber)
            
    case 16
       o_phaseName = 'USR_DIALOG';
+      
+   case 17
+      o_phaseName = 'BUOY_INV';
 
    otherwise
       o_phaseName = 'ERROR';

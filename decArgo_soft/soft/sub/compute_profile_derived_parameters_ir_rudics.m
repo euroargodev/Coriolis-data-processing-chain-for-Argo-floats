@@ -27,6 +27,9 @@ o_tabProfiles = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % collect information on profiles
 profInfo = [];
@@ -79,43 +82,81 @@ if (~isempty(profInfo))
       a_tabProfiles(profInfo(idSensor2(idP), 1)) = compute_profile_derived_parameters_for_OCR(a_tabProfiles(profInfo(idSensor2(idP), 1)));
    end
    
-   % compute ECO3 derived parameters
-   % V1 START
-   %       idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
-   %       for idP = 1:length(idSensor3)
-   %          a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3_V1(a_tabProfiles(profInfo(idSensor3(idP), 1)));
-   %       end
-   % V1 END
-   idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
-   for idP = 1:length(idSensor3)
-      profEco3 = a_tabProfiles(profInfo(idSensor3(idP), 1));
+   if (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
       
-      % look for the associated CTD profile
-      profCtd = [];
-      idF = find((profInfo(:, 2) == 0) & ...
-         (profInfo(:, 4) == profEco3.cycleNumber) & ...
-         (profInfo(:, 5) == profEco3.profileNumber) & ...
-         (profInfo(:, 6) == profEco3.phaseNumber));
-      if (length(idF) == 1)
-         profCtd = a_tabProfiles(profInfo(idF, 1));
-      else
-         if (isempty(idF))
-            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD profile to compute BBP parameter for ''%c'' profile of ECO3 sensor => BBP data set to fill value\n', ...
-               g_decArgo_floatNum, ...
-               profEco3.cycleNumber, ...
-               profEco3.profileNumber, ...
-               profEco3.direction);
+      % compute ECO2 derived parameters
+      idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
+      for idP = 1:length(idSensor3)
+         profEco2 = a_tabProfiles(profInfo(idSensor3(idP), 1));
+         
+         % look for the associated CTD profile
+         profCtd = [];
+         idF = find((profInfo(:, 2) == 0) & ...
+            (profInfo(:, 4) == profEco2.cycleNumber) & ...
+            (profInfo(:, 5) == profEco2.profileNumber) & ...
+            (profInfo(:, 6) == profEco2.phaseNumber));
+         if (length(idF) == 1)
+            profCtd = a_tabProfiles(profInfo(idF, 1));
          else
-            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD profiles have been found to compute BBP parameter for ''%c'' profile of ECO3 sensor => BBP data set to fill value\n', ...
-               g_decArgo_floatNum, ...
-               profEco3.cycleNumber, ...
-               profEco3.profileNumber, ...
-               length(idF), ...
-               profEco3.direction);
+            if (isempty(idF))
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD profile to compute BBP parameter for ''%c'' profile of ECO2 sensor => BBP data set to fill value\n', ...
+                  g_decArgo_floatNum, ...
+                  profEco2.cycleNumber, ...
+                  profEco2.profileNumber, ...
+                  profEco2.direction);
+            else
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD profiles have been found to compute BBP parameter for ''%c'' profile of ECO2 sensor => BBP data set to fill value\n', ...
+                  g_decArgo_floatNum, ...
+                  profEco2.cycleNumber, ...
+                  profEco2.profileNumber, ...
+                  length(idF), ...
+                  profEco2.direction);
+            end
          end
+         a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO2( ...
+            profEco2, profCtd);
       end
-      a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3( ...
-         profEco3, profCtd);
+      
+   else
+      
+      % compute ECO3 derived parameters
+      % V1 START
+      %       idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
+      %       for idP = 1:length(idSensor3)
+      %          a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3_V1(a_tabProfiles(profInfo(idSensor3(idP), 1)));
+      %       end
+      % V1 END
+      idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
+      for idP = 1:length(idSensor3)
+         profEco3 = a_tabProfiles(profInfo(idSensor3(idP), 1));
+         
+         % look for the associated CTD profile
+         profCtd = [];
+         idF = find((profInfo(:, 2) == 0) & ...
+            (profInfo(:, 4) == profEco3.cycleNumber) & ...
+            (profInfo(:, 5) == profEco3.profileNumber) & ...
+            (profInfo(:, 6) == profEco3.phaseNumber));
+         if (length(idF) == 1)
+            profCtd = a_tabProfiles(profInfo(idF, 1));
+         else
+            if (isempty(idF))
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD profile to compute BBP parameter for ''%c'' profile of ECO3 sensor => BBP data set to fill value\n', ...
+                  g_decArgo_floatNum, ...
+                  profEco3.cycleNumber, ...
+                  profEco3.profileNumber, ...
+                  profEco3.direction);
+            else
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD profiles have been found to compute BBP parameter for ''%c'' profile of ECO3 sensor => BBP data set to fill value\n', ...
+                  g_decArgo_floatNum, ...
+                  profEco3.cycleNumber, ...
+                  profEco3.profileNumber, ...
+                  length(idF), ...
+                  profEco3.direction);
+            end
+         end
+         a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3( ...
+            profEco3, profCtd);
+      end
    end
    
    % compute SUNA derived parameters
@@ -287,7 +328,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_110_121_122( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_111_121_122( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -328,7 +369,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_110_121_122( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_111_121_122( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -369,7 +410,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_110_121_122( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_111_121_122( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -410,7 +451,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_110_121_122( ...
+      downPar = compute_DOWNWELLING_PAR_105_to_111_121_122( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -441,6 +482,229 @@ end
 % update output parameters
 a_profOcr.derived = 1;
 o_profOcr = a_profOcr;
+
+return;
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the ECO2 sensor.
+%
+% SYNTAX :
+%  [o_profEco2] = compute_profile_derived_parameters_for_ECO2( ...
+%    a_profEco2, a_profCtd)
+%
+% INPUT PARAMETERS :
+%   a_profEco2   : input ECO2 profile structure
+%   a_profCtd    : input CTD profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_profEco2 : output ECO2 profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/06/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_profEco2] = compute_profile_derived_parameters_for_ECO2( ...
+   a_profEco2, a_profCtd)
+
+% output parameters initialization
+o_profEco2 = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_profEco2.paramList.name};
+
+% compute CHLA data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'FLUORESCENCE_CHLA'} ...
+   ];
+derivedParamList = [ ...
+   {'CHLA'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      chla = compute_CHLA_105_to_111_121_122( ...
+         a_profEco2.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_profEco2.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profEco2.data(:, end+1) = ones(size(a_profEco2.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profEco2.dataQc))
+            a_profEco2.dataQc = ones(size(a_profEco2.data))*g_decArgo_qcDef;
+         else
+            a_profEco2.dataQc(:, end+1) = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco2.paramList = [a_profEco2.paramList derivedParam];
+         derivedParamId = size(a_profEco2.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_profEco2.data(:, derivedParamId) = chla;
+      chlaQc = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profEco2.dataQc(:, derivedParamId) = chlaQc;
+   end
+end
+
+if (isempty(a_profCtd))
+   
+   % we have not been able to retrieve the associated CTD profile
+   paramToDeriveList = [ ...
+      {'BETA_BACKSCATTERING700'} ...
+      {'BETA_BACKSCATTERING532'} ...
+      ];
+   derivedParamList = [ ...
+      {'BBP700'} ...
+      {'BBP532'} ...
+      ];
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp({a_profEco2.paramList.name}, derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
+            a_profEco2.data(:, end+1) = ones(size(a_profEco2.data, 1), 1)*derivedParam.fillValue;
+            if (isempty(a_profEco2.dataQc))
+               a_profEco2.dataQc = ones(size(a_profEco2.data))*g_decArgo_qcDef;
+            else
+               a_profEco2.dataQc(:, end+1) = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profEco2.paramList = [a_profEco2.paramList derivedParam];
+         end
+      end
+   end
+   
+else
+   
+   % get the CTD profile data
+   paramNameListCtd = {a_profCtd.paramList.name};
+   presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
+   tempId = find(strcmp('TEMP', paramNameListCtd) == 1, 1);
+   psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
+   ctdMeasData = a_profCtd.data(:, [presId tempId psalId]);
+   
+   % compute BBP700 data and add them in the profile structure
+   paramToDeriveList = [ ...
+      {'BETA_BACKSCATTERING700'} ...
+      ];
+   derivedParamList = [ ...
+      {'BBP700'} ...
+      ];
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         
+         % compute BBP700 values
+         bbp700 = compute_profile_BBP( ...
+            a_profEco2.data(:, idF), ...
+            paramToDerive.fillValue, ...
+            derivedParam.fillValue, ...
+            a_profEco2.data(:, 1), ...
+            700, ...
+            ctdMeasData, ...
+            a_profEco2);
+         
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp({a_profEco2.paramList.name}, derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
+            a_profEco2.data(:, end+1) = ones(size(a_profEco2.data, 1), 1)*derivedParam.fillValue;
+            if (isempty(a_profEco2.dataQc))
+               a_profEco2.dataQc = ones(size(a_profEco2.data))*g_decArgo_qcDef;
+            else
+               a_profEco2.dataQc(:, end+1) = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profEco2.paramList = [a_profEco2.paramList derivedParam];
+            derivedParamId = size(a_profEco2.data, 2);
+         else
+            derivedParamId = idFDerivedParam;
+         end
+         
+         if (~isempty(bbp700))
+            a_profEco2.data(:, derivedParamId) = bbp700;
+            bbp700Qc = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_profEco2.dataQc(:, derivedParamId) = bbp700Qc;
+         end
+      end
+   end
+   
+   % compute BBP532 data and add them in the profile structure
+   paramToDeriveList = [ ...
+      {'BETA_BACKSCATTERING532'} ...
+      ];
+   derivedParamList = [ ...
+      {'BBP532'} ...
+      ];
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         
+         % compute BBP532 values
+         bbp532 = compute_profile_BBP( ...
+            a_profEco2.data(:, idF), ...
+            paramToDerive.fillValue, ...
+            derivedParam.fillValue, ...
+            a_profEco2.data(:, 1), ...
+            532, ...
+            ctdMeasData, ...
+            a_profEco2);
+         
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp({a_profEco2.paramList.name}, derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
+            a_profEco2.data(:, end+1) = ones(size(a_profEco2.data, 1), 1)*derivedParam.fillValue;
+            if (isempty(a_profEco2.dataQc))
+               a_profEco2.dataQc = ones(size(a_profEco2.data))*g_decArgo_qcDef;
+            else
+               a_profEco2.dataQc(:, end+1) = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profEco2.paramList = [a_profEco2.paramList derivedParam];
+            derivedParamId = size(a_profEco2.data, 2);
+         else
+            derivedParamId = idFDerivedParam;
+         end
+         
+         if (~isempty(bbp532))
+            a_profEco2.data(:, derivedParamId) = bbp532;
+            bbp532Qc = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+            bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_profEco2.dataQc(:, derivedParamId) = bbp532Qc;
+         end
+      end
+   end
+end
+
+% update output parameters
+a_profEco2.derived = 1;
+o_profEco2 = a_profEco2;
 
 return;
 
@@ -493,7 +757,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_110_121_122( ...
+      chla = compute_CHLA_105_to_111_121_122( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -773,7 +1037,7 @@ if (~isempty(ctdDataNoDef))
       idNoNan = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));
       
       if (a_lambda == 700)
-         o_BBP(idNoNan) = compute_BBP700_105_to_110_121_122( ...
+         o_BBP(idNoNan) = compute_BBP700_105_to_111_121_122( ...
             a_BETA_BACKSCATTERING(idNoNan), ...
             a_BETA_BACKSCATTERING_fillValue, ...
             a_BBP_fillValue, ...
@@ -876,7 +1140,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_110_121_122( ...
+      chla = compute_CHLA_105_to_111_121_122( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -905,7 +1169,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      bbp700 = compute_BBP700_105_to_110_121_122_V1( ...
+      bbp700 = compute_BBP700_105_to_111_121_122_V1( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1059,7 +1323,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
             
-            nitrate = compute_profile_NITRATE_from_spectrum_105_to_109_121_122( ...
+            nitrate = compute_profile_NITRATE_from_spectrum_105_to_109_111_121_122( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1160,7 +1424,7 @@ else
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
          
-         nitrate = compute_profile_NITRATE_from_MOLAR_NITRATE_105_to_109_121_122( ...
+         nitrate = compute_profile_NITRATE_from_MOLAR_NI_105_to_109_111_121_122( ...
             a_profSuna.data(:, idF), ...
             paramToDerive.fillValue, derivedParam.fillValue, ...
             a_profSuna.data(:, 1), ctdMeasData, ...
@@ -1430,10 +1694,10 @@ if (~isempty(ctdDataNoDef))
                a_DOXY_fillValue, ...
                a_profOptode);
             
-         case {107, 109, 110, 121, 122}
+         case {107, 109, 110, 111, 121, 122}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoNan) = compute_DOXY_107_109_110_121_122( ...
+            o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_121_122( ...
                a_C1PHASE_DOXY(idNoNan), ...
                a_C2PHASE_DOXY(idNoNan), ...
                a_TEMP_DOXY(idNoNan), ...
@@ -2176,7 +2440,7 @@ end
 %          case {107, 109}
 %
 %             % compute DOXY values using the Stern-Volmer equation
-%             o_DOXY(idNoNan) = compute_DOXY_107_109_110_121_122( ...
+%             o_DOXY(idNoNan) = compute_DOXY_107_109_to_111_121_122( ...
 %                a_C1PHASE_DOXY(idNoNan), ...
 %                a_C2PHASE_DOXY(idNoNan), ...
 %                a_C1PHASE_DOXY_fillValue, ...

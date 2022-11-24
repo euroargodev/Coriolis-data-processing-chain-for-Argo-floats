@@ -264,13 +264,15 @@ if (~isempty(a_dataECO3RawDate))
 end
 
 if (~isempty(a_dataOCRMeanDate))
-   tabDataCycle = [tabDataCycle; a_dataOCRMeanDate(:, 1)];
-   tabDataProf = [tabDataProf; a_dataOCRMeanDate(:, 2)];
-   tabDataPhase = [tabDataPhase; a_dataOCRMeanDate(:, 3)];
-   tabDataType = [tabDataType; ones(size(a_dataOCRMeanDate, 1), 1)*12];
-   tabDataDate = [tabDataDate; a_dataOCRMeanDate(:, 4)];
-   tabDataDateTrans = [tabDataDateTrans; a_dataOCRMeanDateTrans(:, 4)];
-   tabDataPres = [tabDataPres; a_dataOCRMeanPres(:, 4)];
+   for idC = 4:size(a_dataOCRMeanDate, 2)
+      tabDataCycle = [tabDataCycle; a_dataOCRMeanDate(:, 1)];
+      tabDataProf = [tabDataProf; a_dataOCRMeanDate(:, 2)];
+      tabDataPhase = [tabDataPhase; a_dataOCRMeanDate(:, 3)];
+      tabDataType = [tabDataType; ones(size(a_dataOCRMeanDate, 1), 1)*12];
+      tabDataDate = [tabDataDate; a_dataOCRMeanDate(:, idC)];
+      tabDataDateTrans = [tabDataDateTrans; a_dataOCRMeanDateTrans(:, idC)];
+      tabDataPres = [tabDataPres; a_dataOCRMeanPres(:, idC)];
+   end
 end
 
 if (~isempty(a_dataOCRRawDate))

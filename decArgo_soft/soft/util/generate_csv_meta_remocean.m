@@ -30,13 +30,14 @@ showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToM
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
-dataBaseFileName = 'C:\Users\jprannou\Desktop\6902741\new_rem_meta.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170620\new_rem_meta.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_from_VB_20180222.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_lot2_from_VB_20180319.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_BioIndia_6.11_from_VB_20180319.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -302,12 +303,12 @@ switch a_inputSensorName
       o_sensorName = [{'RADIOMETER_DOWN_IRR380'} {'RADIOMETER_DOWN_IRR412'} {'RADIOMETER_DOWN_IRR490'} {'RADIOMETER_PAR'}];
       o_sensorDimLevel = [201 202 203 204];
       o_sensorMaker = [{'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'}];
-      o_sensorModel = [{'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'}];
+      o_sensorModel = [{'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'}];      
       
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110}
+         case {105, 106, 107, 110, 111}
             o_sensorName = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'} {'FLUOROMETER_CDOM'}];
             o_sensorDimLevel = [301 302 303];
             o_sensorMaker = [{'WETLABS'} {'WETLABS'} {'WETLABS'}];
@@ -335,7 +336,7 @@ switch a_inputSensorName
       o_sensorMaker = {'SATLANTIC'};
       o_sensorModel = {'SUNA_V2'};
       
-   case 'FLBB'
+   case {'FLBB', 'ECO2'}
       o_sensorName = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'}];
       o_sensorDimLevel = [401 402];
       o_sensorMaker = [{'WETLABS'} {'WETLABS'}];
@@ -418,7 +419,7 @@ for idSensor = 1:length(a_sensorList)
          
       case 'ECO3'
          switch a_decId
-            case {105, 106, 107, 110}
+            case {105, 106, 107, 110, 111}
                codeList = [ ...
                   {'ECO_BETA_ANGLE'}; ...
                   {'ECO_BETA_BANDWIDTH'}; ...
@@ -535,7 +536,7 @@ for idSensor = 1:length(a_sensorList)
          [techParId, techParDimLev, techParCode, techParValue] = ...
             get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
          
-      case 'FLBB'
+      case {'FLBB', 'ECO2'}
          codeList = [ ...
             {'FLBB_BETA_ANGLE'}; ...
             {'FLBB_BETA_BANDWIDTH'}; ...
@@ -547,7 +548,7 @@ for idSensor = 1:length(a_sensorList)
             {'FLBB_VERTICAL_PRES_OFFSET'} ...
             ];
          ifEmptyList = [ ...
-            {'124'}; ...
+            {'142'}; ...
             {''}; ...
             {'700'}; ...
             {''}; ...
@@ -921,8 +922,8 @@ switch a_inputSensorName
       
    case 'OPTODE'
       switch a_decId
-         case {105, 106, 107, 108, 109, 110, 301}
-            if (ismember(a_decId, [106 107 109 110]))
+         case {105, 106, 107, 108, 109, 110, 111, 301}
+            if (ismember(a_decId, [106 107 109 110 111]))
                optodeInAirMeasFlag = get_optode_in_air(a_floatNum, a_metaWmoList, a_metaData);
                if (isempty(optodeInAirMeasFlag) || (optodeInAirMeasFlag == 0))
                   o_paramName = [ ...
@@ -1007,7 +1008,7 @@ switch a_inputSensorName
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110}
+         case {105, 106, 107, 110, 111}
             o_paramName = [ ...
                {'FLUORESCENCE_CHLA'} {'BETA_BACKSCATTERING700'} {'FLUORESCENCE_CDOM'} ...
                {'CHLA'} {'BBP700'} {'CDOM'} ...
@@ -1067,7 +1068,7 @@ switch a_inputSensorName
             ];
       else
          switch a_decId
-            case {105, 106, 107, 108, 109}
+            case {105, 106, 107, 108, 109, 111}
                o_paramName = [ ...
                   {'TEMP_NITRATE'} ...
                   {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
@@ -1126,7 +1127,7 @@ switch a_inputSensorName
          end
       end
       
-   case 'FLBB'
+   case {'FLBB', 'ECO2'}
       o_paramName = [ ...
          {'FLUORESCENCE_CHLA'} {'BETA_BACKSCATTERING700'} ...
          {'CHLA'} {'BBP700'} ...
@@ -1344,7 +1345,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110}
+         case {105, 106, 107, 108, 109, 110, 111}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
             
@@ -1386,7 +1387,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110}
+         case {105, 106, 107, 108, 109, 110, 111}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');

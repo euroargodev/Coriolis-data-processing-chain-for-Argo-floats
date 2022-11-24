@@ -37,8 +37,8 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformFamily = 'FLOAT';
       
-   case {105, 106, 107, 108, 109, 110, 301}
-      % PROVOR REMOCEAN
+   case {105, 106, 107, 108, 109, 110, 111, 301}
+      % PROVOR CTS4
       o_platformFamily = 'FLOAT';
       
    case {121, 122, 123}

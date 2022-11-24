@@ -902,7 +902,7 @@ if (~isempty(a_tabSensors))
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
-                  tabNbBits = [16 8 8 32 repmat([16 16 16 8 8 8 16], 1, 11) 72];
+                  tabNbBits = [16 8 8 32 repmat([16 8 8 8 16 16 16], 1, 11) 72];
                   % get item bits
                   values = get_bits(firstBit, tabNbBits, msgData);
                   
@@ -1326,7 +1326,7 @@ if (~isempty(a_tabSensors))
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
-                  tabNbBits = [16 8 8 32 repmat([16 32 16], 1, 16) 16];
+                  tabNbBits = [16 8 8 32 repmat([16 16 32], 1, 16) 16];
                   % get item bits
                   values = get_bits(firstBit, tabNbBits, msgData);
                   
@@ -1448,7 +1448,7 @@ if (~isempty(a_tabSensors))
                   % first item bit number
                   firstBit = 1;
                   % item bit lengths
-                  tabNbBits = [16 8 8 32 repmat([16 32 16], 1, 16) 16];
+                  tabNbBits = [16 8 8 32 repmat([16 16 32], 1, 16) 16];
                   % get item bits
                   values = get_bits(firstBit, tabNbBits, msgData);
                   

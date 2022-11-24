@@ -191,7 +191,10 @@ for idMes = 1:size(a_tabData, 1)
             end
             g_decArgo_julD2FloatDayOffset = cycleStartDateDay - tabTech1(5);
          end
-                  
+         
+         % pressure sensor offset
+         tabTech1(44) = twos_complement_dec_argo(tabTech1(44), 8)/10;
+         
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech1(38:43)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          

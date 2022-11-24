@@ -56,6 +56,7 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 
 % sensor list
 global g_decArgo_sensorList;
+global g_decArgo_sensorMountedOnFloat;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
@@ -323,8 +324,10 @@ g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
 
 % fill the sensor list
 sensorList = [];
+sensorMountedOnFloat = [];
 if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+   sensorMountedOnFloat = jSensorNames';
    for id = 1:length(jSensorNames)
       sensorName = jSensorNames{id};
       switch (sensorName)
@@ -357,6 +360,7 @@ end
 
 % store the sensor list
 g_decArgo_sensorList = sensorList;
+g_decArgo_sensorMountedOnFloat = sensorMountedOnFloat;
 
 % fill the calibration coefficients
 if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))

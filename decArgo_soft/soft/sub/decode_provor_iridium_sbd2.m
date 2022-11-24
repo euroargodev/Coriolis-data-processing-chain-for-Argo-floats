@@ -241,7 +241,7 @@ if (~a_floatDmFlag)
    
    if (g_decArgo_delayedModeFlag)
       
-      fprintf('WARNING: Float #%d is expected to be processed in Real Time Mode\n', ...
+      fprintf('ERROR: Float #%d is expected to be processed in Real Time Mode\n', ...
          a_floatNum);
       o_tabProfiles = [];
       o_tabTrajNMeas = [];
@@ -379,8 +379,7 @@ if (~a_floatDmFlag)
          % process mail files according to stored buffers
          
          % read the RT buffer list file
-         [mailFileNameList, mailFileRank, ~, ~, ~] = ...
-            read_buffer_list(a_floatNum, g_decArgo_historyDirectory, '', 0);
+         [mailFileNameList, mailFileRank] = read_buffer_list(a_floatNum, g_decArgo_historyDirectory);
          
          uRank = sort(unique(mailFileRank));
          for idRk = 1:length(uRank)
@@ -780,7 +779,7 @@ else
    
    if (g_decArgo_realtimeFlag)
       
-      fprintf('WARNING: Float #%d is expected to be processed in Delayed Mode\n', ...
+      fprintf('ERROR: Float #%d is expected to be processed in Delayed Mode\n', ...
          a_floatNum);
       o_tabProfiles = [];
       o_tabTrajNMeas = [];
@@ -837,7 +836,7 @@ else
       
       % read the DM buffer list file
       [sbdFileNameList, sbdFileRank, sbdFileDate, sbdFileCyNum, sbdFileProfNum] = ...
-         read_buffer_list(a_floatNum, g_decArgo_dirInputDmBufferList, g_decArgo_archiveDmDirectory, 1);
+         read_dm_buffer_list(a_floatNum, g_decArgo_dirInputDmBufferList, g_decArgo_archiveDmDirectory);
       
       if (isempty(sbdFileNameList))
          
@@ -935,7 +934,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % msg and location times
    if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
       [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
-         o_tabTrajNMeas, o_tabTrajNCycle);
+         o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    end
    
    % add interpolated profile locations
@@ -1284,7 +1283,7 @@ switch (a_decoderId)
          [tabDrift] = compute_drift_derived_parameters_ir_sbd2(tabDrift, a_decoderId);
          
          % collect trajectory data for TRAJ NetCDF file
-         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_sbd2(a_decoderId, ...
+         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_105_to_110_sbd2(a_decoderId, ...
             tabProfiles, tabDrift, ...
             floatProgTech, floatProgParam, ...
             floatPres, tabTech, a_refDay, ...
@@ -1475,7 +1474,7 @@ switch (a_decoderId)
          [tabDrift] = compute_drift_derived_parameters_ir_sbd2(tabDrift, a_decoderId);
          
          % collect trajectory data for TRAJ NetCDF file
-         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_sbd2(a_decoderId, ...
+         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_105_to_110_sbd2(a_decoderId, ...
             tabProfiles, tabDrift, ...
             floatProgTech, floatProgParam, ...
             floatPres, tabTech, a_refDay, ...

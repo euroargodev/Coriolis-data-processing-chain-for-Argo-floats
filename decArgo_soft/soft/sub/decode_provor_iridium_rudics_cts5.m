@@ -263,7 +263,7 @@ end
 
 if (g_decArgo_delayedModeFlag)
    
-   fprintf('WARNING: Float #%d is expected to be processed in Real Time Mode\n', ...
+   fprintf('ERROR: Float #%d is expected to be processed in Real Time Mode\n', ...
       a_floatNum);
    o_tabProfiles = [];
    o_tabTrajNMeas = [];

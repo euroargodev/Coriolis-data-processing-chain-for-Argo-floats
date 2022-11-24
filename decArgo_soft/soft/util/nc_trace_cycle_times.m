@@ -43,12 +43,6 @@ g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_201.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_202.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_203.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_209.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_212.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
@@ -62,6 +56,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.65.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -912,9 +908,10 @@ if (g_NTCT_cycles(a_idCycle+1) == 0)
 end
 
 xSpyInDescToPark = g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :);
-xSpyInDescToPark(find(xSpyInDescToPark == g_dateDef)) = [];
 ySpyInDescToPark = g_NTCT_SpyInDescToPark_pres(a_idCycle+1, :);
-ySpyInDescToPark(find(ySpyInDescToPark == g_presDef)) = [];
+idDel = find((xSpyInDescToPark == g_dateDef) & (ySpyInDescToPark == g_presDef));
+xSpyInDescToPark(idDel) = [];
+ySpyInDescToPark(idDel) = [];
 if (~isempty(xSpyInDescToPark))
    plot(presAxes, xSpyInDescToPark, ySpyInDescToPark, 'k');
    hold on;
@@ -927,9 +924,10 @@ if (~isempty(xSpyInDescToPark))
 end
 
 xSpyAtPark = g_NTCT_SpyAtPark_juld(a_idCycle+1, :);
-xSpyAtPark(find(xSpyAtPark == g_dateDef)) = [];
 ySpyAtPark = g_NTCT_SpyAtPark_pres(a_idCycle+1, :);
-ySpyAtPark(find(ySpyAtPark == g_presDef)) = [];
+idDel = find((xSpyAtPark == g_dateDef) & (ySpyAtPark == g_presDef));
+xSpyAtPark(idDel) = [];
+ySpyAtPark(idDel) = [];
 if (~isempty(xSpyAtPark))
    plot(presAxes, xSpyAtPark, ySpyAtPark, 'k');
    hold on;
@@ -942,9 +940,10 @@ if (~isempty(xSpyAtPark))
 end
 
 xSpyInDescToProf = g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :);
-xSpyInDescToProf(find(xSpyInDescToProf == g_dateDef)) = [];
 ySpyInDescToProf = g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :);
-ySpyInDescToProf(find(ySpyInDescToProf == g_presDef)) = [];
+idDel = find((xSpyInDescToProf == g_dateDef) & (ySpyInDescToProf == g_presDef));
+xSpyInDescToProf(idDel) = [];
+ySpyInDescToProf(idDel) = [];
 if (~isempty(xSpyInDescToProf))
    plot(presAxes, xSpyInDescToProf, ySpyInDescToProf, 'k');
    hold on;
@@ -957,9 +956,10 @@ if (~isempty(xSpyInDescToProf))
 end
 
 xSpyAtProf = g_NTCT_SpyAtProf_juld(a_idCycle+1, :);
-xSpyAtProf(find(xSpyAtProf == g_dateDef)) = [];
 ySpyAtProf = g_NTCT_SpyAtProf_pres(a_idCycle+1, :);
-ySpyAtProf(find(ySpyAtProf == g_presDef)) = [];
+idDel = find((xSpyAtProf == g_dateDef) & (ySpyAtProf == g_presDef));
+xSpyAtProf(idDel) = [];
+ySpyAtProf(idDel) = [];
 if (~isempty(xSpyAtProf))
    plot(presAxes, xSpyAtProf, ySpyAtProf, 'k');
    hold on;
@@ -972,9 +972,10 @@ if (~isempty(xSpyAtProf))
 end
 
 xSpyInAscProf = g_NTCT_SpyInAscProf_juld(a_idCycle+1, :);
-xSpyInAscProf(find(xSpyInAscProf == g_dateDef)) = [];
 ySpyInAscProf = g_NTCT_SpyInAscProf_pres(a_idCycle+1, :);
-ySpyInAscProf(find(ySpyInAscProf == g_presDef)) = [];
+idDel = find((xSpyInAscProf == g_dateDef) & (ySpyInAscProf == g_presDef));
+xSpyInAscProf(idDel) = [];
+ySpyInAscProf(idDel) = [];
 firstSurfDate = g_dateDef;
 firstSurfPres = g_presDef;
 if (~isempty(xSpyInAscProf))
@@ -996,36 +997,40 @@ if (~isempty(xSpyInAscProf))
 end
 
 xDescProf = g_NTCT_DescProf_juld(a_idCycle+1, :);
-xDescProf(find(xDescProf == g_dateDef)) = [];
 yDescProf = g_NTCT_DescProf_pres(a_idCycle+1, :);
-yDescProf(find(yDescProf == g_presDef)) = [];
+idDel = find((xDescProf == g_dateDef) & (yDescProf == g_presDef));
+xDescProf(idDel) = [];
+yDescProf(idDel) = [];
 if (~isempty(xDescProf))
    plot(presAxes, xDescProf, yDescProf, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
    hold on;
 end
 
 xDriftAtPark = g_NTCT_DriftAtPark_juld(a_idCycle+1, :);
-xDriftAtPark(find(xDriftAtPark == g_dateDef)) = [];
 yDriftAtPark = g_NTCT_DriftAtPark_pres(a_idCycle+1, :);
-yDriftAtPark(find(yDriftAtPark == g_presDef)) = [];
+idDel = find((xDriftAtPark == g_dateDef) & (yDriftAtPark == g_presDef));
+xDriftAtPark(idDel) = [];
+yDriftAtPark(idDel) = [];
 if (~isempty(xDriftAtPark))
    plot(presAxes, xDriftAtPark, yDriftAtPark, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
    hold on;
 end
 
 xAscProf = g_NTCT_AscProf_juld(a_idCycle+1, :);
-xAscProf(find(xAscProf == g_dateDef)) = [];
 yAscProf = g_NTCT_AscProf_pres(a_idCycle+1, :);
-yAscProf(find(yAscProf == g_presDef)) = [];
+idDel = find((xAscProf == g_dateDef) & (yAscProf == g_presDef));
+xAscProf(idDel) = [];
+yAscProf(idDel) = [];
 if (~isempty(xAscProf))
    plot(presAxes, xAscProf, yAscProf, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
    hold on;
 end
 
 xInAir = g_NTCT_InAirSeriesOfMeas_juld(a_idCycle+1, :);
-xInAir(find(xInAir == g_dateDef)) = [];
 yInAir = g_NTCT_InAirSeriesOfMeas_pres(a_idCycle+1, :);
-yInAir(find(yInAir == g_presDef)) = [];
+idDel = find((xInAir == g_dateDef) & (yInAir == g_presDef));
+xInAir(idDel) = [];
+yInAir(idDel) = [];
 if (~isempty(xInAir))
    plot(presAxes, xInAir, yInAir, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
    hold on;
@@ -1072,9 +1077,10 @@ if (~isempty(xTET))
 end
 
 xGrounded = g_NTCT_Grounded_flag_juld(a_idCycle+1, :);
-xGrounded(find(xGrounded == g_dateDef)) = [];
 yGrounded = g_NTCT_Grounded_flag_pres(a_idCycle+1, :);
-yGrounded(find(yGrounded == g_presDef)) = [];
+idDel = find((xGrounded == g_dateDef) & (yGrounded == g_presDef));
+xGrounded(idDel) = [];
+yGrounded(idDel) = [];
 if (~isempty(xGrounded))
    plot(presAxes, xGrounded, yGrounded, 'c.', 'MarkerSize', 30);
    hold on;

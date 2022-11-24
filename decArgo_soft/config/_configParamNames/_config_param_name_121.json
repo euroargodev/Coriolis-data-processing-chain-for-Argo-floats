@@ -676,104 +676,104 @@
       "CONF_PARAM_DEC_ID" : "175",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / descente vers profondeur dérive (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DescentToParkPresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_86" :
    {
       "CONF_PARAM_DEC_ID" : "176",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / dérive profondeur parking (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DriftAtParkPresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at parking pressure in the depth zone #<N>."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure in the depth zone #<N>."
    },
    "CONF_PARAM_87" :
    {
       "CONF_PARAM_DEC_ID" : "177",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / descente vers profondeur mesure (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DescentToProfilePresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_88" :
    {
       "CONF_PARAM_DEC_ID" : "178",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / dérive profondeur mesure (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DriftAtProfilePresSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at profile pressure in the depth zone #<N>."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure in the depth zone #<N>."
    },
    "CONF_PARAM_89" :
    {
       "CONF_PARAM_DEC_ID" : "179",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / remontée (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>AscentSamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the ascending profile in the depth zone #<N> (in seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>AscentSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_90" :
    {
       "CONF_PARAM_DEC_ID" : "180",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type d’acquisition",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short sensor name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
    "CONF_PARAM_91" :
    {
       "CONF_PARAM_DEC_ID" : "181",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type de traitement",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short sensor name> in the depth zone #<N>  (see float manual for details)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N>  (see float manual for details)."
    },
    "CONF_PARAM_92" :
    {
       "CONF_PARAM_DEC_ID" : "182",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type de synchronisation",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DataSynchronizationMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data of the <short sensor name> can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataSynchronizationMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data of the <short_sensor_name> can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
    "CONF_PARAM_93" :
    {
       "CONF_PARAM_DEC_ID" : "183",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 – Epaisseur de tranche (dbar)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>SlicesThickness_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short sensor name> in the depth zone #<N> (in dbar)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> (in dbar)."
    },
    "CONF_PARAM_94" :
    {
       "CONF_PARAM_DEC_ID" : "184",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Seuil de pression entre les zones 1 et 2 (dbar)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>DepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short sensor name>  (in dbar)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name>  (in dbar)."
    },
    "CONF_PARAM_95" :
    {
       "CONF_PARAM_DEC_ID" : "185",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Durée de chauffe capteur (msec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>WarmUpTime_msec",
-      "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short sensor name> is powered ON, to provide its first sample (in milli-seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>WarmUpTime_msec",
+      "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short_sensor_name> is powered ON, to provide its first sample (in milli-seconds)."
    },
    "CONF_PARAM_96" :
    {
       "CONF_PARAM_DEC_ID" : "186",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Durée d’extinction capteur (msec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>PowerSwitchDelayMin_msec",
-      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short sensor name> between a switch OFF and a switch ON (in milli-seconds)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec",
+      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON (in milli-seconds)."
    },
    "CONF_PARAM_97" :
    {
       "CONF_PARAM_DEC_ID" : "187",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Index de filtrage du premier échantillon valide",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name>FirstValidSample_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short sensor name> (0 is the rank of the first sample)."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short_sensor_name> (0 is the rank of the first sample)."
    },
    "CONF_PARAM_98" :
    {
@@ -1068,144 +1068,144 @@
       "CONF_PARAM_DEC_ID" : "223",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of depth zones.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>NumberOfDepthZone_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>NumberOfDepthZone_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_135" :
    {
       "CONF_PARAM_DEC_ID" : "224",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Start pressure to define the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>StartPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StartPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_136" :
    {
       "CONF_PARAM_DEC_ID" : "225",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Stop pressure to define the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>StopPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StopPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_137" :
    {
       "CONF_PARAM_DEC_ID" : "226",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>SamplingPeriod_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_138" :
    {
       "CONF_PARAM_DEC_ID" : "227",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Power acquisition mode for the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_139" :
    {
       "CONF_PARAM_DEC_ID" : "228",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of additional raw data sampled in the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>RawDataAcquisition_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled in the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>RawDataAcquisition_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_140" :
    {
       "CONF_PARAM_DEC_ID" : "229",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of subsamplings for data sampled in the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>NumberOfSubSampling_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled in the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>NumberOfSubSampling_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_141" :
    {
       "CONF_PARAM_DEC_ID" : "230",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing mode of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>SubSampling<SubS>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_142" :
    {
       "CONF_PARAM_DEC_ID" : "231",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing rate of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><vertical phase name>DepthZone<N>SubSampling<SubS>DataProcessingRate_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short sensor name> sensor while sampling during the <vertical phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingRate_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_143" :
    {
       "CONF_PARAM_DEC_ID" : "232",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of sampling schemes.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>NumberOfSamplingScheme_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of sampling schemes defined for the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>NumberOfSamplingScheme_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of sampling schemes defined for the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_144" :
    {
       "CONF_PARAM_DEC_ID" : "233",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Start time of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>StartTime_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Start time to define the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>StartTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Start time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_145" :
    {
       "CONF_PARAM_DEC_ID" : "234",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Stop time of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>StopTime_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Stop time to define the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>StopTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Stop time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_146" :
    {
       "CONF_PARAM_DEC_ID" : "235",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>SamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_147" :
    {
       "CONF_PARAM_DEC_ID" : "236",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Power acquisition mode of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_148" :
    {
       "CONF_PARAM_DEC_ID" : "237",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of additional raw data sampled for the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>RawDataAcquisition_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled within the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>RawDataAcquisition_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_149" :
    {
       "CONF_PARAM_DEC_ID" : "238",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of subsamplings for data sampled with the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>NumberOfSubSampling_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled within the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>NumberOfSubSampling_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_150" :
    {
       "CONF_PARAM_DEC_ID" : "239",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing mode of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_151" :
    {
       "CONF_PARAM_DEC_ID" : "240",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing rate of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short sensor name><horizontal phase name>SamplingScheme<S>SubSampling<SubS>DataProcessingRate_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short sensor name> sensor while sampling during the <horizontal phase name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingRate_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
    },
    "CONF_PARAM_152" :
    {
