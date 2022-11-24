@@ -44,6 +44,9 @@ global g_decArgo_tempDoxyCountsDef;
 % decoder Id check flag
 global g_decArgo_decIdCheckFlag;
 
+% Provor/Arvor hydraulic type check flag
+global g_decArgo_provorArvorHydraulicTypeCheckFlag;
+
 
 % packet type
 packType = a_tabData(1);
@@ -172,6 +175,11 @@ switch (packType)
       
       cycleNum = tabTech2(1);
                   
+      % check Provor/Arvor hydraulic type
+      if (g_decArgo_provorArvorHydraulicTypeCheckFlag == 0)
+         check_provor_arvor_hydraulic_type(tabTech2(58), a_decoderId, g_decArgo_floatNum);
+      end
+      
       % compute last reset date
       floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
       

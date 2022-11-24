@@ -51,6 +51,9 @@
 %   07/10/2020 - RNU - V 1.10: correction in processing of PROFILE_<PARAM>_QC
 %                              (the input Qcs used depend on PARAMATER_DATA_MODE
 %                              information)
+%   04/27/2021 - RNU - V 1.11: ignore Bounce cycles (from Ice cycles of APEX
+%                              APF1 floats) because they have distinct JULD and
+%                              LOCATION
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -64,7 +67,7 @@ g_cocs_netCDF4FlagForMultiProf = 1;
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_pb_S-prof.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_pb_S-prof.txt';
 % FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
@@ -106,7 +109,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.10 (version 30.06.2020 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.11 (version 30.06.2020 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

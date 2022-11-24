@@ -1012,7 +1012,8 @@ if (~isempty(a_iceDetection))
    
    % when thermal detection is TRUE: (JULD, P, NB_SAMPLE_ICE_DETECTION) stored in TRAJ_AUX
    % with MC=599
-   if (~isempty(a_iceDetection.thermalDetect.detectTime))
+   if (~isempty(a_iceDetection.thermalDetect.detectTime) && ...
+         ~isempty(a_iceDetection.thermalDetect.detectNbSample))
       time = a_iceDetection.thermalDetect.detectTime;
       timeAdj = a_iceDetection.thermalDetect.detectTimeAdj;
       [measStructAux, ~] = create_one_meas_float_time_bis( ...

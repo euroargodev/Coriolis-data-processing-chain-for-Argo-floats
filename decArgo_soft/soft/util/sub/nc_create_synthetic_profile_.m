@@ -296,6 +296,13 @@ for idType= 1:2
    
    % store PROF data in dedicated structures
    for idProf = 1:nProf
+      
+      % do not consider Bounce cycles (from Ice cycles of APEX APF1 floats)
+      vss = strtrim(verticalSamplingScheme(idProf, :));
+      if (strncmp(vss, 'Bounce sampling:', length('Bounce sampling:')))
+         continue
+      end
+      
       profData = get_prof_data_init_struct;
       
       profData.nProfId = idProf;

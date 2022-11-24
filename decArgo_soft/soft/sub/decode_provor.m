@@ -92,6 +92,9 @@ global g_decArgo_floatLaunchLat;
 % decoder Id check flag
 global g_decArgo_decIdCheckFlag;
 
+% Provor/Arvor hydraulic type check flag
+global g_decArgo_provorArvorHydraulicTypeCheckFlag;
+
 % to store information parameter RT adjustment
 global g_decArgo_paramAdjInfo;
 global g_decArgo_paramAdjId;
@@ -131,6 +134,7 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchLat = '';
    
    g_decArgo_decIdCheckFlag = 0;
+   g_decArgo_provorArvorHydraulicTypeCheckFlag = 0;
    
    g_decArgo_paramAdjInfo = [];
    g_decArgo_paramAdjId = 1;

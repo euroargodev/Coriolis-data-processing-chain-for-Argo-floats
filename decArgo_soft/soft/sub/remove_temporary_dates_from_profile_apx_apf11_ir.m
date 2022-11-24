@@ -31,6 +31,9 @@ if (~isempty(o_profDo))
    if (o_profDo.temporaryDates == 1)
       paramJuld = get_netcdf_param_attributes('JULD');
       o_profDo.dates = ones(size(o_profDo.dates))*paramJuld.fillValue;
+      if (~isempty(o_profDo.datesAdj))
+         o_profDo.datesAdj = ones(size(o_profDo.dates))*paramJuld.fillValue;
+      end
       o_profDo.temporaryDates = 0;
    end
 end

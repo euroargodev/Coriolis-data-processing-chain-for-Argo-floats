@@ -80,15 +80,15 @@ for idMsg = 1:size(sbdDataTab, 1)
             a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {214, 217}
-      % Provor-ARN-DO-Ice Iridium 5.75
-      % Arvor-ARN-DO-Ice Iridium 5.46
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {214, 217}
+         % Provor-ARN-DO-Ice Iridium 5.75
+         % Arvor-ARN-DO-Ice Iridium 5.46
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_214_217(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
-         o_decodedData = [o_decodedData decodedData];         
+         o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {216} % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)

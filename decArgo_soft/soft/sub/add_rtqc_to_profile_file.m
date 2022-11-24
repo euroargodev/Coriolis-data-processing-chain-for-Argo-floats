@@ -4252,7 +4252,7 @@ if (testFlagList(57) == 1)
                   
                   if (any(profPsalCtdQc == g_decArgo_qcStrBad))
                      
-                     % interpolate and extrapolate the CTD TEMP data at the pressures
+                     % interpolate and extrapolate the CTD PSAL data at the pressures
                      % of the DOXY measurements
                      [profPsalInt, profPsalIntQc] = compute_interpolated_PARAM_measurements( ...
                         profPresCtd, profPsalCtd, profPsalCtdQc, profPres, ...

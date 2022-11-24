@@ -92,6 +92,9 @@ global g_decArgo_iridiumMailData;
 % float configuration
 global g_decArgo_floatConfig;
 
+% Provor/Arvor hydraulic type check flag
+global g_decArgo_provorArvorHydraulicTypeCheckFlag;
+
 
 % clean multiple transmission
 % some messages could be transmitted more than once (Ex: 3901868 #13)
@@ -318,6 +321,11 @@ for idMes = 1:size(a_tabData, 1)
             ];
          % get item bits
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
+         
+         % check Provor/Arvor hydraulic type
+         if (g_decArgo_provorArvorHydraulicTypeCheckFlag == 0)
+            check_provor_arvor_hydraulic_type(tabTech2(58), a_decoderId, g_decArgo_floatNum);
+         end
          
          % float 3901863 has been programmed with no CTD acquisition during 2
          % cycles => we cannot manage that for a subsurface cycle (detection of

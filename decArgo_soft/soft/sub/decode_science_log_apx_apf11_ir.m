@@ -150,11 +150,14 @@ ctdCpH = [];
 do = [];
 doId = [];
 flbbCd = [];
+flbbCdId = [];
 flbbCdCfg = [];
 ocr504I = [];
+ocr504IId = [];
 rafosRtc = [];
 rafos = [];
 ramses = [];
+ramsesId = [];
 allPresVal = [];
 for idFile = 1:length(a_scienceLogFileList)
 
@@ -332,12 +335,14 @@ for idFile = 1:length(a_scienceLogFileList)
                   case 'FLBB_CD'
                      dataVal = data.(fieldName);
                      flbbCd = [flbbCd; dataVal(:, 2:end)];
+                     flbbCdId = [flbbCdId; dataVal(:, 1)];
                   case 'FLBB_CD_CFG'
                      dataVal = data.(fieldName);
                      flbbCdCfg = [flbbCdCfg; dataVal(:, 2:end)];
                   case 'OCR_504I'
                      dataVal = data.(fieldName);
                      ocr504I = [ocr504I; dataVal(:, 2:end)];
+                     ocr504IId = [ocr504IId; dataVal(:, 1)];
                   case 'RAFOS_RTC'
                      dataVal = data.(fieldName);
                      rafosRtc = [rafosRtc; dataVal(:, 2:end)];
@@ -347,6 +352,7 @@ for idFile = 1:length(a_scienceLogFileList)
                   case 'IRAD'
                      dataVal = data.(fieldName);
                      ramses = [ramses; dataVal(:, 2:end)];
+                     ramsesId = [ramsesId; dataVal(:, 1)];
                end
             else
                fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
@@ -578,42 +584,7 @@ if (~isempty(do))
       idNoDate = find(isnan(o_profDo.dates));
       fprintf('WARNING: Float #%d Cycle #%d: %d not dated O2 measurements in file: %s - PRES is averaged\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
-      
-      presDo = ones(size(do, 1), 1)*paramPres.fillValue;
-      presDates = ones(size(do, 1), 1)*paramJuld.fillValue;
-      
-      presAll = [allPresVal; [doId nan(size(doId, 1), 2)]];
-      [~, sortId] = sort(presAll(:, 1));
-      presAll = presAll(sortId, :);
-      prevPres = '';
-      lastNanId = [];
-      for id = 1:size(presAll, 1)
-         if (~isnan(presAll(id, 3)))
-            if (~isempty(lastNanId))
-               if (~isempty(prevPres))
-                  presDo(doId == presAll(lastNanId, 1)) = prevPres(3) + (presAll(id, 3) - prevPres(3))/2;
-                  presDates(doId == presAll(lastNanId, 1)) = prevPres(2) + (presAll(id, 2) - prevPres(2))/2;
-               else
-                  presDo(doId == presAll(lastNanId, 1)) = presAll(id, 3);
-                  presDates(doId == presAll(lastNanId, 1)) = presAll(id, 2);
-               end
-               lastNanId = [];
-            end
-            prevPres = presAll(id, :);
-         else
-            lastNanId = [lastNanId; id];
-         end
-      end
-      if (isnan(presAll(end, 3)))
-         if (~isempty(prevPres))
-            presDo(doId == presAll(lastNanId, 1)) = prevPres(3);
-            presDates(doId == presAll(lastNanId, 1)) = prevPres(2);
-         end
-      end
-      
-      o_profDo.dates = presDates; % profil generation process is based on measurements dates
-      o_profDo.data(:, 1) = presDo;
-      o_profDo.temporaryDates = 1;
+
    end
 end
 
@@ -859,6 +830,61 @@ if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I) || .
          o_profRamses.data(isnan(o_profRamses.data(:, 1)), 1) = paramPres.fillValue;
       end
    end
+end
+
+% add times to do measurements
+if (~isempty(o_profDo) && any(isnan(o_profDo.dates)))
+   
+   % gather all (Id, JULD, PRES) information
+   presAll = allPresVal;
+   if (~isempty(flbbCdId))
+      presAll = [presAll; [flbbCdId o_profFlbbCd.dates double(o_profFlbbCd.data(:, 1))]];
+   end
+   if (~isempty(ocr504IId))
+      presAll = [presAll; [ocr504IId o_profOcr504I.dates double(o_profOcr504I.data(:, 1))]];
+   end
+   if (~isempty(ramsesId))
+      presAll = [presAll; [ramsesId o_profRamses.dates double(o_profRamses.data(:, 1))]];
+   end
+   
+   % add do measurements Ids
+   presAll = [presAll; [doId nan(size(doId, 1), 2)]];
+
+   % fil do pressures and times
+   presDo = ones(size(do, 1), 1)*paramPres.fillValue;
+   presDates = ones(size(do, 1), 1)*paramJuld.fillValue;
+   
+   [~, sortId] = sort(presAll(:, 1));
+   presAll = presAll(sortId, :);
+   prevPres = '';
+   lastNanId = [];
+   for id = 1:size(presAll, 1)
+      if (~isnan(presAll(id, 3)))
+         if (~isempty(lastNanId))
+            if (~isempty(prevPres))
+               presDo(doId == presAll(lastNanId, 1)) = prevPres(3) + (presAll(id, 3) - prevPres(3))/2;
+               presDates(doId == presAll(lastNanId, 1)) = prevPres(2) + (presAll(id, 2) - prevPres(2))/2;
+            else
+               presDo(doId == presAll(lastNanId, 1)) = presAll(id, 3);
+               presDates(doId == presAll(lastNanId, 1)) = presAll(id, 2);
+            end
+            lastNanId = [];
+         end
+         prevPres = presAll(id, :);
+      else
+         lastNanId = [lastNanId; id];
+      end
+   end
+   if (isnan(presAll(end, 3)))
+      if (~isempty(prevPres))
+         presDo(doId == presAll(lastNanId, 1)) = prevPres(3);
+         presDates(doId == presAll(lastNanId, 1)) = prevPres(2);
+      end
+   end
+   
+   o_profDo.dates = presDates; % profil generation process is based on measurements dates
+   o_profDo.data(:, 1) = presDo;
+   o_profDo.temporaryDates = 1;
 end
 
 % add cycle times associated pressures (from CTD_P measurements)

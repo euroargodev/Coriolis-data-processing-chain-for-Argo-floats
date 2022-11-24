@@ -44,6 +44,9 @@ global g_decArgo_tempDoxyCountsDef;
 % decoder Id check flag
 global g_decArgo_decIdCheckFlag;
 
+% Provor/Arvor hydraulic type check flag
+global g_decArgo_provorArvorHydraulicTypeCheckFlag;
+
 
 % packet type
 packType = a_tabData(1);
@@ -162,6 +165,11 @@ switch (packType)
       
       cycleNum = tabTech2(1);
             
+      % check Provor/Arvor hydraulic type
+      if (g_decArgo_provorArvorHydraulicTypeCheckFlag == 0)
+         check_provor_arvor_hydraulic_type(tabTech2(58), a_decoderId, g_decArgo_floatNum);
+      end
+      
       % BE CAREFUL (updated 01/23/2019 from NKE information)
       % there is an issue with the transmitted grounding day:
       % - when it occured during phase #2 (buoyancy reduction) it is the

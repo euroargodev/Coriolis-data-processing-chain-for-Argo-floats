@@ -134,7 +134,8 @@ externalPres.traj{end+1} = get_cts5_traj_data_init_struct(...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 internalTemp = init_basic_struct;
-internalTemp.pattern = 'Ti=%f °C';
+% internalTemp.pattern = 'Ti=%f °C';
+internalTemp.pattern = ['Ti=%f ' char(176) 'C']; % for linux
 internalTemp.count = 1;
 internalTemp.id{end+1} = 1;
 internalTemp.name{end+1} = 'internal temperature (degC)';
