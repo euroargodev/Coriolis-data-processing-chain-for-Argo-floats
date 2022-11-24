@@ -392,6 +392,11 @@ if (ismember(g_decArgo_floatNum, [6900791]))
          tabRank(tabCyNum == 14) = tabRank(id);
          tabRankByCycle(tabCyNum == 14) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 14) = tabRankByDate(id);
+         % cycle #16 data are separated
+         id = find((tabCyNum == 16) & (tabBase == 1));
+         tabRank(tabCyNum == 16) = tabRank(id);
+         tabRankByCycle(tabCyNum == 16) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 16) = tabRankByDate(id);
    end
 end
 
