@@ -284,30 +284,35 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
 end
 
 % create the tabDoxyCoef array
-if (isfield(g_decArgo_calibInfo, 'OPTODE'))
-   calibData = g_decArgo_calibInfo.OPTODE;
-   tabDoxyCoef = [];
-   for id = 0:3
-      fieldName = ['PhaseCoef' num2str(id)];
-      if (isfield(calibData, fieldName))
-         tabDoxyCoef(1, id+1) = calibData.(fieldName);
+switch (a_decoderId)
+   
+   case {223}
+      
+      if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+         calibData = g_decArgo_calibInfo.OPTODE;
+         tabDoxyCoef = [];
+         for id = 0:3
+            fieldName = ['PhaseCoef' num2str(id)];
+            if (isfield(calibData, fieldName))
+               tabDoxyCoef(1, id+1) = calibData.(fieldName);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+               return
+            end
+         end
+         for id = 0:6
+            fieldName = ['SVUFoilCoef' num2str(id)];
+            if (isfield(calibData, fieldName))
+               tabDoxyCoef(2, id+1) = calibData.(fieldName);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+               return
+            end
+         end
+         g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
       else
          fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-         return
       end
-   end
-   for id = 0:6
-      fieldName = ['SVUFoilCoef' num2str(id)];
-      if (isfield(calibData, fieldName))
-         tabDoxyCoef(2, id+1) = calibData.(fieldName);
-      else
-         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-         return
-      end
-   end
-   g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
-else
-   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
 end
 
 return
