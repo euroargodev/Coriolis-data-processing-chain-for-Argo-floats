@@ -174,8 +174,11 @@ if (~isempty(metaData.(fieldParamList{1})))
             tabData = metaData.(item);
             tabDataAux = [];
             for id = 1:length(idAux)
-               tabDataAux.([item '_' num2str(idAux(id))]) = tabData.([item '_' num2str(idAux(id))]);
-               tabData = rmfield(tabData, [item '_' num2str(idAux(id))]);
+               fieldName = [item '_' num2str(idAux(id))];
+               if (isfield(tabData, fieldName))
+                  tabDataAux.([item '_' num2str(idAux(id))]) = tabData.([item '_' num2str(idAux(id))]);
+                  tabData = rmfield(tabData, [item '_' num2str(idAux(id))]);
+               end
             end
             metaData.(item) = tabData;
             metaDataAux.(item) = tabDataAux;
