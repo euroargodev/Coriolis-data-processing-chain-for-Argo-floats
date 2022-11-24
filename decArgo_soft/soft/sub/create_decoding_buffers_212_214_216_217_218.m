@@ -595,7 +595,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543]))
+      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, 6900790]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -680,6 +680,32 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 62) = tabRank(id);
          tabRankByCycle(tabCyNum == 62) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 62) = tabRankByDate(id);   
+      case 6900790
+         % cycle #107 data are separated
+         id = find((tabCyNum == 107) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 107) = tabRank(id);
+         tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 107) = tabRankByDate(id);   
+         tabDeep(tabCyNum == 107) = 1;
+         tabDelayed(tabCyNum == 107) = 1;
+   end
+
+   % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
+   if (~isempty(g_decArgo_outputCsvFileId))
+
+      % update tabCompleted array
+      cyNumList = unique(tabRankByCycle);
+      cyNumList(cyNumList < 0) = [];
+      for cyNum = 1:length(cyNumList)
+         idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+
+         % check current session contents
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         if (completed == 1)
+            tabCompleted(idForCheck) = 1;
+         end
+      end
    end
 end
 

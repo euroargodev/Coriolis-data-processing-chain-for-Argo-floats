@@ -1832,6 +1832,60 @@ else
    % for RT version
    if (isfield(metaData, 'sensors'))
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % CTD
+      if (any(a_sensorListNum == 1))
+         if (isfield(metaData.sensors, 'sensor_sbe41'))
+            if (isfield(metaData.sensors.sensor_sbe41, 'temperature_coeff'))
+               if (isfield(metaData.sensors.sensor_sbe41.temperature_coeff, 'ta0') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.temperature_coeff.ta0))
+                  o_metaStruct.SBE_TEMP_COEF_TA0 = ['a0=' metaData.sensors.sensor_sbe41.temperature_coeff.ta0];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.temperature_coeff, 'ta1') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.temperature_coeff.ta1))
+                  o_metaStruct.SBE_TEMP_COEF_TA1 = ['a1=' metaData.sensors.sensor_sbe41.temperature_coeff.ta1];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.temperature_coeff, 'ta2') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.temperature_coeff.ta2))
+                  o_metaStruct.SBE_TEMP_COEF_TA2 = ['a2=' metaData.sensors.sensor_sbe41.temperature_coeff.ta2];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.temperature_coeff, 'ta3') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.temperature_coeff.ta3))
+                  o_metaStruct.SBE_TEMP_COEF_TA3 = ['a3=' metaData.sensors.sensor_sbe41.temperature_coeff.ta3];
+               end
+            end
+            if (isfield(metaData.sensors.sensor_sbe41, 'conductivity_coeff'))
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'g') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.g))
+                  o_metaStruct.SBE_CNDC_COEF_G = ['g=' metaData.sensors.sensor_sbe41.conductivity_coeff.g];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'h') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.h))
+                  o_metaStruct.SBE_CNDC_COEF_H = ['h=' metaData.sensors.sensor_sbe41.conductivity_coeff.h];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'i') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.i))
+                  o_metaStruct.SBE_CNDC_COEF_I = ['i=' metaData.sensors.sensor_sbe41.conductivity_coeff.i];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'j') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.j))
+                  o_metaStruct.SBE_CNDC_COEF_J = ['j=' metaData.sensors.sensor_sbe41.conductivity_coeff.j];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'ctcor') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.ctcor))
+                  o_metaStruct.SBE_CNDC_COEF_CTCOR = ['CTcor=' metaData.sensors.sensor_sbe41.conductivity_coeff.ctcor];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'cpcor') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.cpcor))
+                  o_metaStruct.SBE_CNDC_COEF_CPCOR = ['CPcor=' metaData.sensors.sensor_sbe41.conductivity_coeff.cpcor];
+               end
+               if (isfield(metaData.sensors.sensor_sbe41.conductivity_coeff, 'wbotc') && ...
+                     ~isempty(metaData.sensors.sensor_sbe41.conductivity_coeff.wbotc))
+                  o_metaStruct.SBE_CNDC_COEF_WBOTC = ['WBOTC=' metaData.sensors.sensor_sbe41.conductivity_coeff.wbotc];
+               end
+            end
+         end
+      end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % UVP
       if (any(a_sensorListNum == 8))
          if (isfield(metaData.sensors, 'sensor_uvp6'))
@@ -1902,6 +1956,58 @@ else
                   if (~isfield(o_metaStruct, 'META_AUX_OPUS_WATERBASE_INTENSITIES'))
                      o_metaStruct.META_AUX_OPUS_WATERBASE_INTENSITIES = metaData.sensors.sensor_opus.waterbase.intensities;
                   end
+               end
+            end
+         end
+      end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % MPE
+      if (any(a_sensorListNum == 17))
+         if (isfield(metaData.sensors, 'sensor_mpe'))
+            if (isfield(metaData.sensors.sensor_mpe, 'acquisition'))
+               if (isfield(metaData.sensors.sensor_mpe.acquisition, 'average') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.acquisition.average))
+                  o_metaStruct.META_AUX_MPE_ACQUISITION_AVERAGE = metaData.sensors.sensor_mpe.acquisition.average;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.acquisition, 'rate') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.acquisition.rate))
+                  o_metaStruct.META_AUX_MPE_ACQUISITION_RATE = metaData.sensors.sensor_mpe.acquisition.rate;
+               end
+            end
+            if (isfield(metaData.sensors.sensor_mpe, 'photodetector'))
+               if (isfield(metaData.sensors.sensor_mpe.photodetector, 'responsivityw') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.photodetector.responsivityw))
+                  o_metaStruct.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W = metaData.sensors.sensor_mpe.photodetector.responsivityw;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.photodetector, 'responsivitya') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.photodetector.responsivitya))
+                  o_metaStruct.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A = metaData.sensors.sensor_mpe.photodetector.responsivitya;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.photodetector, 'units') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.photodetector.units))
+                  o_metaStruct.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_UNITS = metaData.sensors.sensor_mpe.photodetector.units;
+               end
+            end
+            if (isfield(metaData.sensors.sensor_mpe, 'microradiometer'))
+               if (isfield(metaData.sensors.sensor_mpe.microradiometer, 'gainhm') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.microradiometer.gainhm))
+                  o_metaStruct.META_AUX_MPE_MICRORADIOMETER_GAIN_HM = metaData.sensors.sensor_mpe.microradiometer.gainhm;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.microradiometer, 'gainml') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.microradiometer.gainml))
+                  o_metaStruct.META_AUX_MPE_MICRORADIOMETER_GAIN_ML = metaData.sensors.sensor_mpe.microradiometer.gainml;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.microradiometer, 'offseth') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.microradiometer.offseth))
+                  o_metaStruct.META_AUX_MPE_MICRORADIOMETER_OFFSET_H = metaData.sensors.sensor_mpe.microradiometer.offseth;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.microradiometer, 'offsetm') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.microradiometer.offsetm))
+                  o_metaStruct.META_AUX_MPE_MICRORADIOMETER_OFFSET_M = metaData.sensors.sensor_mpe.microradiometer.offsetm;
+               end
+               if (isfield(metaData.sensors.sensor_mpe.microradiometer, 'offsetl') && ...
+                     ~isempty(metaData.sensors.sensor_mpe.microradiometer.offsetl))
+                  o_metaStruct.META_AUX_MPE_MICRORADIOMETER_OFFSET_L = metaData.sensors.sensor_mpe.microradiometer.offsetl;
                end
             end
          end

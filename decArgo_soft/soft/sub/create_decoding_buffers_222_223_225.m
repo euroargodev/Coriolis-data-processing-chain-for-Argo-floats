@@ -392,7 +392,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072]))
+      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -400,16 +400,25 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 11) = tabRank(id);
          tabRankByCycle(tabCyNum == 11) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 11) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 11) = 1;
          % cycle #14 data are separated
          id = find((tabCyNum == 14) & (tabBase == 1));
          tabRank(tabCyNum == 14) = tabRank(id);
          tabRankByCycle(tabCyNum == 14) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 14) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 14) = 1;
          % cycle #16 data are separated
          id = find((tabCyNum == 16) & (tabBase == 1));
          tabRank(tabCyNum == 16) = tabRank(id);
          tabRankByCycle(tabCyNum == 16) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 16) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 16) = 1;
+         % cycle #26 data are separated
+         id = find((tabCyNum == 26) & (tabBase == 1));
+         tabRank(tabCyNum == 26) = tabRank(id);
+         tabRankByCycle(tabCyNum == 26) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 26) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 26) = 1;
       case 6903064
          % cycle #7: TECH #1, #2 and one hydraulic packet are decoded twice
          id = find((tabCyNum == 7) & (tabBase == 1));
@@ -451,6 +460,7 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 17) = tabRank(id);
          tabRankByCycle(tabCyNum == 17) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 17) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 17) = 1;
          % cycle #19 data are separated
          id = find((tabCyNum == 19) & (tabBase == 1));
          tabBase(id(2)) = 0;
@@ -458,22 +468,34 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 19) = tabRank(id);
          tabRankByCycle(tabCyNum == 19) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 19) = tabRankByDate(id);
-
+         tabDelayed(tabCyNum == 19) = 1;
          % cycle #21, 23, 26 data are separated
          id = find((tabCyNum == 21) & (tabBase == 1));
          tabRank(tabCyNum == 21) = tabRank(id(1));
          tabRankByCycle(tabCyNum == 21) = tabRankByCycle(id(1));
          tabRankByDate(tabCyNum == 21) = tabRankByDate(id(1));
-         
+         tabDelayed(tabCyNum == 21) = 1;
+
          id = find((tabCyNum == 23) & (tabBase == 1));
          tabRank(tabCyNum == 23) = tabRank(id(1));
          tabRankByCycle(tabCyNum == 23) = tabRankByCycle(id(1));
          tabRankByDate(tabCyNum == 23) = tabRankByDate(id(1));
-         
+         tabDelayed(tabCyNum == 23) = 1;
+
          id = find((tabCyNum == 26) & (tabBase == 1));
          tabRank(tabCyNum == 26) = tabRank(id(1));
          tabRankByCycle(tabCyNum == 26) = tabRankByCycle(id(1));
          tabRankByDate(tabCyNum == 26) = tabRankByDate(id(1));
+         tabDelayed(tabCyNum == 26) = 1;
+
+         % cycle #26 data are separated
+         id = find((tabCyNum == 28) & (tabBase == 1));
+         tabBase(id(2)) = 0;
+         id = id(1);
+         tabRank(tabCyNum == 28) = tabRank(id);
+         tabRankByCycle(tabCyNum == 28) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 28) = tabRankByDate(id);
+         tabDelayed(tabCyNum == 28) = 1;
       case 6903800
          % float picked up by a fisherman during cycle #34
          id = find((tabCyNum > 34));
