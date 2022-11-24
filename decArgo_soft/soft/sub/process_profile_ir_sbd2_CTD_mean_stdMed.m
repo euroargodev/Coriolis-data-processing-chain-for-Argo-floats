@@ -62,10 +62,6 @@ global g_decArgo_phaseAscProf;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
-% structure to store miscellaneous meta-data
-global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
-
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListCtd;
 

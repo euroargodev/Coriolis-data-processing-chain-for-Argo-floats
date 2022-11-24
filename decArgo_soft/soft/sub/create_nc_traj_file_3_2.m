@@ -500,12 +500,12 @@ netcdf.putAtt(fCdf, positionQcVarId, 'conventions', 'Argo reference table 2');
 netcdf.putAtt(fCdf, positionQcVarId, '_FillValue', ' ');
 
 axesErrorEllipseMajorVarId = netcdf.defVar(fCdf, 'AXES_ERROR_ELLIPSE_MAJOR', 'NC_FLOAT', nMeasurementDimId);
-netcdf.putAtt(fCdf, axesErrorEllipseMajorVarId, 'long_name', 'Major axis of error ellipse from positioning system');
+netcdf.putAtt(fCdf, axesErrorEllipseMajorVarId, 'long_name', 'Semi-major axis of error ellipse from positioning system');
 netcdf.putAtt(fCdf, axesErrorEllipseMajorVarId, 'units', 'meters');
 netcdf.putAtt(fCdf, axesErrorEllipseMajorVarId, '_FillValue', single(99999));
 
 axesErrorEllipseMinorVarId = netcdf.defVar(fCdf, 'AXES_ERROR_ELLIPSE_MINOR', 'NC_FLOAT', nMeasurementDimId);
-netcdf.putAtt(fCdf, axesErrorEllipseMinorVarId, 'long_name', 'Minor axis of error ellipse from positioning system');
+netcdf.putAtt(fCdf, axesErrorEllipseMinorVarId, 'long_name', 'Semi-minor axis of error ellipse from positioning system');
 netcdf.putAtt(fCdf, axesErrorEllipseMinorVarId, 'units', 'meters');
 netcdf.putAtt(fCdf, axesErrorEllipseMinorVarId, '_FillValue', single(99999));
 

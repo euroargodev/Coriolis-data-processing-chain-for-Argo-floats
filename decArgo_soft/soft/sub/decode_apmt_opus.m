@@ -2,14 +2,14 @@
 % Decode OPUS data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_opusLightData, o_uvpBlackData] = decode_apmt_opus(a_inputFilePathName)
+%  [o_opusLightData, o_opusBlackData] = decode_apmt_opus(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : APMT OPUS file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_opusLightData : OPUS-LIGHT decoded data
-%   o_uvpBlackData  : OPUS-BLACK decoded data
+%   o_opusBlackData : OPUS-BLACK decoded data
 %
 % EXAMPLES :
 %
@@ -19,11 +19,11 @@
 % RELEASES :
 %   02/15/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_opusLightData, o_uvpBlackData] = decode_apmt_opus(a_inputFilePathName)
+function [o_opusLightData, o_opusBlackData] = decode_apmt_opus(a_inputFilePathName)
 
 % output parameters initialization
 o_opusLightData = [];
-o_uvpBlackData = [];
+o_opusBlackData = [];
 
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
@@ -48,7 +48,7 @@ switch (data(1))
    case {24}
       o_opusLightData = decode_apmt_opus_light(data, lastByteNum, a_inputFilePathName);
    case {25}
-      o_uvpBlackData = decode_apmt_opus_black(data, lastByteNum, a_inputFilePathName);
+      o_opusBlackData = decode_apmt_opus_black(data, lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

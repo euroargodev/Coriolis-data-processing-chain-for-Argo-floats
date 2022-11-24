@@ -112,12 +112,12 @@ end
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
-paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_INTEGRATION_TIME');
-paramRadiometerPrePres = get_netcdf_param_attributes('RADIOMETER_PRE_PRES');
-paramRadiometerPostPres = get_netcdf_param_attributes('RADIOMETER_POST_PRES');
-paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_PRE_INCLINATION');
-paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_POST_INCLINATION');
-paramRadiometerDarkAverage = get_netcdf_param_attributes('RADIOMETER_DARK_AVERAGE');
+paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_INTEGRATION_TIME');
+paramRadiometerPrePres = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRE_PRES');
+paramRadiometerPostPres = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_POST_PRES');
+paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRE_INCLINATION');
+paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_POST_INCLINATION');
+paramRadiometerDarkAverage = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_DARK_AVERAGE');
 paramRawDownwellingIrradiance = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE');
 
 % create final profile(s)
@@ -155,16 +155,7 @@ for idDir = 1:length(uDir)
       paramRadiometerPrePres paramRadiometerPostPres ...
       paramRadiometerPreInclination paramRadiometerPostInclination ...
       paramRadiometerDarkAverage paramRawDownwellingIrradiance];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;

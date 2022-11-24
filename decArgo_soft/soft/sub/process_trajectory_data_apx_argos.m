@@ -405,7 +405,6 @@ end
 
 % deepest bin of the ascending profile
 if (~isempty(a_profData))
-
    tabAscDeepestBin = [];
    tabAscDeepestBinPres = [];
    for idProf = 1:length(a_profData)

@@ -203,16 +203,7 @@ for idDir = 1:length(uDir)
       paramIr1StDev paramIr2StDev paramIr3StDev paramParStDev ...
       paramPresMed paramIr1Med paramIr2Med paramIr3Med paramParMed ...
       ];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;

@@ -321,6 +321,10 @@ for idP = 1:length(a_tabProfiles)
          % descending profile
          parkPres = get_config_value(sprintf('CONFIG_APMT_PATTERN_%02d_P01', ...
             g_decArgo_patternNumFloat), configNames, configValues);
+         if (isnan(parkPres))
+            parkPres = get_config_value(sprintf('CONFIG_APMT_PATTERN_%02d_P01_01', ...
+               g_decArgo_patternNumFloat), configNames, configValues);
+         end
          threshold = ones(4, 1)*-1;
 
          for id = 1:4

@@ -21,6 +21,10 @@ function generate_json_float_meta_argos_apex_old_versions
 
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_pts\float_metadata_pts.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Nemo_1900518\float_metadata_1900518.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Nemo_6900588\float_metadata_6900588.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Nemo_6902042\float_metadata_6902042.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\nemo_list_20220829\float_metadata_20220829.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
@@ -28,12 +32,16 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_pts_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
-
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_1900518.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_6900588.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_6902042.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_list_20220829.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % directory of individual json float meta-data files
 outputDirName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
+outputDirName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta_nemo\';
 
 % ANDRO list of Apex DPF floats
 apexDpfFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\misc_info\apex_argos_DPF.txt';
@@ -446,44 +454,46 @@ for idFloat = 1:length(floatList)
       % use ANDRO meta-data
       idFUpTime = find(strcmp(confParamName, 'CONFIG_UpTime_hours'));
       idFDownTime = find(strcmp(confParamName, 'CONFIG_DownTime_hours'));
-      upTimeVal = unique(upTime, 'stable');
-      if (length(upTimeVal) == 1)
-         upTime = repmat(upTimeVal, size(confParamVal, 2), 1);
-      elseif ((length(upTimeVal) == 2) && any(upTimeVal == -1))
-         upTimeVal(find(upTimeVal == -1)) = [];
-         upTime = repmat(upTimeVal, size(confParamVal, 2), 1);
-      end
-      downTimeVal = unique(downTime, 'stable');
-      if (length(downTimeVal) == 1)
-         downTime = repmat(downTimeVal, size(confParamVal, 2), 1);
-      elseif ((length(downTimeVal) == 2) && any(downTimeVal == -1))
-         downTimeVal(find(downTimeVal == -1)) = [];
-         downTime = repmat(downTimeVal, size(confParamVal, 2), 1);
-      end
-      for idC = 1:size(confParamVal, 2)
-         if (isempty(confParamVal{idFUpTime, idC}) && (upTime(idC) ~= -1))
-            confParamVal{idFUpTime, idC} = num2str(upTime(idC));
+      if (~isempty(idFUpTime))
+         upTimeVal = unique(upTime, 'stable');
+         if (length(upTimeVal) == 1)
+            upTime = repmat(upTimeVal, size(confParamVal, 2), 1);
+         elseif ((length(upTimeVal) == 2) && any(upTimeVal == -1))
+            upTimeVal(find(upTimeVal == -1)) = [];
+            upTime = repmat(upTimeVal, size(confParamVal, 2), 1);
          end
-         if (isempty(confParamVal{idFDownTime, idC}) && (downTime(idC) ~= -1))
-            confParamVal{idFDownTime, idC} = num2str(downTime(idC));
+         downTimeVal = unique(downTime, 'stable');
+         if (length(downTimeVal) == 1)
+            downTime = repmat(downTimeVal, size(confParamVal, 2), 1);
+         elseif ((length(downTimeVal) == 2) && any(downTimeVal == -1))
+            downTimeVal(find(downTimeVal == -1)) = [];
+            downTime = repmat(downTimeVal, size(confParamVal, 2), 1);
          end
-      end
-      
-      repRateBis = repRate;
-      if (dpfFloat && (size(configParamVal, 2) < 3))
-         repRateBis = [repRateBis(1) repRateBis];
-      end
+         for idC = 1:size(confParamVal, 2)
+            if (isempty(confParamVal{idFUpTime, idC}) && (upTime(idC) ~= -1))
+               confParamVal{idFUpTime, idC} = num2str(upTime(idC));
+            end
+            if (isempty(confParamVal{idFDownTime, idC}) && (downTime(idC) ~= -1))
+               confParamVal{idFDownTime, idC} = num2str(downTime(idC));
+            end
+         end
 
-      idFPnP = find(strcmp(confParamName, 'CONFIG_ParkAndProfileCycleCounter_COUNT'));
-      for idC = 1:size(confParamVal, 2)
-         if (isempty(confParamVal{idFPnP, idC}) && (repRateBis(idC) ~= 999))
-            confParamVal{idFPnP, idC} = num2str(repRateBis(idC));
+         repRateBis = repRate;
+         if (dpfFloat && (size(configParamVal, 2) < 3))
+            repRateBis = [repRateBis(1) repRateBis];
          end
-      end
-      
-      idFDpf = find(strcmp(confParamName, 'CONFIG_DeepProfileFirstFloat_LOGICAL'));
-      for idC = 1:size(confParamVal, 2)
-         confParamVal{idFDpf, idC} = num2str(dpfFloat);
+
+         idFPnP = find(strcmp(confParamName, 'CONFIG_ParkAndProfileCycleCounter_COUNT'));
+         for idC = 1:size(confParamVal, 2)
+            if (isempty(confParamVal{idFPnP, idC}) && (repRateBis(idC) ~= 999))
+               confParamVal{idFPnP, idC} = num2str(repRateBis(idC));
+            end
+         end
+
+         idFDpf = find(strcmp(confParamName, 'CONFIG_DeepProfileFirstFloat_LOGICAL'));
+         for idC = 1:size(confParamVal, 2)
+            confParamVal{idFDpf, idC} = num2str(dpfFloat);
+         end
       end
       
       metaStruct.CONFIG_PARAMETER_VALUE = confParamVal;
@@ -734,7 +744,14 @@ switch (a_dacFormatId)
          'CONFIG_ParkAndProfileCycleCounter_COUNT', 'MissionCfgParkAndProfileCount', ...
          'CONFIG_Direction_NUMBER', 'DIRECTION', ...
          'CONFIG_DeepProfileFirstFloat_LOGICAL', 'DEEP_PROFILE_FIRST');
-      
+
+   case{'2.5', '3'} % NEMO
+      o_configStruct = struct( ...
+         'CONFIG_CycleTime_hours', 'CYCLE_TIME', ...
+         'CONFIG_ParkPressure_dbar', 'PARKING_PRESSURE', ...
+         'CONFIG_ProfilePressure_dbar', 'DEEPEST_PRESSURE', ...
+         'CONFIG_Direction_NUMBER', 'DIRECTION');
+
    otherwise
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_argos_apex_old_versions for dacFormatId %s\n', a_dacFormatId);
 end
@@ -790,6 +807,7 @@ o_metaStruct = struct( ...
    'DEPLOYMENT_REFERENCE_STATION_ID', 'DEPLOY_AVAILABLE_PROFILE_ID', ...
    'END_MISSION_DATE', 'END_MISSION_DATE', ...
    'END_MISSION_STATUS', 'END_MISSION_STATUS', ...
+   'END_DECODING_DATE', 'END_DECODING_DATE', ...
    'PREDEPLOYMENT_CALIB_EQUATION', 'PREDEPLOYMENT_CALIB_EQUATION', ...
    'PREDEPLOYMENT_CALIB_COEFFICIENT', 'PREDEPLOYMENT_CALIB_COEFFICIENT', ...
    'PREDEPLOYMENT_CALIB_COMMENT', 'PREDEPLOYMENT_CALIB_COMMENT', ...

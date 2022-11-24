@@ -20,7 +20,7 @@
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ctdData] = decode_apmt_ctd_extended_126_to_128(a_data, a_lastByteNum, a_inputFilePathName)
+function [o_ctdData] = decode_apmt_ctd_extended_126_to_129(a_data, a_lastByteNum, a_inputFilePathName)
 
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
@@ -90,21 +90,15 @@ currentTreatNum = -1;
 dataStruct = [];
 currentDataStruct = [];
 currentByte = 2;
-rescueMode = 0;
 while (currentByte <= lastByteNum)
-
+   
    newPhaseNum = -1;
    newTreatNum = -1;
-
+   
    % look for a new phase header
    if (inputData(currentByte) == '[')
       for idPhase = 1:length(phaseList)
          phaseName = phaseList{idPhase};
-         if (any((currentByte:currentByte+length(phaseName)-1) > length(inputData)))
-            fprintf('ERROR: Unexpected end of file in file: %s\n', a_inputFilePathName);
-            rescueMode = 1;
-            break
-         end
          if (strcmp(char(inputData(currentByte:currentByte+length(phaseName)-1))', phaseName))
             newPhaseNum = idPhase;
             currentByte = currentByte + length(phaseName);
@@ -112,16 +106,11 @@ while (currentByte <= lastByteNum)
          end
       end
    end
-
+   
    % look for a new treatment header
    if (inputData(currentByte) == '(')
       for idTreat = 1:length(treatList)
          treatName = treatList{idTreat};
-         if (any((currentByte:currentByte+length(treatName)-1) > length(inputData)))
-            fprintf('ERROR: Unexpected end of file in file: %s\n', a_inputFilePathName);
-            rescueMode = 1;
-            break
-         end
          if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
             newTreatNum = idTreat;
             currentByte = currentByte + length(treatName);
@@ -129,17 +118,17 @@ while (currentByte <= lastByteNum)
          end
       end
    end
-
+   
    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
    % RAW (NKE personal communication)
    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
       newTreatNum = g_decArgo_cts5Treat_RW;
    end
-
+   
    % consider modification of phase or treatment
    if ((newPhaseNum ~= -1) || (newTreatNum ~= -1))
       if (~isempty(currentDataStruct))
-
+         
          % finalize decoded data
          % compute the dates
          if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]) && ...
@@ -151,12 +140,12 @@ while (currentByte <= lastByteNum)
             end
             currentDataStruct.data(:, 1) = epoch_2_julian_dec_argo(date);
          end
-
+         
          % store decoded data
          dataStruct{end+1} = currentDataStruct;
          currentDataStruct = [];
       end
-
+      
       if (newPhaseNum ~= -1)
          currentPhaseNum = newPhaseNum;
       end
@@ -172,22 +161,17 @@ while (currentByte <= lastByteNum)
       currentDataStruct.treatId = currentTreatNum;
       currentDataStruct.date = [];
       currentDataStruct.data = [];
-
+      
       % the absolute date is provided in the beginning of descent/ascent phase
       % data
       if (ismember(currentPhaseNum, [g_decArgo_cts5PhaseDescent g_decArgo_cts5PhaseDeepProfile g_decArgo_cts5PhaseAscent]) && ...
             (currentTreatNum ~= g_decArgo_cts5Treat_SS))
-         if (any((currentByte:currentByte+3) > length(inputData)))
-            fprintf('ERROR: Unexpected end of file in file: %s\n', a_inputFilePathName);
-            rescueMode = 1;
-            break
-         end
          data = get_bits(1, 32, inputData(currentByte:currentByte+3));
          currentDataStruct.date = typecast(swapbytes(uint32(data)), 'uint32');
          currentByte = currentByte + 4;
       end
    end
-
+   
    % read the data
    if ((currentPhaseNum ~= -1) && (currentTreatNum ~= -1))
       tabNbBits = bitList{currentTreatNum};
@@ -196,11 +180,6 @@ while (currentByte <= lastByteNum)
          tabNbBits(1) = 32;
       end
       nbBytes = sum(tabNbBits)/8;
-      if (any((currentByte:currentByte+nbBytes-1) > length(inputData)))
-         fprintf('ERROR: Unexpected end of file in file: %s\n', a_inputFilePathName);
-         rescueMode = 1;
-         break
-      end
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
       tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
@@ -208,7 +187,7 @@ while (currentByte <= lastByteNum)
             rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), tabSignedList(id), a_inputFilePathName);
          end
       end
-
+      
       if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))
          % raw data
          if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
@@ -271,7 +250,7 @@ while (currentByte <= lastByteNum)
 end
 
 if (~isempty(currentDataStruct))
-
+   
    % finalize decoded data
    % compute the dates
    if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]) && ...
@@ -283,116 +262,11 @@ if (~isempty(currentDataStruct))
       end
       currentDataStruct.data(:, 1) = epoch_2_julian_dec_argo(date);
    end
-
+   
    % store decoded data
    dataStruct{end+1} = currentDataStruct;
 end
 
-if (rescueMode == 1)
-   dataStruct = clean_data(dataStruct);
-end
-
 o_ctdData = dataStruct;
 
-return
-
-function [o_ctdData] = clean_data(a_ctdData)
-
-% output parameters initialization
-o_ctdData = a_ctdData;
-
-% array to store USEA technical data
-global g_decArgo_useaTechData;
-
-% codes for CTS5 phases (used to decode CTD data)
-global g_decArgo_cts5PhaseDescent;
-global g_decArgo_cts5PhasePark;
-global g_decArgo_cts5PhaseDeepProfile;
-global g_decArgo_cts5PhaseShortPark;
-global g_decArgo_cts5PhaseAscent;
-global g_decArgo_cts5PhaseSurface;
-
-
-% remove duplicated data
-dataAll = [o_ctdData{:}];
-phaseTreatList = [[dataAll.phaseId]' [dataAll.treatId]'];
-uPhaseTreatList = unique(phaseTreatList, 'rows');
-
-idDel = [];
-for id1 = 1:size(uPhaseTreatList, 1)
-   idF = find((phaseTreatList(:, 1) == uPhaseTreatList(id1, 1)) & ...
-      (phaseTreatList(:, 2) == uPhaseTreatList(id1, 2)));
-   if (length(idF) > 1)
-      for id2 = 1:length(idF)-1
-         if (~ismember(idF(id2), idDel))
-            for id3 = id2+1:length(idF)
-               if ((size(dataAll(idF(id2)).data, 1) == size(dataAll(idF(id3)).data, 1)) && ...
-                     (size(dataAll(idF(id2)).data, 2) == size(dataAll(idF(id3)).data, 2)))
-                  if (all(all(dataAll(idF(id2)).data == dataAll(idF(id3)).data)))
-                     idDel = [idDel idF(id3)];
-                  end
-               end
-            end
-         end
-      end
-   end
-end
-o_ctdData(idDel) = [];
-
-% clean erroneous measurements
-techLabels = g_decArgo_useaTechData{10, 4}.DATA.name';
-idDesc = find(strcmp('number of SBE41 samples during descent to parking depth', techLabels));
-nbDesc = g_decArgo_useaTechData{10, 4}.DATA.data{idDesc};
-idDrift = find(strcmp('number of SBE41 samples during drift at parking depth', techLabels));
-nbDrift = g_decArgo_useaTechData{10, 4}.DATA.data{idDrift};
-idAsc = find(strcmp('number of SBE41 samples during ascent to surface', techLabels));
-nbAsc = g_decArgo_useaTechData{10, 4}.DATA.data{idAsc};
-idSurf = find(strcmp('number of SBE41 surface samples', techLabels));
-nbSurf = g_decArgo_useaTechData{10, 4}.DATA.data{idSurf};
-idSs = find(strcmp('number of SBE41 sub-surface samples', techLabels));
-nbSs = g_decArgo_useaTechData{10, 4}.DATA.data{idSs};
-
-dataAll = [o_ctdData{:}];
-phaseList = [dataAll.phaseId];
-uPhaseList = unique(phaseList);
-for id1 = 1:length(uPhaseList)
-   switch uPhaseList(id1)
-      case g_decArgo_cts5PhaseDescent
-         nbMeas = nbDesc;
-      case g_decArgo_cts5PhasePark
-         nbMeas = nbDrift;
-      case g_decArgo_cts5PhaseAscent
-         nbMeas = nbAsc + nbSs;
-      case g_decArgo_cts5PhaseSurface
-         nbMeas = nbSurf;
-      otherwise
-         continue
-   end
-   idF = find(phaseList == uPhaseList(id1));
-   nb = 0;
-   for id2 = 1:length(idF)
-      nb = nb + size(dataAll(idF(id2)).data, 1);
-   end
-   if (nb ~= nbMeas)
-%       a=1
-   end
-end
-
-g_decArgo_cts5PhaseDescent = 1;
-g_decArgo_cts5PhasePark = 2;
-g_decArgo_cts5PhaseDeepProfile = 3;
-g_decArgo_cts5PhaseShortPark = 4;
-g_decArgo_cts5PhaseAscent = 5;
-g_decArgo_cts5PhaseSurface = 6;
-
-
-
-%       phase: '[SURFACE]'
-%     phaseId: 6
-%       treat: '(RW)'
-%     treatId: 4
-%        date: []
-%        data: [22×4 double]
-
-% g_decArgo_useaTechData{10, 4}.DATA.name'
 return

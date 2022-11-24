@@ -24,18 +24,11 @@ function create_float_config_argos(a_floatParam, a_decoderId)
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
-% structure to store miscellaneous meta-data
+% json meta-data
 global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
 
 % float configuration
 global g_decArgo_floatConfig;
-
-% default values
-global g_decArgo_janFirst1950InMatlab;
 
 % configuration creation flag
 global g_decArgo_configDone;
@@ -43,25 +36,13 @@ global g_decArgo_configDone;
 
 % create the configurations
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
-
 % retrieve the configuration
 configNames = [];
 configValues = [];
-if ((isfield(metaData, 'CONFIG_PARAMETER_NAME')) && ...
-      (isfield(metaData, 'CONFIG_PARAMETER_VALUE')))
-   configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   cellConfigValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+if ((isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
+      (isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
+   configNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   cellConfigValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    configValues = nan(size(configNames));
    for id = 1:size(configNames, 1)
       if (~isempty(cellConfigValues{id}))

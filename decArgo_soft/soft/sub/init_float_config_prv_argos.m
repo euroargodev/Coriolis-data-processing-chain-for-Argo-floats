@@ -22,16 +22,12 @@ function init_float_config_prv_argos(a_decoderId)
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
 
-% structure to store miscellaneous meta-data
+% json meta-data
 global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
 
 % float configuration
 global g_decArgo_floatConfig;
@@ -40,18 +36,6 @@ global g_decArgo_floatConfig;
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_calibInfo = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
 
 % if the Argos float version transmits its configuration during the prelude, we
 % will wait until the prelude transmission phase to create the float
@@ -62,11 +46,11 @@ if (~ismember(a_decoderId, [30 32]))
    configNames = [];
    configValues = [];
    configNumbers = [];
-   if ((isfield(metaData, 'CONFIG_PARAMETER_NAME')) && ...
-         (isfield(metaData, 'CONFIG_PARAMETER_VALUE')))
+   if ((isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
+         (isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
       
-      configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-      cellConfigValues = metaData.CONFIG_PARAMETER_VALUE;
+      configNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+      cellConfigValues = g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE;
       configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
       configNumbers = 1:length(cellConfigValues);
       for idConf = 1:length(cellConfigValues)
@@ -99,7 +83,7 @@ if (~ismember(a_decoderId, [30 32]))
 end
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add DO calibration coefficients
 if (ismember(a_decoderId, [4 19 25 27 28 29 32]))
@@ -107,11 +91,11 @@ if (ismember(a_decoderId, [4 19 25 27 28 29 32]))
    % read the calibration coefficients in the json meta-data file
 
    % fill the calibration coefficients
-   if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(metaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+   if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
          for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+            g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
          end
       end
    end

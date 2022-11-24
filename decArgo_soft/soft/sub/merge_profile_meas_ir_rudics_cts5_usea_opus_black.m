@@ -112,9 +112,9 @@ end
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
-paramAveragingNitrate = get_netcdf_param_attributes('AVERAGING_NITRATE');
-paramFlashCountNitrate = get_netcdf_param_attributes('FLASH_COUNT_NITRATE');
-paramTempNitrate = get_netcdf_param_attributes('TEMP_NITRATE2');
+paramBlackAveragingNitrate = get_netcdf_param_attributes('BLACK_AVERAGING_NITRATE');
+paramBlackFlashCountNitrate = get_netcdf_param_attributes('BLACK_FLASH_COUNT_NITRATE');
+paramBlackTempNitrate = get_netcdf_param_attributes('BLACK_TEMP_NITRATE');
 paramUvIntensityDarkNitrateAvg = get_netcdf_param_attributes('UV_INTENSITY_DARK_NITRATE_AVG');
 paramUvIntensityDarkNitrateSd = get_netcdf_param_attributes('UV_INTENSITY_DARK_NITRATE_SD');
 
@@ -150,18 +150,9 @@ for idDir = 1:length(uDir)
    
    paramList = [ ...
       paramPres ...
-      paramAveragingNitrate paramFlashCountNitrate paramTempNitrate ...
+      paramBlackAveragingNitrate paramBlackFlashCountNitrate paramBlackTempNitrate ...
       paramUvIntensityDarkNitrateAvg paramUvIntensityDarkNitrateSd];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;

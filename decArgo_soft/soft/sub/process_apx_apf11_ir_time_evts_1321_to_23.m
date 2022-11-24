@@ -2,11 +2,12 @@
 % Get cycle time information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(a_events, a_cycleTimeData)
+%  [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(a_events, a_cycleTimeData, a_fileNum)
 %
 % INPUT PARAMETERS :
 %   a_events        : input system_log file event data
 %   a_cycleTimeData : input cycle timings data
+%   a_fileNum       : file number
 %
 % OUTPUT PARAMETERS :
 %   o_cycleTimeData : output cycle timings data
@@ -19,7 +20,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(a_events, a_cycleTimeData)
+function [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(a_events, a_cycleTimeData, a_fileNum)
 
 % output parameters initialization
 o_cycleTimeData = a_cycleTimeData;
@@ -116,23 +117,26 @@ if (~isempty(firstTimeAfterAED))
    end
 end
 
-% from 'zmodem_upload_files' events
-PATTERN_TRANSMISSION_END = 'Upload Complete: ';
+if (a_fileNum == 1) % files of the previous cycle are generally transmitted in the begining of the next one
 
-events = a_events(find(strcmp({a_events.functionName}, 'upload_file')));
-lastTime = [];
-for idEv = 1:length(events)
-   evt = events(idEv);
-   dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_TRANSMISSION_END)))
-      if ((isempty(lastTime) || (lastTime < evt.timestamp)))
-         lastTime = evt.timestamp;
+   % from 'zmodem_upload_files' events
+   PATTERN_TRANSMISSION_END = 'Upload Complete: ';
+
+   events = a_events(find(strcmp({a_events.functionName}, 'upload_file')));
+   lastTime = [];
+   for idEv = 1:length(events)
+      evt = events(idEv);
+      dataStr = evt.message;
+      if (any(strfind(dataStr, PATTERN_TRANSMISSION_END)))
+         if ((isempty(lastTime) || (lastTime < evt.timestamp)))
+            lastTime = evt.timestamp;
+         end
       end
    end
-end
-if (~isempty(lastTime))
-   if (isempty(o_cycleTimeData.transEndDate) || (o_cycleTimeData.transEndDate < lastTime))
-      o_cycleTimeData.transEndDate = lastTime;
+   if (~isempty(lastTime))
+      if (isempty(o_cycleTimeData.transEndDate) || (o_cycleTimeData.transEndDate < lastTime))
+         o_cycleTimeData.transEndDate = lastTime;
+      end
    end
 end
 

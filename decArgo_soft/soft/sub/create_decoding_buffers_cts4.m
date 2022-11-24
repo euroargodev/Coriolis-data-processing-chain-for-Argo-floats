@@ -351,7 +351,8 @@ tabRank(idSurfVectorPres) = -1;
 % 6903878
 % 6903551 (partially, see below)
 if (ismember(g_decArgo_floatNum, ...
-      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242, 3902124]))
+      [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242, 3902124, ...
+      6903130, 6903549]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -505,6 +506,18 @@ if (ismember(g_decArgo_floatNum, ...
          idDel(1) = [];
          tabRank(idDel) = -1;
          tabDone(idDel) = 1;
+
+      case 6903130
+         % the EOL surface of cycle #19 are assigned to the cycle #18
+         idF = find((tabCyNumRaw == 19) & (tabProfNumRaw == 0) & (tabPackType == 253));
+         tabCyNumOut(idF(2:end)) = 19;
+         tabCyNum(idF(2:end)) = 1900;
+
+      case 6903549
+         % the EOL surface of cycle #230 are assigned to the cycle #229
+         idF = find((tabCyNumRaw == 230) & (tabProfNumRaw == 0) & (tabPackType == 253));
+         tabCyNumOut(idF(2:end)) = 230;
+         tabCyNum(idF(2:end)) = 23000;
 
    end
    

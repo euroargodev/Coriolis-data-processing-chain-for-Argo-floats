@@ -2,14 +2,19 @@
 % Decode UVP data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_uvpLpmData, o_uvpBlackData] = decode_apmt_uvp(a_inputFilePathName)
+%  [o_uvpLpmData, o_uvpLpmV2Data, ...
+%    o_uvpBlackData, o_uvpBlackV2Data, ...
+%    o_uvpTaxoV2Data] = decode_apmt_uvp(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : APMT UVP file to decode
 %
 % OUTPUT PARAMETERS :
-%   o_uvpLpmData   : UVP_LPM decoded data
-%   o_uvpBlackData : UVP-BLK decoded data
+%   o_uvpLpmData     : UVP_LPM decoded data
+%   o_uvpLpmV2Data   : UVP_LPM V2 decoded data
+%   o_uvpBlackData   : UVP-BLK decoded data
+%   o_uvpBlackV2Data : UVP-BLK V2 decoded data
+%   o_uvpTaxoV2Data  : UVP-TAXO V2 decoded data
 %
 % EXAMPLES :
 %
@@ -17,13 +22,18 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   09/09/2020 - RNU - creation
+%   06/20/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_uvpLpmData, o_uvpBlackData] = decode_apmt_uvp(a_inputFilePathName)
+function [o_uvpLpmData, o_uvpLpmV2Data, ...
+   o_uvpBlackData, o_uvpBlackV2Data, ...
+   o_uvpTaxoV2Data] = decode_apmt_uvp(a_inputFilePathName)
 
 % output parameters initialization
 o_uvpLpmData = [];
+o_uvpLpmV2Data = [];
 o_uvpBlackData = [];
+o_uvpBlackV2Data = [];
+o_uvpTaxoV2Data = [];
 
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
@@ -53,8 +63,14 @@ switch (data(1))
       fprintf('WARNING: decode_apmt_uvp_taxo_2 not implemented yet\n');
    case {17}
       o_uvpBlackData = decode_apmt_uvp_black(data, lastByteNum, a_inputFilePathName);
+   case {27}
+      o_uvpLpmV2Data = decode_apmt_uvp_lpm_v2(data, lastByteNum, a_inputFilePathName);
+   case {28}
+      o_uvpTaxoV2Data = decode_apmt_uvp_taxo_v2(data, lastByteNum, a_inputFilePathName);
+   case {29}
+      o_uvpBlackV2Data = decode_apmt_uvp_black_v2(data, lastByteNum, a_inputFilePathName);
    otherwise
-      fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
+      fprintf('ERROR: Unexpected file type (%x) byte in file: %s\n', data(1), a_inputFilePathName);
 end
 
 return

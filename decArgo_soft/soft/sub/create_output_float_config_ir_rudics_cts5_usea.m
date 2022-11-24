@@ -28,7 +28,7 @@ o_ncConfig = [];
 [decArgoConfParamNames, ncConfParamNames, ncConfParamIds] = create_config_param_names_ir_rudics_cts5(a_decoderId);
 
 % create output float configuration
-[o_ncConfig] = create_output_float_config(decArgoConfParamNames, ncConfParamNames, ncConfParamIds);
+[o_ncConfig] = create_output_float_config(a_decoderId, decArgoConfParamNames, ncConfParamNames, ncConfParamIds);
 
 return
 
@@ -37,9 +37,10 @@ return
 %
 % SYNTAX :
 %  [o_ncConfig] = create_output_float_config( ...
-%    a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
+%    a_decoderId, a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
 %
 % INPUT PARAMETERS :
+%    a_decoderId             : float decoder Id
 %    a_decArgoConfParamNames : internal configuration parameter names
 %    a_ncConfParamNames      : NetCDF configuration parameter names
 %    a_ncConfParamIds        : NetCDF configuration parameter Ids
@@ -56,7 +57,7 @@ return
 %   09/22/2020 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ncConfig] = create_output_float_config( ...
-   a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
+   a_decoderId, a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
 
 % output parameters initialization
 o_ncConfig = [];
@@ -67,6 +68,9 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% sensor list
+global g_decArgo_sensorList;
+
 
 % create_csv_to_print_config_ir_rudics_sbd2('create_output_', 1, g_decArgo_floatConfig);
 
@@ -75,6 +79,15 @@ global g_decArgo_floatNum;
 
 staticConfigName = g_decArgo_floatConfig.STATIC.NAMES;
 staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
+
+% duplicate common setting of SENSOR_14_P08 (RAMSES) into SENSOR_21_P08 (RAMSES2)
+if (ismember(14, g_decArgo_sensorList) && ismember(21, g_decArgo_sensorList))
+   inputConfName = 'CONFIG_APMT_SENSOR_14_P08';
+   inputConfId = find(strcmp(inputConfName, staticConfigName), 1);
+   outputConfName = 'CONFIG_APMT_SENSOR_21_P08';
+   outputConfId = find(strcmp(outputConfName, staticConfigName), 1);
+   staticConfigValue(outputConfId) = staticConfigValue(inputConfId);
+end
 
 % delete the static configuration parameters we don't want to put in the META
 % NetCDF file
@@ -97,6 +110,8 @@ notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_20_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_21_P00';
 
 % remove them from output lists
 idDel = [];
@@ -123,7 +138,7 @@ inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
 
 % update output parameter values 
 
-% for PATTERN_XX parameters, duplicate P0 to P7 values of the relevent pattern
+% for PATTERN_XX parameters, duplicate P0 to P8 values of the relevent pattern
 % to PATTERN_01
 % BE CAREFUL! This may create additionnal configurations (when cycles with
 % different patterns share the same configuration, we should create a new
@@ -137,10 +152,25 @@ if (~isempty(uUsedPtn))
    % i.e. PATTERN_02 to PATTERN_10 configuration parameters
    confParamIdToIgnore = [];
    for ptnNum = 2:10
-      for paramNum = 0:8
+      for paramNum = [0:8 99]
+         if (paramNum == 8)
+            for parkNum = 1:5
+               confName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+               confId = find(strcmp(confName, finalConfigName), 1);
+               confParamIdToIgnore = [confParamIdToIgnore; confId];
+            end
+            continue
+         end
          confName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
          confId = find(strcmp(confName, finalConfigName), 1);
          confParamIdToIgnore = [confParamIdToIgnore; confId];
+         if (paramNum == 1)
+            for parkNum = 1:5
+               confName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+               confId = find(strcmp(confName, finalConfigName), 1);
+               confParamIdToIgnore = [confParamIdToIgnore; confId];
+            end
+         end
       end
    end
    
@@ -151,12 +181,31 @@ if (~isempty(uUsedPtn))
       for idConf = 1:length(confIdForPtn)
          confNum = inputUsedConfNum(confIdForPtn(idConf));
          newConfValue = finalConfigValue(:, confNum+1);
-         for paramNum = 0:8
+         for paramNum = [0:8 99]
+            if (paramNum == 8)
+               for parkNum = 1:5
+                  inputConfName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+                  inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
+                  outputConfName = sprintf('CONFIG_APMT_PATTERN_01_P%02d_%02d', paramNum, parkNum);
+                  outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+                  newConfValue(outputConfId) = newConfValue(inputConfId);
+                  continue
+               end
+            end
             inputConfName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
-            inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
+            inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
             outputConfName = sprintf('CONFIG_APMT_PATTERN_01_P%02d', paramNum);
-            outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
-            newConfValue(outputConfid) = newConfValue(inputConfid);
+            outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+            newConfValue(outputConfId) = newConfValue(inputConfId);
+            if (paramNum == 1)
+               for parkNum = 1:5
+                  inputConfName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+                  inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
+                  outputConfName = sprintf('CONFIG_APMT_PATTERN_01_P%02d_%02d', paramNum, parkNum);
+                  outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+                  newConfValue(outputConfId) = newConfValue(inputConfId);
+               end
+            end
          end
          
          % look for the current configurations in existing ones
@@ -191,7 +240,8 @@ if (~isempty(uUsedPtn))
          inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
       end
    end
-   
+
+   %    a=1
    %    create_csv_to_print_config_ir_rudics_cts5('createOutputBefore_', 1, g_decArgo_floatConfig);
 
    % sort configuration and remove unused ones
@@ -218,7 +268,7 @@ if (~isempty(uUsedPtn))
          idForConf = find(finalConfigNum == confNum, 1);
          finalConfigValueBis = cat(2, finalConfigValueBis, finalConfigValue(:, idForConf));
          usedConfNumBis = [usedConfNumBis repmat(size(finalConfigValueBis, 2)-1, 1, length(idForCy))];
-         
+
          confNumOldDone = [confNumOldDone confNum];
          confNumNewDone = [confNumNewDone usedConfNumBis(end)];
       end
@@ -227,12 +277,13 @@ if (~isempty(uUsedPtn))
       g_decArgo_floatConfig.DYNAMIC.NUMBER = 0:(size(finalConfigValueBis, 2)-1);
       g_decArgo_floatConfig.DYNAMIC.VALUES = finalConfigValueBis;
       g_decArgo_floatConfig.USE.CONFIG = usedConfNumBis;
-      
+
       finalConfigNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
       finalConfigValue = g_decArgo_floatConfig.DYNAMIC.VALUES;
       inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
    end
-   
+
+   %    a=1
    %    create_csv_to_print_config_ir_rudics_cts5('createOutputAfter_', 1, g_decArgo_floatConfig);
 end
 
@@ -240,32 +291,109 @@ end
 % i.e. we dont set the configured surface time if the float is not expected to
 % use it
 inputConfName = 'CONFIG_APMT_PATTERN_01_P07';
-inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
+inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
 outputConfName = 'CONFIG_APMT_PATTERN_01_P04';
-outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
-idSetToNan = find(finalConfigValue(inputConfid, :) == 0);
-finalConfigValue(outputConfid, idSetToNan) = nan;
+outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+idSetToNan = find(finalConfigValue(inputConfId, :) == 0);
+finalConfigValue(outputConfId, idSetToNan) = nan;
 
 % if CONFIG_APMT_SURFACE_APPROACH_P00 == 0 set CONFIG_APMT_SURFACE_APPROACH_P01 to Nan
 inputConfName = 'CONFIG_APMT_SURFACE_APPROACH_P00';
-inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
+inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
 outputConfName = 'CONFIG_APMT_SURFACE_APPROACH_P01';
-outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
-idSetToNan = find(finalConfigValue(inputConfid, :) == 0);
-finalConfigValue(outputConfid, idSetToNan) = nan;
+outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+idSetToNan = find(finalConfigValue(inputConfId, :) == 0);
+finalConfigValue(outputConfId, idSetToNan) = nan;
 
 % if CONFIG_APMT_ICE_P00 == 0 set CONFIG_APMT_ICE_P01 to CONFIG_APMT_ICE_P03 to Nan
 inputConfName = 'CONFIG_APMT_ICE_P00';
-inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
-idSetToNan = find(finalConfigValue(inputConfid, :) == 0);
+inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
+idSetToNan = find(finalConfigValue(inputConfId, :) == 0);
 for paramNum = 1:3
    outputConfName = sprintf('CONFIG_APMT_ICE_P%02d', paramNum);
-   outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
-   finalConfigValue(outputConfid, idSetToNan) = nan;
+   outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+   finalConfigValue(outputConfId, idSetToNan) = nan;
 end
 
 % if CONFIG_APMT_SENSOR_XX_P00 == 0 set CONFIG_APMT_SENSOR_XX_P01 to CONFIG_APMT_SENSOR_XX_P53 to Nan
 % not done because the APMT card manages only the CTD sensor (mandatory) in this version
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% manage multi parking - start
+
+% if CONFIG_APMT_PATTERN_01_P01 == Nan we are in multi park mode
+confName = 'CONFIG_APMT_PATTERN_01_P01';
+confId = find(strcmp(confName, finalConfigName), 1);
+idMultiPark = find(isnan(finalConfigValue(confId, :)));
+% for each multi parking configuration
+for idMP = 1:length(idMultiPark)
+
+   % set CONFIG_APMT_PATTERN_01_P03 to Nan
+   confName = 'CONFIG_APMT_PATTERN_01_P03';
+   confId = find(strcmp(confName, finalConfigName), 1);
+   finalConfigValue(confId, idMultiPark(idMP)) = nan;
+
+   % set CONFIG_APMT_TECHNICAL_P06 and CONFIG_APMT_TECHNICAL_P07 to Nan
+   confName = 'CONFIG_APMT_TECHNICAL_P06';
+   confId = find(strcmp(confName, finalConfigName), 1);
+   finalConfigValue(confId, idMultiPark(idMP)) = nan;
+   confName = 'CONFIG_APMT_TECHNICAL_P07';
+   confId = find(strcmp(confName, finalConfigName), 1);
+   finalConfigValue(confId, idMultiPark(idMP)) = nan;
+
+   % look for the number of parking phases
+   nbPark = 2;
+   for idPark = 3:5
+      confName = sprintf('CONFIG_APMT_PATTERN_01_P01_%02d', idPark);
+      confId = find(strcmp(confName, finalConfigName), 1);
+      if (~isnan(finalConfigValue(confId, idMultiPark(idMP))))
+         nbPark = idPark;
+      else
+         break
+      end
+   end
+   % for each unused parking phase number
+   % set CONFIG_APMT_TECHNICAL_P23_XX and CONFIG_APMT_TECHNICAL_P24_XX to Nan
+   for idPark = nbPark+1:5
+      confName = sprintf('CONFIG_APMT_TECHNICAL_P23_%02d', idPark);
+      confId = find(strcmp(confName, finalConfigName), 1);
+      finalConfigValue(confId, idMultiPark(idMP)) = nan;
+      confName = sprintf('CONFIG_APMT_TECHNICAL_P24_%02d', idPark);
+      confId = find(strcmp(confName, finalConfigName), 1);
+      finalConfigValue(confId, idMultiPark(idMP)) = nan;
+   end
+end
+
+% if CONFIG_APMT_PATTERN_01_P01 ~= Nan we are in single park mode
+confName = 'CONFIG_APMT_PATTERN_01_P01';
+confId = find(strcmp(confName, finalConfigName), 1);
+idSinglePark = find(~isnan(finalConfigValue(confId, :)));
+% for each multi parking configuration
+for idSP = 1:length(idSinglePark)
+
+   % set CONFIG_APMT_TECHNICAL_P23_XX and APMT_TECHNICAL_P24_XX to Nan
+   for idPark = 1:5
+      confName = sprintf('CONFIG_APMT_TECHNICAL_P23_%02d', idPark);
+      confId = find(strcmp(confName, finalConfigName), 1);
+      finalConfigValue(confId, idSinglePark(idSP)) = nan;
+      confName = sprintf('CONFIG_APMT_TECHNICAL_P24_%02d', idPark);
+      confId = find(strcmp(confName, finalConfigName), 1);
+      finalConfigValue(confId, idSinglePark(idSP)) = nan;
+   end
+end
+% manage multi parking - end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% duplicate common setting of SENSOR_14 (RAMSES) into SENSOR_21 (RAMSES2)
+if (ismember(14, g_decArgo_sensorList) && ismember(21, g_decArgo_sensorList))
+   for paramNum = [1:7 9:53 60]
+      inputConfName = sprintf('CONFIG_APMT_SENSOR_14_P%02d', paramNum);
+      inputConfId = find(strcmp(inputConfName, finalConfigName), 1);
+      outputConfName = sprintf('CONFIG_APMT_SENSOR_21_P%02d', paramNum);
+      outputConfId = find(strcmp(outputConfName, finalConfigName), 1);
+      finalConfigValue(outputConfId, :) = finalConfigValue(inputConfId, :);
+   end
+end
 
 % delete the dynamic configuration parameters we don't want to put in the META
 % NetCDF file
@@ -273,14 +401,29 @@ notWantedDynamicConfigNames = [];
 
 % PATTERN_02 to PATTERN_10 parameters
 for ptnNum = 2:10
-   for paramNum = 0:8
+   for paramNum = [0:8 99]
+      if (paramNum == 8)
+         for parkNum = 1:5
+            notWantedDynamicConfigNames{end+1} = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+         end
+         continue
+      end
       notWantedDynamicConfigNames{end+1} = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
+      if (paramNum == 1)
+         for parkNum = 1:5
+            notWantedDynamicConfigNames{end+1} = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d_%02d', ptnNum, paramNum, parkNum);
+         end
+      end
    end
 end
 
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P07';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_02_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_03_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_04_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_05_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_END_OF_LIFE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SURFACE_APPROACH_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_P00';
@@ -298,10 +441,15 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_05_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_06_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_07_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_08_P53';
-notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_20_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_21_P53';
+if (ismember(a_decoderId, [126, 127, 128]))
+   notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P99'; % used to manage multi parking for decId >= 129
+end
 
 idDel = [];
 for idConfParam = 1:length(notWantedDynamicConfigNames)

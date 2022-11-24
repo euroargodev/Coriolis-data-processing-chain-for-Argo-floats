@@ -50,9 +50,6 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % sensor list
 global g_decArgo_sensorList;
 global g_decArgo_sensorMountedOnFloat;
@@ -78,27 +75,18 @@ global g_decArgo_filePrefixCts5;
 global g_decArgo_firstPayloadConfigParamId
 g_decArgo_firstPayloadConfigParamId = -1;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
-
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
 
 % fill the sensor list
 apmtSensorList = [];
 payloadSensorList = [];
 sensorMountedOnFloat = [];
-if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-   jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
    sensorMountedOnFloat = jSensorNames';
    for id = 1:length(jSensorNames)
       sensorName = jSensorNames{id};
@@ -152,8 +140,8 @@ g_decArgo_sensorList = [apmtSensorList payloadSensorList];
 g_decArgo_sensorMountedOnFloat = sensorMountedOnFloat;
 
 % retrieve the number of the first cycle to process
-if (isfield(metaData, 'FIRST_CYCLE_TO_PROCESS'))
-   g_decArgo_firstCycleNumCts5 = str2num(metaData.FIRST_CYCLE_TO_PROCESS);
+if (isfield(g_decArgo_jsonMetaData, 'FIRST_CYCLE_TO_PROCESS'))
+   g_decArgo_firstCycleNumCts5 = str2num(g_decArgo_jsonMetaData.FIRST_CYCLE_TO_PROCESS);
 else
    fprintf('ERROR: Float #%d: FIRST_CYCLE_TO_PROCESS not present in Json meta-data file: %s\n', ...
       g_decArgo_floatNum, ...
@@ -328,9 +316,9 @@ configValues1 = [];
 configValues1Ids = [];
 configValues2 = nan(length(configNames2), 1);
 
-if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
-   jConfNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   jConfValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+if (~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME) && ~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE))
+   jConfNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   jConfValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    for id = 1:length(jConfNames)
       jConfName = jConfNames{id};
       jConfValue = jConfValues{id};
@@ -430,14 +418,14 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 % create_csv_to_print_config_ir_rudics_sbd2('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % fill the calibration coefficients
-if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
-   if (~isempty(metaData.CALIBRATION_COEFFICIENT))
-      fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+   if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+      fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
       for idF = 1:length(fieldNames)
-         g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
       end
       
       % create the tabDoxyCoef array
@@ -590,9 +578,9 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
                g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
                
-               g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
-               g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
-               g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
+               g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', g_decArgo_jsonMetaData);
+               g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', g_decArgo_jsonMetaData);
+               g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', g_decArgo_jsonMetaData);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
             end

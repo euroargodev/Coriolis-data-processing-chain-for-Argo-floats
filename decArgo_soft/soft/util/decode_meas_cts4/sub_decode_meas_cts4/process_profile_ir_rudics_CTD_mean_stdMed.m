@@ -60,10 +60,6 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
-% structure to store miscellaneous meta-data
-global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
-
 
 % get the pressure cut-off for CTD ascending profile (from the CTD technical
 % data)

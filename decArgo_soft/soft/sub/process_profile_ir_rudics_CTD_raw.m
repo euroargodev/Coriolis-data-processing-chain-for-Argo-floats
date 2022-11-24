@@ -37,9 +37,6 @@ o_tabDrift = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
-% current cycle number
-global g_decArgo_cycleNum;
-
 % global default values
 global g_decArgo_presDef;
 global g_decArgo_tempDef;
@@ -53,10 +50,6 @@ global g_decArgo_phaseAscProf;
 
 % treatment types
 global g_decArgo_treatRaw;
-
-% structure to store miscellaneous meta-data
-global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
 
 
 % get the pressure cut-off for CTD ascending profile (from the CTD technical

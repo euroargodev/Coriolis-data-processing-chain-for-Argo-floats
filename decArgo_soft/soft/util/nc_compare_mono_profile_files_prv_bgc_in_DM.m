@@ -31,6 +31,7 @@ DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\BASE\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\DIR_INPUT_OLD_NC_FILES\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\DATA_FLBB_INCOIS_EDAC\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos_sans_EOL\';
@@ -42,10 +43,13 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\OUT\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\OUT\';
 
+% directory to store the log file
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
-% directory to store the log and the csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+% directory to store the csv files
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % default list of floats to compare
 FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/lists/nke_all_with_DM_b_file.txt';
@@ -103,14 +107,15 @@ else
    name = sprintf('_%d', floatList);
 end
 
-logFile = [DIR_LOG_CSV_FILE '/' 'nc_compare_mono_profile_files_prv_bgc_in_DM' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+logFile = [DIR_LOG_FILE '/' 'nc_compare_mono_profile_files_prv_bgc_in_DM' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
 
 fprintf('PARAMETERS:\n');
 fprintf('   Base input directory: %s\n', DIR_INPUT_BASE_NC_FILES);
 fprintf('   New input directory: %s\n', DIR_INPUT_NEW_NC_FILES);
-fprintf('   Log/csv output directory: %s\n', DIR_LOG_CSV_FILE);
+fprintf('   Log output directory: %s\n', DIR_LOG_FILE);
+fprintf('   Csv output directory: %s\n', DIR_CSV_FILE);
 if (nargin == 0)
    fprintf('   List of floats to process: %s\n', FLOAT_LIST_FILE_NAME);
 else
@@ -127,7 +132,7 @@ end
 fprintf('\n');
 
 % create the CSV output file
-outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_compare_mono_profile_files_prv_bgc_in_DM' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+outputFileName = [DIR_CSV_FILE '/' 'nc_compare_mono_profile_files_prv_bgc_in_DM' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    return
@@ -1182,6 +1187,8 @@ if (exist(a_profFilePathName, 'file') == 2)
       stationParameters = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
       [~, nParam, nProf] = size(stationParameters);
       paramForProf = [];
+      paramListCFile = [];
+      paramListBFile = [];
       for idProf = 1:nProf
          o_profCut(idProf) = 0;
          if (strncmp(vssList{idProf}, 'Primary sampling:', length('Primary sampling:')))
@@ -1192,7 +1199,11 @@ if (exist(a_profFilePathName, 'file') == 2)
             o_profCut(idProf) = 1;
          end
          for idParam = 1:nParam
-            paramForProf{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
+            paramName = deblank(stationParameters(:, idParam, idProf)');
+            if (~isempty(paramName))
+               paramForProf{idProf, idParam} = paramName;
+               paramListCFile{end+1} = deblank(stationParameters(:, idParam, idProf)');
+            end
          end
       end
       
@@ -1236,6 +1247,7 @@ if (exist(a_profFilePathName, 'file') == 2)
                if (~isempty(paramName))
                   if (~strcmp(paramName, 'PRES'))
                      paramForProf{idProf, end+1} = paramName;
+                     paramListBFile{end+1}  = paramName;
                   end
                end
             end
@@ -1258,6 +1270,8 @@ if (exist(a_profFilePathName, 'file') == 2)
       dataFormat = [];
       dataFillValue = [];
       data = [];
+      paramListCFile = unique(paramListCFile);
+      paramListBFile = unique(paramListBFile);
       for idProf = 1:length(paramForProf2)
          paramList = paramForProf2{idProf};
          formatList = [];
@@ -1266,7 +1280,7 @@ if (exist(a_profFilePathName, 'file') == 2)
          for idParam = 1:length(paramList)
             paramStr = paramList{idParam};
             
-            if (ismember(paramStr, [{'PRES'} {'TEMP'} {'PSAL'}]))
+            if (ismember(paramStr, paramListCFile))
                paramData = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramStr));
                paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), 'C_format');
                paramFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramStr), '_FillValue');

@@ -164,103 +164,84 @@ for idParam = 1:nParam
    if (isempty(parameterName))
       continue
    end
-   
-   for idS = 1:length(sufixList)
-      paramName = [parameterName sufixList{idS}];
-      
-      paramQcName = sprintf('%s_QC', paramName);
-      
-      if ((idS == 1) || ((idS > 1) && (var_is_present_dec_argo(fCdf, paramName))))
-         if (any(strcmp(paramName, paramNameList)))
-            continue
-         end
-         % there is no PARAMETER_DATA_MODE for statistical parameters, we thus
-         % should add a column of ' '
-         if (idS == 1)
-            paramDataMode = [paramDataMode; paramDataModeOri(idParam, :)];
-         else
-            paramDataMode = [paramDataMode; repmat(' ', 1, size(paramDataModeOri, 2))];
-         end
-         paramNameList = [paramNameList {paramName}];
-         if (idS == 1)
-            paramNum = [paramNum {num2str(paramNumCpt)}];
-            paramQcNum = [paramQcNum {num2str(paramNumCpt)}];
-            paramDataModeNum = [paramDataModeNum {num2str(paramNumCpt)}];
-            paramNumCpt = paramNumCpt + 1;
-         else
-            paramNum = [paramNum {''}];
-            paramQcNum = [paramQcNum {''}];
-            paramDataModeNum = [paramDataModeNum {''}];
-         end
-         paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramName), 'C_format');
-         paramDataFormatList = [paramDataFormatList {paramFormat}];
-         paramQcNameList = [paramQcNameList {paramQcName}];         
-         data = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramName));
-         if (var_is_present_dec_argo(fCdf, paramQcName))
-            dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramQcName));
-            dataQc(find(dataQc == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-            dataQc = str2num(dataQc);
-            dataQc(find(dataQc == str2num(g_decArgo_qcStrUnused2))) = -1;
-         else
-            dataQc = ones(size(data, 1), 1)*g_decArgo_qcDef;
-         end
-         if (size(data, 2) == 1)
-            paramDataNbDimList = [paramDataNbDimList 1];
-            paramData = [paramData double(data)];
-            paramQcData = [paramQcData dataQc];
-         else
-            paramDataNbDimList = [paramDataNbDimList size(data, 1)];
-            paramData = [paramData double(data)'];
-            paramQcData = [paramQcData dataQc];
-         end
-         
-         paramAdjName = sprintf('%s_ADJUSTED', paramName);
-         paramAdjQcName = sprintf('%s_QC', paramAdjName);
-         
-         if (var_is_present_dec_argo(fCdf, paramAdjName))
-            paramAdjFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjName), '_FillValue');
-            dataAdj = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjName));
-            paramAdjNameList = [paramAdjNameList {paramAdjName}];
-            if (idS == 1)
-               paramAdjNum = [paramAdjNum {num2str(paramAdjNumCpt)}];
-               paramAdjQcNum = [paramAdjQcNum {num2str(paramAdjNumCpt)}];
-               paramAdjNumCpt = paramAdjNumCpt + 1;
-            else
-               paramAdjNum = [paramAdjNum {''}];
-               paramAdjQcNum = [paramAdjQcNum {''}];
-            end
-            paramAdjFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjName), 'C_format');
-            paramAdjDataFormatList = [paramAdjDataFormatList {paramAdjFormat}];
-            paramAdjQcNameList = [paramAdjQcNameList {paramAdjQcName}];
-            dataAdjQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName));
-            if (size(dataAdj, 2) == 1)
-               paramAdjDataNbDimList = [paramAdjDataNbDimList 1];
-               paramAdjData = [paramAdjData double(dataAdj)];
-               paramAdjQcData = [paramAdjQcData dataAdjQc];
-            else
-               paramAdjDataNbDimList = [paramAdjDataNbDimList size(dataAdj, 1)];
-               paramAdjData = [paramAdjData double(dataAdj)'];
-               paramAdjQcData = [paramAdjQcData dataAdjQc'];
-            end
-         end
-         
-         paramAdjErrorName = sprintf('%s_ADJUSTED_ERROR', paramName);
-         
-         if (var_is_present_dec_argo(fCdf, paramAdjErrorName))
-            paramAdjErrorFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName), '_FillValue');
-            dataAdjError = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName));
-            
-            paramAdjErrorNameList = [paramAdjErrorNameList {paramAdjErrorName}];
-            paramAdjErrorFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName), 'C_format');
-            paramAdjErrorDataFormatList = [paramAdjErrorDataFormatList {paramAdjErrorFormat}];
-            if (size(dataAdjError, 2) == 1)
-               paramAdjErrorDataNbDimList = [paramAdjErrorDataNbDimList 1];
-               paramAdjErrorData = [paramAdjErrorData double(dataAdjError)];
-            else
-               paramAdjErrorDataNbDimList = [paramAdjErrorDataNbDimList size(dataAdjError, 1)];
-               paramAdjErrorData = [paramAdjErrorData double(dataAdjError)'];
-            end
-         end
+
+   paramName = parameterName;
+   paramQcName = sprintf('%s_QC', paramName);
+
+   if (any(strcmp(paramName, paramNameList)))
+      continue
+   end
+   paramDataMode = [paramDataMode; paramDataModeOri(idParam, :)];
+   paramNameList = [paramNameList {paramName}];
+   paramNum = [paramNum {num2str(paramNumCpt)}];
+   paramQcNum = [paramQcNum {num2str(paramNumCpt)}];
+   paramDataModeNum = [paramDataModeNum {num2str(paramNumCpt)}];
+   paramNumCpt = paramNumCpt + 1;
+
+   paramFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramName), 'C_format');
+   paramDataFormatList = [paramDataFormatList {paramFormat}];
+   paramQcNameList = [paramQcNameList {paramQcName}];
+   data = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramName));
+   if (var_is_present_dec_argo(fCdf, paramQcName))
+      dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramQcName));
+      dataQc(find(dataQc == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+      dataQc = str2num(dataQc);
+      dataQc(find(dataQc == str2num(g_decArgo_qcStrUnused2))) = -1;
+   else
+      dataQc = ones(size(data, 1), 1)*g_decArgo_qcDef;
+   end
+   if (size(data, 2) == 1)
+      paramDataNbDimList = [paramDataNbDimList 1];
+      paramData = [paramData double(data)];
+      paramQcData = [paramQcData dataQc];
+   else
+      paramDataNbDimList = [paramDataNbDimList size(data, 1)];
+      paramData = [paramData double(data)'];
+      paramQcData = [paramQcData dataQc];
+   end
+
+   paramAdjName = sprintf('%s_ADJUSTED', paramName);
+   paramAdjQcName = sprintf('%s_QC', paramAdjName);
+
+   if (var_is_present_dec_argo(fCdf, paramAdjName))
+      paramAdjFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjName), '_FillValue');
+      dataAdj = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjName));
+
+      paramAdjNameList = [paramAdjNameList {paramAdjName}];
+      paramAdjNum = [paramAdjNum {num2str(paramAdjNumCpt)}];
+      paramAdjQcNum = [paramAdjQcNum {num2str(paramAdjNumCpt)}];
+      paramAdjNumCpt = paramAdjNumCpt + 1;
+
+      paramAdjFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjName), 'C_format');
+      paramAdjDataFormatList = [paramAdjDataFormatList {paramAdjFormat}];
+      paramAdjQcNameList = [paramAdjQcNameList {paramAdjQcName}];
+      dataAdjQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName));
+      if (size(dataAdj, 2) == 1)
+         paramAdjDataNbDimList = [paramAdjDataNbDimList 1];
+         paramAdjData = [paramAdjData double(dataAdj)];
+         paramAdjQcData = [paramAdjQcData dataAdjQc];
+      else
+         paramAdjDataNbDimList = [paramAdjDataNbDimList size(dataAdj, 1)];
+         paramAdjData = [paramAdjData double(dataAdj)'];
+         paramAdjQcData = [paramAdjQcData dataAdjQc'];
+      end
+   end
+
+   paramAdjErrorName = sprintf('%s_ADJUSTED_ERROR', paramName);
+
+   if (var_is_present_dec_argo(fCdf, paramAdjErrorName))
+      paramAdjErrorFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName), '_FillValue');
+      dataAdjError = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName));
+
+      paramAdjErrorNameList = [paramAdjErrorNameList {paramAdjErrorName}];
+      paramAdjErrorFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramAdjErrorName), 'C_format');
+      paramAdjErrorDataFormatList = [paramAdjErrorDataFormatList {paramAdjErrorFormat}];
+      if (size(dataAdjError, 2) == 1)
+         paramAdjErrorDataNbDimList = [paramAdjErrorDataNbDimList 1];
+         paramAdjErrorData = [paramAdjErrorData double(dataAdjError)];
+      else
+         paramAdjErrorDataNbDimList = [paramAdjErrorDataNbDimList size(dataAdjError, 1)];
+         paramAdjErrorData = [paramAdjErrorData double(dataAdjError)'];
       end
    end
 end
@@ -618,7 +599,7 @@ for idC = 1:length(calibItemList)
       varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
    else
       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         varName, inputFileName);
+         varName, a_inputPathFileName);
       varValue = [];
    end
    o_paramCalibrationData{end+1} = varName;
@@ -638,7 +619,7 @@ for idC = 1:length(calibItemList)
       varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
    else
       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         varName, inputFileName);
+         varName, a_inputPathFileName);
       varValue = [];
    end
    o_juldCalibrationData{end+1} = varName;
@@ -667,7 +648,7 @@ for idH = 1:length(historyItemList)
       varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
    else
       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         varName, inputFileName);
+         varName, a_inputPathFileName);
       varValue = [];
    end
    o_historyData{end+1} = varName;

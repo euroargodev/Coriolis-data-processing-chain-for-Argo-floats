@@ -64,6 +64,8 @@ else
    % default list of floats to plot
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts5_usea.txt';
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_20220321_nke_argos_asfar.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_jumbo.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 
    % JPR CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -822,11 +824,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MinPresInDriftAtPark));
       if (~isempty(idF))
-         g_NTCT_MinPresInDriftAtPark_pres(idC) = pres(idF);
+         g_NTCT_MinPresInDriftAtPark_pres(idC) = min(pres(idF));
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MaxPresInDriftAtPark));
       if (~isempty(idF))
-         g_NTCT_MaxPresInDriftAtPark_pres(idC) = pres(idF);
+         g_NTCT_MaxPresInDriftAtPark_pres(idC) = max(pres(idF));
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DPST));
       if (~isempty(idF))
@@ -976,7 +978,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          confMisNum = configMissionNumberTraj(idF);
          if (confMisNum ~= 99999)
             idF2 = find((configMissionNumberMeta == confMisNum));
-            if (~isempty(idF2))
+            if (~isempty(idF2) && (parkPres(idF2) ~= 99999))
                g_NTCT_ParkPres(idC, 1) = parkPres(idF2);
                g_NTCT_ProfPres(idC, 1) = profPres(idF2);
                g_NTCT_TolerancePres(idC, 1) = tolerancePres(idF2);

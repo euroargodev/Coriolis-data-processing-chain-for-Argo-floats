@@ -27,9 +27,6 @@ global g_decArgo_floatNum;
 global g_decArgo_dirOutputNetcdfFile;
 global g_decArgo_applyRtqc;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % mode processing flags
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
@@ -46,7 +43,7 @@ global g_decArgo_outputNcConfParamLabel;
 % output NetCDF configuration parameter descriptions
 global g_decArgo_outputNcConfParamDescription;
 
-% structure to store miscellaneous meta-data
+% json meta-data
 global g_decArgo_jsonMetaData;
 
 % meta-data retrieved from APMT tech files
@@ -65,25 +62,15 @@ global g_decArgo_decoderVersion;
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts5Usea;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   fprintf('ERROR: Float #%d: Json meta-data file not found: %s\n', ...
-      g_decArgo_floatNum, ...
-      jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
-
 % update the meta-data contents
-metaData = update_meta_data(metaData, a_decoderId);
+metaData = update_meta_data(g_decArgo_jsonMetaData, a_decoderId);
 
 % initialize create_nc_meta_aux_file input parameters
 inputAuxMetaName = [];
@@ -599,7 +586,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125, 126, 127, 128}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129}
       
       % CTS5 floats
       
@@ -640,169 +627,98 @@ switch (a_decoderId)
       
       % CTS5-USEA
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
-         if (isfield(metaData, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FLOAT_SIM_CARD_NUMBER'];
-            idF = find(strcmp('META_AUX_FLOAT_SIM_CARD_NUMBER', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FLOAT_SIM_CARD_NUMBER];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FLOAT_SIM_CARD_NUMBER', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FIRMWARE_VERSION_SECONDARY'];
-            idF = find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FIRMWARE_VERSION_SECONDARY];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-
-         if (isfield(metaData, 'META_AUX_UVP_CONFIG_PARAMETERS'))
-            fieldNames = fields(metaData.META_AUX_UVP_CONFIG_PARAMETERS);
-            for idConf = 1:11
-               if (idConf == 11)
-                  confName = 'META_AUX_UVP_HW_CONF_PARAMETERS';
-               else
-                  confName = sprintf('META_AUX_UVP_ACQ_CONF_%02d_PARAMETERS', idConf);
-               end
-               inputAuxMetaName = [inputAuxMetaName; confName];
-               idF = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
+         metaAuxLabelList = [ ...
+            {'META_AUX_FLOAT_SIM_CARD_NUMBER'} ...
+            {'META_AUX_FIRMWARE_VERSION_SECONDARY'} ...
+            {'META_AUX_OPUS_FIRMWARE_VERSION'} ...
+            {'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'} ...
+            {'META_AUX_OPUS_WATERBASE_LENGTH'} ...
+            {'META_AUX_OPUS_WATERBASE_INTENSITIES'} ...
+            {'META_AUX_MPE_ACQUISITION_AVERAGE'} ...
+            {'META_AUX_MPE_ACQUISITION_RATE'} ...
+            {'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'} ...
+            {'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A'} ...
+            {'META_AUX_MPE_MICRORADIOMETER_GAIN_HM'} ...
+            {'META_AUX_MPE_MICRORADIOMETER_GAIN_ML'} ...
+            {'META_AUX_MPE_MICRORADIOMETER_OFFSET_H'} ...
+            {'META_AUX_MPE_MICRORADIOMETER_OFFSET_M'} ...
+            {'META_AUX_MPE_MICRORADIOMETER_OFFSET_L'} ...
+            {'META_AUX_HYDROC_SERIAL_NO'} ...
+            {'META_AUX_HYDROC_FIRMWARE_VERSION'} ...
+            {'META_AUX_HYDROC_HARDWARE_VERSION'} ...
+            {'META_AUX_BATTERY_PACK1_TYPE'} ...
+            {'META_AUX_BATTERY_PACK1_VOLTAGE'} ...
+            {'META_AUX_BATTERY_PACK1_CAPACITY'} ...
+            {'META_AUX_BATTERY_PACK2_TYPE'} ...
+            {'META_AUX_BATTERY_PACK2_VOLTAGE'} ...
+            {'META_AUX_BATTERY_PACK2_CAPACITY'} ...
+            {'META_AUX_CROVER_PATH_LENGTH'} ...
+            {'META_AUX_CROVER_CALIBRATION_VALUE'} ...
+            {'META_AUX_RAMSES_ACC_FIRMWARE_VERSION'} ...
+            {'META_AUX_RAMSES_ACC_SPECTRUM_LENGTH'} ...
+            {'META_AUX_RAMSES_ACC_SPECTRUM_WAVELENGTHS'} ...
+            {'META_AUX_RAMSES_ARC_FIRMWARE_VERSION'} ...
+            {'META_AUX_RAMSES_ARC_SPECTRUM_LENGTH'} ...
+            {'META_AUX_RAMSES_ARC_SPECTRUM_WAVELENGTHS'} ...
+            {'META_AUX_IMU_ORIENTATION'} ...
+            {'META_AUX_IMU_MODE'} ...
+            {'META_AUX_IMU_TEMPERATURE_COR_OFFSET'} ...
+            {'META_AUX_IMU_ACCELEROMETER_X_COR_OFFSET'} ...
+            {'META_AUX_IMU_ACCELEROMETER_Y_COR_OFFSET'} ...
+            {'META_AUX_IMU_ACCELEROMETER_Z_COR_OFFSET'} ...
+            {'META_AUX_IMU_ACCELEROMETER_X_COR_GAIN'} ...
+            {'META_AUX_IMU_ACCELEROMETER_Y_COR_GAIN'} ...
+            {'META_AUX_IMU_ACCELEROMETER_Z_COR_GAIN'} ...
+            {'META_AUX_IMU_GYROSCOPE_X_COR_OFFSET'} ...
+            {'META_AUX_IMU_GYROSCOPE_Y_COR_OFFSET'} ...
+            {'META_AUX_IMU_GYROSCOPE_Z_COR_OFFSET'} ...
+            {'META_AUX_IMU_MAGNETOMETER_X_COR_OFFSET'} ...
+            {'META_AUX_IMU_MAGNETOMETER_Y_COR_OFFSET'} ...
+            {'META_AUX_IMU_MAGNETOMETER_Z_COR_OFFSET'} ...
+            {'META_AUX_IMU_COMPASS_HARD_IRON_COR_OFFSET1'} ...
+            {'META_AUX_IMU_COMPASS_HARD_IRON_COR_OFFSET2'} ...
+            {'META_AUX_IMU_COMPASS_SOFT_IRON_COR_MATRIX11'} ...
+            {'META_AUX_IMU_COMPASS_SOFT_IRON_COR_MATRIX12'} ...
+            {'META_AUX_IMU_COMPASS_SOFT_IRON_COR_MATRIX21'} ...
+            {'META_AUX_IMU_COMPASS_SOFT_IRON_COR_MATRIX22'} ...
+            {'META_AUX_SBE41_FIRMWARE_VERSION'} ...
+            {'META_AUX_SUNA_FIRMWARE_VERSION'} ...
+            {'META_AUX_SUNA_SPECTROMETER_INTEGRATION_TIME'} ...
+            ];
+         for idMA = 1:length(metaAuxLabelList)
+            if (isfield(metaData, metaAuxLabelList{idMA}))
+               inputAuxMetaName = [inputAuxMetaName; metaAuxLabelList{idMA}];
+               idF = find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1);
                inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-               inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_UVP_CONFIG_PARAMETERS.(fieldNames{idConf})];
+               inputAuxMetaValue = [inputAuxMetaValue; metaData.(metaAuxLabelList{idMA})];
                inputAuxMetaDescription = [inputAuxMetaDescription; ...
-                  g_decArgo_outputNcConfParamDescription(find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1))];
+                  g_decArgo_outputNcConfParamDescription(find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1))];
             end
          end
 
-         if (isfield(metaData, 'META_AUX_OPUS_FIRMWARE_VERSION'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_FIRMWARE_VERSION'];
-            idF = find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_FIRMWARE_VERSION];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'];
-            idF = find(strcmp('META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_LENGTH'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_LENGTH'];
-            idF = find(strcmp('META_AUX_OPUS_WATERBASE_LENGTH', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_LENGTH];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_LENGTH', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_INTENSITIES'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_INTENSITIES'];
-            idF = find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_INTENSITIES];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-
-         if (isfield(metaData, 'META_AUX_MPE_ACQUISITION_AVERAGE'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_ACQUISITION_AVERAGE'];
-            idF = find(strcmp('META_AUX_MPE_ACQUISITION_AVERAGE', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_ACQUISITION_AVERAGE];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_ACQUISITION_AVERAGE', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_ACQUISITION_RATE'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_ACQUISITION_RATE'];
-            idF = find(strcmp('META_AUX_MPE_ACQUISITION_RATE', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_ACQUISITION_RATE];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_ACQUISITION_RATE', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'];
-            idF = find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A'];
-            idF = find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_GAIN_HM'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_GAIN_HM'];
-            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_HM', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_GAIN_HM];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_HM', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_GAIN_ML'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_GAIN_ML'];
-            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_ML', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_GAIN_ML];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_GAIN_ML', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_H'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_H'];
-            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_H', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_H];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_H', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_M'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_M'];
-            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_M', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_M];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_M', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_MPE_MICRORADIOMETER_OFFSET_L'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_MPE_MICRORADIOMETER_OFFSET_L'];
-            idF = find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_L', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_L];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_L', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-
-         if (isfield(metaData, 'META_AUX_HYDROC_SERIAL_NO'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_SERIAL_NO'];
-            idF = find(strcmp('META_AUX_HYDROC_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_SERIAL_NO];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_HYDROC_FIRMWARE_VERSION'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_FIRMWARE_VERSION'];
-            idF = find(strcmp('META_AUX_HYDROC_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_FIRMWARE_VERSION];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
-         end
-         if (isfield(metaData, 'META_AUX_HYDROC_HARDWARE_VERSION'))
-            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_HARDWARE_VERSION'];
-            idF = find(strcmp('META_AUX_HYDROC_HARDWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
-            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_HARDWARE_VERSION];
-            inputAuxMetaDescription = [inputAuxMetaDescription; ...
-               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_HARDWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
+         if (isfield(metaData, 'META_AUX_UVP_CONFIG_NAMES'))
+            fieldNames1 = fields(metaData.META_AUX_UVP_CONFIG_NAMES);
+            fieldNames2 = fields(metaData.META_AUX_UVP_CONFIG_PARAMETERS);
+            acqNum = 0;
+            taxoNum = 0;
+            for idConf = 1:length(fieldNames1)
+               confName = metaData.META_AUX_UVP_CONFIG_NAMES.(fieldNames1{idConf});
+               if (strncmp(confName, 'ACQ_', length('ACQ_')))
+                  confLabel = sprintf('META_AUX_UVP_ACQ_CONF_%d_PARAMETERS', acqNum);
+                  acqNum = acqNum + 1;
+               elseif (strncmp(confName, 'TAXO_', length('TAXO_')))
+                  confLabel = sprintf('META_AUX_UVP_TAXO_CONF_%d_PARAMETERS', taxoNum);
+                  taxoNum = taxoNum + 1;
+               else
+                  confLabel = 'META_AUX_UVP_HW_CONF_PARAMETERS';
+               end
+               inputAuxMetaName = [inputAuxMetaName; confLabel];
+               idF = find(strcmp(confLabel, g_decArgo_outputNcConfParamLabel), 1);
+               inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+               inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_UVP_CONFIG_PARAMETERS.(fieldNames2{idConf})];
+               inputAuxMetaDescription = [inputAuxMetaDescription; ...
+                  g_decArgo_outputNcConfParamDescription(find(strcmp(confLabel, g_decArgo_outputNcConfParamLabel), 1))];
+            end
          end
       end
       
@@ -975,6 +891,20 @@ switch (a_decoderId)
       missionConfigId(idDel) = [];
       missionConfigValue(idDel, :) = [];
       
+      % CTS5-USEA
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+         if (ismember(a_decoderId, [129]) && any(strcmp(g_decArgo_sensorMountedOnFloat, 'UVP')))
+            % dispatch each configuration parameter on the UVP sensor in the
+            % configuration
+            [launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
+               missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue] = ...
+               dispatch_uvp_detailed_configuration_parameters( ...
+               inputAuxMetaName, inputAuxMetaValue, ...
+               launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
+               missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue);
+         end
+      end
+
       % create/update NetCDF META_AUX file
       create_nc_meta_aux_file( ...
          inputAuxMetaName, inputAuxMetaId, inputAuxMetaValue, inputAuxMetaDescription, ...

@@ -1672,8 +1672,7 @@ if (a_rtVersionFlag == 0)
                      o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = [];
                   end
                   frame = metaData.sensors.sensor_uvp6.hw_conf.frame;
-                  idFC = strfind(frame, ',');
-                  o_metaStruct.META_AUX_UVP_CONFIG_NAMES{end+1} = frame(1:idFC(1)-1);
+                  o_metaStruct.META_AUX_UVP_CONFIG_NAMES{end+1} = 'HW_CONF';
                   o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS{end+1} = frame;
                end
                if (isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_NAMES'))

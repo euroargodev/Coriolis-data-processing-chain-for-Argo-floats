@@ -145,7 +145,6 @@ g_decArgo_iceFloat = 0;
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
 
-
 REPROCESS = 1; % in debug mode could be set to 0 to skip float files generation from mail files
 
 % create the float directory

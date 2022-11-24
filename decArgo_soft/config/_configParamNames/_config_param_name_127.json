@@ -1548,80 +1548,80 @@
       "CONF_PARAM_DEC_ID" : "320",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_01",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_01_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_01 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_0_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_0 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_195" :
    {
       "CONF_PARAM_DEC_ID" : "321",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_02",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_02_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_02 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_1_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_1 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_196" :
    {
       "CONF_PARAM_DEC_ID" : "322",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_03",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_03_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_03 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_2_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_2 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_197" :
    {
       "CONF_PARAM_DEC_ID" : "323",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_04",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_04_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_04 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_3_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_3 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_198" :
    {
       "CONF_PARAM_DEC_ID" : "324",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_05",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_05_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_05 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_4_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_4 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_199" :
    {
       "CONF_PARAM_DEC_ID" : "325",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_06",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_06_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_06 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_5_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_5 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_200" :
    {
       "CONF_PARAM_DEC_ID" : "326",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_07",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_07_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_07 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_6_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_6 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_201" :
    {
       "CONF_PARAM_DEC_ID" : "327",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_08",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_08_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_08 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_7_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_7 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_202" :
    {
       "CONF_PARAM_DEC_ID" : "328",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_09",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_09_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_09 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_8_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_8 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_203" :
    {
       "CONF_PARAM_DEC_ID" : "329",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_10",
-      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_10_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_10 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_9_PARAMETERS",
+      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_9 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
    "CONF_PARAM_204" :
    {

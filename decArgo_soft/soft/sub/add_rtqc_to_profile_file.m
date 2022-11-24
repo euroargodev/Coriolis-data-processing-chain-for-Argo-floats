@@ -205,6 +205,7 @@
 %                             TEST #24: set PSAL_QC = '3' for pre-april 2021 RBR
 %                             floats (list g_decArgo_rbrPreApril2021FloatList)
 %                             TEST #19: revised version of Deeepest Pressure Test
+%   06/24/2022 - RNU - V 5.9: TEST #26 added.
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -235,6 +236,7 @@ global g_MC_Surface;
 global g_decArgo_decoderIdListNke;
 global g_decArgo_decoderIdListNova;
 global g_decArgo_decoderIdListAll;
+global g_decArgo_decoderIdListNkeIridiumRbr;
 global g_decArgo_decoderIdListDeepFloat;
 global g_decArgo_decoderIdListBgcFloatAll;
 global g_decArgo_decoderIdListProfWithDatedLev;
@@ -247,7 +249,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.8';
+g_decArgo_addRtqcToProfileVersion = '5.9';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -350,6 +352,7 @@ expectedTestList = [ ...
    {'TEST023_DEEP_FLOAT'} ...
    {'TEST024_RBR_FLOAT'} ...
    {'TEST025_MEDD'} ...
+   {'TEST026_TEMP_CNDC'} ...
    {'TEST057_DOXY'} ...
    {'TEST059_NITRATE'} ...
    {'TEST062_BBP'} ...
@@ -4096,6 +4099,162 @@ if (testFlagList(18) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 26: TEMP_CNDC test
+%
+if (testFlagList(26) == 1)
+
+   if (ismember(floatDecoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+
+      for idProf = 1:length(juld)
+
+         for idDM = 1:2
+            if (idDM == 1)
+               dataMode = 'R';
+            else
+               dataMode = 'A';
+            end
+
+            % retrieve PRES data
+            [presData, presDataQc, presDataFillValue, ~, ~] = ...
+               get_param_data('PRES', dataStruct, idProf, dataMode);
+
+            % retrieve TEMP data
+            [tempData, tempDataQc, tempDataFillValue, ~, ~] = ...
+               get_param_data('TEMP', dataStruct, idProf, dataMode);
+
+            % retrieve PSAL data
+            [psalData, psalDataQc, psalDataFillValue, ~, psalDataQcName] = ...
+               get_param_data('PSAL', dataStruct, idProf, dataMode);
+
+            % retrieve TEMP_CNDC data
+            [tempCndcData, tempCndcDataQc, tempCndcDataFillValue, ~, tempCndcDataQcName] = ...
+               get_param_data('TEMP_CNDC', dataStruct, idProf, 'R');
+
+            if (~isempty(presData) && ~isempty(tempData) && ~isempty(psalData) && ~isempty(tempCndcData))
+
+               profPres = presData(idProf, :);
+               profPresQc = presDataQc(idProf, :);
+               profTemp = tempData(idProf, :);
+               profTempQc = tempDataQc(idProf, :);
+               profPsal = psalData(idProf, :);
+               profPsalQc = psalDataQc(idProf, :);
+               profTempCndc = tempCndcData(idProf, :);
+
+               idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
+                  (profPresQc ~= g_decArgo_qcStrBad) & ...
+                  (profTemp ~= tempDataFillValue) & ...
+                  (profTempQc ~= g_decArgo_qcStrBad) & ...
+                  (profPsal ~= psalDataFillValue) & ...
+                  (profPsalQc ~= g_decArgo_qcStrBad) & ...
+                  (profTempCndc ~= tempCndcDataFillValue));
+               profPres = profPres(idNoDefAndGood);
+               profTemp = profTemp(idNoDefAndGood);
+               profPsal = profPsal(idNoDefAndGood);
+               profTempCndc = profTempCndc(idNoDefAndGood);
+
+               if (~isempty(profPres) && ~isempty(profTemp) && ~isempty(profPsal) && ~isempty(profTempCndc))
+
+                  % initialize Qc flags
+                  idNoDefTempCndc = find(profTempCndc ~= tempCndcDataFillValue);
+                  tempCndcDataQc(idProf, idNoDefTempCndc) = set_qc(tempCndcDataQc(idProf, idNoDefTempCndc), g_decArgo_qcStrGood);
+                  dataStruct.(tempCndcDataQcName) = tempCndcDataQc;
+
+                  idNoDefPsal = find(profPsal ~= psalDataFillValue);
+                  psalDataQc(idProf, idNoDefPsal) = set_qc(psalDataQc(idProf, idNoDefPsal), g_decArgo_qcStrGood);
+                  dataStruct.(psalDataQcName) = psalDataQc;
+
+                  testDoneList(26, idProf) = 1;
+                  testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefTempCndc];
+                  testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefPsal];
+
+                  idPresLt500 = find(profPres <= 500);
+                  idKo1 = find(abs(profTempCndc(idPresLt500) - profTemp(idPresLt500)) > 10);
+                  idPresGt500 = find(profPres > 500);
+                  idKo2 = find(abs(profTempCndc(idPresGt500) - profTemp(idPresGt500)) > 1.5);
+                  if ((length(idKo1) + length(idKo2)) > 2)
+                     tempCndcDataQc(idProf, idNoDefAndGood) = set_qc(tempCndcDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrBad);
+                     dataStruct.(tempCndcDataQcName) = tempCndcDataQc;
+
+                     psalDataQc(idProf, idNoDefAndGood) = set_qc(psalDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrCorrectable);
+                     dataStruct.(psalDataQcName) = psalDataQc;
+
+                     testFailedList(26, idProf) = 1;
+                     testFailedListForTraj{26, idProf} = [testFailedListForTraj{14, idProf} idNoDefAndGood];
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 24: pre-april 2021 RBR floats
+%
+if (testFlagList(24) == 1)
+
+   % Specific test:
+   % set PSAL_QC = '3' for pre-april 2021 RBR salinity
+
+   if (ismember(a_floatNum, g_decArgo_rbrPreApril2021FloatList))
+
+      % list of parameters concerned by this test
+      test24ParameterList1 = [ ...
+         {'PSAL'} ...
+         {'PSAL2'} ...
+         ];
+
+      % get the name of PSAL parameter assigned to RBR sensor
+      rbrPsalName = [];
+      for idP = 1:length(test24ParameterList1)
+         paramName = test24ParameterList1{idP};
+         idF = find(strcmp(paramName, parameterMeta) == 1, 1);
+         if (~isempty(idF))
+            paramSensor = parameterSensorMeta{idF};
+            % retrieve the sensor model of this parameter
+            idF = find(strcmp(paramSensor, sensorMeta) == 1, 1);
+            if (~isempty(idF))
+               paramSensorModel = sensorModelMeta(idF);
+               if (strncmp(paramSensorModel, 'RBR', length('RBR')))
+                  rbrPsalName{end+1} = paramName;
+               end
+            end
+         end
+      end
+
+      if (~isempty(rbrPsalName))
+
+         for idP = 1:length(rbrPsalName)
+            paramName = rbrPsalName{idP};
+
+            for idProf = 1:length(juld)
+
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, 'R');
+
+               if (~isempty(paramData))
+
+                  profParam = paramData(idProf, :);
+
+                  % initialize Qc flags (with QC = '3')
+                  idNoDefParam = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
+                  dataStruct.(paramDataQcName) = paramDataQc;
+
+                  testDoneList(24, idProf) = 1;
+                  testDoneListForTraj{24, idProf} = [testDoneListForTraj{24, idProf} idNoDefParam];
+
+                  testFailedList(24, idProf) = 1;
+                  testFailedListForTraj{24, idProf} = [testFailedListForTraj{24, idProf} idNoDefParam];
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 23: deep float with data deeper than 2000 dbar test
 %
 if (testFlagList(23) == 1)
@@ -4179,72 +4338,6 @@ if (testFlagList(23) == 1)
                         end
                      end
                   end
-               end
-            end
-         end
-      end
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 24: pre-april 2021 RBR floats
-%
-if (testFlagList(24) == 1)
-
-   % Specific test:
-   % set PSAL_QC = '3' for pre-april 2021 RBR salinity
-
-   if (ismember(a_floatNum, g_decArgo_rbrPreApril2021FloatList))
-
-      % list of parameters concerned by this test
-      test24ParameterList1 = [ ...
-         {'PSAL'} ...
-         {'PSAL2'} ...
-         ];
-
-      % get the name of PSAL parameter assigned to RBR sensor
-      rbrPsalName = [];
-      for idP = 1:length(test24ParameterList1)
-         paramName = test24ParameterList1{idP};
-         idF = find(strcmp(paramName, parameterMeta) == 1, 1);
-         if (~isempty(idF))
-            paramSensor = parameterSensorMeta{idF};
-            % retrieve the sensor model of this parameter
-            idF = find(strcmp(paramSensor, sensorMeta) == 1, 1);
-            if (~isempty(idF))
-               paramSensorModel = sensorModelMeta(idF);
-               if (strncmp(paramSensorModel, 'RBR', length('RBR')))
-                  rbrPsalName{end+1} = paramName;
-               end
-            end
-         end
-      end
-
-      if (~isempty(rbrPsalName))
-
-         for idP = 1:length(rbrPsalName)
-            paramName = rbrPsalName{idP};
-
-            for idProf = 1:length(juld)
-
-               % retrieve PARAM data
-               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                  get_param_data(paramName, dataStruct, idProf, 'R');
-
-               if (~isempty(paramData))
-
-                  profParam = paramData(idProf, :);
-
-                  % initialize Qc flags (with QC = '3')
-                  idNoDefParam = find(profParam ~= paramDataFillValue);
-                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
-                  dataStruct.(paramDataQcName) = paramDataQc;
-
-                  testDoneList(24, idProf) = 1;
-                  testDoneListForTraj{24, idProf} = [testDoneListForTraj{24, idProf} idNoDefParam];
-
-                  testFailedList(24, idProf) = 1;
-                  testFailedListForTraj{24, idProf} = [testFailedListForTraj{24, idProf} idNoDefParam];
                end
             end
          end
@@ -5352,11 +5445,11 @@ end
 testDoneListCFile = testDoneList;
 testDoneListCFile([11 57 59 62 63], :) = 0;
 testDoneListBFile = testDoneList;
-testDoneListBFile([8 14 24 25], :) = 0;
+testDoneListBFile([8 14 24 25 26], :) = 0;
 testFailedListCFile = testFailedList;
 testFailedListCFile([11 57 59 62 63], :) = 0;
 testFailedListBFile = testFailedList;
-testFailedListBFile([8 14 24 25], :) = 0;
+testFailedListBFile([8 14 24 25 26], :) = 0;
 
 % compute the report hex values
 testDoneCHex = repmat({''}, length(juld), 1);

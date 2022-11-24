@@ -522,7 +522,7 @@ if (nTechMeas > 0)
    end
    
    paramName = [];
-   paramFormats = repmat('; %d', 1, nTechMeasParam);
+   paramFormats = repmat('; %g', 1, nTechMeasParam);
    paramQcFormats = repmat('; %c', 1, nTechMeasParam);
    paramData = [];
    paramQcData = [];
@@ -532,7 +532,7 @@ if (nTechMeas > 0)
       idVal = find(strcmp(parameterName, techData) == 1);
       if (~isempty(idVal))
          data = techData{idVal+1};
-         paramData = [paramData data];
+         paramData = [paramData double(data)];
       end
       parameterQcName = [parameterName '_QC'];
       idVal = find(strcmp(parameterQcName, techData) == 1);

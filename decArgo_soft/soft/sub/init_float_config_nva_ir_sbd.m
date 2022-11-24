@@ -61,15 +61,15 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
 
 % arrays to store RT offset information
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
+
+% json meta-data
+global g_decArgo_jsonMetaData;
 
 
 % create static configuration names
@@ -98,25 +98,13 @@ configValues3 = nan(length(configNames3), 1);
 
 % initialize the configuration values with the json meta-data file
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
-
 % fill the configuration values
 configValues1 = repmat({'nan'}, length(configNames1), 1);
 configValues2 = nan(length(configNames2), 1);
 
-if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
-   jConfNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   jConfValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+if (~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME) && ~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE))
+   jConfNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   jConfValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    for id = 1:length(jConfNames)
       idPos = find(strncmp(jConfNames{id}, configNames2, 11) == 1, 1);
       if (~isempty(idPos))
@@ -200,17 +188,17 @@ g_decArgo_floatConfig.TMP.VALUES = configValues3;
 % create_csv_to_print_config_ir_sbd('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add DO calibration coefficients
 % read the calibration coefficients in the json meta-data file
 
 % fill the calibration coefficients
-if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
-   if (~isempty(metaData.CALIBRATION_COEFFICIENT))
-      fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+   if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+      fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
       for idF = 1:length(fieldNames)
-         g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
       end
    end
 end

@@ -23,9 +23,6 @@ function init_float_config_apx_argos(a_decoderId)
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
@@ -37,26 +34,17 @@ g_decArgo_rtOffsetInfo = [];
 % float configuration
 global g_decArgo_floatConfig;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
 
 % store AUX static meta-data
 staticConfigName = [];
 staticConfigValue = [];
-if (isfield(jsonMetaData, 'PTT_HEX'))
-   if (~isempty(jsonMetaData.PTT_HEX))
+if (isfield(g_decArgo_jsonMetaData, 'PTT_HEX'))
+   if (~isempty(g_decArgo_jsonMetaData.PTT_HEX))
       staticConfigName{end+1} = ['META_AUX_' 'PTT_HEX'];
-      staticConfigValue{end+1} = jsonMetaData.PTT_HEX;
+      staticConfigValue{end+1} = g_decArgo_jsonMetaData.PTT_HEX;
    end
 end
 
@@ -65,17 +53,17 @@ g_decArgo_floatConfig.STATIC_NC.NAMES = staticConfigName;
 g_decArgo_floatConfig.STATIC_NC.VALUES = staticConfigValue;
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add DO calibration coefficients
 if (ismember(a_decoderId, [1006 1008 1014 1016]))
       
    % fill the calibration coefficients
-   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+   if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
          for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+            g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
          end
       end
    end
@@ -128,11 +116,11 @@ if (ismember(a_decoderId, [1006 1008 1014 1016]))
 elseif (ismember(a_decoderId, [1009]))
       
    % fill the calibration coefficients
-   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+   if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
          for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+            g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
          end
       end
    end
@@ -181,11 +169,11 @@ elseif (ismember(a_decoderId, [1009]))
 elseif (ismember(a_decoderId, [1013 1015]))
    
    % fill the calibration coefficients
-   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+   if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
          for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+            g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
          end
          
          % create the tabDoxyCoef array

@@ -29,9 +29,6 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % sensor list
 global g_decArgo_sensorMountedOnFloat;
 
@@ -50,22 +47,9 @@ global g_decArgo_jsonMetaData;
 global g_decArgo_decoderIdListApexApf11IridiumRudics;
 
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
-g_decArgo_jsonMetaData = jsonMetaData;
-
 % retrieve float username
-if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
-   o_floatRudicsId = jsonMetaData.FLOAT_RUDICS_ID;
+if (isfield(g_decArgo_jsonMetaData, 'FLOAT_RUDICS_ID'))
+   o_floatRudicsId = g_decArgo_jsonMetaData.FLOAT_RUDICS_ID;
 end
 if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11IridiumRudics))
    fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
@@ -73,10 +57,10 @@ if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, g_decArgo_decoderIdListAp
 end
 
 % initialize the configuration with the json meta-data file contents
-configNames = struct2cell(jsonMetaData.CONFIG_PARAMETER_NAME);
+configNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
 configValues = nan(length(configNames), 1);
 
-jConfValues = struct2cell(jsonMetaData.CONFIG_PARAMETER_VALUE);
+jConfValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
 for id = 1:length(jConfValues)
    if (~isempty(jConfValues{id}))
       if (strncmp(jConfValues{id}, '0x', 2))
@@ -115,31 +99,31 @@ g_decArgo_floatConfig.USE.CYCLE = [];
 g_decArgo_floatConfig.USE.CONFIG = [];
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add calibration coefficients
 % read the calibration coefficients in the json meta-data file
 
 % fill the calibration coefficients
-if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-   if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-      fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+   if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+      fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
       for idF = 1:length(fieldNames)
-         g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
       end
    end
 end
 
 % store the sensor list
 g_decArgo_sensorMountedOnFloat = [];
-if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-   jSensorNames = struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
    g_decArgo_sensorMountedOnFloat = jSensorNames';
 end
    
 % create the tabDoxyCoef array
-if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-   if (any(strcmp(struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'OPTODE')))
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   if (any(strcmp(struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'OPTODE')))
       if (isfield(g_decArgo_calibInfo, 'OPTODE'))
          calibData = g_decArgo_calibInfo.OPTODE;
          tabDoxyCoef = [];
@@ -169,8 +153,8 @@ if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
 end
 
 % create the tabDoxyCoef array
-if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-   if (any(strcmp(struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'RAFOS')))
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   if (any(strcmp(struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'RAFOS')))
       % if RAFOS field already exists it has been recovered from the json
       % meta-data file otherwise we set a default one
       if (~isfield(g_decArgo_calibInfo, 'RAFOS'))

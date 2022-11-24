@@ -29,9 +29,6 @@ o_stopFlag = 0;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo = [];
@@ -47,24 +44,11 @@ global g_decArgo_floatTransType;
 global g_decArgo_jsonMetaData;
 
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   o_stopFlag = 1;
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
-g_decArgo_jsonMetaData = jsonMetaData;
-
 if (g_decArgo_floatTransType == 3)
    
    % for Iridium SBD floats only
-   if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
-      [o_floatRudicsId, status] = str2num(jsonMetaData.FLOAT_RUDICS_ID);
+   if (isfield(g_decArgo_jsonMetaData, 'FLOAT_RUDICS_ID'))
+      [o_floatRudicsId, status] = str2num(g_decArgo_jsonMetaData.FLOAT_RUDICS_ID);
       if (status == 0)
          fprintf('ERROR: FLOAT_RUDICS_ID is not correct in Json meta-data file (%s)\n', jsonInputFileName);
          return
@@ -77,7 +61,7 @@ if (g_decArgo_floatTransType == 3)
 end
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add DO calibration coefficients
 if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114, 1201]))
@@ -85,11 +69,11 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114,
    % read the calibration coefficients in the json meta-data file
 
    % fill the calibration coefficients
-   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+   if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
          for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+            g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
          end
       end
    end

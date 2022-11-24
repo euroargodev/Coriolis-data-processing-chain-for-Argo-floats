@@ -1,11 +1,11 @@
 % ------------------------------------------------------------------------------
-% Print APMT CTD data in output CSV file.
+% Print CTS5-USEA CTD data in output CSV file.
 %
 % SYNTAX :
 %  print_data_in_csv_file_ir_rudics_cts5_CTD(a_ctdData)
 %
 % INPUT PARAMETERS :
-%   a_ctdData : APMT CTD data
+%   a_ctdData : CTS5-USEA CTD data
 %
 % OUTPUT PARAMETERS :
 %

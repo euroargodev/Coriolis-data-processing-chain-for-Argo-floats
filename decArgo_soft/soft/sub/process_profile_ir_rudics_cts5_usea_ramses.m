@@ -83,7 +83,7 @@ for idP = 1:length(a_ramsesData)
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
       phaseNum = g_decArgo_phaseSatTrans;
    else
-      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing profiles with phase Id #%d\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing RAMSES profiles with phase Id #%d\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          g_decArgo_cycleNumFloat, ...
@@ -107,12 +107,12 @@ for idP = 1:length(a_ramsesData)
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
-            paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_INTEGRATION_TIME');
-            paramRadiometerPrePres = get_netcdf_param_attributes('RADIOMETER_PRE_PRES');
-            paramRadiometerPostPres = get_netcdf_param_attributes('RADIOMETER_POST_PRES');
-            paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_PRE_INCLINATION');
-            paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_POST_INCLINATION');
-            paramRadiometerDarkAverage = get_netcdf_param_attributes('RADIOMETER_DARK_AVERAGE');
+            paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_INTEGRATION_TIME');
+            paramRadiometerPrePres = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRE_PRES');
+            paramRadiometerPostPres = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_POST_PRES');
+            paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRE_INCLINATION');
+            paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_POST_INCLINATION');
+            paramRadiometerDarkAverage = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_DARK_AVERAGE');
             paramRawDownwellingIrradiance = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE');
             
             profStruct.paramList = [ ...
@@ -143,7 +143,7 @@ for idP = 1:length(a_ramsesData)
       profStruct.paramNumberWithSubLevels = 8;
       profStruct.paramNumberOfSubLevels = size(data, 2) - 9;
       
-      data(:, 9) = [];
+      data(:, 9) = []; % remove "Number of channels"
       profStruct.data = data(:, 2:end);
       profStruct.dates = data(:, 1);
       profStruct.datesAdj = adjust_time_cts5(profStruct.dates);

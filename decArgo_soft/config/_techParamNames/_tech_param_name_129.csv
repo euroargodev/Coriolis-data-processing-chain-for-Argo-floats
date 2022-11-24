@@ -1,0 +1,165 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+100;TECH;Numéro de pattern.;NUMBER_SubCycle_NUMBER;NUMBER_SubCycle_NUMBER
+101;TECH;Numéro de cycle (flotteur).;NUMBER_InternalCycle_NUMBER;NUMBER_InternalCycle_NUMBER
+102;TECH;External pressure offset;PRES_SurfaceOffsetCorrectedNotResetNegative_1mBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE offset (real offset * -1) but no further correction required. Autocorrected
+103;TECH;Internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+104;TECH;No-load battery voltage;VOLTAGE_BatterySurfaceNoLoad_volts;battery voltage during inactive surface phase
+105;TECH;Battery voltage under load (min.);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
+210;TECH_AUX;Pressure of battery voltage under load (min.);TECH_AUX_PRES_BatteryPumpStartProfile_dbar;"Pressure associated to ""VOLTAGE_BatteryPumpStartProfile_volts = Pump battery voltage (volts) at depth""."
+206;TECH;Internal temperature;TEMPERATURE_InternalVacuumAtSurface_degC;internal tube temperature at the surface
+303;META_AUX;nke ID;META_AUX_FLOAT_WC_NUMBER;WC number of the float.
+207;TECH;Pressure activation start;CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;pressure activation scrutation start date
+208;TECH;Pressure activation stop;CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;pressure activation scrutation end date
+106;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredAtSurfaceDuringDescent_cm^3;Oil volume transferred from the external bladder during the descent to park (between the surface and the second threshold of the buoyancy reduction phase). This is the oil volume tranferred  during the NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT valve actions.
+107;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+108;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3;Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
+109;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+196;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToPark<I>_cm^3;Oil volume transferred from the external bladder during the descent to park with multiparking mode park#I (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
+197;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToPark<I>_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent to park during multiparking mode park#I pressure
+110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
+111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+112;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
+113;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
+114;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+115;TECH;Nb. set point outputs;NUMBER_ParkDriftExitsFromParkMargin_COUNT;drift at park pressure: number of exits from margin around park pressure target - specifically, how many times the float exits the band of pressure surrounding the target park pressure (generally +/- 30db)
+254;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark<I>_COUNT;number of valve actions during park with multiparking mode #I phase
+255;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark<I>_COUNT;number of pump actions while at park in multiparking mode #I depth
+256;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInPark<I>Margin_COUNT;drift at park during multiparking mode #I pressure: number of entries in margin around park #I pressure target - specifically, how many times the float enters the band of pressure surrounding the target park #I pressure (generally +/- 30db)
+257;TECH;Nb. set point outputs;NUMBER_ParkDriftExitsFromPark<I>Margin_COUNT;drift at park druing multiparking mode #I pressure: number of exits from margin around park #I pressure target - specifically, how many times the float exits the band of pressure surrounding the target park #I pressure (generally +/- 30db)
+184;TECH_AUX;Stabilization date/time;TECH_AUX_CLOCK_StabilizedParkStartTime_YYYYMMDDHHMMSS;Time when the float stabilized at parking depth (improved stabilization needed for some Bio sensors).
+185;TECH_AUX;Stabilization depth;TECH_AUX_PRES_StabilizedPark_dbar;Pressure of the float when stabilized at parking depth (improved stabilization needed for some Bio sensors).
+258;TECH_AUX;Stabilization date/time;TECH_AUX_CLOCK_StabilizedPark<I>StartTime_YYYYMMDDHHMMSS;Time when the float stabilized at parking #I depth (improved stabilization needed for some Bio sensors).
+259;TECH_AUX;Stabilization depth;TECH_AUX_PRES_StabilizedPark<I>_dbar;Pressure of the float when stabilized at parking #I depth (improved stabilization needed for some Bio sensors).
+116;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3;Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions.
+117;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+186;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
+187;TECH;Nb. pump actions;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
+188;TECH;Nb. set point inputs;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+189;TECH_AUX;Nb. set point outputs;TECH_AUX_NUMBER_ProfileDriftExitsFromProfileMargin_COUNT;drift at profile pressure: number of exits from margin around profile pressure target - specifically, how many times the float exits the band of pressure surrounding the target profile pressure (generally +/- 30db)
+118;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringAscentToSurface_cm^3;Oil volume transferred to the external bladder during the ascent to surface This is the oil volume tranferred  during the NUMBER_PumpActionsDuringAscentToSurface_COUNT pump actions.
+119;TECH;Nb. pump actions (total);NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+120;TECH;Nb. actions for take-off;NUMBER_PumpActionsToStartAscent_COUNT;Number of pump actions needed to start the ascent.
+121;TECH_AUX;Start date/time;TECH_AUX_CLOCK_SlowAscentStart_YYYYMMDDHHMMSS;Slow ascent start time (the upper part of the ascent can be performed with a lower vertical speed).
+122;TECH_AUX;Oil volume transferred;TECH_AUX_VOLUME_OilVolumeTransferredDuringSlowAscentToSurface_cm^3;Oil volume transferred to the external bladder during the slow ascent to surface. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringSlowAscentToSurface_COUNT pump actions.
+123;TECH_AUX;Nb. pump actions;TECH_AUX_NUMBER_PumpActionsDuringSlowAscentToSurface_COUNT;Number of pump actions between slow ascent start and end of ascent.
+124;TECH_AUX;Start date/time;TECH_AUX_CLOCK_ResumedAscentStart_YYYYMMDDHHMMSS;Resumed ascent start time (the float can stop the ascent to perform a ice cover detection and resume the profile if no ice is detected).
+125;TECH_AUX;Oil volume transferred;TECH_AUX_VOLUME_OilVolumeTransferredDuringResumedAscentToSurface_cm^3;Oil volume transferred to the external bladder during the resumed ascent to surface. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringResumedAscentToSurface_COUNT pump actions.
+126;TECH_AUX;Nb. pump actions;TECH_AUX_NUMBER_PumpActionsDuringResumedAscentToSurface_COUNT;Number of pump actions between resumed ascent start and end of ascent.
+211;TECH_AUX;Abort date/time;TECH_AUX_CLOCK_IceAdvoidance_YYYYMMDDHHMMSS;Time when the float advoids Ice.
+212;TECH_AUX;Oil volume transferred;TECH_AUX_VOLUME_OilVolumeTransferredWhenIceAvoidance_cm^3;Oil volume transferred to the external bladder when Ice avoidance occured.
+213;TECH;Abort pressure;PRES_IceAvoidance_dbar;Pressure when float avoids ice
+249;TECH;Argo usual Ice reporting bits;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+214;TECH_AUX;Perigee date/time;TECH_AUX_CLOCK_IceAdvoidancePerigee_YYYYMMDDHHMMSS;Time at perigee when the float advoids Ice.
+215;TECH_AUX;Perigee pressure;TECH_AUX_PRES_IceAdvoidancePerigee_dbar;Pressure at perigee when float avoids ice.
+190;TECH_AUX;Start date/time;TECH_AUX_CLOCK_Hanging_YYYYMMDDHHMMSS;Hanging start time (time when the float is hanged during ascent).
+191;TECH_AUX;Snagging pressure;TECH_AUX_PRES_Hanging_dbar;Hanging pressure.
+192;TECH_AUX;End date/time;TECH_AUX_CLOCK_HangingEscape_YYYYMMDDHHMMSS;Hanging end time.
+127;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
+128;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
+129;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+130;TECH;Nb. set point outputs;NUMBER_ParkDriftExitsFromParkMargin_COUNT;drift at park pressure: number of exits from margin around park pressure target - specifically, how many times the float exits the band of pressure surrounding the target park pressure (generally +/- 30db)
+131;TECH_AUX;Pressure switch activation;TECH_AUX_CLOCK_PressureSwitchActivation_YYYYMMDDHHMMSS;Pressure switch activation time (the float detected an empty internal reservoir).
+193;TECH;Start date/time;CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS;date of emergency ascent
+132;TECH_AUX;Total data size;TECH_AUX_SIZE_FileSizeSentPreviousSession_kbyte;Total size of the files sent during the previous Iridium RUDICS session.
+133;TECH_AUX;Nb. files;TECH_AUX_NUMBER_FileSentPreviousSession_COUNT;Number of files sent during the previous Iridium RUDICS session.
+134;TECH_AUX;Average baud rate;TECH_AUX_RATE_FlowRateFileSentPreviousSession_kbyte/minute;Mean output flow rate to send files of the previous Iridium RUDICS session.
+135;TECH_AUX;Nb. sessions;TECH_AUX_NUMBER_NbSessionPreviousSession_COUNT;Number of Iridium session needed to send files during the previous Iridium RUDICS session.
+136;TECH;Nb. accepted;NUMBER_RemoteControlCommandOK_COUNT;Number of remote control commands successfully considered.
+137;TECH;Nb. refused;NUMBER_RemoteControlCommandKO_COUNT;Number of remote control commands rejected by the float.
+138;TECH_AUX;Nb. unknown;TECH_AUX_NUMBER_RemoteControlCommandUnknown_COUNT;Number of remote control commands not recognised by the float (for example because they concern unknown parameters).
+139;TECH_AUX;Payload configuration download;TECH_AUX_FLAG_SensorBoardConfigurationReceived_LOGICAL;A new configuration for the sensor board has been received.
+140;TECH_AUX;Script download;TECH_AUX_FLAG_ConfigurationScriptReceived_LOGICAL;A new configuration script file has been received.
+194;TECH_AUX;Number of files associated with the pattern (The following files are not taken into account: technical for self-test or pre-mission, configuration nor command/script acknowledgement. The number of files is expressed prior to the files being broken down for transmission);TECH_AUX_NUMBER_FileSent_COUNT;Number of files sent during the current Iridium RUDICS session.
+216;TECH;Nb. park descent;NUMBER_<short_sensor_name>DescentToParkSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface to parking depth"" phase."
+1216;TECH_AUX;Nb. park descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToParkSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface to parking depth"" phase."
+217;TECH;Nb. park drift;NUMBER_<short_sensor_name>ParkSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at parking depth.
+1217;TECH_AUX;Nb. park drift;TECH_AUX_NUMBER_<short_sensor_name>ParkSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at parking depth.
+218;TECH;Nb. measurement descent;NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""parking depth to profile depth"" phase."
+1218;TECH_AUX;Nb. measurement descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""parking depth to profile depth"" phase."
+219;TECH;Nb. measurement drift;NUMBER_<short_sensor_name>ProfileDriftSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at profile depth.
+1219;TECH;Nb. measurement drift;TECH_AUX_NUMBER_<short_sensor_name>ProfileDriftSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at profile depth.
+220;TECH;Nb. ascent;NUMBER_<short_sensor_name>AscentSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""ascent to surface"" phase."
+1220;TECH_AUX;Nb. ascent;TECH_AUX_NUMBER_<short_sensor_name>AscentSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""ascent to surface"" phase."
+200;TECH_AUX;Nb. subsurface;TECH_AUX_NUMBER_SubSurfaceSamples_COUNT;Number of sub-surface samples acquired during ascent profile (the sub-surface sample is the last pumped CTD raw data sampled during ascent).
+221;TECH;Nb. Surface;NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
+1221;TECH_AUX;Nb. Surface;TECH_AUX_NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
+141;TECH_AUX;Pattern duration;TECH_AUX_TIME_CycleDuration_minutes;Duration of the cycle.
+142;TECH_AUX;Processing/standby ratio;TECH_AUX_RATE_ProcessingVsStandByeRatio_percent;Ratio between float activity and stand bye during the cycle.
+195;TECH_AUX;;TECH_AUX_RATE_MeasurementVsStandByeRatio_percent;Ratio between float measurement and stand bye during the cycle.
+143;TECH_AUX;Solenoid valve;TECH_AUX_TIME_TotalValveActivity_csec;Total duration of valve actions during the cycle.
+144;TECH_AUX;Pump;TECH_AUX_TIME_TotalPumpActivity_csec;Total duration of pump actions during the cycle.
+146;TECH;Cumulated modem activations (Information on previous pattern/cycle);TIME_PreviousIridiumSession_minutes;duration of the previous iridium session
+147;TECH_AUX;Cumulated GPS activations;TECH_AUX_TIME_TotalGpsActivity_seconds;Total duration of GPS activity during the cycle.
+222;TECH_AUX; Cumulated sensor activations:  - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES, RAMSES2, OPUS, MPE, HYDROC, IMU]  - Duration;TECH_AUX_TIME_Total<short_sensor_name>Activity_minutes;Total duration of <short_sensor_name> sensor activity during the cycle.
+148;TECH_AUX;Start up;TECH_AUX_FLAG_PowerOnAlarm_LOGICAL;Alarm raised at float power-on.
+149;TECH_AUX;Invalid configuration;TECH_AUX_FLAG_BadConfigurationAlarm_LOGICAL;Alarm raised in case of inconsistency in the configuration
+150;TECH_AUX;Excessively heavy float;TECH_AUX_FLAG_HeavyFloatAlarm_LOGICAL;Alarm raised when the float sinks without any valve actions.
+151;TECH_AUX;Excessively light float;TECH_AUX_FLAG_LightFloatAlarm_LOGICAL;Alarm raised when the float doesn't sink even with valve actions.
+152;TECH;"Source(s) xxx among ""FRAM, FLASH, RTC, Vbatt, Pi, Pe, SBE41-Cutoff, SBE41-Offset, GPS, Payload, Sensor(xxx), Transmitter""";FLAG_InitialCheckError_LOGICAL;Auto-test is performed at the beginning of the mission: Flag 0 = Problem, 1 = OK)
+153;TECH_AUX;Failed systems list;TECH_AUX_DIAGNOSTIC_BitMaskInitialCheckFailed_NUMBER;The failed flag bits (1 if failed, 0 otherwise) set during the initial check are provided in reverse order for: FRAM, FLASH, RTC, Vbatt, Pi, Pe, SBE41-Cutoff, SBE41-Offset, GPS, Payload, Sensor, Transmitter (see float manual for details).
+154;TECH_AUX;No-load battery voltage low;TECH_AUX_FLAG_LowBatteryNoLoadAlarm_LOGICAL;Alarm raised when a low level of the battery is detected (the check is done without any load on the battery).
+155;TECH_AUX;Battery voltage under load low;TECH_AUX_FLAG_LowBatteryLoadAlarm_LOGICAL;Alarm raised when a low level of the battery is detected (the check is done with load on the battery, i.e. pump action at depth).
+156;TECH_AUX;Low external pressure;TECH_AUX_PRES_LowExternalPressureAlarm_dbar;Alarm raised when external pressure is too low.
+157;TECH_AUX;High external pressure;TECH_AUX_PRES_HighExternalPressureAlarm_dbar;Alarm raised when external pressure is too high.
+209;TECH_AUX;External pressure fault;TECH_AUX_FLAG_ExternalPressureSensorFaultAlarm_LOGICAL;Alarm raised when the external pressure sensor reports one error.
+158;TECH_AUX;External breaking pressure;TECH_AUX_FLAG_ExternalPressureSensorFailureAlarm_LOGICAL;Alarm raised when the external pressure sensor reports abnormal number of successive errors.
+201;TECH_AUX;Gear skip;TECH_AUX_FLAG_InconsistentVerticalSpeedAlarm_LOGICAL;Alarm raised when a vertical speed anomaly is detected by the buoyancy management system.
+159;TECH_AUX;High internal pressure;TECH_AUX_FLAG_HighInternalPressureAlarm_LOGICAL;Alarm raised when internal pressure is too high.
+160;TECH_AUX;Presence of water;TECH_AUX_FLAG_WaterInsideAlarm_LOGICAL;Alarm when water is detected inside one of the sensors.
+161;TECH_AUX;Snagging during ascent;TECH_AUX_PRES_HangingAlarm_dbar;Alarm raised when the float is hanged during ascent.
+162;TECH_AUX;Braking during descent;TECH_AUX_FLAG_BrakingDuringDescentAlarm_LOGICAL;Alarm raised when the descent speed is too high and the float brakes.
+163;TECH_AUX;System fault;TECH_AUX_FLAG_SystemFailureAlarm_LOGICAL;Alarm raised when the system fails.
+164;TECH_AUX;Payload board fault;TECH_AUX_FLAG_PayloadFailureAlarm_LOGICAL;Alarm raised when the payload card fails.
+165;TECH_AUX;GPS fault;TECH_AUX_FLAG_GPSFailureAlarm_LOGICAL;Alarm raised when the GPS fails.
+166;TECH_AUX;Hydraulic fault;TECH_AUX_FLAG_HydraulicFailureAlarm_LOGICAL;Alarm raised when the hydraulic engine fails.
+167;TECH_AUX;ADC fault;TECH_AUX_FLAG_ADCFailureAlarm_LOGICAL;Alarm raised when the Analog to Digital Converter fails.
+168;TECH_AUX;File fault;TECH_AUX_FLAG_FileFailureAlarm_LOGICAL;Alarm raised when a file cannot be transmitted.
+169;TECH_AUX;RTC fault;TECH_AUX_FLAG_RTCFailureAlarm_LOGICAL;Alarm raised when the Real Time Clock fails.
+170;TECH_AUX;Pressure switch fault;TECH_AUX_FLAG_PressureSwitchFailureAlarm_LOGICAL;Alarm raised when the pressure switch fails.
+238;TECH_AUX;Vector to payload communication fault;TECH_AUX_FLAG_VectorToPayloadComAlarm_LOGICAL;Alarm raised when some communications between vector and payload cards fail.
+223;TECH_AUX;Ice avoidance (ISA detection);TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with ISA algorithm.
+224;TECH_AUX;Ice avoidance (collision detection);TECH_AUX_FLAG_IceCollisionDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with a collision.
+225;TECH_AUX;Ice avoidance (aborting profile);TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL;Alarm raised when the profile has been aborted by Ice detection.
+226;TECH_AUX;Ice avoidance (cover detection);TECH_AUX_FLAG_IceSatMaskDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with the satellite mask.
+227;TECH_AUX;Ice avoidance (no surface period);TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL;Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm.
+171;TECH_AUX;End of life:;TECH_AUX_FLAG_EndOfLifeAlarm_LOGICAL;Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details).
+202;TECH_AUX;"Source xxx among ""Pi high, Pe broken, Pe high, Vbatt low, Vbatt peak low, Water inside, Flotation (heavy), Flotation (light)""";TECH_AUX_STRING_EndOfLifeCause;Name of the alarm responsible for the End Of Life.
+172;TECH_AUX;Rescue procedure;TECH_AUX_FLAG_EmergencyAscentAlarm_LOGICAL;Alarm raised the float ascends in an emergency mode.
+173;TECH_AUX;Feedback:;TECH_AUX_FLAG_FeedbackAlarm_LOGICAL;Alarm raised when a feedback occurs.
+203;TECH_AUX;"Type xxx among ""Early profile, Early surface, Abort profile, Abort cycle 0, Abort cycle 1, Go to deep, Standard speed, Lower speed""";TECH_AUX_STRING_FeedbackType;Type of the feedback.
+204;TECH_AUX;Nb. accepted;TECH_AUX_NUMBER_FeedbackAccepted_COUNT;Number of accepted feedbacks.
+205;TECH_AUX;Nb. refused;TECH_AUX_NUMBER_FeedbackRefused_COUNT;Number of refused feedbacks.
+228;TECH_AUX;Bad value in data frame: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES, RAMSES2, OPUS, MPE, HYDROC, IMU] - Error count;TECH_AUX_NUMBER_<short_sensor_name>ErrorCountAlarm_COUNT;Alarm raised to report error counter of <short_sensor_name> sensor.
+229;TECH_AUX;No reply/framing error: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES, RAMSES2, OPUS, MPE, HYDROC, IMU] - Error count;TECH_AUX_NUMBER_<short_sensor_name>NoReplyCountAlarm_COUNT;Alarm raised to report no reply counter of <short_sensor_name> sensor.
+230;TECH_AUX;Repetitive default: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES, RAMSES2, OPUS, MPE, HYDROC, IMU];TECH_AUX_FLAG_<short_sensor_name>BrokenAlarm_LOGICAL;Alarm raised when <short_sensor_name> sensor is broken.
+253;TECH_AUX;Sequence error: - Sensor name [HYDROC] - Error code;TECH_AUX_FLAG_<short_sensor_name>SequenceError_hex;Error code transmitted by <short_sensor_name> sensor (identification of failure when sending a command to the sensor).
+231;TECH_AUX;Data size: - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6-LPM, UVP6-TXO, UVP6-BLK, EXT-TRIG, RAMSES, RAMSES2, OPUS-LGT, OPUS-BLK, MPE, HYDROC-M, HYDROC-C, IMU] - Data size;TECH_AUX_NUMBER_<short_sensor_name>DataSizeAlarm_kbyte;Alarm raised to report <short_sensor_name> sensor data size (in KB).
+233;TECH_AUX;Counters:  - Sample counter;TECH_AUX_NUMBER_SunaSamples_COUNT;Number of samples acquired by the Suna.
+234;TECH_AUX; - Power cycle counter;TECH_AUX_NUMBER_SunaPowerCycles_COUNT;Number of power cycles performed by the Suna.
+235;TECH_AUX; - Error counter;TECH_AUX_NUMBER_SunaErrors_COUNT;Number of errors reported by the Suna.
+236;TECH_AUX;Power supply:   - Voltage;TECH_AUX_VOLTAGE_Suna_volts;Suna power supply voltage.
+237;TECH_AUX; - Intensity;TECH_AUX_CURRENT_Suna_amps;Suna power supply current.
+239;TECH_AUX;First ascent frame:  - pressure;TECH_AUX_PRES_SbePhFirstAscentFrame_dbar ;Pressure of SbePh first ascent frame.
+240;TECH_AUX; - Vref;TECH_AUX_VREF_SbePhFirstAscentFrame_volts ;Vref of SbePh first ascent frame.
+241;TECH_AUX; - Vk;TECH_AUX_VK_SbePhFirstAscentFrame_volts ;Vk of SbePh first ascent frame.
+242;TECH_AUX; - Ik;TECH_AUX_LK_SbePhFirstAscentFrame_volts ;Lk of SbePh first ascent frame.
+243;TECH_AUX; - Ib;TECH_AUX_LB_SbePhFirstAscentFrame_volts ;Lb of SbePh first ascent frame.
+244;TECH_AUX;Last ascent frame:  - pressure;TECH_AUX_PRES_SbePhLastAscentFrame_dbar ;Pressure of SbePh last ascent frame.
+245;TECH_AUX; - Vref;TECH_AUX_VREF_SbePhLastAscentFrame_volts ;Vref of SbePh last ascent frame.
+246;TECH_AUX; - Vk;TECH_AUX_VK_SbePhLastAscentFrame_volts ;Vk of SbePh last ascent frame.
+247;TECH_AUX; - Ik;TECH_AUX_LK_SbePhLastAscentFrame_volts ;Lk of SbePh last ascent frame.
+248;TECH_AUX; - Ib;TECH_AUX_LB_SbePhLastAscentFrame_volts ;Lb of SbePh last ascent frame.
+232;TECH_AUX;SD memory free space;TECH_AUX_NUMBER_UvpMemoryFreeSpace_gbyte;Remaining space in the SD card of the UVP sensor (in GB).
+174;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS;Alarm raised when the float is hanged during ascent.
+175;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float escaped from hanging during ascent.
+176;TECH;Remontée d'urgence;CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS;date of emergency ascent
+177;TECH;Pression mesurée en surface;PRES_Now_dbar;test message data reporting pressure at the surface during drift - cycle 0
+178;TECH_AUX;Date de freinage;TECH_AUX_CLOCK_BrakingDuringDescentAlarm_YYYYMMDDHHMMSS;Alarm raised when the descent speed is too high and the float brakes.
+179;TECH_AUX;Immersion de freinage;TECH_AUX_PRES_BrakingDuringDescentAlarm_dbar;Alarm raised when the descent speed is too high and the float brakes.
+180;TECH_AUX;Detection de glace;TECH_AUX_CLOCK_IceDetectionByIsaAlgorithm_YYYYMMDDHHMMSS;Time of ice detection by the ISA algorithm.
+181;TECH_AUX;Date de detection de glace;TECH_AUX_CLOCK_IceDetection_YYYYMMDDHHMMSS;Time of ice detection.
+182;TECH_AUX;Immersion de detection de glace;TECH_AUX_PRES_IceDetection_dbar;Pressure of ice detection.
+183;TECH_AUX;End of life;TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details).
+250;TECH_AUX;GPS time offset for BGC times;TECH_AUX_TIME_GpsTimeOffsetForBgcTimeAdj_seconds;GPS time offset used to adjust all BGC times of the cycle (it is the GPS time offset set before transmission of the previous cycle).
+251;TECH_AUX;Time offset for descending profile BGC times;TECH_AUX_TIME_DescProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust descending profile BGC times.
+252;TECH_AUX;Time offset for ascending profile BGC times;TECH_AUX_TIME_AscProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust ascending profile BGC times.

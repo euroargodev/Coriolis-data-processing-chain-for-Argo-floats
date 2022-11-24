@@ -50,9 +50,6 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % sensor list
 global g_decArgo_sensorList;
 global g_decArgo_sensorMountedOnFloat;
@@ -74,28 +71,21 @@ g_decArgo_firstPayloadConfigParamId = -1;
 
 % names of UVP configuration parameters set
 global g_decArgo_uvpConfigNamesCts5
+global g_decArgo_uvpConfigNumsCts5;
 g_decArgo_uvpConfigNamesCts5 = [];
+g_decArgo_uvpConfigNumsCts5 = [];
+
+% json meta-data
+global g_decArgo_jsonMetaData;
 
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
-
 % fill the sensor list
 sensorList = [];
 sensorMountedOnFloat = [];
-if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
-   jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
    sensorMountedOnFloat = jSensorNames';
    for id = 1:length(jSensorNames)
       sensorName = jSensorNames{id};
@@ -124,6 +114,10 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 17];
          case 'HYDROC'
             sensorList = [sensorList 18];
+         case 'IMU'
+            sensorList = [sensorList 20];
+         case 'RAMSES_ARC'
+            sensorList = [sensorList 21];
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...
@@ -142,8 +136,8 @@ g_decArgo_sensorList = sensorList;
 g_decArgo_sensorMountedOnFloat = sensorMountedOnFloat;
 
 % retrieve the number of the first cycle to process
-if (isfield(metaData, 'FIRST_CYCLE_TO_PROCESS'))
-   g_decArgo_firstCycleNumCts5 = str2num(metaData.FIRST_CYCLE_TO_PROCESS);
+if (isfield(g_decArgo_jsonMetaData, 'FIRST_CYCLE_TO_PROCESS'))
+   g_decArgo_firstCycleNumCts5 = str2num(g_decArgo_jsonMetaData.FIRST_CYCLE_TO_PROCESS);
 else
    fprintf('ERROR: Float #%d: FIRST_CYCLE_TO_PROCESS not present in Json meta-data file: %s\n', ...
       g_decArgo_floatNum, ...
@@ -151,17 +145,24 @@ else
 end
 
 % retrieve the list of UVP configuration parameters set
-if (isfield(metaData, 'META_AUX_UVP_CONFIG_NAMES'))
-   fieldNames = fields(metaData.META_AUX_UVP_CONFIG_NAMES);
+if (isfield(g_decArgo_jsonMetaData, 'META_AUX_UVP_CONFIG_NAMES'))
+   fieldNames = fields(g_decArgo_jsonMetaData.META_AUX_UVP_CONFIG_NAMES);
+   acqNum = 0;
    for idF = 1:length(fieldNames)
-      g_decArgo_uvpConfigNamesCts5{end+1} = metaData.META_AUX_UVP_CONFIG_NAMES.(fieldNames{idF});
+      g_decArgo_uvpConfigNamesCts5{end+1} = g_decArgo_jsonMetaData.META_AUX_UVP_CONFIG_NAMES.(fieldNames{idF});
+      if (strncmp(g_decArgo_jsonMetaData.META_AUX_UVP_CONFIG_NAMES.(fieldNames{idF}), 'ACQ_', length('ACQ_')))
+         g_decArgo_uvpConfigNumsCts5 = [g_decArgo_uvpConfigNumsCts5 acqNum];
+         acqNum = acqNum + 1;
+      else
+         g_decArgo_uvpConfigNumsCts5 = [g_decArgo_uvpConfigNumsCts5 -1];
+      end
    end
 end
 
 % create static configuration names
 configNames1 = [];
 switch (a_decoderId)
-   case {126, 127, 128}
+   case {126, 127, 128, 129}
       configInfoList = [ ...
          {'SYSTEM'} {[0:4 7 9:12]} {[]}; ...
          {'TECHNICAL'} {[0:1 8:15 17 18 20]} {[]}; ...
@@ -248,11 +249,11 @@ configNames1 = [configNames1 ...
 % create dynamic configuration names
 configNames2 = [];
 switch (a_decoderId)
-   case {126, 127, 128}
+   case {126, 127, 128, 129}
       configInfoList = [ ...
          {'SYSTEM'} {[5 6 8]} {[]}; ...
-         {'TECHNICAL'} {[2:7 16 19 21 22]} {[]}; ...
-         {'PATTERN_'} {0:8} {[]}; ...
+         {'TECHNICAL'} {[2:7 16 19 21 22 23 24]} {[]}; ...
+         {'PATTERN_'} {[0:8 99]} {[]}; ...
          {'ALARM'} {[0:5 9 10 16 21]} {[]}; ...
          {'TEMPORIZATION'} {0:3} {[]}; ...
          {'END_OF_LIFE'} {0:2} {[]}; ...
@@ -267,6 +268,7 @@ switch (a_decoderId)
          {'SENSOR_'} {[1:7 9]} {[46:53 60]}; ...
          {'SPECIAL'} {0:1} {[]}; ...
          {'PRESSURE_ACTIVATION'} {0:2} {[]}; ...
+         {'IMU'} {0:1} {[]}; ...
          ];
    otherwise
       fprintf('ERROR: Dynamic configuration parameters not defined yet for deciId #%d\n', ...
@@ -276,10 +278,24 @@ end
 for idConfig = 1:length(configInfoList)
    section = configInfoList{idConfig, 1};
    paramNumList = configInfoList{idConfig, 2};
-   if (strcmp(section, 'PATTERN_'))
+   if (strcmp(section, 'TECHNICAL'))
+      for paramNum = paramNumList
+         configNames2{end+1} = sprintf('CONFIG_APMT_%s_P%02d', section, paramNum);
+         if (ismember(paramNum, [23 24]))
+            for parkNum = 1:5
+               configNames2{end+1} = sprintf('CONFIG_APMT_%s_P%02d_%02d', section, paramNum, parkNum);
+            end
+         end
+      end
+   elseif (strcmp(section, 'PATTERN_'))
       for patternNum = 1:10
          for paramNum = paramNumList
             configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, patternNum, paramNum);
+            if (ismember(paramNum, [1 8]))
+               for parkNum = 1:5
+                  configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d_%02d', section, patternNum, paramNum, parkNum);
+               end
+            end
          end
       end
    elseif (strcmp(section, 'SENSOR_'))
@@ -313,6 +329,10 @@ for idConfig = 1:length(configInfoList)
             for miscNum = 54:59
                configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
             end
+         elseif (sensorNum == 21)
+            for miscNum = 54:56
+               configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
+            end
          end
       end
    else
@@ -344,12 +364,12 @@ opusConfigFileList = [ ...
    {'CONFIG_APMT_SENSOR_15_P64'} ...
    {'CONFIG_APMT_SENSOR_15_P65'} ...
    ];
-if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
-   jConfNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   jConfValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+if (~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME) && ~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE))
+   jConfNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   jConfValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    for id = 1:length(jConfNames)
       jConfName = jConfNames{id};
-      
+
       % ignore unused sensors
       sensorNum = [];
       if (strncmp(jConfName, 'CONFIG_APMT_SENSOR_', length('CONFIG_APMT_SENSOR_')))
@@ -378,6 +398,24 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
       elseif ((length(jConfName) > length('CONFIG_APMT_UVP6_')) && ...
             (strncmp(jConfName, 'CONFIG_APMT_UVP6_', length('CONFIG_APMT_UVP6_'))))
          sensorNum = 8;
+      elseif ((length(jConfName) > length('CONFIG_APMT_RAMSES_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_RAMSES_', length('CONFIG_APMT_RAMSES_'))))
+         sensorNum = 14;
+      elseif ((length(jConfName) > length('CONFIG_APMT_OPUS_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_OPUS_', length('CONFIG_APMT_OPUS_'))))
+         sensorNum = 15;
+      elseif ((length(jConfName) > length('CONFIG_APMT_MPE_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_MPE_', length('CONFIG_APMT_MPE_'))))
+         sensorNum = 17;
+      elseif ((length(jConfName) > length('CONFIG_APMT_HYDROC_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_HYDROC_', length('CONFIG_APMT_HYDROC_'))))
+         sensorNum = 18;
+      elseif ((length(jConfName) > length('CONFIG_APMT_IMU_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_IMU_', length('CONFIG_APMT_IMU_'))))
+         sensorNum = 20;
+      elseif ((length(jConfName) > length('CONFIG_APMT_RAMSES_ARC_')) && ...
+            (strncmp(jConfName, 'CONFIG_APMT_RAMSES_ARC_', length('CONFIG_APMT_RAMSES_ARC_'))))
+         sensorNum = 21;
       end
       if (~isempty(sensorNum) && ~ismember(sensorNum, sensorList))
          continue
@@ -388,12 +426,38 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
          % look for this configuration parameter in the dynamic list
          idPos = find(strcmp(jConfName, configNames2) == 1, 1);
          if (~isempty(idPos))
-            if (isstrprop(jConfValue, 'digit'))
-               configValues2(idPos) = str2num(jConfValue);
+            if (ismember(jConfName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]) || ...
+                  ((length(jConfName) > 23) && ismember(jConfName([1:20 23:end]), [{'CONFIG_APMT_PATTERN__P01'} {'CONFIG_APMT_PATTERN__P08'}])))
+
+               % manage multi park
+               if (any(strfind(jConfValue, ';')))
+                  % multi park mode
+                  dataCell = split(jConfValue, ';');
+                  dataTab = cellfun(@str2num, dataCell);
+                  for idV = 1:length(dataTab)
+                     jConfNameBis = [jConfName sprintf('_%02d', idV)];
+                     idPosBis = find(strcmp(jConfNameBis, configNames2) == 1, 1);
+                     configValues2(idPosBis) = dataTab(idV);
+                  end
+                  if (~ismember(jConfName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]))
+                     jConfNameTer = [jConfName(1:end-3) 'P99'];
+                     idPosTer = find(strcmp(jConfNameTer, configNames2) == 1, 1);
+                     configValues2(idPosTer) = length(dataTab);
+                  end
+               else
+                  configValues2(idPos) = str2double(jConfValue);
+                  if (~ismember(jConfName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]))
+                     jConfNameTer = [jConfName(1:end-3) 'P99'];
+                     idPosTer = find(strcmp(jConfNameTer, configNames2) == 1, 1);
+                     configValues2(idPosTer) = 1;
+                  end
+               end
+            elseif (isstrprop(jConfValue, 'digit'))
+               configValues2(idPos) = str2double(jConfValue);
             else
                [value, status] = str2num(jConfValue);
                if ((length(value) == 1) && (status == 1))
-                  configValues2(idPos) = str2num(jConfValue);
+                  configValues2(idPos) = str2double(jConfValue);
                else
                   if (strcmp(jConfValue, 'True'))
                      configValues2(idPos) = 1;
@@ -414,7 +478,14 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
                      % look for UVP configuration name in the dedicated list
                      idF = find(strcmp(jConfValue, g_decArgo_uvpConfigNamesCts5));
                      if (~isempty(idF))
-                        configValues2(idPos) = idF;
+                        if (g_decArgo_uvpConfigNumsCts5(idF) ~= -1)
+                           configValues2(idPos) = g_decArgo_uvpConfigNumsCts5(idF);
+                        else
+                           fprintf('ERROR: Float #%d: cannot find UVP configuration ''%s'' in the dedicated list\n', ...
+                              g_decArgo_floatNum, ...
+                              jConfValue);
+                           return
+                        end
                      else
                         fprintf('ERROR: Float #%d: cannot find UVP configuration ''%s'' in the dedicated list\n', ...
                            g_decArgo_floatNum, ...
@@ -440,6 +511,30 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
                   end
                end
             end
+
+            % duplicate SENSOR_14_PXX (RAMSES) into SENSOR_21_PXX (RAMSES2)
+            % Except for XX = 54, 55, 56
+            if (strncmp(jConfName, 'CONFIG_APMT_SENSOR_14_P', length('CONFIG_APMT_SENSOR_14_P')))
+               if (ismember(14, g_decArgo_sensorList) && ismember(21, g_decArgo_sensorList))
+                  idFUs = strfind(jConfName, '_');
+                  paramNum = str2double(jConfName(idFUs(4)+2:end));
+                  if (~ismember(paramNum, [54:56]))
+                     jConfNameBis = regexprep(jConfName, '_SENSOR_14_', '_SENSOR_21_');
+                     idPosBis = find(strcmp(jConfNameBis, configNames2) == 1, 1);
+                     if (~isempty(idPosBis))
+                        if (~isempty(jConfValues{id}))
+                           configValues1{end+1} = jConfValues{id};
+                           configValues1Ids = [configValues1Ids idPosBis];
+                        end
+                     else
+                        fprintf('WARNING: Float #%d: cannot find ''%s'' parameter in the configuration list (Json meta-data file: %s)\n', ...
+                           g_decArgo_floatNum, ...
+                           jConfNameBis, ...
+                           jsonInputFileName);
+                     end
+                  end
+               end
+            end
          else
             % look for this configuration parameter in the static list
             idPos = find(strcmp(jConfName, configNames1) == 1, 1);
@@ -453,6 +548,30 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
                   g_decArgo_floatNum, ...
                   jConfName, ...
                   jsonInputFileName);
+            end
+
+            % duplicate SENSOR_14_PXX (RAMSES) into SENSOR_21_PXX (RAMSES2)
+            % Except for XX = 54, 55, 56
+            if (strncmp(jConfName, 'CONFIG_APMT_SENSOR_14_P', length('CONFIG_APMT_SENSOR_14_P')))
+               if (ismember(14, g_decArgo_sensorList) && ismember(21, g_decArgo_sensorList))
+                  idFUs = strfind(jConfName, '_');
+                  paramNum = str2double(jConfName(idFUs(4)+2:end));
+                  if (~ismember(paramNum, [54:56]))
+                     jConfNameBis = regexprep(jConfName, '_SENSOR_14_', '_SENSOR_21_');
+                     idPosBis = find(strcmp(jConfNameBis, configNames1) == 1, 1);
+                     if (~isempty(idPosBis))
+                        if (~isempty(jConfValues{id}))
+                           configValues1{end+1} = jConfValues{id};
+                           configValues1Ids = [configValues1Ids idPosBis];
+                        end
+                     else
+                        fprintf('WARNING: Float #%d: cannot find ''%s'' parameter in the configuration list (Json meta-data file: %s)\n', ...
+                           g_decArgo_floatNum, ...
+                           jConfNameBis, ...
+                           jsonInputFileName);
+                     end
+                  end
+               end
             end
          end
       end
@@ -482,22 +601,23 @@ g_decArgo_floatConfig.DYNAMIC_TMP.NUMBER = 1;
 g_decArgo_floatConfig.DYNAMIC_TMP.NAMES = configNames2';
 g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 
-% create_csv_to_print_config_ir_rudics_sbd2('init_', 0, g_decArgo_floatConfig);
+% a=1
+% create_csv_to_print_config_ir_rudics_cts5('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % fill the calibration coefficients
-if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
-   if (~isempty(metaData.CALIBRATION_COEFFICIENT))
-      fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+   if (~isempty(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT))
+      fieldNames = fields(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT);
       for idF = 1:length(fieldNames)
-         g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
       end
       
       % create the tabDoxyCoef array
       switch (a_decoderId)
-         case {126, 127, 128}
+         case {126, 127, 128, 129}
             if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'OPTODE')))
                if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                   calibData = g_decArgo_calibInfo.OPTODE;
@@ -534,7 +654,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                
                switch (a_decoderId)
                   
-                  case {126, 128}
+                  case {126, 128, 129}
                      calibData = g_decArgo_calibInfo.SUNA;
                      tabOpticalWavelengthUv = [];
                      tabENitrate = [];
@@ -575,9 +695,9 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
                      g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
                      
-                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
+                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', g_decArgo_jsonMetaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', g_decArgo_jsonMetaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', g_decArgo_jsonMetaData);
                      
                   case {127}
                      calibData = g_decArgo_calibInfo.SUNA;
@@ -629,9 +749,9 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
                      g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
                      
-                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
-                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
+                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', g_decArgo_jsonMetaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', g_decArgo_jsonMetaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', g_decArgo_jsonMetaData);
                end
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
@@ -642,8 +762,8 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
 end
 
 % temporary calibration coefficient for MPE sensor
-if (isfield(metaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'))
-   g_decArgo_calibInfo.MPE.ResponsivityW = metaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W;
+if (isfield(g_decArgo_jsonMetaData, 'META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W'))
+   g_decArgo_calibInfo.MPE.ResponsivityW = g_decArgo_jsonMetaData.META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W;
 end
 
 return

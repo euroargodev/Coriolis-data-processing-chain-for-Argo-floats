@@ -7,8 +7,7 @@
 %    o_floatFrameLen, ...
 %    o_floatCycleTime, o_floatDriftSamplingPeriod, o_floatDelay, ...
 %    o_floatLaunchDate, o_floatLaunchLon, o_floatLaunchLat, ...
-%    o_floatRefDay, o_floatEndDate, ...
-%    o_floatDmFlag] = get_one_float_info(a_floatNum, a_floatArgosId)
+%    o_floatRefDay, o_floatDmFlag] = get_one_float_info(a_floatNum, a_floatArgosId)
 %
 % INPUT PARAMETERS :
 %   a_floatNum      : float WMO number (empty if a_floatArgosId is not empty)
@@ -28,7 +27,6 @@
 %   o_floatLaunchLon           : float launch longitude
 %   o_floatLaunchLat           : float launch latitude
 %   o_floatRefDay              : float reference day (day of the first descent)
-%   o_floatEndDate             : float end decoding date
 %   o_floatDmFlag              : float DM flag
 %
 % EXAMPLES :
@@ -44,8 +42,7 @@ function [o_floatNum, o_floatArgosId, ...
    o_floatFrameLen, ...
    o_floatCycleTime, o_floatDriftSamplingPeriod, o_floatDelay, ...
    o_floatLaunchDate, o_floatLaunchLon, o_floatLaunchLat, ...
-   o_floatRefDay, o_floatEndDate, ...
-   o_floatDmFlag] = get_one_float_info(a_floatNum, a_floatArgosId)
+   o_floatRefDay, o_floatDmFlag] = get_one_float_info(a_floatNum, a_floatArgosId)
 
 % output parameters initialization
 o_floatNum = [];
@@ -60,7 +57,6 @@ o_floatLaunchDate = [];
 o_floatLaunchLon = [];
 o_floatLaunchLat = [];
 o_floatRefDay = [];
-o_floatEndDate = [];
 o_floatDmFlag = [];
 
 % global configuration values
@@ -189,7 +185,6 @@ else
    expectedFields{end+1} = 'LAUNCH_DATE';
    expectedFields{end+1} = 'LAUNCH_LON';
    expectedFields{end+1} = 'LAUNCH_LAT';
-   expectedFields{end+1} = 'END_DECODING_DATE';
    expectedFields{end+1} = 'REFERENCE_DAY';
    expectedFields{end+1} = 'DM_FLAG';
    
@@ -212,14 +207,6 @@ else
       floatLaunchDate(9:10), floatLaunchDate(11:12), floatLaunchDate(13:14)));
    o_floatLaunchLon = str2num(getfield(fileContents, 'LAUNCH_LON'));
    o_floatLaunchLat = str2num(getfield(fileContents, 'LAUNCH_LAT'));
-   floatEndDate = getfield(fileContents, 'END_DECODING_DATE');
-   if (strcmp(floatEndDate, '99999999999999'))
-      o_floatEndDate = g_decArgo_dateDef;
-   else
-      o_floatEndDate = gregorian_2_julian_dec_argo(sprintf('%s/%s/%s %s:%s:%s', ...
-         floatEndDate(1:4), floatEndDate(5:6), floatEndDate(7:8), ...
-         floatEndDate(9:10), floatEndDate(11:12), floatEndDate(13:14)));
-   end
    floatRefDay = getfield(fileContents, 'REFERENCE_DAY');
    o_floatRefDay = gregorian_2_julian_dec_argo(sprintf('%s/%s/%s 00:00:00', ...
       floatRefDay(1:4), floatRefDay(5:6), floatRefDay(7:8)));

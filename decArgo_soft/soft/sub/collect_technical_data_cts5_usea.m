@@ -70,7 +70,7 @@ for idPack = 1:size(a_tabTech, 1)
    for idT = 1:length(techData)
       techDataAll = [techDataAll; ...
          cycleNumber profileNumber ...
-         {techData{idT}.source} techData{idT}.techId techData{idT}.valueRaw techData{idT}.valueOutput {techData{idT}.shortSensorName}];
+         {techData{idT}.source} techData{idT}.techId techData{idT}.valueRaw techData{idT}.valueOutput {techData{idT}.shortSensorName} {techData{idT}.parkingNumber}];
    end
 end
 
@@ -79,21 +79,9 @@ for idEvt = 1:length(g_decArgo_eventDataTech)
    eventData = g_decArgo_eventDataTech{idEvt};
    techDataAll = [techDataAll; ...
       g_decArgo_cycleNumFloat g_decArgo_patternNumFloat ...
-      {eventData.source} eventData.techId eventData.valueRaw eventData.valueOutput {''}];
+      {eventData.source} eventData.techId eventData.valueRaw eventData.valueOutput {''} {''}];
 end
 
-noArgoSensorNameList = [ ...
-   {'Uvp'} ...
-   {'UvpLpm'} ...
-   {'UvpBlk'} ...
-   {'OpusLgt'} ...
-   {'OpusBlk'} ...
-   {'Ramses'} ...
-   {'Mpe'} ...
-   {'HydrocC'} ...
-   {'HydrocM'} ...
-   ];
-specificTechIdList = 216:221; % TECH Ids for witch a sensor of noArgoSensorNameList need a change (+ 1000) of TECH label
 if (~isempty(techDataAll))
    
    % merge Tech and Event technical information
@@ -136,7 +124,7 @@ if (~isempty(techDataAll))
                   end
                case {110, 121, 124, 184}
                   % dates
-                  if (abs(techDataAll{idT, 5} - techDataAll{idE, 5}) > 1/86400)
+                  if (abs(techDataAll{idT, 5} - techDataAll{idE, 5}) > 60/86400)
                      useEvent = 1;
                   end
                otherwise
@@ -183,8 +171,26 @@ if (~isempty(techDataAll))
       o_techNcParamIndex(:, 3), ...
       ones(size(techDataAll, 1), 1)*g_decArgo_cycleNum);
    o_techNcParamValue = techDataAll(:, 6);
-   
+
    % additional information on short sensor names
+   noArgoSensorNameList = [ ...
+      {'Uvp'} ...
+      {'UvpLpm'} ...
+      {'UvpTxo'} ...
+      {'UvpBlk'} ...
+      {'Opus'} ...
+      {'OpusLgt'} ...
+      {'OpusBlk'} ...
+      {'Ramses'} ...
+      {'Ramses2'} ...
+      {'Mpe'} ...
+      {'Hydroc'} ...
+      {'HydrocC'} ...
+      {'HydrocM'} ...
+      {'Imu'} ...
+      {'Wave'} ...
+      ];
+   specificTechIdList = 216:221; % TECH Ids for witch a sensor of noArgoSensorNameList need a change (+ 1000) of TECH label
    for idT = 1:size(o_techNcParamIndex, 1)
       if (~isempty(techDataAll{idT, 7}))
          if (ismember(o_techNcParamIndex(idT, 5), specificTechIdList) && ...
@@ -197,7 +203,19 @@ if (~isempty(techDataAll))
          g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<short_sensor_name>'} techDataAll(idT, 7)];
          g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
       end
-   end   
+   end
+
+   % additional information on parking numbers
+   specificTechIdList = [196 197 254:259]; % TECH Ids for witch a parking number (<I>) is present in the label
+   for idT = 1:size(o_techNcParamIndex, 1)
+      if (ismember(o_techNcParamIndex(idT, 5), specificTechIdList))
+         if (~isempty(techDataAll{idT, 8}) && (techDataAll{idT, 8} ~= -1))
+            o_techNcParamIndex(idT, 4) = g_decArgo_outputNcParamLabelInfoCounter*-1;
+            g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<I>'} {num2str(techDataAll{idT, 8})}];
+            g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
+         end
+      end
+   end
 end
 
 % retrieve tech PARAM data from events
@@ -224,6 +242,7 @@ if (~isempty(g_decArgo_eventDataParamTech))
    
    paramValveActionFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
    paramPumpActionFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
+   paramVerticalSpeed = get_netcdf_param_attributes('VERTICAL_SPEED');
 
    cycleNumList = sort(unique(tabTechParamIndex(:, 2)));
    profNumList = sort(unique(tabTechParamIndex(:, 3)));
@@ -254,6 +273,9 @@ if (~isempty(g_decArgo_eventDataParamTech))
             elseif (any(strcmp(paramName, 'PUMP_ACTION_FLAG')))
                measStruct.paramList = paramPumpActionFlag;
                measStruct.paramData = single(data{find(strcmp(paramName, 'PUMP_ACTION_FLAG'), 1)}.value);
+            elseif (any(strcmp(paramName, 'VERTICAL_SPEED')))
+               measStruct.paramList = paramVerticalSpeed;
+               measStruct.paramData = single(data{find(strcmp(paramName, 'VERTICAL_SPEED'), 1)}.value);
             end
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             measDataTab(idspyMeas) = measStruct;

@@ -34,6 +34,7 @@ global g_decArgo_patternNumFloatStr;
 
 % names of UVP configuration parameters set
 global g_decArgo_uvpConfigNamesCts5
+global g_decArgo_uvpConfigNumsCts5;
 
 
 % create and fill a new set of configuration values
@@ -61,14 +62,58 @@ for idC = 1:length(configNames)
    confName = configNames{idC};
    idFUsP = strfind(confName, '_P');
    fieldName = confName(13:idFUsP(end)-1);
-   paramNum = str2num(confName(idFUsP(end)+2:end));
+   paramNum = str2double(confName(idFUsP(end)+2:end));
    if (isfield(a_configData, fieldName))
       paramStruct = a_configData.(fieldName);
       idForParam = find([paramStruct.num{:}] == paramNum);
       if (~isempty(idForParam))
          confValue = [];
          newVal = paramStruct.data{idForParam};
-         if (~ischar(newVal))
+
+         if (ismember(confName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]) || ...
+               ((length(confName) > 23) && ismember(confName([1:20 23:end]), [{'CONFIG_APMT_PATTERN__P01'} {'CONFIG_APMT_PATTERN__P08'}])))
+
+            % manade multi park
+            if (any(strfind(newVal, ';')))
+               % multi park mode
+               dataCell = split(newVal, ';');
+               dataTab = cellfun(@str2num, dataCell);
+               for idV = 1:length(dataTab)
+                  confNameBis = [confName sprintf('_%02d', idV)];
+                  idPosBis = find(strcmp(confNameBis, configNames) == 1, 1);
+                  confValue = dataTab(idV);
+                  if (newConfig(idPosBis) ~= confValue)
+                     fprintf('DEC_INFO: Float #%d: updated param ''%s'': %g - %g \n', ...
+                        g_decArgo_floatNum, ...
+                        confNameBis, newConfig(idPosBis), confValue);
+                     if (~isempty(g_decArgo_outputCsvFileId))
+                        fprintf(g_decArgo_outputCsvFileId, '%d;%s;%s;%s;-;%s;%g;=>;%g\n', ...
+                           g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+                           'Updated_apmt_param', confNameBis, newConfig(idPosBis), confValue);
+                     end
+                  end
+                  newConfig(idPosBis) = confValue;
+               end
+               newConfig(idC) = nan;
+               if (~ismember(confName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]))
+                  confNameTer = [confName(1:end-3) 'P99'];
+                  idPosTer = find(strcmp(confNameTer, configNames) == 1, 1);
+                  newConfig(idPosTer) = length(dataTab);
+               end
+               continue
+            else
+               if (isnumeric(newVal))
+                  confValue = newVal;
+               else
+                  confValue = str2double(newVal);
+               end
+               if (~ismember(confName, [{'CONFIG_APMT_TECHNICAL_P23'} {'CONFIG_APMT_TECHNICAL_P24'}]))
+                  confNameTer = [confName(1:end-3) 'P99'];
+                  idPosTer = find(strcmp(confNameTer, configNames) == 1, 1);
+                  newConfig(idPosTer) = 1;
+               end
+            end
+         elseif (~ischar(newVal))
             confValue = newVal;
          elseif (strcmp(newVal, 'True'))
             confValue = 1;
@@ -87,7 +132,14 @@ for idC = 1:length(configNames)
             % look for UVP configuration name in the dedicated list
             idF = find(strcmp(newVal, g_decArgo_uvpConfigNamesCts5));
             if (~isempty(idF))
-               confValue = idF;
+               if (g_decArgo_uvpConfigNumsCts5(idF) ~= -1)
+                  confValue = g_decArgo_uvpConfigNumsCts5(idF);
+               else
+                  fprintf('ERROR: Float #%d: cannot find UVP configuration ''%s'' in the dedicated list\n', ...
+                     g_decArgo_floatNum, ...
+                     newVal);
+                  return
+               end
             else
                fprintf('ERROR: Float #%d: cannot find UVP configuration ''%s'' in the dedicated list\n', ...
                   g_decArgo_floatNum, ...
@@ -112,6 +164,7 @@ for idC = 1:length(configNames)
                g_decArgo_floatNum, ...
                confName);
          end
+
          if (~isempty(confValue))
             if (newConfig(idC) ~= confValue)
                fprintf('DEC_INFO: Float #%d: updated param ''%s'': %g - %g \n', ...
@@ -136,6 +189,7 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = [g_decArgo_floatConfig.DYNAMIC_TMP.VA
 
 % voir = cat(2, g_decArgo_floatConfig.DYNAMIC_TMP.NAMES, num2cell(g_decArgo_floatConfig.DYNAMIC_TMP.VALUES));
 
+% a=1
 % create_csv_to_print_config_ir_rudics_cts5('', 0, g_decArgo_floatConfig);
 
 return

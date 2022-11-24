@@ -112,7 +112,7 @@ end
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
-paramBlackTemp = get_netcdf_param_attributes('BLACK_TEMP');
+paramBlackTempParticles = get_netcdf_param_attributes('BLACK_TEMP_PARTICLES');
 paramBlackNbSizeSpecPart = get_netcdf_param_attributes('BLACK_NB_SIZE_SPECTRA_PARTICLES');
 
 % create final profile(s)
@@ -146,18 +146,9 @@ for idDir = 1:length(uDir)
    end
    
    paramList = [ ...
-      paramPres paramBlackTemp paramBlackNbSizeSpecPart ...
+      paramPres paramBlackTempParticles paramBlackNbSizeSpecPart ...
       ];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;

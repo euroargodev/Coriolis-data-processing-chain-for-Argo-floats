@@ -173,14 +173,14 @@ for idFile = 1:length(a_systemLogFileList)
          end
       end
    end
-   
+
    % timing events
    idEvts = find(strcmp({events.functionName}, 'go_to_state') | ...
       strcmp({events.functionName}, 'SURFACE') | ...
       strcmp({events.functionName}, 'sky_search') | ...
       strcmp({events.functionName}, 'upload_file'));
    if (~isempty(idEvts))
-      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(events(idEvts), o_cycleTimeData);
+      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1321_to_23(events(idEvts), o_cycleTimeData, idFile);
       if (~isempty(o_cycleTimeData) && ~isempty(o_cycleTimeData.descentStartDateSys))
          descentStartTime = o_cycleTimeData.descentStartDateSys;
       end

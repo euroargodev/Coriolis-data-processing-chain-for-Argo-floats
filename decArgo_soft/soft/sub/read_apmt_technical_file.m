@@ -38,6 +38,11 @@ o_ncMetaData = [];
 % default values
 global g_decArgo_janFirst1950InMatlab; % used in an inline function
 
+% global measurement codes
+global g_MC_DST;
+global g_MC_PST;
+global g_MC_PET;
+
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: read_apmt_technical: File not found: %s\n', a_inputFilePathName);
@@ -147,6 +152,7 @@ for idF = 1:length(fieldNames)
                   val(end) = [];
                end
                
+               parkNum = -1;
                for idD = 1:length(techInfoStruct.(fieldNames{idF}){idP}.id)
                   id = techInfoStruct.(fieldNames{idF}){idP}.id{idD};
                   if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.func) && ...
@@ -194,11 +200,17 @@ for idF = 1:length(fieldNames)
                   else
                      techData.(fieldNames{idF}).fmt{end+1} = [];
                   end
+
+                  % manage multi-parking
+                  if (strcmp(techData.(fieldNames{idF}).name{end}, 'parking number'))
+                     parkNum = techData.(fieldNames{idF}).data{end};
+                  end
                   
                   % collect TECH data
                   if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.tech))
                      if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.tech{idD}))
                         dataForTech = techInfoStruct.(fieldNames{idF}){idP}.tech{idD};
+                        dataForTech.parkingNumber = parkNum;
                         if (~ismember(dataForTech.techId, [152]))
                            if (~isempty(dataForTech.func))
                               dataForTech.valueRaw = techData.(fieldNames{idF}).data{end};
@@ -247,16 +259,18 @@ for idF = 1:length(fieldNames)
                   % collect TIME data
                   if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.time))
                      if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.time{idD}))
-                        dataForTime = techInfoStruct.(fieldNames{idF}){idP}.time{idD};
-                        if (strcmp(dataForTime.paramName, 'JULD'))
-                           dataForTime.time = techData.(fieldNames{idF}).data{end};
-                           if (~isempty(techData.(fieldNames{idF}).dataAdj{end}))
-                              dataForTime.timeAdj = adjust_time_cts5(dataForTime.time);
+                        if (parkNum < 2) % parkNum is set in multi-park only and only first park is used
+                           dataForTime = techInfoStruct.(fieldNames{idF}){idP}.time{idD};
+                           if (strcmp(dataForTime.paramName, 'JULD'))
+                              dataForTime.time = techData.(fieldNames{idF}).data{end};
+                              if (~isempty(techData.(fieldNames{idF}).dataAdj{end}))
+                                 dataForTime.timeAdj = adjust_time_cts5(dataForTime.time);
+                              end
+                           else
+                              dataForTime.pres = techData.(fieldNames{idF}).data{end};
                            end
-                        else
-                           dataForTime.pres = techData.(fieldNames{idF}).data{end};
+                           o_timeData{end+1} = dataForTime;
                         end
-                        o_timeData{end+1} = dataForTime;
                      end
                   end
                   
@@ -264,6 +278,15 @@ for idF = 1:length(fieldNames)
                   if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.traj))
                      if (~isempty(techInfoStruct.(fieldNames{idF}){idP}.traj{idD}))
                         dataForTraj = techInfoStruct.(fieldNames{idF}){idP}.traj{idD};
+                        if (parkNum > 1) % parkNum is set in multi-park only
+                           % assigned times to:
+                           % - g_MC_DST or g_MC_PST for the first park (set in the init_tech_info_struct_*)
+                           % - g_MC_PET-10 for the following ones
+                           % - not modified if set to g_MC_Grounded
+                           if (ismember(dataForTraj.measCode, [g_MC_DST g_MC_PST]))
+                              dataForTraj.measCode = g_MC_PET-10;
+                           end
+                        end
                         dataForTraj.value = techData.(fieldNames{idF}).data{end};
                         if (strcmp(dataForTraj.paramName, 'JULD'))
                            if (~isempty(techData.(fieldNames{idF}).dataAdj{end}))
@@ -479,6 +502,9 @@ switch (a_decoderId)
 
    case {128}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_128;
+
+   case {129}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129;
 
    otherwise
       fprintf('ERROR: init_tech_info_struct: Don''t know how to parse APMT technical data for techId #%d\n', ...

@@ -26,8 +26,6 @@ o_floatRudicsId = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
 
 % arrays to store calibration information
 global g_decArgo_calibInfo;
@@ -37,9 +35,6 @@ g_decArgo_calibInfo = [];
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% Argos (1), Iridium RUDICS (2), Iridium SBD (3) float
-global g_decArgo_floatTransType;
-
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -47,28 +42,15 @@ global g_decArgo_floatConfig;
 global g_decArgo_jsonMetaData;
 
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_calibInfo = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
-g_decArgo_jsonMetaData = jsonMetaData;
-
 % create the configurations from JSON data
 configNames = [];
 configValues = [];
 configNumbers = [];
-if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
-      (isfield(jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
+if ((isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
+      (isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
    
-   configNames = struct2cell(jsonMetaData.CONFIG_PARAMETER_NAME);
-   cellConfigValues = jsonMetaData.CONFIG_PARAMETER_VALUE;
+   configNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   cellConfigValues = g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE;
    configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
    configNumbers = 1:length(cellConfigValues);
    if (length(cellConfigValues) > 1)
@@ -114,6 +96,6 @@ g_decArgo_floatConfig.VALUES = configValues;
 g_decArgo_floatConfig.NUMBER = configNumbers;
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 return

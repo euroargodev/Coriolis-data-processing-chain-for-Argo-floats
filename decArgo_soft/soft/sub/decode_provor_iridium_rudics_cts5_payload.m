@@ -1142,7 +1142,7 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % PROF NetCDF data
-   
+
    % process profile data from apmt
    tabDrift = [];
    tabDriftRaw = [];

@@ -56,9 +56,6 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % arrays to store RT offset information
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
@@ -66,6 +63,9 @@ g_decArgo_rtOffsetInfo = [];
 % ICE float firmware
 global g_decArgo_floatFirmware;
 g_decArgo_floatFirmware = '';
+
+% json meta-data
+global g_decArgo_jsonMetaData;
 
 
 % create static configuration names
@@ -91,29 +91,17 @@ end
 
 % initialize the configuration values with the json meta-data file
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-metaData = loadjson(jsonInputFileName);
-
-if (isfield(metaData, 'FIRMWARE_VERSION'))
-   g_decArgo_floatFirmware = strtrim(metaData.FIRMWARE_VERSION);
+if (isfield(g_decArgo_jsonMetaData, 'FIRMWARE_VERSION'))
+   g_decArgo_floatFirmware = strtrim(g_decArgo_jsonMetaData.FIRMWARE_VERSION);
 end
 
 % fill the configuration values
 configValues1 = repmat({'nan'}, length(configNames1), 1);
 configValues2 = nan(length(configNames2), 1);
 
-if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
-   jConfNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   jConfValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+if (~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME) && ~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE))
+   jConfNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   jConfValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    for id = 1:length(jConfNames)
       idFUs = strfind(jConfNames{id}, '_');
       idPos = find(strncmp(jConfNames{id}, configNames2, idFUs(2)) == 1, 1);
@@ -258,6 +246,6 @@ g_decArgo_floatConfig.DYNAMIC_TMP.VALUES = configValues2;
 % create_csv_to_print_config_ir_sbd('init_', 0, g_decArgo_floatConfig);
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 return

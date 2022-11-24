@@ -1,16 +1,16 @@
 % ------------------------------------------------------------------------------
-% Decode CTD data transmitted by a CTS5-USEA float in extended format.
+% Decode IMU Wave data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_ctdData] = decode_apmt_ctd_extended_126(a_data, a_lastByteNum, a_inputFilePathName)
+%  [o_imuWaveData] = decode_apmt_imu_wave(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data              : input CTD data to decode
+%   a_data              : input IMU Wave data to decode
 %   a_lastByteNum       : number of the last useful byte of the data
-%   a_inputFilePathName : APMT CTD file to decode
+%   a_inputFilePathName : APMT IMU Wave file to decode
 %
 % OUTPUT PARAMETERS :
-%   o_ctdData : CTD decoded data
+%   o_imuWaveData : IMU Wave decoded data
 %
 % EXAMPLES :
 %
@@ -18,9 +18,12 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   09/03/2020 - RNU - creation
+%   06/27/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ctdData] = decode_apmt_ctd_extended_126_to_128(a_data, a_lastByteNum, a_inputFilePathName)
+function [o_imuWaveData] = decode_apmt_imu_wave(a_data, a_lastByteNum, a_inputFilePathName)
+
+% output parameters initialization
+o_imuWaveData = [];
 
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
@@ -36,7 +39,6 @@ global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
-global g_decArgo_cts5Treat_SS;
 global g_decArgo_cts5Treat_DW;
 
 
@@ -52,35 +54,35 @@ phaseList = [ ...
 
 % list of treatment type headers that can be encountered
 treatList = [ ...
-   {'(AM)(SD)(MD)'} ...
-   {'(AM)(SD)'} ...
-   {'(AM)(MD)'} ...
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
    {'(RW)'} ...
-   {'(AM)'} ...
-   {'(SS)'} ...
-   {'(DW)'} ...
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {''} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
    ];
 
 % list of corresponding bit pattern (used to acces the data)
 bitList = [ ...
-   {[16 16 16 16 4 4 8 8 16 16 16 4 4]} ...
-   {[16 16 16 16 4 4 8 8]} ...
-   {[16 16 16 16 4 4 16 16 16 4 4]} ...
-   {[16 16 16 16 4 4]} ...
-   {[16 16 16 16 4 4]} ...
-   {[32 16 16 16 4 4]} ...
-   {[16 16 16 16 4 4]} ...
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[16 16]} ... % the number of points is provided in the data (bit pattern will be updated later)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
    ];
 
 % list of signed type parameters
 signedList = [ ...
-   {[0 0 0 0 0 0 1 1 0 0 0 0 0 ]} ...
-   {[0 0 0 0 0 0 1 1]} ...
-   {[0 0 0 0 0 0 0 0 0 0 0]} ...
-   {[0 0 0 0 0 0]} ...
-   {[0 0 0 0 0 0]} ...
-   {[0 0 0 0 0 0]} ...
-   {[0 0 0 0 0 0]} ...
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[0 0 ones(1, 10)]} ...
+   {[0 0 ones(1, 10)]} ...
+   {[]} ... % unused but to be consistent with g_decArgo_cts5Treat_SS (so that 'DW' is g_decArgo_cts5Treat_DW == 7)
+   {[0 0 ones(1, 10)]} ...
    ];
 
 inputData = a_data;
@@ -110,6 +112,9 @@ while (currentByte <= lastByteNum)
    % look for a new treatment header
    if (inputData(currentByte) == '(')
       for idTreat = 1:length(treatList)
+         if (isempty(treatList{idTreat}))
+            continue
+         end
          treatName = treatList{idTreat};
          if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
             newTreatNum = idTreat;
@@ -131,8 +136,7 @@ while (currentByte <= lastByteNum)
          
          % finalize decoded data
          % compute the dates
-         if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]) && ...
-               (currentTreatNum ~= g_decArgo_cts5Treat_SS))
+         if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
             date = currentDataStruct.data(:, 1);
             date(1) = date(1) + currentDataStruct.date;
             for id = 2:length(date)
@@ -164,8 +168,7 @@ while (currentByte <= lastByteNum)
       
       % the absolute date is provided in the beginning of descent/ascent phase
       % data
-      if (ismember(currentPhaseNum, [g_decArgo_cts5PhaseDescent g_decArgo_cts5PhaseDeepProfile g_decArgo_cts5PhaseAscent]) && ...
-            (currentTreatNum ~= g_decArgo_cts5Treat_SS))
+      if (ismember(currentPhaseNum, [g_decArgo_cts5PhaseDescent g_decArgo_cts5PhaseDeepProfile g_decArgo_cts5PhaseAscent]))
          data = get_bits(1, 32, inputData(currentByte:currentByte+3));
          currentDataStruct.date = typecast(swapbytes(uint32(data)), 'uint32');
          currentByte = currentByte + 4;
@@ -179,68 +182,33 @@ while (currentByte <= lastByteNum)
       if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
          tabNbBits(1) = 32;
       end
+
+      % first decoding to retrieve the number of channels
       nbBytes = sum(tabNbBits)/8;
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
-      tabSignedList = signedList{currentTreatNum};
+      rawData(end) = decode_apmt_meas(rawData(end), tabNbBits(end), 0, a_inputFilePathName);
+      nbPoints = rawData(end);
+
+      tabNbBits = [tabNbBits repmat(16, 1, 6*nbPoints)];
+      nbBytes = sum(tabNbBits)/8;
+      rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
+      tabSignedList = [0 0 ones(1, 6*nbPoints)];
       for id = 1:length(tabNbBits)
-         if (tabNbBits(id) > 8)
+         if ((tabNbBits(id) == 16) || (id == 1))
             rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), tabSignedList(id), a_inputFilePathName);
+         elseif (tabNbBits(id) == 32)
+            rawData(id) = typecast(uint32(swapbytes(uint32(rawData(id)))), 'single');
          end
       end
       
-      if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))
-         % raw data
-         if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
-            data(1) = epoch_2_julian_dec_argo(rawData(1));
-         else
-            data(1) = rawData(1);
-         end
-         data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-         data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-         data(4) = rawData(4)/1000;
-      elseif (currentTreatNum == g_decArgo_cts5Treat_SS)
-         % sub-surface point
+      data = nan(1, 2+6*nbPoints);
+      if (ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
          data(1) = epoch_2_julian_dec_argo(rawData(1));
-         data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-         data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-         data(4) = rawData(4)/1000;
       else
-         % mean data
-         switch (currentTreatNum)
-            case g_decArgo_cts5Treat_AM_SD_MD
-               data(1) = rawData(1);
-               data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-               data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-               data(4) = rawData(4)/1000;
-               data(5) = rawData(7)/1000;
-               data(6) = rawData(8)/1000;
-               data(7) = rawData(9)/10 - 100 + rawData(12)*0.01;
-               data(8) = rawData(10)/1000 - 5 + rawData(13)*0.0001;
-               data(9) = rawData(11)/1000;
-            case g_decArgo_cts5Treat_AM_SD
-               data(1) = rawData(1);
-               data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-               data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-               data(4) = rawData(4)/1000;
-               data(5) = rawData(7)/1000;
-               data(6) = rawData(8)/1000;
-            case g_decArgo_cts5Treat_AM_MD
-               data(1) = rawData(1);
-               data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-               data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-               data(4) = rawData(4)/1000;
-               data(5) = rawData(7)/10 - 100 + rawData(10)*0.01;
-               data(6) = rawData(8)/1000 - 5 + rawData(11)*0.0001;
-               data(7) = rawData(9)/1000;
-            case g_decArgo_cts5Treat_AM
-               data(1) = rawData(1);
-               data(2) = rawData(2)/10 - 100 + rawData(5)*0.01;
-               data(3) = rawData(3)/1000 - 5 + rawData(6)*0.0001;
-               data(4) = rawData(4)/1000;
-            otherwise
-               fprintf('ERROR: Treatment #%d not managed\n', currentTreatNum);
-         end
+         data(1) = rawData(1);
       end
+      data(2:end) = rawData(2:end);
+
       currentDataStruct.data = [currentDataStruct.data; data];
       currentByte = currentByte + nbBytes;
    else
@@ -253,8 +221,7 @@ if (~isempty(currentDataStruct))
    
    % finalize decoded data
    % compute the dates
-   if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]) && ...
-         (currentTreatNum ~= g_decArgo_cts5Treat_SS))
+   if (~ismember(currentPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
       date = currentDataStruct.data(:, 1);
       date(1) = date(1) + currentDataStruct.date;
       for id = 2:length(date)
@@ -267,6 +234,6 @@ if (~isempty(currentDataStruct))
    dataStruct{end+1} = currentDataStruct;
 end
 
-o_ctdData = dataStruct;
+o_imuWaveData = dataStruct;
 
 return

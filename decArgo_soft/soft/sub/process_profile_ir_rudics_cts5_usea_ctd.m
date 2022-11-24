@@ -2,7 +2,7 @@
 % Create the CTD profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift, o_tabSurf, o_subSurfaceMeas] = ...
+%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf, o_subSurfaceMeas] = ...
 %    process_profile_ir_rudics_cts5_usea_ctd(a_ctdData, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
@@ -13,6 +13,7 @@
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : created output profiles
 %   o_tabDrift       : created output drift measurement profiles
+%   o_tabDrift       : created output descent 2 prof measurement profiles
 %   o_tabSurf        : created output surface measurement profiles
 %   o_subSurfaceMeas : created output sub surface measurement point
 %
@@ -24,12 +25,13 @@
 % RELEASES :
 %   09/22/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift, o_tabSurf, o_subSurfaceMeas] = ...
+function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf, o_subSurfaceMeas] = ...
    process_profile_ir_rudics_cts5_usea_ctd(a_ctdData, a_timeData, a_gpsData)
 
 % output parameters initialization
 o_tabProfiles = [];
 o_tabDrift = [];
+o_tabDesc2Prof = [];
 o_tabSurf = [];
 o_subSurfaceMeas = [];
 
@@ -46,6 +48,7 @@ global g_decArgo_patternNumFloat;
 % cycle phases
 global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
+global g_decArgo_phaseDsc2Prof;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
 
@@ -59,6 +62,7 @@ global g_decArgo_treatAverageAndStDevAndMedian;
 
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
+global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
@@ -103,14 +107,16 @@ for idP = 1:length(a_ctdData)
    
    if (phaseId == g_decArgo_cts5PhaseDescent)
       phaseNum = g_decArgo_phaseDsc2Prk;
-   elseif (phaseId == g_decArgo_cts5PhaseAscent)
-      phaseNum = g_decArgo_phaseAscProf;
    elseif (phaseId == g_decArgo_cts5PhasePark)
       phaseNum = g_decArgo_phaseParkDrift;
+   elseif (phaseId == g_decArgo_cts5PhaseDeepProfile)
+      phaseNum = g_decArgo_phaseDsc2Prof;
+   elseif (phaseId == g_decArgo_cts5PhaseAscent)
+      phaseNum = g_decArgo_phaseAscProf;
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
       phaseNum = g_decArgo_phaseSatTrans;
    else
-      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing profiles with phase Id #%d\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing CTD profiles with phase Id #%d\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          g_decArgo_cycleNumFloat, ...
@@ -284,6 +290,8 @@ for idP = 1:length(a_ctdData)
       % add profile additional information
       if (phaseNum == g_decArgo_phaseParkDrift)
          o_tabDrift = [o_tabDrift profStruct];
+      elseif (phaseNum == g_decArgo_phaseDsc2Prof)
+         o_tabDesc2Prof = [o_tabDesc2Prof profStruct];
       elseif (phaseNum == g_decArgo_phaseSatTrans)
          o_tabSurf = [o_tabSurf profStruct];
       else

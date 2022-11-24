@@ -75,6 +75,7 @@ o_tabTrajNMeasRpp = [];
 global g_decArgo_phasePreMission;
 global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
+global g_decArgo_phaseProfDrift;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
 global g_decArgo_phaseEndOfLife;
@@ -97,6 +98,7 @@ global g_MC_SpyInDescToProf;
 global g_MC_MaxPresInDescToProf;
 global g_MC_DPST;
 global g_MC_SpyAtProf;
+global g_MC_DriftAtProf;
 global g_MC_MinPresInDriftAtProf;
 global g_MC_MaxPresInDriftAtProf;
 global g_MC_AST;
@@ -265,29 +267,47 @@ for idCyc = 1:length(cycleNumList)
          (a_tabTrajIndex(:, 1) == g_MC_DescProf) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum) & ...
-         (a_tabTrajIndex(:, 4) == g_decArgo_phaseDsc2Prk));
+         ((a_tabTrajIndex(:, 4) == g_decArgo_phaseDsc2Prk) | ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans))); % g_decArgo_phaseSatTrans is the phase of pressure checks retrieved from events
+
       for idMeas = 1:length(idPackData)
          id = idPackData(idMeas);
-         dates = a_tabTrajData{id}{:}.dates;
-         datesAdj = a_tabTrajData{id}{:}.datesAdj;
-         data = a_tabTrajData{id}{:}.data;
-         
-         measDataTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
-         for idM = 1:length(dates)
-            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DescProf, ...
-               dates(idM), datesAdj(idM), g_JULD_STATUS_2);
-            measStruct.paramList = a_tabTrajData{id}{:}.paramList;
-            measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
-            measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
-            measStruct.paramData = data(idM, :);
-            if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
-               measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+         if (a_tabTrajIndex(id, 4) ~= g_decArgo_phaseSatTrans)
+            dates = a_tabTrajData{id}{:}.dates;
+            datesAdj = a_tabTrajData{id}{:}.datesAdj;
+            data = a_tabTrajData{id}{:}.data;
+
+            measDataTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
+            for idM = 1:length(dates)
+               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DescProf, ...
+                  dates(idM), datesAdj(idM), g_JULD_STATUS_2);
+               measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+               measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
+               measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
+               measStruct.paramData = data(idM, :);
+               if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
+                  measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+               end
+               measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
+               measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
+               measDataTab(idM) = measStruct;
             end
+            measData = [measData; measDataTab];
+         else
+            data = a_tabTrajData{id};
+            paramName = cell2mat(data);
+            paramName = {paramName.paramName};
+            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DescProf, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+               g_JULD_STATUS_2);
+            paramPres = get_netcdf_param_attributes('PRES');
+            paramPres.resolution = single(1);
+            measStruct.paramList = paramPres;
+            measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
             measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
-            measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
-            measDataTab(idM) = measStruct;
+            measData = [measData; measStruct];
          end
-         measData = [measData; measDataTab];
       end
       
       % sort the data by date
@@ -373,45 +393,64 @@ for idCyc = 1:length(cycleNumList)
          (a_tabTrajIndex(:, 1) == g_MC_DriftAtPark) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum) & ...
-         (a_tabTrajIndex(:, 4) == g_decArgo_phaseParkDrift));
+         ((a_tabTrajIndex(:, 4) == g_decArgo_phaseParkDrift) | ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans))); % g_decArgo_phaseSatTrans is the phase of pressure checks retrieved from events
       
       measData2 = [];
       for idMeas = 1:length(idPackData)
          id = idPackData(idMeas);
-         dates = a_tabTrajData{id}{:}.dates;
-         datesAdj = a_tabTrajData{id}{:}.datesAdj;
-         data = a_tabTrajData{id}{:}.data;
-         
-         for idM = 1:length(dates)
-            if (dates(idM) == paramJuld.fillValue)
-               measStruct = get_traj_one_meas_init_struct();
-               measStruct.paramList = a_tabTrajData{id}{:}.paramList;
-               measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
-               measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
-               measStruct.paramData = data(idM, :);
-               if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
-                  measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+         if (a_tabTrajIndex(id, 4) ~= g_decArgo_phaseSatTrans)
+            dates = a_tabTrajData{id}{:}.dates;
+            datesAdj = a_tabTrajData{id}{:}.datesAdj;
+            data = a_tabTrajData{id}{:}.data;
+
+            for idM = 1:length(dates)
+               if (dates(idM) == paramJuld.fillValue)
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+                  measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
+                  measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
+                  measStruct.paramData = data(idM, :);
+                  if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
+                     measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+                  end
+                  measStruct.cyclePhase = g_decArgo_phaseParkDrift;
+                  measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
+                  measData2 = [measData2; measStruct];
+               else
+                  [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DriftAtPark, ...
+                     dates(idM), datesAdj(idM), g_JULD_STATUS_2);
+                  measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+                  measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
+                  measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
+                  measStruct.paramData = data(idM, :);
+                  if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
+                     measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+                  end
+                  measStruct.cyclePhase = g_decArgo_phaseParkDrift;
+                  measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
+                  measData = [measData; measStruct];
                end
-               measStruct.cyclePhase = g_decArgo_phaseParkDrift;
-               measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
-               measData2 = [measData2; measStruct];
-            else
-               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DriftAtPark, ...
-                  dates(idM), datesAdj(idM), g_JULD_STATUS_2);
-               measStruct.paramList = a_tabTrajData{id}{:}.paramList;
-               measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
-               measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
-               measStruct.paramData = data(idM, :);
-               if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
-                  measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
-               end
-               measStruct.cyclePhase = g_decArgo_phaseParkDrift;
-               measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
-               measData = [measData; measStruct];
             end
+         else
+            data = a_tabTrajData{id};
+            paramName = cell2mat(data);
+            paramName = {paramName.paramName};
+            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DriftAtPark, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+               g_JULD_STATUS_2);
+            if (any(strcmp(paramName, 'PRES'))) % in case of multi-parking we use the same MC for new parking depth descent start time (thus without PRES)
+               paramPres = get_netcdf_param_attributes('PRES');
+               paramPres.resolution = single(1);
+               measStruct.paramList = paramPres;
+               measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+            end
+            measStruct.cyclePhase = g_decArgo_phaseParkDrift;
+            measData = [measData; measStruct];
          end
       end
-      
+
       % sort the data by date
       if (~isempty(measData) || ~isempty(measData2))
          measDates = [measData.juld];
@@ -553,6 +592,45 @@ for idCyc = 1:length(cycleNumList)
          end
       end
       
+      % collect pressure checks
+      idPackData  = find( ...
+         (a_tabTrajIndex(:, 1) == g_MC_DriftAtPark) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      
+      paramPres = get_netcdf_param_attributes('PRES');
+      presData = [];
+      for idMeas = 1:length(idPackData)
+         id = idPackData(idMeas);
+
+         data = a_tabTrajData{id};
+         paramName = cell2mat(data);
+         paramName = {paramName.paramName};
+         if (any(strcmp(paramName, 'PRES'))) % in case of multi-parking we use the same MC for new parking depth descent start time (thus without PRES)
+            presData = [presData; double(data{find(strcmp(paramName, 'PRES'), 1)}.value)];
+         end
+      end
+
+      if (~isempty(presData))
+         if (~isempty(paramList))
+
+            idF1 = find(strcmp('PRES', {paramList.name}) == 1);
+            if (isempty(idF1))
+
+               paramList = [paramList paramPres];
+               paramData = [paramData {presData}];
+            else
+
+               paramData{idF1} = [paramData{idF1}; presData];
+            end
+         else
+
+            paramList = [paramList paramPres];
+            paramData = [paramData {presData}];
+         end
+      end
+
       % compute the averaged values
       nbParamRpp = 0;
       paramListRpp = [];
@@ -696,6 +774,41 @@ for idCyc = 1:length(cycleNumList)
       end
       measData = [measData; measDataTab];
       
+      % measurements during drift at prof
+      idPackData  = find( ...
+         (a_tabTrajIndex(:, 1) == g_MC_DriftAtProf) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum) & ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+      
+      for idMeas = 1:length(idPackData)
+         id = idPackData(idMeas);
+         data = a_tabTrajData{id};
+         paramName = cell2mat(data);
+         paramName = {paramName.paramName};
+         [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DriftAtProf, ...
+            data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+            data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+            g_JULD_STATUS_2);
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramPres.resolution = single(1);
+         measStruct.paramList = paramPres;
+         measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+         measStruct.cyclePhase = g_decArgo_phaseProfDrift;
+         measData = [measData; measStruct];
+      end
+      
+      % sort the data by date
+      if (~isempty(measData))
+         measDates = [measData.juld];
+         [measDates, idSort] = sort(measDates);
+         measData = measData(idSort);
+         
+         % store the data
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+         measData = [];
+      end
+
       % min pressure during drift at prof
       idPackTech  = find( ...
          (a_tabTrajIndex(:, 1) == g_MC_MinPresInDriftAtProf) & ...
@@ -815,29 +928,47 @@ for idCyc = 1:length(cycleNumList)
          (a_tabTrajIndex(:, 1) == g_MC_AscProf) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
          (a_tabTrajIndex(:, 3) == profNum) & ...
-         (a_tabTrajIndex(:, 4) == g_decArgo_phaseAscProf));
+         ((a_tabTrajIndex(:, 4) == g_decArgo_phaseAscProf) | ...
+         (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans))); % g_decArgo_phaseSatTrans is the phase of pressure checks retrieved from events
+
       for idMeas = 1:length(idPackData)
          id = idPackData(idMeas);
-         dates = a_tabTrajData{id}{:}.dates;
-         datesAdj = a_tabTrajData{id}{:}.datesAdj;
-         data = a_tabTrajData{id}{:}.data;
-         
-         measDataTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
-         for idM = 1:length(dates)
-            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_AscProf, ...
-               dates(idM), datesAdj(idM), g_JULD_STATUS_2);
-            measStruct.paramList = a_tabTrajData{id}{:}.paramList;
-            measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
-            measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
-            measStruct.paramData = data(idM, :);
-            if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
-               measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+         if (a_tabTrajIndex(id, 4) ~= g_decArgo_phaseSatTrans)
+            dates = a_tabTrajData{id}{:}.dates;
+            datesAdj = a_tabTrajData{id}{:}.datesAdj;
+            data = a_tabTrajData{id}{:}.data;
+
+            measDataTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
+            for idM = 1:length(dates)
+               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_AscProf, ...
+                  dates(idM), datesAdj(idM), g_JULD_STATUS_2);
+               measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+               measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
+               measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
+               measStruct.paramData = data(idM, :);
+               if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
+                  measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
+               end
+               measStruct.cyclePhase = g_decArgo_phaseAscProf;
+               measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
+               measDataTab(idM) = measStruct;
             end
+            measData = [measData; measDataTab];
+         else
+            data = a_tabTrajData{id};
+            paramName = cell2mat(data);
+            paramName = {paramName.paramName};
+            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_AscProf, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+               g_JULD_STATUS_2);
+            paramPres = get_netcdf_param_attributes('PRES');
+            paramPres.resolution = single(1);
+            measStruct.paramList = paramPres;
+            measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
             measStruct.cyclePhase = g_decArgo_phaseAscProf;
-            measStruct.sensorNumber = a_tabTrajData{id}{:}.sensorNumber;
-            measDataTab(idM) = measStruct;
+            measData = [measData; measStruct];
          end
-         measData = [measData; measDataTab];
       end
       
       % last pumped CTD measurement

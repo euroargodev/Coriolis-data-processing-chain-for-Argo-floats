@@ -86,6 +86,28 @@ for idFilePtn = 1:length(a_inputFileName)
    files = dir([a_inputFilePath{idFilePtn} '/' a_inputFileName{idFilePtn}]);
    if (~isempty(files))
       fileList = {files(:).name}';
+
+      % manage ramses VS ramses2
+      if (any(strfind(a_inputFileName{idFilePtn}, 'ramses2')))
+         % only ramses2 is needed
+         idToDel = cellfun(@(x) strfind(fileList, x), {'ramses#'}, 'UniformOutput', 0);
+         idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
+         if (~isempty(idToDel))
+            fileList(idToDel) = [];
+         end
+         idToDel = cellfun(@(x) strfind(fileList, x), {'ramses.'}, 'UniformOutput', 0);
+         idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
+         if (~isempty(idToDel))
+            fileList(idToDel) = [];
+         end
+      elseif (any(strfind(a_inputFileName{idFilePtn}, 'ramses')))
+         idToDel = cellfun(@(x) strfind(fileList, x), {'ramses2'}, 'UniformOutput', 0);
+         idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
+         if (~isempty(idToDel))
+            fileList(idToDel) = [];
+         end
+      end
+
       fileList = cat(2, fileList, cell(size(fileList)), cell(size(fileList)));
       if (~isempty(fileList))
          while (1)

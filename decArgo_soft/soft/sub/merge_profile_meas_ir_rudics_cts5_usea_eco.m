@@ -230,16 +230,7 @@ for idDir = 1:length(uDir)
       paramFluorescenceChlaStDev paramBetaBackscattering700StDev paramFluorescenceCdomStDev ...
       paramPresMed paramFluorescenceChlaMed paramBetaBackscattering700Med paramFluorescenceCdomMed ...
       ];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;
@@ -382,16 +373,7 @@ for idDir = 1:length(uDir)
       paramFluorescenceChlaStDev paramBetaBackscattering700StDev ...
       paramPresMed paramFluorescenceChlaMed paramBetaBackscattering700Med ...
       ];
-   
-   idDel = [];
-   for idP = 1:length(paramList)
-      if ((length(unique(finalData(:, idP))) == 1) && (unique(finalData(:, idP)) == paramList(idP).fillValue))
-         idDel = [idDel, idP];
-      end
-   end
-   paramList(idDel) = [];
-   finalData(:, idDel) = [];
-   
+      
    newProfile = a_tabProfiles(idProfForDir(1));
    
    newProfile.paramList = paramList;

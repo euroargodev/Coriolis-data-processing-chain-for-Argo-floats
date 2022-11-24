@@ -85,7 +85,7 @@ for idP = 1:length(a_uvpLpmData)
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
       phaseNum = g_decArgo_phaseSatTrans;
    else
-      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing profiles with phase Id #%d\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing UVP-LPM profiles with phase Id #%d\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          g_decArgo_cycleNumFloat, ...
@@ -108,7 +108,7 @@ for idP = 1:length(a_uvpLpmData)
             
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
-            paramImNumPart = get_netcdf_param_attributes('IMAGE_NUMBER_PARTICLES');
+            paramImNumPart = get_netcdf_param_attributes('IMAGE_NUMBER_PARTICLES_LPM');
             paramPres = get_netcdf_param_attributes('PRES');
             paramTempPart = get_netcdf_param_attributes('TEMP_PARTICLES');
             paramNbSizeSpecPart = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES');

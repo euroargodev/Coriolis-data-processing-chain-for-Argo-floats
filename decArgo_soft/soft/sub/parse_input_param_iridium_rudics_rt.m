@@ -110,7 +110,7 @@ end
    floatFrameLen, ...
    floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
+   floatRefDay, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatLoginName))
    fprintf('ERROR: no information on float #%d - exit\n', floatWmo);
    o_inputError = 1;
@@ -202,7 +202,7 @@ for idFile = 1:length(ryncLogList)
          case {121, 122, 123, 124, 125}
             % CTS5-OSEAN Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
-         case {126, 127, 128}
+         case {126, 127, 128, 129}
             % CTS5-USEA Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts5_usea(ryncLogList{idFile}, floatLoginName);
          otherwise

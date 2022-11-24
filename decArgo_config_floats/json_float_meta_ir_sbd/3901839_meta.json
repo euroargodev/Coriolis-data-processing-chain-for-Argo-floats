@@ -59,6 +59,7 @@
    "DEPLOYMENT_REFERENCE_STATION_ID" : "no", 
    "END_MISSION_DATE" : "", 
    "END_MISSION_STATUS" : "", 
+   "END_DECODING_DATE" : "", 
    "CONFIG_PARAMETER_NAME" : [ 
       {
       "CONFIG_PARAMETER_NAME_1" : "CONFIG_MC00_NumberOfCycles",

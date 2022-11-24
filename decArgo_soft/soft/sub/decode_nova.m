@@ -80,6 +80,7 @@ global g_decArgo_iridiumMailData;
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
+global g_decArgo_janFirst1950InMatlab;
 
 % for virtual buffers management
 global g_decArgo_spoolFileList;
@@ -108,6 +109,12 @@ global g_decArgo_addParamListCdom;
 global g_decArgo_addParamListRadiometry;
 global g_decArgo_addParamListCp;
 global g_decArgo_addParamListTurbidity;
+
+% directory of json meta-data files
+global g_decArgo_dirInputJsonFloatMetaDataFile;
+
+% json meta-data
+global g_decArgo_jsonMetaData;
 
 
 % get floats information
@@ -176,7 +183,6 @@ for idFloat = 1:nbFloats
       floatLaunchLon = listLaunchLon(idF);
       floatLaunchLat = listLaunchLat(idF);
       floatRefDay = listRefDay(idF);
-      floatEndDate = listEndDate(idF);
       floatDmFlag = listDmFlag(idF);
       
       g_decArgo_floatLaunchDate = floatLaunchDate;
@@ -189,7 +195,7 @@ for idFloat = 1:nbFloats
          floatFrameLen, ...
          floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
          floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-         floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatNum, []);
+         floatRefDay, floatDmFlag] = get_one_float_info(floatNum, []);
       
       if (isempty(floatArgosId))
          fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
@@ -205,6 +211,25 @@ for idFloat = 1:nbFloats
    if ~((floatDecId > 2000) && (floatDecId < 3000))
       fprintf('ERROR: Float #%d is not a Nova float - not decoded\n', floatNum);
       continue
+   end
+   
+   % read the json meta-data file for this float
+   jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
+
+   if ~(exist(jsonInputFileName, 'file') == 2)
+      fprintf('ERROR: Json meta-data file not found: %s - nothing done\n', jsonInputFileName);
+      continue
+   end
+
+   % read meta-data file
+   g_decArgo_jsonMetaData = loadjson(jsonInputFileName);
+   
+   % set END_DECODING_DATE
+   floatEndDate = g_decArgo_dateDef;
+   if (isfield(g_decArgo_jsonMetaData, 'END_DECODING_DATE'))
+      if (~isempty(g_decArgo_jsonMetaData.END_DECODING_DATE))
+         floatEndDate = datenum(g_decArgo_jsonMetaData.END_DECODING_DATE, 'dd/mm/YYYY HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
+      end
    end
    
    % read the NetCDF TECH parameter names

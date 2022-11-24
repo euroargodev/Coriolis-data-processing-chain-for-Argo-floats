@@ -24,13 +24,6 @@ function create_float_config_apx_argos(a_decMetaData, a_decoderId)
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
-% structure to store miscellaneous meta-data
-global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
-
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -53,6 +46,9 @@ global g_decArgo_timeData;
 % mode processing flags
 global g_decArgo_realtimeFlag;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 if (~isempty(g_decArgo_outputCsvFileId))
    VERBOSE = 1;
@@ -60,18 +56,6 @@ else
    VERBOSE = 0;
 end
 ONLY_DIFF = 0;
-
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_floatConfig = [];
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
 
 if (g_decArgo_realtimeFlag == 0)
    
@@ -81,10 +65,10 @@ if (g_decArgo_realtimeFlag == 0)
       idMeta = find([a_decMetaData.metaFlag] == 1);
       for idM = 1:length(idMeta)
          dataStruct = a_decMetaData(idMeta(idM));
-         if (isfield(jsonMetaData, dataStruct.metaConfigLabel))
+         if (isfield(g_decArgo_jsonMetaData, dataStruct.metaConfigLabel))
             if (~strcmp(dataStruct.metaConfigLabel, 'SENSOR_SERIAL_NO') && ...
                   ~strcmp(dataStruct.metaConfigLabel, 'TRANS_FREQUENCY'))
-               if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel), dataStruct.techParamValue))
+               if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel), dataStruct.techParamValue))
                   if (VERBOSE == 1)
                      if (g_decArgo_bddUpdateCsvFileId == -1)
                         % output CSV file creation
@@ -117,7 +101,7 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_floatNum, ...
                         dataStruct.metaConfigLabel, ...
                         dataStruct.techParamValue, ...
-                        jsonMetaData.(dataStruct.metaConfigLabel), ...
+                        g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel), ...
                         g_decArgo_bddUpdateCsvFileName);
                   end
                else
@@ -127,7 +111,7 @@ if (g_decArgo_realtimeFlag == 0)
                            g_decArgo_floatNum, ...
                            dataStruct.metaConfigLabel, ...
                            dataStruct.techParamValue, ...
-                           jsonMetaData.(dataStruct.metaConfigLabel));
+                           g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
                      end
                   end
                end
@@ -140,9 +124,9 @@ if (g_decArgo_realtimeFlag == 0)
                      % 071412, 062608, 061609, 021009, 061810, 082213,
                      % 110613&090413, 121512, 110813, 2.8.0.A
                      % only one sensor (SBE41)
-                     fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
+                     fieldNames = fields(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
-                        if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), dataStruct.techParamValue))
+                        if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), dataStruct.techParamValue))
                            if (VERBOSE == 1)
                               if (g_decArgo_bddUpdateCsvFileId == -1)
                                  % output CSV file creation
@@ -166,7 +150,7 @@ if (g_decArgo_realtimeFlag == 0)
                                  dataStruct.metaConfigLabel, ...
                                  fieldNames{idF}, ...
                                  dataStruct.techParamValue, ...
-                                 jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), ...
+                                 g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), ...
                                  g_decArgo_bddUpdateCsvFileName);
                            end
                         else
@@ -177,7 +161,7 @@ if (g_decArgo_realtimeFlag == 0)
                                     dataStruct.metaConfigLabel, ...
                                     fieldNames{idF}, ...
                                     dataStruct.techParamValue, ...
-                                    jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}));
+                                    g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}));
                               end
                            end
                         end
@@ -189,7 +173,7 @@ if (g_decArgo_realtimeFlag == 0)
                      % two sensors (SBE41 and Aanderaa 3830/4330 or SBE43 IDO)
                      % because FLBB or FLNTU sensor are not provided by the
                      % floats
-                     fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
+                     fieldNames = fields(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
                         if (((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_1') || ...
                               strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_2') || ...
@@ -197,7 +181,7 @@ if (g_decArgo_realtimeFlag == 0)
                               strcmp(dataStruct.techParamCode, 'SENSOR_SERIAL_NO_1')) || ...
                               ((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_4')) && ...
                               strcmp(dataStruct.techParamCode, 'SENSOR_SERIAL_NO_2')))
-                           if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), dataStruct.techParamValue))
+                           if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), dataStruct.techParamValue))
                               if (VERBOSE == 1)
                                  if (g_decArgo_bddUpdateCsvFileId == -1)
                                     % output CSV file creation
@@ -221,7 +205,7 @@ if (g_decArgo_realtimeFlag == 0)
                                     dataStruct.metaConfigLabel, ...
                                     fieldNames{idF}, ...
                                     dataStruct.techParamValue, ...
-                                    jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), ...
+                                    g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), ...
                                     g_decArgo_bddUpdateCsvFileName);
                               end
                            else
@@ -232,7 +216,7 @@ if (g_decArgo_realtimeFlag == 0)
                                        dataStruct.metaConfigLabel, ...
                                        fieldNames{idF}, ...
                                        dataStruct.techParamValue, ...
-                                       jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}));
+                                       g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}));
                                  end
                               end
                            end
@@ -245,8 +229,8 @@ if (g_decArgo_realtimeFlag == 0)
                         a_decoderId);
                end
             elseif (strcmp(dataStruct.metaConfigLabel, 'TRANS_FREQUENCY'))
-               fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
-               if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), dataStruct.techParamValue))
+               fieldNames = fields(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
+               if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), dataStruct.techParamValue))
                   if (VERBOSE == 1)
                      if (g_decArgo_bddUpdateCsvFileId == -1)
                         % output CSV file creation
@@ -279,7 +263,7 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_floatNum, ...
                         dataStruct.metaConfigLabel, ...
                         dataStruct.techParamValue, ...
-                        jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), ...
+                        g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), ...
                         g_decArgo_bddUpdateCsvFileName);
                   end
                else
@@ -289,7 +273,7 @@ if (g_decArgo_realtimeFlag == 0)
                            g_decArgo_floatNum, ...
                            dataStruct.metaConfigLabel, ...
                            dataStruct.techParamValue, ...
-                           jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}));
+                           g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}));
                      end
                   end
                end
@@ -305,10 +289,10 @@ end
 % create the configuration from JSON data
 configNames = [];
 configValues = [];
-if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
-      (isfield(jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
-   configNames = struct2cell(jsonMetaData.CONFIG_PARAMETER_NAME);
-   cellConfigValues = struct2cell(jsonMetaData.CONFIG_PARAMETER_VALUE);
+if ((isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
+      (isfield(g_decArgo_jsonMetaData, 'CONFIG_PARAMETER_VALUE')))
+   configNames = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME);
+   cellConfigValues = struct2cell(g_decArgo_jsonMetaData.CONFIG_PARAMETER_VALUE);
    configValues = nan(size(configNames));
    for id = 1:size(configNames, 1)
       cellConfigValue = cellConfigValues{id};

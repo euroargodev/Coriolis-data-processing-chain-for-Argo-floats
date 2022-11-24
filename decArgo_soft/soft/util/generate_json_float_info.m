@@ -121,11 +121,11 @@ for id = 1:length(listWmoNum)
    fprintf(fidOut, '   "LAUNCH_DATE" : "%s",\n', listLaunchDate{id});
    fprintf(fidOut, '   "LAUNCH_LON" : "%s",\n', listLaunchLon{id});
    fprintf(fidOut, '   "LAUNCH_LAT" : "%s",\n', listLaunchLat{id});
-   fprintf(fidOut, '   "END_DECODING_DATE" : "%s",\n', listEndDate{id});
+   %    fprintf(fidOut, '   "END_DECODING_DATE" : "%s",\n', listEndDate{id});
    fprintf(fidOut, '   "REFERENCE_DAY" : "%s",\n', listRefDay{id});
    fprintf(fidOut, '   "DM_FLAG" : "%d"\n', listDmFlag(id));
    fprintf(fidOut, '}\n');
-   
+
    fclose(fidOut);
 end
 

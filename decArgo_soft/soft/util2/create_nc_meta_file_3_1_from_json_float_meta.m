@@ -28,12 +28,17 @@ floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldV
 floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\list\float list.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_1900518.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_6900588.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_6902042.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_list_20220829.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\generate_json_float_meta_argos_provor_4.6_4.61\';
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\generate_json_float_meta_no_data_float\';
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta_nemo\';
 
 % NetCDF meta-data file output directory
 % ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
@@ -43,6 +48,10 @@ ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20200103\OUT\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Meta_en_3.1_when_no_data\OUT\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220608\OUT\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220707\OUT\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220822\OUT\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220829\OUT\';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 

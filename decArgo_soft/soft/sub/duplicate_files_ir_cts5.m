@@ -61,29 +61,34 @@ for idFile = 1:length(a_listFileNames)
       fileName = a_listFileNames{idFile};
       fileNameIn = [a_inputDir '/' fileName];
       fileInfo = dir(fileNameIn);
-      fileNameOut = [ ...
-         fileName(1:end-4) '_' ...
-         datestr(datenum(fileInfo.date, 'dd-mmmm-yyyy HH:MM:SS'), 'yyyymmddHHMMSS') ...
-         fileName(end-3:end)];
-      
-      filePathNameOut = [a_outputDir '/' fileNameOut];
-      if (exist(filePathNameOut, 'file') == 2)
-         % file exists
-         %          fprintf('%s - unchanged\n', fileNameOut);
-      else
-         fileExist = dir([a_outputDir '/' fileName(1:end-4) '_*' fileName(end-3:end)]);
-         if (~isempty(fileExist))
-            % update existing file
-            move_file([a_outputDir '/' fileExist.name], g_decArgo_updatedDirectory);
-            copy_file(fileNameIn, filePathNameOut);
-            o_nbFiles = o_nbFiles + 1;
-            %             fprintf('%s - copy (update of %s)\n', fileNameOut,fileExist.name);
+      if (~isempty(fileInfo))
+         fileNameOut = [ ...
+            fileName(1:end-4) '_' ...
+            datestr(datenum(fileInfo.date, 'dd-mmmm-yyyy HH:MM:SS'), 'yyyymmddHHMMSS') ...
+            fileName(end-3:end)];
+
+         filePathNameOut = [a_outputDir '/' fileNameOut];
+         if (exist(filePathNameOut, 'file') == 2)
+            % file exists
+            %          fprintf('%s - unchanged\n', fileNameOut);
          else
-            % copy new file
-            copy_file(fileNameIn, filePathNameOut);
-            o_nbFiles = o_nbFiles + 1;
-            %             fprintf('%s - copy\n', fileNameOut);
+            fileExist = dir([a_outputDir '/' fileName(1:end-4) '_*' fileName(end-3:end)]);
+            if (~isempty(fileExist))
+               % update existing file
+               move_file([a_outputDir '/' fileExist.name], g_decArgo_updatedDirectory);
+               copy_file(fileNameIn, filePathNameOut);
+               o_nbFiles = o_nbFiles + 1;
+               %             fprintf('%s - copy (update of %s)\n', fileNameOut,fileExist.name);
+            else
+               % copy new file
+               copy_file(fileNameIn, filePathNameOut);
+               o_nbFiles = o_nbFiles + 1;
+               %             fprintf('%s - copy\n', fileNameOut);
+            end
          end
+      else
+         fprintf('ERROR: File is expected from rsync list but not in the data: %s\n', ...
+            fileNameIn);
       end
    end
 end

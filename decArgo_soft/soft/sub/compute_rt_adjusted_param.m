@@ -112,6 +112,7 @@ o_tabTrajNCycle = a_tabTrajNCycle;
 % QC flag values (numerical)
 global g_decArgo_qcDef;
 global g_decArgo_qcNoQc;
+global g_decArgo_qcCorrectable;
 
 % to store information on adjustments
 global g_decArgo_paramProfAdjInfo;
@@ -135,7 +136,7 @@ coefX2Old = 1.8732e-6;
 coefX3Old = -7.7689e-10;
 coefX4Old = 1.4890e-13;
 [coefX2New, coefX3New, coefX4New] = get_rbr_compressibility_coef(g_decArgo_floatNum);
-ctCoeff = 9.7e-3;
+ctCoeff = 0.014;
 
 % involved parameter information
 paramPres = get_netcdf_param_attributes('PRES');
@@ -163,7 +164,7 @@ end
 
 % for N_CALIB = 2
 equation2 = 'PSAL_ADJUSTED = gsw_SP_from_C(Cadj, TEMP_ADJUSTED + TEMP_longanomaly, PRES_ADJUSTED), TEMP_longanomaly = ctcoeff * (TEMP_CNDC - TEMP), Cadj is from re-computed salinity due to pressure effects.';
-coefficient2 = 'ctcoeff = 9.7e-3';
+coefficient2 = 'ctcoeff = 0.014';
 comment2 = 'Long timescale thermal inertia correction applied to RBR salinity.';
 
 
@@ -234,17 +235,33 @@ for idProf = 1:length(o_tabProfiles)
 
          % STEP 2
 
-         % calculate conductivity
-         cadj = gsw_C_from_SP(PSAL_ADJUSTED_Padj, tempAdjValues, presAdjValues);
+         % check if STEP 2 should be skipped
 
-         % compute TEMP_longanomaly
-         TEMP_longanomaly = ctCoeff * (tempCndcValues - tempValues);
+         idPresLt500 = find(presValues <= 500);
+         idKo1 = find(abs(tempCndcValues(idPresLt500) - tempValues(idPresLt500)) > 10);
+         idPresGt500 = find(presValues > 500);
+         idKo2 = find(abs(tempCndcValues(idPresGt500) - tempValues(idPresGt500)) > 1.5);
+         step2Kept = 1;
+         if ((length(idKo1) + length(idKo2)) > 2)
+            step2Kept = 0;
+         end
 
-         % use TEMP_longanomaly to compute salinity PSAL_ADJUSTED_Padj_CTM
-         PSAL_ADJUSTED_Padj_CTM = gsw_SP_from_C(cadj, tempAdjValues+TEMP_longanomaly, presAdjValues);
-         PSAL_ADJUSTED_Padj_CTM(isnan(PSAL_ADJUSTED_Padj_CTM)) = paramPsal.fillValue;
+         if (step2Kept == 1)
 
-         psalAjValues = PSAL_ADJUSTED_Padj_CTM;
+            % calculate conductivity
+            cadj = gsw_C_from_SP(PSAL_ADJUSTED_Padj, tempAdjValues, presAdjValues);
+
+            % compute TEMP_longanomaly
+            TEMP_longanomaly = ctCoeff * (tempCndcValues - tempValues);
+
+            % use TEMP_longanomaly to compute salinity PSAL_ADJUSTED_Padj_CTM
+            PSAL_ADJUSTED_Padj_CTM = gsw_SP_from_C(cadj, tempAdjValues+TEMP_longanomaly, presAdjValues);
+            PSAL_ADJUSTED_Padj_CTM(isnan(PSAL_ADJUSTED_Padj_CTM)) = paramPsal.fillValue;
+
+            psalAjValues = PSAL_ADJUSTED_Padj_CTM;
+         else
+            psalAjValues = PSAL_ADJUSTED_Padj;
+         end
          
          % create array for adjusted data
          paramFillValue = get_prof_param_fill_value(profile);
@@ -264,7 +281,11 @@ for idProf = 1:length(o_tabProfiles)
          profile.dataAdj(idNoDefPts, idPsal) = psalAjValues;
          
          idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
-         profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
+         if (step2Kept == 1)
+            profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
+         else
+            profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcCorrectable;
+         end
 
          % store information for SCIENTIFIC_CALIB section
                            
@@ -283,11 +304,13 @@ for idProf = 1:length(o_tabProfiles)
          g_decArgo_paramProfAdjId = g_decArgo_paramProfAdjId + 1;
 
          % for N_CALIB = 2
-         profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramProfAdjId];
-         g_decArgo_paramProfAdjInfo = [g_decArgo_paramProfAdjInfo;
-            g_decArgo_paramProfAdjId profile.outputCycleNumber direction ...
-            {'PSAL'} {equation2} {coefficient2} {comment2} {''}];
-         g_decArgo_paramProfAdjId = g_decArgo_paramProfAdjId + 1;
+         if (step2Kept == 1)
+            profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramProfAdjId];
+            g_decArgo_paramProfAdjInfo = [g_decArgo_paramProfAdjInfo;
+               g_decArgo_paramProfAdjId profile.outputCycleNumber direction ...
+               {'PSAL'} {equation2} {coefficient2} {comment2} {''}];
+            g_decArgo_paramProfAdjId = g_decArgo_paramProfAdjId + 1;
+         end
 
          o_tabProfiles(idProf) = profile;
       end
@@ -1520,6 +1543,7 @@ global g_decArgo_qcNoQc;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListBgcFloatAll;
+global g_decArgo_decoderIdListNavis;
 
 
 % involved parameter information
@@ -1538,7 +1562,11 @@ idTemp = find(strcmp({a_profile.paramList.name}, 'TEMP'));
 idPsal = find(strcmp({a_profile.paramList.name}, 'PSAL'));
 idDoxy = find(strcmp({a_profile.paramList.name}, 'DOXY'));
 
-if (~ismember(a_decoderId, g_decArgo_decoderIdListBgcFloatAll))
+% Note on NAVIS float
+% NAVIS float is a PTSO floats, however as we compute DOXY for NS measurements
+% where T and S are not avaialable (we duplicate the shallowest PTS bin on NS
+% pressures), it should be process as a 'real' BGC float
+if ~(ismember(a_decoderId, g_decArgo_decoderIdListBgcFloatAll) || (a_decoderId == g_decArgo_decoderIdListNavis))
    
    % case of a PTSO float
    presValues = a_profile.data(:, idPres);

@@ -604,7 +604,7 @@ if (a_profStruct.date == g_decArgo_dateDef)
    end
 end
 
-if (newDateDir > 0)
+if ((newDateDir > 0) && (a_profStruct.locationDate == g_decArgo_dateDef))
 
    % unpack the input data
    a_gpsLocCycleNum = a_gpsData{1};

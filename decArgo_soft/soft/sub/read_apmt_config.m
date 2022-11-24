@@ -139,12 +139,19 @@ for idF = 1:length(fieldNames)
    if (strcmp(fieldNames{idF}, 'GUI'))
       continue
    end
+   if (strcmp(fieldNames{idF}, 'SENSOR_13'))
+      continue
+   end
    if (strcmp(fieldNames{idF}, 'SENSOR_16'))
+      continue
+   end
+   if (strcmp(fieldNames{idF}, 'EXTTRIG'))
       continue
    end
    rawData = configData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
       data = rawData{idI};
+
       % present in float 6902968 (first CTS5 UVP), should not be considered
       % should be considered from CTS5-USEA version (decId 126)
       if (a_decoderId == 124)
@@ -169,7 +176,8 @@ for idF = 1:length(fieldNames)
          configData.(fieldNames{idF}).num{end+1} = paramInfoStruct.num;
          configData.(fieldNames{idF}).name{end+1} = paramInfoStruct.name;
          configData.(fieldNames{idF}).fmt{end+1} = paramInfoStruct.fmtOut;
-         
+
+         %          if ~(strcmp(fieldNames{idF}, 'TECHNICAL') && ((paramNum == 23) || (paramNum == 24)))
          [val, count, errmsg, nextindex] = sscanf(data(idFEq(1)+1:end), paramInfoStruct.fmtIn);
          if (isempty(errmsg))
             configData.(fieldNames{idF}).data{end+1} = val;
@@ -178,11 +186,30 @@ for idF = 1:length(fieldNames)
                data, fieldNames{idF}, a_inputFilePathName);
             configData.(fieldNames{idF}).data{end+1} = [];
          end
+         %          else
+         %             % multi dimentionnal parameter
+         %             dataCell = split(data(idFEq(1)+1:end), ';');
+         %             dataTab = cellfun(@str2num, dataCell);
+         %             configData.(fieldNames{idF}).data{end+1} = dataTab';
+         %          end
       else
          if (~any(strfind(data, '->')))
             fprintf('ERROR: read_apmt_config: ''='' not found in file (%s)\n', ...
                a_inputFilePathName);
          end
+      end
+   end
+end
+
+% duplicate SENSOR_14_PXX (RAMSES) into SENSOR_21_PXX (RAMSES2) except for XX = 54, 55, 56
+if (isfield(configData, 'SENSOR_14') && isfield(configData, 'SENSOR_21'))
+   for id = 1:length(configData.SENSOR_14.num)
+      if (~ismember(configData.SENSOR_14.num{id}, [configData.SENSOR_21.num{:}]))
+         configData.SENSOR_21.raw{end+1} = configData.SENSOR_14.raw{id};
+         configData.SENSOR_21.num{end+1} = configData.SENSOR_14.num{id};
+         configData.SENSOR_21.name{end+1} = configData.SENSOR_14.name{id};
+         configData.SENSOR_21.fmt{end+1} = configData.SENSOR_14.fmt{id};
+         configData.SENSOR_21.data{end+1} = configData.SENSOR_14.data{id};
       end
    end
 end
@@ -229,6 +256,8 @@ switch (a_decoderId)
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127;
    case {128}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_128;
+   case {129}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);

@@ -148,7 +148,7 @@ tabENitrate = tabENitrate(pixelBegin:pixelEnd);
 tabESwaNitrate = tabESwaNitrate(pixelBegin:pixelEnd);
 tabUvIntensityRefNitrate = tabUvIntensityRefNitrate(pixelBegin:pixelEnd);
 
-if (size(a_UV_INTENSITY_NITRATE, 2) < pixelBegin-floatPixelBegin+1+(pixelEnd-pixelBegin+1)-1)
+if (size(a_UV_INTENSITY_NITRATE, 2) < pixelBegin-floatPixelBegin+1+(pixelEnd-pixelBegin+1)-1) % see 6903125
    fprintf('RTQC_ERROR: Float #%d Cycle #%d: UV_INTENSITY_NITRATE has not the expected dimension - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);
    return

@@ -22,9 +22,6 @@ function check_meta_data_nemo
 % current float WMO number
 global g_decArgo_floatNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
 % storage of META-DATA information (to update data base) - CSV decoder only
 global g_decArgo_metaDataAll;
 
@@ -34,6 +31,9 @@ global g_decArgo_dirOutputCsvFile;
 % file to store BDD update
 global g_decArgo_bddUpdateCsvFileName;
 global g_decArgo_bddUpdateCsvFileId;
+
+% json meta-data
+global g_decArgo_jsonMetaData;
 
 
 if (isempty(g_decArgo_metaDataAll))
@@ -60,23 +60,12 @@ end
 [~, idUnique, ~] = unique([g_decArgo_metaDataAll.techParamId]);
 g_decArgo_metaDataAll = g_decArgo_metaDataAll(idUnique);
 
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
-
 % check meta-data consistency (compare meta-data with JSON file contents)
 for idM = 1:length(g_decArgo_metaDataAll)
    dataStruct = g_decArgo_metaDataAll(idM);
-   if (isfield(jsonMetaData, dataStruct.metaConfigLabel))
+   if (isfield(g_decArgo_jsonMetaData, dataStruct.metaConfigLabel))
       if (~strcmp(dataStruct.metaConfigLabel, 'TRANS_SYSTEM'))
-         if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel), dataStruct.techParamValue))
+         if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel), dataStruct.techParamValue))
             % output CSV file creation
             if (g_decArgo_bddUpdateCsvFileId == -1)
                g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
@@ -104,7 +93,7 @@ for idM = 1:length(g_decArgo_metaDataAll)
                g_decArgo_floatNum, ...
                dataStruct.metaConfigLabel, ...
                dataStruct.techParamValue, ...
-               jsonMetaData.(dataStruct.metaConfigLabel), ...
+               g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel), ...
                g_decArgo_bddUpdateCsvFileName);
          else
             if (ONLY_DIFF == 0)
@@ -112,12 +101,12 @@ for idM = 1:length(g_decArgo_metaDataAll)
                   g_decArgo_floatNum, ...
                   dataStruct.metaConfigLabel, ...
                   dataStruct.techParamValue, ...
-                  jsonMetaData.(dataStruct.metaConfigLabel));
+                  g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
             end
          end
       elseif (strcmp(dataStruct.metaConfigLabel, 'TRANS_SYSTEM'))
-         fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
-         if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), dataStruct.techParamValue))
+         fieldNames = fields(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel));
+         if (~strcmp(g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), dataStruct.techParamValue))
             % output CSV file creation
             if (g_decArgo_bddUpdateCsvFileId == -1)
                g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
@@ -139,7 +128,7 @@ for idM = 1:length(g_decArgo_metaDataAll)
                g_decArgo_floatNum, ...
                dataStruct.metaConfigLabel, ...
                dataStruct.techParamValue, ...
-               jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), ...
+               g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), ...
                g_decArgo_bddUpdateCsvFileName);
          else
             if (ONLY_DIFF == 0)
@@ -147,7 +136,7 @@ for idM = 1:length(g_decArgo_metaDataAll)
                   g_decArgo_floatNum, ...
                   dataStruct.metaConfigLabel, ...
                   dataStruct.techParamValue, ...
-                  jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}));
+                  g_decArgo_jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}));
             end
          end
       end

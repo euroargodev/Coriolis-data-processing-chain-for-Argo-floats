@@ -235,7 +235,7 @@ for idFloat = 1:length(floatList)
    end
 
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} {'7.11'} {'7.12'} {'7.13'}]))
+   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} {'7.11'} {'7.12'} {'7.13'} {'7.14'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -391,7 +391,7 @@ for idFloat = 1:length(floatList)
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
-      case {'7.01', '7.02', '7.04', '7.11', '7.12', '7.13'}
+      case {'7.01', '7.02', '7.04', '7.11', '7.12', '7.13', '7.14'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -594,7 +594,7 @@ for idFloat = 1:length(floatList)
    metaStruct.CONFIG_MISSION_NUMBER = {'0'};
    
    % for CTS5-USEA only
-   if (ismember(dacFormatId, [{'7.11'} {'7.12'} {'7.13'}]))
+   if (ismember(dacFormatId, [{'7.11'} {'7.12'} {'7.13'} {'7.14'}]))
       
       % remove unused sensors from configuration
       
@@ -639,6 +639,12 @@ for idFloat = 1:length(floatList)
             case 'HYDROC'
                sensorListNum = [sensorListNum 18];
                sensorListName = [sensorListName {'CONFIG_APMT_HYDROC_'}];
+            case 'IMU'
+               sensorListNum = [sensorListNum 20];
+               sensorListName = [sensorListName {'CONFIG_APMT_IMU_'}];
+            case 'RAMSES_ARC'
+               sensorListNum = [sensorListNum 21];
+               sensorListName = [sensorListName {'CONFIG_APMT_RAMSES_ARC_'}];
             otherwise
                fprintf('ERROR: unknown sensor name (%s) for float %d\n', ...
                   sensorName, floatNum);
@@ -697,6 +703,26 @@ for idFloat = 1:length(floatList)
          elseif ((length(configParamName) > length('CONFIG_APMT_OPUS_')) && ...
                (strncmp(configParamName, 'CONFIG_APMT_OPUS_', length('CONFIG_APMT_OPUS_'))))
             if (~ismember('CONFIG_APMT_OPUS_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_MPE_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_MPE_', length('CONFIG_APMT_MPE_'))))
+            if (~ismember('CONFIG_APMT_MPE_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_HYDROC_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_HYDROC_', length('CONFIG_APMT_HYDROC_'))))
+            if (~ismember('CONFIG_APMT_HYDROC_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_IMU_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_IMU_', length('CONFIG_APMT_IMU_'))))
+            if (~ismember('CONFIG_APMT_IMU_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_RAMSES_ARC_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_RAMSES_ARC_', length('CONFIG_APMT_RAMSES_ARC_'))))
+            if (~ismember('CONFIG_APMT_RAMSES_ARC_', sensorListName))
                idDel = [idDel id];
             end
          end
@@ -874,6 +900,7 @@ o_metaStruct = struct( ...
    'DEPLOYMENT_REFERENCE_STATION_ID', 'DEPLOY_AVAILABLE_PROFILE_ID', ...
    'END_MISSION_DATE', 'END_MISSION_DATE', ...
    'END_MISSION_STATUS', 'END_MISSION_STATUS', ...
+   'END_DECODING_DATE', 'END_DECODING_DATE', ...
    'PREDEPLOYMENT_CALIB_EQUATION', 'PREDEPLOYMENT_CALIB_EQUATION', ...
    'PREDEPLOYMENT_CALIB_COEFFICIENT', 'PREDEPLOYMENT_CALIB_COEFFICIENT', ...
    'PREDEPLOYMENT_CALIB_COMMENT', 'PREDEPLOYMENT_CALIB_COMMENT', ...

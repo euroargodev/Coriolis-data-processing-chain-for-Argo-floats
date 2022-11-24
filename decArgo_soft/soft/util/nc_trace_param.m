@@ -60,6 +60,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220822\';
 % g_NTP_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output
@@ -247,6 +248,8 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          wantedCVars ...
          {g_NTP_NAME_PARAM1} ...
          {[g_NTP_NAME_PARAM1 '_QC']} ...
+         {[g_NTP_NAME_PARAM1 '_ADJUSTED']} ...
+         {[g_NTP_NAME_PARAM1 '_ADJUSTED_QC']} ...
          ];
    end
    if (param2File == 'c')
@@ -254,6 +257,8 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          wantedCVars ...
          {g_NTP_NAME_PARAM2} ...
          {[g_NTP_NAME_PARAM2 '_QC']} ...
+         {[g_NTP_NAME_PARAM2 '_ADJUSTED']} ...
+         {[g_NTP_NAME_PARAM2 '_ADJUSTED_QC']} ...
          ];
    end
    wantedBVars = [ ...
@@ -268,6 +273,8 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          wantedBVars ...
          {g_NTP_NAME_PARAM1} ...
          {[g_NTP_NAME_PARAM1 '_QC']} ...
+         {[g_NTP_NAME_PARAM1 '_ADJUSTED']} ...
+         {[g_NTP_NAME_PARAM1 '_ADJUSTED_QC']} ...
          ];
    end
    if (param2File ~= 'c')
@@ -275,9 +282,11 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          wantedBVars ...
          {g_NTP_NAME_PARAM2} ...
          {[g_NTP_NAME_PARAM2 '_QC']} ...
+         {[g_NTP_NAME_PARAM2 '_ADJUSTED']} ...
+         {[g_NTP_NAME_PARAM2 '_ADJUSTED_QC']} ...
          ];
    end
-   
+
    % arrays to store the data
    tabCycles1 = [];
    tabPres1 = [];
@@ -323,10 +332,23 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          if (param1File == 'c')
             idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
             profParam1 = profData{2*idVal};
-            
+
             idVal = find(strcmp([g_NTP_NAME_PARAM1 '_QC'], profData(1:2:end)) == 1, 1);
             profParam1Qc = profData{2*idVal};
-            
+
+            idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+            profParamAdj1 = profData{2*idVal};
+
+            idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+            profParamAdj1Qc = profData{2*idVal};
+
+            for idProf = 1:size(profParam1, 2)
+               if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
+                  profParam1(:, idProf) = profParam1(:, idProf);
+                  profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+               end
+            end
+
             idProf = find(profDir == 'A');
             tabCycles1 = cycleNumberProf(idProf);
             tabPres1 = profPres(:, idProf);
@@ -342,6 +364,19 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             idVal = find(strcmp([g_NTP_NAME_PARAM2 '_QC'], profData(1:2:end)) == 1, 1);
             profParam2Qc = profData{2*idVal};
             
+            idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+            profParamAdj2 = profData{2*idVal};
+
+            idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+            profParamAdj2Qc = profData{2*idVal};
+
+            for idProf = 1:size(profParam2, 2)
+               if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
+                  profParam2(:, idProf) = profParam2(:, idProf);
+                  profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+               end
+            end
+
             idProf = find(profDir == 'A');
             tabCycles2 = cycleNumberProf(idProf);
             tabPres2 = profPres(:, idProf);
@@ -390,15 +425,28 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             
             idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
             profPresQc = profData{2*idVal};
-            
+
             if (param1File == 'c')
-               
+
                idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
                profParam1 = profData{2*idVal};
-               
+
                idVal = find(strcmp([g_NTP_NAME_PARAM1 '_QC'], profData(1:2:end)) == 1, 1);
                profParam1Qc = profData{2*idVal};
-               
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+               profParamAdj1 = profData{2*idVal};
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+               profParamAdj1Qc = profData{2*idVal};
+
+               for idProf = 1:size(profParam1, 2)
+                  if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
+                     profParam1(:, idProf) = profParam1(:, idProf);
+                     profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+                  end
+               end
+
                pres1 = [];
                profNum = '';
                for idProf = 1:inputNProf
@@ -466,15 +514,28 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                   end
                end
             end
-            
+
             if (param2File == 'c')
-               
+
                idVal = find(strcmp(g_NTP_NAME_PARAM2, profData(1:2:end)) == 1, 1);
                profParam2 = profData{2*idVal};
-               
+
                idVal = find(strcmp([g_NTP_NAME_PARAM2 '_QC'], profData(1:2:end)) == 1, 1);
                profParam2Qc = profData{2*idVal};
-               
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+               profParamAdj2 = profData{2*idVal};
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+               profParamAdj2Qc = profData{2*idVal};
+
+               for idProf = 1:size(profParam2, 2)
+                  if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
+                     profParam2(:, idProf) = profParam2(:, idProf);
+                     profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+                  end
+               end
+
                pres2 = [];
                %                   profNum = '';
                %                   for idProf = 1:inputNProf
@@ -578,18 +639,31 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             
             idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
             profPres = profData{2*idVal};
-            
+
             %             idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
             %             profPresQc = profData{2*idVal};
-                        
+
             if (param1File ~= 'c')
-               
+
                idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
                profParam1 = profData{2*idVal};
-               
+
                idVal = find(strcmp([g_NTP_NAME_PARAM1 '_QC'], profData(1:2:end)) == 1, 1);
                profParam1Qc = profData{2*idVal};
-               
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+               profParamAdj1 = profData{2*idVal};
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+               profParamAdj1Qc = profData{2*idVal};
+
+               for idProf = 1:size(profParam1, 2)
+                  if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
+                     profParam1(:, idProf) = profParam1(:, idProf);
+                     profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+                  end
+               end
+
                pres1 = [];
                profNum = '';
                for idProf = 1:inputNProf
@@ -655,15 +729,28 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                   end
                end
             end
-            
+
             if (param2File ~= 'c')
-               
+
                idVal = find(strcmp(g_NTP_NAME_PARAM2, profData(1:2:end)) == 1, 1);
                profParam2 = profData{2*idVal};
-               
+
                idVal = find(strcmp([g_NTP_NAME_PARAM2 '_QC'], profData(1:2:end)) == 1, 1);
                profParam2Qc = profData{2*idVal};
-               
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED'], profData(1:2:end)) == 1, 1);
+               profParamAdj2 = profData{2*idVal};
+
+               idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
+               profParamAdj2Qc = profData{2*idVal};
+
+               for idProf = 1:size(profParam2, 2)
+                  if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
+                     profParam2(:, idProf) = profParam2(:, idProf);
+                     profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+                  end
+               end
+
                pres2 = [];
                %                if (~exist('profNum', 'var'))
                profNum = '';

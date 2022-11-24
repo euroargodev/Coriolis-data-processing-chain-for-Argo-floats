@@ -148,6 +148,7 @@ while (currentByte <= lastByteNum)
       
       if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))
          % raw data
+         data = nan(1, 8);
          data(1) = epoch_2_julian_dec_argo(rawData(1));
          data(2) = rawData(2)/10 - 100;
          data(3) = rawData(3)/1000 - 5;
