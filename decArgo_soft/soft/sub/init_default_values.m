@@ -21,14 +21,6 @@ function init_default_values(varargin)
 % decoder version
 global g_decArgo_decoderVersion;
 
-% temporary flag to generate TRAJ 3.2 files
-global g_tempoJPR_generateTraj_3_2;
-g_tempoJPR_generateTraj_3_2 = 0;
-
-% temporary flag to add error ellipses
-global g_tempoJPR_add_error_ellipses;
-g_tempoJPR_add_error_ellipses = 0;
-
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeArgos;
 global g_decArgo_decoderIdListNkeIridiumRbr;
@@ -491,7 +483,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '043h';
+g_decArgo_decoderVersion = '043i';
 
 % list of managed decoders
 

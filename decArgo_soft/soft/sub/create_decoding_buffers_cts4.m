@@ -160,7 +160,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabExpNbDesc(idF) = 258 - 256;
          idF = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 6));
          tabExpNbDesc(idF) = 278 - 256;
-         
+
       case 6903549
          startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
          stopId = find(tabSession == tabSession(startId), 1, 'last');
@@ -484,7 +484,7 @@ if (ismember(a_decoderId, [111, 113, 115]))
    tabRank(idSurfSensorTech) = -1;
 end
 if (ismember(g_decArgo_floatNum, ...
-      [6903249 6902906 6904134]))
+      [6903249 6902906 6904134 6903240]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -544,6 +544,35 @@ if (ismember(g_decArgo_floatNum, ...
          id = find(tabSession ~= -1);
          id = setdiff(id, 1:4603);
          tabSession(id) = tabSession(id) + 2;
+         
+      case 6903240
+         % second Iridium session of cycle #255 s sent with delayed data
+
+         startId1 = find((tabCyNumRaw == 255) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         startId2 = find((tabCyNumRaw == 255) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
+         stopId1 = startId2 - 1;
+         
+         tabDeep(startId1:stopId1) = 0;
+         tabDelayed(startId1:stopId1) = 1;
+         tabCompleted(startId1:stopId1) = 1;
+         
+         startId3 = find((tabCyNumRaw == 256) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         stopId2 = startId3 - 1;
+         
+         tabBase(startId2) = 1;
+         tabCyNumOut(startId2) = 255;
+         tabCyNum(startId2) = 25500;
+         tabRank(startId2:stopId2) = tabRank(startId1) + 1;
+         tabDeep(startId2:stopId2) = 1;
+         tabDone(startId2:stopId2) = 1;
+         tabDelayed(startId2:stopId2) = 1;
+         tabCompleted(startId2:stopId2) = 1;
+
+         startId4 = find((tabCyNumRaw == 256) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
+         
+         tabRank(startId3) = tabRank(stopId2) + 1;
+         idF = find(tabRank(startId4:end) ~= -1);
+         tabRank(idF+startId4-1) = tabRank(idF+startId4-1) + 1;
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
