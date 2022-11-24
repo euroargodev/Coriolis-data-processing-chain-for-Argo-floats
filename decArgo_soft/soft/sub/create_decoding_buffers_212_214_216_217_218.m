@@ -514,6 +514,22 @@ for idL = 1:length(tabRank)
    end
 end
 
+% specific
+if (ismember(g_decArgo_floatNum, [6903772]))
+   switch g_decArgo_floatNum
+      case 6903772
+         % the float have been set to EOL at cycle #99, however the data of this
+         % cycle has been sent twice
+         id = find((tabCyNum == 99) & (tabPackType == 0));
+         id = find(tabSession == tabSession(id(2)));
+         tabDeep(id) = 0;
+         id = find((tabSession == tabSession(id(2))) & (tabPackType == 3));
+         tabRank(id) = -1;
+         tabRankByCycle(id) = -1;
+         tabRankByDate(id) = -1;
+   end
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WRITE CYCLE INFORMATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
