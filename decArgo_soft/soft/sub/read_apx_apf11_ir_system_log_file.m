@@ -2,11 +2,13 @@
 % Read Apex APF11 Iridium system log file.
 %
 % SYNTAX :
-%  [o_error, o_events] = read_apx_apf11_ir_system_log_file(a_logFileName, a_fromLaunchFlag)
+%  [o_error, o_events] = read_apx_apf11_ir_system_log_file( ...
+%    a_logFileName, a_fromLaunchFlag, a_functionName)
 %
 % INPUT PARAMETERS :
 %   a_logFileName    : system log file name
 %   a_fromLaunchFlag : consider events from float launch date
+%   a_functionName   : function name to consider
 %
 % OUTPUT PARAMETERS :
 %   o_error  : error flag
@@ -20,7 +22,8 @@
 % RELEASES :
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_error, o_events] = read_apx_apf11_ir_system_log_file(a_logFileName, a_fromLaunchFlag)
+function [o_error, o_events] = read_apx_apf11_ir_system_log_file( ...
+   a_logFileName, a_fromLaunchFlag, a_functionName)
 
 % output parameters initialization
 o_error = 0;
@@ -82,31 +85,35 @@ while 1
       end
       continue
    end
-   
-   newEvent = get_event_init_struct;
-   newEvent.number = eventNum;
-   newEvent.timestamp = datenum(line(1:idSep(1)-1), 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
-   newEvent.priority = line(idSep(1)+1:idSep(2)-1);
-   newEvent.functionName = line(idSep(2)+1:idSep(3)-1);
-   newEvent.message = line(idSep(3)+1:end);
 
-   if (a_fromLaunchFlag)
-      if (~isempty(g_decArgo_floatLaunchDate) && (newEvent.timestamp < g_decArgo_floatLaunchDate))
-         % we keep Ice information, even without timestamp
-         if ~((strcmp(newEvent.functionName, 'ASCENT') && (any(strfind(newEvent.message, 'aborting mission')))) || ...
-               strcmp(newEvent.functionName, 'ICE'))
-            continue
-         else
-            newEvent.timestamp = g_decArgo_dateDef;
+   functionName = line(idSep(2)+1:idSep(3)-1);
+   if (isempty(a_functionName) || (~isempty(a_functionName) && strcmp(functionName, a_functionName)))
+      
+      newEvent = get_event_init_struct;
+      newEvent.number = eventNum;
+      newEvent.timestamp = datenum(line(1:idSep(1)-1), 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+      newEvent.priority = line(idSep(1)+1:idSep(2)-1);
+      newEvent.functionName = line(idSep(2)+1:idSep(3)-1);
+      newEvent.message = line(idSep(3)+1:end);
+
+      if (a_fromLaunchFlag)
+         if (~isempty(g_decArgo_floatLaunchDate) && (newEvent.timestamp < g_decArgo_floatLaunchDate))
+            % we keep Ice information, even without timestamp
+            if ~((strcmp(newEvent.functionName, 'ASCENT') && (any(strfind(newEvent.message, 'aborting mission')))) || ...
+                  strcmp(newEvent.functionName, 'ICE'))
+               continue
+            else
+               newEvent.timestamp = g_decArgo_dateDef;
+            end
          end
       end
-   end
-      
-   eventList(eventNum) = newEvent;
-   eventNum = eventNum + 1;
-   if (eventNum > eventListSize)
-      eventList = cat(2, eventList, repmat(get_event_init_struct, 1, EVENTS_SET_SIZE));
-      eventListSize = eventListSize + EVENTS_SET_SIZE;
+
+      eventList(eventNum) = newEvent;
+      eventNum = eventNum + 1;
+      if (eventNum > eventListSize)
+         eventList = cat(2, eventList, repmat(get_event_init_struct, 1, EVENTS_SET_SIZE));
+         eventListSize = eventListSize + EVENTS_SET_SIZE;
+      end
    end
 end
 o_events = eventList(1:eventNum-1);

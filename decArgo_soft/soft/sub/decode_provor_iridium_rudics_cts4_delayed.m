@@ -379,6 +379,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    
+   % add MTIME in profiles
+   o_tabProfiles = add_mtime_in_profile(o_tabProfiles);
+   
    % cut CTD profile at the cut-off pressure of the CTD pump
    [o_tabProfiles] = cut_ctd_profile_ir_rudics(o_tabProfiles);
    

@@ -93,7 +93,7 @@ for idFile = 1:length(a_systemLogFileList)
    else
       fromLaunchFlag = 0;
    end
-   [error, events] = read_apx_apf11_ir_system_log_file(sysFilePathName, fromLaunchFlag);
+   [error, events] = read_apx_apf11_ir_system_log_file(sysFilePathName, fromLaunchFlag, '');
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sysFilePathName);

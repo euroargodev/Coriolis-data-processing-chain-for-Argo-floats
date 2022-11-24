@@ -65,7 +65,7 @@ for idFile = 1:length(logFileList)
    logFilePathName = logFileList{idFile};
    
    % read input file
-   [error, events] = read_apx_apf11_ir_system_log_file(logFilePathName, 0);
+   [error, events] = read_apx_apf11_ir_system_log_file(logFilePathName, 0, 'GPS');
    if (error == 1)
       fprintf('ERROR: Error in file: %s - ignored\n', logFilePathName);
       return
