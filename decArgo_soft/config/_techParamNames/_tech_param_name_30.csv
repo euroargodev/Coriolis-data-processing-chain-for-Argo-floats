@@ -81,3 +81,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 1214;27;Transmission Start day : dd;CLOCK_TransmissionStart_DD;time of the first transmission for this cycle
 1215;28;Transmission Start hour : hh;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
 1216;29;Number of repetitions for each argos message;NUMBER_TelemetryRetransmission_COUNT;Number of repeated transmissions of float data for each Argos message
+1000;-1;Number of tech #1 messages received;TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT;Number of times technical message #1 has been received.
+1001;-1;Number of tech #2 messages received;TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT;Number of times technical message #2 has been received.
+1002;-1;Number of parameter messages received;TECH_AUX_NUMBER_ParameterMessageReceived_COUNT;Number of times parameter message has been received.
+1003;-1;Argos data file time span;TECH_AUX_TIME_ArgosReceivedDataTimeSpan_HHMMSS;Time difference between first and last Argos float messages assigned to the cycle.

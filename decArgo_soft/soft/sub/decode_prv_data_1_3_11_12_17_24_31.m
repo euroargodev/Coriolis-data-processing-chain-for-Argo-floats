@@ -54,6 +54,12 @@ global g_decArgo_salCountsDef;
 % configuration values
 global g_decArgo_generateNcTech;
 
+% output NetCDF technical parameter index information
+global g_decArgo_outputNcParamIndex;
+
+% output NetCDF technical parameter values
+global g_decArgo_outputNcParamValue;
+
 % output parameters initialization
 o_tabProfCTD = [];
 o_tabDrifCTD = [];
@@ -66,6 +72,7 @@ o_maxProfPres = g_decArgo_presDef;
 % decode the Argos data messages
 tabProfCTD = [];
 tabDrifCTD = [];
+
 for idMes = 1:size(a_tabSensors, 1)
    % message type
    msgType = a_tabSensors(idMes, 1);
@@ -147,6 +154,11 @@ for idMes = 1:size(a_tabSensors, 1)
          if (g_decArgo_generateNcTech ~= 0)
             store_tech_data_for_nc_1_3_11_12_17_24_31(o_tabTech, ...
                floatTimeParts, utcTimeJuld, o_floatClockDrift, a_decoderId);
+            
+            % store technical message redundancy
+            g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+               g_decArgo_cycleNum 1000];
+            g_decArgo_outputNcParamValue{end+1} = msgOcc;
          end
 
       case {4, 6}

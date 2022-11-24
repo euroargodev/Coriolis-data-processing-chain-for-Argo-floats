@@ -436,7 +436,7 @@
       "CONF_PARAM_DEC_ID" : "IC02",
       "CONF_PARAM_LABEL" : "Nb of detection to confirm Ice at surface",
       "CONF_PARAM_DEFINITION" : "TBD",
-      "CONF_PARAM_NAME" : "CONFIG_IceDetectionConsecutiveDetectionBeforeFloatSurfaceInhibition_Number",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionConsecutiveDetectionBeforeFloatSurfaceInhibition_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of consecutive ISA detections before float surface inhibition.If fewer consecutive ice detections are made, then the float will immediately seek the surface if mixed layer temp is warm."
    },
    "CONF_PARAM_56" :

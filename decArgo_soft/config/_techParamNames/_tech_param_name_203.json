@@ -2,7 +2,7 @@
    "TECH_PARAM_1" :
    {
       "TECH_PARAM_DEC_ID" : "224",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "3",
       "TECH_PARAM_MSG_LABEL" : "Date de début de cycle : JJ",
       "TECH_PARAM_NAME" : "CLOCK_InitialValveActionDescentToPark_YYYYMMDD",
       "TECH_PARAM_DESCRIPTION" : "Date of the beginning of buoyancy reduction (relative to mission start day)."
@@ -10,7 +10,7 @@
    "TECH_PARAM_2" :
    {
       "TECH_PARAM_DEC_ID" : "100",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "6",
       "TECH_PARAM_MSG_LABEL" : "Jour relatif de début de cycle.",
       "TECH_PARAM_NAME" : "CLOCK_InitialValveActionDescentToPark_FloatDay",
       "TECH_PARAM_DESCRIPTION" : "Day number of the beginning of buoyancy reduction (relative to mission start day)."
@@ -18,7 +18,7 @@
    "TECH_PARAM_3" :
    {
       "TECH_PARAM_DEC_ID" : "225",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "7",
       "TECH_PARAM_MSG_LABEL" : "Heure de début cycle (nombre de minutes dans le jour courant). (BUOYANCY_REDUCTION_START_TIME).",
       "TECH_PARAM_NAME" : "CLOCK_InitialValveActionDescentToPark_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Date of the beginning of buoyancy reduction (relative to mission start day)."
@@ -26,7 +26,7 @@
    "TECH_PARAM_4" :
    {
       "TECH_PARAM_DEC_ID" : "101",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "8",
       "TECH_PARAM_MSG_LABEL" : "Durée de l’activation forfaitaire de l’EV lors de la réduction d’émergence.",
       "TECH_PARAM_NAME" : "TIME_ValveActionsAtSurface_seconds",
       "TECH_PARAM_DESCRIPTION" : "Duration of the basic valve actions."
@@ -34,7 +34,7 @@
    "TECH_PARAM_5" :
    {
       "TECH_PARAM_DEC_ID" : "102",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "9",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups EV en surface.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of solenoid valve actions at the surface until the crossing of the GAP threshold"
@@ -42,7 +42,7 @@
    "TECH_PARAM_6" :
    {
       "TECH_PARAM_DEC_ID" : "103",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "10",
       "TECH_PARAM_MSG_LABEL" : "Flag échouage en surface .",
       "TECH_PARAM_NAME" : "FLAG_Beached_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "is the float beached? - could be logical"
@@ -50,7 +50,7 @@
    "TECH_PARAM_7" :
    {
       "TECH_PARAM_DEC_ID" : "104",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "11",
       "TECH_PARAM_MSG_LABEL" : "Heure de début de descente.",
       "TECH_PARAM_NAME" : "CLOCK_StartDescentToPark_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day at the beginning of the descent to parking depth."
@@ -58,7 +58,7 @@
    "TECH_PARAM_8" :
    {
       "TECH_PARAM_DEC_ID" : "105",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "12",
       "TECH_PARAM_MSG_LABEL" : "Heure de première stabilisation.",
       "TECH_PARAM_NAME" : "CLOCK_InitialStabilizationDuringDescentToPark_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day when the float first stabilizes during descent to parking depth."
@@ -66,7 +66,7 @@
    "TECH_PARAM_9" :
    {
       "TECH_PARAM_DEC_ID" : "106",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "13",
       "TECH_PARAM_MSG_LABEL" : "Heure de fin de descente.",
       "TECH_PARAM_NAME" : "CLOCK_EndDescentToPark_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day at the end of the descent to parking depth."
@@ -74,7 +74,7 @@
    "TECH_PARAM_10" :
    {
       "TECH_PARAM_DEC_ID" : "107",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "14",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups d'électrovanne en plongée vers Pdérive.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringDescentToPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure"
@@ -82,7 +82,7 @@
    "TECH_PARAM_11" :
    {
       "TECH_PARAM_DEC_ID" : "108",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "15",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe en plongée vers Pdérive.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringDescentToPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure"
@@ -90,7 +90,7 @@
    "TECH_PARAM_12" :
    {
       "TECH_PARAM_DEC_ID" : "226",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "18",
       "TECH_PARAM_MSG_LABEL" : "Date de début de dérive (JJ du mois seulement)",
       "TECH_PARAM_NAME" : "CLOCK_EndDescentToPark_DD",
       "TECH_PARAM_DESCRIPTION" : "time when park pressure is reached"
@@ -98,7 +98,7 @@
    "TECH_PARAM_13" :
    {
       "TECH_PARAM_DEC_ID" : "109",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "19",
       "TECH_PARAM_MSG_LABEL" : "Nombre d'entrée dans la consigne.",
       "TECH_PARAM_NAME" : "NUMBER_DescentToParkEntriesInParkMargin_COUNT",
       "TECH_PARAM_DESCRIPTION" : "descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)"
@@ -106,7 +106,7 @@
    "TECH_PARAM_14" :
    {
       "TECH_PARAM_DEC_ID" : "110",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "20",
       "TECH_PARAM_MSG_LABEL" : "Nombre de repositionnements en dérive.",
       "TECH_PARAM_NAME" : "NUMBER_RepositionsDuringPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of times the float readjusts its buoyancy during park phase - using either the pump or EV"
@@ -114,7 +114,7 @@
    "TECH_PARAM_15" :
    {
       "TECH_PARAM_DEC_ID" : "111",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "23",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups d'EV en dérive à Pdérive.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions during park phase"
@@ -122,7 +122,7 @@
    "TECH_PARAM_16" :
    {
       "TECH_PARAM_DEC_ID" : "112",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "24",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe en dérive à Pdérive.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of pump actions while at park depth"
@@ -130,7 +130,7 @@
    "TECH_PARAM_17" :
    {
       "TECH_PARAM_DEC_ID" : "113",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "25",
       "TECH_PARAM_MSG_LABEL" : "Heure début descente profil.",
       "TECH_PARAM_NAME" : "CLOCK_StartDescentToProfile_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day at the beginning of the descent to profile depth."
@@ -138,7 +138,7 @@
    "TECH_PARAM_18" :
    {
       "TECH_PARAM_DEC_ID" : "114",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "26",
       "TECH_PARAM_MSG_LABEL" : "Heure fin descente profil.",
       "TECH_PARAM_NAME" : "CLOCK_EndDescentToProfile_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day at the end of the descent to profile depth."
@@ -146,7 +146,7 @@
    "TECH_PARAM_19" :
    {
       "TECH_PARAM_DEC_ID" : "115",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "27",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups EV descente profil.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringDescentToProfile_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions during descent to start profile pressure"
@@ -154,7 +154,7 @@
    "TECH_PARAM_20" :
    {
       "TECH_PARAM_DEC_ID" : "116",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "28",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe descente profil.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringDescentToProfile_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of pump actions during descent to start profile pressure"
@@ -162,7 +162,7 @@
    "TECH_PARAM_21" :
    {
       "TECH_PARAM_DEC_ID" : "117",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "30",
       "TECH_PARAM_MSG_LABEL" : "Nombre d'entrées consigne en dérive en attente profil.",
       "TECH_PARAM_NAME" : "NUMBER_DescentToProfileEntriesInProfileMargin_COUNT",
       "TECH_PARAM_DESCRIPTION" : "descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)"
@@ -170,7 +170,7 @@
    "TECH_PARAM_22" :
    {
       "TECH_PARAM_DEC_ID" : "118",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "31",
       "TECH_PARAM_MSG_LABEL" : "Nombre de repositionnements en dérive en attente profil.",
       "TECH_PARAM_NAME" : "NUMBER_RepositionsAtProfileDepth_COUNT",
       "TECH_PARAM_DESCRIPTION" : "at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV"
@@ -178,7 +178,7 @@
    "TECH_PARAM_23" :
    {
       "TECH_PARAM_DEC_ID" : "119",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "32",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups EV en dérive en attente profil.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringProfileDrift_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions while drifting at profile depth"
@@ -186,7 +186,7 @@
    "TECH_PARAM_24" :
    {
       "TECH_PARAM_DEC_ID" : "120",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "33",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe en dérive en attente profil.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringProfileDrift_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of pump actions during drift at profile depth."
@@ -194,7 +194,7 @@
    "TECH_PARAM_25" :
    {
       "TECH_PARAM_DEC_ID" : "121",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "36",
       "TECH_PARAM_MSG_LABEL" : "Heure de début de remontée.",
       "TECH_PARAM_NAME" : "CLOCK_StartAscentToSurface_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day at the beginning of the ascent to the surface."
@@ -202,7 +202,7 @@
    "TECH_PARAM_26" :
    {
       "TECH_PARAM_DEC_ID" : "122",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "37",
       "TECH_PARAM_MSG_LABEL" : "Heure de fin de remontée.",
       "TECH_PARAM_NAME" : "CLOCK_TransmissionStart_HHMM",
       "TECH_PARAM_DESCRIPTION" : "time of the first transmission for this cycle"
@@ -210,7 +210,7 @@
    "TECH_PARAM_27" :
    {
       "TECH_PARAM_DEC_ID" : "123",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "38",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe en remontée.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringAscentToSurface_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of pump actions between start and end of ascent "
@@ -218,7 +218,7 @@
    "TECH_PARAM_28" :
    {
       "TECH_PARAM_DEC_ID" : "124",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "45",
       "TECH_PARAM_MSG_LABEL" : "Offset de pression.",
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar",
       "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected"
@@ -226,7 +226,7 @@
    "TECH_PARAM_29" :
    {
       "TECH_PARAM_DEC_ID" : "125",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "46",
       "TECH_PARAM_MSG_LABEL" : "Vide interne en surface.",
       "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumAtSurface_mbar",
       "TECH_PARAM_DESCRIPTION" : "Surface internal pressure"
@@ -234,7 +234,7 @@
    "TECH_PARAM_30" :
    {
       "TECH_PARAM_DEC_ID" : "126",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "47",
       "TECH_PARAM_MSG_LABEL" : "Tension batterie.",
       "TECH_PARAM_NAME" : "VOLTAGE_BatteryPumpStartProfile_volts",
       "TECH_PARAM_DESCRIPTION" : "Pump battery voltage (volts) at depth"
@@ -242,7 +242,7 @@
    "TECH_PARAM_31" :
    {
       "TECH_PARAM_DEC_ID" : "127",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "48",
       "TECH_PARAM_MSG_LABEL" : "Erreur RTC.",
       "TECH_PARAM_NAME" : "FLAG_RTCStatus_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "real time clock status - 1= OK, 0=not OK"
@@ -250,7 +250,7 @@
    "TECH_PARAM_32" :
    {
       "TECH_PARAM_DEC_ID" : "128",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "49",
       "TECH_PARAM_MSG_LABEL" : "Compteur de cohérence (nombre d’erreurs de la CTD).",
       "TECH_PARAM_NAME" : "NUMBER_CTDError_COUNT",
       "TECH_PARAM_DESCRIPTION" : "CTD error count"
@@ -258,76 +258,84 @@
    "TECH_PARAM_33" :
    {
       "TECH_PARAM_DEC_ID" : "129",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "50",
       "TECH_PARAM_MSG_LABEL" : "Etat du capteur DO (0 si OK, 1 sinon).",
       "TECH_PARAM_NAME" : "FLAG_OptodeStatus_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "Flag indicating the status of the Optode (see manual)"
    },
    "TECH_PARAM_34" :
    {
+      "TECH_PARAM_DEC_ID" : "1000",
+      "TECH_PARAM_MSG_ID" : "59",
+      "TECH_PARAM_MSG_LABEL" : "GPS valid fix ?",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_GPSValidFix_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise)."
+   },
+   "TECH_PARAM_35" :
+   {
       "TECH_PARAM_DEC_ID" : "130",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "60",
       "TECH_PARAM_MSG_LABEL" : "Durée de la session GPS.",
       "TECH_PARAM_NAME" : "TIME_IridiumGPSFix_seconds",
       "TECH_PARAM_DESCRIPTION" : "the number of seconds required to obtain a GPS fix for a profile"
    },
-   "TECH_PARAM_35" :
+   "TECH_PARAM_36" :
    {
       "TECH_PARAM_DEC_ID" : "131",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "61",
       "TECH_PARAM_MSG_LABEL" : "Nombre de relances effectuées lors de la session GPS.",
       "TECH_PARAM_NAME" : "NUMBER_RetriesForGPSAcquisition_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times the GPS had to try to get a valid fix"
    },
-   "TECH_PARAM_36" :
+   "TECH_PARAM_37" :
    {
       "TECH_PARAM_DEC_ID" : "132",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "62",
       "TECH_PARAM_MSG_LABEL" : "Nombre de télécommandes reçues (pour le cycle en cours).",
       "TECH_PARAM_NAME" : "FLAG_RemoteControlMessageOK_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of remote control successfully considered."
    },
-   "TECH_PARAM_37" :
+   "TECH_PARAM_38" :
    {
       "TECH_PARAM_DEC_ID" : "133",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "63",
       "TECH_PARAM_MSG_LABEL" : "Nombre de télécommandes rejetées (pour le cycle en cours).",
       "TECH_PARAM_NAME" : "FLAG_RemoteControlMessageKO_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of remote control rejected by the float (due to out of range value or remote control syntax error)."
    },
-   "TECH_PARAM_38" :
+   "TECH_PARAM_39" :
    {
       "TECH_PARAM_DEC_ID" : "134",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "65",
       "TECH_PARAM_MSG_LABEL" : "Date de début de fin de vie: HH",
       "TECH_PARAM_NAME" : "CLOCK_EOLStart_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Clock time when End of Life mode starts"
    },
-   "TECH_PARAM_39" :
+   "TECH_PARAM_40" :
    {
       "TECH_PARAM_DEC_ID" : "135",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "71",
       "TECH_PARAM_MSG_LABEL" : "Durée de la précédente session iridium.",
       "TECH_PARAM_NAME" : "TIME_PreviousIridiumSession_seconds",
       "TECH_PARAM_DESCRIPTION" : "Duration on the previous Iridium session"
    },
-   "TECH_PARAM_40" :
+   "TECH_PARAM_41" :
    {
       "TECH_PARAM_DEC_ID" : "136",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "72",
       "TECH_PARAM_MSG_LABEL" : "Nombre de SBD recus lors de la précédente session Iridium.",
       "TECH_PARAM_NAME" : "NUMBER_IridiumMessagesReceivedPreviousSession_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Incoming Iridium Messages Received during previous session"
    },
-   "TECH_PARAM_41" :
+   "TECH_PARAM_42" :
    {
       "TECH_PARAM_DEC_ID" : "137",
-      "TECH_PARAM_MSG_ID" : "1",
+      "TECH_PARAM_MSG_ID" : "73",
       "TECH_PARAM_MSG_LABEL" : "Nombre de SBD émis lors de la précédente session Iridium.",
       "TECH_PARAM_NAME" : "NUMBER_IridiumMessagesSentPreviousSession_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Incoming Iridium Messages Sent during previous session"
    },
-   "TECH_PARAM_42" :
+   "TECH_PARAM_43" :
    {
       "TECH_PARAM_DEC_ID" : "200",
       "TECH_PARAM_MSG_ID" : "2",
@@ -335,220 +343,276 @@
       "TECH_PARAM_NAME" : "NUMBER_DescentIridiumPackets_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth)."
    },
-   "TECH_PARAM_43" :
+   "TECH_PARAM_44" :
    {
       "TECH_PARAM_DEC_ID" : "201",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "3",
       "TECH_PARAM_MSG_LABEL" : "Nombre de paquets de type 2 ou 9 - CTDO dérive.",
       "TECH_PARAM_NAME" : "NUMBER_ParkIridiumPackets_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit sensor data collected during the drift at park depth."
    },
-   "TECH_PARAM_44" :
+   "TECH_PARAM_45" :
    {
       "TECH_PARAM_DEC_ID" : "202",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "4",
       "TECH_PARAM_MSG_LABEL" : "Nombre de paquets de type 3 ou 10 - CTDO remontée.",
       "TECH_PARAM_NAME" : "NUMBER_AscentIridiumPackets_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit sensor data collected during the ascent from the profile depth to the surface."
    },
-   "TECH_PARAM_45" :
+   "TECH_PARAM_46" :
    {
       "TECH_PARAM_DEC_ID" : "203",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "5",
       "TECH_PARAM_MSG_LABEL" : "Nombre de tranches zone surface – descente.",
       "TECH_PARAM_NAME" : "NUMBER_DescendingProfileReductionUpperPart_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Descending profile reduction Number of slices in shallow zone - NTS"
    },
-   "TECH_PARAM_46" :
+   "TECH_PARAM_47" :
    {
       "TECH_PARAM_DEC_ID" : "204",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "6",
       "TECH_PARAM_MSG_LABEL" : "Nombre de tranches zone fond - descente.",
       "TECH_PARAM_NAME" : "NUMBER_DescendingProfileReductionLowerPart_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Descending profile reduction Number of slices in deep zone - NTF"
    },
-   "TECH_PARAM_47" :
+   "TECH_PARAM_48" :
    {
       "TECH_PARAM_DEC_ID" : "205",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "7",
       "TECH_PARAM_MSG_LABEL" : "Nombre de mesures en dérive à l’immersion de parking.",
       "TECH_PARAM_NAME" : "NUMBER_ParkCTDOSamplesInternal_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Park  measurements - Internal counter"
    },
-   "TECH_PARAM_48" :
+   "TECH_PARAM_49" :
    {
       "TECH_PARAM_DEC_ID" : "206",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "8",
       "TECH_PARAM_MSG_LABEL" : "Nombre de tranches zone surface – remontée.",
       "TECH_PARAM_NAME" : "NUMBER_AscendingProfileReductionUpperPart_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Ascending profile reduction Number of slices in shallow zone - NTS"
    },
-   "TECH_PARAM_49" :
+   "TECH_PARAM_50" :
    {
       "TECH_PARAM_DEC_ID" : "207",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "9",
       "TECH_PARAM_MSG_LABEL" : "Nombre de tranches zone fond - remontée.",
       "TECH_PARAM_NAME" : "NUMBER_AscendingProfileReductionLowerPart_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Ascending profile reduction Number of slices in deep zone - NTF"
    },
-   "TECH_PARAM_50" :
+   "TECH_PARAM_51" :
    {
       "TECH_PARAM_DEC_ID" : "221",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "10",
       "TECH_PARAM_MSG_LABEL" : "Pression du « point de subsurface » (dernier point de mesure « brut » pompé lors du profil ascendant)",
       "TECH_PARAM_NAME" : "PRES_LastAscentPumpedRawSample_dbar",
       "TECH_PARAM_DESCRIPTION" : "Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars)."
    },
-   "TECH_PARAM_51" :
+   "TECH_PARAM_52" :
    {
       "TECH_PARAM_DEC_ID" : "208",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "16",
       "TECH_PARAM_MSG_LABEL" : "Nombre d'échouages détectés pendant le cycle.",
       "TECH_PARAM_NAME" : "FLAG_Grounded_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded"
    },
-   "TECH_PARAM_52" :
+   "TECH_PARAM_53" :
    {
       "TECH_PARAM_DEC_ID" : "209",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "18",
       "TECH_PARAM_MSG_LABEL" : "Jour flotteur du premier échouage.",
       "TECH_PARAM_NAME" : "CLOCK_TimeGrounded_FloatDay",
       "TECH_PARAM_DESCRIPTION" : "Day number when the float grounds for the first time (relative to mission start day)."
    },
-   "TECH_PARAM_53" :
+   "TECH_PARAM_54" :
    {
       "TECH_PARAM_DEC_ID" : "210",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "19",
       "TECH_PARAM_MSG_LABEL" : "Heure du premier échouage.",
       "TECH_PARAM_NAME" : "CLOCK_TimeGrounded_HHMM",
       "TECH_PARAM_DESCRIPTION" : "time the float grounded"
    },
-   "TECH_PARAM_54" :
+   "TECH_PARAM_55" :
    {
       "TECH_PARAM_DEC_ID" : "227",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "20",
       "TECH_PARAM_MSG_LABEL" : "Phase 1er échouage",
       "TECH_PARAM_NAME" : "FLAG_FirstGroundingCyclePhase_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "Phase of the float life or cycle when the first grounding occurred.  See the manual for phase definition - this will vary with float type"
    },
-   "TECH_PARAM_55" :
+   "TECH_PARAM_56" :
    {
       "TECH_PARAM_DEC_ID" : "211",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "21",
       "TECH_PARAM_MSG_LABEL" : "Nombre d'ouvertures EV à pression constante pour déclarer le premier échouage.",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsForFirstGroundingDetection_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of valve actions done at constant pressure to set the grounded flag for the first grounding event"
    },
-   "TECH_PARAM_56" :
+   "TECH_PARAM_57" :
    {
       "TECH_PARAM_DEC_ID" : "228",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "23",
       "TECH_PARAM_MSG_LABEL" : "Jour flotteur du 2ième échouage.",
       "TECH_PARAM_NAME" : "CLOCK_TimeGrounded_FloatDay",
       "TECH_PARAM_DESCRIPTION" : "Day number when the float grounds for the first time (relative to mission start day)."
    },
-   "TECH_PARAM_57" :
+   "TECH_PARAM_58" :
    {
       "TECH_PARAM_DEC_ID" : "229",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "24",
       "TECH_PARAM_MSG_LABEL" : "Heure du 2ième échouage.",
       "TECH_PARAM_NAME" : "CLOCK_TimeGrounded_HHMM",
       "TECH_PARAM_DESCRIPTION" : "time the float grounded"
    },
-   "TECH_PARAM_58" :
+   "TECH_PARAM_59" :
    {
       "TECH_PARAM_DEC_ID" : "230",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "25",
       "TECH_PARAM_MSG_LABEL" : "Phase 2ième échouage",
       "TECH_PARAM_NAME" : "FLAG_SecondGroundingCyclePhase_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "Phase of the float life or cycle when the second grounding occurred.  See the manual for phase definition - this will vary with float type"
    },
-   "TECH_PARAM_59" :
+   "TECH_PARAM_60" :
    {
       "TECH_PARAM_DEC_ID" : "231",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "26",
       "TECH_PARAM_MSG_LABEL" : "Nb d'ouvertures EV à pression constante pour déclarer l'échouage n°2",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsForSecondGroundingDetection_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of valve actions done at constant pressure to set the grounded flag for the second grounding event"
    },
-   "TECH_PARAM_60" :
+   "TECH_PARAM_61" :
    {
       "TECH_PARAM_DEC_ID" : "212",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "27",
       "TECH_PARAM_MSG_LABEL" : "Nombre de remontées d'urgence.",
       "TECH_PARAM_NAME" : "NUMBER_EmergencyAscents_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Emergency ascents - Internal count"
    },
-   "TECH_PARAM_61" :
+   "TECH_PARAM_62" :
    {
       "TECH_PARAM_DEC_ID" : "213",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "28",
       "TECH_PARAM_MSG_LABEL" : "Heure de la première remontée d'urgence.",
       "TECH_PARAM_NAME" : "CLOCK_TimeOfFirstEmergencyAscent_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Number of minutes elapsed in the day of the float first emergency ascent."
    },
-   "TECH_PARAM_62" :
+   "TECH_PARAM_63" :
    {
       "TECH_PARAM_DEC_ID" : "214",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "29",
       "TECH_PARAM_MSG_LABEL" : "Pression de la première remontée d'urgence.",
       "TECH_PARAM_NAME" : "PRES_FirstEmergencyAscent_dbar",
       "TECH_PARAM_DESCRIPTION" : "Pressure that triggered the first emergency ascent"
    },
-   "TECH_PARAM_63" :
+   "TECH_PARAM_64" :
    {
       "TECH_PARAM_DEC_ID" : "215",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "30",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe liés à la première remontée d’urgence.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsOnFirstEmergencyAscent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Emergency ascent - pump actions at emergency depth"
    },
-   "TECH_PARAM_64" :
+   "TECH_PARAM_65" :
    {
       "TECH_PARAM_DEC_ID" : "216",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "31",
       "TECH_PARAM_MSG_LABEL" : "Jour de première remontée d’urgence.",
       "TECH_PARAM_NAME" : "CLOCK_TimeOfFirstEmergencyAscent_FloatDay",
       "TECH_PARAM_DESCRIPTION" : "Day number of the float first emergency ascent (relative to mission start day)."
    },
-   "TECH_PARAM_65" :
+   "TECH_PARAM_66" :
    {
       "TECH_PARAM_DEC_ID" : "217",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "32",
       "TECH_PARAM_MSG_LABEL" : "Nombre de coups de pompe avant décollage effectif quand grounded à la pression de profil.",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsWhenGroundedAtProfilePressure_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of pump actions needed to leave the sea bottom when grounded at profile pressure"
    },
-   "TECH_PARAM_66" :
+   "TECH_PARAM_67" :
    {
       "TECH_PARAM_DEC_ID" : "218",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "33",
       "TECH_PARAM_MSG_LABEL" : "Vitesse au moment du premier échouage.",
       "TECH_PARAM_NAME" : "SPEED_FirstGrounding_mm/s",
       "TECH_PARAM_DESCRIPTION" : "Vertical speed during the first grounding"
    },
-   "TECH_PARAM_67" :
+   "TECH_PARAM_68" :
    {
       "TECH_PARAM_DEC_ID" : "219",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "34",
       "TECH_PARAM_MSG_LABEL" : "Vide interne au fond en début de remontée.",
       "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumProfileStart_mbar",
       "TECH_PARAM_DESCRIPTION" : "Internal tube pressure [mbar] in profile depth"
    },
-   "TECH_PARAM_68" :
+   "TECH_PARAM_69" :
    {
       "TECH_PARAM_DEC_ID" : "220",
-      "TECH_PARAM_MSG_ID" : "2",
+      "TECH_PARAM_MSG_ID" : "35",
       "TECH_PARAM_MSG_LABEL" : "Date du dernier reset flotteur.",
       "TECH_PARAM_NAME" : "CLOCK_LastReset_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Clock time of the last reset of the float"
    },
-   "TECH_PARAM_69" :
+   "TECH_PARAM_70" :
    {
       "TECH_PARAM_DEC_ID" : "232",
-      "TECH_PARAM_MSG_ID" : "2",
-      "TECH_PARAM_MSG_LABEL" : "Insulation voltage.",
+      "TECH_PARAM_MSG_ID" : "41",
+      "TECH_PARAM_MSG_LABEL" : "Insulation voltage",
       "TECH_PARAM_NAME" : "VOLTAGE_AcrossInsulation_mV",
       "TECH_PARAM_DESCRIPTION" : "Insulation voltage measured between 2 sub-parts of the float"
+   },
+   "TECH_PARAM_71" :
+   {
+      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of descent CTD packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth)."
+   },
+   "TECH_PARAM_72" :
+   {
+      "TECH_PARAM_DEC_ID" : "1002",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of drift CTD packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the drift at park depth."
+   },
+   "TECH_PARAM_73" :
+   {
+      "TECH_PARAM_DEC_ID" : "1003",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of ascent CTD packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface."
+   },
+   "TECH_PARAM_74" :
+   {
+      "TECH_PARAM_DEC_ID" : "1004",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of hydraulic packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_HydraulicIridiumPacketsReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit hydraulic data recorded during the cycle."
+   },
+   "TECH_PARAM_75" :
+   {
+      "TECH_PARAM_DEC_ID" : "1005",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of tech #1 packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of times technical message #1 has been received."
+   },
+   "TECH_PARAM_76" :
+   {
+      "TECH_PARAM_DEC_ID" : "1006",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of tech #2 packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of times technical message #2 has been received."
+   },
+   "TECH_PARAM_77" :
+   {
+      "TECH_PARAM_DEC_ID" : "1007",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of parameter packets received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParameterMessageReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of times parameter message has been received."
    }
 }

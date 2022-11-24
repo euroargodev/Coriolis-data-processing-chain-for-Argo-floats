@@ -31,6 +31,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 129;45;Battery voltage drop at Pmax, pump ON (with regards to Unom = 15.0 V, in dV);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 130;46;RTC state indicator (normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
 131;47;Coherence problem counter;NUMBER_CTDError_COUNT;CTD error count
+1000;57;GPS valid fix (1 = valid, 0 = not valid);TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).
 132;58;GPS session duration;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
 133;60;Pump duration (buoyancy retrieve for GPS acquisition);TIME_PumpActionsAdditionalAtSurfaceForGPSAcquisition_seconds ;duration of additional pump actions at the surface performed during GPS acquisition in case of insufficient buoyancy
 134;61;Antenna status (0=DontKnow 1=Ok 2=Short 3=Open);FLAG_AntennaStatus_NUMBER;Flag indicating the status of the antenna (see manual)
@@ -79,3 +80,13 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 241;56;CTD status (0 : no error, 1: fast pressure default time-out, 2: fast pressure broken frame, 16: CTD default time-out, 32: CTD broken frame);FLAG_CTDStatus_NUMBER;Flag indicating the status of the CTD (see manual) (could be reported as hex)
 242;57;Float phase during CTD default detection;FLAG_CTDErrorCyclePhase_NUMBER;Phase of the float life or cycle when the CTD occurred.  See the manual for phase definition - this will vary with float type
 243;59;Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging);FLAG_IceDetected_NUMBER;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+1001;-1;Number of descent CTD packets received;TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+1002;-1;Number of drift CTD packets received;TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the drift at park depth.
+1003;-1;Number of ascent CTD packets received;TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface.
+1004;-1;"Number of ""CTD near surface"" packets received";TECH_AUX_NUMBER_NearSurfaceIridiumPacketsReceived_COUNT;"Number of Iridium packets received to transmit sensor data collected during the ""near surface measurement"" phase."
+1005;-1;"Number of ""CTD in air"" packets received";TECH_AUX_NUMBER_InAirIridiumPacketsReceived_COUNT;"Number of Iridium packets received to transmit sensor data collected during the ""in air measurement"" phase."
+1006;-1;Number of hydraulic packets received;TECH_AUX_NUMBER_HydraulicIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit hydraulic data recorded during the cycle.
+1007;-1;Number of tech #1 packets received;TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT;Number of times technical message #1 has been received.
+1008;-1;Number of tech #2 packets received;TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT;Number of times technical message #2 has been received.
+1009;-1;Number of parameter #1 packets received;TECH_AUX_NUMBER_ParameterMessage1Received_COUNT;Number of times parameter message #1 has been received.
+1010;-1;Number of parameter #2 packets received;TECH_AUX_NUMBER_ParameterMessage2Received_COUNT;Number of times parameter message #2 has been received.

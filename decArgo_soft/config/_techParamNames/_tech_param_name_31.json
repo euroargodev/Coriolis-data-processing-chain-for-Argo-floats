@@ -414,5 +414,21 @@
       "TECH_PARAM_MSG_LABEL" : "number of pump actions to lift up from ground",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsToLeaveReleasingSystem_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of pump actions needed to leave the releasing system (float deployed in ASFAR (Autonomous System for Argo float Release) mode)."
+   },
+   "TECH_PARAM_53" :
+   {
+      "TECH_PARAM_DEC_ID" : "1000",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of tech messages received",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessageReceived_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of times technical message has been received."
+   },
+   "TECH_PARAM_54" :
+   {
+      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Argos data file time span",
+      "TECH_PARAM_NAME" : "TECH_AUX_TIME_ArgosReceivedDataTimeSpan_HHMMSS",
+      "TECH_PARAM_DESCRIPTION" : "Time difference between first and last Argos float messages assigned to the cycle."
    }
 }

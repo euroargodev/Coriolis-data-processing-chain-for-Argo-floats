@@ -50,3 +50,5 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 122;34;profile descent stop time;CLOCK_EndDescentToProfile_HHMM;time when float reaches profile pressure  (tenths of an hour since midnight)
 110;35;RTC state indicator ( normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
 410;36;number of entrance in profile target range (descent);NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+1000;-1;Number of tech messages received;TECH_AUX_NUMBER_TechnicalMessageReceived_COUNT;Number of times technical message has been received.
+1001;-1;Argos data file time span;TECH_AUX_TIME_ArgosReceivedDataTimeSpan_HHMMSS;Time difference between first and last Argos float messages assigned to the cycle.

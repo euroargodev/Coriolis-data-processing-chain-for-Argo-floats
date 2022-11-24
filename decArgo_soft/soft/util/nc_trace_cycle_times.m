@@ -20,6 +20,7 @@
 function nc_trace_cycle_times(varargin)
 
 global g_NTCT_NC_DIR;
+global g_NTCT_NC_DIR_AUX;
 global g_NTCT_PDF_DIR;
 global g_NTCT_BATHY;
 global g_NTCT_SURF;
@@ -28,20 +29,28 @@ global g_NTCT_FLOAT_LIST;
 global g_NTCT_FIG_HANDLE;
 global g_NTCT_FLOAT_ID;
 
-% top directory of NetCDF files to plot
+% top directory of NetCDF files to plot (TRAJ and META)
 g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+
+% top directory of NetCDF auxiliary files to plot (TECH_AUX)
+g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store pdf output
 g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_201.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_202.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_203.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_201.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_202.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_203.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_209.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_212.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_213.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -130,6 +139,7 @@ return;
 function plot_cycle_times(a_idFloat, a_idCycle, a_reload)
 
 global g_NTCT_NC_DIR;
+global g_NTCT_NC_DIR_AUX;
 global g_NTCT_PDF_DIR;
 global g_NTCT_BATHY;
 global g_NTCT_SURF;
@@ -268,7 +278,7 @@ g_NTCT_cycle = a_idCycle;
 if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1))
    
    fprintf('Loading new float ... ');
-
+   
    % a new float is wanted
    g_NTCT_FLOAT_ID = a_idFloat;
    g_NTCT_cycles = [];
@@ -282,7 +292,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % from TRAJ file
    trajFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_Rtraj.nc'];
-
+   
    if ~(exist(trajFileName, 'file') == 2)
       fprintf('\n');
       fprintf('File not found: %s\n', trajFileName);
@@ -339,10 +349,10 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    juldAdj = trajData{2*idVal};
    
    idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
-   pres = trajData{2*idVal};
+   pres = double(trajData{2*idVal});
    
    idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
-   presAdj = trajData{2*idVal};
+   presAdj = double(trajData{2*idVal});
    
    idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
    cycleNumberIndex = trajData{2*idVal};
@@ -399,22 +409,22 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       posPrecJuld = posJuld(idP);
       posPrecLat = posLat(idP);
       posPrecLon = posLon(idP);
-   end   
+   end
    
    % retrieve the bathymetry along the displacements
    g_NTCT_tabBathyJuld = posJuldAll;
    g_NTCT_tabBathyMin = ones(size(posJuldAll))*g_elevDef;
    g_NTCT_tabBathyMax = ones(size(posJuldAll))*-g_elevDef;
-
+   
    for idP = 1:length(posJuldAll)
       [elev, lon, lat] = m_etopo2([posLonAll(idP) posLonAll(idP) posLatAll(idP) posLatAll(idP)]);
       g_NTCT_tabBathyMin(idP) = min(min(-elev));
       g_NTCT_tabBathyMax(idP) = max(max(-elev));
    end
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % from TECH_AUX file
-   techAuxFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/auxiliary/' num2str(floatNum) '_tech_aux.nc'];
+   techAuxFileName = [g_NTCT_NC_DIR_AUX '/' num2str(floatNum) '/auxiliary/' num2str(floatNum) '_tech_aux.nc'];
    
    valveAct = [];
    if ~(exist(techAuxFileName, 'file') == 2)
@@ -453,11 +463,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       
       % merge JULD and JULD_ADJUSTED
       idF = find(juldTechAdj ~= 999999);
-      juldTech(idF) = juldTech(idF);
+      juldTech(idF) = juldTechAdj(idF);
       juldTech(find(juldTech == 999999)) = g_dateDef;
       
       % get valva action information
-      if (~isempty(valveActDuration))
+      if (~ischar(valveActDuration))
          valveAct = valveActDuration;
       else
          valveAct = valveActFlag;
@@ -465,14 +475,14 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    end
    
    % process retrieved data
-
+   
    % arrays to store the data
    g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
-
+   
    % buoyancy activitity
    idF = find(ismember(measCode, [g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf]));
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
-
+   
    g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_SpyInDescToPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_SpyInDescToPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
@@ -496,7 +506,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_SpyInDescToPark_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyInDescToPark_pres(idC, 1:length(idF)) = pres(idF);
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToPark));
-            if ((length(idF) ~= length(idF)) || any(juld(idF) - juldTech(idF2)))
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency\n');
             else
                g_NTCT_SpyInDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
@@ -507,7 +518,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_SpyAtPark_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyAtPark_pres(idC, 1:length(idF)) = pres(idF);
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtPark));
-            if ((length(idF) ~= length(idF)) || any(juld(idF) - juldTech(idF2)))
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency\n');
             else
                g_NTCT_SpyAtPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
@@ -518,7 +530,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_SpyInDescToProf_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyInDescToProf_pres(idC, 1:length(idF)) = pres(idF);
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToProf));
-            if ((length(idF) ~= length(idF)) || any(juld(idF) - juldTech(idF2)))
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency\n');
             else
                g_NTCT_SpyInDescToProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
@@ -529,7 +542,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_SpyAtProf_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyAtProf_pres(idC, 1:length(idF)) = pres(idF);
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtProf));
-            if ((length(idF) ~= length(idF)) || any(juld(idF) - juldTech(idF2)))
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency\n');
             else
                g_NTCT_SpyAtProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
@@ -540,7 +554,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_SpyInAscProf_juld(idC, 1:length(idF)) = juld(idF);
             g_NTCT_SpyInAscProf_pres(idC, 1:length(idF)) = pres(idF);
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInAscProf));
-            if ((length(idF) ~= length(idF)) || any(juld(idF) - juldTech(idF2)))
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
                fprintf('ERROR: Traj / Tech_aux consistency\n');
             else
                g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
@@ -552,7 +567,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    % series of measurements
    idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf g_MC_InAirSeriesOfMeas g_MC_Surface g_MC_Grounded]));
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
-
+   
    g_NTCT_DescProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_DescProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_DriftAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
@@ -564,7 +579,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    g_NTCT_Surface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_Grounded_flag_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_Grounded_flag_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-
+   
    for idC = 1:length(g_NTCT_cycles)
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DescProf));
       if (~isempty(idF))
@@ -695,8 +710,8 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       if (~isempty(idF))
          g_NTCT_TET_juld(idC) = juld(idF);
       end
-   end   
-
+   end
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % from META file
    metaFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_meta.nc'];
@@ -749,7 +764,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    end
    
    idVal = find(strcmp('CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
-   configValue = metaData{2*idVal};   
+   configValue = metaData{2*idVal};
    
    idVal = find(strcmp('CONFIG_MISSION_NUMBER', metaData(1:2:end)) == 1, 1);
    configMissionNumberMeta = metaData{2*idVal}';
@@ -787,9 +802,9 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    if (~isempty(idF))
       tolerancePres = configValue(idF, :);
    end
-
+   
    % process retrieved data
-
+   
    g_NTCT_ParkPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
    g_NTCT_ProfPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
    g_NTCT_TolerancePres = ones(length(g_NTCT_cycles), 1)*g_presDef;
@@ -812,7 +827,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             g_NTCT_Grounded_flag(idC) = 1;
          end
       end
-   end   
+   end
    
    fprintf('done\n');
 end
@@ -1336,7 +1351,7 @@ elseif (strcmp(a_eventData.Key, 'downarrow'))
    plot_cycle_times( ...
       g_NTCT_FLOAT_ID, ...
       mod(g_NTCT_cycle+1, length(g_NTCT_cycles)), 0);
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % bathy visibility
 elseif (strcmp(a_eventData.Key, 'b'))
@@ -1344,7 +1359,7 @@ elseif (strcmp(a_eventData.Key, 'b'))
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
    
    display_current_config;
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % surf only visibility
 elseif (strcmp(a_eventData.Key, 's'))
@@ -1352,7 +1367,7 @@ elseif (strcmp(a_eventData.Key, 's'))
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
    
    display_current_config;
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation
 elseif (strcmp(a_eventData.Key, 'p'))
@@ -1451,18 +1466,18 @@ return;
 
 % ------------------------------------------------------------------------------
 % Callback used to customize text of data cursor.
-% 
+%
 % SYNTAX :
 %   data_cursor_output(a_src, a_eventData)
-% 
+%
 % INPUT PARAMETERS :
 %   a_src       : object
 %   a_eventData : event
-% 
+%
 % OUTPUT PARAMETERS :
-% 
+%
 % EXAMPLES :
-% 
+%
 % SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------

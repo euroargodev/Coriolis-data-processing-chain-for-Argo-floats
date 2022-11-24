@@ -665,6 +665,9 @@ if (g_decArgo_generateNcTech ~= 0)
       g_decArgo_outputNcParamValue{end+1} = 0;
    end
    
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 1003];
+   g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo((lastArgosMsgDate-firstArgosMsgDate)*24);
 end
 
 return;

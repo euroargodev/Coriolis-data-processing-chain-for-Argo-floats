@@ -251,15 +251,33 @@ if (length(idF2) > 1)
 elseif (length(idF2) == 1)
    
    id = idF2(1);
-   
+
    if ~((length(unique(a_tabTech(id, 18:19))) == 1) && (unique(a_tabTech(id, 18:19)) == 0))
-      firstGroundingTime = a_tabTech(id, 18) + a_tabTech(id, 19)/1440;
+      
+      % manage possible roll over of grounding day
+      groundingDay = a_tabTech(id, 18);
+      if (~isempty(o_cycleStartDate))
+         while ((groundingDay + a_tabTech(id, 19)/1440 + g_decArgo_julD2FloatDayOffset) < o_cycleStartDate)
+            groundingDay = groundingDay + 256;
+         end
+      end
+      
+      firstGroundingTime = groundingDay + a_tabTech(id, 19)/1440;
       o_firstGroundingDate = firstGroundingTime + g_decArgo_julD2FloatDayOffset;
       o_firstGroundingPres = a_tabTech(id, 17);
    end
    
    if ~((length(unique(a_tabTech(id, 23:24))) == 1) && (unique(a_tabTech(id, 23:24)) == 0))
-      secondGroundingTime = a_tabTech(id, 23) + a_tabTech(id, 24)/1440;
+      
+      % manage possible roll over of grounding day
+      groundingDay = a_tabTech(id, 23);
+      if (~isempty(o_cycleStartDate))
+         while ((groundingDay + a_tabTech(id, 24)/1440 + g_decArgo_julD2FloatDayOffset) < o_cycleStartDate)
+            groundingDay = groundingDay + 256;
+         end
+      end
+      
+      secondGroundingTime = groundingDay + a_tabTech(id, 24)/1440;
       o_secondGroundingDate = secondGroundingTime + g_decArgo_julD2FloatDayOffset;
       o_secondGroundingPres = a_tabTech(id, 22);
    end

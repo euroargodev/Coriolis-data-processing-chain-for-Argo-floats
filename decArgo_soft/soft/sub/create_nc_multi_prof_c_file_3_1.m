@@ -1229,7 +1229,7 @@ if (nbProfParam > 0)
    
    netcdf.endDef(fCdf);
    
-   % fill PARAMETER variable (event if there is no RT adjustments)
+   % fill PARAMETER variable (even if there is no RT adjustments)
    ncParamlist = repmat({''}, length(a_tabProfiles), nbProfParam);
    for idP = 1:length(a_tabProfiles)
       prof = a_tabProfiles(profIdList(idP));

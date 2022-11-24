@@ -55,6 +55,12 @@ global g_decArgo_molarDoxyCountsDef;
 % configuration values
 global g_decArgo_generateNcTech;
 
+% output NetCDF technical parameter index information
+global g_decArgo_outputNcParamIndex;
+
+% output NetCDF technical parameter values
+global g_decArgo_outputNcParamValue;
+
 % output parameters initialization
 o_tabProfCTDO = [];
 o_tabDrifCTDO = [];
@@ -142,6 +148,11 @@ for idMes = 1:size(a_tabSensors, 1)
          % output NetCDF files
          if (g_decArgo_generateNcTech ~= 0)
             store_tech_data_for_nc_4_19_25_27_to_29(o_tabTech, floatTimeParts, utcTimeJuld, o_floatClockDrift)
+            
+            % store technical message redundancy
+            g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+               g_decArgo_cycleNum 1000];
+            g_decArgo_outputNcParamValue{end+1} = msgOcc;
          end
 
       case {4, 6}

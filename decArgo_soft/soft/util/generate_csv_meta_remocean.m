@@ -35,6 +35,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PR
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
+dataBaseFileName = 'C:\Users\jprannou\Desktop\6902741\new_rem_meta.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -759,6 +760,28 @@ end
 return;
 
 % ------------------------------------------------------------------------------
+function [o_optodeInAir] = get_optode_in_air(a_floatNum, a_metaWmoList, a_metaData)
+
+o_optodeInAir = [];
+
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF = find(strcmp(a_metaData(idForWmo, 5), 'OPTODE_IN_AIR_MEASUREMENT'));
+if (~isempty(idF))
+   o_optodeInAir = a_metaData{idForWmo(idF), 4};
+   if ((strcmpi(o_optodeInAir, 'yes')) || (strcmpi(o_optodeInAir, 'y')))
+      o_optodeInAir = 1;
+   elseif ((strcmpi(o_optodeInAir, 'no')) || (strcmpi(o_optodeInAir, 'n')))
+      o_optodeInAir = 0;
+   end
+else
+   fprintf('ERROR: Optode in air information not found for float %d\n', ...
+      a_floatNum);
+end
+
+return;
+
+% ------------------------------------------------------------------------------
 function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
    
 o_platformFamily = [];
@@ -896,7 +919,7 @@ switch a_inputSensorName
       switch a_decId
          case {105, 106, 107, 108, 109, 110, 301}
             if (ismember(a_decId, [106 107 109 110]))
-               optodeInAirMeasFlag = get_static_config_value('CONFIG_PX_1_1_0_0_7', 0);
+               optodeInAirMeasFlag = get_optode_in_air(a_floatNum, a_metaWmoList, a_metaData);
                if (isempty(optodeInAirMeasFlag) || (optodeInAirMeasFlag == 0))
                   o_paramName = [ ...
                      {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} ...

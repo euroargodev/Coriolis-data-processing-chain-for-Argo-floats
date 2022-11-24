@@ -57,6 +57,12 @@ global g_decArgo_tPhaseDoxyCountsDef;
 % configuration values
 global g_decArgo_generateNcTech;
 
+% output NetCDF technical parameter index information
+global g_decArgo_outputNcParamIndex;
+
+% output NetCDF technical parameter values
+global g_decArgo_outputNcParamValue;
+
 % output parameters initialization
 o_tabProfCTDO = [];
 o_tabDrifCTDO = [];
@@ -141,6 +147,13 @@ for idMes = 1:size(a_tabSensors, 1)
                g_decArgo_cycleNum, o_tabTech1(1));
          end
          
+         % store technical message #1 redundancy
+         if (g_decArgo_generateNcTech ~= 0)
+            g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+               g_decArgo_cycleNum 1000];
+            g_decArgo_outputNcParamValue{end+1} = msgOcc;
+         end
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 1
          % technical message #2
@@ -217,6 +230,11 @@ for idMes = 1:size(a_tabSensors, 1)
          % output NetCDF files
          if (g_decArgo_generateNcTech ~= 0)
             store_tech2_data_for_nc_30_32(o_tabTech2, floatTimeParts, utcTimeJuld, o_floatClockDrift, o_deepCycle);
+            
+            % store technical message #2 redundancy
+            g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+               g_decArgo_cycleNum 1001];
+            g_decArgo_outputNcParamValue{end+1} = msgOcc;
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,6 +258,15 @@ for idMes = 1:size(a_tabSensors, 1)
          % output CSV file
          if (~isempty(g_decArgo_outputCsvFileId))
             print_param_data_in_csv_30_32(o_tabParam);
+         end
+         
+         % store parameter message redundancy
+         if (g_decArgo_generateNcTech ~= 0)
+            if (g_decArgo_cycleNum == 0)
+               g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+                  g_decArgo_cycleNum 1002];
+               g_decArgo_outputNcParamValue{end+1} = msgOcc;
+            end
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

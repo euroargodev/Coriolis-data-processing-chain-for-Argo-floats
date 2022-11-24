@@ -80,6 +80,7 @@ global g_decArgo_nbOf13Or11TypePacketExpected;
 global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
+global g_decArgo_nbOf6TypePacketReceived;
 
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
@@ -277,6 +278,17 @@ for idMes = 1:size(a_tabData, 1)
             continue;
          end
          
+         % BE CAREFUL
+         % there is an issue with grounding day when the grounding occured
+         % during the descent to profile depth phase (i.e. phase #5)
+         % => the decoded value should be 256 - transmitted value
+         if ((tabTech2(21) > 0) && (tabTech2(25) == 5))
+            tabTech2(23) = 256 - tabTech2(23);
+         end
+         if ((tabTech2(21) > 1) && (tabTech2(30) == 5))
+            tabTech2(28) = 256 - tabTech2(28);
+         end
+         
          % store last reset date
          floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          
@@ -454,6 +466,8 @@ for idMes = 1:size(a_tabData, 1)
             continue;
          end
          
+         g_decArgo_nbOf6TypePacketReceived = g_decArgo_nbOf6TypePacketReceived + 1;
+
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -532,6 +546,9 @@ if (a_procLevel > 0)
       fprintf('WARNING: Float #%d: Cycle number cannot be determined\n', ...
          g_decArgo_floatNum);
    end
+   
+   % collect information on received packet types
+   collect_received_packet_type_info;
 end
 
 return;
@@ -584,6 +601,7 @@ global g_decArgo_nbOf13Or11TypePacketExpected;
 global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
+global g_decArgo_nbOf6TypePacketReceived;
 
 % initialize information arrays
 g_decArgo_0TypePacketReceivedFlag = 0;
@@ -606,6 +624,7 @@ g_decArgo_nbOf13Or11TypePacketExpected = -1;
 g_decArgo_nbOf13Or11TypePacketReceived = 0;
 g_decArgo_nbOf14Or12TypePacketExpected = -1;
 g_decArgo_nbOf14Or12TypePacketReceived = 0;
+g_decArgo_nbOf6TypePacketReceived = 0;
 
 % items not concerned by this decoder
 g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
@@ -627,6 +646,95 @@ if (~isempty(idPos))
       % ice detection algorithm is disabled => parameter packet #2 is not
       % expected
       g_decArgo_7TypePacketReceivedFlag = 1;
+   end
+else
+   fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...
+      g_decArgo_floatNum);
+end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Collect information on received packet types
+%
+% SYNTAX :
+%  collect_received_packet_type_info
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   05/29/2017 - RNU - creation
+% ------------------------------------------------------------------------------
+function collect_received_packet_type_info
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% float configuration
+global g_decArgo_floatConfig;
+
+% arrays to store rough information on received data
+global g_decArgo_0TypePacketReceivedFlag;
+global g_decArgo_4TypePacketReceivedFlag;
+global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_7TypePacketReceivedFlag;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
+global g_decArgo_nbOf1Or8TypePacketReceived;
+global g_decArgo_nbOf2Or9TypePacketReceived;
+global g_decArgo_nbOf3Or10TypePacketReceived;
+global g_decArgo_nbOf13Or11TypePacketReceived;
+global g_decArgo_nbOf14Or12TypePacketReceived;
+global g_decArgo_nbOf6TypePacketReceived;
+
+% array ro store statistics on received packets
+global g_decArgo_nbDescentPacketsReceived;
+global g_decArgo_nbParkPacketsReceived;
+global g_decArgo_nbAscentPacketsReceived;
+global g_decArgo_nbNearSurfacePacketsReceived;
+global g_decArgo_nbInAirPacketsReceived;
+global g_decArgo_nbHydraulicPacketsReceived;
+global g_decArgo_nbTechPacketsReceived;
+global g_decArgo_nbTech1PacketsReceived;
+global g_decArgo_nbTech2PacketsReceived;
+global g_decArgo_nbParmPacketsReceived;
+global g_decArgo_nbParm1PacketsReceived;
+global g_decArgo_nbParm2PacketsReceived;
+
+g_decArgo_nbDescentPacketsReceived = g_decArgo_nbOf1Or8TypePacketReceived;
+g_decArgo_nbParkPacketsReceived = g_decArgo_nbOf2Or9TypePacketReceived;
+g_decArgo_nbAscentPacketsReceived = g_decArgo_nbOf3Or10TypePacketReceived;
+g_decArgo_nbNearSurfacePacketsReceived = g_decArgo_nbOf13Or11TypePacketReceived;
+g_decArgo_nbInAirPacketsReceived = g_decArgo_nbOf14Or12TypePacketReceived;
+g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbOf6TypePacketReceived;
+g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
+g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
+g_decArgo_nbParm1PacketsReceived = g_decArgo_5TypePacketReceivedFlag;
+g_decArgo_nbParm2PacketsReceived = g_decArgo_7TypePacketReceivedFlag;
+
+% if IC0 = 0, the ice detection algorithm is disabled and parameter #2 packet
+% (type 7) is not send by the float
+
+% retrieve configuration parameters
+configNames = g_decArgo_floatConfig.DYNAMIC.NAMES;
+configValues = g_decArgo_floatConfig.DYNAMIC.VALUES;
+
+% retrieve IC0 configuration value
+idPos = find(strncmp('CONFIG_IC00_', configNames, length('CONFIG_IC00_')) == 1, 1);
+if (~isempty(idPos))
+   iceNoSurfaceDelay = configValues(idPos, end);
+   if (iceNoSurfaceDelay == 0)
+      % ice detection algorithm is disabled => parameter packet #2 is not
+      % expected
+      g_decArgo_nbParm2PacketsReceived = -1;
    end
 else
    fprintf('WARNING: Float #%d: unable to retrieve IC01 configuration value => ice detection mode is supposed to be enabled\n', ...

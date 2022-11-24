@@ -41,7 +41,7 @@ g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_BLUE_REF';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_NTU_REF';
-g_NTP_NAME_PARAM1 = 'NITRATE';
+% g_NTP_NAME_PARAM1 = 'NITRATE';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
 % g_NTP_NAME_PARAM2 = 'BBP700';
@@ -50,7 +50,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'CDOM';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_F_SIG';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_NTU_SIG';
-g_NTP_NAME_PARAM2 = 'NITRATE';
+% g_NTP_NAME_PARAM2 = 'NITRATE';
 % g_NTP_NAME_PARAM2 = 'DOXY';
 
 % top directory of NetCDF files to plot
@@ -94,6 +94,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44_BODC.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

@@ -1196,6 +1196,11 @@ switch (a_decoderId)
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
          
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
+         
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
                   
@@ -1448,6 +1453,11 @@ switch (a_decoderId)
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
          
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
+         
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
          
@@ -1687,6 +1697,11 @@ switch (a_decoderId)
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
          
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
+         
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
          
@@ -1925,6 +1940,11 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
+         
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2227,6 +2247,11 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
+         
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2574,6 +2599,11 @@ switch (a_decoderId)
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
          
+         % store information on received Iridium packet types
+         if (deepCycle == 1)
+            store_received_packet_type_info_for_nc(a_decoderId);
+         end
+         
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
          
@@ -2802,6 +2832,7 @@ switch (a_decoderId)
             % store NetCDF technical data
             store_tech1_data_for_nc_210_to_212(tabTech1, deepCycle);
             store_tech2_data_for_nc_210_211(tabTech2, deepCycle);
+            store_received_packet_type_info_for_nc(a_decoderId);
             
             % update NetCDF technical data
             update_technical_data_argos_sbd(a_decoderId);
@@ -3040,6 +3071,7 @@ switch (a_decoderId)
             % store NetCDF technical data
             store_tech1_data_for_nc_210_to_212(tabTech1, deepCycle);
             store_tech2_data_for_nc_212(tabTech2, deepCycle);
+            store_received_packet_type_info_for_nc(a_decoderId);
             
             % update NetCDF technical data
             update_technical_data_argos_sbd(a_decoderId);
@@ -3327,6 +3359,7 @@ switch (a_decoderId)
             % store NetCDF technical data
             store_tech1_data_for_nc_210_to_212(tabTech1, deepCycle);
             store_tech2_data_for_nc_210_211(tabTech2, deepCycle);
+            store_received_packet_type_info_for_nc(a_decoderId);
 
             % update NetCDF technical data
             update_technical_data_argos_sbd(a_decoderId);

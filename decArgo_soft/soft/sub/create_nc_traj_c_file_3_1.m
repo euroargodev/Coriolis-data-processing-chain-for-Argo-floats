@@ -1423,7 +1423,7 @@ for idNM = 1:length(a_tabTrajNMeas)
    
    for idM = 1:length(nMeas.tabMeas)
       meas = nMeas.tabMeas(idM);
-      
+
       data{cycleNumberVarId+1}(idM) = nMeas.outputCycleNumber;
       data{measurementCodeVarId+1}(idM) = meas.measCode;
       

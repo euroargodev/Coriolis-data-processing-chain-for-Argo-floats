@@ -502,6 +502,9 @@ if (nTechMeas > 0)
    idVal = find(strcmp('JULD', techData) == 1);
    if (~isempty(idVal))
       juld = techData{idVal+1};
+      if (juld == ' ')
+         juld = [];
+      end
    end
    juldStatus = [];
    idVal = find(strcmp('JULD_STATUS', techData) == 1);

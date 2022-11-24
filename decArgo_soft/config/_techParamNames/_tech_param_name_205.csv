@@ -45,3 +45,9 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 142;59;1st Emergency ascent relative day (to 1st cycle day);CLOCK_TimeOfFirstEmergencyAscent_FloatDay;Day number of the float first emergency ascent (relative to mission start day).
 143;60;Remote control received;FLAG_RemoteControlMessageOK_COUNT;Number of remote control successfully considered.
 144;61;Remote control rejected;FLAG_RemoteControlMessageKO_COUNT;Number of remote control rejected by the float (due to out of range value or remote control syntax error).
+1000;70;GPS valid fix (1 = valid, 0 = not valid);TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).
+1001;-1;Number of descent CTD packets received;TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+1002;-1;Number of drift CTD packets received;TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the drift at park depth.
+1003;-1;Number of ascent CTD packets received;TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface.
+1004;-1;Number of tech packets received;TECH_AUX_NUMBER_TechnicalMessageReceived_COUNT;Number of times technical message has been received.
+1005;-1;Number of parameter packets received;TECH_AUX_NUMBER_ParameterMessageReceived_COUNT;Number of times parameter message has been received.

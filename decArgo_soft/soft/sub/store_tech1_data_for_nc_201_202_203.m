@@ -184,6 +184,10 @@ if (a_deepCycle == 1)
    g_decArgo_outputNcParamValue{end+1} = tabTech1(50);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 1000];
+   g_decArgo_outputNcParamValue{end+1} = tabTech1(59);
+   
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 130];
    g_decArgo_outputNcParamValue{end+1} = tabTech1(60);
    

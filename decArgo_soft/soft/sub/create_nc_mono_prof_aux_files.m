@@ -1500,7 +1500,7 @@ for idProf = 1:length(a_tabProfiles)
          
          netcdf.endDef(fCdf);
          
-         % fill PARAMETER variable (event if there is no RT adjustments)
+         % fill PARAMETER variable (even if there is no RT adjustments)
          ncParamlist = repmat({''}, nbProfToStore, nbProfParam);
          for idP = 1:nbProfToStore
             prof = a_tabProfiles(idProfInFile(idP));
