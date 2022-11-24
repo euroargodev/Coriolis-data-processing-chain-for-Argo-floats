@@ -4,12 +4,13 @@
 %
 % SYNTAX :
 %  [o_fileList] = get_cycle_float_file_list_iridium_rudics_apx_apf11( ...
-%    a_floatNum, a_floatRudicsId, a_cycleList)
+%    a_floatNum, a_floatRudicsId, a_cycleList, a_floatLaunchDate)
 %
 % INPUT PARAMETERS :
-%   a_floatNum      : float WMO number
-%   a_floatRudicsId : float Rudics Id
-%   a_cycleList     : list of cycles to consider
+%   a_floatNum        : float WMO number
+%   a_floatRudicsId   : float Rudics Id
+%   a_cycleList       : list of cycles to consider
+%   a_floatLaunchDate : float launch date
 %
 % OUTPUT PARAMETERS :
 %   o_fileList  : associated list of float files
@@ -23,13 +24,16 @@
 %   11/06/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_fileList] = get_cycle_float_file_list_iridium_rudics_apx_apf11( ...
-   a_floatNum, a_floatRudicsId, a_cycleList)
+   a_floatNum, a_floatRudicsId, a_cycleList, a_floatLaunchDate)
 
 % output parameters initialization
 o_fileList = [];
 
 % configuration values
 global g_decArgo_iridiumDataDirectory;
+
+% default values
+global g_decArgo_janFirst1950InMatlab;
 
 
 % search for existing float files
@@ -47,6 +51,13 @@ for idFile = 1:length(fileNames)
    cyNum = fileName(length(a_floatRudicsId)+idF1(1)+1:length(a_floatRudicsId)+idF1(2)-1);
    [cyNum, status] = str2num(cyNum);
    if ((status == 1) && ismember(cyNum, a_cycleList))
+      if (~isempty(a_floatLaunchDate))
+         fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
+         fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+         if (fileDate < a_floatLaunchDate)
+            continue
+         end
+      end
       fileNameList{end+1} = fileName;
    end
 end

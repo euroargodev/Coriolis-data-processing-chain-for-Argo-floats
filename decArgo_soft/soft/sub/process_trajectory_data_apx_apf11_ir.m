@@ -479,88 +479,90 @@ end
 [phaseDates, idSort] = sort(phaseDates);
 phaseMeasCode = phaseMeasCode(idSort);
 
-measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
-for idML = 1:length(measList)
-   doDataFlag = 0;
-   switch (measList{idML})
-      case 'CTD_P'
-         if (isempty(a_profCtdP))
-            continue;
-         end
-         profData = a_profCtdP;
-      case 'CTD_PT'
-         if (isempty(a_profCtdPt))
-            continue;
-         end
-         profData = a_profCtdPt;
-      case 'CTD_PTS'
-         if (isempty(a_profCtdPts))
-            continue;
-         end
-         profData = a_profCtdPts;
-      case 'CTD_PTSH'
-         if (isempty(a_profCtdPtsh))
-            continue;
-         end
-         profData = a_profCtdPtsh;
-      case 'O2'
-         if (isempty(a_profDo))
-            continue;
-         end
-         profData = a_profDo;
-         doDataFlag = 1;
-   end
-   
-   for idPhase = 1:length(phaseDates)+1
-      if (idPhase <= length(phaseDates))
-         if (idPhase > 1)
-            idData = find((profData.dates > phaseDates(idPhase-1)) & ...
-               (profData.dates <= phaseDates(idPhase)));
-         else
-            if (a_cycleNum > 0)
-               idData = find(profData.dates <= phaseDates(idPhase));
+if (~isempty(phaseDates))
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
+   for idML = 1:length(measList)
+      doDataFlag = 0;
+      switch (measList{idML})
+         case 'CTD_P'
+            if (isempty(a_profCtdP))
+               continue;
+            end
+            profData = a_profCtdP;
+         case 'CTD_PT'
+            if (isempty(a_profCtdPt))
+               continue;
+            end
+            profData = a_profCtdPt;
+         case 'CTD_PTS'
+            if (isempty(a_profCtdPts))
+               continue;
+            end
+            profData = a_profCtdPts;
+         case 'CTD_PTSH'
+            if (isempty(a_profCtdPtsh))
+               continue;
+            end
+            profData = a_profCtdPtsh;
+         case 'O2'
+            if (isempty(a_profDo))
+               continue;
+            end
+            profData = a_profDo;
+            doDataFlag = 1;
+      end
+      
+      for idPhase = 1:length(phaseDates)+1
+         if (idPhase <= length(phaseDates))
+            if (idPhase > 1)
+               idData = find((profData.dates > phaseDates(idPhase-1)) & ...
+                  (profData.dates <= phaseDates(idPhase)));
             else
-               idData = 1:length(profData.dates);
+               if (a_cycleNum > 0)
+                  idData = find(profData.dates <= phaseDates(idPhase));
+               else
+                  idData = 1:length(profData.dates);
+               end
+            end
+            measCode = phaseMeasCode(idPhase) - 10;
+         else
+            idData = find(profData.dates > phaseDates(idPhase-1))';
+            measCode = g_MC_TET - 10;
+         end
+         
+         if (doDataFlag)
+            if (~isempty(bladderInflationStartDate))
+               if ((idPhase <= length(phaseDates)) && (phaseDates(idPhase) == bladderInflationStartDate))
+                  measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+               elseif ((idPhase > 1) && (phaseDates(idPhase-1) == bladderInflationStartDate))
+                  measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+               end
             end
          end
-         measCode = phaseMeasCode(idPhase) - 10;
-      else
-         idData = find(profData.dates > phaseDates(idPhase-1))';
-         measCode = g_MC_TET - 10;
-      end
-      
-      if (doDataFlag)
-         if (~isempty(bladderInflationStartDate))
-            if ((idPhase <= length(phaseDates)) && (phaseDates(idPhase) == bladderInflationStartDate))
-               measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
-            elseif ((idPhase > 1) && (phaseDates(idPhase-1) == bladderInflationStartDate))
-               measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+         
+         for idM = 1:length(idData)
+            idMeas = idData(idM);
+            time = profData.dates(idMeas);
+            timeAdj = g_decArgo_dateDef;
+            if (~isempty(profData.datesAdj))
+               timeAdj = profData.datesAdj(idMeas);
+            end
+            [measStruct, ~] = create_one_meas_float_time_bis( ...
+               measCode, ...
+               time, ...
+               timeAdj, ...
+               g_JULD_STATUS_2);
+            if (~isempty(measStruct))
+               measStruct.paramList = profData.paramList;
+               measStruct.paramData = profData.data(idMeas, :);
+               if (~isempty(profData.dataAdj))
+                  measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
+               end
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
          end
       end
-      
-      for idM = 1:length(idData)
-         idMeas = idData(idM);
-         time = profData.dates(idMeas);
-         timeAdj = g_decArgo_dateDef;
-         if (~isempty(profData.datesAdj))
-            timeAdj = profData.datesAdj(idMeas);
-         end
-         [measStruct, ~] = create_one_meas_float_time_bis( ...
-            measCode, ...
-            time, ...
-            timeAdj, ...
-            g_JULD_STATUS_2);
-         if (~isempty(measStruct))
-            measStruct.paramList = profData.paramList;
-            measStruct.paramData = profData.data(idMeas, :);
-            if (~isempty(profData.dataAdj))
-               measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
-            end
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-         end
-      end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

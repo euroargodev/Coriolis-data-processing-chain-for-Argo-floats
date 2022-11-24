@@ -130,8 +130,6 @@ global g_decArgo_iridiumMailData;
 g_decArgo_iridiumMailData = [];
 
 
-REPROCESS = 1; % in debug mode could be set to 0 to skip float files generation transmitted files
-
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatRudicsId '_' num2str(a_floatNum) '/'];
 if ~(exist(floatIriDirName, 'dir') == 7)
@@ -154,12 +152,10 @@ if (g_decArgo_realtimeFlag)
    end
 end
 g_decArgo_archiveFloatFilesDirectory = [floatIriDirName 'archive/float_files/'];
-if (REPROCESS == 1)
-   if (exist(g_decArgo_archiveFloatFilesDirectory, 'dir') == 7)
-      rmdir(g_decArgo_archiveFloatFilesDirectory, 's');
-   end
-   mkdir(g_decArgo_archiveFloatFilesDirectory);
+if (exist(g_decArgo_archiveFloatFilesDirectory, 'dir') == 7)
+   rmdir(g_decArgo_archiveFloatFilesDirectory, 's');
 end
+mkdir(g_decArgo_archiveFloatFilesDirectory);
 
 % inits for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -192,7 +188,7 @@ if (g_decArgo_realtimeFlag == 1)
    % if new files have been collected with rsync, we will duplicate and rename
    % them from the DIR_INPUT_RSYNC_DATA to the IRIDIUM_DATA_DIRECTORY before
    % decoding all the IRIDIUM_DATA_DIRECTORY files
-
+   
    fileIdList = find(g_decArgo_rsyncFloatWmoList == a_floatNum);
    fprintf('RSYNC_INFO: Duplicating %d float files from rsync dir to float archive dir\n', ...
       length(fileIdList));
@@ -210,29 +206,27 @@ if (g_decArgo_realtimeFlag == 1)
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, a_cycleList);
 end
-      
-if (REPROCESS == 1)
+
+% create list of float files to decode
+cycleFileNameList = get_cycle_float_file_list_iridium_rudics_apx_apf11( ...
+   a_floatNum, a_floatRudicsId, a_cycleList, a_floatLaunchDate);
+
+% uncompress float files
+nbFloatFiles = 0;
+for idFile = 1:length(cycleFileNameList)
    
-   % create list of float files to decode
-   cycleFileNameList = get_cycle_float_file_list_iridium_rudics_apx_apf11(a_floatNum, a_floatRudicsId, a_cycleList);
+   floatFileName = [g_decArgo_archiveDirectory cycleFileNameList{idFile}];
+   gunzip(floatFileName, g_decArgo_archiveFloatFilesDirectory);
    
-   % uncompress float files
-   nbFloatFiles = 0;
-   for idFile = 1:length(cycleFileNameList)
-      
-      floatFileName = [g_decArgo_archiveDirectory cycleFileNameList{idFile}];
-      gunzip(floatFileName, g_decArgo_archiveFloatFilesDirectory);
-      
-      nbFloatFiles = nbFloatFiles + 1;
-      
-      if (g_decArgo_realtimeFlag == 1)
-         % update the report structure
-         g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {floatFileName}];
-      end
-      
+   nbFloatFiles = nbFloatFiles + 1;
+   
+   if (g_decArgo_realtimeFlag == 1)
+      % update the report structure
+      g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {floatFileName}];
    end
-   fprintf('DEC_INFO: %d float files to process\n', nbFloatFiles);
 end
+
+fprintf('DEC_INFO: %d float files to process\n', nbFloatFiles);
 
 % retrieve RTC offset information from all existing log files
 g_decArgo_clockOffset = get_clock_offset_apx_ir_rudics_apf11(a_floatRudicsId, a_cycleList);
@@ -255,7 +249,7 @@ for idCy = 1:length(a_cycleList)
    
    % decode the files of the current cycle
    if (ismember(a_decoderId, [1121]))
-      % 2.10.4
+      % 2.10.4 & 2.11.3
          
       [miscInfoSci, miscInfoSys, ...
          metaData, missionCfg, sampleCfg, ...

@@ -28,6 +28,10 @@ o_clockOffset = 0;
 times = struct2cell(a_cycleTimeData);
 times = [times{2:end}];
 
+if (isempty(times))
+   return
+end
+
 idF1 = find([a_clockOffsetData.clockOffsetJuldUtc] < min(times), 1, 'last');
 idF2 = find([a_clockOffsetData.clockOffsetJuldUtc] > max(times), 1, 'first');
 if (~isempty(idF1) && ~isempty(idF2))
@@ -41,5 +45,5 @@ if (~isempty(idF1) && ~isempty(idF2))
    end
 end
 
- return;
+ return
  

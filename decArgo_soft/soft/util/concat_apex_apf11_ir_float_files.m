@@ -22,11 +22,12 @@ function concat_apex_apf11_ir_float_files
 % directory of the float files
 DIR_FLOAT_FILE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SBD\CHECK_DECODING\WORK\';
 % DIR_FLOAT_FILE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_RUDICS\CHECK_DECODING\WORK\';
+DIR_FLOAT_FILE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_RUDICS\20181220\CSV\';
 
 % internal path (to choose Argo or Teledyne decoding)
 INTERNAL_PATH = '\ARGO\FLOAT_FILES\ASCII\'; % to use Argo decoding
 % INTERNAL_PATH = '\TELEDYNE\FLOAT_FILES\ASCII\'; % to use Teledyne decoding
-
+INTERNAL_PATH = '';
 
 dirNames = dir(DIR_FLOAT_FILE);
 for idD = 1:length(dirNames)

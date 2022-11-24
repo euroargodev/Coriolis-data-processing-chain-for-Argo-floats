@@ -63,7 +63,7 @@ for idFile = 1:length(a_vitalsLogFileList)
    vitFilePathName = a_vitalsLogFileList{idFile};
    
    % read input file
-   [error, data] = read_apx_apf11_ir_binary_log_file(vitFilePathName, 'vitals');
+   [error, data] = read_apx_apf11_ir_binary_log_file(vitFilePathName, 'vitals', 0);
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);

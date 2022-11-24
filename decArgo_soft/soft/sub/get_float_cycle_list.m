@@ -9,7 +9,7 @@
 % INPUT PARAMETERS :
 %   a_floatNum            : float WMO number
 %   a_floatArgosIridiumId : float PTT number
-%   a_floatLaunchDate     : float launch data
+%   a_floatLaunchDate     : float launch date
 %   a_decoderId           : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -63,7 +63,7 @@ elseif (g_decArgo_floatTransType == 2)
          [o_cycleList, ~] = get_float_cycle_list_iridium_rudics_apx_apf9_navis(a_floatNum, str2num(char(a_floatArgosIridiumId)));
       else
          % Apex APF11 floats
-         [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, char(a_floatArgosIridiumId));
+         [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, char(a_floatArgosIridiumId), a_floatLaunchDate);
       end
       
    elseif ((a_decoderId > 3000) && (a_decoderId < 4000))

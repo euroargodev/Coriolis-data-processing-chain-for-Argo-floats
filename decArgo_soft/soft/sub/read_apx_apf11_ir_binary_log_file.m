@@ -2,11 +2,13 @@
 % Read Apex APF11 Iridium binary log file ('science' or 'vitals').
 %
 % SYNTAX :
-%  [o_error, o_data] = read_apx_apf11_ir_binary_log_file(a_logFileName, a_logFileType)
+%  [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
+%    a_logFileName, a_logFileType, a_outputCsvFlag)
 %
 % INPUT PARAMETERS :
-%   a_logFileName : binary log file name
-%   a_logFileType : log file type ('science' or 'vitals')
+%   a_logFileName   : binary log file name
+%   a_logFileType   : log file type ('science' or 'vitals')
+%   a_outputCsvFlag : 1 to write data in a CSV file, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %   o_error : error flag
@@ -20,7 +22,8 @@
 % RELEASES :
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_error, o_data] = read_apx_apf11_ir_binary_log_file(a_logFileName, a_logFileType)
+function [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
+   a_logFileName, a_logFileType, a_outputCsvFlag)
 
 % output parameters initialization
 o_error = 0;
@@ -33,20 +36,17 @@ global g_decArgo_janFirst1950InMatlab;
 % float launch date
 global g_decArgo_floatLaunchDate;
 
-% when used by check_apex_apf11_ir_float_files
-DEBUG_FLAG = 0;
-
 
 % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-if (DEBUG_FLAG == 1)
+if (a_outputCsvFlag == 1)
    
    sep = ';'; % use ',' for comparison
    
-   % output CSv path file name (set in check_apex_apf11_ir_float_files)
-   global g_decArgo_debug_outputCsvPathName;
+   % output CSV dir name (used in read_apx_apf11_ir_binary_log_file)
+   global g_decArgo_debug_outputCsvDirName;
    
    [~, logFileName, ~] = fileparts(a_logFileName);
-   outputCsvFilePathName = [g_decArgo_debug_outputCsvPathName [logFileName '.csv']];
+   outputCsvFilePathName = [g_decArgo_debug_outputCsvDirName [logFileName '.csv']];
    outputCsvFileId = fopen(outputCsvFilePathName, 'wt');
    if (outputCsvFileId == -1)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputCsvFilePathName);
@@ -104,7 +104,7 @@ while (1)
             [timeStamp {char(decData')}]];
          
          % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-         if (DEBUG_FLAG == 1)
+         if (a_outputCsvFlag == 1)
             fprintf(outputCsvFileId, '%s%c%s%c%s\n', ...
                decStruct(1).recType, sep, ...
                datestr(timeStamp+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), sep, ...
@@ -132,7 +132,7 @@ while (1)
             dataVal];
          
          % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-         if (DEBUG_FLAG == 1)
+         if (a_outputCsvFlag == 1)
             format = ['%s' sep '%s'];
             for id = 1:length(decStruct)
                format = [format sep decStruct(id).outputFormat];
@@ -155,7 +155,7 @@ while (1)
 end
 
 % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-if (DEBUG_FLAG == 1)
+if (a_outputCsvFlag == 1)
    fclose(outputCsvFileId);
 end
          

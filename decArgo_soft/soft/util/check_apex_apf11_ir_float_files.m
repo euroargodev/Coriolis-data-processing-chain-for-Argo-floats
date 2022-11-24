@@ -38,8 +38,8 @@ DIR_TELEDYNE_CODE = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SBD\C
 global g_decArgo_floatLaunchDate;
 g_decArgo_floatLaunchDate = []; % to consider all reported information (even prior to float launch date)
 
-% output CSv path file name (used in read_apx_apf11_ir_binary_log_file)
-global g_decArgo_debug_outputCsvPathName;
+% output CSV dir name (used in read_apx_apf11_ir_binary_log_file)
+global g_decArgo_debug_outputCsvDirName;
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -112,7 +112,7 @@ for idFloat = 1:nbFloats
    % float output directory
    floatOutputDir = [DIR_WORK '\' floatNumStr '\'];
    mkdir(floatOutputDir);
-   g_decArgo_debug_outputCsvPathName = [floatOutputDir '\ARGO\FLOAT_FILES\ASCII\'];
+   g_decArgo_debug_outputCsvDirName = [floatOutputDir '\ARGO\FLOAT_FILES\ASCII\'];
    
    % duplicate mail files
    mailFileDir = [floatOutputDir '\MAIL\'];
@@ -288,11 +288,11 @@ for idFloat = 1:nbFloats
       tic;
       binSciFiles = dir([floatFileDir '*.science_log.bin']);
       for iFile = 1:length(binSciFiles)
-         read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science');
+         read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 1);
       end
       binVitFiles = dir([floatFileDir '*.vitals_log.bin']);
       for iFile = 1:length(binVitFiles)
-         read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals');
+         read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals', 1);
       end
       ellapsedTime = toc;
       fprintf('=> %d binary files converted (%.1f sec)\n', length(binSciFiles)+length(binVitFiles), ellapsedTime);

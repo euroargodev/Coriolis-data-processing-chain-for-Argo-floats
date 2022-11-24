@@ -66,7 +66,7 @@ switch (a_decoderId)
          a_floatLaunchDate, a_floatEndDate);
 
    case {1121}
-      % APEX APF11 (2.10.4)
+      % APEX APF11 (2.10.4 & 2.11.3)
       
       [o_tabProfiles, ...
          o_tabTrajNMeas, o_tabTrajNCycle, ...

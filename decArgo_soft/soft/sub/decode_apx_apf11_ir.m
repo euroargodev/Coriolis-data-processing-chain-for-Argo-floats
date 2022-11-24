@@ -93,7 +93,7 @@ if (~isempty(a_scienceLogFileList))
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {1321, 1121} % 2.10.1, 2.10.4
+      case {1321, 1121} % 2.10.1, 2.10.4 & 2.11.3
          
          [o_miscInfoSci, o_techData, o_gpsDataSci, ...
             o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...

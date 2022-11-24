@@ -2,11 +2,13 @@
 % Retrieve the list of existing cycles of an Apex Iridium Rudics float.
 %
 % SYNTAX :
-%  [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, a_floatRudicsId)
+%  [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11( ...
+%    a_floatNum, a_floatRudicsId, a_floatLaunchDate)
 %
 % INPUT PARAMETERS :
-%   a_floatNum      : float WMO number
-%   a_floatRudicsId : float Rudics Id
+%   a_floatNum        : float WMO number
+%   a_floatRudicsId   : float Rudics Id
+%   a_floatLaunchDate : float launch date
 %
 % OUTPUT PARAMETERS :
 %   o_cycleList  : existing cycles list
@@ -19,7 +21,8 @@
 % RELEASES :
 %   10/29/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, a_floatRudicsId)
+function [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11( ...
+   a_floatNum, a_floatRudicsId, a_floatLaunchDate)
 
 % output parameters initialization
 o_cycleList = [];
@@ -27,6 +30,9 @@ o_cycleList = [];
 % configuration values
 global g_decArgo_expectedCycleList;
 global g_decArgo_iridiumDataDirectory;
+
+% default values
+global g_decArgo_janFirst1950InMatlab;
 
 
 % search for existing Iridium cycles
@@ -44,6 +50,13 @@ for idFile = 1:length(fileNames)
    cyNum = fileName(length(a_floatRudicsId)+idF1(1)+1:length(a_floatRudicsId)+idF1(2)-1);
    [cyNum, status] = str2num(cyNum);
    if (status)
+      if (~isempty(a_floatLaunchDate))
+         fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
+         fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+         if (fileDate < a_floatLaunchDate)
+            continue
+         end
+      end
       existingCycles = [existingCycles cyNum];
    end
 end
