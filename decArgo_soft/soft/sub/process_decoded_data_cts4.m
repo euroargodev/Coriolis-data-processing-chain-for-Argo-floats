@@ -363,7 +363,9 @@ if (isempty(g_decArgo_outputCsvFileId))
             idPpoxDoxy = find(strcmp({tabProfiles(idProf).paramList.name}, 'PPOX_DOXY') == 1);
             if (~isempty(idPpoxDoxy))
                tabProfiles(idProf).data(:, idPpoxDoxy) = [];
-               tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+               if (~isempty(tabProfiles(idProf).dataQc))
+                  tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+               end
                tabProfiles(idProf).paramList(idPpoxDoxy) = [];
             end
          end

@@ -1346,7 +1346,9 @@ while (procDone == 0)
                      idPpoxDoxy = find(strcmp({tabProfilesBis(idProf).paramList.name}, 'PPOX_DOXY') == 1);
                      if (~isempty(idPpoxDoxy))
                         tabProfilesBis(idProf).data(:, idPpoxDoxy) = [];
-                        tabProfilesBis(idProf).dataQc(:, idPpoxDoxy) = [];
+                        if (~isempty(tabProfilesBis(idProf).dataQc))
+                           tabProfilesBis(idProf).dataQc(:, idPpoxDoxy) = [];
+                        end
                         tabProfilesBis(idProf).paramList(idPpoxDoxy) = [];
                      end
                   end

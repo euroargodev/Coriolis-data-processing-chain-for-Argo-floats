@@ -118,7 +118,9 @@ for idProf = 1:length(a_tabProfiles)
       idPpoxDoxy = find(strcmp({a_tabProfiles(idProf).paramList.name}, 'PPOX_DOXY') == 1);
       if (~isempty(idPpoxDoxy))
          a_tabProfiles(idProf).data(:, idPpoxDoxy) = [];
-         a_tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+         if (~isempty(a_tabProfiles(idProf).dataQc))
+            a_tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+         end
          a_tabProfiles(idProf).paramList(idPpoxDoxy) = [];
       end
    end
