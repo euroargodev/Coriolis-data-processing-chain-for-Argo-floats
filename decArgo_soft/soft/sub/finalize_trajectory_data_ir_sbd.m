@@ -138,7 +138,7 @@ for idCy = 1:length(tabCyNum)
    
    idCyDeep = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 0));
    if (length(idCyDeep) > 1)
-      fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records => only the first one is considered\n', ...
+      fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records - only the first one is considered\n', ...
          g_decArgo_floatNum, cycleNum, ...
          length(idCyDeep));
       idDel = [idDel idCyDeep(2:end)];
@@ -208,8 +208,17 @@ if (isempty(g_decArgo_cycleNumListForIce))
             idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
             if (~isempty(idF2))
                
+               % retrieve the clock offset of the previous cycle
+               idCyPrec2 = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
+               clockDrift = a_tabTrajNCycle(idCyPrec2).clockOffset;
+               
+               if (~isempty(clockDrift))
+                  transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juldAdj;
+               else
+                  transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juld;
+               end
                measStruct = create_one_meas_float_time(g_MC_TET, ...
-                  a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+                  transEndDate, g_JULD_STATUS_2, clockDrift);
                a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
             end
          end
@@ -237,8 +246,17 @@ else
                   idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
                   if (~isempty(idF2))
                      
+                     % retrieve the clock offset of the previous cycle
+                     idCyPrec2 = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
+                     clockDrift = a_tabTrajNCycle(idCyPrec2).clockOffset;
+                     
+                     if (~isempty(clockDrift))
+                        transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juldAdj;
+                     else
+                        transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juld;
+                     end
                      measStruct = create_one_meas_float_time(g_MC_TET, ...
-                        a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+                        transEndDate, g_JULD_STATUS_2, clockDrift);
                      a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
                   end
                end
@@ -271,7 +289,7 @@ if (~isempty(a_tabTrajNCycle))
             
             a_tabTrajNCycle(idCyDeep(1)) = merge_n_cycle_data(a_tabTrajNCycle(idCyDeep));
          else
-            fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records => only the first one is considered\n', ...
+            fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records - only the first one is considered\n', ...
                g_decArgo_floatNum, cycleNum, ...
                length(idCyDeep));
          end

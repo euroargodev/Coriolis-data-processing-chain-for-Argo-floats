@@ -116,7 +116,7 @@ ID_OFFSET = 1;
 % technical message
 if (g_decArgo_finalEolMode == 0)
    if (size(a_tabTech, 1) > 1)
-      fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer) => using the last one\n', ...
+      fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer) - using the last one\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
          size(a_tabTech, 1));
       a_tabTech = a_tabTech(end, :);
@@ -140,7 +140,7 @@ if (g_decArgo_finalEolMode == 0)
       if ~((a_tabTech(id, 39+ID_OFFSET) == 0) && ... % when DLF == TLF == 0 the GPS time is not consistent and the lat/lon are duplicated from the last good previous value
             (a_tabTech(id, 40+ID_OFFSET) == 0))
          
-         if (~g_decArgo_eolMode)
+         if ((g_decArgo_cycleNum > 0) && ~g_decArgo_eolMode)
             [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(o_firstMessageDate);
          else
             [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(a_tabTech(id, end)); % in EOL mode, FMT could be far from current TECH msg
@@ -162,7 +162,14 @@ if (g_decArgo_finalEolMode == 0)
       end
       
       % get the record id to retrieve SBDT of the current cycle
-      if (g_decArgo_cycleNum < 256)
+      if (g_decArgo_cycleNum == 0)
+         idForSbdt = find((g_decArgo_preDecodedData.cycleNum == 255) & ...
+            (g_decArgo_preDecodedData.used == 0), 1, 'first');
+         if (isempty(idForSbdt))
+            idForSbdt = find((g_decArgo_preDecodedData.cycleNum == g_decArgo_cycleNum) & ...
+               (g_decArgo_preDecodedData.used == 0));
+         end
+      elseif (g_decArgo_cycleNum < 256)
          idForSbdt = find((g_decArgo_preDecodedData.cycleNum == g_decArgo_cycleNum) & ...
             (g_decArgo_preDecodedData.used == 0));
       else
@@ -182,7 +189,7 @@ if (g_decArgo_finalEolMode == 0)
          if (~isempty(idForSbdt))
             
             sbdt = g_decArgo_preDecodedData.sbdt(idForSbdt);
-            if (~g_decArgo_eolMode)
+            if ((g_decArgo_cycleNum > 0) && ~g_decArgo_eolMode)
                o_floatClockDrift = o_gpsDate + sbdt/86400 - o_firstMessageDate;
             else
                o_floatClockDrift = o_gpsDate + sbdt/86400 - a_tabTech(id, end);

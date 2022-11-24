@@ -66,7 +66,7 @@ end
 
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
-   fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
+   fprintf('ERROR: The Argos cycle files directory %s does not exist - exit\n', DIR_INPUT_ARGOS_FILES);
    return
 end
 
@@ -79,7 +79,7 @@ end
 % find current float Argos Id
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
-   fprintf('ERROR: No information on float #%d => exit\n', floatNum);
+   fprintf('ERROR: No information on float #%d - exit\n', floatNum);
    return
 end
 floatArgosId = str2num(listArgosId{idF});
@@ -101,7 +101,7 @@ for idFile = 1:length(argosFiles)
       if (isempty(argosFileNameFound))
          argosFileNameFound = argosFileName;
       else
-         fprintf('ERROR: More than one Argos cycle file are dated %s => exit\n', ...
+         fprintf('ERROR: More than one Argos cycle file are dated %s - exit\n', ...
             datestr(file_date, 'yyyy-mm-dd-HH-MM-SS'));
          return
       end
@@ -116,12 +116,12 @@ for idFile = 1:length(argosFiles)
 end
 
 if (isempty(argosFileNameFound))
-   fprintf('ERROR: File not found, check that provided date is part of the Argos cycle file name => exit\n');
+   fprintf('ERROR: File not found, check that provided date is part of the Argos cycle file name - exit\n');
    return
 end
 
 if (~isempty(find(tabCycleNum == cycleNumber, 1)))
-   fprintf('ERROR: An Argos cycle file already has cycle number #%d => exit\n', ...
+   fprintf('ERROR: An Argos cycle file already has cycle number #%d - exit\n', ...
       cycleNumber);
    return
 end

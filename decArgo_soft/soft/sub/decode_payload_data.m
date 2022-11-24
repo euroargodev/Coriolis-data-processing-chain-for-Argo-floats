@@ -124,7 +124,7 @@ while(~isempty(data))
             payloadData = cat(1, payloadData, newCell);
             data(1:idF3+length(ptn3)-1) = [];
          else
-            fprintf('ERROR: Inconsistent payload data => ignored\n');
+            fprintf('ERROR: Inconsistent payload data - ignored\n');
             return
          end
       elseif ((length(data) >= length(ptn7)) && (strcmp(char(data(1:length(ptn7))), ptn7)))
@@ -149,7 +149,7 @@ while(~isempty(data))
             payloadData = cat(1, payloadData, newCell);
             data(1:idF8+length(ptn8)-1) = [];
          else
-            fprintf('ERROR: Inconsistent payload data => ignored\n');
+            fprintf('ERROR: Inconsistent payload data - ignored\n');
             return
          end
       elseif ((length(data) >= length(ptn4)) && (strcmp(char(data(1:length(ptn4))), ptn4)))
@@ -172,7 +172,7 @@ while(~isempty(data))
             data(1:idF5+length(ptn5)-1) = [];
             textData = '';
          else
-            fprintf('ERROR: Inconsistent payload data => ignored\n');
+            fprintf('ERROR: Inconsistent payload data - ignored\n');
             return
          end
       elseif ((length(data) >= length(ptn1)) && (strcmp(char(data(1:length(ptn1))), ptn1)))
@@ -256,11 +256,11 @@ for idT = 1:length(idTagEnd)
             payloadData{idTagBegin, 5} = payloadData{idTagEnd(idT), 5};
             payloadData{idTagEnd(idT), 5} = '';
          else
-            fprintf('WARNING: Inconsistent payload data => ignored\n');
+            fprintf('WARNING: Inconsistent payload data - ignored\n');
             return
          end
       else
-         fprintf('WARNING: Inconsistent payload data => ignored\n');
+         fprintf('WARNING: Inconsistent payload data - ignored\n');
          return
       end
    end
@@ -291,7 +291,7 @@ for idL = 1:size(payloadData, 1)
          end
          payloadData{idL, 4} = data;
       else
-         fprintf('ERROR: Inconsistent payload data => ignored\n');
+         fprintf('ERROR: Inconsistent payload data - ignored\n');
          return
       end
    end

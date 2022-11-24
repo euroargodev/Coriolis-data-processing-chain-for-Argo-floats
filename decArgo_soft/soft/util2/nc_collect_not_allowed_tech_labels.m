@@ -62,7 +62,7 @@ for id = 1:length(labels)
             idFEnd = strfind(tmpLabel, '>');
             template = tmpLabel(idFStart:idFEnd);
             if (~ismember(template, templateList))
-               fprintf('ERROR: template ''%s'' is not in the referenced list => aborted\n', template);
+               fprintf('ERROR: template ''%s'' is not in the referenced list - aborted\n', template);
                return
             end
             templateId = find(strcmp(template, templateList));
@@ -182,7 +182,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(techParamNameList)
                   label = techParamNameList{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;

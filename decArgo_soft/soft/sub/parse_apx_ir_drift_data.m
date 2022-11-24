@@ -119,7 +119,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(12:31), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:end), '%d %d %f %f');
          if (~isempty(errmsg) || (count ~= 4))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, :) = [measDate val'];
@@ -127,7 +127,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(12:31), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:59), '%d %d %f');
          if (~isempty(errmsg) || (count ~= 3))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -136,7 +136,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(12:31), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:51), '%d %d');
          if (~isempty(errmsg) || (count ~= 2))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -145,7 +145,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(12:31), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(32:43), '%d');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -155,10 +155,10 @@ for idL = 1:length(a_driftMeasDataStr)
          data(idL, 1) = measDate;
          %          fprintf('INFO: Park measurement truncated\n');
       else
-         %          fprintf('INFO: Park measurement truncated ''%s'' => ignored\n', errorHeader, dataStr);
+         %          fprintf('INFO: Park measurement truncated ''%s'' - ignored\n', errorHeader, dataStr);
       end
    else
-      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
    end
 end
 idDel = find(sum(isnan(data), 2) == size(data, 2));
@@ -239,24 +239,24 @@ for idL = 1:length(a_driftMeasDataStr)
          if (length(dataStr) == 34)
             [val, count, errmsg, nextIndex] = sscanf(dataStr, '%d %d %f %f');
             if (~isempty(errmsg) || (count ~= 4))
-               fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
+               fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, a_driftMeasDataStr{idL});
                continue
             end
             data(idL, :) = val';
          elseif (length(dataStr) >= 26)
             [val, count, errmsg, nextIndex] = sscanf(dataStr(1:26), '%d %d %f');
             if (~isempty(errmsg) || (count ~= 3))
-               fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
+               fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, a_driftMeasDataStr{idL});
                continue
             end
             data(idL, 1:length(val')) = val';
             fprintf('INFO: Park measurement truncated\n');
          else
-            fprintf('INFO: Park measurement truncated ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
+            fprintf('INFO: Park measurement truncated ''%s'' - ignored\n', errorHeader, a_driftMeasDataStr{idL});
          end
       end
    else
-      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, a_driftMeasDataStr{idL});
+      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, a_driftMeasDataStr{idL});
    end
 end
 idDel = find(sum(isnan(data), 2) == size(data, 2));
@@ -336,7 +336,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(13:32), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:end), '%d %d %f %f %f');
          if (~isempty(errmsg) || (count ~= 5))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, :) = [measDate val'];
@@ -344,7 +344,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(13:32), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:68), '%d %d %f %f');
          if (~isempty(errmsg) || (count ~= 4))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -353,7 +353,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(13:32), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:60), '%d %d %f');
          if (~isempty(errmsg) || (count ~= 3))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -362,7 +362,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(13:32), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:52), '%d %d');
          if (~isempty(errmsg) || (count ~= 2))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -371,7 +371,7 @@ for idL = 1:length(a_driftMeasDataStr)
          measDate = datenum(dataStr(13:32), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
          [val, count, errmsg, nextIndex] = sscanf(dataStr(33:44), '%d');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          data(idL, 1:length([measDate val'])) = [measDate val'];
@@ -381,10 +381,10 @@ for idL = 1:length(a_driftMeasDataStr)
          data(idL, 1) = measDate;
          %          fprintf('INFO: Park measurement truncated\n');
       else
-         %          fprintf('INFO: Park measurement truncated ''%s'' => ignored\n', errorHeader, dataStr);
+         %          fprintf('INFO: Park measurement truncated ''%s'' - ignored\n', errorHeader, dataStr);
       end
    else
-      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+      fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
    end
 end
 idDel = find(sum(isnan(data), 2) == size(data, 2));
@@ -465,7 +465,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:end), '%f %f %f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 8))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, :) = [measDate val'];
@@ -473,7 +473,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:72), '%f %f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 7))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -482,7 +482,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:65), '%f %f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 6))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -491,7 +491,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:58), '%f %f %f %f %f');
       if (~isempty(errmsg) || (count ~= 5))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -500,7 +500,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:51), '%f %f %f %f');
       if (~isempty(errmsg) || (count ~= 4))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -509,7 +509,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:44), '%f %f %f');
       if (~isempty(errmsg) || (count ~= 3))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -518,7 +518,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:36), '%f %f');
       if (~isempty(errmsg) || (count ~= 2))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -527,7 +527,7 @@ for idL = 1:length(a_driftMeasDataStr)
       measDate = datenum(dataStr(1:20), 'mmm dd yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
       [val, count, errmsg, nextIndex] = sscanf(dataStr(21:28), '%f');
       if (~isempty(errmsg) || (count ~= 1))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing drift measurements ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       data(idL-1, 1:length([measDate val'])) = [measDate val'];
@@ -537,7 +537,7 @@ for idL = 1:length(a_driftMeasDataStr)
       data(idL-1, 1) = measDate;
       %       fprintf('INFO: Park measurement truncated\n');
    else
-      %       fprintf('INFO: Park measurement truncated ''%s'' => ignored\n', errorHeader, dataStr);
+      %       fprintf('INFO: Park measurement truncated ''%s'' - ignored\n', errorHeader, dataStr);
    end
 end
 idDel = find(sum(isnan(data), 2) == size(data, 2));

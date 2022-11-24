@@ -286,7 +286,7 @@ for idCy = 1:length(a_cycleList)
          else
             
             if (~isempty(tabDriftCTD))
-               fprintf('WARNING: Float #%d Cycle #%d: technical message not received => unable to define drift measurements order\n', ...
+               fprintf('WARNING: Float #%d Cycle #%d: technical message not received - unable to define drift measurements order\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
             elseif (~isempty(tabProfCTD))
                fprintf('WARNING: Float #%d Cycle #%d: technical message not received\n', ...
@@ -509,7 +509,7 @@ for idCy = 1:length(a_cycleList)
          else
             
             if (~isempty(tabDriftCTDO))
-               fprintf('WARNING: Float #%d Cycle #%d: technical message not received => unable to define drift measurements order\n', ...
+               fprintf('WARNING: Float #%d Cycle #%d: technical message not received - unable to define drift measurements order\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
             elseif (~isempty(tabProfCTDO))
                fprintf('WARNING: Float #%d Cycle #%d: technical message not received\n', ...
@@ -806,7 +806,7 @@ for idCy = 1:length(a_cycleList)
             else
                
                if (~isempty(tabDriftCTD))
-                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received => unable to define drift measurements order\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received - unable to define drift measurements order\n', ...
                      g_decArgo_floatNum, g_decArgo_cycleNum);
                elseif (~isempty(tabProfCTD))
                   fprintf('WARNING: Float #%d Cycle #%d: technical message not received\n', ...
@@ -1061,7 +1061,7 @@ for idCy = 1:length(a_cycleList)
             else
                
                if (~isempty(tabDriftCTDO))
-                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received => unable to define drift measurements order\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received - unable to define drift measurements order\n', ...
                      g_decArgo_floatNum, g_decArgo_cycleNum);
                elseif (~isempty(tabProfCTDO))
                   fprintf('WARNING: Float #%d Cycle #%d: technical message not received\n', ...
@@ -1288,8 +1288,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % consistency
-   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   % consistent
+   [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
 
    % create output float configuration
    [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames, a_decoderId);

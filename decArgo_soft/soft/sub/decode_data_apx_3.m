@@ -973,7 +973,7 @@ elseif (profileCcNstLength >= 0)
 end
 
 if (nbLevProf == -1)
-   fprintf('DEC_WARNING: Float #%d Cycle #%d: ''DDDD'' delimiter not found and profile length not received => profile not decoded\n', ...
+   fprintf('DEC_WARNING: Float #%d Cycle #%d: ''DDDD'' delimiter not found and profile length not received - profile not decoded\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum);
 elseif (nbLevProf > 0)
    
@@ -1057,7 +1057,7 @@ elseif (nbLevProf > 0)
       end
       
       if (nbLevProfCcNst == -1)
-         fprintf('DEC_WARNING: Float #%d Cycle #%d: ''EEEE'' delimiter not found and cross calibration NST profile length not received => cross calibration NST profile not decoded\n', ...
+         fprintf('DEC_WARNING: Float #%d Cycle #%d: ''EEEE'' delimiter not found and cross calibration NST profile length not received - cross calibration NST profile not decoded\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
       elseif (nbLevProfCcNst > 0)
          
@@ -1138,7 +1138,7 @@ elseif (nbLevProf > 0)
                nbLevProfNst = profileNstLength;
             end
             if (profileNstLength == -1)
-               fprintf('DEC_WARNING: Float #%d Cycle #%d: NST profile length has not been received => NST profile not decoded\n', ...
+               fprintf('DEC_WARNING: Float #%d Cycle #%d: NST profile length has not been received - NST profile not decoded\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
             elseif (nbLevProfNst > 0)
                

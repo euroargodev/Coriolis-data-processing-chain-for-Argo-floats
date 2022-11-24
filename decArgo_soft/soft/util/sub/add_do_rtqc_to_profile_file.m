@@ -238,12 +238,12 @@ if (testFlagList(13) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file (%s) not found => test #13 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file (%s) not found - test #13 not performed\n', ...
             a_floatNum, ncMetaPathFileName);
          testFlagList(13) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file needed to perform test #13 => test #13 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file needed to perform test #13 - test #13 not performed\n', ...
          a_floatNum);
       testFlagList(13) = 0;
    end
@@ -291,12 +291,12 @@ if (testFlagList(15) == 1)
    if (~isempty(testGreyListId))
       greyListPathFileName = a_testMetaData{testGreyListId+1};
       if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found => test #15 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found - test #15 not performed\n', ...
             a_floatNum, greyListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 => test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
          a_floatNum);
       testFlagList(15) = 0;
    end
@@ -305,7 +305,7 @@ end
 if (testFlagList(16) == 1)
    % for gross salinity or temperature sensor drift test, we need the multi-profile file
    if (multiProfFileFlag == 0)
-      fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 => test #16 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 - test #16 not performed\n', ...
          a_floatNum);
       testFlagList(16) = 0;
    end
@@ -314,7 +314,7 @@ end
 if (testFlagList(18) == 1)
    % for frozen profile test, we need the multi-profile file
    if (multiProfFileFlag == 0)
-      fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 => test #18 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 - test #18 not performed\n', ...
          a_floatNum);
       testFlagList(18) = 0;
    end
@@ -326,12 +326,12 @@ if (testFlagList(19) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file (%s) not found - test #19 not performed\n', ...
             a_floatNum, ncMetaPathFileName);
          testFlagList(19) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file needed to perform test #19 - test #19 not performed\n', ...
          a_floatNum);
       testFlagList(19) = 0;
    end
@@ -432,7 +432,7 @@ if (testFlagList(21) == 1)
    if (~isempty(floatDecoderId))
       apexFloatFlag = ((floatDecoderId > 1000) && (floatDecoderId < 2000));
    else
-      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 => test #21 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 - test #21 not performed\n', ...
          a_floatNum);
       testFlagList(21) = 0;
    end
@@ -442,12 +442,12 @@ if (testFlagList(21) == 1)
       if (~isempty(testMetaId))
          ncMetaPathFileName = a_testMetaData{testMetaId+1};
          if ~(exist(ncMetaPathFileName, 'file') == 2)
-            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found - test #19 not performed\n', ...
                a_floatNum, ncMetaPathFileName);
             testFlagList(21) = 0;
          end
       else
-         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 - test #19 not performed\n', ...
             a_floatNum);
          testFlagList(21) = 0;
       end
@@ -518,7 +518,7 @@ end
 if (testFlagList(22) == 1)
    % for near-surface mixed air/water test, we need the float decoder Id
    if (isempty(floatDecoderId))
-      fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 => test #22 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 - test #22 not performed\n', ...
          a_floatNum);
       testFlagList(22) = 0;
    end
@@ -530,7 +530,7 @@ if (testFlagList(23) == 1)
    if (~isempty(testDeepFloatFlagId))
       deepFloatFlag = a_testMetaData{testDeepFloatFlagId+1};
    else
-      fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag needed to perform test #23 => test #23 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag needed to perform test #23 - test #23 not performed\n', ...
          a_floatNum);
       testFlagList(23) = 0;
    end
@@ -1406,7 +1406,7 @@ if (testFlagList(19) == 1)
                      end
                      
                      if (isempty(deepestPres))
-                        fprintf('RTQC_WARNING: TEST019: Float #%d Cycle #%d: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s => test #19 not performed\n', ...
+                        fprintf('RTQC_WARNING: TEST019: Float #%d Cycle #%d: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s - test #19 not performed\n', ...
                            a_floatNum, cycleNumber(idProf), ncMetaPathFileName);
                      else
                         
@@ -2725,14 +2725,14 @@ if (testFlagList(15) == 1)
          % read grey list file
          fId = fopen(greyListPathFileName, 'r');
          if (fId == -1)
-            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) => test #15 not performed\n', ...
+            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
                a_floatNum, cycleNumber(idProf), greyListPathFileName);
          else
             fileContents = textscan(fId, '%s', 'delimiter', ',');
             fclose(fId);
             fileContents = fileContents{:};
             if (rem(size(fileContents, 1), 7) ~= 0)
-               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) => test #15 not performed\n', ...
+               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
                   a_floatNum, cycleNumber(idProf), greyListPathFileName);
             else
                
@@ -3932,7 +3932,7 @@ if (~isempty(g_rtqc_trajData))
                   % => N_VALUES = 45 in traj file => we do not consider additional
                   % data
                   data = data(:, 1:dimNValuesProf);
-                  fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file => additional TRAJ data are ignored in the comparison\n', ...
+                  fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file - additional TRAJ data are ignored in the comparison\n', ...
                      a_floatNum, dimNValuesProf, dimNValuesTraj);
                end
             end

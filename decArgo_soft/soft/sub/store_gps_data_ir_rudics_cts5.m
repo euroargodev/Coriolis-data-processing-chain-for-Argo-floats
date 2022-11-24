@@ -36,6 +36,7 @@ global g_decArgo_phaseEndOfLife;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
+global g_decArgo_janFirst1950InMatlab;
 
 
 if (~isempty(a_apmtTech))
@@ -45,6 +46,12 @@ if (~isempty(a_apmtTech))
       idF2 = find(strcmp(a_apmtTech.GPS.name, 'GPS location longitude'), 1);
       idF3 = find(strcmp(a_apmtTech.GPS.name, 'GPS location latitude'), 1);
       if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+         
+         % check GPS location date consistency
+         % (see 6902829 #0 (from 3aa9_007_autotest_00001.txt file))
+         if (a_apmtTech.GPS.data{idF1}+g_decArgo_janFirst1950InMatlab > now_utc)
+            return
+         end
          
          % unpack the GPS data
          if (~isempty(g_decArgo_gpsData))
@@ -108,28 +115,14 @@ if (~isempty(a_apmtTech))
          end
          
          % retrieve the last good GPS location of the previous surface phase
-         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum < profNumber));
-         if (~isempty(idF))
-            idF = idF(end);
-         else
-            idF = find(gpsLocCycleNum == cycleNumber-1);
-            if (~isempty(idF))
-               idF = idF(end);
-            end
+         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum < profNumber) & (gpsLocQc == 1), 1, 'last');
+         if (isempty(idF))
+            idF = find((gpsLocCycleNum == cycleNumber-1) & (gpsLocQc == 1), 1, 'last');
          end
-         
          if (~isempty(idF))
-            prevLocDate = gpsLocDate(idF);
-            prevLocLon = gpsLocLon(idF);
-            prevLocLat = gpsLocLat(idF);
-            prevLocQc = gpsLocQc(idF);
-            
-            idGoodLoc = find(prevLocQc == 1);
-            if (~isempty(idGoodLoc))
-               lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-               lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-               lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
-            end
+            lastLocDateOfPrevCycle = gpsLocDate(idF);
+            lastLocLonOfPrevCycle = gpsLocLon(idF);
+            lastLocLatOfPrevCycle = gpsLocLat(idF);
          end
          
          idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum == profNumber));
@@ -143,7 +136,19 @@ if (~isempty(a_apmtTech))
             lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
          
          gpsLocQc(idF) = str2num(locQc')';
-
+         
+         % sort GPS data according to location dates
+         [~, idSort] = sort(gpsLocDate);
+         gpsLocCycleNum = gpsLocCycleNum(idSort);
+         gpsLocProfNum = gpsLocProfNum(idSort);
+         gpsLocPhase = gpsLocPhase(idSort);
+         gpsLocDate = gpsLocDate(idSort);
+         gpsLocLon = gpsLocLon(idSort);
+         gpsLocLat = gpsLocLat(idSort);
+         gpsLocQc = gpsLocQc(idSort);
+         gpsLocAccuracy = gpsLocAccuracy(idSort);
+         gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
+         
          % update GPS data global variable
          g_decArgo_gpsData{1} = gpsLocCycleNum;
          g_decArgo_gpsData{2} = gpsLocProfNum;

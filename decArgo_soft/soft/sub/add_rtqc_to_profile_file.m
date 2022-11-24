@@ -94,7 +94,7 @@
 %                               (if TEMP_QC=4 or PRES_QC=4, then DOXY_QC=4; if
 %                                PSAL_QC=4, then DOXY_QC=3)
 %   02/13/2017 - RNU - V 3.0: code update to manage CTS5 float data:
-%                             - multiple identical measurements possible =>
+%                             - multiple identical measurements possible -
 %                               size(profNmeasXIndex, 1) cannot be predicted
 %                             - PRES2, TEMP2 and PSAL2 are present when a SUNA
 %                               sensor is used
@@ -131,7 +131,7 @@
 %                             (Spike test) updated for PH_IN_SITU_TOTAL
 %                             parameter
 %   11/20/2018 - RNU - V 3.8: Spike test for CHLA disapeared in V 3.7 due to a
-%                             typo => corrected
+%                             typo - corrected
 %   03/26/2019 - RNU - V 4.0: Added RTQC tests for NITRATE parameter
 %   05/17/2019 - RNU - V 4.1: TEST #19 (deepest pressure test) modification
 %                             of profile pressure threshold:
@@ -159,8 +159,13 @@
 %                             Update of test 13: stuck value (update of the list
 %                             of 'c' and 'b' parameters to process + process
 %                             also associated 'i' parameters).
-%                             Update of density function EOS80 => TEOS 10.
+%                             Update of density function EOS80 - TEOS 10.
 %   06/19/2020 - RNU - V 4.6: TEST #57: set DOXY_QC = '3'
+%   10/19/2020 - RNU - V 4.7: in "REPORT PROFILE QC IN TRAJECTORY DATA"
+%                              - update the list of floats that report profile
+%                                dated levels
+%                              - use the same PROF <-> TRAJ link (created from
+%                                non adjusted values) for adjusted values 
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -192,7 +197,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '4.6';
+g_decArgo_addRtqcToProfileVersion = '4.7';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -339,12 +344,12 @@ if (testFlagList(4) == 1)
    if (~isempty(testMetaId))
       gebcoPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(gebcoPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST004: Float #%d: GEBCO file (%s) not found => test #4 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST004: Float #%d: GEBCO file (%s) not found - test #4 not performed\n', ...
             a_floatNum, gebcoPathFileName);
          testFlagList(4) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST004: Float #%d: GEBCO file needed to perform test #4 => test #4 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST004: Float #%d: GEBCO file needed to perform test #4 - test #4 not performed\n', ...
          a_floatNum);
       testFlagList(4) = 0;
    end
@@ -353,7 +358,7 @@ end
 if (testFlagList(5) == 1)
    % for impossible speed test, we need the trajectory data (in global variable)
    if (isempty(g_rtqc_trajData))
-      fprintf('RTQC_WARNING: TEST005: Float #%d: Trajectory data needed to perform test #5 => test #5 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Trajectory data needed to perform test #5 - test #5 not performed\n', ...
          a_floatNum);
       testFlagList(5) = 0;
    end
@@ -365,12 +370,12 @@ if (testFlagList(13) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file (%s) not found => test #13 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file (%s) not found - test #13 not performed\n', ...
             a_floatNum, ncMetaPathFileName);
          testFlagList(13) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file needed to perform test #13 => test #13 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST013: Float #%d: Nc meta-data file needed to perform test #13 - test #13 not performed\n', ...
          a_floatNum);
       testFlagList(13) = 0;
    end
@@ -418,12 +423,12 @@ if (testFlagList(15) == 1)
    if (~isempty(testGreyListId))
       greyListPathFileName = a_testMetaData{testGreyListId+1};
       if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found => test #15 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found - test #15 not performed\n', ...
             a_floatNum, greyListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 => test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
          a_floatNum);
       testFlagList(15) = 0;
    end
@@ -432,7 +437,7 @@ end
 if (testFlagList(16) == 1)
    % for gross salinity or temperature sensor drift test, we need the multi-profile file
    if (multiProfFileFlag == 0)
-      fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 => test #16 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 - test #16 not performed\n', ...
          a_floatNum);
       testFlagList(16) = 0;
    end
@@ -441,7 +446,7 @@ end
 if (testFlagList(18) == 1)
    % for frozen profile test, we need the multi-profile file
    if (multiProfFileFlag == 0)
-      fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 => test #18 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 - test #18 not performed\n', ...
          a_floatNum);
       testFlagList(18) = 0;
    end
@@ -453,12 +458,12 @@ if (testFlagList(19) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file (%s) not found - test #19 not performed\n', ...
             a_floatNum, ncMetaPathFileName);
          testFlagList(19) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file needed to perform test #19 - test #19 not performed\n', ...
          a_floatNum);
       testFlagList(19) = 0;
    end
@@ -559,7 +564,7 @@ if (testFlagList(21) == 1)
    if (~isempty(floatDecoderId))
       apexFloatFlag = ((floatDecoderId > 1000) && (floatDecoderId < 2000));
    else
-      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 => test #21 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 - test #21 not performed\n', ...
          a_floatNum);
       testFlagList(21) = 0;
    end
@@ -569,12 +574,12 @@ if (testFlagList(21) == 1)
       if (~isempty(testMetaId))
          ncMetaPathFileName = a_testMetaData{testMetaId+1};
          if ~(exist(ncMetaPathFileName, 'file') == 2)
-            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found - test #19 not performed\n', ...
                a_floatNum, ncMetaPathFileName);
             testFlagList(21) = 0;
          end
       else
-         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 - test #19 not performed\n', ...
             a_floatNum);
          testFlagList(21) = 0;
       end
@@ -645,7 +650,7 @@ end
 if (testFlagList(22) == 1)
    % for near-surface mixed air/water test, we need the float decoder Id
    if (isempty(floatDecoderId))
-      fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 => test #22 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 - test #22 not performed\n', ...
          a_floatNum);
       testFlagList(22) = 0;
    end
@@ -657,7 +662,7 @@ if (testFlagList(23) == 1)
    if (~isempty(testDeepFloatFlagId))
       deepFloatFlag = a_testMetaData{testDeepFloatFlagId+1};
    else
-      fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag needed to perform test #23 => test #23 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag needed to perform test #23 - test #23 not performed\n', ...
          a_floatNum);
       testFlagList(23) = 0;
    end
@@ -1634,7 +1639,7 @@ if (testFlagList(19) == 1)
                      end
                      
                      if (isempty(deepestPres))
-                        fprintf('RTQC_WARNING: TEST019: Float #%d Cycle #%d: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s => test #19 not performed\n', ...
+                        fprintf('RTQC_WARNING: TEST019: Float #%d Cycle #%d: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s - test #19 not performed\n', ...
                            a_floatNum, cycleNumber(idProf), ncMetaPathFileName);
                      else
                         
@@ -1803,7 +1808,7 @@ if (testFlagList(4) == 1)
                   testFailedList(4, idProf) = 1;
                end
             else
-               fprintf('RTQC_WARNING: TEST004: Float #%d Cycle #%d: Unable to retrieve GEBCO elevations at profile location => test #4 not performed\n', ...
+               fprintf('RTQC_WARNING: TEST004: Float #%d Cycle #%d: Unable to retrieve GEBCO elevations at profile location - test #4 not performed\n', ...
                   a_floatNum, cycleNumber(idProf));
             end
          end
@@ -1844,7 +1849,7 @@ if (testFlagList(5) == 1)
             end
             testDoneList(5, idProf) = 1;
          elseif (isempty(idProfPosInTraj))
-            fprintf('RTQC_INFO: TEST005: Float #%d Cycle #%d: Unable to retrieve profile location Qc from trajectory data => test #5 not performed\n', ...
+            fprintf('RTQC_INFO: TEST005: Float #%d Cycle #%d: Unable to retrieve profile location Qc from trajectory data - test #5 not performed\n', ...
                a_floatNum, cycleNumber(idProf));
          end
       end
@@ -2155,8 +2160,8 @@ if (testFlagList(6) == 1)
       end
       
       paramTestMinMax = [ ...
-         {''} {''}; ... % PRES => specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
-         {''} {''}; ... % PRES2 => specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
+         {''} {''}; ... % PRES - specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
+         {''} {''}; ... % PRES2 - specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
          {-2.5} {40}; ... % TEMP
          {-2.5} {40}; ... % TEMP2
          {-2.5} {40}; ... % TEMP_DOXY
@@ -3596,7 +3601,7 @@ if (testFlagList(14) == 1)
                         
                         idToFlag = find((sigmaShallow - sigmaDeep) >= 0.03);
                         
-                        % bottom to top check (the deep level should be flagged => add one
+                        % bottom to top check (the deep level should be flagged - add one
                         % to the dected ids)
                         idToFlag = sort(unique([idToFlag; find((sigmaDeep - sigmaShallow) <= -0.03) + 1]));
                         
@@ -3647,14 +3652,14 @@ if (testFlagList(15) == 1)
          % read grey list file
          fId = fopen(greyListPathFileName, 'r');
          if (fId == -1)
-            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) => test #15 not performed\n', ...
+            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
                a_floatNum, cycleNumber(idProf), greyListPathFileName);
          else
             fileContents = textscan(fId, '%s', 'delimiter', ',');
             fclose(fId);
             fileContents = fileContents{:};
             if (rem(size(fileContents, 1), 7) ~= 0)
-               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) => test #15 not performed\n', ...
+               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
                   a_floatNum, cycleNumber(idProf), greyListPathFileName);
             else
                
@@ -4831,7 +4836,7 @@ if (testFlagList(59) == 1)
                         testDoneListForTraj{59, idProf} = [testDoneListForTraj{59, idProf} find(profNitrateAdjQc ~= g_decArgo_qcStrDef)];
                         
                      else
-                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: no available CTD data => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: no available CTD data - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
                            a_floatNum, cycleNumber(idProf));
                      end
                   end
@@ -5081,7 +5086,7 @@ if (testFlagList(63) == 1)
                         if (~isempty(darkChlaId))
                            darkChla = a_testMetaData{darkChlaId+1};
                         else
-                           fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: DARK_CHLA needed to perform test #63 => test #63 not performed\n', ...
+                           fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: DARK_CHLA needed to perform test #63 - test #63 not performed\n', ...
                               a_floatNum, cycleNumber(idProf));
                            testFlagList(63) = 0;
                            continue
@@ -5090,7 +5095,7 @@ if (testFlagList(63) == 1)
                         if (~isempty(scaleChlaId))
                            scaleChla = a_testMetaData{scaleChlaId+1};
                         else
-                           fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: SCALE_CHLA needed to perform test #63 => test #63 not performed\n', ...
+                           fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: SCALE_CHLA needed to perform test #63 - test #63 not performed\n', ...
                               a_floatNum, cycleNumber(idProf));
                            testFlagList(63) = 0;
                            continue
@@ -5419,57 +5424,87 @@ end
 %
 if (~isempty(g_rtqc_trajData))
    
-   % link profile and trajectory data
+   % create the list of MCs concerned by this report
    
-   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
-   for idD = 1:2
-      if (idD == 1)
-         % non adjusted data processing
-         
-         % set the name list
-         ncProfParamXNameList = ncParamNameList;
-         ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamNameList;
-         ncProfParamXDataList = ncParamDataList;
-         ncTrajParamXDataList = g_rtqc_trajData.ncTrajParamDataList;
-         ncParamXFillValueList = g_rtqc_trajData.ncTrajParamFillValueList;
-      else
-         % adjusted data processing
-         
-         ncProfParamXNameList = ncParamAdjNameList;
-         ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamAdjNameList;
-         ncProfParamXDataList = ncParamAdjDataList;
-         ncTrajParamXDataList = g_rtqc_trajData.ncTrajParamAdjDataList;
-         ncParamXFillValueList = g_rtqc_trajData.ncTrajParamAdjFillValueList;
+   % list of decoder Ids implemented in the current decoder
+   decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
+      105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, ...
+      201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, ...
+      301, 302, 303];
+   decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
+      1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, 1123, ...
+      1314, 1321, 1322];
+   decoderIdListNavis = [1201];
+   decoderIdListNova = [2001, 2002, 2003];
+   decoderIdListNemo = [3001];
+   decoderIdList = [ ...
+      decoderIdListNke ...
+      decoderIdListApex ...
+      decoderIdListNavis ...
+      decoderIdListNova ...
+      decoderIdListNemo];
+   
+   % only to check that the function has been updated for each new decoder
+   if (~ismember(floatDecoderId, decoderIdList))
+      fprintf('RTQC_ERROR: Float #%d: decoderId=%d is not present in the check list of the add_rtqc_to_profile_file function (in "REPORT PROFILE QC IN TRAJECTORY DATA" section)\n', ...
+         a_floatNum, floatDecoderId);
+   end
+   
+   % the floats that report profile dated levels are:
+   % - all NKE floats
+   % - all NOVA/DOVA floats
+   % - all NAVIS floats
+   % - all NEMO floats
+   % - Apex APF11 Iridium floats
+   decoderIdListApexApf11Ir = [1121, 1122, 1123, 1321, 1322];
+   decoderIdListProfWithDatedLev = [ ...
+      decoderIdListNke ...
+      decoderIdListNova ...
+      decoderIdListNavis ...
+      decoderIdListNemo ...
+      decoderIdListApexApf11Ir
+      ];
+   
+   profMeasCode = [];
+   if (direction(1) == 'A')
+      profMeasCode = g_MC_AscProfDeepestBin;
+   elseif (ismember(floatDecoderId, [decoderIdListNke decoderIdListNova]))
+      profMeasCode = g_MC_DescProfDeepestBin;
+   end
+   
+   if (ismember(floatDecoderId, decoderIdListProfWithDatedLev))
+      if (direction(1) == 'A')
+         profMeasCode = [profMeasCode g_MC_AscProf];
+      elseif (ismember(floatDecoderId, [decoderIdListNke decoderIdListNova]))
+         profMeasCode = [profMeasCode g_MC_DescProf];
       end
+   end
+   
+   if (~isempty(profMeasCode))
+      
+      % link profile and trajectory data
       
       % create the sorted list of profile and trajectory common parameters
-      ncProfTrajXNameList = intersect(ncProfParamXNameList, ncTrajParamXNameList);
+      ncProfTrajNameList = intersect(ncParamNameList, g_rtqc_trajData.ncTrajParamNameList);
+      ncProfTrajAdjNameList = intersect(ncParamAdjNameList, g_rtqc_trajData.ncTrajParamAdjNameList);
       
       % link profile and trajectory data for concerned MC
-      profNmeasXIndex = [];
       
       % as RT adjustments (stored in the data-base) are applied on PROF data
       % only (not on TRAJ data) we should link PROF and TRAJ data with non
-      % adjusted data only (except when adjustment is performed by the
-      % decoder)
-      %       if (idD == 1)
+      % adjusted data only
       
       % collect prof and traj data
       
       % collect profile data
       dataProf = [];
       dimNValuesProf = [];
-      noAdjDataToLink = 1;
       for idProf = 1:length(juld)
          dataBis = [];
-         for idP = 1:length(ncProfTrajXNameList)
-            if ((idD == 2) && ...
-                  ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
-               continue
-            end
-            idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
-            data = eval(ncProfParamXDataList{idParam});
-            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+         for idP = 1:length(ncProfTrajNameList)
+            idParam = find(strcmp(ncProfTrajNameList{idP}, ncParamNameList) == 1, 1);
+            data = eval(ncParamDataList{idParam});
+            if (strcmp(ncProfTrajNameList{idP}, 'UV_INTENSITY_NITRATE'))
                dimNValuesProf = [dimNValuesProf size(data, 3)];
             end
             if (ndims(data) == 3)
@@ -5479,188 +5514,143 @@ if (~isempty(g_rtqc_trajData))
             end
          end
          dataProf{idProf} = dataBis;
-         if ((idD == 2) && ~isempty(dataBis))
-            noAdjDataToLink = 0;
-         end
       end
       dimNValuesProf = unique(dimNValuesProf);
       
-      if ((idD == 1) || ((idD == 2) && (noAdjDataToLink == 0)))
-         
-         % collect traj data
-         dataTraj = [];
-         dataTrajFillValue = [];
-         for idP = 1:length(ncProfTrajXNameList)
-            if ((idD == 2) && ...
-                  ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
-               continue
+      % collect traj data
+      dataTraj = [];
+      dataTrajFillValue = [];
+      for idP = 1:length(ncProfTrajNameList)
+         idParam = find(strcmp(ncProfTrajNameList{idP}, g_rtqc_trajData.ncTrajParamNameList) == 1, 1);
+         data = g_rtqc_trajData.(g_rtqc_trajData.ncTrajParamDataList{idParam});
+         if (strcmp(ncProfTrajNameList{idP}, 'UV_INTENSITY_NITRATE'))
+            dimNValuesTraj = size(data, 2);
+            if (dimNValuesTraj > dimNValuesProf)
+               % anomaly in Remocean floats (Ex:6901440 #10)
+               % N_VALUES = 45 for some profiles instead of 42
+               % - N_VALUES = 45 in traj file - we do not consider additional
+               % data
+               data = data(:, 1:dimNValuesProf);
+               fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file - additional TRAJ data are ignored in the comparison\n', ...
+                  a_floatNum, dimNValuesProf, dimNValuesTraj);
             end
-            idParam = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
-            data = g_rtqc_trajData.(ncTrajParamXDataList{idParam});
-            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
-               dimNValuesTraj = size(data, 2);
-               if (dimNValuesTraj > dimNValuesProf)
-                  % anomaly in Remocean floats (Ex:6901440 #10)
-                  % N_VALUES = 45 for some profiles instead of 42
-                  % => N_VALUES = 45 in traj file => we do not consider additional
-                  % data
-                  data = data(:, 1:dimNValuesProf);
-                  fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file => additional TRAJ data are ignored in the comparison\n', ...
-                     a_floatNum, dimNValuesProf, dimNValuesTraj);
+         end
+         dataFillValue = g_rtqc_trajData.ncTrajParamFillValueList{idParam};
+         dataTraj = [dataTraj data];
+         dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
+      end
+      
+      % link profile and trajectory data for concerned MC
+      
+      profNmeasIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
+      uCycleNumber = unique(cycleNumber);
+      idTrajFromProf = find( ...
+         (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
+         (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
+      for id = 1:length(idTrajFromProf)
+         found = 0;
+         idMeas = idTrajFromProf(id);
+         if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
+            for idProf = 1:size(profNmeasIndex, 2)
+               profData = dataProf{idProf};
+               for idLev = 1:size(profNmeasIndex, 3)
+                  if (~any(profData(idLev, :) ~= dataTraj(idMeas, :)))
+                     idLength = 1;
+                     while ((idLength <= size(profNmeasIndex, 1)) && ...
+                           (profNmeasIndex(idLength, idProf, idLev) ~= 0))
+                        idLength = idLength + 1;
+                     end
+                     if (idLength > size(profNmeasIndex, 1))
+                        profNmeasIndex = cat(1, profNmeasIndex, ...
+                           zeros(1, length(dataProf), size(dataProf{1}, 1)));
+                     end
+                     profNmeasIndex(idLength, idProf, idLev) = idMeas;
+                     found = 1;
+                     break
+                  end
+               end
+               if (found == 1)
+                  break
                end
             end
-            dataFillValue = ncParamXFillValueList{idParam};
-            dataTraj = [dataTraj data];
-            dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
-         end
-         
-         if (floatDecoderId < 1000) || ((floatDecoderId > 2000) && (floatDecoderId < 3000))
-            % NKE, NOVA, DOVA floats
-            if (direction(1) == 'A')
-               profMeasCode = [g_MC_AscProfDeepestBin g_MC_AscProf];
-            else
-               profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
+            if (found == 0)
+               % print the following warning for <PARAM> parameters
+               % only because <PARAM>_ADJUSTED parameter
+               % measurements may be computed from RT adjustment
+               % (not performed on TRAJ data)
+               if (idD == 1)
+                  fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
+                     a_floatNum, idMeas);
+               end
             end
-         elseif (((floatDecoderId > 1000) && (floatDecoderId < 2000)) || (floatDecoderId > 3000))
-            % Apex & Nemo floats
-            if (direction(1) == 'A')
-               profMeasCode = g_MC_AscProfDeepestBin;
-            else
-               profMeasCode = [];
-            end
-         else
-            fprintf('RTQC_ERROR: Float #%d: PROF to TRAJ link rules not implemented for decoder Id #%d\n', ...
-               a_floatNum, floatDecoderId);
-            continue
          end
-         
-         % link profile and trajectory data for concerned MC
-         
-         if (~isempty(profMeasCode))
+      end
+      
+      profNmeasAdjIndex = profNmeasIndex; % USE THE SAME LINKS FOR ADJUSTED VALUES
+      
+      % arrays to report RTQC on prof data in traj data
+      g_rtqc_trajData.testDoneList = zeros(lastTestNum, 1);
+      g_rtqc_trajData.testFailedList = zeros(lastTestNum, 1);
+      
+      % report profile Qc in trajectory data
+      for idD = 1:2
+         if (idD == 1)
+            % non adjusted data processing
             
-            profNmeasXIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
-            if ((idD == 1) || ((idD == 2) && (dataModeCFile(1) ~= 'R')))
-               uCycleNumber = unique(cycleNumber);
-               idTrajFromProf = find( ...
-                  (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
-                  (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
-               for id = 1:length(idTrajFromProf)
-                  found = 0;
-                  idMeas = idTrajFromProf(id);
-                  if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
-                     for idProf = 1:size(profNmeasXIndex, 2)
-                        profData = dataProf{idProf};
-                        for idLev = 1:size(profNmeasXIndex, 3)
-                           if (~any(profData(idLev, :) ~= dataTraj(idMeas, :)))
-                              idLength = 1;
-                              while ((idLength <= size(profNmeasXIndex, 1)) && ...
-                                    (profNmeasXIndex(idLength, idProf, idLev) ~= 0))
-                                 idLength = idLength + 1;
-                              end
-                              if (idLength > size(profNmeasXIndex, 1))
-                                 profNmeasXIndex = cat(1, profNmeasXIndex, ...
-                                    zeros(1, length(dataProf), size(dataProf{1}, 1)));
-                              end
-                              profNmeasXIndex(idLength, idProf, idLev) = idMeas;
-                              found = 1;
-                              break
-                           end
-                        end
-                        if (found == 1)
-                           break
-                        end
-                     end
-                     if (found == 0)
-                        % print the following warning for <PARAM> parameters
-                        % only because <PARAM>_ADJUSTED parameter
-                        % measurements may be computed from RT adjustment
-                        % (not performed on TRAJ data)
-                        if (idD == 1)
-                           fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
-                              a_floatNum, idMeas);
-                        end
-                     end
-                  end
-               end
-            end
-         end
-      end
-      
-      if (idD == 1)
-         profNmeasIndex = profNmeasXIndex;
-         ncProfTrajNameList = ncProfTrajXNameList;
-      else
-         if (dataModeCFile(1) ~= 'R')
-            profNmeasAdjIndex = profNmeasXIndex;
+            % set the name list
+            ncProfParamXNameList = ncParamNameList;
+            ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamNameList;
+            ncProfParamXDataQcList = ncParamDataQcList;
+            ncTrajParamXDataQcList = g_rtqc_trajData.ncTrajParamDataQcList;
+            profNmeasXIndex = profNmeasIndex;
+            ncProfTrajXNameList = ncProfTrajNameList;
          else
-            profNmeasAdjIndex = [];
+            % adjusted data processing
+            
+            % set the name list
+            ncProfParamXNameList = ncParamAdjNameList;
+            ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamAdjNameList;
+            ncProfParamXDataQcList = ncParamAdjDataQcList;
+            ncTrajParamXDataQcList = g_rtqc_trajData.ncTrajParamAdjDataQcList;
+            profNmeasXIndex = profNmeasAdjIndex;
+            ncProfTrajXNameList = ncProfTrajAdjNameList;
          end
-         ncProfTrajAdjNameList = ncProfTrajXNameList;
-      end
-   end
-   
-   % arrays to report RTQC on prof data in traj data
-   g_rtqc_trajData.testDoneList = zeros(lastTestNum, 1);
-   g_rtqc_trajData.testFailedList = zeros(lastTestNum, 1);
-   
-   % report profile Qc in trajectory data
-   for idD = 1:2
-      if (idD == 1)
-         % non adjusted data processing
          
-         % set the name list
-         ncProfParamXNameList = ncParamNameList;
-         ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamNameList;
-         ncProfParamXDataQcList = ncParamDataQcList;
-         ncTrajParamXDataQcList = g_rtqc_trajData.ncTrajParamDataQcList;
-         profNmeasXIndex = profNmeasIndex;
-         ncProfTrajXNameList = ncProfTrajNameList;
-      else
-         % adjusted data processing
-         
-         % set the name list
-         ncProfParamXNameList = ncParamAdjNameList;
-         ncTrajParamXNameList = g_rtqc_trajData.ncTrajParamAdjNameList;
-         ncProfParamXDataQcList = ncParamAdjDataQcList;
-         ncTrajParamXDataQcList = g_rtqc_trajData.ncTrajParamAdjDataQcList;
-         profNmeasXIndex = profNmeasAdjIndex;
-         ncProfTrajXNameList = ncProfTrajAdjNameList;
-      end
-      
-      if (~isempty(g_rtqc_trajData) && ~isempty(profNmeasXIndex) && ...
-            ~isempty(find(profNmeasXIndex > 0, 1)))
-         for idProf = 1:length(juld)
-            for idLength = 1:size(profNmeasXIndex, 1)
-               idList = find(profNmeasXIndex(idLength, idProf, :) > 0);
-               if (~isempty(idList))
-                  idMeas = squeeze(profNmeasXIndex(idLength, idProf, idList));
-                  
-                  for idP = 1:length(ncProfTrajXNameList)
-                     idParamProf = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
-                     idParamTraj = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
-                     profQcData = eval(ncProfParamXDataQcList{idParamProf});
-                     if (any(profQcData(idProf, idList) ~= g_decArgo_qcStrDef))
-                        idToReport = find(profQcData(idProf, idList) ~= g_decArgo_qcStrDef);
-                        g_rtqc_trajData.(ncTrajParamXDataQcList{idParamTraj})(idMeas(idToReport)) = ...
-                           profQcData(idProf, idList(idToReport));
+         if (~isempty(g_rtqc_trajData) && ~isempty(profNmeasXIndex) && ...
+               ~isempty(find(profNmeasXIndex > 0, 1)))
+            for idProf = 1:length(juld)
+               for idLength = 1:size(profNmeasXIndex, 1)
+                  idList = find(profNmeasXIndex(idLength, idProf, :) > 0);
+                  if (~isempty(idList))
+                     idMeas = squeeze(profNmeasXIndex(idLength, idProf, idList));
+                     
+                     for idP = 1:length(ncProfTrajXNameList)
+                        idParamProf = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
+                        idParamTraj = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
+                        profQcData = eval(ncProfParamXDataQcList{idParamProf});
+                        if (any(profQcData(idProf, idList) ~= g_decArgo_qcStrDef))
+                           idToReport = find(profQcData(idProf, idList) ~= g_decArgo_qcStrDef);
+                           g_rtqc_trajData.(ncTrajParamXDataQcList{idParamTraj})(idMeas(idToReport)) = ...
+                              profQcData(idProf, idList(idToReport));
+                        end
                      end
                   end
                end
             end
-         end
-         for idTest = 1:size(testDoneListForTraj, 1)
-            for idProf = 1:size(testDoneListForTraj, 2)
-               for idLength = 1:size(profNmeasXIndex, 1)
-                  idLevInProf = testDoneListForTraj{idTest, idProf};
-                  if (~isempty(idLevInProf))
-                     if (~isempty(find(profNmeasXIndex(idLength, idProf, idLevInProf) > 0, 1)))
-                        g_rtqc_trajData.testDoneList(idTest) = 1;
+            for idTest = 1:size(testDoneListForTraj, 1)
+               for idProf = 1:size(testDoneListForTraj, 2)
+                  for idLength = 1:size(profNmeasXIndex, 1)
+                     idLevInProf = testDoneListForTraj{idTest, idProf};
+                     if (~isempty(idLevInProf))
+                        if (~isempty(find(profNmeasXIndex(idLength, idProf, idLevInProf) > 0, 1)))
+                           g_rtqc_trajData.testDoneList(idTest) = 1;
+                        end
                      end
-                  end
-                  idLevInProf = testFailedListForTraj{idTest, idProf};
-                  if (~isempty(idLevInProf))
-                     if (~isempty(find(profNmeasXIndex(idLength, idProf, idLevInProf) > 0, 1)))
-                        g_rtqc_trajData.testFailedList(idTest) = 1;
+                     idLevInProf = testFailedListForTraj{idTest, idProf};
+                     if (~isempty(idLevInProf))
+                        if (~isempty(find(profNmeasXIndex(idLength, idProf, idLevInProf) > 0, 1)))
+                           g_rtqc_trajData.testFailedList(idTest) = 1;
+                        end
                      end
                   end
                end
@@ -6250,7 +6240,7 @@ for idFile = 1:2
             end
          end
          if (idChlaParam == -1)
-            fprintf('RTQC_ERROR: Parameter %s not found in STATION_PARAMETERS variable => calibration information not updated in file: %s\n', ...
+            fprintf('RTQC_ERROR: Parameter %s not found in STATION_PARAMETERS variable - calibration information not updated in file: %s\n', ...
                'CHLA', fileName);
          else
             netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
@@ -6277,7 +6267,7 @@ for idFile = 1:2
                end
             end
             if (idParam == -1)
-               fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable => calibration information not updated in file: %s\n', ...
+               fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable - calibration information not updated in file: %s\n', ...
                   'CHLA', fileName);
                break
             end

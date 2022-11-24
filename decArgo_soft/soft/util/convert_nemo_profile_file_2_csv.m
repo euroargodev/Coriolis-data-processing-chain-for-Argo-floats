@@ -109,7 +109,7 @@ for idFloat = 1:nbFloats
    % find float SN
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
       continue
    end
    floatSerialNumStr = sprintf('%04d', str2num(listSn{idF}));
@@ -174,7 +174,7 @@ for idFloat = 1:nbFloats
          secondOrderInformationStr ...
          ] = read_nemo_profile_file(profilePathFileName);
       if (error == 1)
-         fprintf('ERROR: Error in file: %s => ignored\n', profilePathFileName);
+         fprintf('ERROR: Error in file: %s - ignored\n', profilePathFileName);
          continue
       end
       

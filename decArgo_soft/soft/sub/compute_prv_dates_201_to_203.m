@@ -206,7 +206,7 @@ elseif (length(idF1) == 1)
          o_ascentEndDate = o_transStartDate - 10/1440 - PT4Seconds/86400;
          refDate = o_ascentEndDate;
       else
-         fprintf('WARNING: Float #%d cycle #%d: PT04 is unknown => AET cannot be computed\n', ...
+         fprintf('WARNING: Float #%d cycle #%d: PT04 is unknown - AET cannot be computed\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
       end
          

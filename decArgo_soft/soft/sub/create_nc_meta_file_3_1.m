@@ -2441,7 +2441,7 @@ for idField = 1:length(metaFieldNames)
    %          for id = nbSensor+1:length(fNames)
    %             metaData.(fieldName) = rmfield(metaData.(fieldName), fNames{id});
    %          end
-   %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file => considering only the %d first ones\n', ...
+   %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file - considering only the %d first ones\n', ...
    %             ncFileName, fieldName, nbSensor);
    %       end
    %    end
@@ -2454,7 +2454,7 @@ for idField = 1:length(metaFieldNames)
    %          for id = nbParam+1:length(fNames)
    %             metaData.(fieldName) = rmfield(metaData.(fieldName), fNames{id});
    %          end
-   %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file => considering only the %d first ones\n', ...
+   %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file - considering only the %d first ones\n', ...
    %             ncFileName, fieldName, nbParam);
    %       end
    %    end

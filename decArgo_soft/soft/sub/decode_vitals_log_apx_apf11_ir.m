@@ -73,7 +73,7 @@ for idFile = 1:length(a_vitalsLogFileList)
    end
    [error, data] = read_apx_apf11_ir_binary_log_file(vitFilePathName, 'vitals', fromLaunchFlag, 0);
    if (error == 1)
-      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
       return
    end
@@ -96,7 +96,7 @@ for idFile = 1:length(a_vitalsLogFileList)
                         else
                            idF = cellfun(@(x) strfind(msgData, x), ignoredMessages, 'UniformOutput', 0);
                            if (isempty([idF{:}]))
-                              fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                                  g_decArgo_floatNum, g_decArgo_cycleNum, 'Message', msgData, vitFilePathName);
                               continue
                            end
@@ -124,7 +124,7 @@ for idFile = 1:length(a_vitalsLogFileList)
                      o_vitalsData.WD_CNT = wdCntNew;
                end
             else
-               fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, vitFilePathName);
             end
          end

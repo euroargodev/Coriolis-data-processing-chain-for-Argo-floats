@@ -178,13 +178,13 @@ for idFloat = 1:nbFloats
    % get the list of sensors for this float
    idSensor = find(wmoSensorList == floatNum);
    if (isempty(idSensor))
-      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+      fprintf('ERROR: Unknown sensor list for float #%d - nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
          floatNum, SENSOR_LIST_FILE_NAME);
       continue
    end
    sensorList = nameSensorList(idSensor);
    if (length(sensorList) ~= length(unique(sensorList)))
-      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+      fprintf('ERROR: Duplicated sensors for float #%d - nothing done for this float (PLEASE CHECK "%s" file)\n', ...
          floatNum, SENSOR_LIST_FILE_NAME);
       continue
    end
@@ -192,7 +192,7 @@ for idFloat = 1:nbFloats
    % find decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
       continue
    end
    floatDecId = listDecId(idF);
@@ -705,7 +705,7 @@ for idC = 1:length(a_codeList)
          o_techParValue = [o_techParValue; a_ifEmptyList(idC)];
       end
       
-      fprintf('INFO: Sensor info ''%s'' is missing for float #%d => value set to default\n', ...
+      fprintf('INFO: Sensor info ''%s'' is missing for float #%d - value set to default\n', ...
          a_codeList{idC}, a_floatNum);
    end
 end
@@ -825,14 +825,14 @@ end
 
 if (~isempty(o_platformFamily))
    if (~strcmp(o_platformFamily, defaultPlatformFamily))
-      fprintf('WARNING: Float #%d decid #%d: DB platform family (%s) differs from default value (%s) => set to default value\n', ...
+      fprintf('WARNING: Float #%d decid #%d: DB platform family (%s) differs from default value (%s) - set to default value\n', ...
          a_floatNum, a_decId, ...
          o_platformFamily, defaultPlatformFamily);
       o_platformFamily = defaultPlatformFamily;
    end
 else
    o_platformFamily = defaultPlatformFamily;
-   fprintf('INFO: Float #%d decid #%d: DB platform family is missing => set to default value (%s)\n', ...
+   fprintf('INFO: Float #%d decid #%d: DB platform family is missing - set to default value (%s)\n', ...
       a_floatNum, a_decId, ...
       o_platformFamily);
 end
@@ -861,14 +861,14 @@ end
 
 if (~isempty(o_platformType))
    if (~strcmp(o_platformType, defaultPlatformType))
-      fprintf('WARNING: Float #%d decid #%d: DB platform type (%s) differs from default value (%s) => set to default value\n', ...
+      fprintf('WARNING: Float #%d decid #%d: DB platform type (%s) differs from default value (%s) - set to default value\n', ...
          a_floatNum, a_decId, ...
          o_platformType, defaultPlatformType);
       o_platformType = defaultPlatformType;
    end
 else
    o_platformType = defaultPlatformType;
-   fprintf('INFO: Float #%d decid #%d: DB platform type is missing => set to default value (%s)\n', ...
+   fprintf('INFO: Float #%d decid #%d: DB platform type is missing - set to default value (%s)\n', ...
       a_floatNum, a_decId, ...
       o_platformType);
 end
@@ -897,14 +897,14 @@ end
 
 if (~isempty(o_wmoInstType))
    if (~strcmp(o_wmoInstType, defaultWmoInstType))
-      fprintf('WARNING: Float #%d decid #%d: DB WMO instrument type (%s) differs from default value (%s) => set to default value\n', ...
+      fprintf('WARNING: Float #%d decid #%d: DB WMO instrument type (%s) differs from default value (%s) - set to default value\n', ...
          a_floatNum, a_decId, ...
          o_wmoInstType, defaultWmoInstType);
       o_wmoInstType = defaultWmoInstType;
    end
 else
    o_wmoInstType = defaultWmoInstType;
-   fprintf('INFO: Float #%d decid #%d: DB WMO instrument type is missing => set to default value (%s)\n', ...
+   fprintf('INFO: Float #%d decid #%d: DB WMO instrument type is missing - set to default value (%s)\n', ...
       a_floatNum, a_decId, ...
       o_wmoInstType);
 end
@@ -1232,19 +1232,19 @@ if (~isempty(idF1))
    if (isempty(o_paramAccuracy))
       if (strcmp(a_paramName, 'PRES'))
          o_paramAccuracy = '2.4';
-         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'TEMP'))
          o_paramAccuracy = '0.002';
-         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'PSAL'))
          o_paramAccuracy = '0.005';
-         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'DOXY'))
          o_paramAccuracy = '10%';
-         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramAccuracy = '2';
-         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
       end
    end
    
@@ -1256,19 +1256,19 @@ if (~isempty(idF1))
    if (isempty(o_paramResolution))
       if (strcmp(a_paramName, 'PRES'))
          o_paramResolution = '1';
-         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'TEMP'))
          o_paramResolution = '0.001';
-         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'PSAL'))
          o_paramResolution = '0.001';
-         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'DOXY'))
          o_paramResolution = '0.001';
-         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramResolution = '0.01';
-         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       end
    end
    

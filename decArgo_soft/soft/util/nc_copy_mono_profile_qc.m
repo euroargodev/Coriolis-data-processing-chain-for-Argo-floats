@@ -907,13 +907,13 @@ for idType = 1:2
             if (idS == 2)
                if (idType == 1)
                   if (dataMode(a_profNumToUpdate) == 'R')
-                     fprintf('INFO: profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
+                     fprintf('INFO: profile #%d is in ''R'' mode - %s not reported in profile #%d of file : %s\n', ...
                         a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
                      continue
                   end
                else
                   if (isempty(find(strcmp(paramNamePrefix, adjustedParam), 1)))
-                     fprintf('INFO: parameter %s of profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
+                     fprintf('INFO: parameter %s of profile #%d is in ''R'' mode - %s not reported in profile #%d of file : %s\n', ...
                         paramNamePrefix, a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
                      continue
                   end

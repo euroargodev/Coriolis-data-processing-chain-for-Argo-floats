@@ -194,7 +194,7 @@ for idFloat = 1:length(floatList)
                metaStruct.(metaBddStructField) = 'UNKNOWN';
             end
             if (strcmp(metaBddStructField, 'FLOAT_SERIAL_NO'))
-               fprintf('ERROR: Float #%d: FLOAT_SERIAL_NO (''%s'') is mandatory => no json file generated\n', ...
+               fprintf('ERROR: Float #%d: FLOAT_SERIAL_NO (''%s'') is mandatory - no json file generated\n', ...
                   floatNum, metaBddStructValue);
                skipFloat = 1;
             end
@@ -205,7 +205,7 @@ for idFloat = 1:length(floatList)
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
-      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d - no json file generated\n', ...
          floatNum);
       continue
    end
@@ -248,7 +248,7 @@ for idFloat = 1:length(floatList)
    if (~isempty(metaStruct.SENSOR_SERIAL_NO))
       for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
          if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
-            fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
+            fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') - no json file generated\n', ...
                floatNum, ...
                metaStruct.SENSOR{idS}, ...
                metaStruct.SENSOR_MODEL{idS}, ...
@@ -257,7 +257,7 @@ for idFloat = 1:length(floatList)
          end
       end
    else
-      fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory => no json file generated\n', ...
+      fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory - no json file generated\n', ...
          floatNum);
       skipFloat = 1;
    end
@@ -323,13 +323,13 @@ for idFloat = 1:length(floatList)
    % expected data
    idSensor = find(wmoSensorList == floatNum);
    if (isempty(idSensor))
-      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
+      fprintf('ERROR: Unknown sensor list for float #%d - nothing done for this float (PLEASE UPDATE "%s" file)\n', ...
          floatNum, a_sensorListFileName);
       continue
    end
    sensorList = nameSensorList(idSensor);
    if (length(sensorList) ~= length(unique(sensorList)))
-      fprintf('ERROR: Duplicated sensors for float #%d => nothing done for this float (PLEASE CHECK "%s" file)\n', ...
+      fprintf('ERROR: Duplicated sensors for float #%d - nothing done for this float (PLEASE CHECK "%s" file)\n', ...
          floatNum, a_sensorListFileName);
       continue
    end

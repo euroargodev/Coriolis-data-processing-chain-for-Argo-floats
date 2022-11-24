@@ -51,7 +51,7 @@ for id = 1:length(labels)
    idF = strfind(label, '_');
    %    fprintf('%s\n', label(idF(end)+1:end));
    label = label(1:idF(end)-1);
-   fprintf('%s => ', label);
+   fprintf('%s - ', label);
    
    % replace the templates of each label
    tmpLabelListIn = {label};
@@ -66,7 +66,7 @@ for id = 1:length(labels)
             idFEnd = strfind(tmpLabel, '>');
             template = tmpLabel(idFStart:idFEnd);
             if (~ismember(template, templateList))
-               fprintf('ERROR: template ''%s'' is not in the referenced list => aborted\n', template);
+               fprintf('ERROR: template ''%s'' is not in the referenced list - aborted\n', template);
                return
             end
             templateId = find(strcmp(template, templateList));
@@ -204,7 +204,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(launchConfigParamNameList)
                   label = launchConfigParamNameList{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;
@@ -212,7 +212,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(configParamNameList)
                   label = configParamNameList{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;

@@ -160,7 +160,7 @@ if (~isempty(a_varargin))
    inputArgs = a_varargin;
 
    if (rem(length(inputArgs), 2) ~= 0)
-      fprintf('ERROR: odd number of input arguments => exit\n');
+      fprintf('ERROR: odd number of input arguments - exit\n');
       o_inputError = 1;
    else
       varList2 = [inputArgs(1:2:end)];

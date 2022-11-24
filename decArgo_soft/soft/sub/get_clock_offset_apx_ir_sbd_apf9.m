@@ -74,7 +74,7 @@ for idFile = 1:length(logFileList)
    % read input file
    [error, events] = read_apx_ir_sbd_log_file(logFilePathName);
    if (error == 1)
-      fprintf('ERROR: Error in file: %s => ignored\n', logFilePathName);
+      fprintf('ERROR: Error in file: %s - ignored\n', logFilePathName);
       return
    end
    
@@ -182,7 +182,7 @@ if (isempty(o_clockOffset.clockOffsetCycleNum) || ...
             engineeringDataStr, ...
             ] = read_apx_ir_sbd_msg_file(msgFilePathName, a_decoderId, 1);
          if (error == 1)
-            fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
+            fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum, msgFilePathName);
             return
          end

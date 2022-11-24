@@ -64,7 +64,7 @@ if (~isempty(configNames))
             
             if (isempty(ctdPumpSwitchOffPres))
                ctdPumpSwitchOffPres = 5;
-               fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+               fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
                   g_decArgo_floatNum, ctdPumpSwitchOffPres);
             end
          elseif (ismember(a_decoderId, [30 32]))
@@ -72,7 +72,7 @@ if (~isempty(configNames))
             
             if (isempty(ctdPumpSwitchOffPres))
                ctdPumpSwitchOffPres = 5;
-               fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+               fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
                   g_decArgo_floatNum, ctdPumpSwitchOffPres);
             end
          else

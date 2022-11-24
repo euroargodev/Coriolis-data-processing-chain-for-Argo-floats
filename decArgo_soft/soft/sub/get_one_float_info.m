@@ -96,7 +96,7 @@ elseif (~isempty(a_floatArgosId))
    else
       for idF = 1: length(floatInfoFileNames)
          if (~isempty(strfind(floatInfoFileNames(idF).name, 'WWWWWWW_')))
-            fprintf('ERROR: Conflict between one JSON info file (%s) and the other ones => clean the set of JSON info files for this float\n', floatInfoFileNames(idF).name);
+            fprintf('ERROR: Conflict between one JSON info file (%s) and the other ones - clean the set of JSON info files for this float\n', floatInfoFileNames(idF).name);
             return
          end
       end
@@ -106,7 +106,7 @@ elseif (~isempty(a_floatArgosId))
       lastArgosMsgDate = max(argosDataDate);
       
       if (isempty(lastArgosMsgDate))
-         fprintf('WARNING: Input Argos file (%s) is empty => cannot choose between possible WMO numbers\n', g_decArgo_inputArgosFile);
+         fprintf('WARNING: Input Argos file (%s) is empty - cannot choose between possible WMO numbers\n', g_decArgo_inputArgosFile);
          return
       end
       

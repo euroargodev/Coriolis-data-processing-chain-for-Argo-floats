@@ -188,12 +188,12 @@ if (testFlagList(15) == 1)
    if (~isempty(testMetaId))
       greyListPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found => test #15 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found - test #15 not performed\n', ...
             a_floatNum, greyListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 => test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
          a_floatNum);
       testFlagList(15) = 0;
    end
@@ -205,12 +205,12 @@ if (testFlagList(57) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file (%s) not found => test #57 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file (%s) not found - test #57 not performed\n', ...
             a_floatNum, ncMetaPathFileName);
          testFlagList(57) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file needed to perform test #57 => test #57 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file needed to perform test #57 - test #57 not performed\n', ...
          a_floatNum);
       testFlagList(57) = 0;
    end
@@ -1081,14 +1081,14 @@ if (testFlagList(15) == 1)
    % read grey list file
    fId = fopen(greyListPathFileName, 'r');
    if (fId == -1)
-      fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to open grey list file (%s) => test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
          a_floatNum, greyListPathFileName);
    else
       fileContents = textscan(fId, '%s', 'delimiter', ',');
       fclose(fId);
       fileContents = fileContents{:};
       if (rem(size(fileContents, 1), 7) ~= 0)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to parse grey list file (%s) => test #15 not performed\n', ...
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
             a_floatNum, greyListPathFileName);
       else
          
@@ -1347,11 +1347,11 @@ if (testFlagList(57) == 1)
                      testFailedList(57) = 1;
                   end
                else
-                  fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter_sensor ''%s'' in the meta-data sensors => test #57 not performed\n', ...
+                  fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter_sensor ''%s'' in the meta-data sensors - test #57 not performed\n', ...
                      a_floatNum, paramSensor);
                end
             else
-               fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter ''%s'' in the meta-data parameters => test #57 not performed\n', ...
+               fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter ''%s'' in the meta-data parameters - test #57 not performed\n', ...
                   a_floatNum, test57ParameterList{idP});
             end
          end

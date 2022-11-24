@@ -70,7 +70,7 @@ for idFile = 1:length(logFileList)
    % read input file
    [error, events] = read_apx_ir_rudics_log_file(logFilePathName);
    if (error == 1)
-      fprintf('ERROR: Error in file: %s => ignored\n', logFilePathName);
+      fprintf('ERROR: Error in file: %s - ignored\n', logFilePathName);
       return
    end
    
@@ -186,7 +186,7 @@ if (isempty(o_clockOffset.clockOffsetCycleNum) || ...
                nearSurfaceDataStr ...
                ] = read_apx_ir_rudics_msg_file(msgFilePathName);
             if (error == 1)
-               fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+               fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                   g_decArgo_floatNum, msgFilePathName);
                continue
             end

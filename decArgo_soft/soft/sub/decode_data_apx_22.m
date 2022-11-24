@@ -115,7 +115,7 @@ for idL = 1:size(a_sensorData, 1)
    if (msgNum == 9) % emergency message
       
       % emergency msg
-      fprintf('ERROR: Float #%d Cycle #%d: emergency message decoding is implemented but never checked => not used\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: emergency message decoding is implemented but never checked - not used\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
       if (0)
@@ -1216,7 +1216,7 @@ for idL = 1:size(a_sensorData, 1)
       
    else
       
-      fprintf('WARNING: Float #%d Cycle #%d: unexpected message #%d received (with a redundancy of %d) => not considered\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: unexpected message #%d received (with a redundancy of %d) - not considered\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, msgNum, msgRed);
    end
 end

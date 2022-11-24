@@ -150,7 +150,7 @@ else
                if (~isempty(idF))
                   idOk = idOk(idF);
                else
-                  fprintf('WARNING: Float #%d Cycle #%d: cannot fit SEAPOINT standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: cannot fit SEAPOINT standard deviation and median data with associated mean data - standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
                   continue
                end

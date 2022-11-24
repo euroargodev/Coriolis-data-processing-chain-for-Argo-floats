@@ -183,7 +183,7 @@ end
 
 if (~isempty(a_criticalLogFileList))
    filePathNames = sprintf('%s,', a_criticalLogFileList{:});
-   fprintf('INFO: Float #%d Cycle #%d: Not managed critical log file(s): %s => ignored\n', ...
+   fprintf('INFO: Float #%d Cycle #%d: Not managed critical log file(s): %s - ignored\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, filePathNames(1:end-1));
 end
 

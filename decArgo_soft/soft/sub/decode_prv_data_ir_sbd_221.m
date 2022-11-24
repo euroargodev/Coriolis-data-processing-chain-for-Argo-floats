@@ -323,6 +323,9 @@ switch (packType)
       % compute float time
       floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam1(1:6)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
       
+      % alternated profile pressure
+      tabParam1(43) = tabParam1(43)*10;
+      
       % calibration coefficients
       tabParam1(62) = tabParam1(62)/1000;
       tabParam1(63) = -tabParam1(63);

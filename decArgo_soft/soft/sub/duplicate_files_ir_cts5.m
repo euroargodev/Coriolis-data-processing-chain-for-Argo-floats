@@ -82,7 +82,7 @@ for idFile = 1:length(a_listFileNames)
       filePathNameOut = [a_outputDir '/' fileNameOut];
       if (exist(filePathNameOut, 'file') == 2)
          % file exists
-         %          fprintf('%s => unchanged\n', fileNameOut);
+         %          fprintf('%s - unchanged\n', fileNameOut);
       else
          fileExist = dir([a_outputDir '/' fileName(1:end-4) '_*' fileName(end-3:end)]);
          if (~isempty(fileExist))
@@ -90,12 +90,12 @@ for idFile = 1:length(a_listFileNames)
             move_file([a_outputDir '/' fileExist.name], g_decArgo_updatedDirectory);
             copy_file(fileNameIn, filePathNameOut);
             o_nbFiles = o_nbFiles + 1;
-            %             fprintf('%s => copy (update of %s)\n', fileNameOut,fileExist.name);
+            %             fprintf('%s - copy (update of %s)\n', fileNameOut,fileExist.name);
          else
             % copy new file
             copy_file(fileNameIn, filePathNameOut);
             o_nbFiles = o_nbFiles + 1;
-            %             fprintf('%s => copy\n', fileNameOut);
+            %             fprintf('%s - copy\n', fileNameOut);
          end
       end
    end
@@ -108,7 +108,7 @@ switch(a_floatNum)
       delFile = dir([a_outputDir '/019b_*']);
       for idF = 1:length(delFile)
          move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
-         %          fprintf('MISC: %s => not used\n', delFile(idF).name);
+         %          fprintf('MISC: %s - not used\n', delFile(idF).name);
       end
       
    case 4901802
@@ -118,7 +118,7 @@ switch(a_floatNum)
       if (~isempty(delFile))
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end
-      %       fprintf('MISC: %s => not used\n', delFile.name);
+      %       fprintf('MISC: %s - not used\n', delFile.name);
       % 013b_system_00007#02.hex should be renamed 013b_system_00007#02.hex
       movFile = dir([a_outputDir '/013b_system_00007#02*.hex']);
       if (~isempty(movFile))
@@ -142,7 +142,7 @@ switch(a_floatNum)
          if (~files(idF).isdir)
             if (datenum(files(idF).date, 'dd-mmmm-yyyy HH:MM:SS')-g_decArgo_janFirst1950InMatlab < startDate)
                move_file([a_outputDir '/' files(idF).name], g_decArgo_unusedDirectory);
-               %                fprintf('MISC: %s => not used\n', files(idF).name);
+               %                fprintf('MISC: %s - not used\n', files(idF).name);
             end
          end
       end

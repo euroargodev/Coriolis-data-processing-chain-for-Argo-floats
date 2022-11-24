@@ -28,7 +28,7 @@ o_qcTestHex = '';
 tabDec = zeros(1, 16);
 for idTest = 1:length(a_testNumList)
    if (a_testNumList(idTest) > 63)
-      fprintf('RTQC_ERROR: Unable to manage test numbers > 63 => test number ignored\n');
+      fprintf('RTQC_ERROR: Unable to manage test numbers > 63 - test number ignored\n');
    else
       id = floor(a_testNumList(idTest)/4) + 1;
       tabDec(id) = tabDec(id) + 2^(a_testNumList(idTest)-(id-1)*4);

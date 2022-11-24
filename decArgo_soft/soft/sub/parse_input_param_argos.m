@@ -57,7 +57,7 @@ floatWmoInputParam = 0;
 floatWmoListInputParam = 0;
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return
    else
@@ -75,7 +75,7 @@ if (~isempty(a_varargin))
                   g_decArgo_processModeAll = 1;
                   g_decArgo_processModeRedecode = 1;
                else
-                  fprintf('ERROR: inconsistent input arguments => exit\n');
+                  fprintf('ERROR: inconsistent input arguments - exit\n');
                   o_inputError = 1;
                   return
                end
@@ -83,7 +83,7 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_processmode', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
@@ -95,7 +95,7 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_argosfile', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
@@ -107,7 +107,7 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_floatwmo', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
@@ -119,12 +119,12 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_floatwmolist', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
          else
-            fprintf('INFO: unexpected input argument (%s) => ignored\n', a_varargin{id});
+            fprintf('INFO: unexpected input argument (%s) - ignored\n', a_varargin{id});
          end
       end
    end
@@ -132,19 +132,19 @@ end
 
 % check mandatory input parameters
 if (processModeInputParam == 0)
-   fprintf('ERROR: ''processmode'' input param is mandatory => exit\n');
+   fprintf('ERROR: ''processmode'' input param is mandatory - exit\n');
    o_inputError = 1;
    return
 end
 if (g_decArgo_processModeRedecode == 0)
    if (argosFileInputParam == 0)
-      fprintf('ERROR: ''argosfile'' input param is mandatory when ''processmode'' = ''all'' or ''profile'' => exit\n');
+      fprintf('ERROR: ''argosfile'' input param is mandatory when ''processmode'' = ''all'' or ''profile'' - exit\n');
       o_inputError = 1;
       return
    end
 else
    if ((floatWmoInputParam == 0) && (floatWmoListInputParam == 0))
-      fprintf('ERROR: ''floatwmo'' or ''floatwmolist'' input param is mandatory when ''processmode'' = ''redecode'' => exit\n');
+      fprintf('ERROR: ''floatwmo'' or ''floatwmolist'' input param is mandatory when ''processmode'' = ''redecode'' - exit\n');
       o_inputError = 1;
       return
    end
@@ -183,7 +183,7 @@ end
 % check the Argos input file
 if (g_decArgo_processModeRedecode == 0)
    if ~(exist(g_decArgo_inputArgosFile, 'file') == 2)
-      fprintf('ERROR: input Argos file (%s) does not exist => exit\n', g_decArgo_inputArgosFile);
+      fprintf('ERROR: input Argos file (%s) does not exist - exit\n', g_decArgo_inputArgosFile);
       o_inputError = 1;
       return
    end
@@ -193,7 +193,7 @@ end
 if (g_decArgo_processModeRedecode == 1)
    if (~isempty(g_decArgo_inputFloatWmoList))
       if ~(exist(g_decArgo_inputFloatWmoList, 'file') == 2)
-         fprintf('ERROR: input WMO list file (%s) does not exist => exit\n', g_decArgo_inputFloatWmoList);
+         fprintf('ERROR: input WMO list file (%s) does not exist - exit\n', g_decArgo_inputFloatWmoList);
          o_inputError = 1;
          return
       end

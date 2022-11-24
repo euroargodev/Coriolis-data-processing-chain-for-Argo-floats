@@ -165,7 +165,7 @@ for idFloat = 1:nbFloats
                % check if the file should be considered
                fileDate = datenum(argosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
                if (fileDate > floatEndDate)
-                  fprintf('INFO: Date of input file (%s) is after float end decoding date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
+                  fprintf('INFO: Date of input file (%s) is after float end decoding date (%s) - file stored without cycle number (i.e. not decoded)\n', ...
                      julian_2_gregorian_dec_argo(fileDate), ...
                      julian_2_gregorian_dec_argo(floatEndDate));
                   g_decArgo_inputArgosFile = argosFilePathName;
@@ -179,10 +179,10 @@ for idFloat = 1:nbFloats
                g_decArgo_janFirst1950InMatlab;
             
          else
-            fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
+            fprintf('ERROR: Not expected file name: %s - file not considered\n', argosFileName);
          end
       else
-         fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
+         fprintf('ERROR: Not expected file name: %s - file not considered\n', argosFileName);
       end
    end
    
@@ -286,14 +286,14 @@ if (isempty(argosDataDate))
    else
       move_argos_input_file(a_argosId, min(argosLocDate), a_floatNum, [], 'EEE');
    end
-   fprintf('INFO: File (%s) contains no Argos messages => file stored without cycle number (i.e. not decoded)\n', ...
+   fprintf('INFO: File (%s) contains no Argos messages - file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
    return
 elseif (length(unique(argosDataDate)) < NB_MSG_MIN)
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'GGG');
-   fprintf('INFO: File (%s) contains only ghost messages => file stored without cycle number (i.e. not decoded)\n', ...
+   fprintf('INFO: File (%s) contains only ghost messages - file stored without cycle number (i.e. not decoded)\n', ...
       a_argosFileName);
    
    return
@@ -305,7 +305,7 @@ end
 [launchDate, delayBeforeMission, preludeDuration, firstProfileEndDate, cycleDuration, nbCyclesFirstMission] = ...
    get_meta_data_for_cycle_number_determination(a_floatNum, floatDecId, floatLaunchDate, floatCycleTime, floatRefDay);
 if (isempty(launchDate))
-   fprintf('ERROR: Unable to compute cycle number because of missing meta-data => file stored without cycle number (i.e. not decoded)\n');
+   fprintf('ERROR: Unable to compute cycle number because of missing meta-data - file stored without cycle number (i.e. not decoded)\n');
    
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
    return
@@ -539,7 +539,7 @@ if (lastArgosMsgDate > launchDate)
 else
    move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'TTT');
    
-   fprintf('INFO: Last date of input file (%s) is before float launch date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
+   fprintf('INFO: Last date of input file (%s) is before float launch date (%s) - file stored without cycle number (i.e. not decoded)\n', ...
       julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
       julian_2_gregorian_dec_argo(launchDate));
    return
@@ -551,7 +551,7 @@ if (~isempty(cycleNumber))
       if (cycleNumber < 0)
          move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
          
-         fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data => file stored without cycle number (i.e. not decoded)\n', ...
+         fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data - file stored without cycle number (i.e. not decoded)\n', ...
             cycleNumber);
       else
          move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, cycleNumber);
@@ -574,7 +574,7 @@ if (~isempty(cycleNumber))
          if (cycleNumber(idFile) < 0)
             move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
             
-            fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data => file stored without cycle number (i.e. not decoded)\n', ...
+            fprintf('ERROR: Computed cycle number is negative (%d): check the consistency of the meta-data - file stored without cycle number (i.e. not decoded)\n', ...
                cycleNumber(idFile));
          else
             move_argos_input_file(a_argosId, firstArgosMsgDate, a_floatNum, cycleNumber(idFile));

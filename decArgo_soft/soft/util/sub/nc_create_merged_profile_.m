@@ -177,7 +177,7 @@ formatVersion = deblank(get_data_from_name('FORMAT_VERSION', metaData)');
 
 % check the META file format version
 if (~strcmp(formatVersion, '3.1'))
-   fprintf('WARNING: Float #%d: Input META file (%s) format version is %s => not used\n', ...
+   fprintf('WARNING: Float #%d: Input META file (%s) format version is %s - not used\n', ...
       g_cocm_floatNum, a_metaFilePathName, formatVersion);
    return
 end
@@ -386,7 +386,7 @@ for idType= 1:2
    
    % check the TRAJ file format version
    if (~strcmp(formatVersion, '3.1'))
-      fprintf('WARNING: Float #%d: Input TRAJ file (%s) format version is %s => not used\n', ...
+      fprintf('WARNING: Float #%d: Input TRAJ file (%s) format version is %s - not used\n', ...
          g_cocm_floatNum, trajFilePathName, formatVersion);
       return
    end
@@ -613,7 +613,7 @@ for idType= 1:2
    
    % check the PROF file format version
    if (~strcmp(formatVersion, '3.1'))
-      fprintf('WARNING: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s => not used\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s - not used\n', ...
          g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName, formatVersion);
       return
    end
@@ -763,7 +763,7 @@ for idType= 1:2
             paramName = profData.paramList{idParam};
             idF = find(strcmp(paramName, metaParamList));
             if (isempty(idF))
-               fprintf('ERROR: Float #%d Cycle #%d%c: No SENSOR is associated to parameter ''%s'' in the meta file => exit\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d%c: No SENSOR is associated to parameter ''%s'' in the meta file - exit\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, paramName);
                return
             end
@@ -802,11 +802,11 @@ for idType= 1:2
             if (~isempty(deblank(parameterDataMode)))
                profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
             elseif (dataMode(idProf) == 'R')
-               %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => set to ''R'' (as DATA_MODE = ''R'')\n', ...
+               %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) - set to ''R'' (as DATA_MODE = ''R'')\n', ...
                %                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName);
                profData.paramDataMode = [profData.paramDataMode 'R'];
             else
-               fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) - exit (as DATA_MODE = ''%c'')\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, profFilePathName, dataMode(idProf));
                return
             end
@@ -876,7 +876,7 @@ for idProfC = 1:length(profDataTabC)
    profData = profDataTabC(idProfC);
    for idProfB = 1:length(profDataTabB)
       if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
-         fprintf('WARNING: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) => files ignored\n', ...
+         fprintf('WARNING: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) - files ignored\n', ...
             g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, ...
             length(profData.presData), ...
             length(profDataTabB(idProfB).presData));
@@ -1046,7 +1046,7 @@ for idProf = idUnpumped
       sortedId(idToShift) = sortedId(idToShift) + 1;
       sortedId(idProf) = sortedId(idRef) + 1;
    else
-      fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' unpumped profile #%d cannot be assocated to existing one => data ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' unpumped profile #%d cannot be assocated to existing one - data ignored\n', ...
          g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, ...
          idProf);
    end
@@ -1269,112 +1269,112 @@ global g_cocm_printCsv;
 % check input profile consistency
 errorFlag = 0;
 if (length(unique({a_profData.handbookVersion})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple HANDBOOK_VERSION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple HANDBOOK_VERSION - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.referenceDateTime})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple REFERENCE_DATE_TIME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple REFERENCE_DATE_TIME - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformNumber})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_NUMBER - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.projectName})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PROJECT_NAME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PROJECT_NAME - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.piName})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PI_NAME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PI_NAME - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.cycleNumber])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CYCLE_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CYCLE_NUMBER - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.direction})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DIRECTION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DIRECTION - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.dataCentre})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DATA_CENTRE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DATA_CENTRE - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformType})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_TYPE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_TYPE - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.floatSerialNo})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FLOAT_SERIAL_NO => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FLOAT_SERIAL_NO - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.firmwareVersion})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FIRMWARE_VERSION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FIRMWARE_VERSION - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.wmoInstType})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple WMO_INST_TYPE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple WMO_INST_TYPE - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.juld])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldResolution])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD:resolution => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD:resolution - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.juldQc})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_QC => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_QC - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocation])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocationResolution])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION:resolution => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION:resolution - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.latitude])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LATITUDE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LATITUDE - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.longitude])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LONGITUDE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LONGITUDE - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.positionQc})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITION_QC => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITION_QC - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique({a_profData.positioningSystem})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITIONING_SYSTEM => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITIONING_SYSTEM - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
 if (length(unique([a_profData.configMissionNumber])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CONFIG_MISSION_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CONFIG_MISSION_NUMBER - file ignored\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    errorFlag = 1;
 end
@@ -1685,7 +1685,7 @@ if (~isempty(a_trajData))
             if (~isempty(idF))
                trajParamId = [trajParamId idF];
             else
-               fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter not found in TRAJ file => cannot add time on profile levels\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d%c: ''%s'' parameter not found in TRAJ file - cannot add time on profile levels\n', ...
                   g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, paramName);
                trajParamId = [];
                break
@@ -1721,7 +1721,7 @@ if (~isempty(a_trajData))
             end
          end
       else
-         fprintf('ERROR: Float #%d Cycle #%d%c: PROF and TRAJ files have not the same number of parameters => cannot add time on profile levels\n', ...
+         fprintf('ERROR: Float #%d Cycle #%d%c: PROF and TRAJ files have not the same number of parameters - cannot add time on profile levels\n', ...
             g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
       end
       
@@ -1869,7 +1869,7 @@ o_mergedProfData.scientificCalibDate = scientificCalibDate;
 
 if (isempty(o_mergedProfData.paramData))
    
-   fprintf('INFO: Float #%d Cycle #%d%c: no data remain after processing => no merged profile\n', ...
+   fprintf('INFO: Float #%d Cycle #%d%c: no data remain after processing - no merged profile\n', ...
       g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir);
    o_mergedProfData = [];
 end

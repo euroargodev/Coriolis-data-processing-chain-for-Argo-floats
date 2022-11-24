@@ -102,6 +102,15 @@ global g_decArgo_reportStruct;
 % clock offset management
 global g_decArgo_clockOffset;
 
+% from
+% - decId 223 for Arvor
+% - decId 221 for Arvor Deep
+% configuration parameters are not transmitted each cycle
+% consequently we must update the configuration of the second deep cycle with
+% initial parameters, this should be done once (except if alterneated profil or
+% auto-increment flag are set)
+global  g_decArgo_doneOnceFlag;
+
 
 % no data to process
 if (isempty(a_decodedDataTab))
@@ -1237,6 +1246,11 @@ switch (a_decoderId)
       % assign the current configuration to the current deep cycle
       if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
+         
+         % update the configuration (even if no param packets are received)       
+         if (g_decArgo_doneOnceFlag ~= 1)
+            update_float_config_ir_sbd_delayed([{[]} {[]}], g_decArgo_cycleNum, a_decoderId);
+         end
       end
       
       % update float configuration for the next cycles
@@ -1490,6 +1504,11 @@ switch (a_decoderId)
       % assign the current configuration to the current deep cycle
       if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
+         
+         % update the configuration (even if no param packets are received)       
+         if (g_decArgo_doneOnceFlag ~= 1)
+            update_float_config_ir_sbd_delayed([{[]} {[]}], g_decArgo_cycleNum, a_decoderId);
+         end
       end
       
       % update float configuration for the next cycles
@@ -1635,7 +1654,7 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TRAJ NetCDF file
-         
+                  
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_222_223( ...
             g_decArgo_cycleNum, deepCycleFlag, ...
@@ -1698,6 +1717,11 @@ switch (a_decoderId)
       % assign the current configuration to the current deep cycle
       if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetectedFlag == 1))
          set_float_config_ir_sbd_delayed(g_decArgo_cycleNum);
+         
+         % update the configuration (even if no param packets are received)       
+         if (g_decArgo_doneOnceFlag ~= 1)
+            update_float_config_ir_sbd_delayed([{[]} {[]}], g_decArgo_cycleNum, a_decoderId);
+         end
       end
       
       % update float configuration for the next cycles

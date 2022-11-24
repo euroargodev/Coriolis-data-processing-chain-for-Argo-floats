@@ -107,7 +107,7 @@ for idF = 1:length(fieldNames)
       paramList = [paramFirmwareWatchdogCount];
    else
       
-      fprintf('WARNING: Float #%d Cycle #%d: Field ''%s'' not expected in vitals data structure => data ignored\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: Field ''%s'' not expected in vitals data structure - data ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, fieldName);
       continue
    end

@@ -124,7 +124,7 @@ if (length([dataList.asciiFileName]) ~= length(unique([dataList.asciiFileName]))
       end
    end
    
-   fprintf('WARNING: %d duplicates in .msg or .log files => cleared\n', nbDel);
+   fprintf('WARNING: %d duplicates in .msg or .log files - cleared\n', nbDel);
 end
 
 % generate raw .msg and .log ASCII files in the output directory

@@ -43,7 +43,7 @@ if (~isempty(g_decArgo_floatNum))
 end
 
 if (isempty(a_paramName) && ~isempty(a_paramValue))
-   fprintf('ERROR: %s header ''[%s]'' is missing => data ignored\n', errorHeader, a_headerName);
+   fprintf('ERROR: %s header ''[%s]'' is missing - data ignored\n', errorHeader, a_headerName);
    return
 end
 

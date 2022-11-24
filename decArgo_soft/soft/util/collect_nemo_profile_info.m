@@ -107,7 +107,7 @@ for idDir = 1:length(floatDirs)
                secondOrderInformationStr ...
                ] = read_nemo_profile_file(floatFilePathName);
             if (error == 1)
-               fprintf('ERROR: Error in file: %s => ignored\n', floatFilePathName);
+               fprintf('ERROR: Error in file: %s - ignored\n', floatFilePathName);
                continue
             elseif (error == 2)
                continue

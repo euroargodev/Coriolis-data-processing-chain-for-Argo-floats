@@ -53,7 +53,7 @@ rsyncLogFile = [];
 floatWmo = [];
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return
    else
@@ -70,7 +70,7 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_rsynclog', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
@@ -81,12 +81,12 @@ if (~isempty(a_varargin))
                % store input parameter in the XML report
                g_decArgo_xmlReportDOMNode = add_element_in_xml_report(g_decArgo_xmlReportDOMNode, 'param_floatwmo', a_varargin{id+1});
             else
-               fprintf('ERROR: inconsistent input arguments => exit\n');
+               fprintf('ERROR: inconsistent input arguments - exit\n');
                o_inputError = 1;
                return
             end
          else
-            fprintf('INFO: unexpected input argument (%s) => ignored\n', a_varargin{id});
+            fprintf('INFO: unexpected input argument (%s) - ignored\n', a_varargin{id});
          end
       end
    end
@@ -94,12 +94,12 @@ end
 
 % check mandatory input parameter
 if (rsyncLogInputParam == 0)
-   fprintf('ERROR: ''rsynclog'' input param is mandatory => exit\n');
+   fprintf('ERROR: ''rsynclog'' input param is mandatory - exit\n');
    o_inputError = 1;
    return
 end
 if (isempty(floatWmo))
-   fprintf('ERROR: ''floatwmo'' input param is mandatory => exit\n');
+   fprintf('ERROR: ''floatwmo'' input param is mandatory - exit\n');
    o_inputError = 1;
    return
 end
@@ -112,7 +112,7 @@ end
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
    floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatImei))
-   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
+   fprintf('ERROR: no information on float #%d - exit\n', floatWmo);
    o_inputError = 1;
    return
 end
@@ -123,14 +123,14 @@ rsyncLogPathFile = [];
 if (~isempty(rsyncLogFile))
    rsyncLogPathFile = [g_decArgo_dirInputRsyncLog '/' rsyncLogFile];
    if ~(exist(rsyncLogPathFile, 'file') == 2)
-      fprintf('ERROR: rsync log file (%s) does not exist => exit\n', rsyncLogPathFile);
+      fprintf('ERROR: rsync log file (%s) does not exist - exit\n', rsyncLogPathFile);
       o_inputError = 1;
       return;
    end
 end
 if (allRsyncLogFlag == 1)
    if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
-      fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
+      fprintf('ERROR: rsync log file directory (%s) does not exist - exit\n', g_decArgo_dirInputRsyncLog);
       o_inputError = 1;
       return;
    end

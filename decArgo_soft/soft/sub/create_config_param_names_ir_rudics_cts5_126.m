@@ -12,7 +12,7 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -92,6 +92,9 @@ for idConfig = 1:length(configInfoList)
       for idS = 1:length(apmtSensorList)
          paramNumList = 1:9;
          paramIdList = 175:183;
+         if (idS == 8) % <short_sensor_name> = 'Uvp'
+            paramIdList = paramIdList + 1000;
+         end
          for idZ = 1:5
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, (idZ-1)*9 + paramNumList(idP));
@@ -103,6 +106,9 @@ for idConfig = 1:length(configInfoList)
          end
          paramNumList = 46;
          paramIdList = 184;
+         if (idS == 8) % <short_sensor_name> = 'Uvp'
+            paramIdList = paramIdList + 1000;
+         end
          for idZ = 1:4
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, (idZ-1) + paramNumList(idP));
@@ -114,6 +120,9 @@ for idConfig = 1:length(configInfoList)
          end
          paramNumList = [50:52 60];
          paramIdList = [185:187 251];
+         if (idS == 8) % <short_sensor_name> = 'Uvp'
+            paramIdList = paramIdList + 1000;
+         end
          for idP = 1:length(paramNumList)
             decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, paramNumList(idP));
             idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
@@ -121,7 +130,7 @@ for idConfig = 1:length(configInfoList)
                [{'<short_sensor_name>'} {apmtSensorList{idS}}]);
             ncConfNames{end+1} = paramName;
          end
-         if (idS == 1)
+         if (idS == 1) % <short_sensor_name> = 'Ctd'
             paramNumList = [54 55];
             paramIdList = [188 243];
             for idP = 1:length(paramNumList)
@@ -129,7 +138,7 @@ for idConfig = 1:length(configInfoList)
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
             end
-         elseif (idS == 8)
+         elseif (idS == 8) % <short_sensor_name> = 'Uvp'
             paramNumList = 54;
             paramIdList = 252;
             for idZ = 1:5
@@ -137,7 +146,7 @@ for idConfig = 1:length(configInfoList)
                   decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, idS, (idZ-1) + paramNumList(idP));
                   idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                   paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
-                     [{'<short_sensor_name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)}]);
+                     [{'<N>'} {num2str(idZ)}]);
                   ncConfNames{end+1} = paramName;
                end
             end

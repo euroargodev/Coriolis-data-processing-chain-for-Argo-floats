@@ -40,7 +40,7 @@ for idProf = 1:length(a_tabProfiles)
          (a_tabProfiles(idProf).locationLon == g_decArgo_argosLonDef) || ...
          (a_tabProfiles(idProf).locationLat == g_decArgo_argosLatDef))
       a_tabProfiles(idProf) = add_profile_date_and_location( ...
-         a_tabProfiles(idProf), a_tabTrajNMeas, a_tabTrajNCycle, a_tabProfiles);
+         a_tabProfiles(idProf), a_tabTrajNMeas, a_tabTrajNCycle, a_tabProfiles, a_gpsData);
    end
 end
 
@@ -94,38 +94,38 @@ global g_decArgo_dateDef;
 
 
 % unpack the input data
-a_gpsLocCycleNum = a_gpsData{1};
-a_gpsLocProfNum = a_gpsData{2};
-a_gpsLocPhase = a_gpsData{3};
-a_gpsLocDate = a_gpsData{4};
-a_gpsLocLon = a_gpsData{5};
-a_gpsLocLat = a_gpsData{6};
-a_gpsLocQc = a_gpsData{7};
-a_gpsLocAccuracy = a_gpsData{8};
-a_gpsLocSbdFileDate = a_gpsData{9};
+gpsLocCycleNum = a_gpsData{1};
+gpsLocProfNum = a_gpsData{2};
+gpsLocPhase = a_gpsData{3};
+gpsLocDate = a_gpsData{4};
+gpsLocLon = a_gpsData{5};
+gpsLocLat = a_gpsData{6};
+gpsLocQc = a_gpsData{7};
+gpsLocAccuracy = a_gpsData{8};
+gpsLocSbdFileDate = a_gpsData{9};
 
 % we must interpolate between the existing GPS locations
 prevLocDate = g_decArgo_dateDef;
 nextLocDate = g_decArgo_dateDef;
 
 % find the previous GPS location
-idPrev = find(a_gpsLocDate <= a_profStruct.date);
+idPrev = find(gpsLocDate <= a_profStruct.date);
 if (~isempty(idPrev))
    idPrev = idPrev(end);
-   prevLocDate = a_gpsLocDate(idPrev);
-   prevLocLon = a_gpsLocLon(idPrev);
-   prevLocLat = a_gpsLocLat(idPrev);
+   prevLocDate = gpsLocDate(idPrev);
+   prevLocLon = gpsLocLon(idPrev);
+   prevLocLat = gpsLocLat(idPrev);
 end
 
 % find the next GPS location
-idNext = find(a_gpsLocDate >= a_profStruct.date);
+idNext = find(gpsLocDate >= a_profStruct.date);
 if (~isempty(idNext))
    idNext = idNext(1);
-   nextLocDate = a_gpsLocDate(idNext);
-   nextLocLon = a_gpsLocLon(idNext);
-   nextLocLat = a_gpsLocLat(idNext);
-   nextLocCyNum = a_gpsLocCycleNum(idNext);
-   nextLocProfNum = a_gpsLocProfNum(idNext);
+   nextLocDate = gpsLocDate(idNext);
+   nextLocLon = gpsLocLon(idNext);
+   nextLocLat = gpsLocLat(idNext);
+   nextLocCyNum = gpsLocCycleNum(idNext);
+   nextLocProfNum = gpsLocProfNum(idNext);
 end
 
 % interpolate between the 2 locations
@@ -145,13 +145,13 @@ if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
       a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
       
       % to update the associated NetCDF file
-      maxCycleNum = max(a_gpsLocCycleNum);
-      maxProfNumOfMaxCycleNum = max(a_gpsLocProfNum(find(a_gpsLocCycleNum == maxCycleNum)));
+      maxCycleNum = max(gpsLocCycleNum);
+      maxProfNumOfMaxCycleNum = max(gpsLocProfNum(find(gpsLocCycleNum == maxCycleNum)));
       if ((nextLocCyNum == maxCycleNum) && (nextLocProfNum == maxProfNumOfMaxCycleNum))
          a_profStruct.updated = 1;
       end
    else
-      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
          g_decArgo_floatNum, ...
          a_profStruct.cycleNumber, a_profStruct.profileNumber);
    end
@@ -168,12 +168,13 @@ return
 %
 % SYNTAX :
 %  [o_profStruct] = add_profile_date_and_location( ...
-%    a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll)
+%    a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll, a_gpsData)
 %
 % INPUT PARAMETERS :
 %   a_profStruct    : input profile structure
 %   a_tabTrajNMeas  : N_MEASUREMENT trajectory data
 %   a_tabTrajNCycle : N_CYCLE trajectory data
+%   a_gpsData       : float surface data structure
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : output profile structures
@@ -189,13 +190,16 @@ return
 %                      cycle
 % ------------------------------------------------------------------------------
 function [o_profStruct] = add_profile_date_and_location( ...
-   a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll)
+   a_profStruct, a_tabTrajNMeas, a_tabTrajNCycle, a_profStructAll, a_gpsData)
 
 % output parameters initialization
 o_profStruct = a_profStruct;
 
 % global measurement codes
 global g_MC_Launch;
+global g_MC_DST;
+global g_MC_AET;
+global g_MC_Surface;
 global g_MC_LMT;
 
 % global default values
@@ -230,7 +234,7 @@ if ((a_profStruct.locationDate == g_decArgo_dateDef) || ...
    end
 end
 
-% first: try to use the other profiles of the same cycle to fill missing profile dates
+% try to use the other profiles of the same cycle to fill missing profile dates
 if (a_profStruct.date == g_decArgo_dateDef)
    
    idF = find(([a_profStructAll.cycleNumber] == a_profStruct.cycleNumber) & ...
@@ -241,6 +245,117 @@ if (a_profStruct.date == g_decArgo_dateDef)
       profileDate = unique([a_profStructAll(idF).date]);
       if (length(profileDate) == 1)
          a_profStruct.date = profileDate;
+      end
+   end
+end
+
+% try to use TRAJ data (for CST5 floats profile dates and locations come from
+% tech message but if it has been missed TRAJ data (based on system events) can
+% be used)
+if (a_profStruct.date == g_decArgo_dateDef)
+   
+   % list of TRAJ cycle and profile numbers
+   cycleNumList = [a_tabTrajNMeas.cycleNumber];
+   profNumList = [a_tabTrajNMeas.profileNumber];
+
+   if (a_profStruct.direction == 'A')
+      
+      % ascending profile
+      idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
+         (profNumList == a_profStruct.profileNumber));
+      ascentEndDate = '';
+      for id = 1:length(idF)
+         tabMeas = a_tabTrajNMeas(idF(id)).tabMeas;
+         idF2 = find([tabMeas.measCode] == g_MC_AET);
+         if (~isempty(idF2))
+            if (~isempty(tabMeas(idF2).juldAdj))
+               ascentEndDate = tabMeas(idF2).juldAdj;
+               break
+            elseif (~isempty(tabMeas(idF2).juld))
+               ascentEndDate = tabMeas(idF2).juld;
+               break
+            end
+         end
+      end
+      if (~isempty(ascentEndDate))
+         
+         gpsLocDate = [];
+         gpsLocLon = [];
+         gpsLocLat = [];
+         gpsLocQc = [];
+         idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
+            (profNumList == a_profStruct.profileNumber));
+         for id = 1:length(idF)
+            tabMeas = a_tabTrajNMeas(idF(id)).tabMeas;
+            idF2 = find([tabMeas.measCode] == g_MC_Surface);
+            gpsLocDate = [gpsLocDate tabMeas(idF2).juld];
+            gpsLocLon = [gpsLocLon tabMeas(idF2).longitude];
+            gpsLocLat = [gpsLocLat tabMeas(idF2).latitude];
+            gpsLocQc = [gpsLocQc tabMeas(idF2).posQc];
+         end
+         
+         [~, idSort] = sort(gpsLocDate);
+         if (~isempty(idSort))
+            a_profStruct.date = ascentEndDate;
+            a_profStruct.locationDate = gpsLocDate(idSort(1));
+            a_profStruct.locationLon = gpsLocLon(idSort(1));
+            a_profStruct.locationLat = gpsLocLat(idSort(1));
+            a_profStruct.locationQc = gpsLocQc(idSort(1));
+         end
+      end
+   else
+      
+      % descending profile
+      idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
+         (profNumList == a_profStruct.profileNumber));
+      descentStartDate = '';
+      for id = 1:length(idF)
+         tabMeas = a_tabTrajNMeas(idF(id)).tabMeas;
+         idF2 = find([tabMeas.measCode] == g_MC_DST);
+         if (~isempty(idF2))
+            if (~isempty(tabMeas(idF2).juldAdj))
+               descentStartDate = tabMeas(idF2).juldAdj;
+               break
+            elseif (~isempty(tabMeas(idF2).juld))
+               descentStartDate = tabMeas(idF2).juld;
+               break
+            end
+         end
+      end
+      if (~isempty(descentStartDate))
+         
+         gpsLocDate = [];
+         gpsLocLon = [];
+         gpsLocLat = [];
+         gpsLocQc = [];
+         idF = find((cycleNumList == a_profStruct.cycleNumber) & ...
+            (profNumList == a_profStruct.profileNumber-1));
+         if (isempty(idF))
+            if (a_profStruct.cycleNumber > 0)
+               idF2 = find(cycleNumList == a_profStruct.cycleNumber-1);
+               if (~isempty(idF2))
+                  idF = find((cycleNumList == a_profStruct.cycleNumber-1) & ...
+                     (profNumList == max(profNumList(idF2))));
+               end
+            end
+         end
+         for id = 1:length(idF)
+            tabMeas = a_tabTrajNMeas(idF(id)).tabMeas;
+            idF2 = find([tabMeas.measCode] == g_MC_Surface);
+            gpsLocDate = [gpsLocDate tabMeas(idF2).juld];
+            gpsLocLon = [gpsLocLon tabMeas(idF2).longitude];
+            gpsLocLat = [gpsLocLat tabMeas(idF2).latitude];
+            gpsLocQc = [gpsLocQc tabMeas(idF2).posQc];
+         end
+         
+         [~, idSort] = sort(gpsLocDate);
+         if (~isempty(idSort))
+            a_profStruct.date = descentStartDate;
+            a_profStruct.locationDate = gpsLocDate(idSort(end));
+            a_profStruct.locationLon = gpsLocLon(idSort(end));
+            a_profStruct.locationLat = gpsLocLat(idSort(end));
+            a_profStruct.locationQc = gpsLocQc(idSort(end));
+         end
       end
    end
 end

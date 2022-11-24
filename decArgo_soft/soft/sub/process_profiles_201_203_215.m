@@ -81,7 +81,7 @@ if (~isempty(a_tabTech))
    idF2 = find(a_tabTech(:, 1) == 4);
    if (~isempty(idF2))
       if (length(idF2) > 1)
-         fprintf('ERROR: Float #%d cycle #%d: %d decoded tech message #2  => using the last one\n', ...
+         fprintf('ERROR: Float #%d cycle #%d: %d decoded tech message #2  - using the last one\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
             length(idF2));
       end
@@ -104,12 +104,12 @@ if (isempty(presCutOffProf))
    if (~isempty(ctpPumpSwitchOffPres))
       presCutOffProf = ctpPumpSwitchOffPres + 0.5;
       
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data => value retrieved from the configuration\n', ...
+      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data - value retrieved from the configuration\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    else
       presCutOffProf = 5 + 0.5;
       
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data and in the configuration => value set to 5 dbars\n', ...
+      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data and in the configuration - value set to 5 dbars\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    end
 end

@@ -103,7 +103,7 @@ end
 
 % read the configuration file
 if ~(exist(a_configReportFileName, 'file') == 2)
-   fprintf('WARNING: Float #%d: Input file not found: %s => using the default configuration\n', a_floatNum, a_configReportFileName);
+   fprintf('WARNING: Float #%d: Input file not found: %s - using the default configuration\n', a_floatNum, a_configReportFileName);
 else
    
    fId = fopen(a_configReportFileName, 'r');

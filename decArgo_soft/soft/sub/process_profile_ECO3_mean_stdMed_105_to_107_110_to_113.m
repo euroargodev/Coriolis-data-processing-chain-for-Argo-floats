@@ -217,7 +217,7 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                      if (~isempty(idF))
                         idOk = idOk(idF);
                      else
-                        fprintf('WARNING: Float #%d Cycle #%d: cannot fit ECO3 standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
+                        fprintf('WARNING: Float #%d Cycle #%d: cannot fit ECO3 standard deviation and median data with associated mean data - standard deviation and median data ignored\n', ...
                            g_decArgo_floatNum, g_decArgo_cycleNum);
                         continue
                      end

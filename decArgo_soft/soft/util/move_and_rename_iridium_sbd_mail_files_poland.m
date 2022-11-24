@@ -38,7 +38,7 @@ tic;
 
 % check the input directory
 if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
-   fprintf('ERROR: Input directory doesn''t exist => exit\n');
+   fprintf('ERROR: Input directory doesn''t exist - exit\n');
    return
 end
 
@@ -82,7 +82,7 @@ for idF = 1:length(files)
                imei(idFile), momsn(idFile), mtmsn(idFile)) pidNum '.txt'];
             
             if (exist([outputDirName newfilename], 'file') == 2)
-               fprintf('WARNING: Fichier existe déjà: %s => renommé\n', [outputDirName newfilename]);
+               fprintf('WARNING: Fichier existe déjà: %s - renommé\n', [outputDirName newfilename]);
                cpt = 1;
                while (exist([outputDirName newfilename], 'file') == 2)
                   newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...

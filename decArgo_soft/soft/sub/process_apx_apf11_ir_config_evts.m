@@ -2,7 +2,7 @@
 % Get configuration information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts_1121_1321_1322(a_events)
+%  [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -19,7 +19,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts_1121_1321_1322(a_events)
+function [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts(a_events)
 
 % output parameters initialization
 o_missionCfg = [];
@@ -36,7 +36,10 @@ global g_decArgo_cycleNum;
 PATTERN_START = '-----------Mission Parameters-----------';
 PATTERN_END = '----------------------------------------';
 
-events = a_events(find(strcmp({a_events.functionName}, 'MissionCfg')));
+events = a_events(find( ...
+   strcmp({a_events.functionName}, 'MissionCfg') | ...
+   strcmp({a_events.functionName}, 'mission_cfg') ...
+   ));
 configRec = [];
 for idEv = 1:length(events)
    evt = events(idEv);
@@ -64,8 +67,12 @@ end
 PATTERN_START = '#-----------Sample Config-----------';
 PATTERN_END = '#-----------------------------------';
 
-events = a_events(find(strcmp({a_events.functionName}, 'SampleCfg')));
+events = a_events(find( ...
+   strcmp({a_events.functionName}, 'SampleCfg') | ...
+   strcmp({a_events.functionName}, 'sample_cfg') ...
+   ));
 configRec = [];
+configStruct = [];
 for idEv = 1:length(events)
    evt = events(idEv);
    dataStr = evt.message;
@@ -73,9 +80,11 @@ for idEv = 1:length(events)
       configRec = [evt.timestamp {[]}];
       configStruct = [];
    elseif (any(strfind(dataStr, PATTERN_END)))
-      configRec{2} = configStruct;
-      o_sampleCfg = [o_sampleCfg; configRec];
-      configRec = [];
+      if (~isempty(configStruct))
+         configRec{2} = configStruct;
+         o_sampleCfg = [o_sampleCfg; configRec];
+         configRec = [];
+      end
    else
       if (~isempty(configRec))
          line = evt.message;

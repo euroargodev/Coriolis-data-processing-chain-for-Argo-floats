@@ -77,7 +77,7 @@ for idFile = 1:length(a_logFileList)
    % read input file
    [error, events] = read_apx_ir_log_file(logFilePathName, a_decoderId);
    if (error == 1)
-      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, logFilePathName);
       return
    end

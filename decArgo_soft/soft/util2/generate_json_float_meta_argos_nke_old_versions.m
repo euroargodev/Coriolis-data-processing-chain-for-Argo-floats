@@ -264,7 +264,7 @@ for idFloat = 1:length(floatList)
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
-      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d - no json file generated\n', ...
          floatNum);
       continue
    end
@@ -281,7 +281,7 @@ for idFloat = 1:length(floatList)
    % we create all configuration from data base information
    idFRepRate = find(strcmp(metaData(idForWmo, 5), 'REPETITION_RATE') == 1);
    if (isempty(idFRepRate))
-      fprintf('ERROR: REPETITION_RATE is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: REPETITION_RATE is missing for float %d - no json file generated\n', ...
          floatNum);
       continue
    end
@@ -643,7 +643,7 @@ for idFloat = 1:length(floatList)
                floatNum, listDriftSamplingPeriod(idF1));
          else
             if (str2num(confParamVal{idF0, idC}) ~= listDriftSamplingPeriod(idF1))
-               fprintf('INFO: float %d: CONFIG_ParkSamplingPeriod_hours differ (BDD = %d, ANDRO = %d) => ANDRO value used\n', ...
+               fprintf('INFO: float %d: CONFIG_ParkSamplingPeriod_hours differ (BDD = %d, ANDRO = %d) - ANDRO value used\n', ...
                   floatNum, str2num(confParamVal{idF0, idC}), listDriftSamplingPeriod(idF1));
                metaStruct.CONFIG_PARAMETER_VALUE{idF0, idC} = num2str(listDriftSamplingPeriod(idF1));
             end

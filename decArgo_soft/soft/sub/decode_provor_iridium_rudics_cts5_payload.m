@@ -375,7 +375,7 @@ for idFlCy = 1:length(floatCycleList)
          if (idFlCy == length(floatCycleList))
             idDel = [idDel idFile];
             if (g_decArgo_realtimeFlag)
-               fprintf('INFO: Float #%d: expected file not received yet %s => stop\n', ...
+               fprintf('INFO: Float #%d: expected file not received yet %s - stop\n', ...
                   g_decArgo_floatNum, expectedFileName);
                stop = 1;
                break
@@ -517,12 +517,12 @@ for idFlCy = 1:length(floatCycleList)
                      existingNum = [existingNum str2num(existingFileName(idFUs(4)+1:idFUs(5)-1))];
                   end
                   if (~any(existingNum > max(missingNum)))
-                     fprintf('INFO: expected files not received yet => stop\n');
+                     fprintf('INFO: expected files not received yet - stop\n');
                      stop = 1;
                      break
                   end
                else
-                  fprintf('INFO: expected files not received yet => stop\n');
+                  fprintf('INFO: expected files not received yet - stop\n');
                   stop = 1;
                   break
                end
@@ -702,8 +702,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % consistency
-   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   % v
+   [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % perform DOXY, CHLA and NITRATE adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_launchDate, 1);
@@ -891,6 +891,7 @@ techDataFromApmtTech = [];
 trajDataFromApmtTech = [];
 timeDataFromApmtTech = [];
 payloadConfigFileOnly = 0;
+apmtTimeFromTech = [];
 for typeNum = typeOrderList
    
    if (typeNum == 1)

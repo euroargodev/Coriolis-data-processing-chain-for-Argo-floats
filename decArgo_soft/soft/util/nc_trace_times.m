@@ -359,7 +359,7 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
    %       end
    %    end
    if (cycleTimeMeta == -1)
-      fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) => CONFIG_CycleTime_days set to 10\n', ...
+      fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) - CONFIG_CycleTime_days set to 10\n', ...
          metaFileName);
       cycleTimeMeta = 10;
       

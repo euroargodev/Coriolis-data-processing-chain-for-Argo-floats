@@ -38,7 +38,7 @@ end
 
 % check the input directory
 if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
-   fprintf('ERROR: Input directory doesn''t exist => exit\n');
+   fprintf('ERROR: Input directory doesn''t exist - exit\n');
    return
 end
 

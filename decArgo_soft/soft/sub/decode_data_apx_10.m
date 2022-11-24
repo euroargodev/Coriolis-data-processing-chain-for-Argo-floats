@@ -577,7 +577,7 @@ for idL = 1:size(a_sensorData, 1)
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_misc_data_init_struct('Data msg', msgNum, msgRed, msgDate);
-      dataStruct.label = '=> transmission start time';
+      dataStruct.label = '- transmission start time';
       dataStruct.value = julian_2_gregorian_dec_argo(rtcTime + timeDelay/1440);
       dataStruct.format = ' %s';
       dataStruct.unit = 'RTC time';

@@ -62,7 +62,7 @@ for idEv = 1:length(a_events)
    
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS Skew: %d secs');
       if (~isempty(errmsg) || (count ~= 1))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       
@@ -75,7 +75,7 @@ for idEv = 1:length(a_events)
    else
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
-         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
    end

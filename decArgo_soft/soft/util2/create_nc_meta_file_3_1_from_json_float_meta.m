@@ -57,7 +57,7 @@ for idFloat = 1:length(floatList)
    jsonInputFileName = [jsonFloatMetaDatafileDir '/' sprintf('%d_meta.json', floatNum)];
    
    if ~(exist(jsonInputFileName, 'file') == 2)
-      fprintf('ERROR: Float #%d: Json meta-data file not found: %s => nothing done for this float\n', ...
+      fprintf('ERROR: Float #%d: Json meta-data file not found: %s - nothing done for this float\n', ...
          floatNum, ...
          jsonInputFileName);
       return
@@ -758,7 +758,7 @@ for idFloat = 1:length(floatList)
       %          for id = nbSensor+1:length(fNames)
       %             metaData.(fieldName) = rmfield(metaData.(fieldName), fNames{id});
       %          end
-      %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file => considering only the %d first ones\n', ...
+      %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file - considering only the %d first ones\n', ...
       %             ncFileName, fieldName, nbSensor);
       %       end
       %    end
@@ -771,7 +771,7 @@ for idFloat = 1:length(floatList)
       %          for id = nbParam+1:length(fNames)
       %             metaData.(fieldName) = rmfield(metaData.(fieldName), fNames{id});
       %          end
-      %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file => considering only the %d first ones\n', ...
+      %          fprintf('INFO: %s file generation: too many fields for the %s structure in the Json meta-data file - considering only the %d first ones\n', ...
       %             ncFileName, fieldName, nbParam);
       %       end
       %    end

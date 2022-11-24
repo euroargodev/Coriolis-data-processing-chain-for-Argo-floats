@@ -137,7 +137,7 @@ fprintf('\n');
 
 for iFile = 1:length(dataList)
    if (dataList(iFile).size ~= length(dataList(iFile).data))
-      fprintf('\n=> ERROR: Missing data in file : %s\n', dataList(iFile).asciiFileName{:});
+      fprintf('\n- ERROR: Missing data in file : %s\n', dataList(iFile).asciiFileName{:});
    end
    
    currentData = dataList(iFile);

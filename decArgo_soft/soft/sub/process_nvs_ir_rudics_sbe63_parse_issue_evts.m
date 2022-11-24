@@ -53,7 +53,7 @@ for idEv = 1:length(a_events)
          data = [data; a_events(idEv).time val(1) val(4)];
       end
    else
-      fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+      fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
    end
 end
 

@@ -81,7 +81,7 @@ idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == a_cyNum);
 if (~isempty(idUsedConf))
    
    if (a_cyNum > 0)
-      fprintf('WARNING: Float #%d: config already exists for cycle #%d => updating the current one\n', ...
+      fprintf('WARNING: Float #%d: config already exists for cycle #%d - updating the current one\n', ...
          g_decArgo_floatNum, a_cyNum);
    end
    

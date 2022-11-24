@@ -27,7 +27,7 @@ OUTPUT_DIR_NAME = 'E:\HDD\bascule_20140326\message_20140326_by_month\';
 
 % check the input directory
 % if ~(exist(INPUT_DIR_NAME, 'dir') == 7)
-%    fprintf('ERROR: Input directory doesn''t exist => exit\n');
+%    fprintf('ERROR: Input directory doesn''t exist - exit\n');
 %    return
 % end
 

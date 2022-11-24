@@ -71,7 +71,7 @@ switch (a_decoderId)
          a_floatLaunchDate, a_floatEndDate);
       
    otherwise
-      fprintf('ERROR: decode_apex_iridium_sbd_data not defined yet for decId #%d => exit\n', a_decoderId);
+      fprintf('ERROR: decode_apex_iridium_sbd_data not defined yet for decId #%d - exit\n', a_decoderId);
       return
 end
 

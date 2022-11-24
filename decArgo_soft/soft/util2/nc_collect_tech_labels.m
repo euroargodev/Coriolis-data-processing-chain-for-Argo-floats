@@ -117,7 +117,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(techParamNameList)
                   label = techParamNameList{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;

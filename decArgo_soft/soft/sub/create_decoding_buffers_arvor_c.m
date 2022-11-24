@@ -168,9 +168,9 @@ for cyNum = cyNumList
       
       piDecStr = '';
       if (tabGo(idCy) == 2)
-         piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
+         piDecStr = ' - DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
       elseif (tabGo(idCy) == 3)
-         piDecStr = ' => DECODED (TOO OLD)';
+         piDecStr = ' - DECODED (TOO OLD)';
       end
       
       fprintf('BUFF_INFO: Float #%d Cycle #%3d : %3d SBD - %s - %s%s\n', ...

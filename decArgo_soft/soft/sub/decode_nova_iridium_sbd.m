@@ -866,7 +866,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                      g_decArgo_floatNum, ...
                      length(tabNewFileNames));
                else
-                  fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files:\n', ...
+                  fprintf('BUFF_INFO: Float #%d: Last step - processing buffer contents, %d SBD files:\n', ...
                      g_decArgo_floatNum, ...
                      length(tabNewFileNames));
                end
@@ -996,7 +996,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          
          % process all the remaining files
          if (VERBOSE_MODE_BUFF == 1)
-            fprintf('BUFF_INFO: Float #%d: Final EOL mode detected => processing %d SBD files:\n', ...
+            fprintf('BUFF_INFO: Float #%d: Final EOL mode detected - processing %d SBD files:\n', ...
                g_decArgo_floatNum, ...
                length(tabFileNames));
          end
@@ -1061,8 +1061,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % consistency
-   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   % consistent
+   [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_sbd( ...
@@ -1414,7 +1414,7 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TRAJ NetCDF file
-         
+
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_2001_2003( ...
             g_decArgo_cycleNum, deepCycle, ...

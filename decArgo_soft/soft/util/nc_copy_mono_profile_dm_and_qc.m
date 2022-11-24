@@ -256,7 +256,7 @@ for idFloat = 1:nbFloats
                   if (strcmp(formatVersionOld, '3.1'))
                      cyNumList = [cyNumList str2num(cyNumStr)];
                   else
-                     fprintf('INFO: File %s is not in 3.1 version => not considered\n', ...
+                     fprintf('INFO: File %s is not in 3.1 version - not considered\n', ...
                         fileName);
                      cyNumListNot31 = [cyNumListNot31 str2num(cyNumStr)];
                   end
@@ -637,13 +637,13 @@ formatVersionNew = deblank(get_data_from_name('FORMAT_VERSION', profDataNew)');
 
 % check the file format version
 if (~strcmp(formatVersionOld, '3.1'))
-   fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s => not managed\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s - not managed\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameOld, formatVersionOld);
    return
 end
 if (~strcmp(formatVersionNew, '3.1'))
-   fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s => not managed\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: %c file (%s) is in format version %s - not managed\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, a_profFileNameNew, formatVersionNew);
    return
@@ -1202,7 +1202,7 @@ end
 needUpdate = 0;
 if (~isempty(dmProfIdToUpdate))
    profList = sprintf('#%d ', dmProfIdToUpdate);
-   fprintf('INFO: Float #%d Cycle #%d%c: %c file: profiles (%s) are in DM => need to be duplicated in NEW file\n', ...
+   fprintf('INFO: Float #%d Cycle #%d%c: %c file: profiles (%s) are in DM - need to be duplicated in NEW file\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, profList(1:end-1));
    needUpdate = 1;
@@ -1210,7 +1210,7 @@ end
 profIdToUpdate = unique(rtProfIdToUpdate);
 if (~isempty(profIdToUpdate))
    profList = sprintf('#%d ', profIdToUpdate);
-   fprintf('INFO: Float #%d Cycle #%d%c: %c file: profiles (%s) have modified QC => need to be updated in NEW file\n', ...
+   fprintf('INFO: Float #%d Cycle #%d%c: %c file: profiles (%s) have modified QC - need to be updated in NEW file\n', ...
       g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
       fileType, profList(1:end-1));
    needUpdate = 1;
@@ -1731,7 +1731,7 @@ if (~isempty(a_rtProfIdToUpdate))
       
       % update HISTORY data
       if (sum(sum(sum(sum(a_profStructNew.info.PARAMETER ~= a_profStructOld.info.PARAMETER, 1), 2), 3), 4) ~= 0)
-         fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER information differ => SCCOP HISTORY cannot be reported\n', ...
+         fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER information differ - SCCOP HISTORY cannot be reported\n', ...
             g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
       else
          [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
@@ -1950,7 +1950,7 @@ for idP = 1:length(a_paramNameList)
    switch (a_paramNameList{idP})
       
       case {'CNDC', 'PRES', 'PSAL', 'TEMP'}
-         fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': a core parameter is not accepted by this tool => exit\n', a_paramNameList{idP});
+         fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': a core parameter is not accepted by this tool - exit\n', a_paramNameList{idP});
          
       case 'DOXY'
          o_paramNameList = [o_paramNameList ...
@@ -2100,7 +2100,7 @@ for idP = 1:length(a_paramNameList)
             ];
          
       otherwise
-         fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': this parameter is not managed yet by this tool => exit\n', a_paramNameList{idP});
+         fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': this parameter is not managed yet by this tool - exit\n', a_paramNameList{idP});
    end
 end
 

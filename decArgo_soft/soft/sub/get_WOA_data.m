@@ -28,7 +28,7 @@ o_profInfo = [];
 % check that World Ocean Atlas 2013 is available in the Matlab path
 WOA_FILE_NAME = 'woa13_all_n00_01.nc';
 if ~(exist(WOA_FILE_NAME, 'file') == 2)
-   fprintf('ERROR: World Ocean Atlas 2013 file not found in the Matlab path: %s => NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
+   fprintf('ERROR: World Ocean Atlas 2013 file not found in the Matlab path: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
    return
 end
 
@@ -58,7 +58,7 @@ woaDataAtt = get_att_from_nc_file(WOA_FILE_NAME, wantedVarAtts);
 woaFillValue = get_att_from_name('n_an', '_FillValue', woaDataAtt);
 
 if (length(woaTime) ~= 1)
-   fprintf('ERROR: Time is expected to be unique in World Ocean Atlas 2013 file: %s => NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
+   fprintf('ERROR: Time is expected to be unique in World Ocean Atlas 2013 file: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
    return
 end
 

@@ -56,13 +56,13 @@ for idEv = 1:length(a_events)
       if ((status) && (dataStr2(end-1) == '.'))
          data = [data; a_events(idEv).time  pMarValue];
       else
-         fprintf('DEC_INFO: %sAnomaly detected while parsing P mark measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing P mark measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
       end
       
    else
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing P mark measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing P mark measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
    end

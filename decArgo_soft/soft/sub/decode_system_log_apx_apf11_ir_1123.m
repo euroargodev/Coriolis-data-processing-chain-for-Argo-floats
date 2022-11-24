@@ -91,7 +91,7 @@ for idFile = 1:length(a_systemLogFileList)
    end
    [error, events] = read_apx_apf11_ir_system_log_file(sysFilePathName, fromLaunchFlag);
    if (error == 1)
-      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sysFilePathName);
       return
    end
@@ -115,9 +115,14 @@ for idFile = 1:length(a_systemLogFileList)
    end
    
    % configuration information
-   idEvts = find(strcmp({events.functionName}, 'MissionCfg') | strcmp({events.functionName}, 'sample_cfg'));
+   idEvts = find( ...
+      strcmp({events.functionName}, 'MissionCfg') | ...
+      strcmp({events.functionName}, 'mission_cfg') | ...
+      strcmp({events.functionName}, 'SampleCfg') | ...
+      strcmp({events.functionName}, 'sample_cfg') ...
+      );
    if (~isempty(idEvts))
-      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1123(events(idEvts));
+      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts(events(idEvts));
       o_missionCfg = [o_missionCfg; missionCfg];
       o_sampleCfg = [o_sampleCfg; sampleCfg];
       
@@ -176,7 +181,7 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT') | ...
       strcmp({events.functionName}, 'DEEPDESCENT'));
    if (~isempty(idEvts))
-      grounding = process_apx_apf11_ir_grounding_evts_1121_1123_1321_1322(events(idEvts));
+      grounding = process_apx_apf11_ir_grounding_evts(events(idEvts));
       if (~isempty(grounding))
          dataStruct = get_apx_misc_data_init_struct('Grounding', [], [], []);
          dataStruct.label = 'Grounding date & pressure';
@@ -266,7 +271,6 @@ for idFile = 1:length(a_systemLogFileList)
       o_techData{end+1} = dataStruct;
    end
    
-   % buoyancy activity
    % buoyancy activity
    idEvts = find(strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))

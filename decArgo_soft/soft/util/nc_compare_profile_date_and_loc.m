@@ -313,7 +313,7 @@ for idFile = 1:length(monoProfFiles)
          
          [uJulD, idA, idC] = unique(julD);
          if (length(uJulD) > 1)
-            fprintf('WARNING: %d profiles in the %s NetCDF input file: %s => only the first one is considered\n', ...
+            fprintf('WARNING: %d profiles in the %s NetCDF input file: %s - only the first one is considered\n', ...
                length(uJulD), a_commentStr, profFileName);
          end
                     

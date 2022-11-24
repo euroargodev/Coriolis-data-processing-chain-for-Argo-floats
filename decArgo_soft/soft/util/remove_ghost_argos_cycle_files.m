@@ -46,7 +46,7 @@ floatInformationFileName = configVal{1};
 if (nargin ~= 3)
    fprintf('Bad input parameters!\n');
    fprintf('Expecting:\n');
-   fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') => remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
+   fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') - remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
    fprintf('aborted ...\n');
    return
 else
@@ -57,7 +57,7 @@ else
    if ((upper(first) ~= 'F') && (upper(first) ~= 'L'))
       fprintf('Bad input parameters!\n');
       fprintf('Expecting:\n');
-      fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') => remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
+      fprintf('   remove_ghost_argos_cycle_files(WMO, cycle_number, ''F'' or ''L'') - remove first (if ''F'') or last (if ''L'') satellite pass from Argos cycle file of float #WMO and cycle number #cycle_number\n');
       fprintf('aborted ...\n');
       return
    else
@@ -70,7 +70,7 @@ end
 
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
-   fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
+   fprintf('ERROR: The Argos cycle files directory %s does not exist - exit\n', DIR_INPUT_ARGOS_FILES);
    return
 end
 
@@ -83,7 +83,7 @@ end
 % find current float Argos Id
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
-   fprintf('ERROR: No information on float #%d => exit\n', floatNum);
+   fprintf('ERROR: No information on float #%d - exit\n', floatNum);
    return
 end
 floatArgosId = str2num(listArgosId{idF});
@@ -127,9 +127,9 @@ if (length(argosFiles) == 1)
    end
 else
    if (isempty(argosFiles))
-      fprintf('ERROR: Cannot find Argos cycle file for float #%d cycle #%d => aborted\n', floatNum, cycleNum);
+      fprintf('ERROR: Cannot find Argos cycle file for float #%d cycle #%d - aborted\n', floatNum, cycleNum);
    else
-      fprintf('ERROR: Multiple Argos cycle file for float #%d cycle #%d => aborted\n', floatNum, cycleNum);
+      fprintf('ERROR: Multiple Argos cycle file for float #%d cycle #%d - aborted\n', floatNum, cycleNum);
    end
 end
 

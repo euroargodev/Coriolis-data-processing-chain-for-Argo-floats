@@ -69,7 +69,7 @@ if (~isempty(a_cyProfPhaseList))
       % they are considered only the next cycle
       updateNowPtPvPm = 0;
       if (a_floatSoftVersion == -1)
-         fprintf('DEC_WARNING: Float #%d: float software version is unknown => 254 and 255 message types are considered the next cycle\n', ...
+         fprintf('DEC_WARNING: Float #%d: float software version is unknown - 254 and 255 message types are considered the next cycle\n', ...
             g_decArgo_floatNum);
          if (~isempty(find(uProf == 0, 1)))
             updateNowPtPvPm = 1;
@@ -217,7 +217,7 @@ if (~isempty(a_cyProfPhaseList))
                
                if (~isempty(idUsedConf))
                   
-                  fprintf('WARNING: Float #%d: config already exists for cycle #%d and profile #%d => updating the current one\n', ...
+                  fprintf('WARNING: Float #%d: config already exists for cycle #%d and profile #%d - updating the current one\n', ...
                      g_decArgo_floatNum, cyNum, profNum);
                   
                   if ((configNum == -1) || (configNum == 0))

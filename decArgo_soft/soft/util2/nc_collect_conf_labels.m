@@ -108,7 +108,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(launchConfigParamName)
                   label = launchConfigParamName{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;
@@ -116,7 +116,7 @@ for idDir = 1:length(dacDir)
                for id = 1:length(configParamName)
                   label = configParamName{id};
                   if (isempty(strtrim(label)))
-                     fprintf('ERROR: empty label detected => label ignored\n');
+                     fprintf('ERROR: empty label detected - label ignored\n');
                      continue
                   end
                   labelList{end+1} = label;

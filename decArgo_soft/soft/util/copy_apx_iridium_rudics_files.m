@@ -83,7 +83,7 @@ for idFloat = 1:nbFloats
    % find information on current float
    idF = find(floatWmoList == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => (nothing done)\n', floatNum);
+      fprintf('ERROR: No information on float #%d - (nothing done)\n', floatNum);
       continue
    end
    floatDecId = floatDecIdList(idF);
@@ -105,7 +105,7 @@ for idFloat = 1:nbFloats
    for idFile = 1:length(fileNames)
       
       if (fileNames(idFile).bytes == 0)
-         fprintf('INFO: Empty file: %s => ignored\n', fileNames(idFile).name);
+         fprintf('INFO: Empty file: %s - ignored\n', fileNames(idFile).name);
          continue
       end
       
@@ -148,7 +148,7 @@ for idFloat = 1:nbFloats
             nearSurfaceDataStr ...
             ] = read_apx_ir_rudics_msg_file(dataFilePathName);
          if (error == 1)
-            fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                floatNum, dataFilePathName);
             continue
          end
@@ -202,7 +202,7 @@ for idFloat = 1:nbFloats
          if (~isempty(dates))
             date = min(dates);
          else
-            fprintf('INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
+            fprintf('INFO: Float #%d: No dates in file ''%s'' - ignored\n', ...
                floatNum, dataFilePathName);
             continue
          end
@@ -211,7 +211,7 @@ for idFloat = 1:nbFloats
          
          [error, events] = read_apx_ir_rudics_log_file(dataFilePathName);
          if (error == 1)
-            fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                floatNum, dataFilePathName);
             continue
          end
@@ -365,7 +365,7 @@ for idFloat = 1:nbFloats
                % use deployment date
                [error, events] = read_apx_ir_rudics_log_file([floatOutputDirName fileName]);
                if (error == 1)
-                  fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+                  fprintf('ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                      floatNum, [floatOutputDirName fileName]);
                   continue
                end
@@ -460,7 +460,7 @@ for idFloat = 1:nbFloats
                   nearSurfaceDataStr ...
                   ] = read_apx_ir_rudics_msg_file([floatOutputDirName fileName]);
                if (error == 1)
-                  fprintf('ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+                  fprintf('ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                      floatNum, [floatOutputDirName fileName]);
                   continue
                end

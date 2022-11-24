@@ -80,9 +80,9 @@ for idPhase = 1:length(phaseNames)
                end
             end
          elseif (strcmp(sampType, 'MEASURE'))
-            o_configSampName{end+1} = ['CONFIG_MEASURE_' phaseName '_' sensorName '_' num2str(idL) '_NumberOfSamples'];
+            o_configSampName{end+1} = ['CONFIG_MEASURE_' phaseName '_' sensorName '_NumberOfSamples'];
             o_configSampVal{end+1} = num2str(10);
-            o_configSampName{end+1} = ['CONFIG_MEASURE_' phaseName '_' sensorName '_' num2str(idL) '_TimeInterval'];
+            o_configSampName{end+1} = ['CONFIG_MEASURE_' phaseName '_' sensorName '_TimeInterval'];
             o_configSampVal{end+1} = num2str(15);
          else
             fprintf('ERROR: Unexpected sample type ''%s'' in the sample configuration file\n', sampType);

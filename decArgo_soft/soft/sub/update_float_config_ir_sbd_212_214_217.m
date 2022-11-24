@@ -43,7 +43,7 @@ ID_OFFSET = 1;
 
 floatParam1 = a_floatParam{1};
 if (size(floatParam1, 1) > 1)
-   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages #1 in the buffer) => using the last one\n', ...
+   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages #1 in the buffer) - using the last one\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(floatParam1, 1));
 end
@@ -53,7 +53,7 @@ end
 
 floatParam2 = a_floatParam{2};
 if (size(floatParam2, 1) > 1)
-   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages #2 in the buffer) => using the last one\n', ...
+   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages #2 in the buffer) - using the last one\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(floatParam2, 1));
 end
@@ -225,7 +225,7 @@ if (~isnan(newConfig(idPosMc28)))
    ctdPumpSwitchOffPres = newConfig(idPosMc28);
 else
    ctdPumpSwitchOffPres = 5;
-   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
       g_decArgo_floatNum, ctdPumpSwitchOffPres);
 end
 

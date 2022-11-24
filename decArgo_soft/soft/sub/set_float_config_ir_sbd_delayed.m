@@ -96,7 +96,7 @@ if (~isempty(idUsedConf))
    end
    
    if ((a_cyNum > 0) && printWarning)
-      fprintf('WARNING: Float #%d: config already exists for cycle #%d => updating the current one\n', ...
+      fprintf('WARNING: Float #%d: config already exists for cycle #%d - updating the current one\n', ...
          g_decArgo_floatNum, a_cyNum);
    end
    

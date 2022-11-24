@@ -129,7 +129,7 @@ for idFile = 1:length(a_scienceLogFileList)
    end
    [error, data] = read_apx_apf11_ir_binary_log_file(sciFilePathName, 'science', fromLaunchFlag, 0);
    if (error == 1)
-      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sciFilePathName);
       return
    end
@@ -138,7 +138,7 @@ for idFile = 1:length(a_scienceLogFileList)
    if (~isempty(data.CTD_P))
       if (any(data.CTD_P(:, 2) == -999))
          idF = find(data.CTD_P(:, 2) == -999);
-         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_P measurements (with PRES = -999) in file: %s => removed\n', ...
+         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_P measurements (with PRES = -999) in file: %s - removed\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
          data.CTD_P(idF, :) = [];
       end
@@ -148,7 +148,7 @@ for idFile = 1:length(a_scienceLogFileList)
    if (~isempty(data.CTD_PT))
       if (any((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0)))
          idF = find((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0));
-         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_PT measurements (with PRES = 0 and TEMP = 0) in file: %s => removed\n', ...
+         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_PT measurements (with PRES = 0 and TEMP = 0) in file: %s - removed\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
          data.CTD_PT(idF, :) = [];
       end
@@ -193,13 +193,13 @@ for idFile = 1:length(a_scienceLogFileList)
                                  o_cycleTimeData.ascentEndDateSci = msg{idM, 1};
                                  o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSci;
                               otherwise
-                                 fprintf('WARNING: Float #%d Cycle #%d: Message #%d is not managed => ignored\n', ...
+                                 fprintf('WARNING: Float #%d Cycle #%d: Message #%d is not managed - ignored\n', ...
                                     g_decArgo_floatNum, g_decArgo_cycleNum, msgId);
                            end
                         else
                            idF = cellfun(@(x) strfind(msgData, x), ignoredMessages, 'UniformOutput', 0);
                            if (isempty([idF{:}]))
-                              fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Not managed ''%s'' information (''%s'') in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                                  g_decArgo_floatNum, g_decArgo_cycleNum, 'Message', msgData, sciFilePathName);
                               continue
                            end
@@ -269,7 +269,7 @@ for idFile = 1:length(a_scienceLogFileList)
                      ocr504I = [ocr504I; data.(fieldName)];
                end
             else
-               fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
             end
          end

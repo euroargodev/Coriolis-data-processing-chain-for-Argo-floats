@@ -103,7 +103,7 @@ for idFloat = 1:nbFloats
    % find float SN and decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
       continue
    end
    floatDecId = listDecId(idF);
@@ -142,7 +142,7 @@ for idFloat = 1:nbFloats
             engineeringDataStr, ...
             ] = read_apx_ir_sbd_msg_file(filePathName, [], 0);
          if (error == 1)
-            fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+            fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
             continue
          end
          
@@ -171,16 +171,16 @@ for idFloat = 1:nbFloats
                         any(~strcmp(configNameList{idF}, configName)) || ...
                         any(~strcmp(configUnitList{idF}, configUnit)))
                      if (length(configNameList{idF}) > length(configName))
-                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (%d items instead of %d) => ignored\n', ...
+                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (%d items instead of %d) - ignored\n', ...
                            floatNum, cyNum, length(configName), length(configNameList{idF}));
                      elseif (length(configNameList{idF}) < length(configName))                      
-                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (%d items instead of %d) => new configuration stored, previous one ignored\n', ...
+                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (%d items instead of %d) - new configuration stored, previous one ignored\n', ...
                            floatNum, cyNum, length(configName), length(configNameList{idF}));
                         configNameList{idF} = configName;
                         configUnitList{idF} = configUnit;
                         configValueList{idF} = configValue;
                      else
-                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (items differ) => ignored\n', floatNum, cyNum);
+                        fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration (items differ) - ignored\n', floatNum, cyNum);
                      end
                   end
                end
@@ -206,14 +206,14 @@ for idFloat = 1:nbFloats
                         if ((length(engNameList0{idF}) ~= length(engName)) || ...
                               any(~strcmp(engNameList0{idF}, engName)))
                            if (length(engNameList0{idF}) > length(engName))
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) => ignored\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) - ignored\n', ...
                                  floatNum, cyNum, length(engName), length(engNameList0{idF}));
                            elseif (length(engNameList0{idF}) < length(engName))
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) => new engeneering stored, previous one ignored\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) - new engeneering stored, previous one ignored\n', ...
                                  floatNum, cyNum, length(engName), length(engNameList0{idF}));
                               engNameList0{idF} = engName;
                            else
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (items differ) => ignored\n', floatNum, cyNum);
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (items differ) - ignored\n', floatNum, cyNum);
                            end
                         end
                      end
@@ -231,14 +231,14 @@ for idFloat = 1:nbFloats
                         if ((length(engNameList{idF}) ~= length(engName)) || ...
                               any(~strcmp(engNameList{idF}, engName)))
                            if (length(engNameList{idF}) > length(engName))
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) => ignored\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) - ignored\n', ...
                                  floatNum, cyNum, length(engName), length(engNameList{idF}));
                            elseif (length(engNameList{idF}) < length(engName))
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) => new engeneering stored, previous one ignored\n', ...
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (%d items instead of %d) - new engeneering stored, previous one ignored\n', ...
                                  floatNum, cyNum, length(engName), length(engNameList{idF}));
                               engNameList{idF} = engName;
                            else
-                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (items differ) => ignored\n', floatNum, cyNum);
+                              fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering (items differ) - ignored\n', floatNum, cyNum);
                            end
                         end
                      end

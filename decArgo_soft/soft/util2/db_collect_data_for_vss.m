@@ -148,7 +148,7 @@ for idFloat = 1:nbFloats
    % find current float Dec Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => exit\n', floatNum);
+      fprintf('ERROR: No information on float #%d - exit\n', floatNum);
       return
    end
    floatDecId = listDecId(idF);

@@ -51,7 +51,7 @@ global g_decArgo_cycleNum;
 
 % global measurement codes
 global g_MC_Launch;
-global g_MC_DriftAtPark;
+global g_MC_SpyAtPark;
 global g_MC_DriftAtParkMean;
 global g_MC_RPP;
 global g_MC_MinPresInDriftAtPark;
@@ -156,7 +156,7 @@ if (~isempty(a_parkData))
       
       measStruct = get_traj_one_meas_init_struct();
       measStruct.sensorNumber = 1000; % so that it will be stored in TRAJ_AUX file
-      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.measCode = g_MC_SpyAtPark;
       measStruct.paramList = newMeas.paramList;
       measStruct.paramData = newMeas.data;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -171,14 +171,14 @@ if (~isempty(a_parkData))
       end
       
       measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.measCode = g_MC_SpyAtPark;
       measStruct.paramList = a_parkData.paramList;
       measStruct.paramData = a_parkData.data;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    else
       
       measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_DriftAtPark;
+      measStruct.measCode = g_MC_SpyAtPark;
       measStruct.paramList = a_parkData.paramList;
       measStruct.paramData = a_parkData.data;
       if (~isempty(a_parkData.dataAdj))

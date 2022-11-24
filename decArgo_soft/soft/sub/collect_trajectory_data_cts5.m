@@ -245,7 +245,7 @@ if (~isempty(tabTrajIndexAll))
                      valEvt = valEvtTemp;
                   end
                   
-                  fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Traj (from tech) and Event data differ for meas code %d and param ''%s'': traj=''%s'' and evt=''%s'' => using the Evt one\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Traj (from tech) and Event data differ for meas code %d and param ''%s'': traj=''%s'' and evt=''%s'' - using the Evt one\n', ...
                      g_decArgo_floatNum, ...
                      g_decArgo_cycleNum, ...
                      g_decArgo_cycleNumFloat, ...
@@ -314,7 +314,7 @@ for idProf = 1:length(a_tabProfiles)
    datedMeasStruct.sensorNumber = profile.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
-      measCode  profile.cycleNumber profile.profileNumber profile.phaseNumber];
+      measCode profile.cycleNumber profile.profileNumber profile.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
 end
 
@@ -335,7 +335,7 @@ for idDrift = 1:length(a_tabDrift)
    datedMeasStruct.sensorNumber = drift.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
-      g_MC_DriftAtPark  drift.cycleNumber drift.profileNumber drift.phaseNumber];
+      g_MC_DriftAtPark drift.cycleNumber drift.profileNumber drift.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
 end
 
@@ -402,7 +402,7 @@ if (~isempty(profInfo))
          datedMeasStruct.sensorNumber = profile.sensorNumber;
          
          o_tabTrajIndex = [o_tabTrajIndex;
-            measCode  cyNum profNum profile.phaseNumber];
+            measCode cyNum profNum profile.phaseNumber];
          o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
       end
    end
@@ -421,7 +421,7 @@ if (~isempty(a_subSurfaceMeas))
    subSurfMeas.psal = a_subSurfaceMeas(4);
    
    o_tabTrajIndex = [o_tabTrajIndex;
-      g_MC_LastAscPumpedCtd  g_decArgo_cycleNumFloat g_decArgo_patternNumFloat -1];
+      g_MC_LastAscPumpedCtd g_decArgo_cycleNumFloat g_decArgo_patternNumFloat -1];
    o_tabTrajData = [o_tabTrajData; {{subSurfMeas}}];
 end
 
@@ -443,7 +443,7 @@ for idSurf = 1:length(a_tabSurf)
    surfMeasStruct.sensorNumber = surf.sensorNumber;
    
    o_tabTrajIndex = [o_tabTrajIndex;
-      g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST  surf.cycleNumber surf.profileNumber surf.phaseNumber];
+      g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST surf.cycleNumber surf.profileNumber surf.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{surfMeasStruct}}];
 end
 

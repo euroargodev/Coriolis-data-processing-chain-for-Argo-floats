@@ -252,7 +252,7 @@ for idFloat = 1:length(floatList)
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
-      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d - no json file generated\n', ...
          floatNum);
       continue
    end
@@ -268,7 +268,7 @@ for idFloat = 1:length(floatList)
    % we create all configuration from data base information
    idFRepRate = find(strcmp(metaData(idForWmo, 5), 'REPETITION_RATE') == 1);
    if (isempty(idFRepRate))
-      fprintf('ERROR: REPETITION_RATE is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: REPETITION_RATE is missing for float %d - no json file generated\n', ...
          floatNum);
       continue
    end

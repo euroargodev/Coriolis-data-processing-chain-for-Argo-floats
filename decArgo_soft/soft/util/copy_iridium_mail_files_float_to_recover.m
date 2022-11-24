@@ -126,15 +126,15 @@ end
 
 % check input parameters
 if ~(exist(rsyncDirName, 'dir') == 7)
-   fprintf('ERROR: Directory not found: %s => exit\n', rsyncDirName);
+   fprintf('ERROR: Directory not found: %s - exit\n', rsyncDirName);
    return
 end
 if ~(exist(spoolDirName, 'dir') == 7)
-   fprintf('ERROR: Directory not found: %s => exit\n', spoolDirName);
+   fprintf('ERROR: Directory not found: %s - exit\n', spoolDirName);
    return
 end
 if ~(exist(floatInformationFileName, 'file') == 2)
-   fprintf('ERROR: File not found: %s => exit\n', floatInformationFileName);
+   fprintf('ERROR: File not found: %s - exit\n', floatInformationFileName);
    return
 end
 
@@ -319,7 +319,7 @@ a_varargin(idDel) = [];
 % check input parameters
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       return
    else
       for id = 1:2:length(a_varargin)
@@ -338,7 +338,7 @@ if (~isempty(a_varargin))
          elseif (strcmpi(a_varargin{id}, 'logDir'))
             o_logDir = a_varargin{id+1};
          else
-            fprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
+            fprintf('WARNING: unexpected input argument (''%s'') - ignored\n', a_varargin{id});
          end
       end
    end
@@ -346,7 +346,7 @@ end
 
 % 'floatWmo' is mandatory
 if (isempty(o_floatWmo))
-   fprintf('ERROR: ''floatWmo'' input parameter is mandatory => exit\n');
+   fprintf('ERROR: ''floatWmo'' input parameter is mandatory - exit\n');
    return
 end
 

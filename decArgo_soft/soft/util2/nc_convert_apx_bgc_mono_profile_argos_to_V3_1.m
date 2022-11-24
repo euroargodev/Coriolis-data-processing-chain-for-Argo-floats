@@ -207,7 +207,7 @@ for idFloat = 1:nbFloats
    jsonInputFileName = [jsonFloatMetaDatafileDir '/' sprintf('%d_meta.json', floatNum)];
    metaData = get_meta_data(metaDataFilePathName, jsonInputFileName);
    if (isempty(metaData))
-      fprintf('ERROR: float #%d: NetCDf V3.1 meta-data file not found => float ignored\n', floatNum);
+      fprintf('ERROR: float #%d: NetCDf V3.1 meta-data file not found - float ignored\n', floatNum);
       continue
    end
    
@@ -689,7 +689,7 @@ end
 
 % check if DOXY has been adjusted
 doxyAdjFlag = 0;
-% WE DON'T REALLY CHECK (NOT RELIABLE) => WE DECIDE THAT NONE OF THE DOXY
+% WE DON'T REALLY CHECK (NOT RELIABLE) - WE DECIDE THAT NONE OF THE DOXY
 % IS ADJUSTED
 % idVal = find(strcmp('DOXY_QC', inputMeasBData(1:2:end)) == 1, 1);
 % if (~isempty(idVal))
@@ -2215,7 +2215,7 @@ for idOutFile = 1:nbOutPutFile
          end
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), varValue);
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varName);
       end
    end
@@ -2332,7 +2332,7 @@ for idOutFile = 1:nbOutPutFile
                      if (idOutFile == 2) && (idCalib > 1) % we don't duplicate more than one calib information in B file (because it is generally not filled, except for PARAMETER)
                         if (~strcmp(varNameOut, 'PARAMETER'))
                            if (~isempty(strtrim(data)))
-                              fprintf('ERROR: Information ''%s=%s'' => not copied in output file\n', ...
+                              fprintf('ERROR: Information ''%s=%s'' - not copied in output file\n', ...
                                  varNameOut, strtrim(data));
                            end
                         end
@@ -2431,7 +2431,7 @@ for idOutFile = 1:nbOutPutFile
             end
          end
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -2551,7 +2551,7 @@ for idOutFile = 1:nbOutPutFile
       if (var_is_present_dec_argo(fCdf, varNameOut))
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -2596,7 +2596,7 @@ for idOutFile = 1:nbOutPutFile
             end
          end
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             'PARAMETER_DATA_MODE');
       end
    end
@@ -2700,10 +2700,10 @@ for idOutFile = 1:nbOutPutFile
                            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
                               fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
                               fliplr([1 1 1 length(inputDateUpdate)]), inputDateUpdate');
-                           fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter => set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
+                           fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
                               param, inputDateUpdate, outputFileName);
                         else
-                           fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter => nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
+                           fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
                               param, outputFileName);
                         end
                      end
@@ -2713,7 +2713,7 @@ for idOutFile = 1:nbOutPutFile
                         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
                            fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
                            fliplr([1 1 1 length(defaultComment)]), defaultComment');
-                        fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter => set to ''%s'' (file %s)\n', ...
+                        fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter - set to ''%s'' (file %s)\n', ...
                            param, defaultComment,outputFileName);
                      end
                   end
@@ -2841,7 +2841,7 @@ if (~isempty(floatWmo) && ~isempty(dacFormatId) && ~isempty(metaConfMisNum))
    if (~isempty(a_corCyNumData))
       idF = find((a_corCyNumData(:, 1) == floatWmo) & (a_corCyNumData(:, 2) == a_cycleNumber));
       if (isempty(idF))
-         %          fprintf('INFO: Float %d: Corrected cycle number not found for cycle number #%d => no correction done + ''comment'' global attribute added\n', ...
+         %          fprintf('INFO: Float %d: Corrected cycle number not found for cycle number #%d - no correction done + ''comment'' global attribute added\n', ...
          %             floatWmo, a_cycleNumber);
          o_noCorCyNum = 1;
       else
@@ -2974,7 +2974,7 @@ if (exist(a_jsonInputFileName, 'file') == 2)
    [repRateMetaData] = get_meta_data_from_json_file(a_jsonInputFileName, wantedMetaNames);
    repRate = repRateMetaData{2};
 else
-   fprintf('ERROR: Json meta-data file not found: %s => CONFIG_REPETITION_RATE not found\n', ...
+   fprintf('ERROR: Json meta-data file not found: %s - CONFIG_REPETITION_RATE not found\n', ...
       a_jsonInputFileName);
 end
 o_metaData{end+1} = 'CONFIG_REPETITION_RATE';

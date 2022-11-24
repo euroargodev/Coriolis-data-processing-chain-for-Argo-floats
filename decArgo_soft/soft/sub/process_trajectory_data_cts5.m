@@ -689,7 +689,7 @@ for idCyc = 1:length(cycleNumList)
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
       
-      % max pressure during drift at park
+      % max pressure during drift at prof
       idPackTech  = find( ...
          (a_tabTrajIndex(:, 1) == g_MC_MaxPresInDriftAtProf) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
@@ -1098,6 +1098,9 @@ global g_decArgo_phaseEndOfLife;
 % clock offset management
 global g_decArgo_clockOffset;
 
+% clock offset for TRAJ N_CYCLE
+global g_decArgo_clockOffsetForTrajNCy;
+
 % global measurement codes
 global g_MC_CycleStart;
 global g_MC_DST;
@@ -1313,42 +1316,52 @@ for idCyPr = 1:size(cycleProfList, 1)
          trajNCycleStruct.juldTransmissionEnd = a_tabTrajData{idPackTech}{:}.value;
       end
       trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_2;
-   end
+   end   
    
    % clock offset
    idClockOffset  = find( ...
-      (g_decArgo_clockOffset.cycleNum == cycleNum) & ...
-      (g_decArgo_clockOffset.patternNum == profNum));
+      (g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy == cycleNum) & ...
+      (g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy == profNum));
    if (~isempty(idClockOffset))
-      if (length(idClockOffset) > 1)
-         trajNCycleStruct.clockOffset = mean(g_decArgo_clockOffset.clockOffset(idClockOffset));
-      else
-         trajNCycleStruct.clockOffset = g_decArgo_clockOffset.clockOffset(idClockOffset);
-      end
-   else
-      refDate = [];
-      if (~isempty(trajNCycleStruct.juldTransmissionStart))
-         idPackTech  = find( ...
-            (a_tabTrajIndex(:, 1) == g_MC_TST) & ...
-            (a_tabTrajIndex(:, 2) == cycleNum) & ...
-            (a_tabTrajIndex(:, 3) == profNum) & ...
-            (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
-         refDate = a_tabTrajData{idPackTech}{:}.value; % to use not adjusted value
-      elseif (~isempty(trajNCycleStruct.juldAscentEnd))
-         idPackTech  = find( ...
-            (a_tabTrajIndex(:, 1) == g_MC_AET) & ...
-            (a_tabTrajIndex(:, 2) == cycleNum) & ...
-            (a_tabTrajIndex(:, 3) == profNum) & ...
-            (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
-         refDate = a_tabTrajData{idPackTech}{:}.value; % to use not adjusted value
-      end
-      
-      if (~isempty(refDate))
-         refDateAdj = adjust_time_cts5(refDate);
-         trajNCycleStruct.clockOffset = refDate - refDateAdj;
-      end
+      trajNCycleStruct.clockOffset = g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy(idClockOffset);
    end
    
+   % FIRST VERSION - suppose that we have cycle times (juldTransmissionStart or
+   % juldAscentEnd) which is not necessarily the case
+   %    % clock offset
+   %    idClockOffset  = find( ...
+   %       (g_decArgo_clockOffset.cycleNum == cycleNum) & ...
+   %       (g_decArgo_clockOffset.patternNum == profNum));
+   %    if (~isempty(idClockOffset))
+   %       if (length(idClockOffset) > 1)
+   %          trajNCycleStruct.clockOffset = mean(g_decArgo_clockOffset.clockOffset(idClockOffset));
+   %       else
+   %          trajNCycleStruct.clockOffset = g_decArgo_clockOffset.clockOffset(idClockOffset);
+   %       end
+   %    else
+   %       refDate = [];
+   %       if (~isempty(trajNCycleStruct.juldTransmissionStart))
+   %          idPackTech  = find( ...
+   %             (a_tabTrajIndex(:, 1) == g_MC_TST) & ...
+   %             (a_tabTrajIndex(:, 2) == cycleNum) & ...
+   %             (a_tabTrajIndex(:, 3) == profNum) & ...
+   %             (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+   %          refDate = a_tabTrajData{idPackTech}{:}.value; % to use not adjusted value
+   %       elseif (~isempty(trajNCycleStruct.juldAscentEnd))
+   %          idPackTech  = find( ...
+   %             (a_tabTrajIndex(:, 1) == g_MC_AET) & ...
+   %             (a_tabTrajIndex(:, 2) == cycleNum) & ...
+   %             (a_tabTrajIndex(:, 3) == profNum) & ...
+   %             (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+   %          refDate = a_tabTrajData{idPackTech}{:}.value; % to use not adjusted value
+   %       end
+   %
+   %       if (~isempty(refDate))
+   %          refDateAdj = adjust_time_cts5(refDate);
+   %          trajNCycleStruct.clockOffset = refDate - refDateAdj;
+   %       end
+   %    end
+
    % data mode
    if (~isempty(trajNCycleStruct.clockOffset))
       trajNCycleStruct.dataMode = 'A'; % corrected from clock drift

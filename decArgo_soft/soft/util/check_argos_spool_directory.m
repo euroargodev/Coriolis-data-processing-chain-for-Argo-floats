@@ -347,7 +347,7 @@ elseif (~isempty(a_floatArgosId))
       lastArgosMsgDate = max(argosDataDate);
       
       if (isempty(lastArgosMsgDate))
-         fprintf('WARNING: Input Argos file (%s) is empty => cannot choose between possible WMO numbers\n', a_argosFilePathName);
+         fprintf('WARNING: Input Argos file (%s) is empty - cannot choose between possible WMO numbers\n', a_argosFilePathName);
          return
       end
       

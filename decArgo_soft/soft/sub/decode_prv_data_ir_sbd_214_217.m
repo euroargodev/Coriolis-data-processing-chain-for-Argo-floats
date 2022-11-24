@@ -3,13 +3,14 @@
 %
 % SYNTAX :
 %  [o_decodedData] = decode_prv_data_ir_sbd_214_217( ...
-%    a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
+%    a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabData     : data packet to decode
 %   a_sbdFileName : SBD file name
 %   a_sbdFileDate : SBD file date
 %   a_launchDate  : float launch date
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_decodedData : decoded data
@@ -23,7 +24,7 @@
 %   12/17/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_decodedData] = decode_prv_data_ir_sbd_214_217( ...
-   a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
+   a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_decodedData = [];
@@ -90,6 +91,9 @@ switch (packType)
       
       cycleNum = tabTech1(1);
       
+      % check decoder Id
+      check_decoder_id(tabTech1(3), a_decoderId, g_decArgo_floatNum);
+
       % compute the offset between float days and julian days
       julD2FloatDayOffset = -1;
       startDateInfo = [tabTech1(5:7); tabTech1(9)];

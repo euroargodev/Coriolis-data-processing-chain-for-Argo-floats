@@ -109,7 +109,7 @@ for idFloat = 1:length(floatList)
    % retrieve FLOAT_TYPE
    floatType = getfield(infoStruct, 'FLOAT_TYPE');
    if (isempty(floatType))
-      fprintf('ERROR: FLOAT_TYPE (from PLATFORM_TYPE) is missing for float %d => no json file generated\n', ...
+      fprintf('ERROR: FLOAT_TYPE (from PLATFORM_TYPE) is missing for float %d - no json file generated\n', ...
          floatList(idFloat));
       continue
    end
@@ -121,7 +121,7 @@ for idFloat = 1:length(floatList)
       % retrieve DAC_FORMAT_ID
       dacFormatId = getfield(infoStruct, 'DAC_FORMAT_ID');
       if (isempty(dacFormatId))
-         fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d => no json file generated\n', ...
+         fprintf('ERROR: DAC_FORMAT_ID (from PR_VERSION) is missing for float %d - no json file generated\n', ...
             floatList(idFloat));
          continue
       end

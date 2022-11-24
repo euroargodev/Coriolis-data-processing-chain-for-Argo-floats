@@ -81,7 +81,7 @@ for idEv = 1:length(a_events)
       if (~isempty(gpsData1) && (a_events(idEv).number-gpsData1{1} < 10))
          [val, count, errmsg, nextIndex] = sscanf(gpsData1{2}, 'Profile %d GPS fix obtained in %d seconds.');
          if (~isempty(errmsg) || (count ~= 2))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, gpsData1{2});
+            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, gpsData1{2});
             continue
          end
          gpsCycleNum = val(1);
@@ -89,7 +89,7 @@ for idEv = 1:length(a_events)
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Fix: %f %f %d/%d/%d %d %d');
          if (~isempty(errmsg) || (count ~= 7))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          
@@ -109,7 +109,7 @@ for idEv = 1:length(a_events)
          gpsFixStruct.gpsFixAcqTime = gpsLocAcqTime;
          o_gpsData{end+1} = gpsFixStruct;
       else
-         fprintf('DEC_INFO: %sAnomaly detected while computing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while computing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
       end
       gpsData1 = [];
       
@@ -117,7 +117,7 @@ for idEv = 1:length(a_events)
       
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS fix not acquired after %ds; power-cycling the GPS.');
       if (~isempty(errmsg) || (count ~= 1))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       
@@ -129,7 +129,7 @@ for idEv = 1:length(a_events)
       if (~isempty(errmsg) || (count ~= 1))
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'GPS fix-acquisition failed after %ds.  Apf9 RTC skew check by-passed.');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
       end
@@ -139,7 +139,7 @@ for idEv = 1:length(a_events)
    else
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
-         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
    end

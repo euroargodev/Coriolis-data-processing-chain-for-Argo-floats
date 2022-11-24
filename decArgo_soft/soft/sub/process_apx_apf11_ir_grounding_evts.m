@@ -2,7 +2,7 @@
 % Get grounding information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_grounding] = process_apx_apf11_ir_grounding_evts_1121_1123_1321_1322(a_events)
+%  [o_grounding] = process_apx_apf11_ir_grounding_evts(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_grounding] = process_apx_apf11_ir_grounding_evts_1121_1123_1321_1322(a_events)
+function [o_grounding] = process_apx_apf11_ir_grounding_evts(a_events)
 
 % output parameters initialization
 o_grounding = [];

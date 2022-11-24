@@ -132,7 +132,7 @@ if (STEP_1)
             filePathName = [dirPathFileName '/' fileName];
             
             if (fileNames(idFile).bytes == 0)
-               fprintf('INFO: Empty file: %s => ignored\n', filePathName);
+               fprintf('INFO: Empty file: %s - ignored\n', filePathName);
                continue
             end
             
@@ -149,7 +149,7 @@ if (STEP_1)
                   nearSurfaceDataStr ...
                   ] = read_apx_ir_rudics_msg_file(filePathName);
                if (error == 1)
-                  fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+                  fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                   continue
                end
                
@@ -174,7 +174,7 @@ if (STEP_1)
                if (~isempty(dates))
                   date = min(dates);
                else
-                  fprintf('ERROR: No dates in file: %s => ignored\n', filePathName);
+                  fprintf('ERROR: No dates in file: %s - ignored\n', filePathName);
                   continue
                end
             else
@@ -189,7 +189,7 @@ if (STEP_1)
             if (length(idF) == 2)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg');
                if (~isempty(errmsg) || (count ~= 2))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -197,7 +197,7 @@ if (STEP_1)
             elseif (length(idF) == 3)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg.%d');
                if (~isempty(errmsg) || (count ~= 3))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -208,7 +208,7 @@ if (STEP_1)
             elseif (length(idF) == 4)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.msg.%d.%d');
                if (~isempty(errmsg) || (count ~= 4))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -217,7 +217,7 @@ if (STEP_1)
                   pid = val(3);
                end
             else
-               fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+               fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                continue
             end
             
@@ -318,13 +318,13 @@ if (STEP_2)
             filePathName = [dirPathFileName '/' fileName];
             
             if (fileNames(idFile).bytes == 0)
-               fprintf('INFO: Empty file: %s => ignored\n', filePathName);
+               fprintf('INFO: Empty file: %s - ignored\n', filePathName);
                continue
             end
             
             [error, events] = read_apx_ir_rudics_log_file(filePathName);
             if (error == 1)
-               fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+               fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                continue
             end
             
@@ -336,7 +336,7 @@ if (STEP_2)
             if (length(idF) == 2)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log');
                if (~isempty(errmsg) || (count ~= 2))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -346,7 +346,7 @@ if (STEP_2)
             elseif (length(idF) == 3)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log.%d');
                if (~isempty(errmsg) || (count ~= 3))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -359,7 +359,7 @@ if (STEP_2)
             elseif (length(idF) == 4)
                [val, count, errmsg, nextIndex] = sscanf(fileName, '%d.%d.log.%d.%d');
                if (~isempty(errmsg) || (count ~= 4))
-                  fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+                  fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
                   continue
                end
                floatId = val(1);
@@ -370,7 +370,7 @@ if (STEP_2)
                   pid = val(3);
                end
             else
-               fprintf('WARNING: Anomaly detected in file name ''%s'' => file ignored\n', fileName);
+               fprintf('WARNING: Anomaly detected in file name ''%s'' - file ignored\n', fileName);
             end
             
             cyNumStr = 'CCC';
@@ -569,7 +569,7 @@ if (STEP_5)
                nearSurfaceDataStr ...
                ] = read_apx_ir_rudics_msg_file(filePathName);
             if (error == 1)
-               fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+               fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                continue
             end
             
@@ -626,7 +626,7 @@ if (STEP_5)
                         idF = strfind(fileName, '_');
                         newFileName = [fileName(1:idF(3)) num2str(wmoList) '_TTT' fileName(idF(5):end)];
                         if (~strcmp(newFileName, fileName))
-                           %                         fprintf('INFO: Renaming file: %s => %s\n', fileName, newFileName);
+                           %                         fprintf('INFO: Renaming file: %s - %s\n', fileName, newFileName);
                            move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                         end
                      else
@@ -659,7 +659,7 @@ if (STEP_5)
                   idF = strfind(fileName, '_');
                   newFileName = [fileName(1:idF(3)) num2str(floatWmo) fileName(idF(2):idF(3)-1) fileName(idF(5):end)];
                   if (~strcmp(newFileName, fileName))
-                     %                   fprintf('INFO: Renaming file: %s => %s\n', fileName, newFileName);
+                     %                   fprintf('INFO: Renaming file: %s - %s\n', fileName, newFileName);
                      move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                   end
                end
@@ -711,7 +711,7 @@ if (STEP_6)
                
                [error, events] = read_apx_ir_rudics_log_file(filePathName);
                if (error == 1)
-                  fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+                  fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                   continue
                end
                
@@ -787,7 +787,7 @@ if (STEP_6)
                      
                      [error, events] = read_apx_ir_rudics_log_file(filePathName);
                      if (error == 1)
-                        fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+                        fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                         continue
                      end
                      
@@ -837,7 +837,7 @@ if (STEP_6)
                            
                            [error, events] = read_apx_ir_rudics_log_file(filePathName);
                            if (error == 1)
-                              fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+                              fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                               continue
                            end
                            

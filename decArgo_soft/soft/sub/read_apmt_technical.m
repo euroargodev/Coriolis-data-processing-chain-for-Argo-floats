@@ -408,6 +408,25 @@ end
 
 o_techData = techData;
 
+% check GPS location date consistency
+% (see 6902829 #0 (from 3aa9_007_autotest_00001.txt file))
+if (~isempty(o_ncTrajData))
+   trajdata = [o_ncTrajData{:}];
+   trajMeasCode = [trajdata.measCode];
+   trajMeasParamName = {trajdata.paramName};
+   trajGroup = [trajdata.group];
+   trajValue = [trajdata.value];
+   idLocDate = find((trajMeasCode == 703) & strcmp(trajMeasParamName, 'JULD'));
+   idDel = [];
+   for idLoc = idLocDate
+      if (trajValue(idLoc)+g_decArgo_janFirst1950InMatlab > now_utc)
+         idF = find(trajGroup == trajGroup(idLoc));
+         idDel = [idDel idF];
+      end
+   end
+   o_ncTrajData(idDel) = [];
+end
+
 return
 
 % ------------------------------------------------------------------------------

@@ -84,7 +84,7 @@ for idFloat = 1:nbFloats
    % find information on current float
    idF = find(floatWmoList == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => (nothing done)\n', floatNum);
+      fprintf('ERROR: No information on float #%d - (nothing done)\n', floatNum);
       continue
    end
    floatDecId = floatDecIdList(idF);
@@ -113,7 +113,7 @@ for idFloat = 1:nbFloats
          outputFileName = create_apx_rudics_log_file_name(inputFilePathName, ...
             floatNum, floatId, floatLaunchDate, floatEndDate);
       else
-         fprintf('ERROR: Unknown file type (%s) => (nothing done)\n', inputFilePathName);
+         fprintf('ERROR: Unknown file type (%s) - (nothing done)\n', inputFilePathName);
          continue
       end
       
@@ -207,7 +207,7 @@ for idFloat = 1:nbFloats
             
             [error, events] = read_apx_ir_rudics_log_file(filePathName);
             if (error == 1)
-               fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+               fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
                continue
             end
             

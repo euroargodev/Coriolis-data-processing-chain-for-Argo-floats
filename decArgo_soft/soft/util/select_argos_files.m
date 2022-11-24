@@ -26,7 +26,7 @@ DIR_INPUT_ARGOS_FILES = 'H:\HDD\_bascule_20140326\_merge_final\cycle_message_mis
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collecte_20161002\cycle';
-
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARGOS';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

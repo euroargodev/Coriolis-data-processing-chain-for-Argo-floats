@@ -11,7 +11,7 @@
    {
       "CONF_PARAM_DEC_ID" : "101",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de détail du journal des événements",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de dÃ©tail du journal des Ã©vÃ©nements",
       "CONF_PARAM_NAME" : "CONFIG_AUX_EventLoggerDescriptionLevel_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Level of events stored in the associated log file ([0-3])."
    },
@@ -19,7 +19,7 @@
    {
       "CONF_PARAM_DEC_ID" : "102",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Séparateurs décimal et colonne pour les fichiers de données (csv)",
+      "CONF_PARAM_MSG_LABEL" : "SÃ©parateurs dÃ©cimal et colonne pour les fichiers de donnÃ©es (csv)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_OutputCsvConfiguration_STRING",
       "CONF_PARAM_DESCRIPTION" : "The CTD can be transmitted in a CSV file. The first character of this parameter defines the decimal character to use, the second character defines the column separator to use."
    },
@@ -27,7 +27,7 @@
    {
       "CONF_PARAM_DEC_ID" : "300",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Adresse IP du flotteur lors d’une connexion locale par le lien Bluetooth",
+      "CONF_PARAM_MSG_LABEL" : "Adresse IP du flotteur lors dâ€™une connexion locale par le lien Bluetooth",
       "CONF_PARAM_NAME" : "META_AUX_FLOAT_IP_ADDRESS",
       "CONF_PARAM_DESCRIPTION" : "IP address of the float for a bluetooth connection."
    },
@@ -35,7 +35,7 @@
    {
       "CONF_PARAM_DEC_ID" : "103",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Liste des tâches du système",
+      "CONF_PARAM_MSG_LABEL" : "Liste des tÃ¢ches du systÃ¨me",
       "CONF_PARAM_NAME" : "CONFIG_AUX_SystemTaskList_STRING",
       "CONF_PARAM_DESCRIPTION" : "List of tasks considered by the float (see float manual for details)."
    },
@@ -43,7 +43,7 @@
    {
       "CONF_PARAM_DEC_ID" : "104",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation des fichiers traces « utilisateur »",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation des fichiers traces Â« utilisateur Â»",
       "CONF_PARAM_NAME" : "CONFIG_AUX_EnableUserLog_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Enable/disable user log file generation and transmission."
    },
@@ -51,7 +51,7 @@
    {
       "CONF_PARAM_DEC_ID" : "105",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation des fichiers traces « système »",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation des fichiers traces Â« systÃ¨me Â»",
       "CONF_PARAM_NAME" : "CONFIG_AUX_EnableSystemLog_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Enable/disable system log file generation and transmission."
    },
@@ -59,7 +59,7 @@
    {
       "CONF_PARAM_DEC_ID" : "106",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation de l’autotest complet",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation de lâ€™autotest complet",
       "CONF_PARAM_NAME" : "CONFIG_TelemetryAutoTestAtDeployment_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Perform a full auto-test (RUDICS server connection test) at float deployment (Yes=1/No=0).A full auto-test includes a connection test on the RUDICS server and a GPS fix acquisition."
    },
@@ -67,7 +67,7 @@
    {
       "CONF_PARAM_DEC_ID" : "107",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Critère de risque associé à la rétroaction",
+      "CONF_PARAM_MSG_LABEL" : "CritÃ¨re de risque associÃ© Ã  la rÃ©troaction",
       "CONF_PARAM_NAME" : "CONFIG_AUX_FeedbackRiskLevel_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Set the feedback risk level used to decide if a feedback, raised by the sensor board, should be accepted by the vector board (number between 0: lowest risk and 4:highest risk) (see float manual for details)."
    },
@@ -75,7 +75,7 @@
    {
       "CONF_PARAM_DEC_ID" : "108",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Récupération de flottabilité maximum",
+      "CONF_PARAM_MSG_LABEL" : "RÃ©cupÃ©ration de flottabilitÃ© maximum",
       "CONF_PARAM_NAME" : "CONFIG_AUX_EnableHeavyFloatAlarm_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Enable/disable heavy float alarm. Heavy float alarm should be disabled if a 'heavy float deployment' is wanted."
    },
@@ -83,7 +83,7 @@
    {
       "CONF_PARAM_DEC_ID" : "109",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Offset de pression externe après surface effective uniquement",
+      "CONF_PARAM_MSG_LABEL" : "Offset de pression externe aprÃ¨s surface effective uniquement",
       "CONF_PARAM_NAME" : "CONFIG_PressureOffsetSampledAfterTransmission_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "The surface pressure offset is sampled only if an Iridium transmission or a GPS session occured (to be sure that the pressure offset is sampled at the surface). Original proposed names was: CONFIG_SecuredPressureOffsetSampledAtSurface_LOGICAL"
    },
@@ -91,7 +91,7 @@
    {
       "CONF_PARAM_DEC_ID" : "110",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Format d’horodatage pour les fichiers de données (*.csv)",
+      "CONF_PARAM_MSG_LABEL" : "Format dâ€™horodatage pour les fichiers de donnÃ©es (*.csv)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_OutputCsvDatetimeFormat_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The CTD can be transmitted in a CSV file. This parameter is used to set the format of the measurement times (0: seconds elapsed since 01/01/1900, 1: Excel format, 2: Unix format, 3: Mac format)."
    },
@@ -99,7 +99,7 @@
    {
       "CONF_PARAM_DEC_ID" : "111",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Carte mémoire additionnelle obligatoire pour la mission",
+      "CONF_PARAM_MSG_LABEL" : "Carte mÃ©moire additionnelle obligatoire pour la mission",
       "CONF_PARAM_NAME" : "CONFIG_AUX_RequestedMemoryCard_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "An additional memory card is requested for some missions (ex: under-ice mission). This parameter is designed to fail the autotest if the requested additional memory card is not present."
    },
@@ -115,7 +115,7 @@
    {
       "CONF_PARAM_DEC_ID" : "113",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de vitesse en remontée pour action pompe (cm/s)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de vitesse en remontÃ©e pour action pompe (cm/s)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeedMin_cm/s",
       "CONF_PARAM_DESCRIPTION" : "Float minimum ascent speed before activating the pump."
    },
@@ -131,7 +131,7 @@
    {
       "CONF_PARAM_DEC_ID" : "115",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Vitesse de remontée typique (cm/s)",
+      "CONF_PARAM_MSG_LABEL" : "Vitesse de remontÃ©e typique (cm/s)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeed_cm/s",
       "CONF_PARAM_DESCRIPTION" : "ascent speed during upcast (can be used to estimate the profile duration). "
    },
@@ -139,7 +139,7 @@
    {
       "CONF_PARAM_DEC_ID" : "116",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Tolérance de positionnement en descente (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "TolÃ©rance de positionnement en descente (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceForStabilisation_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float stabilisation at parking or profile depth (in dbars)."
    },
@@ -147,7 +147,7 @@
    {
       "CONF_PARAM_DEC_ID" : "117",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Tolérance de positionnement en remontée (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "TolÃ©rance de positionnement en remontÃ©e (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceForStabilisationDuringAscent_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float stabilisation during ascent at a prescribed depth. The prescibed depth could be the PRES threshold to start low ascent (but I think this should not be in the definition which should stay more generic)."
    },
@@ -155,7 +155,7 @@
    {
       "CONF_PARAM_DEC_ID" : "118",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Tolérance de positionnement en dérive (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "TolÃ©rance de positionnement en dÃ©rive (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceDuringDrift_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at parking or profile depth (in dbars)."
    },
@@ -163,7 +163,7 @@
    {
       "CONF_PARAM_DEC_ID" : "119",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Tolérance de repositionnement en dérive (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "TolÃ©rance de repositionnement en dÃ©rive (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceBeforeReposition_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval before performing a buoyancy readjustment to reposition during the drift at parking depth. When a PRES measurement (sampled to monitor the float drift at parking depth) is outside the [parking_pressure +- CONFIG_PressureTargetToleranceBeforeReposition_dbar] interval, the float adjust its buoyancy."
    },
@@ -171,7 +171,7 @@
    {
       "CONF_PARAM_DEC_ID" : "120",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Période de surveillance de pression en descente (sec)",
+      "CONF_PARAM_MSG_LABEL" : "PÃ©riode de surveillance de pression en descente (sec)",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeDescent_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float descent (after CONFIG_BuoyancyReductionSecondThreshold_dbar)."
    },
@@ -179,7 +179,7 @@
    {
       "CONF_PARAM_DEC_ID" : "121",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Période de surveillance de pression en remontée (sec)",
+      "CONF_PARAM_MSG_LABEL" : "PÃ©riode de surveillance de pression en remontÃ©e (sec)",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeAscent_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float ascent to surface."
    },
@@ -187,7 +187,7 @@
    {
       "CONF_PARAM_DEC_ID" : "122",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Période de surveillance de pression en dérive (sec)",
+      "CONF_PARAM_MSG_LABEL" : "PÃ©riode de surveillance de pression en dÃ©rive (sec)",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeParking_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float drift at park or profile depth."
    },
@@ -195,7 +195,7 @@
    {
       "CONF_PARAM_DEC_ID" : "123",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Volume maximum d’une action EV en descente/repositionnement (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume maximum dâ€™une action EV en descente/repositionnement (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMaxPerValveAction_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the valve action durations. The valve flow is known for each float and CONFIG_OilVolumeMaxPerValveAction_cm^3 is converted to a maxDurationOfValveAction.  During descent phases the float regularly computes a valve duration to sink to the target depth. In some specific cases the result can be a huge valve action duration and the result must be thresholded by maxDurationOfValveAction."
    },
@@ -203,7 +203,7 @@
    {
       "CONF_PARAM_DEC_ID" : "124",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Volume maximum d’une action pompe en repositionnement (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume maximum dâ€™une action pompe en repositionnement (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMaxPerPumpActionReposition_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the pump action duration for reposition in the parking drift interval. The pump flow is known for each float and CONFIG_OilVolumeMaxPerPumpActionReposition_cm^3 is converted to a maxDurationOfPumpActionReposition.  When a reposition should be performed, the float computes the needed pump action duration. In some specific cases the result can be a huge pump action duration and the result must be thresholded by maxDurationOfPumpActionReposition."
    },
@@ -211,7 +211,7 @@
    {
       "CONF_PARAM_DEC_ID" : "125",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Seuil 1 de réduction d’émergence (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil 1 de rÃ©duction dâ€™Ã©mergence (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionFirstThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "First threshold of the buoyancy reduction phase (see float manual for explanations)."
    },
@@ -219,7 +219,7 @@
    {
       "CONF_PARAM_DEC_ID" : "126",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Seuil 2 de réduction d’émergence (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil 2 de rÃ©duction dâ€™Ã©mergence (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionSecondThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Second threshold of the buoyancy reduction phase  (see float manual for explanations)."
    },
@@ -227,7 +227,7 @@
    {
       "CONF_PARAM_DEC_ID" : "127",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire d’une action pompe en remontée (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire dâ€™une action pompe en remontÃ©e (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumePerPumpActionAscent_cm^3",
       "CONF_PARAM_DESCRIPTION" : "Nominal oil volume of each pump action during ascent."
    },
@@ -235,7 +235,7 @@
    {
       "CONF_PARAM_DEC_ID" : "128",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire d’une action pompe en freinage (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire dâ€™une action pompe en freinage (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumePerPumpActionDescent_cm^3",
       "CONF_PARAM_DESCRIPTION" : "Nominal oil volume of each pump action during descent (when the float brakes because of a too fast descent speed)."
    },
@@ -243,7 +243,7 @@
    {
       "CONF_PARAM_DEC_ID" : "129",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Temps d’activation EV durant la phase 2 de réduction d’émergence (csec)",
+      "CONF_PARAM_MSG_LABEL" : "Temps dâ€™activation EV durant la phase 2 de rÃ©duction dâ€™Ã©mergence (csec)",
       "CONF_PARAM_NAME" : "CONFIG_ValveTimeActionBuoyancyReduction_csec",
       "CONF_PARAM_DESCRIPTION" : "Duration of the valve actions during the second phase of the buoyancy reduction (between CONFIG_BuoyancyReductionFirstThreshold_dbar and CONFIG_BuoyancyReductionSecondThreshold_dbar)."
    },
@@ -251,7 +251,7 @@
    {
       "CONF_PARAM_DEC_ID" : "130",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Facteur d’activation EV durant la phase 2 de réduction d’émergence",
+      "CONF_PARAM_MSG_LABEL" : "Facteur dâ€™activation EV durant la phase 2 de rÃ©duction dâ€™Ã©mergence",
       "CONF_PARAM_NAME" : "CONFIG_ValveActionPeriodFactorBuoyancyReduction_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Define the period of valve actions during the second phase of the buoyancy reduction (between CONFIG_BuoyancyReductionFirstThreshold_dbar and CONFIG_BuoyancyReductionSecondThreshold_dbar). The valve is open during CONFIG_ValveTimeActionBuoyancyReduction_csec each CONFIG_ValveTimeActionBuoyancyReduction_csec*CONFIG_ValveActionPeriodFactorBuoyancyReduction_NUMBER."
    },
@@ -259,7 +259,7 @@
    {
       "CONF_PARAM_DEC_ID" : "131",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire d’émergence (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume forfaitaire dâ€™Ã©mergence (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeLastPumpActionBuoyancyAcquisition_cm^3",
       "CONF_PARAM_DESCRIPTION" : "Volume of the last pump action of the buoyancy acquisition phase. Original proposed name was: CONFIG_PumpActionOilVolumeBuoyancyAcquisition_cm^3"
    },
@@ -267,7 +267,7 @@
    {
       "CONF_PARAM_DEC_ID" : "132",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de fin de remontée (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de fin de remontÃ©e (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_AscentEndThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold used by the float to stop ascent speed control and pump actions."
    },
@@ -275,7 +275,7 @@
    {
       "CONF_PARAM_DEC_ID" : "133",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Puissance du ralentissement à la remontée (0=aucun, 1=faible, 5=fort)",
+      "CONF_PARAM_MSG_LABEL" : "Puissance du ralentissement Ã  la remontÃ©e (0=aucun, 1=faible, 5=fort)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeedFactor_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "This factor defines the speed of the ascent phase (between 0: nominal speed and 5: lowest speed)."
    },
@@ -283,7 +283,7 @@
    {
       "CONF_PARAM_DEC_ID" : "134",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Puissance du freinage en abandon de remontée (multiplie P15)",
+      "CONF_PARAM_MSG_LABEL" : "Puissance du freinage en abandon de remontÃ©e (multiplie P15)",
       "CONF_PARAM_NAME" : "CONFIG_ProfileEvasionBrakingFactor_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "This factor defines the oil volume transferred from the external bladder when a profile evasion occurs and the float has to brake. The transferred oil volume is CONFIG_ProfileEvasionAscentSpeedFactor_NUMBER times the oil volume of the last pump action."
    },
@@ -291,7 +291,7 @@
    {
       "CONF_PARAM_DEC_ID" : "135",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de dérive « parking » (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de dÃ©rive Â« parking Â» (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_ParkPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
@@ -299,7 +299,7 @@
    {
       "CONF_PARAM_DEC_ID" : "136",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de dérive « mesure » (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de dÃ©rive Â« mesure Â» (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_ProfilePressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "profile pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
@@ -307,7 +307,7 @@
    {
       "CONF_PARAM_DEC_ID" : "137",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Durée du motif (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e du motif (sec)",
       "CONF_PARAM_NAME" : "CONFIG_CycleTime_seconds",
       "CONF_PARAM_DESCRIPTION" : "For APEX and ARVOR floats this is the total duration of one cycle, usually 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value."
    },
@@ -315,7 +315,7 @@
    {
       "CONF_PARAM_DEC_ID" : "138",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Heure de présence en surface",
+      "CONF_PARAM_MSG_LABEL" : "Heure de prÃ©sence en surface",
       "CONF_PARAM_NAME" : "CONFIG_SurfaceTime_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time of day of float surfacing - could be hour of the float surfacing or could be stored as seconds when set as hh:mm:ss (e.g. for PROVOR CTS5)"
    },
@@ -323,7 +323,7 @@
    {
       "CONF_PARAM_DEC_ID" : "139",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation de la prise de position GPS",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation de la prise de position GPS",
       "CONF_PARAM_NAME" : "CONFIG_GPSAcquisitionEndCycle_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "The float performs a GPS session to acquire a GPS fix at the end of the cycle (Yes=1/No=0)."
    },
@@ -331,7 +331,7 @@
    {
       "CONF_PARAM_DEC_ID" : "140",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation d’une session de transmission",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation dâ€™une session de transmission",
       "CONF_PARAM_NAME" : "CONFIG_TransmissionEndCycle_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "The float performs a telemetry transmission at the end of the cycle (Yes=1/No=0)."
    },
@@ -339,7 +339,7 @@
    {
       "CONF_PARAM_DEC_ID" : "141",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de tension batterie faible (V)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de tension batterie faible (V)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_LowBatteryNoLoadAlarmThreshold_volts",
       "CONF_PARAM_DESCRIPTION" : "Min threshold of battery level before raising a low battery no load alarm."
    },
@@ -347,7 +347,7 @@
    {
       "CONF_PARAM_DEC_ID" : "142",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de pression interne forte (mbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de pression interne forte (mbar)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_HighInternalPressureAlarmThreshold_mbar",
       "CONF_PARAM_DESCRIPTION" : "Max threshold of internal pressure level before raising a high internal pressure alarm."
    },
@@ -355,7 +355,7 @@
    {
       "CONF_PARAM_DEC_ID" : "143",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de sauts de pression externe incohérents (cm/s)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de sauts de pression externe incohÃ©rents (cm/s)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_HighAccelerationAlarmThreshold_cm/s",
       "CONF_PARAM_DESCRIPTION" : "Max threshold of vertical speed level before raising a External pressure sensor failure alarm."
    },
@@ -363,7 +363,7 @@
    {
       "CONF_PARAM_DEC_ID" : "144",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de pression externe faible (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de pression externe faible (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_LowExternalPressureAlarmThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Min threshold of external pressure before raising a Low external pressure alarm."
    },
@@ -371,7 +371,7 @@
    {
       "CONF_PARAM_DEC_ID" : "145",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de pression externe forte / pression limite (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de pression externe forte / pression limite (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_HighExternalPressureAlarmThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Max threshold of external pressure before raising a High external pressure alarm."
    },
@@ -379,7 +379,7 @@
    {
       "CONF_PARAM_DEC_ID" : "146",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Détection de capteur de pression externe cassé (erreurs successives)",
+      "CONF_PARAM_MSG_LABEL" : "DÃ©tection de capteur de pression externe cassÃ© (erreurs successives)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_MaxExternalPressureErrorAlarmThreshold_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Max number of successive errors from the external pressure sensor before raising a External pressure sensor failure alarm."
    },
@@ -387,7 +387,7 @@
    {
       "CONF_PARAM_DEC_ID" : "147",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection d’échouage à la descente (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection dâ€™Ã©chouage Ã  la descente (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMinForGroundingDetection_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a grounding of the float. If there is no vertical motion after having tranferred CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the gounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_LOGICAL parameter.So, yes it is a configuration parameter (and I can easily understand that it can be modified via remote control since some PROVOR floats have experienced erroneous grounding detection (under study but perhaps due to in-situ conditions)."
    },
@@ -395,7 +395,7 @@
    {
       "CONF_PARAM_DEC_ID" : "148",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection d’accrochage à la remontée (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection dâ€™accrochage Ã  la remontÃ©e (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumeMinForHangingDetection_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a hanging of the float. If there is no ascent vertical motion after having tranferred CONFIG_OilVolumeMinForHangingDetection_cm^3 through the pump the hanged alarm is activated."
    },
@@ -403,7 +403,7 @@
    {
       "CONF_PARAM_DEC_ID" : "149",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de vitesse de descente élevée (freinage)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de vitesse de descente Ã©levÃ©e (freinage)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_HighDescentSpeedAlarmThreshold_cm/s",
       "CONF_PARAM_DESCRIPTION" : "Max threshold of descent speed before raising a braking alarm."
    },
@@ -411,7 +411,7 @@
    {
       "CONF_PARAM_DEC_ID" : "150",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Seuil de détection de tension batterie (min. sur pompe) faible (V)",
+      "CONF_PARAM_MSG_LABEL" : "Seuil de dÃ©tection de tension batterie (min. sur pompe) faible (V)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_LowBatteryLoadAlarmThreshold_volts",
       "CONF_PARAM_DESCRIPTION" : "Min threshold of battery level before raising a low battery load alarm."
    },
@@ -419,7 +419,7 @@
    {
       "CONF_PARAM_DEC_ID" : "151",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Durée de temporisation en surface étape « SA » avant boucle (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e de temporisation en surface Ã©tape Â« SA Â» avant boucle (sec)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_SurfaceTimeDelayBeforeLoop_seconds",
       "CONF_PARAM_DESCRIPTION" : "Surface temporization (step 'SA' of the mission) before loops ([0-86400 (24 h)]) (see float manual for details)."
    },
@@ -427,7 +427,7 @@
    {
       "CONF_PARAM_DEC_ID" : "152",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Durée de temporisation en surface étape « SA » dans boucle « motif » (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e de temporisation en surface Ã©tape Â« SA Â» dans boucle Â« motif Â» (sec)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_SurfaceTimeDelayInPatternLoop_seconds",
       "CONF_PARAM_DESCRIPTION" : "Surface temporization (step 'SA' of the mission) during pattern loops ([0-7200 (2 h)]) (see float manual for details)."
    },
@@ -435,7 +435,7 @@
    {
       "CONF_PARAM_DEC_ID" : "153",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Durée de temporisation en surface étape « SA » dans boucle « cycle » (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e de temporisation en surface Ã©tape Â« SA Â» dans boucle Â« cycle Â» (sec)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_SurfaceTimeDelayInCycleLoop_seconds",
       "CONF_PARAM_DESCRIPTION" : "Surface temporization (step 'SA' of the mission) during cycle loops ([0-7200 (2 h)]) (see float manual for details)."
    },
@@ -443,7 +443,7 @@
    {
       "CONF_PARAM_DEC_ID" : "154",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Durée de temporisation pour test (étape « TC ») (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e de temporisation pour test (Ã©tape Â« TC Â») (sec)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_TestTimeDelay_seconds",
       "CONF_PARAM_DESCRIPTION" : "Test temporization (step 'TC' of the mission) ([0-600 (10 min)]) (see float manual for details)."
    },
@@ -451,7 +451,7 @@
    {
       "CONF_PARAM_DEC_ID" : "155",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation de la prise de position GPS en fin de vie",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation de la prise de position GPS en fin de vie",
       "CONF_PARAM_NAME" : "CONFIG_GPSAcquisitionEndOfLife_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "The float performs a GPS session to acquire a GPS fix in each End Of Life transmission (Yes=1/No=0)."
    },
@@ -459,7 +459,7 @@
    {
       "CONF_PARAM_DEC_ID" : "156",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Période de transmission en fin de vie (sec)",
+      "CONF_PARAM_MSG_LABEL" : "PÃ©riode de transmission en fin de vie (sec)",
       "CONF_PARAM_NAME" : "CONFIG_TransmissionPeriodEndOfLife_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the Iridium transmission when in End Of Life mode (in minutes)."
    },
@@ -475,7 +475,7 @@
    {
       "CONF_PARAM_DEC_ID" : "158",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Mode de gestion de la détection d’échouage à la descente",
+      "CONF_PARAM_MSG_LABEL" : "Mode de gestion de la dÃ©tection dâ€™Ã©chouage Ã  la descente",
       "CONF_PARAM_NAME" : "CONFIG_GroundingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Action performed by the float when a grounding is detected. 0: the float changes its drift pressure, 1: the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model."
    },
@@ -483,7 +483,7 @@
    {
       "CONF_PARAM_DEC_ID" : "159",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Offset de consigne en cas de gestion d’échouage par correction (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Offset de consigne en cas de gestion dâ€™Ã©chouage par correction (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_GroundingModePresAdjustment_dbar",
       "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure to its programmed one minus this value only if its current pressure is greater than this value."
    },
@@ -491,7 +491,7 @@
    {
       "CONF_PARAM_DEC_ID" : "160",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Mode de gestion de la détection d’accrochage à la remontée",
+      "CONF_PARAM_MSG_LABEL" : "Mode de gestion de la dÃ©tection dâ€™accrochage Ã  la remontÃ©e",
       "CONF_PARAM_NAME" : "CONFIG_HangingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Action performed by the float when a hanging is detected (see float manual for details). [JP additional comments on behaviour for PROVOR floats: The hanging mode is the same idea as the grounding mode but for an ascent phase. When the float detects a too low vertical motion after having activated its pump to try to ascend it enters in a hanging mode (it is probably stuck at the sea floor). This parameter configures (with the same idea as CONFIG_GroundingMode_NUMBER for grounding) what should be the actions to perform to try to escape from hanging (it can activate its pump and valve alternatively to try to escape or abandon the ascent and switch to the next scheduled task]."
    },
@@ -499,7 +499,7 @@
    {
       "CONF_PARAM_DEC_ID" : "161",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Pression minimale pour échappement en cas de détection d’échouage",
+      "CONF_PARAM_MSG_LABEL" : "Pression minimale pour Ã©chappement en cas de dÃ©tection dâ€™Ã©chouage",
       "CONF_PARAM_NAME" : "CONFIG_GroundingModeMinPresThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure only if its current pressure is greater than this value."
    },
@@ -507,7 +507,7 @@
    {
       "CONF_PARAM_DEC_ID" : "162",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de début de remontée « lente » (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de dÃ©but de remontÃ©e Â« lente Â» (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar",
       "CONF_PARAM_DESCRIPTION" : "Pressure threshold to start the slow ascent speed phase."
    },
@@ -515,7 +515,7 @@
    {
       "CONF_PARAM_DEC_ID" : "163",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de début de remontée « lente » (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de dÃ©but de remontÃ©e Â« lente Â» (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar",
       "CONF_PARAM_DESCRIPTION" : "Pressure threshold to start the slow ascent speed phase."
    },
@@ -523,7 +523,7 @@
    {
       "CONF_PARAM_DEC_ID" : "164",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Profondeur de réalisation du test de présence de glace (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Profondeur de rÃ©alisation du test de prÃ©sence de glace (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionAcousticStartPressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Pressure threshold to start the acoustic ice detection test. "
    },
@@ -531,7 +531,7 @@
    {
       "CONF_PARAM_DEC_ID" : "165",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Durée du test de présence de glace",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e du test de prÃ©sence de glace",
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionTestDuration_minutes",
       "CONF_PARAM_DESCRIPTION" : "Duration of the ice detection test."
    },
@@ -539,7 +539,7 @@
    {
       "CONF_PARAM_DEC_ID" : "301",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro DNIS associé à la carte SIM",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro DNIS associÃ© Ã  la carte SIM",
       "CONF_PARAM_NAME" : "META_AUX_FLOAT_DNIS_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "DNIS number of the SIM card of the float."
    },
@@ -547,7 +547,7 @@
    {
       "CONF_PARAM_DEC_ID" : "302",
       "CONF_PARAM_TYPE" : "META",
-      "CONF_PARAM_MSG_LABEL" : "Identifiant du compte associé au flotteur (sur le serveur)",
+      "CONF_PARAM_MSG_LABEL" : "Identifiant du compte associÃ© au flotteur (sur le serveur)",
       "CONF_PARAM_NAME" : "META_PTT",
       "CONF_PARAM_DESCRIPTION" : "Transmission identifier of the float."
    },
@@ -555,7 +555,7 @@
    {
       "CONF_PARAM_DEC_ID" : "303",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro du port série",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro du port sÃ©rie",
       "CONF_PARAM_NAME" : "META_AUX_IRIDIUM_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the Iridium device."
    },
@@ -563,7 +563,7 @@
    {
       "CONF_PARAM_DEC_ID" : "166",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Durée maximale de la session Iridium (sec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e maximale de la session Iridium (sec)",
       "CONF_PARAM_NAME" : "CONFIG_ConnectionTimeOut_seconds",
       "CONF_PARAM_DESCRIPTION" : "Connection time-out, i.e. maximum transmission period for one telemetry session"
    },
@@ -571,7 +571,7 @@
    {
       "CONF_PARAM_DEC_ID" : "167",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Taille de bloc pour le découpage des fichiers",
+      "CONF_PARAM_MSG_LABEL" : "Taille de bloc pour le dÃ©coupage des fichiers",
       "CONF_PARAM_NAME" : "CONFIG_AUX_TransmittedFileMaxSize_kbyte",
       "CONF_PARAM_DESCRIPTION" : "Max size for transmitted files (in kbyte). Larger files are split before transmission."
    },
@@ -579,7 +579,7 @@
    {
       "CONF_PARAM_DEC_ID" : "168",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Format des fichiers de mesure (*.csv, *.hex étendu, *.hex standard)",
+      "CONF_PARAM_MSG_LABEL" : "Format des fichiers de mesure (*.csv, *.hex Ã©tendu, *.hex standard)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_CtdDataFormat_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Format of the transmitted CTD data (0: CSV format, 1: extended hex format, 2: standard hex format) (see float manual for details)."
    },
@@ -587,7 +587,7 @@
    {
       "CONF_PARAM_DEC_ID" : "169",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Mode de transmission des fichiers (standard, étendu, haute vitesse)",
+      "CONF_PARAM_MSG_LABEL" : "Mode de transmission des fichiers (standard, Ã©tendu, haute vitesse)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_FileTransmissionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "File transmission mode (0: standard, 1: extended, 2: streaming)."
    },
@@ -595,7 +595,7 @@
    {
       "CONF_PARAM_DEC_ID" : "304",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Identification de la mécanique",
+      "CONF_PARAM_MSG_LABEL" : "Identification de la mÃ©canique",
       "CONF_PARAM_NAME" : "META_AUX_HYDRAULIC_ENGINE_TYPE",
       "CONF_PARAM_DESCRIPTION" : "Reference of the hydraulic device."
    },
@@ -603,7 +603,7 @@
    {
       "CONF_PARAM_DEC_ID" : "170",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Volume total d’huile dans le circuit hydraulique (cm3)",
+      "CONF_PARAM_MSG_LABEL" : "Volume total dâ€™huile dans le circuit hydraulique (cm3)",
       "CONF_PARAM_NAME" : "CONFIG_AUX_TotalOilVolume_cm^3",
       "CONF_PARAM_DESCRIPTION" : "Total volume of oil in the hydraulic device."
    },
@@ -611,7 +611,7 @@
    {
       "CONF_PARAM_DEC_ID" : "305",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro du port série",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro du port sÃ©rie",
       "CONF_PARAM_NAME" : "META_AUX_SENSOR_BOARD_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the sensor board."
    },
@@ -619,7 +619,7 @@
    {
       "CONF_PARAM_DEC_ID" : "306",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro de la sortie de puissance",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro de la sortie de puissance",
       "CONF_PARAM_NAME" : "META_AUX_SENSOR_BOARD_POWER_OUTPUT_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power output port number used by the sensor board."
    },
@@ -627,7 +627,7 @@
    {
       "CONF_PARAM_DEC_ID" : "171",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation du message « $ADJUST »",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation du message Â« $ADJUST Â»",
       "CONF_PARAM_NAME" : "CONFIG_AUX_InformSensorBoardDuringHydraulicAction_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Ask/inform the sensor board during hydraulic adjustments."
    },
@@ -635,7 +635,7 @@
    {
       "CONF_PARAM_DEC_ID" : "172",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation de l’autotest complet",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation de lâ€™autotest complet",
       "CONF_PARAM_NAME" : "CONFIG_AUX_FullAutotest_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Perform a full autotest."
    },
@@ -643,7 +643,7 @@
    {
       "CONF_PARAM_DEC_ID" : "307",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro du port série",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro du port sÃ©rie",
       "CONF_PARAM_NAME" : "META_AUX_GPS_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the GPS device."
    },
@@ -651,7 +651,7 @@
    {
       "CONF_PARAM_DEC_ID" : "308",
       "CONF_PARAM_TYPE" : "META_AUX",
-      "CONF_PARAM_MSG_LABEL" : "Numéro de la sortie de puissance",
+      "CONF_PARAM_MSG_LABEL" : "NumÃ©ro de la sortie de puissance",
       "CONF_PARAM_NAME" : "META_AUX_GPS_POWER_OUTPUT_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power output port number used by the GPS device."
    },
@@ -659,7 +659,7 @@
    {
       "CONF_PARAM_DEC_ID" : "173",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation de la synchronisation PPS (module externe)",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation de la synchronisation PPS (module externe)",
       "CONF_PARAM_NAME" : "CONFIG_GPSSetClockSensorCard_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "When the float Real Time Clock is set, also set the clock of the measurement card."
    },
@@ -667,7 +667,7 @@
    {
       "CONF_PARAM_DEC_ID" : "174",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Activation/désactivation du positionnement amélioré (altitude 0m)",
+      "CONF_PARAM_MSG_LABEL" : "Activation/dÃ©sactivation du positionnement amÃ©liorÃ© (altitude 0m)",
       "CONF_PARAM_NAME" : "CONFIG_GPSImprovedLocation_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Use the GPS improved location mode. This mode can be used when the float altitude is 0 meter, it provides better locations."
    },
@@ -675,47 +675,47 @@
    {
       "CONF_PARAM_DEC_ID" : "175",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / descente vers profondeur dérive (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - PÃ©riode Ã©chantillonnage / descente vers profondeur dÃ©rive (sec)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToParkPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_86" :
    {
       "CONF_PARAM_DEC_ID" : "176",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / dérive profondeur parking (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - PÃ©riode Ã©chantillonnage / dÃ©rive profondeur parking (sec)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure in the depth zone #<N>."
    },
    "CONF_PARAM_87" :
    {
       "CONF_PARAM_DEC_ID" : "177",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / descente vers profondeur mesure (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - PÃ©riode Ã©chantillonnage / descente vers profondeur mesure (sec)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_88" :
    {
       "CONF_PARAM_DEC_ID" : "178",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / dérive profondeur mesure (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - PÃ©riode Ã©chantillonnage / dÃ©rive profondeur mesure (sec)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure in the depth zone #<N>."
    },
    "CONF_PARAM_89" :
    {
       "CONF_PARAM_DEC_ID" : "179",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Période échantillonnage / remontée (sec)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>AscentSamplingPeriod_seconds",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - PÃ©riode Ã©chantillonnage / remontÃ©e (sec)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_90" :
    {
       "CONF_PARAM_DEC_ID" : "180",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type d’acquisition",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 â€“ Type dâ€™acquisition",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
@@ -723,7 +723,7 @@
    {
       "CONF_PARAM_DEC_ID" : "181",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type de traitement",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 â€“ Type de traitement",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N>  (see float manual for details)."
    },
@@ -731,7 +731,7 @@
    {
       "CONF_PARAM_DEC_ID" : "182",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Type de synchronisation",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 â€“ Type de synchronisation",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the <short_sensor_name> can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
@@ -739,7 +739,7 @@
    {
       "CONF_PARAM_DEC_ID" : "183",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Epaisseur de tranche (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 â€“ Epaisseur de tranche (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> (in dbar)."
    },
@@ -755,7 +755,7 @@
    {
       "CONF_PARAM_DEC_ID" : "185",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Durée de chauffe capteur (msec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e de chauffe capteur (msec)",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>WarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short_sensor_name> is powered ON, to provide its first sample (in milli-seconds)."
    },
@@ -763,7 +763,7 @@
    {
       "CONF_PARAM_DEC_ID" : "186",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Durée d’extinction capteur (msec)",
+      "CONF_PARAM_MSG_LABEL" : "DurÃ©e dâ€™extinction capteur (msec)",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON (in milli-seconds)."
    },
@@ -771,7 +771,7 @@
    {
       "CONF_PARAM_DEC_ID" : "187",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Index de filtrage du premier échantillon valide",
+      "CONF_PARAM_MSG_LABEL" : "Index de filtrage du premier Ã©chantillon valide",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short_sensor_name> (0 is the rank of the first sample)."
    },
@@ -779,7 +779,7 @@
    {
       "CONF_PARAM_DEC_ID" : "188",
       "CONF_PARAM_TYPE" : "CONFIG",
-      "CONF_PARAM_MSG_LABEL" : "Pression de « cut-off » (dbar)",
+      "CONF_PARAM_MSG_LABEL" : "Pression de Â« cut-off Â» (dbar)",
       "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure at which the CTD pump is switched off.  As the float ascends, the code looks at the pressure and if <= CONFIG_CTDPumpStopPressure, the CTD is turned off. CTDPumpStopPressure is a firmware threshold and as such, data may continue to be collected for a limited span after the threshold is recognized. Especially in floats that return high resolution discrete data, there might be data collected shallower than the cut off, due to the discrete nature of the pressure data and also due to the time necessary for the firmware to turn off the CTD once the pressure threshold is reached. For example for SOLOII floats the CTD is switched off at 1dbar, and typically the shallowest data is from 0.5 to 0.8 dbar. This shallow data should be carefully assessed for its validity."
    },
@@ -1068,144 +1068,144 @@
       "CONF_PARAM_DEC_ID" : "223",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of depth zones.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>NumberOfDepthZone_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>NumberOfDepthZone_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_135" :
    {
       "CONF_PARAM_DEC_ID" : "224",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Start pressure to define the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StartPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StartPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_136" :
    {
       "CONF_PARAM_DEC_ID" : "225",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Stop pressure to define the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StopPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StopPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_137" :
    {
       "CONF_PARAM_DEC_ID" : "226",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_138" :
    {
       "CONF_PARAM_DEC_ID" : "227",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Power acquisition mode for the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_139" :
    {
       "CONF_PARAM_DEC_ID" : "228",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of additional raw data sampled in the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>RawDataAcquisition_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>RawDataAcquisition_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_140" :
    {
       "CONF_PARAM_DEC_ID" : "229",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of subsamplings for data sampled in the depth zone.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>NumberOfSubSampling_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSubSampling_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_141" :
    {
       "CONF_PARAM_DEC_ID" : "230",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing mode of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_142" :
    {
       "CONF_PARAM_DEC_ID" : "231",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing rate of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingRate_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SubSampling<SubS>DataProcessingRate_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled in the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_143" :
    {
       "CONF_PARAM_DEC_ID" : "232",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of sampling schemes.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>NumberOfSamplingScheme_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of sampling schemes defined for the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>NumberOfSamplingScheme_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of sampling schemes defined for the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_144" :
    {
       "CONF_PARAM_DEC_ID" : "233",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Start time of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>StartTime_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Start time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>StartTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Start time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_145" :
    {
       "CONF_PARAM_DEC_ID" : "234",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Stop time of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>StopTime_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Stop time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>StopTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Stop time to define the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_146" :
    {
       "CONF_PARAM_DEC_ID" : "235",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period of the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_147" :
    {
       "CONF_PARAM_DEC_ID" : "236",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Power acquisition mode of the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>PowerAcquisitionMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_148" :
    {
       "CONF_PARAM_DEC_ID" : "237",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of additional raw data sampled for the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>RawDataAcquisition_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>RawDataAcquisition_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of additional raw data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_149" :
    {
       "CONF_PARAM_DEC_ID" : "238",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of subsamplings for data sampled with the sampling scheme.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>NumberOfSubSampling_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>NumberOfSubSampling_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of subsamplings of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_150" :
    {
       "CONF_PARAM_DEC_ID" : "239",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing mode of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_151" :
    {
       "CONF_PARAM_DEC_ID" : "240",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Data processing rate of the concerned subsampling.",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><horizontal_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingRate_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <horizontal_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingRate_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing rate for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_152" :
    {

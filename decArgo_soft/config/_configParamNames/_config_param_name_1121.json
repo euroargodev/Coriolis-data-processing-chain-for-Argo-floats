@@ -99,7 +99,7 @@
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_DPF",
       "CONF_PARAM_LABEL" : "n/a",
-      "CONF_PARAM_DEFINITION" : "If set to on, the float will, on its first descent only, after the Mission Prelude, remain in the Park phase for five minutes before descending to the Profile depth. If set to off, the first Park phase period is as described in ìPark Phaseî on page 3-6.",
+      "CONF_PARAM_DEFINITION" : "If set to on, the float will, on its first descent only, after the Mission Prelude, remain in the Park phase for five minutes before descending to the Profile depth. If set to off, the first Park phase period is as described in ‚ÄúPark Phase‚Äù on page 3-6.",
       "CONF_PARAM_NAME" : "CONFIG_DeepProfileFirstFloat_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Some APEX floats are set to do a profile on deployment. This means that when the float is deployed it skips the drift phase at the PARKING depth and sinks directly to the PROFILE depth and starts ascending for the first profile. Independent of the Park and Profile cycle length, the first profile is always a Deep Profile that begins at the Profile Depth. This means the float returns a CTD profile relatively soon, typically less than a day, after the float is deployed. This feature supports comparison of the initial float profile with a conventional CTD cast from the ship. The result is that the first cycle is of shorter duration with a profile depth equal to PROFILE configuration pressure (regardless of the CONFIG_ParkAndProfileCycleCounter_COUNT configuration information). (Yes = 1, No = 0)."
    },
@@ -123,17 +123,17 @@
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_HRC",
       "CONF_PARAM_LABEL" : "n/a",
-      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a floatís density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent.",
+      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float‚Äôs density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent.",
       "CONF_PARAM_NAME" : "CONFIG_PistonPositionHyperRetraction_COUNT",
-      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a floatís density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent."
+      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float‚Äôs density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent."
    },
    "CONF_PARAM_17" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_HRP",
       "CONF_PARAM_LABEL" : "n/a",
-      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a floatís density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount.",
+      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float‚Äôs density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount.",
       "CONF_PARAM_NAME" : "CONFIG_HyperRetractionStopPressure_dbar",
-      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a floatís density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount."
+      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float‚Äôs density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount."
    },
    "CONF_PARAM_18" :
    {
@@ -171,7 +171,7 @@
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_ICEM",
       "CONF_PARAM_LABEL" : "n/a",
-      "CONF_PARAM_DEFINITION" : "Determines the months of the year during which ice avoidance is enabled. To determine the numerical entry, which is in hexadecimal, select one or more months during which to enable ice avoidance, where each month is a ìoneî bit in a 12-bit binary string representing January (000000000001) to December (100000000000). For more than one month, whether contiguous or not, ìorî the values of all the months to determine the binary value. For example, to detect ice during the contiguous months of May to September, the binary value is 000111110000. Converting to hexadecimal, the entry is 0x01f0. For the months January to May and September to December, the binary value is 111100011111. Converting to hexadecimal, the entry is 0x0f1f.",
+      "CONF_PARAM_DEFINITION" : "Determines the months of the year during which ice avoidance is enabled. To determine the numerical entry, which is in hexadecimal, select one or more months during which to enable ice avoidance, where each month is a ‚Äúone‚Äù bit in a 12-bit binary string representing January (000000000001) to December (100000000000). For more than one month, whether contiguous or not, ‚Äúor‚Äù the values of all the months to determine the binary value. For example, to detect ice during the contiguous months of May to September, the binary value is 000111110000. Converting to hexadecimal, the entry is 0x01f0. For the months January to May and September to December, the binary value is 111100011111. Converting to hexadecimal, the entry is 0x0f1f.",
       "CONF_PARAM_NAME" : "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "When is ice detection active - months in reverse order"
    },
@@ -219,7 +219,7 @@
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MAP",
       "CONF_PARAM_LABEL" : "n/a",
-      "CONF_PARAM_DEFINITION" : "The minimum pressure in decibars at which the float goes into Mission mode. It determines the floatís pressure activation depth. The float checks for this pressure periodically at the rate specified by IdleTimerInterval.",
+      "CONF_PARAM_DEFINITION" : "The minimum pressure in decibars at which the float goes into Mission mode. It determines the float‚Äôs pressure activation depth. The float checks for this pressure periodically at the rate specified by IdleTimerInterval.",
       "CONF_PARAM_NAME" : "CONFIG_PressureActivation_dbar",
       "CONF_PARAM_DESCRIPTION" : "depth at which float is set to pressure activate"
    },
@@ -317,7 +317,7 @@
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The amount of time in minutes the float will remain in the Mission Prelude phase before transitioning to the Park Descent phase. The float will transition to the Park Descent phase only at the end of this period and only if the self test passes or PreludeSelfTest is set to off.",
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeTime_minutes",
-      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. Itís crucial in calculating the time of the first descent."
+      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. It‚Äôs crucial in calculating the time of the first descent."
    },
    "CONF_PARAM_41" :
    {
@@ -388,48 +388,48 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE01",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>NumberOfDepthZone_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>NumberOfDepthZone_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_50" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE02",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StartPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StartPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_51" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE03",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StopPres_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StopPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_52" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE04",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_53" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE05",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_seconds",
-      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during <cycle_phase_name> in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_54" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE06",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>NumberOfSamples_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSamples_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
    "CONF_PARAM_55" :
    {

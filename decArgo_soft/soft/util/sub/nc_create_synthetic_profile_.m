@@ -179,7 +179,7 @@ for idType= 1:2
    
    % check the PROF file format version
    if (~strcmp(formatVersion, '3.1'))
-      fprintf('ERROR: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s => not used\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d%c: Input PROF file (%s) format version is %s - not used\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, formatVersion);
       
       % CSV output
@@ -362,11 +362,11 @@ for idType= 1:2
                if (~isempty(deblank(parameterDataMode)))
                   profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
                elseif (dataMode(idProf) == 'R')
-                  %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => set to ''R'' (as DATA_MODE = ''R'')\n', ...
+                  %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) - set to ''R'' (as DATA_MODE = ''R'')\n', ...
                   %                   g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
                   profData.paramDataMode = [profData.paramDataMode 'R'];
                else
-                  fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
+                  fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) - exit (as DATA_MODE = ''%c'')\n', ...
                      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
                   
                   % CSV output
@@ -440,7 +440,7 @@ if (~isempty(profDataTabC) && ~isempty(profDataTabB))
       profData = profDataTabC(idProfC);
       for idProfB = 1:length(profDataTabB)
          if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
-            fprintf('ERROR: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) => files ignored\n', ...
+            fprintf('ERROR: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) - files ignored\n', ...
                g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
                length(profData.presData), ...
                length(profDataTabB(idProfB).presData));
@@ -866,7 +866,7 @@ g_cocs_inputFile  = [fileName fileExt];
 % check input profile consistency
 errorFlag = 0;
 if (length(unique({a_profData.handbookVersion})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple HANDBOOK_VERSION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple HANDBOOK_VERSION - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -877,7 +877,7 @@ if (length(unique({a_profData.handbookVersion})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.referenceDateTime})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple REFERENCE_DATE_TIME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple REFERENCE_DATE_TIME - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -888,7 +888,7 @@ if (length(unique({a_profData.referenceDateTime})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformNumber})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_NUMBER - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -899,7 +899,7 @@ if (length(unique({a_profData.platformNumber})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.projectName})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PROJECT_NAME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PROJECT_NAME - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -910,7 +910,7 @@ if (length(unique({a_profData.projectName})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.piName})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PI_NAME => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PI_NAME - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -921,7 +921,7 @@ if (length(unique({a_profData.piName})) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.cycleNumber])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CYCLE_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CYCLE_NUMBER - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -932,7 +932,7 @@ if (length(unique([a_profData.cycleNumber])) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.direction})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DIRECTION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DIRECTION - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -943,7 +943,7 @@ if (length(unique({a_profData.direction})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.dataCentre})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DATA_CENTRE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple DATA_CENTRE - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -954,7 +954,7 @@ if (length(unique({a_profData.dataCentre})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.platformType})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_TYPE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple PLATFORM_TYPE - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -965,7 +965,7 @@ if (length(unique({a_profData.platformType})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.floatSerialNo})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FLOAT_SERIAL_NO => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FLOAT_SERIAL_NO - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -976,7 +976,7 @@ if (length(unique({a_profData.floatSerialNo})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.firmwareVersion})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FIRMWARE_VERSION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple FIRMWARE_VERSION - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -987,7 +987,7 @@ if (length(unique({a_profData.firmwareVersion})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.wmoInstType})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple WMO_INST_TYPE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple WMO_INST_TYPE - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -998,7 +998,7 @@ if (length(unique({a_profData.wmoInstType})) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.juld])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1009,7 +1009,7 @@ if (length(unique([a_profData.juld])) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldResolution])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD:resolution => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD:resolution - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1020,7 +1020,7 @@ if (length(unique([a_profData.juldResolution])) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.juldQc})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_QC => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_QC - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1031,7 +1031,7 @@ if (length(unique({a_profData.juldQc})) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocation])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1042,7 +1042,7 @@ if (length(unique([a_profData.juldLocation])) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.juldLocationResolution])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION:resolution => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple JULD_LOCATION:resolution - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1053,7 +1053,7 @@ if (length(unique([a_profData.juldLocationResolution])) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.latitude])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LATITUDE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LATITUDE - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1064,7 +1064,7 @@ if (length(unique([a_profData.latitude])) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.longitude])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LONGITUDE => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple LONGITUDE - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1075,7 +1075,7 @@ if (length(unique([a_profData.longitude])) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.positionQc})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITION_QC => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITION_QC - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1086,7 +1086,7 @@ if (length(unique({a_profData.positionQc})) > 1)
    errorFlag = 1;
 end
 if (length(unique({a_profData.positioningSystem})) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITIONING_SYSTEM => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple POSITIONING_SYSTEM - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1097,7 +1097,7 @@ if (length(unique({a_profData.positioningSystem})) > 1)
    errorFlag = 1;
 end
 if (length(unique([a_profData.configMissionNumber])) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CONFIG_MISSION_NUMBER => file ignored\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: multiple CONFIG_MISSION_NUMBER - file ignored\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -1364,7 +1364,7 @@ o_syntProfData.scientificCalibDate = scientificCalibDate;
 
 if (isempty(o_syntProfData.paramData))
    
-   fprintf('ERROR: Float #%d Cycle #%d%c: no data remain after processing => no synthetic profile\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d%c: no data remain after processing - no synthetic profile\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
    
    % CSV output
@@ -3101,89 +3101,5 @@ end
 
 % close NetCDF file
 netcdf.close(fCdf);
-
-return
-
-% ------------------------------------------------------------------------------
-% Remove a given diretory and all its contents.
-%
-% SYNTAX :
-%  [o_ok] = remove_directory(a_dirPathName)
-%
-% INPUT PARAMETERS :
-%   a_dirPathName : path name of the directory to remove
-%
-% OUTPUT PARAMETERS :
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/25/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ok] = remove_directory(a_dirPathName)
-
-% output parameters initialization
-o_ok = 0;
-
-NB_ATTEMPTS = 10;
-
-if (exist(a_dirPathName, 'dir') == 7)
-   [status, ~, ~] = rmdir(a_dirPathName, 's');
-   if (status ~= 1)
-      nbAttemps = 0;
-      while ((nbAttemps < NB_ATTEMPTS) && (status ~= 1))
-         pause(1);
-         [status, ~, ~] = rmdir(a_dirPathName, 's');
-         nbAttemps = nbAttemps + 1;
-      end
-      if (status ~= 1)
-         fprintf('ERROR: Unable to remove directory: %s\n', a_dirPathName);
-         return
-      end
-   end
-end
-
-o_ok = 1;
-
-return
-
-% ------------------------------------------------------------------------------
-% Move file.
-%
-% SYNTAX :
-%  [o_ok] = move_file(a_sourceFileName, a_destFileName)
-%
-% INPUT PARAMETERS :
-%   a_sourceFileName : source file path name
-%   a_destFileName   : destination file path name
-%
-% OUTPUT PARAMETERS :
-%   o_ok : copy operation report flag (1 if ok, 0 otherwise)
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/10/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ok] = move_file(a_sourceFileName, a_destFileName)
-
-% output parameters initialization
-o_ok = 1;
-
-
-[status, message, messageid] = movefile(a_sourceFileName, a_destFileName);
-if (status == 0)
-   fprintf('ERROR: Error while moving file %s to file %s (%s)\n', ...
-      a_sourceFileName, ...
-      a_destFileName, ...
-      message);
-   o_ok = 0;
-end
 
 return

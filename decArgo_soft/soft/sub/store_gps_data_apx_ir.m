@@ -236,18 +236,12 @@ if (a_cycleNum > 0)
       
       % retrieve the last good GPS location of the previous cycle
       % (a_cycleNum-2)
-      idF = find(gpsLocCycleNum == a_cycleNum-2);
-      if (~isempty(idF))
-         prevLocDate = gpsLocDate(idF);
-         prevLocLon = gpsLocLon(idF);
-         prevLocLat = gpsLocLat(idF);
-         prevLocQc = gpsLocQc(idF);
-         
-         idGoodLoc = find(prevLocQc == 1);
-         if (~isempty(idGoodLoc))
-            lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-            lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-            lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
+      if (a_cycleNum > 1)
+         idF = find((gpsLocCycleNum == a_cycleNum-2) & (gpsLocQc == 1), 1, 'last');
+         if (~isempty(idF))
+            lastLocDateOfPrevCycle = gpsLocDate(idF);
+            lastLocLonOfPrevCycle = gpsLocLon(idF);
+            lastLocLatOfPrevCycle = gpsLocLat(idF);
          end
       end
       
@@ -356,18 +350,12 @@ lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
 
 % retrieve the last good GPS location of the previous cycle
 % (a_cycleNum-1)
-idF = find(gpsLocCycleNum == a_cycleNum-1);
-if (~isempty(idF))
-   prevLocDate = gpsLocDate(idF);
-   prevLocLon = gpsLocLon(idF);
-   prevLocLat = gpsLocLat(idF);
-   prevLocQc = gpsLocQc(idF);
-   
-   idGoodLoc = find(prevLocQc == 1);
-   if (~isempty(idGoodLoc))
-      lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-      lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-      lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
+if (a_cycleNum > 0)
+   idF = find((gpsLocCycleNum == a_cycleNum-1) & (gpsLocQc == 1), 1, 'last');
+   if (~isempty(idF))
+      lastLocDateOfPrevCycle = gpsLocDate(idF);
+      lastLocLonOfPrevCycle = gpsLocLon(idF);
+      lastLocLatOfPrevCycle = gpsLocLat(idF);
    end
 end
 
@@ -382,6 +370,18 @@ locAcc = gpsLocAccuracy(idF);
    lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
 
 gpsLocQc(idF) = str2num(locQc')';
+
+% sort GPS data according to location dates
+[~, idSort] = sort(gpsLocDate);
+gpsLocCycleNum = gpsLocCycleNum(idSort);
+gpsLocProfNum = gpsLocProfNum(idSort);
+gpsLocPhase = gpsLocPhase(idSort);
+gpsLocDate = gpsLocDate(idSort);
+gpsLocLon = gpsLocLon(idSort);
+gpsLocLat = gpsLocLat(idSort);
+gpsLocQc = gpsLocQc(idSort);
+gpsLocAccuracy = gpsLocAccuracy(idSort);
+gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
 
 % update GPS data global variable
 g_decArgo_gpsData{1} = gpsLocCycleNum;

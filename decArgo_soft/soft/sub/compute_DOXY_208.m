@@ -79,7 +79,7 @@ end
 
 % get calibration information
 if (isempty(g_decArgo_calibInfo))
-   fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
+   fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing - DOXY data set to fill value\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum);
    return
 elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef')))
@@ -93,7 +93,7 @@ elseif ((isfield(g_decArgo_calibInfo, 'OPTODE')) && (isfield(g_decArgo_calibInfo
       return
    end
 else
-   fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing => DOXY data set to fill value\n', ...
+   fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration coefficients are missing - DOXY data set to fill value\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum);
    return
 end

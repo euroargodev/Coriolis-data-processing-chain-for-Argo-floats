@@ -2,7 +2,7 @@
 % Create configuration parameter lists of decoder names and NetCDF names.
 %
 % SYNTAX :
-%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5
+%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_121_to_123
 %
 % INPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5
+function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_121_to_123
 
 % output parameters initialization
 o_decArgoConfParamNames = [];
@@ -189,7 +189,7 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
          sensorNum = convert_payload_sensor_number(sensorNum);
          sensorNumId = find([payloadSensorList{:, 1}] == sensorNum, 1);
          if (isempty(sensorNumId))
-            fprintf('ERROR: Float #%d: Sensor number #%d not declared in payloadSensorList of create_config_param_names_ir_rudics_cts5\n', ...
+            fprintf('ERROR: Float #%d: Sensor number #%d not declared in payloadSensorList of create_config_param_names_ir_rudics_cts5_121_to_123\n', ...
                g_decArgo_floatNum, ...
                sensorNum);
          end
@@ -197,10 +197,10 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
          phaseNum = str2num(configName(posSensor+9:posSensor+10));
          if (ismember(phaseNum, vpList))
             paramId = paramIdListSensorVp(find(paramNumListSensorVp == paramNum, 1));
-            templateName = '<vertical_phase_name>';
+            templateName = '<cycle_phase_name>';
          elseif (ismember(phaseNum, hpList))
             paramId = paramIdListSensorHp(find(paramNumListSensorHp == paramNum, 1));
-            templateName = '<horizontal_phase_name>';
+            templateName = '<cycle_phase_name>';
          end
          decConfNames{end+1} = configName;
          idParamName = find(g_decArgo_outputNcConfParamId == paramId);

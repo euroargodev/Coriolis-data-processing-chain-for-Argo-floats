@@ -169,6 +169,16 @@ g_decArgo_clockOffset = get_clock_offset_prv_ir_init_struct;
 % delay to recover config messages before launch date
 global g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate;
 
+% from
+% - decId 223 for Arvor
+% - decId 221 for Arvor Deep
+% configuration parameters are not transmitted each cycle
+% consequently we must update the configuration of the second deep cycle with
+% initial parameters, this should be done once (except if alterneated profil or
+% auto-increment flag are set)
+global  g_decArgo_doneOnceFlag;
+g_decArgo_doneOnceFlag = 0;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -432,8 +442,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % consistency
-   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   % consistent
+   [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % add ICE detected flag in TECH variables and finalize TECH data
    [o_tabNcTechIndex, o_tabNcTechVal] = finalize_technical_data_ir_sbd( ...

@@ -1055,13 +1055,13 @@ for idType = 1:2
             if (idS == 2)
                if (idType == 1)
                   if (dataMode(a_profNumToUpdate) == 'R')
-                     fprintf('INFO: profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
+                     fprintf('INFO: profile #%d is in ''R'' mode - %s not reported in profile #%d of file : %s\n', ...
                         a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
                      continue
                   end
                else
                   if (isempty(find(strcmp(paramNamePrefix, adjustedParam), 1)))
-                     fprintf('INFO: parameter %s of profile #%d is in ''R'' mode => %s not reported in profile #%d of file : %s\n', ...
+                     fprintf('INFO: parameter %s of profile #%d is in ''R'' mode - %s not reported in profile #%d of file : %s\n', ...
                         paramNamePrefix, a_profNumToUpdate, paramName, a_profNumToUpdate, outputFileName);
                      continue
                   end
@@ -1541,7 +1541,7 @@ a_varargin(idDel) = [];
 % check input parameters
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return
    else
@@ -1561,7 +1561,7 @@ if (~isempty(a_varargin))
          elseif (strcmpi(a_varargin{id}, 'logDir'))
             g_cocq_dirLogFile = a_varargin{id+1};
          else
-            fprintf('WARNING: unexpected input argument (%s) => ignored\n', a_varargin{id});
+            fprintf('WARNING: unexpected input argument (%s) - ignored\n', a_varargin{id});
          end
       end
    end
@@ -1570,7 +1570,7 @@ end
 % check the xml report file name consistency
 if (~isempty(g_cocq_xmlReportFileName))
    if (length(g_cocq_xmlReportFileName) < 29)
-      fprintf('WARNING: inconsistent xml report file name (%s) expecting co041403_yyyymmddTHHMMSSZ[_PID].xml => ignored\n', g_cocq_xmlReportFileName);
+      fprintf('WARNING: inconsistent xml report file name (%s) expecting co041403_yyyymmddTHHMMSSZ[_PID].xml - ignored\n', g_cocq_xmlReportFileName);
       g_cocq_xmlReportFileName = [];
    end
 end

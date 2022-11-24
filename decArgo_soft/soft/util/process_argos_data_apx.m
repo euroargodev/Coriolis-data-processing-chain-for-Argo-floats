@@ -99,7 +99,7 @@ fprintf('STEP 1: split the data by satellite passes\n');
 dirOutStep1 = [DIR_OUTPUT '/STEP1/'];
 [ok] = split_argos_cycles_bis(floatList, DIR_INPUT_ARGOS_FILES, dirOutStep1);
 if (ok == 0)
-   fprintf('ERROR: In step1 => exit\n');
+   fprintf('ERROR: In step1 - exit\n');
    return
 end
 
@@ -111,7 +111,7 @@ dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
 copy_file(dirOutStep1, dirOutStep2);
 [ok] = delete_double_argos_split_bis(dirOutStep2);
 if (ok == 0)
-   fprintf('ERROR: In step2 => exit\n');
+   fprintf('ERROR: In step2 - exit\n');
    return
 end
 
@@ -121,7 +121,7 @@ fprintf('\nSTEP 3: create cycle files\n');
 dirOutStep3 = [DIR_OUTPUT '/STEP3/'];
 [ok] = create_argos_cycle_files_bis(floatList, dirOutStep2, dirOutStep3);
 if (ok == 0)
-   fprintf('ERROR: In step3 => exit\n');
+   fprintf('ERROR: In step3 - exit\n');
    return
 end
 
@@ -131,7 +131,7 @@ fprintf('\nSTEP 4: correct CLS headers\n');
 dirOutStep4 = [DIR_OUTPUT '/STEP4/'];
 [ok] = co_cls_correct_argos_raw_file_bis(dirOutStep3, dirOutStep4);
 if (ok == 0)
-   fprintf('ERROR: In step4 => exit\n');
+   fprintf('ERROR: In step4 - exit\n');
    return
 end
 
@@ -146,7 +146,7 @@ mkdir([dirOutStep5 '/IN/']);
 copy_file(dirOutStep4, [dirOutStep5 '/IN/']);
 [ok] = move_and_rename_apx_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
 if (ok == 0)
-   fprintf('ERROR: In step5 => exit\n');
+   fprintf('ERROR: In step5 - exit\n');
    return
 end
 rmdir([dirOutStep5 '/IN/'], 's');
@@ -160,7 +160,7 @@ dirOutStep6 = [DIR_OUTPUT '/FINAL/'];
 copy_file(dirOutStep5, dirOutStep6);
 [ok] = clean_ghost_in_apx_argos_cycle_files_bis(floatList, dirOutStep6);
 if (ok == 0)
-   fprintf('ERROR: In step6 => exit\n');
+   fprintf('ERROR: In step6 - exit\n');
    return
 end
 
@@ -452,21 +452,21 @@ for idDir = 1:nbDirs
                         if (compRes == 1)
                            
                            % files are identical
-                           fprintf('INFO: Files %s and %s are identical => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
+                           fprintf('INFO: Files %s and %s are identical - %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
                            break
                         elseif (compRes == 3)
                            
                            % new file contents is included in base file
-                           fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
+                           fprintf('INFO: File %s includes file %s contents - %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
                            break
                         elseif (compRes == 4)
                            
                            % base file contents is included in new file
-                           fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id2).name, dFiles(id1).name, dFiles(id1).name);
+                           fprintf('INFO: File %s includes file %s contents - %s deleted\n', dFiles(id2).name, dFiles(id1).name, dFiles(id1).name);
                            delete(fileName1);
                            deleted = 1;
                            break
@@ -646,10 +646,10 @@ for idFloat = 1:nbFloats
             
             floatArgosDate = [floatArgosDate; argosDate];
          else
-            fprintf('WARNING: Empty file (%s) => not considered\n', argosFileName);
+            fprintf('WARNING: Empty file (%s) - not considered\n', argosFileName);
          end
       else
-         fprintf('WARNING: Not expected file name %s => not considered\n', argosFileName);
+         fprintf('WARNING: Not expected file name %s - not considered\n', argosFileName);
       end
    end
    
@@ -729,7 +729,7 @@ for idFloat = 1:nbFloats
                      fclose(fIdOut);
                      
                   else
-                     fprintf('INFO: Argos data without dates => not considered\n');
+                     fprintf('INFO: Argos data without dates - not considered\n');
                      for id = 1:length(text)
                         fprintf('%s\n', text{id});
                      end
@@ -774,7 +774,7 @@ for idFloat = 1:nbFloats
                      fclose(fIdOut);
                      
                   else
-                     fprintf('INFO: Argos data without dates => not considered\n');
+                     fprintf('INFO: Argos data without dates - not considered\n');
                      for id = 1:length(text)
                         fprintf('%s\n', text{id});
                      end
@@ -1219,7 +1219,7 @@ for idFloat = 1:nbFloats
                % check if the file should be considered
                fileDate = datenum(argosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
                if (fileDate > floatEndDate)
-                  fprintf('INFO: Date of input file (%s) is after float end decoding date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
+                  fprintf('INFO: Date of input file (%s) is after float end decoding date (%s) - file stored without cycle number (i.e. not decoded)\n', ...
                      julian_2_gregorian_dec_argo(fileDate), ...
                      julian_2_gregorian_dec_argo(floatEndDate));
                   g_decArgo_inputArgosFile = argosFilePathName;
@@ -1233,10 +1233,10 @@ for idFloat = 1:nbFloats
                g_decArgo_janFirst1950InMatlab;
             
          else
-            fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
+            fprintf('ERROR: Not expected file name: %s - file not considered\n', argosFileName);
          end
       else
-         fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
+         fprintf('ERROR: Not expected file name: %s - file not considered\n', argosFileName);
       end
    end
    
@@ -1350,13 +1350,13 @@ for idFile = 1:nbFiles
       else
          move_argos_input_file(floatArgosId, min(argosLocDate), a_floatNum, [], 'EEE');
       end
-      fprintf('INFO: File (%s) contains no Argos messages => file stored without cycle number (i.e. not decoded)\n', ...
+      fprintf('INFO: File (%s) contains no Argos messages - file stored without cycle number (i.e. not decoded)\n', ...
          argosFileName);
       continue
    elseif (length(unique(argosDataDate)) < NB_MSG_MIN)
       
       move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'GGG');
-      fprintf('INFO: File (%s) contains only ghost messages => file stored without cycle number (i.e. not decoded)\n', ...
+      fprintf('INFO: File (%s) contains only ghost messages - file stored without cycle number (i.e. not decoded)\n', ...
          argosFileName);
       continue
    end
@@ -1365,13 +1365,13 @@ for idFile = 1:nbFiles
    
    if (isempty(launchDate))
       
-      fprintf('ERROR: Unable to compute cycle number because of missing meta-data => file stored without cycle number (i.e. not decoded)\n');
+      fprintf('ERROR: Unable to compute cycle number because of missing meta-data - file stored without cycle number (i.e. not decoded)\n');
       move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'MMM');
       continue
    else
       if (lastArgosMsgDate <= launchDate)
          
-         fprintf('INFO: Last date of input file (%s) is before float launch date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
+         fprintf('INFO: Last date of input file (%s) is before float launch date (%s) - file stored without cycle number (i.e. not decoded)\n', ...
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
          move_argos_input_file(floatArgosId, firstArgosMsgDate, a_floatNum, [], 'TTT');

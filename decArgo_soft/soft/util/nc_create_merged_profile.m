@@ -412,7 +412,7 @@ a_varargin(idDel) = [];
 % check input parameters
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return
    else
@@ -424,7 +424,7 @@ if (~isempty(a_varargin))
          elseif (strcmpi(a_varargin{id}, 'outputDirName'))
             o_outputDirName = a_varargin{id+1};
          else
-            fprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
+            fprintf('WARNING: unexpected input argument (''%s'') - ignored\n', a_varargin{id});
          end
       end
    end

@@ -111,7 +111,7 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
          end
          
          if (str2num(msgSize) ~= length(dataHex)/2)
-            fprintf('WARNING: Message Size is %d bytes whereas it should be %d bytes => corrected in output file : %s\n', ...
+            fprintf('WARNING: Message Size is %d bytes whereas it should be %d bytes - corrected in output file : %s\n', ...
                str2num(msgSize), length(dataHex)/2, outputFilePathName);
             msgSize = num2str(length(dataHex)/2);
          end

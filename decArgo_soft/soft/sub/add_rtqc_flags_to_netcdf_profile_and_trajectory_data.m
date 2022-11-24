@@ -303,10 +303,7 @@ g_rtqc_trajData = [];
 % retrieve the traj c file path name
 trajFileName = sprintf('%d_Rtraj.nc', floatNum);
 trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
-if ~(exist(trajFilePathName, 'file') == 2)
-   fprintf('INFO: Float #%d: Trajectory file not found (nominal for first cycle profile processing)\n', floatNum);
-else
-   
+if (exist(trajFilePathName, 'file') == 2)
    % define the tests to perform on trajectory data
    testToPerformList2 = [ ...
       {'TEST002_IMPOSSIBLE_DATE'} {1} ...
@@ -320,6 +317,8 @@ else
    add_rtqc_to_trajectory_file(floatNum, ...
       trajFilePathName, [], ...
       testToPerformList2, testMetaData, 1, 0, 1);
+else
+   trajFilePathName = '';
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -72,7 +72,7 @@ end
 
 % get calibration information
 if (isempty(g_decArgo_calibInfo))
-   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA calibration information are missing => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA calibration information are missing - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);
    return
 elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
@@ -93,7 +93,7 @@ elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
    floatPixelBegin = g_decArgo_calibInfo.SUNA.FloatPixelBegin;
    floatPixelEnd = g_decArgo_calibInfo.SUNA.FloatPixelEnd;
 else
-   fprintf('RTQC_WARNING: Float #%d Cycle #%d: inconsistent SUNA calibration information => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: inconsistent SUNA calibration information - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);
    return
 end
@@ -101,12 +101,12 @@ end
 % retrieve configuration information
 if (isempty(sunaVerticalOffset))
    sunaVerticalOffset = 0;
-   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA vertical offset is missing => NITRATE RTQC specific test (Test #59) performed with a 0 dbar vertical offset\n', ...
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA vertical offset is missing - NITRATE RTQC specific test (Test #59) performed with a 0 dbar vertical offset\n', ...
       a_floatNum, a_cyNum);
 end
 
 if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
-   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);
    return
 end
@@ -134,7 +134,7 @@ idF2 = find(tabOpticalWavelengthUv <= 240);
 pixelBegin = idF1(1);
 pixelEnd = idF2(end);
 if ((pixelBegin < floatPixelBegin) || (pixelEnd > floatPixelEnd))
-   fprintf('RTQC_WARNING: Float #%d Cycle #%d: not enough SUNA transmitted pixels => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: not enough SUNA transmitted pixels - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);
    return
 end
@@ -245,20 +245,24 @@ if (~isempty(idNoDef))
       a = [tabOpticalWavelengthUv' tabENitrate'];
       for idL = 1:size(absorbanceCorNitrate, 1)
          b = absorbanceCorNitrate(idL, :)';
-         mdl = fitlm(double(a), double(b)); % both inputs should be double since R2020b
-         
-         % check RMS Error
-         rawResiduals = mdl.Residuals.Raw;
-         fitErrorNitrate = sqrt(sum(rawResiduals.*rawResiduals)/size(absorbanceCorNitrate, 2));
-         if (fitErrorNitrate >= 0.003)
-            %             fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE RMS Error test failed (level: %d value: %g)\n', ...
-            %                a_floatNum, a_cyNum, idL, fitErrorNitrate);
-            profNitrateQc(idL) = set_qc(profNitrateQc(idL), g_decArgo_qcStrBad);
+         if (all(imag(b) == 0))
+            mdl = fitlm(double(a), double(b)); % both inputs should be double since R2020b
+            
+            % check RMS Error
+            rawResiduals = mdl.Residuals.Raw;
+            fitErrorNitrate = sqrt(sum(rawResiduals.*rawResiduals)/size(absorbanceCorNitrate, 2));
+            if (fitErrorNitrate >= 0.003)
+               %             fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE RMS Error test failed (level: %d value: %g)\n', ...
+               %                a_floatNum, a_cyNum, idL, fitErrorNitrate);
+               profNitrateQc(idL) = set_qc(profNitrateQc(idL), g_decArgo_qcStrBad);
+            end
+         else
+            profNitrateQc(idL) = g_decArgo_qcStrMissing;
          end
       end
       
    else
-      fprintf('RTQC_WARNING: Float #%d Cycle #%d: the ''fitlm'' function is not available in your Matlab configuration => unable to perform ''RMS Error'' part of NITRATE RTQC specific test (Test #59)\n', ...
+      fprintf('RTQC_WARNING: Float #%d Cycle #%d: the ''fitlm'' function is not available in your Matlab configuration - unable to perform ''RMS Error'' part of NITRATE RTQC specific test (Test #59)\n', ...
          a_floatNum, a_cyNum);
    end
    

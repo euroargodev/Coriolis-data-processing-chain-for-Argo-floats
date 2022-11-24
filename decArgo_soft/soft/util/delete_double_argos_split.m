@@ -134,21 +134,21 @@ for idDir = 1:nbDirs
                         if (compRes == 1)
 
                            % files are identical
-                           fprintf('INFO: Files %s and %s are identical => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
+                           fprintf('INFO: Files %s and %s are identical - %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
                            break
                         elseif (compRes == 3)
 
                            % new file contents is included in base file
-                           fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
+                           fprintf('INFO: File %s includes file %s contents - %s deleted\n', dFiles(id1).name, dFiles(id2).name, dFiles(id2).name);
                            delete(fileName2);
                            deleted = 1;
                            break
                         elseif (compRes == 4)
 
                            % base file contents is included in new file
-                           fprintf('INFO: File %s includes file %s contents => %s deleted\n', dFiles(id2).name, dFiles(id1).name, dFiles(id1).name);
+                           fprintf('INFO: File %s includes file %s contents - %s deleted\n', dFiles(id2).name, dFiles(id1).name, dFiles(id1).name);
                            delete(fileName1);
                            deleted = 1;
                            break

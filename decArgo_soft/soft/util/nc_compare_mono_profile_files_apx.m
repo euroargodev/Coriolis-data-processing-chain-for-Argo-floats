@@ -282,7 +282,7 @@ for idFloat = 1:nbFloats
          descProfNumBase2New(idProf) = descProfNumNew(idMin);
          
          numbers = sprintf(' #%d', descProfNumNew(idF));
-         fprintf('WARNING: %d descent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
+         fprintf('WARNING: %d descent new profiles found around date %s (corresponding to profiles%s) - (the #%d is selected)\n', ...
             length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
          
          descProfNumNew(idMin) = [];
@@ -556,7 +556,7 @@ for idFloat = 1:nbFloats
             ascProfNumBase2New(idProf) = ascProfNumNew(idMin);
             
             numbers = sprintf(' #%d', ascProfNumNew(idF));
-            fprintf('WARNING: %d ascent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
+            fprintf('WARNING: %d ascent new profiles found around date %s (corresponding to profiles%s) - (the #%d is selected)\n', ...
                length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
             
             ascProfNumNew(idMin) = [];
@@ -910,7 +910,7 @@ for idFile = 1:length(monoProfFiles)
          
          [uJulD, idA, idC] = unique(julD);
          if (length(uJulD) > 1)
-            fprintf('WARNING: %d profiles in the %s NetCDF input file: %s => only the first one is considered\n', ...
+            fprintf('WARNING: %d profiles in the %s NetCDF input file: %s - only the first one is considered\n', ...
                length(uJulD), a_commentStr, profFileName);
          end
                     

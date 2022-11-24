@@ -33,7 +33,7 @@ for idFloat = 1:nbFloats
       floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatNum, []);
    
    if (isempty(floatArgosId))
-      fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
       continue
    end
    
@@ -46,7 +46,7 @@ for idFloat = 1:nbFloats
    elseif ((floatDecId > 3000) && (floatDecId < 4000))
       decode_nemo(floatNum);
    else
-      fprintf('ERROR: DecId #%d unavailable => nothing done\n', floatDecId);
+      fprintf('ERROR: DecId #%d unavailable - nothing done\n', floatDecId);
    end
 end
 

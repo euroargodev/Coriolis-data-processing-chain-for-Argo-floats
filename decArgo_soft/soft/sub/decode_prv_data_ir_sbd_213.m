@@ -119,11 +119,11 @@ if ((size(a_tabData, 1) ~= size(unique(a_tabData, 'rows'), 1)))
          
          if (a_procLevel == 1)
             if (length(idEq) == 2)
-               fprintf('INFO: Float #%d: %s received twice => only one is decoded\n', ...
+               fprintf('INFO: Float #%d: %s received twice - only one is decoded\n', ...
                   g_decArgo_floatNum, ...
                   packetName);
             else
-               fprintf('INFO: Float #%d: %s received %d times => only one is decoded\n', ...
+               fprintf('INFO: Float #%d: %s received %d times - only one is decoded\n', ...
                   g_decArgo_floatNum, ...
                   packetName, ...
                   length(idEq));
@@ -268,7 +268,7 @@ for idMes = 1:size(a_tabData, 1)
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
          
          % float 3901863 has been programmed with no CTD acquisition during 2
-         % cycles => we cannot manage that for a subsurface cycle (detection of
+         % cycles - we cannot manage that for a subsurface cycle (detection of
          % surface/subsurface cycle is done with the number of CTD packets)
          if ((g_decArgo_floatNum == 3901863) && ...
                ~isempty(g_decArgo_cycleNum) && ...
@@ -289,7 +289,7 @@ for idMes = 1:size(a_tabData, 1)
          % BE CAREFUL
          % there is an issue with grounding day when the grounding occured
          % during the descent to profile depth phase (i.e. phase #5)
-         % => the decoded value should be 256 - transmitted value
+         % - the decoded value should be 256 - transmitted value
          if ((tabTech2(21) > 0) && (tabTech2(25) == 5))
             tabTech2(23) = 256 - tabTech2(23);
          end

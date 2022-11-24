@@ -64,7 +64,7 @@ for idL = 1:length(a_profInfoDataStr)
          o_profInfo.ProfTime = profDate;
 
       else
-         fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       

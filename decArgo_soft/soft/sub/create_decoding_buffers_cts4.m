@@ -535,7 +535,7 @@ for idCy = 1:length(cyNumList)
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
+            piDecStr = ' - DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d: FloatCy #%3d FloatProf #%2d: %4d SBD - %s - %s - %s%s%s\n', ...

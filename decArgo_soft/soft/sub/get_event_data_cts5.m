@@ -45,6 +45,11 @@ g_decArgo_eventDataUnseenCycleNum = [];
 global g_decArgo_clockOffset;
 g_decArgo_clockOffset = get_clock_offset_cts5_init_struct;
 
+% clock offset for TRAJ N_CYCLE
+global g_decArgo_clockOffsetForTrajNCy;
+g_decArgo_clockOffsetForTrajNCy = get_clock_offset_for_traj_n_cycle_cts5_init_struct;
+
+
 % get system file names
 eventFiles = manage_split_files({g_decArgo_archiveDirectory}, ...
    {[g_decArgo_filePrefixCts5 '_system_*.hex']}, a_decoderId);
@@ -174,7 +179,7 @@ for idL = 1:size(cyclePatternNumFloat, 1)
    end
 end
 
-% collect clock offset information
+% collect clock offset information (to adjust float times)
 idFClockOffset = find([g_decArgo_eventData{:, 4}] == 12);
 for idC = 1:length(idFClockOffset)
    g_decArgo_clockOffset.cycleNum = [g_decArgo_clockOffset.cycleNum g_decArgo_eventData{idFClockOffset(idC), 1}];
@@ -185,7 +190,89 @@ for idC = 1:length(idFClockOffset)
       g_decArgo_eventData{idFClockOffset(idC), 6}-g_decArgo_eventData{idFClockOffset(idC), 5}{:}];
 end
 
-% version below failed for 4901801 #44,0 => reset of the float
+% collect clock offset information (to set  CLOCK_OFFSET(N_CYCLE))
+
+% we generate a clock offset for each cycle and pattern numbers
+g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy = nan(1, size(a_cyclePatternNumFloat, 1));
+g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy = nan(1, size(a_cyclePatternNumFloat, 1));
+g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy = nan(1, size(a_cyclePatternNumFloat, 1));
+g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy = nan(1, size(a_cyclePatternNumFloat, 1));
+% first loop when a clock offset is present in the events
+for idL = 1:size(a_cyclePatternNumFloat, 1)
+   cyNum = a_cyclePatternNumFloat(idL, 1);
+   ptnNum = a_cyclePatternNumFloat(idL, 2);
+   
+   idClockOffset  = find( ...
+      (g_decArgo_clockOffset.cycleNum == cyNum) & ...
+      (g_decArgo_clockOffset.patternNum == ptnNum));
+   if (~isempty(idClockOffset))
+      
+      idJuldFloat  = find( ...
+         ([g_decArgo_eventData{:, 1}] == cyNum) & ...
+         ([g_decArgo_eventData{:, 2}] == ptnNum));
+      meanJuldFloat = mean([g_decArgo_eventData{idJuldFloat, 6}]);
+      
+      [g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy(idL)] = cyNum;
+      [g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy(idL)] = ptnNum;
+      [g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idL)] = meanJuldFloat;
+      [g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy(idL)] = mean(g_decArgo_clockOffset.clockOffset(idClockOffset));
+   end
+end
+% second loop to interpolate clock offset foe remaining cycles and patterns
+for idL = 1:size(a_cyclePatternNumFloat, 1)
+   cyNum = a_cyclePatternNumFloat(idL, 1);
+   ptnNum = a_cyclePatternNumFloat(idL, 2);
+   
+   idClockOffset  = find( ...
+      (g_decArgo_clockOffset.cycleNum == cyNum) & ...
+      (g_decArgo_clockOffset.patternNum == ptnNum));
+   if (isempty(idClockOffset))
+      
+      juldFloatPrev = '';
+      clockOffsetPrev = '';
+      juldFloatNext = '';
+      clockOffsetNext = '';
+      for idLP = idL-1:-1:1
+         idF  = find( ...
+            (g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy == a_cyclePatternNumFloat(idLP, 1)) & ...
+            (g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy == a_cyclePatternNumFloat(idLP, 2)));
+         if (~isempty(idF) && ~isnan(g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idF)))
+            juldFloatPrev = g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idF);
+            clockOffsetPrev = g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy(idF);
+            break
+         end
+      end
+      if (~isempty(juldFloatPrev))
+         for idLN = idL+1:size(a_cyclePatternNumFloat, 1)
+            idF  = find( ...
+               (g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy == a_cyclePatternNumFloat(idLN, 1)) & ...
+               (g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy == a_cyclePatternNumFloat(idLN, 2)));
+            if (~isempty(idF) && ~isnan(g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idF)))
+               juldFloatNext = g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idF);
+               clockOffsetNext = g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy(idF);
+               break
+            end
+         end
+         
+         if (~isempty(juldFloatNext))
+            
+            idJuldFloat  = find( ...
+               ([g_decArgo_eventData{:, 1}] == cyNum) & ...
+               ([g_decArgo_eventData{:, 2}] == ptnNum));
+            meanJuldFloat = mean([g_decArgo_eventData{idJuldFloat, 6}]);
+            
+            clockOffset = interp1([juldFloatPrev; juldFloatNext], [clockOffsetPrev; clockOffsetNext], meanJuldFloat);
+
+            [g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy(idL)] = cyNum;
+            [g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy(idL)] = ptnNum;
+            [g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idL)] = meanJuldFloat;
+            [g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy(idL)] = clockOffset;
+         end
+      end
+   end
+end
+
+% version below failed for 4901801 #44,0 - reset of the float
 % for idC = 1:length(idFCy)
 %    idStop = idFCy(idC)-1;
 %    if (idStart > 0)
@@ -364,13 +451,13 @@ while ((curBit-1)/8 < lastByteNum)
             % check if the new RTC set date is after float launch date - 365
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
-                  fprintf('WARNING: RTC correctly set to %s in file %s => end of event date correction\n', ...
+                  fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
-               fprintf('WARNING: RTC erroneously set to %s in file %s => start of event date correction\n', ...
+               fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
                   julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                clockError = 1;
             end
@@ -404,14 +491,14 @@ while ((curBit-1)/8 < lastByteNum)
          %                % check if the new RTC set date is after float launch date - 365
          %                if (evtData{:} > a_launchDate - 365)
          %                   if (ignoreEvts == 1)
-         %                      fprintf('WARNING: RTC correctly set to %s in file %s => end of ignored events\n', ...
+         %                      fprintf('WARNING: RTC correctly set to %s in file %s - end of ignored events\n', ...
          %                         julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
          %                      ignoreEvts = 0;
          %                      ignoreNextEvt = 1;
          %                   end
          %                else
          %                   ignoreEvts = 1;
-         %                   fprintf('WARNING: RTC erroneously set to %s in file %s => start of ignored events\n', ...
+         %                   fprintf('WARNING: RTC erroneously set to %s in file %s - start of ignored events\n', ...
          %                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
          %                end
          %             end
@@ -551,13 +638,13 @@ while ((curBit-1)/8 < lastByteNum)
             % check if the new RTC set date is after float launch date - 365
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
-                  fprintf('WARNING: RTC correctly set to %s in file %s => end of event date correction\n', ...
+                  fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
-               fprintf('WARNING: RTC erroneously set to %s in file %s => start of event date correction\n', ...
+               fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
                   julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                clockError = 1;
             end
@@ -591,14 +678,14 @@ while ((curBit-1)/8 < lastByteNum)
          %                % check if the new RTC set date is after float launch date - 365
          %                if (evtData{:} > a_launchDate - 365)
          %                   if (ignoreEvts == 1)
-         %                      fprintf('WARNING: RTC correctly set to %s in file %s => end of ignored events\n', ...
+         %                      fprintf('WARNING: RTC correctly set to %s in file %s - end of ignored events\n', ...
          %                         julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
          %                      ignoreEvts = 0;
          %                      ignoreNextEvt = 1;
          %                   end
          %                else
          %                   ignoreEvts = 1;
-         %                   fprintf('WARNING: RTC erroneously set to %s in file %s => start of ignored events\n', ...
+         %                   fprintf('WARNING: RTC erroneously set to %s in file %s - start of ignored events\n', ...
          %                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
          %                end
          %             end
@@ -738,13 +825,13 @@ while ((curBit-1)/8 < lastByteNum)
             % check if the new RTC set date is after float launch date - 365
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
-                  fprintf('WARNING: RTC correctly set to %s in file %s => end of event date correction\n', ...
+                  fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
-               fprintf('WARNING: RTC erroneously set to %s in file %s => start of event date correction\n', ...
+               fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
                   julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
                clockError = 1;
             end

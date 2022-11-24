@@ -96,7 +96,7 @@ end
 metaData = loadjson(jsonInputFileName);
 
 % fill the configuration values
-configValues1 = [];
+configValues1 = repmat({'nan'}, length(configNames1), 1);
 configValues2 = nan(length(configNames2), 1);
 
 if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
@@ -121,7 +121,7 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
          idPos = find(strncmp(jConfNames{id}, configNames1, idFUs(2)) == 1, 1);
          if (~isempty(idPos))
             if (~isempty(jConfValues{id}))
-               configValues1{end+1} = jConfValues{id};
+               configValues1{idPos} = jConfValues{id};
             end
          end
       end
@@ -203,7 +203,7 @@ if (~isnan(configValues2(idPosMc28)))
    ctdPumpSwitchOffPres = configValues2(idPosMc28);
 else
    ctdPumpSwitchOffPres = 5;
-   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
       g_decArgo_floatNum, ctdPumpSwitchOffPres);
 end
 

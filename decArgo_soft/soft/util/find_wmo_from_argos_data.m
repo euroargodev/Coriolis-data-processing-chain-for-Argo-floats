@@ -214,7 +214,7 @@ for idDir = 1:nbDirs
                   end
                end
             else
-               fprintf('INFO: empty file (no message with good CRC) => %d messages ignored\n', size(argosDataData, 1));
+               fprintf('INFO: empty file (no message with good CRC) - %d messages ignored\n', size(argosDataData, 1));
             end
          end
       end

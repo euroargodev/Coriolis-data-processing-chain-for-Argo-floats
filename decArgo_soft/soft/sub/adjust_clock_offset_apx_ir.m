@@ -164,7 +164,7 @@ if (~isempty(o_surfDataLog))
       % no clock set during the cycle
       if (~isempty(o_surfDataLog.dates))
          if (min(o_surfDataLog.dates) < min(clockOffsetJuldUtc))
-            % first surface measurement prior to any clock check => we use the
+            % first surface measurement prior to any clock check - we use the
             % first measured clock offset to adjust its time
             clockOffsetJuldUtc = [min(o_surfDataLog.dates)-clockOffsetValue(1)/86400 clockOffsetJuldUtc];
             clockOffsetValue = [clockOffsetValue(1) clockOffsetValue];
@@ -198,7 +198,7 @@ if (~isempty(o_surfDataLog))
             idDef = find((o_surfDataLog.datesAdj == o_surfDataLog.dateList.fillValue) & ...
                (o_surfDataLog.dates ~= o_surfDataLog.dateList.fillValue));
             if ((length(idForSet) ~= length(idDef)) || any(idForSet-idDef ~= 0))
-               % clock set occured before the surface sample to be adjusted => we use the
+               % clock set occured before the surface sample to be adjusted - we use the
                % last measured clock offset to adjust the surface sample
                clockOffsetJuldUtc = [clockOffsetJuldUtc(1) max(o_surfDataLog.dates)-clockOffsetValue(1)/86400 clockOffsetJuldUtc(2:end)];
                clockOffsetValue = [clockOffsetValue(1) clockOffsetValue(1) clockOffsetValue(2:end)];
@@ -273,7 +273,7 @@ if (~isempty(o_timeDataLog) && ~isempty(o_timeDataLog.transStartDate))
             idForSet = find((o_timeDataLog.transStartDateMTime > min(clockOffsetMtime(idForCy))) & ...
                (o_timeDataLog.transStartDateMTime < max(clockOffsetMtime(idForCy))));
             if (isempty(idForSet))
-               % clock set occured before the time to be adjusted => we use the
+               % clock set occured before the time to be adjusted - we use the
                % last measured clock offset to adjust the time
                clockOffsetJuldUtc = [clockOffsetJuldUtc(1) o_timeDataLog.transStartDate-clockOffsetValue(1)/86400 clockOffsetJuldUtc(2:end)];
                clockOffsetValue = [clockOffsetValue(1) clockOffsetValue(1) clockOffsetValue(2:end)];
@@ -341,7 +341,7 @@ if (~isempty(o_timeDataLog) && ~isempty(o_timeDataLog.transEndDate))
             idForSet = find((o_timeDataLog.transEndDateMTime > min(clockOffsetMtime(idForCy))) & ...
                (o_timeDataLog.transEndDateMTime < max(clockOffsetMtime(idForCy))));
             if (isempty(idForSet))
-               % clock set occured before the time to be adjusted => we use the
+               % clock set occured before the time to be adjusted - we use the
                % last measured clock offset to adjust the time
                clockOffsetJuldUtc = [clockOffsetJuldUtc(1) o_timeDataLog.transStartDate-clockOffsetValue(1)/86400 clockOffsetJuldUtc(2:end)];
                clockOffsetValue = [clockOffsetValue(1) clockOffsetValue(1) clockOffsetValue(2:end)];

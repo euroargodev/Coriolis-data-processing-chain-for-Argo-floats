@@ -40,7 +40,7 @@ global g_decArgo_janFirst1950InMatlab;
 [~, inputFileName, ~] = fileparts(a_filePathName);
 idF = strfind(inputFileName, '_');
 if (length(idF) < 3)
-   fprintf('ERROR: Inconsistent input file name: %s => ignored\n', a_filePathName);
+   fprintf('ERROR: Inconsistent input file name: %s - ignored\n', a_filePathName);
    return
 end
 inputCyNum = inputFileName(idF(2)+1:idF(3)-1);
@@ -58,7 +58,7 @@ pidNum = str2num(inputFileName(idF(end)+1:end));
    nearSurfaceDataStr ...
    ] = read_apx_ir_rudics_msg_file(a_filePathName);
 if (error == 1)
-   fprintf('ERROR: Error in file: %s => ignored\n', a_filePathName);
+   fprintf('ERROR: Error in file: %s - ignored\n', a_filePathName);
    return
 end
 
@@ -80,7 +80,7 @@ if (~isempty(gpsLocDate))
 end
 
 if (isempty(dates))
-   fprintf('ERROR: No dates in file: %s => ignored\n', a_filePathName);
+   fprintf('ERROR: No dates in file: %s - ignored\n', a_filePathName);
    return
 end
 

@@ -43,7 +43,7 @@ global g_decArgo_firstDeepCycleNumber;
 floatInternalCycleNumber = g_decArgo_cycleNum - g_decArgo_cycleNumOffset;
 
 if (size(a_floatParam, 1) > 1)
-   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages in the buffer) => using the last one\n', ...
+   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d param messages in the buffer) - using the last one\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(a_floatParam, 1));
 end
@@ -163,7 +163,7 @@ if (~isnan(newConfig(idPos)))
    ctdPumpSwitchOffPres = newConfig(idPos);
 else
    ctdPumpSwitchOffPres = 5;
-   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
       g_decArgo_floatNum, ctdPumpSwitchOffPres);
 end
 name = 'CONFIG_PX01';

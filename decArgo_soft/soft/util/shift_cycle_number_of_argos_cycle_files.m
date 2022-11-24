@@ -91,7 +91,7 @@ end
 
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
-   fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
+   fprintf('ERROR: The Argos cycle files directory %s does not exist - exit\n', DIR_INPUT_ARGOS_FILES);
    return
 end
 
@@ -104,7 +104,7 @@ end
 % find current float Argos Id
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
-   fprintf('ERROR: No information on float #%d => exit\n', floatNum);
+   fprintf('ERROR: No information on float #%d - exit\n', floatNum);
    return
 end
 floatArgosId = str2num(listArgosId{idF});
@@ -155,7 +155,7 @@ if (isempty(argosFileNames))
 else
    % shifted cycle number should be >= 0
    if (~isempty(find(argosFileCycle + offsetCycle < 0, 1)))
-      fprintf('WARNING: This shift will create Argos cycle file with negative cycle number => exit\n');
+      fprintf('WARNING: This shift will create Argos cycle file with negative cycle number - exit\n');
       return
    end
    
@@ -163,7 +163,7 @@ else
    newCy = setdiff(argosFileCycle + offsetCycle, argosFileCycle);
    for idCy = 1:length(newCy)
       if (~isempty(find(allArgosFileCycle == newCy(idCy), 1)))
-         fprintf('WARNING: An Argos cycle file already exists for cycle #%d => exit\n', newCy(idCy));
+         fprintf('WARNING: An Argos cycle file already exists for cycle #%d - exit\n', newCy(idCy));
          return
       end
    end

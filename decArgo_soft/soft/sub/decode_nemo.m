@@ -127,7 +127,7 @@ for idFloat = 1:nbFloats
    if (g_decArgo_realtimeFlag == 0)
       idF = find(listWmoNum == floatNum, 1);
       if (isempty(idF))
-         fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
+         fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
          continue
       end
       
@@ -157,7 +157,7 @@ for idFloat = 1:nbFloats
          floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatNum, []);
       
       if (isempty(floatArgosId))
-         fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
+         fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
          continue
       end
       
@@ -168,7 +168,7 @@ for idFloat = 1:nbFloats
       
    % check that it is a NEMO float
    if ~((floatDecId > 3000) && (floatDecId < 4000))
-      fprintf('ERROR: Float #%d is not a NEMO float => not decoded\n', floatNum);
+      fprintf('ERROR: Float #%d is not a NEMO float - not decoded\n', floatNum);
       continue
    end
    

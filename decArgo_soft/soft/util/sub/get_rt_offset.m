@@ -2,14 +2,14 @@
 % Get RT adjustment information from database.
 %
 % SYNTAX :
-%  [o_rtOffsetStruct] = get_rt_offset(a_metaData, a_idForWmo, a_floatNum)
+%  [o_rtOffsetStruct] = get_rt_offset(a_metaData, a_idForWmo)
 %
 % INPUT PARAMETERS :
 %
 % OUTPUT PARAMETERS :
 %   a_metaData : all meta-data information
 %   a_idForWmo : index in meta-data for the concerned float
-%   a_floatNum : float WMO number
+%   floatNum : float WMO number
 %
 % EXAMPLES :
 %
@@ -19,7 +19,7 @@
 % RELEASES :
 %   02/24/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_rtOffsetStruct] = get_rt_offset(a_metaData, a_idForWmo, a_floatNum)
+function [o_rtOffsetStruct] = get_rt_offset(a_metaData, a_idForWmo, floatNum)
 
 % output parameters initialization
 o_rtOffsetStruct = '';
@@ -28,6 +28,8 @@ o_rtOffsetStruct = '';
 idF = find(strcmp(a_metaData(a_idForWmo, 5), 'CALIB_RT_PARAMETER') == 1);
 if (~isempty(idF))
 
+   floatNum = str2double(a_metaData{a_idForWmo(idF(1)), 1});
+   
    rtOffsetData = [];
    
    dimLevelParam = [];
@@ -62,14 +64,14 @@ if (~isempty(idF))
          [~, statusSlope] = str2num(rtOffsetSlope.(fieldNameSlope));
          [~, statusValue] = str2num(rtOffsetValue.(fieldNameValue));
          if ((statusSlope == 0) || (statusValue == 0))
-            fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') => exit\n', ...
-               a_floatNum, coefStrOri);
+            fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+               floatNum, coefStrOri);
             return
          end
          dimLevelValueSlope = [dimLevelValueSlope dimLevel];
       else
-         fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
-            a_floatNum, coefStrOri);
+         fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') - exit\n', ...
+            floatNum, coefStrOri);
          return
       end
    end
@@ -107,15 +109,15 @@ if (~isempty(idF))
    if (~isempty(setdiff(dimLevelParam, dimLevelValueSlope)))
       missingDimLev = setdiff(dimLevelParam, dimLevelValueSlope);
       for idD = 1:length(missingDimLev)
-         fprintf('ERROR: float %d no CALIB_RT_COEFFICIENT provided for DIM_LEVEL %d => exit\n', ...
-            a_floatNum, missingDimLev(idD));
+         fprintf('ERROR: float %d no CALIB_RT_COEFFICIENT provided for DIM_LEVEL %d - exit\n', ...
+            floatNum, missingDimLev(idD));
       end
       return
    elseif (~isempty(setdiff(dimLevelValueSlope, dimLevelParam)))
       missingDimLev = setdiff(dimLevelValueSlope, dimLevelParam);
       for idD = 1:length(missingDimLev)
-         fprintf('ERROR: float %d no CALIB_RT_PARAMETER provided for DIM_LEVEL %d => exit\n', ...
-            a_floatNum, missingDimLev(idD));
+         fprintf('ERROR: float %d no CALIB_RT_PARAMETER provided for DIM_LEVEL %d - exit\n', ...
+            floatNum, missingDimLev(idD));
       end
       return
    end
@@ -124,15 +126,15 @@ if (~isempty(idF))
    if (~isempty(setdiff(dimLevelAdjError, dimLevelAdjErrorMethod)))
       missingDimLev = setdiff(dimLevelAdjError, dimLevelAdjErrorMethod);
       for idD = 1:length(missingDimLev)
-         fprintf('ERROR: float %d no CALIB_RT_ADJ_ERROR_METHOD provided for DIM_LEVEL %d => exit\n', ...
-            a_floatNum, missingDimLev(idD));
+         fprintf('ERROR: float %d no CALIB_RT_ADJ_ERROR_METHOD provided for DIM_LEVEL %d - exit\n', ...
+            floatNum, missingDimLev(idD));
       end
       return
    elseif (~isempty(setdiff(dimLevelAdjErrorMethod, dimLevelAdjError)))
       missingDimLev = setdiff(dimLevelAdjErrorMethod, dimLevelAdjError);
       for idD = 1:length(missingDimLev)
-         fprintf('ERROR: float %d no CALIB_RT_ADJUSTED_ERROR provided for DIM_LEVEL %d => exit\n', ...
-            a_floatNum, missingDimLev(idD));
+         fprintf('ERROR: float %d no CALIB_RT_ADJUSTED_ERROR provided for DIM_LEVEL %d - exit\n', ...
+            floatNum, missingDimLev(idD));
       end
       return
    end

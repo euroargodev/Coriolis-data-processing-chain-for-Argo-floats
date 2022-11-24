@@ -41,6 +41,7 @@ end
 confData = loadjson(jsonInputFileName);
 
 confDataFieldNames = fieldnames(confData);
+nbExtra = 0;
 for idField = 1:length(confDataFieldNames)
    confItemData = confData.(confDataFieldNames{idField});
    
@@ -73,6 +74,33 @@ for idField = 1:length(confDataFieldNames)
    end
    o_ncParamNames{idField} = confItemData.CONF_PARAM_NAME;
    o_ncParamDescriptions{idField} = confItemData.CONF_PARAM_DESCRIPTION;
+   
+   % duplicate entries for <short_sensor_name> not in Argo (Ex: 'Uvp')
+   if (ismember(a_decoderId, [126]))
+      % for <short_sensor_name> = 'Uvp', configuration labels have been
+      % duplicated in the JSON config file but we also
+      % we need to generate all labels (for all depth zones) because META_AUX
+      % needs a descrption for all its configuration labels
+      if (ismember(o_ncParamIds(idField), [1175:1183]))
+         for idZ = 1:5
+            paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
+               [{'<N>'} {num2str(idZ)}]);
+            nbExtra = nbExtra + 1;
+            o_ncParamIds(length(confDataFieldNames)+nbExtra) = o_ncParamIds(idField) + 1000;
+            o_ncParamNames(length(confDataFieldNames)+nbExtra) = {paramName};
+            o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
+         end
+      elseif (ismember(o_ncParamIds(idField), [1184]))
+         for idZ = 1:5
+            paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
+               [{'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);
+            nbExtra = nbExtra + 1;
+            o_ncParamIds(length(confDataFieldNames)+nbExtra) = o_ncParamIds(idField) + 1000;
+            o_ncParamNames(length(confDataFieldNames)+nbExtra) = {paramName};
+            o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
+         end
+      end
+   end
 end
 
 % sort the parameter names

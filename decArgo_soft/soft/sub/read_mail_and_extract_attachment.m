@@ -165,7 +165,7 @@ while 1
                   mailContents.attachementFileName = attachementFileName(1:idPos2+length('.sbd')-1);
                   attachementFileDone = 1;
                else
-                  fprintf('ERROR: Inconsistent attachement file name in mail file: %s => attachement ignored\n', a_fileName);
+                  fprintf('ERROR: Inconsistent attachement file name in mail file: %s - attachement ignored\n', a_fileName);
                end
             end
          else
@@ -219,11 +219,11 @@ if (~isempty(sbdData))
          end
          o_attachmentFound = 1;
       else
-         fprintf('ERROR: Inconsistent attachement file name for mail file: %s => attachement ignored\n', a_fileName);
+         fprintf('ERROR: Inconsistent attachement file name for mail file: %s - attachement ignored\n', a_fileName);
       end
    end
 elseif (o_mailContents.messageSize > 0)
-   fprintf('ERROR: Attachement not retrieved for mail file: %s => attachement ignored\n', a_fileName);
+   fprintf('ERROR: Attachement not retrieved for mail file: %s - attachement ignored\n', a_fileName);
 end
 
 return

@@ -73,17 +73,17 @@ else
    if (compRes == 1)
       
       % files are identical
-      fprintf('DEC_INFO: Files %s and %s are identical => not concatenated\n', a_baseFile, a_newFile);
+      fprintf('DEC_INFO: Files %s and %s are identical - not concatenated\n', a_baseFile, a_newFile);
       
    elseif (compRes == 3)
       
       % new file contents is included in base file
-      fprintf('DEC_INFO: File %s includes file %s contents => not concatenated\n', a_baseFile, a_newFile);
+      fprintf('DEC_INFO: File %s includes file %s contents - not concatenated\n', a_baseFile, a_newFile);
       
    elseif (compRes == 4)
       
       % base file contents is included in new file
-      fprintf('DEC_INFO: File %s includes file %s contents => replace %s by %s\n', a_newFile, a_baseFile, a_baseFile, a_newFile);
+      fprintf('DEC_INFO: File %s includes file %s contents - replace %s by %s\n', a_newFile, a_baseFile, a_baseFile, a_newFile);
       
       if (copy_file(a_newFile, a_baseFile) == 0)
          o_ok = 0;

@@ -908,7 +908,7 @@ for idL = 1:size(a_sensorData, 1)
       o_metaData = [o_metaData; dataStruct];
       
    else
-      fprintf('WARNING: Float #%d Cycle #%d: message #%d is not allowed as test message => not considered\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: message #%d is not allowed as test message - not considered\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, msgNum);
    end
 end

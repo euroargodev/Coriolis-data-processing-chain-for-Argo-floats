@@ -109,7 +109,7 @@ for idFloat = 1:nbFloats
    % find float SN and decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
       continue
    end
    floatDecId = listDecId(idF);
@@ -156,7 +156,7 @@ for idFloat = 1:nbFloats
             nearSurfaceDataStr ...
             ] = read_apx_ir_rudics_msg_file(filePathName);
          if (error == 1)
-            fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+            fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
             continue
          end
          

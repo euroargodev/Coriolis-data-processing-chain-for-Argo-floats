@@ -69,7 +69,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# GPS fix obtained in %d seconds.');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
+            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' - ignored\n', dataStr);
             continue
          end
          
@@ -80,7 +80,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Fix: %f %f %d/%d/%d %d %d');
          if (~isempty(errmsg) || (count ~= 7))
-            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
+            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' - ignored\n', dataStr);
             continue
          end
          
@@ -96,7 +96,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# Attempt to get GPS fix failed after %ds.');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
+            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' - ignored\n', dataStr);
             continue
          end
          
@@ -107,7 +107,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, '# Ice evasion initiated at P=%fdbars.');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' => ignored\n', dataStr);
+            fprintf('DEC_INFO: Anomaly detected while parsing GPS fixes ''%s'' - ignored\n', dataStr);
             continue
          end
          
@@ -135,7 +135,7 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
       o_gpsLocNbSat = [o_gpsLocNbSat; gpsLocNbSat];
       o_gpsLocAcqTime = [o_gpsLocAcqTime; gpsLocAcqTime];
    elseif (noFix == 0)
-      fprintf('DEC_INFO: Inconsistent information for GPS fix #%d => ignored\n', idGpsFix);
+      fprintf('DEC_INFO: Inconsistent information for GPS fix #%d - ignored\n', idGpsFix);
    end
 end
 

@@ -180,7 +180,7 @@ trajNCycleStruct = get_traj_n_cycle_init_struct(a_cycleNum, -1);
 tabTech = [];
 if (~isempty(a_tabTech))
    if ((g_decArgo_finalEolMode == 0) && (size(a_tabTech, 1) > 1))
-      fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer => using the last one\n', ...
+      fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer - using the last one\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
          size(a_tabTech, 1));
    end
@@ -826,64 +826,38 @@ else
    end
    
    % GPS locations
-   if (a_cycleNum < 256)
+   cycleTimeStructBis = [];
+   if (~isempty(g_decArgo_timeData))
+      idCycleStructBis = find([g_decArgo_timeData.cycleNum] == a_cycleNum);
+      if (~isempty(idCycleStructBis))
+         cycleTimeStructBis = g_decArgo_timeData.cycleTime(idCycleStructBis);
+      end
+   end
+   for idpos = 1:length(gpsCyLocDate)
+      measStruct = create_one_meas_surface(g_MC_Surface, ...
+         gpsCyLocDate(idpos), ...
+         gpsCyLocLon(idpos), ...
+         gpsCyLocLat(idpos), ...
+         'G', ...
+         ' ', ...
+         num2str(gpsCyLocQc(idpos)), 1);
+      idF = find([cycleTimeStructBis.gpsTimeAdj] == gpsCyLocDate(idpos));
+      if (length(idF) > 1)
+         [~, idMin] = min(abs(idpos - idF));
+         idF = idF(idMin);
+      end
+      if (~isempty(cycleTimeStructBis(idF).clockDrift))
+         measStruct.juld = measStruct.juld + (cycleTimeStructBis(idF).gpsTime-cycleTimeStructBis(idF).gpsTimeAdj);
+         measStruct.juldStatus = g_JULD_STATUS_2;
+         measStruct.juldAdjStatus = g_JULD_STATUS_2;
+      else
+         measStruct.juldStatus = g_JULD_STATUS_2;
+         measStruct.juldAdj = g_decArgo_ncDateDef;
+         measStruct.juldAdjStatus = g_JULD_STATUS_9;
+         measStruct.juldAdjQc = g_decArgo_qcStrMissing;
+      end
       
-      for idpos = 1:length(gpsCyLocDate)
-         measStruct = create_one_meas_surface(g_MC_Surface, ...
-            gpsCyLocDate(idpos), ...
-            gpsCyLocLon(idpos), ...
-            gpsCyLocLat(idpos), ...
-            'G', ...
-            ' ', ...
-            num2str(gpsCyLocQc(idpos)), 1);
-         if (~isempty(cycleTimeStruct.clockDrift))
-            measStruct.juld = measStruct.juld + (cycleTimeStruct.gpsTime-cycleTimeStruct.gpsTimeAdj);
-            measStruct.juldStatus = g_JULD_STATUS_2;
-            measStruct.juldAdjStatus = g_JULD_STATUS_2;
-         else
-            measStruct.juldStatus = g_JULD_STATUS_2;
-            measStruct.juldAdj = g_decArgo_ncDateDef;
-            measStruct.juldAdjStatus = g_JULD_STATUS_9;
-            measStruct.juldAdjQc = g_decArgo_qcStrMissing;
-         end
-         
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      end
-   else
-      
-      cycleTimeStructBis = [];
-      if (~isempty(g_decArgo_timeData))
-         idCycleStructBis = find([g_decArgo_timeData.cycleNum] == a_cycleNum);
-         if (~isempty(idCycleStructBis))
-            cycleTimeStructBis = g_decArgo_timeData.cycleTime(idCycleStructBis);
-         end
-      end
-      for idpos = 1:length(gpsCyLocDate)
-         measStruct = create_one_meas_surface(g_MC_Surface, ...
-            gpsCyLocDate(idpos), ...
-            gpsCyLocLon(idpos), ...
-            gpsCyLocLat(idpos), ...
-            'G', ...
-            ' ', ...
-            num2str(gpsCyLocQc(idpos)), 1);
-         idF = find([cycleTimeStructBis.gpsTimeAdj] == gpsCyLocDate(idpos));
-         if (length(idF) > 1)
-            [~, idMin] = min(abs(idpos - idF));
-            idF = idF(idMin);
-         end
-         if (~isempty(cycleTimeStructBis(idF).clockDrift))
-            measStruct.juld = measStruct.juld + (cycleTimeStructBis(idF).gpsTime-cycleTimeStructBis(idF).gpsTimeAdj);
-            measStruct.juldStatus = g_JULD_STATUS_2;
-            measStruct.juldAdjStatus = g_JULD_STATUS_2;
-         else
-            measStruct.juldStatus = g_JULD_STATUS_2;
-            measStruct.juldAdj = g_decArgo_ncDateDef;
-            measStruct.juldAdjStatus = g_JULD_STATUS_9;
-            measStruct.juldAdjQc = g_decArgo_qcStrMissing;
-         end
-         
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      end
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
    if (~isempty(gpsCyLocDate))

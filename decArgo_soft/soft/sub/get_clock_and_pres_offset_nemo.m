@@ -65,7 +65,7 @@ else
 end
 o_clockOffset.startupDate = g_decArgo_nemoStartupDate;
 if (isempty(g_decArgo_nemoStartupDate))
-      fprintf('WARNING: Float #%d: Cannot retrieve STARTUO_DATE => cycle timings cannot be computed\n', ...
+      fprintf('WARNING: Float #%d: Cannot retrieve STARTUO_DATE - cycle timings cannot be computed\n', ...
          g_decArgo_floatNum);
 end
 
@@ -126,7 +126,7 @@ for idFile = 1:length(profileFileNames)
          secondOrderInformationStr ...
          ] = read_nemo_profile_file(profileFilePathName);
       if (error == 1)
-         fprintf('ERROR: Error in file: %s => ignored\n', profileFilePathName);
+         fprintf('ERROR: Error in file: %s - ignored\n', profileFilePathName);
          continue
       elseif (error == 2)
          continue
@@ -162,7 +162,7 @@ for idFile = 1:length(profileFileNames)
          colNames = surfaceGpsData.paramName;
          for idL = 1:size(surfaceGpsData.paramValue, 1)
             if (any(isnan(surfaceGpsData.paramValue(idL, :))))
-               fprintf('WARNING: NaN value in GPS data in file: %s => ignored\n', profileFilePathName);
+               fprintf('WARNING: NaN value in GPS data in file: %s - ignored\n', profileFilePathName);
                continue
             end
             gpsLocCycleNum = [gpsLocCycleNum; cycleNumber];
@@ -200,7 +200,7 @@ for idFile = 1:length(profileFileNames)
          colNames = iridiumPositions.paramName;
          for idL = 1:size(iridiumPositions.paramValue, 1)
             if (any(isnan(iridiumPositions.paramValue(idL, :))))
-               fprintf('WARNING: NaN value in Iridium data in file: %s => ignored\n', profileFilePathName);
+               fprintf('WARNING: NaN value in Iridium data in file: %s - ignored\n', profileFilePathName);
                continue
             end
             iridiumFix = get_iridium_fix_init_struct;
@@ -326,19 +326,11 @@ for idCy = 1:length(cycleNumList)
    
    % retrieve the last good GPS location of the previous cycle
    if (curCyNum > 0)
-      idF = find(gpsLocCycleNum == curCyNum-1);
+      idF = find((gpsLocCycleNum == curCyNum-1) & (gpsLocQc == 1), 1, 'last');
       if (~isempty(idF))
-         prevLocDate = gpsLocDate(idF);
-         prevLocLon = gpsLocLon(idF);
-         prevLocLat = gpsLocLat(idF);
-         prevLocQc = gpsLocQc(idF);
-         
-         idGoodLoc = find(prevLocQc == 1);
-         if (~isempty(idGoodLoc))
-            lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-            lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-            lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
-         end
+         lastLocDateOfPrevCycle = gpsLocDate(idF);
+         lastLocLonOfPrevCycle = gpsLocLon(idF);
+         lastLocLatOfPrevCycle = gpsLocLat(idF);
       end
    end
    

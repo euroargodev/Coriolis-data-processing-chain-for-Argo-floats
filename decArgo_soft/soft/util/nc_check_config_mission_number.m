@@ -25,12 +25,12 @@ function nc_check_config_mission_number(varargin)
 
 % top directory of the input NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'E:\202002-ArgoData\coriolis\';
+% DIR_INPUT_NC_FILES = 'E:\202002-ArgoData\coriolis\';
 
 % default list of floats to convert (should be set to '' if we want to process
 % all the floats of the DIR_INPUT_NC_FILES directory)
 FLOAT_LIST_FILE_NAME = ''; % process all the floats of the DIR_INPUT_NC_FILES directory
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

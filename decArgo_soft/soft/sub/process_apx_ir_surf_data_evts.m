@@ -56,7 +56,7 @@ if (~isempty(idEvts))
          if (~isempty(idF))
             cycleNum = str2num(dataStr(length(PATTERN+1):idF(1)-1));
          else
-            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'TelemetryInit()', dataStr);
+            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'TelemetryInit()', dataStr);
          end
       end
    end
@@ -79,12 +79,12 @@ if (~isempty(idEvts))
             if (any(strfind(dataStr, HEADER)))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars/%d,%d,%d');
                if (~isempty(errmsg) || (count ~= 4))
-                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                   continue
                end
                data = [data; events(idEv).time  val' events(idEv).mTime];
             else
-               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             end
             
          case {1105} % 030512
@@ -93,12 +93,12 @@ if (~isempty(idEvts))
             if (any(strfind(dataStr, HEADER)))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars / %fuM %fC %f %f / %d,%d,%d');
                if (~isempty(errmsg) || (count ~= 8))
-                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                   continue
                end
                data = [data; events(idEv).time val(1) val(4) val(3) val(6) val(7) val(8) events(idEv).mTime];
             else
-               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             end
             
          case {1110, 1111, 1112} % 092813 & 073014 & 102815
@@ -107,12 +107,12 @@ if (~isempty(idEvts))
             if (any(strfind(dataStr, HEADER)))
                [val, count, errmsg, nextIndex] = sscanf(dataStr(length(HEADER)+1:end), '%fdbars / %fuM %fC %f %f %f / %d,%d,%d');
                if (~isempty(errmsg) || (count ~= 9))
-                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+                  fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                   continue
                end
                data = [data; events(idEv).time val(1) val(3) val(4) val(5) val(6) val(7) val(8) events(idEv).mTime];
             else
-               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             end
             
          case {1201} % 061113
@@ -121,7 +121,7 @@ if (~isempty(idEvts))
             if (any(strfind(dataStr, HEADER)))
                % surface measurements are not reported in log file
             else
-               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             end
             
          otherwise

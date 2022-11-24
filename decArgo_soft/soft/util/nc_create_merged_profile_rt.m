@@ -364,7 +364,7 @@ a_varargin(idDel) = [];
 % check input parameters
 if (~isempty(a_varargin))
    if (rem(length(a_varargin), 2) ~= 0)
-      o_logLines{end+1} = sprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      o_logLines{end+1} = sprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return
    else
@@ -400,7 +400,7 @@ if (~isempty(a_varargin))
          elseif (strcmpi(a_varargin{id}, 'floatWmo'))
             g_cocm_floatWmo = a_varargin{id+1};
          else
-            o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
+            o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') - ignored\n', a_varargin{id});
          end
       end
    end
@@ -504,7 +504,7 @@ if (g_cocm_createOnlyMultiProfFlag == '0')
    end
    
    if (~isempty(g_cocm_floatWmo))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatWmo'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatWmo'') - ignored\n');
    end
    
 else
@@ -534,22 +534,22 @@ else
    end
    
    if (~isempty(g_cocm_floatCProfFileName))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCProfFileName'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCProfFileName'') - ignored\n');
    end
    if (~isempty(g_cocm_floatBProfFileName))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBProfFileName'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBProfFileName'') - ignored\n');
    end
    if (~isempty(g_cocm_floatMetaFileName))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatMetaFileName'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatMetaFileName'') - ignored\n');
    end
    if (~isempty(g_cocm_floatCTrajFileName))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCTrajFileName'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatCTrajFileName'') - ignored\n');
    end
    if (~isempty(g_cocm_floatBTrajFileName))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBTrajFileName'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''floatBTrajFileName'') - ignored\n');
    end
    if (~isempty(g_cocm_createMultiProfFlag))
-      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''createMultiProfFlag'') => ignored\n');
+      o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''createMultiProfFlag'') - ignored\n');
    end
    
 end

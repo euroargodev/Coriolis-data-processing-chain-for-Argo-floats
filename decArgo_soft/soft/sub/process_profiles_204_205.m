@@ -65,7 +65,7 @@ if (~isempty(a_tabTech))
    
    % retrieve the last pumped PRES from the tech msg
    if (size(a_tabTech, 1) > 1)
-      fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer => using the last one\n', ...
+      fprintf('WARNING: Float #%d cycle #%d: %d tech message in the buffer - using the last one\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
          size(a_tabTech, 1));
    end
@@ -86,12 +86,12 @@ if (isempty(presCutOffProf))
    if (~isempty(ctpPumpSwitchOffPres))
       presCutOffProf = ctpPumpSwitchOffPres + 0.5;
       
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data => value retrieved from the configuration\n', ...
+      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data - value retrieved from the configuration\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    else
       presCutOffProf = 5 + 0.5;
       
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data and in the configuration => value set to 5 dbars\n', ...
+      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data and in the configuration - value set to 5 dbars\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
    end
 end

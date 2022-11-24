@@ -718,7 +718,7 @@ if (~a_floatDmFlag)
                         g_decArgo_floatNum, ...
                         length(tabNewFileNames));
                   else
-                     fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents, %d SBD files\n', ...
+                     fprintf('BUFF_INFO: Float #%d: Last step - processing buffer contents, %d SBD files\n', ...
                         g_decArgo_floatNum, ...
                         length(tabNewFileNames));
                      
@@ -960,8 +960,8 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % consistency
-   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   % consistent
+   [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % set QC parameters to '3' when the sensor state is ko
    [o_tabProfiles, o_tabTrajNMeas] = update_qc_from_sensor_state_ir_rudics_sbd2( ...

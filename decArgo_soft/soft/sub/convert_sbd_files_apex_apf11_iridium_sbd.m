@@ -79,7 +79,7 @@ for iFile = 1:length(sbdFiles)
       % check if an existing current float file could be finalized
       if (~isempty(currentData))
          if (currentData.nbSbdFileExpected ~= currentData.nbSbdFileUsed)
-            fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Incomplete file : %s => ignored\n', currentData.floatFileName{:});
+            fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Incomplete file : %s - ignored\n', currentData.floatFileName{:});
          else
             dataList = [dataList; currentData];
          end
@@ -109,19 +109,19 @@ for iFile = 1:length(sbdFiles)
       % is chosen according to float date, thus the header SBD file could have
       % been ignored)
       if (isempty(prevData) && isempty(currentData))
-         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Starting with SBD with no header in file : %s => ignored\n', sbdFileName);
+         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Starting with SBD with no header in file : %s - ignored\n', sbdFileName);
          continue
       end
       
       % SBD file contents transmitted twice
       if (~isempty(prevData) && (length(sbdData) == length(prevData)) && ~any(sbdData ~= prevData))
-         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Duplicated data in file : %s => ignored\n', sbdFileName);
+         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Duplicated data in file : %s - ignored\n', sbdFileName);
          continue
       end
       
       % not needed additional SBD file
       if (currentData.nbSbdFileExpected == currentData.nbSbdFileUsed)
-         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Useless data in file : %s => ignored\n', sbdFileName);
+         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Useless data in file : %s - ignored\n', sbdFileName);
          continue
       end
       
@@ -132,7 +132,7 @@ for iFile = 1:length(sbdFiles)
       
       prevData = sbdData;
    else
-      fprintf('WARNING: convert_sbd_files_apex_apf11_iridium_sbd: Anomaly in file : %s => ignored\n', sbdFileName);
+      fprintf('WARNING: convert_sbd_files_apex_apf11_iridium_sbd: Anomaly in file : %s - ignored\n', sbdFileName);
       continue
    end
    
@@ -160,7 +160,7 @@ end
 % flush last SBD file data
 if (~isempty(currentData))
    if (currentData.nbSbdFileExpected ~= currentData.nbSbdFileUsed)
-      fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Incomplete file : %s => ignored\n', currentData.floatFileName{:});
+      fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Incomplete file : %s - ignored\n', currentData.floatFileName{:});
    else
       dataList = [dataList; currentData];
    end

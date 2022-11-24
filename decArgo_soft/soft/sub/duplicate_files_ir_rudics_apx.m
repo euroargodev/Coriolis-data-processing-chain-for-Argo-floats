@@ -57,7 +57,7 @@ for idFile = 1:length(fileIdList)
    
    fileNames = dir(dataFilePathName);
    if (fileNames(1).bytes == 0)
-      fprintf('RSYNC_INFO: Empty file: %s => ignored\n', dataFilePathName);
+      fprintf('RSYNC_INFO: Empty file: %s - ignored\n', dataFilePathName);
       continue
    end
    
@@ -97,7 +97,7 @@ for idFile = 1:length(fileIdList)
          nearSurfaceDataStr ...
          ] = read_apx_ir_rudics_msg_file(dataFilePathName);
       if (error == 1)
-         fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+         fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
             a_floatNum, dataFilePathName);
          continue
       end
@@ -151,7 +151,7 @@ for idFile = 1:length(fileIdList)
       if (~isempty(dates))
          date = min(dates);
       else
-         fprintf('RSYNC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
+         fprintf('RSYNC_INFO: Float #%d: No dates in file ''%s'' - ignored\n', ...
             a_floatNum, dataFilePathName);
          continue
       end
@@ -160,7 +160,7 @@ for idFile = 1:length(fileIdList)
       
       [error, events] = read_apx_ir_rudics_log_file(dataFilePathName);
       if (error == 1)
-         fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+         fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
             a_floatNum, dataFilePathName);
          continue
       end
@@ -312,7 +312,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.log']))))
          % use deployment date
          [error, events] = read_apx_ir_rudics_log_file([g_decArgo_archiveDirectory fileName]);
          if (error == 1)
-            fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                a_floatNum, [g_decArgo_archiveDirectory fileName]);
             continue
          end
@@ -405,7 +405,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
             nearSurfaceDataStr ...
             ] = read_apx_ir_rudics_msg_file([g_decArgo_archiveDirectory fileName]);
          if (error == 1)
-            fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('RSYNC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                a_floatNum, [g_decArgo_archiveDirectory fileName]);
             continue
          end
@@ -536,7 +536,7 @@ if (~isempty(anomalyCyList))
          fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
          
          move_file(filePathName, [filePath '/' fileNameOut fileExt]);
-         %          fprintf('\t=> File %s moved to %s\n', ...
+         %          fprintf('\t- File %s moved to %s\n', ...
          %             [fileName fileExt], ...
          %             [fileNameOut fileExt]);
       end
@@ -612,7 +612,7 @@ if (~isempty(anomalyCyList))
                   fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
                   
                   move_file(filePathName, [filePath '/' fileNameOut fileExt]);
-                  %                   log{end+1} = sprintf('\t=> File %s moved to %s\n', ...
+                  %                   log{end+1} = sprintf('\t- File %s moved to %s\n', ...
                   %                      [fileName fileExt], ...
                   %                      [fileNameOut fileExt]);
                   printLog = 1;

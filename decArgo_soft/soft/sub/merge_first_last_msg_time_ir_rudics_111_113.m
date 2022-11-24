@@ -180,6 +180,15 @@ end
 
 if (~isempty(a_tabTrajNCycle))
    
+   % change profileNumber of the PRELUDE message to 0 (and surfOnly to 2)
+   idPrelude = find(([a_tabTrajNCycle.cycleNumber] == 1) & ...
+      ([a_tabTrajNCycle.profileNumber] == 0) & ...
+      ([a_tabTrajNCycle.surfOnly] == 1));
+   if (~isempty(idPrelude))
+      [a_tabTrajNCycle(idPrelude).cycleNumber] = deal(0);
+      [a_tabTrajNCycle(idPrelude).surfOnly] = deal(2);
+   end
+   
    % assign the data of the second Iridium session to the end of the previous cycle
    cycleNumList = [a_tabTrajNCycle.cycleNumber];
    profNumList = [a_tabTrajNCycle.profileNumber];

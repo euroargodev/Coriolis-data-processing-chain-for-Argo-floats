@@ -81,7 +81,7 @@ for idMes = 1:size(tabSensors, 1)
          % sensor data type
          sensorDataType = tabSensors(idMes, 2);
          if ((sensorDataType+1 < 1) || (sensorDataType+1 > length(lut)))
-            fprintf('WARNING: Inconsistent sensorDataType (%d) => packet ignored\n', ...
+            fprintf('WARNING: Inconsistent sensorDataType (%d) - packet ignored\n', ...
                sensorDataType);
             continue
          end
@@ -312,7 +312,7 @@ for idMes = 1:size(tabSensors, 1)
          fclose(fId);
       end
       %       elseif (~isempty(cycleNum))
-      %          fprintf('WARNING: Cycle number of the data (%d) differ from cycle number of the SBD file name (%d) => data not considered\n', ...
+      %          fprintf('WARNING: Cycle number of the data (%d) differ from cycle number of the SBD file name (%d) - data not considered\n', ...
       %             cycleNum, a_cyNumFile);
       %       end
    else
@@ -365,7 +365,7 @@ for idMes = 1:size(tabSensors, 1)
             fclose(fId);
          end
          %          else
-         %             fprintf('WARNING: Cycle number of the data (%d) differ from cycle number of the SBD file name (%d) => data not considered\n', ...
+         %             fprintf('WARNING: Cycle number of the data (%d) differ from cycle number of the SBD file name (%d) - data not considered\n', ...
          %                cycleNum, a_cyNumFile);
          %          end
       end

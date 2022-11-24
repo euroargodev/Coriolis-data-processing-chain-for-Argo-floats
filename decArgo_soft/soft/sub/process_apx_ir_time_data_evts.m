@@ -56,7 +56,7 @@ if (any(strcmp({a_events.cmd}, 'DescentInit()')))
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Deep profile %d initiated at mission-time %dsec.');
          if (~isempty(errmsg) || (count ~= 2))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          o_timeData.cycleNum = val(1);
@@ -67,7 +67,7 @@ if (any(strcmp({a_events.cmd}, 'DescentInit()')))
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Park profile %d initiated at mission-time %dsec.');
          if (~isempty(errmsg) || (count ~= 2))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          o_timeData.cycleNum = val(1);
@@ -80,14 +80,14 @@ if (any(strcmp({a_events.cmd}, 'DescentInit()')))
          if (~isempty(errmsg) || (count ~= 1))
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Surface pressure: %fdbars.  IER: %i');
             if (~isempty(errmsg) || (count ~= 2))
-               fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                continue
             end
          end
          o_timeData.descentStartSurfPres = val(1);
          
       else
-         fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'DescentInit()', dataStr);
+         fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'DescentInit()', dataStr);
       end
    end
 end
@@ -158,13 +158,13 @@ if (any(strcmp({a_events.cmd}, 'ProfileInit()')))
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'PrfId:%d  Pressure:%fdbar  pTable[%d]:%ddbar');
          if (~isempty(errmsg) || (count ~= 4))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
          if (isempty(o_timeData.cycleNum))
             o_timeData.cycleNum = val(1);
          elseif (o_timeData.cycleNum ~= val(1))
-            fprintf('DEC_INFO: %sAnomaly detected between cycle number of DST and AST => ignored\n', errorHeader);
+            fprintf('DEC_INFO: %sAnomaly detected between cycle number of DST and AST - ignored\n', errorHeader);
             continue
          end
          o_timeData.ascentStartDate = events(idEv).time;
@@ -173,7 +173,7 @@ if (any(strcmp({a_events.cmd}, 'ProfileInit()')))
       else
          idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
          if (isempty([idF{:}]))
-            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'ProfileInit()', dataStr);
+            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'ProfileInit()', dataStr);
             continue
          end
       end
@@ -206,7 +206,7 @@ if (any(strcmp({a_events.cmd}, 'SurfaceDetect()')))
          if (~isempty(errmsg) || (count ~= 3))
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'SurfacePressure:%fdbars Pressure:%fdbars BuoyancyPosition:%d');
             if (~isempty(errmsg) || (count ~= 3))
-               fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing time information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                continue
             end
          end
@@ -216,7 +216,7 @@ if (any(strcmp({a_events.cmd}, 'SurfaceDetect()')))
       else
          idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
          if (isempty([idF{:}]))
-            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'SurfaceDetect()', dataStr);
+            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'SurfaceDetect()', dataStr);
             continue
          end
       end
@@ -267,7 +267,7 @@ if (any(strcmp({a_events.cmd}, 'login()')))
       else
          idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
          if (isempty([idF{:}]))
-            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'login()', dataStr);
+            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'login()', dataStr);
             continue
          end
       end
@@ -302,7 +302,7 @@ if (any(strcmp({a_events.cmd}, 'logout()')))
       else
          idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
          if (isempty([idF{:}]))
-            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' => ignored\n', errorHeader, 'logout()', dataStr);
+            fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'logout()', dataStr);
             continue
          end
       end

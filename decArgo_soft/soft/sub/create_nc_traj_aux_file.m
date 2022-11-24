@@ -819,7 +819,7 @@ if (nbMeasParam > 0)
       valueStr = char(measUniqueParamName(idParam));
       
       if (length(valueStr) > paramNameLength)
-         fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) => name truncated\n', ...
+         fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) - name truncated\n', ...
             g_decArgo_floatNum, valueStr, paramNameLength);
          valueStr = valueStr(1:paramNameLength);
       end
@@ -873,7 +873,7 @@ if (nbMeasParam > 0)
          netcdf.putVar(fCdf, historyDateVarId, ...
             fliplr([0 0]), fliplr([size(histoDate, 2) size(histoDate, 1)]), histoDate);
       else
-         fprintf('WARNING: Float #%d : N_CYCLE=%d in existing file, N_CYCLE=%d in updated file => history information not copied when updating file %s\n', ...
+         fprintf('WARNING: Float #%d : N_CYCLE=%d in existing file, N_CYCLE=%d in updated file - history information not copied when updating file %s\n', ...
             g_decArgo_floatNum, length(ncDataMode), length(cycles), ncPathFileName);
       end
    end

@@ -126,7 +126,7 @@ for idFloat = 1:nbFloats
    if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
       idF = find(listWmoNum == floatNum, 1);
       if (isempty(idF))
-         fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
+         fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
          continue
       end
       
@@ -171,7 +171,7 @@ for idFloat = 1:nbFloats
          floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatNum, []);
       
       if (isempty(floatArgosId))
-         fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
+         fprintf('ERROR: No information on float #%d - nothing done\n', floatNum);
          continue
       end
       
@@ -182,7 +182,7 @@ for idFloat = 1:nbFloats
    
    % check that it is a PROVOR float
    if (floatDecId > 1000)
-      fprintf('ERROR: Float #%d is not a Provor float => not decoded\n', floatNum);
+      fprintf('ERROR: Float #%d is not a Provor float - not decoded\n', floatNum);
       continue
    end
    
@@ -375,61 +375,53 @@ for idFloat = 1:nbFloats
    if (isempty(g_decArgo_outputCsvFileId))
       % save decoded data in NetCDF files
       
-      if ~(isempty(tabProfiles) && ...
-            isempty(tabTrajNMeas) && ...
-            isempty(tabTrajNCycle) && ...
-            isempty(tabNcTechIndex) && ...
-            isempty(tabTechNMeas) && ...
-            isempty(structConfig) && ...
-            isempty(tabProfiles))
-         
-         % meta-data used in TRAJ, PROF and TECH NetCDF files
-         % when creating the META NetcCDF file the JSON meta-data file is opened
-         % and all needed information are copied
-         wantedMetaNames = [ ...
-            {'PROJECT_NAME'} ...
-            {'DATA_CENTRE'} ...
-            {'PI_NAME'} ...
-            {'FLOAT_SERIAL_NO'} ...
-            {'FIRMWARE_VERSION'} ...
-            {'CALIB_RT_PARAMETER'} ...
-            {'CALIB_RT_EQUATION'} ...
-            {'CALIB_RT_COEFFICIENT'} ...
-            {'CALIB_RT_COMMENT'} ...
-            {'CALIB_RT_DATE'} ...
-            ];
-         
-         % retrieve information from json meta-data file
-         [additionalMetaData] = get_meta_data_from_json_file(floatNum, wantedMetaNames);
-         
-         % NetCDF MONO-PROFILE files
-         if (g_decArgo_generateNcMonoProf ~= 0)
-            create_nc_mono_prof_files(floatDecId, ...
-               tabProfiles, additionalMetaData);
-         end
-         
-         % NetCDF MULTI-PROFILE files
-         if (g_decArgo_generateNcMultiProf ~= 0)
-            create_nc_multi_prof_file(floatDecId, ...
-               tabProfiles, additionalMetaData);
-         end
-         
-         % NetCDF TRAJ file
-         if (g_decArgo_generateNcTraj ~= 0)
-            create_nc_traj_file(floatDecId, ...
-               tabTrajNMeas, tabTrajNCycle, additionalMetaData);
-         end
-         
-         % NetCDF TECHNICAL file
-         if (g_decArgo_generateNcTech ~= 0)
-            create_nc_tech_file(floatDecId, ...
-               tabNcTechIndex, tabNcTechVal, tabTechNMeas, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
-         end
-         
-         % NetCDF META-DATA file
-         if (g_decArgo_generateNcMeta ~= 0)
-            create_nc_meta_file(floatDecId, structConfig);
-         end
+      % meta-data used in TRAJ, PROF and TECH NetCDF files
+      % when creating the META NetcCDF file the JSON meta-data file is opened
+      % and all needed information are copied
+      wantedMetaNames = [ ...
+         {'PROJECT_NAME'} ...
+         {'DATA_CENTRE'} ...
+         {'PI_NAME'} ...
+         {'FLOAT_SERIAL_NO'} ...
+         {'FIRMWARE_VERSION'} ...
+         {'CALIB_RT_PARAMETER'} ...
+         {'CALIB_RT_EQUATION'} ...
+         {'CALIB_RT_COEFFICIENT'} ...
+         {'CALIB_RT_COMMENT'} ...
+         {'CALIB_RT_DATE'} ...
+         ];
+      
+      % retrieve information from json meta-data file
+      [additionalMetaData] = get_meta_data_from_json_file(floatNum, wantedMetaNames);
+      
+      % NetCDF MONO-PROFILE files
+      if ((g_decArgo_generateNcMonoProf ~= 0) && ~isempty(tabProfiles))
+         create_nc_mono_prof_files(floatDecId, ...
+            tabProfiles, additionalMetaData);
+      end
+      
+      % NetCDF MULTI-PROFILE files
+      if ((g_decArgo_generateNcMultiProf ~= 0) && ~isempty(tabProfiles))
+         create_nc_multi_prof_file(floatDecId, ...
+            tabProfiles, additionalMetaData);
+      end
+      
+      % NetCDF TRAJ file
+      if ((g_decArgo_generateNcTraj ~= 0) && ~isempty(tabTrajNMeas))
+         create_nc_traj_file(floatDecId, ...
+            tabTrajNMeas, tabTrajNCycle, additionalMetaData);
+      end
+      
+      % NetCDF TECHNICAL file
+      if ((g_decArgo_generateNcTech ~= 0) && ...
+            ~(isempty(tabNcTechIndex) && isempty(tabTechNMeas)))
+         create_nc_tech_file(floatDecId, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
+      end
+      
+      % NetCDF META-DATA file
+      if (g_decArgo_generateNcMeta ~= 0)
+         create_nc_meta_file(floatDecId, structConfig);
       end
       
       if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1))

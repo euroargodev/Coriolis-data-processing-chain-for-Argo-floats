@@ -89,6 +89,9 @@ switch (packType)
             
       cycleNum = tabTech1(1);
       
+      % check decoder Id
+      check_decoder_id(tabTech1(3), 212, g_decArgo_floatNum);
+      
       % compute the offset between float days and julian days
       julD2FloatDayOffset = -1;
       startDateInfo = [tabTech1(5:7); tabTech1(9)];

@@ -129,43 +129,49 @@ if (~isempty(a_tabTech))
             gpsLocQc = [gpsLocQc; 0];
             gpsLocAccuracy = [gpsLocAccuracy; 'G'];
             gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos(idP), end)];
-            
-            % compute the JAMSTEC QC for the GPS locations of the current cycle
-            
-            lastLocDateOfPrevCycle = g_decArgo_dateDef;
-            lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
-            lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
-            
-            % retrieve the last good GPS location of the previous cycle
-            % (a_cycleNum-1)
-            idF = find(gpsLocCycleNum == a_cycleNum-1);
-            if (~isempty(idF))
-               prevLocDate = gpsLocDate(idF);
-               prevLocLon = gpsLocLon(idF);
-               prevLocLat = gpsLocLat(idF);
-               prevLocQc = gpsLocQc(idF);
-               
-               idGoodLoc = find(prevLocQc == 1);
-               if (~isempty(idGoodLoc))
-                  lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-                  lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-                  lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
-               end
-            end
-            
-            idF = find(gpsLocCycleNum == a_cycleNum);
-            locDate = gpsLocDate(idF);
-            locLon = gpsLocLon(idF);
-            locLat = gpsLocLat(idF);
-            locAcc = gpsLocAccuracy(idF);
-            
-            [locQc] = compute_jamstec_qc( ...
-               locDate, locLon, locLat, locAcc, ...
-               lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
-            
-            gpsLocQc(idF) = str2num(locQc')';
          end
       end
+            
+      % compute the JAMSTEC QC for the GPS locations of the current cycle
+      
+      lastLocDateOfPrevCycle = g_decArgo_dateDef;
+      lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
+      lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
+      
+      % retrieve the last good GPS location of the previous cycle
+      % (a_cycleNum-1)
+      if (a_cycleNum > 0)
+         idF = find((gpsLocCycleNum == a_cycleNum-1) & (gpsLocQc == 1), 1, 'last');
+         if (~isempty(idF))
+            lastLocDateOfPrevCycle = gpsLocDate(idF);
+            lastLocLonOfPrevCycle = gpsLocLon(idF);
+            lastLocLatOfPrevCycle = gpsLocLat(idF);
+         end
+      end
+      
+      idF = find(gpsLocCycleNum == a_cycleNum);
+      locDate = gpsLocDate(idF);
+      locLon = gpsLocLon(idF);
+      locLat = gpsLocLat(idF);
+      locAcc = gpsLocAccuracy(idF);
+      
+      [locQc] = compute_jamstec_qc( ...
+         locDate, locLon, locLat, locAcc, ...
+         lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
+      
+      gpsLocQc(idF) = str2num(locQc')';
+      
+      % sort GPS data according to location dates
+      [~, idSort] = sort(gpsLocDate);
+      gpsLocCycleNum = gpsLocCycleNum(idSort);
+      gpsLocProfNum = gpsLocProfNum(idSort);
+      gpsLocPhase = gpsLocPhase(idSort);
+      gpsLocDate = gpsLocDate(idSort);
+      gpsLocLon = gpsLocLon(idSort);
+      gpsLocLat = gpsLocLat(idSort);
+      gpsLocQc = gpsLocQc(idSort);
+      gpsLocAccuracy = gpsLocAccuracy(idSort);
+      gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
       
       % update GPS data global variable
       g_decArgo_gpsData{1} = gpsLocCycleNum;

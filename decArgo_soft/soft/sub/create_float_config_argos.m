@@ -176,7 +176,7 @@ if (~isnan(configValues(idPosTc18)))
    ctdPumpSwitchOffPres = configValues(idPosTc18);
 else
    ctdPumpSwitchOffPres = 5;
-   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
       g_decArgo_floatNum, ctdPumpSwitchOffPres);
 end
 

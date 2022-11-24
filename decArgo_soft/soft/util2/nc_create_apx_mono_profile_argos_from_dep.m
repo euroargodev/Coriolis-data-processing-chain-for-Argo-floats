@@ -449,7 +449,7 @@ if (exist(a_jsonInputFileName, 'file') == 2)
    [repRateMetaData] = get_meta_data_from_json_file(a_jsonInputFileName, wantedMetaNames);
    repRate = repRateMetaData{2};
 else
-   fprintf('ERROR: Json meta-data file not found: %s => CONFIG_REPETITION_RATE not found\n', ...
+   fprintf('ERROR: Json meta-data file not found: %s - CONFIG_REPETITION_RATE not found\n', ...
       a_jsonInputFileName);
 end
 o_configMetaData{end+1} = 'CONFIG_REPETITION_RATE';
@@ -791,7 +791,7 @@ for idVar = 1:2:length(a_profMetaData)
       end
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), varValue);
    else
-      fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+      fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
          varName);
    end
 end
@@ -806,7 +806,7 @@ for idVar = 1:length(paramlist)
       varValue = a_profileData.(lower(varName));
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), varValue);
    else
-      fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+      fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
          varName);
    end
    
@@ -816,7 +816,7 @@ for idVar = 1:length(paramlist)
          varValueAdj = a_profileData.([lower(varName) 'Adj']);
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameAdj), varValueAdj);
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameAdj);
       end
             

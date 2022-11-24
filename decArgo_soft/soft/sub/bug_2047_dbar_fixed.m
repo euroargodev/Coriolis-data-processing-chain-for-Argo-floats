@@ -101,7 +101,7 @@ elseif (a_decoderId == 24)
    end
    
    if (isempty(o_fixed))
-      fprintf('WARNING: Float #%d: Unable to retrieve FIRMWARE_VERSION => set bug 2047 dbar to ''not fixed''\n', ...
+      fprintf('WARNING: Float #%d: Unable to retrieve FIRMWARE_VERSION - set bug 2047 dbar to ''not fixed''\n', ...
          a_floatNum);
       o_fixed = 0;
    end

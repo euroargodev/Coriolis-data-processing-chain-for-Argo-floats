@@ -226,7 +226,7 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006 6901880]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006 6901880 6902957]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -292,6 +292,14 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 690300
          id = find((tabCyNum == 40) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+      case 6902957
+         % packet type 0 4 5 transmitted after data packets
+         id = find(tabCyNum == 119);
+         tabSession(id) = max(tabSession(id));
+         tabBase(id) = 0;
+         id = find(tabCyNum == 121);
+         tabSession(id) = max(tabSession(id));
+         tabBase(id) = 0;         
    end
 end
 
@@ -523,7 +531,7 @@ for cyNum = cyNumList
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
+            piDecStr = ' - DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d : %3d SBD - %s - %s - %s%s%s\n', ...

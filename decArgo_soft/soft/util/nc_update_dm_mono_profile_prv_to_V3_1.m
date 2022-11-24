@@ -495,7 +495,7 @@ else
       if (length(idF) == 1)
          cutOffPres = a_cutOffPresVal(idF);
       else
-         fprintf('WARNING: Float #%d: Unable to find the profile cut-off pressure for cycle #%d => profile not cut\n', ...
+         fprintf('WARNING: Float #%d: Unable to find the profile cut-off pressure for cycle #%d - profile not cut\n', ...
             a_floatNum, a_rtCyNum);
          cutOffPres = -9999;
       end
@@ -833,7 +833,7 @@ for idFile = 1:nbOutputFiles
          end
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -857,7 +857,7 @@ for idFile = 1:nbOutputFiles
          end
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -911,17 +911,17 @@ for idFile = 1:nbOutputFiles
    if (primaryProfInRtInput ~= primaryProfInOutput)
       [~, fileName, fileExt] = fileparts(a_inputDmFileName);
       if ((primaryProfInRtInput == 0) && (primaryProfInOutput == 1))
-         fprintf('ERROR: File %s no primary in RT input but exists in DM output => exit. We must create a new VSS for output primary profile\n', ...
+         fprintf('ERROR: File %s no primary in RT input but exists in DM output - exit. We must create a new VSS for output primary profile\n', ...
             [fileName fileExt]);
          return
       else
-         fprintf('INFO: File %s no primary in DM output but exists in RT input => RT data are ignored\n', ...
+         fprintf('INFO: File %s no primary in DM output but exists in RT input - RT data are ignored\n', ...
             [fileName fileExt]);
       end
    end
    
    if (primaryProfInOutput == 0)
-      fprintf('INFO: File %s no primary in DM output => a default primary profile is created (from secondary profile information)\n', ...
+      fprintf('INFO: File %s no primary in DM output - a default primary profile is created (from secondary profile information)\n', ...
          [fileName fileExt]);
    end
    
@@ -1082,7 +1082,7 @@ for idFile = 1:nbOutputFiles
             end
          end
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -1262,7 +1262,7 @@ for idFile = 1:nbOutputFiles
          end
          
       else
-         fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
             varNameOut);
       end
    end
@@ -1293,10 +1293,10 @@ for idFile = 1:nbOutputFiles
                         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
                            fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
                            fliplr([1 1 1 length(inputDmDateUpdate)]), inputDmDateUpdate');
-                        fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter => set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
+                        fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
                            param, inputDmDateUpdate, outputFileName);
                      else
-                        fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter => nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
+                        fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
                            param, outputFileName);
                      end
                   end
@@ -1306,7 +1306,7 @@ for idFile = 1:nbOutputFiles
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
                         fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
                         fliplr([1 1 1 length(defaultComment)]), defaultComment');
-                     fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter => set to ''%s'' (file %s)\n', ...
+                     fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter - set to ''%s'' (file %s)\n', ...
                         param, defaultComment,outputFileName);
                   end
                end
@@ -1329,7 +1329,7 @@ for idFile = 1:nbOutputFiles
          julDateCreationNew = max(julD);
          dateCreationNew = datestr(julDateCreationNew + g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'), dateCreationNew);
-         fprintf('INFO: ''DATE_CREATION'' (%s) is before ''JULD'' (%s) => ''DATE_CREATION'' set to ''JULD'' (file %s)\n', ...
+         fprintf('INFO: ''DATE_CREATION'' (%s) is before ''JULD'' (%s) - ''DATE_CREATION'' set to ''JULD'' (file %s)\n', ...
             dateCreation, julian_2_gregorian_dec_argo(julDateCreationNew), outputFileName);
       end
    end
@@ -1694,7 +1694,7 @@ for idFile = 1:nbOutputFiles
                end
             end
          else
-            fprintf('INFO: Variable %s not present in output format => not copied in output file\n', ...
+            fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
                varNameOut);
          end
       end
@@ -2182,7 +2182,7 @@ else
                   
                   if (isempty(ctdPumpSwitchOffPres))
                      ctdPumpSwitchOffPres = 5;
-                     fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (5 dbars)\n', ...
+                     fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (5 dbars)\n', ...
                         a_floatNum);
                   end
                else

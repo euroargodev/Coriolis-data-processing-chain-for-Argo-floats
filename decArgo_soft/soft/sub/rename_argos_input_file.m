@@ -104,7 +104,7 @@ if (~isempty(idPos))
                   move_argos_input_file(floatArgosId, min(argosLocDate), [], [], 'EEE');
                end
                
-               fprintf('DEC_INFO: Empty Argos file (%s) => stored\n', ...
+               fprintf('DEC_INFO: Empty Argos file (%s) - stored\n', ...
                   g_decArgo_inputArgosFile);
             else
                % create the Argos Id directory
@@ -123,7 +123,7 @@ if (~isempty(idPos))
                fileNamOut = [emptyFilesDirName inputArgosFileName];
                move_file(fileNameIn, fileNamOut);
                
-               fprintf('DEC_INFO: Empty Argos file (%s) => stored (in the ''empty_files'' directory)\n', ...
+               fprintf('DEC_INFO: Empty Argos file (%s) - stored (in the ''empty_files'' directory)\n', ...
                   g_decArgo_inputArgosFile);
             end
          else
@@ -139,12 +139,12 @@ if (~isempty(idPos))
             if (length(unique(argosDataDate)) < g_decArgo_minNumMsgForNotGhost)
                move_argos_input_file(floatArgosId, firstArgosMsgDate, [], [], 'GGG');
                
-               fprintf('DEC_INFO: Ghost Argos file (%s) => stored\n', ...
+               fprintf('DEC_INFO: Ghost Argos file (%s) - stored\n', ...
                   g_decArgo_inputArgosFile);
             else
                move_argos_input_file(floatArgosId, firstArgosMsgDate, [], [], 'WWW');
                
-               fprintf('DEC_INFO: Argos file without associated WMO number (%s) => stored\n', ...
+               fprintf('DEC_INFO: Argos file without associated WMO number (%s) - stored\n', ...
                   g_decArgo_inputArgosFile);
             end
          end
@@ -185,7 +185,7 @@ if (g_decArgo_processModeAll == 1)
             move_argos_input_file(floatArgosId, min(argosLocDate), floatNum, [], 'EEE');
          end
          
-         fprintf('DEC_WARNING: Empty Argos file (%s) => stored but not decoded\n', ...
+         fprintf('DEC_WARNING: Empty Argos file (%s) - stored but not decoded\n', ...
             g_decArgo_inputArgosFile);
       else
          % create the Argos Id directory
@@ -204,7 +204,7 @@ if (g_decArgo_processModeAll == 1)
          fileNamOut = [emptyFilesDirName inputArgosFileName];
          move_file(fileNameIn, fileNamOut);
          
-         fprintf('DEC_WARNING: Empty Argos file (%s) => stored (in the ''empty_files'' directory) but not decoded\n', ...
+         fprintf('DEC_WARNING: Empty Argos file (%s) - stored (in the ''empty_files'' directory) but not decoded\n', ...
             g_decArgo_inputArgosFile);
       end
       
@@ -212,7 +212,7 @@ if (g_decArgo_processModeAll == 1)
    elseif (length(unique(argosDataDate)) < g_decArgo_minNumMsgForNotGhost)
       move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'GGG');
       
-      fprintf('DEC_WARNING: Ghost Argos file (%s) => stored but not decoded\n', ...
+      fprintf('DEC_WARNING: Ghost Argos file (%s) - stored but not decoded\n', ...
          g_decArgo_inputArgosFile);
       
       return
@@ -233,9 +233,9 @@ if (floatDecId < 1000)
       if (g_decArgo_processModeAll == 1)
          move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'MMM');
          
-         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => stored but not decoded\n', floatNum);
+         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data - stored but not decoded\n', floatNum);
       else
-         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => not decoded\n', floatNum);
+         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data - not decoded\n', floatNum);
       end
       return
    end
@@ -444,12 +444,12 @@ if (floatDecId < 1000)
       if (g_decArgo_processModeAll == 1)
          move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'TTT');
          
-         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) => stored but not decoded\n', ...
+         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) - stored but not decoded\n', ...
             floatNum, ...
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
       else
-         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) => not decoded\n', ...
+         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) - not decoded\n', ...
             floatNum, ...
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
@@ -463,10 +463,10 @@ if (floatDecId < 1000)
          if (g_decArgo_processModeAll == 1)
             move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'MMM');
             
-            fprintf('ERROR: Float #%d: Computed cycle number is negative (%d): check the consistency of the meta-data => stored but not decoded\n', ...
+            fprintf('ERROR: Float #%d: Computed cycle number is negative (%d): check the consistency of the meta-data - stored but not decoded\n', ...
                floatNum, cycleNumber);
          else
-            fprintf('ERROR: Float #%d: Computed cycle number is negative (%d): check the consistency of the meta-data => not decoded\n', ...
+            fprintf('ERROR: Float #%d: Computed cycle number is negative (%d): check the consistency of the meta-data - not decoded\n', ...
                floatNum, cycleNumber);
          end
       else
@@ -496,9 +496,9 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
       if (g_decArgo_processModeAll == 1)
          move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'MMM');
          
-         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => stored but not decoded\n', floatNum);
+         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data - stored but not decoded\n', floatNum);
       else
-         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data => not decoded\n', floatNum);
+         fprintf('ERROR: Float #%d: Unable to compute cycle number because of missing meta-data - not decoded\n', floatNum);
       end
       return
    end
@@ -783,7 +783,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             if (~isempty(tabCycleNumber))
                
                if (~ismember(floatDpfFlag, [0 1]))
-                  fprintf('DEC_WARNING: Float #%d: Inconsistent DPF float flag value (= %d) => set to 1\n', ...
+                  fprintf('DEC_WARNING: Float #%d: Inconsistent DPF float flag value (= %d) - set to 1\n', ...
                      floatNum, floatDpfFlag);
                   
                   floatDpfFlag = 1;
@@ -853,12 +853,12 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
       if (g_decArgo_processModeAll == 1)
          move_argos_input_file(floatArgosId, firstArgosMsgDate, floatNum, [], 'TTT');
          
-         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) => stored but not decoded\n', ...
+         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) - stored but not decoded\n', ...
             floatNum, ...
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));
       else
-         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) => not decoded\n', ...
+         fprintf('DEC_INFO: Float #%d: Last date of input file (%s) is before float launch date (%s) - not decoded\n', ...
             floatNum, ...
             julian_2_gregorian_dec_argo(lastArgosMsgDate), ...
             julian_2_gregorian_dec_argo(launchDate));

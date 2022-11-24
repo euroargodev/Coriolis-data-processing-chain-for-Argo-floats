@@ -111,9 +111,9 @@ if (~isempty(refWmo))
 end
 
 if (isempty(refWmo))
-   errorLabel = 'ERROR: we need a float WMO number (through ''floatwmo'' or ''floatwmolist'' parameter) to select the correct configuration file => exit\n';
+   errorLabel = 'ERROR: we need a float WMO number (through ''floatwmo'' or ''floatwmolist'' parameter) to select the correct configuration file - exit\n';
 else
-   errorLabel = sprintf('ERROR: unavailable information to select the correct configuration file for float #%d => exit\n', ...
+   errorLabel = sprintf('ERROR: unavailable information to select the correct configuration file for float #%d - exit\n', ...
       refWmo);
 end
 

@@ -70,7 +70,7 @@ o_profileData = [];
    secondOrderInformationStr ...
    ] = read_nemo_profile_file(a_profileFile);
 if (error == 1)
-   fprintf('ERROR: Error in file: %s => ignored\n', a_profileFile);
+   fprintf('ERROR: Error in file: %s - ignored\n', a_profileFile);
    return
 elseif (error == 2)
    return

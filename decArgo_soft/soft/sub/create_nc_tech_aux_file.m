@@ -437,7 +437,7 @@ for idParam = 1:length(measUniqueParamName)
    valueStr = measUniqueParamName{idParam};
    
    if (length(valueStr) > paramNameLength)
-      fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) => name truncated\n', ...
+      fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) - name truncated\n', ...
          g_decArgo_floatNum, valueStr, paramNameLength);
       valueStr = valueStr(1:paramNameLength);
    end

@@ -41,7 +41,7 @@ for idFile = 1:length(fileNames)
 end
 
 if (length(o_profileFile) > 1)
-   fprintf('ERROR: Float #%d Cycle #%d: %d .profile files (only one is expected) => only the last one is considered\n', ...
+   fprintf('ERROR: Float #%d Cycle #%d: %d .profile files (only one is expected) - only the last one is considered\n', ...
       a_floatNum, a_cycleNum, length(o_profileFile));
    o_profileFile = o_profileFile(end);
 end

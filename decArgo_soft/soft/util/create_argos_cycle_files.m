@@ -179,10 +179,10 @@ for idFloat = 1:nbFloats
 
             floatArgosDate = [floatArgosDate; argosDate];
          else
-            fprintf('WARNING: Empty file (%s) => not considered\n', argosFileName);
+            fprintf('WARNING: Empty file (%s) - not considered\n', argosFileName);
          end
       else
-         fprintf('WARNING: Not expected file name %s => not considered\n', argosFileName);
+         fprintf('WARNING: Not expected file name %s - not considered\n', argosFileName);
       end
    end
 
@@ -262,7 +262,7 @@ for idFloat = 1:nbFloats
                      fclose(fIdOut);
 
                   else
-                     fprintf('INFO: Argos data without dates => not considered\n');
+                     fprintf('INFO: Argos data without dates - not considered\n');
                      for id = 1:length(text)
                         fprintf('%s\n', text{id});
                      end
@@ -307,7 +307,7 @@ for idFloat = 1:nbFloats
                      fclose(fIdOut);
 
                   else
-                     fprintf('INFO: Argos data without dates => not considered\n');
+                     fprintf('INFO: Argos data without dates - not considered\n');
                      for id = 1:length(text)
                         fprintf('%s\n', text{id});
                      end

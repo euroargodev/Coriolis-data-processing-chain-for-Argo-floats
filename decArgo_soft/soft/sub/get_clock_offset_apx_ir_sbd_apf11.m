@@ -67,7 +67,7 @@ for idFile = 1:length(logFileList)
    % read input file
    [error, events] = read_apx_apf11_ir_system_log_file(logFilePathName, 0);
    if (error == 1)
-      fprintf('ERROR: Error in file: %s => ignored\n', logFilePathName);
+      fprintf('ERROR: Error in file: %s - ignored\n', logFilePathName);
       return
    end
    

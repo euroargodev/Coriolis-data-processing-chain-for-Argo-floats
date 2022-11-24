@@ -142,7 +142,7 @@ for idCy = 1:length(tabCyNum)
    
    if (length(idCyDeep) > 1)
       
-      fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records => only the first one is considered\n', ...
+      fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records - only the first one is considered\n', ...
          g_decArgo_floatNum, cycleNum, ...
          length(idCyDeep));
       idDelFinal = [idDelFinal idCyDeep(2:end)];
@@ -249,7 +249,7 @@ if (~isempty(a_tabTrajNCycle))
       idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
 
       if (length(idCyDeep) > 1)
-         fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records => only the first one is considered\n', ...
+         fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records - only the first one is considered\n', ...
             g_decArgo_floatNum, cycleNum, ...
             length(idCyDeep));
          idDelFinal = [idDelFinal idCyDeep(2:end)];
@@ -264,13 +264,13 @@ if (~isempty(a_tabTrajNCycle))
             if (isempty(idCyDeep))
                
                % merge FMT, LMT, FLT and LLT
-               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCySurf(end), idCySurf(1:end-1));
+               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCySurf(end), idCySurf(1:end-1), a_tabTrajNMeas);
                
                idDelFinal = [idDelFinal idCySurf(1:end-1)];
             else
                
                % merge FMT, LMT, FLT and LLT
-               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCyDeep(end), idCySurf);
+               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCyDeep(end), idCySurf, a_tabTrajNMeas);
                
                idDelFinal = [idDelFinal idCySurf];
             end
@@ -278,7 +278,7 @@ if (~isempty(a_tabTrajNCycle))
             if (~isempty(idCyDeep))
                
                % merge FMT, LMT, FLT and LLT
-               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCyDeep(end), idCySurf);
+               a_tabTrajNCycle = merge_N_CYCLE(a_tabTrajNCycle, idCyDeep(end), idCySurf, a_tabTrajNMeas);
                
                idDelFinal = [idDelFinal idCySurf];
             end
@@ -322,6 +322,7 @@ if (~isempty(a_tabTrajNMeas))
       tabClockOffset = [];
       for idS = 1:length(idFSurf)
          if ((a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef) && ...
+               (~isempty(a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj)) && ...
                (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj ~= g_decArgo_ncDateDef))
             tabClockOffset = [tabClockOffset ...
                a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
@@ -472,10 +473,20 @@ function [o_tabTrajNMeas] = merge_N_MEASUREMENT(a_tabTrajNMeas, a_storeId, a_mer
 % output parameters initialization
 o_tabTrajNMeas = a_tabTrajNMeas;
 
+% default values
+global g_decArgo_ncDateDef;
+
 % global measurement codes
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
+
+% global time status
+global g_JULD_STATUS_2;
+global g_JULD_STATUS_9;
+
+% QC flag values (char)
+global g_decArgo_qcStrMissing;
 
 
 % merge FMT and LMT
@@ -518,9 +529,15 @@ for id = a_mergeId
    idF1 = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
    if (~isempty(idF1))
       idF2 = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
-      date = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
+      dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
+      if (~isempty(dateList))
+         dateListStr = cellstr(julian_2_gregorian_dec_argo(dateList));
+      else
+         dateListStr = {''};
+      end
       for id2 = idF1
-         if (~ismember(o_tabTrajNMeas(id).tabMeas(id2).juld, date))
+         dateLocStr = julian_2_gregorian_dec_argo(o_tabTrajNMeas(id).tabMeas(id2).juld);
+         if (~any(strcmp(dateLocStr, dateListStr)))
             o_tabTrajNMeas(a_storeId).tabMeas = [o_tabTrajNMeas(a_storeId).tabMeas; ...
                o_tabTrajNMeas(id).tabMeas(id2)];
             updated = 1;
@@ -528,11 +545,27 @@ for id = a_mergeId
       end
    end
 end
+% some location dates may not be adjusted, in that case we remove all adjusted
+% dates
+idLoc = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
+dateAdjList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juldAdj];
+if (any(dateAdjList == g_decArgo_ncDateDef))
+   for id = 1:length(o_tabTrajNMeas(a_storeId).tabMeas)
+      o_tabTrajNMeas(a_storeId).tabMeas(id).juldAdj = '';
+      o_tabTrajNMeas(a_storeId).tabMeas(id).juldAdjStatus = '';
+      o_tabTrajNMeas(a_storeId).tabMeas(id).juldAdjQc = '';
+   end
+end
 
-% sort trajectory data structures according to the predefined
-% measurement code order
+% sort locations
 if (updated)
-   o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
+   idLoc = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
+   dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juldAdj];
+   if (isempty(dateList))
+      dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juld];
+   end
+   [~, sortId] = sort(dateList);
+   o_tabTrajNMeas(a_storeId).tabMeas(idLoc) = o_tabTrajNMeas(a_storeId).tabMeas(idLoc(sortId));
 end
 
 return
@@ -541,12 +574,13 @@ return
 % Merge FMT, LMT, FLT and LLT of N_CYCLE arrays
 %
 % SYNTAX :
-%  [o_tabTrajNCycle] = merge_N_CYCLE(a_tabTrajNCycle, a_storeId, a_mergeId)
+%  [o_tabTrajNCycle] = merge_N_CYCLE(a_tabTrajNCycle, a_storeId, a_mergeId, a_tabTrajNMeas)
 %
 % INPUT PARAMETERS :
 %   a_tabTrajNCycle : input N_CYCLE trajectory data
 %   a_storeId       : Id of the final N_CYCLE array
 %   a_mergeId       : Ids of N_CYCLE arrays to merge
+%   a_tabTrajNMeas  : input N_MEASUREMENT trajectory data
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNCycle : output N_CYCLE trajectory data
@@ -559,13 +593,18 @@ return
 % RELEASES :
 %   10/17/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNCycle] = merge_N_CYCLE(a_tabTrajNCycle, a_storeId, a_mergeId)
+function [o_tabTrajNCycle] = merge_N_CYCLE(a_tabTrajNCycle, a_storeId, a_mergeId, a_tabTrajNMeas)
 
 % output parameters initialization
 o_tabTrajNCycle = a_tabTrajNCycle;
 
 % default values
 global g_decArgo_ncDateDef;
+
+% global measurement codes
+global g_MC_FMT;
+global g_MC_Surface;
+global g_MC_LMT;
 
 
 allId = [a_storeId a_mergeId];
@@ -606,6 +645,16 @@ tabDateStatus(idDel) = [];
 if (~isempty(tabDate))
    [o_tabTrajNCycle(a_storeId).juldLastLocation, idMax] = max(tabDate);
    o_tabTrajNCycle(a_storeId).juldLastLocationStatus = tabDateStatus(idMax);
+end
+
+% some location dates may not be adjusted, in that case we removed all adjusted
+% dates => we should update N_CYCLE data accordingly
+idC = find([a_tabTrajNMeas.cycleNumber] == o_tabTrajNCycle(a_storeId).cycleNumber);
+idLoc = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_Surface);
+dateAdjList = [a_tabTrajNMeas(idC).tabMeas(idLoc).juldAdj];
+if (all(dateAdjList == g_decArgo_ncDateDef))
+   o_tabTrajNCycle(a_storeId).clockOffset = '';
+   o_tabTrajNCycle(a_storeId).dataMode = 'R';
 end
 
 return

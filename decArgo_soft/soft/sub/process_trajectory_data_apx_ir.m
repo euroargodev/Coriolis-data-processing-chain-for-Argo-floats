@@ -151,8 +151,10 @@ if (~isempty(a_clockOffsetData.clockOffsetCycleNum))
 end
 
 % clock offset
+clockDriftKnown = 0;
 if (~isempty(floatClockDrift))
    trajNCycleStruct.clockOffset = floatClockDrift/86400;
+   clockDriftKnown = 1;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1162,6 +1164,14 @@ if (a_cycleNum > 0)
                idSurf = find([o_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_Surface);
                if (~isempty(idSurf))
                   
+                  % retrieve data mode of previous cycle
+                  idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
+                  if (isempty(o_tabTrajNCycle(idCyNCycle).clockOffset))
+                     clockDriftKnownPrevCy = 0;
+                  else
+                     clockDriftKnownPrevCy = 1;
+                  end
+                  
                   % check that all GPS fixes are already stored in N_MEAS
                   newOne = 0;
                   for idFix = 1:length(gpsLocDatePrevCy)
@@ -1175,16 +1185,15 @@ if (a_cycleNum > 0)
                            gpsLocLatPrevCy(idFix), ...
                            'G', ...
                            ' ', ...
-                           num2str(gpsLocQcPrevCy(idFix)), 1);
+                           num2str(gpsLocQcPrevCy(idFix)), ...
+                           clockDriftKnownPrevCy);
                         o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
                         newOne = 1;
                      end
                   end
                   
                   % update N_CYCLE
-                  if (newOne)
-                     idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-                     
+                  if (newOne)                     
                      o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                      o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
                      
@@ -1192,6 +1201,14 @@ if (a_cycleNum > 0)
                      o_tabTrajNCycle(idCyNCycle).juldLastLocationStatus = g_JULD_STATUS_4;
                   end
                else
+                  
+                  % retrieve data mode of previous cycle
+                  idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
+                  if (isempty(o_tabTrajNCycle(idCyNCycle).clockOffset))
+                     clockDriftKnownPrevCy = 0;
+                  else
+                     clockDriftKnownPrevCy = 1;
+                  end
                   
                   % store GPS fixes in N_MEAS
                   for idFix = 1:length(gpsLocDatePrevCy)
@@ -1201,13 +1218,12 @@ if (a_cycleNum > 0)
                         gpsLocLatPrevCy(idFix), ...
                         'G', ...
                         ' ', ...
-                        num2str(gpsLocQcPrevCy(idFix)), 1);
+                        num2str(gpsLocQcPrevCy(idFix)), ...
+                        clockDriftKnownPrevCy);
                      o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
                   end
                   
                   % update N_CYCLE
-                  idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-                  
                   o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                   o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
                   
@@ -1215,6 +1231,14 @@ if (a_cycleNum > 0)
                   o_tabTrajNCycle(idCyNCycle).juldLastLocationStatus = g_JULD_STATUS_4;
                end
             else
+               
+               % retrieve data mode of previous cycle
+               idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
+               if (isempty(o_tabTrajNCycle(idCyNCycle).clockOffset))
+                  clockDriftKnownPrevCy = 0;
+               else
+                  clockDriftKnownPrevCy = 1;
+               end
                
                % store GPS fixes in N_MEAS
                for idFix = 1:length(gpsLocDatePrevCy)
@@ -1224,13 +1248,12 @@ if (a_cycleNum > 0)
                      gpsLocLatPrevCy(idFix), ...
                      'G', ...
                      ' ', ...
-                     num2str(gpsLocQcPrevCy(idFix)), 1);
+                     num2str(gpsLocQcPrevCy(idFix)), ...
+                     clockDriftKnownPrevCy);
                   o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
                end
                
-               % update N_CYCLE
-               idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-               
+               % update N_CYCLE               
                o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
                
@@ -1297,7 +1320,8 @@ for idFix = 1:length(gpsCyLocDate)
       gpsCyLocLat(idFix), ...
       'G', ...
       ' ', ...
-      num2str(gpsCyLocQc(idFix)), 1);
+      num2str(gpsCyLocQc(idFix)), ...
+      clockDriftKnown);
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
 

@@ -200,10 +200,10 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
          phaseNum = str2num(configName(posSensor+9:posSensor+10));
          if (ismember(phaseNum, vpList))
             paramId = paramIdListSensorVp(find(paramNumListSensorVp == paramNum, 1));
-            templateName = '<vertical_phase_name>';
+            templateName = '<cycle_phase_name>';
          elseif (ismember(phaseNum, hpList))
             paramId = paramIdListSensorHp(find(paramNumListSensorHp == paramNum, 1));
-            templateName = '<horizontal_phase_name>';
+            templateName = '<cycle_phase_name>';
          end
          decConfNames{end+1} = configName;
          idParamName = find(g_decArgo_outputNcConfParamId == paramId);

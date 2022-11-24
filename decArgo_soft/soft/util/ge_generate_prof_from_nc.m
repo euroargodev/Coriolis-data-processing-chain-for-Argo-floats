@@ -160,7 +160,7 @@ for idFloat = 1:nbFloats
    % check input file version
    if (~strcmp(metaFileFormatVersion, '3.1'))
       fprintf('\n');
-      fprintf('ERROR: Meta-data file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s) => unused\n', ...
+      fprintf('ERROR: Meta-data file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s) - unused\n', ...
          metaFileName, metaFileFormatVersion);
       return
    end
@@ -251,7 +251,7 @@ for idFloat = 1:nbFloats
       % contrôle de la version
       if (~strcmp(profFileFormatVersion, '3.1'))
          fprintf('\n');
-         fprintf('ERROR: Profile file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s) => unused\n', ...
+         fprintf('ERROR: Profile file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s) - unused\n', ...
             floatFileName, profFileFormatVersion);
          continue
       end

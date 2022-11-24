@@ -58,18 +58,12 @@ if (~isempty(g_decArgo_gpsData))
       
       % retrieve the last good GPS location of the previous cycle
       % (cycleNum-1)
-      idF = find(gpsLocCycleNum == cycleNum-1);
-      if (~isempty(idF))
-         prevLocDate = gpsLocDate(idF);
-         prevLocLon = gpsLocLon(idF);
-         prevLocLat = gpsLocLat(idF);
-         prevLocQc = gpsLocQc(idF);
-         
-         idGoodLoc = find(prevLocQc == 1);
-         if (~isempty(idGoodLoc))
-            lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-            lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-            lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
+      if (cycleNum > 0)
+         idF = find((gpsLocCycleNum == cycleNum-1) & (gpsLocQc == 1), 1, 'last');
+         if (~isempty(idF))
+            lastLocDateOfPrevCycle = gpsLocDate(idF);
+            lastLocLonOfPrevCycle = gpsLocLon(idF);
+            lastLocLatOfPrevCycle = gpsLocLat(idF);
          end
       end
       

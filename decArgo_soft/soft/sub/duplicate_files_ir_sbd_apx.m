@@ -87,7 +87,7 @@ for idFile = 1:length(files)
             engineeringDataStr, ...
             ] = read_apx_ir_sbd_msg_file(dataFilePathName, a_decoderId, 0);
          if (error == 1)
-            fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                a_floatNum, dataFilePathName);
             continue
          end
@@ -111,7 +111,7 @@ for idFile = 1:length(files)
          end
          
          if (isempty(dates))
-            fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
+            fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' - ignored\n', ...
                a_floatNum, dataFilePathName);
             continue
          end
@@ -121,7 +121,7 @@ for idFile = 1:length(files)
          fileType = 2;
          [error, events] = read_apx_ir_sbd_log_file(dataFilePathName);
          if (error == 1)
-            fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+            fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                a_floatNum, dataFilePathName);
             continue
          end
@@ -582,7 +582,7 @@ if (FINAL_CHECK)
                engineeringDataStr, ...
                ] = read_apx_ir_sbd_msg_file(dataFilePathName, a_decoderId, 0);
             if (error == 1)
-               fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+               fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                   a_floatNum, dataFilePathName);
                continue
             end
@@ -606,7 +606,7 @@ if (FINAL_CHECK)
             end
             
             if (isempty(dates))
-               fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' => ignored\n', ...
+               fprintf('DEC_INFO: Float #%d: No dates in file ''%s'' - ignored\n', ...
                   a_floatNum, dataFilePathName);
                continue
             end
@@ -616,7 +616,7 @@ if (FINAL_CHECK)
             fileType = 2;
             [error, events] = read_apx_ir_sbd_log_file(dataFilePathName);
             if (error == 1)
-               fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' => ignored\n', ...
+               fprintf('DEC_ERROR: Float #%d: Error in file ''%s'' - ignored\n', ...
                   a_floatNum, dataFilePathName);
                continue
             end

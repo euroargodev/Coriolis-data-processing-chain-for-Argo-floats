@@ -119,7 +119,7 @@ while (1)
          
          % check decoding information VS data length consistency
          if (5+sum([decStruct.tabBytes]) ~= recLength)
-            fprintf('ERROR: science_log file reader: recId #%d inconsistency in decoding information => data ignored\n', recId);
+            fprintf('ERROR: science_log file reader: recId #%d inconsistency in decoding information - data ignored\n', recId);
             continue
          end
          dataVal = nan(1, length(decStruct)+1);
@@ -152,7 +152,7 @@ while (1)
          o_data.([decStruct(1).recType '_labels']) = get_binary_log_data_labels(decStruct(1).recType);
       end
    else
-      fprintf('ERROR: %s file reader: recId #%d not managed yet => data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType, recId);
+      fprintf('ERROR: %s file reader: recId #%d not managed yet - data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType, recId);
    end
    
    recCurPos = recCurPos + recLength + 1;

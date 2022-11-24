@@ -251,7 +251,7 @@ if (a_nbDriftMeas ~= length(parkDateHour))
       fprintf('DEC_INFO: Float #%d Cycle #%d: number of drift measurements: done (%d) < theoretical (%d)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_nbDriftMeas, length(parkDateHour));
    else
-      fprintf('DEC_ERROR: Float #%d Cycle #%d: number of drift measurements: done (%d) > theoretical (%d) => unable to date %d drift measurements\n', ...
+      fprintf('DEC_ERROR: Float #%d Cycle #%d: number of drift measurements: done (%d) > theoretical (%d) - unable to date %d drift measurements\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_nbDriftMeas, length(parkDateHour), a_nbDriftMeas-length(parkDateHour));
    end
 end
@@ -320,7 +320,7 @@ for id = 1:size(a_tabDrifCTD, 1)
          end
       end
    else
-      fprintf('DEC_ERROR: Float #%d Cycle #%d: unable to determine drift measurements dates => unable to define drift measurements order\n', ...
+      fprintf('DEC_ERROR: Float #%d Cycle #%d: unable to determine drift measurements dates - unable to define drift measurements order\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       return
    end

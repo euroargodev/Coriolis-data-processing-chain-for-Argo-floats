@@ -92,7 +92,7 @@ switch (packType)
       tabTech1 = get_bits(firstBit, tabNbBits, msgData);
       
       cycleNum = tabTech1(1);
-      
+            
       % compute float time
       floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech1(38:43)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
 

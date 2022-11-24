@@ -165,7 +165,7 @@ for idFloat = 1:nbFloats
          delFile = dir([floatOutputDirName '/019b_*']);
          for idF = 1:length(delFile)
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
-            fprintf('MISC: %s => not used\n', delFile(idF).name);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
          end
          
       case 4901802
@@ -174,7 +174,7 @@ for idFloat = 1:nbFloats
          delFile = dir([floatOutputDirName '/013b_system_00007#01*.hex']);
          if (~isempty(delFile))
             move_file([floatOutputDirName '/' delFile.name], unusedDirName);
-            fprintf('MISC: %s => not used\n', delFile.name);
+            fprintf('MISC: %s - not used\n', delFile.name);
          end
          % 013b_system_00007#02.hex should be renamed 013b_system_00007#02.hex
          movFile = dir([floatOutputDirName '/013b_system_00007#02*.hex']);
@@ -186,7 +186,7 @@ for idFloat = 1:nbFloats
          delFile = dir([floatOutputDirName '/012b_*']);
          for idF = 1:length(delFile)
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
-            fprintf('MISC: %s => not used\n', delFile(idF).name);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
          end
          
       case 6902667
@@ -198,7 +198,7 @@ for idFloat = 1:nbFloats
             if (~files(idF).isdir)
                if (datenum(files(idF).date, 'dd-mmmm-yyyy HH:MM:SS')-g_decArgo_janFirst1950InMatlab < startDate)
                   move_file([floatOutputDirName '/' files(idF).name], unusedDirName);
-                  fprintf('MISC: %s => not used\n', files(idF).name);
+                  fprintf('MISC: %s - not used\n', files(idF).name);
                end
             end
          end
@@ -208,7 +208,7 @@ for idFloat = 1:nbFloats
          delFile = dir([floatOutputDirName '/3a9b_*']);
          for idF = 1:length(delFile)
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
-            fprintf('MISC: %s => not used\n', delFile(idF).name);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
          end
          
       case 6902829
@@ -216,7 +216,7 @@ for idFloat = 1:nbFloats
          delFile = dir([floatOutputDirName '/3aa9_system_00116_*.hex']);
          if (~isempty(delFile))
             move_file([floatOutputDirName '/' delFile.name], unusedDirName);
-            fprintf('MISC: %s => not used\n', delFile.name);
+            fprintf('MISC: %s - not used\n', delFile.name);
          end
          
       case 6902968

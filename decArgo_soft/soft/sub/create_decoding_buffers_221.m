@@ -130,7 +130,7 @@ for cyNum = cuNumList
       end
       
       if (optodeActivatedFlag == -1)
-         fprintf('WARNING: Float #%d: unable to find if the optode is activated during cycle #%d => set to ''yes''\n', ...
+         fprintf('WARNING: Float #%d: unable to find if the optode is activated during cycle #%d - set to ''yes''\n', ...
             g_decArgo_floatNum, ...
             cyNum);
          nbMeasPerPacket = 7;
@@ -473,7 +473,7 @@ for cyNum = cyNumList
          
          piDecStr = '';
          if (tabGo(idRankCy) == 2)
-            piDecStr = ' => DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
+            piDecStr = ' - DECODED WITH ''PROCESS_REMAINING_BUFFERS'' FLAG';
          end
          
          fprintf('BUFF_INFO: Float #%d Cycle #%3d : %3d SBD - %s - %s - %s%s%s\n', ...

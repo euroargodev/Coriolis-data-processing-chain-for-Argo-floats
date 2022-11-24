@@ -83,7 +83,7 @@ for idEv = 1:length(a_events)
          if (~isempty(errmsg) || (count ~= 2))
             [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Profile %d GPS fix obtained in %d seconds.');
             if (~isempty(errmsg) || (count ~= 2))
-               fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+               fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
                continue
             end
          end
@@ -95,7 +95,7 @@ for idEv = 1:length(a_events)
       
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'APF9 RTC skew (%ds) OK.');
       if (~isempty(errmsg) || (count ~= 1))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       
@@ -113,7 +113,7 @@ for idEv = 1:length(a_events)
       
       [val, count, errmsg, nextIndex] = sscanf(dataStr, 'NPF RTC skew (%ds) OK.');
       if (~isempty(errmsg) || (count ~= 1))
-         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
       
@@ -133,7 +133,7 @@ for idEv = 1:length(a_events)
       if (~isempty(errmsg) || (count ~= 1))
          [val, count, errmsg, nextIndex] = sscanf(dataStr(1:end-25), 'Excessive RTC skew (%ds) detected.  Resetting Npf''s RTC to');
          if (~isempty(errmsg) || (count ~= 1))
-            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+            fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             continue
          end
       end
@@ -185,7 +185,7 @@ for idEv = 1:length(a_events)
          end
          o_rtcOffset = [o_rtcOffset rtcOffset];
       else
-         fprintf('DEC_INFO: %sInconsistency after RTC set (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sInconsistency after RTC set (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
       end
       
    elseif (any(strfind(dataStr, PATTERN6)))
@@ -219,13 +219,13 @@ for idEv = 1:length(a_events)
          end
          o_rtcOffset = [o_rtcOffset rtcOffset];
       else
-         fprintf('DEC_INFO: %sInconsistency after RTC set (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sInconsistency after RTC set (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
       end
 
    else
       idF = cellfun(@(x) strfind(dataStr, x), PATTERN_UNUSED, 'UniformOutput', 0);
       if (isempty([idF{:}]))
-         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' => ignored\n', errorHeader, dataStr);
+         fprintf('DEC_INFO: %sNot managed GPS information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          continue
       end
    end

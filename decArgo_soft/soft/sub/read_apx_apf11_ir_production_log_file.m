@@ -68,7 +68,7 @@ while 1
             o_events(end).message = [o_events(end).message line];
          end
       else
-         fprintf('WARNING: Production_log parsing: Less than 2 separators in line "%s" => ignored\n', line);
+         fprintf('WARNING: Production_log parsing: Less than 2 separators in line "%s" - ignored\n', line);
       end
       continue
    end

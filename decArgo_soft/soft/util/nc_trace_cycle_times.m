@@ -42,6 +42,7 @@ g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_215_216_218_grounded.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -996,7 +997,7 @@ end
 
 xSurface1 = g_NTCT_Surface1_juld(a_idCycle+1, :);
 ySurface1 = g_NTCT_Surface1_pres(a_idCycle+1, :);
-idDel = find((xSurface1 == g_dateDef) & (ySurface1 == g_presDef));
+idDel = find((xSurface1 == g_dateDef) | (ySurface1 == g_presDef));
 xSurface1(idDel) = [];
 ySurface1(idDel) = [];
 if (~isempty(xSurface1))
@@ -1006,7 +1007,7 @@ end
 
 xDescProf = g_NTCT_DescProf_juld(a_idCycle+1, :);
 yDescProf = g_NTCT_DescProf_pres(a_idCycle+1, :);
-idDel = find((xDescProf == g_dateDef) & (yDescProf == g_presDef));
+idDel = find((xDescProf == g_dateDef) | (yDescProf == g_presDef));
 xDescProf(idDel) = [];
 yDescProf(idDel) = [];
 if (~isempty(xDescProf))
@@ -1016,7 +1017,7 @@ end
 
 xDriftAtPark1 = g_NTCT_DriftAtPark1_juld(a_idCycle+1, :);
 yDriftAtPark1 = g_NTCT_DriftAtPark1_pres(a_idCycle+1, :);
-idDel = find((xDriftAtPark1 == g_dateDef) & (yDriftAtPark1 == g_presDef));
+idDel = find((xDriftAtPark1 == g_dateDef) | (yDriftAtPark1 == g_presDef));
 xDriftAtPark1(idDel) = [];
 yDriftAtPark1(idDel) = [];
 if (~isempty(xDriftAtPark1))
@@ -1026,7 +1027,7 @@ end
 
 xDriftAtPark = g_NTCT_DriftAtPark_juld(a_idCycle+1, :);
 yDriftAtPark = g_NTCT_DriftAtPark_pres(a_idCycle+1, :);
-idDel = find((xDriftAtPark == g_dateDef) & (yDriftAtPark == g_presDef));
+idDel = find((xDriftAtPark == g_dateDef) | (yDriftAtPark == g_presDef));
 xDriftAtPark(idDel) = [];
 yDriftAtPark(idDel) = [];
 if (~isempty(xDriftAtPark))
@@ -1036,7 +1037,7 @@ end
 
 xDesc2Prof1 = g_NTCT_Desc2Prof1_juld(a_idCycle+1, :);
 yDesc2Prof1 = g_NTCT_Desc2Prof1_pres(a_idCycle+1, :);
-idDel = find((xDesc2Prof1 == g_dateDef) & (yDesc2Prof1 == g_presDef));
+idDel = find((xDesc2Prof1 == g_dateDef) | (yDesc2Prof1 == g_presDef));
 xDesc2Prof1(idDel) = [];
 yDesc2Prof1(idDel) = [];
 if (~isempty(xDesc2Prof1))
@@ -1046,7 +1047,7 @@ end
 
 xDesc2Prof2 = g_NTCT_Desc2Prof2_juld(a_idCycle+1, :);
 yDesc2Prof2 = g_NTCT_Desc2Prof2_pres(a_idCycle+1, :);
-idDel = find((xDesc2Prof2 == g_dateDef) & (yDesc2Prof2 == g_presDef));
+idDel = find((xDesc2Prof2 == g_dateDef) | (yDesc2Prof2 == g_presDef));
 xDesc2Prof2(idDel) = [];
 yDesc2Prof2(idDel) = [];
 if (~isempty(xDesc2Prof2))
@@ -1056,7 +1057,7 @@ end
 
 xAscProf = g_NTCT_AscProf_juld(a_idCycle+1, :);
 yAscProf = g_NTCT_AscProf_pres(a_idCycle+1, :);
-idDel = find((xAscProf == g_dateDef) & (yAscProf == g_presDef));
+idDel = find((xAscProf == g_dateDef) | (yAscProf == g_presDef));
 xAscProf(idDel) = [];
 yAscProf(idDel) = [];
 if (~isempty(xAscProf))
@@ -1066,7 +1067,7 @@ end
 
 xNearSurfaceSeriesOfMeas = g_NTCT_NearSurfaceSeriesOfMeas_juld(a_idCycle+1, :);
 yNearSurfaceSeriesOfMeas = g_NTCT_NearSurfaceSeriesOfMeas_pres(a_idCycle+1, :);
-idDel = find((xNearSurfaceSeriesOfMeas == g_dateDef) & (yNearSurfaceSeriesOfMeas == g_presDef));
+idDel = find((xNearSurfaceSeriesOfMeas == g_dateDef) | (yNearSurfaceSeriesOfMeas == g_presDef));
 xNearSurfaceSeriesOfMeas(idDel) = [];
 yNearSurfaceSeriesOfMeas(idDel) = [];
 if (~isempty(xNearSurfaceSeriesOfMeas))
@@ -1076,7 +1077,7 @@ end
 
 xInAirSeriesOfMeas = g_NTCT_InAirSeriesOfMeas_juld(a_idCycle+1, :);
 yInAirSeriesOfMeas = g_NTCT_InAirSeriesOfMeas_pres(a_idCycle+1, :);
-idDel = find((xInAirSeriesOfMeas == g_dateDef) & (yInAirSeriesOfMeas == g_presDef));
+idDel = find((xInAirSeriesOfMeas == g_dateDef) | (yInAirSeriesOfMeas == g_presDef));
 xInAirSeriesOfMeas(idDel) = [];
 yInAirSeriesOfMeas(idDel) = [];
 if (~isempty(xInAirSeriesOfMeas))
@@ -1086,7 +1087,7 @@ end
 
 xSpyInDescToPark = g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :);
 ySpyInDescToPark = g_NTCT_SpyInDescToPark_pres(a_idCycle+1, :);
-idDel = find((xSpyInDescToPark == g_dateDef) & (ySpyInDescToPark == g_presDef));
+idDel = find((xSpyInDescToPark == g_dateDef) | (ySpyInDescToPark == g_presDef));
 xSpyInDescToPark(idDel) = [];
 ySpyInDescToPark(idDel) = [];
 if (~isempty(xSpyInDescToPark))
@@ -1102,7 +1103,7 @@ end
 
 xSpyAtPark = g_NTCT_SpyAtPark_juld(a_idCycle+1, :);
 ySpyAtPark = g_NTCT_SpyAtPark_pres(a_idCycle+1, :);
-idDel = find((xSpyAtPark == g_dateDef) & (ySpyAtPark == g_presDef));
+idDel = find((xSpyAtPark == g_dateDef) | (ySpyAtPark == g_presDef));
 xSpyAtPark(idDel) = [];
 ySpyAtPark(idDel) = [];
 if (~isempty(xSpyAtPark))
@@ -1118,7 +1119,7 @@ end
 
 xSpyInDescToProf = g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :);
 ySpyInDescToProf = g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :);
-idDel = find((xSpyInDescToProf == g_dateDef) & (ySpyInDescToProf == g_presDef));
+idDel = find((xSpyInDescToProf == g_dateDef) | (ySpyInDescToProf == g_presDef));
 xSpyInDescToProf(idDel) = [];
 ySpyInDescToProf(idDel) = [];
 if (~isempty(xSpyInDescToProf))
@@ -1134,7 +1135,7 @@ end
 
 xSpyAtProf = g_NTCT_SpyAtProf_juld(a_idCycle+1, :);
 ySpyAtProf = g_NTCT_SpyAtProf_pres(a_idCycle+1, :);
-idDel = find((xSpyAtProf == g_dateDef) & (ySpyAtProf == g_presDef));
+idDel = find((xSpyAtProf == g_dateDef) | (ySpyAtProf == g_presDef));
 xSpyAtProf(idDel) = [];
 ySpyAtProf(idDel) = [];
 if (~isempty(xSpyAtProf))
@@ -1150,7 +1151,7 @@ end
 
 xSpyInAscProf = g_NTCT_SpyInAscProf_juld(a_idCycle+1, :);
 ySpyInAscProf = g_NTCT_SpyInAscProf_pres(a_idCycle+1, :);
-idDel = find((xSpyInAscProf == g_dateDef) & (ySpyInAscProf == g_presDef));
+idDel = find((xSpyInAscProf == g_dateDef) | (ySpyInAscProf == g_presDef));
 xSpyInAscProf(idDel) = [];
 ySpyInAscProf(idDel) = [];
 firstSurfDate = g_dateDef;
@@ -1215,7 +1216,7 @@ end
 
 xSurface2 = g_NTCT_Surface2_juld(a_idCycle+1, :);
 ySurface2 = g_NTCT_Surface2_pres(a_idCycle+1, :);
-idDel = find((xSurface2 == g_dateDef) & (ySurface2 == g_presDef));
+idDel = find((xSurface2 == g_dateDef) | (ySurface2 == g_presDef));
 xSurface2(idDel) = [];
 ySurface2(idDel) = [];
 if (~isempty(xSurface2))
@@ -1225,7 +1226,7 @@ end
 
 xGrounded = g_NTCT_Grounded_flag_juld(a_idCycle+1, :);
 yGrounded = g_NTCT_Grounded_flag_pres(a_idCycle+1, :);
-idDel = find((xGrounded == g_dateDef) & (yGrounded == g_presDef));
+idDel = find((xGrounded == g_dateDef) | (yGrounded == g_presDef));
 xGrounded(idDel) = [];
 yGrounded(idDel) = [];
 if (~isempty(xGrounded))

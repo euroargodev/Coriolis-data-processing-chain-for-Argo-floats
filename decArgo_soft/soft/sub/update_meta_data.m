@@ -122,17 +122,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -171,17 +171,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -218,17 +218,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -265,17 +265,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -312,17 +312,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -359,17 +359,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -406,17 +406,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -453,17 +453,17 @@ if (isfield(o_metaData, 'PARAMETER'))
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
             preCalibEq = preCalibEq(1:FORMAT_SIZE);
          end
          if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
             preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
          end
          if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) => cut to fit the format\n', ...
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
@@ -487,7 +487,7 @@ if (isfield(o_metaData, 'PARAMETER'))
    end
    
 else
-   fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information => parameter information cannot be updated\n', ...
+   fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information - parameter information cannot be updated\n', ...
       g_decArgo_floatNum);
 end
 
@@ -1605,7 +1605,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
             % Aanderaa standard calibration
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1653,7 +1653,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
             % Aanderaa standard calibration
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1754,7 +1754,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1802,7 +1802,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1854,7 +1854,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1935,7 +1935,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -1977,7 +1977,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2050,7 +2050,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2114,7 +2114,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2181,7 +2181,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2251,7 +2251,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2332,7 +2332,7 @@ switch (a_decoderId)
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
             % Aanderaa standard calibration (tabPhaseCoef(i) = PhaseCoefi).
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2340,7 +2340,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2388,7 +2388,7 @@ switch (a_decoderId)
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
             % Aanderaa standard calibration (tabPhaseCoef(i) = PhaseCoefi).
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2396,7 +2396,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2919,7 +2919,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                   g_decArgo_floatNum);
                return
             end

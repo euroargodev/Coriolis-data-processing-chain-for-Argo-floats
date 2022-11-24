@@ -55,7 +55,7 @@ for idF = 1:length(g_decArgo_rtOffsetInfo.param)
             o_adjData(idNoDef) = o_adjData(idNoDef)*slopeValue + offsetValue;
          end
       else
-         fprintf('RTADJ_WARNING: Float #%d Cycle #%d Profile #%d: profile not dated => RT offset cannot be applied\n', ...
+         fprintf('RTADJ_WARNING: Float #%d Cycle #%d Profile #%d: profile not dated - RT offset cannot be applied\n', ...
             g_decArgo_floatNum, a_profile.cycleNumber, a_profile.profileNumber);
       end
       break

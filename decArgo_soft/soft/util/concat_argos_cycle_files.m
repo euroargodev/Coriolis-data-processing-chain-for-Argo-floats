@@ -96,7 +96,7 @@ end
 
 % check the input directory
 if ~(exist(DIR_INPUT_ARGOS_FILES, 'dir') == 7)
-   fprintf('ERROR: The Argos cycle files directory %s does not exist => exit\n', DIR_INPUT_ARGOS_FILES);
+   fprintf('ERROR: The Argos cycle files directory %s does not exist - exit\n', DIR_INPUT_ARGOS_FILES);
    return
 end
 
@@ -109,7 +109,7 @@ end
 % find current float Argos Id
 idF = find(listWmoNum == floatNum, 1);
 if (isempty(idF))
-   fprintf('ERROR: No information on float #%d => exit\n', floatNum);
+   fprintf('ERROR: No information on float #%d - exit\n', floatNum);
    return
 end
 floatArgosId = str2num(listArgosId{idF});
@@ -156,14 +156,14 @@ for idFile = 1:length(argosFiles)
          end
       end
    else
-      fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
+      fprintf('ERROR: Not expected file name: %s - file not considered\n', argosFileName);
    end
 end
 
 if ~((nargin == 1) || ...
    ((nargin == 2) && (fileFound == 1)) || ...
       ((nargin == 3) && (fileFound == 2)))
-   fprintf('ERROR: Check that provided date(s) is(are) part of the Argos cycle file name => exit\n');
+   fprintf('ERROR: Check that provided date(s) is(are) part of the Argos cycle file name - exit\n');
    return
 end
 

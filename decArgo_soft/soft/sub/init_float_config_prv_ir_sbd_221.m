@@ -63,14 +63,16 @@ g_decArgo_floatFirmware = '';
 
 % create static configuration names
 configNames1 = [];
+configNames1{end+1} = 'CONFIG_PM01'; % to store value to be used for the second deep cycle (see g_decArgo_doneOnceFlag)
 configNames1{end+1} = 'CONFIG_PM04';
+configNames1{end+1} = 'CONFIG_PM05'; % to store value to be used for the second deep cycle (see g_decArgo_doneOnceFlag)
 
 % create dynamic configuration names
 configNames2 = [];
 for id = [0:3 5:18]
    configNames2{end+1} = sprintf('CONFIG_PM%02d', id);
 end
-for id = [0:14 18 20:37]
+for id = [0:14 16:37]
    configNames2{end+1} = sprintf('CONFIG_PT%02d', id);
 end
 for id = 0:15
@@ -99,7 +101,7 @@ if (isfield(metaData, 'FIRMWARE_VERSION'))
 end
 
 % fill the configuration values
-configValues1 = [];
+configValues1 = repmat({'nan'}, length(configNames1), 1);
 configValues2 = nan(length(configNames2), 1);
 
 if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMETER_VALUE))
@@ -123,11 +125,14 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
                return
             end
          end
-      else
+      end
+      if (isempty(idPos) || ...
+            strncmp(jConfNames{id}, 'CONFIG_PM01', length('CONFIG_PM01')) || ...
+            strncmp(jConfNames{id}, 'CONFIG_PM05', length('CONFIG_PM05')))
          idPos = find(strncmp(jConfNames{id}, configNames1, 11) == 1, 1);
          if (~isempty(idPos))
             if (~isempty(jConfValues{id}))
-               configValues1{end+1} = jConfValues{id};
+               configValues1{idPos} = jConfValues{id};
             end
          end
       end
@@ -171,7 +176,7 @@ if (~isnan(configValues2(idPosPt20)))
    ctdPumpSwitchOffPres = configValues2(idPosPt20);
 else
    ctdPumpSwitchOffPres = 5;
-   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
+   fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (%d dbars)\n', ...
       g_decArgo_floatNum, ctdPumpSwitchOffPres);
 end
 

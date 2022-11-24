@@ -105,7 +105,7 @@ for idFloat = 1:nbFloats
    % find float SN and decoder Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
-      fprintf('ERROR: No information on float #%d => nothing done for this float\n', floatNum);
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
       continue
    end
    floatDecId = listDecId(idF);
@@ -145,7 +145,7 @@ for idFloat = 1:nbFloats
             nearSurfaceDataStr ...
             ] = read_apx_ir_rudics_msg_file(filePathName);
          if (error == 1)
-            fprintf('ERROR: Error in file: %s => ignored\n', filePathName);
+            fprintf('ERROR: Error in file: %s - ignored\n', filePathName);
             continue
          end
          
@@ -172,7 +172,7 @@ for idFloat = 1:nbFloats
                else
                   if (any(~strcmp(configNameList{idF}, configName)) || ...
                         any(~strcmp(configUnitList{idF}, configUnit)))
-                     fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration => ignored\n', floatNum, cyNum);
+                     fprintf('ERROR: Float #%d Cycle #%d: Inconsistent configuration - ignored\n', floatNum, cyNum);
                      continue
                   end
                end
@@ -196,7 +196,7 @@ for idFloat = 1:nbFloats
                         engNameList0{end+1} = engName;
                      else
                         if ((length(engNameList0{idF}) ~= length(engName)) || any(~strcmp(engNameList0{idF}, engName)))
-                           fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering => ignored\n', floatNum, cyNum);
+                           fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering - ignored\n', floatNum, cyNum);
                            continue
                         end
                      end
@@ -212,7 +212,7 @@ for idFloat = 1:nbFloats
                         engNameList{end+1} = engName;
                      else
                         if ((length(engNameList{idF}) ~= length(engName)) || any(~strcmp(engNameList{idF}, engName)))
-                           fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering => ignored\n', floatNum, cyNum);
+                           fprintf('ERROR: Float #%d Cycle #%d: Inconsistent engineering - ignored\n', floatNum, cyNum);
                            continue
                         end
                      end

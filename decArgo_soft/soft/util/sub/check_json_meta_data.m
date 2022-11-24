@@ -39,7 +39,7 @@ for idField = 1:length(fieldNames)
      if (~isempty(info))
         if (ischar(info))
            if (length(info) > maxLength)
-              fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) => no json file generated\n', ...
+              fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
                  a_floatNum, fieldName, maxLength, info);
               o_ok = 0;
            end
@@ -47,7 +47,7 @@ for idField = 1:length(fieldNames)
            for idL = 1:size(info, 1)
               info2 = info{idL, :};
               if (length(info2) > maxLength)
-                 fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) => no json file generated\n', ...
+                 fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
                     a_floatNum, fieldName, maxLength, info2);
                  o_ok = 0;
               end

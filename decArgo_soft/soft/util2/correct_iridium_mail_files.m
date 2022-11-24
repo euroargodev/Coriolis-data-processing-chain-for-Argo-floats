@@ -83,9 +83,9 @@ fprintf('output directory = %s\n', outputDirName);
 fprintf('DIR_LOG_FILE = %s\n', DIR_LOG_FILE);
 fprintf('DO_IT = %d', DO_IT);
 if (DO_IT == 1)
-   fprintf(' => correct mail files\n');
+   fprintf(' - correct mail files\n');
 else
-   fprintf(' => only print result of mail parsing\n');
+   fprintf(' - only print result of mail parsing\n');
 end
 fprintf('IMEI_number = %d\n', imeiNumber);
 fprintf('first_MOMSN = %d\n', momsnStart);
@@ -93,7 +93,7 @@ fprintf('last_MOMSN = %d\n\n', momsnStop);
 
 % check the input directory
 if ~(exist(inputDirName, 'dir') == 7)
-   fprintf('ERROR: Input directory doesn''t exist => exit\n');
+   fprintf('ERROR: Input directory doesn''t exist - exit\n');
    return
 end
 
@@ -121,7 +121,7 @@ for idFile = 1:length(files)
       % retrieve MOMSN number
       idFUs = strfind(fileName, '_');
       if (length(idFUs) < 4)
-         fprintf('ERROR: Inconsistent file name for file: %s => not processed\n', fileName);
+         fprintf('ERROR: Inconsistent file name for file: %s - not processed\n', fileName);
          continue
       end
       momsn = str2double(fileName(idFUs(3)+1:idFUs(4)-1));
@@ -172,7 +172,7 @@ for idFile = 1:length(files)
       end
       
       if (boundIdMax < 0)
-         fprintf('ERROR: Inconsistent data in file: %s => not processed\n', fileName);
+         fprintf('ERROR: Inconsistent data in file: %s - not processed\n', fileName);
          continue
       end
       
@@ -267,7 +267,7 @@ for idFile = 1:length(files)
       if (isempty(imei) || isempty(momsn) || isempty(mtmsn) || ...
             isempty(timeOfSession) || isempty(sessionStatus) || ...
             isempty(messageSize) || isempty(unitLocation) || isempty(cepRadius))
-         fprintf('ERROR: Inconsistent data in file: %s => not processed\n', fileName);
+         fprintf('ERROR: Inconsistent data in file: %s - not processed\n', fileName);
          continue
       end
       

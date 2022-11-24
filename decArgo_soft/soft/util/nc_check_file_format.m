@@ -27,7 +27,10 @@ function nc_check_file_format(varargin)
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-12-18\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2019-02-26\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2019-07-15\';
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2020-09-08\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2020-09-08\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\_BETA_FOR_TRAJ\file_checker_v2.6.01_exec_2020-10-01_spec_2020-10-01\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\_BETA_FOR_TRAJ\file_checker_v2.6.01_exec_2020-10-01_spec_2020-10-07\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.6_2020-10-23_spec_2020-10-23\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-04-24\';
 
@@ -42,6 +45,7 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20200103\OUT\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_36\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_tmp\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\selected_nke_prv_ir\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
@@ -78,16 +82,26 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexO
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_41.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_9.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11_a_refaire_20200103.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11_a_refaire_20200103.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_cts5.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_argos.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nova.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_atlantos.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_rem.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
 
-% directory to store the log and csv files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
+% directory to store the log file
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\'; 
+
+% directory to store the csv file
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\'; 
 
 % nc file types to check
 CHECK_NC_TRAJ = 1;
@@ -132,7 +146,7 @@ diary(logFile);
 tic;
 
 % create the CSV output file
-outputFileName = [DIR_LOG_FILE '/' 'nc_check_file_format' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+outputFileName = [DIR_CSV_FILE '/' 'nc_check_file_format' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    return
@@ -214,6 +228,29 @@ for idFloat = 1:nbFloats
             ncFilePathName = [ncFileDir '/' ncFileName];
             
             cmd = '';
+            %             if (ispc)
+            %                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+            %                   'java -classpath ' DIR_JAVA_CHECKER ' ' ...
+            %                   '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
+            %                   '-full-traj-checks ' ...
+            %                   lower(floatDac) ' ' ...
+            %                   DIR_JAVA_CHECKER '/spec ' ...
+            %                   DIR_OUTPUT_REPORT_FILES ' ' ...
+            %                   ncFileDir ' ' ...
+            %                   ncFileName];
+            %             elseif (isunix)
+            %                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+            %                   DIR_JAVA_CHECKER '/ArgoFileChecker.csh ' ...
+            %                   '-full-traj-checks ' ...
+            %                   lower(floatDac) ' ' ...
+            %                   DIR_OUTPUT_REPORT_FILES ' ' ...
+            %                   ncFileDir ' ' ...
+            %                   ncFileName];
+            %             else
+            %                fprintf('Cannot determine operating system\n');
+            %                return
+            %             end
+            
             if (ispc)
                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
                   'java -classpath ' DIR_JAVA_CHECKER ' ' ...
@@ -233,7 +270,7 @@ for idFloat = 1:nbFloats
             else
                fprintf('Cannot determine operating system\n');
                return
-            end
+            end            
             
             [status, cmdOut] = system(cmd);
             if (status == 0)

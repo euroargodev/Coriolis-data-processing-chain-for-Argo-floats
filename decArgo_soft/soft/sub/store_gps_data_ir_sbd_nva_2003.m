@@ -58,7 +58,7 @@ if (~isempty(a_tabTech))
       % no GPS fix in the TECH message
       if ((a_tabTech(idTech, 39+ID_OFFSET) == 0) && ...
             (a_tabTech(idTech, 40+ID_OFFSET) == 0))
-         return
+         continue
       end
 
       % unpack the GPS data
@@ -110,6 +110,18 @@ if (~isempty(a_tabTech))
             gpsLocQc = [gpsLocQc; 0];
             gpsLocAccuracy = [gpsLocAccuracy; 'G'];
             gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idTech, end)];
+            
+            % sort GPS data according to location dates
+            [~, idSort] = sort(gpsLocDate);
+            gpsLocCycleNum = gpsLocCycleNum(idSort);
+            gpsLocProfNum = gpsLocProfNum(idSort);
+            gpsLocPhase = gpsLocPhase(idSort);
+            gpsLocDate = gpsLocDate(idSort);
+            gpsLocLon = gpsLocLon(idSort);
+            gpsLocLat = gpsLocLat(idSort);
+            gpsLocQc = gpsLocQc(idSort);
+            gpsLocAccuracy = gpsLocAccuracy(idSort);
+            gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
             
             % update GPS data global variable
             g_decArgo_gpsData{1} = gpsLocCycleNum;
