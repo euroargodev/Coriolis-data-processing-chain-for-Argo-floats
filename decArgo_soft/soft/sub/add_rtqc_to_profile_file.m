@@ -172,6 +172,8 @@
 %                               that depend on float decoder Id
 %                             - interpolate CTD data for specific BGC parameters
 %                               that need PTS
+%   11/18/2020 - RNU - V 5.1: - correction of a bug in get_ctd_data when primary
+%                               or NS profile is missing
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -211,7 +213,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.0';
+g_decArgo_addRtqcToProfileVersion = '5.1';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -6491,81 +6493,93 @@ o_psalCtdDataFillValue = '';
 idPrimary = find(strncmp(a_vssList, 'Primary sampling:', length('Primary sampling:')) == 1);
 
 % retrieve PRES CTD data
-[presCtdData, presCtdDataQc, o_presCtdDataFillValue, presPrimaryDataMode, ~] = ...
-   get_param_data('PRES', a_dataStruct, idPrimary, '');
-if (~isempty(presCtdData))
-   profPresPrimaryCtd = presCtdData(idPrimary, :);
-   profPresPrimaryCtdQc = presCtdDataQc(idPrimary, :);
-else
-   profPresPrimaryCtd = [];
-   profPresPrimaryCtdQc = [];
-end
-
-% retrieve TEMP CTD data
-[tempCtdData, tempCtdDataQc, o_tempCtdDataFillValue, tempPrimaryDataMode, ~] = ...
-   get_param_data('TEMP', a_dataStruct, idPrimary, '');
-if (~isempty(tempCtdData))
-   profTempPrimaryCtd = tempCtdData(idPrimary, :);
-   profTempPrimaryCtdQc = tempCtdDataQc(idPrimary, :);
-else
-   profTempPrimaryCtd = [];
-   profTempPrimaryCtdQc = [];
-end
-
-% retrieve PSAL CTD data
-[psalCtdData, psalCtdDataQc, o_psalCtdDataFillValue, psalPrimaryDataMode, ~] = ...
-   get_param_data('PSAL', a_dataStruct, idPrimary, '');
-if (~isempty(psalCtdData))
-   profPsalPrimaryCtd = psalCtdData(idPrimary, :);
-   profPsalPrimaryCtdQc = psalCtdDataQc(idPrimary, :);
-else
-   profPsalPrimaryCtd = [];
-   profPsalPrimaryCtdQc = [];
+profPresPrimaryCtd = [];
+presPrimaryDataMode = '';
+tempPrimaryDataMode = '';
+psalPrimaryDataMode = '';
+if (~isempty(idPrimary))
+   [presCtdData, presCtdDataQc, o_presCtdDataFillValue, presPrimaryDataMode, ~] = ...
+      get_param_data('PRES', a_dataStruct, idPrimary, '');
+   if (~isempty(presCtdData))
+      profPresPrimaryCtd = presCtdData(idPrimary, :);
+      profPresPrimaryCtdQc = presCtdDataQc(idPrimary, :);
+   else
+      profPresPrimaryCtd = [];
+      profPresPrimaryCtdQc = [];
+   end
+   
+   % retrieve TEMP CTD data
+   [tempCtdData, tempCtdDataQc, o_tempCtdDataFillValue, tempPrimaryDataMode, ~] = ...
+      get_param_data('TEMP', a_dataStruct, idPrimary, '');
+   if (~isempty(tempCtdData))
+      profTempPrimaryCtd = tempCtdData(idPrimary, :);
+      profTempPrimaryCtdQc = tempCtdDataQc(idPrimary, :);
+   else
+      profTempPrimaryCtd = [];
+      profTempPrimaryCtdQc = [];
+   end
+   
+   % retrieve PSAL CTD data
+   [psalCtdData, psalCtdDataQc, o_psalCtdDataFillValue, psalPrimaryDataMode, ~] = ...
+      get_param_data('PSAL', a_dataStruct, idPrimary, '');
+   if (~isempty(psalCtdData))
+      profPsalPrimaryCtd = psalCtdData(idPrimary, :);
+      profPsalPrimaryCtdQc = psalCtdDataQc(idPrimary, :);
+   else
+      profPsalPrimaryCtd = [];
+      profPsalPrimaryCtdQc = [];
+   end
 end
 
 % retrieve the near-surface profile Id
 idNSProf = find(strncmp(a_vssList, 'Near-surface sampling:', length('Near-surface sampling:')) == 1);
 
 % retrieve PRES CTD data
-[presCtdData, presCtdDataQc, presNSCtdDataFillValue, presNSDataMode, ~] = ...
-   get_param_data('PRES', a_dataStruct, idNSProf, '');
-if (~isempty(presCtdData))
-   profPresNSCtd = presCtdData(idNSProf, :);
-   profPresNSCtdQc = presCtdDataQc(idNSProf, :);
-else
-   profPresNSCtd = [];
-   profPresNSCtdQc = [];
-end
-if (isempty(o_presCtdDataFillValue))
-   o_presCtdDataFillValue = presNSCtdDataFillValue;
-end
-
-% retrieve TEMP CTD data
-[tempCtdData, tempCtdDataQc, tempNSCtdDataFillValue, tempNSDataMode, ~] = ...
-   get_param_data('TEMP', a_dataStruct, idNSProf, '');
-if (~isempty(tempCtdData))
-   profTempNSCtd = tempCtdData(idNSProf, :);
-   profTempNSCtdQc = tempCtdDataQc(idNSProf, :);
-else
-   profTempNSCtd = [];
-   profTempNSCtdQc = [];
-end
-if (isempty(o_tempCtdDataFillValue))
-   o_tempCtdDataFillValue = tempNSCtdDataFillValue;
-end
-
-% retrieve PSAL CTD data
-[psalCtdData, psalCtdDataQc, psalNSCtdDataFillValue, psalNSDataMode, ~] = ...
-   get_param_data('PSAL', a_dataStruct, idNSProf, '');
-if (~isempty(psalCtdData))
-   profPsalNSCtd = psalCtdData(idNSProf, :);
-   profPsalNSCtdQc = psalCtdDataQc(idNSProf, :);
-else
-   profPsalNSCtd = [];
-   profPsalNSCtdQc = [];
-end
-if (isempty(o_psalCtdDataFillValue))
-   o_psalCtdDataFillValue = psalNSCtdDataFillValue;
+profPresNSCtd = [];
+presNSDataMode = '';
+tempNSDataMode = '';
+psalNSDataMode = '';
+if (~isempty(idNSProf))
+   [presCtdData, presCtdDataQc, presNSCtdDataFillValue, presNSDataMode, ~] = ...
+      get_param_data('PRES', a_dataStruct, idNSProf, '');
+   if (~isempty(presCtdData))
+      profPresNSCtd = presCtdData(idNSProf, :);
+      profPresNSCtdQc = presCtdDataQc(idNSProf, :);
+   else
+      profPresNSCtd = [];
+      profPresNSCtdQc = [];
+   end
+   if (isempty(o_presCtdDataFillValue))
+      o_presCtdDataFillValue = presNSCtdDataFillValue;
+   end
+   
+   % retrieve TEMP CTD data
+   [tempCtdData, tempCtdDataQc, tempNSCtdDataFillValue, tempNSDataMode, ~] = ...
+      get_param_data('TEMP', a_dataStruct, idNSProf, '');
+   if (~isempty(tempCtdData))
+      profTempNSCtd = tempCtdData(idNSProf, :);
+      profTempNSCtdQc = tempCtdDataQc(idNSProf, :);
+   else
+      profTempNSCtd = [];
+      profTempNSCtdQc = [];
+   end
+   if (isempty(o_tempCtdDataFillValue))
+      o_tempCtdDataFillValue = tempNSCtdDataFillValue;
+   end
+   
+   % retrieve PSAL CTD data
+   [psalCtdData, psalCtdDataQc, psalNSCtdDataFillValue, psalNSDataMode, ~] = ...
+      get_param_data('PSAL', a_dataStruct, idNSProf, '');
+   if (~isempty(psalCtdData))
+      profPsalNSCtd = psalCtdData(idNSProf, :);
+      profPsalNSCtdQc = psalCtdDataQc(idNSProf, :);
+   else
+      profPsalNSCtd = [];
+      profPsalNSCtdQc = [];
+   end
+   if (isempty(o_psalCtdDataFillValue))
+      o_psalCtdDataFillValue = psalNSCtdDataFillValue;
+   end
 end
 
 ctdDataModePrimary = unique([presPrimaryDataMode tempPrimaryDataMode psalPrimaryDataMode]);
