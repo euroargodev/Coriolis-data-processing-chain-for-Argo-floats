@@ -114,6 +114,10 @@
 %                               accordingly).
 %                             - CHLA_ADJUSTED_QC = 8 replaced by
 %                               CHLA_ADJUSTED_QC = 5
+%   07/06/2018 - RNU - V 3.4: In nc_update_file:
+%                             - for each profile, update PROFILE_<PARAM>_QC with
+%                               <PARAM>_QC or <PARAM>_ADJUSTED_QC depending on
+%                               each profile DATA_MODE
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -145,7 +149,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.3';
+g_decArgo_addRtqcToProfileVersion = '3.4';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -4918,15 +4922,15 @@ for idFile = 1:2
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), newProfParamQc);
             else
                if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
-                  if ~((length(unique(dataQc)) == 1) && (unique(dataQc) == g_decArgo_qcStrDef))
-                     profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
-                     if (var_is_present_dec_argo(fCdf, profParamQcName))
-                        % compute PROFILE_<PARAM>_QC from <PARAM>_ADJUSTED_QC values
-                        newProfParamQc = repmat(g_decArgo_qcStrDef, 1, size(dataQc, 1));
-                        for idProf = 1:size(dataQc, 1)
-                           newProfParamQc(idProf) = compute_profile_quality_flag(dataQc(idProf, :));
+                  profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
+                  if (var_is_present_dec_argo(fCdf, profParamQcName))
+                     % compute PROFILE_<PARAM>_QC from <PARAM>_ADJUSTED_QC values
+                     for idProf = 1:size(dataQc, 1)
+                        if (any(dataQc(idProf, :) ~= g_decArgo_qcStrDef))
+                           % the parameter is adjusted
+                           newProfParamQc = compute_profile_quality_flag(dataQc(idProf, :));
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), idProf-1, newProfParamQc);
                         end
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), newProfParamQc);
                      end
                   end
                end
