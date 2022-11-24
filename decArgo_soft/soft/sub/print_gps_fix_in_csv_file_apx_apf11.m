@@ -2,7 +2,7 @@
 % Print GPS data in CSV file.
 %
 % SYNTAX :
-%  print_gps_fix_apx_apf11_in_csv_file(a_gpsData, a_cycleNumber)
+%  print_gps_fix_in_csv_file_apx_apf11(a_gpsData, a_cycleNumber)
 %
 % INPUT PARAMETERS :
 %   a_gpsData     : GPS data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_gps_fix_apx_apf11_in_csv_file(a_gpsData, a_cycleNumber)
+function print_gps_fix_in_csv_file_apx_apf11(a_gpsData, a_cycleNumber)
 
 % current float WMO number
 global g_decArgo_floatNum;

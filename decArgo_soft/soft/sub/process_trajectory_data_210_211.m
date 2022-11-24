@@ -158,6 +158,9 @@ global g_decArgo_salDef;
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 ID_OFFSET = 1;
 
@@ -931,20 +934,24 @@ else
 end
 
 % add configuration mission number
-configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
-if (~isempty(configMissionNumber))
-   if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
-      trajNCycleStruct.configMissionNumber = configMissionNumber;
+if (any(g_decArgo_floatConfig.USE.CYCLE == a_cycleNum))
+   configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
+   if (~isempty(configMissionNumber))
+      if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+         trajNCycleStruct.configMissionNumber = configMissionNumber;
+      end
    end
 elseif (trajNCycleStruct.surfOnly == 1)
    % we don't know what should be the configuration number during a surface
    % cycle after a reset of the float => we keep the previous one
    cyNum = a_cycleNum - 1;
    while (cyNum >= 0)
-      configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
-      if (~isempty(configMissionNumber))
-         trajNCycleStruct.configMissionNumber = configMissionNumber;
-         break;
+      if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
+         configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
+         if (~isempty(configMissionNumber))
+            trajNCycleStruct.configMissionNumber = configMissionNumber;
+            break;
+         end
       end
       cyNum = cyNum - 1;
    end

@@ -32,7 +32,7 @@ function generate_json_decoder_tech_labels()
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_111.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_121.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_122.csv';
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_124.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_124.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
@@ -74,6 +74,8 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2002.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2003.csv';
+
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_3001.csv';
 
 
 if ~(exist(decoderTechLabelsFileName, 'file') == 2)
@@ -261,6 +263,9 @@ else
          decIdList = [2002];
       case {2003}
          decIdList = [2003];
+         
+      case {3001}
+         decIdList = [3001];
          
       otherwise
          fprintf('ERROR: Unknown decId list associate to decId #%d\n', decId);

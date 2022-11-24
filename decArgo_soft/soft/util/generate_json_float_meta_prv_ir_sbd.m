@@ -34,7 +34,7 @@ function generate_json_float_meta_prv_ir_sbd()
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\exportJPR_ArvorDeep_from_VB_20170825.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_extract_6901246_6901248_from_FK_20180921.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_5.74_5.75_from_VB_20171107.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_DeepIce_5.65_20180201.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_DeepIce_5.65_20180201.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export_6901471_pour_codage_slope_adj_rt.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\db_export-3902101_Arvor-Ir-Do_5.46_from_VB_20180216.txt';
 

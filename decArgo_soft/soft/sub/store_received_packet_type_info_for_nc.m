@@ -29,7 +29,6 @@ global g_decArgo_outputNcParamIndex;
 global g_decArgo_outputNcParamValue;
 
 % array ro store statistics on received packets
-global g_decArgo_cycleList;
 global g_decArgo_nbDescentPacketsReceived;
 global g_decArgo_nbParkPacketsReceived;
 global g_decArgo_nbAscentPacketsReceived;
@@ -141,50 +140,47 @@ switch (a_decoderId)
       g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParmPacketsReceived;
       
    case {212, 214, 217}
-      
-      idFCy = find(g_decArgo_cycleList == g_decArgo_cycleNum);
-         
+               
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1001];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1002];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1003];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1004];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1005];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1006];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1007];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1008];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1009];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm1PacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm1PacketsReceived;
       
-      if (~isempty(g_decArgo_7TypePacketReceivedCyNum) && ...
-            (g_decArgo_cycleNum >= g_decArgo_7TypePacketReceivedCyNum))
+      if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
          g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
             g_decArgo_cycleNum 1010];
-         g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm2PacketsReceived(idFCy);
+         g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm2PacketsReceived;
       end
       
    case {215}
@@ -226,44 +222,42 @@ switch (a_decoderId)
       g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;
       
    case {216}
-      
-      idFCy = find(g_decArgo_cycleList == g_decArgo_cycleNum);
-      
+
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1001];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbDescentPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1002];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParkPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1003];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1004];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbHydraulicPacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1005];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech1PacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1006];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbTech2PacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1007];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParmPacketsReceived(idFCy);      
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParmPacketsReceived;      
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1008];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived(idFCy);
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbNearSurfacePacketsReceived;
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1009];
-      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived(idFCy);      
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;      
 
    otherwise
       fprintf('WARNING: Received packet type information is not defined yet for decoderId #%d\n', a_decoderId);

@@ -80,6 +80,10 @@
 %      Correction #10: 'on the fly' correction of output DM data.
 %      - if PSAL ~= fillValue and PSAL_ADJUSTED == fillValue 
 %        then PSAL_ADJUSTED_QC = '4'
+%   11/20/2018 - RNU - V 3.0:
+%      Correction #12: 'on the fly' correction of output DM data.
+%      - correct HISTORY_DATE and SCIENTIFIC_CALIB_DATE (or
+%        CALIBRATION_DATE) (format YYYYMMDDHHMISS) when SS = 60
 % ------------------------------------------------------------------------------
 % Version 2.2 (AUM 2.2 08/21/2009
 %  - FIRMWARE_VERSION is missing in Coriolis files
@@ -152,7 +156,7 @@ DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\DecArgo_soft\work/json_float_meta_
 
 % program version
 global g_cofc_ncConvertMonoProfileVersion;
-g_cofc_ncConvertMonoProfileVersion = '2.9';
+g_cofc_ncConvertMonoProfileVersion = '3.0';
 
 % default values initialization
 init_default_values;
@@ -637,6 +641,70 @@ for idParam = 1:length(inputDmParamList)
       ];
 end
 [inputDmData] = get_data_from_nc_file(a_inputDmFileName, wantedInputVars);
+
+% correction #12: correct HISTORY_DATE and SCIENTIFIC_CALIB_DATE (or
+% CALIBRATION_DATE) (format YYYYMMDDHHMISS) when SS = 60
+idVal = find(strcmp('HISTORY_DATE', inputDmData(1:2:end)) == 1, 1);
+if (~isempty(idVal))
+   updated = 0;
+   inputDmDate = inputDmData{2*idVal};
+   % HISTORY_DATE(N_HISTORY, N_PROF, DATE_TIME)
+   for idNHistory = 1:size(inputDmDate, 3)
+      for idNProf = 1:size(inputDmDate, 2)
+         curDate = inputDmDate(:, idNProf, idNHistory)';
+         if (~isempty(deblank(curDate)))
+            if ((length(deblank(curDate)) == 14) && strcmp(curDate(end-1:end), '60'))
+               curDateNum = datenum(curDate, 'yyyymmddHHMMSS');
+               newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
+               inputDmDate(:, idNProf, idNHistory) = newDate';
+               updated = 1;
+               
+               fprintf('INFO: input ''HISTORY_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
+                  curDate, newDate, a_inputDmFileName);
+            end
+         end
+      end
+   end
+   if (updated == 1)
+      inputDmData{2*idVal} = inputDmDate;
+   end
+end
+inputDmDate = [];
+idVal = find(strcmp('SCIENTIFIC_CALIB_DATE', inputDmData(1:2:end)) == 1, 1);
+if (~isempty(idVal))
+   inputDmDate = inputDmData{2*idVal};
+else
+   idVal = find(strcmp('CALIBRATION_DATE', inputDmData(1:2:end)) == 1, 1);
+   if (~isempty(idVal))
+      inputDmDate = inputDmData{2*idVal};
+   end
+end
+if (~isempty(inputDmDate))
+   updated = 0;
+   inputDmDate = inputDmData{2*idVal};
+   % SCIENTIFIC_CALIB_DATE (N_PROF, N_CALIB, N_PARAM, DATE_TIME)
+   for idNProf = 1:size(inputDmDate, 4)
+      for idNCalib = 1:size(inputDmDate, 3)
+         for idNParam = 1:size(inputDmDate, 2)
+            curDate = inputDmDate(:, idNParam, idNCalib, idNProf)';
+            if (~isempty(deblank(curDate)))
+               if ((length(deblank(curDate)) == 14) && strcmp(curDate(end-1:end), '60'))
+                  curDateNum = datenum(curDate, 'yyyymmddHHMMSS');
+                  newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
+                  inputDmDate(:, idNParam, idNCalib, idNProf) = newDate';
+                  updated = 1;
+                  
+                  fprintf('INFO: input ''SCIENTIFIC_CALIB_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
+                     curDate, newDate, a_inputDmFileName);
+               end
+            end
+         end
+      end
+   end
+   if (updated == 1)
+      inputDmData{2*idVal} = inputDmDate;
+   end
+end
 
 % retrieve information from input RT C file
 wantedInputVars = [ ...

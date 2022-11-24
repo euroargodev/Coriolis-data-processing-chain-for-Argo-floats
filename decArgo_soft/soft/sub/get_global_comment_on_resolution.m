@@ -97,6 +97,10 @@ switch (a_decoderId)
       % Nova, Dova
       o_comment = 'JULD and PRES variable resolution depends on measurement codes';
 
+   case {3001}
+      % Nemo
+      o_comment = '';
+      
    otherwise
       o_comment = ' ';
       fprintf('WARNING: Float #%d: No global comment on resolution defined yet for decoderId #%d\n', ...

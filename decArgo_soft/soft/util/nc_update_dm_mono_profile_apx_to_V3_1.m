@@ -84,6 +84,10 @@
 %      Correction #11: 'on the fly' correction of output DM data.
 %      - if <PARAM>_QC = fillValue and PSAL_ADJUSTED == fillValue 
 %        then PSAL_ADJUSTED_QC = '4'
+%   11/20/2018 - RNU - V 3.1:
+%      Correction #12: 'on the fly' correction of output DM data.
+%      - correct HISTORY_DATE and SCIENTIFIC_CALIB_DATE (or
+%        CALIBRATION_DATE) (format YYYYMMDDHHMISS) when SS = 60
 % ------------------------------------------------------------------------------
 % Version 2.2 (AUM 2.2 08/21/2009
 %  - FIRMWARE_VERSION is missing in Coriolis files
@@ -116,13 +120,16 @@ function nc_update_dm_mono_profile_apx_to_V3_1(varargin)
 % top directory of input DM NetCDF mono-profile files to update
 DIR_INPUT_DM_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
 DIR_INPUT_DM_NC_FILES = 'H:\archive_201709\coriolis\';
+DIR_INPUT_DM_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\input_dm\';
 
 % top directory of input RT NetCDF mono-profile files
 DIR_INPUT_RT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule\';
 DIR_INPUT_RT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apx_ir_20170918\';
+DIR_INPUT_RT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\input_rt\';
 
 % top directory of output NetCDF mono-profile files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -140,17 +147,20 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_DM.tx
 % default list of floats to process
 DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DM_2_RT_link_apx.txt';
 DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DM_2_RT_link_apx_ir.txt';
+DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\DM_2_RT_link_apx.txt';
 
 % directory of JSON float info files
 DIR_JSON_FLOAT_INFO = 'C:\Users\jprannou\_RNU\DecArgo_soft\work/json_float_info/';
+DIR_JSON_FLOAT_INFO = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test/';
 
 % directory of JSON float meta-data
 DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\DecArgo_soft\work/json_float_meta_argos/';
 DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_apx_ir\/';
+DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test/';
 
 % program version
 global g_cofc_ncConvertMonoProfileVersion;
-g_cofc_ncConvertMonoProfileVersion = '3.0';
+g_cofc_ncConvertMonoProfileVersion = '3.1';
 
 % default values initialization
 init_default_values;
@@ -634,6 +644,70 @@ for idParam = 1:length(inputDmParamList)
       ];
 end
 [inputDmData] = get_data_from_nc_file(a_inputDmFileName, wantedInputVars);
+
+% correction #12: correct HISTORY_DATE and SCIENTIFIC_CALIB_DATE (or
+% CALIBRATION_DATE) (format YYYYMMDDHHMISS) when SS = 60
+idVal = find(strcmp('HISTORY_DATE', inputDmData(1:2:end)) == 1, 1);
+if (~isempty(idVal))
+   updated = 0;
+   inputDmDate = inputDmData{2*idVal};
+   % HISTORY_DATE(N_HISTORY, N_PROF, DATE_TIME)
+   for idNHistory = 1:size(inputDmDate, 3)
+      for idNProf = 1:size(inputDmDate, 2)
+         curDate = inputDmDate(:, idNProf, idNHistory)';
+         if (~isempty(deblank(curDate)))
+            if ((length(deblank(curDate)) == 14) && strcmp(curDate(end-1:end), '60'))
+               curDateNum = datenum(curDate, 'yyyymmddHHMMSS');
+               newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
+               inputDmDate(:, idNProf, idNHistory) = newDate';
+               updated = 1;
+               
+               fprintf('INFO: input ''HISTORY_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
+                  curDate, newDate, a_inputDmFileName);
+            end
+         end
+      end
+   end
+   if (updated == 1)
+      inputDmData{2*idVal} = inputDmDate;
+   end
+end
+inputDmDate = [];
+idVal = find(strcmp('SCIENTIFIC_CALIB_DATE', inputDmData(1:2:end)) == 1, 1);
+if (~isempty(idVal))
+   inputDmDate = inputDmData{2*idVal};
+else
+   idVal = find(strcmp('CALIBRATION_DATE', inputDmData(1:2:end)) == 1, 1);
+   if (~isempty(idVal))
+      inputDmDate = inputDmData{2*idVal};
+   end
+end
+if (~isempty(inputDmDate))
+   updated = 0;
+   inputDmDate = inputDmData{2*idVal};
+   % SCIENTIFIC_CALIB_DATE (N_PROF, N_CALIB, N_PARAM, DATE_TIME)
+   for idNProf = 1:size(inputDmDate, 4)
+      for idNCalib = 1:size(inputDmDate, 3)
+         for idNParam = 1:size(inputDmDate, 2)
+            curDate = inputDmDate(:, idNParam, idNCalib, idNProf)';
+            if (~isempty(deblank(curDate)))
+               if ((length(deblank(curDate)) == 14) && strcmp(curDate(end-1:end), '60'))
+                  curDateNum = datenum(curDate, 'yyyymmddHHMMSS');
+                  newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
+                  inputDmDate(:, idNParam, idNCalib, idNProf) = newDate';
+                  updated = 1;
+                  
+                  fprintf('INFO: input ''SCIENTIFIC_CALIB_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
+                     curDate, newDate, a_inputDmFileName);
+               end
+            end
+         end
+      end
+   end
+   if (updated == 1)
+      inputDmData{2*idVal} = inputDmDate;
+   end
+end
 
 % retrieve information from input RT C file
 wantedInputVars = [ ...

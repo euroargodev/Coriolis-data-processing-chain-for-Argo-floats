@@ -762,6 +762,11 @@ for idType= 1:2
          for idParam = 1:length(profData.paramList)
             paramName = profData.paramList{idParam};
             idF = find(strcmp(paramName, metaParamList));
+            if (isempty(idF))
+               fprintf('ERROR: Float #%d Cycle #%d%c: No SENSOR is associated to parameter ''%s'' in the meta file => exit\n', ...
+                  g_cocm_floatNum, g_cocm_cycleNum, g_cocm_cycleDir, paramName);
+               return;
+            end
             profData.paramSensorList{end+1} = metaParamSensorList{idF};
          end
       end

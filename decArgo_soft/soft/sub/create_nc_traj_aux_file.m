@@ -539,8 +539,9 @@ if (nbMeasParam > 0)
                end
                
                % parameter QC variable and attributes
-               if ~(strcmp(measParamName(end-3:end), '_STD') || ...
-                     strcmp(measParamName(end-3:end), '_MED'))
+               if ~((length(measParamName) > 3) && ...
+                     (strcmp(measParamName(end-3:end), '_STD') || ...
+                     strcmp(measParamName(end-3:end), '_MED')))
                   
                   measParamQcName = sprintf('%s_QC', measParamName);
                   if (~var_is_present_dec_argo(fCdf, measParamQcName))
@@ -939,8 +940,9 @@ if (nbMeasParam > 0)
                measParamVarId = netcdf.inqVarID(fCdf, measParamName);
                
                measParamQcVarId = '';
-               if ~(strcmp(measParamName(end-3:end), '_STD') || ...
-                     strcmp(measParamName(end-3:end), '_MED'))
+               if ~((length(measParamName) > 3) && ...
+                     (strcmp(measParamName(end-3:end), '_STD') || ...
+                     strcmp(measParamName(end-3:end), '_MED')))
                   measParamQcName = sprintf('%s_QC', measParamName);
                   measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
                end

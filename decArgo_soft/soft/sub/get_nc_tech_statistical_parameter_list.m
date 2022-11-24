@@ -58,6 +58,9 @@ switch (a_decoderId)
    case {2001, 2002, 2003}
       % none
       
+   case {3001}
+      % none
+      
    otherwise
       fprintf('WARNING: The list of statistical technical parameters is not defined yet for decoderId #%d\n', a_decoderId);
 end

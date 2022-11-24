@@ -32,7 +32,7 @@ function generate_json_decoder_config_labels()
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_111.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_124.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_124.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_201.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_202.csv';
@@ -68,10 +68,11 @@ decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNam
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1108.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1111.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1201.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1321.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1321.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_2001.csv';
 
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_3001.csv';
 
 fprintf('Generating json reference configuration file from input file: %s\n', decoderConfLabelsFileName);
 
@@ -247,6 +248,9 @@ else
 
       case {2001}
          decIdList = [2001 2002 2003];
+
+      case {3001}
+         decIdList = [3001];
 
       otherwise
          fprintf('ERROR: Unknown decId list associate to decId #%d\n', decId);

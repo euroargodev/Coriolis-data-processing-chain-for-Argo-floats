@@ -117,7 +117,11 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_ar
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_212.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;
@@ -1115,6 +1119,7 @@ suptitle(label);
 % pdf output management
 
 if (g_NTP_PRINT)
+   orient tall
    orient landscape
    print('-dpdf', [g_NTP_PDF_DIR '/' sprintf('nc_trace_param_%s_%03d_%03d', num2str(g_NTP_FLOAT_LIST(a_idFloat+1)), g_NTP_cycles(a_idCycle+1), g_NTP_cycles(a_idCycle+1+g_NTP_nbCyles-1)) '.pdf']);
    g_NTP_PRINT = 0;

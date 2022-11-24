@@ -147,13 +147,31 @@ for idFloat = 1:length(floatList)
       end
    end
    
-   % PTT / IMEI specific processing
-   %    if (~isempty(metaStruct.IMEI))
-   %       metaStruct.PTT = metaStruct.IMEI;
-   %    end
-   if (~isempty(metaStruct.PTT) && (length(metaStruct.PTT) >= 7))
-      metaStruct.IMEI = metaStruct.PTT;
-      metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+   % IMEI / PTT specific processing
+   if (~isempty(metaStruct.IMEI))
+      if (length(metaStruct.IMEI) ~= 15)
+         fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s''); 15 digits expected\n', ...
+            floatList(idFloat), metaStruct.IMEI);
+      else
+         if (~strcmp(metaStruct.PTT, 'n/a'))
+            if (length(metaStruct.PTT) ~= 6)
+               fprintf('ERROR: Float #%d: inconsistent PTT number (''%s''); 6 digits expected\n', ...
+                  floatList(idFloat), metaStruct.PTT);
+            else
+               if (~strcmp(metaStruct.IMEI(end-6:end-1), metaStruct.PTT))
+                  fprintf('ERROR: Float #%d: inconsistent IMEI number (''%s'') VS PTT number (''%s'')\n', ...
+                     floatList(idFloat), metaStruct.IMEI, metaStruct.PTT);
+               end
+            end
+         else
+            metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+            fprintf('INFO: Float #%d: PTT number (''%s'') set from IMEI number (''%s'')\n', ...
+               floatList(idFloat), metaStruct.PTT, metaStruct.IMEI);
+         end
+      end
+   elseif (~strcmp(metaStruct.PTT, 'n/a'))
+      fprintf('WARNING: Float #%d: PTT number (''%s'') is set but IMEI number is unknown\n', ...
+         floatList(idFloat), metaStruct.PTT);
    end
    
    % multi dim data

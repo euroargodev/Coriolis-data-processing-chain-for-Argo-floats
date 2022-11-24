@@ -4345,8 +4345,8 @@ if (~isempty(g_rtqc_trajData))
             else
                profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
             end
-         elseif ((floatDecoderId > 1000) && (floatDecoderId < 2000))
-            % Apex floats
+         elseif (((floatDecoderId > 1000) && (floatDecoderId < 2000)) || (floatDecoderId > 3000))
+            % Apex & Nemo floats
             if (direction(1) == 'A')
                profMeasCode = g_MC_AscProfDeepestBin;
             else

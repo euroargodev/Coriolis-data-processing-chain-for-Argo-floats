@@ -75,6 +75,10 @@ switch (a_decoderId)
       %       % Dova float
       %       o_wmoInstType = '869';
       
+   case {3001}
+      % Profiling Float, NEMO, SBE conductivity sensor
+      o_wmoInstType = '860';
+      
    otherwise
       o_wmoInstType = '';
       fprintf('WARNING: Float #%d: No instrument reference assigned to decoderId #%d\n', ...

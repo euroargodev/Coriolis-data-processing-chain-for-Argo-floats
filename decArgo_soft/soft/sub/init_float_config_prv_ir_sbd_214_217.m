@@ -227,6 +227,17 @@ confName = 'CONFIG_PX02_';
 idPosPx02 = find(strncmp(confName, configNames2, length(confName)) == 1, 1);
 configValues2(idPosPx02) = ctdPumpSwitchOffPres + 0.5;
 
+% CONFIG_IC00 is mandatory
+confName = 'CONFIG_IC00_';
+idPosIc00 = find(strncmp(confName, configNames2, length(confName)) == 1, 1);
+ic00Value = configValues2(idPosIc00);
+if (isnan(ic00Value))
+   fprintf('ERROR: Float #%d: IC0 configuration parameter is mandatory (should be set to 0 if Ice algorithm is not activated at launch; to the appropriate value otherwise)\n', ...
+      g_decArgo_floatNum);
+   g_decArgo_floatConfig = [];
+   return;
+end
+
 % store the configuration
 g_decArgo_floatConfig = [];
 g_decArgo_floatConfig.STATIC.NAMES = configNames1';

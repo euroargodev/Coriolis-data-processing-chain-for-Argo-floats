@@ -378,6 +378,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {30, 32}
       
       % Arvor ARN
@@ -433,6 +434,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
       
       % Remocean floats
@@ -571,8 +573,9 @@ switch (a_decoderId)
             metaDataAux);
       end
       
-      nbConfigParam = length(missionConfigName);      
-
+      nbConfigParam = length(missionConfigName);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {121, 122, 123, 124}
       
       % CTS5 floats
@@ -773,7 +776,8 @@ switch (a_decoderId)
       end
       
       nbConfigParam = length(missionConfigName);
-
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217}
       
       % Arvor deep 4000
@@ -1384,6 +1388,116 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);      
 
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % NEMO floats
+      
+   case {3001}
+            
+      % retrieve mandatory configuration names for this decoder
+      [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
+      
+      configName = a_structConfig.NAMES;
+      configValue = a_structConfig.VALUES;
+      
+      mandatoryList = [];
+      for idL = 1:length(mandatoryConfigName)
+         for idC = 1:length(configName)
+            if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
+               mandatoryList = [mandatoryList idC];
+               if (idL < length(mandatoryConfigName))
+                  break;
+               end
+            end
+         end
+      end
+      
+      % select Auxiliary configuration information
+      inputAuxConfigName = [];
+      inputAuxConfigValue = [];
+      for idC = 1:length(configName)
+         if (strncmp(configName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            inputAuxConfigName = [inputAuxConfigName; configName(idC)];
+            inputAuxConfigValue = [inputAuxConfigValue; configValue(idC)];
+         end
+      end      
+      
+      % create the launch configuration
+      launchConfigName = configName;
+      launchConfigValue = configValue(:, 1);
+      
+      % clean AUX parameters from output Argo launch configuration
+      launchAuxConfigName = [];
+      launchAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(launchConfigName)
+         if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+            launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      launchConfigName(idDel) = [];
+      launchConfigValue(idDel, :) = [];
+      
+      nbLaunchConfigParam = length(launchConfigName);
+      
+      % create the mission configuration
+      missionConfigName = configName;
+      missionConfigValue = configValue;
+      
+      if (size(configValue, 2) > 1)
+         idDel = [];
+         for idL = 1:size(missionConfigValue, 1)
+            if (sum(isnan(missionConfigValue(idL, 2:end))) == size(missionConfigValue, 2)-1)
+               idDel = [idDel; idL];
+            elseif ((length(unique(missionConfigValue(idL, 2:end))) == 1) && ...
+                  (unique(missionConfigValue(idL, 2:end)) == missionConfigValue(idL, 1)))
+               idDel = [idDel; idL];
+            end
+         end
+         idDel = setdiff(idDel, mandatoryList);
+         missionConfigName(idDel) = [];
+         missionConfigValue(idDel, :) = [];
+         % don't keep launch mission
+         missionConfigValue(:, 1) = [];
+         configMissionNumber = a_structConfig.NUMBER(2:end);
+      else
+         missionConfigName = configName(mandatoryList);
+         missionConfigValue = configValue(mandatoryList, 1);
+         configMissionNumber = 1;
+      end
+      
+      % clean AUX parameters from output Argo configuration
+      missionAuxConfigName = [];
+      missionAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(missionConfigName)
+         if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
+            missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      missionConfigName(idDel) = [];
+      missionConfigValue(idDel, :) = [];
+      
+      nbConfigParam = length(missionConfigName);  
+      
+      % create/update NetCDF META_AUX file
+      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
+         % collect AUX meta-data information
+         metaDataAux = [];
+         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
+         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
+         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
+         create_nc_meta_aux_file( ...
+            [], [], [], ...
+            [], [], ...
+            launchAuxConfigName, launchAuxConfigValue, ...
+            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            metaDataAux);
+      end           
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in launch and mission configurations processing for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

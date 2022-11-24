@@ -564,10 +564,20 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
          
          [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
             g_decArgo_inputArgosFile, floatDecId, floatArgosId, checkTestMsg);
+         
+         % specific
          if (floatNum == 3901639)
             cycleNumber = -1;
             cycleNumberCount = -1;
          end
+         if (floatNum == 3901663)
+            % Apex float 3901663 (decId 1022) resets at sea after cycle #22
+            offsetDate = gregorian_2_julian_dec_argo('2018/12/03 17:41:54');
+            if (firstArgosMsgDate >= offsetDate)
+               cycleNumber = cycleNumber + 22;
+            end
+         end
+         
          if (cycleNumberCount > 1)
             
             % manage possible roll over of profile number counter

@@ -30,6 +30,7 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 % top directory of the NetCDF files to check
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_checkTraj\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';

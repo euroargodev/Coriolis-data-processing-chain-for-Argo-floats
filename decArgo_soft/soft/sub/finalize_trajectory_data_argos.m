@@ -79,7 +79,7 @@ end
 % N_CYCLE DATA
 
 % assign cycle start time of the current cycle to the TET of the previous cycle
-if (~isempty(a_tabTrajNMeas))
+if (~isempty(a_tabTrajNMeas) && ~isempty(a_tabTrajNCycle))
    tabCyNum = sort(unique([a_tabTrajNCycle.cycleNumber]));
    for idCy = 1:length(tabCyNum)
       cycleNum = tabCyNum(idCy);

@@ -1032,6 +1032,33 @@ switch (a_decoderId)
             
       end      
       
+   case {3001}
+      % Nemo
+      switch (a_paramName)
+         case {'PRES', 'PRES_ADJUSTED'}
+            
+            o_resolution = single(0.1);
+                        
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
+            
+         case {'JULD', 'JULD_ADJUSTED'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+         case {'JULD_DESCENT_START', ...
+               'JULD_PARK_START', ...
+               'JULD_PARK_END', ...
+               'JULD_ASCENT_START', ...
+               'JULD_ASCENT_END', ...
+               'JULD_TRANSMISSION_START', ...
+               'JULD_FIRST_LOCATION', ...
+               'JULD_LAST_LOCATION'}
+            
+            o_resolution = double(1/86400); % 1 second
+      end
+      
    otherwise
       o_comment = ' ';
       fprintf('WARNING: Float #%d: No param comment on resolution defined yet for decoderId #%d\n', ...

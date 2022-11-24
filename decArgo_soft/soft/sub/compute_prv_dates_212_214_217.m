@@ -164,13 +164,15 @@ if (~isempty(id1) && ~isempty(id2))
    
    % retrieve the IC0 configuration parameter
    if (o_iceDetected == -1)
-      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-      if (~isempty(ic0Value))
-         if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-            o_iceDetected = 2;
-         else
-            o_iceDetected = 0;
+      if (a_deepCycle == 1)
+         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+         ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
+         if (~isempty(ic0Value))
+            if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
+               o_iceDetected = 2;
+            else
+               o_iceDetected = 0;
+            end
          end
       end
    end

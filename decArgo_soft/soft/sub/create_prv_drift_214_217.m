@@ -5,13 +5,12 @@
 %  [o_parkDate, o_parkTransDate, ...
 %    o_parkPres, o_parkTemp, o_parkSal, ...
 %    o_parkC1PhaseDoxy, o_parkC2PhaseDoxy, o_parkTempDoxy] = ...
-%    create_prv_drift_214_217(a_dataCTD, a_dataCTDO, a_refDay, a_decoderId)
+%    create_prv_drift_214_217(a_dataCTD, a_dataCTDO, a_refDay)
 %
 % INPUT PARAMETERS :
 %   a_dataCTD   : decoded CTD data
 %   a_dataCTDO  : decoded CTDO data
 %   a_refDay    : reference day (day of the first descent)
-%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_parkDate        : drift meas dates
@@ -57,7 +56,8 @@ global g_decArgo_c1C2PhaseDoxyDef;
 global g_decArgo_tempDoxyDef;
 
 
-if (isempty(a_dataCTD) && isempty(a_dataCTDO))
+if ~((~isempty(a_dataCTD) && any(a_dataCTD(:, 1) == 2)) || ...
+      (~isempty(a_dataCTDO) && any(a_dataCTDO(:, 1) == 9)))
    return;
 end
 

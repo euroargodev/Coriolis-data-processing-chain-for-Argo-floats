@@ -89,6 +89,10 @@ switch (a_decoderId)
       %       % Dova
       %       o_platformType = 'DOVA';
       
+   case {3001}
+      % NEMO
+      o_platformType = 'NEMO';
+
    otherwise
       o_platformType = '';
       fprintf('WARNING: Float #%d: No platform type assigned to decoderId #%d\n', ...

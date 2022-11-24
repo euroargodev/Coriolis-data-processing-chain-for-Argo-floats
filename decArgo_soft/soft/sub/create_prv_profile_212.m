@@ -6,11 +6,12 @@
 %    o_ascProfDate, o_ascProfPres, o_ascProfTemp, o_ascProfSal, ...
 %    o_nearSurfDate, o_nearSurfTransDate, o_nearSurfPres, o_nearSurfTemp, o_nearSurfSal, ...
 %    o_inAirDate, o_inAirTransDate, o_inAirPres, o_inAirTemp, o_inAirSal] = ...
-%    create_prv_profile_212(a_dataCTD, a_refDay)
+%    create_prv_profile_212(a_dataCTD, a_deepCycleFlag, a_refDay)
 %
 % INPUT PARAMETERS :
-%   a_dataCTD : decoded data of the CTD sensor
-%   a_refDay  : reference day (day of the first descent)
+%   a_dataCTD        : decoded data of the CTD sensor
+%   a_deepCycleFlag  : 1 if it is a deep cycle, 0 if it is a surface one
+%   a_refDay         : reference day (day of the first descent)
 %
 % OUTPUT PARAMETERS :
 %   o_descProfDate      : descending profile dates
@@ -44,7 +45,7 @@ function [o_descProfDate, o_descProfPres, o_descProfTemp, o_descProfSal, ...
    o_ascProfDate, o_ascProfPres, o_ascProfTemp, o_ascProfSal, ...
    o_nearSurfDate, o_nearSurfTransDate, o_nearSurfPres, o_nearSurfTemp, o_nearSurfSal, ...
    o_inAirDate, o_inAirTransDate, o_inAirPres, o_inAirTemp, o_inAirSal] = ...
-   create_prv_profile_212(a_dataCTD, a_refDay)
+   create_prv_profile_212(a_dataCTD, a_deepCycleFlag, a_refDay)
 
 % output parameters initialization
 o_descProfDate = [];
@@ -75,13 +76,34 @@ global g_decArgo_dateDef;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% float configuration
+global g_decArgo_floatConfig;
 
-if (isempty(a_dataCTD))
+
+if ~(~isempty(a_dataCTD) && any(ismember(a_dataCTD(:, 1), [1 3 13 14])))
    return;
 end
 
 % retrieve the "Near Surface" or "In Air" sampling period from the configuration
-[configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+if (a_deepCycleFlag)
+   % for a deep cycle, a configuration must exist
+   [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+else
+   % for a surface cycle (In Air measurements), no associated configuration
+   % exists
+   if (any(g_decArgo_floatConfig.USE.CYCLE == g_decArgo_cycleNum))
+      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+   else
+      cyNum = g_decArgo_cycleNum - 1;
+      while (cyNum >= 0)
+         if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
+            [configNames, configValues] = get_float_config_ir_sbd(cyNum);
+            break;
+         end
+         cyNum = cyNum - 1;
+      end
+   end
+end
 inAirSampPeriodSeconds = get_config_value('CONFIG_MC30', configNames, configValues);
 
 for type = [1 3 13 14]

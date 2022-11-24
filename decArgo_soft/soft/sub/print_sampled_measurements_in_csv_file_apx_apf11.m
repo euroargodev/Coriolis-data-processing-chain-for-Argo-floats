@@ -2,7 +2,7 @@
 % Print measurement data in CSV file.
 %
 % SYNTAX :
-%  print_sampled_measurements_apx_apf11_in_csv_file(a_sampledData, a_measType)
+%  print_sampled_measurements_in_csv_file_apx_apf11(a_sampledData, a_measType)
 %
 % INPUT PARAMETERS :
 %   a_sampledData  : measurement data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_sampled_measurements_apx_apf11_in_csv_file(a_sampledData, a_measType)
+function print_sampled_measurements_in_csv_file_apx_apf11(a_sampledData, a_measType)
 
 % current float WMO number
 global g_decArgo_floatNum;

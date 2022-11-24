@@ -34,6 +34,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp\ori\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\IN\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\TMP\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
@@ -42,6 +43,7 @@ DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos_out\';
 DIR_OUTPUT = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori_out\';
 DIR_OUTPUT = 'C:\Users\jprannou\Desktop\TMP\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

@@ -43,6 +43,8 @@ g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTT_NC_DIR = 'H:\archive_201702\incois\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 
 
@@ -103,16 +105,22 @@ g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova2.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_rudics.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_sbd.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_212.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
 
 % display help information on available commands
 display_help;
@@ -742,7 +750,7 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
          if (~isempty(idDef))
             dates = juld(idCycle(idDriftMes(idDef)));
             dates(find(dates == 999999)) = g_dateDef;
-            g_NTT_driftMes(numCycle+1, 1:length(idDriftMes)) = dates;
+            g_NTT_driftMes(numCycle+1, idDef) = dates;
             dates(find(dates == g_dateDef)) = [];
             if (~isempty(dates))
                g_NTT_firstDriftMes(numCycle+1) = dates(1);
@@ -1618,6 +1626,7 @@ title(presAxes, labelPres, 'FontSize', 14);
 % pdf output management
 
 if (g_NTT_PRINT)
+   orient tall
    orient landscape
    print('-dpdf', [g_NTT_PDF_DIR '/' sprintf('nc_trace_times_bis_%s', num2str(g_NTT_FLOAT_LIST(a_idFloat+1))) '.pdf']);
    g_NTT_PRINT = 0;

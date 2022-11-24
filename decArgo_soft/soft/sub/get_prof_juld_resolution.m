@@ -64,6 +64,9 @@ switch (a_floatTransType)
          case {1121} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
+         case {3001} % NEMO
+            o_profJuldRes = double(1/86400); % 1 second
+            
          otherwise
             fprintf('WARNING: Nothing done yet in get_prof_juld_resolution for decoderId #%d\n', ...
                a_decoderId);

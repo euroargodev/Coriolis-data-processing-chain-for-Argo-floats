@@ -146,12 +146,7 @@ for idFloat = 1:length(floatList)
          end
       end
    end
-   
-   % PTT / IMEI specific processing
-   %    if (~isempty(metaStruct.IMEI))
-   %       metaStruct.PTT = metaStruct.IMEI;
-   %    end
-   
+      
    % multi dim data
    itemList = [ ...
       {'TRANS_SYSTEM'} ...

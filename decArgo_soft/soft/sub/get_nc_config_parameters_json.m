@@ -64,6 +64,9 @@ for idField = 1:length(confDataFieldNames)
          
       case {2001, 2002, 2003}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
+         
+      case {3001}
+         o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       otherwise
          fprintf('WARNING: Nothing done yet in get_nc_config_parameters_json for decoderId #%d\n', a_decoderId);
    end

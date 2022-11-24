@@ -1,0 +1,234 @@
+{
+   "TECH_PARAM_1" :
+   {
+      "TECH_PARAM_DEC_ID" : "1101",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_motor_errors_count",
+      "TECH_PARAM_NAME" : "NUMBER_MotorErrorDuringProfile_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of moter errors during profile"
+   },
+   "TECH_PARAM_2" :
+   {
+      "TECH_PARAM_DEC_ID" : "1102",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_sbe42_ctd_errors",
+      "TECH_PARAM_NAME" : "NUMBER_CTDError_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "CTD error count"
+   },
+   "TECH_PARAM_3" :
+   {
+      "TECH_PARAM_DEC_ID" : "1103",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_o2_optode_errors",
+      "TECH_PARAM_NAME" : "NUMBER_DOXYErrorsAscending_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of O2_ Optode errors during profile. Zero if no sensor installed."
+   },
+   "TECH_PARAM_4" :
+   {
+      "TECH_PARAM_DEC_ID" : "1104",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_rafos_errors",
+      "TECH_PARAM_NAME" : "NUMBER_RAFOSErrorsAscending_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of RAFOS errors during profile. Zero if no rafos module installed."
+   },
+   "TECH_PARAM_5" :
+   {
+      "TECH_PARAM_DEC_ID" : "1105",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_cpu_battery_voltage",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatteryCPUStartProfile_volts",
+      "TECH_PARAM_DESCRIPTION" : "CPU battery voltage at profile depth"
+   },
+   "TECH_PARAM_6" :
+   {
+      "TECH_PARAM_DEC_ID" : "1106",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_pump_battery_voltage",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatteryPumpStartProfile_volts",
+      "TECH_PARAM_DESCRIPTION" : "Pump battery voltage (volts) at depth"
+   },
+   "TECH_PARAM_7" :
+   {
+      "TECH_PARAM_DEC_ID" : "1107",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_motor_current",
+      "TECH_PARAM_NAME" : "CURRENT_MotorStartProfile_amps",
+      "TECH_PARAM_DESCRIPTION" : "Motor current in profile depth"
+   },
+   "TECH_PARAM_8" :
+   {
+      "TECH_PARAM_DEC_ID" : "1108",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_motor_current_mean",
+      "TECH_PARAM_NAME" : "CURRENT_MotorMeanOfProfile_amps",
+      "TECH_PARAM_DESCRIPTION" : "Mean of motor current during upcast"
+   },
+   "TECH_PARAM_9" :
+   {
+      "TECH_PARAM_DEC_ID" : "1109",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_internal_pressure_surface",
+      "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumAtSurface_mbar",
+      "TECH_PARAM_DESCRIPTION" : "Surface internal pressure"
+   },
+   "TECH_PARAM_10" :
+   {
+      "TECH_PARAM_DEC_ID" : "1110",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_internal_pressure_depth",
+      "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumProfileStart_mbar",
+      "TECH_PARAM_DESCRIPTION" : "Internal tube pressure [mbar] in profile depth"
+   },
+   "TECH_PARAM_11" :
+   {
+      "TECH_PARAM_DEC_ID" : "1111",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_pressure_offset",
+      "TECH_PARAM_NAME" : "PRES_SurfaceOffsetNotTruncated_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board. Not autocorrected"
+   },
+   "TECH_PARAM_12" :
+   {
+      "TECH_PARAM_DEC_ID" : "1112",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_surface_pressure",
+      "TECH_PARAM_NAME" : "PRES_Now_dbar",
+      "TECH_PARAM_DESCRIPTION" : "test message data reporting pressure at the surface during drift - cycle 0"
+   },
+   "TECH_PARAM_13" :
+   {
+      "TECH_PARAM_DEC_ID" : "1113",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_parking_pressure_median",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_parking_pressure_median_dbar",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_14" :
+   {
+      "TECH_PARAM_DEC_ID" : "1114",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_depth_pressure",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_depth_pressure_dbar",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_15" :
+   {
+      "TECH_PARAM_DEC_ID" : "1115",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_depth_pressure_max",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_depth_pressure_max_dbar",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_16" :
+   {
+      "TECH_PARAM_DEC_ID" : "1116",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_profile_recovery",
+      "TECH_PARAM_NAME" : "TECH_AUX_profile_recovery",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_17" :
+   {
+      "TECH_PARAM_DEC_ID" : "1117",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_piston_counts_surface",
+      "TECH_PARAM_NAME" : "POSITION_PistonSurface_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Piston position, recorded as the instrument reaches the surface"
+   },
+   "TECH_PARAM_18" :
+   {
+      "TECH_PARAM_DEC_ID" : "1118",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_piston_counts_parking",
+      "TECH_PARAM_NAME" : "POSITION_PistonPark_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "piston position at park pressure"
+   },
+   "TECH_PARAM_19" :
+   {
+      "TECH_PARAM_DEC_ID" : "1119",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_piston_counts_calc",
+      "TECH_PARAM_NAME" : "POSITION_PistonTarget_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "is this the same as one of the CONFIG_PISTON variables? "
+   },
+   "TECH_PARAM_20" :
+   {
+      "TECH_PARAM_DEC_ID" : "1120",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_piston_counts_eop",
+      "TECH_PARAM_NAME" : "TECH_AUX_POSITION_piston_counts_eop",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_21" :
+   {
+      "TECH_PARAM_DEC_ID" : "1121",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_surface_detection_GPS",
+      "TECH_PARAM_NAME" : "TECH_AUX_surface_detection_GPS",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_22" :
+   {
+      "TECH_PARAM_DEC_ID" : "1122",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_surface_detection_Iridium",
+      "TECH_PARAM_NAME" : "TECH_AUX_surface_detection_Iridium",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_23" :
+   {
+      "TECH_PARAM_DEC_ID" : "1123",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_airpump_runtime",
+      "TECH_PARAM_NAME" : "TIME_AirPumpOn_seconds",
+      "TECH_PARAM_DESCRIPTION" : "Air pump on time"
+   },
+   "TECH_PARAM_24" :
+   {
+      "TECH_PARAM_DEC_ID" : "1124",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "xmit_ice_detection_temp_median",
+      "TECH_PARAM_NAME" : "TECH_AUX_TEMP_ice_detection_temp_median_degC",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_25" :
+   {
+      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "cpu_battery_voltage",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatteryCPUSurface_volts",
+      "TECH_PARAM_DESCRIPTION" : "Surface CPU battery voltage"
+   },
+   "TECH_PARAM_26" :
+   {
+      "TECH_PARAM_DEC_ID" : "1002",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "pump_battery_voltage",
+      "TECH_PARAM_NAME" : "VOLTAGE_BatteryPumpStartProfile_volts",
+      "TECH_PARAM_DESCRIPTION" : "Pump battery voltage (volts) at depth"
+   },
+   "TECH_PARAM_27" :
+   {
+      "TECH_PARAM_DEC_ID" : "1003",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ext_battery_voltage",
+      "TECH_PARAM_NAME" : "TECH_AUX_VOLTAGE_ext_battery_voltage_volts",
+      "TECH_PARAM_DESCRIPTION" : "TBD"
+   },
+   "TECH_PARAM_28" :
+   {
+      "TECH_PARAM_DEC_ID" : "1004",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "pressure_tube_surface",
+      "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumAtLaunch_mbar",
+      "TECH_PARAM_DESCRIPTION" : "Internal vacuum when float launched"
+   },
+   "TECH_PARAM_29" :
+   {
+      "TECH_PARAM_DEC_ID" : "1201",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ice_detected",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+   }
+}

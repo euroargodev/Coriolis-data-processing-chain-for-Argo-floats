@@ -43,7 +43,7 @@ global g_decArgo_tempDef;
 global g_decArgo_salDef;
 
 
-if (isempty(a_dataCTD))
+if ~(~isempty(a_dataCTD) && any(a_dataCTD(:, 1) == 2))
    return;
 end
 

@@ -33,11 +33,15 @@ global g_NTCT_FLOAT_ID;
 g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
 % g_NTCT_NC_DIR = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
+% g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
+% g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 % top directory of NetCDF auxiliary files to plot (TECH_AUX)
 g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
 % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
+% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_rudics_FINAL\NC_FINAUX\';
+% g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\REMOCEAN_Done_Lot2_sbd_FINAL\NC_FINAUX\';
 
 % directory to store pdf output
 g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -65,7 +69,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_al
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_rudics.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\LISTS\provor_cts4_remocean_dead_lot2_sbd.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -1452,6 +1457,7 @@ if (g_NTCT_PRINT)
    if (g_NTCT_SURF)
       surfText = '_surface';
    end
+   orient tall
    orient landscape
    print('-dpdf', [g_NTCT_PDF_DIR '/' sprintf('nc_trace_cycle_times_%s_%s%s', ...
       num2str(g_NTCT_FLOAT_LIST(a_idFloat+1))), num2str(g_NTCT_cycles(a_idCycle+1)), surfText, '.pdf']);

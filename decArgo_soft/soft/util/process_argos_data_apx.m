@@ -29,12 +29,14 @@ function process_argos_data_apx(varargin)
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\IN\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
 DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori_out\';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -1422,10 +1424,20 @@ for idFile = 1:nbFiles
             
             [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
                argosFileName, floatDecId, floatArgosId, checkTestMsg);
+            
+            % specific
             if (a_floatNum == 3901639)
                cycleNumber = -1;
                cycleNumberCount = -1;
             end
+            if (a_floatNum == 3901663)
+               % Apex float 3901663 (decId 1022) resets at sea after cycle #22
+               offsetDate = gregorian_2_julian_dec_argo('2018/12/03 17:41:54');
+               if (firstArgosMsgDate >= offsetDate)
+                  cycleNumber = cycleNumber + 22;
+               end
+            end
+            
             if (cycleNumberCount > 1)
                
                % manage possible roll over of profile number counter

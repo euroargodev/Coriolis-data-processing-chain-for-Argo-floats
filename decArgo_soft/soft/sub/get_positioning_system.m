@@ -47,6 +47,9 @@ switch (a_decoderId)
    case {2001, 2002, 2003}
       o_posSystem = 'GPS';
 
+   case {3001}
+      o_posSystem = 'GPS';
+
    otherwise
       o_posSystem = ' ';
       fprintf('WARNING: Float #%d: No positioning system defined yet for decoderId #%d\n', ...

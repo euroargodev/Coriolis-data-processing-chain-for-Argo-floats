@@ -33,6 +33,7 @@ FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_BioIndia_6.11_from_VB_20180319.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_lot2_from_VB_20180319.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_Rem_6902737_from_LF_20180711.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\float_metadata\float_metadata.txt';
 
 % list of concerned floats
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt';
@@ -45,19 +46,23 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11.tx
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_2.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\float_metadata\liste_6.11.txt';
 
 % calibration coefficient file decoded from data
 CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 % CALIB_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+CALIB_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\float_metadata\CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\';
 % CONFIG_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\ConfigAtLaunch\';
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\meta_remocean_www\ConfigAtLaunch\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\float_metadata\CTS4\ConfigAtLaunch\';
 
 % directory of SUNA calibration files
 SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\meta_remocean_www\suna_calibration_file\';
 % SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\meta_remocean_www\suna_calibration_file\';
+SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\float_metadata\CTS4\meta_remocean_www\suna_calibration_file\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];

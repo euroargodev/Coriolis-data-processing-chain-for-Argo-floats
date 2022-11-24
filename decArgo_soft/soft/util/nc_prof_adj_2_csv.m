@@ -25,16 +25,23 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_param_adj_error\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\CHECk_DO_VT\OLD\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\CHECk_DO_VT\SNAPSHOT_092018\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
 
 % default list of floats to convert
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\DerivedParameters\DOXY\refonte_DO_201809\test_modifs\lists\nke_cts5.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\DerivedParameters\DOXY\refonte_DO_201809\test_modifs\lists\nke_cts5.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_212.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

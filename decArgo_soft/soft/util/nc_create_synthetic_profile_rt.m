@@ -48,6 +48,8 @@
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 %   09/25/2018 - RNU - V 1.3: added input parameters 'createOnlyMultiProfFlag' and 'floatWmo'
+%   27/11/2018 - RNU - V 1.4: use the provided XML file name to create log file name
+%                             add information on concerned float when a mandatory parameter is missing
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -109,7 +111,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.3 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.4 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -129,6 +131,7 @@ g_cocs_outputXmlReportDirName = DIR_XML_FILE;
 g_cocs_monoProfRefFile = MONO_PROF_REF_PROFILE_FILE;
 g_cocs_multiProfRefFile = MULTI_PROF_REF_PROFILE_FILE;
 g_cocs_outputXmlReportFileName = ['nc_create_synthetic_profile_rt_' currentTime '.xml'];
+tmpXmlReportFileName = g_cocs_outputXmlReportFileName;
 g_cocs_tmpDirName = DIR_TMP;
 
 % default values initialization
@@ -148,10 +151,19 @@ try
    [inputError, logLines] = parse_input_param(varargin);
 
    % log file creation
-   if (~isempty(g_cocs_outputLogDirName))
-      logFileName = [g_cocs_outputLogDirName '/nc_create_synthetic_profile_rt_' currentTime '.log'];
+   if (~strcmp(g_cocs_outputXmlReportFileName, tmpXmlReportFileName))
+      % the XML report file name has been set through an input parameter
+      if (~isempty(g_cocs_outputLogDirName))
+         logFileName = [g_cocs_outputLogDirName '/' regexprep(g_cocs_outputXmlReportFileName, '.xml', '.log')];
+      else
+         logFileName = [tempdir '/' regexprep(g_cocs_outputXmlReportFileName, '.xml', '.log')];
+      end
    else
-      logFileName = [tempdir '/nc_create_synthetic_profile_rt_' currentTime '.log'];
+      if (~isempty(g_cocs_outputLogDirName))
+         logFileName = [g_cocs_outputLogDirName '/nc_create_synthetic_profile_rt_' currentTime '.log'];
+      else
+         logFileName = [tempdir '/nc_create_synthetic_profile_rt_' currentTime '.log'];
+      end
    end
    
    diary(logFileName);
@@ -390,22 +402,26 @@ if (g_cocs_createOnlyMultiProfFlag == '0')
       return;
    end
    if (isempty(g_cocs_floatBProfFileName))
-      o_logLines{end+1} = sprintf('ERROR: ''floatBProfFileName'' input parameter is mandatory\n');
+      o_logLines{end+1} = sprintf('ERROR: ''floatBProfFileName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
+         g_cocs_floatCProfFileName);
       o_inputError = 1;
       return;
    end
    if (isempty(g_cocs_floatMetaFileName))
-      o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory\n');
+      o_logLines{end+1} = sprintf('ERROR: ''floatMetaFileName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
+         g_cocs_floatCProfFileName);
       o_inputError = 1;
       return;
    end
    if (isempty(g_cocs_createMultiProfFlag))
-      o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory\n');
+      o_logLines{end+1} = sprintf('ERROR: ''createMultiProfFlag'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
+         g_cocs_floatCProfFileName);
       o_inputError = 1;
       return;
    end
    if (isempty(g_cocs_outputDirName))
-      o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory\n');
+      o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory (associated ''floatCProfFileName'': %s)\n', ...
+         g_cocs_floatCProfFileName);
       o_inputError = 1;
       return;
    end
@@ -450,8 +466,8 @@ else
       o_inputError = 1;
       return;
    end
-   if ~(exist(g_cocs_outputDirName, 'dir') == 7)
-      o_logLines{end+1} = sprintf('ERROR: Output directory not found: %s\n', g_cocs_outputDirName);
+   if (isempty(g_cocs_outputDirName))
+      o_logLines{end+1} = sprintf('ERROR: ''outputDirName'' input parameter is mandatory (for ''floatWmo'': %s)\n', g_cocs_floatWmo);
       o_inputError = 1;
       return;
    end

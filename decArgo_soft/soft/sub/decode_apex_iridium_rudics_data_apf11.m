@@ -319,7 +319,7 @@ for idCy = 1:length(a_cycleList)
          end
          
          % output CSV file
-         print_file_info_apx_apf11_in_csv_file(scienceLogFileList, vitalsLogFileList, ...
+         print_file_info_in_csv_file_apx_apf11(scienceLogFileList, vitalsLogFileList, ...
             systemLogFileList, criticalLogFileList);
          
          print_config_mission_info_apx_apf11_in_csv_file(missionCfg);
@@ -332,16 +332,16 @@ for idCy = 1:length(a_cycleList)
          
          print_time_info_apx_apf11_in_csv_file(cycleTimeData);
          
-         %          print_sampled_measurements_apx_apf11_in_csv_file(profCtdP, 'CTD_P');
-         print_sampled_measurements_apx_apf11_in_csv_file(profCtdPt, 'CTD_PT');
-         print_sampled_measurements_apx_apf11_in_csv_file(profCtdPts, 'CTD_PTS');
-         print_sampled_measurements_apx_apf11_in_csv_file(profCtdPtsh, 'CTD_PTSH');
-         print_sampled_measurements_apx_apf11_in_csv_file(profDo, 'O2');
-         print_sampled_measurements_apx_apf11_in_csv_file(profCtdCp, 'CTD_CP');
-         print_sampled_measurements_apx_apf11_in_csv_file(profCtdCpH, 'CTD_CP_H');
+         %          print_sampled_measurements_in_csv_file_apx_apf11(profCtdP, 'CTD_P');
+         print_sampled_measurements_in_csv_file_apx_apf11(profCtdPt, 'CTD_PT');
+         print_sampled_measurements_in_csv_file_apx_apf11(profCtdPts, 'CTD_PTS');
+         print_sampled_measurements_in_csv_file_apx_apf11(profCtdPtsh, 'CTD_PTSH');
+         print_sampled_measurements_in_csv_file_apx_apf11(profDo, 'O2');
+         print_sampled_measurements_in_csv_file_apx_apf11(profCtdCp, 'CTD_CP');
+         print_sampled_measurements_in_csv_file_apx_apf11(profCtdCpH, 'CTD_CP_H');
          
-         print_gps_fix_apx_apf11_in_csv_file(g_decArgo_gpsData, g_decArgo_cycleNum-1);
-         print_gps_fix_apx_apf11_in_csv_file(g_decArgo_gpsData, g_decArgo_cycleNum);
+         print_gps_fix_in_csv_file_apx_apf11(g_decArgo_gpsData, g_decArgo_cycleNum-1);
+         print_gps_fix_in_csv_file_apx_apf11(g_decArgo_gpsData, g_decArgo_cycleNum);
          
          print_clock_offset_apx_apf11_in_csv_file(cycleClockOffset);
          

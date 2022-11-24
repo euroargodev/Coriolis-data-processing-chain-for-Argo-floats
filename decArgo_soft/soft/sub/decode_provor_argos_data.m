@@ -1248,6 +1248,12 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % output NetCDF files
    
+   % if trajectory data is empty (no transmission from the float) add float
+   % launch date and position in trajectory data structure
+   if (isempty(o_tabTrajNMeas))
+      o_tabTrajNMeas = add_launch_data_in_traj(a_floatSurfData);
+   end
+   
    % fill empty profile locations with interpolated positions
    % (profile locations have been computed cycle by cycle, we will check if
    % some empty profile locations can not be determined using interpolations of the

@@ -54,6 +54,7 @@ global g_JULD_STATUS_9;
 
 % default values
 global g_decArgo_ncDateDef;
+global g_decArgo_argosLonDef;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
