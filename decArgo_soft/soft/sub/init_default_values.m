@@ -30,6 +30,8 @@ global g_decArgo_decoderIdListNkeMisc;
 global g_decArgo_decoderIdListNke;
 global g_decArgo_decoderIdListApexApf9Argos;
 global g_decArgo_decoderIdListApexApf9Iridium;
+global g_decArgo_decoderIdListApexApf11IridiumRudics;
+global g_decArgo_decoderIdListApexApf11IridiumSbd;
 global g_decArgo_decoderIdListApexApf11Iridium;
 global g_decArgo_decoderIdListApexApf11Argos;
 global g_decArgo_decoderIdListApexArgos;
@@ -444,7 +446,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '037j';
+g_decArgo_decoderVersion = '037k';
 
 % list of managed decoders
 
@@ -468,7 +470,11 @@ g_decArgo_decoderIdListNke = [ ...
 g_decArgo_decoderIdListApexApf9Argos = [1001:1016];
 g_decArgo_decoderIdListApexApf9Iridium = [1101:1113, 1314];
 g_decArgo_decoderIdListApexApf11Argos = [1021, 1022];
-g_decArgo_decoderIdListApexApf11Iridium = [1121:1125, 1321, 1322];
+g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1127];
+g_decArgo_decoderIdListApexApf11IridiumSbd = [1321:1323];
+g_decArgo_decoderIdListApexApf11Iridium = [ ...
+   g_decArgo_decoderIdListApexApf11IridiumRudics ...
+   g_decArgo_decoderIdListApexApf11IridiumSbd];
 g_decArgo_decoderIdListApexArgos = [ ...
    g_decArgo_decoderIdListApexApf9Argos ...
    g_decArgo_decoderIdListApexApf11Argos];

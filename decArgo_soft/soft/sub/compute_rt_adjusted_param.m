@@ -101,6 +101,7 @@ doSlope = '';
 doOffset = '';
 doDate = '';
 doAdjError = '';
+doAdjErrorStr = '';
 doAdjErrMethod = '';
 if (~isempty(g_decArgo_rtOffsetInfo))
    for idF = 1:length(g_decArgo_rtOffsetInfo.param)
@@ -112,6 +113,7 @@ if (~isempty(g_decArgo_rtOffsetInfo))
          % not mandatory fields
          if (isfield(g_decArgo_rtOffsetInfo, 'adjError'))
             doAdjError = g_decArgo_rtOffsetInfo.adjError{idF};
+            doAdjErrorStr = g_decArgo_rtOffsetInfo.adjErrorStr{idF}{:};
             doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF};
          end
          break
@@ -156,18 +158,18 @@ if (~isempty(doSlope))
             if (~isnan(doAdjError))
                switch (doAdjErrMethod)
                   case '1_1'
-                     comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
+                     comment = sprintf(['DOXY_ADJUSTED is computed from an adjustment ' ...
                         'of in water PSAT or PPOX float data at surface by comparison to WOA PSAT ' ...
                         'climatology or WOA PPOX in using PSATWOA and TEMP and PSALfloat at 1 atm, ' ...
-                        'DOXY_ADJUSTED_ERROR is estimated from a PPOX_ERROR of %g mbar.'], doAdjError);
+                        'DOXY_ADJUSTED_ERROR is computed from a PPOX_ERROR of %s mbar'], doAdjErrorStr);
                   case '2_1'
                      comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
                         'of in air PPOX float data by comparison to NCEP reanalysis, ' ...
-                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %g mbar.'], doAdjError);
+                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %s mbar.'], doAdjErrorStr);
                   case '3_1'
                      comment = sprintf(['DOXY_ADJUSTED is estimated from the last valid cycle ' ...
                         'with DM adjustment, DOXY_ADJUSTED_ERROR is recomputed from a ' ...
-                        'PPOX_ERROR = %g mbar.'], doAdjError);
+                        'PPOX_ERROR = %s mbar.'], doAdjErrorStr);
                   otherwise
                      fprintf('ERROR: Float #%d Cycle #%d%c: input CALIB_RT_ADJ_ERROR_METHOD (''%s'') of DOXY adjustment is not implemented yet - SCIENTIFIC_CALIB_COMMENT of DOXY parameter not set\n', ...
                         g_decArgo_floatNum, ...

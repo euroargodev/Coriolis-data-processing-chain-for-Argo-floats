@@ -33,6 +33,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.slope = [];
    o_rtOffsetInfo.value = [];
    o_rtOffsetInfo.adjError = [];
+   o_rtOffsetInfo.adjErrorStr = [];
    o_rtOffsetInfo.adjErrorMethod = [];
    o_rtOffsetInfo.date = [];
    
@@ -44,6 +45,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabSlope = [];
       tabValue = [];
       tabAdjError = [];
+      tabAdjErrorStr = [];
       tabAdjErrorMethod = [];
       tabDate = [];
       for idF = 1:length(fieldNames)
@@ -63,11 +65,14 @@ if (isfield(a_metaData, 'RT_OFFSET'))
                if (isfield(rtData.ADJUSTED_ERROR, ['ADJUSTED_ERROR_' paramNum]))
                   adjError = str2double(rtData.ADJUSTED_ERROR.(['ADJUSTED_ERROR_' paramNum]));
                   tabAdjError = [tabAdjError adjError];
+                  tabAdjErrorStr{end+1} = rtData.ADJUSTED_ERROR.(['ADJUSTED_ERROR_' paramNum]);
                else
                   tabAdjError = [tabAdjError nan];
+                  tabAdjErrorStr{end+1} = 'nan';
                end
             else
                tabAdjError = [tabAdjError nan];
+               tabAdjErrorStr{end+1} = 'nan';
             end
             if (isfield(rtData, 'ADJUSTED_ERROR_METHOD'))
                if (isfield(rtData.ADJUSTED_ERROR_METHOD, ['ADJUSTED_ERROR_METHOD_' paramNum]))
@@ -94,6 +99,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       o_rtOffsetInfo.slope{end+1} = tabSlope;
       o_rtOffsetInfo.value{end+1} = tabValue;
       o_rtOffsetInfo.adjError{end+1} = tabAdjError;
+      o_rtOffsetInfo.adjErrorStr{end+1} = tabAdjErrorStr;
       o_rtOffsetInfo.adjErrorMethod{end+1} = tabAdjErrorMethod;
       o_rtOffsetInfo.date{end+1} = tabDate;
    end
