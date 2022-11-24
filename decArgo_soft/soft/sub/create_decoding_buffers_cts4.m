@@ -484,7 +484,7 @@ if (ismember(a_decoderId, [111, 113]))
    tabRank(idSurfSensorTech) = -1;
 end
 if (ismember(g_decArgo_floatNum, ...
-      [6903249]))
+      [6903249 6902906]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -495,6 +495,20 @@ if (ismember(g_decArgo_floatNum, ...
          idDel = find((tabSession == tabSession(idSession)) & (tabSensorType == 2));
          tabRank(idDel) = -1;
          
+      case 6902906
+         % during first and second Iridium session of cycle #115, 0, thefloat
+         % transmitted old memorized data
+         idSession = find((tabCyNumRaw == 115) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12));
+         idDel = find((tabSession == tabSession(idSession)) & (tabCyNumRaw ~= 115));
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+
+         idSession = find((tabCyNumRaw == 116) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1));
+         idDel = find((tabSession == tabSession(idSession)) & ...
+            ~((tabCyNumRaw == 116) | ((tabCyNumRaw == 115) & (tabPackType == 250))));
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+   
    end
 end
 
