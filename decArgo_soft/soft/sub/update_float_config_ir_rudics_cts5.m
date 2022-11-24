@@ -109,21 +109,23 @@ elseif (a_configType == 'P')
    %    voir = cat(2, payloadConfigNames', num2cell(paylQSoadConfigValues)');
    
    % clean parameters that are not part of the incoming payload configuration
-   confParamToNan = setdiff(configNames(g_decArgo_firstPayloadConfigParamId:end), payloadConfigNames);
-   if (~isempty(confParamToNan))
-      for idP = 1:length(confParamToNan)
-         idF = find(strcmp(configNames, confParamToNan{idP}), 1);
-         fprintf('DEC_INFO: Float #%d: disabled param ''%s'': %g\n', ...
-            g_decArgo_floatNum, ...
-            confParamToNan{idP}, newConfig(idF));
-         if (~isempty(g_decArgo_outputCsvFileId))
-            fprintf(g_decArgo_outputCsvFileId, '%d;%s;%s;%s;-;%s;%g\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
-               'Disabled_payload_param', confParamToNan{idP}, newConfig(idF));
+   if (g_decArgo_firstPayloadConfigParamId > 0)
+      confParamToNan = setdiff(configNames(g_decArgo_firstPayloadConfigParamId:end), payloadConfigNames);
+      if (~isempty(confParamToNan))
+         for idP = 1:length(confParamToNan)
+            idF = find(strcmp(configNames, confParamToNan{idP}), 1);
+            fprintf('DEC_INFO: Float #%d: disabled param ''%s'': %g\n', ...
+               g_decArgo_floatNum, ...
+               confParamToNan{idP}, newConfig(idF));
+            if (~isempty(g_decArgo_outputCsvFileId))
+               fprintf(g_decArgo_outputCsvFileId, '%d;%s;%s;%s;-;%s;%g\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+                  'Disabled_payload_param', confParamToNan{idP}, newConfig(idF));
+            end
+            newConfig(idF) = nan;
          end
-         newConfig(idF) = nan;
       end
-   end   
+   end
    
    % merge payload configuration information
    for idC = 1:length(payloadConfigNames)
