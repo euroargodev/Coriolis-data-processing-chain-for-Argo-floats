@@ -8,7 +8,7 @@
 %    a_UV_INTENSITY_NITRATE_fill_value, a_UV_INTENSITY_DARK_NITRATE_fill_value, ...
 %    a_UV_INTENSITY_NITRATE_pres, a_ctdData, ...
 %    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, ...
-%    a_profNitrateQc, a_decoderId)
+%    a_profNitrateQc, a_decoderId, a_profDir)
 %
 % INPUT PARAMETERS :
 %   a_floatNum                             : float WMO number
@@ -28,6 +28,7 @@
 %   a_PSAL_fill_value                      : fill value for input PSAL data
 %   a_profNitrateQc                        : input NITRATE_QC data
 %   a_decoderId                            : float decoder Id
+%   a_profDir                              : profile direction
 %
 % OUTPUT PARAMETERS :
 %   o_profNitrateQc : Qcs of the NITRATE parameter profile
@@ -46,7 +47,7 @@ function [o_profNitrateQc] = add_nitrate_rtqc_to_profile_file( ...
    a_UV_INTENSITY_NITRATE_fill_value, a_UV_INTENSITY_DARK_NITRATE_fill_value, ...
    a_UV_INTENSITY_NITRATE_pres, a_ctdData, ...
    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, ...
-   a_profNitrateQc, a_decoderId)
+   a_profNitrateQc, a_decoderId, a_profDir)
 
 % output parameters initialization
 o_profNitrateQc = [];
@@ -126,7 +127,8 @@ end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements (to take the vertical offset into account)
-ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset);
+ctdIntData = compute_interpolated_CTD_measurements( ...
+   a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, a_profDir);
 
 % compute pixel interval that covers the [217 nm, 240 nm] wavelength interval
 idF1 = find(tabOpticalWavelengthUv >= 217);

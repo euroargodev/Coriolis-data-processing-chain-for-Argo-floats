@@ -145,7 +145,8 @@ end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements (to take the vertical offset into account)
-ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset);
+ctdIntData = compute_interpolated_CTD_measurements( ...
+   a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, a_profSuna.direction);
 
 % compute pixel interval that covers the [217 nm, 240 nm] wavelength interval
 idF1 = find(tabOpticalWavelengthUv >= 217);

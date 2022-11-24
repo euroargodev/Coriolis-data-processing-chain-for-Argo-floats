@@ -629,7 +629,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the FLBB
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_BBP_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_BBP_pres, a_profFlbb.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));
@@ -928,7 +929,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the OPTODE
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_DOXY_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_DOXY_pres, a_profOptode.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));
@@ -1053,7 +1055,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the OPTODE
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_DOXY_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_DOXY_pres, a_profOptode.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));

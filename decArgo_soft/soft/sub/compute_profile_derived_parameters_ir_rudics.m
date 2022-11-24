@@ -1062,7 +1062,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the ECO3
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_BBP_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_BBP_pres, a_profEco3.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
@@ -1815,7 +1816,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the OPTODE
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_DOXY_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_DOXY_pres, a_profOptode.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
@@ -1965,7 +1967,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the OPTODE
    % measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_DOXY_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_DOXY_pres, a_profOptode.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
@@ -2302,7 +2305,8 @@ if (~isempty(ctdDataNoDef))
    
    % interpolate and extrapolate the CTD data at the pressures of the
    % TRANSISTOR_PH measurements
-   ctdIntData = compute_interpolated_CTD_measurements(ctdDataNoDef, a_VRS_PH_pres);
+   ctdIntData = compute_interpolated_CTD_measurements( ...
+      ctdDataNoDef, a_VRS_PH_pres, a_profTransPh.direction);
    if (~isempty(ctdIntData))
       
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));

@@ -125,23 +125,29 @@ switch (a_decoderId)
 
                   if (~isempty(ctdData))
                      
-                     % interpolate and extrapolate PTS data at the times of the OPTODE
-                     % measurements
-                     presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
-                        o_profDo.dates(idPark), 'linear', 'extrap');
-                     tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
-                        o_profDo.dates(idPark), 'linear', 'extrap');
-                     psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
-                        o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      % interpolate and extrapolate PTS data at the times of the OPTODE
+                     %                      % measurements
+                     %                      presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
+                     %                         o_profDo.dates(idPark), 'linear', 'extrap');
                      
-                     % compute DOXY
-                     doxyValues = compute_DOXY_1121_1122_1123_1322( ...
-                        o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
-                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                        presData, tempData, psalData, ...
-                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                        paramDoxy.fillValue);
-                     o_profDo.data(idPark, idDoxy) = doxyValues;
+                     % assign the CTD data at the times of the measurements
+                     % (timely closest association)
+                     ctdLinkData = assign_CTD_measurements(ctdData.dates, ctdData.data, o_profDo.dates(idPark));
+                     if (~isempty(ctdLinkData))
+                        
+                        % compute DOXY
+                        doxyValues = compute_DOXY_1121_1122_1123_1322( ...
+                           o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
+                           paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                           ctdLinkData(:, 1), ctdLinkData(:, 2), ctdLinkData(:, 3), ...
+                           paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                           paramDoxy.fillValue);
+                        o_profDo.data(idPark, idDoxy) = doxyValues;
+                     end
                      
                      % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                      % Hamburg"
@@ -235,32 +241,39 @@ switch (a_decoderId)
                   end
                   
                   if (~isempty(ctdDataAscent))
-                     [~, idSort] = sort(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idSort, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
-                     end
-                     [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
-                     end
+                     %                      [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                     %                      ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                     %                      if (~isempty(ctdDataAscent.dataAdj))
+                     %                         ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                     %                      end
+                     %                      [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                     %                      ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                     %                      if (~isempty(ctdDataAscent.dataAdj))
+                     %                         ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                     %                      end
                      
-                     % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     %                      % interpolate and extrapolate TS data at the pressures of the OPTODE
+                     %                      % measurements
+                     %                      tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
+                     %                         o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
+                     %                         o_profDo.data(idAscent, idPres), 'linear', 'extrap');
+                     
+                     % interpolate and extrapolate the CTD data at the pressures of the OPTODE
                      % measurements
-                     tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
-                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
-                     psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
-                        o_profDo.data(idAscent, idPres), 'linear', 'extrap');
-                     
-                     % compute DOXY
-                     doxyValues = compute_DOXY_1121_1122_1123_1322( ...
-                        o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
-                        paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
-                        o_profDo.data(idAscent, idPres), tempData, psalData, ...
-                        paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
-                        paramDoxy.fillValue);
-                     o_profDo.data(idAscent, idDoxy) = doxyValues;
+                     ctdIntData = compute_interpolated_CTD_measurements( ...
+                        ctdDataAscent.data, o_profDo.data(idAscent, idPres), 'A');
+                     if (~isempty(ctdIntData))
+
+                        % compute DOXY
+                        doxyValues = compute_DOXY_1121_1122_1123_1322( ...
+                           o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
+                           paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
+                           o_profDo.data(idAscent, idPres), ctdIntData(:, 2), ctdIntData(:, 3), ...
+                           paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, ...
+                           paramDoxy.fillValue);
+                        o_profDo.data(idAscent, idDoxy) = doxyValues;
+                     end
                      
                      % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
                      % Hamburg"
@@ -573,22 +586,28 @@ switch (a_decoderId)
                   
                   if (~isempty(ctdData))
                      
-                     % interpolate and extrapolate PTS data at the times of the
-                     % measurements
-                     presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
-                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
-                     tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
-                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
-                     psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
-                        o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     %                      % interpolate and extrapolate PTS data at the times of the
+                     %                      % measurements
+                     %                      presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
+                     %                         o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     %                      tempData = interp1(ctdData.dates, ctdData.data(:, 2), ...
+                     %                         o_profFlbbCd.dates(idPark), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdData.dates, ctdData.data(:, 3), ...
+                     %                         o_profFlbbCd.dates(idPark), 'linear', 'extrap');
                      
-                     % compute BBP700
-                     bbp700Values = compute_BBP700_105_to_112_121_to_126_1121_to_1123_1322( ...
-                        o_profFlbbCd.data(idPark, idBetaBackscattering700), ...
-                        paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
-                        [presData, tempData, psalData], ...
-                        paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
-                     o_profFlbbCd.data(idPark, idBbp700) = bbp700Values;
+                     % assign the CTD data at the times of the measurements
+                     % (timely closest association)
+                     ctdLinkData = assign_CTD_measurements(ctdData.dates, ctdData.data, o_profFlbbCd.dates(idPark));
+                     if (~isempty(ctdLinkData))
+                        
+                        % compute BBP700
+                        bbp700Values = compute_BBP700_105_to_112_121_to_126_1121_to_1123_1322( ...
+                           o_profFlbbCd.data(idPark, idBetaBackscattering700), ...
+                           paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+                           [presData, tempData, psalData], ...
+                           paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+                        o_profFlbbCd.data(idPark, idBbp700) = bbp700Values;
+                     end
                   else
                      fprintf('WARNING: Float #%d Cycle #%d: No available CTD data to compute BBP700 parameter for subsurface drift measurements - BBP700 data set to fill value\n', ...
                         g_decArgo_floatNum, ...
@@ -645,29 +664,34 @@ switch (a_decoderId)
                   end
                   
                   if (~isempty(ctdDataAscent))
-                     [~, idSort] = sort(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idSort, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
-                     end
-                     [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
-                     ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
-                     if (~isempty(ctdDataAscent.dataAdj))
-                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
-                     end
+                     %                      [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                     %                      ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                     %                      if (~isempty(ctdDataAscent.dataAdj))
+                     %                         ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                     %                      end
+                     %                      [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                     %                      ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                     %                      if (~isempty(ctdDataAscent.dataAdj))
+                     %                         ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
+                     %                      end
                      
-                     % interpolate and extrapolate TS data at the pressures
-                     % of the FLBB_CD measurements
-                     tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
-                        o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
-                     psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
-                        o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
+                     %                      % interpolate and extrapolate TS data at the pressures
+                     %                      % of the FLBB_CD measurements
+                     %                      tempData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 2), ...
+                     %                         o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
+                     %                      psalData = interp1(ctdDataAscent.data(:, 1), ctdDataAscent.data(:, 3), ...
+                     %                         o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
                      
+                     % interpolate and extrapolate the CTD data at the pressures of the FLBB_CD
+                     % measurements
+                     ctdIntData = compute_interpolated_CTD_measurements( ...
+                        ctdDataAscent.data, o_profFlbbCd.data(idAscent, idPres), 'A');
+
                      % compute BBP700
                      bbp700Values = compute_BBP700_105_to_112_121_to_126_1121_to_1123_1322( ...
                         o_profFlbbCd.data(idAscent, idBetaBackscattering700), ...
                         paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
-                        [o_profFlbbCd.data(idAscent, idPres), tempData, psalData], ...
+                        [o_profFlbbCd.data(idAscent, idPres), ctdIntData(:, 2), ctdIntData(:, 3)], ...
                         paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
                      o_profFlbbCd.data(idAscent, idBbp700) = bbp700Values;
                   else

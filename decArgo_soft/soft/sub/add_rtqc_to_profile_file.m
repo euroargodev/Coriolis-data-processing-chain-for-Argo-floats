@@ -4792,8 +4792,8 @@ if (testFlagList(59) == 1)
                            presDataFillValue, ...
                            tempDataFillValue, ...
                            psalDataFillValue, ...
-                           profNitrateQc, floatDecoderId);
-                        
+                           profNitrateQc, floatDecoderId, direction(idProf));
+
                         % update NITRATE_QC with test #59 results
                         idQc4 = find(profNitrateTest59Qc == g_decArgo_qcStrBad);
                         profNitrateQc(idQc4) = set_qc(profNitrateQc(idQc4), g_decArgo_qcStrBad);

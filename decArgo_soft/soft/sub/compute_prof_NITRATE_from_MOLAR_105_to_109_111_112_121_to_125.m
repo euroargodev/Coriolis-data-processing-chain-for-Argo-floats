@@ -53,7 +53,8 @@ end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements
-ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset);
+ctdIntData = compute_interpolated_CTD_measurements( ...
+   a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset, a_profSuna.direction);
 if (~isempty(ctdIntData))
    
    idNoDef = find(~((ctdIntData(:, 1) == a_PRES_fill_value) | ...

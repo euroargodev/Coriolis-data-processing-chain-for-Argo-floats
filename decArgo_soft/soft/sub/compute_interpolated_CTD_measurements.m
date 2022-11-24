@@ -3,11 +3,12 @@
 %
 % SYNTAX :
 %  [o_ctdIntData] = compute_interpolated_CTD_measurements( ...
-%    a_ctdMeasData, a_presData, a_extrapFlag)
+%    a_ctdMeasData, a_presData, a_presData, a_profDir)
 %
 % INPUT PARAMETERS :
 %   a_ctdMeasData : CTD profile measurements
 %   a_presData    : P levels of T and S measurement interpolation
+%   a_profDir     : profile direction
 %
 % OUTPUT PARAMETERS :
 %   o_ctdIntData : CTD interpolated data
@@ -21,7 +22,7 @@
 %   06/02/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ctdIntData] = compute_interpolated_CTD_measurements( ...
-   a_ctdMeasData, a_presData)
+   a_ctdMeasData, a_presData, a_profDir)
 
 % output parameters initialization
 o_ctdIntData = [];
@@ -51,7 +52,8 @@ if (~isempty(idNoDefInput))
    ctdPsalData = a_ctdMeasData(idNoDefInput, 3);
    
    % if it is a ascending profile, flip measurements up to down
-   if (length(find(diff(ctdPresData)<0)) > length(ctdPresData)/2)
+   %    if (length(find(diff(ctdPresData)<0)) > length(ctdPresData)/2)
+   if (a_profDir == 'A')
       ctdPresData = flipud(ctdPresData);
       ctdTempData = flipud(ctdTempData);
       ctdPsalData = flipud(ctdPsalData);

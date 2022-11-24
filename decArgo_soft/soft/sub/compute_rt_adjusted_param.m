@@ -307,7 +307,7 @@ else
       % interpolate and extrapolate the PTS data at the pressures of the
       % DOXY measurements
       ctdIntData = compute_interpolated_CTD_measurements(...
-         [ctdPresData ctdTempData ctdPsalData], a_profile.data(:, idPres));
+         [ctdPresData ctdTempData ctdPsalData], a_profile.data(:, idPres), a_profile.direction);
       
       presValues = ctdIntData(:, 1);
       tempValues = ctdIntData(:, 2);
