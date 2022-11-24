@@ -38,7 +38,10 @@ global g_decArgo_floatNum;
 finalConfigNum = [];
 finalConfigName = [];
 finalConfigValue = [];
-if (~isempty(g_decArgo_floatConfig))
+if (~isempty(g_decArgo_floatConfig) && ...
+      (isfield(g_decArgo_floatConfig, 'NUMBER') && ...
+      isfield(g_decArgo_floatConfig, 'NAMES') && ...
+      isfield(g_decArgo_floatConfig, 'VALUES')))
    finalConfigNum = g_decArgo_floatConfig.NUMBER;
    finalConfigName = g_decArgo_floatConfig.NAMES;
    finalConfigValue = g_decArgo_floatConfig.VALUES;

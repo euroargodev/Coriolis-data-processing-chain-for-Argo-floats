@@ -106,8 +106,8 @@ if (~isempty(a_tabTech))
             
             gpsLocDate = [gpsLocDate; g_decArgo_timeData.cycleTime(idCycleStruct(idF)).gpsTimeAdj];
             
-            gpsLocLon = [gpsLocLon; a_tabTech(idTech, 38+ID_OFFSET)];
-            gpsLocLat = [gpsLocLat; a_tabTech(idTech, 37+ID_OFFSET)];
+            gpsLocLon = [gpsLocLon; a_tabTech(idTech, 39+ID_OFFSET)];
+            gpsLocLat = [gpsLocLat; a_tabTech(idTech, 38+ID_OFFSET)];
             gpsLocQc = [gpsLocQc; 0];
             gpsLocAccuracy = [gpsLocAccuracy; 'G'];
             gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idTech, end)];

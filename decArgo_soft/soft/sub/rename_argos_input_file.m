@@ -564,7 +564,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
          
          [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
             g_decArgo_inputArgosFile, floatDecId, floatArgosId, checkTestMsg);
-         if (a_floatNum == 3901639)
+         if (floatNum == 3901639)
             cycleNumber = -1;
             cycleNumberCount = -1;
          end
@@ -712,72 +712,74 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % clean last message ghosts from renamed files
-         if (~isempty(tabCycleNumber))
-            
-            if (~ismember(floatDpfFlag, [0 1]))
-               fprintf('DEC_WARNING: Float #%d: Inconsistent DPF float flag value (= %d) => set to 1\n', ...
-                  floatNum, floatDpfFlag);
+         if (~ismember(floatDecId, [1021 1022])) % not possible for APF11 floats
+            if (~isempty(tabCycleNumber))
                
-               floatDpfFlag = 1;
-            end
-            
-            idUsed = find(tabCycleNumber >= floatDpfFlag);
-            tabCycleNumberBis = tabCycleNumber(idUsed);
-            tabLastMsgDateBis = tabLastMsgDate(idUsed);
-            
-            if (~isempty(tabCycleNumberBis))
-               
-               tabLastMsgDateBis = tabLastMsgDateBis-compute_duration(tabCycleNumberBis, tabCycleNumberBis(1), ones(max(tabCycleNumberBis), 1)*floatCycleTime)';
-               lastArgosMsgDateBis = lastArgosMsgDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
-               
-               %                if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > 0)
-               %                   fprintf('Cycle #%3d: LAST %s\n', ...
-               %                      cycleNumber, ...
-               %                      format_time_dec_argo((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24));
-               %                end
-               
-               if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
-                  argosDate = [argosLocDate; argosDataDate];
-                  argosDate = sort(argosDate);
-                  argosDate = argosDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
+               if (~ismember(floatDpfFlag, [0 1]))
+                  fprintf('DEC_WARNING: Float #%d: Inconsistent DPF float flag value (= %d) => set to 1\n', ...
+                     floatNum, floatDpfFlag);
                   
-                  if (g_decArgo_processModeAll == 1)
-                     argosDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', floatArgosId) '/'];
-                  else
-                     argosDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', floatArgosId) '/tmp/'];
-                  end
-                  argosPathFileName = dir([argosDirName sprintf('%d_*_%03d.txt', floatArgosId, cycleNumber)]);
-                  argosPathFileName = [argosDirName argosPathFileName(1).name];
-                  stop = 0;
-                  while (~stop && ~isempty(argosDate) && ((argosDate(end)-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
-                     
-                     % a ghost message is detected, move it to a dedicated file
-                     [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
-                     if (~isempty(subFileNameList))
-                        argosPathFileName = subFileNameList{1};
-                        
-                        argosDate(end) = [];
-                        if (~isempty(argosDate))
-                           lastArgosMsgDate = argosDate(end);
-                           fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
-                              floatNum, subFileNameList{2});
-                        end
-                     else
-                        % this is not a real ghost message
-                        stop = 1;
-                     end
-                  end
+                  floatDpfFlag = 1;
                end
                
+               idUsed = find(tabCycleNumber >= floatDpfFlag);
+               tabCycleNumberBis = tabCycleNumber(idUsed);
+               tabLastMsgDateBis = tabLastMsgDate(idUsed);
+               
+               if (~isempty(tabCycleNumberBis))
+                  
+                  tabLastMsgDateBis = tabLastMsgDateBis-compute_duration(tabCycleNumberBis, tabCycleNumberBis(1), ones(max(tabCycleNumberBis), 1)*floatCycleTime)';
+                  lastArgosMsgDateBis = lastArgosMsgDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
+                  
+                  %                if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > 0)
+                  %                   fprintf('Cycle #%3d: LAST %s\n', ...
+                  %                      cycleNumber, ...
+                  %                      format_time_dec_argo((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24));
+                  %                end
+                  
+                  if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
+                     argosDate = [argosLocDate; argosDataDate];
+                     argosDate = sort(argosDate);
+                     argosDate = argosDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
+                     
+                     if (g_decArgo_processModeAll == 1)
+                        argosDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', floatArgosId) '/'];
+                     else
+                        argosDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', floatArgosId) '/tmp/'];
+                     end
+                     argosPathFileName = dir([argosDirName sprintf('%06d_*_%03d.txt', floatArgosId, cycleNumber)]);
+                     argosPathFileName = [argosDirName argosPathFileName(1).name];
+                     stop = 0;
+                     while (~stop && ~isempty(argosDate) && ((argosDate(end)-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+                        
+                        % a ghost message is detected, move it to a dedicated file
+                        [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
+                        if (~isempty(subFileNameList))
+                           argosPathFileName = subFileNameList{1};
+                           
+                           argosDate(end) = [];
+                           if (~isempty(argosDate))
+                              lastArgosMsgDate = argosDate(end);
+                              fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
+                                 floatNum, subFileNameList{2});
+                           end
+                        else
+                           % this is not a real ghost message
+                           stop = 1;
+                        end
+                     end
+                  end
+                  
+               end
             end
+            
+            tabCycleNumber = [tabCycleNumber; cycleNumber];
+            tabFirstMsgDate = [tabFirstMsgDate; firstArgosMsgDate];
+            tabLastMsgDate = [tabLastMsgDate; lastArgosMsgDate];
+            [tabCycleNumber, idSort] = sort(tabCycleNumber);
+            tabFirstMsgDate = tabFirstMsgDate(idSort);
+            tabLastMsgDate = tabLastMsgDate(idSort);
          end
-         
-         tabCycleNumber = [tabCycleNumber; cycleNumber];
-         tabFirstMsgDate = [tabFirstMsgDate; firstArgosMsgDate];
-         tabLastMsgDate = [tabLastMsgDate; lastArgosMsgDate];
-         [tabCycleNumber, idSort] = sort(tabCycleNumber);
-         tabFirstMsgDate = tabFirstMsgDate(idSort);
-         tabLastMsgDate = tabLastMsgDate(idSort);
       end
    else
       

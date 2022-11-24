@@ -52,7 +52,7 @@ end
 % read the SBD file data
 for idBufFile = 1:length(a_sbdFileNameList)
    
-   sbdFileName = a_sbdFileNameList{idBufFile};
+   sbdFileName = a_sbdFileNameList{idBufFile};   
    %       fprintf('SBD file : %s\n', sbdFileName);
    if (g_decArgo_virtualBuff)
       sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
@@ -76,14 +76,21 @@ for idBufFile = 1:length(a_sbdFileNameList)
       fclose(fId);
       
       info = get_bits(1, [8 16], sbdData);
-      if (~isempty(o_sbdDataData) && (size(o_sbdDataData, 2) < info(2)-1))
-         nbColToAdd = info(2)-1 - size(o_sbdDataData, 2);
-         o_sbdDataData = cat(2, o_sbdDataData, repmat(-1, size(o_sbdDataData, 1), nbColToAdd));
+      if (info(2) <= sbdDataCount) % inconsistent data could be tansmitted in EOL mode (E: 6903178)
+         if (~isempty(o_sbdDataData) && (size(o_sbdDataData, 2) < info(2)-1))
+            nbColToAdd = info(2)-1 - size(o_sbdDataData, 2);
+            o_sbdDataData = cat(2, o_sbdDataData, repmat(-1, size(o_sbdDataData, 1), nbColToAdd));
+         end
+         data = [info(1) info(2)-3 sbdData(4:info(2))'];
+         data = [data repmat(-1, 1, size(o_sbdDataData, 2)-length(data))];
+         o_sbdDataData = [o_sbdDataData; data];
+         o_sbdDataDate = [o_sbdDataDate; sbdFileDate];
+      else
+         fprintf('WARNING: Float #%d: Inconsistent data in file : %s => ignored\n', ...
+            g_decArgo_floatNum, ...
+            sbdFileName);
+         continue;
       end
-      data = [info(1) info(2)-3 sbdData(4:info(2))'];
-      data = [data repmat(-1, 1, size(o_sbdDataData, 2)-length(data))];
-      o_sbdDataData = [o_sbdDataData; data];
-      o_sbdDataDate = [o_sbdDataDate; sbdFileDate];
    end
    
    % output CSV file
