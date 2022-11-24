@@ -1098,7 +1098,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                   
                   measParamName = measParam.name;
                   measParamVarId = netcdf.inqVarID(fCdf, measParamName);
-                  
+
                   measParamQcVarId = [];
                   measParamQcName = [measParamName '_QC'];
                   if (any(strcmp(measParamQcName, paramNameInFile)))
@@ -1186,7 +1186,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                         data{measParamVarId+1}(idM) = paramData;
                         
                         if ((adjustedCycle == 1) && ~isempty(measParamAdjVarId))
-                           if (~isempty(meas.paramDataAdj) && ~any(meas.paramDataAdj(:, firstCol:lastCol) ~= measParam.fillValue))
+                           if (~isempty(meas.paramDataAdj) && any(meas.paramDataAdj(:, firstCol:lastCol) ~= measParam.fillValue))
                               paramAdjData = meas.paramDataAdj(:, firstCol:lastCol);
                            else
                               paramAdjData = paramData; % only duplicate parameter values
@@ -1220,7 +1220,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                         data{measParamVarId+1}(1:size(paramData, 2), idM) = paramData';
                         
                         if ((adjustedCycle == 1) && ~isempty(measParamAdjVarId))
-                           if (~isempty(meas.paramDataAdj) && ~any(meas.paramDataAdj(:, firstCol:lastCol) ~= measParam.fillValue))
+                           if (~isempty(meas.paramDataAdj) && any(meas.paramDataAdj(:, firstCol:lastCol) ~= measParam.fillValue))
                               paramAdjData = meas.paramDataAdj(:, firstCol:lastCol);
                            else
                               paramAdjData = paramData; % only duplicate parameter values
