@@ -56,14 +56,13 @@ if (a_cycleTimeData.cycleNum ~= 0)
          
          if (~isempty(refTime))
             
-            clockOffset1 = 0;
+            clockOffset1 = a_clockOffsetData.clockOffset(idF1);
             juldFloat1 = a_clockOffsetData.juldUtc(idF1);
             
             clockOffset2 = a_clockOffsetData.clockOffset(idF2);
             juldFloat2 = a_clockOffsetData.juldUtc(idF2) + clockOffset2/86400;
 
-            clockOffset = interp1q([clockOffset1 clockOffset2], ...
-               [juldFloat1 juldFloat2], refTime);
+            clockOffset = interp1q([juldFloat1; juldFloat2], [clockOffset1; clockOffset2], refTime);            
             o_clockOffset = round(clockOffset); % clock offset rounded to 1 second
          else
             fprintf('ERROR: Float #%d cycle #%d: cannot find a cycle timing to estimate clock offset\n', ...
