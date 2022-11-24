@@ -176,8 +176,10 @@ if (a_deepCycle == 1)
 
 else
 
+   offset = 10000;
+
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 220];
+      g_decArgo_cycleNum 220+offset];
    g_decArgo_outputNcParamValue{end+1} = sprintf('%04d%02d%02d%02d%02d%02d', ...
          tabTech2(40)+2000, tabTech2(39), tabTech2(38), tabTech2(35), tabTech2(36), tabTech2(37));
    

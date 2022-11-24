@@ -2847,10 +2847,8 @@ switch (a_decoderId)
          end
          
          % store NetCDF technical data
-         if (deepCycle == 1)
-            store_tech1_data_for_nc_210_to_212_214(tabTech1, deepCycle);
-            store_tech2_data_for_nc_210_211(tabTech2, deepCycle);
-         end
+         store_tech1_data_for_nc_210_to_214(tabTech1, deepCycle);
+         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycle);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -3088,10 +3086,8 @@ switch (a_decoderId)
          end
          
          % store NetCDF technical data
-         if (deepCycle == 1)
-            store_tech1_data_for_nc_210_to_212_214(tabTech1, deepCycle);
-            store_tech2_data_for_nc_212_214(tabTech2, deepCycle);
-         end
+         store_tech1_data_for_nc_210_to_214(tabTech1, deepCycle);
+         store_tech2_data_for_nc_212_214(tabTech2, deepCycle);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -3378,10 +3374,8 @@ switch (a_decoderId)
          end
          
          % store NetCDF technical data
-         if (deepCycle == 1)
-            store_tech1_data_for_nc_210_to_212_214(tabTech1, deepCycle);
-            store_tech2_data_for_nc_210_211(tabTech2, deepCycle);
-         end
+         store_tech1_data_for_nc_210_to_214(tabTech1, deepCycle);
+         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycle);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -3663,10 +3657,8 @@ switch (a_decoderId)
          end
          
          % store NetCDF technical data
-         if (deepCycle == 1)
-            store_tech1_data_for_nc_210_to_212_214(tabTech1, deepCycle);
-            store_tech2_data_for_nc_212_214(tabTech2, deepCycle);
-         end
+         store_tech1_data_for_nc_210_to_214(tabTech1, deepCycle);
+         store_tech2_data_for_nc_212_214(tabTech2, deepCycle);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);

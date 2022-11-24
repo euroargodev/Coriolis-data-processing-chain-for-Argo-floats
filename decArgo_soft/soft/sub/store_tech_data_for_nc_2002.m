@@ -253,20 +253,22 @@ if (a_deepCycle == 1)
    
 else
    
+   offset = 10000;
+
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 121];
+      g_decArgo_cycleNum 121+offset];
    g_decArgo_outputNcParamValue{end+1} = tabTech(26+ID_OFFSET);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 122];
+      g_decArgo_cycleNum 122+offset];
    g_decArgo_outputNcParamValue{end+1} = tabTech(27+ID_OFFSET);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 125];
+      g_decArgo_cycleNum 125+offset];
    g_decArgo_outputNcParamValue{end+1} = tabTech(31+ID_OFFSET);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 141];
+      g_decArgo_cycleNum 141+offset];
    g_decArgo_outputNcParamValue{end+1} = tabTech(49+ID_OFFSET);
 
 end

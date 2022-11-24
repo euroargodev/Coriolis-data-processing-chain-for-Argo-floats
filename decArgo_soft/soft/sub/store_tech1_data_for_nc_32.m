@@ -241,12 +241,14 @@ if (o_deepCycle == 1)
    
 else
    
+   offset = 10000;
+
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1100];
+      g_decArgo_cycleNum 1100+offset];
    g_decArgo_outputNcParamValue{end+1} = a_tabTech(2);
 
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1132];
+      g_decArgo_cycleNum 1132+offset];
    g_decArgo_outputNcParamValue{end+1} = 15 - (a_tabTech(35)/10);
    
    rtcStatus = a_tabTech(36);
@@ -256,19 +258,19 @@ else
       rtcStatusOut = 0;
    end
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1133];
+      g_decArgo_cycleNum 1133+offset];
    g_decArgo_outputNcParamValue{end+1} = rtcStatusOut;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1136];
+      g_decArgo_cycleNum 1136+offset];
    g_decArgo_outputNcParamValue{end+1} = a_tabTech(40);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1137];
+      g_decArgo_cycleNum 1137+offset];
    g_decArgo_outputNcParamValue{end+1} = sprintf('%02d', a_tabTech(41));
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1138];
+      g_decArgo_cycleNum 1138+offset];
    g_decArgo_outputNcParamValue{end+1} = sprintf('%02d', a_tabTech(42));
 
 end

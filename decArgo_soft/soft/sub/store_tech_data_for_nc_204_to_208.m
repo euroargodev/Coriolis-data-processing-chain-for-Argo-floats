@@ -254,6 +254,40 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 1000];
    g_decArgo_outputNcParamValue{end+1} = tabTech(74);
    
+else
+   
+   offset = 10000;
+
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 130+offset];
+   g_decArgo_outputNcParamValue{end+1} = tabTech(50);
+   
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 131+offset];
+   g_decArgo_outputNcParamValue{end+1} = tabTech(51)*5;
+   
+   rtcStatus = tabTech(53);
+   if (rtcStatus == 0)
+      rtcStatusOut = 1;
+   else
+      rtcStatusOut = 0;
+   end
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 133+offset];
+   g_decArgo_outputNcParamValue{end+1} = rtcStatusOut;
+   
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 143+offset];
+   g_decArgo_outputNcParamValue{end+1} = tabTech(64);
+   
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 144+offset];
+   g_decArgo_outputNcParamValue{end+1} = tabTech(65);
+   
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 1000+offset];
+   g_decArgo_outputNcParamValue{end+1} = tabTech(74);
+   
 end
 
 return;

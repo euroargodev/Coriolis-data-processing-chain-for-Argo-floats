@@ -143,21 +143,23 @@ if (o_deepCycle == 1)
 
 else
    
+   offset = 10000;
+
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1211];
+      g_decArgo_cycleNum 1211+offset];
    g_decArgo_outputNcParamValue{end+1} = sprintf('%02d%02d%02d', ...
       a_floatTimeParts(1), a_floatTimeParts(2), a_floatTimeParts(3));
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 112];
+      g_decArgo_cycleNum 112+offset];
    g_decArgo_outputNcParamValue{end+1} = format_date_yyyymmddhhmiss_dec_argo(a_utcTimeJuld);
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 113];
+      g_decArgo_cycleNum 113+offset];
    g_decArgo_outputNcParamValue{end+1} = floatClockDrift*1440;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 1212];
+      g_decArgo_cycleNum 1212+offset];
    g_decArgo_outputNcParamValue{end+1} = sprintf('%02d', a_tabTech(24));
    
 end

@@ -2,7 +2,7 @@
 % Store technical message #2 data for output NetCDF file.
 %
 % SYNTAX :
-%  store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle)
+%  store_tech2_data_for_nc_210_211_213(a_tabTech2, a_deepCycle)
 %
 % INPUT PARAMETERS :
 %   a_tabTech2  : decoded technical data
@@ -16,9 +16,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/05/2017 - RNU - creation
+%   07/04/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function store_tech2_data_for_nc_212_214(a_tabTech2, a_deepCycle)
+function store_tech2_data_for_nc_210_211_213(a_tabTech2, a_deepCycle)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -233,20 +233,10 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 242];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(57+ID_OFFSET);
    
-   % store ice detection flag reported in the tech msg only when ice detection
-   % algorithm is enabled
-   [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-   iceUsed = get_config_value('CONFIG_IC00_', configNames, configValues);
-   if (~isempty(iceUsed) && (iceUsed ~= 0))
-      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-         g_decArgo_cycleNum 243];
-      g_decArgo_outputNcParamValue{end+1} = tabTech2(59+ID_OFFSET);
-   end
-   
 else
    
    offset = 10000;
-   
+
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 227+offset];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(37+ID_OFFSET);
