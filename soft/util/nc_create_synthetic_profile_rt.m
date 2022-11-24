@@ -22,6 +22,7 @@
 %      xmlReportFileName    : XML file name
 %      monoProfRefFileName  : S mono-profile reference file path name
 %      multiProfRefFileName : S multi-profile reference file path name
+%      tmpDirName           : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -34,6 +35,7 @@
 %   01/11/2018 - RNU - V 0.1: creation
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
+%   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -50,6 +52,9 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default directory to store the XML file
 DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
+
+% default base name of the temporary directory 
+DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocs_netCDF4FlagForMonoProf)
@@ -74,6 +79,7 @@ global g_cocs_outputDirName;
 global g_cocs_outputLogDirName;
 global g_cocs_outputXmlReportDirName;
 global g_cocs_outputXmlReportFileName;
+global g_cocs_tmpDirName;
 
 % DOM node of XML report
 global g_cocs_xmlReportDOMNode;
@@ -89,7 +95,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.1 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -109,6 +115,7 @@ g_cocs_outputXmlReportDirName = DIR_XML_FILE;
 g_cocs_monoProfRefFile = MONO_PROF_REF_PROFILE_FILE;
 g_cocs_multiProfRefFile = MULTI_PROF_REF_PROFILE_FILE;
 g_cocs_outputXmlReportFileName = ['nc_create_synthetic_profile_rt_' currentTime '.xml'];
+g_cocs_tmpDirName = DIR_TMP;
 
 % default values initialization
 init_default_values;
@@ -164,7 +171,8 @@ try
          g_cocs_floatMetaFileName, ...
          g_cocs_outputDirName, ...
          str2num(g_cocs_createMultiProfFlag), ...
-         g_cocs_monoProfRefFile, g_cocs_multiProfRefFile);
+         g_cocs_monoProfRefFile, g_cocs_multiProfRefFile, ...
+         g_cocs_tmpDirName);
 
    end
    
@@ -280,6 +288,7 @@ global g_cocs_outputDirName;
 global g_cocs_outputLogDirName;
 global g_cocs_outputXmlReportDirName;
 global g_cocs_outputXmlReportFileName;
+global g_cocs_tmpDirName;
 
 
 g_cocs_floatCProfFileName = '';
@@ -325,6 +334,8 @@ if (~isempty(a_varargin))
             g_cocs_monoProfRefFile = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'multiProfRefFileName'))
             g_cocs_multiProfRefFile = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'tmpDirName'))
+            g_cocs_tmpDirName = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
          end
@@ -406,6 +417,11 @@ if ~(exist(g_cocs_outputXmlReportDirName, 'dir') == 7)
    o_inputError = 1;
    return;
 end
+if ~(exist(g_cocs_tmpDirName, 'dir') == 7)
+   o_logLines{end+1} = sprintf('ERROR: Temporary directory not found: %s\n', g_cocs_tmpDirName);
+   o_inputError = 1;
+   return;
+end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('floatCProfFileName   : %s\n', g_cocs_floatCProfFileName);
@@ -418,6 +434,7 @@ o_logLines{end+1} = sprintf('xmlReportDirName     : %s\n', g_cocs_outputXmlRepor
 o_logLines{end+1} = sprintf('xmlReportFileName    : %s\n', g_cocs_outputXmlReportFileName);
 o_logLines{end+1} = sprintf('monoProfRefFileName  : %s\n', g_cocs_monoProfRefFile);
 o_logLines{end+1} = sprintf('multiProfRefFileName : %s\n', g_cocs_multiProfRefFile);
+o_logLines{end+1} = sprintf('tmpDirName           : %s\n', g_cocs_tmpDirName);
 o_logLines{end+1} = sprintf('\n');
 
 return;

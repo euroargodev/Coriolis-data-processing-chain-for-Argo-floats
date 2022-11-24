@@ -19,6 +19,7 @@
 %   a_createMultiProfFlag : generate M multi-profile file flag
 %   a_monoProfRefFile     : netCDF merged mono-profile file schema
 %   a_multiProfRefFile    : netCDF merged multi-profile file schema
+%   a_tmpDir              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %   o_metaDataStruct : output meta-data
@@ -35,7 +36,8 @@
 function [o_metaDataStruct, o_trajDataStruct] = nc_create_merged_profile_( ...
    a_cProfFileName, a_bProfFileName, ...
    a_metaFileName, a_cTrajFileName, a_bTrajFileName, a_metaDataStruct, a_trajDataStruct, ...
-   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
+   a_tmpDir)
 
 % output parameters initialization
 o_metaDataStruct = a_metaDataStruct;
@@ -47,6 +49,29 @@ global g_cocm_floatNum;
 
 floatWmoStr = num2str(g_cocm_floatNum);
 
+% create a temporary directory
+tmpDirName = [a_tmpDir '/'];
+if ~(exist(tmpDirName, 'dir') == 7)
+   mkdir(tmpDirName);
+end
+tmpDirName = [tmpDirName '/merged_profile/'];
+if ~(exist(tmpDirName, 'dir') == 7)
+   mkdir(tmpDirName);
+end
+tmpDirName = [tmpDirName '/' floatWmoStr '/'];
+if (exist(tmpDirName, 'dir') == 7)
+   % delete the temporary directory
+   remove_directory(tmpDirName);
+end
+% create the temporary directory
+mkdir(tmpDirName);
+
+% create output file directory
+outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
+if ~(exist(outputFloatDirName, 'dir') == 7)
+   mkdir(outputFloatDirName);
+end
+
 % retrieve META data
 if (isempty(o_metaDataStruct))
    o_metaDataStruct = get_meta_data(a_metaFileName);
@@ -56,21 +81,6 @@ end
 if (isempty(o_trajDataStruct))
    o_trajDataStruct = get_traj_data(a_cTrajFileName, a_bTrajFileName);
 end
-
-% create output file directory
-outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
-if ~(exist(outputFloatDirName, 'dir') == 7)
-   mkdir(outputFloatDirName);
-end
-
-% create a temporary directory
-tmpDirName = [a_outputDir '/' floatWmoStr '/tmp/'];
-if (exist(tmpDirName, 'dir') == 7)
-   % delete the temporary directory
-   remove_directory(tmpDirName);
-end
-% create the temporary directory
-mkdir(tmpDirName);
 
 % retrieve PROF data
 profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName, o_metaDataStruct);

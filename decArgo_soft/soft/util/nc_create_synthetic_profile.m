@@ -20,6 +20,7 @@
 %   01/11/2018 - RNU - V 0.1: creation
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
+%   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -39,17 +40,20 @@ FLOAT_LIST_FILE_NAME = '';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\aoml\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_classic\';
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_co\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_aoml\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_csiro\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_aoml\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_csiro\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
+
+% base name of the temporary directory 
+DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocs_netCDF4FlagForMonoProf)
@@ -68,7 +72,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.0 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.1 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -159,7 +163,7 @@ if (errorFlag == 0)
             fprintf('%03d/%03d %d\n', idFloat, length(floatList), g_cocs_floatNum);
             
             process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
-               CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE);
+               CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
             
             floatNum = floatNum + 1;
          else
@@ -184,7 +188,7 @@ if (errorFlag == 0)
                fprintf('%03d/%03d %d\n', floatNum, length(floatDirs)-2, g_cocs_floatNum);
                
                process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
-                  CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE);
+                  CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
                
                floatNum = floatNum + 1;
             end
@@ -202,7 +206,7 @@ return;
 %
 % SYNTAX :
 %  process_one_float(a_floatDir, a_outputDir, ...
-%    a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+%    a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, a_tmpDir)
 %
 % INPUT PARAMETERS :
 %   a_floatDir            : float input data directory
@@ -210,6 +214,7 @@ return;
 %   a_createMultiProfFlag : flag to generate multi-prof netCDF synthetic file
 %   a_monoProfRefFile     : netCDF synthetic mono-profile file schema
 %   a_multiProfRefFile    : netCDF synthetic multi-profile file schema
+%   a_tmpDir              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -219,10 +224,10 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/15/2018 - RNU - creation
+%   06/08/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function process_one_float(a_floatDir, a_outputDir, ...
-   a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+   a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, a_tmpDir)
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -301,7 +306,7 @@ for idCy = 1:length(cyNumList)
             
             % generate S-PROF file
             nc_create_synthetic_profile_(cProfFileName, bProfFileName, metaFileName, ...
-               a_outputDir, createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile);
+               a_outputDir, createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, a_tmpDir);
          end
       end
    end

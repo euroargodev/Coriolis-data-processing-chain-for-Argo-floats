@@ -4,7 +4,8 @@
 % SYNTAX :
 %  nc_create_synthetic_profile_( ...
 %    a_cProfFileName, a_bProfFileName, a_metaFileName, ...
-%    a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+%    a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
+%    a_tmpDir)
 %
 % INPUT PARAMETERS :
 %   a_cProfFileName       : input C prof file path name
@@ -14,7 +15,7 @@
 %   a_createMultiProfFlag : generate S multi-prof flag
 %   a_monoProfRefFile     : netCDF synthetic mono-profile file schema
 %   a_multiProfRefFile    : netCDF synthetic multi-profile file schema
-
+%   a_tmpDir              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -28,7 +29,8 @@
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_( ...
    a_cProfFileName, a_bProfFileName, a_metaFileName, ...
-   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+   a_outputDir, a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, ...
+   a_tmpDir)
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -36,20 +38,28 @@ global g_cocs_floatNum;
 
 floatWmoStr = num2str(g_cocs_floatNum);
 
-% create output file directory
-outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
-if ~(exist(outputFloatDirName, 'dir') == 7)
-   mkdir(outputFloatDirName);
-end
-
 % create a temporary directory
-tmpDirName = [a_outputDir '/' floatWmoStr '/tmp/'];
+tmpDirName = [a_tmpDir '/'];
+if ~(exist(tmpDirName, 'dir') == 7)
+   mkdir(tmpDirName);
+end
+tmpDirName = [tmpDirName '/synthetic_profile/'];
+if ~(exist(tmpDirName, 'dir') == 7)
+   mkdir(tmpDirName);
+end
+tmpDirName = [tmpDirName '/' floatWmoStr '/'];
 if (exist(tmpDirName, 'dir') == 7)
    % delete the temporary directory
    remove_directory(tmpDirName);
 end
 % create the temporary directory
 mkdir(tmpDirName);
+
+% create output file directory
+outputFloatDirName = [a_outputDir '/' floatWmoStr '/profiles/'];
+if ~(exist(outputFloatDirName, 'dir') == 7)
+   mkdir(outputFloatDirName);
+end
 
 % retrieve PROF data
 profDataStruct = get_prof_data(a_cProfFileName, a_bProfFileName);

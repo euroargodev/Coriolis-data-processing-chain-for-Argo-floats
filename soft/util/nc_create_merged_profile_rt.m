@@ -24,6 +24,7 @@
 %      xmlReportFileName    : XML file name
 %      monoProfRefFileName  : M mono-profile reference file path name
 %      multiProfRefFileName : M multi-profile reference file path name
+%      tmpDirName           : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -36,6 +37,7 @@
 %   01/11/2018 - RNU - V 0.1: creation
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
+%   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile_rt(varargin)
 
@@ -52,6 +54,9 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default directory to store the XML file
 DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
+
+% default base name of the temporary directory 
+DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocm_netCDF4FlagForMonoProf)
@@ -78,6 +83,7 @@ global g_cocm_outputDirName;
 global g_cocm_outputLogDirName;
 global g_cocm_outputXmlReportDirName;
 global g_cocm_outputXmlReportFileName;
+global g_cocm_tmpDirName;
 
 % DOM node of XML report
 global g_cocm_xmlReportDOMNode;
@@ -95,7 +101,7 @@ g_cocm_reportData.outputMMultiProfFile = [];
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.0';
+g_cocm_ncCreateMergedProfileVersion = '1.1';
 
 % current float and cycle identification
 global g_cocm_floatNum;
@@ -119,6 +125,7 @@ g_cocm_outputXmlReportDirName = DIR_XML_FILE;
 g_cocm_monoProfRefFile = MONO_PROF_REF_PROFILE_FILE;
 g_cocm_multiProfRefFile = MULTI_PROF_REF_PROFILE_FILE;
 g_cocm_outputXmlReportFileName = ['nc_create_merged_profile_rt_' currentTime '.xml'];
+g_cocm_tmpDirName = DIR_TMP;
 
 % default values initialization
 init_default_values;
@@ -179,7 +186,8 @@ try
          [], [], ...
          g_cocm_outputDirName, ...
          str2num(g_cocm_createMultiProfFlag), ...
-         g_cocm_monoProfRefFile, g_cocm_multiProfRefFile);
+         g_cocm_monoProfRefFile, g_cocm_multiProfRefFile, ...
+         g_cocm_tmpDirName);
    end
    
    diary off;
@@ -296,6 +304,7 @@ global g_cocm_outputDirName;
 global g_cocm_outputLogDirName;
 global g_cocm_outputXmlReportDirName;
 global g_cocm_outputXmlReportFileName;
+global g_cocm_tmpDirName;
 
 
 g_cocm_floatCProfFileName = '';
@@ -347,6 +356,8 @@ if (~isempty(a_varargin))
             g_cocm_monoProfRefFile = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'multiProfRefFileName'))
             g_cocm_multiProfRefFile = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'tmpDirName'))
+            g_cocm_tmpDirName = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
          end
@@ -448,6 +459,11 @@ if ~(exist(g_cocm_outputXmlReportDirName, 'dir') == 7)
    o_inputError = 1;
    return;
 end
+if ~(exist(g_cocm_tmpDirName, 'dir') == 7)
+   o_logLines{end+1} = sprintf('ERROR: Temporary directory not found: %s\n', g_cocm_tmpDirName);
+   o_inputError = 1;
+   return;
+end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('floatCProfFileName   : %s\n', g_cocm_floatCProfFileName);
@@ -462,6 +478,7 @@ o_logLines{end+1} = sprintf('xmlReportDirName     : %s\n', g_cocm_outputXmlRepor
 o_logLines{end+1} = sprintf('xmlReportFileName    : %s\n', g_cocm_outputXmlReportFileName);
 o_logLines{end+1} = sprintf('monoProfRefFileName  : %s\n', g_cocm_monoProfRefFile);
 o_logLines{end+1} = sprintf('multiProfRefFileName : %s\n', g_cocm_multiProfRefFile);
+o_logLines{end+1} = sprintf('tmpDirName           : %s\n', g_cocm_tmpDirName);
 o_logLines{end+1} = sprintf('\n');
 
 return;

@@ -20,6 +20,7 @@
 %   01/11/2018 - RNU - V 0.1: creation
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/08/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
+%   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile(varargin)
 
@@ -38,14 +39,18 @@ FLOAT_LIST_FILE_NAME = '';
 % top directory of input NetCDF files
 % DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
+% DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 
 % top directory of output NetCDF files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic_co\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
+
+% base name of the temporary directory 
+DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocm_netCDF4FlagForMonoProf)
@@ -67,7 +72,7 @@ PRINT_CSV_FLAG = 0;
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.0';
+g_cocm_ncCreateMergedProfileVersion = '1.1';
 
 % current float and cycle identification
 global g_cocm_floatNum;
@@ -162,7 +167,7 @@ if (errorFlag == 0)
             fprintf('%03d/%03d %d\n', idFloat, length(floatList), g_cocm_floatNum);
             
             process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
-               CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE);
+               CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
             
             floatNum = floatNum + 1;
          else
@@ -187,7 +192,7 @@ if (errorFlag == 0)
                fprintf('%03d/%03d %d\n', floatNum, length(floatDirs)-2, g_cocm_floatNum);
                
                process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
-                  CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE);
+                  CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
                
                floatNum = floatNum + 1;
             end
@@ -213,6 +218,7 @@ return;
 %   a_createMultiProfFlag : flag to generate multi-prof netCDF merged file
 %   a_monoProfRefFile     : netCDF merged mono-profile file schema
 %   a_multiProfRefFile    : netCDF merged multi-profile file schema
+%   a_tmpDir              : base name of the temporary directory
 %
 % OUTPUT PARAMETERS :
 %
@@ -225,7 +231,7 @@ return;
 %   06/08/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function process_one_float(a_floatDir, a_outputDir, ...
-   a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile)
+   a_createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, a_tmpDir)
 
 % current float and cycle identification
 global g_cocm_floatNum;
@@ -327,7 +333,7 @@ for idCy = 1:length(cyNumList)
             % generate M-PROF file
             [metaDataStruct, trajDataStruct] = nc_create_merged_profile_(cProfFileName, bProfFileName, ...
                metaFileName, cTrajFileName, bTrajFileName, metaDataStruct, trajDataStruct, ...
-               a_outputDir, createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile);
+               a_outputDir, createMultiProfFlag, a_monoProfRefFile, a_multiProfRefFile, a_tmpDir);
          end
       end
    end
