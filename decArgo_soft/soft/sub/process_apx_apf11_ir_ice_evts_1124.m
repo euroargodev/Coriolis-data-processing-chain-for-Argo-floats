@@ -107,6 +107,9 @@ for idEv = 1:length(events)
          iceDetection.thermalDetect.detectPres = detectPres;
          iceDetection.thermalDetect.detectPresAdj = g_decArgo_presDef;
          iceDetection.thermalDetect.medianTemp = medianTemp;
+         if (~isempty(iceDetection.thermalDetect.sampleTime))
+            iceDetection.thermalDetect.detectNbSample = length(iceDetection.thermalDetect.sampleTime);
+         end
          
       elseif (any(strfind(dataStr, PATTERN_BREAKUP_DETECT)))
          if (any(strfind(dataStr, PATTERN_BREAKUP_DETECT_TRUE)))

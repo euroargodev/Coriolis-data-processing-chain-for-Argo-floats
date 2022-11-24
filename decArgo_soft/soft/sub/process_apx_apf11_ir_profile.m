@@ -11,7 +11,7 @@
 % profile.
 %
 % SYNTAX :
-%  [o_ncProfile] = process_apx_apf11_ir_profile( ...
+%  [o_ncProfile, o_cycleTimeData] = process_apx_apf11_ir_profile( ...
 %    a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, ...
 %    a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
@@ -29,12 +29,13 @@
 %   a_profFlbbCd     : FLBB_CD data
 %   a_profOcr504I    : OCR_504I data
 %   a_profRamses     : RAMSES data
-%   a_cycleTimeData  : cycle timings data
+%   a_cycleTimeData  : input cycle timings data
 %   a_cycleNum       : cycle number
 %   a_presOffsetData : pressure offset data structure
 %
 % OUTPUT PARAMETERS :
-%   o_ncProfile : created output profiles
+%   o_ncProfile     : created output profiles
+%   o_cycleTimeData : output cycle timings data
 %
 % EXAMPLES :
 %
@@ -44,7 +45,7 @@
 % RELEASES :
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncProfile] = process_apx_apf11_ir_profile( ...
+function [o_ncProfile, o_cycleTimeData] = process_apx_apf11_ir_profile( ...
    a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, ...
    a_profFlbb, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
@@ -53,10 +54,14 @@ function [o_ncProfile] = process_apx_apf11_ir_profile( ...
 
 % output parameters initialization
 o_ncProfile = [];
+o_cycleTimeData = a_cycleTimeData;
 
 % QC flag values (numerical)
 global g_decArgo_qcDef;
 global g_decArgo_qcProbablyGood;
+
+% clock offset storage
+global g_decArgo_clockOffset;
 
 
 if (isempty(a_profCtdPt) && ...
@@ -105,6 +110,8 @@ profIceFlbb = [];
 profIceFlbbCd = [];
 profIceOcr504I = [];
 profIceRamses = [];
+
+ascentEndDateWhenAbort = [];
 for idS = 0:7
 
    if (idS == 0)
@@ -131,11 +138,25 @@ for idS = 0:7
    
    % ascent profiles
    if ((idS > 0) && ...
-         ~isempty(a_cycleTimeData.ascentStartDateSci) && ...
-         ~isempty(a_cycleTimeData.ascentEndDate) && ...
-         any((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDate)))
+         ((~isempty(o_cycleTimeData.ascentStartDateSci) && ...
+         ~isempty(o_cycleTimeData.ascentEndDate) && ...
+         any((inputData.dates >= o_cycleTimeData.ascentStartDateSci) & (inputData.dates <= o_cycleTimeData.ascentEndDate))) || ...
+         (~isempty(o_cycleTimeData.ascentStartDateSci) && ...
+         ~isempty(o_cycleTimeData.ascentAbortDate))))
       outputData = inputData;
-      idProfMeas = find((inputData.dates >= a_cycleTimeData.ascentStartDateSci) & (inputData.dates <= a_cycleTimeData.ascentEndDate));
+      if (~isempty(o_cycleTimeData.ascentStartDateSci) && ...
+            ~isempty(o_cycleTimeData.ascentEndDate) && ...
+            any((inputData.dates >= o_cycleTimeData.ascentStartDateSci) & (inputData.dates <= o_cycleTimeData.ascentEndDate)))
+         idProfMeas = find((inputData.dates >= o_cycleTimeData.ascentStartDateSci) & (inputData.dates <= o_cycleTimeData.ascentEndDate));
+      else
+         idProfMeas = find(inputData.dates >= o_cycleTimeData.ascentStartDateSci); % we don't use o_cycleTimeData.ascentEndDate because we have measurements after this time
+         % when profile aborted, create an ascentEndDate with max dates of profiles 
+         if (isempty(ascentEndDateWhenAbort))
+            ascentEndDateWhenAbort = max(inputData.dates);
+         else
+            ascentEndDateWhenAbort = max(ascentEndDateWhenAbort, max(inputData.dates));
+         end
+      end
       outputData.data = outputData.data(idProfMeas, :);
       if (~isempty(outputData.dataAdj))
          outputData.dataAdj = outputData.dataAdj(idProfMeas, :);
@@ -164,15 +185,15 @@ for idS = 0:7
    end
    
    % manage Ice descent and ascent cycles
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
-      for idC = 1:length(a_cycleTimeData.iceDescentStartDateSci)
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
+      for idC = 1:length(o_cycleTimeData.iceDescentStartDateSci)
          
          % Ice descent profiles
-         if (~isempty(a_cycleTimeData.iceDescentStartDateSci(idC)) && ...
-               ~isempty(a_cycleTimeData.iceAscentStartDateSci(idC)) && ...
-               any((inputData.dates > a_cycleTimeData.iceDescentStartDateSci(idC)) & (inputData.dates < a_cycleTimeData.iceAscentStartDateSci(idC))))
+         if (~isempty(o_cycleTimeData.iceDescentStartDateSci(idC)) && ...
+               ~isempty(o_cycleTimeData.iceAscentStartDateSci(idC)) && ...
+               any((inputData.dates > o_cycleTimeData.iceDescentStartDateSci(idC)) & (inputData.dates < o_cycleTimeData.iceAscentStartDateSci(idC))))
             outputData = inputData;
-            idProfMeas = find(((inputData.dates >  a_cycleTimeData.iceDescentStartDateSci(idC)) & (inputData.dates < a_cycleTimeData.iceAscentStartDateSci(idC))));
+            idProfMeas = find(((inputData.dates >  o_cycleTimeData.iceDescentStartDateSci(idC)) & (inputData.dates < o_cycleTimeData.iceAscentStartDateSci(idC))));
             outputData.data = outputData.data(idProfMeas, :);
             if (~isempty(outputData.dataAdj))
                outputData.dataAdj = outputData.dataAdj(idProfMeas, :);
@@ -203,11 +224,11 @@ for idS = 0:7
          end
          
          % Ice ascent profiles
-         if (~isempty(a_cycleTimeData.iceAscentStartDateSci(idC)) && ...
-               ~isempty(a_cycleTimeData.iceAscentEndDateSci(idC)) && ...
-               any((inputData.dates >= a_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= a_cycleTimeData.iceAscentEndDateSci(idC))))
+         if (~isempty(o_cycleTimeData.iceAscentStartDateSci(idC)) && ...
+               ~isempty(o_cycleTimeData.iceAscentEndDateSci(idC)) && ...
+               any((inputData.dates >= o_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= o_cycleTimeData.iceAscentEndDateSci(idC))))
             outputData = inputData;
-            idProfMeas = find(((inputData.dates >=  a_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= a_cycleTimeData.iceAscentEndDateSci(idC))));
+            idProfMeas = find(((inputData.dates >=  o_cycleTimeData.iceAscentStartDateSci(idC)) & (inputData.dates <= o_cycleTimeData.iceAscentEndDateSci(idC))));
             outputData.data = outputData.data(idProfMeas, :);
             if (~isempty(outputData.dataAdj))
                outputData.dataAdj = outputData.dataAdj(idProfMeas, :);
@@ -239,6 +260,16 @@ for idS = 0:7
       end
    end
    clear inputData
+end
+
+if (~isempty(ascentEndDateWhenAbort))
+   
+   % store ascentEnd date
+   o_cycleTimeData.ascentEndDateSci = ascentEndDateWhenAbort;
+   o_cycleTimeData.ascentEndDate = ascentEndDateWhenAbort;
+   
+   % adjust ascentEnd date
+   [o_cycleTimeData] = adjust_ascent_end(o_cycleTimeData, g_decArgo_clockOffset);
 end
 
 if (isempty(profCtdPts) && ...
@@ -877,7 +908,7 @@ if (~isempty(profCtdCpStruct))
    primaryProfSetFlag = 1;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profCtdCpStruct.bounceFlag = 'BS';
    end
    
@@ -1090,7 +1121,7 @@ if (~isempty(profCtdCpHStruct))
    primaryProfSetFlag = 1;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profCtdCpHStruct.bounceFlag = 'BS';
    end
    
@@ -1136,7 +1167,7 @@ if (~isempty(profCtdPtsStruct))
    end
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profCtdPtsStruct.bounceFlag = 'BS';
    end
    
@@ -1159,7 +1190,7 @@ if (~isempty(profCtdPtshStruct))
    end
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profCtdPtshStruct.bounceFlag = 'BS';
    end
    
@@ -1177,7 +1208,7 @@ if (~isempty(profDoStruct))
    profDoStruct.primarySamplingProfileFlag = 0;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profDoStruct.bounceFlag = 'BS';
    end
    
@@ -1195,7 +1226,7 @@ if (~isempty(profFlbbStruct))
    profFlbbStruct.primarySamplingProfileFlag = 0;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profFlbbStruct.bounceFlag = 'BS';
    end
    
@@ -1213,7 +1244,7 @@ if (~isempty(profFlbbCdStruct))
    profFlbbCdStruct.primarySamplingProfileFlag = 0;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profFlbbCdStruct.bounceFlag = 'BS';
    end
    
@@ -1231,7 +1262,7 @@ if (~isempty(profOcr504IStruct))
    profOcr504IStruct.primarySamplingProfileFlag = 0;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profOcr504IStruct.bounceFlag = 'BS';
    end
    
@@ -1249,7 +1280,7 @@ if (~isempty(profRamsesStruct))
    profRamsesStruct.primarySamplingProfileFlag = 0;
    
    % add bounce information
-   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
       profRamsesStruct.bounceFlag = 'BS';
    end
    
@@ -1315,10 +1346,10 @@ if (~isempty(profIceCtdPt) || ...
          end
          
          % date of the profile
-         profIceStruct.date = a_cycleTimeData.iceAscentEndDateSci(profIce{idP, 1});
+         profIceStruct.date = o_cycleTimeData.iceAscentEndDateSci(profIce{idP, 1});
          if (profIce{idP, 2} == 1)
             profIceStruct.direction = 'D';
-            profIceStruct.date = a_cycleTimeData.iceDescentStartDateSci(profIce{idP, 1});
+            profIceStruct.date = o_cycleTimeData.iceDescentStartDateSci(profIce{idP, 1});
          end
          
          % positioning system
@@ -1439,3 +1470,82 @@ end
 
 return
 
+% ------------------------------------------------------------------------------
+% Apply clock offset adjustment to Ascent End date.
+%
+% SYNTAX :
+%  [o_cycleTimeData] = adjust_ascent_end(a_cycleTimeData, a_clockOffsetData)
+%
+% INPUT PARAMETERS :
+%   a_cycleTimeData   : input cycle timings data
+%   a_clockOffsetData : clock offset information
+%
+% OUTPUT PARAMETERS :
+%   o_cycleTimeData : output cycle timings data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   09/28/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_cycleTimeData] = adjust_ascent_end(a_cycleTimeData, a_clockOffsetData)
+
+% output parameters initialization
+o_cycleTimeData = a_cycleTimeData;
+
+
+if (isempty(a_clockOffsetData.clockOffsetJuldUtc))
+   return
+end
+
+% clock adjustment of the current cycle
+cycleClockOffset = get_clock_offset_value_apx_apf11_ir(a_clockOffsetData, a_cycleTimeData);
+
+% clock adjustment of misc cycle times
+o_cycleTimeData.ascentEndAdjDateSci = adjust_time(o_cycleTimeData.ascentEndDateSci, cycleClockOffset);
+o_cycleTimeData.ascentEndAdjDate = adjust_time(o_cycleTimeData.ascentEndDate, cycleClockOffset);
+
+return
+
+% ------------------------------------------------------------------------------
+% Apply clock offset adjustment to a given time.
+%
+% SYNTAX :
+%  [o_timeAdj] = adjust_time(a_time, a_clockOffset)
+%
+% INPUT PARAMETERS :
+%   a_time        : time to adjust
+%   a_clockOffset : clock offset to apply
+%
+% OUTPUT PARAMETERS :
+%   o_timeAdj : adjusted time
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   04/27/2018 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_timeAdj] = adjust_time(a_time, a_clockOffset)
+
+% output parameters initialization
+o_timeAdj = [];
+
+% default values
+global g_decArgo_dateDef;
+
+
+if (~isempty(a_time))
+   if (a_time ~= g_decArgo_dateDef)
+      o_timeAdj = a_time - a_clockOffset/86400;
+   else
+      o_timeAdj = g_decArgo_dateDef;
+   end
+end
+
+return
