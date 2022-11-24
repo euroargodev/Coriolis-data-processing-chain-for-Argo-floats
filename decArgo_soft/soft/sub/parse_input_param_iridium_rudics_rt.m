@@ -117,10 +117,13 @@ if (isempty(floatLoginName))
    return;
 end
 
-% g_decArgo_dirInputRsyncLog depends on decoder version 
-% if (ismember(floatDecId, [111]))
+% g_decArgo_dirInputRsyncLog depends on decoder version
+if ((floatDecId > 1000) && (floatDecId < 2000))
+   % APEX Iridium RUDICS & NAVIS floats
+   g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' sprintf('%04d', str2double(floatLoginName)) '/'];
+else
    g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
-% end
+end
 
 % check the corresponding directories and files
 rsyncLogPathFile = [];

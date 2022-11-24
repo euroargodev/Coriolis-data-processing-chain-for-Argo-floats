@@ -9,7 +9,7 @@
 %   a_cycleNum                    : cycle number
 %   a_profNum                     : profile number
 %   a_phaseNum                    : phase number
-%   a_PrimarySamplingProfileFlag  : 1 if it is a primary sampling profile, 
+%   a_PrimarySamplingProfileFlag  : 1 if it is a primary sampling profile,
 %                                   0 otherwise
 %
 % OUTPUT PARAMETERS :
@@ -17,7 +17,7 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -77,6 +77,8 @@ o_profStruct = struct( ...
    'merged', 0, ... % 1 for merged profile
    'derived', 0, ... % 1 if the derived parameters have been computed and added
    'updated', 0, ... % 1 if the associated nc file must be updated
-   'rtOffset', g_decArgo_rtOffsetInfo);
+   'rtOffset', g_decArgo_rtOffsetInfo, ...
+   'fakeProfFlag', 0 ... % 1 if it is a 'default' profile created by the decoder to pass the java checker
+   );
 
 return;

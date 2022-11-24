@@ -47,6 +47,12 @@ global g_decArgo_cycleNum;
 % number of the previous decoded cycle
 global g_decArgo_cycleNumPrev;
 
+% offset to consider for cycle numbers
+global g_decArgo_cycleNumOffset;
+
+% prelude ended flag
+global g_decArgo_preludeDoneFlag;
+
 % default values
 global g_decArgo_dateDef;
 global g_decArgo_presCountsDef;
@@ -77,7 +83,7 @@ NB_MEAS_MAX_NOVA = g_decArgo_maxCTDSampleInNovaDataPacket;
 global g_decArgo_eolMode;
 g_decArgo_eolMode = 0;
 
-% final EOL flag (float in EOL mode and cycle number set to 256 by the decoder)
+% final EOL flag (all remaining transmitted data are processed together)
 global g_decArgo_finalEolMode;
 
 
@@ -125,7 +131,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % determine if it is a deep cycle
          if (g_decArgo_finalEolMode == 0)
-            if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
+            if (any(tabTech([20 22 24]) ~= 0))
                o_deepCycle = 1;
             else
                o_deepCycle = 0;
@@ -326,10 +332,14 @@ if (a_procLevel > 0)
          
          if (length(unique(tabCycleNum)) == 1)
             g_decArgo_cycleNum = unique(tabCycleNum);
+                        
+            if ((g_decArgo_cycleNum ~= 255) && (g_decArgo_cycleNum > 0))
+               g_decArgo_preludeDoneFlag = 1;
+            end
             
             % add 1 to cycle number except for PRELUDE cycle
             if (o_deepCycle == 0)
-               if (a_firstDeepCycleDone == 0)
+               if (g_decArgo_preludeDoneFlag == 0)
                   % PRELUDE cycle
                   if (g_decArgo_cycleNum == 255)
                      g_decArgo_cycleNum = 0;
@@ -341,19 +351,25 @@ if (a_procLevel > 0)
                g_decArgo_cycleNum = g_decArgo_cycleNum + 1;
             end
             
-            % EOL mode
-            if ((g_decArgo_cycleNum == g_decArgo_cycleNumPrev) && ...
-                  (~isempty(o_tabTech) && ~any(o_tabTech([20 22 24]) ~= 0)))
-               o_deepCycle = 0;
-               g_decArgo_eolMode = 1;
-               g_decArgo_finalEolMode = 1;
-               %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...
-               %                   g_decArgo_floatNum, g_decArgo_cycleNum);
+            if (o_deepCycle == 1)
+               % float #6901885 transmitted profiles with cycle numbers
+               % 0, 1, 2, ..., 253, 254, 255, 255, 255, etc...
+               if (g_decArgo_cycleNum <= g_decArgo_cycleNumPrev)
+                  % add 1 to g_decArgo_cycleNumPrev
+                  g_decArgo_cycleNumOffset = g_decArgo_cycleNumPrev - g_decArgo_cycleNum + 1;
+                  g_decArgo_cycleNum = g_decArgo_cycleNum + g_decArgo_cycleNumOffset;
+               end
+            else
+               if (g_decArgo_cycleNum < g_decArgo_cycleNumPrev)
+                  % keep the same g_decArgo_cycleNumPrev
+                  g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
+               end
             end
-            
-            if (g_decArgo_cycleNum < g_decArgo_cycleNumPrev)
-               g_decArgo_cycleNum = 256;
-               o_deepCycle = 0;
+                        
+            % EOL mode
+            if ((~isempty(o_deepCycle) && (o_deepCycle == 0)) && ...
+                  (g_decArgo_preludeDoneFlag == 1) && ...
+                  (g_decArgo_cycleNum == g_decArgo_cycleNumPrev))
                g_decArgo_eolMode = 1;
                g_decArgo_finalEolMode = 1;
             end
@@ -381,13 +397,14 @@ if (a_procLevel > 0)
                o_dataHydrau = [];
                o_dataAck = [];
                o_deepCycle = [];
+               g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
             else
                
                if (isempty(o_dataCTD))
                   fprintf('WARNING: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (no CTD data lost)\n', ...
                      g_decArgo_floatNum, cycleListStr(1:end-1));
                else
-                  fprintf('WARNING: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
+                  fprintf('ERROR: Float #%d: Multiple cycle numbers (%s) have been received => buffer ignored (CTD data lost)\n', ...
                      g_decArgo_floatNum, cycleListStr(1:end-1));
                end
                
@@ -395,7 +412,7 @@ if (a_procLevel > 0)
                o_dataHydrau = [];
                o_dataAck = [];
                o_deepCycle = 0;
-               g_decArgo_cycleNum = 256;
+               g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
             end
          end
       else

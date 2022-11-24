@@ -20,7 +20,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_ARM",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "Activates or deactivates Recovery mode.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_ActivateRecoveryMode_LOGICAL",
+      "CONF_PARAM_NAME" : "CONFIG_RecoveryModeActivate_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Activates or deactivates recovery mode. Recovery mode is operator activated. If activated, the float remains on the surface indefinitely while transmitting its position and log files and downloading new mission and sample configuration parameters if available. If Recovery mode is then deactivated, the float will begin the Park Descent phase of a new mission."
    },
    "CONF_PARAM_4" :
@@ -92,7 +92,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_DDTI",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The interval in seconds between float samples of the pressure to determine if the Profile depth has been reached.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureCheckTimeDescentToProfileDepth_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeDescentToProfileDepth_seconds",
       "CONF_PARAM_DESCRIPTION" : "The interval in seconds between float samples of the pressure to determine if the Profile depth has been reached."
    },
    "CONF_PARAM_13" :
@@ -124,7 +124,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_HRC",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_PistonPositionHyperRetraction_COUNT",
+      "CONF_PARAM_NAME" : "CONFIG_PistonPositionHyperRetraction_COUNT",
       "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent."
    },
    "CONF_PARAM_17" :
@@ -132,7 +132,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_HRP",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_HyperRetractionStopPressure_dbar",
+      "CONF_PARAM_NAME" : "CONFIG_HyperRetractionStopPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount."
    },
    "CONF_PARAM_18" :
@@ -196,7 +196,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_LD",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "If set to on, the float will transition to the Emergency mode upon detection of an internal water leak. If set to off, the float will only log the condition to the system_log.txt file.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_WaterLeakDetection_LOGICAL",
+      "CONF_PARAM_NAME" : "CONFIG_EmergencyModeWaterLeakDetection_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Emergency mode upon detection of an internal water leak. If set to no, the float will only log the condition to the system_log.txt file."
    },
    "CONF_PARAM_26" :
@@ -228,8 +228,8 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_MBC",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The minimum allowable buoyancy position in counts, overriding any other count setting. This configuration parameter prevents the movement of oil from the oil compartment of the bladder into the oil reservoir at the specified count to manage the maximum depth of a descent. In general MinBuoyancyCount should be set less than the DeepDescentCount.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_MinBuoyancy_COUNT",
-      "CONF_PARAM_DESCRIPTION" : "The minimum allowable buoyancy position in counts, overriding any other count setting. This configuration parameter prevents the movement of oil from the oil compartment of the bladder into the oil reservoir at the specified count to manage the maximum depth of a descent. In general CONFIG_MinBuoyancy_COUNT should be set less than the CONFIG_PistonProfile_COUNT."
+      "CONF_PARAM_NAME" : "CONFIG_BuoyancyMinimum_COUNT",
+      "CONF_PARAM_DESCRIPTION" : "The minimum allowable buoyancy position in counts, overriding any other count setting. This configuration parameter prevents the movement of oil from the oil compartment of the bladder into the oil reservoir at the specified count to manage the maximum depth of a descent. In general CONFIG_BuoyancyMinimum_COUNT should be set less than the CONFIG_PistonProfile_COUNT."
    },
    "CONF_PARAM_30" :
    {
@@ -244,7 +244,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PBN",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The number of counts to change the piston position from its current position in the direction that will bring the float closer to the Park depth. It is applied after three successive pressure samples that are outside the dead band specified by ParkDeadband.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_ParkBuoyancyNudge_COUNT",
+      "CONF_PARAM_NAME" : "CONFIG_BuoyancyNudgeToPark_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The number of counts to change the piston position from its current position in the direction that will bring the float closer to the Park depth. It is applied after three successive pressure samples that are outside the dead band specified by CONFIG_PressureTargetToleranceDuringDrift_dbar."
    },
    "CONF_PARAM_32" :
@@ -276,7 +276,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PDTI",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The interval in seconds between float samples of the pressure to determine if the Park depth has been reached. The pressure is recorded to the science_log.bin file.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureCheckTimeDescentToParkingDepth_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeDescentToParkingDepth_seconds",
       "CONF_PARAM_DESCRIPTION" : "The interval in seconds between float samples of the pressure to determine if the Park depth has been reached."
    },
    "CONF_PARAM_36" :
@@ -308,7 +308,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PST",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "If set to on, the float will transition to the Park Descent phase at the end of the period determined by PreludeTime only if the self test passes. If the self test fails, the float will go into Emergency mode. If set to off, the float will transition to the Park Descent phase whether or not the self test passes. In addition, the test results, pass or fail, will be logged to the system_log.txt file.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_AutoTestAtDeploymentStopMission_LOGICAL",
+      "CONF_PARAM_NAME" : "CONFIG_MissionPreludeAutoTest_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Park Descent phase at the end of the period determined by CONFIG_MissionPreludeTime_hours only if the self test passes. If the self test fails, the float will go into Emergency mode. If set to no, the float will transition to the Park Descent phase whether or not the self test passes. In addition, the test results, pass or fail, will be logged to the system_log.txt file."
    },
    "CONF_PARAM_40" :
@@ -324,7 +324,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_SPSPC",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The pressure in decibars added to the most recently measured pressure at the surface, the sum of which is the pressure at which the conductivity, temperature and pressure sampling stops for a pumped type CTD. It is also the pressure at which the Surface phase begins.",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_CTDPumpStopPressureOffset_dbar",
+      "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure in decibars added to the most recently measured pressure at the surface, the sum of which is the pressure at which the conductivity, temperature and pressure sampling stops for a pumped type CTD. It is also the pressure at which the Surface phase begins."
    },
    "CONF_PARAM_42" :
@@ -428,7 +428,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE06",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name><vertical_phase_name>DepthZone<N>NumberOfSamples_NUMBER",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>NumberOfSamples_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
    "CONF_PARAM_55" :
@@ -436,7 +436,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE01",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseNumberOfDepthZone_NUMBER",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseNumberOfDepthZone_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of ascent depth zones defined for the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_56" :
@@ -444,7 +444,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE02",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_57" :
@@ -452,7 +452,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE03",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseDepthZone<N>StopPres_dbar",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StopPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_58" :
@@ -460,15 +460,15 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE04",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseDepthZone<N>BinSize_dbar",
-      "CONF_PARAM_DESCRIPTION" : "Bin size of the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thicknes of the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_59" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE05",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseDepthZone<N>SampleRate_hertz",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SampleRate_hertz",
       "CONF_PARAM_DESCRIPTION" : "Sample rate for the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_60" :
@@ -476,7 +476,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE06",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>CpAscentPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
    "CONF_PARAM_61" :
@@ -484,7 +484,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_MEASURE01",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>InAirMeasurementNumberOfSamples_NUMBER",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementNumberOfSamples_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of measurements sampled before and after inflating the air bladder for the <short_sensor_name> sensor during the in air measurement phase."
    },
    "CONF_PARAM_62" :
@@ -492,7 +492,7 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_MEASURE02",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the <short_sensor_name> sensor during the in air measurement phase."
    }
 }

@@ -97,7 +97,7 @@ else
 end
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(g_decArgo_floatTransType, a_decoderId);
 
-% 03/24/2015: the GDAC checker cannot check 'empty' profiles, we will add a 
+% 03/24/2015: the GDAC checker cannot check 'empty' profiles, we will add a
 % default profile with fillValue measurements
 
 % collect information on profiles
@@ -129,7 +129,7 @@ for idCy = 1:length(cyNumList)
             (profInfo(:, 1) == cyNum) & ...
             (profInfo(:, 2) == direction));
          idPrimary = find(profInfo(idProfInFile, 3) == 1);
-
+         
          if (isempty(idPrimary))
             
             % create a 'default' primary c profile
@@ -261,7 +261,7 @@ for idProf = 1:length(tabProfiles)
             
             % Iridium RUDICS floats
             % Iridium SBD ProvBioII floats
-
+            
             if (g_decArgo_generateNcMonoProf == 2)
                
                if (g_decArgo_realtimeFlag == 1)
@@ -286,7 +286,7 @@ for idProf = 1:length(tabProfiles)
          elseif (g_decArgo_floatTransType == 3)
             
             % Iridium SBD floats
-
+            
             if (g_decArgo_generateNcMonoProf == 2)
                
                if (g_decArgo_realtimeFlag == 1)
@@ -311,7 +311,7 @@ for idProf = 1:length(tabProfiles)
                      g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber);
                end
             end
-         end         
+         end
          
          % the data of one cycle can be in consecutive rsync log files
          % to check if the file need to be created we should then compare profile
@@ -459,7 +459,7 @@ for idProf = 1:length(tabProfiles)
                fprintf('Creating NetCDF MONO-PROFILE file (%s) ...\n', ncFileName);
             end
          end
-
+         
          if (g_decArgo_floatTransType == 1)
             
             % Argos floats
@@ -521,7 +521,7 @@ for idProf = 1:length(tabProfiles)
          idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
          if (~isempty(idVal))
             dataCentre = char(a_metaDataFromJson{idVal+1});
-            [institution] = get_institution_from_data_centre(dataCentre);
+            [institution] = get_institution_from_data_centre(dataCentre, 1);
          end
          netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
          netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -1070,7 +1070,9 @@ for idProf = 1:length(tabProfiles)
          adjustedProfilesList = zeros(nbProfToStore, 1);
          for idP = 1:nbProfToStore
             prof = tabProfiles(idProfInFile(idP));
-            [adjustedProfilesList(idP)] = rt_adjusment_exist(prof, 1);
+            if (~prof.fakeProfFlag)
+               [adjustedProfilesList(idP)] = rt_adjusment_exist(prof, 1);
+            end
          end
          
          % add profile data
@@ -1131,7 +1133,7 @@ for idProf = 1:length(tabProfiles)
             if (~isempty(prof.configMissionNumber))
                netcdf.putVar(fCdf, configMissionNumberVarId, profPos, 1, prof.configMissionNumber);
             end
-                        
+            
             % profile parameter data
             parameterList = prof.paramList;
             for idParam = 1:length(parameterList)
@@ -1182,7 +1184,7 @@ for idProf = 1:length(tabProfiles)
                            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                         end
                      end
-                                         
+                     
                      if (prof.direction == 'A')
                         measIds = fliplr([1:length(paramData)]);
                      else
@@ -1221,7 +1223,7 @@ for idProf = 1:length(tabProfiles)
                      % RT PRES adjustment of Apex float
                      if (~isempty(prof.presOffset))
                         if (profParam.adjAllowed == 1)
-
+                           
                            if (isempty(paramAdjData))
                               % no RT adjustment in the data base
                               paramDataIn = prof.dataAdj(:, idParam);
@@ -1248,7 +1250,7 @@ for idProf = 1:length(tabProfiles)
             % add RT DB adjustments information
             if (adjustedProfilesList(idP) == 1)
                netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
-
+               
                % process calibration information
                idVal = find(strcmp('CALIB_RT_PARAMETER', a_metaDataFromJson) == 1);
                if (~isempty(idVal))

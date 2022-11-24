@@ -12,8 +12,8 @@
       "CONF_PARAM_DEC_ID" : "101",
       "CONF_PARAM_MSG_ID" : "248",
       "CONF_PARAM_MSG_LABEL" : "First hanging Time-out (in minutes)",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_ConnectionFailureTimeOut_minutes",
-      "CONF_PARAM_DESCRIPTION" : "Maximum delay allowed to the float to connect to the RUDICS server."
+      "CONF_PARAM_NAME" : "CONFIG_ConnectionFailureTimeOut_minutes",
+      "CONF_PARAM_DESCRIPTION" : "Is the maximum time allowed for the float to connect to the RUDICS server, i.e. it tries to connect during 30 minutes (values set for these floats) if it fails it is probably because it is under ice (that has not been detected by ISA or hanging algorithms)."
    },
    "CONF_PARAM_3" :
    {
@@ -28,15 +28,15 @@
       "CONF_PARAM_DEC_ID" : "103",
       "CONF_PARAM_MSG_ID" : "248",
       "CONF_PARAM_MSG_LABEL" : "SBD positioning activation",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_RudicsAndIridiumSession_LOGICAL",
-      "CONF_PARAM_DESCRIPTION" : "For RUDICS transmission floats, perform also one Iridium session (to get an Iridium position)."
+      "CONF_PARAM_NAME" : "CONFIG_RudicsAndIridiumSession_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "This float has a RUDICS transmission system. However it is able to connect to Iridium if the user want to get one Iridium position for each cycle."
    },
    "CONF_PARAM_5" :
    {
       "CONF_PARAM_DEC_ID" : "104",
       "CONF_PARAM_MSG_ID" : "248",
       "CONF_PARAM_MSG_LABEL" : "Send SBD positioning only on GPS default",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_RudicsAndIridiumSessionWhenNoGPS_LOGICAL",
+      "CONF_PARAM_NAME" : "CONFIG_RudicsAndIridiumSessionWhenNoGPS_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "For RUDICS transmission floats, perform also one Iridium session (to get an Iridium position) when the GPS fix is not valid."
    },
    "CONF_PARAM_6" :
@@ -212,7 +212,7 @@
       "CONF_PARAM_DEC_ID" : "221",
       "CONF_PARAM_MSG_ID" : "254",
       "CONF_PARAM_MSG_LABEL" : "Wait period on surface after Emergency ascent (in min)",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_SurfaceWaitPeriodAfterEmergencyAscent_minutes",
+      "CONF_PARAM_NAME" : "CONFIG_SurfaceWaitPeriodAfterEmergencyAscent_minutes",
       "CONF_PARAM_DESCRIPTION" : "Duration of the specific surface phase that occurs after an emergency ascent of the float."
    },
    "CONF_PARAM_28" :
@@ -220,8 +220,8 @@
       "CONF_PARAM_DEC_ID" : "223",
       "CONF_PARAM_MSG_ID" : "254",
       "CONF_PARAM_MSG_LABEL" : "Number of retries per SBD commands on error",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_SecondaryTelemetryMaxRetry_COUNT",
-      "CONF_PARAM_DESCRIPTION" : "Maximum number of Iridium telemetry session retries."
+      "CONF_PARAM_NAME" : "CONFIG_TelemetryMaxRetrySecondary_COUNT",
+      "CONF_PARAM_DESCRIPTION" : "Some float versions have a secondary telemetry system, in this case the float is able to perform an Iridium session (to get one Iridium position) in addition to the RUDICS version used in the main telemetry session specified by CONFIG_TelemetryMaxRetry_COUNT"
    },
    "CONF_PARAM_29" :
    {
@@ -236,7 +236,7 @@
       "CONF_PARAM_DEC_ID" : "225",
       "CONF_PARAM_MSG_ID" : "254",
       "CONF_PARAM_MSG_LABEL" : "Buoyancy inversion : Volume of first EV activation",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionOilVolumeForFirstValveAction_cm^3",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionOilVolumeForFirstValveAction_cm^3",
       "CONF_PARAM_DESCRIPTION" : "Volume of the first valve action of a buoyancy inversion phase."
    },
    "CONF_PARAM_31" :
@@ -636,8 +636,8 @@
       "CONF_PARAM_DEC_ID" : "614",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "ISA Mode",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionISAMode_NUMBE",
-      "CONF_PARAM_DESCRIPTION" : "Mode of the ISA ice detection algorithm (see float manual for details)."
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionISAMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Mode of the ISA ice detection algorithm (see float manual for details). For this firmware Mar 2018 the values are (0: not used, 1: algorithm based on temperature median value, 2: algorithm based on temperature median value and associated salinities)"
    },
    "CONF_PARAM_81" :
    {

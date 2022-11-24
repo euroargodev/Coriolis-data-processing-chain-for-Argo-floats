@@ -74,6 +74,10 @@ for idFile = 1:nbEventFiles
    
    filePathName = [eventFiles{idFile, 4} eventFiles{idFile, 1}];
    
+   %    if (strcmp(eventFiles{idFile, 1}, '3aa9_system_00115_20180720142611.hex'))
+   %        a=1
+   %    end
+   
    if ~(exist(filePathName, 'file') == 2)
       fprintf('DEC_ERROR: File not found: %s\n', filePathName);
       return;
@@ -115,8 +119,8 @@ for idL = 1:size(cyclePatternNumFloat, 1)
    cyNum = cyclePatternNumFloat(idL, 1);
    ptnNum = cyclePatternNumFloat(idL, 2);
    
-   %    if ((cyNum == 89) && (ptnNum == 0))
-   %       a=1
+   %    if ((cyNum == 107) && (ptnNum == 1))
+   %        a=1
    %    end
 
    if (ptnNum == 0)

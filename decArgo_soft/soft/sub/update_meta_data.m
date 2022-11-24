@@ -56,14 +56,14 @@ if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Re
    end
 end
 
-% % add 'MTIME' parameter and associated SENSOR to specific floats
-% decoderIdListMtimeCTS5 = [121 122 123];
-% decoderIdListMtimeApex = [1321 1322];
-% decoderIdListMtimeNavis = [1201];
-% decoderIdListMtime = [decoderIdListMtimeCTS5 decoderIdListMtimeApex decoderIdListMtimeNavis];
-% if (ismember(a_decoderId, decoderIdListMtime))
-%    o_metaData = add_mtime_parameter(o_metaData);
-% end
+% add 'MTIME' parameter and associated SENSOR to specific floats
+decoderIdListMtimeCTS5 = [121 122 123];
+decoderIdListMtimeApex = [1321 1322];
+decoderIdListMtimeNavis = [1201];
+decoderIdListMtime = [decoderIdListMtimeCTS5 decoderIdListMtimeApex decoderIdListMtimeNavis];
+if (ismember(a_decoderId, decoderIdListMtime))
+   o_metaData = add_mtime_parameter(o_metaData);
+end
 
 fieldList = [ ...
    {'PARAMETER_SENSOR'} ...

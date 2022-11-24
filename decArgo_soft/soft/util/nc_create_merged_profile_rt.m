@@ -38,6 +38,7 @@
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
+%   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile_rt(varargin)
 
@@ -101,7 +102,7 @@ g_cocm_reportData.outputMMultiProfFile = [];
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.1';
+g_cocm_ncCreateMergedProfileVersion = '1.2';
 
 % current float and cycle identification
 global g_cocm_floatNum;

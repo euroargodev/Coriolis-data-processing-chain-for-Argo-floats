@@ -136,6 +136,14 @@ g_decArgo_firstDeepCycleDone = 0;
 global g_decArgo_cycleNumPrev;
 g_decArgo_cycleNumPrev = -1;
 
+% offset to consider for cycle numbers
+global g_decArgo_cycleNumOffset;
+g_decArgo_cycleNumOffset = 0;
+
+% prelude ended flag
+global g_decArgo_preludeDoneFlag;
+g_decArgo_preludeDoneFlag = 0;
+
 % already processed rsync log information
 global g_decArgo_rsyncLogFileUnderProcessList;
 global g_decArgo_rsyncLogFileUsedList;

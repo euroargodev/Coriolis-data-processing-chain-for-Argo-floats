@@ -21,6 +21,7 @@
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/08/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
+%   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 % ------------------------------------------------------------------------------
 function nc_create_merged_profile(varargin)
 
@@ -43,8 +44,8 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 
 % top directory of output NetCDF files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic_co\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic_co\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -72,7 +73,7 @@ PRINT_CSV_FLAG = 0;
 
 % program version
 global g_cocm_ncCreateMergedProfileVersion;
-g_cocm_ncCreateMergedProfileVersion = '1.1';
+g_cocm_ncCreateMergedProfileVersion = '1.2';
 
 % current float and cycle identification
 global g_cocm_floatNum;

@@ -21,6 +21,7 @@
 %   03/07/2018 - RNU - V 0.2: update from 20180306 version of the specifications
 %   06/15/2018 - RNU - V 1.0: creation of PI and RT tool + generate NetCDF 4 output files
 %   07/13/2018 - RNU - V 1.1: the temporary directory could be set by an input parameter
+%   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -44,8 +45,8 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_classic\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_co\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_classic\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_co\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_aoml\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF_netcdf4_classic_csiro\';
 
@@ -72,7 +73,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.1 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.2 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
 
 % current float and cycle identification
 global g_cocs_floatNum;

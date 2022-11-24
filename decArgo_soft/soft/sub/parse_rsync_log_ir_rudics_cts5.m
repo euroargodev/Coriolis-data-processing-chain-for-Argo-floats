@@ -57,6 +57,7 @@ for idL = 1:length(logData)
    if (~isempty(strfind(infoData{idL}, ptn1)))
       
       fileName = logData{idL};
+      [~, ~, fileExt] = fileparts(fileName);
       for idPtn = 1:size(ptnList, 1)
          if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
                strcmp(fileExt, ptnList{idPtn, 2}))

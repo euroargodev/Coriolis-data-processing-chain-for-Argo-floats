@@ -279,7 +279,7 @@ if (nbMeasParam > 0)
    idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
    if (~isempty(idVal))
       dataCentre = char(a_metaDataFromJson{idVal+1});
-      [institution] = get_institution_from_data_centre(dataCentre);
+      [institution] = get_institution_from_data_centre(dataCentre, 1);
    end
    netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
    netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');

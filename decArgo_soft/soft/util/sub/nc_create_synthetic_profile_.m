@@ -327,7 +327,17 @@ for idType= 1:2
                   break;
                end
             end
-            profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
+            if (~isempty(deblank(parameterDataMode)))
+               profData.paramDataMode = [profData.paramDataMode parameterDataMode(idProf, nParamId)];
+            elseif (dataMode(idProf) == 'R')
+               %                fprintf('WARNING: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => set to ''R'' (as DATA_MODE = ''R'')\n', ...
+               %                   g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName);
+               profData.paramDataMode = [profData.paramDataMode 'R'];
+            else
+               fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER_DATA_MODE information is missing in input PROF file (%s) => exit (as DATA_MODE = ''%c'')\n', ...
+                  g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profFilePathName, dataMode(idProf));
+               return;
+            end
          end
          
          % manage SCIENTIFIC_CALIB_* information
@@ -1347,10 +1357,10 @@ netcdf.reDef(fCdf);
 % fill global attributes
 globalVarId = netcdf.getConstant('NC_GLOBAL');
 netcdf.putAtt(fCdf, globalVarId, 'title', 'Argo float vertical profile');
-institution = get_institution_from_data_centre(a_profData.dataCentre);
-if (isempty(institution))
+institution = get_institution_from_data_centre(a_profData.dataCentre, 0);
+if (isempty(deblank(institution)))
    fprintf('WARNING: Float #%d Cycle #%d%c: No institution assigned to data centre %s\n', ...
-      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData.datacentre);
+      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData.dataCentre);
 end
 netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
 netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -2256,10 +2266,10 @@ netcdf.reDef(fCdf);
 % fill global attributes
 globalVarId = netcdf.getConstant('NC_GLOBAL');
 netcdf.putAtt(fCdf, globalVarId, 'title', 'Argo float vertical profile');
-institution = get_institution_from_data_centre(a_profData(1).dataCentre);
-if (isempty(institution))
+institution = get_institution_from_data_centre(a_profData(1).dataCentre, 0);
+if (isempty(deblank(institution)))
    fprintf('WARNING: Float #%d Cycle #%d%c: No institution assigned to data centre %s\n', ...
-      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData(1).datacentre);
+      g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, a_profData(1).dataCentre);
 end
 netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
 netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');

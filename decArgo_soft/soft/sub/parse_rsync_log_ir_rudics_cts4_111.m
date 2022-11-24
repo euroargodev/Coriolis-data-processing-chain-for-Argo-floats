@@ -35,7 +35,6 @@ logData = textscan(fId, '%s');
 logData = logData{:};
 fclose(fId);
 
-ptn = sprintf('%s/', a_floatLoginName);
 for idL = 1:length(logData)
    line = logData{idL};
    % we are looking for lines with the pattern:
@@ -48,7 +47,7 @@ for idL = 1:length(logData)
          if (length(idF) == 3)
             floatLogin = fileName(idF(2)+1:idF(3)-1);
             if (strcmp(floatLogin, a_floatLoginName) == 1)
-               o_floatBinFiles{end+1} = [ptn fileName];
+               o_floatBinFiles{end+1} = fileName;
             end
          end
          

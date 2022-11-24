@@ -118,6 +118,12 @@
 %                             - for each profile, update PROFILE_<PARAM>_QC with
 %                               <PARAM>_QC or <PARAM>_ADJUSTED_QC depending on
 %                               each profile DATA_MODE
+%   08/22/2018 - RNU - V 3.5: In TEST #5, when looking for the profile
+%                             position in the trajectory data the
+%                             comparision with adjusted JULD
+%                             (g_rtqc_trajData.juldAdj) should be done with
+%                             an epsilon difference (due to adjustment
+%                             processing)
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -149,7 +155,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.4';
+g_decArgo_addRtqcToProfileVersion = '3.5';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1622,7 +1628,7 @@ if (testFlagList(5) == 1)
          idProfPosInTraj = find( ...
             (g_rtqc_trajData.cycleNumber == cycleNumber(idProf)+cycleOffset) & ...
             (g_rtqc_trajData.measurementCode == g_MC_Surface) & ...
-            ((g_rtqc_trajData.juld == juldLocation(idProf)) | (g_rtqc_trajData.juldAdj == juldLocation(idProf))) & ...
+            ((g_rtqc_trajData.juld == juldLocation(idProf)) | (abs(g_rtqc_trajData.juldAdj - juldLocation(idProf)) < 1/86400)) & ...
             (g_rtqc_trajData.latitude == latitude(idProf)) & ...
             (g_rtqc_trajData.longitude == longitude(idProf)));
          if (length(idProfPosInTraj) >= 1) % we can have multiple identical locations in the traj file (Ex: 6900750 #74)

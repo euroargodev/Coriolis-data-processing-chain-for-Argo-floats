@@ -468,7 +468,7 @@ for idProf = 1:length(a_tabProfiles)
          idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
          if (~isempty(idVal))
             dataCentre = char(a_metaDataFromJson{idVal+1});
-            [institution] = get_institution_from_data_centre(dataCentre);
+            [institution] = get_institution_from_data_centre(dataCentre, 1);
          end
          netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
          netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -1039,7 +1039,9 @@ for idProf = 1:length(a_tabProfiles)
          adjustedProfilesList = zeros(nbProfToStore, 1);
          for idP = 1:nbProfToStore
             prof = a_tabProfiles(idProfInFile(idP));
-            [adjustedProfilesList(idP)] = rt_adjusment_exist(prof, 0);
+            if (~prof.fakeProfFlag)
+               [adjustedProfilesList(idP)] = rt_adjusment_exist(prof, 0);
+            end
          end
          
          % add profile data

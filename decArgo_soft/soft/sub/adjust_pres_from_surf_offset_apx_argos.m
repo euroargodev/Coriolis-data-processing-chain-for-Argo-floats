@@ -437,6 +437,28 @@ if (~isempty(o_profData))
          %
          %             end
          %          end
+         
+         % but we prefer to set fillValue for derived parameters
+         idDoxy = find(strcmp({profParamList.name}, 'DOXY') == 1, 1);
+         if (~isempty(idDoxy))
+            
+            paramDoxy = get_netcdf_param_attributes('DOXY');
+            o_profData.dataAdj(:, idDoxy) = ones(size(o_profData.dataAdj, 1), 1)*paramDoxy.fillValue;
+         end
+         
+         idPpoxDoxy = find(strcmp({profParamList.name}, 'PPOX_DOXY') == 1, 1);
+         if (~isempty(idPpoxDoxy))
+            
+            paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
+            o_profData.dataAdj(:, idPpoxDoxy) = ones(size(o_profData.dataAdj, 1), 1)*paramPpoxDoxy.fillValue;
+         end
+         
+         idBbp700 = find(strcmp({profParamList.name}, 'BBP700') == 1, 1);
+         if (~isempty(idBbp700))
+            
+            paramBbp700 = get_netcdf_param_attributes('BBP700');
+            o_profData.dataAdj(:, idBbp700) = ones(size(o_profData.dataAdj, 1), 1)*paramBbp700.fillValue;
+         end
       end
    end
 end

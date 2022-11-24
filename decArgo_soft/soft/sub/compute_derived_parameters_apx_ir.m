@@ -326,6 +326,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -380,6 +386,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -455,6 +467,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -518,6 +536,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -593,6 +617,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -657,6 +687,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -788,6 +824,12 @@ switch (a_decoderId)
                   %                      % add DOXY to the data structure
                   %                      dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                   %                   end
+                  
+                  % but we should have the same number of columns in
+                  % dataStruct.data and dataStruct.dataAdj
+                  if (~isempty(dataStruct.dataAdj))
+                     dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+                  end
                end
                
                o_outputData{idS} = dataStruct;
@@ -851,6 +893,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+               end
             end
             
             o_outputData = dataStruct;
@@ -975,6 +1023,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -1038,6 +1092,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -1153,6 +1213,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -1210,6 +1276,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -1277,6 +1349,12 @@ switch (a_decoderId)
                %                   % add DOXY to the data structure
                %                   dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
                %                end
+               
+               % but we should have the same number of columns in
+               % dataStruct.data and dataStruct.dataAdj
+               if (~isempty(dataStruct.dataAdj))
+                  dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
+               end
             end
             
             o_outputData{idS} = dataStruct;
@@ -1334,6 +1412,12 @@ switch (a_decoderId)
             %                % add DOXY to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramPpoxDoxy.fillValue];
+            end
          end
          
          o_outputData = dataStruct;
@@ -1422,6 +1506,12 @@ if (iscell(o_outputData))
          %             % add CHLA to the data structure
          %             dataStruct.dataAdj = [dataStruct.dataAdj chla];
          %          end
+         
+         % but we should have the same number of columns in
+         % dataStruct.data and dataStruct.dataAdj
+         if (~isempty(dataStruct.dataAdj))
+            dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
+         end
       end
       
       o_outputData{idS} = dataStruct;
@@ -1465,6 +1555,12 @@ else
       %          % add CHLA to the data structure
       %          dataStruct.dataAdj = [dataStruct.dataAdj chla];
       %       end
+      
+      % but we should have the same number of columns in
+      % dataStruct.data and dataStruct.dataAdj
+      if (~isempty(dataStruct.dataAdj))
+         dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
+      end
    end
    
    o_outputData = dataStruct;
@@ -1577,6 +1673,12 @@ if (iscell(o_outputData))
             %                % add CHLA to the data structure
             %                dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
             %             end
+            
+            % but we should have the same number of columns in
+            % dataStruct.data and dataStruct.dataAdj
+            if (~isempty(dataStruct.dataAdj))
+               dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramBbp700.fillValue];
+            end
          end
       end
       
@@ -1648,6 +1750,12 @@ else
          %             % add CHLA to the data structure
          %             dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
          %          end
+         
+         % but we should have the same number of columns in
+         % dataStruct.data and dataStruct.dataAdj
+         if (~isempty(dataStruct.dataAdj))
+            dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramBbp700.fillValue];
+         end
       end
    end
    

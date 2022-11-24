@@ -313,7 +313,7 @@ if (nbProfParam > 0)
    idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
    if (~isempty(idVal))
       dataCentre = char(a_metaDataFromJson{idVal+1});
-      [institution] = get_institution_from_data_centre(dataCentre);
+      [institution] = get_institution_from_data_centre(dataCentre, 1);
    end
    netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
    netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -932,7 +932,9 @@ if (nbProfParam > 0)
    adjustedProfilesList = zeros(length(a_tabProfiles), 1);
    for idP = 1:length(a_tabProfiles)
       prof = a_tabProfiles(profIdList(idP));
-      adjustedProfilesList(idP) = rt_adjusment_exist(prof, 0);
+      if (~prof.fakeProfFlag)
+         adjustedProfilesList(idP) = rt_adjusment_exist(prof, 0);
+      end
    end
    
    % add profile data
@@ -1300,8 +1302,8 @@ if (nbProfParam > 0)
       specificAdjParamFlag = zeros(size(specificAdjParamList));
       if (adjustedProfilesList(idP) == 1)
          netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
-         for id = 1:length(adjustedParamIdList)
-            netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos adjustedParamIdList(id)]), fliplr([1 1]), 'A');
+         for id = 1:length(dbAdjustedParamIdList)
+            netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos dbAdjustedParamIdList(id)]), fliplr([1 1]), 'A');
          end
          
          % process calibration information

@@ -76,6 +76,7 @@ if (~isempty(idSecondary))
    o_defaultPrimaryProf.configMissionNumber = secondaryProf.configMissionNumber;
    o_defaultPrimaryProf.sensorNumber = secondaryProf.sensorNumber;
    o_defaultPrimaryProf.updated = 0;
+   o_defaultPrimaryProf.fakeProfFlag = 1;
    
 else
    
@@ -95,6 +96,7 @@ else
    o_defaultPrimaryProf.dataQc = [];
    o_defaultPrimaryProf.sensorNumber = 0;
    o_defaultPrimaryProf.updated = 0;
+   o_defaultPrimaryProf.fakeProfFlag = 1;
    
 end
 

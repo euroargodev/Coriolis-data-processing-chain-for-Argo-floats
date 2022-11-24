@@ -176,6 +176,7 @@ for idProf = 1:length(tabProfiles)
       cycleNumber = profile.cycleNumber;
       profileNumber = profile.profileNumber;
       outputCycleNumber = profile.outputCycleNumber;
+      
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
@@ -609,7 +610,7 @@ for idProf = 1:length(tabProfiles)
          idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
          if (~isempty(idVal))
             dataCentre = char(a_metaDataFromJson{idVal+1});
-            [institution] = get_institution_from_data_centre(dataCentre);
+            [institution] = get_institution_from_data_centre(dataCentre, 1);
          end
          netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
          netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
@@ -1228,12 +1229,14 @@ for idProf = 1:length(tabProfiles)
          % - adjustements stored in the DB have the highest priority (i.e. for
          % example if NITRATE has a DB adjustment it will replace the one
          % performed during the decoding process).
-
+         
          % create the list of RT adjusted profiles (from DB information)
          adjustedProfilesList = zeros(nbProfToStore, 1);
          for idP = 1:nbProfToStore
             prof = tabProfiles(idProfInFile(idP));
-            adjustedProfilesList(idP) = rt_adjusment_exist(prof, 0);
+            if (~prof.fakeProfFlag)
+               adjustedProfilesList(idP) = rt_adjusment_exist(prof, 0);
+            end
          end
          
          % add profile data

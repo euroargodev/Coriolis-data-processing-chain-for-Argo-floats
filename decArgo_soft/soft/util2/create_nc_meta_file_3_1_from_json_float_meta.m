@@ -239,7 +239,7 @@ for idFloat = 1:length(floatList)
    inputElt = getfield(metaData, 'DATA_CENTRE');
    if (~isempty(inputElt))
       dataCentre = getfield(metaData, 'DATA_CENTRE');
-      [institution] = get_institution_from_data_centre(dataCentre);
+      [institution] = get_institution_from_data_centre(dataCentre, 1);
    end
    netcdf.putAtt(fCdf, globalVarId, 'institution', institution);
    netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');

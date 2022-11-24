@@ -21,6 +21,7 @@ function nc_check_file_format(varargin)
 
 % directory of the JAVA checker
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-12-18_spec_2018-07-10\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-08-06\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-04-24\';
 
@@ -93,38 +94,39 @@ header = ['Line #; WMO; File type; File name; Status; Error numbers; Warning num
 fprintf(fidOut, '%s\n', header);
 
 % read meta file
-fprintf('Processing file: %s\n', dataBaseFileName);
-fId = fopen(dataBaseFileName, 'r');
-if (fId == -1)
-   fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
-   return;
-end
-metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
-metaFileContents = metaFileContents{:};
-fclose(fId);
+% fprintf('Processing file: %s\n', dataBaseFileName);
+% fId = fopen(dataBaseFileName, 'r');
+% if (fId == -1)
+%    fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
+%    return;
+% end
+% metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
+% metaFileContents = metaFileContents{:};
+% fclose(fId);
+% 
+% metaFileContents = regexprep(metaFileContents, '"', '');
+% 
+% metaData = reshape(metaFileContents, 5, size(metaFileContents, 1)/5)';
 
-metaFileContents = regexprep(metaFileContents, '"', '');
-
-metaData = reshape(metaFileContents, 5, size(metaFileContents, 1)/5)';
-
-metaWmoList = metaData(:, 1);
-S = sprintf('%s*', metaWmoList{:});
-metaWmoList = sscanf(S, '%f*');
+% metaWmoList = metaData(:, 1);
+% S = sprintf('%s*', metaWmoList{:});
+% metaWmoList = sscanf(S, '%f*');
 
 % process the floats
 lineNum = 1;
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-     
+   
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
-   [floatDac] = get_float_dac(floatNum, metaWmoList, metaData);
-   floatDac = 'incois';
-%    floatDac = 'aoml';
+   %    [floatDac] = get_float_dac(floatNum, metaWmoList, metaData);
+   %    floatDac = 'incois';
+   %    floatDac = 'aoml';
+   %    floatDac = 'csio';
+   %    floatDac = 'bodc';
    floatDac = 'coriolis';
-%    floatDac = 'bodc';
    
    for idType = 1:5
 
@@ -285,7 +287,7 @@ idForWmo = find(a_metaWmoList == a_floatNum);
 idF = find(strcmp(a_metaData(idForWmo, 5), 'DATA_CENTRE'));
 if (~isempty(idF))
    floatDac = a_metaData{idForWmo(idF), 4};
-   [o_floatDac] = get_institution_from_data_centre(floatDac);
+   [o_floatDac] = get_institution_from_data_centre(floatDac, 1);
 else
    o_floatDac = 'CORIOLIS';
 end

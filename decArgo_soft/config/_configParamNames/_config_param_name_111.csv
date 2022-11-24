@@ -1,9 +1,9 @@
 CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PARAM_DESCRIPTION
 100;248;Session time-out (in minutes);CONFIG_ConnectionTimeOut_minutes;Connection time-out, i.e. maximum transmission period for one telemetry session
-101;248;First hanging Time-out (in minutes);CONFIG_AUX_ConnectionFailureTimeOut_minutes;Maximum delay allowed to the float to connect to the RUDICS server.
+101;248;First hanging Time-out (in minutes);CONFIG_ConnectionFailureTimeOut_minutes;Is the maximum time allowed for the float to connect to the RUDICS server, i.e. it tries to connect during 30 minutes (values set for these floats) if it fails it is probably because it is under ice (that has not been detected by ISA or hanging algorithms).
 102;248;Full Auto-test (Rudics server connection test at mission begin);CONFIG_TelemetryAutoTestAtDeployment_LOGICAL;Perform a full auto-test (RUDICS server connection test) at float deployment (Yes=1/No=0).A full auto-test includes a connection test on the RUDICS server and a GPS fix acquisition.
-103;248;SBD positioning activation;CONFIG_AUX_RudicsAndIridiumSession_LOGICAL;For RUDICS transmission floats, perform also one Iridium session (to get an Iridium position).
-104;248;Send SBD positioning only on GPS default;CONFIG_AUX_RudicsAndIridiumSessionWhenNoGPS_LOGICAL;For RUDICS transmission floats, perform also one Iridium session (to get an Iridium position) when the GPS fix is not valid.
+103;248;SBD positioning activation;CONFIG_RudicsAndIridiumSession_LOGICAL;This float has a RUDICS transmission system. However it is able to connect to Iridium if the user want to get one Iridium position for each cycle.
+104;248;Send SBD positioning only on GPS default;CONFIG_RudicsAndIridiumSessionWhenNoGPS_LOGICAL;For RUDICS transmission floats, perform also one Iridium session (to get an Iridium position) when the GPS fix is not valid.
 200;254;Max eV activation on Surface (in csec);CONFIG_SurfaceValveMaxTimeAdditionalActions_csec;Maximum duration of the additional valve actions performed at the surface during the buoyancy reduction phase (in centi-seconds).
 201;254;Valve activations target (in number of actions);CONFIG_SurfaceValveAdditionalActions_COUNT;Target number of additional valve actions performed at the surface during the buoyancy reduction phase.
 202;254;Pressure timing period during buoyancy reduction (in sec);CONFIG_PressureCheckTimeBuoyancyReductionPhase_seconds;Time delay after each valve action before checking the pressure during the buoyancy reduction phase (in seconds).
@@ -25,10 +25,10 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 218;254;Average descent speed (in mm/sec);CONFIG_DescentSpeed_mm/s;Descent speed during downcast in mm/s (can be used to estimate the time to descent from parking pressure to profile pressure)
 219;254;Min ascent speed (in mm/sec);CONFIG_AscentSpeedMin_mm/s;Float minimum ascent speed before activating the pump (in mm/second).
 220;254;Average ascent speed (in mm/sec);CONFIG_AscentSpeed_mm/s;ascent speed during upcast in mm/s or cm/s (can be used to estimate the profile duration)
-221;254;Wait period on surface after Emergency ascent (in min);CONFIG_AUX_SurfaceWaitPeriodAfterEmergencyAscent_minutes;Duration of the specific surface phase that occurs after an emergency ascent of the float.
-223;254;Number of retries per SBD commands on error;CONFIG_AUX_SecondaryTelemetryMaxRetry_COUNT;Maximum number of Iridium telemetry session retries.
+221;254;Wait period on surface after Emergency ascent (in min);CONFIG_SurfaceWaitPeriodAfterEmergencyAscent_minutes;Duration of the specific surface phase that occurs after an emergency ascent of the float.
+223;254;Number of retries per SBD commands on error;CONFIG_TelemetryMaxRetrySecondary_COUNT;Some float versions have a secondary telemetry system, in this case the float is able to perform an Iridium session (to get one Iridium position) in addition to the RUDICS version used in the main telemetry session specified by CONFIG_TelemetryMaxRetry_COUNT
 224;254;Buoyancy inversion : Offset pressure;CONFIG_IceDetectionDescentVerticalThresholdToEndBuoyancyInversionPhase_dbar;When the cycle is aborted this threshold is used to detect speed inversion and to stop buoyancy inversion phase.
-225;254;Buoyancy inversion : Volume of first EV activation;CONFIG_AUX_IceDetectionOilVolumeForFirstValveAction_cm^3;Volume of the first valve action of a buoyancy inversion phase.
+225;254;Buoyancy inversion : Volume of first EV activation;CONFIG_IceDetectionOilVolumeForFirstValveAction_cm^3;Volume of the first valve action of a buoyancy inversion phase.
 226;254;Buoyancy inversion : Volume of next EV activation;CONFIG_IceDetectionOilVolumePerValveAction_cm^3;Valve action duration during the buoyancy inversion phase.
 227;254;Buoyancy inversion : Maximum volume of EV activation;CONFIG_IceDetectionOilVolumeMinForGroundingDetection_cm^3;Similar to CONFIG_OilVolumeMinForGroundingDetection_cm^3 but for a float in a buoyancy inversion phase.
 228;254;Coef 1;CONFIG_InternalPressureCalibrationCoef1_NUMBER;First coefficient used to compute float internal pressure in mBars from sensor counts.
@@ -78,7 +78,7 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 609;251;Min salinity of CTD (mPSU);CONFIG_CtdMinTransmittedSalinity_mpsu;Minimum value of transmitted Ctd salinity measurements (in milli-PSU).
 610;251;Max salinity of CTD (mPSU);CONFIG_CtdMaxTransmittedSalinity_mpsu;Maximum value of transmitted Ctd salinity measurements (in milli-PSU).
 613;251;Extrude acquisition during hydraulic pump activation;CONFIG_<short_sensor_name>IgnoreSamplesWhenPumpActive_LOGICAL;Ignore sample measurements acquired while the hydraulic pump is running. Values: Yes = 1, No = 0
-614;251;ISA Mode;CONFIG_AUX_IceDetectionISAMode_NUMBE;Mode of the ISA ice detection algorithm (see float manual for details).
+614;251;ISA Mode;CONFIG_IceDetectionISAMode_NUMBER;Mode of the ISA ice detection algorithm (see float manual for details). For this firmware Mar 2018 the values are (0: not used, 1: algorithm based on temperature median value, 2: algorithm based on temperature median value and associated salinities)
 615;251;ISA Start pressure (dbar);CONFIG_IceDetectionMixedLayerPMax_dbar;Maximum sampling pressure used by ice cover detection algorithm. i.e. start pressure threshold for the ice detection algorithm.
 616;251;ISA Stop pressure (dbar);CONFIG_IceDetectionMixedLayerPMin_dbar;Minimum sampling pressure used by ice cover detection algorithm.
 617;251;Median temperature (m°C);CONFIG_IceDetection_degC;Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions
