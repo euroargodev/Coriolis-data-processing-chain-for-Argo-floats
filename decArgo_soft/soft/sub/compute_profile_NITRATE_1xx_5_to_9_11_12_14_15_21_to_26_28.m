@@ -60,6 +60,14 @@ global g_decArgo_floatNum;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
+% NITRATE coefficients
+global g_decArgo_nitrate_tCorr1;
+global g_decArgo_nitrate_tCorr2;
+global g_decArgo_nitrate_tCorr3;
+global g_decArgo_nitrate_tCorr4;
+global g_decArgo_nitrate_tCorr5;
+global g_decArgo_nitrate_opticalWavelengthOffset;
+
 global g_tempoJPR_nitrateFromFloat;
 
 
@@ -230,12 +238,12 @@ if (~isempty(idNoDef))
    
    % Equation #1
    absorbanceSw = -log10((tabUvIntensityNitrate - tabUvIntensityDarkNitrate) ./ tabUvIntensityRefNitrate);
-   
+
    % Equation #2
-   eSwaInsitu = tabESwaNitrate .* ...
-      f_function(tabOpticalWavelengthUv, ctdData(:, 2)) ./ ...
-      f_function(tabOpticalWavelengthUv, tempCalNitrate);
-   
+   tCorrCoef = [g_decArgo_nitrate_tCorr1 g_decArgo_nitrate_tCorr2 g_decArgo_nitrate_tCorr3 g_decArgo_nitrate_tCorr4 g_decArgo_nitrate_tCorr5];
+   tCorr = polyval(tCorrCoef, (tabOpticalWavelengthUv - g_decArgo_nitrate_opticalWavelengthOffset)) .* (ctdData(:, 2) - tempCalNitrate);
+   eSwaInsitu = tabESwaNitrate .* exp(tCorr);
+
    % Equation #4 (with the pressure effect taken into account)
    absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.026 * tabPres / 1000));
    
@@ -435,41 +443,5 @@ if (0)
       fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
    end
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Subfunction for NITRATE processing from UV_INTENSITY_NITRATE.
-%
-% SYNTAX :
-%  [o_output] = f_function(a_opticalWavelength, a_temp)
-%
-% INPUT PARAMETERS :
-%   a_opticalWavelength : OPTICAL_WAVELENGTH_UV calibration information
-%   a_temp              : temperature used in the processing
-%
-% OUTPUT PARAMETERS :
-%   o_output : result
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   12/08/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_output] = f_function(a_opticalWavelength, a_temp)
-
-% NITRATE coefficients
-global g_decArgo_nitrate_a;
-global g_decArgo_nitrate_b;
-global g_decArgo_nitrate_c;
-global g_decArgo_nitrate_d;
-global g_decArgo_nitrate_opticalWavelengthOffset;
-
-tabOpticalWavelength = repmat(a_opticalWavelength, size(a_temp, 1), 1);
-tabTemp = repmat(a_temp, 1, size(a_opticalWavelength, 2));
-o_output = (g_decArgo_nitrate_a + g_decArgo_nitrate_b*tabTemp) .* exp((g_decArgo_nitrate_c + g_decArgo_nitrate_d*tabTemp) .* (tabOpticalWavelength - g_decArgo_nitrate_opticalWavelengthOffset));
 
 return

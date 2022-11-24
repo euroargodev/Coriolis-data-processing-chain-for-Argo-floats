@@ -58,6 +58,14 @@ global g_decArgo_floatNum;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
+% NITRATE coefficients
+global g_decArgo_nitrate_tCorr1;
+global g_decArgo_nitrate_tCorr2;
+global g_decArgo_nitrate_tCorr3;
+global g_decArgo_nitrate_tCorr4;
+global g_decArgo_nitrate_tCorr5;
+global g_decArgo_nitrate_opticalWavelengthOffset;
+
 
 if (isempty(a_UV_INTENSITY_NITRATE) || isempty(a_UV_INTENSITY_DARK_NITRATE))
    return
@@ -216,15 +224,15 @@ if (~isempty(idNoDef))
    
    % Equation #1
    absorbanceSw = -log10((tabUvIntensityNitrate - tabUvIntensityDarkNitrate) ./ tabUvIntensityRefNitrate);
-   
+
    % Equation #2
-   eSwaInsitu = tabESwaNitrate .* ...
-      f_function(tabOpticalWavelengthUv, ctdData(:, 2)) ./ ...
-      f_function(tabOpticalWavelengthUv, tempCalNitrate);
-   
+   tCorrCoef = [g_decArgo_nitrate_tCorr1 g_decArgo_nitrate_tCorr2 g_decArgo_nitrate_tCorr3 g_decArgo_nitrate_tCorr4 g_decArgo_nitrate_tCorr5];
+   tCorr = polyval(tCorrCoef, (tabOpticalWavelengthUv - g_decArgo_nitrate_opticalWavelengthOffset)) .* (ctdData(:, 2) - tempCalNitrate);
+   eSwaInsitu = tabESwaNitrate .* exp(tCorr);
+
    % Equation #4 (with the pressure effect taken into account)
    absorbanceCorNitrate = absorbanceSw - (eSwaInsitu .* tabPsal) .* (1 - (0.026 * tabPres / 1000));
-   
+
    % Equation #5
    % solve:
    % A11*x1 + A12x2 + A13*X3 = B1
@@ -279,40 +287,5 @@ if (~isempty(idNoDef))
          length(idToDef));
    end
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Subfunction for NITRATE processing from UV_INTENSITY_NITRATE.
-%
-% SYNTAX :
-%  [o_output] = f_function(a_opticalWavelength, a_temp)
-%
-% INPUT PARAMETERS :
-%   a_opticalWavelength : OPTICAL_WAVELENGTH_UV calibration information
-%   a_temp              : temperature used in the processing
-%
-% OUTPUT PARAMETERS :
-%   o_output : result
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   12/08/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_output] = f_function(a_opticalWavelength, a_temp)
-
-A = 1.1500276;
-B = 0.02840;
-C = -0.3101349;
-D = 0.001222;
-OPTICAL_WAVELENGTH_OFFSET = 210;
-
-tabOpticalWavelength = repmat(a_opticalWavelength, size(a_temp, 1), 1);
-tabTemp = repmat(a_temp, 1, size(a_opticalWavelength, 2));
-o_output = (A + B*tabTemp) .* exp((C + D*tabTemp) .* (tabOpticalWavelength - OPTICAL_WAVELENGTH_OFFSET));
 
 return

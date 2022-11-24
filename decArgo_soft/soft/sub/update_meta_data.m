@@ -77,18 +77,18 @@ fieldList = [ ...
    ];
 
 if (isfield(o_metaData, 'PARAMETER'))
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update CTD meta-data
-   
+
    [o_metaData] = update_parameter_list_ctd(o_metaData);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP}, a_decoderId, o_metaData);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -106,7 +106,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isfield(o_metaData, fieldList{idF}))
                if (isempty(o_metaData.(fieldList{idF})))
@@ -116,7 +116,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -126,18 +126,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update OXYGEN meta-data
-   
+
    [o_metaData] = update_parameter_list_oxygen(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_oxygen(paramList{idP}, a_decoderId, o_metaData);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -155,7 +155,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -163,7 +163,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -173,18 +173,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update RADIOMETRY meta-data
-   
+
    [o_metaData] = update_parameter_list_radiometry(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_radiometry(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -202,7 +202,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -210,7 +210,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -220,18 +220,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update BACKSCATTERING meta-data
-   
+
    [o_metaData] = update_parameter_list_backscattering(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_backscattering(paramList{idP}, a_decoderId, o_metaData);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -249,7 +249,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -257,7 +257,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -267,18 +267,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update NITRATE meta-data
-   
+
    [o_metaData] = update_parameter_list_nitrate(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_nitrate(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -296,7 +296,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -304,7 +304,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -314,18 +314,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update CHLA meta-data
-   
+
    [o_metaData] = update_parameter_list_chla(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_chla(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -343,7 +343,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -351,7 +351,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -361,18 +361,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update CDOM meta-data
-   
+
    [o_metaData] = update_parameter_list_cdom(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cdom(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -390,7 +390,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -398,7 +398,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -408,18 +408,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update PH meta-data
-   
+
    [o_metaData] = update_parameter_list_ph(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ph(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -437,7 +437,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -445,7 +445,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -455,18 +455,18 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update CP meta-data
-   
+
    [o_metaData] = update_parameter_list_cp(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cp(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -484,7 +484,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -492,7 +492,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -505,15 +505,15 @@ if (isfield(o_metaData, 'PARAMETER'))
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update TURBIDITY meta-data
-   
+
    [o_metaData] = update_parameter_list_turbidity(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_turbidity(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -531,7 +531,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -539,7 +539,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -552,15 +552,15 @@ if (isfield(o_metaData, 'PARAMETER'))
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update RAFOS meta-data
-   
+
    [o_metaData] = update_parameter_list_rafos(o_metaData, a_decoderId);
-   
+
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
          preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_rafos(paramList{idP}, a_decoderId);
       if (~isempty(param))
-         
+
          % check meta data length
          FORMAT_SIZE = 4096;
          if (length(preCalibEq) > FORMAT_SIZE)
@@ -578,7 +578,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
             preCalibComment = preCalibComment(1:FORMAT_SIZE);
          end
-         
+
          for idF = 1:length(fieldList)
             if (isempty(o_metaData.(fieldList{idF})))
                for id = 1:length(paramList)
@@ -586,7 +586,7 @@ if (isfield(o_metaData, 'PARAMETER'))
                end
             end
          end
-         
+
          o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
          o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
          o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
@@ -595,8 +595,8 @@ if (isfield(o_metaData, 'PARAMETER'))
          o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
          o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
-   end   
-   
+   end
+
 else
    fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information - parameter information cannot be updated\n', ...
       g_decArgo_floatNum);
@@ -656,7 +656,7 @@ if (~(fix(a_decoderId/100) == 1) && ... % because this should not be done for Re
          (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
          ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')))
       o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2 = 'IRIDIUM';
-      
+
       fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = IRIDIUM'' to float positioning systems\n', ...
          g_decArgo_floatNum);
    end
@@ -671,7 +671,7 @@ if (ismember(a_decoderId, g_decArgo_decoderIdListNemo))
          (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2, 'IRIDIUM')) && ...
          ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_3')))
       o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_3 = 'RAFOS';
-      
+
       fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = RAFOS'' to float positioning systems\n', ...
          g_decArgo_floatNum);
    end
@@ -762,9 +762,9 @@ if (isfield(a_metaData, 'SENSOR') && ...
       isfield(a_metaData, 'PREDEPLOYMENT_CALIB_EQUATION') && ...
       isfield(a_metaData, 'PREDEPLOYMENT_CALIB_COEFFICIENT') && ...
       isfield(a_metaData, 'PREDEPLOYMENT_CALIB_COMMENT'))
-   
+
    paramMtime = get_netcdf_param_attributes('MTIME');
-   
+
    o_metaData = add_field_in_top(o_metaData, 'SENSOR');
    o_metaData.SENSOR.SENSOR_1 = 'FLOATCLOCK_MTIME';
    o_metaData = add_field_in_top(o_metaData, 'SENSOR_MAKER');
@@ -785,7 +785,7 @@ if (isfield(a_metaData, 'SENSOR') && ...
    o_metaData = add_field_in_top(o_metaData, 'PREDEPLOYMENT_CALIB_COEFFICIENT');
    o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.PREDEPLOYMENT_CALIB_COEFFICIENT_1 = 'none';
    o_metaData = add_field_in_top(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT');
-   
+
 end
 
 return
@@ -922,7 +922,7 @@ global g_decArgo_floatNum;
 
 
 switch (a_paramName)
-   
+
    case {'PRES'}
       o_param = 'PRES';
       o_paramSensor = 'CTD_PRES';
@@ -937,7 +937,7 @@ switch (a_paramName)
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
          if (isfield(o_metaData, 'PRES_PARAMETER_ACCURACY') && ~isempty(o_metaData.PRES_PARAMETER_ACCURACY))
             o_paramAccuracy = o_metaData.PRES_PARAMETER_ACCURACY;
@@ -955,7 +955,7 @@ switch (a_paramName)
             o_preCalibComment = o_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
 
          % Apex APF11 Iridium
@@ -1001,7 +1001,7 @@ switch (a_paramName)
             end
          end
       end
-      
+
    case {'TEMP'}
       o_param = 'TEMP';
       o_paramSensor = 'CTD_TEMP';
@@ -1016,7 +1016,7 @@ switch (a_paramName)
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
          if (isfield(o_metaData, 'TEMP_PARAMETER_ACCURACY') && ~isempty(o_metaData.TEMP_PARAMETER_ACCURACY))
             o_paramAccuracy = o_metaData.TEMP_PARAMETER_ACCURACY;
@@ -1034,7 +1034,7 @@ switch (a_paramName)
             o_preCalibComment = o_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium) || ...
             ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
 
@@ -1066,7 +1066,7 @@ switch (a_paramName)
             end
          end
       end
-      
+
    case {'PSAL'}
       o_param = 'PSAL';
       o_paramSensor = 'CTD_CNDC';
@@ -1081,7 +1081,7 @@ switch (a_paramName)
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
          if (isfield(o_metaData, 'PSAL_PARAMETER_ACCURACY') && ~isempty(o_metaData.PSAL_PARAMETER_ACCURACY))
             o_paramAccuracy = o_metaData.PSAL_PARAMETER_ACCURACY;
@@ -1099,7 +1099,7 @@ switch (a_paramName)
             o_preCalibComment = o_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
-      
+
       if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium) || ...
             ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
 
@@ -1137,7 +1137,7 @@ switch (a_paramName)
             end
          end
       end
-      
+
    case {'NB_SAMPLE_CTD'}
       o_param = 'NB_SAMPLE_CTD';
       o_paramSensor = 'CTD_PRES';
@@ -1147,7 +1147,7 @@ switch (a_paramName)
       o_preCalibEq = 'n/a';
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
-      
+
    case {'PRES_MED'}
       o_param = 'PRES_MED';
       o_paramSensor = 'CTD_PRES';
@@ -1236,13 +1236,13 @@ switch (a_decoderId)
          {'MOLAR_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {27, 28, 29, 32}
       paramList = [ ...
          {'TPHASE_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 114, 115, ...
          201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 128, 129, 215, 216, 217, 218, 221, 223, 225}
       if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223, 225]))
@@ -1285,7 +1285,7 @@ switch (a_decoderId)
             {'DOXY'} ...
             ];
       end
-      
+
    case {209}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1296,21 +1296,21 @@ switch (a_decoderId)
          {'PHASE_DELAY_DOXY'} ...
          {'DOXY2'} ...
          ];
-      
+
    case {302, 303}
       paramList = [ ...
          {'TEMP_DOXY'} ...
          {'DPHASE_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {2002}
       paramList = [ ...
          {'TEMP_DOXY'} ...
          {'PHASE_DELAY_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1006, 1008, 1014, 1016}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1318,7 +1318,7 @@ switch (a_decoderId)
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1009}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1327,20 +1327,20 @@ switch (a_decoderId)
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1013, 1015, 1101}
       paramList = [ ...
          {'FREQUENCY_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1104}
       paramList = [ ...
          {'TEMP_DOXY'} ...
          {'TPHASE_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1105}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1348,7 +1348,7 @@ switch (a_decoderId)
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1107, 1113}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1356,7 +1356,7 @@ switch (a_decoderId)
          {'C2PHASE_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1110, 1111, 1112, 1114}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1365,7 +1365,7 @@ switch (a_decoderId)
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
          ];
-      
+
    case {1201}
       paramList = [ ...
          {'TEMP_DOXY'} ...
@@ -1377,7 +1377,7 @@ switch (a_decoderId)
          {'PHASE_DELAY_DOXY2'} ...
          {'DOXY2'} ...
          ];
-      
+
    case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -1704,12 +1704,12 @@ switch (a_decoderId)
             g_decArgo_floatNum);
          return
       end
-      
+
       if (strcmp(sensorModel, 'AANDERAA_OPTODE_3830'))
-         
+
          % CASE_201_201_301
          switch (a_paramName)
-            
+
             case {'MOLAR_DOXY'}
                o_param = 'MOLAR_DOXY';
                o_paramSensor = 'OPTODE_DOXY';
@@ -1719,7 +1719,7 @@ switch (a_decoderId)
                o_preCalibEq = 'none';
                o_preCalibCoef = 'none';
                o_preCalibComment = 'dissolved oxygen concentration at zero pressure and in fresh water or at a reference salinity; see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
-               
+
             case {'DOXY'}
                % get calibration information
                if (isempty(g_decArgo_calibInfo) || ...
@@ -1730,7 +1730,7 @@ switch (a_decoderId)
                   return
                end
                doxyCalibRefSalinity = g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity;
-               
+
                o_param = 'DOXY';
                o_paramSensor = 'OPTODE_DOXY';
                o_paramUnits = 'umol/kg';
@@ -1754,12 +1754,12 @@ switch (a_decoderId)
                   );
                o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
          end
-         
+
       else
-         
+
          % CASE_202_201_301
          switch (a_paramName)
-            
+
             case {'MOLAR_DOXY'}
                o_param = 'MOLAR_DOXY';
                o_paramSensor = 'OPTODE_DOXY';
@@ -1769,7 +1769,7 @@ switch (a_decoderId)
                o_preCalibEq = 'none';
                o_preCalibCoef = 'none';
                o_preCalibComment = 'dissolved oxygen concentration at zero pressure and in fresh water or at a reference salinity; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-               
+
             case {'DOXY'}
                % get calibration information
                if (isempty(g_decArgo_calibInfo) || ...
@@ -1780,7 +1780,7 @@ switch (a_decoderId)
                   return
                end
                doxyCalibRefSalinity = g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity;
-               
+
                o_param = 'DOXY';
                o_paramSensor = 'OPTODE_DOXY';
                o_paramUnits = 'umol/kg';
@@ -1805,11 +1805,11 @@ switch (a_decoderId)
                o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
          end
       end
-      
+
    case {27, 32}
       % CASE_202_204_204
       switch (a_paramName)
-         
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -1819,7 +1819,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -1836,7 +1836,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -1862,11 +1862,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {28}
       % CASE_202_204_202
       switch (a_paramName)
-         
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -1876,7 +1876,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -1894,7 +1894,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -1928,11 +1928,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {29}
       % CASE_202_204_203
       switch (a_paramName)
-         
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -1942,7 +1942,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -1960,7 +1960,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -1995,11 +1995,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {106, 301, 202, 207}
       % CASE_202_205_302
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2017,7 +2017,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -2027,7 +2027,7 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
                tabDoxyCoef(2, 1:6));
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C1PHASE_DOXY'}
             o_param = 'C1PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2037,7 +2037,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2047,7 +2047,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2065,7 +2065,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2098,7 +2098,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_205_302_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2116,7 +2116,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -2144,11 +2144,11 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
 
       end
-      
+
    case {208, 112, 123, 125}
       % CASE_202_205_303
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2166,7 +2166,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -2176,7 +2176,7 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
                tabDoxyCoef(2, 1:6));
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C1PHASE_DOXY'}
             o_param = 'C1PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2186,7 +2186,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2196,7 +2196,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2214,7 +2214,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2248,7 +2248,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_205_303_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2266,7 +2266,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -2295,14 +2295,14 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {107, 109, 110, 111, 113, 114, 115, ...
          121, 122, 124, 126, 127, 128, 129, ...
          201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, 225, ...
          1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1322, 1323}
       % CASE_202_205_304
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2312,7 +2312,7 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
             o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C1PHASE_DOXY'}
             o_param = 'C1PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2322,7 +2322,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2332,7 +2332,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2349,7 +2349,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2374,7 +2374,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_205_304_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2391,7 +2391,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -2410,12 +2410,12 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {209}
       % CASE_202_205_304 for AANDERAA
       % CASE_103_208_307 for SBE
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2425,9 +2425,9 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
             o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
             % CASE_202_205_304 for AANDERAA
-            
+
          case {'C1PHASE_DOXY'}
             o_param = 'C1PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2437,7 +2437,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2447,7 +2447,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2464,7 +2464,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2489,7 +2489,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_205_304_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'TEMP_DOXY2'} % CASE_103_102_001
             o_param = 'TEMP_DOXY2';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2499,9 +2499,9 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
             o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
-            
+
             % CASE_103_208_307 for SBE
-            
+
          case {'PHASE_DELAY_DOXY'}
             o_param = 'PHASE_DELAY_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2511,7 +2511,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'output phase delay';
-            
+
          case {'DOXY2'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2528,7 +2528,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY2';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2553,11 +2553,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {302, 303}
       % CASE_201_203_202
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_201_102_001
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2567,7 +2567,7 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
             o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             o_preCalibComment = 'optode temperature, see TD218 Operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
-            
+
          case {'DPHASE_DOXY'}
             o_param = 'DPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2577,7 +2577,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Calibrated phase measurement; see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2595,7 +2595,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2624,11 +2624,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {2002}
       % CASE_103_208_307
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_103_102_001
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2638,7 +2638,7 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
             o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
-            
+
          case {'PHASE_DELAY_DOXY'}
             o_param = 'PHASE_DELAY_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2648,7 +2648,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'output phase delay';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2665,7 +2665,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2689,13 +2689,13 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1006, 1008, 1014, 1016}
       % CASE_201_202_202
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_201_102_001
-            
+
             % get calibration information
             tabDoxyTempCoef = [];
             if (~isempty(g_decArgo_calibInfo) && ...
@@ -2703,7 +2703,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
                tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -2717,7 +2717,7 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD218 Operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
-            
+
          case {'BPHASE_DOXY'}
             o_param = 'BPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2727,7 +2727,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2754,7 +2754,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2783,7 +2783,7 @@ switch (a_decoderId)
                g_decArgo_doxy_201_202_202_d3 ...
                );
             o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2810,7 +2810,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -2833,13 +2833,13 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1009, 1107, 1112, 1113}
       % CASE_202_204_304
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
-            
+
             % get calibration information
             tabDoxyTempCoef = [];
             if (~isempty(g_decArgo_calibInfo) && ...
@@ -2847,7 +2847,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
                tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -2861,7 +2861,7 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2871,7 +2871,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'RPHASE_DOXY'}
             o_param = 'RPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2881,7 +2881,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -2891,7 +2891,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2908,7 +2908,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -2933,7 +2933,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_304_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -2950,7 +2950,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -2969,11 +2969,11 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1013, 1015, 1101}
       % CASE_102_207_206
       switch (a_paramName)
-         
+
          case {'FREQUENCY_DOXY'}
             o_param = 'FREQUENCY_DOXY';
             o_paramSensor = 'IDO_DOXY';
@@ -2983,7 +2983,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Output frequency of the DO sensor';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3000,7 +3000,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'IDO_DOXY';
             o_paramUnits = 'umol/kg';
@@ -3022,13 +3022,13 @@ switch (a_decoderId)
                g_decArgo_doxy_102_207_206_c0);
             o_preCalibComment = 'see Application note #64: SBE43 Dissolved Oxygen Sensor – Background Information, Deployment Recommendations and Clearing and Storage (revised June 2013); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1104, 1105, 1110, 1111}
       % CASE_202_204_302
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
-            
+
             % get calibration information
             tabDoxyTempCoef = [];
             if (~isempty(g_decArgo_calibInfo) && ...
@@ -3036,7 +3036,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
                tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -3050,7 +3050,7 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3060,7 +3060,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3070,7 +3070,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3088,7 +3088,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -3121,7 +3121,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_302_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3139,7 +3139,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -3166,13 +3166,13 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1114}
       % CASE_202_204_303
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
-            
+
             % get calibration information
             tabDoxyTempCoef = [];
             if (~isempty(g_decArgo_calibInfo) && ...
@@ -3180,7 +3180,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
                tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -3194,7 +3194,7 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3204,7 +3204,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'C2PHASE_DOXY'}
             o_param = 'C2PHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3214,7 +3214,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3232,7 +3232,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -3266,7 +3266,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_303_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3284,7 +3284,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -3313,14 +3313,14 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
-      
+
    case {1201}
       % CASE_202_204_304 for AANDERAA
       % CASE_103_208_307 for SBE
       switch (a_paramName)
-         
+
          case {'TEMP_DOXY'} % CASE_202_102_001
-            
+
             % get calibration information
             tabDoxyTempCoef = [];
             if (~isempty(g_decArgo_calibInfo) && ...
@@ -3328,7 +3328,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyTempCoef'))
                tabDoxyTempCoef = g_decArgo_calibInfo.OPTODE.TabDoxyTempCoef;
             end
-            
+
             o_param = 'TEMP_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
@@ -3342,9 +3342,9 @@ switch (a_decoderId)
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
             % CASE_202_204_304 for AANDERAA
-            
+
          case {'TPHASE_DOXY'}
             o_param = 'TPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3354,7 +3354,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'RPHASE_DOXY'}
             o_param = 'RPHASE_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
@@ -3364,7 +3364,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
-            
+
          case {'DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3381,7 +3381,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
@@ -3406,7 +3406,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_304_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'PPOX_DOXY'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3423,7 +3423,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PPOX_DOXY';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'mbar';
@@ -3441,7 +3441,7 @@ switch (a_decoderId)
                g_decArgo_doxy_202_204_304_d2 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
-            
+
          case {'TEMP_DOXY2'} % CASE_103_102_001
             o_param = 'TEMP_DOXY2';
             o_paramSensor = 'OPTODE_DOXY2';
@@ -3451,9 +3451,9 @@ switch (a_decoderId)
             o_preCalibEq = 'TEMP_DOXY2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
             o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
-            
+
             % CASE_103_208_307 for SBE
-            
+
          case {'PHASE_DELAY_DOXY2'}
             o_param = 'PHASE_DELAY_DOXY2';
             o_paramSensor = 'OPTODE_DOXY2';
@@ -3463,7 +3463,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'output phase delay';
-            
+
          case {'DOXY2'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
@@ -3480,7 +3480,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOXY2';
             o_paramSensor = 'OPTODE_DOXY2';
             o_paramUnits = 'umol/kg';
@@ -3666,14 +3666,14 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OCR, 'A0PAR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1PAR') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'LmPAR'))
-               
+
                paramList = [ ...
                   {'DOWN_IRRADIANCE380'} ...
                   {'DOWN_IRRADIANCE412'} ...
                   {'DOWN_IRRADIANCE490'} ...
                   {'DOWNWELLING_PAR'} ...
                   ];
-               
+
             elseif (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda443') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1Lambda443') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'LmLambda443') && ...
@@ -3686,7 +3686,7 @@ switch (a_decoderId)
                   isfield(g_decArgo_calibInfo.OCR, 'A0Lambda670') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'A1Lambda670') && ...
                   isfield(g_decArgo_calibInfo.OCR, 'LmLambda670'))
-               
+
                paramList = [ ...
                   {'DOWN_IRRADIANCE443'} ...
                   {'DOWN_IRRADIANCE490'} ...
@@ -3761,7 +3761,7 @@ switch (a_decoderId)
          121, 122, 123, 124, 125, 126, 127, 128, 129, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
-         
+
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
             o_param = 'RAW_DOWNWELLING_IRRADIANCE380';
             o_paramSensor = 'RADIOMETER_DOWN_IRR380';
@@ -3771,7 +3771,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 380 nm';
-            
+
          case {'RAW_DOWNWELLING_IRRADIANCE412'}
             o_param = 'RAW_DOWNWELLING_IRRADIANCE412';
             o_paramSensor = 'RADIOMETER_DOWN_IRR412';
@@ -3781,7 +3781,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 412 nm';
-            
+
          case {'RAW_DOWNWELLING_IRRADIANCE490'}
             o_param = 'RAW_DOWNWELLING_IRRADIANCE490';
             o_paramSensor = 'RADIOMETER_DOWN_IRR490';
@@ -3791,7 +3791,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 490 nm';
-            
+
          case {'RAW_DOWNWELLING_PAR'}
             o_param = 'RAW_DOWNWELLING_PAR';
             o_paramSensor = 'RADIOMETER_PAR';
@@ -3801,9 +3801,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling PAR measurement';
-            
+
          case {'DOWN_IRRADIANCE380'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE380 calibration information\n', ...
@@ -3821,7 +3821,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE380';
             o_paramSensor = 'RADIOMETER_DOWN_IRR380';
             o_paramUnits = 'W/m^2/nm';
@@ -3831,9 +3831,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_380=%g, A0_380=%g, lm_380=%g', ...
                a1Lambda380, a0Lambda380, lmLambda380);
             o_preCalibComment = '';
-            
+
          case {'DOWN_IRRADIANCE412'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE412 calibration information\n', ...
@@ -3851,7 +3851,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE412';
             o_paramSensor = 'RADIOMETER_DOWN_IRR412';
             o_paramUnits = 'W/m^2/nm';
@@ -3861,9 +3861,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_412=%g, A0_412=%g, lm_412=%g', ...
                a1Lambda412, a0Lambda412, lmLambda412);
             o_preCalibComment = '';
-            
+
          case {'DOWN_IRRADIANCE443'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE443 calibration information\n', ...
@@ -3881,7 +3881,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE443';
             o_paramSensor = 'RADIOMETER_DOWN_IRR443';
             o_paramUnits = 'W/m^2/nm';
@@ -3891,9 +3891,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_443=%g, A0_443=%g, lm_443=%g', ...
                a1Lambda443, a0Lambda443, lmLambda443);
             o_preCalibComment = '';
-            
+
          case {'DOWN_IRRADIANCE490'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE490 calibration information\n', ...
@@ -3911,7 +3911,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE490';
             o_paramSensor = 'RADIOMETER_DOWN_IRR490';
             o_paramUnits = 'W/m^2/nm';
@@ -3921,9 +3921,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_490=%g, A0_490=%g, lm_490=%g', ...
                a1Lambda490, a0Lambda490, lmLambda490);
             o_preCalibComment = '';
-            
+
          case {'DOWN_IRRADIANCE555'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE555 calibration information\n', ...
@@ -3941,7 +3941,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE555';
             o_paramSensor = 'RADIOMETER_DOWN_IRR555';
             o_paramUnits = 'W/m^2/nm';
@@ -3951,9 +3951,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_555=%g, A0_555=%g, lm_555=%g', ...
                a1Lambda555, a0Lambda555, lmLambda555);
             o_preCalibComment = '';
-            
+
          case {'DOWN_IRRADIANCE670'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE670 calibration information\n', ...
@@ -3971,7 +3971,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWN_IRRADIANCE670';
             o_paramSensor = 'RADIOMETER_DOWN_IRR670';
             o_paramUnits = 'W/m^2/nm';
@@ -3981,9 +3981,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_670=%g, A0_670=%g, lm_670=%g', ...
                a1Lambda670, a0Lambda670, lmLambda670);
             o_preCalibComment = '';
-            
+
          case {'DOWNWELLING_PAR'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR calibration information\n', ...
@@ -4001,7 +4001,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'DOWNWELLING_PAR';
             o_paramSensor = 'RADIOMETER_PAR';
             o_paramUnits = 'microMoleQuanta/m^2/sec';
@@ -4011,9 +4011,9 @@ switch (a_decoderId)
             o_preCalibCoef = sprintf('A1_PAR=%g, A0_PAR=%g, lm_PAR=%g', ...
                a1PAR, a0PAR, lmPAR);
             o_preCalibComment = '';
-            
+
          case {'DOWNWELLING_PAR2'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR2 calibration information\n', ...
@@ -4255,7 +4255,7 @@ switch (a_decoderId)
          121, 122, 123, 124, 125, 126, 127, 128, 129, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
-         
+
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
             o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4265,9 +4265,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated backscattering measurement';
-            
+
          case {'BBP700'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
@@ -4305,7 +4305,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4327,12 +4327,12 @@ switch (a_decoderId)
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter, angle);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
-            
+
       end
-      
+
    case {108, 109, 115}
       switch (a_paramName)
-         
+
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
             o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4342,9 +4342,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated backscattering measurement';
-            
+
          case {'BBP700'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
@@ -4366,7 +4366,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4388,7 +4388,7 @@ switch (a_decoderId)
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
-            
+
          case {'BETA_BACKSCATTERING532'}
             o_param = 'BETA_BACKSCATTERING532';
             o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
@@ -4398,9 +4398,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated backscattering measurement';
-            
+
          case {'BBP532'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent BBP532 calibration information\n', ...
@@ -4422,7 +4422,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(darkCountBackscatter532_O))
                o_param = 'BBP532';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
@@ -4444,12 +4444,12 @@ switch (a_decoderId)
                   darkCountBackscatter532, darkCountBackscatter532_O, scaleFactBackscatter532, khiCoefBackscatter);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
-            
+
       end
-      
+
    case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114}
       switch (a_paramName)
-         
+
          case {'BETA_BACKSCATTERING700'}
             o_param = 'BETA_BACKSCATTERING700';
             o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4459,9 +4459,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated backscattering measurement';
-            
+
          case {'BBP700'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
@@ -4483,7 +4483,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(darkCountBackscatter700_O))
                o_param = 'BBP700';
                o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
@@ -4505,7 +4505,7 @@ switch (a_decoderId)
                   darkCountBackscatter700, darkCountBackscatter700_O, scaleFactBackscatter700, khiCoefBackscatter);
                o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
             end
-            
+
       end
 end
 
@@ -4678,7 +4678,7 @@ switch (a_decoderId)
          121, 122, 123, 124, 125, 126, 127, 128, 129, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
-         
+
          case {'FLUORESCENCE_CHLA'}
             o_param = 'FLUORESCENCE_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4688,9 +4688,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
-            
+
          case {'CHLA'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4719,7 +4719,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4741,12 +4741,12 @@ switch (a_decoderId)
                   scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
-            
+
       end
-      
+
    case {302, 303}
       switch (a_paramName)
-         
+
          case {'FLUORESCENCE_CHLA'}
             o_param = 'FLUORESCENCE_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4756,9 +4756,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
-            
+
          case {'CHLA'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4778,7 +4778,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4800,12 +4800,12 @@ switch (a_decoderId)
                   scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
-            
+
       end
-      
+
    case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114}
       switch (a_paramName)
-         
+
          case {'FLUORESCENCE_CHLA'}
             o_param = 'FLUORESCENCE_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4815,7 +4815,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
-            
+
          case {'TEMP_CPU_CHLA'}
             o_param = 'TEMP_CPU_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4825,9 +4825,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Thermistor signal from backscattering sensor';
-            
+
          case {'CHLA'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4847,7 +4847,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4879,7 +4879,7 @@ switch (a_decoderId)
             o_preCalibEq = 'n/a';
             o_preCalibCoef = 'n/a';
             o_preCalibComment = '';
-            
+
          case {'CHLA2'}
             o_param = 'CHLA2';
             o_paramSensor = 'FLUOROMETER_CHLA2';
@@ -4889,12 +4889,12 @@ switch (a_decoderId)
             o_preCalibEq = 'n/a';
             o_preCalibCoef = 'n/a';
             o_preCalibComment = '';
-            
+
       end
-      
+
    case {1014}
       switch (a_paramName)
-         
+
          case {'FLUORESCENCE_CHLA'}
             o_param = 'FLUORESCENCE_CHLA';
             o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4904,9 +4904,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
-            
+
          case {'CHLA'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
@@ -4926,7 +4926,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(DarkCountChloroA_O))
                o_param = 'CHLA';
                o_paramSensor = 'FLUOROMETER_CHLA';
@@ -4948,7 +4948,7 @@ switch (a_decoderId)
                   scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
-            
+
       end
 end
 
@@ -5102,7 +5102,7 @@ switch (a_decoderId)
          121, 122, 123, 124, 125, 126, 127, 128, 129, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
-         
+
          case {'FLUORESCENCE_CDOM'}
             o_param = 'FLUORESCENCE_CDOM';
             o_paramSensor = 'FLUOROMETER_CDOM';
@@ -5112,9 +5112,9 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated fluorescence from coloured dissolved organic matter sensor';
-            
+
          case {'CDOM'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent CDOM calibration information\n', ...
@@ -5134,7 +5134,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(darkCountCDOM_O))
                o_param = 'CDOM';
                o_paramSensor = 'FLUOROMETER_CDOM';
@@ -5156,9 +5156,9 @@ switch (a_decoderId)
                   scaleFactCDOM, darkCountCDOM, darkCountCDOM_O);
                o_preCalibComment = '';
             end
-            
+
       end
-      
+
 end
 
 switch (a_paramName)
@@ -5304,6 +5304,7 @@ global g_decArgo_nitrate_a;
 global g_decArgo_nitrate_b;
 global g_decArgo_nitrate_c;
 global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_e;
 global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
@@ -5311,7 +5312,7 @@ switch (a_decoderId)
    case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115, ...
          121, 122, 123, 124, 125, 126, 127, 128, 129}
       switch (a_paramName)
-         
+
          case {'UV_INTENSITY_NITRATE'}
             o_param = 'UV_INTENSITY_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5321,7 +5322,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Intensity of ultra violet flux from nitrate sensor';
-            
+
          case {'UV_INTENSITY_DARK_NITRATE'}
             o_param = 'UV_INTENSITY_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5343,9 +5344,9 @@ switch (a_decoderId)
             o_preCalibComment = 'Standard deviation of intensity of ultra violet flux dark measurement from nitrate sensor';
 
          case {'NITRATE'}
-            
+
             if (~ismember(a_decoderId, [110, 113, 127]))
-               
+
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
                   fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...
@@ -5373,26 +5374,26 @@ switch (a_decoderId)
                      g_decArgo_floatNum);
                   return
                end
-               
+
                if (isempty(floatPixelBegin) || isempty(floatPixelEnd))
                   fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                      g_decArgo_floatNum);
                   return
                end
-               
+
                idF1 = find(tabOpticalWavelengthUv >= 217);
                idF2 = find(tabOpticalWavelengthUv <= 240);
                pixelBegin = idF1(1);
                pixelEnd = idF2(end);
-               
+
                o_param = 'NITRATE';
                o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
                o_paramUnits = 'umol/kg';
                o_paramAccuracy = '2 umol/kg';
                o_paramResolution = '0.01 umol/kg';
-               
-               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
-               
+
+               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; DIFF_OPTICAL_WAVELENGTH(R)=OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET; Tcorr(R,T)=(A*DIFF_OPTICAL_WAVELENGTH(R)^4+B*DIFF_OPTICAL_WAVELENGTH(R)^3+C*DIFF_OPTICAL_WAVELENGTH(R)^2+D*DIFF_OPTICAL_WAVELENGTH(R)+E)*(T-TEMP_CAL_NITRATE); E_SWA_INSITU(R)=E_SWA_NITRATE(R)*exp(Tcorr(R,TEMP)); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+
                % try to set o_preCalibCoef without restriction
 
                uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
@@ -5403,8 +5404,8 @@ switch (a_decoderId)
                   sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                   floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
                   'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
-                  sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                  sprintf('A=%e, B=%e, C=%e, D=%e, E=%e, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_e, g_decArgo_nitrate_opticalWavelengthOffset) ...
                   'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
                   sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
                   'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
@@ -5489,8 +5490,8 @@ switch (a_decoderId)
                      sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                      floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
                      'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
-                     sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-                     g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                     sprintf('A=%e, B=%e, C=%e, D=%e, E=%e, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                     g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_e, g_decArgo_nitrate_opticalWavelengthOffset) ...
                      'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
                      sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
                      'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
@@ -5530,26 +5531,26 @@ switch (a_decoderId)
                      g_decArgo_floatNum);
                   return
                end
-               
+
                if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
                   fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                      g_decArgo_floatNum);
                   return
                end
-               
+
                idF1 = find(tabOpticalWavelengthUv >= 217);
                idF2 = find(tabOpticalWavelengthUv <= 280);
                pixelBegin = idF1(1);
                pixelEnd = idF2(end);
-               
+
                o_param = 'NITRATE';
                o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
                o_paramUnits = 'umol/kg';
                o_paramAccuracy = '2 umol/kg';
                o_paramResolution = '0.01 umol/kg';
-               
-               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
-               
+
+               o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; DIFF_OPTICAL_WAVELENGTH(R)=OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET; Tcorr(R,T)=(A*DIFF_OPTICAL_WAVELENGTH(R)^4+B*DIFF_OPTICAL_WAVELENGTH(R)^3+C*DIFF_OPTICAL_WAVELENGTH(R)^2+D*DIFF_OPTICAL_WAVELENGTH(R)+E)*(T-TEMP_CAL_NITRATE); E_SWA_INSITU(R)=E_SWA_NITRATE(R)*exp(Tcorr(R,TEMP)); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+
                % for NITRATE&BISULFIDE we have more pixel and we must squeeze
                % their output as possible
                uvIntensityRefNitrateStr = [];
@@ -5557,7 +5558,7 @@ switch (a_decoderId)
                eSwaNitrateStr = [];
                eNitrateStr = [];
                eBisulfideStr = [];
-               
+
                for id = pixelBegin:pixelEnd
                   if (tabUvIntensityRefNitrate(id) == 0)
                      uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr sprintf('%d,', tabUvIntensityRefNitrate(id))];
@@ -5568,7 +5569,7 @@ switch (a_decoderId)
                      val2(1:idN-1) = [];
                      uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
                   end
-                  
+
                   if (tabOpticalWavelengthUv(id) == 0)
                      opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
                   else
@@ -5578,7 +5579,7 @@ switch (a_decoderId)
                      val2(1:idN-1) = [];
                      opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
                   end
-                  
+
                   if (tabESwaNitrate(id) == 0)
                      eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
                   else
@@ -5600,7 +5601,7 @@ switch (a_decoderId)
                      end
                      eSwaNitrateStr = [eSwaNitrateStr ',' val4];
                   end
-                  
+
                   if (tabENitrate(id) == 0)
                      eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
                   else
@@ -5619,7 +5620,7 @@ switch (a_decoderId)
                      end
                      eNitrateStr = [eNitrateStr ',' val4];
                   end
-                  
+
                   if (tabEBisulfide(id) == 0)
                      eBisulfideStr = [eBisulfideStr sprintf('%d,', tabEBisulfide(id))];
                   else
@@ -5639,25 +5640,25 @@ switch (a_decoderId)
                      eBisulfideStr = [eBisulfideStr ',' val4];
                   end
                end
-               
+
                o_preCalibCoef = [ ...
                   sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                   floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
                   'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
-                  sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                  sprintf('A=%e, B=%e, C=%e, D=%e, E=%e, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_e, g_decArgo_nitrate_opticalWavelengthOffset) ...
                   'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
                   sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
                   'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
                   'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
                   'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(2:end) ']' ...
                   ];
-               
+
                o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             end
-            
+
          case {'BISULFIDE'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...
@@ -5687,29 +5688,29 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
                fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                   g_decArgo_floatNum);
                return
             end
-            
+
             idF1 = find(tabOpticalWavelengthUv >= 217);
             idF2 = find(tabOpticalWavelengthUv <= 280);
             pixelBegin = idF1(1);
             pixelEnd = idF2(end);
-            
+
             o_param = 'NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
             o_paramUnits = 'umol/kg';
             o_paramAccuracy = '2 umol/kg';
             o_paramResolution = '0.02 umol/kg';
-            
-            o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 289 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 280 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE and MOLAR_BISULFIDE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R)+MOLAR_BISULFIDE*E_BISULFIDE(R); NITRATE=MOLAR_NITRATE/rho and BISULFIDE=MOLAR_BISULFIDE/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            
+
+            o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; DIFF_OPTICAL_WAVELENGTH(R)=OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET; Tcorr(R,T)=(A*DIFF_OPTICAL_WAVELENGTH(R)^4+B*DIFF_OPTICAL_WAVELENGTH(R)^3+C*DIFF_OPTICAL_WAVELENGTH(R)^2+D*DIFF_OPTICAL_WAVELENGTH(R)+E)*(T-TEMP_CAL_NITRATE); E_SWA_INSITU(R)=E_SWA_NITRATE(R)*exp(Tcorr(R,TEMP)); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
+
             % for NITRATE&BISULFIDE we have more pixel and we must squeeze
             % their output as possible
-            
+
             uvIntensityRefNitrateStr = [];
             opticalWavelengthUvStr = [];
             eSwaNitrateStr = [];
@@ -5726,7 +5727,7 @@ switch (a_decoderId)
                   val2(1:idN-1) = [];
                   uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
                end
-               
+
                if (tabOpticalWavelengthUv(id) == 0)
                   opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
                else
@@ -5736,7 +5737,7 @@ switch (a_decoderId)
                   val2(1:idN-1) = [];
                   opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
                end
-               
+
                if (tabESwaNitrate(id) == 0)
                   eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
                else
@@ -5758,7 +5759,7 @@ switch (a_decoderId)
                   end
                   eSwaNitrateStr = [eSwaNitrateStr ',' val4];
                end
-               
+
                if (tabENitrate(id) == 0)
                   eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
                else
@@ -5777,7 +5778,7 @@ switch (a_decoderId)
                   end
                   eNitrateStr = [eNitrateStr ',' val4];
                end
-               
+
                if (tabEBisulfide(id) == 0)
                   eBisulfideStr = [eBisulfideStr sprintf('%d,', tabEBisulfide(id))];
                else
@@ -5797,22 +5798,22 @@ switch (a_decoderId)
                   eBisulfideStr = [eBisulfideStr ',' val4];
                end
             end
-            
+
             o_preCalibCoef = [ ...
                sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
                floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
                'UV_INTENSITY_REF_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' uvIntensityRefNitrateStr(2:end) ']; ' ...
-               sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-               g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+               sprintf('A=%e, B=%e, C=%e, D=%e, E=%e, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+               g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_e, g_decArgo_nitrate_opticalWavelengthOffset) ...
                'OPTICAL_WAVELENGTH_UV(PIXEL_FIT_START:PIXEL_FIT_END)=[' opticalWavelengthUvStr(2:end) ']; ' ...
                sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
                'E_SWA_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eSwaNitrateStr(2:end) ']; ' ...
                'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
                'E_BISULFIDE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eBisulfideStr(2:end) ']' ...
                ];
-            
+
             o_preCalibComment = 'Bisulfide concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
-            
+
          case {'FIT_ERROR_NITRATE'}
             o_param = 'FIT_ERROR_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5822,7 +5823,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Nitrate fit error (dimensionless)';
-            
+
          case {'TEMP_NITRATE'}
             o_param = 'TEMP_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5832,7 +5833,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Internal temperature of the SUNA sensor';
-            
+
          case {'TEMP_SPECTROPHOTOMETER_NITRATE'}
             o_param = 'TEMP_SPECTROPHOTOMETER_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5842,7 +5843,7 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Temperature of the spectrometer';
-            
+
          case {'HUMIDITY_NITRATE'}
             o_param = 'HUMIDITY_NITRATE';
             o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
@@ -5972,7 +5973,7 @@ global g_decArgo_calibInfo;
 switch (a_decoderId)
    case {121, 122, 123, 124, 125, 126, 127, 128, 129}
       switch (a_paramName)
-         
+
          case {'VRS_PH'}
             o_param = 'VRS_PH';
             o_paramSensor = 'TRANSISTOR_PH';
@@ -6014,7 +6015,7 @@ switch (a_decoderId)
             o_preCalibComment = 'Base current of pH sensor (in nanoampere)';
 
          case {'PH_IN_SITU_FREE'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
@@ -6048,7 +6049,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PH_IN_SITU_FREE';
             o_paramSensor = 'TRANSISTOR_PH';
             o_paramUnits = 'dimensionless';
@@ -6066,9 +6067,9 @@ switch (a_decoderId)
                   transPhF1, transPhF2, transPhF3, transPhF4);
             end
             o_preCalibComment = '';
-            
+
          case {'PH_IN_SITU_TOTAL'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_TOTAL calibration information\n', ...
@@ -6102,7 +6103,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PH_IN_SITU_TOTAL';
             o_paramSensor = 'TRANSISTOR_PH';
             o_paramUnits = 'dimensionless';
@@ -6121,12 +6122,12 @@ switch (a_decoderId)
             end
             o_preCalibComment = '';
       end
-      
+
    case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, ...
          111, 113, 114, 115}
-      
+
       switch (a_paramName)
-         
+
          case {'VRS_PH'}
             o_param = 'VRS_PH';
             o_paramSensor = 'TRANSISTOR_PH';
@@ -6136,10 +6137,10 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Voltage difference between reference and source from pH sensor (in volt)';
-            
-            
+
+
          case {'PH_IN_SITU_FREE'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
@@ -6175,7 +6176,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PH_IN_SITU_FREE';
             o_paramSensor = 'TRANSISTOR_PH';
             o_paramUnits = 'dimensionless';
@@ -6193,9 +6194,9 @@ switch (a_decoderId)
                   transPhF1, transPhF2, transPhF3, transPhF4);
             end
             o_preCalibComment = '';
-            
+
          case {'PH_IN_SITU_TOTAL'}
-            
+
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_TOTAL calibration information\n', ...
@@ -6231,7 +6232,7 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_param = 'PH_IN_SITU_TOTAL';
             o_paramSensor = 'TRANSISTOR_PH';
             o_paramUnits = 'dimensionless';
@@ -6249,7 +6250,7 @@ switch (a_decoderId)
                   transPhF1, transPhF2, transPhF3, transPhF4);
             end
             o_preCalibComment = '';
-            
+
          case {'NB_SAMPLE_SFET'}
             o_param = 'NB_SAMPLE_SFET';
             o_paramSensor = 'TRANSISTOR_PH';
@@ -6344,7 +6345,7 @@ switch (a_paramName)
       o_preCalibEq = 'n/a';
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
-      
+
 end
 
 return
@@ -6493,7 +6494,7 @@ switch (a_paramName)
       o_preCalibEq = 'n/a';
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
-      
+
    case {'CP660_STD'}
       o_param = 'CP660_STD';
       o_paramSensor = 'TRANSMISSOMETER_CP660';
@@ -6513,7 +6514,7 @@ switch (a_paramName)
       o_preCalibEq = 'n/a';
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
-      
+
 end
 
 return
@@ -6810,7 +6811,7 @@ global g_decArgo_calibInfo;
 switch (a_decoderId)
    case {1125, 1128}
       switch (a_paramName)
-         
+
          case {'COR'}
             o_param = 'COR';
             o_paramSensor = 'AUX_ACOUSTIC_GEOLOCATION';
@@ -6853,12 +6854,12 @@ switch (a_decoderId)
                   g_decArgo_floatNum);
                return
             end
-            
+
             o_preCalibEq = 'TOA = RAW_TOA*SlopeRafosTOA + OffsetRafosTOA';
             o_preCalibCoef = sprintf('SlopeRafosTOA=%.4f; OffsetRafosTOA=%d', ...
                slopeRafosTOA, offsetRafosTOA);
             o_preCalibComment = '';
-            
+
          case {'RAFOS_RTC_TIME'}
             o_param = 'RAFOS_RTC_TIME';
             o_paramSensor = 'AUX_RAFOS_CLOCK';
@@ -6904,7 +6905,7 @@ global g_decArgo_floatNum;
 
 
 if (~isempty(a_paramList))
-   
+
    fieldList = [ ...
       {'PARAMETER_SENSOR'} ...
       {'PARAMETER_UNITS'} ...
@@ -6914,13 +6915,13 @@ if (~isempty(a_paramList))
       {'PREDEPLOYMENT_CALIB_COEFFICIENT'} ...
       {'PREDEPLOYMENT_CALIB_COMMENT'} ...
       ];
-   
+
    for idP = 1:length(a_paramList)
       idF = find(strcmp(a_paramList{idP}, struct2cell(o_metaData.PARAMETER)) == 1, 1);
       if (isempty(idF))
          fprintf('INFO: Float #%d: adding ''%s'' to float parameter list\n', ...
             g_decArgo_floatNum, a_paramList{idP});
-         
+
          nbParam = length(struct2cell(o_metaData.PARAMETER)) + 1;
          o_metaData.PARAMETER.(['PARAMETER_' num2str(nbParam)]) = a_paramList{idP};
          for id = 1:length(fieldList)
