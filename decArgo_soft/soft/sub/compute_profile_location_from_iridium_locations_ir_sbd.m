@@ -62,6 +62,11 @@ if (~isempty(idFCyNum))
       radiusList(idDel) = [];
    end
    
+   % longitudes must be in the [-180, 180[ interval
+   % (see cycle #18 of float #6903190)
+   idToShift = find(lonList >= 180);
+   lonList(idToShift) = lonList(idToShift) - 360;
+
    if (~isempty(timeList))
       weight = 1./(radiusList.*radiusList);
       o_locDate = mean(timeList);
