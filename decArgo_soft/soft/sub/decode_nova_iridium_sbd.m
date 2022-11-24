@@ -442,6 +442,13 @@ for idBufFile = 1:length(tabAllSbdFileNames)
       end
    end
 end
+g_decArgo_preDecodedData.used = zeros(size(g_decArgo_preDecodedData.cycleNum));
+if (~isempty(g_decArgo_preDecodedData.cycleNum))
+   % the first SBDT is not used, it is stored with cycleNum == 255 if it came
+   % from the PRELUDE (should be set as used so that it will not be used for a
+   % possible cycle #255)
+   g_decArgo_preDecodedData.used(1) = 1;
+end
 
 if (g_decArgo_realtimeFlag)
    
@@ -1065,7 +1072,7 @@ switch (a_decoderId)
          g_decArgo_cycleNum = g_decArgo_cycleNumPrev;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
-      
+
       % assign the current configuration to the decoded cycle
       if (~isempty(deepCycle))
          set_float_config_ir_sbd_nva(g_decArgo_cycleNum, deepCycle);

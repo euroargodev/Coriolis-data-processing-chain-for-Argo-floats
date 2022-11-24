@@ -135,9 +135,9 @@ elseif (size(a_tabTech, 1) == 1)
          (fix(a_tabTech(id, 39+ID_OFFSET)) == 214))
       
       if (~g_decArgo_eolMode)
-         [dayNum, day, month, year, hour, minutes, sec] = format_juld_dec_argo(o_firstMessageDate);
+         [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(o_firstMessageDate);
       else
-         [dayNum, day, month, year, hour, minutes, sec] = format_juld_dec_argo(a_tabTech(id, end)); % in EOL mode, FMT could be far from current TECH msg
+         [dayNum, day, month, year, hour, min, sec] = format_juld_dec_argo(a_tabTech(id, end)); % in EOL mode, FMT could be far from current TECH msg
       end
       if (day < a_tabTech(id, 40+ID_OFFSET))
          if (month > 1)
@@ -155,16 +155,32 @@ elseif (size(a_tabTech, 1) == 1)
       o_gpsDate = g_decArgo_dateDef;
    end
    
+   % get the record id to retrieve SBDT of the current cycle
+   if (g_decArgo_cycleNum < 256)
+      idForSbdt = find((g_decArgo_preDecodedData.cycleNum == g_decArgo_cycleNum) & ...
+         (g_decArgo_preDecodedData.used == 0));
+   else
+      idForSbdt = find((g_decArgo_preDecodedData.cycleNum == g_decArgo_cycleNum-1) & ...
+         (g_decArgo_preDecodedData.used == 0));
+   end
+   if (~isempty(idForSbdt))
+      idForSbdt = idForSbdt(1);
+      g_decArgo_preDecodedData.used(idForSbdt) = 1;
+   end
+   
    % estimate clock offset
    o_gpsDateAdj = o_gpsDate;
    if (o_gpsDate ~= g_decArgo_dateDef)
       
-      % retrieve SBDT of the current cycle
-      idF = find(g_decArgo_preDecodedData.cycleNum == g_decArgo_cycleNum, 1);
-      if (~isempty(idF))
+      % use SBDT of the current cycle
+      if (~isempty(idForSbdt))
          
-         sbdt = g_decArgo_preDecodedData.sbdt(idF);
-         o_floatClockDrift = o_gpsDate + sbdt/86400 - o_firstMessageDate;
+         sbdt = g_decArgo_preDecodedData.sbdt(idForSbdt);
+         if (~g_decArgo_eolMode)
+            o_floatClockDrift = o_gpsDate + sbdt/86400 - o_firstMessageDate;
+         else
+            o_floatClockDrift = o_gpsDate + sbdt/86400 - a_tabTech(id, end);
+         end
          %          fprintf('Float %d cycle %d: clock offset %s\n', ...
          %             g_decArgo_floatNum, g_decArgo_cycleNum, format_time_dec_argo(o_floatClockDrift*24));
          
@@ -185,11 +201,8 @@ elseif (size(a_tabTech, 1) == 1)
    cycleTimeStruct.cycleStartTime = o_cycleStartDate;
    cycleTimeStruct.cycleStartTimeAdj = o_cycleStartDateAdj;
    cycleTimeStruct.clockDrift = o_floatClockDrift;
-   cycleTimeStruct.deepCycle = 0;
    
    if (a_deepCycle == 1)
-      
-      cycleTimeStruct.deepCycle = 1;
       
       if (a_tabTech(id, 28+ID_OFFSET) == 0)
          
@@ -328,29 +341,10 @@ elseif (size(a_tabTech, 1) == 1)
          fprintf('INFO: Float #%d cycle #%d: EOL mode detected\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          
-         % merge cycle time structures of EOL cycles
-         idEol = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
-         if ((g_decArgo_timeData.cycleTime(idEol).deepCycle == 1) && (cycleTimeStruct.deepCycle == 1))
-            fprintf('ERROR: Float #%d cycle #%d: 2 cycles detected as deep cycles\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum);
-         end
-         
-         baseStruct = g_decArgo_timeData.cycleTime(idEol);
-         baseStruct.gpsTime = [baseStruct.gpsTime cycleTimeStruct.gpsTime];
-         baseStruct.gpsTimeAdj = [baseStruct.gpsTimeAdj cycleTimeStruct.gpsTimeAdj];
-         tabDates = [baseStruct.firstMessageTime cycleTimeStruct.firstMessageTime];
-         tabDates(find(tabDates == g_decArgo_dateDef)) = [];
-         if (~isempty(tabDates))
-            baseStruct.firstMessageTime = min(tabDates);
-         end
-         tabDates = [baseStruct.lastMessageTime cycleTimeStruct.lastMessageTime];
-         tabDates(find(tabDates == g_decArgo_dateDef)) = [];
-         if (~isempty(tabDates))
-            baseStruct.lastMessageTime = max(tabDates);
-         end
-         baseStruct.clockDrift = [baseStruct.clockDrift cycleTimeStruct.clockDrift];
-         baseStruct.deepCycle = max([baseStruct.deepCycle cycleTimeStruct.deepCycle]);
-         g_decArgo_timeData.cycleTime(idEol) = baseStruct;
+         g_decArgo_timeData.cycleNum = [g_decArgo_timeData.cycleNum g_decArgo_cycleNum];
+         g_decArgo_timeData.cycleTime = [g_decArgo_timeData.cycleTime cycleTimeStruct];
+         %          idCycleStruct = find([g_decArgo_timeData.cycleNum] == g_decArgo_cycleNum);
+         %          g_decArgo_timeData.cycleTime(idCycleStruct) = cycleTimeStruct;
       else
          g_decArgo_timeData.cycleNum = [g_decArgo_timeData.cycleNum g_decArgo_cycleNum];
          g_decArgo_timeData.cycleTime = [g_decArgo_timeData.cycleTime cycleTimeStruct];

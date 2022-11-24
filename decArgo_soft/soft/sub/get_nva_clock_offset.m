@@ -47,7 +47,7 @@ else
    % retrieve information from g_decArgo_timeData structure
    if (~isempty(g_decArgo_timeData))
       idCycleStruct = find([g_decArgo_timeData.cycleNum] == a_cycleNumber);
-      if (~isempty(idCycleStruct))
+      if (length(idCycleStruct) == 1) % same cycle number only for a_cycleNumber = 255 (EOL mode => surface cycle => no time to adjust)
          if (~isempty(g_decArgo_timeData.cycleTime(idCycleStruct).clockDrift))
             clockDrift = g_decArgo_timeData.cycleTime(idCycleStruct).clockDrift;
             refDateStart = g_decArgo_timeData.cycleTime(idCycleStruct).cycleStartTime;

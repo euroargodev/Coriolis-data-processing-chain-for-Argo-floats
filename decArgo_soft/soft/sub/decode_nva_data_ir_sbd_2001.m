@@ -48,7 +48,6 @@ global g_decArgo_cycleNum;
 global g_decArgo_cycleNumPrev;
 
 % default values
-global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 global g_decArgo_presCountsDef;
 global g_decArgo_tempCountsDef;
@@ -321,7 +320,7 @@ if (a_procLevel > 0)
             
             % EOL mode
             if ((g_decArgo_cycleNum == g_decArgo_cycleNumPrev) && ...
-                  ((length(unique(o_tabTech(20:25))) == 1) && (unique(o_tabTech(20:25)) == 0)))
+                  ~any(o_tabTech([20 22 24]) ~= 0))
                o_deepCycle = 0;
                g_decArgo_eolMode = 1;
                %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...

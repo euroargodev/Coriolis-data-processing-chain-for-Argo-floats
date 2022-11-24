@@ -308,6 +308,64 @@ if (~isempty(a_tabTrajNCycle))
    end
 end
 
+% update EOL cycle (cycle number 256)
+% compute an averaged of clock offsets and apply it to all GPS times
+if (~isempty(a_tabTrajNMeas))
+   idEolCy = find([a_tabTrajNMeas.cycleNumber] == 256);
+   idEolCy2 = [];
+   if (~isempty(a_tabTrajNCycle))
+      idEolCy2 = find([a_tabTrajNCycle.cycleNumber] == 256);
+   end
+   if (~isempty(idEolCy))
+      idFSurf = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_Surface);
+      tabClockOffset = [];
+      for idS = 1:length(idFSurf)
+         if ((a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef) && ...
+               (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj ~= g_decArgo_ncDateDef))
+            tabClockOffset = [tabClockOffset ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
+               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj];
+         end
+      end
+      if (~isempty(tabClockOffset))
+         tabClockOffset = round(mean(tabClockOffset*86400))/86400;
+         for idS = 1:length(idFSurf)
+            if (a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld ~= g_decArgo_ncDateDef)
+               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdj = ...
+                  a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juld - ...
+                  tabClockOffset;
+               a_tabTrajNMeas(idEolCy).tabMeas(idFSurf(idS)).juldAdjStatus = g_JULD_STATUS_2;
+            end
+         end
+         if (~isempty(idEolCy2))
+            a_tabTrajNCycle(idEolCy2).juldFirstLocation = min([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
+            a_tabTrajNCycle(idEolCy2).juldLastLocation = max([a_tabTrajNMeas(idEolCy).tabMeas(idFSurf).juldAdj]);
+            a_tabTrajNCycle(idEolCy2).clockOffset = tabClockOffset;
+            a_tabTrajNCycle(idEolCy2).dataMode = 'A';
+         end
+         idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_FMT);
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
+         if (~isempty(idEolCy2))
+            a_tabTrajNCycle(idEolCy2).juldFirstMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
+         end
+         idF = find([a_tabTrajNMeas(idEolCy).tabMeas.measCode] == g_MC_LMT);
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juld;
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjStatus = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldStatus;
+         a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdjQc = ...
+            a_tabTrajNMeas(idEolCy).tabMeas(idF).juldQc;
+         if (~isempty(idEolCy2))
+            a_tabTrajNCycle(idEolCy2).juldLastMessage = a_tabTrajNMeas(idEolCy).tabMeas(idF).juldAdj;
+         end
+      end
+   end
+end
 
 % check that all expected MC are present
 
@@ -453,28 +511,31 @@ if (lmtId ~= a_storeId)
    o_tabTrajNMeas(a_storeId).tabMeas(idF1) = o_tabTrajNMeas(lmtId).tabMeas(idF2);
 end
 
-% merge locations
-updated = 0;
-for id = a_mergeId
-   idF1 = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
-   if (~isempty(idF1))
-      idF2 = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
-      date = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
-      for id2 = idF1
-         if (~ismember(o_tabTrajNMeas(id).tabMeas(id2).juld, date))
-            o_tabTrajNMeas(a_storeId).tabMeas = [o_tabTrajNMeas(a_storeId).tabMeas; ...
-               o_tabTrajNMeas(id).tabMeas(id2)];
-            updated = 1;
-         end
-      end
-   end
-end
+% all locations are gathered in the last (a_storeId) item => no need to merge
+% GPS locations
 
-% sort trajectory data structures according to the predefined
-% measurement code order
-if (updated)
-   o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
-end
+% % merge locations
+% updated = 0;
+% for id = a_mergeId
+%    idF1 = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
+%    if (~isempty(idF1))
+%       idF2 = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
+%       date = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
+%       for id2 = idF1
+%          if (~ismember(o_tabTrajNMeas(id).tabMeas(id2).juld, date))
+%             o_tabTrajNMeas(a_storeId).tabMeas = [o_tabTrajNMeas(a_storeId).tabMeas; ...
+%                o_tabTrajNMeas(id).tabMeas(id2)];
+%             updated = 1;
+%          end
+%       end
+%    end
+% end
+% 
+% % sort trajectory data structures according to the predefined
+% % measurement code order
+% if (updated)
+%    o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
+% end
 
 return;
 
