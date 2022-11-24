@@ -236,8 +236,8 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6902814, 6903230, 3901963, 6903265, 3901645, ...
-      6903006, 6901880, 6902957, 6902849, 6902853, 6903019, 6902989]))
+      6902814, 6903230, 3901963, 6903265, 3901645, 6903006, 6901880, 6902957, ...
+      6902849, 6902853, 6903019, 6902989]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -616,7 +616,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
       6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522, ...
-      6902989, 6903774, 3901644]))
+      6902989, 6903774, 3901644, 6903010]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -664,8 +664,17 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
       case 6903698
-         % data packets transmitted twice in the first EOL session
-         idBase = find(tabEolFlag ==1, 1, 'first');
+         % data packets transmitted twice in the first EOL session of cycles
+         % #410 and #425
+         idEol = find((tabEolFlag == 1) & (tabCyNum == 410));
+         idBase = idEol(1);
+         tabDeep(tabSession == tabSession(idBase)) = 0;
+         idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4 5]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
+         idEol = find((tabEolFlag == 1) & (tabCyNum == 425));
+         idBase = idEol(1);
          tabDeep(tabSession == tabSession(idBase)) = 0;
          idDel = find((tabSession == tabSession(idBase)) & ~ismember(tabPackType, [0 4 5]));
          tabRank(idDel) = -1;
@@ -928,6 +937,15 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabSession(tabCyNum == 126) = tabSession(id);   
          tabSessionDeep(tabCyNum == 126) = tabSessionDeep(id);   
          tabCompleted(tabCyNum == 126) = 1;
+      case 6903010
+         % one data packet and the second iridium session of cycle #60 delayed
+         idRank60 = find(tabCyNum == 60, 1);
+         idDataKo = find((tabCyNum == 60) & (tabPackType == 3), 1, 'last');
+         tabRank(idDataKo) = tabRank(idRank60);
+         tabRankByCycle(idDataKo) = tabRankByCycle(idRank60);
+         tabRankByDate(idDataKo) = tabRankByDate(idRank60);
+         idSecondIs = find((tabCyNum == 60) & (tabPackType == 0), 1, 'last');
+         tabDeep(tabRank == tabRank(idSecondIs)) = 0;            
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
