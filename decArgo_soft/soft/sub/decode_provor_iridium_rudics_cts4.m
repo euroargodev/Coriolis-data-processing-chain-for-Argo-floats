@@ -466,10 +466,7 @@ if (~a_floatDmFlag)
       % process the SBD files of the spool directory in chronological order
       for idSpoolFile = 1:length(tabAllFileNames)
 
-         %          if (strcmp(tabAllFileNames{idSpoolFile}, '171009_120536_eribio003b_00001.bin.sbd'))
-         %             a=1
-         %          end
-         %          if (strcmp(tabAllFileNames{idSpoolFile}, '171009_133052_eribio003b_00001.bin.sbd'))
+         %          if (strcmp(tabAllFileNames{idSpoolFile}, '130502_092221_lovbio010b_00022.b64.sbd'))
          %             a=1
          %          end
          
@@ -494,6 +491,14 @@ if (~a_floatDmFlag)
          
          idOld = [];
          
+         % for float 2902243 (6.11 float) in cycle #29 profile #0
+         % one ECO2 packet data is missing => we must process buffer files as
+         % soon as the second Iridium session transmission is received
+         % To do that we check if the buffer contains 2 float tech packets (type
+         % 253) one associated to g_decArgo_phaseSatTrans phase and the other to
+         % g_decArgo_phaseSurfWait phase. If so, all the buffer files but the
+         % last received one (which is the second Iridium session one) are
+         % processed together as 'old' files.
          if (a_decoderId == 111)            
             if (g_decArgo_virtualBuff)
                sbdFilePathName = [g_decArgo_archiveDirectory '/' tabAllFileNames{idSpoolFile}];
@@ -535,7 +540,7 @@ if (~a_floatDmFlag)
          % create the 'old' and 'new' file lists
          % test 1
          %       idOld = find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS);
-         if (~isempty(idOld))
+         if (isempty(idOld))
             if (~isempty(find(tabFileDates < tabAllFileDates(idSpoolFile)-MIN_SUB_CYCLE_DURATION_IN_DAYS, 1)))
                idOld = find((tabFileDates < tabFileDates(1)+MIN_SUB_CYCLE_DURATION_IN_DAYS) & ...
                   tabFileCycles == tabFileCycles(1));
