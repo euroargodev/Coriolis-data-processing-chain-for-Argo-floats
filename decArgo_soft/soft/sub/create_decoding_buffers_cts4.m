@@ -121,7 +121,7 @@ if (ismember(a_decoderId, [111, 113]))
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
 if (ismember(g_decArgo_floatNum, ...
-      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122]))
+      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241]))
    switch g_decArgo_floatNum
       case 2902263
          idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
@@ -247,6 +247,15 @@ if (ismember(g_decArgo_floatNum, ...
          for id = startId192_2:stopId192_2
             a_decodedData(id).cyProfPhaseList(6) = a_decodedData(stopId192_1).cyProfPhaseList(6);
          end
+      case 2902241
+         % error in transmitted data
+         idDel = find((tabSession == 373) & (tabCyNum ~= 18600));
+         tabDone(idDel) = 1;
+         
+         idDel = find((tabSession == 374) & (tabCyNum ~= 18600) & (tabBase == 0));
+         tabDone(idDel) = 1;
+         idDel = find((tabSession == 374) & (tabCyNum == 18600) & (tabPackType == 0));
+         tabDone(idDel) = 1;
    end
 end
 
@@ -272,15 +281,15 @@ end
 rank = 1;
 sessionList = unique(tabSession);
 for sesNum = sessionList
-      
-   idBaseForSession = find((tabSession == sesNum) & (tabBase == 1), 1);
+         
+   idBaseForSession = find((tabSession == sesNum) & (tabBase == 1) & (tabDone == 0), 1);
    if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
       % deep session
-      idForCheck = find((tabSession == sesNum) & (tabCyNum == tabCyNum(idBaseForSession)));
+      idForCheck = find((tabSession == sesNum) & (tabCyNum == tabCyNum(idBaseForSession)) & (tabDone == 0));
       deepExpected = 1;
    else
       % surface session
-      idForCheck = find((tabSession == sesNum) & ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]));
+      idForCheck = find((tabSession == sesNum) & ismember(tabCyNum, [tabCyNum(idBaseForSession)-100 tabCyNum(idBaseForSession)]) & (tabDone == 0));
       deepExpected = 0;
    end
    
