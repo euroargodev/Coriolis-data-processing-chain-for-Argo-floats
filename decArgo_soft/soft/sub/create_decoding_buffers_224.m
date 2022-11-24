@@ -107,6 +107,7 @@ if (any(diff(tabResetDate(idPackType4)) > 0))
    for idR = 1:length(resetListId)
       resetId = idPackType4(resetListId(idR));
       resetDate = tabResetDate(resetId);
+      tabResetFlag(resetId) = 1;
       cycNumPrev = tabCyNum(find(tabDate < resetDate, 1, 'last'));
       firstPack = find(tabDate >= resetDate, 1);
       
