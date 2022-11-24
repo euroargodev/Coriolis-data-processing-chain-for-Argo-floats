@@ -77,6 +77,11 @@ for idMes = 1:size(tabSensors, 1)
          
          % sensor data type
          sensorDataType = tabSensors(idMes, 2);
+         if ((sensorDataType+1 < 1) || (sensorDataType+1 > length(lut)))
+            fprintf('WARNING: Inconsistent sensorDataType (%d) => packet ignored\n', ...
+               sensorDataType);
+            continue;
+         end
          
          % sensor number
          sensorNum = lut(sensorDataType+1);

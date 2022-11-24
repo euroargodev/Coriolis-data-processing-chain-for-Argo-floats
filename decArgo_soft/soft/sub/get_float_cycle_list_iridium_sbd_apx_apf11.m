@@ -2,7 +2,7 @@
 % Retrieve the list of existing cycles of an Apex APF11 Iridium Sbd float.
 %
 % SYNTAX :
-%  [o_cycleList, o_restricted] = get_float_cycle_list_iridium_sbd_apx_apf11( ...
+%  [o_cycleList] = get_float_cycle_list_iridium_sbd_apx_apf11( ...
 %    a_floatNum, a_floatImei, a_floatRudicsId)
 %
 % INPUT PARAMETERS :
@@ -12,7 +12,6 @@
 %
 % OUTPUT PARAMETERS :
 %   o_cycleList  : existing cycles list
-%   o_restricted : restricted cycle list flag
 %
 % EXAMPLES :
 %
@@ -22,12 +21,11 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleList, o_restricted] = get_float_cycle_list_iridium_sbd_apx_apf11( ...
+function [o_cycleList] = get_float_cycle_list_iridium_sbd_apx_apf11( ...
    a_floatNum, a_floatImei, a_floatRudicsId)
 
 % output parameters initialization
 o_cycleList = [];
-o_restricted = 0;
 
 % configuration values
 global g_decArgo_expectedCycleList;
@@ -64,10 +62,6 @@ else
 end
 
 o_cycleList = sort(o_cycleList);
-
-if (length(existingCycles) > length(o_cycleList))
-   o_restricted = 1;
-end
 
 return;
 

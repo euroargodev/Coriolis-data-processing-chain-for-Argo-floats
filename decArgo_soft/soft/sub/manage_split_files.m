@@ -28,9 +28,17 @@ o_fileList = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
+% SBD sub-directories
+global g_decArgo_unusedDirectory;
 
-% ANOMALY in V1.06.010 AMPT version concerning payload data file:
-% sometimes the information '#01' is missing in the name of the first splitted file
+
+% ANOMALY in V1.06.010 AMPT version concerning payload data files:
+% 1- sometimes a payload.bin file exists together with payload#i.bin i=1...
+% => in such case the payload.bin file is ignored (moved to
+% g_decArgo_unusedDirectory)
+% Ex: 3aa8_103_01_payload.bin, 3aa8_103_01_payload#01.bin, 3aa8_103_01_payload#02.bin and 3aa8_103_01_payload#03.bin
+% 2- sometimes a payload.bin file exists together with payload#i.bin i=2...
+% => in such case the payload.bin file is renamed payload#1.bin
 % Ex: 003a_009_01_payload.bin, 003a_009_01_payload#02.bin
 if (ismember(a_decoderId, [122 123]))
    for idFilePtn = 1:length(a_inputFileName)
@@ -41,18 +49,30 @@ if (ismember(a_decoderId, [122 123]))
             idF = strfind(fileList, '#');
             if (~isempty(cell2mat(idF)))
                if (length(cell2mat(idF)) ~= length(fileList))
-                  idExist = cellfun(@(x) strfind(fileList, x), {'_payload#02_'}, 'UniformOutput', 0);
+                  idExist = cellfun(@(x) strfind(fileList, x), {'_payload#01_'}, 'UniformOutput', 0);
                   idExist = find(~cellfun(@isempty, idExist{:}) == 1);
-                  idToMove = cellfun(@(x) strfind(fileList, x), {'_payload_'}, 'UniformOutput', 0);
-                  idToMove = find(~cellfun(@isempty, idToMove{:}) == 1);
-                  if (~isempty(idExist) && ~isempty(idToMove))
-                     fileNameNew = regexprep(fileList{idToMove}, '_payload_', '_payload#01_');
-                     move_file([a_inputFilePath{idFilePtn} '/' fileList{idToMove}], ...
-                        [a_inputFilePath{idFilePtn} '/' fileNameNew]);
-                     fprintf('DEC_WARNING: Float #%d: File naming anomaly (%s renamed %s)\n', ...
+                  idToDel = cellfun(@(x) strfind(fileList, x), {'_payload_'}, 'UniformOutput', 0);
+                  idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
+                  if (~isempty(idExist) && ~isempty(idToDel))
+                     move_file([a_inputFilePath{idFilePtn} '/' fileList{idToDel}], g_decArgo_unusedDirectory);
+                     fprintf('DEC_WARNING: Float #%d: File naming anomaly (%s ignored, i.e. moved to %s)\n', ...
                         g_decArgo_floatNum, ...
-                        fileList{idToMove}, ...
-                        fileNameNew);
+                        fileList{idToDel}, ...
+                        g_decArgo_unusedDirectory);
+                  else
+                     idExist = cellfun(@(x) strfind(fileList, x), {'_payload#02_'}, 'UniformOutput', 0);
+                     idExist = find(~cellfun(@isempty, idExist{:}) == 1);
+                     idToMove = cellfun(@(x) strfind(fileList, x), {'_payload_'}, 'UniformOutput', 0);
+                     idToMove = find(~cellfun(@isempty, idToMove{:}) == 1);
+                     if (~isempty(idExist) && ~isempty(idToMove))
+                        fileNameNew = regexprep(fileList{idToMove}, '_payload_', '_payload#01_');
+                        move_file([a_inputFilePath{idFilePtn} '/' fileList{idToMove}], ...
+                           [a_inputFilePath{idFilePtn} '/' fileNameNew]);
+                        fprintf('DEC_WARNING: Float #%d: File naming anomaly (%s renamed %s)\n', ...
+                           g_decArgo_floatNum, ...
+                           fileList{idToMove}, ...
+                           fileNameNew);
+                     end
                   end
                end
             end

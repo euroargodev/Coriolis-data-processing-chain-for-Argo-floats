@@ -120,10 +120,11 @@ end
 % g_decArgo_dirInputRsyncLog depends on decoder version
 if ((floatDecId > 1000) && (floatDecId < 2000))
    % APEX Iridium RUDICS & NAVIS floats
-   g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' sprintf('%04d', str2double(floatLoginName)) '/'];
-else
-   g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
+   if (~any(~ismember(abs(floatLoginName), 48:57)))
+      floatLoginName = sprintf('%04d', str2double(floatLoginName));
+   end
 end
+g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
 
 % check the corresponding directories and files
 rsyncLogPathFile = [];
@@ -148,13 +149,7 @@ end
 % according to float type and decoder configuration
 
 % create the float directory
-if (floatDecId < 1000)
-   % NKE floats
-   floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatLoginName '_' num2str(floatWmo) '/'];
-elseif ((floatDecId > 1000) && (floatDecId < 2000))
-   % APEX Iridium RUDICS & NAVIS floats
-   floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', str2double(floatLoginName)) '_' num2str(floatWmo) '/'];
-end
+floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatLoginName '_' num2str(floatWmo) '/'];
 if ~(exist(floatIriDirName, 'dir') == 7)
    mkdir(floatIriDirName);
 end
@@ -194,13 +189,10 @@ for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
       switch (floatDecId)
-         case {105, 106, 107, 108, 109, 110, 112}
-            % CTS4 Iridium RUDICS floats (rsync to Villefranche global server)
-            floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110_112(ryncLogList{idFile}, floatLoginName);
-         case {111}
-            % CTS4 Iridium RUDICS floats (ftp to individual float account + internal rsync at Coriolis)
-            floatFiles = parse_rsync_log_ir_rudics_cts4_111(ryncLogList{idFile}, floatLoginName);
-         case {121 122 123}
+         case {105, 106, 107, 108, 109, 110, 111, 112}
+            % CTS4 Iridium RUDICS floats
+            floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
+         case {121 122 123 124}
             % CTS5 Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
          otherwise

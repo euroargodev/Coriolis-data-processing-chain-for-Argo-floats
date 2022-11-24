@@ -197,7 +197,7 @@ for idDir = 1:length(uDir)
    finalDatesAdj = [];
    for idPrf = 1:length(idProfForDir)
       idProf = idProfForDir(idPrf);
-      
+
       paramList = a_tabProfiles(idProf).paramList;
       paramNumberWithSubLevel = a_tabProfiles(idProf).paramNumberWithSubLevels;
       paramNumberOfSubLevels = a_tabProfiles(idProf).paramNumberOfSubLevels;

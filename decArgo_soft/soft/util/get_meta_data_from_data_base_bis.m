@@ -27,7 +27,7 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\exportJPR_5900A04_from_VB_20170825.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\exportJPR_ArvorDeep_from_VB_20170825.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\DB_export_Finland_From_VB_20180904.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_export_NEMO_from_VB_20170911.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Export\DB_export_NEMO_from_VB_20170911.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_from_VB_20170912.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DB_Export_APEX_Poland_from_vb_20171020.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DB_Export_APEX_Poland_from_vb_20171020.txt';
@@ -43,12 +43,14 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Argos\DB_export_APF11_Argos_from_VB_20171204.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APF11_Iridium-SBD_from_VB_20180410.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Argos\DB_export_APF11_Argos_lot2&3_from_VB_20180514.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Finland_APF11_Rudics_from_VB_20181023.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
 floatListFileName = '';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 
 % directory to store the log and csv file
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

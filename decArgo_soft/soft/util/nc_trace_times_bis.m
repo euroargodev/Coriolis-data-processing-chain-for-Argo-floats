@@ -42,6 +42,8 @@ g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_TrajCheck\';
 % g_NTT_NC_DIR = 'H:\archive_201702\incois\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170918\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\REMOCEAN_Done_Lot1\NC_FINAUX\';
+
 
 
 % directory to store pdf output
@@ -106,8 +108,10 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_al
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\REMOCEAN_DM\LISTS\provor_cts4_remocean_dead_lot1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 
 % display help information on available commands

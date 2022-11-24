@@ -395,10 +395,21 @@ if (~isempty(o_profDo))
    tabJuld(idDel) = [];
    tabPres(idDel) = [];
    
-   [tabJuld, idSort] = sort(tabJuld);
-   tabPres = tabPres(idSort);
-   
-   o_profDo.data(:, 1) = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
+   if (~isempty(tabPres))
+      [tabJuld, idSort] = sort(tabJuld);
+      tabPres = tabPres(idSort);
+      
+      idJuldEq = find(diff(tabJuld) == 0);
+      if (~isempty(idJuldEq))
+         tabJuld(idJuldEq) = [];
+         tabPres(idJuldEq) = [];
+      end
+      
+      if (~isempty(tabPres))
+         o_profDo.data(:, 1) = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
+         o_profDo.data(isnan(o_profDo.data(:, 1)), 1) = paramPres.fillValue;
+      end
+   end
 end
 
 % add cycle times associated pressures (from CTD_P measurements)

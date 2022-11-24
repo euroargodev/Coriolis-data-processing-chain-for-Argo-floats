@@ -38,7 +38,7 @@ global g_NTD_COMPUTE_BOUNDARIES;
 % top directory of NetCDF files to plot
 g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_rem_for_rtqc\';
-g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
+% g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
 
 % directory to store pdf output
 g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -93,6 +93,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_ar
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % number of displacements to plot
 g_NTD_DEFAULT_NB_PLOT_CYCLE = 5;

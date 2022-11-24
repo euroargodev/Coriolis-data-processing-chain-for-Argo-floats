@@ -31,7 +31,9 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\DBexport_ArvorIce_5.45.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Provor_Do_Ir-5.74\DBexport_CTS3DO_5.74.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\apex_rudics_meta_20170412.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\apex_rudics_meta_20170412.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_BioIndia_6.11_from_VB_20180319.txt';
+dataBaseFileName = 'C:\Users\jprannou\Desktop\Nouveau dossier\new_argos_meta.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
@@ -60,7 +62,7 @@ if (fidOut == -1)
    return;
 end
 
-header = ['Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
+header = ['Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #; IMEI #; Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
 fprintf(fidOut, '%s\n', header);
 
 % read meta file
@@ -118,11 +120,12 @@ for idFloat = 1:length(floatList)
    ptt = '';
    if (~isempty(idPtt))
       ptt = paramValueList{idForWmo(idPtt)};
-   else
-      idPtt = find(strcmp(paramCodeList(idForWmo), 'IMEI') == 1, 1);
-      if (~isempty(idPtt))
-         ptt = paramValueList{idForWmo(idPtt)};
-      end
+   end
+   
+   idImei = find(strcmp(paramCodeList(idForWmo), 'IMEI') == 1, 1);
+   imei = '';
+   if (~isempty(idImei))
+      imei = paramValueList{idForWmo(idImei)};
    end
    
    idSerialNum = find(strcmp(paramCodeList(idForWmo), 'INST_REFERENCE') == 1, 1);
@@ -206,9 +209,9 @@ for idFloat = 1:length(floatList)
       coVersion = paramValueList{idForWmo(idCoVersion)};
    end
    
-   fprintf(fidOut, '%s; %s; %s; %g; %s; %s; %d; ; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
+   fprintf(fidOut, '%s; %s; %s; %g; %s; %s; %d; ; %s; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
       dataCenter, coVersion, serialNum, str2num(cycleTime)/24, parkPres, profPres, ...
-      floatNum, ptt, cycleTime, driftPeriod, launchDate, launchLon, launchLat, dayFirstDesc, coVersion);
+      floatNum, ptt, imei, cycleTime, driftPeriod, launchDate, launchLon, launchLat, dayFirstDesc, coVersion);
 end
 
 ellapsedTime = toc;

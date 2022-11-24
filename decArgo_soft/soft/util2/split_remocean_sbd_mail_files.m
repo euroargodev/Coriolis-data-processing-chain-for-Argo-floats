@@ -27,15 +27,18 @@ function split_remocean_sbd_mail_files(varargin)
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % default values initialization
 init_default_values;
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\users\RNU\Argo\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % if we only want to check existing split SBD files
-CHECK_BUFF_ONLY = 0;
+CHECK_BUFF_ONLY = 1;
 
 % to generate a CSV file without buffer contents
 GENERATE_CSV_OUTPUT = 1;
@@ -96,6 +99,7 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+   g_decArgo_floatNum = floatNum;
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    

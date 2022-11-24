@@ -21,16 +21,17 @@
 function generate_csv_meta_cts5(varargin)
 
 % calibration coefficients decoded from data
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % SUNA output pixel numbers decoded from data
-outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_pH_Float.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_pH_Float.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -865,10 +866,10 @@ if (~isempty(idF1))
          o_paramResolution = '0.000001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'PH_IN_SITU_TOTAL'))
-         o_paramResolution = '0.0001';
+         o_paramResolution = '0.0004';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'PH_IN_SITU_FREE'))
-         o_paramResolution = '0.0001';
+         o_paramResolution = '0.0004';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       end
    end
@@ -951,7 +952,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {121, 122}
+         case {121, 122, 123, 124}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
 
@@ -974,7 +975,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {121, 122}
+         case {121, 122, 123, 124}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');

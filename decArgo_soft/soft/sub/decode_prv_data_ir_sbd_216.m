@@ -7,11 +7,13 @@
 %    decode_prv_data_ir_sbd_216(a_tabData, a_tabDataDates, a_procLevel, a_cycleNumberList)
 %
 % INPUT PARAMETERS :
-%   a_tabData         : data frame to decode
-%   a_tabDataDates    : corresponding dates of Iridium SBD
-%   a_procLevel       : processing level (0: collect only rough information, 1:
-%                       decode the data)
-%   a_cycleNumberList : list of cycle to decode
+%   a_tabData             : data frame to decode
+%   a_tabDataDates        : corresponding dates of Iridium SBD
+%   a_procLevel           : processing level (0: collect only rough information, 1:
+%                           decode the data)
+%   a_cycleNumberList     : list of cycle to decode
+%   o_firstDateNextBuffer : date of the first packet of the next session
+%                           (the second Iridium session)
 %
 % OUTPUT PARAMETERS :
 %   o_tabTech1        : decoded data of technical msg #1
@@ -149,6 +151,8 @@ for idMes = 1:size(a_tabData, 1)
          if ~(isempty(g_decArgo_0TypePacketReceivedFlag) || ...
                (length(g_decArgo_0TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
                (g_decArgo_0TypePacketReceivedFlag(idFCy) ~= 1))
+            % packet types 0, 4 and 5 are sent again in a possible Iridium
+            % session
             o_firstDateNextBuffer = sbdFileDate;
             break;
          end
@@ -254,13 +258,18 @@ for idMes = 1:size(a_tabData, 1)
          if ~(isempty(g_decArgo_4TypePacketReceivedFlag) || ...
                (length(g_decArgo_4TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
                (g_decArgo_4TypePacketReceivedFlag(idFCy) ~= 1))
+            % packet types 0, 4 and 5 are sent again in a possible Iridium
+            % session
             o_firstDateNextBuffer = sbdFileDate;
             break;
          end
          g_decArgo_4TypePacketReceivedFlag(idFCy) = 1;
          
+         g_decArgo_nbOf1Or8TypePacketExpected(length(g_decArgo_nbOf1Or8TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf1Or8TypePacketExpected(idFCy) = tabTech2(2);
+         g_decArgo_nbOf2Or9TypePacketExpected(length(g_decArgo_nbOf2Or9TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf2Or9TypePacketExpected(idFCy) = tabTech2(3);
+         g_decArgo_nbOf3Or10TypePacketExpected(length(g_decArgo_nbOf3Or10TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf3Or10TypePacketExpected(idFCy) = tabTech2(4);
          
          if (length(g_decArgo_nbOf1Or8TypePacketReceived) < idFCy)
@@ -548,6 +557,8 @@ for idMes = 1:size(a_tabData, 1)
          if ~(isempty(g_decArgo_5TypePacketReceivedFlag) || ...
                (length(g_decArgo_5TypePacketReceivedFlag) < length(g_decArgo_cycleList)) || ...
                (g_decArgo_5TypePacketReceivedFlag(idFCy) ~= 1))
+            % packet types 0, 4 and 5 are sent again in a possible Iridium
+            % session
             o_firstDateNextBuffer = sbdFileDate;
             break;
          end

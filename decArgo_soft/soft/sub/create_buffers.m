@@ -45,6 +45,9 @@ o_sbdFileDataType = [];
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % collect information on SBD files of the directory
 tabName = [];
@@ -308,6 +311,30 @@ while (modifRank)
                % second iridium session data
                rankNumList = rankNumList(2:end);
                idCy = setdiff(idCy, idCy(idF1));
+            end
+            
+            % specific to float #6902547
+            if (g_decArgo_floatNum == 6902547)
+               if ((cyNum == 221) && (rankNumList(1) == -1))
+                  rankNumList = rankNumList(2:end);
+                  idCy = setdiff(idCy, idCy(idF1));
+               end
+            end
+            
+            % specific to float #6902828
+            if (g_decArgo_floatNum == 6902828)
+               if ((cyNum == 107) && (rankNumList(1) == -1))
+                  rankNumList = rankNumList(2:end);
+                  idCy = setdiff(idCy, idCy(idF1));
+               end
+            end
+            
+            % specific to float #2902089
+            if (g_decArgo_floatNum == 2902089)
+               if ((cyNum == 71) && (rankNumList(1) == -1))
+                  rankNumList = rankNumList(2:end);
+                  idCy = setdiff(idCy, idCy(idF1));
+               end
             end
             
             for idRk = 1:length(rankNumList)

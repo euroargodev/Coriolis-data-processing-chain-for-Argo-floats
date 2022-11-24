@@ -695,6 +695,9 @@ if (~a_floatDmFlag)
          for idBufFile = 1:length(fileNameList)
             
             sbdFileName = fileNameList{idBufFile};
+            %             if (strcmp(sbdFileName, '131011_223712_lovbio052b_00001.b64'))
+            %                a=1
+            %             end
             
             if (idBufFile == 1)
                g_decArgo_cycleNum = get_cycle_num_from_sbd_name_ir_rudics({sbdFileName});

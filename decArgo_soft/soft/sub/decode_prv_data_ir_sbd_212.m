@@ -240,10 +240,15 @@ for idMes = 1:size(a_tabData, 1)
          end
          g_decArgo_4TypePacketReceivedFlag(idFCy) = 1;
          
+         g_decArgo_nbOf1Or8TypePacketExpected(length(g_decArgo_nbOf1Or8TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf1Or8TypePacketExpected(idFCy) = tabTech2(3);
+         g_decArgo_nbOf2Or9TypePacketExpected(length(g_decArgo_nbOf2Or9TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf2Or9TypePacketExpected(idFCy) = tabTech2(4);
+         g_decArgo_nbOf3Or10TypePacketExpected(length(g_decArgo_nbOf3Or10TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf3Or10TypePacketExpected(idFCy) = tabTech2(5);
+         g_decArgo_nbOf13Or11TypePacketExpected(length(g_decArgo_nbOf13Or11TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf13Or11TypePacketExpected(idFCy) = tabTech2(6);
+         g_decArgo_nbOf14Or12TypePacketExpected(length(g_decArgo_nbOf14Or12TypePacketExpected)+1:idFCy-1) = -1;
          g_decArgo_nbOf14Or12TypePacketExpected(idFCy) = tabTech2(7);
          
          if (length(g_decArgo_nbOf1Or8TypePacketReceived) < idFCy)

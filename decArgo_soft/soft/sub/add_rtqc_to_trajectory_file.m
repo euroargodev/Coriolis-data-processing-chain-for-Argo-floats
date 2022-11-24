@@ -84,6 +84,8 @@
 %                             instead of:
 %                             g_MC_InAirSingleMeas
 %                             g_MC_InAirSeriesOfMeas
+%   11/06/2018 - RNU - V 2.3: TEST #6 (Global range test) updated for
+%                             PH_IN_SITU_TOTAL parameter
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -122,7 +124,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.2';
+g_decArgo_addRtqcToTrajVersion = '2.3';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -966,6 +968,7 @@ if (testFlagList(6) == 1)
             {'CHLA2'} ...
             {'BBP700'} ...
             {'BBP532'} ...
+            {'PH_IN_SITU_TOTAL'} ...
             ];
       else
          % adjusted data processing
@@ -992,11 +995,12 @@ if (testFlagList(6) == 1)
             {'CHLA2_ADJUSTED'} ...
             {'BBP700_ADJUSTED'} ...
             {'BBP532_ADJUSTED'} ...
+            {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
             ];
       end
       
-      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'}];
-      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}];
+      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'} {'7.3'}];
+      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}       {'8.5'}];
       
       for id = 1:length(paramTestList)
          

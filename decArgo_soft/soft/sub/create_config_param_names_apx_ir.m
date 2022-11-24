@@ -311,8 +311,8 @@ switch (a_decoderId)
          {'CONFIG_DEBUG'} ...
          ];
       
-   case {1321, 1322}
-      % 2.10.1, 2.11.1
+   case {1321, 1322, 1121}
+      % 2.10.1, 2.11.1, 2.10.4
       
       configIds = [ ...
          {'CONFIG_DIR'} ...

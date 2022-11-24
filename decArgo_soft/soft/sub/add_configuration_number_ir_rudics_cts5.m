@@ -73,6 +73,9 @@ for idNCy = 1:length(a_tabTrajNMeas)
       (g_decArgo_floatConfig.USE.PROFILE == a_tabTrajNMeas(idNCy).profileNumber));
    if (~isempty(idConf))
       a_tabTrajNMeas(idNCy).outputCycleNumber = g_decArgo_floatConfig.USE.CYCLE_OUT(idConf);
+   elseif (isempty(g_decArgo_floatConfig.USE.CYCLE))
+      % prelude cycle
+      a_tabTrajNMeas(idNCy).outputCycleNumber = 0;
    elseif ((a_tabTrajNMeas(idNCy).cycleNumber == min(g_decArgo_floatConfig.USE.CYCLE)) && ...
          (a_tabTrajNMeas(idNCy).profileNumber == 0))
       % prelude cycle
@@ -115,6 +118,9 @@ for idNCy = 1:length(a_tabTrajNCycle)
       if (a_tabTrajNCycle(idNCy).outputCycleNumber > 0) % we don't assign any configuration to cycle #0 data
          a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
       end
+   elseif (isempty(g_decArgo_floatConfig.USE.CYCLE))
+      % prelude cycle
+      a_tabTrajNCycle(idNCy).outputCycleNumber = 0;
    elseif ((a_tabTrajNCycle(idNCy).cycleNumber == min(g_decArgo_floatConfig.USE.CYCLE)) && ...
          (a_tabTrajNCycle(idNCy).profileNumber == 0))
       % prelude cycle
@@ -181,14 +187,16 @@ for idNCy = 1:length(a_tabTechNMeas)
    end
 end
 % manage EOL cycles
-outputCycleNumberList = [a_tabTechNMeas.outputCycleNumber];
-idEol = find((outputCycleNumberList == -1));
-idEol = idEol(find(idEol > 1));
-for idC = 1:length(idEol)
-   cyPrev = outputCycleNumberList(idEol(idC)-1);
-   if (~any(outputCycleNumberList == cyPrev+1))
-      a_tabTechNMeas(idEol(idC)).outputCycleNumber = cyPrev+1;
-      outputCycleNumberList(idEol(idC)) = cyPrev+1;
+if (~isempty(a_tabTechNMeas))
+   outputCycleNumberList = [a_tabTechNMeas.outputCycleNumber];
+   idEol = find((outputCycleNumberList == -1));
+   idEol = idEol(find(idEol > 1));
+   for idC = 1:length(idEol)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      if (~any(outputCycleNumberList == cyPrev+1))
+         a_tabTechNMeas(idEol(idC)).outputCycleNumber = cyPrev+1;
+         outputCycleNumberList(idEol(idC)) = cyPrev+1;
+      end
    end
 end
 

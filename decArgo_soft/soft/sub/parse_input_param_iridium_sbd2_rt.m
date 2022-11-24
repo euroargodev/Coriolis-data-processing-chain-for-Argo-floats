@@ -104,6 +104,20 @@ if (isempty(floatWmo))
    return;
 end
 
+% retrieve float IMEI number
+[floatWmo, floatImei, ...
+   floatDecVersion, floatDecId, ...
+   floatFrameLen, ...
+   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
+   floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
+   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
+if (isempty(floatImei))
+   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
+   o_inputError = 1;
+   return;
+end
+g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatImei '/'];
+
 % check the corresponding directories and files
 rsyncLogPathFile = [];
 if (~isempty(rsyncLogFile))
@@ -120,19 +134,6 @@ if (allRsyncLogFlag == 1)
       o_inputError = 1;
       return;
    end
-end
-
-% retrieve float IMEI number
-[floatWmo, floatImei, ...
-   floatDecVersion, floatDecId, ...
-   floatFrameLen, ...
-   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
-   floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
-if (isempty(floatImei))
-   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
-   o_inputError = 1;
-   return;
 end
 
 % create the g_decArgo_historyDirectory directory (used below when there is no

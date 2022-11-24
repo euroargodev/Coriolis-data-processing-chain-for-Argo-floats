@@ -293,7 +293,7 @@ switch (a_decoderId)
             
       end
       
-   case {121, 122, 123}
+   case {121, 122, 123, 124}
       % PROVOR CTS5
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -818,7 +818,7 @@ switch (a_decoderId)
             o_resolution = double(1/86400); % 1 second
       end
       
-   case {1321, 1322}
+   case {1121, 1321, 1322}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

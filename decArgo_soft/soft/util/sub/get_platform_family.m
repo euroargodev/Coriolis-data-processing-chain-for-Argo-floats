@@ -41,7 +41,7 @@ switch (a_decoderId)
       % PROVOR CTS4
       o_platformFamily = 'FLOAT';
       
-   case {121, 122, 123}
+   case {121, 122, 123, 124}
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       
@@ -69,7 +69,7 @@ switch (a_decoderId)
       % NOVA & DOVA
       o_platformFamily = 'FLOAT';
       
-   case {1321, 1322}
+   case {1321, 1322, 1121}
       % Apex APF11
       o_platformFamily = 'FLOAT';
       

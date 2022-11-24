@@ -323,7 +323,7 @@ for idFloat = 1:length(floatList)
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
-      case {'7.01', '7.02'}
+      case {'7.01', '7.02', '7.04'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -444,8 +444,12 @@ for idFloat = 1:length(floatList)
    
    % retrieve configuration names and values at launch from configuration
    % commands report files
-   configReportFileName = [a_configDirName '/' loginName '.txt'];
-   [configParamNames, configParamValues] = get_conf_at_launch_cts5(configReportFileName, sensorList);
+   if ((wmoNumber == 6902671) || (wmoNumber == 6902953))
+      configReportFileName = [a_configDirName '/' loginName '_' num2str(wmoNumber) '.txt'];
+   else
+      configReportFileName = [a_configDirName '/' loginName '.txt'];
+   end
+   [configParamNames, configParamValues] = get_conf_at_launch_cts5(configReportFileName, sensorList, dacFormatId);
       
    % delete some configuration parameters
    %   listToDelete = [ ...

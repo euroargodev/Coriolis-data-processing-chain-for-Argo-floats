@@ -26,6 +26,7 @@ o_sensorList = [];
 switch a_floatNum
    case { ...
          3901988, ...
+         6903695, ...
          }
       o_sensorList = [{'CTD'}];
    case { ...
@@ -35,7 +36,7 @@ switch a_floatNum
          }
       o_sensorList = [{'CTD'}; {'OPTODE'}; {'TRANSISTOR_PH'}];
    otherwise
-      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float\n', a_floatNum);
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "get_sensor_list_apex_apf11" MATLAB CODE!)\n', a_floatNum);
 end
 
 return;

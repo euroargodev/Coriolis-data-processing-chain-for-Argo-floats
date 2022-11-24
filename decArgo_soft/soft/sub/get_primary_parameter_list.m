@@ -73,7 +73,7 @@ switch (a_decoderId)
          {'PSAL_MED'} ...
          ];
       
-   case {121, 122, 123}
+   case {121, 122, 123, 124}
 
       % CTS5 floats
       o_paramList = [ ...
@@ -148,7 +148,7 @@ switch (a_decoderId)
          {'BBP700'} ...
          ];
       
-   case {1102, 1103, 1106, 1108, 1109, 1314, 1321}
+   case {1102, 1103, 1106, 1108, 1109, 1121, 1314, 1321}
       
       % Apex Ir Rudics & Sbd
       o_paramList = [ ...

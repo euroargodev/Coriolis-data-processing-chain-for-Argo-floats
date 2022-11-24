@@ -28,6 +28,9 @@ global g_decArgo_delayedModeFlag;
 % default values
 global g_decArgo_dateDef;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % default values initialization
 init_default_values;
@@ -97,6 +100,7 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+   g_decArgo_floatNum = floatNum;
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    

@@ -132,9 +132,9 @@ for idFloat = 1:nbFloats
       mailFileName = mailFile(idFile).name;
       mailFilePathName = [inputDirName '/' floatImei '/' mailFileName];
       
-      mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
-      if (exist(mailFilePathNameOut, 'file') == 2)
-         if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
+      if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
+         mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
+         if (exist(mailFilePathNameOut, 'file') == 2)
             % when the file already exists, check (with its date) if it needs to be
             % updated
             mailFileOut = dir(mailFilePathNameOut);
@@ -144,11 +144,11 @@ for idFloat = 1:nbFloats
             else
                fprintf('   %s => unchanged\n', mailFileName);
             end
+         else
+            % copy the file if it doesn't exist
+            copy_file(mailFilePathName, floatOutputDirName);
+            fprintf('   %s => copy\n', mailFileName);
          end
-      else
-         % copy the file if it doesn't exist
-         copy_file(mailFilePathName, floatOutputDirName);
-         fprintf('   %s => copy\n', mailFileName);
       end
    end
    

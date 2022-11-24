@@ -73,13 +73,6 @@ if (isempty(floatWmo))
    return;
 end
 
-% check the corresponding directories and files
-if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
-   fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
-   o_inputError = 1;
-   return;
-end
-
 % retrieve float IMEI number
 [floatWmo, floatImei, ...
    floatDecVersion, floatDecId, ...
@@ -89,6 +82,14 @@ end
    floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatImei))
    fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
+   o_inputError = 1;
+   return;
+end
+g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatImei '/'];
+
+% check the corresponding directories and files
+if ~(exist(g_decArgo_dirInputRsyncLog, 'dir') == 7)
+   fprintf('ERROR: rsync log file directory (%s) does not exist => exit\n', g_decArgo_dirInputRsyncLog);
    o_inputError = 1;
    return;
 end

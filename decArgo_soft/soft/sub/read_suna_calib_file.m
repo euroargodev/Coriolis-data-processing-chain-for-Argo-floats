@@ -84,7 +84,7 @@ else
    if (~isempty(idFirstE))
       data = calibData(idFirstE:end);
       switch (a_dacFormatId)
-         case {'5.9', '5.91', '5.92', '5.94', '6.01', '6.11', '7.01', '7.02', '7.03'}
+         case {'5.9', '5.91', '5.92', '5.94', '6.01', '6.11', '7.01', '7.02', '7.03', '7.04'}
             if (mod(length(data), 6) == 0)
                o_opticalWavelengthUv = data(2:6:end);
                o_eNitrate = data(3:6:end);

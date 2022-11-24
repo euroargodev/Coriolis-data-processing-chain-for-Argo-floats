@@ -220,7 +220,7 @@ switch a_floatNum
          }
       o_sensorList = [{'CTD'}; {'OPTODE'}; {'FLNTU'}; {'CYCLOPS'}; {'SEAPOINT'}];
    otherwise
-      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float\n', a_floatNum);
+      fprintf('ERROR: Unknown sensor list for float #%d => nothing done for this float (PLEASE UPDATE "get_sensor_list_cts4" MATLAB CODE!)\n', a_floatNum);
 end
 
 return;

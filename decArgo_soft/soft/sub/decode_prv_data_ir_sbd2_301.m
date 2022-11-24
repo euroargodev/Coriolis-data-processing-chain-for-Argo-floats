@@ -64,6 +64,8 @@ global g_decArgo_janFirst1950InMatlab;
 % arrays to store rough information on received data
 global g_decArgo_0TypeReceivedData;
 global g_decArgo_250TypeReceivedData;
+global g_decArgo_251TypeReceivedData;
+global g_decArgo_252TypeReceivedData;
 global g_decArgo_253TypeReceivedData;
 global g_decArgo_254TypeReceivedData;
 global g_decArgo_255TypeReceivedData;
@@ -77,6 +79,9 @@ global g_decArgo_phaseParkDrift;
 
 % array to store ko sensor states
 global g_decArgo_koSensorState;
+
+% to check timeouted buffer contents
+global g_decArgo_needFullBufferInfo;
 
 
 % output parameters initialization
@@ -224,10 +229,10 @@ for id = 1:length(idSensorTechDataPack)
    
    dataPack = a_tabSensors(idPack, :);
    datePack = a_tabDates(idPack);
-
+   
    tabSensors = [tabSensors; [dataPack(1:70) repmat([0], 1, 70)]];
    tabDates = [tabDates; datePack];
-
+   
    if ~((dataPack(71) == 250) && (length(unique(dataPack(72:75))) == 1) && (dataPack(72) == 255))
       tabSensors = [tabSensors; [dataPack(71:140) repmat([0], 1, 70)]];
       tabDates = [tabDates; datePack];
@@ -257,10 +262,10 @@ for idMes = 1:size(tabSensors, 1)
          if (a_procLevel == 2)
             continue;
          end
-                  
+         
          % sensor data type
          sensorDataType = tabSensors(idMes, 2);
-
+         
          % message data frame
          msgData = tabSensors(idMes, 3:end);
          
@@ -269,9 +274,9 @@ for idMes = 1:size(tabSensors, 1)
          if ((length(uMsgdata) == 1) && (uMsgdata == 0))
             continue;
          end
-
+         
          switch (sensorDataType)
-
+            
             case {0}
                % CTD (mean)
                
@@ -281,7 +286,7 @@ for idMes = 1:size(tabSensors, 1)
                tabNbBits = [16 8 8 32 repmat([16 16 16], 1, 21) 32];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -294,7 +299,7 @@ for idMes = 1:size(tabSensors, 1)
                      profNum);
                   continue;
                end
-
+               
                if (a_procLevel == 0)
                   g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
                      sensorDataType cycleNum profNum phaseNum];
@@ -324,7 +329,7 @@ for idMes = 1:size(tabSensors, 1)
                
                o_cyProfPhaseList = [o_cyProfPhaseList; ...
                   packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
-
+               
             case {1}
                % CTD (stDev & median)
                
@@ -334,7 +339,7 @@ for idMes = 1:size(tabSensors, 1)
                tabNbBits = [16 8 8 32 repmat([16 8 8 16 16 16], 1, 13)];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -353,11 +358,11 @@ for idMes = 1:size(tabSensors, 1)
                      sensorDataType cycleNum profNum phaseNum];
                   continue;
                end
-                              
+               
                measDate = ones(1, 13)*g_decArgo_dateDef;
                measDate(1) = epoch2000_2_julian(values(4));
                measDateTrans = zeros(1, 13);
-
+               
                measPresMean = [];
                measTempStd = [];
                measSalStd = [];
@@ -375,7 +380,7 @@ for idMes = 1:size(tabSensors, 1)
                measDateTrans(1) = 1;
                measDateTrans(find((measPresMean == 0) & (measTempStd == 0) & (measSalStd == 0) & ...
                   (measPresMed == 0) & (measTempMed == 0) & (measSalMed == 0))) = -1;
-
+               
                o_dataCTDStdMedDate = [o_dataCTDStdMedDate; [cycleNum profNum phaseNum measDate]];
                o_dataCTDStdMedDateTrans = [o_dataCTDStdMedDate; [cycleNum profNum phaseNum measDateTrans]];
                o_dataCTDStdMedPresMean  = [o_dataCTDStdMedPresMean; [cycleNum profNum phaseNum measPresMean]];
@@ -387,17 +392,17 @@ for idMes = 1:size(tabSensors, 1)
                
                o_cyProfPhaseList = [o_cyProfPhaseList; ...
                   packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
-
+               
             case {3}
                % OXYGEN (mean)
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
                tabNbBits = [16 8 8 32 repmat([16 32 32 16], 1, 10) 80];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -420,7 +425,7 @@ for idMes = 1:size(tabSensors, 1)
                measDate = ones(1, 10)*g_decArgo_dateDef;
                measDate(1) = epoch2000_2_julian(values(4));
                measDateTrans = zeros(1, 10);
-
+               
                measPres = [];
                measC1Phase = [];
                measC2Phase = [];
@@ -443,17 +448,17 @@ for idMes = 1:size(tabSensors, 1)
                
                o_cyProfPhaseList = [o_cyProfPhaseList; ...
                   packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
-
+               
             case {4}
                % OXYGEN (stDev & median)
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
                tabNbBits = [16 8 8 32 repmat([16 16 16 8 32 32 16], 1, 7) 88];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -472,11 +477,11 @@ for idMes = 1:size(tabSensors, 1)
                      sensorDataType cycleNum profNum phaseNum];
                   continue;
                end
-                              
+               
                measDate = ones(1, 7)*g_decArgo_dateDef;
                measDate(1) = epoch2000_2_julian(values(4));
                measDateTrans = zeros(1, 7);
-
+               
                measPresMean = [];
                measC1PhaseStd = [];
                measC2PhaseStd = [];
@@ -497,7 +502,7 @@ for idMes = 1:size(tabSensors, 1)
                measDateTrans(find((measPresMean == 0) & (measC1PhaseStd == 0) & ...
                   (measC2PhaseStd == 0) & (measTempStd == 0) & ...
                   (measC1PhaseMed == 0) & (measC2PhaseMed == 0) & (measTempMed == 0))) = -1;
-
+               
                o_dataOXYStdMedDate = [o_dataOXYStdMedDate; [cycleNum profNum phaseNum measDate]];
                o_dataOXYStdMedDateTrans = [o_dataOXYStdMedDateTrans; [cycleNum profNum phaseNum measDateTrans]];
                o_dataOXYStdMedPresMean  = [o_dataOXYStdMedPresMean; [cycleNum profNum phaseNum measPresMean]];
@@ -510,17 +515,17 @@ for idMes = 1:size(tabSensors, 1)
                
                o_cyProfPhaseList = [o_cyProfPhaseList; ...
                   packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
-
+               
             case {6}
                % FLBB (mean)
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
                tabNbBits = [16 8 8 32 repmat([16 16 16], 1, 21) 32];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -539,11 +544,11 @@ for idMes = 1:size(tabSensors, 1)
                      sensorDataType cycleNum profNum phaseNum];
                   continue;
                end
-                              
+               
                measDate = ones(1, 21)*g_decArgo_dateDef;
                measDate(1) = epoch2000_2_julian(values(4));
                measDateTrans = zeros(1, 21);
-
+               
                measPres = [];
                measChloroA = [];
                measBackscat = [];
@@ -563,17 +568,17 @@ for idMes = 1:size(tabSensors, 1)
                
                o_cyProfPhaseList = [o_cyProfPhaseList; ...
                   packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
-
+               
             case {7}
                % FLBB (stDev & median)
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
                tabNbBits = [16 8 8 32 repmat([16 8 8 16 16], 1, 16) 16];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
-
+               
                % decode and store data values
                cycleNum = values(1);
                profNum = values(2);
@@ -592,11 +597,11 @@ for idMes = 1:size(tabSensors, 1)
                      sensorDataType cycleNum profNum phaseNum];
                   continue;
                end
-                              
+               
                measDate = ones(1, 16)*g_decArgo_dateDef;
                measDate(1) = epoch2000_2_julian(values(4));
                measDateTrans = zeros(1, 16);
-
+               
                measPresMean = [];
                measChloroAStd = [];
                measBackscatStd = [];
@@ -612,7 +617,7 @@ for idMes = 1:size(tabSensors, 1)
                measDateTrans(1) = 1;
                measDateTrans(find((measPresMean == 0) & (measChloroAStd == 0) & ...
                   (measBackscatStd == 0) & (measChloroAMed == 0) & (measBackscatMed == 0))) = -1;
-
+               
                o_dataFLBBStdMedDate = [o_dataFLBBStdMedDate; [cycleNum profNum phaseNum measDate]];
                o_dataFLBBStdMedDateTrans = [o_dataFLBBStdMedDateTrans; [cycleNum profNum phaseNum measDateTrans]];
                o_dataFLBBStdMedPresMean  = [o_dataFLBBStdMedPresMean; [cycleNum profNum phaseNum measPresMean]];
@@ -630,7 +635,7 @@ for idMes = 1:size(tabSensors, 1)
                   g_decArgo_cycleNum, ...
                   sensorDataType);
          end
-
+         
       case 250
          % sensor tech data
          
@@ -647,7 +652,7 @@ for idMes = 1:size(tabSensors, 1)
          tabNbBits = [16 repmat([8], 1, 16) 400];
          % get item bits
          values = get_bits(firstBit, tabNbBits, msgData);
-
+         
          % decode and store data values
          cycleNum = values(1);
          profNum = values(2);
@@ -667,7 +672,7 @@ for idMes = 1:size(tabSensors, 1)
          nbMeasAscZ5 = values(16);
          sensorState = values(17);
          g_decArgo_cycleNum = cycleNum;
-                  
+         
          if (profNum > 9)
             fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent profile number (#%d) => ignoring packet data\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -677,7 +682,7 @@ for idMes = 1:size(tabSensors, 1)
          
          % sensor type
          sensorType = tabSensors(idMes, 2);
-
+         
          if (a_procLevel == 0)
             g_decArgo_250TypeReceivedData = [g_decArgo_250TypeReceivedData; ...
                sensorType cycleNum profNum nbPackDesc nbPackDrift nbPackAsc];
@@ -695,15 +700,15 @@ for idMes = 1:size(tabSensors, 1)
          
          o_cyProfPhaseList = [o_cyProfPhaseList; ...
             250 sensorType cycleNum profNum -1 sbdFileDate];
-
+         
          % message data frame
          msgData = tabSensors(idMes, 21:end);
-
+         
          switch (sensorType)
-
+            
             case 0
                % CTD
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
@@ -716,7 +721,7 @@ for idMes = 1:size(tabSensors, 1)
                measSubPres = typecast(uint32(swapbytes(uint32(values(2)))), 'single');
                measTempPres = typecast(uint32(swapbytes(uint32(values(3)))), 'single');
                measSalPres = typecast(uint32(swapbytes(uint32(values(4)))), 'single');
-         
+               
                o_sensorTechCTDNbPackDesc = [o_sensorTechCTDNbPackDesc; cycleNum profNum nbPackDesc];
                o_sensorTechCTDNbPackDrift = [o_sensorTechCTDNbPackDrift; cycleNum profNum nbPackDrift];
                o_sensorTechCTDNbPackAsc = [o_sensorTechCTDNbPackAsc; cycleNum profNum nbPackAsc];
@@ -755,10 +760,10 @@ for idMes = 1:size(tabSensors, 1)
                o_sensorTechOPTODENbMeasAscZ4 = [o_sensorTechOPTODENbMeasAscZ4; cycleNum profNum nbMeasAscZ4];
                o_sensorTechOPTODENbMeasAscZ5 = [o_sensorTechOPTODENbMeasAscZ5; cycleNum profNum nbMeasAscZ5];
                o_sensorTechOPTODESensorState = [o_sensorTechOPTODESensorState; cycleNum profNum sensorState];
-
+               
             case 4
                % FLBB
-
+               
                % first item bit number
                firstBit = 1;
                % item bit lengths
@@ -772,7 +777,7 @@ for idMes = 1:size(tabSensors, 1)
                measCoefDarkCountChloroA = swapbytes(uint16(values(3)));
                measCoefScaleFactBackscat = typecast(uint32(swapbytes(uint32(values(4)))), 'single');
                measCoefDarkCountBackscat = swapbytes(uint16(values(5)));
-
+               
                o_sensorTechFLBBNbPackDesc = [o_sensorTechFLBBNbPackDesc; cycleNum profNum nbPackDesc];
                o_sensorTechFLBBNbPackDrift = [o_sensorTechFLBBNbPackDrift; cycleNum profNum nbPackDrift];
                o_sensorTechFLBBNbPackAsc = [o_sensorTechFLBBNbPackAsc; cycleNum profNum nbPackAsc];
@@ -804,20 +809,28 @@ for idMes = 1:size(tabSensors, 1)
       case 251
          % sensor parameter
          
+         if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+            if (isempty(g_decArgo_251TypeReceivedData))
+               g_decArgo_251TypeReceivedData = 1;
+            else
+               g_decArgo_251TypeReceivedData = g_decArgo_251TypeReceivedData + 1;
+            end
+         end
+         
          if ((a_procLevel == 0) || (a_procLevel == 1))
             continue;
          end
          
          % message data frame
          msgData = tabSensors(idMes, 2:end);
-
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
          tabNbBits = [repmat([8 8 8 32 32], 1, 12) 56];
          % get item bits
          values = get_bits(firstBit, tabNbBits, msgData);
-
+         
          % decode and store data values
          measModSensorNum = [];
          measParamType = [];
@@ -831,7 +844,7 @@ for idMes = 1:size(tabSensors, 1)
             measOldVal = [measOldVal typecast(uint32(values(5*(idBin-1)+4)), 'single')];
             measNewVal = [measNewVal typecast(uint32(values(5*(idBin-1)+5)), 'single')];
          end
-
+         
          % try to identify 'bad' reported sensor modification
          data = [measModSensorNum' measParamType' measParamNum' measOldVal' measNewVal'];
          idDel = find((data(:, 1) == 0) & (data(:, 2) == 0) & (data(:, 3) == 0) & ...
@@ -862,17 +875,47 @@ for idMes = 1:size(tabSensors, 1)
          % update float configuration
          update_float_config_ir_rudics_105_to_110_112_sbd2(251, sbdFileDate, ...
             [measModSensorNum' measParamType' measParamNum' measOldVal' measNewVal']);
-
+         
       case 252
          % float pressure data
-
+         
+         if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+            % message data frame
+            msgData = tabSensors(idMes, 2:end);
+            
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [16 repmat([4 4 8 8 16], 1, 27) 16];
+            % get item bits
+            values = get_bits(firstBit, tabNbBits, msgData);
+            
+            % decode and store data values
+            cycleNum = values(1);
+            
+            for idBin = 1:27
+               profNum = values(5*(idBin-1)+3);
+               phaseNum = values(5*(idBin-1)+2);
+               pumpOrEv = values(5*(idBin-1)+4);
+               actPres = values(5*(idBin-1)+5);
+               time = values(5*(idBin-1)+6);
+               
+               if ((profNum == 0) && (phaseNum == 0) && (pumpOrEv == 0) && (actPres == 0) && (time == 0))
+                  continue;
+               end
+               
+               g_decArgo_252TypeReceivedData = [g_decArgo_252TypeReceivedData; ...
+                  cycleNum profNum phaseNum];
+            end
+         end
+         
          if ((a_procLevel == 0) || (a_procLevel == 2))
             continue;
          end
          
          % message data frame
          msgData = tabSensors(idMes, 2:end);
-
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -883,7 +926,7 @@ for idMes = 1:size(tabSensors, 1)
          % decode and store data values
          cycleNum = values(1);
          g_decArgo_cycleNum = cycleNum;
-                        
+         
          for idBin = 1:27
             profNum = values(5*(idBin-1)+3);
             phaseNum = values(5*(idBin-1)+2);
@@ -901,21 +944,21 @@ for idMes = 1:size(tabSensors, 1)
                [cycleNum profNum phaseNum actPres]];
             o_floatPresTime = [o_floatPresTime; ...
                [cycleNum profNum phaseNum time]];
-
+            
             o_cyProfPhaseList = [o_cyProfPhaseList; ...
                252 -1 cycleNum profNum phaseNum sbdFileDate];
          end
          
       case 253
          % float technical data
-
+         
          if (a_procLevel == 2)
             continue;
          end
          
          % message data frame
          msgData = tabSensors(idMes, 2:end);
-
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -941,7 +984,7 @@ for idMes = 1:size(tabSensors, 1)
                tabTech(9) tabTech(10) tabTech(13)];
             continue;
          end
-                  
+         
          % packet date
          packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
          
@@ -962,10 +1005,10 @@ for idMes = 1:size(tabSensors, 1)
             tabTech(74)/10000)/60);
          
          tabTech = [packJulD tabTech(7:80)' gpsLocLon gpsLocLat sbdFileDate];
-
+         
          % internal pressure in mbar
          tabTech(11) = tabTech(11)*5;
-
+         
          % some pressures are given in bars
          %          tabTech(26) = tabTech(26)*10;
          %          tabTech(27) = tabTech(27)*10;
@@ -976,22 +1019,37 @@ for idMes = 1:size(tabSensors, 1)
          %          tabTech(46) = tabTech(46)*10;
          %          tabTech(53) = tabTech(53)*10;
          %          tabTech(58) = tabTech(58)*10;
-
+         
          o_tabTech = [o_tabTech; tabTech];
          
          o_cyProfPhaseList = [o_cyProfPhaseList; ...
             253 -1 tabTech(4) tabTech(5) tabTech(8) sbdFileDate];
-
+         
       case 254
          % float prog technical data
-
+         
+         if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+            % message data frame
+            msgData = tabSensors(idMes, 2:end);
+            
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [repmat([8], 1, 6) 16 8 repmat([16], 1, 28) 592];
+            % get item bits
+            values = get_bits(firstBit, tabNbBits, msgData);
+            
+            g_decArgo_254TypeReceivedData = [g_decArgo_254TypeReceivedData; ...
+               values(7) values(8)];
+         end
+         
          if (a_procLevel == 1)
             continue;
          end
          
          % message data frame
          msgData = tabSensors(idMes, 2:end);
-
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -1038,23 +1096,40 @@ for idMes = 1:size(tabSensors, 1)
          
          % update float configuration
          update_float_config_ir_rudics_105_to_110_112_sbd2(254, packJulD, values(7:36));
-
+         
       case 255
          % float prog param data
-
+         
+         if ((g_decArgo_needFullBufferInfo == 1) && (a_procLevel == 0))
+            % message data frame
+            msgData = tabSensors(idMes, 2:end);
+            
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [repmat([8], 1, 6) 16 8 8 16 8 repmat([16 8 8 8], 1, 5) ...
+               8 16 8 repmat([8 8 16 16 8], 1, 10) 216];
+            
+            % get item bits
+            values = get_bits(firstBit, tabNbBits, msgData);
+            
+            g_decArgo_255TypeReceivedData = [g_decArgo_255TypeReceivedData; ...
+               values(7) values(8)];
+         end
+         
          if (a_procLevel == 1)
             continue;
          end
          
          % message data frame
          msgData = tabSensors(idMes, 2:end);
-
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
          tabNbBits = [repmat([8], 1, 6) 16 8 8 16 8 repmat([16 8 8 8], 1, 5) ...
             8 16 8 repmat([8 8 16 16 8], 1, 10) 216];
-
+         
          % get item bits
          values = get_bits(firstBit, tabNbBits, msgData);
          
@@ -1086,14 +1161,14 @@ for idMes = 1:size(tabSensors, 1)
          
          % update float configuration
          update_float_config_ir_rudics_105_to_110_112_sbd2(255, packJulD, values(7:84));
-
+         
       otherwise
          fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for packet type #%d\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNum, ...
             packType);
    end
-
+   
 end
 
 

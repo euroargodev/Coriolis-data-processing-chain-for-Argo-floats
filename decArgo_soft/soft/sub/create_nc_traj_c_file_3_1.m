@@ -1512,7 +1512,7 @@ for idNM = 1:length(a_tabTrajNMeas)
             if (adjustedCycle == 1)
                
                % process RT PRES adjustment of this parameter
-               if (~isempty(meas.paramDataAdj))
+               if (~isempty(meas.paramDataAdj) && (meas.paramDataAdj(:, idParam) ~= measParam.fillValue))
                   paramAdjData = meas.paramDataAdj(:, idParam);
                else
                   paramAdjData = paramData; % only duplicate parameter values

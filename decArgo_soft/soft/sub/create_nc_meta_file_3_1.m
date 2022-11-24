@@ -573,7 +573,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);      
 
-   case {121, 122, 123}
+   case {121, 122, 123, 124}
       
       % CTS5 floats
       
@@ -1083,7 +1083,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1321, 1322}
+   case {1121, 1321, 1322}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);

@@ -2,12 +2,13 @@
 % Create the final configuration that will be used in the meta.nc file.
 %
 % SYNTAX :
-%  [o_ncConfig] = create_output_float_config_ir_rudics_cts5
+%  [o_ncConfig] = create_output_float_config_ir_rudics_cts5(a_decoderId)
 %
 % INPUT PARAMETERS :
+%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
-% o_ncConfig : NetCDF configuration
+%   o_ncConfig : NetCDF configuration
 %
 % EXAMPLES :
 %
@@ -17,14 +18,14 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncConfig] = create_output_float_config_ir_rudics_cts5
+function [o_ncConfig] = create_output_float_config_ir_rudics_cts5(a_decoderId)
 
 % output parameters initialization
 o_ncConfig = [];
 
 
 % create the configuration parameter names for the META NetCDF file
-[decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_rudics_cts5;
+[decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_rudics_cts5(a_decoderId);
 
 % create output float configuration
 [o_ncConfig] = create_output_float_config(decArgoConfParamNames, ncConfParamNames);
@@ -110,19 +111,115 @@ inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
 
 % for PATTERN_XX parameters, duplicate P0 to P7 values of the relevent pattern
 % to PATTERN_01
-
+% BE CAREFUL! This may create additionnal configurations (when cycles with
+% different patterns share the same configuration, we should create a new
+% one for each pattern - in fact create a temporary new one and check if it
+% doesn't already exist)
 uUsedPtn = unique(inputUsedProf(find(inputUsedProf > 1)));
-for idProf = 1:length(uUsedPtn)
-   ptnNum = uUsedPtn(idProf);
-   profId  = find(inputUsedProf == ptnNum);
-   confNum = unique(inputUsedConfNum(profId));
-   for paramNum = 0:7
-      inputConfName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
-      inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
-      outputConfName = sprintf('CONFIG_APMT_PATTERN_01_P%02d', paramNum);
-      outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
-      finalConfigValue(outputConfid, confNum+1) = finalConfigValue(inputConfid, confNum+1);
+if (~isempty(uUsedPtn))
+   
+   % create the list of configuration parameters to be ignored when looking
+   % for an existing configuration
+   % i.e. PATTERN_02 to PATTERN_10 configuration parameters
+   confParamIdToIgnore = [];
+   for ptnNum = 2:10
+      for paramNum = 0:7
+         confName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
+         confId = find(strcmp(confName, finalConfigName), 1);
+         confParamIdToIgnore = [confParamIdToIgnore; confId];
+      end
    end
+   
+   % process all PATTERN_XX with XX > 1
+   for idPtn = 1:length(uUsedPtn)
+      ptnNum = uUsedPtn(idPtn);
+      confIdForPtn  = find(inputUsedProf == ptnNum);
+      for idConf = 1:length(confIdForPtn)
+         confNum = inputUsedConfNum(confIdForPtn(idConf));
+         newConfValue = finalConfigValue(:, confNum+1);
+         for paramNum = 0:7
+            inputConfName = sprintf('CONFIG_APMT_PATTERN_%02d_P%02d', ptnNum, paramNum);
+            inputConfid = find(strcmp(inputConfName, finalConfigName), 1);
+            outputConfName = sprintf('CONFIG_APMT_PATTERN_01_P%02d', paramNum);
+            outputConfid = find(strcmp(outputConfName, finalConfigName), 1);
+            newConfValue(outputConfid) = newConfValue(inputConfid);
+         end
+         
+         % look for the current configurations in existing ones
+         [configNum] = config_exists_ir_rudics_sbd2( ...
+            newConfValue, ...
+            finalConfigNum, ...
+            finalConfigValue, ...
+            confParamIdToIgnore);
+         
+         % if configNum == -1 the new configuration doesn't exist
+         % if configNum == 0 the new configuration is identical to launch
+         % configuration, we create a new one however so that the launch
+         % configuration should never be referenced in the prof and traj
+         % data
+         
+         if ((configNum == -1) || (configNum == 0))
+            
+            % create a new config
+            
+            g_decArgo_floatConfig.DYNAMIC.NUMBER(end+1) = ...
+               max(g_decArgo_floatConfig.DYNAMIC.NUMBER) + 1;
+            g_decArgo_floatConfig.DYNAMIC.VALUES(:, end+1) = newConfValue;
+            configNum = g_decArgo_floatConfig.DYNAMIC.NUMBER(end);
+            
+            finalConfigNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
+            finalConfigValue = g_decArgo_floatConfig.DYNAMIC.VALUES;
+         end
+         
+         % assign the config to the cycle and profile
+         g_decArgo_floatConfig.USE.CONFIG(confIdForPtn(idConf)) = configNum;
+         
+         inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
+      end
+   end
+   
+   %    create_csv_to_print_config_ir_rudics_cts5('createOutputBefore_', 1, g_decArgo_floatConfig);
+
+   % sort configuration and remove unused ones
+   error = 0;
+   finalConfigValueBis = finalConfigValue(:, 1); % initiliazed with launch config
+   usedConfNumBis = [];
+   confNumOldDone = [];
+   confNumNewDone = [];
+   cyNumList = unique(inputUsedCyOut);
+   for idCy = 1:length(cyNumList)
+      idForCy = find(inputUsedCyOut == cyNumList(idCy));
+      confNum = unique(inputUsedConfNum(idForCy));
+      if (length(confNum) > 1)
+         error = 1;
+         fprintf('ERROR: Float #%d: %d configurations for the same cycle number (#%d)\n', ...
+            g_decArgo_floatNum, ...
+            length(confNum), cyNumList(idCy));
+         break;
+      end
+      if (any(confNumOldDone == confNum))
+         idF = find(confNumOldDone == confNum, 1);
+         usedConfNumBis = [usedConfNumBis repmat(confNumNewDone(idF), 1, length(idForCy))];
+      else
+         idForConf = find(finalConfigNum == confNum, 1);
+         finalConfigValueBis = cat(2, finalConfigValueBis, finalConfigValue(:, idForConf));
+         usedConfNumBis = [usedConfNumBis repmat(size(finalConfigValueBis, 2)-1, 1, length(idForCy))];
+         
+         confNumOldDone = [confNumOldDone confNum];
+         confNumNewDone = [confNumNewDone usedConfNumBis(end)];
+      end
+   end
+   if (~error)
+      g_decArgo_floatConfig.DYNAMIC.NUMBER = 0:(size(finalConfigValueBis, 2)-1);
+      g_decArgo_floatConfig.DYNAMIC.VALUES = finalConfigValueBis;
+      g_decArgo_floatConfig.USE.CONFIG = usedConfNumBis;
+      
+      finalConfigNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
+      finalConfigValue = g_decArgo_floatConfig.DYNAMIC.VALUES;
+      inputUsedConfNum = g_decArgo_floatConfig.USE.CONFIG;
+   end
+   
+   %    create_csv_to_print_config_ir_rudics_cts5('createOutputAfter_', 1, g_decArgo_floatConfig);
 end
 
 % if CONFIG_APMT_PATTERN_01_P07 == 0 set CONFIG_APMT_PATTERN_01_P04 to Nan

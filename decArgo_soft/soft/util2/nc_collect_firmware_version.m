@@ -19,7 +19,7 @@
 function nc_collect_firmware_version(varargin)
 
 % top directory of input NetCDF mono-profile files
-DIR_INPUT_NC_FILES = 'E:\archive_201510\201510-ArgoData\DATA\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\201809-ArgoData\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

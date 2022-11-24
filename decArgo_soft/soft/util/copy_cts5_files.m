@@ -202,6 +202,12 @@ for idFloat = 1:nbFloats
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
             fprintf('MISC: %s => not used\n', delFile(idF).name);
          end
+         
+      case 6902829
+         % file 3aa9_system_00116.hex should not be kept
+         delFile = dir([floatOutputDirName '/3aa9_system_00116_*.hex']);
+         move_file([floatOutputDirName '/' delFile.name], unusedDirName);
+         fprintf('MISC: %s => not used\n', delFile.name);
    end
 end
 

@@ -103,7 +103,9 @@ if (~isempty(idF))
          idFCy = find(inputUsedCy == cyNum);
          if (isempty(idFCy))
             if (cyNum > 0)
-               idFCyPrev = find(inputUsedCy == cyNum-1);
+               idFCyPrev = find(inputUsedCy <= cyNum-1, 1, 'last');
+               cyNumPrev = inputUsedCy(idFCyPrev);
+               idFCyPrev = find(inputUsedCy == cyNumPrev);
                idFCyProfPrev = idFCyPrev(find(inputUsedProf(idFCyPrev) == max(inputUsedProf(idFCyPrev))));
                
                inputUsedCy(end+1) = cyNum;

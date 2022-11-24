@@ -374,7 +374,7 @@ if ~(isempty(setdiff(sort({a_profLrStruct.paramList.name}), sort({a_profHrStruct
                end
             end
             concatProf.paramList = concatParamlist;
-            concatProf.data = repmat(concatParamFillValue, size(a_profLrStruct.data, 1)+size(a_profNsStruct.data, 1), 1);
+            concatProf.data = repmat(double(concatParamFillValue), size(a_profLrStruct.data, 1)+size(a_profNsStruct.data, 1), 1);
             concatProf.dataAdj = concatProf.data;
             
             % concatenate profile data

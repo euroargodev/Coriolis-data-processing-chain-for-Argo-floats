@@ -54,11 +54,14 @@ switch (a_floatTransType)
       
       switch (a_decoderId)
          
-         case {105, 106, 107, 109, 110, 111, 112, 121, 122, 123} % NKE CTS4 and CTS5 floats
+         case {105, 106, 107, 109, 110, 111, 112, 121, 122, 123, 124} % NKE CTS4 and CTS5 floats
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
          case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201, 1314} % Apex Ir Rudics & navis floats
+            o_profJuldRes = double(1/86400); % 1 second
+            
+         case {1121} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
          otherwise
@@ -85,7 +88,7 @@ switch (a_floatTransType)
          case {1314} % Apex Ir Sbd
             o_profJuldRes = double(1/86400); % 1 second
             
-         case {1321, 1322} % Apex PF11 Ir
+         case {1321, 1322} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
          case {2001, 2002}

@@ -50,7 +50,7 @@ finalConfigName(idDel) = [];
 finalConfigValue(idDel, :) = [];
 
 % APF11 floats
-if (ismember(a_decoderId, [1321 1322]))
+if (ismember(a_decoderId, [1121 1321 1322]))
    
    % convert CONFIG_AR_AscentRate from dbar/s to mm/s
    idF1 = find(strcmp(finalConfigName, 'CONFIG_AR_AscentRate'));
@@ -73,11 +73,7 @@ if (ismember(a_decoderId, [1321 1322]))
    end
    
    % create sensor list
-   if (a_decoderId == 1321)
-      sensorList = {'CTD'};
-   else
-      sensorList = get_sensor_list_apex_apf11(g_decArgo_floatNum);
-   end
+   sensorList = get_sensor_list_apex_apf11(g_decArgo_floatNum);
    sensorListConfig = [];
    for idS = 1:length(sensorList)
       switch (sensorList{idS})
@@ -95,6 +91,7 @@ if (ismember(a_decoderId, [1321 1322]))
    end
    
    sensorList = [ ...
+      {'PT'} {'Ctd'}; ...
       {'PTS'} {'Ctd'}; ...
       {'CTD'} {'Ctd'}; ...
       {'PTSH'} {'Ph'}; ...
@@ -117,7 +114,7 @@ if (~isempty(a_decArgoConfParamNames))
       else
          
          % Apex APF11 floats
-         if (ismember(a_decoderId, [1321 1322]))
+         if (ismember(a_decoderId, [1121 1321 1322]))
             if (ismember(finalConfigName{idConfParam}(1:idFUs(2)-1), ['CONFIG_SAMPLE' 'CONFIG_PROFILE' 'CONFIG_MEASURE']))
 
                % retrieve phase name

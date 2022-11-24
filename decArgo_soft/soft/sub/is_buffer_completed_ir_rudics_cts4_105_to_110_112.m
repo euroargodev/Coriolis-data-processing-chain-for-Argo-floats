@@ -107,7 +107,7 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseDsc2Prof)));
          if (isempty(id0SensorCycleProfDesc) && (nbTransDesc >0))
             return;
-         elseif (length(id0SensorCycleProfDesc) ~= nbTransDesc)
+         elseif (rem(length(id0SensorCycleProfDesc), 256) ~= nbTransDesc)
             return;
          end
          id0SensorCycleProfDrift = find( ...
@@ -118,7 +118,7 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseProfDrift)));
          if (isempty(id0SensorCycleProfDrift) && (nbTransDrift >0))
             return;
-         elseif (length(id0SensorCycleProfDrift) ~= nbTransDrift)
+         elseif (rem(length(id0SensorCycleProfDrift), 256) ~= nbTransDrift)
             return;
          end
          id0SensorCycleProfAsc = find( ...
@@ -128,7 +128,7 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
             (zeroTypeReceivedData(:, 4) == g_decArgo_phaseAscProf));
          if (isempty(id0SensorCycleProfAsc) && (nbTransAsc >0))
             return;
-         elseif (length(id0SensorCycleProfAsc) ~= nbTransAsc)
+         elseif (rem(length(id0SensorCycleProfAsc), 256) ~= nbTransAsc)
             return;
          end
          

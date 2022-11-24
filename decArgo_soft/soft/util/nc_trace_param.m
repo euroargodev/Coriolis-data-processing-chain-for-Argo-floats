@@ -58,6 +58,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\201809-ArgoData\coriolis';
 % g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_Apx_Ir_REF\';
 % g_NTP_NC_DIR = 'C:\Users\jprannou\Desktop\ftp\';
 
@@ -116,6 +117,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_ar
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

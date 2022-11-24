@@ -35,7 +35,7 @@ logData = textscan(fId, '%s');
 logData = logData{:};
 fclose(fId);
 
-ptn = sprintf('%04d/%04d_', str2double(a_floatRudicsId), str2double(a_floatRudicsId));
+ptn = sprintf('%s/%s', a_floatRudicsId, a_floatRudicsId);
 for idL = 1:length(logData)
    line = logData{idL};
    % we are looking for lines with the pattern: floatRudicsId/floatRudicsId_*

@@ -36,7 +36,7 @@ global g_decArgo_dateDef;
 % code order
 if (~isempty(o_tabTrajNMeas))
    
-   apexApf11IrDecoderIdList = [1321 1322];
+   apexApf11IrDecoderIdList = [1121 1321 1322];
    if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
       
       mcOrderList = get_mc_order_list(a_decoderId);

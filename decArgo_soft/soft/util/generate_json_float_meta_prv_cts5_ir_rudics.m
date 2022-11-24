@@ -21,25 +21,19 @@
 function generate_json_float_meta_prv_cts5_ir_rudics
 
 % meta-data file exported from Coriolis data base
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_CTS5_lot3_from_VB_20170912.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DB_export_pH_Float.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 
 % list of concerned floats
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_lot3.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_lot4_PH.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_CTS5_7.04.txt';
 
 % calibration coefficient file decoded from data
-CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of launch configuration for each float
-CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\ConfigAtLaunch\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\ConfigAtLaunch\';
 
 % directory of SUNA calibration files
-SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\meta_CTS5_www\suna_calibration_file\';
+SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\meta_CTS5_www\suna_calibration_file\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];

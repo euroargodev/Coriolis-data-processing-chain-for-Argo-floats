@@ -99,10 +99,22 @@ elseif (~isempty(a_ptnNum) && (a_ptnNum == 0))
       end
    end
    
+   % look for a possible reset of the float during its mission
+   if (a_cyNum > a_firstCycle)
+      pattern1 = [a_filePrefix sprintf('_%03d_autotest_', a_cyNum)];
+      % if the float has been reset at sea the apmt.ini file (with a_ptnNum=0)
+      % is not in the SYSTEM files
+      if (any(strncmp(o_expectedFileList, pattern1, length(pattern1))))
+         o_expectedFileList = [o_expectedFileList [a_filePrefix sprintf('_%03d_%02d_apmt.ini', a_cyNum, a_ptnNum)]];
+         o_expectedFileList = [o_expectedFileList [a_filePrefix sprintf('_%03d_%02d_payload.xml', a_cyNum, a_ptnNum)]];
+      end
+   end
+      
    pattern = [a_filePrefix sprintf('_%03d_%02d_', a_cyNum, a_ptnNum)];
    idF2 = find(strncmp(o_expectedFileList, pattern, length(pattern)));
    o_expectedFileList = o_expectedFileList(idF2);
    
+   % first cycle
    if (a_cyNum == a_firstCycle)
       o_expectedFileList = [o_expectedFileList [a_filePrefix sprintf('_%03d_%02d_apmt.ini', a_cyNum, a_ptnNum)]];
       %       o_expectedFileList = [o_expectedFileList [a_filePrefix

@@ -215,7 +215,7 @@ if (~isempty(g_decArgo_253TypeReceivedData) && ...
          end
          if (isempty(id0SensorCycleProfDesc) && (nbTransDesc >0))
             return;
-         elseif (length(id0SensorCycleProfDesc) ~= nbTransDesc)
+         elseif (rem(length(id0SensorCycleProfDesc), 256) ~= nbTransDesc)
             return;
          end
          % for drift phase
@@ -230,7 +230,7 @@ if (~isempty(g_decArgo_253TypeReceivedData) && ...
          end
          if (isempty(id0SensorCycleProfDrift) && (nbTransDrift >0))
             return;
-         elseif (length(id0SensorCycleProfDrift) ~= nbTransDrift)
+         elseif (rem(length(id0SensorCycleProfDrift), 256) ~= nbTransDrift)
             return;
          end
          % for ascent profile phase
@@ -244,7 +244,7 @@ if (~isempty(g_decArgo_253TypeReceivedData) && ...
          end
          if (isempty(id0SensorCycleProfAsc) && (nbTransAsc >0))
             return;
-         elseif (length(id0SensorCycleProfAsc) ~= nbTransAsc)
+         elseif (rem(length(id0SensorCycleProfAsc), 256) ~= nbTransAsc)
             return;
          end
       end

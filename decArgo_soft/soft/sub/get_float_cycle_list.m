@@ -46,8 +46,14 @@ elseif (g_decArgo_floatTransType == 2)
    
    if ((a_decoderId > 1000) && (a_decoderId < 2000))
       % Apex Iridium RUDICS floats
-      [o_cycleList, ~] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, str2num(char(a_floatArgosIridiumId)));
-   elseif (~ismember(a_decoderId, [121 122 123]))
+      if (ismember(a_decoderId, [1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201]))
+         % Apex APF9 & Navis floats
+         [o_cycleList, ~] = get_float_cycle_list_iridium_rudics_apx_apf9_navis(a_floatNum, str2num(char(a_floatArgosIridiumId)));
+      else
+         % Apex APF11 floats
+         [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, char(a_floatArgosIridiumId));
+      end
+   elseif (~ismember(a_decoderId, [121 122 123 124]))
       % PROVOR CTS4 Iridium RUDICS floats
       [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
    else

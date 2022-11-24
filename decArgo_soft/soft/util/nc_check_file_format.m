@@ -22,6 +22,8 @@ function nc_check_file_format(varargin)
 % directory of the JAVA checker
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2017-12-18_spec_2018-07-10\';
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-08-06\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-10-09\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2018-07-16_v2.5.4_spec_2018-11-07\';
 
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\TRAJ_CHECKED\javaChecker\file_checker_exec_2017-03-13_beta_spec_2017-04-24\';
 

@@ -72,7 +72,7 @@ elseif (length(idF1) == 1)
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #1_%d; Float serial number; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech1(id, 2+ID_OFFSET), a_tabTech1(id, 4+ID_OFFSET));
    
-   if (a_deepCycle == 1)
+%    if (a_deepCycle == 1) % commented for 6902910 #12
       
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #1_%d; TECH: BUOYANCY REDUCTION\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech1(id, 2+ID_OFFSET));
@@ -169,7 +169,7 @@ elseif (length(idF1) == 1)
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech1(id, 2+ID_OFFSET), a_tabTech1(id, 39+ID_OFFSET), format_time_dec_argo(a_tabTech1(id, 39+ID_OFFSET)/60));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #1_%d; Pump nb actions during ascent to surface; %d\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech1(id, 2+ID_OFFSET), a_tabTech1(id, 40+ID_OFFSET));
-   end
+%    end
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #1_%d; TECH: GENERAL INFORMATION\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech1(id, 2+ID_OFFSET));

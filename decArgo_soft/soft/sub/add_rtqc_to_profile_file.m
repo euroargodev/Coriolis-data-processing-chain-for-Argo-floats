@@ -127,6 +127,9 @@
 %   09/24/2018 - RNU - V 3.6: TEST 63 (CHLA specific test): CHLA_ADJUSTED_QC
 %                             previously set by TEST 15 (grey list test)
 %                             are used to set final value of CHLA_ADJUSTED_QC
+%   11/06/2018 - RNU - V 3.7: TEST #6 (Global range test) and TEST #9
+%                             (Spike test) updated for PH_IN_SITU_TOTAL
+%                             parameter
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -158,7 +161,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.6';
+g_decArgo_addRtqcToProfileVersion = '3.7';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1908,6 +1911,7 @@ if (testFlagList(6) == 1)
             {'CHLA2'} ...
             {'BBP700'} ...
             {'BBP532'} ...
+            {'PH_IN_SITU_TOTAL'} ...
             ];
       else
          % adjusted data processing
@@ -1934,11 +1938,12 @@ if (testFlagList(6) == 1)
             {'CHLA2_ADJUSTED'} ...
             {'BBP700_ADJUSTED'} ...
             {'BBP532_ADJUSTED'} ...
+            {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
             ];
       end
       
-      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'}];
-      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}];
+      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'} {'7.3'}];
+      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}       {'8.5'}];
       
       for id = 1:length(paramTestList)
          
@@ -2245,9 +2250,10 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'DOXY2'} ...
                   {'CHLA'} ...
                   {'CHLA2'} ...
+                  {'PH_IN_SITU_TOTAL'} ...
                   ];
-               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''}];
-               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''}];
+               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''} {''}];
+               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''} {''}];
             else
                paramTestList = [ ...
                   {'TEMP'} ...
@@ -2287,9 +2293,10 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'DOXY2_ADJUSTED'} ...
                   {'CHLA_ADJUSTED'} ...
                   {'CHLA2_ADJUSTED'} ...
+                  {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
                   ];
-               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''}];
-               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''}];
+               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''} {''}];
+               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''} {''}];
             else
                paramTestList = [ ...
                   {'TEMP_ADJUSTED'} ...
@@ -2336,10 +2343,12 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                               testDoneListForTraj{testNum, idProf} = [testDoneListForTraj{testNum, idProf} idNoDef];
                               
                               idToFlag = [];
-                              if ((~strcmp(paramTestList{idP}, 'CHLA')) && ...
-                                    (~strcmp(paramTestList{idP}, 'CHLA_ADJUSTED')) && ...
-                                    (~strcmp(paramTestList{idP}, 'CHLA2')) && ...
-                                    (~strcmp(paramTestList{idP}, 'CHLA2_ADJUSTED')))
+                              if (~strcmp(paramTestList{idP}, 'CHLA') && ...
+                                    ~strcmp(paramTestList{idP}, 'CHLA_ADJUSTED') && ...
+                                    ~strcmp(paramTestList{idP}, 'CHLA2') && ...
+                                    ~strcmp(paramTestList{idP}, 'CHLA2_ADJUSTED') && ...
+                                    ~strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL') && ...
+                                    ~strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL_ADJUSTED'))
                                  
                                  % test for TEMP, TEMP_DOXY, PSAL and DOXY
                                  profPres = presData(idProf, :);
@@ -2379,7 +2388,9 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                        end
                                     end
                                  end
-                              else
+                                 
+                              elseif (strcmp(paramTestList{idP}, 'CHLA2') || ...
+                                    strcmp(paramTestList{idP}, 'CHLA2_ADJUSTED'))
                                  
                                  % spike test for CHLA
                                  profData = data(idProf, :);
@@ -2406,6 +2417,35 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                        percentile10 = sortedResProfData(idPct10);
                                        if (any(resProfData < 2*percentile10))
                                           idToFlag = [idToFlag idLevel(find(resProfData < 2*percentile10)) + 2];
+                                       end
+                                    end
+                                 end
+                                 
+                              elseif (strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL') || ...
+                                    strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL_ADJUSTED'))
+                                 
+                                 % spike test for PH_IN_SITU_TOTAL
+                                 profData = data(idProf, :);
+                                 profDataQc = dataQc(idProf, :);
+                                 idDefOrBad = find((profData == paramFillValue) | ...
+                                    (profDataQc == g_decArgo_qcStrCorrectable) | ...
+                                    (profDataQc == g_decArgo_qcStrBad));
+                                 idDefOrBad = [0 idDefOrBad length(profData)+1];
+                                 for idSlice = 1:length(idDefOrBad)-1
+                                    
+                                    % part of continuous measurements
+                                    idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+                                    
+                                    % apply the test
+                                    if (length(idLevel) > 4)
+                                       resProfData = ones(1, length(idLevel)-4)*paramFillValue;
+                                       idList = 3:length(idLevel)-2;
+                                       for id = 1:length(idList)
+                                          idL = idLevel(idList(id));
+                                          resProfData(id) = abs(profData(idL) - median(profData(idL-2:idL+2))) - 0.04*profData(idL);
+                                       end
+                                       if (any(resProfData > 0))
+                                          idToFlag = [idToFlag idLevel(find(resProfData > 0)) + 2];
                                        end
                                     end
                                  end

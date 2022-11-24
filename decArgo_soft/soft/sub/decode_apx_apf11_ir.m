@@ -93,12 +93,12 @@ if (~isempty(a_scienceLogFileList))
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {1321} % 2.10.1
+      case {1321, 1121} % 2.10.1, 2.10.4
          
          [o_miscInfoSci, o_techData, o_gpsDataSci, ...
             o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
             o_cycleTimeData] = ...
-            decode_science_log_apx_apf11_ir_1321(a_scienceLogFileList, o_cycleTimeData);
+            decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, o_cycleTimeData);
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          

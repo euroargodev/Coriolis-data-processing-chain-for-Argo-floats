@@ -593,7 +593,7 @@ if (~isempty(a_tabSensors))
                   end
                   measDateTrans(1) = 1;
                   measDateTrans(find((measPres == 0) & (measTemp == 0) & (measSal == 0))) = -1;
-                  
+                                    
                   if (sensorDataType == 0)
                      o_dataCTDMeanDate = [o_dataCTDMeanDate; [cycleNum profNum phaseNum measDate]];
                      o_dataCTDMeanDateTrans = [o_dataCTDMeanDateTrans; [cycleNum profNum phaseNum measDateTrans]];
@@ -731,7 +731,7 @@ if (~isempty(a_tabSensors))
                   end
                   measDateTrans(1) = 1;
                   measDateTrans(find((measPres == 0) & (measC1Phase == 0) & (measC2Phase == 0) & (measTemp == 0))) = -1;
-                  
+                                    
                   if (sensorDataType == 3)
                      o_dataOXYMeanDate = [o_dataOXYMeanDate; [cycleNum profNum phaseNum measDate]];
                      o_dataOXYMeanDateTrans = [o_dataOXYMeanDateTrans; [cycleNum profNum phaseNum measDateTrans]];

@@ -186,11 +186,18 @@ while (1)
    end
    
    if ((line(1) == '<') && (line(end) == '>'))
+      
       phase = line(2:end-1);
       if (~isfield(o_confData, phase))
          o_confData.(phase) = [];
       end
+      
    elseif (strncmpi(line, 'SAMPLE', length('SAMPLE')))
+      
+      sampType = 'SAMPLE';
+      if (~isfield(o_confData.(phase), sampType))
+         o_confData.(phase).(sampType) = [];
+      end
       
       % default values
       start = 2000;
@@ -212,8 +219,8 @@ while (1)
       end
       
       sensor = info{2};
-      if (~isfield(o_confData.(phase), sensor))
-         o_confData.(phase).(sensor) = [];
+      if (~isfield(o_confData.(phase).(sampType), sensor))
+         o_confData.(phase).(sampType).(sensor) = [];
       end
       
       if (length(info) >= 3)
@@ -229,9 +236,15 @@ while (1)
          count = str2num(info{6});
       end
       
-      o_confData.(phase).(sensor) = [o_confData.(phase).(sensor); ...
+      o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
          start stop interval count];
+      
    elseif (strncmpi(line, 'PROFILE', length('PROFILE')))
+      
+      sampType = 'PROFILE';
+      if (~isfield(o_confData.(phase), sampType))
+         o_confData.(phase).(sampType) = [];
+      end
       
       % default values
       start = 2000;
@@ -248,8 +261,13 @@ while (1)
       end
             
       sensor = info{2};
-      if (~isfield(o_confData.(phase), sensor))
-         o_confData.(phase).(sensor) = [];
+      if (strcmp(sensor, 'PTSH'))
+         sensor = 'PH';
+         bin_size = 1;
+         rate = -1;
+      end
+      if (~isfield(o_confData.(phase).(sampType), sensor))
+         o_confData.(phase).(sampType).(sensor) = [];
       end
       
       if (length(info) >= 3)
@@ -265,8 +283,38 @@ while (1)
          rate = str2num(info{6});
       end
       
-      o_confData.(phase).(sensor) = [o_confData.(phase).(sensor); ...
+      o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
          start stop bin_size rate];
+      
+   elseif (strncmpi(line, 'MEASURE', length('MEASURE')))
+      
+      sampType = 'MEASURE';
+      if (~isfield(o_confData.(phase), sampType))
+         o_confData.(phase).(sampType) = [];
+      end
+      
+      % default values
+      start = -1;
+      stop = -1;
+      interval = -1;
+      count = -1;
+      
+      info = textscan(line, '%s');
+      info = info{:};
+      
+      if (~strcmpi(info{1}, 'MEASURE'))
+         fprintf('ERROR: Inconsistent data line #%d of file: %s\n', lineNum, a_filePathName);
+         return;
+      end
+            
+      sensor = info{2};
+      if (~isfield(o_confData.(phase).(sampType), sensor))
+         o_confData.(phase).(sampType).(sensor) = [];
+      end
+            
+      o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
+         start stop interval count];
+      
    end
 end
 

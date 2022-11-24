@@ -292,7 +292,7 @@ if (REPROCESS == 1)
 end
 
 % retrieve RTC offset information from all existing log files
-[g_decArgo_clockOffset, cycleList] = get_clock_offset_apx_ir_sbd(a_floatNum, ...
+[g_decArgo_clockOffset, cycleList] = get_clock_offset_apx_ir_sbd_apf9(a_floatNum, ...
    a_floatImei, floatRudicsId, a_decoderId);
 
 if (g_decArgo_realtimeFlag == 1)

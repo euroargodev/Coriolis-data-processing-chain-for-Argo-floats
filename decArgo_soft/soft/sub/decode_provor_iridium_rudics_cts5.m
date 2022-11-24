@@ -678,7 +678,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = cut_ctd_profile_ir_rudics(o_tabProfiles);
    
    % create output float configuration
-   [o_structConfig] = create_output_float_config_ir_rudics_cts5;
+   [o_structConfig] = create_output_float_config_ir_rudics_cts5(a_decoderId);
 
    % add configuration number and output cycle number   
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
@@ -821,7 +821,7 @@ fileTypes = zeros(size(fileNames));
 for idF = 1:length(fileNames)
    fileName = fileNames{idF};
    if (~isempty(g_decArgo_patternNumFloat))
-      typeList = [1 4 5 6 7];
+      typeList = [1 4 5 6 7 9];
       for idType = typeList
          idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
          [val, count, errmsg, nextindex] = sscanf( ...
@@ -860,7 +860,7 @@ if (ismember(6, fileTypes) || ismember(7, fileTypes))
 end
 
 % the files should be processed in the following order
-typeOrderList = [2 3 4 6 7 5 1];
+typeOrderList = [2 3 4 6 7 5 9 1];
 % 2: the payload configuration can be anywhere in the list (because it is
 % decoded independantly through a recursive call)
 % 3, 4, 6, 7, 5: usual order i.e. tech first, data after and EOL at the end
@@ -909,7 +909,7 @@ for typeNum = typeOrderList
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                
                % read apmt configuration
-               apmtConfig = read_apmt_config([fileNameInfo{4} fileNameInfo{1}]);
+               apmtConfig = read_apmt_config([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
                
                % update current configuration
                update_float_config_ir_rudics_cts5('A', apmtConfig);
@@ -929,8 +929,9 @@ for typeNum = typeOrderList
                   print_config_in_csv_file_ir_rudics_cts5('Updated_config');
                end
                
-            case 2
+            case {2, 9}
                % '_payload*.txt'
+               % '*_payload*.xml'
                % payload configuration file
                
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));

@@ -4,7 +4,7 @@
 %
 % SYNTAX :
 %  generate_json_float_meta_apx_apf11_iridium_( ...
-%    a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName)
+%    a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName : meta-data file exported from Coriolis data base
@@ -12,6 +12,8 @@
 %   a_configDirName     : directory of float configuration at launch files
 %   a_outputDirName     : directory of individual json float meta-data files
 %   a_csvDirName        : directory to store the CSV file (when DB update is needed)
+%   a_rudicsFlag        : 1 if it is a RUDICS transmission, 0 for a SBD
+%                         transmission
 %
 % OUTPUT PARAMETERS :
 %
@@ -24,7 +26,7 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_apx_apf11_iridium_( ...
-   a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName)
+   a_floatMetaFileName, a_floatListFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -161,8 +163,10 @@ for idFloat = 1:length(floatList)
       end
    end
       
-   if (~isempty(metaStruct.IMEI) && (length(metaStruct.IMEI) >= 7))
-      metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+   if (a_rudicsFlag == 0)
+      if (~isempty(metaStruct.IMEI) && (length(metaStruct.IMEI) >= 7))
+         metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+      end
    end
    
    % multi dim data
@@ -615,7 +619,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1', '2.11.1'}
+   case {'2.10.1', '2.10.4', '2.11.1'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -698,7 +702,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1', '2.11.1'}
+   case {'2.10.1', '2.10.4', '2.11.1'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...

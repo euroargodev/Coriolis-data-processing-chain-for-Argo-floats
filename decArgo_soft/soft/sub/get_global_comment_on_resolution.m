@@ -40,7 +40,7 @@ switch (a_decoderId)
       % PROVOR CTS4 & ARVOR CM
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {121, 122, 123}
+   case {121, 122, 123, 124}
       % PROVOR APMT
       o_comment = 'PRES variable resolutions depend on measurement codes';
       
@@ -85,7 +85,7 @@ switch (a_decoderId)
       % Apex Iridium Rudics & Sbd
       o_comment = 'PRES variable resolution depends on measurement codes';
       
-   case {1321, 1322}
+   case {1121, 1321, 1322}
       % Apex APF11 Iridium
       o_comment = '';
       

@@ -47,7 +47,7 @@ elseif (size(a_floatParam1, 1) == 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam1(id, 2+ID_OFFSET), id);
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Prog1_%d; Transmission time of parameters #1 packet; %s\n', ...
-      g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam1(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(a_floatParam1(id, end-1)));
+      g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam1(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(a_floatParam1(id, end)));
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Prog1_%d; PARAM #1: MISCELLANEOUS\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam1(id, 2+ID_OFFSET));
@@ -206,7 +206,7 @@ elseif (size(a_floatParam2, 1) == 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam2(id, 2+ID_OFFSET), id);
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Prog2_%d; Transmission time of parameters #2 packet; %s\n', ...
-      g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(a_floatParam2(id, end-1)));
+      g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(a_floatParam2(id, end)));
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Prog2_%d; PARAM #2: MISCELLANEOUS\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_floatParam2(id, 2+ID_OFFSET));

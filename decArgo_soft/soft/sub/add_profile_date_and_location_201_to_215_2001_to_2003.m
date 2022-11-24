@@ -295,7 +295,7 @@ else
    % we have not been able to set a location for the profile, we will use the
    % Iridium locations
    if (a_profStruct.locationDate == g_decArgo_dateDef)
-      [locDate, locLon, locLat, locQc, lastCycleFlag] = ...
+      [locDate, locLon, locLat, locQc, ~] = ...
          compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, a_profStruct.cycleNumber);
       if (~isempty(locDate))
          % assign the averaged Iridium location to the profile
@@ -307,13 +307,6 @@ else
          
          % positioning system
          a_profStruct.posSystem = 'IRIDIUM';
-         
-         % if the current cycle is the last received cycle, the location could
-         % have been updated (if the last cycle data have been received in two
-         % different rsync log files)
-         if (lastCycleFlag == 1)
-            a_profStruct.updated = 1;
-         end
       end
    end
    
