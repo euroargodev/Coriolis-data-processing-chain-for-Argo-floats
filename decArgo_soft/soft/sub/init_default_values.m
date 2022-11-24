@@ -475,17 +475,18 @@ global g_decArgo_doxy_102_207_206_b3;
 global g_decArgo_doxy_102_207_206_c0;
 
 % NITRATE coefficients
-global g_decArgo_nitrate_a;
-global g_decArgo_nitrate_b;
-global g_decArgo_nitrate_c;
-global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_tCorr1;
+global g_decArgo_nitrate_tCorr2;
+global g_decArgo_nitrate_tCorr3;
+global g_decArgo_nitrate_tCorr4;
+global g_decArgo_nitrate_tCorr5;
 global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release
-g_decArgo_decoderVersion = '051d';
+g_decArgo_decoderVersion = '051e';
 % list of managed decoders
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1189,10 +1190,11 @@ g_decArgo_doxy_102_207_206_b3 = -0.00817083;
 g_decArgo_doxy_102_207_206_c0 = -0.000000488682;
 
 % NITRATE coefficients
-g_decArgo_nitrate_a = 1.1500276;
-g_decArgo_nitrate_b = 0.02840;
-g_decArgo_nitrate_c = -0.3101349;
-g_decArgo_nitrate_d = 0.001222;
-g_decArgo_nitrate_opticalWavelengthOffset = 208.5;
+g_decArgo_nitrate_tCorr1 = 1.27353e-07;
+g_decArgo_nitrate_tCorr2 = -7.56395e-06;
+g_decArgo_nitrate_tCorr3 = 2.91898e-05;
+g_decArgo_nitrate_tCorr4 = 1.67660e-03;
+g_decArgo_nitrate_tCorr5 = 1.46380e-02;
+g_decArgo_nitrate_opticalWavelengthOffset = 210;
 
 return

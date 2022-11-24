@@ -334,6 +334,7 @@ if (g_decArgo_generateNcTraj32 ~= 0)
             % retrieve PTS and PT_ADJUSTED values
             idPres = find(strcmp({tabMeas.paramList.name}, 'PRES'));
             idTemp = find(strcmp({tabMeas.paramList.name}, 'TEMP'));
+            idPsal = find(strcmp({tabMeas.paramList.name}, 'PSAL'));
             idTempCndc = find(strcmp({tabMeas.paramList.name}, 'TEMP_CNDC'));
 
             presValues = tabMeas.paramData(:, idPres);
