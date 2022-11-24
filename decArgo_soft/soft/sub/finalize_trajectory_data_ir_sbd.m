@@ -532,24 +532,26 @@ for idM = 1:length(a_tabTrajNMeas)
    tabMeasAll = [tabMeasAll; a_tabTrajNMeas(idM).tabMeas];
 end
 
-idFirst = find([tabMeasAll.measCode] == g_MC_FMT);
-if (~isempty(idFirst))
-   tabMeasAll(idFirst(1)).juld = min([tabMeasAll(idFirst).juld]);
-   tabMeasAll(idFirst(1)).juldAdj = min([tabMeasAll(idFirst).juldAdj]);
-   tabMeasAll(idFirst(2:end)) = [];
-end
+if (~isempty(tabMeasAll))
+   idFirst = find([tabMeasAll.measCode] == g_MC_FMT);
+   if (~isempty(idFirst))
+      tabMeasAll(idFirst(1)).juld = min([tabMeasAll(idFirst).juld]);
+      tabMeasAll(idFirst(1)).juldAdj = min([tabMeasAll(idFirst).juldAdj]);
+      tabMeasAll(idFirst(2:end)) = [];
+   end
 
-idLast = find([tabMeasAll.measCode] == g_MC_LMT);
-if (~isempty(idLast))
-   tabMeasAll(idLast(end)).juld = max([tabMeasAll(idLast).juld]);
-   tabMeasAll(idLast(end)).juldAdj = max([tabMeasAll(idLast).juldAdj]);
-   tabMeasAll(idLast(1:end-1)) = [];
-end
+   idLast = find([tabMeasAll.measCode] == g_MC_LMT);
+   if (~isempty(idLast))
+      tabMeasAll(idLast(end)).juld = max([tabMeasAll(idLast).juld]);
+      tabMeasAll(idLast(end)).juldAdj = max([tabMeasAll(idLast).juldAdj]);
+      tabMeasAll(idLast(1:end-1)) = [];
+   end
 
-idLoc = find([tabMeasAll.measCode] == g_MC_Surface);
-if (~isempty(idLast))
-   [~, idSort] = sort([tabMeasAll(idLoc).juld]);
-   tabMeasAll(idLoc) = tabMeasAll(idLoc(idSort));
+   idLoc = find([tabMeasAll.measCode] == g_MC_Surface);
+   if (~isempty(idLast))
+      [~, idSort] = sort([tabMeasAll(idLoc).juld]);
+      tabMeasAll(idLoc) = tabMeasAll(idLoc(idSort));
+   end
 end
 
 o_tabTrajNMeas = a_tabTrajNMeas(1);
