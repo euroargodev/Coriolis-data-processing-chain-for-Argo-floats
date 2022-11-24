@@ -3,13 +3,14 @@
 %
 % SYNTAX :
 %  [o_decodedData] = decode_prv_data_ir_sbd_212( ...
-%    a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
+%    a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabData     : data packet to decode
 %   a_sbdFileName : SBD file name
 %   a_sbdFileName : SBD file date
 %   a_launchDate  : float launch date
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_decodedData : decoded data
@@ -23,7 +24,7 @@
 %   12/17/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_decodedData] = decode_prv_data_ir_sbd_212( ...
-   a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate)
+   a_tabData, a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_decodedData = [];

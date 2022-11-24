@@ -77,7 +77,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          
          % decode the collected data
          decodedData = decode_prv_data_ir_sbd_212(sbdDataTab(idMsg, :), ...
-            a_sbdFileName, a_sbdFileDate, a_launchDate);
+            a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
          o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

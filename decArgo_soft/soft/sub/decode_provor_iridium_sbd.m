@@ -695,7 +695,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          case {213} % Provor-ARN-DO Iridium 5.74
             
             % decode the collected data
-            decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 0);
+            decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 0, a_decoderId);
             
          case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
             
@@ -2892,7 +2892,7 @@ switch (a_decoderId)
       % decode the collected data
       [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, ...
          irSessionNum, deepCycle, resetDetected] = ...
-         decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 1);
+         decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 1, a_decoderId);
       
       completedBuffer = a_completedBuffer;
       if (isempty(completedBuffer))
