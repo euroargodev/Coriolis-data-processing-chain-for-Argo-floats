@@ -616,7 +616,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
       6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522, ...
-      6902989, 6903774, 3901644, 6903010, 6902938]))
+      6902989, 6903774, 3901644, 6903010, 6902938, 6903777]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -957,6 +957,19 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(id2) = tabRank(id2(1));
          tabRankByCycle(id2) = tabRankByCycle(id2(1));
          tabDeep([idF0(end) idF4(end) idF5(end)]) = 0;
+      case 6903777
+         % cycle #55 data are delayed and scrambled
+         id = find(tabCyNum == 55);
+         tabRank(id) = tabRank(id(1));
+         tabRankByCycle(id) = tabRankByCycle(id(1));
+         tabDelayed(id) = 1;
+         tabCompleted(id) = 1;
+         for cyNum = 59:88
+            id = find(tabCyNum == cyNum);
+            idDel = id(end-2:end);
+            tabRank(idDel) = -1;
+            tabRankByCycle(idDel) = -1;
+         end
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
