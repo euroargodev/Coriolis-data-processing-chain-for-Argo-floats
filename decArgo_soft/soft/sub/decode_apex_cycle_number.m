@@ -43,7 +43,6 @@ if (a_checkTestMsg == 1)
    % try to identify a test or a data msg
    testSensor = [];
    dataSensor = [];
-   bytePos = 6;
    switch (a_decoderId)
       case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1013, 1014, 1015, ...
             1016}
@@ -51,21 +50,37 @@ if (a_checkTestMsg == 1)
          % 071807, 082807, 020110, 090810
          
          nbTestMsg = 2;
+         msgNumOfCyNum = 1;
+         bytePos = 6;
          [~, ~, ~, ~, ~, ~, ~, ~, testSensor, ~] = get_apex_test_sensor(a_argosPathFileName, ...
             a_ArgosId, 31, nbTestMsg, testMsgBytesToFreeze);
                   
          [~, ~, ~, ~, ~, ~, ~, ~, dataSensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
-            a_ArgosId, 31, dataMsgBytesToFreeze, 999999999);
+            a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
 
       case {1009, 1010, 1011, 1012} % 032213, 110613&090413, 121512, 110813
          
          nbTestMsg = 3;
+         msgNumOfCyNum = 1;
+         bytePos = 6;
          [~, ~, ~, ~, ~, ~, ~, ~, testSensor, ~] = get_apex_test_sensor(a_argosPathFileName, ...
             a_ArgosId, 31, nbTestMsg, testMsgBytesToFreeze);
                   
          [~, ~, ~, ~, ~, ~, ~, ~, dataSensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
-            a_ArgosId, 31, dataMsgBytesToFreeze, 999999999);
+            a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
 
+      case {1021}
+         % 2.8.0
+         
+         nbTestMsg = 2;
+         msgNumOfCyNum = 10;
+         bytePos = 7;
+         [~, ~, ~, ~, ~, ~, ~, ~, testSensor, ~] = get_apex_test_sensor(a_argosPathFileName, ...
+            a_ArgosId, 31, nbTestMsg, testMsgBytesToFreeze);
+                  
+         [~, ~, ~, ~, ~, ~, ~, ~, dataSensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
+            a_ArgosId, 31, dataMsgBytesToFreeze, 2, 999999999);
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet in decode_apex_cycle_number for decoderId #%d\n', ...
             g_decArgo_floatNum, ...
@@ -92,7 +107,7 @@ if (a_checkTestMsg == 1)
          for idL = 1:size(dataSensor, 1)
             data = dataSensor(idL, :);
             msgNum = data(2);
-            if (msgNum == 1)
+            if (msgNum == msgNumOfCyNum)
                o_cycleNumber = data(bytePos);
                o_cycleNumberCount = data(1);
                break;
@@ -106,14 +121,25 @@ else
    % compute cycle number from data message
    
    sensor = [];
-   bytePos = 6;
    switch (a_decoderId)
       case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
             1012, 1013, 1014, 1015, 1016}
          % 071412, 062608, 061609, 021009, 061810, 093008, 082213, 021208,
-         % 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810
+         % 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110,
+         % 090810
+         
+         msgNumOfCyNum = 1;
+         bytePos = 6;
          [~, ~, ~, ~, ~, ~, ~, ~, sensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
-            a_ArgosId, 31, dataMsgBytesToFreeze, 999999999);
+            a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
+         
+      case {1021}
+         % 2.8.0
+         
+         msgNumOfCyNum = 10;
+         bytePos = 7;
+         [~, ~, ~, ~, ~, ~, ~, ~, sensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
+            a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
 
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet in decode_apex_cycle_number for decoderId #%d\n', ...
@@ -126,7 +152,7 @@ else
       for idL = 1:size(sensor, 1)
          data = sensor(idL, :);
          msgNum = data(2);
-         if (msgNum == 1)
+         if (msgNum == msgNumOfCyNum)
             o_cycleNumber = data(bytePos);
             o_cycleNumberCount = data(1);
             break;

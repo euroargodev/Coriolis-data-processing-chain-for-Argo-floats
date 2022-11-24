@@ -1267,7 +1267,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
 
    % create output float configuration
-   [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames);
+   [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
 end
 

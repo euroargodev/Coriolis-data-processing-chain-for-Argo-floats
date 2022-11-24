@@ -13,8 +13,6 @@
 %    a_profEndDateMsg, a_profEndAdjDateMsg, ...
 %    a_gpsDataLog, a_gpsDataMsg)
 %
-%    a_gpsDataLog, a_gpsDataMsg)
-%
 % INPUT PARAMETERS :
 %   a_surfDataLog             : surf data from log file
 %   a_pMarkDataLog            : P marks from log file

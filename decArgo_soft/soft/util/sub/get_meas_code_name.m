@@ -39,6 +39,7 @@ global g_MC_PST;
 global g_MC_SpyAtPark;
 global g_MC_DriftAtPark;
 global g_MC_DriftAtParkStd;
+global g_MC_DriftAtParkMeanOfDiff;
 global g_MC_DriftAtParkMean;
 global g_MC_MinPresInDriftAtPark;
 global g_MC_MaxPresInDriftAtPark;
@@ -124,6 +125,9 @@ switch (a_measCode)
       
    case g_MC_DriftAtParkStd
       o_measCodeName = sprintf('%03d: DRIFT_AT_PARK_STD', a_measCode);
+      
+   case g_MC_DriftAtParkMeanOfDiff
+      o_measCodeName = sprintf('%03d: DRIFT_AT_PARK_MEAN_OF_DIFF', a_measCode);
       
    case g_MC_DriftAtParkMean
       o_measCodeName = sprintf('%03d: DRIFT_AT_PARK_MEAN', a_measCode);

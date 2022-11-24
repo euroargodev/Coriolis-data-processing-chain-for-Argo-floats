@@ -22,6 +22,7 @@ function clean_ghost_in_apx_argos_cycle_files(varargin)
 
 % directory of the argos files to check
 DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT_FINAL\';
+DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\OUT\FINAL\';
 
 % directory to store the log and CSV files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -97,6 +98,11 @@ for idFloat = 1:nbFloats
    if (isempty(idF))
       fprintf('ERROR: No information on float #%d\n', floatNum);
       fprintf('(nothing done)\n');
+      continue;
+   end
+   floatDecId = listDecId(idF);
+   if (ismember(floatDecId, [1021]))
+      fprintf('INFO: Clean ghost operation is not possible for decId #%d\n', floatDecId);
       continue;
    end
    floatArgosId = str2num(listArgosId{idF});

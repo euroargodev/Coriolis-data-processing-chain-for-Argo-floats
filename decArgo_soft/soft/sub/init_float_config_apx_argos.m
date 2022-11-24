@@ -34,9 +34,6 @@ g_decArgo_calibInfo = [];
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];

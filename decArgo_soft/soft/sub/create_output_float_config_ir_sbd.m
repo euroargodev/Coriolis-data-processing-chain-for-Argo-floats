@@ -8,6 +8,7 @@
 % INPUT PARAMETERS :
 %   a_decArgoConfParamNames : internal configuration parameter names
 %   a_ncConfParamNames      : NetCDF configuration parameter names
+%   a_decoderId             : float decoder Id
 %
 % OUTPUT PARAMETERS :
 % o_ncConfig : NetCDF configuration

@@ -2,11 +2,11 @@
 % Print miscellaneous information in output CSV file.
 %
 % SYNTAX :
-%  print_misc_info_in_csv_file(a_miscInfo, a_FileType)
+%  print_misc_info_in_csv_file(a_miscInfo, a_fileType)
 %
 % INPUT PARAMETERS :
 %   a_miscInfo : miscellaneous information structure
-%   a_FileType : type of file from which the information has been retrieved
+%   a_fileType : type of file from which the information has been retrieved
 %
 % OUTPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   09/23/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_misc_info_in_csv_file(a_miscInfo, a_FileType)
+function print_misc_info_in_csv_file(a_miscInfo, a_fileType)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -42,9 +42,9 @@ for idL = 1:length(a_miscInfo)
    data{end+1} = g_decArgo_cycleNum;
    format = [format ';%s'];
    data{end+1} = dataStruct.msgType;
-   if (~isempty(a_FileType))
+   if (~isempty(a_fileType))
       format = [format ';%s'];
-      data{end+1} = a_FileType;
+      data{end+1} = a_fileType;
    end
    if (~isempty(dataStruct.msgNum))
       format = [format ';%d'];

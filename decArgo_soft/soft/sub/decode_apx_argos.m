@@ -261,6 +261,18 @@ switch (a_decoderId)
             decode_data_apx_16(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
       end
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1021} % 2.8.0
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData);
+      end
+      
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in decode_apex_argos_data for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

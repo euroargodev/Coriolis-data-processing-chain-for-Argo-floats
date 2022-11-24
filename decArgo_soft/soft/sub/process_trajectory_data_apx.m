@@ -212,6 +212,23 @@ if (ismember(a_decoderId, [1013, 1015])) % mean PTS is not provided for these fl
          trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_4;
       end
    end
+elseif (ismember(a_decoderId, [1021])) % mean PTS is not provided for these floats => we use the average of min and max measurements
+   
+   if (~isempty(a_trajData))
+      
+      idMinMeas = find(([a_trajData.measCode] == g_MC_MinPresInDriftAtPark) & ...
+         strcmp('PRES', {a_trajData.paramName}));
+      idMaxMeas = find(([a_trajData.measCode] == g_MC_MaxPresInDriftAtPark) & ...
+         strcmp('PRES', {a_trajData.paramName}));
+      if (~isempty(idMinMeas) && ~isempty(idMaxMeas))
+   
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_RPP;
+         measStruct.paramList = get_netcdf_param_attributes('PRES');
+         measStruct.paramData = (a_trajData(idMinMeas).value + a_trajData(idMaxMeas).value)/2;
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
+   end
 else
    if (~isempty(a_trajData))
       

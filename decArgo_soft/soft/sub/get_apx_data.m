@@ -62,9 +62,11 @@ global g_decArgo_floatNum;
 switch (a_decoderId)
    
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
-         1012, 1013, 1014, 1015, 1016}
+         1012, 1013, 1014, 1015, 1016, 1021}
       % 071412 , 062608, 061609, 021009, 061810, 093008, 082213, 021208,
-      % 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810
+      % 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810,
+      % 2.8.0
+      
       if (a_cycleNumber == 0)
          nbTestMsg = 2;
          if (ismember(a_decoderId, [1009 1010 1011 1012]))
@@ -75,11 +77,16 @@ switch (a_decoderId)
             get_apex_test_sensor(a_argosFileName, ...
             a_argosId, a_frameLength, nbTestMsg, a_testMsgBytesToFreeze);
       else
-         nbArgosMsgMax = compute_number_of_apx_argos_msg([], a_decoderId);
+         if (ismember(a_decoderId, [1021]))
+            firstDataMsgNum = 10;
+         else
+            firstDataMsgNum = 1;
+         end
+         [lastDataMsgNum, ~] = compute_last_apx_argos_msg_number([], a_decoderId);
          [o_argosLocDate, o_argosLocLon, o_argosLocLat, o_argosLocAcc, o_argosLocSat, ...
             o_argosDataData, o_argosDataUsed, o_argosDataDate, o_sensorData, o_sensorDate] = ...
             get_apex_data_sensor(a_argosFileName, ...
-            a_argosId, a_frameLength, a_dataMsgBytesToFreeze, nbArgosMsgMax);
+            a_argosId, a_frameLength, a_dataMsgBytesToFreeze, firstDataMsgNum, lastDataMsgNum);
       end
       
    otherwise

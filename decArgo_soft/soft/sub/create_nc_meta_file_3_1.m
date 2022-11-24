@@ -894,7 +894,7 @@ switch (a_decoderId)
          [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_argos(a_decoderId);
          
          % create output float configuration
-         [a_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames);
+         [a_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames, a_decoderId);
       end
       
       configName = a_structConfig.NAMES;
@@ -942,6 +942,127 @@ switch (a_decoderId)
       end
       
       nbConfigParam = length(missionConfigName);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % APEX Argos APF11
+      
+   case {1021}
+            
+      % retrieve mandatory configuration names for this decoder
+      [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
+      
+      % if no data has been received create the configuration at launch
+      if (isempty(a_structConfig.NAMES))
+         
+         % create and initialize the launch configuration
+         create_float_config_apx_argos([], a_decoderId);
+         
+         % create the configuration parameter names for the META NetCDF file
+         [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_argos(a_decoderId);
+         
+         % create output float configuration
+         [a_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames, a_decoderId);
+      end
+      
+      configName = a_structConfig.NAMES;
+      configValue = a_structConfig.VALUES;
+      
+      mandatoryList = [];
+      for idL = 1:length(mandatoryConfigName)
+         for idC = 1:length(configName)
+            if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
+               mandatoryList = [mandatoryList idC];
+               if (idL < length(mandatoryConfigName))
+                  break;
+               end
+            end
+         end
+      end
+      
+      % select Auxiliary configuration information
+      inputAuxConfigName = [];
+      inputAuxConfigValue = [];
+      for idC = 1:length(configName)
+         if (strncmp(configName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            inputAuxConfigName = [inputAuxConfigName; configName(idC)];
+            inputAuxConfigValue = [inputAuxConfigValue; configValue(idC)];
+         end
+      end      
+      
+      % create the launch configuration
+      launchConfigName = configName;
+      launchConfigValue = configValue(:, 1);
+      
+      % clean AUX parameters from output Argo launch configuration
+      launchAuxConfigName = [];
+      launchAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(launchConfigName)
+         if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+            launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      launchConfigName(idDel) = [];
+      launchConfigValue(idDel, :) = [];
+      
+      nbLaunchConfigParam = length(launchConfigName);
+
+      % create the mission configuration
+      missionConfigName = configName;
+      missionConfigValue = configValue;
+      
+      if (size(configValue, 2) > 1)
+         idDel = [];
+         for idL = 1:size(missionConfigValue, 1)
+            if (sum(isnan(missionConfigValue(idL, 2:end))) == size(missionConfigValue, 2)-1)
+               idDel = [idDel; idL];
+            elseif ((length(unique(missionConfigValue(idL, 2:end))) == 1) && ...
+                  (unique(missionConfigValue(idL, 2:end)) == missionConfigValue(idL, 1)))
+               idDel = [idDel; idL];
+            end
+         end
+         idDel = setdiff(idDel, mandatoryList);
+         missionConfigName(idDel) = [];
+         missionConfigValue(idDel, :) = [];
+         configMissionNumber = a_structConfig.NUMBER(2:end);
+      else
+         missionConfigName = configName(mandatoryList);
+         missionConfigValue = configValue(mandatoryList, 1);
+         configMissionNumber = 1;
+      end
+      
+      % clean AUX parameters from output Argo configuration
+      missionAuxConfigName = [];
+      missionAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(missionConfigName)
+         if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
+            missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      missionConfigName(idDel) = [];
+      missionConfigValue(idDel, :) = [];
+      
+      nbConfigParam = length(missionConfigName);      
+      
+      % create/update NetCDF META_AUX file
+      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
+         % collect AUX meta-data information
+         metaDataAux = [];
+         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
+         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
+         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
+         create_nc_meta_aux_file( ...
+            [], [], [], ...
+            [], [], ...
+            launchAuxConfigName, launchAuxConfigValue, ...
+            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            metaDataAux);
+      end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX Iridium Rudics & Navis floats

@@ -201,7 +201,20 @@ switch (a_decoderId)
       o_dataMsgBytesToFreeze{2, 2} = [];
       o_dataMsgBytesToFreeze{3, 1} = 3;
       o_dataMsgBytesToFreeze{3, 2} = [3:8];
-
+      
+   case {1021} % 2.8.0
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 10 11 15:18];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 25:28];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 10;
+      o_dataMsgBytesToFreeze{1, 2} = [3 12 28:31];
+      o_dataMsgBytesToFreeze{2, 1} = 12;
+      o_dataMsgBytesToFreeze{2, 2} = [4:5];
+      o_dataMsgBytesToFreeze{3, 1} = 9;
+      o_dataMsgBytesToFreeze{3, 2} = [3 11:13 18:21];
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_bytes_to_freeze for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

@@ -63,6 +63,9 @@ global g_decArgo_applyRtqc;
 % Argos (1), Iridium RUDICS (2) float
 global g_decArgo_floatTransType;
 
+% float launch date
+global g_decArgo_floatLaunchDate;
+
 % array to store GPS data
 global g_decArgo_gpsData;
 
@@ -117,7 +120,7 @@ for idFloat = 1:nbFloats
       floatRefDay = listRefDay(idF);
       floatEndDate = listEndDate(idF);
       floatDmFlag = listDmFlag(idF);
-      
+            
    else
       
       [floatNum, floatArgosId, ...
@@ -133,6 +136,8 @@ for idFloat = 1:nbFloats
       end
    end
    
+   g_decArgo_floatLaunchDate = floatLaunchDate;
+
    % check that it is an APEX float
    if ~((floatDecId > 1000) && (floatDecId < 2000))
       fprintf('ERROR: Float #%d is not an Apex float => not decoded\n', floatNum);

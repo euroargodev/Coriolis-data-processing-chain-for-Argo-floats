@@ -496,7 +496,7 @@ for idConf = 1:length(a_inputAuxStaticConfigName)
    confName = a_inputAuxStaticConfigName{idConf};
    confValue = a_inputAuxStaticConfigValue{idConf};
    confDescription = g_decArgo_outputNcConfParamDescription{find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1)};
-   confName = regexprep(confName, 'CONFIG_AUX_', '');
+   confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
    
    netcdf.putVar(fCdf, staticConfigurationParameterNameVarId, ...
       fliplr([idConf-1  0]), fliplr([1 length(confName)]), confName');
@@ -514,7 +514,7 @@ for idConf = 1:length(a_launchAuxConfigName)
       idDesc = find(cellfun(@(x) (length(x) > 12) && ~isempty(strfind(x(end-12:end), confName(end-12:end))), g_decArgo_outputNcConfParamLabel), 1);
    end
    confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
-   confName = regexprep(confName, 'CONFIG_AUX_', '');
+   confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
 
    netcdf.putVar(fCdf, launchConfigParameterNameVarId, ...
       fliplr([idConf-1  0]), fliplr([1 length(confName)]), confName');
@@ -530,7 +530,7 @@ end
 % store mission configuration data
 for idConf = 1:length(a_missionAuxConfigName)
    confName = a_missionAuxConfigName{idConf};
-   confName = regexprep(confName, 'CONFIG_AUX_', '');
+   confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
    
    netcdf.putVar(fCdf, configParameterNameVarId, ...
       fliplr([idConf-1  0]), fliplr([1 length(confName)]), confName');

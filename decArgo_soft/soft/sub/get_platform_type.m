@@ -66,7 +66,7 @@ switch (a_decoderId)
       o_platformType = 'ARVOR_C';
       
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
-         1012, 1013, 1014, 1015, 1016}
+         1012, 1013, 1014, 1015, 1016, 1021}
       % Apex Argos
       o_platformType = 'APEX';
       

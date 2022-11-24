@@ -30,7 +30,7 @@ global g_decArgo_floatNum;
 
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 121 122 123 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
-decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
+decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002 2003];
 decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
@@ -535,7 +535,7 @@ switch (a_paramName)
       o_paramSensor = 'CTD_PRES';
       o_paramUnits = 'decibar';
       o_paramAccuracy = '2.4';
-      o_paramResolution = '1';
+      o_paramResolution = '0.1';
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';

@@ -34,9 +34,9 @@ global g_NTP_NAME_PARAM1;
 global g_NTP_NAME_PARAM2;
 
 % g_NTP_NAME_PARAM1 = 'TURBIDITY';
-g_NTP_NAME_PARAM1 = 'CHLA';
+% g_NTP_NAME_PARAM1 = 'CHLA';
 % g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
-% g_NTP_NAME_PARAM1 = 'TEMP';
+g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'FLUORESCENCE_CDOM';
 % g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_BLUE_REF';
@@ -46,9 +46,9 @@ g_NTP_NAME_PARAM1 = 'CHLA';
 % g_NTP_NAME_PARAM1 = 'PH_IN_SITU_FREE';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
-g_NTP_NAME_PARAM2 = 'BBP700';
+% g_NTP_NAME_PARAM2 = 'BBP700';
 % g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
-% g_NTP_NAME_PARAM2 = 'PSAL';
+g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'CDOM';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_F_SIG';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_NTU_SIG';
@@ -109,8 +109,9 @@ g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova2.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

@@ -882,14 +882,14 @@ end
 
 % adjust the amount of received data according to profile length
 if (profileLength ~= -1)
-   nbMsg = compute_number_of_apx_argos_msg(profileLength, a_decoderId);
+   [expectedLastMsgNum, ~] = compute_last_apx_argos_msg_number(profileLength, a_decoderId);
    % sometimes the auxiliary engineering data cause an additional message to be
    % generated (ex: 6900743 #5, #6) => we remove only messages with a low
    % reduncdancy (= 1)
-   if (lastMsgNum > nbMsg)
-      idList = find(profRedundancy(end-(lastMsgNum-(nbMsg+1))*29+1:end) > 1);
+   if (lastMsgNum > expectedLastMsgNum)
+      idList = find(profRedundancy(end-(lastMsgNum-(expectedLastMsgNum+1))*29+1:end) > 1);
       if (isempty(idList))
-         idList = length(profRedundancy) - (lastMsgNum-(nbMsg+1))*29;
+         idList = length(profRedundancy) - (lastMsgNum-(expectedLastMsgNum+1))*29;
       end
       profData(max(idList)+1:end) = [];
       profReceived(max(idList)+1:end) = [];

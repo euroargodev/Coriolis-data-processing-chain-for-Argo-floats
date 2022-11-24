@@ -45,7 +45,7 @@ usedConfNum = g_decArgo_floatConfig.USE.CONFIG;
 idUsedConf = find((usedCy == a_cycleNum) & (usedProf == a_profNum));
 idConf = find(configNum == usedConfNum(idUsedConf));
 
-% find the sapmling periods and the depth zone thresholds
+% find the sampling periods and the depth zone thresholds
 for id = 1:5
    % sampling period
    confParamName = sprintf('CONFIG_PC_%d_0_%d', ...

@@ -28,6 +28,8 @@ global g_decArgo_floatNum;
 
 switch (a_dataCentre)
 
+   case 'AO'
+      o_institution = 'AOML';
    case 'BO'
       o_institution = 'BODC';
    case 'CS'

@@ -103,6 +103,10 @@ switch (a_decoderId)
       o_downTimeEnd = 0;
       o_ascentStartTime = 0;
       
+   case {1021} % 2.8.0
+      o_downTimeEnd = 1;
+      o_ascentStartTime = 0;
+      
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in down_time_provided for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

@@ -62,10 +62,12 @@ function move_and_rename_apx_argos_files(varargin)
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\020110_final\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\090810\';
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\090810_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\STEP4\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\FINAL\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set3\102015_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\STEP4\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\FINAL\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\ori_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\FINAL\';
 
 
 % directory to store the log file
@@ -419,6 +421,11 @@ for idFile = 1:nbFiles
                   idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);
                   if (~isempty(idPrevCycle))
                      idPrevCycle = idPrevCycle(end);
+                     if (cycleNumber < tabCycleNumber(idPrevCycle))
+                        if (a_floatNum == 3901639)
+                           cycleNumber = cycleNumber + 5;
+                        end
+                     end
                      while (cycleNumber < tabCycleNumber(idPrevCycle))
                         cycleNumber = cycleNumber + 256;
                      end

@@ -571,6 +571,11 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
                idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);
                if (~isempty(idPrevCycle))
                   idPrevCycle = idPrevCycle(end);
+                  if (cycleNumber < tabCycleNumber(idPrevCycle))
+                     if (floatNum == 3901639)
+                        cycleNumber = cycleNumber + 5;
+                     end
+                  end
                   while (cycleNumber < tabCycleNumber(idPrevCycle))
                      cycleNumber = cycleNumber + 256;
                   end

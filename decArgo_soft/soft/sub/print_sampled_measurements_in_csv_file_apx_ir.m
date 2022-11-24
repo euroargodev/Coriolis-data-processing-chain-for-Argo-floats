@@ -3,12 +3,12 @@
 %
 % SYNTAX :
 %  print_sampled_measurements_in_csv_file_apx_ir( ...
-%    a_sampledData, a_measType, a_FileType, a_cyOffset)
+%    a_sampledData, a_measType, a_fileType, a_cyOffset)
 %
 % INPUT PARAMETERS :
 %   a_sampledData : measurement data
 %   a_measType    : measurement types
-%   a_FileType    : source file
+%   a_fileType    : source file
 %   a_cyOffset    : cycle offset
 %
 % OUTPUT PARAMETERS :
@@ -22,15 +22,15 @@
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_sampled_measurements_in_csv_file_apx_ir( ...
-   a_sampledData, a_measType, a_FileType, a_cyOffset)
+   a_sampledData, a_measType, a_fileType, a_cyOffset)
 
 if (iscell(a_sampledData))
    for id = 1:length(a_sampledData)
-      print_sampled_measurements_in_csv_file(a_sampledData{id}, a_measType, a_FileType, a_cyOffset, num2str(id));
+      print_sampled_measurements_in_csv_file(a_sampledData{id}, a_measType, a_fileType, a_cyOffset, num2str(id));
    end
 else
    if (~isempty(a_sampledData))
-      print_sampled_measurements_in_csv_file(a_sampledData, a_measType, a_FileType, a_cyOffset, '-');
+      print_sampled_measurements_in_csv_file(a_sampledData, a_measType, a_fileType, a_cyOffset, '-');
    end
 end
 
@@ -41,12 +41,12 @@ return;
 %
 % SYNTAX :
 %  print_sampled_measurements_in_csv_file( ...
-%    a_sampledData, a_measType, a_FileType, a_cyOffset, a_msgRecordNum)
+%    a_sampledData, a_measType, a_fileType, a_cyOffset, a_msgRecordNum)
 %
 % INPUT PARAMETERS :
 %   a_sampledData  : measurement data
 %   a_measType     : measurement types
-%   a_FileType     : source file
+%   a_fileType     : source file
 %   a_cyOffset     : cycle offset
 %   a_msgRecordNum : number of the record
 %
@@ -61,7 +61,7 @@ return;
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_sampled_measurements_in_csv_file( ...
-   a_sampledData, a_measType, a_FileType, a_cyOffset, a_msgRecordNum)
+   a_sampledData, a_measType, a_fileType, a_cyOffset, a_msgRecordNum)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -90,7 +90,7 @@ data{end+1} = g_decArgo_floatNum;
 format1 = [format1 ';%d'];
 data{end+1} = cycleNumber;
 format1 = [format1 ';' a_measType];
-format1 = [format1 ';' a_FileType];
+format1 = [format1 ';' a_fileType];
 format1 = [format1 ';' a_msgRecordNum];
 
 fprintf(g_decArgo_outputCsvFileId, format1, data{:});

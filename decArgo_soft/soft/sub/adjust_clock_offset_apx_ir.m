@@ -124,7 +124,7 @@ for idSet = 1:length(o_surfDataBladderInflated)
    [o_surfDataBladderInflated{idSet}] = adjust_profile(o_surfDataBladderInflated{idSet}, clockOffsetJuldUtc, clockOffsetValue);
 end
 
-% clock adjsutment of misc cycle times of the current cycle
+% clock adjustment of misc cycle times of the current cycle
 if (~isempty(o_timeDataLog))
    [o_timeDataLog.cycleStartAdjDate] = adjust_time(o_timeDataLog.cycleStartDate, clockOffsetJuldUtc, clockOffsetValue);
    [o_timeDataLog.descentStartAdjDate] = adjust_time(o_timeDataLog.descentStartDate, clockOffsetJuldUtc, clockOffsetValue);

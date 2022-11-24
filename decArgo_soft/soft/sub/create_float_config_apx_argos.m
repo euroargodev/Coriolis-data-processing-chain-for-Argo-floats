@@ -82,7 +82,8 @@ if (g_decArgo_realtimeFlag == 0)
       for idM = 1:length(idMeta)
          dataStruct = a_decMetaData(idMeta(idM));
          if (isfield(jsonMetaData, dataStruct.metaConfigLabel))
-            if (~strcmp(dataStruct.metaConfigLabel, 'SENSOR_SERIAL_NO'))
+            if (~strcmp(dataStruct.metaConfigLabel, 'SENSOR_SERIAL_NO') && ...
+                  ~strcmp(dataStruct.metaConfigLabel, 'TRANS_FREQUENCY'))
                if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel), dataStruct.techParamValue))
                   if (VERBOSE == 1)
                      if (g_decArgo_bddUpdateCsvFileId == -1)
@@ -130,13 +131,14 @@ if (g_decArgo_realtimeFlag == 0)
                      end
                   end
                end
-            else
+            elseif (strcmp(dataStruct.metaConfigLabel, 'SENSOR_SERIAL_NO'))
                switch (a_decoderId)
                   
                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                  case {1001, 1002, 1003, 1004, 1005, 1007, 1010, 1011, 1012}
+                  case {1001, 1002, 1003, 1004, 1005, 1007, 1010, 1011, 1012, ...
+                        1021}
                      % 071412, 062608, 061609, 021009, 061810, 082213,
-                     % 110613&090413, 121512, 110813
+                     % 110613&090413, 121512, 110813, 2.8.0
                      % only one sensor (SBE41)
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
@@ -242,6 +244,55 @@ if (g_decArgo_realtimeFlag == 0)
                         g_decArgo_floatNum, ...
                         a_decoderId);
                end
+            elseif (strcmp(dataStruct.metaConfigLabel, 'TRANS_FREQUENCY'))
+               fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
+               if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), dataStruct.techParamValue))
+                  if (VERBOSE == 1)
+                     if (g_decArgo_bddUpdateCsvFileId == -1)
+                        % output CSV file creation
+                        g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+                        g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
+                        if (g_decArgo_bddUpdateCsvFileId == -1)
+                           fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
+                           return;
+                        end
+                        
+                        header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%s\n', header);
+                     end
+                     
+                     if (strcmp(dataStruct.techParamCode, 'STARTUP_DATE'))
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d; %s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     elseif (strcmp(dataStruct.techParamCode, 'FIRMWARE_VERSION'))
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;''%s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     else
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;%s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     end
+                     
+                     fprintf('WARNING: Float #%d: Meta-data ''%s'': decoder value (''%s'') and configuration value (''%s'') differ => BDD contents should be updated (see %s)\n', ...
+                        g_decArgo_floatNum, ...
+                        dataStruct.metaConfigLabel, ...
+                        dataStruct.techParamValue, ...
+                        jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}), ...
+                        g_decArgo_bddUpdateCsvFileName);
+                  end
+               else
+                  if (VERBOSE == 1)
+                     if (ONLY_DIFF == 1)
+                        fprintf('INFO: Float #%d: Meta-data ''%s'': decoder value (''%s'') and configuration value (''%s'')\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.metaConfigLabel, ...
+                           dataStruct.techParamValue, ...
+                           jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{1}));
+                     end
+                  end
+               end
             end
          else
             fprintf('WARNING: Float #%d: Field ''%s'' is not in the meta-data configuration\n', ...
@@ -276,62 +327,65 @@ end
 if (g_decArgo_realtimeFlag == 0)
    
    if (~isempty(a_decMetaData))
+      
       % check configuration data consistency
-      idConfig = find([a_decMetaData.configFlag] == 1);
-      for idM = 1:length(idConfig)
-         dataStruct = a_decMetaData(idConfig(idM));
-         idF = find(strcmp(configNames, dataStruct.metaConfigLabel));
-         if (~isempty(idF))
-            if (~strcmp(num2str(configValues(idF)), dataStruct.value))
-               if (VERBOSE == 1)
-                  if (g_decArgo_bddUpdateCsvFileId == -1)
-                     % output CSV file creation
-                     g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
-                     g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
+      if (~ismember(a_decoderId, [1021])) % not relevant for APF11 floats
+         idConfig = find([a_decMetaData.configFlag] == 1);
+         for idM = 1:length(idConfig)
+            dataStruct = a_decMetaData(idConfig(idM));
+            idF = find(strcmp(configNames, dataStruct.metaConfigLabel));
+            if (~isempty(idF))
+               if (~strcmp(num2str(configValues(idF)), dataStruct.value))
+                  if (VERBOSE == 1)
                      if (g_decArgo_bddUpdateCsvFileId == -1)
-                        fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
-                        return;
+                        % output CSV file creation
+                        g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+                        g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
+                        if (g_decArgo_bddUpdateCsvFileId == -1)
+                           fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
+                           return;
+                        end
+                        
+                        header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%s\n', header);
                      end
                      
-                     header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
-                     fprintf(g_decArgo_bddUpdateCsvFileId, '%s\n', header);
-                  end
-                  
-                  if (strcmp(dataStruct.techParamCode, 'STARTUP_DATE'))
-                     fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d; %s;%s\n', ...
-                        g_decArgo_floatNum, ...
-                        dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
-                  elseif (strcmp(dataStruct.techParamCode, 'FIRMWARE_VERSION'))
-                     fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;''%s;%s\n', ...
-                        g_decArgo_floatNum, ...
-                        dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
-                  else
-                     fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;%s;%s\n', ...
-                        g_decArgo_floatNum, ...
-                        dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
-                  end
-                  
-                  fprintf('WARNING: Float #%d: Configuration ''%s'': decoder value (''%s'') and configuration value (''%s'') differ => BDD contents should be updated (see %s)\n', ...
-                     g_decArgo_floatNum, ...
-                     dataStruct.metaConfigLabel, ...
-                     dataStruct.value, ...
-                     num2str(configValues(idF)), ...
-                     g_decArgo_bddUpdateCsvFileName);
-               end
-            else
-               if (VERBOSE == 1)
-                  if (ONLY_DIFF == 1)
-                     fprintf('INFO: Float #%d: Configuration ''%s'': decoder value (''%s'') and configuration value (''%s'')\n', ...
+                     if (strcmp(dataStruct.techParamCode, 'STARTUP_DATE'))
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d; %s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     elseif (strcmp(dataStruct.techParamCode, 'FIRMWARE_VERSION'))
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;''%s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     else
+                        fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;%s;%s\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.techParamId, 1, dataStruct.techParamValue, dataStruct.techParamCode);
+                     end
+                     
+                     fprintf('WARNING: Float #%d: Configuration ''%s'': decoder value (''%s'') and configuration value (''%s'') differ => BDD contents should be updated (see %s)\n', ...
                         g_decArgo_floatNum, ...
                         dataStruct.metaConfigLabel, ...
                         dataStruct.value, ...
-                        num2str(configValues(idF)));
+                        num2str(configValues(idF)), ...
+                        g_decArgo_bddUpdateCsvFileName);
+                  end
+               else
+                  if (VERBOSE == 1)
+                     if (ONLY_DIFF == 1)
+                        fprintf('INFO: Float #%d: Configuration ''%s'': decoder value (''%s'') and configuration value (''%s'')\n', ...
+                           g_decArgo_floatNum, ...
+                           dataStruct.metaConfigLabel, ...
+                           dataStruct.value, ...
+                           num2str(configValues(idF)));
+                     end
                   end
                end
+            else
+               fprintf('WARNING: Float #%d: Field ''%s'' is not in the float configuration\n', ...
+                  g_decArgo_floatNum, dataStruct.metaConfigLabel);
             end
-         else
-            fprintf('WARNING: Float #%d: Field ''%s'' is not in the float configuration\n', ...
-               g_decArgo_floatNum, dataStruct.metaConfigLabel);
          end
       end
    end
@@ -399,6 +453,31 @@ if (configValues(idF) ~= 234)
    floatConfigNumbers(end+1) = max(floatConfigNumbers) + 1;
 end
 
+% APF11 floats
+if (ismember(a_decoderId, [1021]))
+   
+   % convert CONFIG_AR_AscentRate from dbar/s to mm/s
+   idF = find(strcmp(configNames, 'CONFIG_AR_AscentRate'));
+   if (~isnan(floatConfigValues(idF)))
+      floatConfigValues(idF) = floatConfigValues(idF) * 1000;
+   end
+   
+   % if CONFIG_ICEM_IceDetectionMask = 0, remove Ice relative configuration
+   % parameters
+   idF = find(strcmp(configNames, 'CONFIG_ICEM_IceDetectionMask'));
+   if (~isnan(floatConfigValues(idF)) && (floatConfigValues(idF) == 0))
+      idDel = find( ...
+         strcmp(configNames, 'CONFIG_IBD_IceBreakupDays') | ...
+         strcmp(configNames, 'CONFIG_IMLT_IceDetectionTemperature') | ...
+         strcmp(configNames, 'CONFIG_IDP_IceDetectionMaxPres') | ...
+         strcmp(configNames, 'CONFIG_IEP_IceEvasionPressure') | ...
+         strcmp(configNames, 'CONFIG_ICEM_IceDetectionMask') ...
+         );
+      configNames(idDel) = [];
+      floatConfigValues(idDel) = [];
+   end
+end
+
 % the possible cases are:
 % 1 - DPF = yes and N = 1 (2 configurations):
 %     - config #1: cycle duration reduced, profile pres = TP
@@ -428,41 +507,93 @@ g_decArgo_floatConfig.USE.CONFIG = [];
 g_decArgo_configDone = 1;
 
 % store configuration parameters for cycle timings determination
-dpfFloatFlag = get_float_config_argos_3('CONFIG_DPF_');
-if (~isempty(dpfFloatFlag))
-   g_decArgo_timeData.configParam.dpfFloatFlag = dpfFloatFlag;
-end
-cycleTime = get_float_config_argos_3('CONFIG_CT_');
-if (~isempty(cycleTime))
-   g_decArgo_timeData.configParam.cycleTime = cycleTime;
-end
-downTime = get_float_config_argos_3('CONFIG_DOWN_');
-if (~isempty(downTime))
-   g_decArgo_timeData.configParam.downTime = downTime;
-end
-upTime = get_float_config_argos_3('CONFIG_UP_');
-if (~isempty(upTime))
-   g_decArgo_timeData.configParam.upTime = upTime;
-end
-parkingPres = get_float_config_argos_3('CONFIG_PRKP_');
-if (~isempty(parkingPres))
-   g_decArgo_timeData.configParam.parkingPres = parkingPres;
-end
-profilePres = get_float_config_argos_3('CONFIG_TP_');
-if (~isempty(profilePres))
-   g_decArgo_timeData.configParam.profilePres = profilePres;
-end
-parkAndProfileCycleLength = get_float_config_argos_3('CONFIG_N_');
-if (~isempty(parkAndProfileCycleLength))
-   g_decArgo_timeData.configParam.parkAndProfileCycleLength = parkAndProfileCycleLength;
-end
-deepProfileDescentPeriod = get_float_config_argos_3('CONFIG_DPDP_');
-if (~isempty(deepProfileDescentPeriod))
-   g_decArgo_timeData.configParam.deepProfileDescentPeriod = deepProfileDescentPeriod;
-end
-transRepPeriod = get_float_config_argos_3('CONFIG_REP_');
-if (~isempty(transRepPeriod))
-   g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod;
+switch (a_decoderId)
+   
+   case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, ...
+         1013, 1014, 1015, 1016}
+      % 071412, 062608, 061609, 021009, 061810, 093008, 082213, 021208, 032213,
+      % 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810
+      
+      dpfFloatFlag = get_float_config_argos_3('CONFIG_DPF_');
+      if (~isempty(dpfFloatFlag))
+         g_decArgo_timeData.configParam.dpfFloatFlag = dpfFloatFlag;
+      end
+      cycleTime = get_float_config_argos_3('CONFIG_CT_');
+      if (~isempty(cycleTime))
+         g_decArgo_timeData.configParam.cycleTime = cycleTime;
+      end
+      downTime = get_float_config_argos_3('CONFIG_DOWN_');
+      if (~isempty(downTime))
+         g_decArgo_timeData.configParam.downTime = downTime;
+      end
+      upTime = get_float_config_argos_3('CONFIG_UP_');
+      if (~isempty(upTime))
+         g_decArgo_timeData.configParam.upTime = upTime;
+      end
+      parkingPres = get_float_config_argos_3('CONFIG_PRKP_');
+      if (~isempty(parkingPres))
+         g_decArgo_timeData.configParam.parkingPres = parkingPres;
+      end
+      profilePres = get_float_config_argos_3('CONFIG_TP_');
+      if (~isempty(profilePres))
+         g_decArgo_timeData.configParam.profilePres = profilePres;
+      end
+      parkAndProfileCycleLength = get_float_config_argos_3('CONFIG_N_');
+      if (~isempty(parkAndProfileCycleLength))
+         g_decArgo_timeData.configParam.parkAndProfileCycleLength = parkAndProfileCycleLength;
+      end
+      deepProfileDescentPeriod = get_float_config_argos_3('CONFIG_DPDP_');
+      if (~isempty(deepProfileDescentPeriod))
+         g_decArgo_timeData.configParam.deepProfileDescentPeriod = deepProfileDescentPeriod;
+      end
+      transRepPeriod = get_float_config_argos_3('CONFIG_REP_');
+      if (~isempty(transRepPeriod))
+         g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod;
+      end
+      
+   case {1021} % 2.8.0
+      
+      dpfFloatFlag = get_float_config_argos_3('CONFIG_DPF_');
+      if (~isempty(dpfFloatFlag))
+         g_decArgo_timeData.configParam.dpfFloatFlag = dpfFloatFlag;
+      end
+      cycleTime = get_float_config_argos_3('CONFIG_CT_');
+      if (~isempty(cycleTime))
+         g_decArgo_timeData.configParam.cycleTime = cycleTime; % in hours
+      end
+      downTime = get_float_config_argos_3('CONFIG_DOWN_');
+      if (~isempty(downTime))
+         g_decArgo_timeData.configParam.downTime = downTime/60; % in hours
+      end
+      upTime = get_float_config_argos_3('CONFIG_UP_');
+      if (~isempty(upTime))
+         g_decArgo_timeData.configParam.upTime = upTime/60; % in hours
+      end
+      parkingPres = get_float_config_argos_3('CONFIG_PRKP_');
+      if (~isempty(parkingPres))
+         g_decArgo_timeData.configParam.parkingPres = parkingPres; % in dbar
+      end
+      profilePres = get_float_config_argos_3('CONFIG_TP_');
+      if (~isempty(profilePres))
+         g_decArgo_timeData.configParam.profilePres = profilePres; % in dbar
+      end
+      parkAndProfileCycleLength = get_float_config_argos_3('CONFIG_N_');
+      if (~isempty(parkAndProfileCycleLength))
+         g_decArgo_timeData.configParam.parkAndProfileCycleLength = parkAndProfileCycleLength;
+      end
+      deepProfileDescentPeriod = get_float_config_argos_3('CONFIG_DPDP_');
+      if (~isempty(deepProfileDescentPeriod))
+         g_decArgo_timeData.configParam.deepProfileDescentPeriod = deepProfileDescentPeriod/60; % in hours
+      end
+      transRepPeriod = get_float_config_argos_3('CONFIG_REP_');
+      if (~isempty(transRepPeriod))
+         g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod; % in seconds
+      end
+      
+   otherwise
+      fprintf('WARNING: Float #%d: Nothing done yet in create_float_config_apx_argos for decoderId #%d\n', ...
+         g_decArgo_floatNum, ...
+         a_decoderId);
 end
 
 return;

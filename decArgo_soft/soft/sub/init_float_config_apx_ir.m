@@ -37,9 +37,6 @@ g_decArgo_calibInfo = [];
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
-% default values
-global g_decArgo_janFirst1950InMatlab;
-
 % Argos (1), Iridium RUDICS (2), Iridium SBD (3) float
 global g_decArgo_floatTransType;
 

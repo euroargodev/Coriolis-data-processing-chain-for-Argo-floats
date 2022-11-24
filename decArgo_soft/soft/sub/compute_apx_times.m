@@ -150,9 +150,11 @@ if (a_cycleNum > 0)
    end
    
    % compute AET = TST - 10 minutes
-   if (cycleTimeStruct.transStartTimeAdj ~= g_decArgo_dateDef)
-      cycleTimeStruct.ascentEndTimeAdj = cycleTimeStruct.transStartTimeAdj - 10/1440;
-      cycleTimeStruct.ascentEndTimeStatus = cycleTimeStruct.transStartTimeStatus;
+   if (~ismember(a_decoderId, [1021]))
+      if (cycleTimeStruct.transStartTimeAdj ~= g_decArgo_dateDef)
+         cycleTimeStruct.ascentEndTimeAdj = cycleTimeStruct.transStartTimeAdj - 10/1440;
+         cycleTimeStruct.ascentEndTimeStatus = cycleTimeStruct.transStartTimeStatus;
+      end
    end
 end
 
@@ -162,10 +164,10 @@ o_timeData.cycleTime(idCycleStruct) = cycleTimeStruct;
 if (a_finalStep)
    
    % compute (or estimate) TET and clock drift
-   o_timeData = compute_apx_TET(o_timeData);
+   o_timeData = compute_apx_TET(o_timeData, a_decoderId);
    
    % finalize cycle times
-   o_timeData = finalize_apx_times(o_timeData);
+   o_timeData = finalize_apx_times(o_timeData, a_decoderId);
    
 end
 

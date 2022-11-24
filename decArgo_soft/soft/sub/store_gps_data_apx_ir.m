@@ -81,7 +81,7 @@ end
 if (~isempty(a_gpsDataMsg))
    gpsMsgDateList = [a_gpsDataMsg{:}];
    gpsMsgDateList = [gpsMsgDateList.gpsFixDate];
-   if (length(a_gpsDataLog) ~= length(unique(gpsMsgDateList)))
+   if (length(a_gpsDataMsg) ~= length(unique(gpsMsgDateList)))
       uGpsMsgDateList = unique(gpsMsgDateList);
       idDel = [];
       for idF = 1:length(uGpsMsgDateList)

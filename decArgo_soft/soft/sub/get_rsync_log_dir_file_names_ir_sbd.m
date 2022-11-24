@@ -2,10 +2,10 @@
 % Retrieve the list of the rsync log file names in a given directory.
 %
 % SYNTAX :
-%  [o_fileName] = get_rsync_log_dir_file_names_ir_rudics(a_dirName)
+%  [o_fileName] = get_rsync_log_dir_file_names_ir_sbd(a_dirName)
 %
 % INPUT PARAMETERS :
-%   a_dirName : concerned directory
+%   a_dirName        : concerned directory
 %
 % OUTPUT PARAMETERS :
 %   o_fileName : file names

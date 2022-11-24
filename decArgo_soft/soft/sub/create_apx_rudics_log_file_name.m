@@ -11,7 +11,7 @@
 %   a_floatWmo        : float WMO number
 %   a_floatRudicsId   : float Rudics Id
 %   a_floatLaunchDate : float launch date
-%   a_floatLaunchDate : float end decoding date
+%   a_floatEndDate    : float end decoding date
 %
 % OUTPUT PARAMETERS :
 %

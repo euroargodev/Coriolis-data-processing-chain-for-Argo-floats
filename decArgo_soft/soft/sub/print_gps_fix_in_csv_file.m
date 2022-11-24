@@ -2,11 +2,11 @@
 % Print GPS data in CSV file.
 %
 % SYNTAX :
-%  print_gps_fix_in_csv_file(a_gpsData, a_FileType, a_cyOffset)
+%  print_gps_fix_in_csv_file(a_gpsData, a_fileType, a_cyOffset)
 %
 % INPUT PARAMETERS :
 %   a_gpsData  : GPS data
-%   a_FileType : source file
+%   a_fileType : source file
 %   a_cyOffset : cycle offset
 %
 % OUTPUT PARAMETERS :
@@ -19,7 +19,7 @@
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_gps_fix_in_csv_file(a_gpsData, a_FileType, a_cyOffset)
+function print_gps_fix_in_csv_file(a_gpsData, a_fileType, a_cyOffset)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -41,10 +41,10 @@ if ((cycleNumber + a_cyOffset) >= 0)
 end
 
 fprintf(g_decArgo_outputCsvFileId, '%d; %d; GPS fix; %s; -; Fix #; Date; Latitude; Longitude; Nb sat.; Acq. time\n', ...
-   g_decArgo_floatNum, cycleNumber, a_FileType);
+   g_decArgo_floatNum, cycleNumber, a_fileType);
 for idF = 1:length(a_gpsData)
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; GPS fix; %s; -; %s; %s; %.4f; %.4f; %d; %d\n', ...
-      g_decArgo_floatNum, cycleNumber, a_FileType, ...
+      g_decArgo_floatNum, cycleNumber, a_fileType, ...
       ['Fix #' num2str(idF)], ...
       julian_2_gregorian_dec_argo(a_gpsData{idF}.gpsFixDate), ...
       a_gpsData{idF}.gpsFixLat, ...

@@ -40,7 +40,8 @@ tabInputDirName = [];
 % tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823\';
 % tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set3\071807_ori_cycle\';
 % tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set3\090810_ori_cycle\';
-tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set3\102015_ori_cycle\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set3\102015_ori_cycle\';
+tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\ori_cycle\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

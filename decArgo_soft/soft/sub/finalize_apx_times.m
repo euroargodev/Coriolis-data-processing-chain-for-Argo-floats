@@ -2,10 +2,11 @@
 % Compute APEX cycle times for all received cycles.
 %
 % SYNTAX :
-%  [o_timeData] = finalize_apx_times(a_timeData)
+%  [o_timeData] = finalize_apx_times(a_timeData, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_timeData : input cycle time data structure
+%   a_timeData  : input cycle time data structure
+%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_timeData : updated cycle time data structure
@@ -18,13 +19,14 @@
 % RELEASES :
 %   09/22/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_timeData] = finalize_apx_times(a_timeData)
+function [o_timeData] = finalize_apx_times(a_timeData, a_decoderId)
 
 % output parameters initialization
 o_timeData = a_timeData;
 
 % global time status
 global g_JULD_STATUS_1;
+global g_JULD_STATUS_2;
 global g_JULD_STATUS_3;
 
 % default values
@@ -132,29 +134,41 @@ for idCy = 1:length(o_timeData.cycleNum)
    end
    
    % AST
-   % AST = TET - UP_TIME when PARK P = PROF P
-   if (o_timeData.cycleNum(idCy) > 0)
-      if (~isempty(o_timeData.cycleParkPres) && ~isempty(o_timeData.cycleProfPres) && ...
-            ~isempty(o_timeData.configParam.upTime))
-         if (o_timeData.cycleParkPres(idCy) == o_timeData.cycleProfPres(idCy))
-            if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
-               % TET is computed
-               if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
-                  o_timeData.cycleTime(idCy).ascentStartTime = o_timeData.cycleTime(idCy).transEndTime ...
-                     - o_timeData.configParam.upTime/24;
-                  o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                     - o_timeData.configParam.upTime/24;
-                  o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
-               end
-            elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
-               % TET is estimated
-               if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
-                  o_timeData.cycleTime(idCy).ascentStartTime = g_decArgo_dateDef;
-                  o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                     - o_timeData.configParam.upTime/24;
-                  o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+   if (~ismember(a_decoderId, [1021]))
+      % AST = TET - UP_TIME when PARK P = PROF P
+      if (o_timeData.cycleNum(idCy) > 0)
+         if (~isempty(o_timeData.cycleParkPres) && ~isempty(o_timeData.cycleProfPres) && ...
+               ~isempty(o_timeData.configParam.upTime))
+            if (o_timeData.cycleParkPres(idCy) == o_timeData.cycleProfPres(idCy))
+               if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
+                  % TET is computed
+                  if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
+                     o_timeData.cycleTime(idCy).ascentStartTime = o_timeData.cycleTime(idCy).transEndTime ...
+                        - o_timeData.configParam.upTime/24;
+                     o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                        - o_timeData.configParam.upTime/24;
+                     o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+                  end
+               elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
+                  % TET is estimated
+                  if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
+                     o_timeData.cycleTime(idCy).ascentStartTime = g_decArgo_dateDef;
+                     o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                        - o_timeData.configParam.upTime/24;
+                     o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+                  end
                end
             end
+         end
+      end
+   else
+      % AST = DOWN_TIME end
+      if (o_timeData.configParam.downTimeEndProvidedFlag)
+         if (o_timeData.cycleTime(idCy).downTimeEnd ~= g_decArgo_dateDef)
+            o_timeData.cycleTime(idCy).ascentStartTime = o_timeData.cycleTime(idCy).downTimeEnd;
+            o_timeData.cycleTime(idCy).ascentStartTimeAdj = adjust_apx_time( ...
+               o_timeData.cycleTime(idCy).downTimeEndFloat, clockDrift, clockOffset, clockOffsetRefDate);
+            o_timeData.cycleTime(idCy).ascentStartTimeStatus = g_JULD_STATUS_2;
          end
       end
    end
@@ -229,10 +243,12 @@ for idCy = 1:length(o_timeData.cycleNum)
    % AET = TST - 10 minutes: done in compute_apx_times
    
    % AET float = TST float - 10 minutes
-   if (o_timeData.cycleTime(idCy).transStartTimeFloat ~= g_decArgo_dateDef)
-      o_timeData.cycleTime(idCy).ascentEndTimeFloat = o_timeData.cycleTime(idCy).transStartTimeFloat - 10/1440;
-      o_timeData.cycleTime(idCy).ascentEndTimeFloatAdj = o_timeData.cycleTime(idCy).transStartTimeFloatAdj - 10/1440;
-      o_timeData.cycleTime(idCy).ascentEndTimeFloatStatus = o_timeData.cycleTime(idCy).transStartTimeFloatStatus;
+   if (~ismember(a_decoderId, [1021]))
+      if (o_timeData.cycleTime(idCy).transStartTimeFloat ~= g_decArgo_dateDef)
+         o_timeData.cycleTime(idCy).ascentEndTimeFloat = o_timeData.cycleTime(idCy).transStartTimeFloat - 10/1440;
+         o_timeData.cycleTime(idCy).ascentEndTimeFloatAdj = o_timeData.cycleTime(idCy).transStartTimeFloatAdj - 10/1440;
+         o_timeData.cycleTime(idCy).ascentEndTimeFloatStatus = o_timeData.cycleTime(idCy).transStartTimeFloatStatus;
+      end
    end
    
 end
