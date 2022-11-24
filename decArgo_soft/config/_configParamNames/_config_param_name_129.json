@@ -309,7 +309,7 @@
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Number of multi -parking phases",
       "CONF_PARAM_NAME" : "CONFIG_MultiParkingPhase_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Number of multi-parking phases :  Must be greater than 1 or else use normal single park CONFIG (up to 5 for Provor CTS5 floats)."
+      "CONF_PARAM_DESCRIPTION" : "Number of multi-parking phases (up to 5 for Provor CTS5 floats). Do Not Use multi-parking CONFIGs if there is only a single, mono drift target throughout the life of a float. If a float has both mono-parking and multi-parking cycles, fill CONFIG_ParkPressure with fillvalue in multi-parking cycles."
    },
    "CONF_PARAM_40" :
    {
@@ -372,7 +372,7 @@
       "CONF_PARAM_DEC_ID" : "200",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Parking durations (s)",
-      "CONF_PARAM_NAME" : "CONFIG_ParkDurationPase<I>_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_ParkDurationPhase<I>_seconds",
       "CONF_PARAM_DESCRIPTION" : "Duration of the park phase #<I> in multi-parking mode"
    },
    "CONF_PARAM_48" :
