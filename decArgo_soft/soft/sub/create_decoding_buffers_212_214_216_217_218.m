@@ -231,7 +231,8 @@ for idE = 1:length(idEol)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 6903006 6901880 6902957]))
+if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 ...
+      6903006 6901880 6902957]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -532,7 +533,7 @@ for idL = 1:length(tabRank)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903772, 6903773]))
+if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -551,6 +552,16 @@ if (ismember(g_decArgo_floatNum, [6903772, 6903773]))
          id = find(tabSession == tabSession(id(2)));
          tabDeep(id) = 0;
          id = find((tabSession == tabSession(id(2))) & (tabPackType == 3));
+         tabRank(id) = -1;
+         tabRankByCycle(id) = -1;
+         tabRankByDate(id) = -1;
+      case 3902137
+         % the float has switched to EOL at cycle #465, however the data of this
+         % cycle has been sent twice
+         id = find((tabCyNum == 465) & (tabPackType == 0));
+         id = find(tabSession == tabSession(id(2)));
+         tabDeep(id) = 0;
+         id = find((tabSession == tabSession(id(2))) & (ismember(tabPackType, [1 2 3 13 14])));
          tabRank(id) = -1;
          tabRankByCycle(id) = -1;
          tabRankByDate(id) = -1;
