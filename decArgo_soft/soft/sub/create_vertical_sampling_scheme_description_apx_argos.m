@@ -53,7 +53,7 @@ switch (a_decoderId)
          configValue = g_decArgo_floatConfig.VALUES;
       end
       
-      idF = find(strcmp(configName, 'CONFIG_SAMPLE_ASCENT_PST_NumberOfZones'));
+      idF = find(strcmp(configName, 'CONFIG_SAMPLE_ASCENT_PTS_NumberOfZones'));
       if (~isempty(idF) && ~isnan(configValue(idF, 1)))
          nbZone = configValue(idF, 1);
          for idZ = nbZone:-1:1
@@ -61,19 +61,19 @@ switch (a_decoderId)
             stopPres = [];
             depthInterval = [];
             nbSamples = [];
-            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PST_%d_StartPressure', idZ)));
+            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PTS_%d_StartPressure', idZ)));
             if (~isempty(idF) && ~isnan(configValue(idF, 1)))
                startPres = configValue(idF, 1);
             end
-            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PST_%d_StopPressure', idZ)));
+            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PTS_%d_StopPressure', idZ)));
             if (~isempty(idF) && ~isnan(configValue(idF, 1)))
                stopPres = configValue(idF, 1);
             end
-            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PST_%d_DepthInterval', idZ)));
+            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PTS_%d_DepthInterval', idZ)));
             if (~isempty(idF) && ~isnan(configValue(idF, 1)))
                depthInterval = configValue(idF, 1);
             end
-            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PST_%d_NumberOfSamples', idZ)));
+            idF = find(strcmp(configName, sprintf('CONFIG_SAMPLE_ASCENT_PTS_%d_NumberOfSamples', idZ)));
             if (~isempty(idF) && ~isnan(configValue(idF, 1)))
                nbSamples = configValue(idF, 1);
             end
