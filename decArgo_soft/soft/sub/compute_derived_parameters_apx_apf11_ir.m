@@ -87,7 +87,7 @@ switch (a_decoderId)
             end
             if (~isempty(a_profCtdPtsh))
                if (isempty(ctdData))
-                  ctdData = a_profCtdPts;
+                  ctdData = a_profCtdPtsh;
                   ctdData.data = ctdData.data(:, 1:3);
                   if (~isempty(ctdData.dataAdj))
                      ctdData.dataAdj = ctdData.dataAdj(:, 1:3);
@@ -109,7 +109,7 @@ switch (a_decoderId)
             if (~isempty(a_cycleTimeData.ascentStartDateSci))
                idPark = find(o_profDo.dates < a_cycleTimeData.ascentStartDateSci);
                
-               if (~isempty(idPark))
+               if (length(idPark) > 1)
                   
                   % interpolate and extrapolate PTS data at the times of the OPTODE
                   % measurements
@@ -174,7 +174,7 @@ switch (a_decoderId)
                idAscent = find(((o_profDo.dates >= a_cycleTimeData.ascentStartDateSci) & ...
                   (o_profDo.dates <= a_cycleTimeData.ascentEndDateSci)));
                
-               if (~isempty(idAscent))
+               if (length(idAscent) > 1)
                   
                   % retrieve PTS measurements sampled suring ascent profile from
                   % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data

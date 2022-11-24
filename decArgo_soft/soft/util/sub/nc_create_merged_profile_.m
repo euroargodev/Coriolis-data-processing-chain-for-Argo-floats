@@ -2283,6 +2283,7 @@ netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
 netcdf.putAtt(fCdf, globalVarId, 'history', ...
    [datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ...
    ' creation (software version ' g_cocm_ncCreateMergedProfileVersion ')']);
+netcdf.putAtt(fCdf, globalVarId, 'software_version', g_cocm_ncCreateMergedProfileVersion);
 netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
@@ -3205,6 +3206,7 @@ netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
 netcdf.putAtt(fCdf, globalVarId, 'history', ...
    [datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ...
    ' creation (software version ' g_cocm_ncCreateMergedProfileVersion ')']);
+netcdf.putAtt(fCdf, globalVarId, 'software_version', g_cocm_ncCreateMergedProfileVersion);
 netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');

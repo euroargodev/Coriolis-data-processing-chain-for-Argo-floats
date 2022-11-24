@@ -57,12 +57,14 @@ for idL = 1:length(logData)
    if (~isempty(strfind(infoData{idL}, ptn1)))
       
       fileName = logData{idL};
-      [~, ~, fileExt] = fileparts(fileName);
-      for idPtn = 1:size(ptnList, 1)
-         if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
-               strcmp(fileExt, ptnList{idPtn, 2}))
-            o_floatFiles{end+1} = [ptn2 fileName];
-            break;
+      [filePath, ~, fileExt] = fileparts(fileName);
+      if (isempty(filePath)) % to not consider things like "Trash/3aa2_028_01_payload#01.bin"
+         for idPtn = 1:size(ptnList, 1)
+            if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
+                  strcmp(fileExt, ptnList{idPtn, 2}))
+               o_floatFiles{end+1} = [ptn2 fileName];
+               break;
+            end
          end
       end
       

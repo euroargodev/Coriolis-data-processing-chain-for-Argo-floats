@@ -137,6 +137,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.descentStartPresSci];
+      if (isempty(a_cycleTimeData.descentStartPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.descentStartAdjPresSci];
       if (isempty(a_cycleTimeData.descentStartAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -173,6 +176,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.parkStartPresSci];
+      if (isempty(a_cycleTimeData.parkStartPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.parkStartAdjPresSci];
       if (isempty(a_cycleTimeData.parkStartAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -198,6 +204,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.parkEndPresSci];
+      if (isempty(a_cycleTimeData.parkEndPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.parkEndAdjPresSci];
       if (isempty(a_cycleTimeData.parkEndAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -234,6 +243,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.ascentStartPresSci];
+      if (isempty(a_cycleTimeData.ascentStartPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.ascentStartAdjPresSci];
       if (isempty(a_cycleTimeData.ascentStartAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -259,6 +271,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.continuousProfileStartPresSci];
+      if (isempty(a_cycleTimeData.continuousProfileStartPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.continuousProfileStartAdjPresSci];
       if (isempty(a_cycleTimeData.continuousProfileStartAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -273,6 +288,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.continuousProfileEndPresSci];
+      if (isempty(a_cycleTimeData.continuousProfileEndPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.continuousProfileEndAdjPresSci];
       if (isempty(a_cycleTimeData.continuousProfileEndAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
@@ -287,6 +305,9 @@ if (~isempty(a_cycleTimeData))
          allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
       end
       allTabPres = [allTabPres a_cycleTimeData.ascentEndPresSci];
+      if (isempty(a_cycleTimeData.ascentEndPresSci))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
       allTabPresAdj = [allTabPresAdj a_cycleTimeData.ascentEndAdjPresSci];
       if (isempty(a_cycleTimeData.ascentEndAdjPresSci))
          allTabPresAdj = [allTabPresAdj g_decArgo_presDef];

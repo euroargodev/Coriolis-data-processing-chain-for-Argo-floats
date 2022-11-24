@@ -123,6 +123,10 @@ g_decArgo_rsyncFloatWmoList = ones(size(tabFloatSbdFiles))*floatWmo;
 g_decArgo_rsyncFloatSbdFileList = tabFloatSbdFiles;
 
 % output data
-o_floatList = unique(g_decArgo_rsyncFloatWmoList);
+if (checkRsyncLog == 1)
+   o_floatList = unique(g_decArgo_rsyncFloatWmoList);
+else
+   o_floatList = floatWmo;
+end
 
 return;

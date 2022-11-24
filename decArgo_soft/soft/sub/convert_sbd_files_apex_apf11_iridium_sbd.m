@@ -167,22 +167,24 @@ if (~isempty(currentData))
 end
 
 % clear duplicates in float files
-if (length([dataList.floatFileName]) ~= length(unique([dataList.floatFileName])))
-
-   nbDel = 0;
-   while(length([dataList.floatFileName]) ~= length(unique([dataList.floatFileName])))
-      for iFile = 1:length(dataList)
-         fileName = dataList(iFile).floatFileName{:};
-         idF = find(strcmp([dataList.floatFileName], fileName));
-         if (length(idF) > 1)
-            sizeList = cellfun(@length, {dataList(idF).data});
-            [~, idMax] = max(sizeList);
-            idToDel = setdiff(idF, idF(idMax));
-            fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: file %s (%d bytes) kept (%d file(s) ignored)\n', ...
-               fileName, sizeList(idMax), length(idToDel));
-            dataList(idToDel) = [];
-            nbDel = nbDel + length(idToDel);
-            break;
+if (~isempty(dataList))
+   if (length([dataList.floatFileName]) ~= length(unique([dataList.floatFileName])))
+      
+      nbDel = 0;
+      while(length([dataList.floatFileName]) ~= length(unique([dataList.floatFileName])))
+         for iFile = 1:length(dataList)
+            fileName = dataList(iFile).floatFileName{:};
+            idF = find(strcmp([dataList.floatFileName], fileName));
+            if (length(idF) > 1)
+               sizeList = cellfun(@length, {dataList(idF).data});
+               [~, idMax] = max(sizeList);
+               idToDel = setdiff(idF, idF(idMax));
+               fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: file %s (%d bytes) kept (%d file(s) ignored)\n', ...
+                  fileName, sizeList(idMax), length(idToDel));
+               dataList(idToDel) = [];
+               nbDel = nbDel + length(idToDel);
+               break;
+            end
          end
       end
    end

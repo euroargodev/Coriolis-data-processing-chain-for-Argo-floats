@@ -116,6 +116,16 @@ for idFile = 1:length(a_scienceLogFileList)
       return;
    end
    
+   % remove CTD_P measurements with FillValue = -999 for PRES
+   if (~isempty(data.CTD_P))
+      if (any(data.CTD_P(:, 2) == -999))
+         idF = find(data.CTD_P(:, 2) == -999);
+         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_P measurements (with PRES = -999) in file: %s => removed\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
+         data.CTD_P(idF, :) = [];
+      end
+   end
+   
    dataFields = fieldnames(data);
    for idFld = 1:length(dataFields)
       fieldName = dataFields{idFld};
