@@ -882,11 +882,20 @@ try
       'cfilepath', a_cProfFileName, ...
       'bfilepath', a_bProfFileName, ...
       'metafilepath', a_metaFileName);
-catch
+catch error
    [~, bProfFileName, bProfFileExt] = fileparts(a_bProfFileName);
    fprintf('ERROR: Float #%d Cycle #%d%c: the synthetic profile data processing failed (ARGO_simplify_getpressureaxis_v6 fonction on file %s)\n', ...
       g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, [bProfFileName bProfFileExt]);
    o_syntProfData = [];
+   
+   % write error information in log file
+   fprintf('%s\n', error.message);
+   for idS = 1:size(error.stack, 1)
+      fprintf('   Line: %3d File: %s (func: %s)\n', ...
+         error.stack(idS). line, ...
+         error.stack(idS). file, ...
+         error.stack(idS). name);
+   end
    return;
 end
 
