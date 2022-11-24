@@ -28,8 +28,7 @@ global g_MC_LMT;
 
 % Argos error ellipses input directories
 global g_decArgo_dirInputErrorEllipsesMail;
-global g_decArgo_dirInputErrorEllipsesWsSpool;
-global g_decArgo_dirInputErrorEllipsesWsArchive;
+global g_decArgo_dirInputErrorEllipsesWs;
 
 
 % output parameters initialization
@@ -39,8 +38,7 @@ o_tabTrajNMeas = a_tabTrajNMeas;
 mailErrorEllipsesDirectory = g_decArgo_dirInputErrorEllipsesMail;
 
 % path to error ellipses collected by web service
-webServiceErrorEllipsesSpoolDirectory = g_decArgo_dirInputErrorEllipsesWsSpool;
-webServiceErrorEllipsesArchiveDirectory = g_decArgo_dirInputErrorEllipsesWsArchive;
+webServiceErrorEllipsesDirectory = g_decArgo_dirInputErrorEllipsesWs;
 
 
 fprintf('INFO: ARGOS ERROR ELLIPSES INSERTION: Start\n');
@@ -49,8 +47,7 @@ tic;
 % retrieve error ellipses data
 ellipsesDataStruct = get_argos_error_ellipses(a_floatArgosId, ...
    mailErrorEllipsesDirectory, ...
-   webServiceErrorEllipsesSpoolDirectory, ...
-   webServiceErrorEllipsesArchiveDirectory ...
+   webServiceErrorEllipsesDirectory ...
    );
 
 % add error ellipses data in trajectories
@@ -159,17 +156,14 @@ return
 % SYNTAX :
 %  [o_ellipsesDataStruct] = get_argos_error_ellipses(a_floatArgosId, ...
 %    a_mailErrorEllipsesDirectory, ...
-%    a_webServiceErrorEllipsesSpoolDirectory, ...
-%    a_webServiceErrorEllipsesArchiveDirectory)
+%    a_webServiceErrorEllipsesDirectory)
 %
 % INPUT PARAMETERS :
-%   a_floatArgosId                            : float PTT number
-%   a_mailErrorEllipsesDirectory              : directory where error ellipses
-%                                               received by mail are stored
-%   a_webServiceErrorEllipsesSpoolDirectory   : spool directory of error
-%                                               ellipses collected by web service
-%   a_webServiceErrorEllipsesArchiveDirectory : archive directory of error
-%                                               ellipses collected by web service
+%   a_floatArgosId                     : float PTT number
+%   a_mailErrorEllipsesDirectory       : directory where error ellipses
+%                                        received by mail are stored
+%   a_webServiceErrorEllipsesDirectory : directory of error
+%                                        ellipses collected by web service
 %
 % OUTPUT PARAMETERS :
 %   o_ellipsesDataStruct : output structure of Argos error ellipses data
@@ -184,8 +178,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_ellipsesDataStruct] = get_argos_error_ellipses(a_floatArgosId, ...
    a_mailErrorEllipsesDirectory, ...
-   a_webServiceErrorEllipsesSpoolDirectory, ...
-   a_webServiceErrorEllipsesArchiveDirectory)
+   a_webServiceErrorEllipsesDirectory)
 
 % output parameters initialization
 o_ellipsesDataStruct = [];
@@ -207,43 +200,33 @@ end
 
 % error ellipses collected by WS
 rawDataWs = [];
-if (~isempty(a_webServiceErrorEllipsesSpoolDirectory))
-   if (exist(a_webServiceErrorEllipsesSpoolDirectory, 'dir') == 7)
-      data = get_argos_error_ellipses_ws(a_floatArgosId, a_webServiceErrorEllipsesSpoolDirectory);
-      rawDataWs = [rawDataWs; data];
-   else
-      fprintf('ERROR: Float #%d: Directory of spool WS Argos error ellipses not found (%s)\n', ...
-         g_decArgo_floatNum, a_webServiceErrorEllipsesSpoolDirectory);
-   end
-end
-if (~isempty(a_webServiceErrorEllipsesArchiveDirectory))
-   if (exist(a_webServiceErrorEllipsesArchiveDirectory, 'dir') == 7)
-      data = get_argos_error_ellipses_ws(a_floatArgosId, a_webServiceErrorEllipsesArchiveDirectory);
-      rawDataWs = [rawDataWs; data];
+if (~isempty(a_webServiceErrorEllipsesDirectory))
+   if (exist(a_webServiceErrorEllipsesDirectory, 'dir') == 7)
+      rawDataWs = get_argos_error_ellipses_ws(a_floatArgosId, a_webServiceErrorEllipsesDirectory);
    else
       fprintf('ERROR: Float #%d: Directory of archive WS Argos error ellipses not found (%s)\n', ...
-         g_decArgo_floatNum, a_webServiceErrorEllipsesArchiveDirectory);
+         g_decArgo_floatNum, a_webServiceErrorEllipsesDirectory);
    end
 end
 
-% clean WS data from duplicated lines
-if (~isempty(rawDataWs))
-   idDel = [];
-   for id1 = 1:size(rawDataWs, 1)-1
-      if (any(idDel == id1))
-         continue
-      end
-      for id2 = id1+1:size(rawDataWs, 1)
-         if (any(idDel == id2))
-            continue
-         end
-         if (~any(strcmp(rawDataWs(id1, :), rawDataWs(id2, :)) ~= 1))
-            idDel = [idDel id2];
-         end
-      end
-   end
-   rawDataWs(idDel, :) = [];
-end
+% clean WS data from duplicated lines - NOT NEEDED ANYMORE (DONE BY CORIOLIS)
+% if (~isempty(rawDataWs))
+%    idDel = [];
+%    for id1 = 1:size(rawDataWs, 1)-1
+%       if (any(idDel == id1))
+%          continue
+%       end
+%       for id2 = id1+1:size(rawDataWs, 1)
+%          if (any(idDel == id2))
+%             continue
+%          end
+%          if (~any(strcmp(rawDataWs(id1, :), rawDataWs(id2, :)) ~= 1))
+%             idDel = [idDel id2];
+%          end
+%       end
+%    end
+%    rawDataWs(idDel, :) = [];
+% end
 
 % process collected data
 if (~isempty(rawDataMail) || ~isempty(rawDataWs))
@@ -338,7 +321,7 @@ for idD = 1:length(uDateList)
          if (length(idF2) > 1)
             locErrRad = [dataAll(idF1(idF2)).fixErrorRadius];
             [~, idMin] = min(locErrRad);
-            idDel = [idDel setdiff(idF1, idF1(idF2(idMin)))];
+            idDel = [idDel setdiff(idF1(idF2), idF1(idF2(idMin)))];
          end
       end
    end
@@ -421,16 +404,19 @@ function [o_data] = get_argos_error_ellipses_ws(a_floatArgosId, a_inputDir)
 % output parameters initialization
 o_data = [];
 
+% current float WMO number
+global g_decArgo_floatNum;
 
-files = dir([a_inputDir '/' num2str(a_floatArgosId) '_*.csv']);
-nbFiles = length(files);
-for idFile = 1:nbFiles
-   
-   fileName = files(idFile).name;
-   filePathName = [a_inputDir '/' fileName];
-   if (exist(filePathName, 'file') == 2)
-      dataFile = read_argos_error_ellipses_ws_file(filePathName);
-      o_data = [o_data; dataFile];
+
+floatArgosIdStr = num2str(sprintf('%06d', a_floatArgosId));
+dataDirPathName = [a_inputDir '/' floatArgosIdStr];
+if (exist(dataDirPathName, 'dir') == 7)
+   dataFilePathName = [dataDirPathName '/' floatArgosIdStr '_error_ellipses.csv'];
+   if (exist(dataFilePathName, 'file') == 2)
+      o_data = read_argos_error_ellipses_ws_file(dataFilePathName);
+   else
+      fprintf('WARNING: Float #%d: Empty directory of WS Argos error ellipses (%s)\n', ...
+         g_decArgo_floatNum, dataDirPathName);
    end
 end
 

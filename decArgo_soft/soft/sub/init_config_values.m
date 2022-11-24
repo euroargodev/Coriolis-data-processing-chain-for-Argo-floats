@@ -69,8 +69,7 @@ global g_decArgo_dirOutputTraj32NetcdfFile;
 
 global g_decArgo_addErrorEllipses;
 global g_decArgo_dirInputErrorEllipsesMail;
-global g_decArgo_dirInputErrorEllipsesWsSpool;
-global g_decArgo_dirInputErrorEllipsesWsArchive;
+global g_decArgo_dirInputErrorEllipsesWs;
 
 global g_decArgo_applyRtqc;
 
@@ -153,8 +152,7 @@ configVar{end+1} = 'DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE';
 
 configVar{end+1} = 'ADD_ARGOS_ERROR_ELLIPSES';
 configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL';
-configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_SPOOL';
-configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS_ARCHIVE';
+configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_WS';
 
 configVar{end+1} = 'APPLY_RTQC';
 
@@ -283,9 +281,7 @@ if (o_inputError == 0)
    configVal(1) = [];
    g_decArgo_dirInputErrorEllipsesMail = configVal{1};
    configVal(1) = [];
-   g_decArgo_dirInputErrorEllipsesWsSpool = configVal{1};
-   configVal(1) = [];
-   g_decArgo_dirInputErrorEllipsesWsArchive = configVal{1};
+   g_decArgo_dirInputErrorEllipsesWs = configVal{1};
    configVal(1) = [];
 
    g_decArgo_applyRtqc = str2num(configVal{1});
