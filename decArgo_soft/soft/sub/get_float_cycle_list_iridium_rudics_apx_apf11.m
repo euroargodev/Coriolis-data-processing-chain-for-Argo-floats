@@ -46,6 +46,7 @@ if ~(exist(iriDirName, 'dir') == 7)
 end
 
 existingCycles = [];
+prevDate = '';
 fileNames = dir([iriDirName a_floatRudicsId '*.gz']);
 for idFile = 1:length(fileNames)
    fileName = fileNames(idFile).name;
@@ -57,9 +58,13 @@ for idFile = 1:length(fileNames)
          if (~isempty(a_floatLaunchDate))
             fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
             fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+            if (strcmp(fileDateStr, '00000000T000000') && ~isempty(prevDate)) % 6904113 #68
+               fileDate = prevDate;
+            end
             if (fileDate < a_floatLaunchDate)
                continue
             end
+            prevDate = fileDate;
          end
       end
       existingCycles = [existingCycles cyNum];

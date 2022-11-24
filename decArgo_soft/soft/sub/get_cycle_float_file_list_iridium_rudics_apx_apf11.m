@@ -51,6 +51,7 @@ end
 
 fileNameList = [];
 fileNames = dir([iriDirName a_floatRudicsId '*.gz']);
+prevDate = '';
 for idFile = 1:length(fileNames)
    fileName = fileNames(idFile).name;
    idF1 = strfind(fileName(length(a_floatRudicsId)+1:end), '.');
@@ -60,6 +61,9 @@ for idFile = 1:length(fileNames)
       if (~isempty(a_floatLaunchDate))
          fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
          fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+         if (strcmp(fileDateStr, '00000000T000000') && ~isempty(prevDate)) % 6904113 #68
+            fileDate = prevDate;
+         end
          if (isempty(g_decArgo_outputCsvFileId))
             if (fileDate < a_floatLaunchDate)
                continue
@@ -70,6 +74,7 @@ for idFile = 1:length(fileNames)
                continue
             end
          end
+         prevDate = fileDate;
       end
       fileNameList{end+1} = fileName;
    end
