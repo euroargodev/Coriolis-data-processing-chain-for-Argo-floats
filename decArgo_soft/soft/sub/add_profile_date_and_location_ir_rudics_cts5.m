@@ -60,7 +60,7 @@ ascentEndDate = g_decArgo_dateDef;
 for idT = 1:length(a_timedata)
    if (cycleStartDate == g_decArgo_dateDef)
       if (strcmp(a_timedata{idT}.label, 'CYCLE START TIME'))
-         if (~isempty(a_timedata{idT}.timeAdj))
+         if (~isempty(a_timedata{idT}.timeAdj) && (a_timedata{idT}.timeAdj ~= g_decArgo_dateDef))
             cycleStartDate = a_timedata{idT}.timeAdj;
          else
             cycleStartDate = a_timedata{idT}.time;
@@ -69,7 +69,7 @@ for idT = 1:length(a_timedata)
    end
    if (ascentEndDate == g_decArgo_dateDef)
       if (strcmp(a_timedata{idT}.label, 'ASCENT END TIME'))
-         if (~isempty(a_timedata{idT}.timeAdj))
+         if (~isempty(a_timedata{idT}.timeAdj) && (a_timedata{idT}.timeAdj ~= g_decArgo_dateDef))
             ascentEndDate = a_timedata{idT}.timeAdj;
          else
             ascentEndDate = a_timedata{idT}.time;

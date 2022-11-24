@@ -776,7 +776,7 @@ end
 
 % adjust value of time data
 for idEvt = 1:length(g_decArgo_eventDataTime)
-   if (isempty(g_decArgo_eventDataTime{idEvt}.time))
+   if (~isempty(g_decArgo_eventDataTime{idEvt}.time))
       g_decArgo_eventDataTime{idEvt}.timeAdj = adjust_time_cts5(g_decArgo_eventDataTime{idEvt}.time);
    end
 end
