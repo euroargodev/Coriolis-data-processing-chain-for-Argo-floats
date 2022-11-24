@@ -576,7 +576,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124}
+   case {121, 122, 123, 124, 125}
       
       % CTS5 floats
       

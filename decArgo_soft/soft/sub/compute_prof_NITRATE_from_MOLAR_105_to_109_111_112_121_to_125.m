@@ -2,7 +2,7 @@
 % Compute NITRATE from MOLAR_NITRATE provided by the SUNA sensor.
 %
 % SYNTAX :
-%  [o_NITRATE] = compute_prof_NITRATE_from_MOLAR_105_to_109_111_112_121_122_124(a_MOLAR_NITRATE, ...
+%  [o_NITRATE] = compute_prof_NITRATE_from_MOLAR_105_to_109_111_112_121_to_125(a_MOLAR_NITRATE, ...
 %    a_MOLAR_NITRATE_fill_value, a_NITRATE_fill_value, ...
 %    a_MOLAR_NITRATE_pres, a_ctdData, ...
 %    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
@@ -28,7 +28,7 @@
 % RELEASES :
 %   06/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_NITRATE] = compute_prof_NITRATE_from_MOLAR_105_to_109_111_112_121_122_124(a_MOLAR_NITRATE, ...
+function [o_NITRATE] = compute_prof_NITRATE_from_MOLAR_105_to_109_111_112_121_to_125(a_MOLAR_NITRATE, ...
    a_MOLAR_NITRATE_fill_value, a_NITRATE_fill_value, ...
    a_MOLAR_NITRATE_pres, a_ctdData, ...
    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
@@ -52,11 +52,7 @@ end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements
-if (size(a_ctdData, 1) > 1)
-   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset, 0);
-else
-   ctdIntData = a_ctdData;
-end
+ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset);
 if (~isempty(ctdIntData))
    
    idNoDef = find(~((ctdIntData(:, 1) == a_PRES_fill_value) | ...

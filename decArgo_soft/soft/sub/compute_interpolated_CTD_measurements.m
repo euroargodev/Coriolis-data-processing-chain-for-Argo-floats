@@ -8,8 +8,6 @@
 % INPUT PARAMETERS :
 %   a_ctdMeasData : CTD profile measurements
 %   a_presData    : P levels of T and S measurement interpolation
-%   a_extrapFlag  : extrapolated flag (if 1 do the extrapolation for P levels
-%                   that are outside the CTD P interval)
 %
 % OUTPUT PARAMETERS :
 %   o_ctdIntData : CTD interpolated data
@@ -23,7 +21,7 @@
 %   06/02/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ctdIntData] = compute_interpolated_CTD_measurements( ...
-   a_ctdMeasData, a_presData, a_extrapFlag)
+   a_ctdMeasData, a_presData)
 
 % output parameters initialization
 o_ctdIntData = [];
@@ -45,7 +43,7 @@ idNoDefInput = find(~((a_ctdMeasData(:, 1) == paramPres.fillValue) | ...
    (a_ctdMeasData(:, 2) == paramTemp.fillValue) | ...
    (a_ctdMeasData(:, 3) == paramSal.fillValue)));
 
-if (length(idNoDefInput) > 1)
+if (~isempty(idNoDefInput))
    
    % get PTS measurements
    ctdPresData = a_ctdMeasData(idNoDefInput, 1);
@@ -59,32 +57,35 @@ if (length(idNoDefInput) > 1)
       ctdPsalData = flipud(ctdPsalData);
    end
    
-   % consider increasing pressures only (we start the algorithm from the middle
-   % of the profile)
-   idToDelete = [];
-   idStart = fix(length(ctdPresData)/2);
-   pMin = ctdPresData(idStart);
-   for id = idStart-1:-1:1
-      if (ctdPresData(id) >= pMin)
-         idToDelete = [idToDelete id];
-      else
-         pMin = ctdPresData(id);
+   if (length(ctdPresData) > 1)
+      
+      % consider increasing pressures only (we start the algorithm from the middle
+      % of the profile)
+      idToDelete = [];
+      idStart = fix(length(ctdPresData)/2);
+      pMin = ctdPresData(idStart);
+      for id = idStart-1:-1:1
+         if (ctdPresData(id) >= pMin)
+            idToDelete = [idToDelete id];
+         else
+            pMin = ctdPresData(id);
+         end
       end
-   end
-   pMax = ctdPresData(idStart);
-   for id = idStart+1:length(ctdPresData)
-      if (ctdPresData(id) <= pMax)
-         idToDelete = [idToDelete id];
-      else
-         pMax = ctdPresData(id);
+      pMax = ctdPresData(idStart);
+      for id = idStart+1:length(ctdPresData)
+         if (ctdPresData(id) <= pMax)
+            idToDelete = [idToDelete id];
+         else
+            pMax = ctdPresData(id);
+         end
       end
+      
+      ctdPresData(idToDelete) = [];
+      ctdTempData(idToDelete) = [];
+      ctdPsalData(idToDelete) = [];
    end
-
-   ctdPresData(idToDelete) = [];
-   ctdTempData(idToDelete) = [];
-   ctdPsalData(idToDelete) = [];
    
-   if (a_extrapFlag == 0)
+   if (~isempty(ctdPresData))
       
       % duplicate T&S values 10 dbar above the shallowest level
       ctdPresData = [ctdPresData(1)-10; ctdPresData];
@@ -102,28 +103,18 @@ if (length(idNoDefInput) > 1)
       psalIntData = interp1(ctdPresData, ...
          ctdPsalData, ...
          a_presData(idNoDefOutput), 'linear');
-   else
-      tempIntData = interp1(ctdPresData, ...
-         ctdTempData, ...
-         a_presData(idNoDefOutput), 'linear', 'extrap');
-      psalIntData = interp1(ctdPresData, ...
-         ctdPsalData, ...
-         a_presData(idNoDefOutput), 'linear', 'extrap');
+      
+      tempIntData(isnan(tempIntData)) = paramTemp.fillValue;
+      psalIntData(isnan(psalIntData)) = paramSal.fillValue;
+      
+      % output parameters
+      o_ctdIntData = [ ...
+         a_presData ...
+         ones(length(a_presData), 1)*paramTemp.fillValue ...
+         ones(length(a_presData), 1)*paramSal.fillValue];
+      o_ctdIntData(idNoDefOutput, 2) = tempIntData;
+      o_ctdIntData(idNoDefOutput, 3) = psalIntData;
    end
-   
-   % output parameters
-   o_ctdIntData = [ ...
-      a_presData ...
-      ones(length(a_presData), 1)*paramTemp.fillValue ...
-      ones(length(a_presData), 1)*paramSal.fillValue];
-   o_ctdIntData(idNoDefOutput, 2) = tempIntData;
-   o_ctdIntData(idNoDefOutput, 3) = psalIntData;
-   
-elseif ((length(idNoDefInput) == 1) && (length(a_presData) == 1) && ...
-      (a_ctdMeasData(idNoDefInput, 1) == a_presData))
-   
-   o_ctdIntData = a_ctdMeasData;
-
 end
 
 return

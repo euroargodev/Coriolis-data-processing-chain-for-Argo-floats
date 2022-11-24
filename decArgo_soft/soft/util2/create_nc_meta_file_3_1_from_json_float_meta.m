@@ -19,15 +19,19 @@
 function create_nc_meta_file_3_1_from_json_float_meta()
 
 % list of concerned floats
-% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_iridium.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_pts_all.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_36.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\tmp.txt';
 
 % json meta-data file directory
-jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\generate_json_float_meta_argos_nke_old_versions\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
 
 % NetCDF meta-data file output directory
-ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+% ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
+% ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_from_DEP\';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
@@ -89,11 +93,20 @@ for idFloat = 1:length(floatList)
       cellConfigValues = metaData.CONFIG_PARAMETER_VALUE;
       configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
       configNumbers = 1:length(cellConfigValues);
-      for idConf = 1:length(cellConfigValues)
-         cellConfigVals = struct2cell(cellConfigValues{idConf});
+      if (length(cellConfigValues) == 1)
+         cellConfigVals = struct2cell(cellConfigValues);
          for idVal = 1:length(cellConfigVals)
             if (~isempty(cellConfigVals{idVal}))
-               configValues(idVal, idConf) = str2num(cellConfigVals{idVal});
+               configValues(idVal) = str2num(cellConfigVals{idVal});
+            end
+         end
+      else
+         for idConf = 1:length(cellConfigValues)
+            cellConfigVals = struct2cell(cellConfigValues{idConf});
+            for idVal = 1:length(cellConfigVals)
+               if (~isempty(cellConfigVals{idVal}))
+                  configValues(idVal, idConf) = str2num(cellConfigVals{idVal});
+               end
             end
          end
       end
@@ -853,6 +866,7 @@ for idFloat = 1:length(floatList)
          fliplr([idConfName-1  0]), fliplr([1 length(valueStr)]), valueStr');
    end
    
+   launchConfigValue(isnan(launchConfigValue)) = double(99999);
    netcdf.putVar(fCdf, launchConfigParameterValueVarId, 0, length(launchConfigValue), launchConfigValue);
    
    % store mission configuration data
@@ -862,6 +876,7 @@ for idFloat = 1:length(floatList)
          fliplr([idConfName-1  0]), fliplr([1 length(valueStr)]), valueStr');
    end
    
+   missionConfigValue(isnan(missionConfigValue)) = double(99999);
    netcdf.putVar(fCdf, configParameterValueVarId, [0 0], size(missionConfigValue), missionConfigValue);
    
    % store mission configuration numbers

@@ -19,10 +19,10 @@
 function nc_get_tech_aux_value
 
 % top directory of input NetCDF TECH_AUX files
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log and the csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 
 logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_tech_aux_value_' datestr(now, 'yyyymmddTHHMMSS') '.log'];

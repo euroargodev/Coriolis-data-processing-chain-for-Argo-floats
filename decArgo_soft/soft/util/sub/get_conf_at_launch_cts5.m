@@ -40,6 +40,8 @@ switch (a_dacFormatId)
       decoderId = 123;
    case {'7.04'}
       decoderId = 124;
+   case {'7.05'}
+      decoderId = 125;
    otherwise
       fprintf('ERROR: Cannot find decoderId from DAC version ''%s'' in get_conf_at_launch_cts5\n', ...
          a_dacFormatId);

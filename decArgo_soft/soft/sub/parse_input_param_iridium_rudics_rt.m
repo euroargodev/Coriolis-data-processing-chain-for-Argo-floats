@@ -192,7 +192,7 @@ for idFile = 1:length(ryncLogList)
          case {105, 106, 107, 108, 109, 110, 111, 112, 113}
             % CTS4 Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
-         case {121 122 123 124}
+         case {121, 122, 123, 124, 125}
             % CTS5 Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
          otherwise

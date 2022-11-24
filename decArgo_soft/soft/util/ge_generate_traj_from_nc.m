@@ -61,15 +61,12 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_al
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
 
 % répertoire de production des fichier KML
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
-DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 % répertoire de stockage des répertoires temporaires
 DIR_TMP_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
-DIR_TMP_FILES = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
 
 
 % convertion des dates julienes 1950 en dates grégoriennes

@@ -26,14 +26,17 @@ function nc_compare_mono_profile_files_apx(varargin)
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apres_PARAM_SURF\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
+% DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 
 % top directory of new NetCDF mono-profile files
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
 % DIR_INPUT_NEW_NC_FILES = 'H:\archive_201608\coriolis\';
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_avant_PARAM_SURF\';
-DIR_INPUT_NEW_NC_FILES = 'H:\archive_201708\coriolis\';
+% DIR_INPUT_NEW_NC_FILES = 'H:\archive_201708\coriolis\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
+% DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_from_DEP\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -53,17 +56,24 @@ DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_121512.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082213.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071807.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_090810.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_071412.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_061609.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_old_pts_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_new_pts_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
+
+% flag to link cycle numbers of 2 data set using profile dates
+LINK_DATA_SET_FLAG = 0;
 
 % flag to print data measurements (when different) in the log file
 PRINT_DIFF_DATA_FLAG = 1;
 
 % when comparing data measurements consider only parameters of BASE data set
-BASE_PARAM_ONLY = 0;
+BASE_PARAM_ONLY = 1;
 
 % default values
 global g_dateDef;
@@ -76,6 +86,7 @@ SHIFT_DATE = 712224;
 
 % half interval for profile fit
 INTERVAL_HOUR = 10;
+INTERVAL_HOUR = 24;
 INTERVAL_DAY = INTERVAL_HOUR/24;
 
 % first profile date to stop the comparison (leave it empty if you don't want
@@ -510,54 +521,72 @@ for idFloat = 1:nbFloats
    % ascent profiles processing
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   % try to link the 2 sets according to profile dates
-   ascProfNumBase2New = ones(length(ascProfNumBase), 1)*-1;
-   for idProf = 1:length(ascProfNumBase)
-      profNumBase = ascProfNumBase(idProf);
-      profDateBase = ascProfDateBase(idProf);
+   if (~LINK_DATA_SET_FLAG)
       
-      % look for the corresponding New profile
-      idF = find(abs(ascProfDateNew - profDateBase) <= INTERVAL_DAY);
-      if (length(idF) == 1)
-         ascProfNumBase2New(idProf) = ascProfNumNew(idF);
-         
-         ascProfNumNew(idF) = [];
-         ascProfDateNew(idF) = [];
-      elseif (length(idF) > 1)
-         [~, idMin] = min(abs(ascProfDateNew - profDateBase));
-         ascProfNumBase2New(idProf) = ascProfNumNew(idMin);
-         
-         numbers = sprintf(' #%d', ascProfNumNew(idF));
-         fprintf('WARNING: %d ascent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
-            length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
-         
-         ascProfNumNew(idMin) = [];
-         ascProfDateNew(idMin) = [];
-      end
-   end
-
-   % process the remaining New profiles
-   for idProf = 1:length(ascProfNumNew)
-      profNumNew = ascProfNumNew(idProf);
-      profDateNew = ascProfDateNew(idProf);
+      % don't compute link between 2 data sets
+      ascProfNumBase2New = ascProfNumBase;
+      %       ascProfNumBase2New = ones(length(ascProfNumBase), 1)*-1;
+      %       for idProf = 1:length(ascProfNumBase)
+      %          profNumBase = ascProfNumBase(idProf);
+      %          idF = find((corCyNumData(:,1) == floatNum) & (corCyNumData(:,2) == profNumBase));
+      %          if (isempty(idF))
+      %             fprintf('INFO: Float %d: Corrected cycle number not found for cycle number #%d\n', ...
+      %                floatNum, profNumBase);
+      %          else
+      %             ascProfNumBase2New(idProf) = corCyNumData(idF, 3);
+      %          end
+      %       end
+   else
       
-      % find the right place (chronological order) to store the remaining
-      % profile
-      idF = find(ascProfDateBase < profDateNew);
-      if (~isempty(idF))
-         if (idF(end) < length(ascProfDateBase))
-            ascProfNumBase(idF(end)+2:end+1) = ascProfNumBase(idF(end)+1:end);
-            ascProfDateBase(idF(end)+2:end+1) = ascProfDateBase(idF(end)+1:end);
-            ascProfNumBase2New(idF(end)+2:end+1) = ascProfNumBase2New(idF(end)+1:end);
+      % try to link the 2 sets according to profile dates
+      ascProfNumBase2New = ones(length(ascProfNumBase), 1)*-1;
+      for idProf = 1:length(ascProfNumBase)
+         profNumBase = ascProfNumBase(idProf);
+         profDateBase = ascProfDateBase(idProf);
+         
+         % look for the corresponding New profile
+         idF = find(abs(ascProfDateNew - profDateBase) <= INTERVAL_DAY);
+         if (length(idF) == 1)
+            ascProfNumBase2New(idProf) = ascProfNumNew(idF);
+            
+            ascProfNumNew(idF) = [];
+            ascProfDateNew(idF) = [];
+         elseif (length(idF) > 1)
+            [~, idMin] = min(abs(ascProfDateNew - profDateBase));
+            ascProfNumBase2New(idProf) = ascProfNumNew(idMin);
+            
+            numbers = sprintf(' #%d', ascProfNumNew(idF));
+            fprintf('WARNING: %d ascent new profiles found around date %s (corresponding to profiles%s) => (the #%d is selected)\n', ...
+               length(idF), julian_2_gregorian(profDateBase), numbers, idMin);
+            
+            ascProfNumNew(idMin) = [];
+            ascProfDateNew(idMin) = [];
          end
-         ascProfNumBase(idF(end)+1) = -1;
-         ascProfDateBase(idF(end)+1) = profDateNew;
-         ascProfNumBase2New(idF(end)+1) = profNumNew;
-      else
-         ascProfNumBase = [-1; ascProfNumBase];
-         ascProfDateBase = [profDateNew; ascProfDateBase];
-         ascProfNumBase2New = [profNumNew; ascProfNumBase2New];
-      end         
+      end
+      
+      % process the remaining New profiles
+      for idProf = 1:length(ascProfNumNew)
+         profNumNew = ascProfNumNew(idProf);
+         profDateNew = ascProfDateNew(idProf);
+         
+         % find the right place (chronological order) to store the remaining
+         % profile
+         idF = find(ascProfDateBase < profDateNew);
+         if (~isempty(idF))
+            if (idF(end) < length(ascProfDateBase))
+               ascProfNumBase(idF(end)+2:end+1) = ascProfNumBase(idF(end)+1:end);
+               ascProfDateBase(idF(end)+2:end+1) = ascProfDateBase(idF(end)+1:end);
+               ascProfNumBase2New(idF(end)+2:end+1) = ascProfNumBase2New(idF(end)+1:end);
+            end
+            ascProfNumBase(idF(end)+1) = -1;
+            ascProfDateBase(idF(end)+1) = profDateNew;
+            ascProfNumBase2New(idF(end)+1) = profNumNew;
+         else
+            ascProfNumBase = [-1; ascProfNumBase];
+            ascProfDateBase = [profDateNew; ascProfDateBase];
+            ascProfNumBase2New = [profNumNew; ascProfNumBase2New];
+         end
+      end
    end
    
    % compare the mono-profile files

@@ -2,7 +2,7 @@
 % Compute CHLA from FLUORESCENCE_CHLA provided by the ECO2 or ECO3 sensor.
 %
 % SYNTAX :
-%  [o_CHLA] = compute_CHLA_105_to_112_121_122_124(a_FLUORESCENCE_CHLA, ...
+%  [o_CHLA] = compute_CHLA_105_to_112_121_to_125(a_FLUORESCENCE_CHLA, ...
 %    a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
 %
 % INPUT PARAMETERS :
@@ -21,7 +21,7 @@
 % RELEASES :
 %   06/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_CHLA] = compute_CHLA_105_to_112_121_122_124(a_FLUORESCENCE_CHLA, ...
+function [o_CHLA] = compute_CHLA_105_to_112_121_to_125(a_FLUORESCENCE_CHLA, ...
    a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
 
 % current float WMO number

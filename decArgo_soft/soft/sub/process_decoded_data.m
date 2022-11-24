@@ -358,6 +358,10 @@ switch (a_decoderId)
          store_tech1_data_for_nc_210_to_212(tabTech1, deepCycleFlag);
          store_tech2_data_for_nc_212_214_217(tabTech2, deepCycleFlag, iceDetected);
          
+         % store additional technical decoding information (for TECH_AUX
+         % file)
+         store_misc_tech_data_for_nc_212_214_216_217(a_decodedDataTab, a_decoderId);
+
          tabBuffNcTechIndex = [tabBuffNcTechIndex; g_decArgo_outputNcParamIndex];
          tabBuffNcTechVal = [tabBuffNcTechVal g_decArgo_outputNcParamValue];
          tabBuffTechNMeas = [tabBuffTechNMeas tabTechNMeas];
@@ -630,6 +634,10 @@ switch (a_decoderId)
          store_tech1_data_for_nc_213_214_217(tabTech1, deepCycleFlag);
          store_tech2_data_for_nc_212_214_217(tabTech2, deepCycleFlag, iceDetected);
          
+         % store additional technical decoding information (for TECH_AUX
+         % file)
+         store_misc_tech_data_for_nc_212_214_216_217(a_decodedDataTab, a_decoderId);
+         
          tabBuffNcTechIndex = [tabBuffNcTechIndex; g_decArgo_outputNcParamIndex];
          tabBuffNcTechVal = [tabBuffNcTechVal g_decArgo_outputNcParamValue];
          tabBuffTechNMeas = [tabBuffTechNMeas tabTechNMeas];
@@ -899,6 +907,10 @@ switch (a_decoderId)
          % store NetCDF technical data
          store_tech1_data_for_nc_201_to_203_215_216(tabTech1, deepCycleFlag);
          store_tech2_data_for_nc_216(tabTech2, deepCycleFlag, iceDetected);
+         
+         % store additional technical decoding information (for TECH_AUX
+         % file)
+         store_misc_tech_data_for_nc_212_214_216_217(a_decodedDataTab, a_decoderId);
          
          tabBuffNcTechIndex = [tabBuffNcTechIndex; g_decArgo_outputNcParamIndex];
          tabBuffNcTechVal = [tabBuffNcTechVal g_decArgo_outputNcParamValue];

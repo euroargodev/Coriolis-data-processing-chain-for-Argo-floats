@@ -46,20 +46,19 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\DB_Exp
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Iridium\DB_export_APEX_APF11Bio_frm_VB_20180615.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Finland_APF11_Rudics_from_VB_20181023.txt';
-dataBaseFileName = 'F:\NEW_20190125\Sélection flotteurs MOCCA\mocca_meta.txt';
-dataBaseFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\Reste_a_basculer_en_3.1\Apex_013108_042408_111509\float_metadata.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
 floatListFileName = '';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-% floatListFileName = 'F:\NEW_20190125\_RNU\DecArgo_soft\lists\tmp.txt';
-% floatListFileName = 'F:\NEW_20190125\Sélection flotteurs MOCCA\mocca_co_not_in_andro_floats.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % directory to store the log and csv file
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
-DIR_LOG_CSV_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\';
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 
 % create and start log file recording

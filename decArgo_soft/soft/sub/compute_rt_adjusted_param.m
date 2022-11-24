@@ -182,11 +182,15 @@ VERBOSE_MODE = 0;
 % number of days after launch date to update med_Offset value
 TWO_MONTH_IN_DAYS = double(365/6);
 
+% minimum number of offsets expected in the median
+NB_OFFSET_MIN = 5;
+
 paramPres = get_netcdf_param_attributes('PRES');
 paramNitrate = get_netcdf_param_attributes('NITRATE');
 
 % collect information on profiles
 profInfo = [];
+nbOffset = 0;
 for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    if (any(strcmp({profile.paramList.name}, 'NITRATE')))
@@ -212,6 +216,7 @@ for idProf = 1:length(a_tabProfiles)
          end
       end
       nitrateData = profile.data(:, idNitrate);
+      rmsErrorData = profile.rmsError;
       
       idNoDef = find((presData ~= paramPres.fillValue) & (nitrateData ~= paramNitrate.fillValue));
       if (isempty(idNoDef))
@@ -221,10 +226,21 @@ for idProf = 1:length(a_tabProfiles)
       nitratePresWoa = nitrateData(idNoDef(idMax));
       
       getValueFlag = 0;
-      if (profile.date ~= g_decArgo_dateDef)
-         if (profile.date - a_launchDate <= TWO_MONTH_IN_DAYS)
-            getValueFlag = 1;
+      rmsError = rmsErrorData(idNoDef(idMax));
+      if (rmsError < 0.003)
+         if (profile.date ~= g_decArgo_dateDef)
+            if (profile.date - a_launchDate <= TWO_MONTH_IN_DAYS)
+               getValueFlag = 1;
+               nbOffset = nbOffset + 1;
+            elseif (nbOffset < NB_OFFSET_MIN)
+               getValueFlag = 1;
+               nbOffset = nbOffset + 1;
+            end
+         else
+            getValueFlag = -2;
          end
+      else
+         getValueFlag = -1;
       end
       profInfo = [profInfo; ...
          [idProf profile.outputCycleNumber direction ...
@@ -238,34 +254,41 @@ if (~isempty(profInfo))
    % retrieve data from World Ocean Atlas 2013
    profInfo = get_WOA_data(profInfo);
    
-   if (isempty(profInfo))
+   if (isempty(profInfo)) % if an error occured during acces to World Ocean Atlas
       return
    end
    
-   offsetTab = [];
-   medOffset = [];
-   for idP = 1:size(profInfo, 1)
-      profInfoCur = profInfo(idP, :);
-      idProf = profInfoCur(1);
-      profile = a_tabProfiles(idProf);
-            
-      if (profile.date ~= g_decArgo_dateDef)
+   woaNitrateValues = profInfo(:, 9);
+   idNoDef = find(woaNitrateValues ~= paramNitrate.fillValue);
+   if (length(idNoDef) >= NB_OFFSET_MIN)
+      
+      offsetTab = [];
+      medOffset = [];
+      for idP = 1:size(profInfo, 1)
+         profInfoCur = profInfo(idP, :);
+         idProf = profInfoCur(1);
+         profile = a_tabProfiles(idProf);
          
-         % compute med_Offset
-         if (profile.date - a_launchDate <= TWO_MONTH_IN_DAYS)
-            if (profInfoCur(9) ~= paramNitrate.fillValue)
-               offset = profInfoCur(8) - profInfoCur(9);
-               offsetTab = [offsetTab offset];
-            end
-            medOffset = median(offsetTab);
-         end
-         
-         if (isempty(offsetTab))
-            fprintf('WARNING: Float #%d Cycle #%d%c: no offset to compute med_offset => NITRATE data cannot be adjusted\n', ...
+         if (profInfoCur(10) == -1)
+            fprintf('WARNING: Float #%d Cycle #%d%c: RMS error too large => NITRATE data cannot be adjusted\n', ...
                g_decArgo_floatNum, ...
                profile.outputCycleNumber, profile.direction);
             continue
          end
+         
+         if (profInfoCur(10) == -2)
+            fprintf('WARNING: Float #%d Cycle #%d%c: the profile is not dated => NITRATE data cannot be adjusted\n', ...
+               g_decArgo_floatNum, ...
+               profile.outputCycleNumber, profile.direction);
+            continue
+         end
+         
+         % compute med_Offset
+         if (profInfoCur(9) ~= paramNitrate.fillValue)
+            offset = profInfoCur(8) - profInfoCur(9);
+            offsetTab = [offsetTab offset];
+         end
+         medOffset = median(offsetTab);
          
          % create array for adjusted data
          if (isempty(profile.dataAdj))
@@ -291,6 +314,7 @@ if (~isempty(profInfo))
             end
             profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
             profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
+            profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
          end
          
          % retrieve and adjust NITRATE data
@@ -307,6 +331,7 @@ if (~isempty(profInfo))
          nitrateDataAdj(idNoDef) = nitrateDataAdj(idNoDef) - medOffset;
          profile.dataAdj(:, idNitrate) = nitrateDataAdj;
          profile.dataAdjQc(idNoDef, idNitrate) = g_decArgo_qcNoQc;
+         profile.dataAdjError(idNoDef, idNitrate) = 5;
          a_tabProfiles(idProf) = profile;
          
          % fill structure to store NITRATE adjustment information
@@ -347,12 +372,11 @@ if (~isempty(profInfo))
             fprintf(' ]\n');
             fprintf('   * MED_OFFSET = median(TAB_OFFSET) = %g\n', medOffset);
          end
-         
-      else
-         fprintf('WARNING: Float #%d Cycle #%d%c: the profile is not dated => NITRATE data cannot be adjusted\n', ...
-            g_decArgo_floatNum, ...
-            profile.outputCycleNumber, profile.direction);
       end
+   else
+      fprintf('WARNING: Float #%d: not enough offset to compute med_offset (%d offsets while at least %d are expected) => NITRATE data cannot be adjusted\n', ...
+         g_decArgo_floatNum, ...
+         length(idNoDef), NB_OFFSET_MIN);
    end
 end
 

@@ -50,13 +50,11 @@ g_cocm_netCDF4FlagForMultiProf = 1;
 FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
-% DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
+DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
 % DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 
 % top directory of output NetCDF files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

@@ -2,7 +2,7 @@
 % Create configuration parameter lists of decoder names and NetCDF names.
 %
 % SYNTAX :
-%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124
+%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124_125
 %
 % INPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124
+function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124_125
 
 % output parameters initialization
 o_decArgoConfParamNames = [];

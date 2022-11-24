@@ -41,7 +41,7 @@ switch (a_decoderId)
       % PROVOR_III float
       o_wmoInstType = '836';
       
-   case {121, 122, 123, 124}
+   case {121, 122, 123, 124, 125}
       % PROVOR_IV float
       o_wmoInstType = '835';
       

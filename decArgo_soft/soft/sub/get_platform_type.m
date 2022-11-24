@@ -41,7 +41,7 @@ switch (a_decoderId)
       % PROVOR CTS4
       o_platformType = 'PROVOR_III';
       
-   case {121, 122, 123, 124}
+   case {121, 122, 123, 124, 125}
       % PROVOR APMT (CTS5)
       o_platformType = 'PROVOR_IV';
       

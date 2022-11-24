@@ -1444,6 +1444,13 @@ for idProf = 1:length(tabProfiles)
                                        paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                        paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                                        netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                                       
+                                       if (~isempty(prof.dataAdjError))
+                                          paramAdjDataError = prof.dataAdjError(:, idParam);
+                                          if (any(paramAdjDataError ~= profParam.fillValue))
+                                             netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
+                                          end
+                                       end
                                     end
                                  end
                               end
@@ -1579,6 +1586,13 @@ for idProf = 1:length(tabProfiles)
                                           paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                           paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                                           netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                                          
+                                          if (~isempty(prof.dataAdjError))
+                                             paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
+                                             if (any(paramAdjDataError ~= profParam.fillValue))
+                                                netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
+                                             end
+                                          end
                                        end
                                     end
                                  end
@@ -1658,6 +1672,13 @@ for idProf = 1:length(tabProfiles)
                                              end
                                           end
                                           netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 size(paramAdjData, 1)]), paramAdjDataQcStr(measIds));
+                                          
+                                          if (~isempty(prof.dataAdjError))
+                                             paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
+                                             if (any(paramAdjDataError ~= profParam.fillValue))
+                                                netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjDataError)]), paramAdjDataError(measIds, :)');
+                                             end
+                                          end
                                        end
                                     end
                                  end

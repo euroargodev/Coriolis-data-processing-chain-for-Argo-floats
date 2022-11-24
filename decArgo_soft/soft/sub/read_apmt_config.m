@@ -209,8 +209,8 @@ o_configInfoStruct = [];
 switch (a_decoderId)
    case {121, 122, 123}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_121_to_123;
-   case {124}
-      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124;
+   case {124, 125}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124_125;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);
@@ -982,7 +982,7 @@ return
 % Get the basic structure to read APMT configuration.
 %
 % SYNTAX :
-%  [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124
+%  [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124_125
 %
 % INPUT PARAMETERS :
 %
@@ -998,7 +998,7 @@ return
 % RELEASES :
 %   10/16/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124
+function [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124_125
 
 % list of expected sections
 o_configSectionList = [ ...

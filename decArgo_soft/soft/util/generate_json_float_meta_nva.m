@@ -24,20 +24,21 @@ function generate_json_float_meta_nva()
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecNova_info\_configParamNames\NOVA_DBExport_20160226.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecNova_info\_configParamNames\DB_export_Nova_from_VB_20171121.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecNova_info\_configParamNames\DB_export_Nova_historiques_allemands_et_grecs_from_vb_20180201.txt';
-FLOAT_META_FILE_NAME = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\float_metadata.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\float_metadata.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\float_metadata_6903284.txt';
 
 % list of concerned floats
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova2.txt';
-FLOAT_LIST_FILE_NAME = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\nova_float_list.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\nova_float_list.txt';
 
 % directory of individual json float meta-data files
-OUTPUT_DIR_NAME = ['F:\NEW_20190125\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
+OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
 
 % directory to store the log file
-DIR_LOG_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 
 % store the start time of the run

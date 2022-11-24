@@ -37,9 +37,9 @@ switch (a_decoderId)
       
       [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_121_to_123;
 
-   case {124}
+   case {124, 125}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124;
+      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_124_125;
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in create_config_param_names_ir_rudics_cts5 for decoderId #%d\n', ...

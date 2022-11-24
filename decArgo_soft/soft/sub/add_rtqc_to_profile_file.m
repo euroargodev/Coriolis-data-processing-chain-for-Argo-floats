@@ -77,7 +77,7 @@
 %   05/19/2016 - RNU - V 2.4: correction of the 'set_qc' function
 %   06/10/2016 - RNU - V 2.5: RTQC on profile data can be performed even if no
 %                             multi-profile file is available (tests #16 and #18
-%                             are not performed) 
+%                             are not performed)
 %   06/22/2016 - RNU - V 2.6: in test #5, the JULD_LOCATION can be found in traj
 %                             JULD or JULD_ADJUSTED (due to NOVA/DOVA floats
 %                             which transmit GPS times in float time)
@@ -90,13 +90,13 @@
 %   11/07/2016 - RNU - V 2.8: - test #5: apply the test even when we have
 %                               multiple identical locations in the traj file
 %   12/06/2016 - RNU - V 2.9: - test #23: DOXY parameter removed from this test
-%                             - test #57: new specific test defined for DOXY 
+%                             - test #57: new specific test defined for DOXY
 %                               (if TEMP_QC=4 or PRES_QC=4, then DOXY_QC=4; if
 %                                PSAL_QC=4, then DOXY_QC=3)
 %   02/13/2017 - RNU - V 3.0: code update to manage CTS5 float data:
-%                             - multiple identical measurements possible => 
+%                             - multiple identical measurements possible =>
 %                               size(profNmeasXIndex, 1) cannot be predicted
-%                             - PRES2, TEMP2 and PSAL2 are present when a SUNA 
+%                             - PRES2, TEMP2 and PSAL2 are present when a SUNA
 %                               sensor is used
 %   03/22/2017 - RNU - V 3.1: - add RTQC test #62 for BBP
 %                             - management of erroneous Remocean SUNA data
@@ -124,14 +124,21 @@
 %                             (g_rtqc_trajData.juldAdj) should be done with
 %                             an epsilon difference (due to adjustment
 %                             processing)
-%   09/24/2018 - RNU - V 3.6: TEST 63 (CHLA specific test): CHLA_ADJUSTED_QC
+%   09/24/2018 - RNU - V 3.6: TEST #63 (CHLA specific test): CHLA_ADJUSTED_QC
 %                             previously set by TEST 15 (grey list test)
 %                             are used to set final value of CHLA_ADJUSTED_QC
 %   11/06/2018 - RNU - V 3.7: TEST #6 (Global range test) and TEST #9
 %                             (Spike test) updated for PH_IN_SITU_TOTAL
 %                             parameter
-%   20/11/2018 - RNU - V 3.8: Spike test for CHLA disapeared in V 3.7 due to a
+%   11/20/2018 - RNU - V 3.8: Spike test for CHLA disapeared in V 3.7 due to a
 %                             typo => corrected
+%   03/26/2019 - RNU - V 4.0: Added RTQC tests for NITRATE parameter
+%   05/17/2019 - RNU - V 4.1: TEST #19 (deepest pressure test) modification
+%                             of profile pressure threshold:
+%                              - 10% for profile pressures deeper than 1000 dbar
+%                              - for profile pressures shallower than 1000 dbar,
+%                                the coefficient varies linearly between
+%                                10% at 1000 dbar and 150% at 10 dbar
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -163,7 +170,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.8';
+g_decArgo_addRtqcToProfileVersion = '4.1';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -264,6 +271,7 @@ expectedTestList = [ ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
    {'TEST023_DEEP_FLOAT'} ...
    {'TEST057_DOXY'} ...
+   {'TEST059_NITRATE'} ...
    {'TEST062_BBP'} ...
    {'TEST063_CHLA'} ...
    ];
@@ -290,7 +298,7 @@ if (~isempty(floatDecoderIdId))
 else
    fprintf('WARNING: Cannot get float decoder Id for float #%d\n', a_floatNum);
 end
-   
+
 % retrieve test additional information
 if (testFlagList(4) == 1)
    % for position on land test, we need the ETOPO2 file path name
@@ -1270,7 +1278,7 @@ for idProf = 1:nProf
                nLevelsParam = max(idNoDefAll) - min(idNoDefAll) + 1;
             end
          end
-
+         
          % second loop to initialize QC values for parameters of the profile
          for idP = 1:nParam
             paramName = deblank(stationParametersNcMono(:, idP, idProf)');
@@ -1335,10 +1343,26 @@ for idProf = 1:nProf
                            % those which have been set by the decoder (in
                            % update_qc_from_sensor_state_ir_rudics_sbd2)
                            dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrNoQc);
+                           
+                           % initialize NITRATE_QC to g_decArgo_qcStrCorrectable
+                           % initialize NITRATE_ADJUSTED_QC to g_decArgo_qcStrProbablyGood
+                           if (strcmp(paramName, 'NITRATE'))
+                              dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrCorrectable);
+                           elseif (strcmp(paramName, 'NITRATE_ADJUSTED'))
+                              dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrProbablyGood);
+                           end
                         else
                            % initialize Qc flags to g_decArgo_qcStrNoQc
                            dataQc(idProf, :) = g_decArgo_qcStrDef;
                            dataQc(idProf, 1:nLevelsParam) = g_decArgo_qcStrNoQc;
+                           
+                           % initialize NITRATE_QC to g_decArgo_qcStrCorrectable
+                           % initialize NITRATE_ADJUSTED_QC to g_decArgo_qcStrProbablyGood
+                           if (strcmp(paramName, 'NITRATE'))
+                              dataQc(idProf, 1:nLevelsParam) = g_decArgo_qcStrCorrectable;
+                           elseif (strcmp(paramName, 'NITRATE_ADJUSTED'))
+                              dataQc(idProf, 1:nLevelsParam) = g_decArgo_qcStrProbablyGood;
+                           end
                         end
                         idDef = find(data(idProf, 1:nLevelsParam) == paramFillValue);
                         if (~isempty(idDef))
@@ -1396,8 +1420,10 @@ if (testFlagList(19) == 1)
       {'CHLA2'} ...
       {'BBP700'} ...
       {'BBP532'} ...
+      {'PH_IN_SITU_TOTAL'} ...
+      {'NITRATE'} ...
       ];
-         
+   
    for idD = 1:2
       if (idD == 1)
          % non adjusted data processing
@@ -1453,7 +1479,8 @@ if (testFlagList(19) == 1)
                   else
                      
                      % apply the test
-                     idToFlag = idNoDef(find(profPres > deepestPres*1.1));
+                     maxProfPres = compute_max_pres_for_rtqc_test19(deepestPres);
+                     idToFlag = idNoDef(find(profPres > maxProfPres));
                      
                      % set the parameters Qc
                      for idBParam = 1:length(rtqcParameterList)
@@ -1479,8 +1506,18 @@ if (testFlagList(19) == 1)
                               paramData = eval(ncParamXDataList{idParam});
                               paramDataQc = eval(ncParamXDataQcList{idParam});
                               paramDataFillValue = ncParamXFillValueList{idParam};
-                              profParam = paramData(idProf, :);
-                              idNoDef = find(profParam ~= paramDataFillValue);
+                              if (ndims(paramData) <= 2)
+                                 profParam = paramData(idProf, :);
+                                 idNoDef = find(profParam ~= paramDataFillValue);
+                              else
+                                 idNoDef = 1:size(paramData, 2);
+                                 for idL = 1:size(paramData, 2)
+                                    if (length(find(paramData(idProf, idL, :) == paramDataFillValue)) == size(paramData, 3))
+                                       idNoDef(idL) = -1;
+                                    end
+                                 end
+                                 idNoDef(find(idNoDef == -1)) = [];
+                              end
                               
                               % initialize Qc flags
                               paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
@@ -1488,7 +1525,7 @@ if (testFlagList(19) == 1)
                               testDoneList(19, idProf) = 1;
                               testDoneListForTraj{19, idProf} = [testDoneListForTraj{19, idProf} idNoDef];
                               
-                              % apply the test                            
+                              % apply the test
                               if (~isempty(idToFlag))
                                  idToFlagParam = idNoDef(find(ismember(idNoDef, idToFlag) == 1));
                                  paramDataQc(idProf, idToFlagParam) = set_qc(paramDataQc(idProf, idToFlagParam), g_decArgo_qcStrBad);
@@ -1504,7 +1541,7 @@ if (testFlagList(19) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1664,10 +1701,11 @@ if (testFlagList(21) == 1)
       % list of parameters concerned by this test
       test21ParameterList = [ ...
          {'PSAL'} ...
+         {'PSAL2'} ...
          {'DOXY'} ...
          {'DOXY2'} ...
          ];
-
+      
       for idProf = 1:length(juld)
          if (strncmp(vssList{idProf}, 'Near-surface sampling:', length('Near-surface sampling:')))
             
@@ -1749,7 +1787,7 @@ if (testFlagList(22) == 1)
       {'TEMP_DOXY'} ...
       {'TEMP_DOXY2'} ...
       ];
-
+   
    for idProf = 1:length(juld)
       if (strncmp(vssList{idProf}, 'Near-surface sampling:', length('Near-surface sampling:')))
          
@@ -1914,6 +1952,7 @@ if (testFlagList(6) == 1)
             {'BBP700'} ...
             {'BBP532'} ...
             {'PH_IN_SITU_TOTAL'} ...
+            {'NITRATE'} ...
             ];
       else
          % adjusted data processing
@@ -1941,11 +1980,28 @@ if (testFlagList(6) == 1)
             {'BBP700_ADJUSTED'} ...
             {'BBP532_ADJUSTED'} ...
             {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
+            {'NITRATE_ADJUSTED'} ...
             ];
       end
       
-      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'} {'7.3'}];
-      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}       {'8.5'}];
+      paramTestMinMax = [ ...
+         {-5} {''}; ... % PRES
+         {-5} {''}; ... % PRES2
+         {-2.5} {40}; ... % TEMP
+         {-2.5} {40}; ... % TEMP2
+         {-2.5} {40}; ... % TEMP_DOXY
+         {-2.5} {40}; ... % TEMP_DOXY2
+         {2} {41}; ... % PSAL
+         {2} {41}; ... % PSAL2
+         {-5} {600}; ... % DOXY
+         {-5} {600}; ... % DOXY2
+         {-0.1} {50}; ... % CHLA
+         {-0.1} {50}; ... % CHLA2
+         {-0.000025} {0.1}; ... % BBP700
+         {-0.000005} {0.1}; ... % BBP532
+         {7.3} {8.5}; ... % PH_IN_SITU_TOTAL
+         {-2} {50}; ... % NITRATE
+         ];
       
       for id = 1:length(paramTestList)
          
@@ -1967,13 +2023,25 @@ if (testFlagList(6) == 1)
                   testDoneList(6, idProf) = 1;
                   
                   % apply the test
-                  if (~isempty(paramTestMax{id}))
-                     idToFlag = find((profData < str2num(paramTestMin{id})) | ...
-                        (profData > str2num(paramTestMax{id})));
+                  paramTestMin = paramTestMinMax{id, 1};
+                  paramTestMax = paramTestMinMax{id, 2};
+                  if (~isempty(paramTestMax))
+                     idToFlag = find((profData < paramTestMin) | ...
+                        (profData > paramTestMax));
                   else
-                     idToFlag = find(profData < str2num(paramTestMin{id}));
+                     idToFlag = find(profData < paramTestMin);
                   end
                   if (~isempty(idToFlag))
+                     %                      if (strncmp(paramTestList{id}, 'NITRATE', length('NITRATE')))
+                     %                         levelStr = sprintf('%d, ', idNoDef(idToFlag));
+                     %                         if (idD == 1)
+                     %                            fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE global range test failed (levels: %s)\n', ...
+                     %                               a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                     %                         else
+                     %                            fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE_ADJUSTED global range test failed (levels: %s)\n', ...
+                     %                               a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                     %                         end
+                     %                      end
                      flagValue = g_decArgo_qcStrBad;
                      if (strncmp(paramTestList{id}, 'BBP', length('BBP')))
                         flagValue = g_decArgo_qcStrCorrectable;
@@ -2040,8 +2108,14 @@ if (testFlagList(7) == 1)
                
                if (location_in_region(longitude(idProf), latitude(idProf), RED_SEA_REGION))
                   
-                  paramTestMin = [{'21.7'} {'21.7'} {'21.7'} {'21.7'} {'2'}  {'2'}];
-                  paramTestMax = [{'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'}];
+                  paramTestMinMax = [ ...
+                     21.7 40; ... % TEMP
+                     21.7 40; ... % TEMP2
+                     21.7 40; ... % TEMP_DOXY
+                     21.7 40; ... % TEMP_DOXY2
+                     2 41; ... % PSAL
+                     2 41; ... % PSAL2
+                     ];
                   
                   for id = 1:length(paramTestList)
                      
@@ -2062,8 +2136,10 @@ if (testFlagList(7) == 1)
                            testDoneList(7, idProf) = 1;
                            
                            % apply the test
-                           idToFlag = find((profData < str2num(paramTestMin{id})) | ...
-                              (profData > str2num(paramTestMax{id})));
+                           paramTestMin = paramTestMinMax(id, 1);
+                           paramTestMax = paramTestMinMax(id, 2);
+                           idToFlag = find((profData < paramTestMin) | ...
+                              (profData > paramTestMax));
                            if (~isempty(idToFlag))
                               dataQc(idProf, idNoDef(idToFlag)) = set_qc(dataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
                               eval([ncParamXDataQcList{idParam} ' = dataQc;']);
@@ -2076,8 +2152,14 @@ if (testFlagList(7) == 1)
                
                if (location_in_region(longitude(idProf), latitude(idProf), MEDITERRANEAN_SEA_REGION))
                   
-                  paramTestMin = [{'10'} {'10'} {'10'} {'10'} {'2'}  {'2'}];
-                  paramTestMax = [{'40'} {'40'} {'40'} {'40'} {'40'} {'40'}];
+                  paramTestMinMax = [ ...
+                     10 40; ... % TEMP
+                     10 40; ... % TEMP2
+                     10 40; ... % TEMP_DOXY
+                     10 40; ... % TEMP_DOXY2
+                     2 40; ... % PSAL
+                     2 40; ... % PSAL2
+                     ];
                   
                   for id = 1:length(paramTestList)
                      
@@ -2098,8 +2180,10 @@ if (testFlagList(7) == 1)
                            testDoneList(7, idProf) = 1;
                            
                            % apply the test
-                           idToFlag = find((profData < str2num(paramTestMin{id})) | ...
-                              (profData > str2num(paramTestMax{id})));
+                           paramTestMin = paramTestMinMax(id, 1);
+                           paramTestMax = paramTestMinMax(id, 2);
+                           idToFlag = find((profData < paramTestMin) | ...
+                              (profData > paramTestMax));
                            if (~isempty(idToFlag))
                               dataQc(idProf, idNoDef(idToFlag)) = set_qc(dataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
                               eval([ncParamXDataQcList{idParam} ' = dataQc;']);
@@ -2215,6 +2299,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 9 & TEST 11: spike and gradient test
 %
+
+% NOTE THAT A SPIKE TEST IS DEFINED FOR BBP (IT IS SIMILAR TO CHLA ONE) BUT NOT
+% IMPLEMENTED YET (Catherine SCHMECHTIG's decision).
+
 if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
    
    testNumList = [];
@@ -2241,6 +2329,7 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
             
             % list of parameters to test and associated ranges
             if (testNum == 9)
+               % spike test
                paramTestList = [ ...
                   {'TEMP'} ...
                   {'TEMP2'} ...
@@ -2253,10 +2342,20 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'CHLA'} ...
                   {'CHLA2'} ...
                   {'PH_IN_SITU_TOTAL'} ...
+                  {'NITRATE'} ...
                   ];
-               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''} {''}];
-               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''} {''}];
+               paramTestShallowDeep = [ ...
+                  6 2; ... % TEMP
+                  6 2; ... % TEMP2
+                  6 2; ... % TEMP_DOXY
+                  6 2; ... % TEMP_DOXY2
+                  0.9 0.3; ... % PSAL
+                  0.9 0.3; ... % PSAL2
+                  50 25; ... % DOXY
+                  50 25; ... % DOXY2
+                  ];
             else
+               % gradient test
                paramTestList = [ ...
                   {'TEMP'} ...
                   {'TEMP2'} ...
@@ -2267,8 +2366,16 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'DOXY'} ...
                   {'DOXY2'} ...
                   ];
-               paramTestShallow = [{'9'} {'9'} {'9'} {'9'} {'1.5'} {'1.5'} {'50'} {'50'}];
-               paramTestDeep =    [{'3'} {'3'} {'3'} {'3'} {'0.5'} {'0.5'} {'25'} {'25'}];
+               paramTestShallowDeep = [ ...
+                  9 3; ... % TEMP
+                  9 3; ... % TEMP2
+                  9 3; ... % TEMP_DOXY
+                  9 3; ... % TEMP_DOXY2
+                  1.5 0.5; ... % PSAL
+                  1.5 0.5; ... % PSAL2
+                  50 25; ... % DOXY
+                  50 25; ... % DOXY2
+                  ];
             end
             
             % retrieve PRES data from the workspace
@@ -2284,6 +2391,7 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
             
             % list of parameters to test and associated ranges
             if (testNum == 9)
+               % spike test
                paramTestList = [ ...
                   {'TEMP_ADJUSTED'} ...
                   {'TEMP2_ADJUSTED'} ...
@@ -2296,10 +2404,20 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'CHLA_ADJUSTED'} ...
                   {'CHLA2_ADJUSTED'} ...
                   {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
+                  {'NITRATE_ADJUSTED'} ...
                   ];
-               paramTestShallow = [{'6'} {'6'} {'6'} {'6'} {'0.9'} {'0.9'} {'50'} {'50'} {''} {''} {''}];
-               paramTestDeep =    [{'2'} {'2'} {'2'} {'2'} {'0.3'} {'0.3'} {'25'} {'25'} {''} {''} {''}];
+               paramTestShallowDeep = [ ...
+                  6 2; ... % TEMP_ADJUSTED
+                  6 2; ... % TEMP2_ADJUSTED
+                  6 2; ... % TEMP_DOXY_ADJUSTED
+                  6 2; ... % TEMP_DOXY2_ADJUSTED
+                  0.9 0.3; ... % PSAL_ADJUSTED
+                  0.9 0.3; ... % PSAL2_ADJUSTED
+                  50 25; ... % DOXY_ADJUSTED
+                  50 25; ... % DOXY2_ADJUSTED
+                  ];
             else
+               % gradient test
                paramTestList = [ ...
                   {'TEMP_ADJUSTED'} ...
                   {'TEMP2_ADJUSTED'} ...
@@ -2310,8 +2428,16 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                   {'DOXY_ADJUSTED'} ...
                   {'DOXY2_ADJUSTED'} ...
                   ];
-               paramTestShallow = [{'9'} {'9'} {'9'} {'9'} {'1.5'} {'1.5'} {'50'} {'50'}];
-               paramTestDeep =    [{'3'} {'3'} {'3'} {'3'} {'0.5'} {'0.5'} {'25'} {'25'}];
+               paramTestShallowDeep = [ ...
+                  9 3; ... % TEMP_ADJUSTED
+                  9 3; ... % TEMP2_ADJUSTED
+                  9 3; ... % TEMP_DOXY_ADJUSTED
+                  9 3; ... % TEMP_DOXY2_ADJUSTED
+                  1.5 0.5; ... % PSAL_ADJUSTED
+                  1.5 0.5; ... % PSAL2_ADJUSTED
+                  50 25; ... % DOXY_ADJUSTED
+                  50 25; ... % DOXY2_ADJUSTED
+                  ];
             end
             
             % retrieve PRES adjusted data from the workspace
@@ -2350,9 +2476,11 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                     ~strcmp(paramTestList{idP}, 'CHLA2') && ...
                                     ~strcmp(paramTestList{idP}, 'CHLA2_ADJUSTED') && ...
                                     ~strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL') && ...
-                                    ~strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL_ADJUSTED'))
+                                    ~strcmp(paramTestList{idP}, 'PH_IN_SITU_TOTAL_ADJUSTED') && ...
+                                    ~strcmp(paramTestList{idP}, 'NITRATE') && ...
+                                    ~strcmp(paramTestList{idP}, 'NITRATE_ADJUSTED'))
                                  
-                                 % test for TEMP, TEMP_DOXY, PSAL and DOXY
+                                 % spike or gradient test for TEMP, TEMP_DOXY, PSAL and DOXY
                                  profPres = presData(idProf, :);
                                  profPresQc = presDataQc(idProf, :);
                                  profData = data(idProf, :);
@@ -2379,11 +2507,11 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                              testVal = abs(profData(idL)-(profData(idL+1)+profData(idL-1))/2);
                                           end
                                           if (profPres(idL) < 500)
-                                             if (testVal > str2num(paramTestShallow{idP}))
+                                             if (testVal > paramTestShallowDeep(idP, 1))
                                                 idToFlag = [idToFlag idL];
                                              end
                                           else
-                                             if (testVal > str2num(paramTestDeep{idP}))
+                                             if (testVal > paramTestShallowDeep(idP, 2))
                                                 idToFlag = [idToFlag idL];
                                              end
                                           end
@@ -2453,6 +2581,65 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                        end
                                     end
                                  end
+                                 
+                              elseif (strcmp(paramTestList{idP}, 'NITRATE') || ...
+                                    strcmp(paramTestList{idP}, 'NITRATE_ADJUSTED'))
+                                 
+                                 % determine spike threshold value
+                                 % 1 micromole/kg in Mediterranean Sea and Red Sea
+                                 % 5 micromole/kg anywhere else
+                                 spikeThreshold = 5;
+                                 if (~isempty(latitude) && ~isempty(longitude))
+                                    if ((latitude(idProf) ~= paramLat.fillValue) && ...
+                                          (longitude(idProf) ~= paramLon.fillValue))
+                                       if ((location_in_region(longitude(idProf), latitude(idProf), RED_SEA_REGION) == 1) || ...
+                                             (location_in_region(longitude(idProf), latitude(idProf), MEDITERRANEAN_SEA_REGION) == 1))
+                                          spikeThreshold = 1;
+                                       end
+                                    end
+                                 end
+                                 
+                                 % spike test for NITRATE
+                                 profData = data(idProf, :);
+                                 profDataQc = dataQc(idProf, :);
+                                 % Catherine SCHMECHTIG's decision 05/21/2019
+                                 % values with QC =
+                                 % g_decArgo_qcStrCorrectable should be
+                                 % considered in spike test (this is
+                                 % usually the NITRATE_QC value at this
+                                 % processing step)
+                                 %                                  idDefOrBad = find((profData == paramFillValue) | ...
+                                 %                                     (profDataQc == g_decArgo_qcStrCorrectable) | ...
+                                 %                                     (profDataQc == g_decArgo_qcStrBad));
+                                 idDefOrBad = find((profData == paramFillValue) | ...
+                                    (profDataQc == g_decArgo_qcStrBad));
+                                 idDefOrBad = [0 idDefOrBad length(profData)+1];
+                                 for idSlice = 1:length(idDefOrBad)-1
+                                    
+                                    % part of continuous measurements
+                                    idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+                                    
+                                    % apply the test
+                                    if (length(idLevel) > 4)
+                                       resProfData = ones(1, length(idLevel)-4)*paramFillValue;
+                                       idList = 3:length(idLevel)-2;
+                                       for id = 1:length(idList)
+                                          idL = idLevel(idList(id));
+                                          resProfData(id) = abs(profData(idL) - median(profData(idL-2:idL+2))) - spikeThreshold;
+                                       end
+                                       if (any(resProfData > 0))
+                                          %                                           levelStr = sprintf('%d, ', idLevel(find(resProfData > 0)) + 2);
+                                          %                                           if (idD == 1)
+                                          %                                              fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE spike test failed (levels: %s)\n', ...
+                                          %                                                 a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                                          %                                           else
+                                          %                                              fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE_ADJUSTED spike test failed (levels: %s)\n', ...
+                                          %                                                 a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                                          %                                           end
+                                          idToFlag = [idToFlag idLevel(find(resProfData > 0)) + 2];
+                                       end
+                                    end
+                                 end
                               end
                               
                               if (~isempty(idToFlag))
@@ -2515,8 +2702,7 @@ if (testFlagList(12) == 1)
             {'PSAL2_ADJUSTED'} ...
             ];
       end
-      
-      paramTestDiff = [{'10'} {'10'} {'10'} {'10'} {'5'} {'5'}];
+      paramTestDiff = [10 10 10 10 5 5];
       
       for id = 1:length(paramTestList)
          
@@ -2551,7 +2737,7 @@ if (testFlagList(12) == 1)
                         % the levels where jumps are detected and
                         % g_decArgo_qcStrCorrectable on the remaining levels of
                         % the profile)
-                        idToFlag = find(abs(diff(profData(idLevel))) > str2num(paramTestDiff{id}));
+                        idToFlag = find(abs(diff(profData(idLevel))) > paramTestDiff(id));
                         if (~isempty(idToFlag))
                            idToFlag = unique([idToFlag idToFlag+1]);
                            dataQc(idProf, idLevel) = set_qc(dataQc(idProf, idLevel), g_decArgo_qcStrCorrectable);
@@ -2928,7 +3114,7 @@ if (multiProfFileFlag)
                juldLocationM(idProfM) = juldLocation(idProf);
                latitudeM(idProfM) = latitude(idProf);
                longitudeM(idProfM) = longitude(idProf);
-
+               
                % update <PARAM>_QC
                for idParam = 1:length(ncMParamNameQcList)
                   paramNameQc = lower(ncMParamNameQcList{idParam});
@@ -3040,7 +3226,7 @@ if (testFlagList(16) == 1)
             {'PSAL'} ...
             {'PSAL2'} ...
             ];
-         paramTestDiffMax = [{'1'} {'1'} {'1'} {'1'} {'0.5'} {'0.5'}];
+         paramTestDiffMax = [1 1 1 1 0.5 0.5];
          
          for id = 1:length(paramTestList)
             
@@ -3191,7 +3377,7 @@ if (testFlagList(16) == 1)
                         if (~isempty(idFLev))
                            meanParam = mean(profParam(idFLev));
                            
-                           if (abs(meanParam-meanParamRef) > str2num(paramTestDiffMax{id}))
+                           if (abs(meanParam-meanParamRef) > paramTestDiffMax(id))
                               paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
                               eval([ncParamXDataQcList{idParam} ' = paramDataQc;']);
                               testFailedList(16, idProf) = 1;
@@ -3228,9 +3414,14 @@ if (testFlagList(18) == 1)
             {'PSAL'} ...
             {'PSAL2'} ...
             ];
-         paramTestMax =  [{'0.3'}   {'0.3'}   {'0.3'}   {'0.3'}   {'0.3'}   {'0.3'}];
-         paramTestMin =  [{'0.001'} {'0.001'} {'0.001'} {'0.001'} {'0.001'} {'0.001'}];
-         paramTestMean = [{'0.02'}  {'0.02'}  {'0.02'}  {'0.02'}  {'0.004'} {'0.004'}];
+         paramTestMinMaxMean = [ ...
+            0.001 0.3 0.002; ... % TEMP
+            0.001 0.3 0.002; ... % TEMP2
+            0.001 0.3 0.002; ... % TEMP_DOXY
+            0.001 0.3 0.002; ... % TEMP_DOXY2
+            0.001 0.3 0.004; ... % PSAL
+            0.001 0.3 0.004; ... % PSAL2
+            ];
          
          for id = 1:length(paramTestList)
             
@@ -3420,9 +3611,9 @@ if (testFlagList(18) == 1)
                                  deltaParam = abs(prevProfParamRefBis - newProfParam);
                                  
                                  % apply the test
-                                 if ((max(deltaParam) <  str2num(paramTestMax{id})) && ...
-                                       (min(deltaParam) <  str2num(paramTestMin{id})) && ...
-                                       (mean(deltaParam) <  str2num(paramTestMean{id})))
+                                 if ((min(deltaParam) <  paramTestMinMaxMean(id, 1)) && ...
+                                       (max(deltaParam) <  paramTestMinMaxMean(id, 2)) && ...
+                                       (mean(deltaParam) <  paramTestMinMaxMean(id, 3)))
                                     paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrBad);
                                     eval([ncParamXDataQcList{idParam} ' = paramDataQc;']);
                                     testFailedList(18, idProf) = 1;
@@ -3504,7 +3695,7 @@ if (testFlagList(23) == 1)
                g_decArgo_qcStrCorrectable ...
                g_decArgo_qcStrCorrectable ...
                ];
-
+            
             % retrieve PRES adjusted data from the workspace
             idPres = find(strcmp('PRES_ADJUSTED', ncParamXNameList) == 1, 1);
          end
@@ -3637,7 +3828,7 @@ if (testFlagList(57) == 1)
                   paramData = eval(ncParamXDataList{idParam});
                   paramDataQc = eval(ncParamXDataQcList{idParam});
                   paramFillValue = ncParamXFillValueList{idParam};
-            
+                  
                   if (~isempty(idParam))
                      
                      for idProf = 1:length(juld)
@@ -3647,9 +3838,9 @@ if (testFlagList(57) == 1)
                         profTempQc = tempDataQc(idProf, :);
                         profPsal = psalData(idProf, :);
                         profPsalQc = psalDataQc(idProf, :);
-                     
+                        
                         profParam = paramData(idProf, :);
-            
+                        
                         % initialize Qc flags
                         idNoDefParam = find(profParam ~= paramFillValue);
                         paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
@@ -3657,7 +3848,7 @@ if (testFlagList(57) == 1)
                         
                         testDoneList(57, idProf) = 1;
                         testDoneListForTraj{57, idProf} = [testDoneListForTraj{57, idProf} idNoDefParam];
-
+                        
                         % apply the test
                         idNoDef = find((profPres ~= presDataDataFillValue) & ...
                            (profTemp ~= tempDataFillValue) & ...
@@ -3681,6 +3872,207 @@ if (testFlagList(57) == 1)
                            testFailedList(57, idProf) = 1;
                            testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
                         end
+                     end
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 59: NITRATE specific test
+%
+if (testFlagList(59) == 1)
+   
+   if (~isempty(find(strcmp('NITRATE', ncParamNameList) == 1, 1)))
+      
+      idPres = find(strcmp('PRES', ncParamNameList) == 1, 1);
+      idTemp = find(strcmp('TEMP', ncParamNameList) == 1, 1);
+      idPsal = find(strcmp('PSAL', ncParamNameList) == 1, 1);
+      
+      idUvIntensityNitrate = find(strcmp('UV_INTENSITY_NITRATE', ncParamNameList) == 1, 1);
+      idUvIntensityDarkNitrate = find(strcmp('UV_INTENSITY_DARK_NITRATE', ncParamNameList) == 1, 1);
+      idNitrate = find(strcmp('NITRATE', ncParamNameList) == 1, 1);
+      idNitrateAdj = find(strcmp('NITRATE_ADJUSTED', ncParamAdjNameList) == 1, 1);
+      
+      if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal) && ...
+            ~isempty(idUvIntensityNitrate) && ~isempty(idUvIntensityDarkNitrate) && ~isempty(idNitrate))
+         
+         presData = eval(ncParamDataList{idPres});
+         presDataFillValue = ncParamFillValueList{idPres};
+         
+         tempData = eval(ncParamDataList{idTemp});
+         tempDataFillValue = ncParamFillValueList{idTemp};
+         
+         psalData = eval(ncParamDataList{idPsal});
+         psalDataFillValue = ncParamFillValueList{idPsal};
+         
+         uvIntensityNitrateData = eval(ncParamDataList{idUvIntensityNitrate});
+         uvIntensityNitrateDataFillValue = ncParamFillValueList{idUvIntensityNitrate};
+         
+         uvIntensityDarkNitrateData = eval(ncParamDataList{idUvIntensityDarkNitrate});
+         uvIntensityDarkNitrateDataFillValue = ncParamFillValueList{idUvIntensityDarkNitrate};
+         
+         nitrateData = eval(ncParamDataList{idNitrate});
+         nitrateDataQc = eval(ncParamDataQcList{idNitrate});
+         nitrateDataFillValue = ncParamFillValueList{idNitrate};
+         
+         nitrateDataAdjQc = eval(ncParamAdjDataQcList{idNitrateAdj});
+         
+         if (~isempty(presData) && ~isempty(tempData) && ~isempty(psalData) && ...
+               ~isempty(uvIntensityNitrateData) && ~isempty(uvIntensityDarkNitrateData))
+            
+            if (any(any(nitrateData ~= nitrateDataFillValue)))
+               
+               % create the PTS profile by concatenating the near-surface
+               % and the primary sampling profiles
+               
+               % retrieve the near-surface profile Id
+               idNSProf = find(strncmp(vssList, 'Near-surface sampling:', length('Near-surface sampling:')) == 1);
+               if (~isempty(idNSProf))
+                  % CTD and DOXY profiles could have a NS profile
+                  % we should check the data (even if only one NS profile is
+                  % present) to identify the NS CTD profile
+                  found = 0;
+                  for idP = 1:length(idNSProf)
+                     if (any((tempData(idNSProf(idP), :) ~= tempDataFillValue) & ...
+                           (psalData(idNSProf(idP), :) ~= psalDataFillValue)))
+                        found = 1;
+                        idNSProf = idNSProf(idP);
+                        break
+                     end
+                  end
+                  if (found == 0)
+                     idNSProf = [];
+                  end
+               end
+               
+               % retrieve the primary profile Id
+               idPProf = find(strncmp(vssList, 'Primary sampling:', length('Primary sampling:')) == 1);
+               if (length(idPProf) > 1)
+                  fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d primary profiles in mono profile file\n', ...
+                     a_floatNum, cycleNumber(idProf), length(idPProf));
+                  idPProf = idPProf(find(idPProf < idProf));
+                  idPProf = idPProf(end);
+               end
+               
+               if (~isempty(idNSProf) && ~isempty(idPProf))
+                  profPres = [presData(idNSProf, :), presData(idPProf, :)];
+                  profTemp = [tempData(idNSProf, :), tempData(idPProf, :)];
+                  profPsal = [psalData(idNSProf, :), psalData(idPProf, :)];
+               elseif (~isempty(idPProf))
+                  profPres = presData(idPProf, :);
+                  profTemp = tempData(idPProf, :);
+                  profPsal = psalData(idPProf, :);
+               elseif (~isempty(idNSProf))
+                  profPres = presData(idNSProf, :);
+                  profTemp = tempData(idNSProf, :);
+                  profPsal = psalData(idNSProf, :);
+               else
+                  profPres = [];
+                  profTemp = [];
+                  profPsal = [];
+               end
+               
+               idNoDefPts = find((profPres ~= presDataFillValue) & ...
+                  (profTemp ~= tempDataFillValue) & ...
+                  (profPsal ~= psalDataFillValue) ...
+                  );
+               
+               profPres = profPres(idNoDefPts);
+               profTemp = profTemp(idNoDefPts);
+               profPsal = profPsal(idNoDefPts);
+               
+               for idProf = 1:length(juld)
+                  profPresUvIntensityNitrate = presData(idProf, :);
+                  profUvIntensityNitrate = uvIntensityNitrateData(idProf, :, :);
+                  profUvIntensityDarkNitrate = uvIntensityDarkNitrateData(idProf, :);
+                  
+                  profNitrate = nitrateData(idProf, :);
+                  profNitrateQc = nitrateDataQc(idProf, :);
+                  
+                  if (any(profNitrate ~= nitrateDataFillValue))
+                     
+                     if (isempty(profPres))
+                        
+                        % if no PTS is available in the primary profile, we
+                        % use the PTS measurements provided in the NITRATE
+                        % profile
+                        
+                        profPres = presData(idProf, :);
+                        profTemp = tempData(idProf, :);
+                        profPsal = psalData(idProf, :);
+                        
+                        idNoDefPts = find((profPres ~= presDataFillValue) & ...
+                           (profTemp ~= tempDataFillValue) & ...
+                           (profPsal ~= psalDataFillValue) ...
+                           );
+                        
+                        profPres = profPres(idNoDefPts)';
+                        profTemp = profTemp(idNoDefPts)';
+                        profPsal = profPsal(idNoDefPts)';
+                     end
+                     
+                     if (~isempty(profPres))
+                        
+                        profNitrateTest59Qc = add_nitrate_rtqc_to_profile_file( ...
+                           a_floatNum, cycleNumber(idProf), ...
+                           squeeze(profUvIntensityNitrate), ...
+                           profUvIntensityDarkNitrate', ...
+                           uvIntensityNitrateDataFillValue, ...
+                           uvIntensityDarkNitrateDataFillValue, ...
+                           profPresUvIntensityNitrate', [profPres' profTemp' profPsal'], ...
+                           presDataFillValue, ...
+                           tempDataFillValue, ...
+                           psalDataFillValue, ...
+                           profNitrateQc, floatDecoderId);
+                        
+                        % update NITRATE_QC with test #59 results
+                        idQc4 = find(profNitrateTest59Qc == g_decArgo_qcStrBad);
+                        profNitrateQc(idQc4) = set_qc(profNitrateQc(idQc4), g_decArgo_qcStrBad);
+                        
+                        nitrateDataQc(idProf, :) = profNitrateQc;
+                        eval([ncParamDataQcList{idNitrate} ' = nitrateDataQc;']);
+                        
+                        if (~isempty(find((profNitrateQc == g_decArgo_qcStrProbablyGood) | ...
+                              (profNitrateQc == g_decArgo_qcStrCorrectable), 1)))
+                           testFailedList(59, idProf) = 1;
+                           testFailedListForTraj{59, idProf} = [testFailedListForTraj{59, idProf} ...
+                              find((profNitrateQc == g_decArgo_qcStrProbablyGood) | ...
+                              (profNitrateQc == g_decArgo_qcStrCorrectable))];
+                        end
+                        
+                        % update NITRATE_ADJUSTED_QC with test #59 results
+                        profNitrateAdjQc = nitrateDataAdjQc(idProf, :);
+                        
+                        idQc3 = find((profNitrateAdjQc ~= g_decArgo_qcStrDef) & ... % to be sure that the value exists at this level
+                           (profNitrateTest59Qc == g_decArgo_qcStrCorrectable));
+                        profNitrateAdjQc(idQc3) = set_qc(profNitrateAdjQc(idQc3), g_decArgo_qcStrCorrectable);
+                        
+                        idQc4 = find((profNitrateAdjQc ~= g_decArgo_qcStrDef) & ...
+                           (profNitrateTest59Qc == g_decArgo_qcStrBad));
+                        profNitrateAdjQc(idQc4) = set_qc(profNitrateAdjQc(idQc4), g_decArgo_qcStrBad);
+                        
+                        nitrateDataAdjQc(idProf, :) = profNitrateAdjQc;
+                        eval([ncParamAdjDataQcList{idNitrateAdj} ' = nitrateDataAdjQc;']);
+                        
+                        if (~isempty(find((profNitrateAdjQc == g_decArgo_qcStrProbablyGood) | ...
+                              (profNitrateAdjQc == g_decArgo_qcStrCorrectable), 1)))
+                           testFailedList(59, idProf) = 1;
+                           testFailedListForTraj{59, idProf} = [testFailedListForTraj{59, idProf} ...
+                              find((profNitrateAdjQc == g_decArgo_qcStrProbablyGood) | ...
+                              (profNitrateAdjQc == g_decArgo_qcStrCorrectable))];
+                        end
+                        
+                        testDoneList(59, idProf) = 1;
+                        testDoneListForTraj{59, idProf} = [testDoneListForTraj{59, idProf} find(profNitrateQc ~= g_decArgo_qcStrDef)];
+                        testDoneListForTraj{59, idProf} = [testDoneListForTraj{59, idProf} find(profNitrateAdjQc ~= g_decArgo_qcStrDef)];
+                        
+                     else
+                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: no available CTD data => unable to perform NITRATE RTQC specific test (Test #59)\n', ...
+                           a_floatNum, cycleNumber(idProf));
                      end
                   end
                end
@@ -4155,7 +4547,7 @@ chlaProfIdList = find(testDoneList(63, :) == 1);
 % update multi profile QC data
 %
 if (multiProfFileFlag)
-
+   
    for idProf = 1:length(juld)
       if (idProfileInMulti(idProf) ~= -1)
          idProfM = idProfileInMulti(idProf);
@@ -4284,14 +4676,15 @@ if (~isempty(g_rtqc_trajData))
          ncTrajParamXDataList = g_rtqc_trajData.ncTrajParamAdjDataList;
          ncParamXFillValueList = g_rtqc_trajData.ncTrajParamAdjFillValueList;
       end
-            
+      
       % create the sorted list of profile and trajectory common parameters
       ncProfTrajXNameList = intersect(ncProfParamXNameList, ncTrajParamXNameList);
       
       % as RT adjustments (stored in the data-base) are applied on PROF data
       % only (not on TRAJ data) we should link PROF and TRAJ data with non
-      % adjusted data only
-      if (idD == 1)
+      % adjusted data only (except when adjustment is performed by the
+      % decoder)
+      %       if (idD == 1)
          
          % collect prof and traj data
          
@@ -4301,6 +4694,10 @@ if (~isempty(g_rtqc_trajData))
          for idProf = 1:length(juld)
             dataBis = [];
             for idP = 1:length(ncProfTrajXNameList)
+               if ((idD == 2) && ...
+                     ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
+                  continue
+               end
                idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
                data = eval(ncProfParamXDataList{idParam});
                if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
@@ -4320,6 +4717,10 @@ if (~isempty(g_rtqc_trajData))
          dataTraj = [];
          dataTrajFillValue = [];
          for idP = 1:length(ncProfTrajXNameList)
+            if ((idD == 2) && ...
+                  ~ismember(ncProfTrajXNameList{idP}, [{'CHLA_ADJUSTED'} {'NITRATE_ADJUSTED'}]))
+               continue
+            end
             idParam = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
             data = g_rtqc_trajData.(ncTrajParamXDataList{idParam});
             if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
@@ -4404,7 +4805,7 @@ if (~isempty(g_rtqc_trajData))
                end
             end
          end
-      end
+         %       end
       
       if (idD == 1)
          profNmeasIndex = profNmeasXIndex;
@@ -4422,7 +4823,7 @@ if (~isempty(g_rtqc_trajData))
    % arrays to report RTQC on prof data in traj data
    g_rtqc_trajData.testDoneList = zeros(lastTestNum, 1);
    g_rtqc_trajData.testFailedList = zeros(lastTestNum, 1);
-
+   
    % report profile Qc in trajectory data
    for idD = 1:2
       if (idD == 1)
@@ -4446,7 +4847,7 @@ if (~isempty(g_rtqc_trajData))
          profNmeasXIndex = profNmeasAdjIndex;
          ncProfTrajXNameList = ncProfTrajAdjNameList;
       end
-
+      
       if (~isempty(g_rtqc_trajData) && ~isempty(profNmeasXIndex) && ...
             ~isempty(find(profNmeasXIndex > 0, 1)))
          for idProf = 1:length(juld)
@@ -4487,7 +4888,7 @@ if (~isempty(g_rtqc_trajData))
             end
          end
       end
-   end   
+   end
 end
 
 if (a_update_file_flag == 0)
@@ -4598,7 +4999,7 @@ if (multiProfFileFlag)
       {'LATITUDE'} {latitudeM} ...
       {'LONGITUDE'} {longitudeM} ...
       ];
-
+   
    % create the list of data Qc to store in the NetCDF multi profile files
    dataQcMList = [ ...
       {'JULD_QC'} {juldQcM} ...
@@ -4652,7 +5053,7 @@ if (ok == 1)
          move_file(tmpNcMultiBProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
       end
    end
-
+   
 end
 
 % delete the temp directory
@@ -5027,7 +5428,10 @@ for idFile = 1:2
    globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
    globalHistoryText = [globalHistoryText ...
       datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COQC software)'];
+   netcdf.reDef(fCdf);
    netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+   netcdf.endDef(fCdf);
+
    
    % upate date
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
@@ -5445,6 +5849,45 @@ while (1)
          end
       end
    end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute the new threshold for test #19 along the following rules:
+%   - 10% for profile pressures deeper than 1000 dbar
+%   - for profile pressures shallower than 1000 dbar, the coefficient varies
+%     linearly between 10% at 1000 dbar and 150% at 10 dbar
+%
+% SYNTAX :
+%  [o_maxPres] = compute_max_pres_for_rtqc_test19(a_profilePressure)
+%
+% INPUT PARAMETERS :
+%   a_profilePressure : meta PROFILE_PRESSURE value
+%
+% OUTPUT PARAMETERS :
+%   o_maxPres : profile pressure threshold
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   05/17/2019 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_maxPres] = compute_max_pres_for_rtqc_test19(a_profilePressure)
+
+if (a_profilePressure >= 1000)
+   % 10 % for profile pressures deeper than 1000 dbar
+   o_maxPres = a_profilePressure*1.1;
+else
+   % for profile pressures shallower than 1000 dbar, the coefficient will
+   % vary linearly between 150 % at 10 dbar and 10 % at 1000 dbar
+   coefA = (150-10)/(10-1000);
+   coefB = 10 - coefA*1000;
+   coef = coefA*a_profilePressure + coefB;
+   o_maxPres = a_profilePressure*(1+coef/100);
 end
 
 return

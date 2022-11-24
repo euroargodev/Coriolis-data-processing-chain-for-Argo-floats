@@ -28,6 +28,9 @@ o_ok = 0;
 
 global g_decArgo_janFirst1950InMatlab;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % split sensor technical data packets (packet type 250 is 70 bytes length
 % whereas input SBD size is 140 bytes)
@@ -235,7 +238,8 @@ for idMes = 1:size(tabSensors, 1)
          phaseNum = '';
          
       otherwise
-         fprintf('WARNING: Nothing done yet for packet type #%d\n', ...
+         fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d\n', ...
+            g_decArgo_floatNum, ...
             packType);
          cycleNum = '';
          profNum = '';

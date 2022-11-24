@@ -66,6 +66,15 @@ if (exist(bufferListFileName, 'file') == 2)
    fclose(fId);
    
    if (any(fileCyCorList ~= -1))
+      
+      % create a temporary directory
+      tmpDirName = [a_fileDirName '/tmp/'];
+      if (exist(tmpDirName, 'dir') == 7)
+         rmdir(tmpDirName, 's');
+      end
+      mkdir(tmpDirName);
+
+      % update SBD file names
       idFModif = find(fileCyCorList ~= -1);
       for idF = 1:length(idFModif)
          newFileName = modify_sbd_file(a_fileDirName, ...
@@ -74,6 +83,9 @@ if (exist(bufferListFileName, 'file') == 2)
             fileNameList{idFModif(idF)} = newFileName;
          end
       end
+      
+      % remove the temporary directory
+      rmdir(tmpDirName, 's');
    end
    
    for idFile = 1:length(o_fileRank)
@@ -158,12 +170,12 @@ if (packType ~= 251)
    % if the file with the name stored in the buffer exists, it has not been modified yet
    if (exist([a_fileDirName '/' a_fileName], 'file') == 2)
       
-      % create a temporary directory
+      %       % create a temporary directory
       tmpDirName = [a_fileDirName '/tmp/'];
-      if (exist(tmpDirName, 'dir') == 7)
-         rmdir(tmpDirName, 's');
-      end
-      mkdir(tmpDirName);
+      %       if (exist(tmpDirName, 'dir') == 7)
+      %          rmdir(tmpDirName, 's');
+      %       end
+      %       mkdir(tmpDirName);
       
       % modify the file contents
       move_file([a_fileDirName '/' a_fileName], [tmpDirName '/' a_fileName]);
@@ -175,8 +187,8 @@ if (packType ~= 251)
       end
       move_file([tmpDirName '/' newFileName], [a_fileDirName '/' newFileName]);
       
-      % remove the temporary directory
-      rmdir(tmpDirName, 's');
+      %       % remove the temporary directory
+      %       rmdir(tmpDirName, 's');
       
    end
    

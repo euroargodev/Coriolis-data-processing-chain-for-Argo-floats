@@ -20,8 +20,7 @@
 function nc_traj_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\CHECk_DO_VT\OLD\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % default list of floats to convert
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_032213.txt';
@@ -46,7 +45,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_ir
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % measurement codes initialization
 init_measurement_codes;

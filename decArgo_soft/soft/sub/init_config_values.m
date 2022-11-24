@@ -83,6 +83,7 @@ global g_decArgo_rtqcTest21;
 global g_decArgo_rtqcTest22;
 global g_decArgo_rtqcTest23;
 global g_decArgo_rtqcTest57;
+global g_decArgo_rtqcTest59;
 global g_decArgo_rtqcTest62;
 global g_decArgo_rtqcTest63;
 
@@ -153,6 +154,7 @@ configVar{end+1} = 'TEST021_NS_UNPUMPED_SALINITY';
 configVar{end+1} = 'TEST022_NS_MIXED_AIR_WATER';
 configVar{end+1} = 'TEST023_DEEP_FLOAT';
 configVar{end+1} = 'TEST057_DOXY';
+configVar{end+1} = 'TEST059_NITRATE';
 configVar{end+1} = 'TEST062_BBP';
 configVar{end+1} = 'TEST063_CHLA';
 
@@ -276,6 +278,8 @@ if (o_inputError == 0)
    g_decArgo_rtqcTest23 = str2num(configVal{1});
    configVal(1) = [];
    g_decArgo_rtqcTest57 = str2num(configVal{1});
+   configVal(1) = [];
+   g_decArgo_rtqcTest59 = str2num(configVal{1});
    configVal(1) = [];
    g_decArgo_rtqcTest62 = str2num(configVal{1});
    configVal(1) = [];

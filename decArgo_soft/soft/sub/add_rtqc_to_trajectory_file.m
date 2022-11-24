@@ -91,6 +91,7 @@
 %                             1) are used in the 'previous locations set' when
 %                             processing the next cycle (see cycle #48 of float
 %                             6903183).
+%   03/26/2019 - RNU - V 2.5: Added RTQC tests for NITRATE parameter
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -129,7 +130,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.4';
+g_decArgo_addRtqcToTrajVersion = '2.5';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -203,8 +204,10 @@ expectedTestList = [ ...
    {'TEST020_QUESTIONABLE_ARGOS_POSITION'} ...
    {'TEST021_NS_UNPUMPED_SALINITY'} ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
-   {'TEST062_BBP'} ...
    {'TEST057_DOXY'} ...
+   {'TEST059_NITRATE'} ...
+   {'TEST062_BBP'} ...
+   {'TEST063_CHLA'} ...
    ];
 
 % retrieve the test to apply
@@ -669,6 +672,7 @@ for idD = 1:2
    end
    
    for idParam = 1:length(ncTrajParamXNameList)
+      paramName = ncTrajParamXNameList{idParam};
       data = eval(ncTrajParamXDataList{idParam});
       dataQc = eval(ncTrajParamXDataQcList{idParam});
       paramFillValue = ncTrajParamXFillValueList{idParam};
@@ -692,10 +696,26 @@ for idD = 1:2
             % have been set by the decoder (in
             % update_qc_from_sensor_state_ir_rudics_sbd2)
             dataQc(idNoDef) = set_qc(dataQc(idNoDef), g_decArgo_qcStrNoQc);
+            
+            % initialize NITRATE_QC to g_decArgo_qcStrCorrectable
+            % initialize NITRATE_ADJUSTED_QC to g_decArgo_qcStrProbablyGood
+            if (strcmp(paramName, 'NITRATE'))
+               dataQc(idNoDef) = set_qc(dataQc(idNoDef), g_decArgo_qcStrCorrectable);
+            elseif (strcmp(paramName, 'NITRATE_ADJUSTED'))
+               dataQc(idNoDef) = set_qc(dataQc(idNoDef), g_decArgo_qcStrProbablyGood);
+            end
          else
             % initialize Qc flags to g_decArgo_qcStrNoQc
             dataQc = repmat(g_decArgo_qcStrDef, size(dataQc));
             dataQc(idNoDef) = g_decArgo_qcStrNoQc;
+            
+            % initialize NITRATE_QC to g_decArgo_qcStrCorrectable
+            % initialize NITRATE_ADJUSTED_QC to g_decArgo_qcStrProbablyGood
+            if (strcmp(paramName, 'NITRATE'))
+               dataQc(idNoDef) = g_decArgo_qcStrCorrectable;
+            elseif (strcmp(paramName, 'NITRATE_ADJUSTED'))
+               dataQc(idNoDef) = g_decArgo_qcStrProbablyGood;
+            end
          end
          eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
       end
@@ -987,6 +1007,7 @@ if (testFlagList(6) == 1)
             {'BBP700'} ...
             {'BBP532'} ...
             {'PH_IN_SITU_TOTAL'} ...
+            {'NITRATE'} ...
             ];
       else
          % adjusted data processing
@@ -1014,11 +1035,28 @@ if (testFlagList(6) == 1)
             {'BBP700_ADJUSTED'} ...
             {'BBP532_ADJUSTED'} ...
             {'PH_IN_SITU_TOTAL_ADJUSTED'} ...
+            {'NITRATE_ADJUSTED'} ...
             ];
       end
       
-      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'} {'7.3'}];
-      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}       {'8.5'}];
+      paramTestMinMax = [ ...
+         {-5} {''}; ... % PRES
+         {-5} {''}; ... % PRES2
+         {-2.5} {40}; ... % TEMP
+         {-2.5} {40}; ... % TEMP2
+         {-2.5} {40}; ... % TEMP_DOXY
+         {-2.5} {40}; ... % TEMP_DOXY2
+         {2} {41}; ... % PSAL
+         {2} {41}; ... % PSAL2
+         {-5} {600}; ... % DOXY
+         {-5} {600}; ... % DOXY2
+         {-0.1} {50}; ... % CHLA
+         {-0.1} {50}; ... % CHLA2
+         {-0.000025} {0.1}; ... % BBP700
+         {-0.000005} {0.1}; ... % BBP532
+         {7.3} {8.5}; ... % PH_IN_SITU_TOTAL
+         {-2} {50}; ... % NITRATE
+         ];
       
       for id = 1:length(paramTestList)
          
@@ -1036,11 +1074,13 @@ if (testFlagList(6) == 1)
                eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
                
                % apply the test
-               if (~isempty(paramTestMax{id}))
-                  idToFlag = find((data(idNoDef) < str2num(paramTestMin{id})) | ...
-                     (data(idNoDef) > str2num(paramTestMax{id})));
+               paramTestMin = paramTestMinMax{id, 1};
+               paramTestMax = paramTestMinMax{id, 2};
+               if (~isempty(paramTestMax))
+                  idToFlag = find((data(idNoDef) < paramTestMin) | ...
+                     (data(idNoDef) > paramTestMax));
                else
-                  idToFlag = find(data(idNoDef) < str2num(paramTestMin{id}));
+                  idToFlag = find(data(idNoDef) < paramTestMin);
                end
                if (~isempty(idToFlag))
                   flagValue = g_decArgo_qcStrBad;
@@ -1161,8 +1201,14 @@ if (testFlagList(7) == 1)
                
                if (location_in_region(meanLonOfCy, meanLatOfCy, RED_SEA_REGION))
                   
-                  paramTestMin = [{'21.7'} {'21.7'} {'21.7'} {'21.7'} {'2'}  {'2'}];
-                  paramTestMax = [{'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'}];
+                  paramTestMinMax = [ ...
+                     21.7 40; ... % TEMP
+                     21.7 40; ... % TEMP2
+                     21.7 40; ... % TEMP_DOXY
+                     21.7 40; ... % TEMP_DOXY2
+                     2 41; ... % PSAL
+                     2 41; ... % PSAL2
+                     ];
                   
                   for id = 1:length(paramTestList)
                      
@@ -1180,8 +1226,10 @@ if (testFlagList(7) == 1)
                            eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
                            
                            % apply the test
-                           idToFlag = find((data(idMeasForCy(idNoDef)) < str2num(paramTestMin{id})) | ...
-                              (data(idMeasForCy(idNoDef)) > str2num(paramTestMax{id})));
+                           paramTestMin = paramTestMinMax(id, 1);
+                           paramTestMax = paramTestMinMax(id, 2);
+                           idToFlag = find((data(idMeasForCy(idNoDef)) < paramTestMin) | ...
+                              (data(idMeasForCy(idNoDef)) > paramTestMax));
                            if (~isempty(idToFlag))
                               dataQc(idMeasForCy(idNoDef(idToFlag))) = set_qc(dataQc(idMeasForCy(idNoDef(idToFlag))), g_decArgo_qcStrBad);
                               eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
@@ -1194,8 +1242,14 @@ if (testFlagList(7) == 1)
                            
                if (location_in_region(meanLonOfCy, meanLatOfCy, MEDITERRANEAN_SEA_REGION))
                   
-                  paramTestMin = [{'10'} {'10'} {'10'} {'10'} {'2'}  {'2'}];
-                  paramTestMax = [{'40'} {'40'} {'40'} {'40'} {'40'} {'40'}];
+                  paramTestMinMax = [ ...
+                     10 40; ... % TEMP
+                     10 40; ... % TEMP2
+                     10 40; ... % TEMP_DOXY
+                     10 40; ... % TEMP_DOXY2
+                     2 40; ... % PSAL
+                     2 40; ... % PSAL2
+                     ];
                   
                   for id = 1:length(paramTestList)
                      
@@ -1213,8 +1267,10 @@ if (testFlagList(7) == 1)
                            eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
                            
                            % apply the test
-                           idToFlag = find((data(idMeasForCy(idNoDef)) < str2num(paramTestMin{id})) | ...
-                              (data(idMeasForCy(idNoDef)) > str2num(paramTestMax{id})));
+                           paramTestMin = paramTestMinMax(id, 1);
+                           paramTestMax = paramTestMinMax(id, 2);
+                           idToFlag = find((data(idMeasForCy(idNoDef)) < paramTestMin) | ...
+                              (data(idMeasForCy(idNoDef)) > paramTestMax));
                            if (~isempty(idToFlag))
                               dataQc(idMeasForCy(idNoDef(idToFlag))) = set_qc(dataQc(idMeasForCy(idNoDef(idToFlag))), g_decArgo_qcStrBad);
                               eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);

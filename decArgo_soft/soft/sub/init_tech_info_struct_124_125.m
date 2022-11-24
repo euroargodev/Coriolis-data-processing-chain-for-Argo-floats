@@ -2,7 +2,7 @@
 % Get the basic structure to read APMT technical data.
 %
 % SYNTAX :
-%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_124
+%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_124_125
 %
 % INPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   10/19/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_124
+function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_124_125
 
 % output parameters initialization
 o_techSectionList = [];

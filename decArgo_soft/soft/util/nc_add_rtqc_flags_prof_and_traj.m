@@ -37,7 +37,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % ETOPO2 file
-ETOPO2_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\Argo\_ressources\ETOPO2\ETOPO2v2g_i2_MSB.bin';
+ETOPO2_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\_ressources\ETOPO2\ETOPO2v2g_i2_MSB.bin';
 
 % grey list file
 GREY_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt';
@@ -54,6 +54,10 @@ init_measurement_codes;
 
 % temporary trajectory data
 global g_rtqc_trajData;
+
+% arrays to store decoded calibration coefficient
+global g_decArgo_calibInfo;
+g_decArgo_calibInfo = [];
 
 % maximum number of mono profile files to process for each float
 NB_FILES_TO_PROCESS = -1;
@@ -90,6 +94,8 @@ testToPerformList = [ ...
    {'TEST022_NS_MIXED_AIR_WATER'} {1} ...
    {'TEST023_DEEP_FLOAT'} {1} ...
    {'TEST057_DOXY'} {1} ...
+   {'TEST059_NITRATE'} {1} ...
+   {'TEST062_BBP'} {1} ...
    {'TEST063_CHLA'} {1} ...
    ];
 
@@ -117,6 +123,8 @@ testToPerformList = [ ...
    {'TEST022_NS_MIXED_AIR_WATER'} {1} ...
    {'TEST023_DEEP_FLOAT'} {1} ...
    {'TEST057_DOXY'} {1} ...
+   {'TEST059_NITRATE'} {1} ...
+   {'TEST062_BBP'} {1} ...
    {'TEST063_CHLA'} {1} ...
    ];
 
@@ -144,6 +152,8 @@ testToPerformList = [ ...
 %    {'TEST022_NS_MIXED_AIR_WATER'} {0} ...
 %    {'TEST023_DEEP_FLOAT'} {0} ...
 %    {'TEST057_DOXY'} {0} ...
+%    {'TEST059_NITRATE'} {0} ...
+%    {'TEST062_BBP'} {0} ...
 %    {'TEST063_CHLA'} {0} ...
 %    ];
 
@@ -301,6 +311,329 @@ for idFloat = 1:nbFloats
             end
          else
             fprintf('WARNING: TEST057: No meta file to perform test#57\n');
+         end
+      end
+      
+      if (test_to_perform('TEST059_NITRATE', testToPerformList) == 1)
+      
+         % create the NITRATE calibration arrays
+         
+         % json meta-data file for this float
+         jsonInputFileName = [dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', floatNum)];
+         
+         if (exist(jsonInputFileName, 'file') == 2)
+            
+            % read meta-data file
+            metaData = loadjson(jsonInputFileName);
+            
+            if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+               jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
+               if (any(strcmp(jSensorNames, 'SUNA')))
+                  
+                  if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
+                     if (~isempty(metaData.CALIBRATION_COEFFICIENT))
+                        fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
+                        for idF = 1:length(fieldNames)
+                           g_decArgo_calibInfo.(fieldNames{idF}) = metaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+                        end
+                     end
+                  end
+                  
+                  if (isfield(g_decArgo_calibInfo, 'SUNA'))
+                     calibData = g_decArgo_calibInfo.SUNA;
+                     tabOpticalWavelengthUv = [];
+                     tabENitrate = [];
+                     tabESwaNitrate = [];
+                     tabEBisulfide = [];
+                     tabUvIntensityRefNitrate = [];
+                     for id = 1:256
+                        fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
+                        if (isfield(calibData, fieldName))
+                           tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
+                        else
+                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                           return
+                        end
+                        fieldName = ['E_NITRATE_' num2str(id)];
+                        if (isfield(calibData, fieldName))
+                           tabENitrate = [tabENitrate calibData.(fieldName)];
+                        else
+                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                           return
+                        end
+                        fieldName = ['E_SWA_NITRATE_' num2str(id)];
+                        if (isfield(calibData, fieldName))
+                           tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
+                        else
+                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                           return
+                        end
+                        if (floatDecoderId == 110)
+                           fieldName = ['E_BISULFIDE_' num2str(id)];
+                           if (isfield(calibData, fieldName))
+                              tabEBisulfide = [tabEBisulfide calibData.(fieldName)];
+                           else
+                              fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                              return
+                           end
+                        end
+                        fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
+                        if (isfield(calibData, fieldName))
+                           tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
+                        else
+                           fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                           return
+                        end
+                     end
+                     g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
+                     g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
+                     g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
+                     if (~isempty(tabEBisulfide))
+                        g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
+                     end
+                     g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
+                     
+                     g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
+                     g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', floatNum);
+                  end
+               end
+            end
+         else
+            
+            fprintf('INFO: TEST059: Json meta-data file not found: %s, using NetCDF meta file\n', jsonInputFileName);
+            
+            % use NetCDF meta file
+            ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
+            if (exist(ncMetaFilePathName, 'file') == 2)
+               
+               % retrieve information from NetCDF meta file
+               wantedVars = [ ...
+                  {'PARAMETER'} ...
+                  {'PREDEPLOYMENT_CALIB_COEFFICIENT'} ...
+                  {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
+                  {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
+                  ];
+               
+               % retrieve information from NetCDF meta file
+               [ncMetaData] = get_data_from_nc_file(ncMetaFilePathName, wantedVars);
+               
+               coefData = [];
+               idVal = find(strcmp('PARAMETER', ncMetaData) == 1);
+               idCoef = find(strcmp('PREDEPLOYMENT_CALIB_COEFFICIENT', ncMetaData) == 1);
+               if (~isempty(idVal) && ~isempty(idCoef))
+                  parameterMetaTmp = ncMetaData{idVal+1}';
+                  parameterCoefTmp = ncMetaData{idCoef+1}';
+                  
+                  for id = 1:size(parameterMetaTmp, 1)
+                     if (strcmp(deblank(parameterMetaTmp(id, :)), 'NITRATE'))
+                        coefData = deblank(parameterCoefTmp(id, :));
+                     end
+                  end
+               end
+               
+               launchConfigParameterName = [];
+               idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', ncMetaData) == 1);
+               if (~isempty(idVal))
+                  launchConfigParameterNameTmp = ncMetaData{idVal+1}';
+                  
+                  for id = 1:size(launchConfigParameterNameTmp, 1)
+                     launchConfigParameterName{end+1} = deblank(launchConfigParameterNameTmp(id, :));
+                  end
+               end
+               
+               launchConfigParameterValue = [];
+               idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', ncMetaData) == 1);
+               if (~isempty(idVal))
+                  launchConfigParameterValue = ncMetaData{idVal+1}';
+               end
+               
+               % retrieve needed information
+               tempCalNitrate = [];
+               opticalWavelengthUv = [];
+               eNitrate = [];
+               eSwaNitrate = [];
+               eBisulfide = [];
+               uvIntensityRefNitrate = [];
+               
+               if (~isempty(coefData))
+                  
+                  % TEMP_CAL_NITRATE
+                  idF1 = strfind(coefData, 'TEMP_CAL_NITRATE');
+                  if (~isempty(idF1))
+                     strTmp = coefData(idF1(1):end);
+                     idF2 = strfind(strTmp, '=');
+                     if (~isempty(idF2))
+                        strTmp = strTmp(idF2(1)+1:end);
+                        idF3 = strfind(strTmp, ';');
+                        if (~isempty(idF3))
+                           strTmp = strTmp(1:idF3(1)-1);
+                           tempCalNitrate = str2double(strTmp);
+                        end
+                     end
+                  end
+                  
+                  % OPTICAL_WAVELENGTH_UV
+                  idF1 = strfind(coefData, 'OPTICAL_WAVELENGTH_UV');
+                  if (~isempty(idF1))
+                     strTmp = coefData(idF1(1):end);
+                     idF2 = strfind(strTmp, '=');
+                     if (~isempty(idF2))
+                        strTmp = strTmp(idF2(1):end);
+                        idF3 = strfind(strTmp, '[');
+                        if (~isempty(idF3))
+                           strTmp = strTmp(idF3(1)+1:end);
+                           idF4 = strfind(strTmp, ']');
+                           if (~isempty(idF4))
+                              strTmp = strTmp(1:idF4(1)-1);
+                              opticalWavelengthUv = str2double(strsplit(strTmp, ','));
+                           end
+                        end
+                     end
+                  end
+                  % E_NITRATE
+                  idF1 = strfind(coefData, 'E_NITRATE');
+                  if (~isempty(idF1))
+                     strTmp = coefData(idF1(1):end);
+                     idF2 = strfind(strTmp, '=');
+                     if (~isempty(idF2))
+                        strTmp = strTmp(idF2(1):end);
+                        idF3 = strfind(strTmp, '[');
+                        if (~isempty(idF3))
+                           strTmp = strTmp(idF3(1)+1:end);
+                           idF4 = strfind(strTmp, ']');
+                           if (~isempty(idF4))
+                              strTmp = strTmp(1:idF4(1)-1);
+                              eNitrate = str2double(strsplit(strTmp, ','));
+                           end
+                        end
+                     end
+                  end
+                  % E_SWA_NITRATE
+                  idF1 = strfind(coefData, 'E_SWA_NITRATE');
+                  if (~isempty(idF1))
+                     strTmp = coefData(idF1(1):end);
+                     idF2 = strfind(strTmp, '=');
+                     if (~isempty(idF2))
+                        strTmp = strTmp(idF2(1):end);
+                        idF3 = strfind(strTmp, '[');
+                        if (~isempty(idF3))
+                           strTmp = strTmp(idF3(1)+1:end);
+                           idF4 = strfind(strTmp, ']');
+                           if (~isempty(idF4))
+                              strTmp = strTmp(1:idF4(1)-1);
+                              eSwaNitrate = str2double(strsplit(strTmp, ','));
+                           end
+                        end
+                     end
+                  end
+                  if (ismember(floatDecoderId, [110, 113]))
+                     % E_BISULFIDE
+                     idF1 = strfind(coefData, 'E_BISULFIDE');
+                     if (~isempty(idF1))
+                        strTmp = coefData(idF1(1):end);
+                        idF2 = strfind(strTmp, '=');
+                        if (~isempty(idF2))
+                           strTmp = strTmp(idF2(1):end);
+                           idF3 = strfind(strTmp, '[');
+                           if (~isempty(idF3))
+                              strTmp = strTmp(idF3(1)+1:end);
+                              idF4 = strfind(strTmp, ']');
+                              if (~isempty(idF4))
+                                 strTmp = strTmp(1:idF4(1)-1);
+                                 eBisulfide = str2double(strsplit(strTmp, ','));
+                              end
+                           end
+                        end
+                     end
+                  end
+                  % UV_INTENSITY_REF_NITRATE
+                  idF1 = strfind(coefData, 'UV_INTENSITY_REF_NITRATE');
+                  if (~isempty(idF1))
+                     strTmp = coefData(idF1(1):end);
+                     idF2 = strfind(strTmp, '=');
+                     if (~isempty(idF2))
+                        strTmp = strTmp(idF2(1):end);
+                        idF3 = strfind(strTmp, '[');
+                        if (~isempty(idF3))
+                           strTmp = strTmp(idF3(1)+1:end);
+                           idF4 = strfind(strTmp, ']');
+                           if (~isempty(idF4))
+                              strTmp = strTmp(1:idF4(1)-1);
+                              uvIntensityRefNitrate = str2double(strsplit(strTmp, ','));
+                           end
+                        end
+                     end
+                  end
+                  
+                  if (~isempty(launchConfigParameterName))
+                     if (~isempty(launchConfigParameterValue))
+                        
+                        % sunaVerticalOffset
+                        idF = find(strcmp(launchConfigParameterName, 'CONFIG_SunaVerticalPressureOffset_dbar'), 1);
+                        if (~isempty(idF))
+                           g_decArgo_calibInfo.SUNA.SunaVerticalOffset = launchConfigParameterValue(idF);
+                        end
+                        % floatPixelBegin
+                        idF = find(strcmp(launchConfigParameterName, 'CONFIG_SunaApfFrameOutputPixelBegin_NUMBER'), 1);
+                        if (~isempty(idF))
+                           g_decArgo_calibInfo.SUNA.FloatPixelBegin = launchConfigParameterValue(idF);
+                        end
+                        % floatPixelEnd
+                        idF = find(strcmp(launchConfigParameterName, 'CONFIG_SunaApfFrameOutputPixelEnd_NUMBER'), 1);
+                        if (~isempty(idF))
+                           g_decArgo_calibInfo.SUNA.FloatPixelEnd = launchConfigParameterValue(idF);
+                        end
+                     else
+                        fprintf('ERROR: TEST059: unable to retrieve LAUNCH_CONFIG_PARAMETER_VALUE from NetCDF meta file: %s\n', ncMetaFilePathName);
+                     end
+                  else
+                     fprintf('ERROR: TEST059: unable to retrieve LAUNCH_CONFIG_PARAMETER_NAME from NetCDF meta file: %s\n', ncMetaFilePathName);
+                  end
+                  
+                  if ~((~ismember(floatDecoderId, [110, 113]) && ...
+                        (isempty(tempCalNitrate) || ...
+                        isempty(opticalWavelengthUv) || ...
+                        isempty(eNitrate) || ...
+                        isempty(eSwaNitrate) || ...
+                        isempty(uvIntensityRefNitrate))) || ...
+                        (ismember(floatDecoderId, [110, 113]) && ...
+                        (isempty(tempCalNitrate) || ...
+                        isempty(opticalWavelengthUv) || ...
+                        isempty(eNitrate) || ...
+                        isempty(eSwaNitrate) || ...
+                        isempty(eBisulfide) || ...
+                        isempty(uvIntensityRefNitrate))))
+                     
+                     g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = nan(1, 256);
+                     g_decArgo_calibInfo.SUNA.TabENitrate = nan(1, 256);
+                     g_decArgo_calibInfo.SUNA.TabESwaNitrate = nan(1, 256);
+                     if (~isempty(eBisulfide))
+                        g_decArgo_calibInfo.SUNA.TabEBisulfide = nan(1, 256);
+                     end
+                     g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = nan(1, 256);
+                     
+                     pixelRange = g_decArgo_calibInfo.SUNA.FloatPixelBegin:g_decArgo_calibInfo.SUNA.FloatPixelEnd;
+                     
+                     g_decArgo_calibInfo.SUNA.TEMP_CAL_NITRATE(pixelRange) = tempCalNitrate;
+                     g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv(pixelRange) = opticalWavelengthUv;
+                     g_decArgo_calibInfo.SUNA.TabENitrate(pixelRange) = eNitrate;
+                     g_decArgo_calibInfo.SUNA.TabESwaNitrate(pixelRange) = eSwaNitrate;
+                     if (~isempty(eBisulfide))
+                        g_decArgo_calibInfo.SUNA.TabEBisulfide(pixelRange) = eBisulfide;
+                     end
+                     g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate(pixelRange) = uvIntensityRefNitrate;
+                  else
+                     fprintf('ERROR: TEST059: calibration information is missing for NITRATE in NetCDF meta file: %s\n', ncMetaFilePathName);
+                  end
+               else
+                  fprintf('ERROR: TEST059: unable to retrieve PREDEPLOYMENT_CALIB_COEFFICIENT for NITRATE from NetCDF meta file: %s\n', ncMetaFilePathName);
+               end
+            else
+               fprintf('ERROR: TEST059: NetCDF meta file not found: %s\n', ncMetaFilePathName);
+            end
          end
       end
       
@@ -544,6 +877,62 @@ o_testToPerform = 0;
 testId = find(strcmp(a_testName, a_testToPerformList) == 1);
 if (~isempty(testId))
    o_testToPerform = a_testToPerformList{testId+1};
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve data from NetCDF file.
+%
+% SYNTAX :
+%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+%
+% INPUT PARAMETERS :
+%   a_ncPathFileName : NetCDF file name
+%   a_wantedVars     : NetCDF variables to retrieve from the file
+%
+% OUTPUT PARAMETERS :
+%   o_ncData : retrieved data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/15/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
+
+% output parameters initialization
+o_ncData = [];
+
+
+if (exist(a_ncPathFileName, 'file') == 2)
+   
+   % open NetCDF file
+   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
+   if (isempty(fCdf))
+      fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
+      return
+   end
+   
+   % retrieve variables from NetCDF file
+   for idVar = 1:length(a_wantedVars)
+      varName = a_wantedVars{idVar};
+      
+      if (var_is_present_dec_argo(fCdf, varName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+         o_ncData = [o_ncData {varName} {varValue}];
+      else
+         %          fprintf('RTQC_WARNING: Variable %s not present in file : %s\n', ...
+         %             varName, a_ncPathFileName);
+         o_ncData = [o_ncData {varName} {''}];
+      end
+      
+   end
+   
+   netcdf.close(fCdf);
 end
 
 return

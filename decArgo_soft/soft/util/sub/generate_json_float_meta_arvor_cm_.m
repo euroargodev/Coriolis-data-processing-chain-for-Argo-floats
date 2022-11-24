@@ -106,6 +106,7 @@ fclose(fId);
 fileContents = regexprep(fileContents, '"', '');
 
 metaData = reshape(fileContents, 5, size(fileContents, 1)/5)';
+metaData(:,4)=(cellfun(@strtrim, metaData(:, 4), 'UniformOutput', 0))';
 
 % read calib file
 fId = fopen(a_calibFileName, 'r');
@@ -231,19 +232,25 @@ for idFloat = 1:length(floatList)
       itemList, ...
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
-
-   % check that SENSOR_SERIAL_NO is set
-   for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
-      if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
-         fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
-            floatNum, ...
-            metaStruct.SENSOR{idS}, ...
-            metaStruct.SENSOR_MODEL{idS}, ...
-            metaStruct.SENSOR_MAKER{idS});
-         skipFloat = 1;
-      end
-   end
    
+   % check that SENSOR_SERIAL_NO is set
+   if (~isempty(metaStruct.SENSOR_SERIAL_NO))
+      for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
+         if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
+            fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
+               floatNum, ...
+               metaStruct.SENSOR{idS}, ...
+               metaStruct.SENSOR_MODEL{idS}, ...
+               metaStruct.SENSOR_MAKER{idS});
+            skipFloat = 1;
+         end
+      end
+   else
+      fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory => no json file generated\n', ...
+         floatNum);
+      skipFloat = 1;
+   end
+
    itemList = [ ...
       {'PARAMETER'} ...
       {'PARAMETER_SENSOR'} ...
@@ -498,6 +505,10 @@ for idFloat = 1:length(floatList)
       rtOffsetData.DATE = rtOffsetDate;
       
       metaStruct.RT_OFFSET = rtOffsetData;
+   end
+   
+   if (~check_json_meta_data(metaStruct, floatNum))
+      skipFloat = 1;
    end
    
    if (skipFloat)

@@ -460,7 +460,7 @@ for idProf = 1:inputNProf
       profParam{end+1} = paramForProf{idProf, idParam};
    end
    % add DOXY if needed
-   if (any(strcmp(profParam, 'MOLAR_DOXY') & ~strcmp(profParam, 'DOXY')))
+   if (any(strcmp(profParam, 'MOLAR_DOXY')) && ~any(strcmp(profParam, 'DOXY')))
       paramForProf{idProf, inputNParam+1} = 'DOXY';
       inputNParam = inputNParam + 1;
       doxyAdded = 1;
@@ -1956,7 +1956,7 @@ for idProf = 1:inputNProf
       profParam{end+1} = paramForProf{idProf, idParam};
    end
    % add DOXY if needed
-   if (any(strcmp(profParam, 'MOLAR_DOXY') & ~strcmp(profParam, 'DOXY')))
+   if (any(strcmp(profParam, 'MOLAR_DOXY')) && ~any(strcmp(profParam, 'DOXY')))
       paramForProf{idProf, inputNParam+1} = 'DOXY';
       inputNParam = inputNParam + 1;
       doxyAdded = 1;

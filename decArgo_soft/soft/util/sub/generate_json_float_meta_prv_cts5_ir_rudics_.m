@@ -114,6 +114,7 @@ fclose(fId);
 fileContents = regexprep(fileContents, '"', '');
 
 metaData = reshape(fileContents, 5, size(fileContents, 1)/5)';
+metaData(:,4)=(cellfun(@strtrim, metaData(:, 4), 'UniformOutput', 0))';
 
 % read calib file
 fId = fopen(a_calibFileName, 'r');
@@ -212,7 +213,7 @@ for idFloat = 1:length(floatList)
    end
 
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'}]))
+   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -246,15 +247,21 @@ for idFloat = 1:length(floatList)
       metaStruct, mandatoryList1, mandatoryList2);
    
    % check that SENSOR_SERIAL_NO is set
-   for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
-      if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
-         fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
-            floatNum, ...
-            metaStruct.SENSOR{idS}, ...
-            metaStruct.SENSOR_MODEL{idS}, ...
-            metaStruct.SENSOR_MAKER{idS});
-         skipFloat = 1;
+   if (~isempty(metaStruct.SENSOR_SERIAL_NO))
+      for idS = 1:length(metaStruct.SENSOR_SERIAL_NO)
+         if (isempty(metaStruct.SENSOR_SERIAL_NO{idS}))
+            fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory (for SENSOR=''%s'' SENSOR_MODEL=''%s'' SENSOR_MAKER=''%s'') => no json file generated\n', ...
+               floatNum, ...
+               metaStruct.SENSOR{idS}, ...
+               metaStruct.SENSOR_MODEL{idS}, ...
+               metaStruct.SENSOR_MAKER{idS});
+            skipFloat = 1;
+         end
       end
+   else
+      fprintf('ERROR: Float #%d: SENSOR_SERIAL_NO is mandatory => no json file generated\n', ...
+         floatNum);
+      skipFloat = 1;
    end
    
    itemList = [ ...
@@ -369,7 +376,7 @@ for idFloat = 1:length(floatList)
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
          
-      case {'7.03'}
+      case {'7.03', '7.05'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1) | ...
@@ -615,6 +622,10 @@ for idFloat = 1:length(floatList)
       rtOffsetData.DATE = rtOffsetDate;
       
       metaStruct.RT_OFFSET = rtOffsetData;
+   end
+   
+   if (~check_json_meta_data(metaStruct, floatNum))
+      skipFloat = 1;
    end
    
    if (skipFloat)

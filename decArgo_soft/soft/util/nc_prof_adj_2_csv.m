@@ -20,14 +20,7 @@
 function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\NEW_20190125\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_param_adj_error\coriolis\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\CHECk_DO_VT\OLD\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\CHECk_DO_VT\SNAPSHOT_092018\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % default list of floats to convert
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
@@ -45,7 +38,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default values initialization
 init_default_values;

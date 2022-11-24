@@ -952,7 +952,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {121, 122, 123, 124}
+         case {121, 122, 123, 124, 125}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
 
@@ -975,7 +975,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {121, 122, 123, 124}
+         case {121, 122, 123, 124, 125}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');

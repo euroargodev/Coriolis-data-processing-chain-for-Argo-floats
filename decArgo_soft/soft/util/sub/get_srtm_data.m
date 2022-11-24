@@ -74,7 +74,7 @@ fileName{33} = 'e120s60';
 currentFileName  = fileName{a_fileNumber};
 
 % chemin d'accès au fichier demandé
-srtmDirName = 'C:\Users\jprannou\NEW_20190125\_RNU\_ressources\SRTM30+\data/';
+srtmDirName = 'C:\Users\jprannou\_RNU\_ressources\SRTM30+\data/';
 srtmFileName = [srtmDirName '/' currentFileName '.Bathymetry.srtm'];
 
 % ouverture du fichier (big-endian format)

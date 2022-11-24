@@ -47,7 +47,7 @@ elseif (g_decArgo_floatTransType == 2)
    if (a_decoderId < 1000)
       
       % PROVOR floats
-      if (~ismember(a_decoderId, [121 122 123 124]))
+      if (~ismember(a_decoderId, [121 122 123 124 125]))
          % PROVOR CTS4 Iridium RUDICS floats
          [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
       else

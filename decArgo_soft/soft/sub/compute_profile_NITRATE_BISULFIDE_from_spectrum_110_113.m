@@ -3,7 +3,8 @@
 % sensor.
 %
 % SYNTAX :
-%  [o_NITRATE, o_BISULFIDE] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113( ...
+%  [o_NITRATE, o_BISULFIDE, o_rmsError] = ...
+%    compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113( ...
 %    a_UV_INTENSITY_NITRATE, a_UV_INTENSITY_DARK_NITRATE, ...
 %    a_UV_INTENSITY_NITRATE_fill_value, a_UV_INTENSITY_DARK_NITRATE_fill_value, ...
 %    a_NITRATE_fill_value, a_BISULFIDE_fill_value, ...
@@ -32,6 +33,7 @@
 % OUTPUT PARAMETERS :
 %   o_NITRATE   : output NITRATE data
 %   o_BISULFIDE : output BISULFIDE data
+%   o_rmsError  : RMS error of the fit
 %
 % EXAMPLES :
 %
@@ -41,7 +43,8 @@
 % RELEASES :
 %   02/28/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_NITRATE, o_BISULFIDE] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113( ...
+function [o_NITRATE, o_BISULFIDE, o_rmsError] = ...
+   compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113( ...
    a_UV_INTENSITY_NITRATE, a_UV_INTENSITY_DARK_NITRATE, ...
    a_UV_INTENSITY_NITRATE_fill_value, a_UV_INTENSITY_DARK_NITRATE_fill_value, ...
    a_NITRATE_fill_value, a_BISULFIDE_fill_value, ...
@@ -52,6 +55,7 @@ function [o_NITRATE, o_BISULFIDE] = compute_profile_NITRATE_BISULFIDE_from_spect
 % output parameters initialization
 o_NITRATE = ones(size(a_UV_INTENSITY_NITRATE, 1), 1)*a_NITRATE_fill_value;
 o_BISULFIDE = ones(size(a_UV_INTENSITY_NITRATE, 1), 1)*a_BISULFIDE_fill_value;
+o_rmsError = nan(size(a_UV_INTENSITY_NITRATE, 1), 1);
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -90,13 +94,19 @@ elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabESwaNitrate') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabEBisulfide') && ...
       isfield(g_decArgo_calibInfo.SUNA, 'TabUvIntensityRefNitrate') && ...
-      isfield(g_decArgo_calibInfo.SUNA, 'TEMP_CAL_NITRATE'))
+      isfield(g_decArgo_calibInfo.SUNA, 'TEMP_CAL_NITRATE') && ...
+      isfield(g_decArgo_calibInfo.SUNA, 'SunaVerticalOffset') && ...
+      isfield(g_decArgo_calibInfo.SUNA, 'FloatPixelBegin') && ...
+      isfield(g_decArgo_calibInfo.SUNA, 'FloatPixelEnd'))
    tabOpticalWavelengthUv = g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv;
    tabENitrate = g_decArgo_calibInfo.SUNA.TabENitrate;
    tabESwaNitrate = g_decArgo_calibInfo.SUNA.TabESwaNitrate;
    tabEBisulfide = g_decArgo_calibInfo.SUNA.TabEBisulfide;
    tabUvIntensityRefNitrate = g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate;
    tempCalNitrate = g_decArgo_calibInfo.SUNA.TEMP_CAL_NITRATE;
+   sunaVerticalOffset = g_decArgo_calibInfo.SUNA.SunaVerticalOffset;
+   floatPixelBegin = g_decArgo_calibInfo.SUNA.FloatPixelBegin;
+   floatPixelEnd = g_decArgo_calibInfo.SUNA.FloatPixelEnd;
 else
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: inconsistent SUNA calibration information => NITRATE data set to fill value in ''%c'' profile of SUNA sensor\n', ...
       g_decArgo_floatNum, ...
@@ -107,7 +117,6 @@ else
 end
 
 % retrieve configuration information
-sunaVerticalOffset = get_static_config_value('CONFIG_PX_1_6_0_0_0', 1);
 if (isempty(sunaVerticalOffset))
    sunaVerticalOffset = 0;
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA vertical offset is missing => NITRATE data computed with a 0 dbar vertical offset in ''%c'' profile of SUNA sensor\n', ...
@@ -117,8 +126,6 @@ if (isempty(sunaVerticalOffset))
       a_profSuna.direction);
 end
 
-floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
-floatPixelEnd = get_static_config_value('CONFIG_PX_1_6_0_0_4', 1);
 if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing => NITRATE data set to fill value in ''%c'' profile of SUNA sensor\n', ...
       g_decArgo_floatNum, ...
@@ -130,11 +137,7 @@ end
 
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements (to take the vertical offset into account)
-if (size(a_ctdData, 1) > 1)
-   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, 0);
-else
-   ctdIntData = a_ctdData;
-end
+ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset);
 
 % compute pixel interval that covers the [217 nm, 280 nm] wavelength interval
 idF1 = find(tabOpticalWavelengthUv >= 217);
@@ -241,12 +244,15 @@ if (~isempty(idNoDef))
    
    tabMolarNitrate = ones(size(tabUvIntensityDarkNitrate, 1), 1)*double(a_NITRATE_fill_value);
    tabMolarBisulfide = ones(size(tabUvIntensityDarkNitrate, 1), 1)*double(a_BISULFIDE_fill_value);
+   tabRmsError = nan(size(tabUvIntensityDarkNitrate, 1), 1);
    a = [tabOpticalWavelengthUv' tabENitrate' tabEBisulfide'];
    for idL = 1:length(tabMolarNitrate)
       b = absorbanceCorNitrate(idL, :)';
       mdl = fitlm(a, b);
       tabMolarNitrate(idL) = mdl.Coefficients.Estimate(3);
       tabMolarBisulfide(idL) = mdl.Coefficients.Estimate(4);
+      rawResiduals = mdl.Residuals.Raw;
+      tabRmsError(idL) = sqrt(sum(rawResiduals.*rawResiduals)/size(absorbanceCorNitrate, 2));
    end
    
    % Equation #6
@@ -258,6 +264,7 @@ if (~isempty(idNoDef))
    % compute NITRATE and BISULFIDE data (units convertion: micromol/L to micromol/kg)
    o_NITRATE(idNoDef) = tabMolarNitrate ./ rho;
    o_BISULFIDE(idNoDef) = tabMolarBisulfide ./ rho;
+   o_rmsError(idNoDef) = tabRmsError;
    
    % replace complex values with fillValue (ex: 6901865 #34)
    if (any(imag(o_NITRATE) ~= 0))

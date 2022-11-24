@@ -75,11 +75,11 @@ data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
 data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
 data(:, 6) = sensor_2_value_for_cdom_ir_rudics(data(:, 6));
 paramCHLA = get_netcdf_param_attributes('CHLA');
-data(:, 7) = compute_CHLA_105_to_112_121_122_124(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+data(:, 7) = compute_CHLA_105_to_112_121_to_125(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 % paramBBP700 = get_netcdf_param_attributes('BBP700');
-% data(:, 8) = compute_BBP700_105_to_112_121_122_124(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+% data(:, 8) = compute_BBP700_105_to_112_121_to_125(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
 paramCDOM = get_netcdf_param_attributes('CDOM');
-data(:, 8) = compute_CDOM_105_to_107_110_112_121_122_124(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
+data(:, 8) = compute_CDOM_105_to_107_110_112_121_to_125(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
 
 for idL = 1:size(data, 1)
    if (data(idL, 1) ~= g_decArgo_dateDef)

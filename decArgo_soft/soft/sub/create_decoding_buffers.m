@@ -480,6 +480,10 @@ tabIceDelayed = zeros(size(tabDelayed)); % needed because we can have Ice delaye
 tabIceDelayed(find(tabDelayed == 1)) = 1;
 tabIceDelayedCell = num2cell(tabIceDelayed);
 [o_decodedData.iceDelayed] = deal(tabIceDelayedCell{:});
+tabDelayedCell = num2cell(tabDelayed);
+[o_decodedData.delayed] = deal(tabDelayedCell{:});
+tabCompletedCell = num2cell(tabCompleted);
+[o_decodedData.completed] = deal(tabCompletedCell{:});
 
 if (~isempty(g_decArgo_outputCsvFileId))
    if (1)

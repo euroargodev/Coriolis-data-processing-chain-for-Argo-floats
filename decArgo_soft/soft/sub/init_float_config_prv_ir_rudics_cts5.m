@@ -176,7 +176,7 @@ switch (a_decoderId)
          {'PRESSURE_I'} {0:3} {[]}; ...
          {'SBE41'} {0} {[]}; ...
          ];
-   case {124}
+   case {124, 125}
       configInfoList = [ ...
          {'SYSTEM'} {[0:4 7 9:12]} {[]}; ...
          {'TECHNICAL'} {[0:1 8:15 17 18 20]} {[]}; ...
@@ -264,7 +264,7 @@ switch (a_decoderId)
          {'GPS'} {3} {[]}; ...
          {'SENSOR_'} {[1:7 9]} {46:53}; ...
          ];
-   case {124}
+   case {124, 125}
       configInfoList = [ ...
          {'SYSTEM'} {[5 6 8]} {[]}; ...
          {'TECHNICAL'} {[2:7 16 19 21 22]} {[]}; ...
@@ -308,7 +308,7 @@ for idConfig = 1:length(configInfoList)
       end
       if (sensorNum == 1)
          configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, max(miscNumList)+1);
-         if (a_decoderId == 124)
+         if (ismember(a_decoderId, [124, 125]))
             configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, max(miscNumList)+2);
          end
       end
@@ -468,7 +468,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             end
             
-         case {123}
+         case {123, 125}
             if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                calibData = g_decArgo_calibInfo.OPTODE;
                tabDoxyCoef = [];
@@ -585,6 +585,10 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
                g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
                g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
+               
+               g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
+               g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
+               g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
             end

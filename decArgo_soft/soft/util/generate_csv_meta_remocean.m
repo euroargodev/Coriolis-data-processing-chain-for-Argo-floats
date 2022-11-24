@@ -21,13 +21,13 @@
 function generate_csv_meta_remocean(varargin)
 
 % calibration coefficients decoded from data
-calibFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % show mode state decoded from data
-showModeFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\ShowMode\show_mode.txt';
+showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\ShowMode\show_mode.txt';
 
 % SUNA output pixel numbers decoded from data
-outputPixelFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
@@ -39,12 +39,9 @@ outputPixelFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\PROVOR_CT
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_export_BioAtlantos_lot2_from_VB_20180319.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_BioIndia_6.11_from_VB_20180319.txt';
 dataBaseFileName = 'C:\Users\jprannou\Desktop\TEMP\new_rem_meta.txt';
-dataBaseFileName = 'F:\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\6903240_meta.txt';
-dataBaseFileName = 'C:\Users\jprannou\NEW_20190125\_RNU\DecPrv_info\_configParamNames\DB_Export\new_rem_meta_6903249_6903250.txt';
 
 % directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'F:\NEW_20190125\_RNU\DecArgo_soft\work\';
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
