@@ -20,27 +20,34 @@
 function generate_json_float_meta_argos_nke_old_versions()
 
 % meta-data file exported from Coriolis data base
-floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\meta_PRV_from_VB_REFERENCE_20150217_nke_old_versions.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\meta_PRV_from_VB_REFERENCE_20150217_nke_old_versions.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\DB_export_provor_4.6_4.61_20210913.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\DB_export_float_with_no_data_20210920.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
 % list of concerned floats
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\list\float list.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % directory of individual json float meta-data files
-outputDirName = ['C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\generate_json_float_meta_argos_nke_old_versions_' datestr(now, 'yyyymmddTHHMMSS')];
+outputDirName = ['C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\generate_json_float_meta_argos_nke_old_versions_' datestr(now, 'yyyymmddTHHMMSS')];
+outputDirName = ['C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\generate_json_float_meta_argos_nke_old_versions_' datestr(now, 'yyyymmddTHHMMSS')];
 
 % list of floats which profile during descent
-descProfFloatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\descent_profiling_floats.txt';
+descProfFloatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\descent_profiling_floats.txt';
 
 % to check consistency with ANDRO meta-data
-surfSliceThickFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\cut_off_pres\surf_slice_thick.txt';
-ctdCutOffFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\cut_off_pres\ctd_cut_off.txt';
-standardFormatIdFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\andro_standard_format_id\andro_standard_format_id.txt';
-metaDataFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\andro_meta_data\CorrectedMetadata_20140813.txt';
-prvFloatInfoFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\andro_prv_float_info\_provor_floats_information_all.txt';
+% surfSliceThickFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\cut_off_pres\surf_slice_thick.txt';
+surfSliceThickFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\cut_off_pres\surf_slice_thickness_from_DB_export_provor_4.6_4.61_20210913.txt';
+% ctdCutOffFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\cut_off_pres\ctd_cut_off.txt';
+ctdCutOffFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\cut_off_pres\ctd_cut_off_from_DB_export_provor_4.6_4.61_20210913.txt';
+standardFormatIdFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\andro_standard_format_id\andro_standard_format_id.txt';
+metaDataFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\andro_meta_data\CorrectedMetadata_20140813.txt';
+prvFloatInfoFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\misc_info\andro_prv_float_info\_provor_floats_information_all.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -431,11 +438,14 @@ for idFloat = 1:length(floatList)
    
    % PLATFORM_MAKER
    switch (dacFormatId)
+      % flotteurs METOCEAN
+      case {'1'}
+         metaStruct.PLATFORM_MAKER = 'METOCEAN';
       % flotteurs MARTEC
-      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11', '5.0', '5.1', '5.2', '5.5'}
+      case {'2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11'}
          metaStruct.PLATFORM_MAKER = 'MARTEC';
          % flotteurs NKE
-      case {'4.6', '4.61'}
+      case {'4.6', '4.61', '5.0', '5.1', '5.2', '5.5'}
          metaStruct.PLATFORM_MAKER = 'NKE';
       otherwise
          fprintf('WARNING: Nothing done yet to retrieve PLATFORM_MAKER for dacFormatId %s\n', dacFormatId);
@@ -903,7 +913,7 @@ switch (a_dacFormatId)
    
    % old versions are all with a DELAI parameter
    % (CONFIG_DescentToProfTimeOut_hours)
-   case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.1', '4.11'}
+   case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.1', '4.11', '4.6', '4.61'}
       o_configStruct = struct( ...
          'CONFIG_MaxCycles_NUMBER', 'CONFIG_MaxCycles_NUMBER', ...
          'CONFIG_CycleTime_hours', 'CYCLE_TIME', ...
@@ -926,7 +936,7 @@ switch (a_dacFormatId)
          'CONFIG_Direction_NUMBER', 'DIRECTION');
       
       % new version
-   case {'4.0', '4.6', '4.61', '5.0', '5.1', '5.2', '5.5'}
+   case {'4.0', '5.0', '5.1', '5.2', '5.5'}
       o_configStruct = struct( ...
          'CONFIG_MaxCycles_NUMBER', 'CONFIG_MaxCycles_NUMBER', ...
          'CONFIG_CycleTime_hours', 'CYCLE_TIME', ...

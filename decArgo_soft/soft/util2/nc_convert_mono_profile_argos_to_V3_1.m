@@ -51,10 +51,12 @@
 function nc_convert_mono_profile_argos_to_V3_1(varargin)
 
 % top directory of input NetCDF mono-profile files
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN2\';
 
 % top directory of output NetCDF mono-profile files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT2\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -62,20 +64,25 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
 
 % reference files
-refNcFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ref/ArgoProf_V3.1_cfile_part1.nc';
-refNcFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ref/ArgoProf_V3.1_cfile_part2.nc';
+refNcFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part1.nc';
+refNcFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part2.nc';
 
 % list of corrected cycle numbers
 corCyNumFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info/correctedCycleNumbers_argos.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\generate_json_float_meta_argos_nke_old_versions\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\generate_json_float_meta_argos_provor_4.6_4.61\';
 
 % program version
 global g_cofc_ncConvertMonoProfileVersion;
-g_cofc_ncConvertMonoProfileVersion = '2.8';
+g_cofc_ncConvertMonoProfileVersion = '2.9';
+
+% float WMO number
+global g_cofc_floatNum;
 
 % default values initialization
 init_default_values;
@@ -145,6 +152,7 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+   g_cofc_floatNum = floatNum;
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    
    % convert the mono-profile files of the current float
@@ -153,14 +161,14 @@ for idFloat = 1:nbFloats
    jsonInputFileName = [jsonFloatMetaDatafileDir '/' sprintf('%d_meta.json', floatNum)];
    metaData = get_meta_data(metaDataFilePathName, jsonInputFileName);
    if (isempty(metaData))
-      fprintf('ERROR: float #%d: NetCDf V3.1 meta-data file not found - float ignored\n', a_floatNum);
+      fprintf('ERROR: float #%d: NetCDf V3.1 meta-data file not found - float ignored\n', floatNum);
       continue
    end
    
    % retrieve the cut off pressure of the CTD profile
    cutOffPres = get_cutoff_pres(metaData);
    if (isempty(cutOffPres))
-      fprintf('ERROR: float #%d: cut-off pressure not found - float ignored\n', a_floatNum);
+      fprintf('ERROR: float #%d: cut-off pressure not found - float ignored\n', floatNum);
       continue
    end
    
@@ -334,6 +342,9 @@ function [o_ok, o_comment] = convert_file( ...
 % output parameters initialization
 o_ok = 0;
 o_comment = [];
+
+% float WMO number
+global g_cofc_floatNum;
 
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
@@ -1508,6 +1519,9 @@ function [o_ok, o_comment] = convert_and_update_file( ...
 o_ok = 0;
 o_comment = [];
 
+% float WMO number
+global g_cofc_floatNum;
+
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
 
@@ -1591,6 +1605,7 @@ for idProf = 1:inputNProf
    end
 end
 paramForProf = paramForProf(1, :);
+% specific
 if (strcmp(a_inputFileName(end-14:end), 'D1900078_016.nc'))
    paramForProf{end} = 'CNDC';
 end
@@ -2052,6 +2067,7 @@ wantedInputVars = [ ...
    {'LATITUDE'} ...
    {'LONGITUDE'} ...
    {'POSITION_QC'} ...
+   {'CONFIG_MISSION_NUMBER'} ...
    {'PRES'} ...
    {'PARAMETER'} ...
    {'SCIENTIFIC_CALIB_EQUATION'} ...
@@ -2120,6 +2136,22 @@ if (~isempty(idValDate1))
 else
    scientificCalibDate = inputData{2*idValDate2};
    idValDate = idValDate2;
+end
+
+% specific
+% empty PARAMETER
+if (strcmp(a_inputFileName(end-14:end), 'D6900952_233.nc'))
+   idValParam = find(strcmp('PARAMETER', inputData(1:2:end)) == 1, 1);
+   parameter = inputData{2*idValParam};
+   parameter(1:length('PRES'), 1, 1, 1) = 'PRES';
+   parameter(1:length('PSAL'), 2, 1, 1) = 'PSAL';
+   parameter(1:length('TEMP'), 3, 1, 1) = 'TEMP';
+   
+   idValParam = find(strcmp('PARAMETER', inputData(1:2:end)) == 1, 1);
+   inputData{2*idValParam} = parameter;
+   
+   fprintf('INFO: PARAMETER information empty - set (file %s)\n', ...
+      a_outputFileName);
 end
 
 [~, nParamDim, nCalibDim, nProfDim] = size(parameter);
@@ -2200,6 +2232,23 @@ if (any(juld > creationDate))
    inputData{2*idValCreationDate} = creationDateNewStr';
    fprintf('INFO: DATE_CREATION set to %s (file %s)\n', ...
       creationDateNewStr, a_outputFileName);
+end
+
+% specific
+% when not set, copy JULD into JULD_LOCATION for Provor 4.6 & 4.61 floats
+if (ismember(g_cofc_floatNum, [6901878, 6902681, 6902683]))
+   idVal = find(strcmp('JULD', inputData(1:2:end)) == 1, 1);
+   juld = inputData{2*idVal};
+   idVal = find(strcmp('JULD_LOCATION', inputData(1:2:end)) == 1, 1);
+   juldLocation = inputData{2*idVal};
+   for idProf = 1:length(juld)
+      if ((juldLocation == 999999) && (juld ~= 999999))
+         juldLocation(idProf) = juld(idProf);
+         inputData{2*idVal} = juldLocation;
+         fprintf('INFO: JULD_LOCATION information empty - set to JULD (file %s)\n', ...
+            a_outputFileName);
+      end
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2862,7 +2911,8 @@ cycleNumber = unique(inputData{2*idVal});
 [confMissionNumber, noCorCyNum] = compute_config_mission_number(cycleNumber, a_metaData, a_corCyNumData);
 if (~isempty(confMissionNumber))
    for idProf = 1:outputNProf
-      if (((idProf == 1) && (nLevelsPrimary > 0)) || (idProf > 1))
+      %       if (((idProf == 1) && (nLevelsPrimary > 0)) || (idProf > 1))
+      if (((idProf == 1) && ((nLevelsPrimary > 0) || (dataMode() == 'D'))) || (idProf > 1))
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'CONFIG_MISSION_NUMBER'), ...
             idProf-1, 1, confMissionNumber);
       end
@@ -3009,6 +3059,9 @@ function [o_confMissionNumber, o_noCorCyNum] = compute_config_mission_number(a_c
 o_confMissionNumber = [];
 o_noCorCyNum = 0;
 
+% float WMO number
+global g_cofc_floatNum;
+
 
 if (isempty(a_metaData))
    return
@@ -3034,39 +3087,106 @@ if (~isempty(floatWmo) && ~isempty(dacFormatId) && ~isempty(metaConfMisNum))
       corCycleNumber = a_corCyNumData(idF,3);
    end
    
-   firstProfCycleNum = [];
-   switch (dacFormatId)
-      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11'}
-         firstProfCycleNum = 0;
-      case {'4.6', '4.61'}
-         firstProfCycleNum = 1; % from Coriolis nc files since these floats are not in DEP files
-      case {'5.0', '5.1', '5.2', '5.5'}
-         firstProfCycleNum = 1;
-      otherwise
-         fprintf('WARNING: Nothing done yet to first deep cycle number for dacFormatId %s\n', dacFormatId);
-   end
-   
-   if (length(metaConfMisNum) < 3)
-      if (corCycleNumber == firstProfCycleNum)
-         o_confMissionNumber = metaConfMisNum(1);
-      else
-         o_confMissionNumber = metaConfMisNum(2);
+   % specific
+   % unusual configurations of Provor 4.6 & 4.61
+   if (ismember(g_cofc_floatNum, [6900947, 6900952, 6900998, 6901876, 6901878]))
+      
+      switch (g_cofc_floatNum)
+         case 6900947
+            if (rem(corCycleNumber, 2) == 0)
+               if (corCycleNumber > 46)
+                  o_confMissionNumber = metaConfMisNum(4);
+               else
+                  o_confMissionNumber = metaConfMisNum(2);
+               end
+            else
+               if (corCycleNumber > 46)
+                  o_confMissionNumber = metaConfMisNum(5);
+               else
+                  o_confMissionNumber = metaConfMisNum(3);
+               end
+            end
+         case 6900952
+            if (rem(corCycleNumber, 2) == 0)
+               if ((corCycleNumber > 117) && (corCycleNumber < 231))
+                  o_confMissionNumber = metaConfMisNum(4);
+               else
+                  o_confMissionNumber = metaConfMisNum(2);
+               end
+            else
+               if ((corCycleNumber > 117) && (corCycleNumber < 231))
+                  o_confMissionNumber = metaConfMisNum(5);
+               else
+                  o_confMissionNumber = metaConfMisNum(3);
+               end
+            end
+         case 6900998
+            if (rem(corCycleNumber, 2) == 0)
+               if (corCycleNumber > 11)
+                  o_confMissionNumber = metaConfMisNum(4);
+               else
+                  o_confMissionNumber = metaConfMisNum(2);
+               end
+            else
+               if (corCycleNumber > 11)
+                  o_confMissionNumber = metaConfMisNum(5);
+               else
+                  o_confMissionNumber = metaConfMisNum(3);
+               end
+            end
+         case 6901876
+            if (corCycleNumber <= 30)
+               o_confMissionNumber = metaConfMisNum(2);
+            elseif ((corCycleNumber > 30) && (corCycleNumber <= 40))
+               o_confMissionNumber = metaConfMisNum(3);
+            else
+               o_confMissionNumber = metaConfMisNum(4);
+            end
+         case 6901878
+            if (corCycleNumber <= 17)
+               o_confMissionNumber = metaConfMisNum(2);
+            elseif ((corCycleNumber > 17) && (corCycleNumber <= 199))
+               o_confMissionNumber = metaConfMisNum(3);
+            else
+               o_confMissionNumber = metaConfMisNum(4);
+            end
       end
    else
-      if (corCycleNumber == firstProfCycleNum)
-         o_confMissionNumber = metaConfMisNum(1);
-      else
-         idVal = find(strcmp('CONFIG_REPETITION_RATE', a_metaData(1:2:end)) == 1, 1);
-         repRateMetaData = a_metaData{2*idVal};
-         sumRepRate = 0;
-         for idRep = 1:length(repRateMetaData)
-            sumRepRate = sumRepRate + ...
-               str2num(repRateMetaData{idRep}.(char(fieldnames(repRateMetaData{idRep}))));
-         end
-         if (rem(corCycleNumber, sumRepRate) ~= 0)
-            o_confMissionNumber = metaConfMisNum(2);
+      
+      firstProfCycleNum = [];
+      switch (dacFormatId)
+         case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11'}
+            firstProfCycleNum = 0;
+         case {'4.6', '4.61'}
+            firstProfCycleNum = 1; % from Coriolis nc files since these floats are not in DEP files
+         case {'5.0', '5.1', '5.2', '5.5'}
+            firstProfCycleNum = 1;
+         otherwise
+            fprintf('WARNING: Nothing done yet to first deep cycle number for dacFormatId %s\n', dacFormatId);
+      end
+      
+      if (length(metaConfMisNum) < 3)
+         if (corCycleNumber == firstProfCycleNum)
+            o_confMissionNumber = metaConfMisNum(1);
          else
-            o_confMissionNumber = metaConfMisNum(3);
+            o_confMissionNumber = metaConfMisNum(2);
+         end
+      else
+         if (corCycleNumber == firstProfCycleNum)
+            o_confMissionNumber = metaConfMisNum(1);
+         else
+            idVal = find(strcmp('CONFIG_REPETITION_RATE', a_metaData(1:2:end)) == 1, 1);
+            repRateMetaData = a_metaData{2*idVal};
+            sumRepRate = 0;
+            for idRep = 1:length(repRateMetaData)
+               sumRepRate = sumRepRate + ...
+                  str2num(repRateMetaData{idRep}.(char(fieldnames(repRateMetaData{idRep}))));
+            end
+            if (rem(corCycleNumber, sumRepRate) ~= 0)
+               o_confMissionNumber = metaConfMisNum(2);
+            else
+               o_confMissionNumber = metaConfMisNum(3);
+            end
          end
       end
    end
@@ -3123,7 +3243,7 @@ if (~isempty(configParamName) && ~isempty(configParamValue) && ~isempty(dacForma
    
    switch (dacFormatId)
       
-      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11'}
+      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11', '4.6', '4.61'}
          
          o_vssInfoStruct.nbThreshold = 1;
          o_vssInfoStruct.descSamplingPeriod = get_config_value('CONFIG_DescentToParkPresSamplingTime_seconds', configParamName, configParamValue);
@@ -3134,18 +3254,18 @@ if (~isempty(configParamName) && ~isempty(configParamValue) && ~isempty(dacForma
          o_vssInfoStruct.thickSurf = get_config_value('CONFIG_ProfileSurfaceSlicesThickness_dbar', configParamName, configParamValue);
          o_vssInfoStruct.thickBottom = get_config_value('CONFIG_ProfileBottomSlicesThickness_dbar', configParamName, configParamValue);
          
-      case {'4.6', '4.61', }
-         
-         o_vssInfoStruct.nbThreshold = 2;
-         o_vssInfoStruct.descSamplingPeriod = get_config_value('CONFIG_DescentToParkPresSamplingTime_seconds', configParamName, configParamValue);
-         o_vssInfoStruct.ascSamplingPeriod = get_config_value('CONFIG_AscentSamplingPeriod_seconds', configParamName, configParamValue);
-         o_vssInfoStruct.parkPres = get_config_value('CONFIG_ParkPressure_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.profilePres = get_config_value('CONFIG_ProfilePressure_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.threshold1 = get_config_value('CONFIG_PressureThresholdDataReductionShallowToIntermediate_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.threshold2 = get_config_value('CONFIG_PressureThresholdDataReductionIntermediateToDeep_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.thickSurf = get_config_value('CONFIG_ProfileSurfaceSlicesThickness_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.thickMiddle = get_config_value('CONFIG_ProfileIntermediateSlicesThickness_dbar', configParamName, configParamValue);
-         o_vssInfoStruct.thickBottom = get_config_value('CONFIG_ProfileBottomSlicesThickness_dbar', configParamName, configParamValue);
+         %       case {'4.6', '4.61', }
+         %
+         %          o_vssInfoStruct.nbThreshold = 2;
+         %          o_vssInfoStruct.descSamplingPeriod = get_config_value('CONFIG_DescentToParkPresSamplingTime_seconds', configParamName, configParamValue);
+         %          o_vssInfoStruct.ascSamplingPeriod = get_config_value('CONFIG_AscentSamplingPeriod_seconds', configParamName, configParamValue);
+         %          o_vssInfoStruct.parkPres = get_config_value('CONFIG_ParkPressure_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.profilePres = get_config_value('CONFIG_ProfilePressure_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.threshold1 = get_config_value('CONFIG_PressureThresholdDataReductionShallowToIntermediate_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.threshold2 = get_config_value('CONFIG_PressureThresholdDataReductionIntermediateToDeep_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.thickSurf = get_config_value('CONFIG_ProfileSurfaceSlicesThickness_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.thickMiddle = get_config_value('CONFIG_ProfileIntermediateSlicesThickness_dbar', configParamName, configParamValue);
+         %          o_vssInfoStruct.thickBottom = get_config_value('CONFIG_ProfileBottomSlicesThickness_dbar', configParamName, configParamValue);
          
       otherwise
          fprintf('WARNING: nothing done yet in get_vss_info for dacFormatId %s\n', ...
@@ -3423,7 +3543,11 @@ else
             %                a_outputFileName);
          end
          
-         o_vssText = [o_vssText ' [' description ']'];
+         if (any(strfind(description, '99999')))
+            o_vssText = [o_vssText ' []'];
+         else
+            o_vssText = [o_vssText ' [' description ']'];
+         end
       else
          if (~isempty(a_vssInfoStruct.ascSamplingPeriod) && ...
                ~isempty(a_vssInfoStruct.profilePres) && ...
@@ -3480,7 +3604,11 @@ else
             %                a_outputFileName);
          end
          
-         o_vssText = [o_vssText ' [' description ']'];
+         if (any(strfind(description, '99999')))
+            o_vssText = [o_vssText ' []'];
+         else
+            o_vssText = [o_vssText ' [' description ']'];
+         end
       end
    else
       if (a_vssInfoStruct.nbThreshold == 1)
@@ -3505,7 +3633,11 @@ else
             %                a_outputFileName);
          end
          
-         o_vssText = [o_vssText ' [' description ']'];
+         if (any(strfind(description, '99999')))
+            o_vssText = [o_vssText ' []'];
+         else
+            o_vssText = [o_vssText ' [' description ']'];
+         end
       else
          if (~isempty(a_vssInfoStruct.descSamplingPeriod) && ...
                ~isempty(a_vssInfoStruct.parkPres) && ...
@@ -3535,7 +3667,11 @@ else
             %                a_outputFileName);
          end
          
-         o_vssText = [o_vssText ' [' description ']'];
+         if (any(strfind(description, '99999')))
+            o_vssText = [o_vssText ' []'];
+         else
+            o_vssText = [o_vssText ' [' description ']'];
+         end
       end
    end
 end

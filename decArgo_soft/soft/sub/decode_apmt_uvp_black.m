@@ -141,8 +141,7 @@ while (currentByte <= lastByteNum)
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
-            rawData(id) = eval(cmd);
+            rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), 0, a_inputFilePathName);
          end
       end
       

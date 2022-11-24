@@ -43,7 +43,7 @@ g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'FREQUENCY_DOXY';
 % g_NTP_NAME_PARAM1 = 'PH_IN_SITU_FREE';
 % g_NTP_NAME_PARAM1 = 'DOXY';
-g_NTP_NAME_PARAM1 = 'CHLA';
+% g_NTP_NAME_PARAM1 = 'CHLA';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
 % g_NTP_NAME_PARAM2 = 'BBP700';
@@ -54,10 +54,11 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'DOXY';
 % g_NTP_NAME_PARAM2 = 'PH_IN_SITU_TOTAL';
 % g_NTP_NAME_PARAM2 = 'CHLA';
-g_NTP_NAME_PARAM2 = 'BBP700';
+% g_NTP_NAME_PARAM2 = 'BBP700';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% g_NTP_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output
 g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

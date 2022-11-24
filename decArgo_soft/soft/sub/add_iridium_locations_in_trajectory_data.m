@@ -97,9 +97,11 @@ if (~isempty(a_iridiumMailData))
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
       idFixForCycle = find([a_iridiumMailData.cycleNumber] == cycleNum);
+      surfaceLocData = repmat(get_traj_one_meas_init_struct, length(idFixForCycle), 1);
+      cpt = 1;
       for idFix = idFixForCycle
          if (a_iridiumMailData(idFix).cepRadius ~= 0)
-            measStruct = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
+            surfaceLocData(cpt) = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
                a_iridiumMailData(idFix).timeOfSessionJuld, ...
                a_iridiumMailData(idFix).unitLocationLon, ...
                a_iridiumMailData(idFix).unitLocationLat, ...
@@ -110,10 +112,12 @@ if (~isempty(a_iridiumMailData))
                '', ...
                ' ', ...
                1);
-            o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; measStruct];
+            cpt = cpt + 1;
          end
       end
-      
+      surfaceLocData(cpt:end) = [];
+      o_tabTrajNMeas(idNMeasForCy).tabMeas = [o_tabTrajNMeas(idNMeasForCy).tabMeas; surfaceLocData];
+
       % sort GPS and Iridium locations
       surfLocDate = [];
       if (~isempty(o_tabTrajNMeas(idNMeasForCy).tabMeas))

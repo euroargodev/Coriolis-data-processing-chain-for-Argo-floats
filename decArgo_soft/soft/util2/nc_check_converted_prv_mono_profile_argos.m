@@ -5,7 +5,7 @@
 % assigned to each profile.
 %
 % SYNTAX :
-%   nc_check_converted_apx_mono_profile_argos ou nc_check_converted_apx_mono_profile_argos(6900189, 7900118)
+%   nc_check_converted_prv_mono_profile_argos ou nc_check_converted_prv_mono_profile_argos(6900189, 7900118)
 %
 % INPUT PARAMETERS :
 %   varargin : éventuellement la liste des numéros de flotteurs à traiter
@@ -18,41 +18,17 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/26/2019 - RNU - creation
+%   09/15/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function nc_check_converted_apx_mono_profile_argos(varargin)
+function nc_check_converted_prv_mono_profile_argos(varargin)
 
 % top directory of input NetCDF mono-profile files
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default list of floats to process
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_pts_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_4_multi.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.2.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_24.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_19.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_25.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.02.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.01.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_6.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.4.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.1.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_28.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.3.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.03.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_13.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_23.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.04.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_46.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11.1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
 
 % default values initialization
@@ -83,7 +59,7 @@ else
    name = sprintf('_%d', floatList);
 end
 
-logFile = [DIR_LOG_FILE '/' 'nc_check_converted_apx_mono_profile_argos' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+logFile = [DIR_LOG_FILE '/' 'nc_check_converted_prv_mono_profile_argos' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
 
@@ -161,12 +137,13 @@ for idFloat = 1:nbFloats
       end
       idFl = find(strcmp('CONFIG_CycleTime_hours', configParameterName) == 1);
       if (~isempty(idFl))
-         if (size(configParameterValue, 2) < 4)
-            cycleTimeMeta = min(configParameterValue(idFl, :));
-         else
-            % seasonal floats
-            cycleTimeMeta = configParameterValue(idFl, :);
-         end
+         cycleTimeMeta = configParameterValue(idFl, :);
+%          if (size(configParameterValue, 2) < 4)
+%             cycleTimeMeta = min(configParameterValue(idFl, :));
+%          else
+%             % seasonal floats
+%             cycleTimeMeta = configParameterValue(idFl, :);
+%          end
       else
          fprintf('ERROR: Float #%d: ''CONFIG_CycleTime_hours'' not in meta.nc\n', ...
             floatNum);
@@ -231,16 +208,18 @@ for idFloat = 1:nbFloats
       idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
       presQc = profData{2*idVal};
       
-      tabCyNum = [tabCyNum; cycleNumber];
-      tabJuldLoc = [tabJuldLoc; juldLocation];
-      tabLon = [tabLon; longitude];
-      tabLat = [tabLat; latitude];
-      tabJuld = [tabJuld; juld];
-      tabDir = [tabDir; direction];
-      tabMisNum = [tabMisNum; configMissionNumber];
-      idPresOk = find((pres ~= paramPres.fillValue) & (presQc ~= '4'));
+      tabCyNum = [tabCyNum; cycleNumber(1)];
+      tabJuldLoc = [tabJuldLoc; juldLocation(1)];
+      tabLon = [tabLon; longitude(1)];
+      tabLat = [tabLat; latitude(1)];
+      tabJuld = [tabJuld; juld(1)];
+      tabDir = [tabDir; direction(1)];
+      tabMisNum = [tabMisNum; configMissionNumber(1)];
+      presProf = pres(:, 1);
+      presQcProf = presQc(:, 1);
+      idPresOk = find((presProf ~= paramPres.fillValue) & (presQcProf ~= '4'));
       if (~isempty(idPresOk))
-         tabPresMax = [tabPresMax; max(pres(idPresOk))];
+         tabPresMax = [tabPresMax; max(presProf(idPresOk))];
       else
          tabPresMax = [tabPresMax; paramPres.fillValue];
       end

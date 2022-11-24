@@ -887,7 +887,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
       add_configuration_number_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
-
+   
    % set cycle numbers to Iridium mail files data
    update_mail_data_ir_rudics_sbd2(o_tabTrajNMeas);
    
@@ -899,7 +899,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % sort trajectory data structures according to the predefined
    % measurement code order
    [o_tabTrajNMeas] = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
-
+   
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);

@@ -44,6 +44,7 @@ if (~isempty(a_tabTech))
          gpsLocQc = g_decArgo_gpsData{7};
          gpsLocAccuracy = g_decArgo_gpsData{8};
          gpsLocSbdFileDate = g_decArgo_gpsData{9};
+         gpsLocInTrajFlag = g_decArgo_gpsData{13};
       else
          gpsLocCycleNum = [];
          gpsLocProfNum = [];
@@ -54,6 +55,7 @@ if (~isempty(a_tabTech))
          gpsLocQc = [];
          gpsLocAccuracy = [];
          gpsLocSbdFileDate = [];
+         gpsLocInTrajFlag = [];
       end
       
       % GPS data (consider only 'valid' GPS locations)
@@ -69,6 +71,7 @@ if (~isempty(a_tabTech))
       gpsLocQc = [gpsLocQc; zeros(length(idPos), 1)];
       gpsLocAccuracy = [gpsLocAccuracy; repmat('G', length(idPos), 1)];
       gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos, 78)];
+      gpsLocInTrajFlag = [gpsLocInTrajFlag; zeros(length(idPos), 1)];
       
       cyProfNumList = [a_tabTech(idPos, 4) a_tabTech(idPos, 5)];
       uCyProfNumList = unique(cyProfNumList, 'rows');
@@ -118,7 +121,8 @@ if (~isempty(a_tabTech))
       gpsLocQc = gpsLocQc(idSort);
       gpsLocAccuracy = gpsLocAccuracy(idSort);
       gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
-      
+      gpsLocInTrajFlag = gpsLocInTrajFlag(idSort);
+
       % update GPS data global variable
       g_decArgo_gpsData{1} = gpsLocCycleNum;
       g_decArgo_gpsData{2} = gpsLocProfNum;
@@ -129,6 +133,7 @@ if (~isempty(a_tabTech))
       g_decArgo_gpsData{7} = gpsLocQc;
       g_decArgo_gpsData{8} = gpsLocAccuracy;
       g_decArgo_gpsData{9} = gpsLocSbdFileDate;
+      g_decArgo_gpsData{13} = gpsLocInTrajFlag;
    end
 end
 

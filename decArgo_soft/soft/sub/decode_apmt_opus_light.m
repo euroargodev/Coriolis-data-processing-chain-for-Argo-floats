@@ -2,11 +2,12 @@
 % Decode OPUS-LIGHT data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_opusLightData] = decode_apmt_opus_light(a_data, a_lastByteNum)
+%  [o_opusLightData] = decode_apmt_opus_light(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input OPUS-LIGHT data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_data              : input OPUS-LIGHT data to decode
+%   a_lastByteNum       : number of the last useful byte of the data
+%   a_inputFilePathName : APMT OPUS file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_opusLightData : OPUS-LIGHT decoded data
@@ -19,7 +20,7 @@
 % RELEASES :
 %   02/15/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_opusLightData] = decode_apmt_opus_light(a_data, a_lastByteNum)
+function [o_opusLightData] = decode_apmt_opus_light(a_data, a_lastByteNum, a_inputFilePathName)
 
 % output parameters initialization
 o_opusLightData = [];
@@ -168,8 +169,7 @@ while (currentByte <= lastByteNum)
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
-            rawData(id) = eval(cmd);
+            rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), 0, a_inputFilePathName);
          end
       end
       
@@ -194,8 +194,7 @@ while (currentByte <= lastByteNum)
          rawData = get_bits(1, tabNbBits2, inputData(currentByte:currentByte+nbBytes-1));
          for id = 1:length(tabNbBits2)
             if (tabNbBits2(id) > 8)
-               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits2(id), id, tabNbBits2(id));
-               rawData(id) = eval(cmd);
+               rawData(id) = decode_apmt_meas(rawData(id), tabNbBits2(id), 0, a_inputFilePathName);
             end
          end
          dataF = rawData(1:end-1)';
@@ -208,8 +207,7 @@ while (currentByte <= lastByteNum)
          rawData = get_bits(1, tabNbBits2, inputData(currentByte:currentByte+nbBytes-1));
          for id = 1:length(tabNbBits2)
             if (tabNbBits2(id) > 8)
-               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits2(id), id, tabNbBits2(id));
-               rawData(id) = eval(cmd);
+               rawData(id) = decode_apmt_meas(rawData(id), tabNbBits2(id), 0, a_inputFilePathName);
             end
          end
          dataB = rawData';

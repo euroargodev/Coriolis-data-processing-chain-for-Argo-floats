@@ -182,6 +182,12 @@ global g_decArgo_julD2FloatDayOffset;
 % float configuration
 global g_decArgo_floatConfig;
 
+% array to store GPS data
+global g_decArgo_gpsData;
+
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
+
 
 ID_OFFSET = 1;
 
@@ -291,30 +297,28 @@ if (a_deepCycle == 1)
    % GPS LOCATIONS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   surfaceLocData = [];
-   
    % unpack GPS data
    gpsLocCycleNum = a_gpsData{1};
    gpsLocDate = a_gpsData{4};
    gpsLocLon = a_gpsData{5};
    gpsLocLat = a_gpsData{6};
    gpsLocQc = a_gpsData{7};
-   
+
    idF = find(gpsLocCycleNum == a_cycleNum);
    gpsCyLocDate = gpsLocDate(idF);
    gpsCyLocLon = gpsLocLon(idF);
    gpsCyLocLat = gpsLocLat(idF);
    gpsCyLocQc = gpsLocQc(idF);
-   
+
+   surfaceLocData = repmat(get_traj_one_meas_init_struct, length(gpsCyLocDate), 1);
    for idpos = 1:length(gpsCyLocDate)
-      measStruct = create_one_meas_surface(g_MC_Surface, ...
+      surfaceLocData(idpos) = create_one_meas_surface(g_MC_Surface, ...
          gpsCyLocDate(idpos), ...
          gpsCyLocLon(idpos), ...
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
          num2str(gpsCyLocQc(idpos)), 1);
-      surfaceLocData = [surfaceLocData; measStruct];
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,9 +328,13 @@ if (a_deepCycle == 1)
    iridiumCyLocDate = [];
    if (~isempty(a_iridiumMailData))
       idFixForCycle = find([a_iridiumMailData.cycleNumber] == a_cycleNum);
+      cpt = length(surfaceLocData) + 1;
+      surfaceLocData = cat(1, ...
+         surfaceLocData, ...
+         repmat(get_traj_one_meas_init_struct, length(idFixForCycle), 1));
       for idFix = idFixForCycle
          if (a_iridiumMailData(idFix).cepRadius ~= 0)
-            measStruct = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
+            surfaceLocData(cpt) = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
                a_iridiumMailData(idFix).timeOfSessionJuld, ...
                a_iridiumMailData(idFix).unitLocationLon, ...
                a_iridiumMailData(idFix).unitLocationLat, ...
@@ -337,9 +345,10 @@ if (a_deepCycle == 1)
                '', ...
                ' ', ...
                1);
-            surfaceLocData = [surfaceLocData; measStruct];
+            cpt = cpt + 1;
          end
       end
+      surfaceLocData(cpt:end) = [];
       iridiumCyLocDate = [a_iridiumMailData(idFixForCycle).timeOfSessionJuld];
    end
    
@@ -962,56 +971,67 @@ else
    % GPS LOCATIONS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   surfaceLocData = [];
-   
    % unpack GPS data
-   gpsLocCycleNum = a_gpsData{1};
-   gpsLocDate = a_gpsData{4};
-   gpsLocLon = a_gpsData{5};
-   gpsLocLat = a_gpsData{6};
-   gpsLocQc = a_gpsData{7};
-   
-   idF = find(gpsLocCycleNum == a_cycleNum);
+   gpsLocCycleNum = g_decArgo_gpsData{1};
+   gpsLocDate = g_decArgo_gpsData{4};
+   gpsLocLon = g_decArgo_gpsData{5};
+   gpsLocLat = g_decArgo_gpsData{6};
+   gpsLocQc = g_decArgo_gpsData{7};
+   gpsLocInTrajFlag = g_decArgo_gpsData{13};
+
+   idF = find((gpsLocCycleNum == a_cycleNum) & (gpsLocInTrajFlag == 0));
    gpsCyLocDate = gpsLocDate(idF);
    gpsCyLocLon = gpsLocLon(idF);
    gpsCyLocLat = gpsLocLat(idF);
    gpsCyLocQc = gpsLocQc(idF);
-   
+
+   surfaceLocData = repmat(get_traj_one_meas_init_struct, length(gpsCyLocDate), 1);
    for idpos = 1:length(gpsCyLocDate)
-      measStruct = create_one_meas_surface(g_MC_Surface, ...
+      surfaceLocData(idpos) = create_one_meas_surface(g_MC_Surface, ...
          gpsCyLocDate(idpos), ...
          gpsCyLocLon(idpos), ...
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
          num2str(gpsCyLocQc(idpos)), 1);
-      surfaceLocData = [surfaceLocData; measStruct];
    end
+
+   gpsLocInTrajFlag(idF) = 1; % to be sure each new location is computed only once
+   g_decArgo_gpsData{13} = gpsLocInTrajFlag;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % IRIDIUM LOCATIONS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    iridiumCyLocDate = [];
-   if (~isempty(a_iridiumMailData))
-      idFixForCycle = find([a_iridiumMailData.cycleNumber] == a_cycleNum);
-      for idFix = idFixForCycle
-         if (a_iridiumMailData(idFix).cepRadius ~= 0)
-            measStruct = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
-               a_iridiumMailData(idFix).timeOfSessionJuld, ...
-               a_iridiumMailData(idFix).unitLocationLon, ...
-               a_iridiumMailData(idFix).unitLocationLat, ...
-               'I', ...
-               0, ... % no need to set a Qc, it will be set during RTQC
-               a_iridiumMailData(idFix).cepRadius*1000, ...
-               a_iridiumMailData(idFix).cepRadius*1000, ...
-               '', ...
-               ' ', ...
-               1);
-            surfaceLocData = [surfaceLocData; measStruct];
+   if (~isempty(g_decArgo_iridiumMailData))
+      idFixForCycle = find(([g_decArgo_iridiumMailData.cycleNumber] == a_cycleNum) & ...
+         ([g_decArgo_iridiumMailData.locInTrajFlag] == 0));
+      if (~isempty(idFixForCycle))
+         cpt = length(surfaceLocData) + 1;
+         surfaceLocData = cat(1, ...
+            surfaceLocData, ...
+            repmat(get_traj_one_meas_init_struct, length(idFixForCycle), 1));
+         for idFix = idFixForCycle
+            if (g_decArgo_iridiumMailData(idFix).cepRadius ~= 0)
+               surfaceLocData(cpt) = create_one_meas_surface_with_error_ellipse(g_MC_Surface, ...
+                  g_decArgo_iridiumMailData(idFix).timeOfSessionJuld, ...
+                  g_decArgo_iridiumMailData(idFix).unitLocationLon, ...
+                  g_decArgo_iridiumMailData(idFix).unitLocationLat, ...
+                  'I', ...
+                  0, ... % no need to set a Qc, it will be set during RTQC
+                  g_decArgo_iridiumMailData(idFix).cepRadius*1000, ...
+                  g_decArgo_iridiumMailData(idFix).cepRadius*1000, ...
+                  '', ...
+                  ' ', ...
+                  1);
+               cpt = cpt + 1;
+            end
          end
+         surfaceLocData(cpt:end) = [];
+         iridiumCyLocDate = [g_decArgo_iridiumMailData(idFixForCycle).timeOfSessionJuld];
+         [g_decArgo_iridiumMailData(idFixForCycle).locInTrajFlag] = deal(1); % to be sure each new location is computed only once
       end
-      iridiumCyLocDate = [a_iridiumMailData(idFixForCycle).timeOfSessionJuld];
    end
    
    % sort the surface locations by date

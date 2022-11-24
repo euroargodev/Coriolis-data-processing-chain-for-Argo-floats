@@ -34,8 +34,8 @@ global g_decArgo_provorCts5UseaFileTypeListAll;
 fileTypeList = g_decArgo_provorCts5UseaFileTypeListAll;
 
 if ~(exist(a_outputDirName, 'dir') == 7)
-   fprintf('Creating directory: %s\n', a_outputDir);
-   mkdir(a_outputDir);
+   fprintf('Creating directory: %s\n', a_outputDirName);
+   mkdir(a_outputDirName);
 end
 
 % current date

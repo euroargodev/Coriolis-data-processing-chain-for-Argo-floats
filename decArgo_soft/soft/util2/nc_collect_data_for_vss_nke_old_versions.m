@@ -22,15 +22,18 @@ function nc_collect_data_for_vss_nke_old_versions(varargin)
 
 % top directory of input NetCDF mono-profile files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN\';
 
 % top directory of output NetCDF mono-profile files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
 
 % interactively display the histograms
 HISTO = 0;
@@ -91,9 +94,9 @@ for idFloat = 1:nbFloats
    idVal = find(strcmp('DAC_FORMAT_ID', metaData(1:2:end)) == 1, 1);
    dacFormatId = strtrim(metaData{2*idVal}');
    switch (dacFormatId)
-      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11'}
+      case {'1', '2.2', '2.6', '2.7', '3.21', '3.5', '3.61', '3.8', '3.81', '4.0', '4.1', '4.11', '4.6', '4.61'}
          nbThreshold = 1;
-      case {'4.6', '4.61', '5.0', '5.1', '5.2', '5.5'}
+      case {'5.0', '5.1', '5.2', '5.5'}
          nbThreshold = 2;
       otherwise
          fprintf('WARNING: Nothing done yet to deduce nbThreshold for dacFormatId %s\n', dacFormatId);

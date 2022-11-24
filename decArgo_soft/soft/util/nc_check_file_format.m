@@ -52,11 +52,13 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\A
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Apex_APF9_argos\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Nemo\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\nc_avec_dm\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\nc\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Meta_en_3.1_when_no_data\OUT\';
 
 % json meta-data file directory
 DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\json_float_meta\';
+DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\generate_json_float_meta_argos_nke_old_versions_20210914T095832\';
+DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\generate_json_float_meta_no_data_float\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports_not_in_dm\';
@@ -116,19 +118,22 @@ DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all2.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all3.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
- FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\_LOG_AVEC_BUFF\not_in_dm_check_ko.txt';
- FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\_LOG\in_dm_check_ko.txt';
- FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts3_delayed_error.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\_LOG_AVEC_BUFF\not_in_dm_check_ko.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\_LOG\in_dm_check_ko.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_a_passer_en_dm_20210930.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % directory to store the csv file
-DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\'; 
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % nc file types to check
 CHECK_NC_TRAJ = 1;
@@ -190,9 +195,9 @@ fprintf(fidOut, '%s\n', header);
 % metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
 % metaFileContents = metaFileContents{:};
 % fclose(fId);
-% 
+%
 % metaFileContents = regexprep(metaFileContents, '"', '');
-% 
+%
 % metaData = reshape(metaFileContents, 5, size(metaFileContents, 1)/5)';
 
 % metaWmoList = metaData(:, 1);
@@ -211,6 +216,7 @@ for idFloat = 1:nbFloats
    % json meta-data file for this float
    jsonInputFileName = [DIR_JSON_FLOAT_META '/' sprintf('%d_meta.json', floatNum)];
    
+   floatDac = 'INCOIS';
    floatDac = 'CORIOLIS';
    if (exist(jsonInputFileName, 'file') == 2)
       % read meta-data file
@@ -259,7 +265,7 @@ for idFloat = 1:nbFloats
       else
          continue
       end
-
+      
       if (exist(ncFileDir, 'dir') == 7)
          
          for idFile = 1:length(ncFiles)
@@ -272,33 +278,11 @@ for idFloat = 1:nbFloats
             ncFilePathName = [ncFileDir '/' ncFileName];
             
             cmd = '';
-            %             if (ispc)
-            %                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
-            %                   'java -classpath ' DIR_JAVA_CHECKER ' ' ...
-            %                   '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
-            %                   '-full-traj-checks ' ...
-            %                   lower(floatDac) ' ' ...
-            %                   DIR_JAVA_CHECKER '/spec ' ...
-            %                   DIR_OUTPUT_REPORT_FILES ' ' ...
-            %                   ncFileDir ' ' ...
-            %                   ncFileName];
-            %             elseif (isunix)
-            %                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
-            %                   DIR_JAVA_CHECKER '/ArgoFileChecker.csh ' ...
-            %                   '-full-traj-checks ' ...
-            %                   lower(floatDac) ' ' ...
-            %                   DIR_OUTPUT_REPORT_FILES ' ' ...
-            %                   ncFileDir ' ' ...
-            %                   ncFileName];
-            %             else
-            %                fprintf('Cannot determine operating system\n');
-            %                return
-            %             end
-            
             if (ispc)
                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
                   'java -classpath ' DIR_JAVA_CHECKER ' ' ...
                   '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
+                  '-full-traj-checks ' ...
                   lower(floatDac) ' ' ...
                   DIR_JAVA_CHECKER '/spec ' ...
                   DIR_OUTPUT_REPORT_FILES ' ' ...
@@ -307,6 +291,7 @@ for idFloat = 1:nbFloats
             elseif (isunix)
                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
                   DIR_JAVA_CHECKER '/ArgoFileChecker.csh ' ...
+                  '-full-traj-checks ' ...
                   lower(floatDac) ' ' ...
                   DIR_OUTPUT_REPORT_FILES ' ' ...
                   ncFileDir ' ' ...
@@ -314,7 +299,7 @@ for idFloat = 1:nbFloats
             else
                fprintf('Cannot determine operating system\n');
                return
-            end            
+            end
             
             [status, cmdOut] = system(cmd);
             if (status == 0)
@@ -330,7 +315,7 @@ for idFloat = 1:nbFloats
                   fprintf('ERROR: Unable to open file: %s\n', reportFilePathName);
                   continue
                end
-
+               
                status = '';
                errorNum = -1;
                warningNum = -1;
@@ -377,9 +362,9 @@ for idFloat = 1:nbFloats
                fclose(fId);
                
                % edit report
-%                if ((errorNum > 0) || (warningNum > 0))
-%                   edit(reportFilePathName);
-%                end
+               %                if ((errorNum > 0) || (warningNum > 0))
+               %                   edit(reportFilePathName);
+               %                end
                
                % print collected information in the output CSV file
                fprintf(fidOut, '%d; %d; %s; %s; %s; %d; %d\n', ...
@@ -395,7 +380,7 @@ for idFloat = 1:nbFloats
       end
    end
 end
-   
+
 ellapsedTime = toc;
 fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 

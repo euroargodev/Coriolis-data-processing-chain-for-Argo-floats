@@ -39,7 +39,7 @@ g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\nc_avec_dm\';
 % g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\nc\';
-% g_NTT_NC_DIR = 'E:\202110-ArgoData\coriolis\';
+g_NTT_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -73,7 +73,7 @@ g_NTT_PRINT = 0;
 g_NTT_CYCLE_0 = 1;
 
 % use adjusted data
-g_NTT_ADJ = 1;
+g_NTT_ADJ = 2;
 
 % display float times
 g_NTT_FLOAT_TIMES = 0;
@@ -456,11 +456,11 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
    trajFileFormatVersion = strtrim(trajData{2*idVal}');
    
    % check the traj file format version
-%    if (~ismember(trajFileFormatVersion, [{'3.1'} {'3.2'}]))
-%       fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-%          trajFileName, trajFileFormatVersion);
-%       return
-%    end
+   if (~ismember(trajFileFormatVersion, [{'3.1'} {'3.2'}]))
+      fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+         trajFileName, trajFileFormatVersion);
+      return
+   end
    
    idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
    cycleNumberTraj = trajData{2*idVal};

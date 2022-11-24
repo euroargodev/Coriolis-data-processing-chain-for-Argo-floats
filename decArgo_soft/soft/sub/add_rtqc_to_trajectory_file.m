@@ -117,6 +117,10 @@
 %   08/18/2021 - RNU - V 3.2: Minor modifications so that the same RTQC code can
 %                             be used on C and B TRAJ 3.1 files or on the unique
 %                             TRAJ 3.2 file
+%   10/28/2021 - RNU - V 3.3: TEST 4 (position on land test) exclude Iridium
+%                             locations
+%                             TEST 7 (regional range test) don't use Iridium
+%                             locations to determine region area
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -155,7 +159,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '3.2';
+g_decArgo_addRtqcToTrajVersion = '3.3';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -890,7 +894,8 @@ if (testFlagList(4) == 1)
    
    % we check that the mean value of the elevations provided by the GEBCO
    % bathymetric atlas is < 0 at the profile location
-   idNoDef = find((latitude ~= paramLat.fillValue) & (longitude ~= paramLon.fillValue));
+   idNoDef = find((latitude ~= paramLat.fillValue) & (longitude ~= paramLon.fillValue) & ...
+      (positionAccuracy ~= 'I')'); % to exclude Iridium locations
    if (~isempty(idNoDef))
       % initialize Qc flag
       positionQc(idNoDef) = set_qc(positionQc(idNoDef), g_decArgo_qcStrGood);
@@ -920,7 +925,7 @@ end
 %
 if (testFlagList(20) == 1)
    
-   uCycleNumber = unique(cycleNumber(find(cycleNumber >= 0)));
+   uCycleNumber = unique(cycleNumber(cycleNumber >= 0));
    cyNumPrev = -1;
    for idCy = 1:length(uCycleNumber)
       cyNum = uCycleNumber(idCy);
@@ -1525,7 +1530,7 @@ if (testFlagList(7) == 1)
    
    % we determine a mean location for each cycle. This mean location is used to
    % define the region of all the measurements sampled during the cycle
-   uCycleNumber = unique(cycleNumber);
+   uCycleNumber = unique(cycleNumber(cycleNumber >= 0));
    for idCy = 1:length(uCycleNumber)
       cyNum = uCycleNumber(idCy);
       idMeasForCy = find(cycleNumber == cyNum);
@@ -1535,11 +1540,13 @@ if (testFlagList(7) == 1)
          latForCy = latitude(idMeasForCy);
          lonForCy = longitude(idMeasForCy);
          posQcForCy = positionQc(idMeasForCy);
+         posAccForCy = positionAccuracy(idMeasForCy);
          idOkForCy = find((juldForCy ~= paramJuld.fillValue) & ...
             (latForCy ~= paramLat.fillValue) & ...
             (lonForCy ~= paramLon.fillValue) & ...
             (posQcForCy ~= g_decArgo_qcStrCorrectable)' & ...
-            (posQcForCy ~= g_decArgo_qcStrBad)');
+            (posQcForCy ~= g_decArgo_qcStrBad)' & ...
+            (posAccForCy ~= 'I')'); % to exclude Iridium locations
          
          if (~isempty(idOkForCy))
             [~, idFirst] = min(juldForCy(idOkForCy));
@@ -1556,11 +1563,13 @@ if (testFlagList(7) == 1)
                latForCyPrev = latitude(idMeasForCyPrev);
                lonForCyPrev = longitude(idMeasForCyPrev);
                posQcForCyPrev = positionQc(idMeasForCyPrev);
+               posAccForCyPrev = positionAccuracy(idMeasForCyPrev);
                idOkForCyPrev = find((juldForCyPrev ~= paramJuld.fillValue) & ...
                   (latForCyPrev ~= paramLat.fillValue) & ...
                   (lonForCyPrev ~= paramLon.fillValue) & ...
                   (posQcForCyPrev ~= g_decArgo_qcStrCorrectable)' & ...
-                  (posQcForCyPrev ~= g_decArgo_qcStrBad)');
+                  (posQcForCyPrev ~= g_decArgo_qcStrBad)' & ...
+                  (posAccForCyPrev ~= 'I')'); % to exclude Iridium locations
                
                if (~isempty(idOkForCyPrev))
                   [~, idLast] = max(juldForCyPrev(idOkForCyPrev));

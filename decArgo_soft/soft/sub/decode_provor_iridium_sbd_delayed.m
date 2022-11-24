@@ -352,7 +352,10 @@ ignore_duplicated_mail_files;
 fprintf('\nDEC_INFO: decoding %d mail files\n', length(tabAllFileNames));
 
 % read email files and decode data
-decodedDataTab = [];
+mailContentsTab = repmat(get_iridium_mail_init_struct(''), 1, length(tabAllFileNames));
+cptMailCont = 1;
+decodedDataTab = repmat(get_decoded_data_init_struct, 1, length(tabAllFileNames)*3);
+cptDecData = 1;
 for idSpoolFile = 1:length(tabAllFileNames)
    
    curMailFile = tabAllFileNames{idSpoolFile};
@@ -382,7 +385,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % extract the attachement
    [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
       curMailFile, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-   g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
+   if (~isempty(mailContents))
+      mailContentsTab(cptMailCont) = mailContents;
+      cptMailCont = cptMailCont + 1;
+   end
    if (attachmentFound == 0)
       remove_from_list_ir_sbd(curMailFile, 'buffer', 1, 1);
       continue
@@ -391,12 +397,18 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % decode SBD file
    sbdFileName = regexprep(curMailFile, '.txt', '.sbd');
    decodedData = decode_sbd_file(sbdFileName, curMailFileDate, a_decoderId, a_launchDate);
-   decodedDataTab = [decodedDataTab decodedData];
-   
+   if (~isempty(decodedData))
+      decodedDataTab(cptDecData:cptDecData+length(decodedData)-1) = decodedData;
+      cptDecData = cptDecData + length(decodedData);
+   end
+
    % move the current file into the archive directory
    % (and delete the associated SBD files)
    remove_from_list_ir_sbd(curMailFile, 'buffer', 1, 1);
 end
+decodedDataTab(cptDecData:end) = [];
+mailContentsTab(cptMailCont:end) = [];
+g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContentsTab];
 
 if (isempty(decodedDataTab))
    fprintf('DEC_INFO: Float #%d: No data\n', ...

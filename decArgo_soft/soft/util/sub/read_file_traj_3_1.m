@@ -151,6 +151,7 @@ else
    
    for idParam = 1:nParam
       parameterName = strtrim(trajectoryParameters(:, idParam)');
+      
       if (isempty(parameterName))
          continue
       end
@@ -238,11 +239,11 @@ else
                end
                if (size(data, 2) == 1)
                   paramDataNbDimList = [paramDataNbDimList 1];
-                  paramData = [paramData data];
+                  paramData = [paramData double(data)];
                   paramQcData = [paramQcData dataQc];
                else
                   paramDataNbDimList = [paramDataNbDimList size(data, 1)];
-                  paramData = [paramData data'];
+                  paramData = [paramData double(data)'];
                   paramQcData = [paramQcData dataQc];
                end
                
@@ -261,11 +262,11 @@ else
                      dataAdjQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName));
                      if (size(dataAdj, 2) == 1)
                         paramAdjDataNbDimList = [paramAdjDataNbDimList 1];
-                        paramAdjData = [paramAdjData dataAdj];
+                        paramAdjData = [paramAdjData double(dataAdj)];
                         paramAdjQcData = [paramAdjQcData dataAdjQc];
                      else
                         paramAdjDataNbDimList = [paramAdjDataNbDimList size(dataAdj, 1)];
-                        paramAdjData = [paramAdjData dataAdj'];
+                        paramAdjData = [paramAdjData double(dataAdj)'];
                         paramAdjQcData = [paramAdjQcData dataAdjQc'];
                      end
                      %                   end

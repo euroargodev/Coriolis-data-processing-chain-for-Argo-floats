@@ -46,7 +46,7 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 % decode the data according to the first byte flag
 switch (data(1))
    case {14}
-      o_uvpLpmData = decode_apmt_uvp_lpm(data, lastByteNum);
+      o_uvpLpmData = decode_apmt_uvp_lpm(data, lastByteNum, a_inputFilePathName);
    case {15}
       fprintf('WARNING: decode_apmt_uvp_taxo_1 not implemented yet\n');
    case {16}

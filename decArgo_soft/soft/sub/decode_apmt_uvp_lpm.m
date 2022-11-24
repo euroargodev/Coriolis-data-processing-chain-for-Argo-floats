@@ -2,11 +2,12 @@
 % Decode UVP-LPM data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_uvpLpmData] = decode_apmt_uvp_lpm(a_data, a_lastByteNum)
+%  [o_uvpLpmData] = decode_apmt_uvp_lpm(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input UVP-LPM data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_data              : input UVP-LPM data to decode
+%   a_lastByteNum       : number of the last useful byte of the data
+%   a_inputFilePathName : APMT UVP file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_uvpLpmData : UVP-LPM decoded data
@@ -19,7 +20,7 @@
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_uvpLpmData] = decode_apmt_uvp_lpm(a_data, a_lastByteNum)
+function [o_uvpLpmData] = decode_apmt_uvp_lpm(a_data, a_lastByteNum, a_inputFilePathName)
 
 % output parameters initialization
 o_uvpLpmData = [];
@@ -170,8 +171,7 @@ while (currentByte <= lastByteNum)
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
       for id = 1:length(tabNbBits)
          if ((tabNbBits(id) == 16) || (id == 1))
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
-            rawData(id) = eval(cmd);
+            rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), 0, a_inputFilePathName);
          elseif (tabNbBits(id) == 32)
             rawData(id) = typecast(uint32(swapbytes(uint32(rawData(id)))), 'single');
          end

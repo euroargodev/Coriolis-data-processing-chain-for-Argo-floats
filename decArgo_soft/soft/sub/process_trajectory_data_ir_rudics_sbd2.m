@@ -336,7 +336,8 @@ for idCyc = 1:length(cycleNumList)
                      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                   end
                end
-               
+
+               measStructTab = repmat(get_traj_one_meas_init_struct, length(idInAir), 1);
                for idIA = 1:length(idInAir)
                   if (prof.dates(idInAir(idIA)) == paramJuld.fillValue)
                      measStruct = get_traj_one_meas_init_struct();
@@ -350,7 +351,6 @@ for idCyc = 1:length(cycleNumList)
                      end
                      measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
                      measStruct.sensorNumber = prof.sensorNumber;
-                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                   else
                      measStruct = create_one_meas_float_time(...
                         g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST, ...
@@ -364,9 +364,10 @@ for idCyc = 1:length(cycleNumList)
                      end
                      measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
                      measStruct.sensorNumber = prof.sensorNumber;
-                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                   end
+                  measStructTab(idIA) = measStruct;
                end
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructTab];
             end
          end
       end
@@ -563,13 +564,17 @@ for idCyc = 1:length(cycleNumList)
                (a_tabTrajIndex(:, 2) == cycleNum) & ...
                (a_tabTrajIndex(:, 3) == profNum) & ...
                (a_tabTrajIndex(:, 4) == g_decArgo_phaseParkDrift));
-            
+
             measData2 = [];
             for idMeas = 1:length(idPackData)
                id = idPackData(idMeas);
                dates = a_tabTrajData{id}.dates;
                data = a_tabTrajData{id}.data;
-               
+
+               measStructTab = repmat(get_traj_one_meas_init_struct, length(idPackData)*length(dates), 1);
+               cptMeasStructTab = 1;
+               measData2Tab = repmat(get_traj_one_meas_init_struct, length(idPackData)*length(dates), 1);
+               cptMeasData2Tab = 1;
                for idM = 1:length(dates)
                   if (dates(idM) == paramJuld.fillValue)
                      measStruct = get_traj_one_meas_init_struct();
@@ -583,7 +588,8 @@ for idCyc = 1:length(cycleNumList)
                      end
                      measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                      measStruct.sensorNumber = a_tabTrajData{id}.sensorNumber;
-                     measData2 = [measData2; measStruct];
+                     measData2Tab(cptMeasData2Tab) = measStruct;
+                     cptMeasData2Tab = cptMeasData2Tab + 1;
                   else
                      measStruct = create_one_meas_float_time(g_MC_DriftAtPark, dates(idM), g_JULD_STATUS_2, 0);
                      measStruct.paramList = a_tabTrajData{id}.paramList;
@@ -595,11 +601,16 @@ for idCyc = 1:length(cycleNumList)
                      end
                      measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                      measStruct.sensorNumber = a_tabTrajData{id}.sensorNumber;
-                     measData = [measData; measStruct];
+                     measStructTab(cptMeasStructTab) = measStruct;
+                     cptMeasStructTab = cptMeasStructTab + 1;
                   end                  
                end
+               measStructTab(cptMeasStructTab:end) = [];
+               measData = [measData; measStructTab];
+               measData2Tab(cptMeasData2Tab:end) = [];
+               measData2 = [measData2; measData2Tab];
             end
-            
+
             % sort the data by date
             if (~isempty(measData) || ~isempty(measData2))
                measDates = [measData.juld];
@@ -953,7 +964,8 @@ for idCyc = 1:length(cycleNumList)
                id = idPackData(idMeas);
                dates = a_tabTrajData{id}.dates;
                data = a_tabTrajData{id}.data;
-               
+
+               measStructTab = repmat(get_traj_one_meas_init_struct, length(dates), 1);
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_AscProf, dates(idM), g_JULD_STATUS_2, 0);
                   measStruct.paramList = a_tabTrajData{id}.paramList;
@@ -965,8 +977,9 @@ for idCyc = 1:length(cycleNumList)
                   end
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measStruct.sensorNumber = a_tabTrajData{id}.sensorNumber;
-                  measData = [measData; measStruct];
+                  measStructTab(idM) = measStruct;
                end
+               measData = [measData; measStructTab];
             end
             
             % sort the data by date
@@ -1074,7 +1087,8 @@ for idCyc = 1:length(cycleNumList)
                            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                         end
                      end
-                     
+
+                     measStructTab = repmat(get_traj_one_meas_init_struct, length(idInAir), 1);
                      for idIA = 1:length(idInAir)
                         if (prof.dates(idInAir(idIA)) == paramJuld.fillValue)
                            measStruct = get_traj_one_meas_init_struct();
@@ -1088,7 +1102,6 @@ for idCyc = 1:length(cycleNumList)
                            end
                            measStruct.cyclePhase = g_decArgo_phaseAscProf;
                            measStruct.sensorNumber = prof.sensorNumber;
-                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                         else
                            measStruct = create_one_meas_float_time(...
                               g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
@@ -1102,9 +1115,10 @@ for idCyc = 1:length(cycleNumList)
                            end
                            measStruct.cyclePhase = g_decArgo_phaseAscProf;
                            measStruct.sensorNumber = prof.sensorNumber;
-                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                         end
+                        measStructTab(idIA) = measStruct;
                      end
+                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructTab];
                   end
                end
             end

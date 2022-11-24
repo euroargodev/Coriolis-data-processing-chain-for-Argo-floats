@@ -64,6 +64,7 @@ if (~isempty(a_apmtTech))
             gpsLocQc = g_decArgo_gpsData{7};
             gpsLocAccuracy = g_decArgo_gpsData{8};
             gpsLocSbdFileDate = g_decArgo_gpsData{9};
+            gpsLocInTrajFlag = g_decArgo_gpsData{13};
          else
             gpsLocCycleNum = [];
             gpsLocProfNum = [];
@@ -74,6 +75,7 @@ if (~isempty(a_apmtTech))
             gpsLocQc = [];
             gpsLocAccuracy = [];
             gpsLocSbdFileDate = [];
+            gpsLocInTrajFlag = [];
          end
          
          % the Provor CTS5 provides only valid GPS locations
@@ -100,6 +102,7 @@ if (~isempty(a_apmtTech))
          gpsLocQc = [gpsLocQc; 0];
          gpsLocAccuracy = [gpsLocAccuracy; 'G'];
          gpsLocSbdFileDate = [gpsLocSbdFileDate; g_decArgo_dateDef];
+         gpsLocInTrajFlag = [gpsLocInTrajFlag; 0];
 
          % compute the JAMSTEC QC for the GPS locations of the current cycle
          
@@ -148,7 +151,8 @@ if (~isempty(a_apmtTech))
          gpsLocQc = gpsLocQc(idSort);
          gpsLocAccuracy = gpsLocAccuracy(idSort);
          gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
-         
+         gpsLocInTrajFlag = gpsLocInTrajFlag(idSort);
+
          % update GPS data global variable
          g_decArgo_gpsData{1} = gpsLocCycleNum;
          g_decArgo_gpsData{2} = gpsLocProfNum;
@@ -159,6 +163,7 @@ if (~isempty(a_apmtTech))
          g_decArgo_gpsData{7} = gpsLocQc;
          g_decArgo_gpsData{8} = gpsLocAccuracy;
          g_decArgo_gpsData{9} = gpsLocSbdFileDate;
+         g_decArgo_gpsData{13} = gpsLocInTrajFlag;
       end
    end
 end

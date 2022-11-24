@@ -286,6 +286,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{7} = 0;
          g_decArgo_gpsData{8} = ' ';
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
+         g_decArgo_gpsData{13} = 0;
       end
       
       if (~ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
@@ -346,6 +347,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{7} = 0;
          g_decArgo_gpsData{8} = ' ';
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
+         g_decArgo_gpsData{13} = 0;
       end
       
       if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225]))
@@ -395,6 +397,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{7} = 0;
          g_decArgo_gpsData{8} = ' ';
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
+         g_decArgo_gpsData{13} = 0;
       end
       
       [tabProfiles, ...

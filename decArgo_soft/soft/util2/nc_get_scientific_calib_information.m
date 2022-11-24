@@ -3,7 +3,7 @@
 % search of inconsistencies.
 %
 % SYNTAX :
-%   nc_get_scientific_calib_information_ter(varargin)
+%   nc_get_scientific_calib_information(varargin)
 %
 % INPUT PARAMETERS :
 %   varargin : WMO number of floats to process
@@ -18,10 +18,11 @@
 % RELEASES :
 %   18/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function nc_get_scientific_calib_information_ter(varargin)
+function nc_get_scientific_calib_information(varargin)
 
 % top directory of input NetCDF tech files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\201809-ArgoData\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -48,7 +49,7 @@ else
    floatList = cell2mat(varargin);
 end
 
-logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
 
@@ -97,7 +98,6 @@ for idDir = 1:length(dacDir)
       
       floatDir = dir(dacDirPathName);
       for idDir2 = 1:length(floatDir)
-         %       for idDir2 = 1:10
          
          floatDirName = floatDir(idDir2).name;
          if (~isempty(floatList))
@@ -105,11 +105,7 @@ for idDir = 1:length(dacDir)
                continue
             end
          end
-         
-%          if (~strcmp(floatDirName, '1900379'))
-%             continue
-%          end
-         
+                  
          floatDirPathName = [dacDirPathName '/' floatDirName];
          if (exist(floatDirPathName, 'dir') == 7)
             
@@ -119,7 +115,7 @@ for idDir = 1:length(dacDir)
                
                fprintf('%03d/%03d %s\n', idDir2, length(floatDir), floatDirName);
                
-               profDir = dir(floatProfDirPathName);
+               profDir = dir([floatProfDirPathName '*.nc']);
                for idFProf = 1:length(profDir)
                   
                   profFileName = profDir(idFProf).name;
@@ -248,7 +244,7 @@ for idDir = 1:length(dacDir)
             end
             
             % create the CSV output file
-            outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv'];
+            outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv'];
             fidOut = fopen(outputFileName, 'wt');
             if (fidOut == -1)
                return
@@ -354,7 +350,7 @@ for idDir = 1:length(dacDir)
          end
          
          % create the CSV output file
-         outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_ter_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv']
+         outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_scientific_calib_information_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '_' num2str(fileNum) '.csv']
          fidOut = fopen(outputFileName, 'wt');
          if (fidOut == -1)
             return
@@ -537,6 +533,43 @@ o_dataValues = [];
 idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
 if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Check if a given variable is present in a NetCDF file.
+%
+% SYNTAX :
+%  [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
+%
+% INPUT PARAMETERS :
+%   a_ncId    : NetCDF file Id
+%   a_varName : variable name
+%
+% OUTPUT PARAMETERS :
+%   o_present : 1 if the variable is present (0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO : 
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   05/27/2014 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
+
+o_present = 0;
+
+[nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(a_ncId);
+
+for idVar= 0:nbVars-1
+   [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
+   if (strcmp(varName, a_varName))
+      o_present = 1;
+      break
+   end
 end
 
 return

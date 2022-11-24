@@ -20,7 +20,7 @@
 function select_float_list
 
 % float reference file list
-FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_float_info_20201006.txt';
+FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\apex_float_info_20201006.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nova_float_info_20201006.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp16.txt';
@@ -28,7 +28,7 @@ FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_float_i
 % float file list to select
 FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_prv_ir.txt';
 FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_argos.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_arvor_cm.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp11.txt';
 
 % directory to store the CSV file
 DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';

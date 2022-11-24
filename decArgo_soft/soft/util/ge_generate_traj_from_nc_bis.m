@@ -21,6 +21,8 @@
 function ge_generate_traj_from_nc(varargin)
 
 global g_dateDef;
+global g_decArgo_ncArgosLonDef;
+global g_decArgo_ncArgosLatDef;
 global g_MC_Launch;
 global g_MC_Surface;
 
@@ -175,7 +177,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de meta-données (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          metaFileName, metaFileFormatVersion);
-      return
+%       return
    end   
    
    metaStruct = [];
@@ -228,7 +230,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de trajectoire (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);
-      return
+%       return
    end
    
    idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
@@ -262,6 +264,8 @@ for idFloat = 1:nbFloats
 
    % date de lâcher
    launchDateJuld = g_dateDef;
+   launchLatitudeMeta = g_decArgo_ncArgosLatDef;
+   launchLongitudeMeta = g_decArgo_ncArgosLonDef;
    idF = find(measCode == g_MC_Launch);
    if (~isempty(idF))
       launchDateJuld = juld(idF);

@@ -429,9 +429,6 @@ global g_decArgo_decoderIdListNkeCts4;
 global g_decArgo_decoderIdListNkeCts5Osean;
 global g_decArgo_decoderIdListNkeCts5Usea;
 
-g_decArgo_decoderIdListNkeCts4 = [105, 106, 107, 109, 110:113];
-g_decArgo_decoderIdListNkeCts5Osean = [121:125];
-g_decArgo_decoderIdListNkeCts5Usea = [126 127];
 
 % choose the log parser according to decoder Id
 if ((a_decId > 100) && (a_decId < 1000))

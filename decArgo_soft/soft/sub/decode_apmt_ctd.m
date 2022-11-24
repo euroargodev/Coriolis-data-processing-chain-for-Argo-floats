@@ -45,9 +45,9 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 % decode the data according to the first byte flag
 switch (data(1))
    case {1}
-      o_ctdData = decode_apmt_ctd_extended(data, lastByteNum, a_decoderId);
+      o_ctdData = decode_apmt_ctd_extended(data, lastByteNum, a_decoderId, a_inputFilePathName);
    case {2}
-      o_ctdData = decode_apmt_ctd_standard(data, lastByteNum, a_decoderId);
+      o_ctdData = decode_apmt_ctd_standard(data, lastByteNum, a_decoderId, a_inputFilePathName);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

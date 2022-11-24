@@ -548,6 +548,9 @@ end
 [phaseDates, idSort] = sort(phaseDates);
 phaseMeasCode = phaseMeasCode(idSort);
 
+NB_CPT = 1000;
+measStructTab = repmat(get_traj_one_meas_init_struct, NB_CPT, 1);
+cpt = 1;
 if (~isempty(phaseDates))
    measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB'} {'FLBB_CD'} {'OCR_504I'} {'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}];
    for idML = 1:length(measList)
@@ -661,7 +664,7 @@ if (~isempty(phaseDates))
                end
             end
          end
-         
+
          for idM = 1:length(idData)
             idMeas = idData(idM);
             time = profData.dates(idMeas);
@@ -731,12 +734,18 @@ if (~isempty(phaseDates))
                      measStruct.paramDataAdj = [];
                   end
                end
-               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               if (cpt > size(measStructTab, 1))
+                  measStructTab = cat(1, measStructTab, repmat(get_traj_one_meas_init_struct, NB_CPT, 1));
+               end
+               measStructTab(cpt) = measStruct;
+               cpt = cpt + 1;
             end
          end
       end
    end
 end
+measStructTab(cpt:end) = [];
+trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructTab];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % REPRESENTATIVE PARKING MEASUREMENTS

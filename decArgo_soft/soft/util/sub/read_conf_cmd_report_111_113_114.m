@@ -192,11 +192,34 @@ else
             end
          end
       elseif (~isempty(strfind(line, '<PC ')))
-         
+
          start = strfind(line, '<');
          stop = strfind(line, '>');
          if (~isempty(start) && ~isempty(stop))
-            
+
+            remain = line(start+1:stop-1);
+            id = 1;
+            name = 'CONFIG';
+            while (1)
+               [info, remain] = strtok(remain, ' ');
+               if (isempty(info))
+                  break
+               end
+               if (id == 5)
+                  o_confParamNames{end+1} = name;
+                  o_confParamValues{end+1} = info;
+               else
+                  name = [name '_' info];
+               end
+               id = id + 1;
+            end
+         end
+      elseif (~isempty(strfind(line, '!PC ')))
+
+         start = strfind(line, '!');
+         stop = length(line) + 1;
+         if (~isempty(start) && ~isempty(stop))
+
             remain = line(start+1:stop-1);
             id = 1;
             name = 'CONFIG';

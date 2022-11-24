@@ -44,7 +44,7 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 % decode the data according to the first byte flag
 switch (data(1))
    case {4}
-      o_ocrData = decode_apmt_ocr4(data, lastByteNum);
+      o_ocrData = decode_apmt_ocr4(data, lastByteNum, a_inputFilePathName);
    case {5}
       fprintf('WARNING: decode_apmt_ocr7 not implemented yet\n');
    case {6}

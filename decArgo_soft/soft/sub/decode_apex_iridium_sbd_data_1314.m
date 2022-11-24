@@ -241,6 +241,8 @@ g_decArgo_realtimeFlag = realtimeFlagTmp;
 
 % store mail file information and extract attachment
 nbMailFiles = 0;
+mailContentsTab = repmat(get_iridium_mail_init_struct(''), 1, length(cycleFileNameList));
+cptMailCont = 1;
 for idFile = 1:length(cycleFileNameList)
    
    mailFileName = cycleFileNameList{idFile};
@@ -268,19 +270,24 @@ for idFile = 1:length(cycleFileNameList)
    if (REPROCESS == 1)
       [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
          mailFileName, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
-      g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    else
       [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
          mailFileName, g_decArgo_archiveDirectory, []);
-      g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    end
-   
+   if (~isempty(mailContents))
+      mailContentsTab(cptMailCont) = mailContents;
+      cptMailCont = cptMailCont + 1;
+   end
+
    if (g_decArgo_realtimeFlag == 1)
       % update the report structure
       g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {mailFileName}];
    end
    
 end
+mailContentsTab(cptMailCont:end) = [];
+g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContentsTab];
+
 fprintf('DEC_INFO: %d Iridium mail files to process\n', nbMailFiles);
 
 % convert SBD files to raw .msg and .log ASCII files

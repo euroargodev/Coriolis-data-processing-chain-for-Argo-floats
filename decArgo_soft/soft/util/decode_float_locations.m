@@ -21,6 +21,7 @@
 % RELEASES :
 %   05/19/2021 - RNU - creation: floats CTS4 not Ice, APF11 IR RUDICS, CTS3 5.75
 %   05/31/2021 - RNU - added float Arvor DEEP 5.62
+%   10/04/2021 - RNU - added float Arvor DEEP 5.64
 % ------------------------------------------------------------------------------
 function decode_float_locations(varargin)
 
@@ -94,13 +95,13 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    % PROVOR CTS5 CONFIGURATION - START
    
    % rsync directory
-   DIR_INPUT_RSYNC_DATA_CTS5 = TBD;
+   DIR_INPUT_RSYNC_DATA_CTS5 = '/home/coriolis_exp/spool/co01/co0101/co010111/rsync/';
    
    % spool directory
-   DIR_INPUT_SPOOL_DATA_CTS5 = TBD;
+   DIR_INPUT_SPOOL_DATA_CTS5 = '';
    
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_CTS5 = TBD;
+   DIR_OUTPUT_DATA_CTS5 = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/iridium/';
    
    % PROVOR CTS5 CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +211,7 @@ decIdManagedList = [ ...
    203 ... % Arvor-deep 4000 5.62
    213 ... % Provor-ARN-DO Iridium 5.74
    214 ... % Provor-ARN-DO-Ice Iridium 5.75
+   215 ... % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
    g_decArgo_decoderIdListNkeCts4NotIce ... % no Ice versions of Provor CTS4
    g_decArgo_decoderIdListNkeCts5 ... % all versions of Provor CTS5
    g_decArgo_decoderIdListApexApf11IridiumRudics ... % all versions of Apex APF11 Iridium Rudics
@@ -335,7 +337,7 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
       MAX_FILE_AGE_IN_HOUR);
 else
    switch (floatDecId)
-      case {203, 213, 214}
+      case {203, 213, 214, 215}
          duplicate_iridium_mail_files_float_to_recover( ...
             floatWmo, ...
             floatPtt, ...
@@ -358,7 +360,7 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
    [decodedDataTab] = decode_float_location_cts5(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_CTS5);
 else
    switch (floatDecId)
-      case {203, 213, 214}
+      case {203, 213, 214, 215}
          [decodedDataTab] = decode_float_location_iridium_sbd(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
    end
 end
@@ -862,7 +864,7 @@ for idMsg = 1:size(sbdDataTab, 1)
       
       switch (a_decoderId)
          
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          case {203}
             % Arvor-deep 4000 5.62
             
@@ -963,7 +965,7 @@ for idMsg = 1:size(sbdDataTab, 1)
             
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          case {214}
             % Provor-ARN-DO-Ice Iridium 5.75
             
@@ -1012,6 +1014,53 @@ for idMsg = 1:size(sbdDataTab, 1)
                tabTech1(59)/10000)/60);
             
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
+           
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         case {215}
+            % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
+
+            % first item bit number
+            firstBit = 1;
+            % item bit lengths
+            tabNbBits = [ ...
+               16 ...
+               8 8 8 16 16 16 8 8 ...
+               16 16 16 8 8 16 16 ...
+               8 8 8 16 16 8 8 ...
+               16 16 8 8 16 ...
+               8 8 8 8 16 16 ...
+               16 16 8 ...
+               8 8 8  repmat(8, 1, 9) ...
+               8 8 16 8 8 8 16 8 8 16 8 ...
+               repmat(8, 1, 2) ...
+               repmat(8, 1, 7) ...
+               16 8 16 ...
+               repmat(8, 1, 4) ...
+               ];
+            % get item bits
+            tabTech = get_bits(firstBit, tabNbBits, msgData);
+
+            % compute float time
+            floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(38:43)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
+            
+            % compute GPS location
+            if (tabTech(53) == 0)
+               signLat = 1;
+            else
+               signLat = -1;
+            end
+            gpsLocLat = signLat*(tabTech(50) + (tabTech(51) + ...
+               tabTech(52)/10000)/60);
+            if (tabTech(57) == 0)
+               signLon = 1;
+            else
+               signLon = -1;
+            end
+            gpsLocLon = signLon*(tabTech(54) + (tabTech(55) + ...
+               tabTech(56)/10000)/60);
+            
+            o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
+
       end
    end
 end

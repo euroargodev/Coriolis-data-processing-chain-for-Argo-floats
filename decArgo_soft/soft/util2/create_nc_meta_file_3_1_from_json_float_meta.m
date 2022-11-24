@@ -25,15 +25,21 @@ floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldV
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_36.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\tmp.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_11_a_refaire_20200103.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\list\float list.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\generate_json_float_meta_argos_provor_4.6_4.61\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\GenerateMeta3.1WhenNoData_20210920\generate_json_float_meta_no_data_float\';
 
 % NetCDF meta-data file output directory
 % ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20200103\OUT\';
 % ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_from_DEP\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
+ncMetaDatafileDir = 'C:\Users\jprannou\_DATA\Meta_en_3.1_when_no_data\OUT\';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
@@ -62,10 +68,17 @@ for idFloat = 1:length(floatList)
          jsonInputFileName);
       return
    end
-   
+      
    % read meta-data file
    metaData = loadjson(jsonInputFileName);
    
+   % specific
+   if (floatNum == 6900131)
+      % launch date and position was not available for this float => arbitrarily
+      % set
+      metaData.LAUNCH_QC = '4';
+   end
+
    % collect dimensions in input meta-data
    nbSensor = 0;
    if (~isempty(metaData.SENSOR))

@@ -435,7 +435,7 @@ for idCyc = 1:length(cycleNumList)
             a_tabTrajData{idPackTech}{:}.valueAdj, ...
             g_JULD_STATUS_2);
          measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
             
       % min pressure during drift at park

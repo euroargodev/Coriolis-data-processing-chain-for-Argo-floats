@@ -21,10 +21,8 @@ function nc_prof_adj_err_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\IN\NC_PROVOR_ARVOR_IRIDIUM\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\GDAC\provor_arvor_iridium_189\';
-%DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\IN\NC\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\GDAC\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_multi\';
+% DIR_INPUT_NC_FILES = 'E:\202108-ArgoData\coriolis_core\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';

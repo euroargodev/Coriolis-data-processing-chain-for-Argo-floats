@@ -19,10 +19,10 @@
 function nc_get_prelude_anomaly_in_traj
 
 % list of floats to process
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_argos.txt';
 
 % top directory of input NetCDF mono-profile files
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\E_DAC_TRAJ\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
@@ -33,6 +33,9 @@ global g_MC_Surface;
 
 % default values initialization
 init_default_values;
+
+% measurement codes initialization
+init_measurement_codes;
 
 logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_prelude_anomaly_in_traj_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);

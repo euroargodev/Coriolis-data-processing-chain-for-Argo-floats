@@ -2,11 +2,12 @@
 % Decode ECO3 data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_eco3Data] = decode_apmt_eco3(a_data, a_lastByteNum)
+%  [o_eco3Data] = decode_apmt_eco3(a_data, a_lastByteNum, a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input ECO3 data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_data              : input ECO3 data to decode
+%   a_lastByteNum       : number of the last useful byte of the data
+%   a_inputFilePathName : APMT ECO file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_eco3Data : ECO3 decoded data
@@ -19,7 +20,7 @@
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_eco3Data] = decode_apmt_eco3(a_data, a_lastByteNum)
+function [o_eco3Data] = decode_apmt_eco3(a_data, a_lastByteNum, a_inputFilePathName)
 
 % output parameters initialization
 o_eco3Data = [];
@@ -183,12 +184,7 @@ while (currentByte <= lastByteNum)
       tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)
-            if (tabSignedList(id) == 0)
-               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
-            else
-               cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''int%d'')', tabNbBits(id), id, tabNbBits(id));
-            end
-            rawData(id) = eval(cmd);
+            rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), tabSignedList(id), a_inputFilePathName);
          end
       end
       

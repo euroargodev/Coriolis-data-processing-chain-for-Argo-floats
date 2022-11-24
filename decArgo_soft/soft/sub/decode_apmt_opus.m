@@ -46,9 +46,9 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 % decode the data according to the first byte flag
 switch (data(1))
    case {24}
-      o_opusLightData = decode_apmt_opus_light(data, lastByteNum);
+      o_opusLightData = decode_apmt_opus_light(data, lastByteNum, a_inputFilePathName);
    case {25}
-      o_uvpBlackData = decode_apmt_opus_black(data, lastByteNum);
+      o_uvpBlackData = decode_apmt_opus_black(data, lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

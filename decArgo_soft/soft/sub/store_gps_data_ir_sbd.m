@@ -49,6 +49,7 @@ if (~isempty(a_tabTech))
          gpsLocQc = g_decArgo_gpsData{7};
          gpsLocAccuracy = g_decArgo_gpsData{8};
          gpsLocSbdFileDate = g_decArgo_gpsData{9};
+         gpsLocInTrajFlag = g_decArgo_gpsData{13};
       else
          gpsLocCycleNum = [];
          gpsLocProfNum = [];
@@ -59,8 +60,10 @@ if (~isempty(a_tabTech))
          gpsLocQc = [];
          gpsLocAccuracy = [];
          gpsLocSbdFileDate = [];
+         gpsLocInTrajFlag = [];
       end
-      
+
+      eolFlag = 2;
       for idP = 1:length(idPos)
          switch (a_decoderId)
             
@@ -72,13 +75,15 @@ if (~isempty(a_tabTech))
                % Arvor-Deep-Ice Iridium 5.66 (NKE version)
                % Arvor-Deep-Ice Iridium 5.67
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
-               
+               eolFlag = min(eolFlag, a_tabTech(idPos(idP), 64));
+
             case {205, 204, 206, 207, 208, 209}
                % Arvor Iridium 5.41 & 5.42 & 5.4
                % Provor-DO Iridium 5.71 & 5.7 & 5.72
                % Arvor-2DO Iridium 5.73
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
-               
+               % no EOL FLAG for these firmware versions
+
             case {210, 211, 212, 222, 224, 223, 213, 214, 217, 225}
                % Arvor-ARN Iridium
                % Arvor-ARN-Ice Iridium
@@ -88,11 +93,13 @@ if (~isempty(a_tabTech))
                % Arvor-ARN-DO-Ice Iridium 5.46
                % Provor-ARN-DO-Ice Iridium 5.76
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
+               eolFlag = min(eolFlag, a_tabTech(idPos(idP), 67));
                
             case {219, 220}
                % Arvor-C 5.3 & 5.301
                gpsValidFlagFromTech = a_tabTech(idPos(idP), end-5);
-               
+               % no EOL FLAG for these firmware versions
+
                % specific
                if (ismember(g_decArgo_floatNum, [6902679 6902932]))
                   switch g_decArgo_floatNum
@@ -131,37 +138,42 @@ if (~isempty(a_tabTech))
             gpsLocQc = [gpsLocQc; 0];
             gpsLocAccuracy = [gpsLocAccuracy; 'G'];
             gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos(idP), end)];
+            gpsLocInTrajFlag = [gpsLocInTrajFlag; 0];
          end
       end
-            
-      % compute the JAMSTEC QC for the GPS locations of the current cycle
-      
-      lastLocDateOfPrevCycle = g_decArgo_dateDef;
-      lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
-      lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
-      
-      % retrieve the last good GPS location of the previous cycle
-      % (a_cycleNum-1)
-      if (a_cycleNum > 0)
-         idF = find((gpsLocCycleNum == a_cycleNum-1) & (gpsLocQc == 1), 1, 'last');
-         if (~isempty(idF))
-            lastLocDateOfPrevCycle = gpsLocDate(idF);
-            lastLocLonOfPrevCycle = gpsLocLon(idF);
-            lastLocLatOfPrevCycle = gpsLocLat(idF);
+          
+      if (eolFlag == 0)
+
+         % compute the JAMSTEC QC for the GPS locations of the current cycle
+
+         lastLocDateOfPrevCycle = g_decArgo_dateDef;
+         lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
+         lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
+
+         % retrieve the last good GPS location of the previous cycle
+         % (a_cycleNum-1)
+         if (a_cycleNum > 0)
+            idF = find((gpsLocCycleNum == a_cycleNum-1) & (gpsLocQc == 1), 1, 'last');
+            if (~isempty(idF))
+               lastLocDateOfPrevCycle = gpsLocDate(idF);
+               lastLocLonOfPrevCycle = gpsLocLon(idF);
+               lastLocLatOfPrevCycle = gpsLocLat(idF);
+            end
          end
+
+         idF = find(gpsLocCycleNum == a_cycleNum);
+         locDate = gpsLocDate(idF);
+         locLon = gpsLocLon(idF);
+         locLat = gpsLocLat(idF);
+         locAcc = gpsLocAccuracy(idF);
+
+         [locQc] = compute_jamstec_qc( ...
+            locDate, locLon, locLat, locAcc, ...
+            lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
+
+         gpsLocQc(idF) = str2num(locQc')';
+
       end
-      
-      idF = find(gpsLocCycleNum == a_cycleNum);
-      locDate = gpsLocDate(idF);
-      locLon = gpsLocLon(idF);
-      locLat = gpsLocLat(idF);
-      locAcc = gpsLocAccuracy(idF);
-      
-      [locQc] = compute_jamstec_qc( ...
-         locDate, locLon, locLat, locAcc, ...
-         lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
-      
-      gpsLocQc(idF) = str2num(locQc')';
       
       % sort GPS data according to location dates
       [~, idSort] = sort(gpsLocDate);
@@ -174,7 +186,8 @@ if (~isempty(a_tabTech))
       gpsLocQc = gpsLocQc(idSort);
       gpsLocAccuracy = gpsLocAccuracy(idSort);
       gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
-      
+      gpsLocInTrajFlag = gpsLocInTrajFlag(idSort);
+
       % update GPS data global variable
       g_decArgo_gpsData{1} = gpsLocCycleNum;
       g_decArgo_gpsData{2} = gpsLocProfNum;
@@ -185,6 +198,7 @@ if (~isempty(a_tabTech))
       g_decArgo_gpsData{7} = gpsLocQc;
       g_decArgo_gpsData{8} = gpsLocAccuracy;
       g_decArgo_gpsData{9} = gpsLocSbdFileDate;
+      g_decArgo_gpsData{13} = gpsLocInTrajFlag;
    end
 end
 

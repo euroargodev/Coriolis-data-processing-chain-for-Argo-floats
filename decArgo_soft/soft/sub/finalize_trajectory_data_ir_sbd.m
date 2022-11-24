@@ -128,14 +128,12 @@ end
 
 % N_MEASUREMENT DATA
 
-% clean the collected data from float anomaly
-% Ex: float 6901038 #272: the float transmitted twice the TECH and PARAM
-% messages
 idDel = [];
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
    
+   % clean the collected data from float anomaly
    idCyDeep = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 0));
    if (length(idCyDeep) > 1)
       fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records - only the first one is considered\n', ...
@@ -144,15 +142,11 @@ for idCy = 1:length(tabCyNum)
       idDel = [idDel idCyDeep(2:end)];
    end
    
+   % merge surface data
    idCySurf = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 1));
    if (length(idCySurf) > 1)
-      %       if (cycleNum > 1)
-      %          % new firmware (ARN) transmits 2 tech message for cycle #0
-      %          fprintf('INFO: Float #%d cycle #%d: %d surf N_MEASUREMENT records\n', ...
-      %             g_decArgo_floatNum, cycleNum, ...
-      %             length(idCySurf));
-      %       end
-      idDel = [idDel idCySurf(1:end-1)];
+      a_tabTrajNMeas(idCySurf(1)) = merge_n_meas_data(a_tabTrajNMeas(idCySurf));
+      idDel = [idDel idCySurf(2:end)];
    end
 end
 
@@ -498,5 +492,61 @@ a_tabTrajNCycle(1).juldLastMessage = max(tabDate);
 
 % output data
 o_tabTrajNCycle = a_tabTrajNCycle(1);
+
+return
+
+% ------------------------------------------------------------------------------
+% Merge N_MEAS surface data: concatenate surface locations and measurements and
+% update FMT/LMT.
+%
+% SYNTAX :
+%  [o_tabTrajNMeas] = merge_n_meas_data(a_tabTrajNMeas)
+%
+% INPUT PARAMETERS :
+%   a_tabTrajNMeas : input N_MEAS trajectory data
+%
+% OUTPUT PARAMETERS :
+%   o_tabTrajNMeas : merged N_MEAS trajectory data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/28/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabTrajNMeas] = merge_n_meas_data(a_tabTrajNMeas)
+
+% output parameters initialization
+o_tabTrajNMeas = [];
+
+% global measurement codes
+global g_MC_FMT;
+global g_MC_Surface;
+global g_MC_LMT;
+
+
+tabMeasAll = [];
+for idM = 1:length(a_tabTrajNMeas)
+   tabMeasAll = [tabMeasAll; a_tabTrajNMeas(idM).tabMeas];
+end
+
+idFirst = find([tabMeasAll.measCode] == g_MC_FMT);
+tabMeasAll(idFirst(1)).juld = min([tabMeasAll(idFirst).juld]);
+tabMeasAll(idFirst(1)).juldAdj = min([tabMeasAll(idFirst).juldAdj]);
+tabMeasAll(idFirst(2:end)) = [];
+
+idLast = find([tabMeasAll.measCode] == g_MC_LMT);
+tabMeasAll(idLast(end)).juld = max([tabMeasAll(idLast).juld]);
+tabMeasAll(idLast(end)).juldAdj = max([tabMeasAll(idLast).juldAdj]);
+tabMeasAll(idLast(1:end-1)) = [];
+
+idLoc = find([tabMeasAll.measCode] == g_MC_Surface);
+[~, idSort] = sort([tabMeasAll(idLoc).juld]);
+tabMeasAll(idLoc) = tabMeasAll(idLoc(idSort));
+
+o_tabTrajNMeas = a_tabTrajNMeas(1);
+o_tabTrajNMeas.tabMeas = tabMeasAll;
 
 return

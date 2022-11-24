@@ -777,7 +777,7 @@ if (a_writeQcFlag == 0)
       end
       
       fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
-      for idLev = 1:size(data, 1);
+      for idLev = 1:size(data, 1)
          if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
             fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
                a_floatNum, cycleNumber(idP), idP, idLev);

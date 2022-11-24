@@ -201,12 +201,7 @@ while (currentByte <= lastByteNum)
       rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
       tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
-         if (tabSignedList(id) == 0)
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''uint%d'')', tabNbBits(id), id, tabNbBits(id));
-         else
-            cmd = sprintf('typecast(swapbytes(uint%d(rawData(%d))), ''int%d'')', tabNbBits(id), id, tabNbBits(id));
-         end
-         rawData(id) = eval(cmd);
+         rawData(id) = decode_apmt_meas(rawData(id), tabNbBits(id), tabSignedList(id), a_inputFilePathName);
       end
       
       if (ismember(currentTreatNum, [g_decArgo_cts5Treat_RW g_decArgo_cts5Treat_DW]))

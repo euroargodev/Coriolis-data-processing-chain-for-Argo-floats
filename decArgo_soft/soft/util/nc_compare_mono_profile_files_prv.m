@@ -28,6 +28,8 @@ DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\nc_new\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST - ori\nc_output_decArgo_courant_dun coup\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\new_dec\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\DATA_FLBB_INCOIS_EDAC\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
@@ -38,9 +40,11 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_he
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST - ori\nc_output_decArgo_courant_buffersréelsduncoup\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\14g\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log and the csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % default list of floats to compare
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\old_versions/nke_old_all.txt';
@@ -49,6 +53,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOl
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\floats_with_cls_error.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_ice.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_a_passer_en_dm_20210930.txt';
 
 % flag to print data measurements (when different) in the log file
 PRINT_DIFF_DATA_FLAG = 1;
@@ -133,27 +139,27 @@ if (fidOut == -1)
    return
 end
 header = ['; ; ; ; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF; DIFF;' ...
-   'BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; ' ...
-   'NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW'];
+   'BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; BASE; ' ...
+   'NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW; NEW'];
 fprintf(fidOut, '%s\n', header);
 header = ['Line; WMO; PI; Dir; CyNum; Date; Pos; Mode; Cut; Lev; Data; Vers;' ...
-   'CyNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers; ' ...
-   'CyNum; Date; DateLoc; Lon; Lat; Mode; Cut; Lev; Vers'];
+   'CyNum; Date; Qc; DateLoc; Lon; Lat; Qc; Mode; Cut; Lev; Vers; ' ...
+   'CyNum; Date; Qc; DateLoc; Lon; Lat; Qc; Mode; Cut; Lev; Vers'];
 fprintf(fidOut, '%s\n', header);
 
 % process the floats
 lineNum = 1;
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-
+   
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-
+   
    % retrieve profile dates and numbers of both sets
    [descProfNumBase, descProfDateBase, descProfLocDateBase, ...
       ascProfNumBase, ascProfDateBase, ascProfLocDateBase] = ...
       get_nc_profile_dates(DIR_INPUT_BASE_NC_FILES, floatNum, 'Base');
-
+   
    [descProfNumNew, descProfDateNew, descProfLocDateNew, ...
       ascProfNumNew, ascProfDateNew, ascProfLocDateNew] = ...
       get_nc_profile_dates(DIR_INPUT_NEW_NC_FILES, floatNum, 'New');
@@ -240,11 +246,11 @@ for idFloat = 1:nbFloats
          ascProfDateNew(idDel) = [];
       end
    end
-      
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % descent profiles processing
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     
+   
    % try to link the 2 sets according to profile dates
    descProfNumBase2New = ones(length(descProfNumBase), 1)*-1;
    for idProf = 1:length(descProfNumBase)
@@ -291,7 +297,7 @@ for idFloat = 1:nbFloats
          descProfNumBase = [-1; descProfNumBase];
          descProfDateBase = [profDateNew; descProfDateBase];
          descProfNumBase2New = [profNumNew; descProfNumBase2New];
-      end         
+      end
    end
    
    % compare the mono-profile files
@@ -309,15 +315,15 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDate, profLocDate, profLon, profLat, ...
+         [profDate, profDateQc, profLocDate, profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramLst, piName] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG, []);
          
-         fprintf(fidOut, '%d; %d; %s; D; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; D; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d; %s; %c; %s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             descProfNumBase2New(idProf), ...
-            julian_2_gregorian(profDate), ...
-            julian_2_gregorian(profLocDate), profLon, profLat, ...
+            julian_2_gregorian(profDate), profDateQc, ...
+            julian_2_gregorian(profLocDate), profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion);
          lineNum = lineNum + 1;
          
@@ -346,15 +352,15 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDate, profLocDate, profLon, profLat, ...
+         [profDate, profDateQc, profLocDate, profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramLst, piName] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG, []);
          
-         fprintf(fidOut, '%d; %d; %s; D; -1; -1; -1; -1; -1; -1; -1; -1; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; D; -1; -1; -1; -1; -1; -1; -1; -1; %d; %s; %c; %s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             descProfNumBase(idProf), ...
-            julian_2_gregorian(profDate), ...
-            julian_2_gregorian(profLocDate), profLon, profLat, ...
+            julian_2_gregorian(profDate), profDateQc, ...
+            julian_2_gregorian(profLocDate), profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion);
          lineNum = lineNum + 1;
          
@@ -370,7 +376,7 @@ for idFloat = 1:nbFloats
                fprintf('  %d : %s |\n', ...
                   diffFlag, dataStr(idLev, :));
             end
-         end         
+         end
          
       else
          
@@ -384,10 +390,10 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDateBase, profLocDateBase, profLonBase, profLatBase, ...
+         [profDateBase, profDateQcBase, profLocDateBase, profLonBase, profLatBase, profPosQcBase, ...
             profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, dataStrBase, paramStrBase, paramLstBase, piName] = ...
             get_nc_profile_info(profFileNameBase, 1, []);
-
+         
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
             sprintf('/%d/profiles/R%d_%03dD.nc', floatNum, floatNum, descProfNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
@@ -401,7 +407,7 @@ for idFloat = 1:nbFloats
          if (BASE_PARAM_ONLY == 0)
             paramLstBase = [];
          end
-         [profDateNew, profLocDateNew, profLonNew, profLatNew, ...
+         [profDateNew, profDateQcNew, profLocDateNew, profLonNew, profLatNew, profPosQcNew, ...
             profModeNew, profCutNew, profNbLevelsNew, fileVersionNew, dataStrNew, paramStrNew, paramLstNew, piName] = ...
             get_nc_profile_info(profFileNameNew, 1, paramLstBase);
          
@@ -480,23 +486,23 @@ for idFloat = 1:nbFloats
             fileVersionFlag = 1;
          end
          
-         fprintf(fidOut, '%d; %d; %s; D; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; D; %d; %d; %d; %d; %d; %d; %d; %d; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             cycleNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
             profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
             descProfNumBase(idProf), ...
-            julian_2_gregorian(profDateBase), ...
-            julian_2_gregorian(profLocDateBase), profLonBase, profLatBase, ...
+            julian_2_gregorian(profDateBase), profDateQcBase, ...
+            julian_2_gregorian(profLocDateBase), profLonBase, profLatBase, profPosQcBase, ...
             profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, ...
             descProfNumBase2New(idProf), ...
-            julian_2_gregorian(profDateNew), ...
-            julian_2_gregorian(profLocDateNew), profLonNew, profLatNew, ...
+            julian_2_gregorian(profDateNew), profDateQcNew, ...
+            julian_2_gregorian(profLocDateNew), profLonNew, profLatNew, profPosQcNew, ...
             profModeNew, profCutNew, profNbLevelsNew, fileVersionNew);
          lineNum = lineNum + 1;
          
       end
    end
-
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % ascent profiles processing
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -526,7 +532,7 @@ for idFloat = 1:nbFloats
          ascProfDateNew(idMin) = [];
       end
    end
-
+   
    % process the remaining New profiles
    for idProf = 1:length(ascProfNumNew)
       profNumNew = ascProfNumNew(idProf);
@@ -548,7 +554,7 @@ for idFloat = 1:nbFloats
          ascProfNumBase = [-1; ascProfNumBase];
          ascProfDateBase = [profDateNew; ascProfDateBase];
          ascProfNumBase2New = [profNumNew; ascProfNumBase2New];
-      end         
+      end
    end
    
    % compare the mono-profile files
@@ -566,15 +572,15 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDate, profLocDate, profLon, profLat, ...
+         [profDate, profDateQc, profLocDate, profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramLst, piName] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG, []);
          
-         fprintf(fidOut, '%d; %d; %s; A; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; A; -1; -1; -1; -1; -1; -1; -1; -1; ; ; ; ; ; ; ; ; ; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             ascProfNumBase2New(idProf), ...
-            julian_2_gregorian(profDate), ...
-            julian_2_gregorian(profLocDate), profLon, profLat, ...
+            julian_2_gregorian(profDate), profDateQc, ...
+            julian_2_gregorian(profLocDate), profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion);
          lineNum = lineNum + 1;
          
@@ -603,15 +609,15 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDate, profLocDate, profLon, profLat, ...
+         [profDate, profDateQc, profLocDate, profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramLst, piName] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG, []);
          
-         fprintf(fidOut, '%d; %d; %s; A; -1; -1; -1; -1; -1; -1; -1; -1; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; A; -1; -1; -1; -1; -1; -1; -1; -1; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             ascProfNumBase(idProf), ...
-            julian_2_gregorian(profDate), ...
-            julian_2_gregorian(profLocDate), profLon, profLat, ...
+            julian_2_gregorian(profDate), profDateQc, ...
+            julian_2_gregorian(profLocDate), profLon, profLat, profPosQc, ...
             profMode, profCut, profNbLevels, fileVersion);
          lineNum = lineNum + 1;
          
@@ -627,7 +633,7 @@ for idFloat = 1:nbFloats
                fprintf('  %d : %s |\n', ...
                   diffFlag, dataStr(idLev, :));
             end
-         end         
+         end
          
       else
          
@@ -641,11 +647,11 @@ for idFloat = 1:nbFloats
                continue
             end
          end
-         [profDateBase, profLocDateBase, profLonBase, profLatBase, ...
+         [profDateBase, profDateQcBase, profLocDateBase, profLonBase, profLatBase, profPosQcBase, ...
             profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, ...
             dataStrBase, paramStrBase, paramLstBase, piName] = ...
             get_nc_profile_info(profFileNameBase, 1, []);
-
+         
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
             sprintf('/%d/profiles/R%d_%03d.nc', floatNum, floatNum, ascProfNumBase2New(idProf))];
          if ~(exist(profFileNameNew, 'file') == 2)
@@ -659,7 +665,7 @@ for idFloat = 1:nbFloats
          if (BASE_PARAM_ONLY == 0)
             paramLstBase = [];
          end
-         [profDateNew, profLocDateNew, profLonNew, profLatNew, ...
+         [profDateNew, profDateQcNew, profLocDateNew, profLonNew, profLatNew, profPosQcNew, ...
             profModeNew, profCutNew, profNbLevelsNew, fileVersionNew, ...
             dataStrNew, paramStrNew, paramLstNew, piName] = ...
             get_nc_profile_info(profFileNameNew, 1, paramLstBase);
@@ -739,27 +745,27 @@ for idFloat = 1:nbFloats
             fileVersionFlag = 1;
          end
          
-         fprintf(fidOut, '%d; %d; %s; A; %d; %d; %d; %d; %d; %d; %d; %d; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s; %d; %s; %s; %.3f; %.3f; %c; %d; %d; V%s\n', ...
+         fprintf(fidOut, '%d; %d; %s; A; %d; %d; %d; %d; %d; %d; %d; %d; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s; %d;%s; %c;%s; %.3f; %.3f; %c; %c; %d; %d; V%s\n', ...
             lineNum, floatNum, piName, ...
             cycleNumFlag, profDateFlag, profPosFlag, profModeFlag, ...
             profCutFlag, profNbLevFlag, profDataFlag, fileVersionFlag, ...
             ascProfNumBase(idProf), ...
-            julian_2_gregorian(profDateBase), ...
-            julian_2_gregorian(profLocDateBase), profLonBase, profLatBase, ...
+            julian_2_gregorian(profDateBase), profDateQcBase, ...
+            julian_2_gregorian(profLocDateBase), profLonBase, profLatBase, profPosQcBase, ...
             profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, ...
             ascProfNumBase2New(idProf), ...
-            julian_2_gregorian(profDateNew), ...
-            julian_2_gregorian(profLocDateNew), profLonNew, profLatNew, ...
+            julian_2_gregorian(profDateNew), profDateQcNew, ...
+            julian_2_gregorian(profLocDateNew), profLonNew, profLatNew, profPosQcNew, ...
             profModeNew, profCutNew, profNbLevelsNew, fileVersionNew);
          lineNum = lineNum + 1;
          
       end
-   end   
+   end
    
    fprintf(fidOut, '%d; %d\n', ...
       lineNum, floatNum);
    lineNum = lineNum + 1;
-
+   
 end
 
 fclose(fidOut);
@@ -825,23 +831,23 @@ monoProfDirName = [a_ncDirName sprintf('/%d/profiles/', a_floatNum)];
 monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
 monoProfFiles = dir(monoProfFileName);
 for idFile = 1:length(monoProfFiles)
-    
+   
    fileName = monoProfFiles(idFile).name;
    % do not consider b file (if exists)
    if (fileName(1) == 'B')
       continue
    end
    profFileName = [monoProfDirName fileName];
-
+   
    if (exist(profFileName, 'file') == 2)
-            
+      
       % open NetCDF file
       fCdf = netcdf.open(profFileName, 'NC_NOWRITE');
       if (isempty(fCdf))
          fprintf('ERROR: Unable to open NetCDF input file: %s\n', profFileName);
          return
       end
-
+      
       % retrieve information
       if (var_is_present(fCdf, 'CYCLE_NUMBER') && ...
             var_is_present(fCdf, 'DIRECTION') && ...
@@ -876,7 +882,7 @@ for idFile = 1:length(monoProfFiles)
                length(uJulD), a_commentStr, profFileName);
             continue
          end
-           
+         
          if (length(uJulD) ~= length(julD))
             % delete duplicated information
             for id1 = 1:length(uJulD)
@@ -941,9 +947,10 @@ return
 % Retrieve information on profile of a mono-profile NetCDF file.
 %
 % SYNTAX :
-%  [o_profDate, o_profLocDate, o_profLon, o_profLat, ...
-%    o_profMode, o_profCut, o_profNbLevels, o_fileVersion, o_dataStr, o_paramStr, o_paramList] = ...
-%    get_nc_profile_info(a_profFilePathName, a_dataFlag, a_paramList, o_piName)
+%  [o_profDate, o_profDateQc, o_profLocDate, o_profLon, o_profLat, o_profPosQc, ...
+%    o_profMode, o_profCut, o_profNbLevels, o_fileVersion, ...
+%    o_dataStr, o_paramStr, o_paramList, o_piName] = ...
+%    get_nc_profile_info(a_profFilePathName, a_dataFlag, a_paramList)
 %
 % INPUT PARAMETERS :
 %   a_profFilePathName : NetCDF file path name
@@ -952,18 +959,20 @@ return
 %                        parameters
 %
 % OUTPUT PARAMETERS :
-%   o_profDate     : profile date
-%   o_profLocDate  : profile location date
-%   o_profLon      : profile longitude
-%   o_profLat      : profile latitude
-%   o_profMode     : profile mode
-%   o_profCut      : cut profile flag
-%   o_profNbLevels : number of levels of the profile
-%   o_fileVersion  : NetCDF file format version
-%   o_dataStr      : profile data measurements
-%   o_paramStr     : param names string
-%   o_paramList    : param names list
-%   o_piName       : PI name
+%   o_profDate      : profile date
+%   o_profDateQc    : profile date Qc
+%   o_profLocDate   : profile location date
+%   o_profLon       : profile longitude
+%   o_profLat       : profile latitude
+%   o_profPosQc     : profile position Qc
+%   o_profMode      : profile mode
+%   o_profCut       : cut profile flag
+%   o_profNbLevels  : number of levels of the profile
+%   o_fileVersion   : NetCDF file format version
+%   o_dataStr       : profile data measurements
+%   o_paramStr      : param names string
+%   o_paramList     : param names list
+%   o_piName        : PI name
 %
 % EXAMPLES :
 %
@@ -973,16 +982,18 @@ return
 % RELEASES :
 %   03/26/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profDate, o_profLocDate, o_profLon, o_profLat, ...
+function [o_profDate, o_profDateQc, o_profLocDate, o_profLon, o_profLat, o_profPosQc, ...
    o_profMode, o_profCut, o_profNbLevels, o_fileVersion, ...
    o_dataStr, o_paramStr, o_paramList, o_piName] = ...
    get_nc_profile_info(a_profFilePathName, a_dataFlag, a_paramList)
-         
+
 % output parameters initialization
 o_profDate = [];
+o_profDateQc = [];
 o_profLocDate = [];
 o_profLon = [];
 o_profLat = [];
+o_profPosQc = [];
 o_profMode = [];
 o_profCut = [];
 o_profNbLevels = [];
@@ -998,7 +1009,7 @@ global g_dateDef;
 
 % read the file and retrieve wanted information
 if (exist(a_profFilePathName, 'file') == 2)
-      
+   
    % file Id for possible b file
    fCdfB = '';
    
@@ -1012,9 +1023,11 @@ if (exist(a_profFilePathName, 'file') == 2)
    % retrieve information
    if (var_is_present(fCdf, 'PI_NAME') && ...
          var_is_present(fCdf, 'JULD') && ...
+         var_is_present(fCdf, 'JULD_QC') && ...
          var_is_present(fCdf, 'JULD_LOCATION') && ...
          var_is_present(fCdf, 'LONGITUDE') && ...
          var_is_present(fCdf, 'LATITUDE') && ...
+         var_is_present(fCdf, 'POSITION_QC') && ...
          var_is_present(fCdf, 'DATA_MODE') && ...
          var_is_present(fCdf, 'PRES') && ...
          var_is_present(fCdf, 'FORMAT_VERSION'))
@@ -1030,15 +1043,19 @@ if (exist(a_profFilePathName, 'file') == 2)
       
       julD = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD'));
       julDFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD'), '_FillValue');
-      julD(find(julD == julDFillVal)) = g_dateDef;
+      julD(julD == julDFillVal) = g_dateDef;
+      
+      julDQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD_QC'));
       
       julDLocation = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD_LOCATION'));
       julDLocationFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD_LOCATION'), '_FillValue');
-      julDLocation(find(julDLocation == julDLocationFillVal)) = g_dateDef;
-      
+      julDLocation(julDLocation == julDLocationFillVal) = g_dateDef;
+            
       longitude = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'LONGITUDE'));
       
       latitude = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'LATITUDE'));
+      
+      positionQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'POSITION_QC'));
       
       dataMode = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'));
       
@@ -1061,14 +1078,16 @@ if (exist(a_profFilePathName, 'file') == 2)
       idDel = find(dataMode == ' ');
       if (~isempty(idDel))
          julD(idDel) = [];
+         julDQc(idDel) = [];
          julDLocation(idDel) = [];
          longitude(idDel) = [];
          latitude(idDel) = [];
+         positionQc(idDel) = [];
          dataMode(idDel) = [];
          pres(:, idDel) = [];
          temp(:, idDel) = [];
          psal(:, idDel) = [];
-      end      
+      end
       
       if (length(julD) > 2)
          fprintf('ERROR: multiple profiles in file: %s\n', a_profFilePathName);
@@ -1108,9 +1127,11 @@ if (exist(a_profFilePathName, 'file') == 2)
             else
                % output parameters
                o_profDate = julD(1);
+               o_profDateQc = julDQc(1);
                o_profLocDate = julDLocation(1);
                o_profLon = longitude(1);
                o_profLat = latitude(1);
+               o_profPosQc = positionQc(1);
                o_profMode = dataMode(1);
                o_profCut = 1;
                pres = [pres(:, 2); pres(:, 1)];
@@ -1121,9 +1142,11 @@ if (exist(a_profFilePathName, 'file') == 2)
       else
          % output parameters
          o_profDate = julD;
+         o_profDateQc = julDQc;
          o_profLocDate = julDLocation;
          o_profLon = longitude;
          o_profLat = latitude;
+         o_profPosQc = positionQc;
          o_profMode = dataMode;
          o_profCut = 0;
       end
@@ -1131,7 +1154,7 @@ if (exist(a_profFilePathName, 'file') == 2)
       pres(idDel) = [];
       o_profNbLevels = length(pres);
       o_fileVersion = version;
-
+      
       if (a_dataFlag == 1)
          
          % collect the station parameter list
@@ -1159,14 +1182,14 @@ if (exist(a_profFilePathName, 'file') == 2)
          [pathstr, name, ext] = fileparts(a_profFilePathName);
          bProfFilePathName = [pathstr '/B' name ext];
          if (exist(bProfFilePathName, 'file') == 2)
-                  
+            
             % open NetCDF file
             fCdfB = netcdf.open(bProfFilePathName, 'NC_NOWRITE');
             if (isempty(fCdfB))
                fprintf('ERROR: Unable to open NetCDF input file: %s\n', bProfFilePathName);
                return
             end
-         
+            
             % collect the station parameter list
             stationParameters = netcdf.getVar(fCdfB, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
             [~, nParam, nProf] = size(stationParameters);
@@ -1193,7 +1216,7 @@ if (exist(a_profFilePathName, 'file') == 2)
          o_paramStr = sprintf('%s, ', paramForProf{:});
          o_paramStr(end-1:end) = [];
          o_paramList = paramForProf;
-
+         
          % collect a string of parameter data
          dataStr = [];
          fillValueStr = [];
@@ -1235,13 +1258,17 @@ if (exist(a_profFilePathName, 'file') == 2)
          end
          dataStr(idDel, :) = [];
          o_dataStr = dataStr;
-      
+         
       end
       
    else
       
       if (~var_is_present(fCdf, 'JULD'))
          fprintf('WARNING: Variable JULD not present in file : %s\n', ...
+            a_profFilePathName);
+      end
+      if (~var_is_present(fCdf, 'JULD_QC'))
+         fprintf('WARNING: Variable JULD_QC not present in file : %s\n', ...
             a_profFilePathName);
       end
       if (~var_is_present(fCdf, 'JULD_LOCATION'))
@@ -1254,6 +1281,10 @@ if (exist(a_profFilePathName, 'file') == 2)
       end
       if (~var_is_present(fCdf, 'LATITUDE'))
          fprintf('WARNING: Variable LATITUDE not present in file : %s\n', ...
+            a_profFilePathName);
+      end
+      if (~var_is_present(fCdf, 'POSITION_QC'))
+         fprintf('WARNING: Variable POSITION_QC not present in file : %s\n', ...
             a_profFilePathName);
       end
       if (~var_is_present(fCdf, 'DATA_MODE'))
@@ -1296,7 +1327,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -1328,12 +1359,12 @@ return
 %   a_julDay : julian 1950 date
 %
 % OUTPUT PARAMETERS :
-%   o_gregorianDate : gregorain date (in 'yyyy/mm/dd HH:MM' or 
+%   o_gregorianDate : gregorain date (in 'yyyy/mm/dd HH:MM' or
 %                     'yyyy/mm/dd HH:MM:SS' format)
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -1380,20 +1411,20 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_dayNum, o_day, o_month, o_year, o_hour, o_min, o_sec] = format_juld(a_juld)
- 
+
 % output parameters initialization
-o_dayNum = []; 
-o_day = []; 
-o_month = []; 
-o_year = [];   
-o_hour = [];   
+o_dayNum = [];
+o_day = [];
+o_month = [];
+o_year = [];
+o_hour = [];
 o_min = [];
 o_sec = [];
 
@@ -1416,7 +1447,7 @@ for id = 1:length(a_juld)
       o_year(id) = res(1);
       o_month(id) = res(2);
       o_day(id) = res(3);
-
+      
       hms = datestr(a_juld(id), 'HH:MM:SS');
       res = sscanf(hms, '%d:%d:%d');
       o_hour(id) = res(1);

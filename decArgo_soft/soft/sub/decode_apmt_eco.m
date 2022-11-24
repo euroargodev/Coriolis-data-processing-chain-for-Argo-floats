@@ -46,9 +46,9 @@ switch (data(1))
    case {7}
       fprintf('WARNING: decode_apmt_eco1 not implemented yet\n');
    case {8}
-      o_ecoData = decode_apmt_eco2(data, lastByteNum);
+      o_ecoData = decode_apmt_eco2(data, lastByteNum, a_inputFilePathName);
    case {9}
-      o_ecoData = decode_apmt_eco3(data, lastByteNum);
+      o_ecoData = decode_apmt_eco3(data, lastByteNum, a_inputFilePathName);
    otherwise
       fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end

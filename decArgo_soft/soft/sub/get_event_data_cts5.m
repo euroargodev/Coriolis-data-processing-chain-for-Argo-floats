@@ -407,6 +407,9 @@ ignoreEvts = 0;
 ignoreNextEvt = 0;
 clockError = 0;
 evtJulDPrec = [];
+NB_EVENTS = 500;
+evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
+cpt = 1;
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
@@ -421,7 +424,6 @@ while ((curBit-1)/8 < lastByteNum)
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
       evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
-      evtGregD = julian_2_gregorian_dec_argo(evtJulD);
       
       evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
       idF = find(evtList(:, 1) == evtNum);
@@ -433,6 +435,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          [ok, curBit, evtData] = get_event_121_2_123(curBit, data, evtDataType, retrieve);
          if (~ok)
+            evtGregD = julian_2_gregorian_dec_argo(evtJulD);
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
             return
@@ -460,7 +463,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          
          if (retrieve)
-            evtNew = cell(1, 3);
+            evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
                evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
             else
@@ -477,7 +480,11 @@ while ((curBit-1)/8 < lastByteNum)
                   evtNew{1, 3} = evtNew(1, 4);
                end
             end
-            g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
+            if (cpt > size(evtAll, 1))
+               evtAll = cat(1, evtAll, repmat(cell(1, 4), NB_EVENTS, 1));
+            end
+            evtAll(cpt, :) = evtNew;
+            cpt = cpt + 1;
          end
          
          % first version
@@ -522,6 +529,8 @@ while ((curBit-1)/8 < lastByteNum)
       end
    end
 end
+
+g_decArgo_eventData = cat(1, g_decArgo_eventData, evtAll(1:cpt-1, :));
 
 o_ok = 1;
 
@@ -594,6 +603,9 @@ ignoreEvts = 0;
 ignoreNextEvt = 0;
 clockError = 0;
 evtJulDPrec = [];
+NB_EVENTS = 500;
+evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
+cpt = 1;
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
@@ -608,7 +620,6 @@ while ((curBit-1)/8 < lastByteNum)
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
       evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
-      evtGregD = julian_2_gregorian_dec_argo(evtJulD);
       
       evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
       idF = find(evtList(:, 1) == evtNum);
@@ -620,6 +631,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          [ok, curBit, evtData] = get_event_124_125(curBit, data, evtDataType, retrieve);
          if (~ok)
+            evtGregD = julian_2_gregorian_dec_argo(evtJulD);
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
             return
@@ -647,7 +659,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          
          if (retrieve)
-            evtNew = cell(1, 3);
+            evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
                evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
             else
@@ -664,7 +676,11 @@ while ((curBit-1)/8 < lastByteNum)
                   evtNew{1, 3} = evtNew(1, 4);
                end
             end
-            g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
+            if (cpt > size(evtAll, 1))
+               evtAll = cat(1, evtAll, repmat(cell(1, 4), NB_EVENTS, 1));
+            end
+            evtAll(cpt, :) = evtNew;
+            cpt = cpt + 1;
          end
          
          % first version
@@ -709,6 +725,8 @@ while ((curBit-1)/8 < lastByteNum)
       end
    end
 end
+
+g_decArgo_eventData = cat(1, g_decArgo_eventData, evtAll(1:cpt-1, :));
 
 o_ok = 1;
 
@@ -781,6 +799,9 @@ ignoreEvts = 0;
 ignoreNextEvt = 0;
 clockError = 0;
 evtJulDPrec = [];
+NB_EVENTS = 500;
+evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
+cpt = 1;
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
@@ -795,7 +816,6 @@ while ((curBit-1)/8 < lastByteNum)
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
       evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
-      evtGregD = julian_2_gregorian_dec_argo(evtJulD);
 
       evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
       idF = find(evtList(:, 1) == evtNum);
@@ -807,6 +827,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          [ok, curBit, evtData] = get_event_126_127(curBit, data, evtDataType, retrieve);
          if (~ok)
+            evtGregD = julian_2_gregorian_dec_argo(evtJulD);
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
                evtNum, evtGregD, a_inputFilePathName);
             return
@@ -834,7 +855,7 @@ while ((curBit-1)/8 < lastByteNum)
          end
          
          if (retrieve)
-            evtNew = cell(1, 3);
+            evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
                evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
             else
@@ -851,7 +872,11 @@ while ((curBit-1)/8 < lastByteNum)
                   evtNew{1, 3} = evtNew(1, 4);
                end
             end
-            g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
+            if (cpt > size(evtAll, 1))
+               evtAll = cat(1, evtAll, repmat(cell(1, 4), NB_EVENTS, 1));
+            end
+            evtAll(cpt, :) = evtNew;
+            cpt = cpt + 1;
          end
 
       else
@@ -861,6 +886,8 @@ while ((curBit-1)/8 < lastByteNum)
       end
    end
 end
+
+g_decArgo_eventData = cat(1, g_decArgo_eventData, evtAll(1:cpt-1, :));
 
 o_ok = 1;
 

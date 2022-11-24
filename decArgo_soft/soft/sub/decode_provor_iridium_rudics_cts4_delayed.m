@@ -283,13 +283,9 @@ end
 
 fprintf('\nDEC_INFO: decoding %d SBD files\n', length(tabAllFileNames));
 
-% matFileName = [num2str(g_decArgo_floatNum) '_decodedDataTab.mat'];
-% if (exist(matFileName, 'file') == 2)
-%    load(matFileName);
-% else
-
 % read email files and decode data
-decodedDataTab = [];
+decodedDataTab = repmat(get_decoded_data_cts4_init_struct, 1, length(tabAllFileNames)*18);
+cpt = 1;
 for idSpoolFile = 1:length(tabAllFileNames)
    
    sbdFileName = tabAllFileNames{idSpoolFile};
@@ -301,14 +297,15 @@ for idSpoolFile = 1:length(tabAllFileNames)
    
    % decode SBD file
    decodedData = decode_sbd_file_cts4(sbdFileName, sbdFileDate, a_decoderId);
-   decodedDataTab = cat(2, decodedDataTab, decodedData);
-   
+   if (~isempty(decodedData))
+      decodedDataTab(cpt:cpt+length(decodedData)-1) = decodedData;
+      cpt = cpt + length(decodedData);
+   end
+
    % move the processed 'new' files into the archive directory
    remove_from_list_ir_rudics(sbdFileName, 'buffer', 1);
 end
-
-%    save(matFileName, 'decodedDataTab');
-% end
+decodedDataTab(cpt:end) = [];
 
 if (isempty(decodedDataTab))
    fprintf('DEC_INFO: Float #%d: No data\n', ...

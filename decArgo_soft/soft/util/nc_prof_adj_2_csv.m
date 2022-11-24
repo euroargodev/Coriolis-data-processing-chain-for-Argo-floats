@@ -21,11 +21,8 @@ function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'D:\TEMPO\TEST_NR_AVANT\Rem\';
-% DIR_INPUT_NC_FILES = 'D:\TEMPO\TEST_NR_APRES\Rem\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\OUT2\';
+% DIR_INPUT_NC_FILES = 'E:\202108-ArgoData\coriolis_core\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
@@ -502,6 +499,7 @@ if (var_is_present_dec_argo(fCdf, varName))
 else
    fprintf('WARNING: Variable %s is missing in file %s\n', ...
       varName, inputFileName);
+   configMissionNumber = nan(size(latitude));
 end
 
 paramList2 = [ ...

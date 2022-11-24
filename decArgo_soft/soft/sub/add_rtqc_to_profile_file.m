@@ -194,6 +194,10 @@
 %   16/08/2021 - RNU - V 5.5: To follow Virginie Racapé's recomendation,
 %                             TEST 25: MEDD test is not performed on (PRES,
 %                             TEMP_DOXY) profiles
+%   10/28/2021 - RNU - V 3.6: Code improvement:
+%                             - improve efficiency in retrieveing paramDataMode
+%                             - improve efficiency while reporting profile QC in
+%                             trajectory
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -233,7 +237,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.5';
+g_decArgo_addRtqcToProfileVersion = '5.6';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -805,7 +809,8 @@ stationParametersNcMono = get_data_from_name('STATION_PARAMETERS', ncMonoProfDat
 [~, nParam, nProf] = size(stationParametersNcMono);
 ncParamNameList = [];
 ncParamAdjNameList = [];
-paramDataMode = [];
+paramDataMode = cell(nProf*nParam, 3);
+cpt = 1;
 for idProf = 1:nProf
    if (dataModeCFile(idProf) ~= 'D')
       for idParam = 1:nParam
@@ -818,11 +823,14 @@ for idProf = 1:nProf
                   {[paramName '_ADJUSTED']} ...
                   ];
             end
-            paramDataMode = [paramDataMode; [idProf {paramName} {dataModeCFile(idProf)}]];
+            %             paramDataMode = [paramDataMode; [idProf {paramName} {dataModeCFile(idProf)}]];
+            paramDataMode(cpt, :) = [idProf {paramName} {dataModeCFile(idProf)}];
+            cpt = cpt + 1;
          end
       end
    end
 end
+paramDataMode(cpt:end, :) = [];
 ncParamNameList = unique(ncParamNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
 ncParamAdjNameList = unique(ncParamAdjNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
 
@@ -1108,9 +1116,9 @@ if (multiProfFileFlag)
    [~, nParam, nProf] = size(stationParametersNcMulti);
    ncMParamNameList = [];
    ncMParamAdjNameList = [];
-   paramDataModeM = [];
+   paramDataModeM = cell(nProf*nParam, 3);
+   cpt = 1;
    for idProf = 1:nProf
-      %       if (dataModeMFile(idProf) ~= 'D')
       for idParam = 1:nParam
          paramName = deblank(stationParametersNcMulti(:, idParam, idProf)');
          if (~isempty(paramName))
@@ -1121,11 +1129,13 @@ if (multiProfFileFlag)
                   {[paramName '_ADJUSTED']} ...
                   ];
             end
-            paramDataModeM = [paramDataModeM; [idProf {paramName} {dataModeMFile(idProf)}]];
+            %             paramDataModeM = [paramDataModeM; [idProf {paramName} {dataModeMFile(idProf)}]];
+            paramDataModeM(cpt, :) = [idProf {paramName} {dataModeMFile(idProf)}];
+            cpt = cpt + 1;
          end
       end
-      %       end
    end
+   paramDataModeM(cpt:end, :) = [];
    ncMParamNameList = unique(ncMParamNameList);
    ncMParamAdjNameList = unique(ncMParamAdjNameList);
    
@@ -4943,21 +4953,21 @@ if (~isempty(g_rtqc_trajData))
    end
    
    if (~isempty(profMeasCode))
-      
+
       % link profile and trajectory data
-      
+
       % create the sorted list of profile and trajectory common parameters
       ncProfTrajNameList = intersect(ncParamNameList, g_rtqc_trajData.ncTrajParamNameList);
       ncProfTrajAdjNameList = intersect(ncParamAdjNameList, g_rtqc_trajData.ncTrajParamAdjNameList);
-      
+
       % link profile and trajectory data for concerned MC
-      
+
       % as RT adjustments (stored in the data-base) are applied on PROF data
       % only (not on TRAJ data) we should link PROF and TRAJ data with non
       % adjusted data only
-      
+
       % collect prof and traj data
-      
+
       % collect profile data
       dataProf = [];
       dimNValuesProf = [];
@@ -4978,7 +4988,7 @@ if (~isempty(g_rtqc_trajData))
          dataProf{idProf} = dataBis;
       end
       dimNValuesProf = unique(dimNValuesProf);
-      
+
       % collect traj data
       dataTraj = [];
       dataTrajFillValue = [];
@@ -5001,22 +5011,24 @@ if (~isempty(g_rtqc_trajData))
          dataTraj = [dataTraj data];
          dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
       end
-      
+
       % link profile and trajectory data for concerned MC
-      
-      profNmeasIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
-      uCycleNumber = unique(cycleNumber);
-      idTrajFromProf = find( ...
-         (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
-         (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
-      for id = 1:length(idTrajFromProf)
-         found = 0;
-         idMeas = idTrajFromProf(id);
-         if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
-            for idProf = 1:size(profNmeasIndex, 2)
-               profData = dataProf{idProf};
-               for idLev = 1:size(profNmeasIndex, 3)
-                  if (~any(profData(idLev, :) ~= dataTraj(idMeas, :)))
+
+      if (1)
+
+         profNmeasIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
+         uCycleNumber = unique(cycleNumber);
+         idTrajFromProf = find( ...
+            (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
+            (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
+         for id = 1:length(idTrajFromProf)
+            found = 0;
+            idMeas = idTrajFromProf(id);
+            if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
+               for idProf = 1:size(profNmeasIndex, 2)
+                  profData = dataProf{idProf};
+                  idLev = find(sum(profData == dataTraj(idMeas, :), 2) == size(profData, 2), 1, 'first');
+                  if (~isempty(idLev))
                      idLength = 1;
                      while ((idLength <= size(profNmeasIndex, 1)) && ...
                            (profNmeasIndex(idLength, idProf, idLev) ~= 0))
@@ -5031,23 +5043,73 @@ if (~isempty(g_rtqc_trajData))
                      break
                   end
                end
-               if (found == 1)
-                  break
-               end
-            end
-            if (found == 0)
-               % print the following warning for <PARAM> parameters
-               % only because <PARAM>_ADJUSTED parameter
-               % measurements may be computed from RT adjustment
-               % (not performed on TRAJ data)
-               if (idD == 1)
-                  fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
-                     a_floatNum, idMeas);
+               if (found == 0)
+                  % print the following warning for <PARAM> parameters
+                  % only because <PARAM>_ADJUSTED parameter
+                  % measurements may be computed from RT adjustment
+                  % (not performed on TRAJ data)
+                  if (idD == 1)
+                     fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
+                        a_floatNum, idMeas);
+                  end
                end
             end
          end
+
+      else
+
+         % PREVIOUS VERSION - START
+
+         % link profile and trajectory data for concerned MC
+
+         profNmeasIndex = zeros(length(profMeasCode), length(dataProf), size(dataProf{1}, 1));
+         uCycleNumber = unique(cycleNumber);
+         idTrajFromProf = find( ...
+            (g_rtqc_trajData.cycleNumber == uCycleNumber) & ...
+            (ismember(g_rtqc_trajData.measurementCode, profMeasCode)));
+         for id = 1:length(idTrajFromProf)
+            found = 0;
+            idMeas = idTrajFromProf(id);
+            if (any(dataTraj(idMeas, :) ~= dataTrajFillValue))
+               for idProf = 1:size(profNmeasIndex, 2)
+                  profData = dataProf{idProf};
+                  for idLev = 1:size(profNmeasIndex, 3)
+                     if (all(profData(idLev, :) == dataTraj(idMeas, :)))
+                        idLength = 1;
+                        while ((idLength <= size(profNmeasIndex, 1)) && ...
+                              (profNmeasIndex(idLength, idProf, idLev) ~= 0))
+                           idLength = idLength + 1;
+                        end
+                        if (idLength > size(profNmeasIndex, 1))
+                           profNmeasIndex = cat(1, profNmeasIndex, ...
+                              zeros(1, length(dataProf), size(dataProf{1}, 1)));
+                        end
+                        profNmeasIndex(idLength, idProf, idLev) = idMeas;
+                        found = 1;
+                        break
+                     end
+                  end
+                  if (found == 1)
+                     break
+                  end
+               end
+               if (found == 0)
+                  % print the following warning for <PARAM> parameters
+                  % only because <PARAM>_ADJUSTED parameter
+                  % measurements may be computed from RT adjustment
+                  % (not performed on TRAJ data)
+                  if (idD == 1)
+                     fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
+                        a_floatNum, idMeas);
+                  end
+               end
+            end
+         end
+
+         % PREVIOUS VERSION - END
+
       end
-      
+
       profNmeasAdjIndex = profNmeasIndex; % USE THE SAME LINKS FOR ADJUSTED VALUES
       
       % arrays to report RTQC on prof data in traj data

@@ -28,6 +28,7 @@ outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
@@ -38,6 +39,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Expo
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.13_6903095_6903096.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.12_Ramses_6903706.txt';
+dataBaseFileName = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_rem_meta.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
@@ -1108,9 +1110,9 @@ idForWmo = find(a_metaWmoList == a_floatNum);
 
 idF1 = find(strcmp(a_metaData(idForWmo, 4), a_paramName) & ...
    strcmp(a_metaData(idForWmo, 5), 'PARAMETER'));
-if (~isempty(idF1))
+if (length(idF1) == 1)
    dimLevel = a_metaData(idForWmo(idF1), 3);
-   
+
    idF2 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
       strcmp(a_metaData(idForWmo, 5), 'PARAMETER_ACCURACY'));
    if (~isempty(idF2))
@@ -1176,7 +1178,10 @@ if (~isempty(idF1))
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
       end
    end
-   
+
+elseif (length(idF1) > 1)
+   fprintf('ERROR: Float #%d: %d entries in DB for parameter ''%s''\n', ...
+      a_floatNum, length(idF1), a_paramName);
 end
 
 return

@@ -30,6 +30,7 @@ DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\OLD\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\BASE\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\DIR_INPUT_OLD_NC_FILES\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\DATA_FLBB_INCOIS_EDAC\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos_sans_EOL\';
@@ -40,6 +41,7 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\OUT\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 
 % directory to store the log and the csv files
@@ -49,9 +51,10 @@ DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/lists/nke_all_with_DM_b_file.txt';
 FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/lists/nke_all_with_DM.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_all_with_DM_bis_20151003.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_a_passer_en_dm_20210930.txt';
 
 % flag to print data measurements (when different) in the log file
-PRINT_DIFF_DATA_FLAG = 0;
+PRINT_DIFF_DATA_FLAG = 1;
 
 % default values
 global g_dateDef;
@@ -152,14 +155,14 @@ for idFloat = 1:nbFloats
    [descCyNumBase, descProfNumBase, descProfDateBase, descProfLocDateBase, ...
       ascCyNumBase, ascProfNumBase, ascProfDateBase, ascProfLocDateBase] = ...
       get_nc_profile_dates(DIR_INPUT_BASE_NC_FILES, floatNum, 'Base');
-   if (isempty(descCyNumBase))
+   if (isempty(descCyNumBase) && isempty(ascCyNumBase))
       continue
    end
 
    [descCyNumNew, descProfNumNew, descProfDateNew, descProfLocDateNew, ...
       ascCyNumNew, ascProfNumNew, ascProfDateNew, ascProfLocDateNew] = ...
       get_nc_profile_dates(DIR_INPUT_NEW_NC_FILES, floatNum, 'New');
-   if (isempty(descCyNumNew))
+   if (isempty(descCyNumNew) && isempty(ascCyNumNew))
       continue
    end
    
