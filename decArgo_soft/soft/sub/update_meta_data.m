@@ -3283,6 +3283,10 @@ switch (a_decoderId)
                   darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter700_O);
                end
                khiCoefBackscatter = double(g_decArgo_calibInfo.ECO2.KhiCoefBackscatter);
+               % determine angle of measurement
+               % if SENSOR_MODEL == ECO_FLBB => 142°
+               % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
+               angle = 142;
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
                   isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
@@ -3294,34 +3298,11 @@ switch (a_decoderId)
                   darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700_O);
                end
                khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
+               angle = 124;
             else
                fprintf('WARNING: Float #%d: inconsistent BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
                return;
-            end
-            
-            % determine angle of measurement
-            % if SENSOR_MODEL == ECO_FLBB => 142°
-            % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
-            angle = 124;
-            if (a_decoderId == 111)
-               % INCOIS Provor CTS4 v3.xx floats have ECO_FLBB sensors
-               % (whereas Coriolis Provor CTS4 v3.xx floats have ECO_FLBBCD
-               % sensors)
-               idP = find(strcmp('BBP700', struct2cell(a_metaData.PARAMETER)));
-               paramSensorList = struct2cell(a_metaData.PARAMETER_SENSOR);
-               paramSensor = paramSensorList{idP};
-               idS = find(strcmp(paramSensor, struct2cell(a_metaData.SENSOR)));
-               sensorModelList = struct2cell(a_metaData.SENSOR_MODEL);
-               sensorModel = sensorModelList{idS};
-               if (~isempty(sensorModel))
-                  if (strcmp(sensorModel, 'ECO_FLBB'))
-                     angle = 142;
-                  end
-               else
-                  fprintf('WARNING: Float #%d: no SENSOR_MODEL associated to PARAMETER BBP700\n', ...
-                     g_decArgo_floatNum);
-               end
             end
             
             if (isempty(darkCountBackscatter700_O))

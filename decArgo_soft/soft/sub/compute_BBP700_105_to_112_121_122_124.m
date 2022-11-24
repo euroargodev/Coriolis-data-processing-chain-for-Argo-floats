@@ -49,7 +49,7 @@ o_BBP = ones(length(a_BETA_BACKSCATTERING), 1)*a_BBP_fill_value;
 if (any(strcmp('ECO3', g_decArgo_sensorMountedOnFloat) == 1))
    
    % ECO3 sensor
-
+   
    % calibration coefficients
    if (isempty(g_decArgo_calibInfo))
       fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
@@ -76,6 +76,11 @@ if (any(strcmp('ECO3', g_decArgo_sensorMountedOnFloat) == 1))
          g_decArgo_cycleNum);
       return;
    end
+   
+   % determine angle of measurement
+   % if SENSOR_MODEL == ECO_FLBB => 142°
+   % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
+   angle = 124;
    
 elseif (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
    
@@ -107,7 +112,12 @@ elseif (any(strcmp('ECO2', g_decArgo_sensorMountedOnFloat) == 1))
          g_decArgo_cycleNum);
       return;
    end
-
+   
+   % determine angle of measurement
+   % if SENSOR_MODEL == ECO_FLBB => 142°
+   % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
+   angle = 142;
+   
 end
 
 % compute output data
@@ -116,8 +126,8 @@ idNoDef = find((a_BETA_BACKSCATTERING ~= a_BETA_BACKSCATTERING_fill_value) & ...
    (a_ctdData(:, 2) ~= a_TEMP_fill_value) & ...
    (a_ctdData(:, 3) ~= a_PSAL_fill_value));
 % [betasw124, ~, ~, ~] = betasw124_ZHH2009(700, a_ctdData(:, 3), a_ctdData(:, 2));
-[betasw124, ~, ~] = betasw_ZHH2009(700, a_ctdData(:, 2), 124, a_ctdData(:, 3));
+[betaswAngle, ~, ~] = betasw_ZHH2009(700, a_ctdData(:, 2), angle, a_ctdData(:, 3));
 o_BBP(idNoDef) = 2*pi*khiCoefBackscatter* ...
-   ((a_BETA_BACKSCATTERING(idNoDef) - darkCountBackscatter700)*scaleFactBackscatter700 - betasw124(idNoDef));
+   ((a_BETA_BACKSCATTERING(idNoDef) - darkCountBackscatter700)*scaleFactBackscatter700 - betaswAngle(idNoDef));
 
 return;
