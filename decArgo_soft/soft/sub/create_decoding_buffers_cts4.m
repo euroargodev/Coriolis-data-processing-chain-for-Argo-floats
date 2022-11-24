@@ -484,7 +484,7 @@ if (ismember(a_decoderId, [111, 113, 115]))
    tabRank(idSurfSensorTech) = -1;
 end
 if (ismember(g_decArgo_floatNum, ...
-      [6903249 6902906]))
+      [6903249 6902906 6904134]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -508,8 +508,72 @@ if (ismember(g_decArgo_floatNum, ...
             ~((tabCyNumRaw == 116) | ((tabCyNumRaw == 115) & (tabPackType == 250))));
          tabRank(idDel) = -1;
          tabDone(idDel) = 1;
-   
+         
+      case 6904134
+         % second Iridium session of cycles #9 and #10 are sent with delayed
+         % data
+         
+         tabSessionDeep(3665:3669) = 9;
+         
+         tabBase(3670) = 1;
+         tabRank(3670:4037) = 20;
+         tabSession(3670:4037) = 20;
+         tabCyNumOut(3670:4037) = 10;
+         tabCyNum(3670:4037) = 1000;
+         tabDeep(3670:4037) = 1;
+         tabDone(3670:4037) = 1;
+         tabGo(3670:4037) = 1;
+         
+         tabRank(4038) = 21;
+         tabSession(4038:4042) = 21;
+         tabSessionDeep(4038:4042) = 10;
+         tabGo(4038:4042) = 1;
+         
+         tabBase(4043) = 1;
+         tabRank(4043:4603) = 22;
+         tabSession(4043:4603) = 22;
+         tabCyNumOut(4043:4603) = 11;
+         tabCyNum(4043:4603) = 1100;
+         tabDeep(4043:4603) = 1;
+         tabDone(4043:4603) = 1;
+         tabGo(4043:4603) = 1;
+         
+         id = find(tabRank ~= -1);
+         id = setdiff(id, 1:4603);
+         tabRank(id) = tabRank(id) + 2;
+         id = find(tabSession ~= -1);
+         id = setdiff(id, 1:4603);
+         tabSession(id) = tabSession(id) + 2;
    end
+   
+   % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
+   %    if (~isempty(g_decArgo_outputCsvFileId))
+   %
+   %       % sort rank numbers according to cycle numbers
+   %       rank = 1;
+   %       cyNumList = unique(tabCyNum);
+   %       for cyNum = cyNumList
+   %          idForCy = find(tabCyNum == cyNum);
+   %          rankNumList = setdiff(unique(tabRank(idForCy)), -1);
+   %          for rankNum = rankNumList
+   %             idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
+   %             tabRankByCycle(idForRankCy) = rank;
+   %             rank = rank + 1;
+   %          end
+   %       end
+   %
+   %       % update tabCompleted array
+   %       sessionList = unique(tabSession);
+   %       for session = 1:length(sessionList)
+   %          idForCheck = find(tabSession == sessionList(session));
+   %
+   %          % check current session contents
+   %          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabPhaseNumRaw, tabSensorType, tabSensorDataType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, 0);
+   %          if (completed == 1)
+   %             tabCompleted(idForCheck) = 1;
+   %          end
+   %       end
+   %    end
 end
 
 % sort rank numbers according to cycle numbers

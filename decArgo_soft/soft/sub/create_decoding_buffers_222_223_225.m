@@ -398,6 +398,22 @@ if (ismember(g_decArgo_floatNum, [6900791]))
          tabRankByCycle(tabCyNum == 16) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 16) = tabRankByDate(id);
    end
+   
+   % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
+   %    if (~isempty(g_decArgo_outputCsvFileId))
+   %
+   %       % update tabCompleted array
+   %       cyNumList = unique(tabRankByCycle);
+   %       for cyNum = 1:length(cyNumList)
+   %          idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+   %
+   %          % check current session contents
+   %          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+   %          if (completed == 1)
+   %             tabCompleted(idForCheck) = 1;
+   %          end
+   %       end
+   %    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

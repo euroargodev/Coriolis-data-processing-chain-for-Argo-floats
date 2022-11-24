@@ -119,20 +119,26 @@ for idP = 1:size(a_tabTech, 1)
    end
    
    % specific
-   % float 3902120:
-   % At the end of cycle #134 the float stayed at the surface from
-   % 2019/12/16 19:06:40 to  2019/12/18 12:10:00 because it didn''t manage to
-   % connect to Iridium RUDICS server earlier (RUDICS was down from 2019/12/16
-   % 10:00 to 2019/12/18 12:00).
-   % We discovered that reference day has not been incremented during this
-   % period:
-   % - cycle #133 refDay 637 is 11/12/2019 => ok
-   % - cycle #134 refDay 642 is 16/12/2019 => ok
-   % - cycle #135 refDay 643 for 18/12/2019 => ko
-   % => 1 day should be added to refDay for cycles >= 135
-   if (g_decArgo_floatNum == 3902120)
-      if ((cycleNum == 135) && (a_tabTech(idP, 8) == g_decArgo_phaseSatTrans))
-         refDay = refDay + 1;
+   if (ismember(g_decArgo_floatNum, [3902120 6904134]))
+      switch g_decArgo_floatNum
+         case 3902120
+            % At the end of cycle #134 the float stayed at the surface from
+            % 2019/12/16 19:06:40 to  2019/12/18 12:10:00 because it didn''t manage to
+            % connect to Iridium RUDICS server earlier (RUDICS was down from 2019/12/16
+            % 10:00 to 2019/12/18 12:00).
+            % We discovered that reference day has not been incremented during this
+            % period:
+            % - cycle #133 refDay 637 is 11/12/2019 => ok
+            % - cycle #134 refDay 642 is 16/12/2019 => ok
+            % - cycle #135 refDay 643 for 18/12/2019 => ko
+            % => 1 day should be added to refDay for cycles >= 135
+            if ((cycleNum == 135) && (a_tabTech(idP, 8) == g_decArgo_phaseSatTrans))
+               refDay = refDay + 1;
+            end
+         case 6904134
+            if ((cycleNum == 10) && (a_tabTech(idP, 8) == g_decArgo_phaseSatTrans))
+               refDay = refDay + 10;
+            end
       end
    end
    

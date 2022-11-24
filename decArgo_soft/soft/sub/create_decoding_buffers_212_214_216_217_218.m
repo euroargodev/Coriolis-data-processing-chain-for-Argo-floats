@@ -539,7 +539,7 @@ for idL = 1:length(tabRank)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865]))
+if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865, 6903264]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -576,7 +576,16 @@ if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865]))
          id = find((tabCyNum == 58) & (tabBase == 1));
          tabRank(tabCyNum == 58) = tabRank(id);
          tabRankByCycle(tabCyNum == 58) = tabRankByCycle(id);
-         tabRankByDate(tabCyNum == 58) = tabRankByDate(id);         
+         tabRankByDate(tabCyNum == 58) = tabRankByDate(id);   
+      case 6903264
+         % data of last cycle before EOL (#500) is transmitted twice
+         id = find((tabCyNum == 500) & (tabBase == 1));
+         id = id(2);
+         tabDeep(tabSession == tabSession(id)) = 0;
+         idDel = find((tabSession == tabSession(id)) & ismember(tabPackType, [2 3 13 14]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
    end
 end
 
