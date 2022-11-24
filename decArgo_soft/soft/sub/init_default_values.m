@@ -10,7 +10,7 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -233,6 +233,9 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_SS;
 global g_decArgo_cts5Treat_DW;
+
+% max length allowed for VERTICAL_SAMPLING_SCHEME
+global g_decArgo_vssMaxLength;
 
 % DOXY coefficients
 global g_decArgo_doxy_nomAirPress;
@@ -482,8 +485,8 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
-% dated release 
-g_decArgo_decoderVersion = '047f';
+% dated release
+g_decArgo_decoderVersion = '047g';
 
 % list of managed decoders
 
@@ -766,7 +769,7 @@ g_decArgo_backscatDef = 9999.9;
 g_decArgo_cdomDef = 9999.9;
 g_decArgo_chloroDef = 9999.9;
 g_decArgo_chloroVoltDef = 9.999;
-g_decArgo_turbiDef = 9999.9;  
+g_decArgo_turbiDef = 9999.9;
 g_decArgo_turbiVoltDef = 9.999;
 g_decArgo_concNitraDef = 9.99e+038;
 g_decArgo_coefAttDef = 99.999;
@@ -905,6 +908,9 @@ g_decArgo_cts5Treat_RW = 4; % raw
 g_decArgo_cts5Treat_AM = 5; % mean
 g_decArgo_cts5Treat_SS = 6; % sub-surface point (last pumped raw measurement)
 g_decArgo_cts5Treat_DW = 7; % decimated raw
+
+% max length allowed for VERTICAL_SAMPLING_SCHEME
+g_decArgo_vssMaxLength = 256;
 
 % DOXY coefficients
 g_decArgo_doxy_nomAirPress = 1013.25;
@@ -1140,7 +1146,7 @@ g_decArgo_doxy_102_207_206_a4 = -0.256847;
 g_decArgo_doxy_102_207_206_a5 = 3.88767;
 g_decArgo_doxy_102_207_206_b0 = -0.00624523;
 g_decArgo_doxy_102_207_206_b1 = -0.00737614;
-g_decArgo_doxy_102_207_206_b2 = -0.00103410;    
+g_decArgo_doxy_102_207_206_b2 = -0.00103410;
 g_decArgo_doxy_102_207_206_b3 = -0.00817083;
 g_decArgo_doxy_102_207_206_c0 = -0.000000488682;
 

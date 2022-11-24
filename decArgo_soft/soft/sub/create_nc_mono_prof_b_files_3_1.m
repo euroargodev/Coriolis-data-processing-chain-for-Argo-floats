@@ -65,6 +65,9 @@ global g_decArgo_longNameOfParamAdjErr;
 % to store information on PARAM adjustment
 global g_decArgo_paramProfAdjInfo;
 
+% max length allowed for VERTICAL_SAMPLING_SCHEME
+global g_decArgo_vssMaxLength;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -128,26 +131,26 @@ for idCy = 1:length(cyNumList)
    cyNum = cyNumList(idCy);
    for idDir = 1:length(dirList)
       direction = dirList(idDir);
-      
+
       if (~isempty(find( ...
             (profInfo(:, 1) == cyNum) & ...
             (profInfo(:, 2) == direction), 1)))
-         
+
          idProfInFile = find( ...
             (profInfo(:, 1) == cyNum) & ...
             (profInfo(:, 2) == direction));
          idPrimary = find(profInfo(idProfInFile, 3) == 1);
-         
+
          if (isempty(idPrimary))
-            
+
             % create a 'default' primary b profile
             defaultPrimaryProfile = create_default_primary_profile( ...
                cyNum, direction, ...
                tabProfiles, a_decoderId);
-            
+
             fprintf('DEC_INFO: Float #%d Output Cycle #%d ''%c'': no primary sampling profile - adding a ''default'' one\n', ...
                g_decArgo_floatNum, cyNum, defaultPrimaryProfile.direction);
-            
+
             % add it to the profiles to process
             tabProfiles(end+1) = defaultPrimaryProfile;
          end
@@ -173,19 +176,19 @@ for idProf = 1:length(tabProfiles)
       cycleNumber = profile.cycleNumber;
       profileNumber = profile.profileNumber;
       outputCycleNumber = profile.outputCycleNumber;
-      
+
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
       end
-      
+
       % list of profiles to store in the current profile file
       idProfInFile = find( ...
          (profInfo(:, 1) == outputCycleNumber) & ...
          (profInfo(:, 2) == direction) & ...
          (profInfo(:, 4) == 0));
       nbProfToStore = length(idProfInFile);
-      
+
       % put the primary sampling profile on top of the list
       idPrimary = find(profInfo(idProfInFile, 3) == 1);
       profShiftIfNoPrimary = 0;
@@ -204,7 +207,7 @@ for idProf = 1:length(tabProfiles)
          end
       end
       nbProfInFile = nbProfToStore + profShiftIfNoPrimary;
-      
+
       % check if all the profiles to be stored are core profiles
       bFileNeeded = 0;
       for idP = 1:nbProfToStore
@@ -220,7 +223,7 @@ for idProf = 1:length(tabProfiles)
          end
          continue
       end
-      
+
       % create the profile parameters list and compute the number of levels
       % and sublevels
       profParamName = [];
@@ -238,11 +241,11 @@ for idProf = 1:length(tabProfiles)
                   strcmp(parameterList(idParam).name, 'PRES')) && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
-               
+
                profParamName = [profParamName; {parameterList(idParam).name}];
                paramNameOfProf = [paramNameOfProf; {parameterList(idParam).name}];
                nbProfLevels = max(nbProfLevels, size(profileData, 1));
-               
+
                if (~isempty(prof.paramNumberWithSubLevels))
                   idF = find(prof.paramNumberWithSubLevels == idParam);
                   if (~isempty(idF))
@@ -255,7 +258,7 @@ for idProf = 1:length(tabProfiles)
          nbProfParam = max(nbProfParam, length(unique(paramNameOfProf)));
       end
       profUniqueParamName = unique(profParamName, 'stable');
-      
+
       % due to erroneous received data, the number of sublevels can vary for a
       % same parameter
       paramSubLevels = unique(paramNameSubLevels, 'stable');
@@ -265,9 +268,9 @@ for idProf = 1:length(tabProfiles)
             max(profSubLevels(find(strcmp(paramNameSubLevels, paramSubLevels{idParamSL}))))];
       end
       profSubLevels = sort(unique(dimSubLevels), 'descend');
-      
+
       if (nbProfParam > 0)
-         
+
          % create output file pathname
          floatNumStr = num2str(g_decArgo_floatNum);
          outputDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
@@ -278,7 +281,7 @@ for idProf = 1:length(tabProfiles)
          if ~(exist(outputDirName, 'dir') == 7)
             mkdir(outputDirName);
          end
-         
+
          if (direction == 1)
             ncFileName = sprintf('BR%d_%03dD.nc', ...
                g_decArgo_floatNum, outputCycleNumber);
@@ -287,17 +290,17 @@ for idProf = 1:length(tabProfiles)
                g_decArgo_floatNum, outputCycleNumber);
          end
          ncPathFileName = [outputDirName  ncFileName];
-         
+
          % check if the file need to be created
          generate = 1;
          if (g_decArgo_floatTransType == 1)
-            
+
             % Argos floats
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
-               
+
                if ((g_decArgo_realtimeFlag == 1) && (g_decArgo_processModeAll == 0))
-                  
+
                   % in this configuration, only new profile files are created
                   % (never updated)
                   if (exist(ncPathFileName, 'file') == 2)
@@ -305,17 +308,17 @@ for idProf = 1:length(tabProfiles)
                   end
                end
             end
-            
+
          elseif ((g_decArgo_floatTransType == 2) || ...
                (g_decArgo_floatTransType == 4))
-            
+
             % Iridium RUDICS floats
             % Iridium SBD ProvBioII floats
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
-               
+
                if (g_decArgo_realtimeFlag == 1)
-                  
+
                   % in this configuration, the file is created/updated if:
                   % - it doesn't exist
                   % - it exists but the profile structure has been updated
@@ -324,7 +327,7 @@ for idProf = 1:length(tabProfiles)
                      generate = 0;
                   end
                elseif (g_decArgo_delayedModeFlag == 1)
-                  
+
                   % in this configuration, the file is created/updated if:
                   % - it doesn't exist
                   if (exist(ncPathFileName, 'file') == 2)
@@ -332,15 +335,15 @@ for idProf = 1:length(tabProfiles)
                   end
                end
             end
-            
+
          elseif (g_decArgo_floatTransType == 3)
-            
+
             % Iridium SBD floats
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
-               
+
                if (g_decArgo_realtimeFlag == 1)
-                  
+
                   % in this configuration, the file is created/updated if:
                   % - it doesn't exist
                   % - it exists but the profile structure has been updated
@@ -350,19 +353,19 @@ for idProf = 1:length(tabProfiles)
                   end
                end
             end
-            
+
          else
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
-               
+
                if (g_decArgo_realtimeFlag == 1)
-                  
+
                   fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: no strategy to generate or not profile NetCDF files - generating all profile fles\n', ...
                      g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber);
                end
             end
          end
-         
+
          % the data of one cycle can be in consecutive rsync log files
          % to check if the file need to be created we should then compare profile
          % levels
@@ -370,20 +373,20 @@ for idProf = 1:length(tabProfiles)
             if ((g_decArgo_floatTransType == 2) || (g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
                if ((g_decArgo_generateNcMonoProf == 2) && (g_decArgo_realtimeFlag == 1))
                   if (exist(ncPathFileName, 'file') == 2)
-                     
+
                      % retrieve profile levels of the nc file
                      ncProfLev = get_nc_profile_level(ncPathFileName);
-                     
+
                      % compare profile levels
                      differ = 0;
-                     
+
                      for idP = 1:nbProfToStore
                         prof = tabProfiles(idProfInFile(idP));
                         nLevelsParam = 0;
                         idNoDefAll = [];
-                        
+
                         profPos = idP-1+profShiftIfNoPrimary;
-                        
+
                         % profile parameter data
                         parameterList = prof.paramList;
                         for idParam = 1:length(parameterList)
@@ -409,14 +412,14 @@ for idProf = 1:length(tabProfiles)
                                     else
                                        firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
                                     end
-                                    
+
                                     idF = find(prof.paramNumberWithSubLevels == idParam);
                                     if (isempty(idF))
                                        lastCol = firstCol;
                                     else
                                        lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
                                     end
-                                    
+
                                     paramData = prof.data(:, firstCol:lastCol);
                                     if (size(paramData, 2) == 1)
                                        idNoDef = find(paramData ~= paramInfo.fillValue);
@@ -445,10 +448,10 @@ for idProf = 1:length(tabProfiles)
                      if (differ == 1)
                         generate = 1;
                      end
-                     
+
                      if (generate == 0)
                         if ((a_decoderId > 2000) && (a_decoderId < 3000))
-                           
+
                            % NOVA/DOVA float
                            % the clock offset is not defined for the last cycle
                            % (needed information for cycle N is transmitted during
@@ -457,7 +460,7 @@ for idProf = 1:length(tabProfiles)
                            % following cycles
                            % => the file should be updated if it was the last one
                            % of the previous run and we received a new one
-                           
+
                            fileCycleNum = [];
                            floatFiles = [dir([outputDirName '/' sprintf('BR%d_*.nc', g_decArgo_floatNum)]); ...
                               dir([outputDirName '/' sprintf('BD%d_*.nc', g_decArgo_floatNum)])];
@@ -466,7 +469,7 @@ for idProf = 1:length(tabProfiles)
                               idFUs = strfind(floatFileName, '_');
                               fileCycleNum = [fileCycleNum str2num(floatFileName(idFUs+1:idFUs+3))];
                            end
-                           
+
                            if (~isempty(fileCycleNum))
                               if ((outputCycleNumber == max(fileCycleNum)) && ...
                                     (any(profInfo(:, 1) == outputCycleNumber+1)))
@@ -482,7 +485,7 @@ for idProf = 1:length(tabProfiles)
          if (generate == 0)
             continue
          end
-         
+
          % information to retrieve from a possible existing mono-profile file
          ncCreationDate = '';
          histoInstitution = '';
@@ -490,9 +493,9 @@ for idProf = 1:length(tabProfiles)
          histoSoftware = '';
          histoSoftwareRelease = '';
          histoDate = '';
-         
+
          if (exist(ncPathFileName, 'file') == 2)
-            
+
             % retrieve information from existing file
             wantedProfVars = [ ...
                {'DATE_CREATION'} ...
@@ -502,10 +505,10 @@ for idProf = 1:length(tabProfiles)
                {'HISTORY_SOFTWARE_RELEASE'} ...
                {'HISTORY_DATE'} ...
                ];
-            
+
             % retrieve information from PROF netCDF file
             [profData] = get_data_from_nc_file(ncPathFileName, wantedProfVars);
-            
+
             idVal = find(strcmp('DATE_CREATION', profData) == 1);
             if (~isempty(idVal))
                ncCreationDate = profData{idVal+1}';
@@ -530,21 +533,21 @@ for idProf = 1:length(tabProfiles)
             if (~isempty(idVal))
                histoDate = profData{idVal+1};
             end
-            
+
             if ((VERBOSE_MODE == 1) || (VERBOSE_MODE == 2))
                fprintf('Updating NetCDF MONO-PROFILE b file (%s) ...\n', ncFileName);
             end
-            
+
          else
             if ((VERBOSE_MODE == 1) || (VERBOSE_MODE == 2))
                fprintf('Creating NetCDF MONO-PROFILE b file (%s) ...\n', ncFileName);
             end
          end
-         
+
          if (g_decArgo_floatTransType == 1)
-            
+
             % Argos floats
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
                if (~isempty(profile.profileCompleted) && (profile.profileCompleted > 0))
                   fprintf('INFO: Float #%d cycle #%d: missing levels in transmitted profile (%d levels are missing)\n', ...
@@ -552,16 +555,16 @@ for idProf = 1:length(tabProfiles)
                end
             end
          end
-         
+
          currentDate = datestr(now_utc, 'yyyymmddHHMMSS');
-         
+
          % create and open NetCDF file
          fCdf = netcdf.create(ncPathFileName, 'NC_CLOBBER');
          if (isempty(fCdf))
             fprintf('ERROR: Unable to create NetCDF output file: %s\n', ncPathFileName);
             return
          end
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % DEFINE MODE BEGIN
          if (VERBOSE_MODE == 2)
@@ -570,11 +573,10 @@ for idProf = 1:length(tabProfiles)
             fprintf('float profile # = %d\n', profileNumber);
             fprintf('output cycle # = %d\n', outputCycleNumber);
          end
-         
+
          % create dimensions
          dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
          string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
-         verticalSamplingSchemeLength = 256;
          string64DimId = netcdf.defDim(fCdf, 'STRING64', 64);
          paramNameLength = 64;
          string32DimId = netcdf.defDim(fCdf, 'STRING32', 32);
@@ -582,7 +584,7 @@ for idProf = 1:length(tabProfiles)
          string8DimId = netcdf.defDim(fCdf, 'STRING8', 8);
          string4DimId = netcdf.defDim(fCdf, 'STRING4', 4);
          string2DimId = netcdf.defDim(fCdf, 'STRING2', 2);
-         
+
          nProfDimId = netcdf.defDim(fCdf, 'N_PROF', nbProfInFile);
          nParamDimId = netcdf.defDim(fCdf, 'N_PARAM', nbProfParam);
          nLevelsDimId = netcdf.defDim(fCdf, 'N_LEVELS', nbProfLevels);
@@ -591,7 +593,7 @@ for idProf = 1:length(tabProfiles)
          end
          % N_CALIB dimension is processed and created later
          nHistoryDimId = netcdf.defDim(fCdf, 'N_HISTORY', netcdf.getConstant('NC_UNLIMITED'));
-         
+
          if (VERBOSE_MODE == 2)
             fprintf('N_PROF = %d\n', nbProfInFile);
             fprintf('N_PARAM = %d\n', nbProfParam);
@@ -600,7 +602,7 @@ for idProf = 1:length(tabProfiles)
                fprintf('N_SUBLEVELS%d = %d\n', profSubLevels(idSL), profSubLevels(idSL));
             end
          end
-         
+
          % create global attributes
          globalVarId = netcdf.getConstant('NC_GLOBAL');
          netcdf.putAtt(fCdf, globalVarId, 'title', 'Argo float vertical profile');
@@ -625,108 +627,108 @@ for idProf = 1:length(tabProfiles)
          netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
          netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
          netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
-         
+
          % create misc variables
          dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string32DimId);
          netcdf.putAtt(fCdf, dataTypeVarId, 'long_name', 'Data type');
          netcdf.putAtt(fCdf, dataTypeVarId, 'conventions', 'Argo reference table 1');
          netcdf.putAtt(fCdf, dataTypeVarId, '_FillValue', ' ');
-         
+
          formatVersionVarId = netcdf.defVar(fCdf, 'FORMAT_VERSION', 'NC_CHAR', string4DimId);
          netcdf.putAtt(fCdf, formatVersionVarId, 'long_name', 'File format version');
          netcdf.putAtt(fCdf, formatVersionVarId, '_FillValue', ' ');
-         
+
          handbookVersionVarId = netcdf.defVar(fCdf, 'HANDBOOK_VERSION', 'NC_CHAR', string4DimId);
          netcdf.putAtt(fCdf, handbookVersionVarId, 'long_name', 'Data handbook version');
          netcdf.putAtt(fCdf, handbookVersionVarId, '_FillValue', ' ');
-         
+
          referenceDateTimeVarId = netcdf.defVar(fCdf, 'REFERENCE_DATE_TIME', 'NC_CHAR', dateTimeDimId);
          netcdf.putAtt(fCdf, referenceDateTimeVarId, 'long_name', 'Date of reference for Julian days');
          netcdf.putAtt(fCdf, referenceDateTimeVarId, 'conventions', 'YYYYMMDDHHMISS');
          netcdf.putAtt(fCdf, referenceDateTimeVarId, '_FillValue', ' ');
-         
+
          dateCreationVarId = netcdf.defVar(fCdf, 'DATE_CREATION', 'NC_CHAR', dateTimeDimId);
          netcdf.putAtt(fCdf, dateCreationVarId, 'long_name', 'Date of file creation');
          netcdf.putAtt(fCdf, dateCreationVarId, 'conventions', 'YYYYMMDDHHMISS');
          netcdf.putAtt(fCdf, dateCreationVarId, '_FillValue', ' ');
-         
+
          dateUpdateVarId = netcdf.defVar(fCdf, 'DATE_UPDATE', 'NC_CHAR', dateTimeDimId);
          netcdf.putAtt(fCdf, dateUpdateVarId, 'long_name', 'Date of update of this file');
          netcdf.putAtt(fCdf, dateUpdateVarId, 'conventions', 'YYYYMMDDHHMISS');
          netcdf.putAtt(fCdf, dateUpdateVarId, '_FillValue', ' ');
-         
+
          % create profile variables
          platformNumberVarId = netcdf.defVar(fCdf, 'PLATFORM_NUMBER', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
          netcdf.putAtt(fCdf, platformNumberVarId, 'long_name', 'Float unique identifier');
          netcdf.putAtt(fCdf, platformNumberVarId, 'conventions', 'WMO float identifier : A9IIIII');
          netcdf.putAtt(fCdf, platformNumberVarId, '_FillValue', ' ');
-         
+
          projectNameVarId = netcdf.defVar(fCdf, 'PROJECT_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
          netcdf.putAtt(fCdf, projectNameVarId, 'long_name', 'Name of the project');
          netcdf.putAtt(fCdf, projectNameVarId, '_FillValue', ' ');
-         
+
          piNameVarId = netcdf.defVar(fCdf, 'PI_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
          netcdf.putAtt(fCdf, piNameVarId, 'long_name', 'Name of the principal investigator');
          netcdf.putAtt(fCdf, piNameVarId, '_FillValue', ' ');
-         
+
          stationParametersVarId = netcdf.defVar(fCdf, 'STATION_PARAMETERS', 'NC_CHAR', fliplr([nProfDimId nParamDimId string64DimId]));
          netcdf.putAtt(fCdf, stationParametersVarId, 'long_name', 'List of available parameters for the station');
          netcdf.putAtt(fCdf, stationParametersVarId, 'conventions', 'Argo reference table 3');
          netcdf.putAtt(fCdf, stationParametersVarId, '_FillValue', ' ');
-         
+
          cycleNumberVarId = netcdf.defVar(fCdf, 'CYCLE_NUMBER', 'NC_INT', nProfDimId);
          netcdf.putAtt(fCdf, cycleNumberVarId, 'long_name', 'Float cycle number');
          netcdf.putAtt(fCdf, cycleNumberVarId, 'conventions', '0...N, 0 : launch cycle (if exists), 1 : first complete cycle');
          netcdf.putAtt(fCdf, cycleNumberVarId, '_FillValue', int32(99999));
-         
+
          directionVarId = netcdf.defVar(fCdf, 'DIRECTION', 'NC_CHAR', nProfDimId);
          netcdf.putAtt(fCdf, directionVarId, 'long_name', 'Direction of the station profiles');
          netcdf.putAtt(fCdf, directionVarId, 'conventions', 'A: ascending profiles, D: descending profiles');
          netcdf.putAtt(fCdf, directionVarId, '_FillValue', ' ');
-         
+
          dataCenterVarId = netcdf.defVar(fCdf, 'DATA_CENTRE', 'NC_CHAR', fliplr([nProfDimId string2DimId]));
          netcdf.putAtt(fCdf, dataCenterVarId, 'long_name', 'Data centre in charge of float data processing');
          netcdf.putAtt(fCdf, dataCenterVarId, 'conventions', 'Argo reference table 4');
          netcdf.putAtt(fCdf, dataCenterVarId, '_FillValue', ' ');
-         
+
          dcReferenceVarId = netcdf.defVar(fCdf, 'DC_REFERENCE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
          netcdf.putAtt(fCdf, dcReferenceVarId, 'long_name', 'Station unique identifier in data centre');
          netcdf.putAtt(fCdf, dcReferenceVarId, 'conventions', 'Data centre convention');
          netcdf.putAtt(fCdf, dcReferenceVarId, '_FillValue', ' ');
-         
+
          dataStateIndicatorVarId = netcdf.defVar(fCdf, 'DATA_STATE_INDICATOR', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'long_name', 'Degree of processing the data have passed through');
          netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'conventions', 'Argo reference table 6');
          netcdf.putAtt(fCdf, dataStateIndicatorVarId, '_FillValue', ' ');
-         
+
          dataModeVarId = netcdf.defVar(fCdf, 'DATA_MODE', 'NC_CHAR', nProfDimId);
          netcdf.putAtt(fCdf, dataModeVarId, 'long_name', 'Delayed mode or real time data');
          netcdf.putAtt(fCdf, dataModeVarId, 'conventions', 'R : real time; D : delayed mode; A : real time with adjustment');
          netcdf.putAtt(fCdf, dataModeVarId, '_FillValue', ' ');
-         
+
          parameterDataModeVarId = netcdf.defVar(fCdf, 'PARAMETER_DATA_MODE', 'NC_CHAR', fliplr([nProfDimId nParamDimId]));
          netcdf.putAtt(fCdf, parameterDataModeVarId, 'long_name', 'Delayed mode or real time data');
          netcdf.putAtt(fCdf, parameterDataModeVarId, 'conventions', 'R : real time; D : delayed mode; A : real time with adjustment');
          netcdf.putAtt(fCdf, parameterDataModeVarId, '_FillValue', ' ');
-         
+
          platformTypeVarId = netcdf.defVar(fCdf, 'PLATFORM_TYPE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
          netcdf.putAtt(fCdf, platformTypeVarId, 'long_name', 'Type of float');
          netcdf.putAtt(fCdf, platformTypeVarId, 'conventions', 'Argo reference table 23');
          netcdf.putAtt(fCdf, platformTypeVarId, '_FillValue', ' ');
-         
+
          floatSerialNoVarId = netcdf.defVar(fCdf, 'FLOAT_SERIAL_NO', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
          netcdf.putAtt(fCdf, floatSerialNoVarId, 'long_name', 'Serial number of the float');
          netcdf.putAtt(fCdf, floatSerialNoVarId, '_FillValue', ' ');
-         
+
          firmwareVersionVarId = netcdf.defVar(fCdf, 'FIRMWARE_VERSION', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
          netcdf.putAtt(fCdf, firmwareVersionVarId, 'long_name', 'Instrument firmware version');
          netcdf.putAtt(fCdf, firmwareVersionVarId, '_FillValue', ' ');
-         
+
          wmoInstTypeVarId = netcdf.defVar(fCdf, 'WMO_INST_TYPE', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, wmoInstTypeVarId, 'long_name', 'Coded instrument type');
          netcdf.putAtt(fCdf, wmoInstTypeVarId, 'conventions', 'Argo reference table 8');
          netcdf.putAtt(fCdf, wmoInstTypeVarId, '_FillValue', ' ');
-         
+
          juldVarId = netcdf.defVar(fCdf, 'JULD', 'NC_DOUBLE', nProfDimId);
          netcdf.putAtt(fCdf, juldVarId, 'long_name', 'Julian day (UTC) of the station relative to REFERENCE_DATE_TIME');
          netcdf.putAtt(fCdf, juldVarId, 'standard_name', 'time');
@@ -738,19 +740,19 @@ for idProf = 1:length(tabProfiles)
          if (~isempty(profJulDComment))
             netcdf.putAtt(fCdf, juldVarId, 'comment_on_resolution', profJulDComment);
          end
-         
+
          juldQcVarId = netcdf.defVar(fCdf, 'JULD_QC', 'NC_CHAR', nProfDimId);
          netcdf.putAtt(fCdf, juldQcVarId, 'long_name', 'Quality on date and time');
          netcdf.putAtt(fCdf, juldQcVarId, 'conventions', 'Argo reference table 2');
          netcdf.putAtt(fCdf, juldQcVarId, '_FillValue', ' ');
-         
+
          juldLocationVarId = netcdf.defVar(fCdf, 'JULD_LOCATION', 'NC_DOUBLE', nProfDimId);
          netcdf.putAtt(fCdf, juldLocationVarId, 'long_name', 'Julian day (UTC) of the location relative to REFERENCE_DATE_TIME');
          netcdf.putAtt(fCdf, juldLocationVarId, 'units', 'days since 1950-01-01 00:00:00 UTC');
          netcdf.putAtt(fCdf, juldLocationVarId, 'conventions', 'Relative julian days with decimal part (as parts of day)');
          netcdf.putAtt(fCdf, juldLocationVarId, 'resolution', profJulDLocRes);
          netcdf.putAtt(fCdf, juldLocationVarId, '_FillValue', double(999999));
-         
+
          latitudeVarId = netcdf.defVar(fCdf, 'LATITUDE', 'NC_DOUBLE', nProfDimId);
          netcdf.putAtt(fCdf, latitudeVarId, 'long_name', 'Latitude of the station, best estimate');
          netcdf.putAtt(fCdf, latitudeVarId, 'standard_name', 'latitude');
@@ -759,7 +761,7 @@ for idProf = 1:length(tabProfiles)
          netcdf.putAtt(fCdf, latitudeVarId, 'valid_min', double(-90));
          netcdf.putAtt(fCdf, latitudeVarId, 'valid_max', double(90));
          netcdf.putAtt(fCdf, latitudeVarId, 'axis', 'Y');
-         
+
          longitudeVarId = netcdf.defVar(fCdf, 'LONGITUDE', 'NC_DOUBLE', nProfDimId);
          netcdf.putAtt(fCdf, longitudeVarId, 'long_name', 'Longitude of the station, best estimate');
          netcdf.putAtt(fCdf, longitudeVarId, 'standard_name', 'longitude');
@@ -768,57 +770,57 @@ for idProf = 1:length(tabProfiles)
          netcdf.putAtt(fCdf, longitudeVarId, 'valid_min', double(-180));
          netcdf.putAtt(fCdf, longitudeVarId, 'valid_max', double(180));
          netcdf.putAtt(fCdf, longitudeVarId, 'axis', 'X');
-         
+
          positionQcVarId = netcdf.defVar(fCdf, 'POSITION_QC', 'NC_CHAR', nProfDimId);
          netcdf.putAtt(fCdf, positionQcVarId, 'long_name', 'Quality on position (latitude and longitude)');
          netcdf.putAtt(fCdf, positionQcVarId, 'conventions', 'Argo reference table 2');
          netcdf.putAtt(fCdf, positionQcVarId, '_FillValue', ' ');
-         
+
          positioningSystemVarId = netcdf.defVar(fCdf, 'POSITIONING_SYSTEM', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
          netcdf.putAtt(fCdf, positioningSystemVarId, 'long_name', 'Positioning system');
          netcdf.putAtt(fCdf, positioningSystemVarId, '_FillValue', ' ');
-         
+
          % global quality of PARAM profile
          for idParam = 1:length(profUniqueParamName)
             profParamName = profUniqueParamName{idParam};
             if (~strcmp(profParamName, 'PRES'))
                ncParamName = sprintf('PROFILE_%s_QC', profParamName);
-               
+
                profileParamQcVarId = netcdf.defVar(fCdf, ncParamName, 'NC_CHAR', nProfDimId);
                netcdf.putAtt(fCdf, profileParamQcVarId, 'long_name', sprintf('Global quality flag of %s profile', profParamName));
                netcdf.putAtt(fCdf, profileParamQcVarId, 'conventions', 'Argo reference table 2a');
                netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
             end
          end
-         
+
          verticalSamplingSchemeVarId = netcdf.defVar(fCdf, 'VERTICAL_SAMPLING_SCHEME', 'NC_CHAR', fliplr([nProfDimId string256DimId]));
          netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'long_name', 'Vertical sampling scheme');
          netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'conventions', 'Argo reference table 16');
          netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, '_FillValue', ' ');
-         
+
          configMissionNumberVarId = netcdf.defVar(fCdf, 'CONFIG_MISSION_NUMBER', 'NC_INT', nProfDimId);
          netcdf.putAtt(fCdf, configMissionNumberVarId, 'long_name', 'Unique number denoting the missions performed by the float');
          netcdf.putAtt(fCdf, configMissionNumberVarId, 'conventions', '1...N, 1 : first complete mission');
          netcdf.putAtt(fCdf, configMissionNumberVarId, '_FillValue', int32(99999));
-         
+
          % add profile data
          calibInfo = [];
          doubleTypeInFile = 0;
          for idP = 1:nbProfToStore
-            
+
             prof = tabProfiles(idProfInFile(idP));
-            
+
             % profile parameter data
             parameterList = prof.paramList;
             for idParam = 1:length(parameterList)
-               
+
                if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES'))
-                  
+
                   profParam = parameterList(idParam);
                   profParamName = profParam.name;
                   profParamNcType = profParam.paramNcType;
-                  
+
                   % find if this parameter has sublevels
                   paramWithSubLevels = 0;
                   if (~isempty(prof.paramNumberWithSubLevels))
@@ -830,10 +832,10 @@ for idProf = 1:length(tabProfiles)
                         nValuesDimId = netcdf.inqDimID(fCdf, sprintf('N_VALUES%d', paramSubLevelsDim));
                      end
                   end
-                  
+
                   % parameter variable and attributes
                   if (~var_is_present_dec_argo(fCdf, profParamName))
-                     
+
                      if (strcmp(profParamNcType, 'NC_DOUBLE'))
                         doubleTypeInFile = 1;
                      end
@@ -842,7 +844,7 @@ for idProf = 1:length(tabProfiles)
                      else
                         profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                      end
-                     
+
                      if (~isempty(profParam.longName))
                         netcdf.putAtt(fCdf, profParamVarId, 'long_name', profParam.longName);
                      end
@@ -874,36 +876,36 @@ for idProf = 1:length(tabProfiles)
                         netcdf.putAtt(fCdf, profParamVarId, 'axis', profParam.axis);
                      end
                   end
-                  
+
                   % parameter QC variable and attributes
                   if ((profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
                            strcmp(profParam.name(end-3:end), '_MED'))
-                        
+
                         profParamQcName = sprintf('%s_QC', profParam.name);
                         if (~var_is_present_dec_argo(fCdf, profParamQcName))
-                           
+
                            profParamQcVarId = netcdf.defVar(fCdf, profParamQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
-                           
+
                            netcdf.putAtt(fCdf, profParamQcVarId, 'long_name', 'quality flag');
                            netcdf.putAtt(fCdf, profParamQcVarId, 'conventions', 'Argo reference table 2');
                            netcdf.putAtt(fCdf, profParamQcVarId, '_FillValue', ' ');
                         end
                      end
                   end
-                  
+
                   % parameter adjusted variable and attributes
                   if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
-                     
+
                      profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                      if (~var_is_present_dec_argo(fCdf, profParamAdjName))
-                        
+
                         if (paramWithSubLevels == 0)
                            profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                         else
                            profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                         end
-                        
+
                         if (~isempty(profParam.longName))
                            netcdf.putAtt(fCdf, profParamAdjVarId, 'long_name', profParam.longName);
                         end
@@ -935,28 +937,28 @@ for idProf = 1:length(tabProfiles)
                            netcdf.putAtt(fCdf, profParamAdjVarId, 'axis', profParam.axis);
                         end
                      end
-                     
+
                      % parameter adjusted QC variable and attributes
                      profParamAdjQcName = sprintf('%s_ADJUSTED_QC', profParam.name);
                      if (~var_is_present_dec_argo(fCdf, profParamAdjQcName))
-                        
+
                         profParamAdjQcVarId = netcdf.defVar(fCdf, profParamAdjQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
-                        
+
                         netcdf.putAtt(fCdf, profParamAdjQcVarId, 'long_name', 'quality flag');
                         netcdf.putAtt(fCdf, profParamAdjQcVarId, 'conventions', 'Argo reference table 2');
                         netcdf.putAtt(fCdf, profParamAdjQcVarId, '_FillValue', ' ');
                      end
-                     
+
                      % parameter adjusted error variable and attributes
                      profParamAdjErrName = sprintf('%s_ADJUSTED_ERROR', profParam.name);
                      if (~var_is_present_dec_argo(fCdf, profParamAdjErrName))
-                        
+
                         if (paramWithSubLevels == 0)
                            profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                         else
                            profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                         end
-                        
+
                         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
                         if (~isempty(profParam.fillValue))
                            netcdf.putAtt(fCdf, profParamAdjErrVarId, '_FillValue', profParam.fillValue);
@@ -978,58 +980,58 @@ for idProf = 1:length(tabProfiles)
                end
             end
          end
-         
+
          % history information
          historyInstitutionVarId = netcdf.defVar(fCdf, 'HISTORY_INSTITUTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, historyInstitutionVarId, 'long_name', 'Institution which performed action');
          netcdf.putAtt(fCdf, historyInstitutionVarId, 'conventions', 'Argo reference table 4');
          netcdf.putAtt(fCdf, historyInstitutionVarId, '_FillValue', ' ');
-         
+
          historyStepVarId = netcdf.defVar(fCdf, 'HISTORY_STEP', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, historyStepVarId, 'long_name', 'Step in data processing');
          netcdf.putAtt(fCdf, historyStepVarId, 'conventions', 'Argo reference table 12');
          netcdf.putAtt(fCdf, historyStepVarId, '_FillValue', ' ');
-         
+
          historySoftwareVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, historySoftwareVarId, 'long_name', 'Name of software which performed action');
          netcdf.putAtt(fCdf, historySoftwareVarId, 'conventions', 'Institution dependent');
          netcdf.putAtt(fCdf, historySoftwareVarId, '_FillValue', ' ');
-         
+
          historySoftwareReleaseVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE_RELEASE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'long_name', 'Version/release of software which performed action');
          netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'conventions', 'Institution dependent');
          netcdf.putAtt(fCdf, historySoftwareReleaseVarId, '_FillValue', ' ');
-         
+
          historyReferenceVarId = netcdf.defVar(fCdf, 'HISTORY_REFERENCE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string64DimId]));
          netcdf.putAtt(fCdf, historyReferenceVarId, 'long_name', 'Reference of database');
          netcdf.putAtt(fCdf, historyReferenceVarId, 'conventions', 'Institution dependent');
          netcdf.putAtt(fCdf, historyReferenceVarId, '_FillValue', ' ');
-         
+
          historyDateVarId = netcdf.defVar(fCdf, 'HISTORY_DATE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId dateTimeDimId]));
          netcdf.putAtt(fCdf, historyDateVarId, 'long_name', 'Date the history record was created');
          netcdf.putAtt(fCdf, historyDateVarId, 'conventions', 'YYYYMMDDHHMISS');
          netcdf.putAtt(fCdf, historyDateVarId, '_FillValue', ' ');
-         
+
          historyActionVarId = netcdf.defVar(fCdf, 'HISTORY_ACTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
          netcdf.putAtt(fCdf, historyActionVarId, 'long_name', 'Action performed on data');
          netcdf.putAtt(fCdf, historyActionVarId, 'conventions', 'Argo reference table 7');
          netcdf.putAtt(fCdf, historyActionVarId, '_FillValue', ' ');
-         
+
          historyParameterVarId = netcdf.defVar(fCdf, 'HISTORY_PARAMETER', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string64DimId]));
          netcdf.putAtt(fCdf, historyParameterVarId, 'long_name', 'Station parameter action is performed on');
          netcdf.putAtt(fCdf, historyParameterVarId, 'conventions', 'Argo reference table 3');
          netcdf.putAtt(fCdf, historyParameterVarId, '_FillValue', ' ');
-         
+
          historyStartPresVarId = netcdf.defVar(fCdf, 'HISTORY_START_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
          netcdf.putAtt(fCdf, historyStartPresVarId, 'long_name', 'Start pressure action applied on');
          netcdf.putAtt(fCdf, historyStartPresVarId, '_FillValue', single(99999));
          netcdf.putAtt(fCdf, historyStartPresVarId, 'units', 'decibar');
-         
+
          historyStopPresVarId = netcdf.defVar(fCdf, 'HISTORY_STOP_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
          netcdf.putAtt(fCdf, historyStopPresVarId, 'long_name', 'Stop pressure action applied on');
          netcdf.putAtt(fCdf, historyStopPresVarId, '_FillValue', single(99999));
          netcdf.putAtt(fCdf, historyStopPresVarId, 'units', 'decibar');
-         
+
          if (doubleTypeInFile == 0)
             historyPreviousValueVarId = netcdf.defVar(fCdf, 'HISTORY_PREVIOUS_VALUE', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
             netcdf.putAtt(fCdf, historyPreviousValueVarId, 'long_name', 'Parameter/Flag previous value before action');
@@ -1039,51 +1041,51 @@ for idProf = 1:length(tabProfiles)
             netcdf.putAtt(fCdf, historyPreviousValueVarId, 'long_name', 'Parameter/Flag previous value before action');
             netcdf.putAtt(fCdf, historyPreviousValueVarId, '_FillValue', double(99999));
          end
-         
+
          historyQcTestVarId = netcdf.defVar(fCdf, 'HISTORY_QCTEST', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string16DimId]));
          netcdf.putAtt(fCdf, historyQcTestVarId, 'long_name', 'Documentation of tests performed, tests failed (in hex form)');
          netcdf.putAtt(fCdf, historyQcTestVarId, 'conventions', 'Write tests performed when ACTION=QCP$; tests failed when ACTION=QCF$');
          netcdf.putAtt(fCdf, historyQcTestVarId, '_FillValue', ' ');
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % DEFINE MODE END
          if (VERBOSE_MODE == 2)
             fprintf('STOP DEFINE MODE\n');
          end
-         
+
          netcdf.endDef(fCdf);
-         
+
          valueStr = 'B-Argo profile';
          netcdf.putVar(fCdf, dataTypeVarId, 0, length(valueStr), valueStr);
-         
+
          valueStr = '3.1';
          netcdf.putVar(fCdf, formatVersionVarId, 0, length(valueStr), valueStr);
-         
+
          valueStr = '1.2';
          netcdf.putVar(fCdf, handbookVersionVarId, 0, length(valueStr), valueStr);
-         
+
          netcdf.putVar(fCdf, referenceDateTimeVarId, '19500101000000');
-         
+
          if (isempty(ncCreationDate))
             netcdf.putVar(fCdf, dateCreationVarId, currentDate);
          else
             netcdf.putVar(fCdf, dateCreationVarId, ncCreationDate);
          end
-         
+
          netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
-                  
+
          % create profile variables
-         
+
          for idP = 1:nbProfToStore
             prof = tabProfiles(idProfInFile(idP));
-            
+
             profPos = idP-1+profShiftIfNoPrimary;
-            
+
             valueStr = sprintf('%d', g_decArgo_floatNum);
             netcdf.putVar(fCdf, platformNumberVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = ' ';
             idVal = find(strcmp('PROJECT_NAME', a_metaDataFromJson) == 1);
             if (~isempty(idVal))
@@ -1092,7 +1094,7 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, projectNameVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = ' ';
             idVal = find(strcmp('PI_NAME', a_metaDataFromJson) == 1);
             if (~isempty(idVal))
@@ -1101,30 +1103,30 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, piNameVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'R');
 
             parameterList = prof.paramList;
             parameterDataMode = prof.paramDataMode;
             paramPos = 0;
             for idParam = 1:length(parameterList)
-               
+
                if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
-                  
+
                   valueStr = parameterList(idParam).name;
-                  
+
                   if (length(valueStr) > paramNameLength)
                      fprintf('ERROR: Float #%d : NetCDF variable name %s too long (> %d) - name truncated\n', ...
                         g_decArgo_floatNum, valueStr, paramNameLength);
                      valueStr = valueStr(1:paramNameLength);
                   end
-                  
+
                   netcdf.putVar(fCdf, stationParametersVarId, ...
                      fliplr([profPos paramPos 0]), fliplr([1 1 length(valueStr)]), valueStr');
-                  
+
                   if (isempty(parameterDataMode))
                      netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
                   elseif ((parameterDataMode(idParam) == 'A') && (~strcmp(parameterList(idParam).name, 'PRES')))
@@ -1133,13 +1135,13 @@ for idProf = 1:length(tabProfiles)
                   else
                      netcdf.putVar(fCdf, parameterDataModeVarId, fliplr([profPos paramPos]), fliplr([1 1]), 'R');
                   end
-                  
+
                   paramPos = paramPos + 1;
                end
             end
-            
+
             netcdf.putVar(fCdf, cycleNumberVarId, profPos, 1, outputCycleNumber);
-            
+
             valueStr = ' ';
             idVal = find(strcmp('DATA_CENTRE', a_metaDataFromJson) == 1);
             if (~isempty(idVal))
@@ -1148,12 +1150,12 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, dataCenterVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = '1A';
             netcdf.putVar(fCdf, dataStateIndicatorVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-                        
+
             valueStr = get_platform_type(a_decoderId);
             netcdf.putVar(fCdf, platformTypeVarId, ...
                fliplr([profPos 0]), ...
@@ -1167,7 +1169,7 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, floatSerialNoVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = ' ';
             idVal = find(strcmp('FIRMWARE_VERSION', a_metaDataFromJson) == 1);
             if (~isempty(idVal))
@@ -1176,13 +1178,13 @@ for idProf = 1:length(tabProfiles)
             netcdf.putVar(fCdf, firmwareVersionVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
-            
+
             valueStr = get_wmo_instrument_type(a_decoderId);
             netcdf.putVar(fCdf, wmoInstTypeVarId, ...
                fliplr([profPos 0]), ...
                fliplr([1 length(valueStr)]), valueStr');
          end
-         
+
          % copy existing history information
          if (~isempty(histoInstitution))
             if (size(histoInstitution, 2) <= nbProfInFile)
@@ -1201,7 +1203,7 @@ for idProf = 1:length(tabProfiles)
                   g_decArgo_floatNum, size(histoInstitution, 2), nbProfInFile, ncPathFileName);
             end
          end
-         
+
          % CONCERNING RT ADJUSTMENT
          % there are 2 kinds of RT adjustments that are managed by the decoder:
          % 1- adjustments performed during the decoding process
@@ -1216,22 +1218,22 @@ for idProf = 1:length(tabProfiles)
          % - there is no reprocessing of associated derived parameters (i.e. for
          % example if PSAL should be adjusted, associated DOXY data is not
          % reprocessed to DOXY_ADJUSTED)
-         
+
          % add profile data
          for idP = 1:nbProfToStore
-            
+
             prof = tabProfiles(idProfInFile(idP));
-            
+
             profPos = idP-1+profShiftIfNoPrimary;
-            
+
             if (VERBOSE_MODE == 2)
                fprintf('Add profile #%d/%d data\n', ...
                   profPos, nbProfInFile);
             end
-            
+
             % profile direction
             netcdf.putVar(fCdf, directionVarId, profPos, 1, prof.direction);
-            
+
             % profile date
             profDate = prof.date;
             if (profDate ~= g_decArgo_dateDef)
@@ -1244,7 +1246,7 @@ for idProf = 1:length(tabProfiles)
             else
                netcdf.putVar(fCdf, juldQcVarId, profPos, 1, g_decArgo_qcStrMissing);
             end
-            
+
             % profile location
             profLocationDate = prof.locationDate;
             profLocationLon = prof.locationLon;
@@ -1264,37 +1266,39 @@ for idProf = 1:length(tabProfiles)
                netcdf.putVar(fCdf, positionQcVarId, profPos, 1, g_decArgo_qcStrMissing);
             end
             netcdf.putVar(fCdf, positioningSystemVarId, fliplr([profPos 0]), fliplr([1 length(profPosSystem)]), profPosSystem');
-            
+
             % vertical sampling scheme
             vertSampScheme = prof.vertSamplingScheme;
-            if (length(vertSampScheme) > verticalSamplingSchemeLength)
+            if (length(vertSampScheme) > g_decArgo_vssMaxLength)
                fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: vertical sampling scheme too long (length = %d > %d) - vertical sampling scheme ''%s'' not set\n', ...
                   g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber, ...
-                  length(vertSampScheme), verticalSamplingSchemeLength, ...
+                  length(vertSampScheme), g_decArgo_vssMaxLength, ...
                   vertSampScheme);
-               vertSampScheme = 'detailed description too long for available space';
+               idF1 = strfind(vertSampScheme, '[');
+               idF2 = strfind(vertSampScheme, ']');
+               vertSampScheme = [vertSampScheme(1:idF1(1)) 'detailed description too long for available space' vertSampScheme(idF2(end):end)];
             end
             netcdf.putVar(fCdf, verticalSamplingSchemeVarId, fliplr([profPos 0]), fliplr([1 length(vertSampScheme)]), vertSampScheme');
-            
+
             % configuration mission number
             if (~isempty(prof.configMissionNumber))
                netcdf.putVar(fCdf, configMissionNumberVarId, profPos, 1, prof.configMissionNumber);
             end
-            
+
             % profile parameter data
             parameterList = prof.paramList;
             parameterDataMode = prof.paramDataMode;
             for idParam = 1:length(parameterList)
-               
+
                if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES'))
-                  
+
                   profParam = parameterList(idParam);
-                  
+
                   % parameter variable and attributes
                   profParamName = profParam.name;
                   profParamVarId = netcdf.inqVarID(fCdf, profParamName);
-                  
+
                   % parameter QC variable and attributes
                   profParamQcVarId = '';
                   if ~(strcmp(profParam.name, 'PRES') || ...
@@ -1303,27 +1307,27 @@ for idProf = 1:length(tabProfiles)
                      profParamQcName = sprintf('%s_QC', profParam.name);
                      profParamQcVarId = netcdf.inqVarID(fCdf, profParamQcName);
                   end
-                  
+
                   if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      % parameter adjusted variable and attributes
                      profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                      profParamAdjVarId = netcdf.inqVarID(fCdf, profParamAdjName);
-                     
+
                      % parameter adjusted QC variable and attributes
                      profParamAdjQcName = sprintf('%s_ADJUSTED_QC', profParam.name);
                      profParamAdjQcVarId = netcdf.inqVarID(fCdf, profParamAdjQcName);
-                     
+
                      % parameter adjusted error variable and attributes
                      profParamAdjErrName = sprintf('%s_ADJUSTED_ERROR', profParam.name);
                      profParamAdjErrVarId = netcdf.inqVarID(fCdf, profParamAdjErrName);
                   end
-                  
+
                   % prof.data is empty in 'default' primary profiles
                   if (~isempty(prof.data))
-                     
+
                      % parameter data
                      if (isempty(prof.paramNumberWithSubLevels))
-                        
+
                         % none of the profile parameters has sublevels
                         paramData = prof.data(:, idParam);
                         if (isempty(prof.dataQc))
@@ -1338,7 +1342,7 @@ for idProf = 1:length(tabProfiles)
                               paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
                               idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                               paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-                              
+
                               if ~(strcmp(profParam.name, 'PRES') || ...
                                     strcmp(profParam.name(end-3:end), '_STD') || ...
                                     strcmp(profParam.name(end-3:end), '_MED'))
@@ -1348,21 +1352,21 @@ for idProf = 1:length(tabProfiles)
                               end
                            end
                         end
-                        
+
                         if (prof.direction == 'A')
                            measIds = fliplr([1:length(paramData)]);
                         else
                            measIds = [1:length(paramData)];
                         end
                         netcdf.putVar(fCdf, profParamVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramData(measIds));
-                        
+
                         if (~isempty(profParamQcVarId))
                            netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramDataQcStr(measIds));
                         end
-                        
+
                         if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
                               (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
-                           
+
                            % parameter adjusted data
                            paramAdjData = prof.dataAdj(:, idParam);
                            if (isempty(prof.dataAdjQc))
@@ -1377,17 +1381,17 @@ for idProf = 1:length(tabProfiles)
                                  paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, length(paramAdjData), 1);
                                  idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                                  paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
-                                 
+
                                  profQualityFlag = compute_profile_quality_flag(paramAdjDataQcStr);
                                  profileParamQcName = sprintf('PROFILE_%s_QC', profParam.name);
                                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profileParamQcName), profPos, 1, profQualityFlag);
                               end
                            end
-                           
+
                            netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                           
+
                            netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                           
+
                            if (~isempty(prof.dataAdjError))
                               paramAdjDataError = prof.dataAdjError(:, idParam);
                               if (any(paramAdjDataError ~= profParam.fillValue))
@@ -1395,11 +1399,11 @@ for idProf = 1:length(tabProfiles)
                               end
                            end
                         end
-                        
+
                      else % of if (isempty(prof.paramNumberWithSubLevels))
-                        
+
                         % some profile parameters have sublevels
-                        
+
                         % retrieve the column(s) associated with the parameter data
                         idF = find(prof.paramNumberWithSubLevels < idParam);
                         if (isempty(idF))
@@ -1407,14 +1411,14 @@ for idProf = 1:length(tabProfiles)
                         else
                            firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
                         end
-                        
+
                         idF = find(prof.paramNumberWithSubLevels == idParam);
                         if (isempty(idF))
                            lastCol = firstCol;
                         else
                            lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
                         end
-                        
+
                         paramData = prof.data(:, firstCol:lastCol);
                         if (isempty(prof.dataQc))
                            paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
@@ -1444,7 +1448,7 @@ for idProf = 1:length(tabProfiles)
                               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
                               idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                               paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
-                              
+
                               if ~(strcmp(profParam.name, 'PRES') || ...
                                     strcmp(profParam.name(end-3:end), '_STD') || ...
                                     strcmp(profParam.name(end-3:end), '_MED'))
@@ -1454,23 +1458,23 @@ for idProf = 1:length(tabProfiles)
                               end
                            end
                         end
-                        
+
                         if (prof.direction == 'A')
                            measIds = fliplr([1:size(paramData, 1)]);
                         else
                            measIds = [1:size(paramData, 1)];
                         end
                         if (size(paramData, 2) == 1)
-                           
+
                            netcdf.putVar(fCdf, profParamVarId, fliplr([profPos 0]), fliplr([1 length(paramData)]), paramData(measIds));
-                           
+
                            if (~isempty(profParamQcVarId))
                               netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataQcStr)]), paramDataQcStr(measIds));
                            end
-                           
+
                            if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
                                  (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
-                              
+
                               % parameter adjusted data
                               paramAdjData = prof.dataAdj(:, firstCol:lastCol);
                               if (isempty(prof.dataAdjQc))
@@ -1485,7 +1489,7 @@ for idProf = 1:length(tabProfiles)
                                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                     idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                                     paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
-                                    
+
                                     if ~(strcmp(profParam.name, 'PRES') || ...
                                           strcmp(profParam.name(end-3:end), '_STD') || ...
                                           strcmp(profParam.name(end-3:end), '_MED'))
@@ -1495,11 +1499,11 @@ for idProf = 1:length(tabProfiles)
                                     end
                                  end
                               end
-                              
+
                               netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjData(measIds));
-                              
+
                               netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                              
+
                               if (~isempty(prof.dataAdjError))
                                  paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
                                  if (any(paramAdjDataError ~= profParam.fillValue))
@@ -1507,18 +1511,18 @@ for idProf = 1:length(tabProfiles)
                                  end
                               end
                            end
-                           
+
                         else % of if (size(paramData, 2) == 1)
-                           
+
                            netcdf.putVar(fCdf, profParamVarId, fliplr([profPos 0 0]), fliplr([1 size(paramData)]), paramData(measIds, :)');
-                           
+
                            if (~isempty(profParamQcVarId))
                               netcdf.putVar(fCdf, profParamQcVarId, fliplr([profPos 0]), fliplr([1 length(paramDataQcStr)]), paramDataQcStr(measIds));
                            end
-                           
+
                            if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
                                  (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
-                              
+
                               % parameter adjusted data
                               paramAdjData = prof.dataAdj(:, firstCol:lastCol);
                               if (isempty(prof.dataAdjQc))
@@ -1541,7 +1545,7 @@ for idProf = 1:length(tabProfiles)
                                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                                     idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                                     paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
-                                    
+
                                     if ~(strcmp(profParam.name, 'PRES') || ...
                                           strcmp(profParam.name(end-3:end), '_STD') || ...
                                           strcmp(profParam.name(end-3:end), '_MED'))
@@ -1551,11 +1555,11 @@ for idProf = 1:length(tabProfiles)
                                     end
                                  end
                               end
-                              
+
                               netcdf.putVar(fCdf, profParamAdjVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjData)]), paramAdjData(measIds, :)');
 
                               netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
-                              
+
                               if (~isempty(prof.dataAdjError))
                                  paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
                                  if (any(paramAdjDataError ~= profParam.fillValue))
@@ -1568,10 +1572,10 @@ for idProf = 1:length(tabProfiles)
                   end
                end
             end
-            
+
             % add specific comment for PRES parameter
             if (any(strcmp({prof.paramList.name}, 'PRES')))
-               
+
                comment = '';
                paramDate = '';
                if (any(prof.paramDataMode == 'A'))
@@ -1587,7 +1591,7 @@ for idProf = 1:length(tabProfiles)
                tabCoefficient = {comment};
                tabComment = {'Adjusted values are provided in the core profile file'};
                tabDate = {paramDate};
-               
+
                % store calibration information for this profile
                profCalibInfo = [];
                profCalibInfo.profId = idP;
@@ -1598,25 +1602,25 @@ for idProf = 1:length(tabProfiles)
                profCalibInfo.date = tabDate;
                calibInfo{end+1} = profCalibInfo;
             end
-            
+
             % for decoder RT adjustments:
             % retrieve SCIENTIFIC_CALIB_* from decoder g_decArgo_paramProfAdjInfo
             % global variable
             if (~isempty(prof.rtParamAdjIdList))
                for idAdj = prof.rtParamAdjIdList
-                  
+
                   % retrieve information on PARAM adjustment
                   idF = find([g_decArgo_paramProfAdjInfo{:, 1}] == idAdj);
                   paramAdjInfo = g_decArgo_paramProfAdjInfo(idF, :);
                   paramName = paramAdjInfo{4};
-                  
+
                   paramInfo = get_netcdf_param_attributes(paramName);
                   if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                      paramEquation = paramAdjInfo{5};
                      paramCoefficient = paramAdjInfo{6};
                      paramComment = paramAdjInfo{7};
                      paramDate = paramAdjInfo{8};
-                     
+
                      if (isempty(paramDate))
                         if (isempty(ncCreationDate))
                            paramDate = currentDate;
@@ -1629,7 +1633,7 @@ for idProf = 1:length(tabProfiles)
                      tabCoefficient = {paramCoefficient};
                      tabComment = {paramComment};
                      tabDate = {paramDate};
-                     
+
                      % store calibration information for this profile
                      profCalibInfo = [];
                      profCalibInfo.profId = idP;
@@ -1642,7 +1646,7 @@ for idProf = 1:length(tabProfiles)
                   end
                end
             end
-            
+
             % history information
             currentHistoId = 0;
             if (~isempty(histoInstitution))
@@ -1665,12 +1669,12 @@ for idProf = 1:length(tabProfiles)
             value = currentDate;
             netcdf.putVar(fCdf, historyDateVarId, ...
                fliplr([currentHistoId profPos 0]), fliplr([1 1 length(value)]), value');
-            
+
             profInfo(idProfInFile(idP), 4) = 1;
          end
-         
+
          % process calibration information
-         
+
          % compute the N_CALIB dimension
          nbCalib = 1;
          if (~isempty(calibInfo))
@@ -1690,36 +1694,36 @@ for idProf = 1:length(tabProfiles)
             end
             nbCalib = max([tabCalibInfo1{:, end}]);
          end
-         
+
          netcdf.reDef(fCdf);
-         
+
          nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbCalib);
-         
+
          % calibration information
          parameterVarId = netcdf.defVar(fCdf, 'PARAMETER', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string64DimId]));
          netcdf.putAtt(fCdf, parameterVarId, 'long_name', 'List of parameters with calibration information');
          netcdf.putAtt(fCdf, parameterVarId, 'conventions', 'Argo reference table 3');
          netcdf.putAtt(fCdf, parameterVarId, '_FillValue', ' ');
-         
+
          scientificCalibEquationVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_EQUATION', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
          netcdf.putAtt(fCdf, scientificCalibEquationVarId, 'long_name', 'Calibration equation for this parameter');
          netcdf.putAtt(fCdf, scientificCalibEquationVarId, '_FillValue', ' ');
-         
+
          scientificCalibCoefficientVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
          netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, 'long_name', 'Calibration coefficients for this equation');
          netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, '_FillValue', ' ');
-         
+
          scientificCalibCommentVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COMMENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
          netcdf.putAtt(fCdf, scientificCalibCommentVarId, 'long_name', 'Comment applying to this parameter calibration');
          netcdf.putAtt(fCdf, scientificCalibCommentVarId, '_FillValue', ' ');
-         
+
          scientificCalibDateVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_DATE', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId dateTimeDimId]));
          netcdf.putAtt(fCdf, scientificCalibDateVarId, 'long_name', 'Date of calibration');
          netcdf.putAtt(fCdf, scientificCalibDateVarId, 'conventions', 'YYYYMMDDHHMISS');
          netcdf.putAtt(fCdf, scientificCalibDateVarId, '_FillValue', ' ');
-         
+
          netcdf.endDef(fCdf);
-         
+
          % fill PARAMETER variable (event if there is no RT adjustments)
          ncParamlist = repmat({''}, nbProfToStore, nbProfParam);
          for idP = 1:nbProfToStore
@@ -1728,14 +1732,14 @@ for idProf = 1:length(tabProfiles)
             profPos = idP-1+profShiftIfNoPrimary;
             paramPos = 0;
             for idParam = 1:length(parameterList)
-               
+
                if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
-                  
+
                   valueStr = parameterList(idParam).name;
-                  
+
                   for idCalib = 1:nbCalib
                      netcdf.putVar(fCdf, parameterVarId, ...
                         fliplr([profPos idCalib-1 paramPos 0]), fliplr([1 1 1 length(valueStr)]), valueStr');
@@ -1745,7 +1749,7 @@ for idProf = 1:length(tabProfiles)
                end
             end
          end
-         
+
          tabCalibInfo2 = [];
          for idC = 1:length(calibInfo)
             profId = calibInfo{idC}.profId;
@@ -1756,7 +1760,7 @@ for idProf = 1:length(tabProfiles)
             coef = calibInfo{idC}.coefficient{:};
             comment = calibInfo{idC}.comment{:};
             date = calibInfo{idC}.date{:};
-            
+
             % compute start calibId
             if (isempty(tabCalibInfo2))
                tabCalibInfo2 = [tabCalibInfo2; calibInfo{idC}.profId calibInfo{idC}.param 1];
@@ -1772,10 +1776,10 @@ for idProf = 1:length(tabProfiles)
                   idCalibStart = idCalibStart + 1;
                end
             end
-            
+
             idF = find(([tabCalibInfo1{:, 1}] == profId)' & strcmp(tabCalibInfo1(:, 2), param));
             idCalibStop = idCalibStart + (nbCalib-tabCalibInfo1{idF, end});
-            
+
             for id = idCalibStart:idCalibStop
                value = param;
                if (~isempty(value))
@@ -1803,10 +1807,10 @@ for idProf = 1:length(tabProfiles)
                      fliplr([profPos id-1 idPosParam-1 0]), fliplr([1 1 1 length(value)]), value');
                end
             end
-         end         
-         
+         end
+
          netcdf.close(fCdf);
-         
+
          if ((g_decArgo_realtimeFlag == 1) || (g_decArgo_applyRtqc == 1))
             % store information for the XML report
             g_decArgo_reportStruct.outputMonoProfFiles = [g_decArgo_reportStruct.outputMonoProfFiles ...
