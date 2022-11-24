@@ -61,6 +61,10 @@ switch (a_decoderId)
       % ARVOR-DO Iridium
       o_platformType = 'ARVOR';
       
+   case {219, 220}
+      % ARVOR-C Iridium
+      o_platformType = 'ARVOR_C';
+      
    case {302, 303}
       % Arvor CM
       o_platformType = 'ARVOR_C';

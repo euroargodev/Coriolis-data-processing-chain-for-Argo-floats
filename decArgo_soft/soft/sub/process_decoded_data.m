@@ -182,8 +182,8 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 33:47)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTD(:, 33:47));
-         [dataCTD(:, 48:62)] = sensor_2_value_for_temperature_204_to_214_217(dataCTD(:, 48:62));
-         [dataCTD(:, 63:77)] = sensor_2_value_for_salinity_210_to_214_217(dataCTD(:, 63:77));
+         [dataCTD(:, 48:62)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 48:62));
+         [dataCTD(:, 63:77)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTD(:, 63:77));
       end
       
       % create drift data set
@@ -404,13 +404,13 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 33:47)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTD(:, 33:47));
-         [dataCTD(:, 48:62)] = sensor_2_value_for_temperature_204_to_214_217(dataCTD(:, 48:62));
-         [dataCTD(:, 63:77)] = sensor_2_value_for_salinity_210_to_214_217(dataCTD(:, 63:77));
+         [dataCTD(:, 48:62)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 48:62));
+         [dataCTD(:, 63:77)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTD(:, 63:77));
       end
       if (~isempty(dataCTDO))
          [dataCTDO(:, 17:23)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTDO(:, 17:23));
-         [dataCTDO(:, 24:30)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 24:30));
-         [dataCTDO(:, 31:37)] = sensor_2_value_for_salinity_210_to_214_217(dataCTDO(:, 31:37));
+         [dataCTDO(:, 24:30)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 24:30));
+         [dataCTDO(:, 31:37)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTDO(:, 31:37));
          [dataCTDO(:, 38:51)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 38:51));
          [dataCTDO(:, 52:58)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 52:58));
       end

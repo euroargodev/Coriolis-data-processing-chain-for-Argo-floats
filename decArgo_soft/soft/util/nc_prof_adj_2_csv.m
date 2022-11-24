@@ -35,7 +35,7 @@ init_default_values;
 COMPARISON_MODE = 0;
 
 % to print the parameter Qc values
-WRITE_QC_FLAG = 1;
+WRITE_QC_FLAG = 1; % if 0 the code should be checked and corrected (failed for BGC floats)
 
 
 if (nargin == 0)
@@ -202,6 +202,13 @@ global g_decArgo_qcStrUnused2;
 inputFileName = [inputName inputExt];
 ourputFileName = [outputName outputExt];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
+
+% list of parameters that have an extra dimension (N_VALUESx)
+paramWithExtraDimList = [ ...
+   {'UV_INTENSITY_NITRATE'} ...
+   {'NB_SIZE_SPECTRA_PARTICLES'} ...
+   {'GREY_SIZE_SPECTRA_PARTICLES'} ...
+   ];
 
 % open NetCDF file
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
@@ -626,7 +633,7 @@ if (a_writeQcFlag == 0)
             idF = find(strcmp(paramList, paramName) == 1, 1);
             if (~isempty(idF))
                dataTmp = paramData{idF};
-               if (ndims(dataTmp) == 2)
+               if (~ismember(parameterName, paramWithExtraDimList))
                   fprintf(fidOut, '; %s', ...
                      paramName);
                else
@@ -653,7 +660,7 @@ if (a_writeQcFlag == 0)
                      idF = find(strcmp(paramList, paramName) == 1, 1);
                      if (~isempty(idF))
                         dataTmp = paramData{idF};
-                        if (ndims(dataTmp) == 2)
+                        if (~ismember(parameterName, paramWithExtraDimList))
                            fprintf(fidOut, '; %s', ...
                               paramName);
                         else
@@ -682,7 +689,7 @@ if (a_writeQcFlag == 0)
                   idF = find(strcmp(paramList, paramName) == 1, 1);
                   if (~isempty(idF))
                      dataTmp = paramData{idF};
-                     if (ndims(dataTmp) == 2)
+                     if (~ismember(parameterName, paramWithExtraDimList))
                         fprintf(fidOut, '; %s', ...
                            paramName);
                      else
@@ -720,7 +727,7 @@ if (a_writeQcFlag == 0)
                   fprintf(fidOut, '%c; ', ...
                      profileParamQcTmp(idP));
                   dataTmp = paramData{idF};
-                  if (ndims(dataTmp) == 3)
+                  if (ismember(parameterName, paramWithExtraDimList))
                      for id1 = 2:size(dataTmp, 1);
                         fprintf(fidOut, '; ');
                      end
@@ -761,7 +768,7 @@ if (a_writeQcFlag == 0)
                         fprintf(fidOut, '%c; ', ...
                            profileParamQcTmp(idP));
                         dataTmp = paramData{idF};
-                        if (ndims(dataTmp) == 3)
+                        if (ismember(parameterName, paramWithExtraDimList))
                            for id1 = 2:size(dataTmp, 1);
                               fprintf(fidOut, '; ');
                            end
@@ -795,15 +802,23 @@ if (a_writeQcFlag == 0)
             idF = find(strcmp(paramList, paramName) == 1, 1);
             if (~isempty(idF))
                dataTmp = paramData{idF};
-               if (ndims(dataTmp) == 2)
+               if (~ismember(parameterName, paramWithExtraDimList))
                   data = [data double(dataTmp(:, idP))];
                   dataFillValue = [dataFillValue paramFillValue{idF}];
                   format = [format '; ' paramFormat{idF}];
                else
-                  for id1 = 1:size(dataTmp, 1);
-                     data = [data double(dataTmp(id1, :, idP)')];
-                     dataFillValue = [dataFillValue paramFillValue{idF}];
-                     format = [format '; ' paramFormat{idF}];
+                  if (ndims(dataTmp) == 2) % when N_PROF = 1
+                     for id1 = 1:size(dataTmp, 1);
+                        data = [data double(dataTmp(id1, :)')];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
+                     end
+                  else
+                     for id1 = 1:size(dataTmp, 1);
+                        data = [data double(dataTmp(id1, :, idP)')];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
+                     end
                   end
                end
             elseif (idS == 1)
@@ -823,15 +838,23 @@ if (a_writeQcFlag == 0)
                   idF = find(strcmp(paramList, paramName) == 1, 1);
                   if (~isempty(idF))
                      dataTmp = paramData{idF};
-                     if (ndims(dataTmp) == 2)
+                     if (~ismember(parameterName, paramWithExtraDimList))
                         data = [data double(dataTmp(:, idP))];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
                      else
-                        for id1 = 1:size(dataTmp, 1);
-                           data = [data double(dataTmp(id1, :, idP)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
+                        if (ndims(dataTmp) == 2) % when N_PROF = 1
+                           for id1 = 1:size(dataTmp, 1);
+                              data = [data double(dataTmp(id1, :)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
+                        else
+                           for id1 = 1:size(dataTmp, 1);
+                              data = [data double(dataTmp(id1, :, idP)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
                         end
                      end
                   elseif (idS == 1)
@@ -853,15 +876,23 @@ if (a_writeQcFlag == 0)
                   idF = find(strcmp(paramList, paramName) == 1, 1);
                   if (~isempty(idF))
                      dataTmp = paramData{idF};
-                     if (ndims(dataTmp) == 2)
+                     if (~ismember(parameterName, paramWithExtraDimList))
                         data = [data double(dataTmp(:, idP))];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
                      else
-                        for id1 = 1:size(dataTmp, 1);
-                           data = [data double(dataTmp(id1, :, idP)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
+                        if (ndims(dataTmp) == 2) % when N_PROF = 1
+                           for id1 = 1:size(dataTmp, 1);
+                              data = [data double(dataTmp(id1, :)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
+                        else
+                           for id1 = 1:size(dataTmp, 1);
+                              data = [data double(dataTmp(id1, :, idP)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
                         end
                      end
                   elseif (idS == 1)
@@ -1015,7 +1046,7 @@ else
             idF = find(strcmp(paramList, paramName) == 1, 1);
             if (~isempty(idF))
                dataTmp = paramData{idF};
-               if (ndims(dataTmp) == 2)
+               if (~ismember(parameterName, paramWithExtraDimList))
                   fprintf(fidOut, '; %s', ...
                      paramName);
                else
@@ -1046,7 +1077,7 @@ else
                         idF = find(strcmp(paramList, paramName) == 1, 1);
                         if (~isempty(idF))
                            dataTmp = paramData{idF};
-                           if (ndims(dataTmp) == 2)
+                           if (~ismember(parameterName, paramWithExtraDimList))
                               fprintf(fidOut, '; %s', ...
                                  paramName);
                            else
@@ -1079,7 +1110,7 @@ else
                   idF = find(strcmp(paramList, paramName) == 1, 1);
                   if (~isempty(idF))
                      dataTmp = paramData{idF};
-                     if (ndims(dataTmp) == 2)
+                     if (~ismember(parameterName, paramWithExtraDimList))
                         fprintf(fidOut, '; %s', ...
                            paramName);
                      else
@@ -1120,7 +1151,7 @@ else
                   fprintf(fidOut, '%c; ', ...
                      profileParamQcTmp(idP));
                   dataTmp = paramData{idF};
-                  if (ndims(dataTmp) == 3)
+                  if (ismember(parameterName, paramWithExtraDimList))
                      for id1 = 2:size(dataTmp, 1);
                         fprintf(fidOut, '; ');
                      end
@@ -1164,7 +1195,7 @@ else
                         fprintf(fidOut, '%c; ', ...
                            profileParamQcTmp(idP));
                         dataTmp = paramData{idF};
-                        if (ndims(dataTmp) == 3)
+                        if (ismember(parameterName, paramWithExtraDimList))
                            for id1 = 2:size(dataTmp, 1);
                               fprintf(fidOut, '; ');
                            end
@@ -1199,15 +1230,23 @@ else
             idF = find(strcmp(paramList, paramName) == 1, 1);
             if (~isempty(idF))
                dataTmp = paramData{idF};
-               if (ndims(dataTmp) == 2)
+               if (~ismember(parameterName, paramWithExtraDimList))
                   data = [data double(dataTmp(:, idP))];
                   dataFillValue = [dataFillValue paramFillValue{idF}];
                   format = [format '; ' paramFormat{idF}];
                else
-                  for id1 = 1:size(dataTmp, 1);
-                     data = [data double(dataTmp(id1, :, idP)')];
-                     dataFillValue = [dataFillValue paramFillValue{idF}];
-                     format = [format '; ' paramFormat{idF}];
+                  if (ndims(dataTmp) == 2) % when N_PROF = 1
+                     for id1 = 1:size(dataTmp, 1);
+                        data = [data double(dataTmp(id1, :)')];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
+                     end
+                  else
+                     for id1 = 1:size(dataTmp, 1);
+                        data = [data double(dataTmp(id1, :, idP)')];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
+                     end
                   end
                end
                dataQcTmp = paramDataQc{idF};
@@ -1239,15 +1278,23 @@ else
                         idF = find(strcmp(paramList, paramName) == 1, 1);
                         if (~isempty(idF))
                            dataTmp = paramData{idF};
-                           if (ndims(dataTmp) == 2)
+                           if (~ismember(parameterName, paramWithExtraDimList))
                               data = [data double(dataTmp(:, idP))];
                               dataFillValue = [dataFillValue paramFillValue{idF}];
                               format = [format '; ' paramFormat{idF}];
                            else
-                              for id1 = 1:size(dataTmp, 1);
-                                 data = [data double(dataTmp(id1, :, idP)')];
-                                 dataFillValue = [dataFillValue paramFillValue{idF}];
-                                 format = [format '; ' paramFormat{idF}];
+                              if (ndims(dataTmp) == 2) % when N_PROF = 1
+                                 for id1 = 1:size(dataTmp, 1);
+                                    data = [data double(dataTmp(id1, :)')];
+                                    dataFillValue = [dataFillValue paramFillValue{idF}];
+                                    format = [format '; ' paramFormat{idF}];
+                                 end
+                              else
+                                 for id1 = 1:size(dataTmp, 1);
+                                    data = [data double(dataTmp(id1, :, idP)')];
+                                    dataFillValue = [dataFillValue paramFillValue{idF}];
+                                    format = [format '; ' paramFormat{idF}];
+                                 end
                               end
                            end
                            dataQcTmp = paramDataQc{idF};
@@ -1281,7 +1328,7 @@ else
                   idF = find(strcmp(paramList, paramName) == 1, 1);
                   if (~isempty(idF))
                      dataTmp = paramData{idF};
-                     if (ndims(dataTmp) == 2)
+                     if (~ismember(parameterName, paramWithExtraDimList))
                         data = [data double(dataTmp(:, idP))];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];

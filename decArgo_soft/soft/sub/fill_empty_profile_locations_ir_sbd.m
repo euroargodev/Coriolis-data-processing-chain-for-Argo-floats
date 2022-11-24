@@ -70,20 +70,22 @@ for idProf = 1:length(a_tabProfiles)
       % find the previous good GPS location
       idPrev = find((gpsLocDate <= profile.date) & (gpsLocQc == 1));
       if (~isempty(idPrev))
-         idPrev = idPrev(end);
-         prevLocDate = gpsLocDate(idPrev);
-         prevLocLon = gpsLocLon(idPrev);
-         prevLocLat = gpsLocLat(idPrev);
+         % previous good GPS locations exist, use the last one
+         [~, idMax] = max(gpsLocDate(idPrev));
+         prevLocDate = gpsLocDate(idPrev(idMax));
+         prevLocLon = gpsLocLon(idPrev(idMax));
+         prevLocLat = gpsLocLat(idPrev(idMax));
       end
       
       % find the next good GPS location
       idNext = find((gpsLocDate >= profile.date) & (gpsLocQc == 1));
       if (~isempty(idNext))
-         idNext = idNext(1);
-         nextLocDate = gpsLocDate(idNext);
-         nextLocLon = gpsLocLon(idNext);
-         nextLocLat = gpsLocLat(idNext);
-         nextLocCyNum = gpsLocCycleNum(idNext);
+         % next good GPS locations exist, use the first one
+         [~, idMin] = min(gpsLocDate(idNext));
+         nextLocDate = gpsLocDate(idNext(idMin));
+         nextLocLon = gpsLocLon(idNext(idMin));
+         nextLocLat = gpsLocLat(idNext(idMin));
+         nextLocCyNum = gpsLocCycleNum(idNext(idMin));
       end
       
       % interpolate between the 2 locations

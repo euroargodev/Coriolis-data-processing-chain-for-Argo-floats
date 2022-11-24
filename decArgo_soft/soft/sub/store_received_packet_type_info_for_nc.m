@@ -303,6 +303,12 @@ switch (a_decoderId)
          g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbParm2PacketsReceived;
       end
       
+   case {219, 220}
+
+      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+         g_decArgo_cycleNum 1000];
+      g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbAscentPacketsReceived;      
+      
    otherwise
       fprintf('WARNING: Received packet type information is not defined yet for decoderId #%d\n', a_decoderId);
 end

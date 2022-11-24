@@ -280,6 +280,21 @@ else
             end
          end
          
+      case {219, 220}
+         % Arvor-C 5.3 & 5.301
+         
+         if (g_decArgo_0TypePacketReceivedFlag == 0)
+            fprintf('BUFF_INFO: Float #%d: Technical packet is missing\n', ...
+               g_decArgo_floatNum);
+         end
+         if (g_decArgo_0TypePacketReceivedFlag == 1)
+            if (g_decArgo_nbOf1Or8Or11Or14TypePacketExpected ~= g_decArgo_nbOf1Or8Or11Or14TypePacketReceived)
+               fprintf('BUFF_INFO: Float #%d: %d ascent data packets are missing\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_nbOf1Or8Or11Or14TypePacketExpected-g_decArgo_nbOf1Or8Or11Or14TypePacketReceived);
+            end
+         end
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing implemented yet to explain what is missing in the buffer for decoderId #%d\n', ...
             g_decArgo_floatNum, ...

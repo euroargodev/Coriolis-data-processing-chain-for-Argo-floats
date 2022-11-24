@@ -27,6 +27,7 @@ INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_pr
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\zzz\zzzz\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\C-RAID\TEST\OUT_TEST\';
 
 % output directory
 % OUTPUT_DIR_NAME = 'E:\HDD\message_20140306_by_month_split_raw_zip\';
@@ -37,6 +38,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_p
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing_zzzz_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing_zip\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\C-RAID\TEST\OUT_TEST_zip\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

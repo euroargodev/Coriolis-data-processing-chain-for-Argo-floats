@@ -50,6 +50,10 @@ BOUNDARY2 = 'boundary=';
 SBD_FILE_NAME = 'filename=';
 BOUNDARY_END = '----------';
 
+% if (strcmp(a_fileName, 'co_20111030T120954Z_300034013303990_001664_000000_26298.txt'))
+%    a=1
+% end
+
 % mail file path name to process
 mailFilePathName = [a_inputDirName '/' a_fileName];
 
@@ -88,15 +92,21 @@ while 1
    lineNum = lineNum + 1;
    
    % collect information
-   if (boundaryDone == 0) % use the first boundary only
-      if (~isempty(strfind(line, BOUNDARY)))
-         idPos = strfind(line, BOUNDARY);
-         boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
-         boundaryCode = regexprep(boundaryCode, '-', '');
-         boundaryDone = 1;
-      end
+   if (~isempty(strfind(line, BOUNDARY))) % BOUNDARY may appear twice, use the last occurence
+      idPos = strfind(line, BOUNDARY);
+      boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
+      boundaryCode = regexprep(boundaryCode, '-', '');
+      boundaryDone = 1;
    end
-   if (~isempty(strfind(line, BOUNDARY2)) && (boundaryDone == 0)) % use the first boundary only
+%       if (boundaryDone == 0) % use the first boundary only
+%          if (~isempty(strfind(line, BOUNDARY)))
+%             idPos = strfind(line, BOUNDARY);
+%             boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
+%             boundaryCode = regexprep(boundaryCode, '-', '');
+%             boundaryDone = 1;
+%          end
+%       end
+   if (~isempty(strfind(line, BOUNDARY2)) && (boundaryDone == 0)) % use BOUNDARY if present otherwise BOUNDARY2
       idPos = strfind(line, BOUNDARY2);
       boundaryCode = strtrim(line(idPos+length(BOUNDARY2):end));
       boundaryDone = 1;

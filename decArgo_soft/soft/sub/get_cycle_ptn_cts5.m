@@ -85,6 +85,10 @@ cyclePatternList = unique(cyclePatternList, 'rows');
 cycleList = [cycleList; cyclePatternList(:, 1)];
 cycleList = unique(cycleList);
 
+% a=1; % reduce the number of cycles (for debug)
+% cycleList(find(ismember(cycleList, 1:149))) = [];
+% cyclePatternList(find(ismember(cyclePatternList(:, 1), 1:149)), :) = [];
+
 o_cycleList = cycleList;
 o_cyclePatternList = cyclePatternList;
 o_payloadConfFiles = payloadConfFileList;

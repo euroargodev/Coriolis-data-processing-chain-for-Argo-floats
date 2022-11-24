@@ -21,18 +21,23 @@
 function generate_json_float_meta_prv_cts5_ir_rudics
 
 % meta-data file exported from Coriolis data base
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\TMP\new_rem_meta.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
 
 % list of sensors mounted on floats
+% SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\TMP\float_sensor_list.txt';
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
 % list of concerned floats
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\TMP\new_rem.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % calibration coefficient file decoded from data
 CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of launch configuration for each float
+% CONFIG_DIR_NAME = 'C:\Users\jprannou\Desktop\TMP\';
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\ConfigAtLaunch\';
 
 % directory of SUNA calibration files

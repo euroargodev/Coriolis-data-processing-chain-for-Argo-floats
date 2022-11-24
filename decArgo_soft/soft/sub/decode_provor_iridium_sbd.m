@@ -59,6 +59,7 @@ g_decArgo_floatNum = a_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
+g_decArgo_cycleNum = [];
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
@@ -769,6 +770,11 @@ for idSpoolFile = 1:length(tabAllFileNames)
             
             % decode the collected data
             decode_prv_data_ir_sbd_215(sbdDataData, sbdDataDate, 0);
+            
+         case {219, 220} % Arvor-C 5.3 & 5.301
+            
+            % decode the collected data
+            decode_prv_data_ir_sbd_219_220(sbdDataData, sbdDataDate, 0);
             
          otherwise
             fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
@@ -1648,8 +1654,8 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217(dataCTD(:, 47:61));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1891,8 +1897,8 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217(dataCTD(:, 47:61));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -2135,8 +2141,8 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 23:29));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 51:57));
@@ -2448,27 +2454,27 @@ switch (a_decoderId)
          switch (optodeType)
             case 2
                % CTD only
-               [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 32:46));
-               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 47:61));
+               [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 32:46));
+               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 47:61));
                [dataCTDO(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 62:76));
             case 1
                % CTD + Aanderaa 4330
-               [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 23:29));
+               [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
+               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 23:29));
                [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
                [dataCTDO(:, 37:50)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 37:50));
                [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 51:57));
             case 4
                % CTD + SBE 63
-               [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 20:28));
-               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 29:37));
+               [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 20:28));
+               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 29:37));
                [dataCTDO(:, 38:46)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 38:46));
                [dataCTDO(:, 47:55)] = sensor_2_value_for_phase_delay_doxy_209(dataCTDO(:, 47:55));
                [dataCTDO(:, 56:64)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 56:64));
             case 5
                % CTD + Aanderaa 4330 + SBE 63
-               [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 12:16));
-               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 17:21));
+               [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 12:16));
+               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 17:21));
                [dataCTDO(:, 22:26)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 22:26));
                [dataCTDO(:, 27:36)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 27:36));
                [dataCTDO(:, 37:41)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 37:41));
@@ -2771,8 +2777,8 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_to_214_217(dataCTD(:, 62:76));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTD(:, 62:76));
       end
       
       % create drift data set
@@ -3012,8 +3018,8 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTDO))
          [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_210_to_214_217(dataCTDO(:, 30:36));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_214_217_219_220(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_210_to_214_217_220(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(dataCTDO(:, 51:57));
       end

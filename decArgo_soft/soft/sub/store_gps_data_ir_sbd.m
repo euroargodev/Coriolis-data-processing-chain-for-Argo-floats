@@ -62,84 +62,108 @@ if (~isempty(a_tabTech))
       end
       
       for idP = 1:length(idPos)
-      switch (a_decoderId)
-         
-         case {201, 202, 203, 215, 216, 218} 
-            % Arvor-deep 4000
-            % Arvor-deep 3500
-            % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
-            % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)
-            % Arvor-Deep-Ice Iridium 5.66 (NKE version)
-            gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
-
-         case {205, 204, 206, 207, 208, 209}
-            % Arvor Iridium 5.41 & 5.42 & 5.4
-            % Provor-DO Iridium 5.71 & 5.7 & 5.72
-            % Arvor-2DO Iridium 5.73
-            gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
+         switch (a_decoderId)
             
-         case {210, 211, 212, 213, 214, 217}
-            % Arvor-ARN Iridium
-            % Arvor-ARN-Ice Iridium
-            % Provor-ARN-DO Iridium
-            % Provor-ARN-DO-Ice Iridium 5.75
-            % Arvor-ARN-DO-Ice Iridium 5.46
-            gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
-            
-         otherwise
-            fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...
-               g_decArgo_floatNum, ...
-               a_decoderId);
-            return
-      end
-      
-      % GPS data (consider only 'valid' GPS locations)
-      if (gpsValidFlagFromTech == 1)
-         gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
-         gpsLocProfNum = [gpsLocProfNum; -1];
-         gpsLocPhase = [gpsLocPhase; -1];
-         gpsLocDate = [gpsLocDate; a_tabTech(idPos(idP), end-3)];
-         gpsLocLon = [gpsLocLon; a_tabTech(idPos(idP), end-2)];
-         gpsLocLat = [gpsLocLat; a_tabTech(idPos(idP), end-1)];
-         gpsLocQc = [gpsLocQc; 0];
-         gpsLocAccuracy = [gpsLocAccuracy; 'G'];
-         gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos(idP), end)];
-         
-         % compute the JAMSTEC QC for the GPS locations of the current cycle
-
-         lastLocDateOfPrevCycle = g_decArgo_dateDef;
-         lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
-         lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
-                  
-         % retrieve the last good GPS location of the previous cycle
-         % (a_cycleNum-1)
-         idF = find(gpsLocCycleNum == a_cycleNum-1);
-         if (~isempty(idF))
-            prevLocDate = gpsLocDate(idF);
-            prevLocLon = gpsLocLon(idF);
-            prevLocLat = gpsLocLat(idF);
-            prevLocQc = gpsLocQc(idF);
+            case {201, 202, 203, 215, 216, 218}
+               % Arvor-deep 4000
+               % Arvor-deep 3500
+               % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
+               % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)
+               % Arvor-Deep-Ice Iridium 5.66 (NKE version)
+               gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
                
-            idGoodLoc = find(prevLocQc == 1);
-            if (~isempty(idGoodLoc))
-               lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
-               lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
-               lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
-            end
+            case {205, 204, 206, 207, 208, 209}
+               % Arvor Iridium 5.41 & 5.42 & 5.4
+               % Provor-DO Iridium 5.71 & 5.7 & 5.72
+               % Arvor-2DO Iridium 5.73
+               gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
+               
+            case {210, 211, 212, 213, 214, 217}
+               % Arvor-ARN Iridium
+               % Arvor-ARN-Ice Iridium
+               % Provor-ARN-DO Iridium
+               % Provor-ARN-DO-Ice Iridium 5.75
+               % Arvor-ARN-DO-Ice Iridium 5.46
+               gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
+               
+            case {219, 220}
+               % Arvor-C 5.3 & 5.301
+               gpsValidFlagFromTech = a_tabTech(idPos(idP), end-5);
+               
+               % specific
+               if (ismember(g_decArgo_floatNum, [6902679 6902932]))
+                  switch g_decArgo_floatNum
+                     case 6902679
+                        % erroneous GPS location that cannot be detected by
+                        % JAMSTEC QC
+                        if (strcmp(julian_2_gregorian_dec_argo(a_tabTech(idPos(idP), end-3)), '2015/10/06 12:29:30') || ...
+                              strcmp(julian_2_gregorian_dec_argo(a_tabTech(idPos(idP), end-3)), '2015/10/07 12:12:00') || ...
+                              strcmp(julian_2_gregorian_dec_argo(a_tabTech(idPos(idP), end-3)), '2015/10/24 12:13:10'))
+                           gpsValidFlagFromTech = 0;
+                        end
+                     case 6902932
+                        % erroneous GPS location that cannot be detected by
+                        % JAMSTEC QC
+                        if (strcmp(julian_2_gregorian_dec_argo(a_tabTech(idPos(idP), end-3)), '2018/11/25 12:15:57'))
+                           gpsValidFlagFromTech = 0;
+                        end
+                  end
+               end
+               
+            otherwise
+               fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...
+                  g_decArgo_floatNum, ...
+                  a_decoderId);
+               return
          end
          
-         idF = find(gpsLocCycleNum == a_cycleNum);
-         locDate = gpsLocDate(idF);
-         locLon = gpsLocLon(idF);
-         locLat = gpsLocLat(idF);
-         locAcc = gpsLocAccuracy(idF);
-         
-         [locQc] = compute_jamstec_qc( ...
-            locDate, locLon, locLat, locAcc, ...
-            lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
-         
-         gpsLocQc(idF) = str2num(locQc')';
-      end
+         % GPS data (consider only 'valid' GPS locations)
+         if (gpsValidFlagFromTech == 1)
+            gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
+            gpsLocProfNum = [gpsLocProfNum; -1];
+            gpsLocPhase = [gpsLocPhase; -1];
+            gpsLocDate = [gpsLocDate; a_tabTech(idPos(idP), end-3)];
+            gpsLocLon = [gpsLocLon; a_tabTech(idPos(idP), end-2)];
+            gpsLocLat = [gpsLocLat; a_tabTech(idPos(idP), end-1)];
+            gpsLocQc = [gpsLocQc; 0];
+            gpsLocAccuracy = [gpsLocAccuracy; 'G'];
+            gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos(idP), end)];
+            
+            % compute the JAMSTEC QC for the GPS locations of the current cycle
+            
+            lastLocDateOfPrevCycle = g_decArgo_dateDef;
+            lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
+            lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
+            
+            % retrieve the last good GPS location of the previous cycle
+            % (a_cycleNum-1)
+            idF = find(gpsLocCycleNum == a_cycleNum-1);
+            if (~isempty(idF))
+               prevLocDate = gpsLocDate(idF);
+               prevLocLon = gpsLocLon(idF);
+               prevLocLat = gpsLocLat(idF);
+               prevLocQc = gpsLocQc(idF);
+               
+               idGoodLoc = find(prevLocQc == 1);
+               if (~isempty(idGoodLoc))
+                  lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
+                  lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
+                  lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
+               end
+            end
+            
+            idF = find(gpsLocCycleNum == a_cycleNum);
+            locDate = gpsLocDate(idF);
+            locLon = gpsLocLon(idF);
+            locLat = gpsLocLat(idF);
+            locAcc = gpsLocAccuracy(idF);
+            
+            [locQc] = compute_jamstec_qc( ...
+               locDate, locLon, locLat, locAcc, ...
+               lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
+            
+            gpsLocQc(idF) = str2num(locQc')';
+         end
       end
       
       % update GPS data global variable

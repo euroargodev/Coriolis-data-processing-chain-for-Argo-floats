@@ -116,21 +116,23 @@ if (a_profStruct.direction == 'A')
             nextLocDate = g_decArgo_dateDef;
             
             % find the previous GPS location
-            idPrev = find(a_gpsLocDate <= a_profStruct.date);
+            idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
             if (~isempty(idPrev))
-               idPrev = idPrev(end);
-               prevLocDate = a_gpsLocDate(idPrev);
-               prevLocLon = a_gpsLocLon(idPrev);
-               prevLocLat = a_gpsLocLat(idPrev);
+               % previous good GPS locations exist, use the last one
+               [~, idMax] = max(a_gpsLocDate(idPrev));
+               prevLocDate = a_gpsLocDate(idPrev(idMax));
+               prevLocLon = a_gpsLocLon(idPrev(idMax));
+               prevLocLat = a_gpsLocLat(idPrev(idMax));
             end
             
             % find the next GPS location
-            idNext = find(a_gpsLocDate >= a_profStruct.date);
+            idNext = find((a_gpsLocDate >= a_profStruct.date) & (a_gpsLocQc == 1));
             if (~isempty(idNext))
-               idNext = idNext(1);
-               nextLocDate = a_gpsLocDate(idNext);
-               nextLocLon = a_gpsLocLon(idNext);
-               nextLocLat = a_gpsLocLat(idNext);
+               % next good GPS locations exist, use the first one
+               [~, idMin] = min(a_gpsLocDate(idNext));
+               nextLocDate = a_gpsLocDate(idNext(idMin));
+               nextLocLon = a_gpsLocLon(idNext(idMin));
+               nextLocLat = a_gpsLocLat(idNext(idMin));
             end
             
             % interpolate between the 2 locations
@@ -172,11 +174,13 @@ else
       if (a_profStruct.date ~= g_decArgo_dateDef)
          
          % find the previous GPS location
-         idPrev = find(a_gpsLocDate <= a_profStruct.date);
+         idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
          if (~isempty(idPrev))
-            idPrev = idPrev(end);            
+            % previous good GPS locations exist, use the last one
+            [~, idMax] = max(a_gpsLocDate(idPrev));
+            idPrev = idPrev(idMax);
             useIt = 0;
-                        
+            
             % search if we can use the previous GPS location
             if ((a_profStruct.cycleNumber == g_decArgo_firstCycleNumFloat) && ...
                   (a_profStruct.profileNumber == 1))
@@ -225,15 +229,16 @@ else
                prevLocDate = a_gpsLocDate(idPrev);
                prevLocLon = a_gpsLocLon(idPrev);
                prevLocLat = a_gpsLocLat(idPrev);
-               
+                              
                % find the next GPS location
                nextLocDate = g_decArgo_dateDef;
-               idNext = find(a_gpsLocDate >= a_profStruct.date);
+               idNext = find((a_gpsLocDate >= a_profStruct.date) & (a_gpsLocQc == 1));
                if (~isempty(idNext))
-                  idNext = idNext(1);
-                  nextLocDate = a_gpsLocDate(idNext);
-                  nextLocLon = a_gpsLocLon(idNext);
-                  nextLocLat = a_gpsLocLat(idNext);
+                  % next good GPS locations exist, use the first one
+                  [~, idMin] = min(a_gpsLocDate(idNext));
+                  nextLocDate = a_gpsLocDate(idNext(idMin));
+                  nextLocLon = a_gpsLocLon(idNext(idMin));
+                  nextLocLat = a_gpsLocLat(idNext(idMin));
                end
                
                % interpolate between the 2 locations

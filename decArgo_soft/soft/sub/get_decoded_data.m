@@ -334,7 +334,7 @@ switch (a_decoderId)
       g_decArgo_nbInAirPacketsReceived = 0;
       
       % clean duplicates in received data
-      a_decDataTab = clean_duplicates_in_received_data(a_decDataTab,a_decoderId);
+      a_decDataTab = clean_duplicates_in_received_data(a_decDataTab, a_decoderId);
       
       % retrieve data and update counters
       for idSbd = 1:length(a_decDataTab)
@@ -433,7 +433,7 @@ switch (a_decoderId)
       g_decArgo_nbInAirPacketsReceived = 0;
       
       % clean duplicates in received data
-      a_decDataTab = clean_duplicates_in_received_data(a_decDataTab,a_decoderId);
+      a_decDataTab = clean_duplicates_in_received_data(a_decDataTab, a_decoderId);
       
       % retrieve data and update counters
       for idSbd = 1:length(a_decDataTab)
@@ -524,6 +524,32 @@ switch (a_decoderId)
                else
                   g_decArgo_nbParm2PacketsReceived = g_decArgo_nbParm2PacketsReceived + 1;
                end
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {219, 220} % Arvor-C 5.3 & 5.301
+      
+      g_decArgo_nbAscentPacketsReceived = 0;
+      g_decArgo_nbTech1PacketsReceived = 0;
+      
+      % clean duplicates in received data
+      a_decDataTab = clean_duplicates_in_received_data(a_decDataTab, a_decoderId);
+      
+      % retrieve data and update counters
+      for idSbd = 1:length(a_decDataTab)
+         
+         switch (a_decDataTab(idSbd).packType)
+            
+            case 0
+               % technical packet #1
+               o_tabTech1 = [o_tabTech1; a_decDataTab(idSbd).decData{:}];
+               g_decArgo_nbTech1PacketsReceived = g_decArgo_nbTech1PacketsReceived + 1;
+               
+            case 1
+               % CTD packets
+               o_dataCTD = [o_dataCTD; a_decDataTab(idSbd).decData{:}];
+               g_decArgo_nbAscentPacketsReceived = g_decArgo_nbAscentPacketsReceived + 1;
          end
       end
       

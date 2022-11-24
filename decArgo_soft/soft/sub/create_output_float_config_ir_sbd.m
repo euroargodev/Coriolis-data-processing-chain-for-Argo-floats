@@ -51,7 +51,7 @@ switch (a_decoderId)
    
    case {2001, 2002, 2003}
       
-      %nothing for Nova floats
+      % nothing for Nova floats
 
    case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218}
       
@@ -191,6 +191,10 @@ switch (a_decoderId)
          finalConfigName(idDel) = [];
          finalConfigValue(idDel, :) = [];
       end
+      
+   case {219, 220}
+      
+      % nothing for Arvor-C floats
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to create output configuration parameters for decoderId #%d\n', ...

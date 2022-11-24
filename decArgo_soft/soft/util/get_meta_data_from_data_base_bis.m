@@ -48,13 +48,21 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Finland_APF11_Rudics_from_VB_20181023.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6901763_dbexport_inclinometre.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\Reste_a_basculer_en_3.1\Apex_013108_042408_111509\float_metadata.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\Apex_APF11_Norway_DB_export.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_pts\float_metadata_pts.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\Apex_APF11_Norway_DB_export.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_pts\float_metadata_pts.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\Apex_bgc\float_metadata_bgc.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\APEX_ARGOS_dbExport_USED.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\APEX_IRIDIUM_dbExport_USED.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\PROVOR_ARGOS_dbExport_USED.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\PROVOR_IRIDIUM_dbExport_USED.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\ARVORC_dbExport.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_SBD.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\lists\CO_APEX_IRIDIUM_24_RUDICS.txt';
 floatListFileName = '';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
@@ -77,7 +85,7 @@ if (fidOut == -1)
    return
 end
 
-header = ['PI Name; Trans system; Activity flag; Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
+header = ['PI Name; Trans system; Activity flag; Data center; Decoder version; Serial No; Cycle length (days); Parking PRES; Profile PRES; IMEI; WMO #; Decoder Id; PTT #;  Frame length (bytes); Cycle length (hours); Drift sampling period (hours); DELAI parameter (hours); Launch date (yyyymmddHHMMSS); Launch longitude; Launch latitude; Day of the first descent (yyyymmdd); End decoding date; DM flag; Decoder version'];
 fprintf(fidOut, '%s\n', header);
 
 % read meta file
@@ -124,6 +132,7 @@ tabTransSystem = [];
 tabActivity = [];
 tabDataCenter = [];
 tabPtt = [];
+tabImei = [];
 tabSerialNum = [];
 tabCycleTime = [];
 tabParkPres = [];
@@ -177,6 +186,13 @@ for idFloat = 1:length(floatList)
       ptt = paramValueList{idForWmo(idPtt)};
    end
    tabPtt{end+1} = ptt;
+
+   idImei = find(strcmp(paramCodeList(idForWmo), 'IMEI') == 1, 1);
+   imei = '';
+   if (~isempty(idImei))
+      imei = paramValueList{idForWmo(idImei)};
+   end
+   tabImei{end+1} = imei;
 
    idSerialNum = find(strcmp(paramCodeList(idForWmo), 'INST_REFERENCE') == 1, 1);
    serialNum = '';
@@ -285,6 +301,7 @@ for idTS = 1:length(refTransSystem)
       tabActivity(idF) = tabActivity(idF(idSort));
       tabDataCenter(idF) = tabDataCenter(idF(idSort));
       tabPtt(idF) = tabPtt(idF(idSort));
+      tabImei(idF) = tabImei(idF(idSort));
       tabSerialNum(idF) = tabSerialNum(idF(idSort));
       tabCycleTime(idF) = tabCycleTime(idF(idSort));
       tabParkPres(idF) = tabParkPres(idF(idSort));
@@ -298,9 +315,9 @@ for idTS = 1:length(refTransSystem)
       
       for idL = 1:length(idF)
          id = idF(idL);
-         fprintf(fidOut, '%s; %s; %s; %s;''%s; %s; %g; %s; %s; %d; ; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
+         fprintf(fidOut, '%s; %s; %s; %s;''%s; %s; %g; %s; %s; %s; %d; ; %s; 31; %s; %s; -1; %s; %s; %s; %s; 99999999999999; 0; %s\n', ...
             tabPiName{id}, tabTransSystem{id}, tabActivity{id}, tabDataCenter{id}, tabCoVersion{id}, tabSerialNum{id}, ...
-            str2num(tabCycleTime{id})/24, tabParkPres{id}, tabProfPres{id}, ...
+            str2num(tabCycleTime{id})/24, tabParkPres{id}, tabProfPres{id}, tabImei{id}, ...
             tabFloatNum{id}, tabPtt{id}, tabCycleTime{id}, tabDriftPeriod{id}, ...
             tabLaunchDate{id}, tabLaunchLon{id}, tabLaunchLat{id}, ...
             tabDayFirstDesc{id}, tabCoVersion{id});

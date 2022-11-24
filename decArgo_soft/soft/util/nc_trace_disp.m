@@ -320,12 +320,12 @@ if ((g_NTD_ID_FLOAT ~= a_idFloat) || (g_NTD_LOAD_FLOAT == 1))
    if (parkPres == -1)
       fprintf('ERROR: Unable to retrieve CONFIG_ParkPressure_dbar from meta file (%s)', ...
          metaFileName);
-      return
+%       return
    end
    if (profPres == -1)
       fprintf('ERROR: Unable to retrieve CONFIG_ProfilePressure_dbar from meta file (%s)', ...
          metaFileName);
-      return
+%       return
    end   
    g_NTD_parkingPressure = parkPres;
    g_NTD_deepestPressure = profPres;

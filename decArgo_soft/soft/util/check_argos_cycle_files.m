@@ -41,7 +41,7 @@ global g_decArgo_delayedModeFlag;
 init_default_values;
 
 % date of the last check
-LAST_CHECK_GREG_DATE = '01/06/2010';
+LAST_CHECK_GREG_DATE = '01/01/1900';
 lastCheckMatDate = datenum(LAST_CHECK_GREG_DATE, 'dd/mm/YYYY');
 
 % consider only active floats (since last check date)

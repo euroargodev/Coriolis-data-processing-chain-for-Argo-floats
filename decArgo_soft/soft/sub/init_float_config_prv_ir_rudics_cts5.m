@@ -118,7 +118,7 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
          case 'TRANSISTOR_PH'
             payloadSensorList = [payloadSensorList 7]; % not yet in CTS4 floats
             
-            % not BGC sensors (for Ids we use the number of the manual + 100)
+            % not BGC sensors
          case 'PSA_916'
             payloadSensorList = [payloadSensorList 101];
          case 'OPT_TAK'
@@ -131,6 +131,8 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             payloadSensorList = [payloadSensorList 105];
          case 'TILT'
             payloadSensorList = [payloadSensorList 106];
+         case 'UVP'
+            payloadSensorList = [payloadSensorList 107];
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...
@@ -442,30 +444,32 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       switch (a_decoderId)
 
          case {121, 122, 124}
-            if (isfield(g_decArgo_calibInfo, 'OPTODE'))
-               calibData = g_decArgo_calibInfo.OPTODE;
-               tabDoxyCoef = [];
-               for id = 0:3
-                  fieldName = ['PhaseCoef' num2str(id)];
-                  if (isfield(calibData, fieldName))
-                     tabDoxyCoef(1, id+1) = calibData.(fieldName);
-                  else
-                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return
+            if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'OPTODE')))
+               if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+                  calibData = g_decArgo_calibInfo.OPTODE;
+                  tabDoxyCoef = [];
+                  for id = 0:3
+                     fieldName = ['PhaseCoef' num2str(id)];
+                     if (isfield(calibData, fieldName))
+                        tabDoxyCoef(1, id+1) = calibData.(fieldName);
+                     else
+                        fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+                        return
+                     end
                   end
-               end
-               for id = 0:6
-                  fieldName = ['SVUFoilCoef' num2str(id)];
-                  if (isfield(calibData, fieldName))
-                     tabDoxyCoef(2, id+1) = calibData.(fieldName);
-                  else
-                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
-                     return
+                  for id = 0:6
+                     fieldName = ['SVUFoilCoef' num2str(id)];
+                     if (isfield(calibData, fieldName))
+                        tabDoxyCoef(2, id+1) = calibData.(fieldName);
+                     else
+                        fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+                        return
+                     end
                   end
+                  g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
                end
-               g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
-            else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
             end
             
          case {123, 125}

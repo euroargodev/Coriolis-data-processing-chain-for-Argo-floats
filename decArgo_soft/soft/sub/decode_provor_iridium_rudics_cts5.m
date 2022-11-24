@@ -954,7 +954,7 @@ for typeNum = typeOrderList
                % payload configuration file
                
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               
+
                % update current configuration
                update_float_config_ir_rudics_cts5('P', [fileNameInfo{4} fileNameInfo{1}]);
                

@@ -778,7 +778,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220}
       
       % Arvor deep 4000
       % Arvor deep 3500
@@ -793,6 +793,7 @@ switch (a_decoderId)
       % Arvor-Deep-Ice Iridium 5.65
       % Arvor-ARN-DO-Ice Iridium 5.46
       % Arvor-Deep-Ice Iridium 5.66
+      % Arvor-C Iridium 5.3 & 5.301
       
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);

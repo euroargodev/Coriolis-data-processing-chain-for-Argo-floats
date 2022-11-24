@@ -142,6 +142,9 @@ for idF = 1:length(fieldNames)
    rawData = configData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
       data = rawData{idI};
+      if (strcmp(data, 'P60=0')) % present in float 6902968 (first CTS5 UVP), should not be considered
+         continue
+      end
       idFEq = strfind(data, '=');
       % manage known errors
       if (isempty(idFEq))

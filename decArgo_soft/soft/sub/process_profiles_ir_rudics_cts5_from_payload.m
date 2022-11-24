@@ -261,6 +261,7 @@ managedSensornameList = [ ...
    {'SUNA'} ...
    {'Optode'} ...
    {'PHSEABIRD_UART6'} ...
+   {'OCTOPUS'} ...
    ];
 idToDel = [];
 for idP = 1:length(payloadProfiles)
@@ -507,6 +508,37 @@ for idP = 1:length(payloadProfiles)
             payloadProfile.paramNameDecArgo = {{'JULD'} ...
                {'VRS_PH'} {'VK_PH'} {'IK_PH'} {'IB_PH'}};
          end         
+      case 107 % UVP6
+         if (~isempty(payloadProfile.subSamplingNum))
+            switch payloadProfile.subSamplingNum
+               case {g_decArgo_treatRaw, g_decArgo_treatAverage}
+                  payloadProfile.paramNameDecArgo = {{'JULD'} {'PARAM_1'} ...
+                     {'PRES'} {'PARAM_2'} {'PARAM_3'} ...
+                     {'IMAGE_NUMBER_PARTICLES'} {'TEMP_PARTICLES'} ...
+                     {'NB_SIZE_SPECTRA_PARTICLES'} {'GREY_SIZE_SPECTRA_PARTICLES'}};
+                  
+                  payloadProfile.paramNumberWithSubLevels = [7 8];
+                  payloadProfile.paramNumberOfSubLevels = [18 18];
+                  
+                  %                case g_decArgo_treatAverage
+                  %                case g_decArgo_treatMedian
+                  %                case g_decArgo_treatMax
+                  %                case g_decArgo_treatMin
+                  %                case g_decArgo_treatStDev
+               otherwise
+                  fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Don''t know how to create parameters for payload sensor #%d with sub-sampling #%d\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum, ...
+                     g_decArgo_cycleNumFloat, ...
+                     g_decArgo_patternNumFloat, ...
+                     payloadProfile.sensorNum, payloadProfile.subSamplingNum);
+            end
+         else
+            payloadProfile.paramNameDecArgo = {{'JULD'} ...
+               {'PARAM_1'} {'PARAM_2'} {'PARAM_3'} ...
+               {'IMAGE_NUMBER_PARTICLES'} {'TEMP_PARTICLES'} ...
+               {'NB_SIZE_SPECTRA_PARTICLES'} {'GREY_SIZE_SPECTRA_PARTICLES'}};
+         end         
    end
    
    payloadProfiles(idP) = payloadProfile;
@@ -678,8 +710,43 @@ for idP = 1:length(payloadProfiles)
       
       % due to payload issue, the measured data could be from a previous cycle
       profStruct = check_payload_profile_cycle_number(profStruct, tabCycleTimes);
+      
+      % TEMPORARY
+      % specific
+      if (g_decArgo_floatNum == 6902968)
+         % remove 'PARAM_1', 'PARAM_2', 'PARAM_3' data from
+         % profile
+         if (any(strcmp({profStruct.paramList.name}, 'PARAM_1') | ...
+               strcmp({profStruct.paramList.name}, 'PARAM_2') | ...
+               strcmp({profStruct.paramList.name}, 'PARAM_3')))
+            idToDel  = find(strcmp({profStruct.paramList.name}, 'PARAM_1') | ...
+               strcmp({profStruct.paramList.name}, 'PARAM_2') | ...
+               strcmp({profStruct.paramList.name}, 'PARAM_3'));
+            if (max(idToDel) < min(profStruct.paramNumberWithSubLevels))
+               profStruct.paramList(:, idToDel) = [];
+               profStruct.paramNumberWithSubLevels = profStruct.paramNumberWithSubLevels - length(idToDel);
+               profStruct.data(:, idToDel) = [];
+            end
+         end
+         % multiply the number of images analyzed and averaged by the
+         % number of levels averaged (i.e. 20)
+         if (any(strcmp({profStruct.paramList.name}, 'IMAGE_NUMBER_PARTICLES')))
+            idParam  = find(strcmp({profStruct.paramList.name}, 'IMAGE_NUMBER_PARTICLES'));
+            if (idParam < min(profStruct.paramNumberWithSubLevels))
+               profStruct.data(:, idParam) = profStruct.data(:, idParam) * 20;
+            end
+         end
+         % divide the number of particles per size class by 0.63 to obtain
+         % the number of particles per litre
+         if (any(strcmp({profStruct.paramList.name}, 'NB_SIZE_SPECTRA_PARTICLES')))
+            idParam  = find(strcmp({profStruct.paramList.name}, 'NB_SIZE_SPECTRA_PARTICLES'));
+            idF = find(profStruct.paramNumberWithSubLevels == idParam);
+            firstCol = idParam;
+            lastCol = idParam + payloadProfile.paramNumberOfSubLevels(idF) - 1;
+            profStruct.data(:, firstCol:lastCol) = profStruct.data(:, firstCol:lastCol) / 0.63;
+         end
+      end
    end
-   
    profStructAll = [profStructAll profStruct]; % use to determine the phase of raw data
    
    % move PTS of the SUNA profile to a new profile

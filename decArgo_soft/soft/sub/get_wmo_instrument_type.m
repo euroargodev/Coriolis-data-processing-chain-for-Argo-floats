@@ -49,6 +49,10 @@ switch (a_decoderId)
       % Arvor-D float
       o_wmoInstType = '838';
       
+   case {219, 220}
+      % ARVOR-C Iridium
+      o_wmoInstType = '837';
+      
    case {302, 303}
       % Arvor-C float
       o_wmoInstType = '837';

@@ -105,6 +105,12 @@ switch (a_decoderId)
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
+   case {219, 220} % Arvor-C Iridium 5.3 & 5.301
+      
+      init_float_config_prv_ir_sbd_219_220(a_launchDate);
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+      
    case {2001, 2002, 2003} % Nova, Dova
       
       init_float_config_nva_ir_sbd(a_launchDate, a_decoderId);

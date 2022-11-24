@@ -94,7 +94,7 @@ for idMsg = 1:size(sbdDataTab, 1)
          decodedData = decode_prv_data_ir_sbd_216(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate);
          o_decodedData = [o_decodedData decodedData];
-            
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {218} % Arvor-Deep-Ice Iridium 5.66 (NKE version)
          
@@ -102,7 +102,15 @@ for idMsg = 1:size(sbdDataTab, 1)
          decodedData = decode_prv_data_ir_sbd_218(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate);
          o_decodedData = [o_decodedData decodedData];
-            
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {219, 220} % Arvor-C 5.3 & 5.301
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_219_220(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate);
+         o_decodedData = [o_decodedData decodedData];
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing implemented yet in decode_sbd_file for decoderId #%d\n', ...
             g_decArgo_floatNum, ...
