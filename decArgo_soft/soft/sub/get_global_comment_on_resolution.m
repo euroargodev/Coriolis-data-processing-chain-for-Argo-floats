@@ -53,7 +53,7 @@ switch (a_decoderId)
       % Arvor-Deep-Ice Iridium 5.67
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210, 211, 212, 222, 213, 214, 217, 219, 220}
+   case {205, 204, 210, 211, 212, 222, 213, 214, 217, 219, 220, 223}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
       % ARVOR-ARN-Ice Iridium 5.45 & 5.47
@@ -61,6 +61,7 @@ switch (a_decoderId)
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
       % Arvor-C Iridium
+      % Arvor-ARN-DO-Ice Iridium 5.48
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
    case {209}
@@ -88,7 +89,7 @@ switch (a_decoderId)
       % Apex Iridium Rudics & Sbd
       o_comment = 'PRES variable resolution depends on measurement codes';
       
-   case {1121, 1321, 1322}
+   case {1121, 1122, 1321, 1322}
       % Apex APF11 Iridium
       o_comment = '';
       

@@ -63,12 +63,13 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217, 223}
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-ARN-DO-Ice Iridium 5.48
       o_configParamName = [ ...
          {'CONFIG_CycleTime_hours'}; ...
          {'CONFIG_ParkPressure_dbar'}; ...
@@ -98,7 +99,7 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
       
-   case {1121, 1321, 1322}
+   case {1121, 1122, 1321, 1322}
       % Apex APF11 Iridium
       o_configParamName = [ ...
          {'CONFIG_CycleTime_minutes'}; ...

@@ -32,7 +32,6 @@ o_tabProfiles = [];
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
-
 % add date to not already dated profiles (due to missing float tech msg #253)
 for idProf = 1:length(a_tabProfiles)
    if (a_tabProfiles(idProf).date == g_decArgo_dateDef)

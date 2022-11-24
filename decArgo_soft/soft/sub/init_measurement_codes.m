@@ -73,6 +73,8 @@ global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
 
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
 global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTST;
 global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
@@ -152,6 +154,8 @@ g_MC_LMT = 704;
 g_MC_TET = 800;
 g_MC_Grounded = 901;
 
+g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST = 110;
+g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST = 111;
 g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST = 690;
 g_MC_InAirSingleMeasRelativeToTST = 699;
 g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST = 710;

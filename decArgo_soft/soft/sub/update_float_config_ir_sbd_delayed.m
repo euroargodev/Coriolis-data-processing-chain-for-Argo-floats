@@ -57,9 +57,11 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {222} % Arvor-ARN-Ice Iridium 5.47
+   case {222, 223}
+      % Arvor-ARN-Ice Iridium 5.47
+      % Arvor-ARN-DO-Ice Iridium 5.48
       
-      update_float_config_ir_sbd_222(a_floatParam, a_cycleNum);
+      update_float_config_ir_sbd_222_223(a_floatParam, a_cycleNum);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to update configuration for decoderId #%d\n', ...

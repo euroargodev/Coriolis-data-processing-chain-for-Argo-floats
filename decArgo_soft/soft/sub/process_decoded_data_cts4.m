@@ -317,7 +317,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
-            cyProfPhaseList, tabTrajIndex, tabTrajData);
+            cyProfPhaseList, tabTrajIndex, tabTrajData, a_decoderId);
                   
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
@@ -354,6 +354,21 @@ end
 % output parameters
 if (isempty(g_decArgo_outputCsvFileId))
    if (~isempty(tabProfiles))
+      
+      % remove PPOX_DOXY data in DOXY profiles
+      for idProf = 1:length(tabProfiles)
+         if (tabProfiles(idProf).sensorNumber == 1)
+            
+            % remove temporary PPOX_DOXY
+            idPpoxDoxy = find(strcmp({tabProfiles(idProf).paramList.name}, 'PPOX_DOXY') == 1);
+            if (~isempty(idPpoxDoxy))
+               tabProfiles(idProf).data(:, idPpoxDoxy) = [];
+               tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+               tabProfiles(idProf).paramList(idPpoxDoxy) = [];
+            end
+         end
+      end
+      
       o_tabProfiles = [o_tabProfiles tabProfiles];
    end
    if (~isempty(tabTrajNMeas))

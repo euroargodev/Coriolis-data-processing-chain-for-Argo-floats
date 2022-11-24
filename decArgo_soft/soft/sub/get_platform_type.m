@@ -49,7 +49,7 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209, 210, 211, 212, 222}
+   case {205, 204, 209, 210, 211, 212, 222, 223}
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       
@@ -76,7 +76,7 @@ switch (a_decoderId)
       
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, ...
          1314, ...
-         1121, ...
+         1121, 1122, ...
          1321, 1322}
       % Apex Iridium
       o_platformType = 'APEX';

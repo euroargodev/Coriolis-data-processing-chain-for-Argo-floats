@@ -951,8 +951,8 @@ if (a_deepCycle == 1)
       
    if (~isempty(tabTech2) && (a_iceDetected == 0))
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217_222(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222(tabTech2(16+ID_OFFSET));
+      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_223(tabTech2(15+ID_OFFSET));
+      temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222_223(tabTech2(16+ID_OFFSET));
       psal = tabTech2(17+ID_OFFSET)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
@@ -967,10 +967,10 @@ if (a_deepCycle == 1)
             paramDoxy = get_netcdf_param_attributes('DOXY');
             measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
             
-            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(tabTech2(18+ID_OFFSET));
-            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(tabTech2(19+ID_OFFSET));
-            tempDoxy = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221(tabTech2(20+ID_OFFSET));
-            doxy = compute_DOXY_201_203_206_209_213_to_218_221(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
+            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221_223(tabTech2(18+ID_OFFSET));
+            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221_223(tabTech2(19+ID_OFFSET));
+            tempDoxy = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221_223(tabTech2(20+ID_OFFSET));
+            doxy = compute_DOXY_201_203_206_209_213_to_218_221_223(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
             measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
             
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

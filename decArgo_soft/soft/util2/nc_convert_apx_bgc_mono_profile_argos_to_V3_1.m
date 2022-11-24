@@ -51,10 +51,13 @@ function nc_convert_apx_bgc_mono_profile_argos_to_V3_1(varargin)
 % top directory of input NetCDF mono-profile files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\Apex_V36_avec_CHLA_TURBIDITY_from_LF_20190426\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 
 % top directory of output NetCDF mono-profile files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_36\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_20200428\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -70,6 +73,11 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexO
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_9.txt';
 
 % reference files
+refNcCFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part1.nc';
+refNcCFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part2.nc';
+refNcBFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part1.nc';
+refNcBFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part2.nc';
+
 refNcCFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part1.nc';
 refNcCFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part2.nc';
 refNcBFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part1.nc';
@@ -914,9 +922,33 @@ if (doxyAdded == 1)
       if (~isempty(idDef))
          
          % compute DOXY
+         
+         % we need profile location for get_meas_location function
+
+         idVal = find(strcmp('LATITUDE', inputData(1:2:end)) == 1, 1);
+         latitude = inputData{2*idVal};
+         idVal = find(strcmp('LONGITUDE', inputData(1:2:end)) == 1, 1);
+         longitude = inputData{2*idVal};
+         
+         latitudeParam = get_netcdf_param_attributes_3_1('LATITUDE');
+         longitudeParam = get_netcdf_param_attributes_3_1('LONGITUDE');
+         
+         global g_decArgo_floatLaunchLon;
+         global g_decArgo_floatLaunchLat;
+         if ((latitude ~= latitudeParam.fillValue) && ...
+               (longitude ~= longitudeParam.fillValue))
+            g_decArgo_floatLaunchLon = longitude;
+            g_decArgo_floatLaunchLat = latitude;
+         end
+         
          doxyValue(idDef, idProf) = compute_DOXY( ...
             molarDoxyValue(idDef, idProf), presValue(idDef, idProf), ...
             tempValue(idDef, idProf), psalValue(idDef, idProf));
+         
+         if (~isempty(g_decArgo_floatLaunchLon))
+            g_decArgo_floatLaunchLon = '';
+            g_decArgo_floatLaunchLat = '';
+         end
          
          % fill DOXY_QC
          doxyQcValue(idDef, idProf) = g_decArgo_qcStrNoQc;
@@ -2723,30 +2755,31 @@ for idOutFile = 1:nbOutPutFile
                end
             end
          end
-         if (emptyFlag)
-            % create the list of parameters
-            [~, nParamDimInput3, nProfDimOutput3] = size(stationParameters);
-            paramForProf = [];
-            for idProf = 1:nProfDimOutput3
-               profParam = [];
-               for idParam = 1:nParamDimInput3
-                  paramForProf{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
-               end
+         % following line commented on 04/28/2020 (demand of Catherine S.)
+         %          if (emptyFlag)
+         % create the list of parameters
+         [~, nParamDimInput3, nProfDimOutput3] = size(stationParameters);
+         paramForProf = [];
+         for idProf = 1:nProfDimOutput3
+            profParam = [];
+            for idParam = 1:nParamDimInput3
+               paramForProf{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
             end
-            paramlist = unique(paramForProf, 'stable');
-            
-            % set PARAMETER names
-            for idProf = 1:nProfDimOutput2
-               for idCalib = 1:nCalibDimOutput2
-                  for idParam = 1:nParamDimInput2
-                     paramName = paramlist{idParam};
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER'), ...
-                        fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
-                        fliplr([1 1 1 length(paramName)]), paramName');
-                  end
+         end
+         paramlist = unique(paramForProf, 'stable');
+         
+         % set PARAMETER names
+         for idProf = 1:nProfDimOutput2
+            for idCalib = 1:nCalibDimOutput2
+               for idParam = 1:nParamDimInput2
+                  paramName = paramlist{idParam};
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER'), ...
+                     fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
+                     fliplr([1 1 1 length(paramName)]), paramName');
                end
             end
          end
+         %          end
       end
    end
    

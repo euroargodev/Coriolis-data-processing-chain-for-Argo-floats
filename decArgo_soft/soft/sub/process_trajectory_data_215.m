@@ -912,10 +912,10 @@ if (a_deepCycle == 1)
             paramDoxy = get_netcdf_param_attributes('DOXY');
             measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
             
-            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(tabTech2(13));
-            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(tabTech2(14));
-            tempDoxy = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221(tabTech2(15));
-            doxy = compute_DOXY_201_203_206_209_213_to_218_221(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
+            c1PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221_223(tabTech2(13));
+            c2PhaseDoxy = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221_223(tabTech2(14));
+            tempDoxy = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221_223(tabTech2(15));
+            doxy = compute_DOXY_201_203_206_209_213_to_218_221_223(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
             measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
             
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

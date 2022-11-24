@@ -32,6 +32,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% output CSV file Id
+global g_decArgo_outputCsvFileId;
+
 
 if (isempty(a_vitalsLogFileList))
    return
@@ -63,7 +66,12 @@ for idFile = 1:length(a_vitalsLogFileList)
    vitFilePathName = a_vitalsLogFileList{idFile};
    
    % read input file
-   [error, data] = read_apx_apf11_ir_binary_log_file(vitFilePathName, 'vitals', 0);
+   if (isempty(g_decArgo_outputCsvFileId))
+      fromLaunchFlag = 1;
+   else
+      fromLaunchFlag = 0;
+   end
+   [error, data] = read_apx_apf11_ir_binary_log_file(vitFilePathName, 'vitals', fromLaunchFlag, 0);
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);

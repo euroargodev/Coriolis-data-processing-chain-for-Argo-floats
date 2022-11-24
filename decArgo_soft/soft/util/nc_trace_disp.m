@@ -44,6 +44,7 @@ g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 
 % number of displacements to plot
 g_NTD_DEFAULT_NB_PLOT_CYCLE = 5;
@@ -660,37 +661,49 @@ if (g_NTD_ISOBATH == 1)
    end
 
    if (g_NTD_ISO_SRTM == 0)
-      [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
-      if (~isempty(contourMatrix))
-         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (ETOPO)'}];
-      end
-
-      [contourMatrix, contourHdl] = m_etopo2('contour', [0:-100:-isoDerive]', 'g:');
-      if (~isempty(contourMatrix))
-         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-      end
-
-      [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_deepestPressure-30 -g_NTD_deepestPressure+30], 'r');
-      if (~isempty(contourMatrix))
-         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (ETOPO)'}];
-      end
-
-      [contourMatrix, contourHdl] = m_etopo2('contour', isoProfilLevels, 'r:');
-      if (~isempty(contourMatrix))
-         set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
-      end
-      
-      [contourMatrix, contourHdl] = m_etopo2('contour', [0 0], 'k');
-      if (~isempty(contourMatrix))
-         g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
-         g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (ETOPO)'}];
-      end
-   else
+      tic;
       [elev, lon , lat] = get_srtm_elev(lonMin, lonMax, latMin, latMax);
+      ellapsedTime = toc;
+      fprintf('load srtm (Elapsed time is %.1f seconds)\n', ellapsedTime);
+   else
+      tic;
+      tic;[elev, lon , lat] = get_gebco_elev(lonMin, lonMax, latMin, latMax);
+      ellapsedTime = toc;
+      fprintf('load gebco (Elapsed time is %.1f seconds)\n', ellapsedTime);
+   end      
+      
+%       [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
+%       if (~isempty(contourMatrix))
+%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+%          g_NTD_legendLabels = [g_NTD_legendLabels {'Park. press. iso. (ETOPO)'}];
+%       end
+% 
+%       [contourMatrix, contourHdl] = m_etopo2('contour', [0:-100:-isoDerive]', 'g:');
+%       if (~isempty(contourMatrix))
+%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+%       end
+% 
+%       [contourMatrix, contourHdl] = m_etopo2('contour', [-g_NTD_deepestPressure-30 -g_NTD_deepestPressure+30], 'r');
+%       if (~isempty(contourMatrix))
+%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+%          g_NTD_legendLabels = [g_NTD_legendLabels {'Prof. press. iso. (ETOPO)'}];
+%       end
+% 
+%       [contourMatrix, contourHdl] = m_etopo2('contour', isoProfilLevels, 'r:');
+%       if (~isempty(contourMatrix))
+%          set(contourHdl, 'ShowText', 'off', 'TextStep', get(contourHdl, 'LevelStep')*4);
+%       end
+%       
+%       [contourMatrix, contourHdl] = m_etopo2('contour', [0 0], 'k');
+%       if (~isempty(contourMatrix))
+%          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
+%          g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (ETOPO)'}];
+%       end
+%    else
+% %       [elev, lon , lat] = get_srtm_elev(lonMin, lonMax, latMin, latMax);
+%       [elev, lon , lat] = get_gebco_elev(lonMin, lonMax, latMin, latMax);
       
       [contourMatrix, contourHdl] = m_contour(lon, lat, elev, [-g_NTD_parkingPressure-30 -g_NTD_parkingPressure+30], 'g');
       if (~isempty(contourMatrix))
@@ -721,7 +734,8 @@ if (g_NTD_ISOBATH == 1)
          g_NTD_legendPlots = [g_NTD_legendPlots contourHdl];
          g_NTD_legendLabels = [g_NTD_legendLabels {'Coastline (SRTM)'}];
       end
-   end
+      clear elev lon lat;
+%    end
    
    fprintf('done\n');
 end

@@ -79,8 +79,10 @@ for id = 1:length(listWmoNum)
       floatType = 'PROVOR';
    elseif ((listDecId(id) > 1000) && (listDecId(id) < 2000))
       floatType = 'APEX';
-   elseif (listDecId(id) > 2000)
+   elseif ((listDecId(id) > 2000) && (listDecId(id) < 3000))
       floatType = 'NOVA';
+   elseif (listDecId(id) > 3000)
+      floatType = 'NEMO';
    end
    
    fprintf(fidOut, '{\n');

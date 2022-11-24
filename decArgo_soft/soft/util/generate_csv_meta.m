@@ -23,6 +23,8 @@ function generate_csv_meta(varargin)
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\deep_norway_6903557.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\5900A05_DBexport.txt';
+dataBaseFileName = 'C:\Users\jprannou\Downloads\new_iridium_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -324,7 +326,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 223}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -537,7 +539,7 @@ switch a_inputSensorName
                {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} ...
                ];
             
-         case {213, 214, 215, 216, 217, 218, 221}
+         case {213, 214, 215, 216, 217, 218, 221, 223}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...

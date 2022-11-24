@@ -3,12 +3,13 @@
 %
 % SYNTAX :
 %  [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
-%    a_logFileName, a_logFileType, a_outputCsvFlag)
+%    a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag)
 %
 % INPUT PARAMETERS :
-%   a_logFileName   : binary log file name
-%   a_logFileType   : log file type ('science' or 'vitals')
-%   a_outputCsvFlag : 1 to write data in a CSV file, 0 otherwise
+%   a_logFileName    : binary log file name
+%   a_logFileType    : log file type ('science' or 'vitals')
+%   a_fromLaunchFlag : consider events from float launch date
+%   a_outputCsvFlag  : 1 to write data in a CSV file, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %   o_error : error flag
@@ -23,7 +24,7 @@
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
-   a_logFileName, a_logFileType, a_outputCsvFlag)
+   a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag)
 
 % output parameters initialization
 o_error = 0;
@@ -92,9 +93,11 @@ while (1)
       timeStampRaw = get_bits(1, 32, dataTime);
       timeStamp = g_decArgo_janFirst1970InJulD + timeStampRaw/86400;
       
-      if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
-         recCurPos = recCurPos + recLength + 1;
-         continue
+      if (a_fromLaunchFlag)
+         if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
+            recCurPos = recCurPos + recLength + 1;
+            continue
+         end
       end
       
       % data

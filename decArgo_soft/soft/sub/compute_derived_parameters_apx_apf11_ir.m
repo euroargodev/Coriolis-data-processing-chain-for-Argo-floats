@@ -54,7 +54,7 @@ global g_decArgo_cycleNum;
 switch (a_decoderId)
    
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1121, 1322}
+   case {1121, 1122, 1322}
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % DOXY & PPOX_DOXY
@@ -117,11 +117,12 @@ switch (a_decoderId)
                end
             end
             
-            % compute DOXY for sub-surface measurements
+            % compute DOXY for drift phase measurements
             if (~isempty(a_cycleTimeData.ascentStartDateSci))
                idPark = find(o_profDo.dates < a_cycleTimeData.ascentStartDateSci);
                
                if (length(idPark) > 1)
+
                   if (~isempty(ctdData))
                      
                      % interpolate and extrapolate PTS data at the times of the OPTODE
@@ -134,7 +135,7 @@ switch (a_decoderId)
                         o_profDo.dates(idPark), 'linear', 'extrap');
                      
                      % compute DOXY
-                     doxyValues = compute_DOXY_1121_1322( ...
+                     doxyValues = compute_DOXY_1121_1122_1322( ...
                         o_profDo.data(idPark, idC1PhaseDoxy), o_profDo.data(idPark, idC2PhaseDoxy), o_profDo.data(idPark, idTempDoxy), ...
                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                         presData, tempData, psalData, ...
@@ -170,7 +171,7 @@ switch (a_decoderId)
                      %                         o_profDo.dates(idPark), 'linear', 'extrap');
                      %
                      %                      % compute DOXY
-                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                      doxyValues = compute_DOXY_1121_1122_1322( ...
                      %                         o_profDo.dataAdj(idPark, idC1PhaseDoxy), o_profDo.dataAdj(idPark, idC2PhaseDoxy), o_profDo.dataAdj(idPark, idTempDoxy), ...
                      %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                      %                         presData, tempData, psalData, ...
@@ -194,11 +195,10 @@ switch (a_decoderId)
                
                if (length(idAscent) > 1)
                   
+                  % retrieve PTS measurements sampled suring ascent profile from
+                  % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                  ctdDataAscent = [];
                   if (~isempty(ctdData))
-                     
-                     % retrieve PTS measurements sampled suring ascent profile from
-                     % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
-                     ctdDataAscent = [];
                      idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
                         (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
                      if (~isempty(idCtdAscent))
@@ -208,42 +208,42 @@ switch (a_decoderId)
                            ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
                         end
                      end
-                     if (~isempty(a_profCtdCp))
-                        if (isempty(ctdDataAscent))
-                           ctdDataAscent = a_profCtdCp;
-                        else
-                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
-                           end
+                  end
+                  if (~isempty(a_profCtdCp))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCp;
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
                         end
                      end
-                     if (~isempty(a_profCtdCpH))
-                        if (isempty(ctdDataAscent))
-                           ctdDataAscent = a_profCtdCpH;
-                           ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
-                           end
-                        else
-                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
-                           end
+                  end
+                  if (~isempty(a_profCtdCpH))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCpH;
+                        ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                        end
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
                         end
                      end
-                     
-                     if (~isempty(ctdDataAscent))
-                        [~, idSort] = sort(ctdDataAscent.data(:, 1));
-                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
-                        end
-                        [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
-                        ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
-                        end
+                  end
+                  
+                  if (~isempty(ctdDataAscent))
+                     [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                     ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                     if (~isempty(ctdDataAscent.dataAdj))
+                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                     end
+                     [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                     ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                     if (~isempty(ctdDataAscent.dataAdj))
+                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
                      end
                      
                      % interpolate and extrapolate TS data at the pressures of the OPTODE
@@ -254,7 +254,7 @@ switch (a_decoderId)
                         o_profDo.data(idAscent, idPres), 'linear', 'extrap');
                      
                      % compute DOXY
-                     doxyValues = compute_DOXY_1121_1322( ...
+                     doxyValues = compute_DOXY_1121_1122_1322( ...
                         o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                         o_profDo.data(idAscent, idPres), tempData, psalData, ...
@@ -288,7 +288,7 @@ switch (a_decoderId)
                      %                         o_profDo.dataAdj(idAscent, idPres), 'linear', 'extrap');
                      %
                      %                      % compute DOXY
-                     %                      doxyValues = compute_DOXY_1121_1322( ...
+                     %                      doxyValues = compute_DOXY_1121_1122_1322( ...
                      %                         o_profDo.dataAdj(idAscent, idC1PhaseDoxy), o_profDo.dataAdj(idAscent, idC2PhaseDoxy), o_profDo.dataAdj(idAscent, idTempDoxy), ...
                      %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                      %                         o_profDo.dataAdj(idAscent, idPres), tempData, psalData, ...
@@ -311,7 +311,7 @@ switch (a_decoderId)
                if (~isempty(idSurf))
                   
                   % compute PPOX_DOXY
-                  ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
+                  ppoxDoxyValues = compute_PPOX_DOXY_1121_1122_1322( ...
                      o_profDo.data(idSurf, idC1PhaseDoxy), o_profDo.data(idSurf, idC2PhaseDoxy), o_profDo.data(idSurf, idTempDoxy), ...
                      paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                      o_profDo.data(idSurf, idPres), ...
@@ -338,7 +338,7 @@ switch (a_decoderId)
                   %                   if (~isempty(o_profDo.dataAdj))
                   %
                   %                      % compute PPOX_DOXY
-                  %                      ppoxDoxyValues = compute_PPOX_DOXY_1121_1322( ...
+                  %                      ppoxDoxyValues = compute_PPOX_DOXY_1121_1122_1322( ...
                   %                         o_profDo.dataAdj(idSurf, idC1PhaseDoxy), o_profDo.dataAdj(idSurf, idC2PhaseDoxy), o_profDo.dataAdj(idSurf, idTempDoxy), ...
                   %                         paramC1phaseDoxy.fillValue, paramC2phaseDoxy.fillValue, paramTempDoxy.fillValue, ...
                   %                         o_profDo.dataAdj(idSurf, idPres), ...
@@ -388,7 +388,7 @@ switch (a_decoderId)
                   ~isempty(idVrsPh) && ~isempty(idPhInSituFree) && ~isempty(idPhInSituTotal))
                
                % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL
-               [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1322( ...
+               [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1122_1322( ...
                   o_profCtdPtsh.data(:, idVrsPh), ...
                   paramVrsPh.fillValue, ...
                   o_profCtdPtsh.data(:, idPres), o_profCtdPtsh.data(:, idTemp), o_profCtdPtsh.data(:, idPsal), ...
@@ -416,7 +416,7 @@ switch (a_decoderId)
                %                if (~isempty(o_profCtdPtsh.dataAdj))
                %
                %                   % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL
-               %                   [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1322( ...
+               %                   [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1122_1322( ...
                %                      o_profCtdPtsh.dataAdj(:, idVrsPh), ...
                %                      paramVrsPh.fillValue, ...
                %                      o_profCtdPtsh.dataAdj(:, idPres), o_profCtdPtsh.dataAdj(:, idTemp), o_profCtdPtsh.dataAdj(:, idPsal), ...
@@ -452,7 +452,7 @@ switch (a_decoderId)
                   ~isempty(idVrsPh) && ~isempty(idPhInSituFree) && ~isempty(idPhInSituTotal))
                
                % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL
-               [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1322( ...
+               [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1122_1322( ...
                   o_profCtdCpH.data(:, idVrsPh), ...
                   paramVrsPh.fillValue, ...
                   o_profCtdCpH.data(:, idPres), o_profCtdCpH.data(:, idTemp), o_profCtdCpH.data(:, idPsal), ...
@@ -480,7 +480,7 @@ switch (a_decoderId)
                %                if (~isempty(o_profCtdCpH.dataAdj))
                %
                %                   % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL
-               %                   [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1322( ...
+               %                   [phInSituFreeValues, phInSituTotalValues] = compute_PH_1121_1122_1322( ...
                %                      o_profCtdCpH.dataAdj(:, idVrsPh), ...
                %                      paramVrsPh.fillValue, ...
                %                      o_profCtdCpH.dataAdj(:, idPres), o_profCtdCpH.dataAdj(:, idTemp), o_profCtdCpH.dataAdj(:, idPsal), ...
@@ -528,7 +528,7 @@ switch (a_decoderId)
          
          if (~isempty(idFluorescenceChla) && ~isempty(idChla))
             % compute CHLA
-            chlaValues = compute_CHLA_105_to_112_121_to_125_1121_1322( ...
+            chlaValues = compute_CHLA_105_to_112_121_to_125_1121_1122_1322( ...
                o_profFlbbCd.data(:, idFluorescenceChla), ...
                paramFluorescenceChla.fillValue, paramChla.fillValue);
             o_profFlbbCd.data(:, idChla) = chlaValues;
@@ -565,14 +565,15 @@ switch (a_decoderId)
                end
             end
             
-            % compute BBP700 for sub-surface measurements
+            % compute BBP700 for drift phase measurements
             if (~isempty(a_cycleTimeData.ascentStartDateSci))
                idPark = find(o_profFlbbCd.dates < a_cycleTimeData.ascentStartDateSci);
                
                if (length(idPark) > 1)
+                  
                   if (~isempty(ctdData))
                      
-                     % interpolate and extrapolate PTS data at the times of the OPTODE
+                     % interpolate and extrapolate PTS data at the times of the
                      % measurements
                      presData = interp1(ctdData.dates, ctdData.data(:, 1), ...
                         o_profFlbbCd.dates(idPark), 'linear', 'extrap');
@@ -582,7 +583,7 @@ switch (a_decoderId)
                         o_profFlbbCd.dates(idPark), 'linear', 'extrap');
                      
                      % compute BBP700
-                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1121_1322( ...
+                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1121_1122_1322( ...
                         o_profFlbbCd.data(idPark, idBetaBackscattering700), ...
                         paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                         [presData, tempData, psalData], ...
@@ -604,11 +605,10 @@ switch (a_decoderId)
                
                if (length(idAscent) > 1)
                   
+                  % retrieve PTS measurements sampled suring ascent profile from
+                  % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
+                  ctdDataAscent = [];
                   if (~isempty(ctdData))
-                     
-                     % retrieve PTS measurements sampled suring ascent profile from
-                     % CTD_PTS, CTD_PTSH, CTD_CP and CTD_CP_H data
-                     ctdDataAscent = [];
                      idCtdAscent = find(((ctdData.dates >= a_cycleTimeData.ascentStartDateSci) & ...
                         (ctdData.dates <= a_cycleTimeData.ascentEndDate)));
                      if (~isempty(idCtdAscent))
@@ -618,42 +618,42 @@ switch (a_decoderId)
                            ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idCtdAscent, :);
                         end
                      end
-                     if (~isempty(a_profCtdCp))
-                        if (isempty(ctdDataAscent))
-                           ctdDataAscent = a_profCtdCp;
-                        else
-                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
-                           end
+                  end
+                  if (~isempty(a_profCtdCp))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCp;
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
                         end
                      end
-                     if (~isempty(a_profCtdCpH))
-                        if (isempty(ctdDataAscent))
-                           ctdDataAscent = a_profCtdCpH;
-                           ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
-                           end
-                        else
-                           ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
-                           if (~isempty(ctdDataAscent.dataAdj))
-                              ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
-                           end
+                  end
+                  if (~isempty(a_profCtdCpH))
+                     if (isempty(ctdDataAscent))
+                        ctdDataAscent = a_profCtdCpH;
+                        ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                        end
+                     else
+                        ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
                         end
                      end
-                     
-                     if (~isempty(ctdDataAscent))
-                        [~, idSort] = sort(ctdDataAscent.data(:, 1));
-                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
-                        end
-                        [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
-                        ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
-                        if (~isempty(ctdDataAscent.dataAdj))
-                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
-                        end
+                  end
+                  
+                  if (~isempty(ctdDataAscent))
+                     [~, idSort] = sort(ctdDataAscent.data(:, 1));
+                     ctdDataAscent.data = ctdDataAscent.data(idSort, :);
+                     if (~isempty(ctdDataAscent.dataAdj))
+                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
+                     end
+                     [~, idUnique, ~] = unique(ctdDataAscent.data(:, 1));
+                     ctdDataAscent.data = ctdDataAscent.data(idUnique, :);
+                     if (~isempty(ctdDataAscent.dataAdj))
+                        ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idUnique, :);
                      end
                      
                      % interpolate and extrapolate TS data at the pressures
@@ -664,7 +664,7 @@ switch (a_decoderId)
                         o_profFlbbCd.data(idAscent, idPres), 'linear', 'extrap');
                      
                      % compute BBP700
-                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1121_1322( ...
+                     bbp700Values = compute_BBP700_105_to_112_121_to_125_1121_1122_1322( ...
                         o_profFlbbCd.data(idAscent, idBetaBackscattering700), ...
                         paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                         [o_profFlbbCd.data(idAscent, idPres), tempData, psalData], ...
@@ -685,7 +685,7 @@ switch (a_decoderId)
          
          if (~isempty(idFluorescenceCdom) && ~isempty(idCdom))
             % compute CDOM
-            cdomValues = compute_CDOM_105_to_107_110_112_121_to_125_1121_1322( ...
+            cdomValues = compute_CDOM_105_to_107_110_112_121_to_125_1121_1122_1322( ...
                o_profFlbbCd.data(:, idFluorescenceCdom), ...
                paramFluorescenceCdom.fillValue, paramCdom.fillValue);
             o_profFlbbCd.data(:, idCdom) = cdomValues;

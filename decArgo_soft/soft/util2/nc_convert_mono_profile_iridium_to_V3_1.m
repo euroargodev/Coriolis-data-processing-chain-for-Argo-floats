@@ -52,9 +52,11 @@ function nc_convert_mono_profile_iridium_to_V3_1(varargin)
 
 % top directory of input NetCDF mono-profile files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 
 % top directory of output NetCDF mono-profile files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_20200428\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -69,11 +71,18 @@ refNcCFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ref/ArgoProf_V3.1_cf
 refNcBFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ref/ArgoProf_V3.1_bfile_part1.nc';
 refNcBFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ref/ArgoProf_V3.1_bfile_part2.nc';
 
+refNcCFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part1.nc';
+refNcCFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_cfile_part2.nc';
+refNcBFileName1 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part1.nc';
+refNcBFileName2 = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoProf_V3.1_bfile_part2.nc';
+
+
 % list of corrected cycle numbers
 corCyNumFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info/correctedCycleNumbers_iridium.txt';
 
 % json meta-data file directory
 jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\generate_json_float_meta_argos_nke_old_versions\';
+jsonFloatMetaDatafileDir = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\json_float_meta\';
 
 % program version
 global g_cofc_ncConvertMonoProfileVersion;

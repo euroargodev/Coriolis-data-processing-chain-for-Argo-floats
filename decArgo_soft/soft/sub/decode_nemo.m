@@ -19,6 +19,9 @@
 % ------------------------------------------------------------------------------
 function decode_nemo(a_floatList)
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
@@ -114,7 +117,8 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchLat = '';
    
    floatNum = a_floatList(idFloat);
-   
+   g_decArgo_floatNum = floatNum;
+
    if (g_decArgo_realtimeFlag == 0)
       fprintf('\n%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    end

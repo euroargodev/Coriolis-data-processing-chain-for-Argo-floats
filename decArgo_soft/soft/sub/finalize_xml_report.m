@@ -28,6 +28,9 @@ global g_decArgo_xmlReportDOMNode;
 % report information structure
 global g_decArgo_reportData;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % initalize final status
 o_status = 'ok';
@@ -233,6 +236,12 @@ if (~isempty(a_error))
    o_status = 'nok';
    
    newChild = docNode.createElement('matlab_error');
+   
+   if (~isempty(g_decArgo_floatNum))
+      newChildBis = docNode.createElement('float_wmo');
+      newChildBis.appendChild(docNode.createTextNode(num2str(g_decArgo_floatNum)));
+      newChild.appendChild(newChildBis);
+   end
    
    newChildBis = docNode.createElement('error_message');
    textNode = regexprep(a_error.message, char(10), ': ');

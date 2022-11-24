@@ -91,13 +91,14 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 1322}
+   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 1322, 223}
       
       % Arvor Deep
       % Provor-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
       % Arvor-Deep-Ice Iridium 5.67
+      % Arvor-ARN-DO-Ice Iridium 5.48
       o_paramList = [ ...
          {'PRES'} ...
          {'TEMP'} ...
@@ -150,7 +151,7 @@ switch (a_decoderId)
          {'BBP700'} ...
          ];
       
-   case {1102, 1103, 1106, 1108, 1109, 1121, 1314, 1321}
+   case {1102, 1103, 1106, 1108, 1109, 1121, 1122, 1314, 1321}
       
       % Apex Ir Rudics & Sbd
       o_paramList = [ ...

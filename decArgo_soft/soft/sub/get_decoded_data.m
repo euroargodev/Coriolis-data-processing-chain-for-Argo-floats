@@ -183,9 +183,10 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {214, 217}
+   case {214, 217, 223}
       % Provor-ARN-DO-Ice Iridium 5.75
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-ARN-DO-Ice Iridium 5.48
       
       g_decArgo_nbDescentPacketsReceived = 0;
       g_decArgo_nbParkPacketsReceived = 0;

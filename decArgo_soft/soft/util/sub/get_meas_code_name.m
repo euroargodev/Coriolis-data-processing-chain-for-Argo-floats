@@ -73,6 +73,8 @@ global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
 
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
 global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTST;
 global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
@@ -93,6 +95,12 @@ switch (a_measCode)
       
    case g_MC_PressureOffset
       o_measCodeName = sprintf('%03d: PRESSURE_OFFSET', a_measCode);
+      
+   case g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST % 110
+      o_measCodeName = sprintf('%03d: IN_WATER_SURF_MEAS', a_measCode);
+
+   case g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST % 111
+      o_measCodeName = sprintf('%03d: IN_AIR_SURF_MEAS', a_measCode);
       
    case g_MC_DST
       o_measCodeName = sprintf('%03d: DESCENT_START', a_measCode);

@@ -123,10 +123,12 @@ for idMsg = 1:size(sbdDataTab, 1)
          o_decodedData = [o_decodedData decodedData];
          
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {222} % Arvor-ARN-Ice Iridium 5.47
+      case {222, 223}
+         % Arvor-ARN-Ice Iridium 5.47
+         % Arvor-ARN-DO-Ice Iridium 5.48
          
          % decode the collected data
-         decodedData = decode_prv_data_ir_sbd_222(sbdDataTab(idMsg, :), ...
+         decodedData = decode_prv_data_ir_sbd_222_223(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate, a_launchDate);
          o_decodedData = [o_decodedData decodedData];
          

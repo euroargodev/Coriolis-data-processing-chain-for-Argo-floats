@@ -164,7 +164,7 @@ if (a_deepCycle == 1)
    g_decArgo_outputNcParamValue{end+1} = tabTech(40);
    
    pres = sensor_2_value_for_pressure_204_to_209_219_220(tabTech(41));
-   temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222(tabTech(42));
+   temp = sensor_2_value_for_temperature_204_to_214_217_219_220_222_223(tabTech(42));
    psal = tabTech(43)/1000;
    if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;

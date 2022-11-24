@@ -47,7 +47,7 @@ switch (a_decoderId)
             o_fortranFormat = 'F8.2';
       end
       
-   case {1121, 1321, 1322}
+   case {1121, 1122, 1321, 1322}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}

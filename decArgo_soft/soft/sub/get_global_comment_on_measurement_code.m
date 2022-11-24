@@ -333,13 +333,14 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217, 223}
       % Provor/Arvor Iridium with "NS & IA"
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-ARN-DO-Ice Iridium 5.48
       o_mcList = [ ...
          g_MC_Launch ...
          g_MC_CycleStart ...
@@ -796,7 +797,7 @@ switch (a_decoderId)
          g_MC_TET ...
          ];
 
-   case {1121, 1321}
+   case {1321}
       % Apex APF11 Iridium
       o_mcList = [ ...
          g_MC_Launch ...
@@ -830,7 +831,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];      
 
-   case {1322}
+   case {1121, 1122, 1322}
       % Apex APF11 Iridium (with DO sensor)
       o_mcList = [ ...
          g_MC_Launch ...

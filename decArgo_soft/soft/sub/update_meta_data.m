@@ -31,10 +31,10 @@ global g_decArgo_floatNum;
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
    105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, ...
-   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, ...
+   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
-   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, ...
+   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, ...
    1314, 1321, 1322];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001, 2002, 2003];
@@ -84,7 +84,7 @@ end
 
 % add 'MTIME' parameter and associated SENSOR to specific floats
 decoderIdListMtimeCTS5 = [121, 122, 123, 124, 125];
-decoderIdListMtimeApex = [1121, 1321, 1322];
+decoderIdListMtimeApex = [1121, 1122, 1321, 1322];
 decoderIdListMtimeNavis = [1201];
 decoderIdListMtimeNemo = [3001];
 decoderIdListMtime = [ ...
@@ -691,7 +691,7 @@ switch (a_paramName)
       o_preCalibComment = '';
       
       switch (a_decoderId)
-         case {1321, 1322, 1121}
+         case {1321, 1322, 1121, 1122}
             % Apex APF11 Iridium
             if (isfield(o_metaData, 'SBE_PRES_COEF_PA0'))
                o_preCalibEq = 'y=thermistor_output (counts); t=PTHA0+PTHA1*y+PTHA2*y^2; x=instrument_output-PTCA0-PTCA1*t-PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (PSIA)=PA0+PA1*n+PA2*n^2';
@@ -747,7 +747,7 @@ switch (a_paramName)
       o_preCalibComment = '';
       
       switch (a_decoderId)
-         case {1321, 1322, 1121}
+         case {1321, 1322, 1121, 1122}
             % Apex APF11 Iridium
             if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0'))
                o_preCalibEq = 'n=instrument_output (counts); temperature ITS-90 (°C)=1/{a0+a1[ln(n)]+a2[ln^2(n)]+a3[ln^3(n)]}-273.15';
@@ -787,7 +787,7 @@ switch (a_paramName)
       o_preCalibComment = '';
       
       switch (a_decoderId)
-         case {1321, 1322, 1121}
+         case {1321, 1322, 1121, 1122}
             % Apex APF11 Iridium
             if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC'))
                o_preCalibEq = 'f=instrument_output (Hz)*sqrt(1.0+WBOTC*t)/1000.0; t=temperature (°C); p=pressure (decibars); d=CTcor; e=CPcor; conductivity (S/m)=(g+h*f^2+i*f^3+j*f^4)/(1+d*t+e*p)';
@@ -864,8 +864,8 @@ switch (a_decoderId)
          ];
       
    case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, ...
-         201, 203, 206, 121, 122, 123, 124, 125, 215, 216, 217, 218, 221}
-      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 215, 216, 217, 218, 221]))
+         201, 203, 206, 121, 122, 123, 124, 125, 215, 216, 217, 218, 221, 223}
+      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 215, 216, 217, 218, 221, 223]))
          if (a_decoderId == 124) % no optode on CTS5 UVP #6902968
             if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
                   any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -886,6 +886,14 @@ switch (a_decoderId)
                {'DOXY'} ...
                ];
          end
+      elseif (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113])) % CTS3 with PPOX_DOXY
+         paramList = [ ...
+            {'TEMP_DOXY'} ...
+            {'C1PHASE_DOXY'} ...
+            {'C2PHASE_DOXY'} ...
+            {'PPOX_DOXY'} ...
+            {'DOXY'} ...
+            ];
       else
          paramList = [ ...
             {'TEMP_DOXY'} ...
@@ -987,7 +995,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {1322, 1121}
+   case {1322, 1121, 1122}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -1682,6 +1690,51 @@ switch (a_decoderId)
                g_decArgo_doxy_202_205_302_d3 ...
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            
+         case {'PPOX_DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('WARNING: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
+            % Aanderaa standard calibration
+            if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            
+            o_param = 'PPOX_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'mbar';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP_DOXY^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=Cstar*44.614*AirSat/100; Pcorr=1+((Pcoef2*TEMP_DOXY+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP_DOXY+273.15))+D2*ln((TEMP_DOXY+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP_DOXY+273.15))]';
+            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+               g_decArgo_doxy_202_205_302_pCoef1, ...
+               g_decArgo_doxy_202_205_302_pCoef2, ...
+               g_decArgo_doxy_202_205_302_pCoef3, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(3, 1:28), ...
+               tabDoxyCoef(4, 1:28), ...
+               tabDoxyCoef(5, 1:28), ...
+               g_decArgo_doxy_202_205_302_a0, ...
+               g_decArgo_doxy_202_205_302_a1, ...
+               g_decArgo_doxy_202_205_302_a2, ...
+               g_decArgo_doxy_202_205_302_a3, ...
+               g_decArgo_doxy_202_205_302_a4, ...
+               g_decArgo_doxy_202_205_302_a5, ...
+               g_decArgo_doxy_202_205_302_d0, ...
+               g_decArgo_doxy_202_205_302_d1, ...
+               g_decArgo_doxy_202_205_302_d2 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+
       end
       
    case {208, 112, 123, 125}
@@ -1835,8 +1888,8 @@ switch (a_decoderId)
       end
       
    case {107, 109, 110, 111, 113, 121, 122, 124, ...
-         201, 203, 206, 213, 214, 215, 216, 217, 218, 221, ...
-         1121, 1322}
+         201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, ...
+         1121, 1122, 1322}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -2938,7 +2991,7 @@ switch (a_decoderId)
             {'DOWNWELLING_PAR'} ...
             ];
       end
-   case {1322, 1121}
+   case {1322, 1121, 1122}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3006,7 +3059,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, ...
-         1322, 1121}
+         1322, 1121, 1122}
       switch (a_paramName)
          
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -3197,7 +3250,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121, 1122}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3286,7 +3339,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121, 1122}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -3569,7 +3622,7 @@ paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, ...
          301, 302, 303, ...
-         1322, 1121}
+         1322, 1121, 1122}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3646,7 +3699,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, ...
-         1322, 1121}
+         1322, 1121, 1122}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}
@@ -3929,7 +3982,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121, 1122}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3994,7 +4047,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121}
+   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 1322, 1121, 1122}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CDOM'}
@@ -4768,7 +4821,7 @@ switch (a_decoderId)
             o_preCalibComment = '';
       end
       
-   case {1121, 1322, 111, 113}
+   case {1121, 1122, 1322, 111, 113}
       switch (a_paramName)
          
          case {'VRS_PH'}

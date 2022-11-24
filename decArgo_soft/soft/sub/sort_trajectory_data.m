@@ -36,7 +36,7 @@ global g_decArgo_dateDef;
 % code order
 if (~isempty(o_tabTrajNMeas))
    
-   apexApf11IrDecoderIdList = [1121, 1321, 1322];
+   apexApf11IrDecoderIdList = [1121, 1122, 1321, 1322];
    if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
       
       mcOrderList = get_mc_order_list(a_decoderId);
@@ -415,13 +415,14 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217, 223}
       % Provor/Arvor Iridium with "NS & IA"
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-ARN-DO-Ice Iridium 5.48
       o_mcOrderList = [ ...
          g_MC_Launch ...
          g_MC_CycleStart ...

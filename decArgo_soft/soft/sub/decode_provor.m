@@ -19,6 +19,9 @@
 % ------------------------------------------------------------------------------
 function decode_provor(a_floatList)
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
@@ -88,7 +91,6 @@ global g_decArgo_floatLaunchDate;
 global g_decArgo_floatLaunchLon;
 global g_decArgo_floatLaunchLat;
 
-
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
    [listWmoNum, listDecId, listArgosId, listFrameLen, ...
@@ -114,6 +116,7 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchLat = '';
 
    floatNum = a_floatList(idFloat);
+   g_decArgo_floatNum = floatNum;
    
    if (g_decArgo_realtimeFlag == 0)
       fprintf('\n%03d/%03d %d\n', idFloat, nbFloats, floatNum);
@@ -301,7 +304,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221]))
+      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223]))
          % ICE floats
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...

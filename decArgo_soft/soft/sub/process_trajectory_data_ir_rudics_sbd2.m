@@ -4,13 +4,14 @@
 % SYNTAX :
 %  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
 %    process_trajectory_data_ir_rudics_sbd2( ...
-%    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
+%    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_cyProfPhaseList : information (cycle #, prof #, phase #) on each received
 %                       packet
 %   a_tabTrajIndex    : trajectory index information
 %   a_tabTrajData     : trajectory data
+%   a_decoderId       : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -27,7 +28,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
    process_trajectory_data_ir_rudics_sbd2( ...
-   a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
+   a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, a_decoderId)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -38,7 +39,7 @@ if (~isempty(a_tabTrajIndex))
    % process data for N_MEASUREMENT arrays
    [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
       process_n_meas_for_trajectory_data( ...
-      a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData);
+      a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, a_decoderId);
    
    % process data for N_CYCLE arrays
    [o_tabTrajNCycle] = process_n_cycle_for_trajectory_data( ...
@@ -53,13 +54,14 @@ return
 % SYNTAX :
 %  [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
 %    process_n_meas_for_trajectory_data( ...
-%    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
+%    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_cyProfPhaseList : information (cycle #, prof #, phase #) on each received
 %                       packet
 %   a_tabTrajIndex    : trajectory index information
 %   a_tabTrajData     : trajectory data
+%   a_decoderId       : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas    : trajectory N_MEASUREMENT data
@@ -76,7 +78,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
    process_n_meas_for_trajectory_data( ...
-   a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
+   a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData, a_decoderId)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -143,6 +145,11 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -257,6 +264,97 @@ for idCyc = 1:length(cycleNumList)
       
       %%%%%%%%%%%%%%%%%%%%%%
       % data during the dive
+      
+      % store descent surface DO measurements in PPOX_DOXY
+      if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113]))
+
+         % fill value for JULD parameter
+         paramJuld = get_netcdf_param_attributes('JULD');
+         
+         % retrieve configuration information
+         optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
+         if (isempty(optodeVerticalOffset))
+            optodeVerticalOffset = 0;
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing => surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
+               g_decArgo_floatNum, ...
+               cycleNum, ...
+               profNum);
+         end
+         
+         % descending DOXY profile
+         idPackData  = find( ...
+            (a_tabTrajIndex(:, 1) == 2) & ...
+            (a_tabTrajIndex(:, 2) == cycleNum) & ...
+            (a_tabTrajIndex(:, 3) == profNum) & ...
+            (a_tabTrajIndex(:, 4) == g_decArgo_phaseDsc2Prk));
+         
+         if (length(idPackData) > 1)
+            fprintf('ERROR: Float #%d Cycle #%d Profile #%d%c: %d descending DO profiles\n', ...
+               g_decArgo_floatNum, ...
+               cycleNum, ...
+               profNum, ...
+               'D', ...
+               length(idPackData));
+         end
+         
+         for idPack = 1:length(idPackData)
+            prof = a_tabTrajData{idPackData(idPack)};
+            pres = prof.data(:, 1);
+            idInAir = find(round((pres + optodeVerticalOffset)*10)/10 <= -0.1);
+            if (~isempty(idInAir))
+               idLastInWater = find(round((pres + optodeVerticalOffset)*10)/10 >= 0.3, 1, 'first');
+               if (~isempty(idLastInWater))
+                  if (prof.dates(idLastInWater) == paramJuld.fillValue)
+                     measStruct = get_traj_one_meas_init_struct();
+                     measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+                     measStruct.paramList = prof.paramList;
+                     measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                     measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                     measStruct.paramData = prof.data(idLastInWater, :);
+                     measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
+                     measStruct.sensorNumber = prof.sensorNumber;
+                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                  else
+                     measStruct = create_one_meas_float_time(...
+                        g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST, ...
+                        prof.dates(idLastInWater), g_JULD_STATUS_2, 0);
+                     measStruct.paramList = prof.paramList;
+                     measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                     measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                     measStruct.paramData = prof.data(idLastInWater, :);
+                     measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
+                     measStruct.sensorNumber = prof.sensorNumber;
+                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                  end
+               end
+               
+               for idIA = 1:length(idInAir)
+                  if (prof.dates(idInAir(idIA)) == paramJuld.fillValue)
+                     measStruct = get_traj_one_meas_init_struct();
+                     measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+                     measStruct.paramList = prof.paramList;
+                     measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                     measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                     measStruct.paramData = prof.data(idInAir(idIA), :);
+                     measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
+                     measStruct.sensorNumber = prof.sensorNumber;
+                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                  else
+                     measStruct = create_one_meas_float_time(...
+                        g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST, ...
+                        prof.dates(idInAir(idIA)), g_JULD_STATUS_2, 0);
+                     measStruct.paramList = prof.paramList;
+                     measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                     measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                     measStruct.paramData = prof.data(idInAir(idIA), :);
+                     measStruct.cyclePhase = g_decArgo_phaseDsc2Prk;
+                     measStruct.sensorNumber = prof.sensorNumber;
+                     trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                  end
+               end
+            end
+         end
+      end
       
       % check that deep data have been received
       idPackDeepData = find( ...
@@ -867,6 +965,97 @@ for idCyc = 1:length(cycleNumList)
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
+            % store ascent surface DO measurements in PPOX_DOXY
+            if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113]))
+
+               % fill value for JULD parameter
+               paramJuld = get_netcdf_param_attributes('JULD');
+               
+               % retrieve configuration information
+               optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
+               if (isempty(optodeVerticalOffset))
+                  optodeVerticalOffset = 0;
+                  fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing => surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
+                     g_decArgo_floatNum, ...
+                     cycleNum, ...
+                     profNum);
+               end
+               
+               % ascending DOXY profile
+               idPackData  = find( ...
+                  (a_tabTrajIndex(:, 1) == 3) & ...
+                  (a_tabTrajIndex(:, 2) == cycleNum) & ...
+                  (a_tabTrajIndex(:, 3) == profNum) & ...
+                  (a_tabTrajIndex(:, 4) == g_decArgo_phaseAscProf));
+               
+               if (length(idPackData) > 1)
+                  fprintf('ERROR: Float #%d Cycle #%d Profile #%d%c: %d ascending DO profiles\n', ...
+                     g_decArgo_floatNum, ...
+                     cycleNum, ...
+                     profNum, ...
+                     'A', ...
+                     length(idPackData));
+               end
+               
+               for idPack = 1:length(idPackData)
+                  prof = a_tabTrajData{idPackData(idPack)};
+                  pres = prof.data(:, 1);
+                  idInAir = find(round((pres + optodeVerticalOffset)*10)/10 <= -0.1);
+                  if (~isempty(idInAir))
+                     idFirstInWater = find(round((pres + optodeVerticalOffset)*10)/10 >= 0.3, 1, 'last');
+                     if (~isempty(idFirstInWater))
+                        if (prof.dates(idFirstInWater) == paramJuld.fillValue)
+                           measStruct = get_traj_one_meas_init_struct();
+                           measStruct.measCode = g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+                           measStruct.paramList = prof.paramList;
+                           measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                           measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                           measStruct.paramData = prof.data(idFirstInWater, :);
+                           measStruct.cyclePhase = g_decArgo_phaseAscProf;
+                           measStruct.sensorNumber = prof.sensorNumber;
+                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        else
+                           measStruct = create_one_meas_float_time(...
+                              g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
+                              prof.dates(idFirstInWater), g_JULD_STATUS_2, 0);
+                           measStruct.paramList = prof.paramList;
+                           measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                           measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                           measStruct.paramData = prof.data(idFirstInWater, :);
+                           measStruct.cyclePhase = g_decArgo_phaseAscProf;
+                           measStruct.sensorNumber = prof.sensorNumber;
+                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        end
+                     end
+                     
+                     for idIA = 1:length(idInAir)
+                        if (prof.dates(idInAir(idIA)) == paramJuld.fillValue)
+                           measStruct = get_traj_one_meas_init_struct();
+                           measStruct.measCode = g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+                           measStruct.paramList = prof.paramList;
+                           measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                           measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                           measStruct.paramData = prof.data(idInAir(idIA), :);
+                           measStruct.cyclePhase = g_decArgo_phaseAscProf;
+                           measStruct.sensorNumber = prof.sensorNumber;
+                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        else
+                           measStruct = create_one_meas_float_time(...
+                              g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST, ...
+                              prof.dates(idInAir(idIA)), g_JULD_STATUS_2, 0);
+                           measStruct.paramList = prof.paramList;
+                           measStruct.paramNumberWithSubLevels = prof.paramNumberWithSubLevels;
+                           measStruct.paramNumberOfSubLevels = prof.paramNumberOfSubLevels;
+                           measStruct.paramData = prof.data(idInAir(idIA), :);
+                           measStruct.cyclePhase = g_decArgo_phaseAscProf;
+                           measStruct.sensorNumber = prof.sensorNumber;
+                           trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        end
+                     end
+                  end
+               end
+            end
+            
             % transmission start time
             if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
                measStruct = create_one_meas_float_time(g_MC_TST, a_tabTrajData{idPackTech}.transStartDate, g_JULD_STATUS_3, 0);
@@ -920,7 +1109,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
-            
+                        
             %%%%%%%%%%%%%%%%%%%%%
             % data after the dive
             

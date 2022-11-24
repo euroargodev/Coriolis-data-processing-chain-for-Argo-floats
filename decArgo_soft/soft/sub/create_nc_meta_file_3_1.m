@@ -1016,9 +1016,10 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {222}
+   case {222, 223}
       
       % Arvor-ARN-Ice Iridium 5.47
+      % Arvor-ARN-DO-Ice Iridium 5.48
       
       % select Argo and Auxiliary configuration information
       staticConfigName = a_structConfig.STATIC_NC.NAMES;
@@ -1356,7 +1357,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1121, 1321, 1322}
+   case {1121, 1122, 1321, 1322}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);

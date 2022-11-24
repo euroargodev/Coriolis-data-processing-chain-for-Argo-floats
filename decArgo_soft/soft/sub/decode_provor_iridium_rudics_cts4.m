@@ -1337,7 +1337,22 @@ while (procDone == 0)
                   end
                end
                
-               o_tabProfiles = [o_tabProfiles tabProfiles];
+               % remove PPOX_DOXY data in DOXY profiles
+               tabProfilesBis = tabProfiles;
+               for idProf = 1:length(tabProfilesBis)
+                  if (tabProfilesBis(idProf).sensorNumber == 1)
+                     
+                     % remove temporary PPOX_DOXY
+                     idPpoxDoxy = find(strcmp({tabProfilesBis(idProf).paramList.name}, 'PPOX_DOXY') == 1);
+                     if (~isempty(idPpoxDoxy))
+                        tabProfilesBis(idProf).data(:, idPpoxDoxy) = [];
+                        tabProfilesBis(idProf).dataQc(:, idPpoxDoxy) = [];
+                        tabProfilesBis(idProf).paramList(idPpoxDoxy) = [];
+                     end
+                  end
+               end
+               
+               o_tabProfiles = [o_tabProfiles tabProfilesBis];
                
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                % TRAJ NetCDF file
@@ -1364,7 +1379,7 @@ while (procDone == 0)
                
                % process trajectory data for TRAJ NetCDF file
                [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
-                  cyProfPhaseList, tabTrajIndex, tabTrajData);
+                  cyProfPhaseList, tabTrajIndex, tabTrajData, a_decoderId);
                
                o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
                o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

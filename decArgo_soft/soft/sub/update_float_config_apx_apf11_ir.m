@@ -60,27 +60,56 @@ if (~isempty(a_missionCfg))
                   fprintf('ERROR: Float #%d Cycle #%d: Don''t know how to manage ''%s'' configuration multiple values\n', ...
                      g_decArgo_floatNum, ...
                      g_decArgo_cycleNum, ...
-                     floatConfName);
+                     floatConfigLabel);
                end
             end
+         elseif (strcmp(floatConfigLabel, 'TelemetryDays'))
+            % managed below
          else
             fprintf('ERROR: Float #%d Cycle #%d: Don''t know how to manage ''%s'' configuration multiple values\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
-               floatConfName);
+               floatConfigLabel);
          end
       end
       
-      [configName, configValue] = get_config(floatConfigLabel, floatConfigValue);
-      if (~isempty(configName))
-         idF = find(strcmp(configName, configNames));
-         if (~isempty(idF))
-            newConfigValues(idF) = configValue;
-         else
-            fprintf('WARNING: Float #%d Cycle #%d: Not managed configuration label ''%s''\n', ...
-               g_decArgo_floatNum, ...
-               g_decArgo_cycleNum, ...
-               configName);
+      if (~strcmp(floatConfigLabel, 'TelemetryDays'))
+         [configName, configValue] = get_config(floatConfigLabel, floatConfigValue);
+         if (~isempty(configName))
+            idF = find(strcmp(configName, configNames));
+            if (~isempty(idF))
+               newConfigValues(idF) = configValue;
+            else
+               fprintf('WARNING: Float #%d Cycle #%d: Not managed configuration label ''%s''\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  configName);
+            end
+         end
+      else
+         [configName, configValue] = get_config('TelemetryDaysStart', floatConfigValue{1});
+         if (~isempty(configName))
+            idF = find(strcmp(configName, configNames));
+            if (~isempty(idF))
+               newConfigValues(idF) = configValue;
+            else
+               fprintf('WARNING: Float #%d Cycle #%d: Not managed configuration label ''%s''\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  configName);
+            end
+         end
+         [configName, configValue] = get_config('TelemetryDaysEnd', floatConfigValue{2});
+         if (~isempty(configName))
+            idF = find(strcmp(configName, configNames));
+            if (~isempty(idF))
+               newConfigValues(idF) = configValue;
+            else
+               fprintf('WARNING: Float #%d Cycle #%d: Not managed configuration label ''%s''\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  configName);
+            end
          end
       end
    end
@@ -314,6 +343,9 @@ switch (a_floatConfLabel)
    case 'IceCriticalT'
       o_configName = 'CONFIG_IMLT_IceDetectionTemperature';
       o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentCycles'
+      o_configName = 'CONFIG_IDC_IceDescentCycles';
+      o_configValue = str2double(a_floatConfValue);
    case 'IceDetectionP'
       o_configName = 'CONFIG_IDP_IceDetectionMaxPres';
       o_configValue = str2double(a_floatConfValue);
@@ -388,8 +420,17 @@ switch (a_floatConfLabel)
    case 'SurfacePressure'
       o_configName = 'CONFIG_SPSPC_SurfacePressureStopPumpedCtd';
       o_configValue = str2double(a_floatConfValue);
+   case 'TelemetryDaysStart'
+      o_configName = 'CONFIG_TSD_IceTelemetryStartDay';
+      o_configValue = str2double(a_floatConfValue);
+   case 'TelemetryDaysEnd'
+      o_configName = 'CONFIG_TED_IceTelemetryEndDay';
+      o_configValue = str2double(a_floatConfValue);
    case 'TelemetryInterval'
       o_configName = 'CONFIG_REP_ArgosTransmissionRepetitionPeriod';
+      o_configValue = str2double(a_floatConfValue);
+   case 'TelemetryTimeout'
+      o_configName = 'CONFIG_TT_IceTelemetryTimeout';
       o_configValue = str2double(a_floatConfValue);
    case 'UpTime'
       o_configName = 'CONFIG_UP_UpTime';
@@ -397,7 +438,7 @@ switch (a_floatConfLabel)
    case 'VitalsMask'
       o_configName = 'CONFIG_VM_VitalsMask';
       o_configValue = hex2dec(a_floatConfValue);
-   case 'CheckSum'
+   case {'CheckSum', 'Checksum'}
       % not considered
    case 'float_id'
       % not considered

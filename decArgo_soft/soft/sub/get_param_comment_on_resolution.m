@@ -501,12 +501,13 @@ switch (a_decoderId)
             
       end
       
-   case {210, 211, 212, 222, 213, 214, 217}
+   case {210, 211, 212, 222, 213, 214, 217, 223}
       % ARVOR ARN Iridium
       % PROVOR ARN DO Iridium
       % Provor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
+      % Arvor-ARN-DO-Ice Iridium 5.48
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             
@@ -874,7 +875,7 @@ switch (a_decoderId)
             o_resolution = double(1/86400); % 1 second
       end
       
-   case {1121, 1321, 1322}
+   case {1121, 1122, 1321, 1322}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

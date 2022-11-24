@@ -35,6 +35,9 @@ global g_decArgo_iridiumDataDirectory;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% output CSV file Id
+global g_decArgo_outputCsvFileId;
+
 
 % search for existing float files
 iriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatRudicsId '_' num2str(a_floatNum) '/archive/'];
@@ -51,11 +54,13 @@ for idFile = 1:length(fileNames)
    cyNum = fileName(length(a_floatRudicsId)+idF1(1)+1:length(a_floatRudicsId)+idF1(2)-1);
    [cyNum, status] = str2num(cyNum);
    if ((status == 1) && ismember(cyNum, a_cycleList))
-      if (~isempty(a_floatLaunchDate))
-         fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
-         fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
-         if (fileDate < a_floatLaunchDate)
-            continue
+      if (isempty(g_decArgo_outputCsvFileId))
+         if (~isempty(a_floatLaunchDate))
+            fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
+            fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+            if (fileDate < a_floatLaunchDate)
+               continue
+            end
          end
       end
       fileNameList{end+1} = fileName;

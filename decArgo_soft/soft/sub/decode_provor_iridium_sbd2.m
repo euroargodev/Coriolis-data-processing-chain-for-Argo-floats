@@ -1338,7 +1338,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
-            cyProfPhaseList, tabTrajIndex, tabTrajData);
+            cyProfPhaseList, tabTrajIndex, tabTrajData, a_decoderId);
          
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
          o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
@@ -1529,7 +1529,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
-            cyProfPhaseList, tabTrajIndex, tabTrajData);
+            cyProfPhaseList, tabTrajIndex, tabTrajData, a_decoderId);
          
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
          o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

@@ -87,6 +87,43 @@ global g_decArgo_julD2FloatDayOffset;
 % fill value for JULD parameter
 paramJuld = get_netcdf_param_attributes('JULD');
 
+% store DOXY profile data
+for idProf = 1:length(a_tabProfiles)
+   
+   profile = a_tabProfiles(idProf);
+   
+   if (profile.sensorNumber == 1)
+      
+      datedMeasStruct = get_dated_meas_init_struct(profile.cycleNumber, ...
+         profile.profileNumber, profile.phaseNumber);
+      
+      datedMeasStruct.paramList = profile.paramList;
+      datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
+      datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
+      datedMeasStruct.dateList = profile.dateList;
+      datedMeasStruct.dates = profile.dates;
+      datedMeasStruct.data = profile.data;
+      datedMeasStruct.sensorNumber = profile.sensorNumber;
+      
+      if (profile.direction == 'D')
+         o_tabTrajIndex = [o_tabTrajIndex;
+            2  profile.cycleNumber profile.profileNumber profile.phaseNumber];
+      else
+         o_tabTrajIndex = [o_tabTrajIndex;
+            3  profile.cycleNumber profile.profileNumber profile.phaseNumber];
+      end
+      o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
+      
+      % remove temporary PPOX_DOXY
+      idPpoxDoxy = find(strcmp({a_tabProfiles(idProf).paramList.name}, 'PPOX_DOXY') == 1);
+      if (~isempty(idPpoxDoxy))
+         a_tabProfiles(idProf).data(:, idPpoxDoxy) = [];
+         a_tabProfiles(idProf).dataQc(:, idPpoxDoxy) = [];
+         a_tabProfiles(idProf).paramList(idPpoxDoxy) = [];
+      end
+   end
+end
+
 % retrieve dated measurements
 for idProf = 1:length(a_tabProfiles)
    
