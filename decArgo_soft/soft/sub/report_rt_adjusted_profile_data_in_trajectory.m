@@ -64,15 +64,17 @@ for idProf = 1:length(a_tabProfiles)
 end
 
 % update DATA_MODE
-if (any([o_tabTrajNCycle.dataMode] ~= 'A'))
-   idCyList = find([o_tabTrajNCycle.dataMode] ~= 'A');
-   for idCy = 1:length(idCyList)
-      idStruct = find([o_tabTrajNMeas.outputCycleNumber] == o_tabTrajNCycle(idCyList(idCy)).outputCycleNumber); % nominal case: only one
-      for idS = 1:length(idStruct)
-         tabTrajNMeas = o_tabTrajNMeas(idStruct(idS));
-         if (any([tabTrajNMeas.tabMeas.paramDataMode] == 'A'))
-            o_tabTrajNCycle(idCyList(idCy)).dataMode = 'A';
-            break
+if (~isempty(o_tabTrajNCycle))
+   if (any([o_tabTrajNCycle.dataMode] ~= 'A'))
+      idCyList = find([o_tabTrajNCycle.dataMode] ~= 'A');
+      for idCy = 1:length(idCyList)
+         idStruct = find([o_tabTrajNMeas.outputCycleNumber] == o_tabTrajNCycle(idCyList(idCy)).outputCycleNumber); % nominal case: only one
+         for idS = 1:length(idStruct)
+            tabTrajNMeas = o_tabTrajNMeas(idStruct(idS));
+            if (any([tabTrajNMeas.tabMeas.paramDataMode] == 'A'))
+               o_tabTrajNCycle(idCyList(idCy)).dataMode = 'A';
+               break
+            end
          end
       end
    end
