@@ -165,6 +165,9 @@ end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
 init_float_config_apx_apf11_ir(a_decoderId);
+if (isempty(g_decArgo_floatConfig))
+   return
+end
 
 % add launch position and time in the TRAJ NetCDF file
 if (isempty(g_decArgo_outputCsvFileId))

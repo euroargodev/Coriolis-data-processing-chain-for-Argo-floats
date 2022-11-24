@@ -230,7 +230,7 @@ end
 
 % initialize float parameter configuration
 init_float_config_ir_sbd(a_launchDate, a_decoderId);
-if (isempty(g_decArgo_floatConfig)) % CONFIG_PG00 not set or issue with config values (during str2num conversion)
+if (isempty(g_decArgo_floatConfig))
    return
 end
 

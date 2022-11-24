@@ -309,9 +309,10 @@ end
 
 % initialize float configuration
 init_float_config_prv_ir_rudics_cts5(a_decoderId);
-if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+if (isempty(g_decArgo_floatConfig))
    return
 end
+
 g_decArgo_firstCycleNumFloat = g_decArgo_firstCycleNumCts5;
 g_decArgo_firstCycleNumFloatNew = g_decArgo_firstCycleNumCts5;
 

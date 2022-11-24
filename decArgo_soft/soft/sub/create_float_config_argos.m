@@ -51,6 +51,7 @@ global g_decArgo_configDone;
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
 
 if ~(exist(jsonInputFileName, 'file') == 2)
+   g_decArgo_floatConfig = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
    return
 end

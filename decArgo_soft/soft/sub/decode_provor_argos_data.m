@@ -98,7 +98,7 @@ end
 % initialize float configuration
 init_float_config_prv_argos(a_decoderId);
 if (~ismember(a_decoderId, [30 32]))
-   if (isempty(g_decArgo_floatConfig)) % issue with config values (during str2num conversion)
+   if (isempty(g_decArgo_floatConfig))
       return
    end
 end
@@ -743,6 +743,9 @@ for idCy = 1:length(a_cycleList)
          
          if (g_decArgo_configDone == 0)
             create_float_config_argos(tabParam, a_decoderId);
+            if (isempty(g_decArgo_floatConfig))
+               return
+            end
          end
          
          % update and assign the current configuration to the decoded cycle
@@ -994,6 +997,9 @@ for idCy = 1:length(a_cycleList)
          
          if (g_decArgo_configDone == 0)
             create_float_config_argos(tabParam, a_decoderId);
+            if (isempty(g_decArgo_floatConfig))
+               return
+            end
          end
          
          % update and assign the current configuration to the decoded cycle

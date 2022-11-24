@@ -148,6 +148,9 @@ end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
 init_float_config_apx_ir(a_decoderId);
+if (isempty(g_decArgo_floatConfig))
+   return
+end
 
 % print DOXY and FLBB coef in the output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))

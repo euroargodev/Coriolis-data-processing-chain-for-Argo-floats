@@ -68,6 +68,10 @@ function move_and_rename_apx_argos_files(varargin)
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\FINAL\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\ori_cycle_CORRECT\';
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\FINAL\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\OUT\STEP4\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\OUT\FINAL\';
+
+
 
 
 % directory to store the log file
@@ -315,6 +319,7 @@ tabLastMsgDate = [];
 % first loop to decode cycle number from transmitted data
 remainingArgosFileNames = [];
 remainingFileCycleNumber = [];
+offsetCyNum = 0;
 nbFiles = length(a_argosFileNames);
 for idFile = 1:nbFiles
    
@@ -421,15 +426,34 @@ for idFile = 1:nbFiles
                cycleNumberCount = -1;
             end
             if (a_floatNum == 3901663)
-               % Apex float 3901663 (decId 1022) resets at sea after cycle
-               % #22, cycle #3 (of second mission)
-               offsetDate = gregorian_2_julian_dec_argo('2018/12/03 17:41:54');
-               offsetDate2 = gregorian_2_julian_dec_argo('2019/01/02 15:34:40');
-               if (firstArgosMsgDate >= offsetDate)
-                  cycleNumber = cycleNumber + 22;
+               % Apex float 3901663 (decId 1022) regularly resets at sea
+               if (cycleNumber == 1)
+                  if (max([tabCycleNumber; remainingFileCycleNumber']) > 0)
+                     offsetCyNum = max([tabCycleNumber; remainingFileCycleNumber']);
+                     cycleNumberCount = 2;
+                  end
                end
-               if (firstArgosMsgDate >= offsetDate2)
-                  cycleNumber = cycleNumber + 3;
+               cycleNumber = cycleNumber + offsetCyNum;
+               
+               offsetDate = gregorian_2_julian_dec_argo('2019/03/23 00:00:00');
+               if (fix(firstArgosMsgDate) == offsetDate)
+                  cycleNumber = 34;
+                  cycleNumberCount = 2;
+               end
+               offsetDate2 = gregorian_2_julian_dec_argo('2019/04/22 00:00:00');
+               if (fix(firstArgosMsgDate) == offsetDate2)
+                  cycleNumber = 37;
+                  cycleNumberCount = 2;
+               end
+               offsetDate3 = gregorian_2_julian_dec_argo('2019/05/12 00:00:00');
+               if (fix(firstArgosMsgDate) == offsetDate3)
+                  cycleNumber = 39;
+                  cycleNumberCount = 2;
+               end
+               offsetDate4 = gregorian_2_julian_dec_argo('2019/05/31 00:00:00');
+               if (fix(firstArgosMsgDate) == offsetDate4)
+                  cycleNumber = 41;
+                  cycleNumberCount = 2;
                end
             end
             

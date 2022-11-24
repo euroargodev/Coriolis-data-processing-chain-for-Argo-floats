@@ -135,6 +135,16 @@ for idFile = 1:length(a_scienceLogFileList)
       end
    end
    
+   % remove CTD_PT measurements with PRES = 0 and TEMP = 0
+   if (~isempty(data.CTD_PT))
+      if (any((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0)))
+         idF = find((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0));
+         fprintf('WARNING: Float #%d Cycle #%d: %d CTD_PT measurements (with PRES = 0 and TEMP = 0) in file: %s => removed\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
+         data.CTD_PT(idF, :) = [];
+      end
+   end
+   
    dataFields = fieldnames(data);
    for idFld = 1:length(dataFields)
       fieldName = dataFields{idFld};

@@ -75,6 +75,9 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 % configuration creation flag
 global g_decArgo_configDone;
 g_decArgo_configDone = 0;
@@ -96,6 +99,9 @@ end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
 init_float_config_apx_argos(a_decoderId);
+if (isempty(g_decArgo_floatConfig))
+   return
+end
 
 % inits for output NetCDF file
 decArgoConfParamNames = [];
@@ -196,6 +202,10 @@ for idCy = 1:length(a_cycleList)
       % create the configuration
       if (g_decArgo_configDone == 0)
          create_float_config_apx_argos(metaData, a_decoderId);
+         if (isempty(g_decArgo_floatConfig))
+            return
+         end
+         
          if (~isempty(g_decArgo_outputCsvFileId))
             if (ismember(a_decoderId, [1006 1008 1009, 1013, 1014, 1015, 1016]))
                print_calib_coef_in_csv_file(a_decoderId);

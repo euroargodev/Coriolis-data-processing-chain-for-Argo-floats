@@ -170,6 +170,9 @@ global g_decArgo_virtualBuff;
 global g_decArgo_finalEolMode;
 g_decArgo_finalEolMode = 0;
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -236,6 +239,9 @@ end
 
 % initialize float parameter configuration
 init_float_config_ir_sbd(a_launchDate, a_decoderId);
+if (isempty(g_decArgo_floatConfig))
+   return
+end
 
 % print DOXY coef in the output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))

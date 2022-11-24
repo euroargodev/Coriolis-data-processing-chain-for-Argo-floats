@@ -132,6 +132,9 @@ global g_decArgo_applyRtqc;
 global g_decArgo_floatProgTab;
 g_decArgo_floatProgTab = [];
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatLoginName '_' num2str(a_floatNum) '/'];
@@ -157,6 +160,9 @@ end
 
 % initialize float parameter configuration
 init_float_config_prv_ir_rudics_cts4(a_launchDate, a_decoderId);
+if (isempty(g_decArgo_floatConfig))
+   return
+end
 
 % add launch position and time in the TRAJ NetCDF file
 if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))

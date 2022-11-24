@@ -213,7 +213,7 @@ end
 
 % initialize float parameter configuration
 init_float_config_ir_sbd(a_launchDate, a_decoderId);
-if (isempty(g_decArgo_floatConfig)) % CONFIG_IC00 not set
+if (isempty(g_decArgo_floatConfig))
    return
 end
 
