@@ -447,7 +447,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '039a';
+g_decArgo_decoderVersion = '039b';
 
 % list of managed decoders
 

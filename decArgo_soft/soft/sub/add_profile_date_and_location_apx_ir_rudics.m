@@ -137,11 +137,11 @@ for idP = 1:length(o_tabProfiles)
       
       if (~isempty(idPosToUse))
          % set the profile updated flag if no GPS fix has been received during
-         % the current cycle (used to detect when a profile needs to be updated
-         % in GENERATE_NC_MONO_PROF = 2 mode)
+         % the last cycle of the current decoding session (used to detect when a
+         % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
          if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
             if (~any(a_gpsLocReceivedCyNum(idPosToUse) == prof.cycleNumber))
-               if (prof.cycleNumber == max(a_gpsLocCycleNum))
+               if (a_gpsLocReceivedCyNum(idPosToUse) == max(a_gpsLocCycleNum))
                   prof.updated = 1;
                end
             end
@@ -199,6 +199,19 @@ for idP = 1:length(o_tabProfiles)
                   prof.locationLon = interpLocLon;
                   prof.locationLat = interpLocLat;
                   prof.locationQc = g_decArgo_qcStrInterpolated;
+                  
+                  % set the profile updated flag if profile location is
+                  % interpolated thanks to a new GPS received during the last
+                  % cycle of the current decoding session (used to detect when a
+                  % profile needs to be updated in GENERATE_NC_MONO_PROF = 2 mode)
+                  if (~isempty(a_gpsLocReceivedCyNum)) % set for APF11 only
+                     idPrev = find(a_gpsLocDate == prevLocDate);
+                     idNext = find(a_gpsLocDate == nextLocDate);
+                     if ((a_gpsLocReceivedCyNum(idPrev) == max(a_gpsLocCycleNum)) || ...
+                           (a_gpsLocReceivedCyNum(idNext) == max(a_gpsLocCycleNum)))
+                        prof.updated = 1;
+                     end
+                  end
                else
                   fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing - profile not located\n', ...
                      g_decArgo_floatNum, ...

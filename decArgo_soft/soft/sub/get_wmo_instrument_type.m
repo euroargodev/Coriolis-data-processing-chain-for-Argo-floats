@@ -39,10 +39,7 @@ switch (a_decoderId)
       
    case {224}
       % ARVOR RBR
-      % TEMPORARY-START
-      o_wmoInstType = '878'; % good value but not updated yet in the checker
-      o_wmoInstType = '844';
-      % TEMPORARY-END
+      o_wmoInstType = '878';
       
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301}
       % PROVOR_III SBE
