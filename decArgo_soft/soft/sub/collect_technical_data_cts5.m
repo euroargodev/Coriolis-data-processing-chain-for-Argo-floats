@@ -89,64 +89,68 @@ if (~isempty(techDataAll))
       if (~isempty(idT) && ~isempty(idE))
          idT = idFTech(idT);
          idE = idFEvt(idE);
-         if ((uEvtTechId(idTechId) == 171) && (length(idT) > 1) || (length(idE) > 1))
-            idToDel = [idToDel idT(2:end) idE];
-         else
-            useEvent = 0;
-            if (~strcmp(techDataAll{idT, 6}, techDataAll{idE, 6}))
-               switch (uEvtTechId(idTechId))
-                  case {161, 162, 171, 185}
-                     % 1
+         if (length(idT) > 1)
+            idToDel = [idToDel idT(2:end)];
+            idT = idT(1);
+         end
+         if (length(idE) > 1)
+            idToDel = [idToDel idE(2:end)];
+            idE = idE(1);
+         end
+         useEvent = 0;
+         if (~strcmp(techDataAll{idT, 6}, techDataAll{idE, 6}))
+            switch (uEvtTechId(idTechId))
+               case {161, 162, 171, 185}
+                  % 1
+                  useEvent = 0;
+               case {173}
+                  % 1
+                  useEvent = 1;
+               case {102}
+                  % .01
+                  if (~strcmp(sprintf('%.2f', techDataAll{idT, 5}), sprintf('%.2f', techDataAll{idE, 5})))
                      useEvent = 0;
-                  case {173}
-                     % 1
-                     useEvent = 1;
-                  case {102}
-                     % .01
-                     if (~strcmp(sprintf('%.2f', techDataAll{idT, 5}), sprintf('%.2f', techDataAll{idE, 5})))
-                        useEvent = 0;
-                     end
-                  case {103, 104}
-                     % .1
-                     if (~strcmp(sprintf('%.1f', techDataAll{idT, 5}), sprintf('%.1f', techDataAll{idE, 5})))
-                        useEvent = 0;
-                     end
-                  case {110, 121, 124, 184}
-                     % dates
-                     if (abs(techDataAll{idT, 5} - techDataAll{idE, 5}) > 1/86400)
-                        useEvent = 1;
-                     end
-                  otherwise
-                     fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Don''t know how to compare Tech and Event data for techId #%d\n', ...
-                        g_decArgo_floatNum, ...
-                        g_decArgo_cycleNum, ...
-                        g_decArgo_cycleNumFloat, ...
-                        g_decArgo_patternNumFloat, ...
-                        uEvtTechId(idTechId));
-               end
-               if (COMPARISON_FLAG == 1)
-                  if (useEvent == 0)
-                     fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Tech and Event data differ for techId #%d: tech=''%s'' and evt=''%s'' => using the Tech one\n', ...
-                        g_decArgo_floatNum, ...
-                        g_decArgo_cycleNum, ...
-                        g_decArgo_cycleNumFloat, ...
-                        g_decArgo_patternNumFloat, ...
-                        uEvtTechId(idTechId), techDataAll{idT, 6}, techDataAll{idE, 6});
-                  elseif (useEvent == 1)
-                     fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Tech and Event data differ for techId #%d: tech=''%s'' and evt=''%s'' => using the Event one\n', ...
-                        g_decArgo_floatNum, ...
-                        g_decArgo_cycleNum, ...
-                        g_decArgo_cycleNumFloat, ...
-                        g_decArgo_patternNumFloat, ...
-                        uEvtTechId(idTechId), techDataAll{idT, 6}, techDataAll{idE, 6});
                   end
+               case {103, 104}
+                  % .1
+                  if (~strcmp(sprintf('%.1f', techDataAll{idT, 5}), sprintf('%.1f', techDataAll{idE, 5})))
+                     useEvent = 0;
+                  end
+               case {110, 121, 124, 184}
+                  % dates
+                  if (abs(techDataAll{idT, 5} - techDataAll{idE, 5}) > 1/86400)
+                     useEvent = 1;
+                  end
+               otherwise
+                  fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Don''t know how to compare Tech and Event data for techId #%d\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum, ...
+                     g_decArgo_cycleNumFloat, ...
+                     g_decArgo_patternNumFloat, ...
+                     uEvtTechId(idTechId));
+            end
+            if (COMPARISON_FLAG == 1)
+               if (useEvent == 0)
+                  fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Tech and Event data differ for techId #%d: tech=''%s'' and evt=''%s'' => using the Tech one\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum, ...
+                     g_decArgo_cycleNumFloat, ...
+                     g_decArgo_patternNumFloat, ...
+                     uEvtTechId(idTechId), techDataAll{idT, 6}, techDataAll{idE, 6});
+               elseif (useEvent == 1)
+                  fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Tech and Event data differ for techId #%d: tech=''%s'' and evt=''%s'' => using the Event one\n', ...
+                     g_decArgo_floatNum, ...
+                     g_decArgo_cycleNum, ...
+                     g_decArgo_cycleNumFloat, ...
+                     g_decArgo_patternNumFloat, ...
+                     uEvtTechId(idTechId), techDataAll{idT, 6}, techDataAll{idE, 6});
                end
             end
-            if (useEvent == 1)
-               idToDel = [idToDel idT];
-            else
-               idToDel = [idToDel idE];
-            end
+         end
+         if (useEvent == 1)
+            idToDel = [idToDel idT];
+         else
+            idToDel = [idToDel idE];
          end
       end
    end
