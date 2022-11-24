@@ -17,8 +17,10 @@
 %                            to '0' otherwise
 %      outputDirName       : output directory name
 %   optional parameters:
-%      outputLogDirName : LOG file directory name
-%      xmlReportDirName : XML file directory name
+%      outputLogDirName     : LOG file directory name
+%      xmlReportDirName     : XML file directory name
+%      monoProfRefFileName  : S mono-profile reference file path name
+%      multiProfRefFileName : S multi-profile reference file path name
 %
 % OUTPUT PARAMETERS :
 %
@@ -313,6 +315,10 @@ if (~isempty(a_varargin))
             g_cocs_outputLogDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'xmlReportDirName'))
             g_cocs_outputXmlReportDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'monoProfRefFileName'))
+            g_cocs_monoProfRefFile = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'multiProfRefFileName'))
+            g_cocs_multiProfRefFile = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
          end

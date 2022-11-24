@@ -302,10 +302,13 @@ end
 useind=false(size(upres));
 i=length(upres); % start at bottom
 niter=0;nitermax=length(upres)+1;
+if all(isnan(valdp(:))) % each BGC obs has only one level - no way to jump/construct synthetic pressure axis
+%presaxis=median(upres); % take median pressure
+presaxis=upres(end); % take deepest pressure and align rest to this level
+else % cycle pressure record
 while ~isempty(i)
     niter=niter+1;
     useind(i)=1; % add current level to synthetic axis
-    %if upres(i)==13.7; keyboard, end
     ind=find(upres>upres(i)-min(valdp(i,:)) & upres<=upres(i)); % get pressures that are within current level (included) and probably next level-min(dPRES) (excluded)
     % check if any of the intermittent levels has such a small dPRES, that
     % there will be a second observation within the current level-min(dPRES) "jump"
@@ -338,6 +341,7 @@ while ~isempty(i)
 end
 clear niter nitermax
 presaxis=upres(useind);
+end % pressure axis cycle from bottom possible?
 %presaxis=double(upres(useind))./1000; % and put back on 1/1000 float value
 
 %%{
@@ -380,7 +384,7 @@ for i=1:length(ubgcparams)
             else % more than one nprof with data: keep only data outside existing range
                 overlap(:,k)=ind & (xpres(:,k)>xrange(2,1) | xpres(:,k)<xrange(1,1));
                 xrange(1,1)=min([xrange(1,1) xrange(1,1+k)]);
-                xrange(2,1)=min([xrange(2,1) xrange(2,1+k)]);
+                xrange(2,1)=max([xrange(2,1) xrange(2,1+k)]);
             end
         end
     end % cycle all nprofs
@@ -459,15 +463,16 @@ for i=1:length(ubgcparams)
     % take maximum of QC; order 1 < 2 < 5 < 3 < 4
     qcnext(qcnext==5)=2.5; qcprevious(qcprevious==5)=2.5; % replace QC 5 with 2.5: 
     qcfill=max(qcnext,qcprevious); % max for interpolated QC
-    else % only one value, keep this value as well as its QC
-    synth.(ubgcparams{i}).value(isnan(synth.(ubgcparams{i}).value))=y;
-    qcfill=yqc;
-    end
     synth.([ubgcparams{i} '_QC']).value(isnan(synth.([ubgcparams{i} '_QC']).value))=qcfill(isnan(synth.([ubgcparams{i} '_QC']).value));
     synth.([ubgcparams{i} '_QC']).value(synth.([ubgcparams{i} '_QC']).value==2.5)=5; % and reverse QC 5
     % qc extrapolation: nearest-neighbour
     synth.([ubgcparams{i} '_QC']).value(isnan(synth.([ubgcparams{i} '_QC']).value))=interp1(double(x(uind)),yqc(uind),double(presaxis(isnan(synth.([ubgcparams{i} '_QC']).value))),'nearest','extrap');
     clear qcnext qcprevious qcfill
+    else % only one value, keep this value as well as its QC, and place it closest to the original pressure
+        [~,ifill]=min(abs(presaxis-x));
+        synth.(ubgcparams{i}).value(ifill)=y;
+        synth.([ubgcparams{i} '_QC']).value(ifill)=yqc;
+    end
     %{
     %% check dPRES assignment
     % and add pressure difference where it is missing (and there are data)
@@ -490,7 +495,11 @@ for i=1:length(ubgcparams)
     % keep nearest data (can be two points) and remove all other that
     % are further away
     inomatch=true(nos,1);
+    if length(presaxis)==1
+    neardp=abs(synth.PRES.value-x(uind)); % on original sampling axis
+    else
     neardp=abs(synth.PRES.value(dsearchn(synth.PRES.value,x(uind)))-x(uind)); % on original sampling axis
+    end
     for k=1:length(uind), 
         inomatch(abs(synth.PRES.value-x(uind(k)))==neardp(k))=0; 
     end
@@ -586,16 +595,19 @@ for i=1:length(ubgcparams)
     % take maximum of QC; order 1 < 2 < 5 < 3 < 4
     qcnextadj(qcnextadj==5)=2.5; qcpreviousadj(qcpreviousadj==5)=2.5; % replace QC 5 with 2.5: 
     qcfilladj=max(qcnextadj,qcpreviousadj); % max for interpolated QC
-    else % only one value, keep this value, its error, and its QC
-    synth.([ubgcparams{i} '_ADJUSTED']).value(isnan(synth.([ubgcparams{i} '_ADJUSTED']).value))=yadj;
-    synth.([ubgcparams{i} '_ADJUSTED_ERROR']).value(isnan(synth.([ubgcparams{i} '_ADJUSTED_ERROR']).value))=yadjerr;
-    qcfilladj=yadjqc;
-    end
     synth.([ubgcparams{i} '_ADJUSTED_QC']).value(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value))=qcfilladj(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value));
     synth.([ubgcparams{i} '_ADJUSTED_QC']).value(synth.([ubgcparams{i} '_ADJUSTED_QC']).value==2.5)=5; % and reverse QC 5
     % qc extrapolation: nearest-neighbour
     synth.([ubgcparams{i} '_ADJUSTED_QC']).value(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value))=interp1(double(xadj(uindadj)),yadjqc(uindadj),double(presaxis(isnan(synth.([ubgcparams{i} '_ADJUSTED_QC']).value))),'nearest','extrap');
     clear qcnextadj qcpreviousadj qcfilladj
+    else % only one value, keep this value, its error, and its QC, and place it closest to the original pressure
+    [~,ifill]=min(abs(presaxis-xadj));
+    synth.([ubgcparams{i} '_ADJUSTED']).value(ifill)=yadj;
+    if yadjerrpresence % same with errors if any
+    synth.([ubgcparams{i} '_ADJUSTED_ERROR']).value(ifill)=yadjerr;
+    end
+    synth.([ubgcparams{i} '_ADJUSTED_QC']).value(ifill)=yadjqc;
+    end
     
     % and kick out unmatched data
     inomatch=true(nos,1);
@@ -614,7 +626,7 @@ for i=1:length(ubgcparams)
         iremove(find(inomatch(2) & ~inomatch(1) & ~inomatch(3) & ~inomatch(4))+1)=0;
         iremove(find(inomatch(nos-1) & ~inomatch(nos-3) & ~inomatch(nos-2) & ~inomatch(nos))+nos-2)=0;
     end
-    if nos>=2
+    if nos>2
         % special case: shallowest data point: up to 1 float length (2
         % dbar) and deepest data point: up to 1 antenna length (1 dbar)
         iremove(find(inomatch(1) & ~inomatch(2) & ~inomatch(3) & diff(synth.PRES.value([1 2]))<=2*1000))=0;

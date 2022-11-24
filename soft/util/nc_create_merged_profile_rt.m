@@ -19,8 +19,10 @@
 %                            to '0' otherwise
 %      outputDirName       : output directory name
 %   optional parameters:
-%      outputLogDirName : LOG file directory name
-%      xmlReportDirName : XML file directory name
+%      outputLogDirName     : LOG file directory name
+%      xmlReportDirName     : XML file directory name
+%      monoProfRefFileName  : M mono-profile reference file path name
+%      multiProfRefFileName : M multi-profile reference file path name
 %
 % OUTPUT PARAMETERS :
 %
@@ -165,7 +167,7 @@ try
       g_cocm_cycleNum = str2double(cProfFileName(idF+1:end));
       
       % generate M-PROF file
-      nc_create_v2_merged_profile_(...
+      nc_create_merged_profile_(...
          g_cocm_floatCProfFileName, ...
          g_cocm_floatBProfFileName, ...
          g_cocm_floatMetaFileName, ...
@@ -335,6 +337,10 @@ if (~isempty(a_varargin))
             g_cocm_outputLogDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'xmlReportDirName'))
             g_cocm_outputXmlReportDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'monoProfRefFileName'))
+            g_cocm_monoProfRefFile = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'multiProfRefFileName'))
+            g_cocm_multiProfRefFile = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
          end
