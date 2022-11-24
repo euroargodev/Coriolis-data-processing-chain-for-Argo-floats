@@ -10,32 +10,26 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 301;META_AUX;Payload version;META_AUX_SENSOR_BOARD_FIRMWARE_VERSION;Firmware version of the sensor board.
 302;META_AUX;SIM card ID;META_AUX_FLOAT_SIM_CARD_NUMBER;SIM card number of the float.
 303;META_AUX;nke ID;META_AUX_FLOAT_WC_NUMBER;WC number of the float.
-207;TECH_AUX;Pressure activation start;CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;pressure activation scrutation start date
-208;TECH_AUX;Pressure activation stop;CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;pressure activation scrutation end date
+207;TECH;Pressure activation start;CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;pressure activation scrutation start date
+208;TECH;Pressure activation stop;CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;pressure activation scrutation end date
 106;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredAtSurfaceDuringDescent_cm^3;Oil volume transferred from the external bladder during the descent to park (between the surface and the second threshold of the buoyancy reduction phase). This is the oil volume tranferred  during the NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT valve actions.
 107;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
 108;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3;Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
 109;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
-110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+110;TECH_AUX;Date/heure de fin;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
+111;TECH;Volume huile transféré;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
 112;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
 113;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
 114;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
 115;TECH;Nb. set point outputs;NUMBER_ParkDriftExitsFromParkMargin_COUNT;drift at park pressure: number of exits from margin around park pressure target - specifically, how many times the float exits the band of pressure surrounding the target park pressure (generally +/- 30db)
 184;TECH_AUX;Stabilization date/time;TECH_AUX_CLOCK_StabilizedParkStartTime_YYYYMMDDHHMMSS;Time when the float stabilized at parking depth (improved stabilization needed for some Bio sensors).
 185;TECH_AUX;Stabilization depth;TECH_AUX_PRES_StabilizedPark_dbar;Pressure of the float when stabilized at parking depth (improved stabilization needed for some Bio sensors).
-110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
 116;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3;Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions.
 117;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
-110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
 186;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
 187;TECH;Nb. pump actions;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
 188;TECH;Nb. set point inputs;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
 189;TECH_AUX;Nb. set point outputs;TECH_AUX_NUMBER_ProfileDriftExitsFromProfileMargin_COUNT;drift at profile pressure: number of exits from margin around profile pressure target - specifically, how many times the float exits the band of pressure surrounding the target profile pressure (generally +/- 30db)
-110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
 118;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringAscentToSurface_cm^3;Oil volume transferred to the external bladder during the ascent to surface This is the oil volume tranferred  during the NUMBER_PumpActionsDuringAscentToSurface_COUNT pump actions.
 119;TECH;Nb. pump actions (total);NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
 120;TECH;Nb. actions for take-off;NUMBER_PumpActionsToStartAscent_COUNT;Number of pump actions needed to start the ascent.
