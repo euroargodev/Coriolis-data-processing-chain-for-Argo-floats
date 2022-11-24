@@ -272,7 +272,9 @@ if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~=
    if (~isnan(secondProfRepRate) && (secondProfRepRate ~= 1))
       
       % check float internal cycle number VS MC15
-      if ((mod(floatInternalCycleNumber, secondProfRepRate) == 0) || (floatInternalCycleNumber == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
+      % we must check floatInternalCycleNumber+1 because the configuration is
+      % for the next cycle
+      if ((mod(floatInternalCycleNumber+1, secondProfRepRate) == 0) || (floatInternalCycleNumber == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
          % profile pressure is MC16
          confName = 'CONFIG_MC16_';
          idPosMc16 = find(strncmp(confName, configNames, length(confName)) == 1, 1);

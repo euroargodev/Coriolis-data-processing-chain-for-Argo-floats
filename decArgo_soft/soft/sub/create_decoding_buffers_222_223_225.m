@@ -393,7 +393,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, ...
-      6903059, 6903109, 6903793]))
+      6903059, 6903109, 6903793, 6904236]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -552,6 +552,14 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
+      case 6904236
+         % cycle #413 data are separated
+         id = find((tabCyNum == 413) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 413) = tabRank(id);
+         tabRankByCycle(tabCyNum == 413) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 413) = tabRankByDate(id);   
+         tabDeep(tabCyNum == 413) = 1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
