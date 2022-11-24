@@ -180,7 +180,7 @@ elseif (a_whyFlag == 1)
             end
          end
          
-      case {210}
+      case {210, 211}
          % Arvor-ARN Iridium
 
          if (g_decArgo_0TypePacketReceivedFlag == 0)

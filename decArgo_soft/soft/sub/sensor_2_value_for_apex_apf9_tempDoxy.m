@@ -9,7 +9,7 @@
 %   a_tempDoxyDef : DOXY temperature default value
 %
 % OUTPUT PARAMETERS :
-%   o_value : DOXY temperature value
+%   o_value : DOXY temperature values
 %
 % EXAMPLES :
 %

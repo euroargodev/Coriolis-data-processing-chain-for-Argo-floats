@@ -5,7 +5,7 @@
 %
 % SYNTAX :
 %  split_argos_messages_one_month(a_inputPathName, a_inputDirName, ...
-%    a_outputPathName, a_timeStamp, a_subDir)
+%    a_outputPathName, a_timeStamp, a_subDir, a_logFile)
 %
 % INPUT PARAMETERS :
 %   a_inputPathName  : path name of the input directory
@@ -14,6 +14,7 @@
 %   a_timeStamp      : time stamp used with the subDir option
 %   a_subDir         : create a sub-directory and add a time stamp in the output
 %                      files names
+%   a_logFile        : log file path name
 %
 % OUTPUT PARAMETERS :
 %
@@ -26,7 +27,9 @@
 %   03/18/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function split_argos_messages_one_month(a_inputPathName, a_inputDirName, ...
-   a_outputPathName, a_timeStamp, a_subDir)
+   a_outputPathName, a_timeStamp, a_subDir, a_logFile)
+
+diary(a_logFile);
 
 DIR_INPUT_ARGOS_FILES = [a_inputPathName '/' a_inputDirName '/'];
 if (a_subDir == 1)
@@ -88,45 +91,53 @@ for idFile = 1:nbFiles
                end
 
                % create the output file name
-               if (a_subDir == 1)
-                  outputFileName = sprintf('%06d_%s_%s', ...
-                     floatArgosId, ...
-                     datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
-                     a_inputDirName);
-               else
-                  outputFileName = sprintf('%06d_%s', ...
-                     floatArgosId, ...
-                     datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'));
-               end
-
-               stop = 0;
-               fileNum = 1;
-               while (~stop)
-                  outputFilePathName = [dirFloatOutPut '/' ...
-                     sprintf('%s_%03d.txt', outputFileName, fileNum)];
-                  if (exist(outputFilePathName, 'file') == 2)
-                     fileNum = fileNum + 1;
+               if (~isempty(dateList))
+                  % files without dated data are useless
+                  if (a_subDir == 1)
+                     outputFileName = sprintf('%06d_%s_%s', ...
+                        floatArgosId, ...
+                        datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+                        a_inputDirName);
                   else
-                     stop = 1;
+                     outputFileName = sprintf('%06d_%s', ...
+                        floatArgosId, ...
+                        datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'));
                   end
-                  if (fileNum == 1000)
-                     fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
+                  
+                  stop = 0;
+                  fileNum = 1;
+                  while (~stop)
+                     outputFilePathName = [dirFloatOutPut '/' ...
+                        sprintf('%s_%03d.txt', outputFileName, fileNum)];
+                     if (exist(outputFilePathName, 'file') == 2)
+                        fileNum = fileNum + 1;
+                     else
+                        stop = 1;
+                     end
+                     if (fileNum == 1000)
+                        % this can appear but only for file without date in their
+                        % name => file without dated data => useless
+                        fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
+                        outputFilePathName = '';
+                        stop = 1;
+                     end
+                  end
+                  
+                  % store the data in the output file
+                  if (~isempty(outputFilePathName))
+                     fIdOut = fopen(outputFilePathName, 'wt');
+                     if (fIdOut == -1)
+                        fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
+                        return;
+                     end
+                     
+                     for id = 1:length(text)
+                        fprintf(fIdOut, '%s\n', text{id});
+                     end
+                     
+                     fclose(fIdOut);
                   end
                end
-
-               % store the data in the output file
-               fIdOut = fopen(outputFilePathName, 'wt');
-               if (fIdOut == -1)
-                  fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-                  return;
-               end
-
-               for id = 1:length(text)
-                  fprintf(fIdOut, '%s\n', text{id});
-               end
-
-               fclose(fIdOut);
-
             end
 
             break;
@@ -214,44 +225,53 @@ for idFile = 1:nbFiles
                end
 
                % create the output file name
-               if (a_subDir == 1)
-                  outputFileName = sprintf('%06d_%s_%s', ...
-                     floatArgosId, ...
-                     datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
-                     a_inputDirName);
-               else
-                  outputFileName = sprintf('%06d_%s', ...
-                     floatArgosId, ...
-                     datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'));
-               end
-
-               stop = 0;
-               fileNum = 1;
-               while (~stop)
-                  outputFilePathName = [dirFloatOutPut '/' ...
-                     sprintf('%s_%03d.txt', outputFileName, fileNum)];
-                  if (exist(outputFilePathName, 'file') == 2)
-                     fileNum = fileNum + 1;
+               if (~isempty(dateList))
+                  % files without dated data are useless
+                  if (a_subDir == 1)
+                     outputFileName = sprintf('%06d_%s_%s', ...
+                        floatArgosId, ...
+                        datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+                        a_inputDirName);
                   else
-                     stop = 1;
+                     outputFileName = sprintf('%06d_%s', ...
+                        floatArgosId, ...
+                        datestr(min(dateList)+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'));
                   end
-                  if (fileNum == 1000)
-                     fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
+                  
+                  stop = 0;
+                  fileNum = 1;
+                  while (~stop)
+                     outputFilePathName = [dirFloatOutPut '/' ...
+                        sprintf('%s_%03d.txt', outputFileName, fileNum)];
+                     if (exist(outputFilePathName, 'file') == 2)
+                        fileNum = fileNum + 1;
+                     else
+                        stop = 1;
+                     end
+                     if (fileNum == 1000)
+                        % this can appear but only for file without date in their
+                        % name => file without dated data => useless
+                        fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
+                        outputFilePathName = '';
+                        stop = 1;
+                     end
+                  end
+                  
+                  % store the data in the output file
+                  if (~isempty(outputFilePathName))
+                     fIdOut = fopen(outputFilePathName, 'wt');
+                     if (fIdOut == -1)
+                        fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
+                        return;
+                     end
+                     
+                     for id = 1:length(text)
+                        fprintf(fIdOut, '%s\n', text{id});
+                     end
+                     
+                     fclose(fIdOut);
                   end
                end
-
-               % store the data in the output file
-               fIdOut = fopen(outputFilePathName, 'wt');
-               if (fIdOut == -1)
-                  fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-                  return;
-               end
-
-               for id = 1:length(text)
-                  fprintf(fIdOut, '%s\n', text{id});
-               end
-
-               fclose(fIdOut);
                
                clear text;
                clear floatArgosId;
@@ -341,5 +361,7 @@ for idFile = 1:nbFiles
       fclose(fIdIn);
    end
 end
+
+diary off;
 
 return;

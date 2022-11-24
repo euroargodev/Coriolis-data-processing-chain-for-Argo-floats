@@ -73,6 +73,15 @@ switch (a_decoderId)
          {'PSAL_MED'} ...
          ];
       
+   case {301}
+
+      % INCOIS FLBB floats
+      o_paramList = [ ...
+         {'PRES'} ...
+         {'TEMP'} ...
+         {'PSAL'} ...
+         ];
+      
    case {201, 202, 203, 206, 207, 208}
       
       % Arvor Deep
@@ -103,7 +112,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {204, 205, 210}
+   case {204, 205, 210, 211}
 
       % Arvor Iridium
       o_paramList = [ ...

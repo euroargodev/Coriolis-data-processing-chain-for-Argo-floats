@@ -21,10 +21,53 @@
 function split_argos_messages(varargin)
 
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_message_20160208\ori\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_cycle\ori_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori_split\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_cycle\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori_split\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\archive_message_20160823\ori\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\archive_cycle_20160823\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\spool_20160824\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\spool_20160824\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\archive_message_20160823\ori\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\archive_cycle_all_20160823\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\archive_message_collecte_V1_20160829\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\historical_processing_V1\';
+% 
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\archive_message_new_collecte_V1_20160829\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\historical_processing_V1\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\archive_cycle_back_collecte_V1_20160829\zz\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\final_processing_V1\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\archive_cycle_collecte_V1_20160829\zz\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\final_processing_V1\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\archive_message_refused_collecte_V1_20160829\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\historical_processing_V1\';
+% 
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\spool_V1_20160829\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\historical_processing_V1\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing\ori_CORRECT\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\COLLECTE_V1\final_processing_V1\zz\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\processing_all_v1\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\base_traitements_20160823\';
+
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -78,13 +121,14 @@ if (nargin == 0)
          if ~(strcmp(dirName, '.') || strcmp(dirName, '..'))
 
             fprintf('Processing directory %s\n', dirName);
+            logFileForDir = [DIR_LOG_FILE '/' 'split_argos_messages' name '_' dirName '_' currentDate '.log'];
 
             % process one directory (one month)
             tic;
             %             split_argos_messages_one_month( ...
             %                DIR_INPUT_ARGOS_FILES, dirName, ...
             %                DIR_OUTPUT_ARGOS_FILES, currentDate, 0);
-            cmd = ['matlab -nodesktop -nosplash -r "split_argos_messages_one_month(''' DIR_INPUT_ARGOS_FILES ''', ''' dirName ''', ''' DIR_OUTPUT_ARGOS_FILES ''', ''' currentDate ''', 0);exit"'];
+            cmd = ['matlab -nodesktop -nosplash -r "split_argos_messages_one_month(''' DIR_INPUT_ARGOS_FILES ''', ''' dirName ''', ''' DIR_OUTPUT_ARGOS_FILES ''', ''' currentDate ''', 0,''' logFileForDir ''');exit"'];
             system(cmd);
             ellapsedTime = toc;
             fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);

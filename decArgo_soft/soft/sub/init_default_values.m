@@ -54,9 +54,10 @@ global g_decArgo_salDef;
 global g_decArgo_cndcDef;
 global g_decArgo_molarDoxyDef;
 global g_decArgo_mlplDoxyDef;
-global g_decArgo_tPhaseDoxyDef;
 global g_decArgo_c1C2PhaseDoxyDef;
 global g_decArgo_bPhaseDoxyDef;
+global g_decArgo_tPhaseDoxyDef;
+global g_decArgo_rPhaseDoxyDef;
 global g_decArgo_phaseDelayDoxyDef;
 global g_decArgo_tempDoxyDef;
 global g_decArgo_doxyDef;
@@ -324,6 +325,20 @@ global g_decArgo_doxy_201_202_202_pCoef1;
 global g_decArgo_doxy_201_202_202_pCoef2;
 global g_decArgo_doxy_201_202_202_pCoef3;
 
+global g_decArgo_doxy_202_204_304_d0;
+global g_decArgo_doxy_202_204_304_d1;
+global g_decArgo_doxy_202_204_304_d2;
+global g_decArgo_doxy_202_204_304_d3;
+global g_decArgo_doxy_202_204_304_sPreset;
+global g_decArgo_doxy_202_204_304_b0;
+global g_decArgo_doxy_202_204_304_b1;
+global g_decArgo_doxy_202_204_304_b2;
+global g_decArgo_doxy_202_204_304_b3;
+global g_decArgo_doxy_202_204_304_c0;
+global g_decArgo_doxy_202_204_304_pCoef1;
+global g_decArgo_doxy_202_204_304_pCoef2;
+global g_decArgo_doxy_202_204_304_pCoef3;
+
 % NITRATE coefficients
 global g_decArgo_nitrate_a;
 global g_decArgo_nitrate_b;
@@ -367,9 +382,10 @@ g_decArgo_salDef = 99.999;
 g_decArgo_cndcDef = 99.9999;
 g_decArgo_molarDoxyDef = 999;
 g_decArgo_mlplDoxyDef = 999;
-g_decArgo_tPhaseDoxyDef = 999.999;
 g_decArgo_c1C2PhaseDoxyDef = 999.999;
 g_decArgo_bPhaseDoxyDef = 999.999;
+g_decArgo_tPhaseDoxyDef = 999.999;
+g_decArgo_rPhaseDoxyDef = 999.999;
 g_decArgo_phaseDelayDoxyDef = 99999.999;
 g_decArgo_tempDoxyDef = 99.999;
 g_decArgo_doxyDef = 999.999;
@@ -409,7 +425,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '006b';
+g_decArgo_decoderVersion = '007a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -658,6 +674,20 @@ g_decArgo_doxy_201_202_202_c0 = -4.88682e-7;
 g_decArgo_doxy_201_202_202_pCoef1 = 0.1;
 g_decArgo_doxy_201_202_202_pCoef2 = 0.00022;
 g_decArgo_doxy_201_202_202_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_204_304_d0 = 24.4543;
+g_decArgo_doxy_202_204_304_d1 = -67.4509;
+g_decArgo_doxy_202_204_304_d2 = -4.8489;
+g_decArgo_doxy_202_204_304_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_304_sPreset = 0;
+g_decArgo_doxy_202_204_304_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_304_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_304_b2 = -1.03410e-3;
+g_decArgo_doxy_202_204_304_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_304_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_304_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_304_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_304_pCoef3 = 0.0419;
 
 % NITRATE coefficients
 g_decArgo_nitrate_a = 1.1500276;

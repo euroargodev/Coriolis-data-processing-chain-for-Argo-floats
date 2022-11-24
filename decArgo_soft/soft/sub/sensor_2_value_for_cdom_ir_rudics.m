@@ -8,7 +8,7 @@
 %   a_cdomCounts : input CDOM counts
 %
 % OUTPUT PARAMETERS :
-%   o_cdomValues : output CDOM counts
+%   o_cdomValues : output CDOM values
 %
 % EXAMPLES :
 %

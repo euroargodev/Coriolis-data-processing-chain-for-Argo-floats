@@ -181,7 +181,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Profile length';
-      dataStruct.techId = 1001;
+      dataStruct.techId = 1000;
       dataStruct.value = num2str(decData(4));
       o_techData{end+1} = dataStruct;
       
@@ -195,7 +195,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Float status word';
-      dataStruct.techId = 1002;
+      dataStruct.techId = 1001;
       dataStruct.value = sprintf('%#X', decData(5));
       o_techData{end+1} = dataStruct;
       
@@ -210,7 +210,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Surface pressure at end of Up Time';
-      dataStruct.techId = 1003;
+      dataStruct.techId = 1002;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_pressure(decData(6), g_decArgo_presDef));
       o_techData{end+1} = dataStruct;
       
@@ -229,7 +229,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Internal vacuum at end of Park phase';
-      dataStruct.techId = 1004;
+      dataStruct.techId = 1003;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_vacuum(decData(7)));
       o_techData{end+1} = dataStruct;
 
@@ -255,7 +255,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged air bladder pressure during transmission';
-      dataStruct.techId = 1005;
+      dataStruct.techId = 1004;
       dataStruct.value = num2str(round(mean(tabBladPres)));
       o_techData{end+1} = dataStruct;      
 
@@ -268,7 +268,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Piston position when surface detected';
-      dataStruct.techId = 1006;
+      dataStruct.techId = 1005;
       dataStruct.value = num2str(decData(9));
       o_techData{end+1} = dataStruct;
       
@@ -281,7 +281,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Piston position at end of Park phase';
-      dataStruct.techId = 1007;
+      dataStruct.techId = 1006;
       dataStruct.value = num2str(decData(10));
       o_techData{end+1} = dataStruct;
       
@@ -294,7 +294,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Piston position at end of Deep descent phase';
-      dataStruct.techId = 1008;
+      dataStruct.techId = 1007;
       dataStruct.value = num2str(decData(11));
       o_techData{end+1} = dataStruct;
       
@@ -306,7 +306,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'SBE41 status word';
-      dataStruct.techId = 1009;
+      dataStruct.techId = 1008;
       dataStruct.value = sprintf('%#X', decData(12));
       o_techData{end+1} = dataStruct;
       
@@ -319,7 +319,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Cumulative piston on time during ascent';
-      dataStruct.techId = 1010;
+      dataStruct.techId = 1009;
       dataStruct.value = num2str(decData(13));
       o_techData{end+1} = dataStruct;
       
@@ -335,7 +335,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery voltage at end of Park phase';
-      dataStruct.techId = 1011;
+      dataStruct.techId = 1010;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_voltage(decData(14)));
       o_techData{end+1} = dataStruct;
       
@@ -351,7 +351,7 @@ for idL = 1:size(a_sensorData, 1)
 
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery current at end of Park phase';
-      dataStruct.techId = 1012;
+      dataStruct.techId = 1011;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_current(decData(15)));
       o_techData{end+1} = dataStruct;
       
@@ -367,7 +367,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery voltage while SBE41 sampling at end of Park phase';
-      dataStruct.techId = 1013;
+      dataStruct.techId = 1012;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_voltage(decData(16)));
       o_techData{end+1} = dataStruct;
       
@@ -383,7 +383,7 @@ for idL = 1:size(a_sensorData, 1)
 
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery current while SBE41 sampling at end of Park phase';
-      dataStruct.techId = 1014;
+      dataStruct.techId = 1013;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_current(decData(17)));
       o_techData{end+1} = dataStruct;
       
@@ -399,7 +399,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery voltage measured just before the end of the initial piston extension beginning Profile phase';
-      dataStruct.techId = 1015;
+      dataStruct.techId = 1014;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_voltage(decData(18)));
       o_techData{end+1} = dataStruct;
       
@@ -415,7 +415,7 @@ for idL = 1:size(a_sensorData, 1)
 
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery current measured just before the end of the initial piston extension beginning Profile phase';
-      dataStruct.techId = 1016;
+      dataStruct.techId = 1015;
       dataStruct.value = num2str(sensor_2_value_for_apex_apf9_current(decData(19)));
       o_techData{end+1} = dataStruct;
       
@@ -447,7 +447,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged battery voltage while air pump running';
-      dataStruct.techId = 1017;
+      dataStruct.techId = 1016;
       dataStruct.value = num2str(round(mean(tabBatVolt)*1000)/1000);
       o_techData{end+1} = dataStruct;
       
@@ -479,7 +479,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged battery current while air pump running';
-      dataStruct.techId = 1018;
+      dataStruct.techId = 1017;
       dataStruct.value = num2str(round(mean(tabBatCur)*1000)/1000);
       o_techData{end+1} = dataStruct;
 
@@ -503,7 +503,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged number of 6-second pulses of the air pump required to inflate the air bladder';
-      dataStruct.techId = 1019;
+      dataStruct.techId = 1018;
       dataStruct.value = num2str(round(mean(tabNum)));
       o_techData{end+1} = dataStruct;
       
@@ -527,7 +527,7 @@ for idL = 1:size(a_sensorData, 1)
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged integrated Measure of (Volt-Sec) of volume of air pumped during telemetry cycle';
-      dataStruct.techId = 1020;
+      dataStruct.techId = 1019;
       dataStruct.value = num2str(round(mean(tabNum)));
       o_techData{end+1} = dataStruct;
       
@@ -565,7 +565,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Number of active-ballast adjustments made during the park phase';
-      dataStruct.techId = 1021;
+      dataStruct.techId = 1020;
       dataStruct.value = num2str(decData(1));
       o_techData{end+1} = dataStruct;
 
@@ -579,7 +579,7 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Ice evasion record';
-      dataStruct.techId = 1022;
+      dataStruct.techId = 1021;
       dataStruct.value = dec2bin(decData(2), 8);
       o_techData{end+1} = dataStruct;
       
@@ -592,7 +592,7 @@ for idL = 1:size(a_sensorData, 1)
       if (techId1023Done == 0)
          dataStruct = get_apx_tech_data_init_struct(msgRed);
          dataStruct.label = 'Number of mixed-layer samples taken';
-         dataStruct.techId = 1023;
+         dataStruct.techId = 1022;
          dataStruct.value = num2str(decData(3));
          o_techData{end+1} = dataStruct;
          techId1023Done = 1;
@@ -632,7 +632,7 @@ for idL = 1:size(a_sensorData, 1)
       if (dataStruct.value ~= g_decArgo_tempDef)
          dataStruct = get_apx_tech_data_init_struct(msgRed);
          dataStruct.label = 'Infimum of the mixed-layer median temperature since the last successful telemetry';
-         dataStruct.techId = 1024;
+         dataStruct.techId = 1023;
          dataStruct.value = num2str(sensor_2_value_for_apex_apf9_temperature(decData(5), g_decArgo_tempDef));
          o_techData{end+1} = dataStruct;
       end
@@ -645,7 +645,7 @@ for idL = 1:size(a_sensorData, 1)
 
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Number of hourly park-level PT samples';
-      dataStruct.techId = 1025;
+      dataStruct.techId = 1024;
       dataStruct.value = num2str(decData(6));
       o_techData{end+1} = dataStruct;
       
@@ -857,7 +857,7 @@ for idL = 1:size(a_sensorData, 1)
 
       % store profile data
       profData(1:23) = msgData(9:31);
-      profReceived(1:23) = ones(23, 1)*255;
+      profReceived(1:23) = 255;
       profRedundancy(1:23) = msgRed;
       
    else
@@ -870,7 +870,7 @@ for idL = 1:size(a_sensorData, 1)
       
       % store profile data
       profData(23+(msgNum-4)*29+1:23+(msgNum-4)*29+29) = msgData(3:31);
-      profReceived(23+(msgNum-4)*29+1:23+(msgNum-4)*29+29) = ones(29, 1)*255;
+      profReceived(23+(msgNum-4)*29+1:23+(msgNum-4)*29+29) = 255;
       profRedundancy(23+(msgNum-4)*29+1:23+(msgNum-4)*29+29) = msgRed;
 
    end
@@ -919,17 +919,17 @@ if (nbLev > 0)
    profSal = [];
    for idLev = 1:nbLev
       id = (idLev-1)*3;
-      if (receivedData(id+1) == 65535)
+      if ((receivedData(id+1) == 65535) && (decData(id+1) ~= 65535))
          temp = sensor_2_value_for_apex_apf9_temperature(decData(id+1), g_decArgo_tempDef);
       else
          temp = g_decArgo_tempDef;
       end
-      if (receivedData(id+2) == 65535)
+      if ((receivedData(id+2) == 65535) && (decData(id+2) ~= 65535))
          sal = sensor_2_value_for_apex_apf9_salinity(decData(id+2), g_decArgo_salDef);
       else
          sal = g_decArgo_salDef;
       end
-      if (receivedData(id+3) == 65535)
+      if ((receivedData(id+3) == 65535) && (decData(id+3) ~= 65535))
          pres = sensor_2_value_for_apex_apf9_pressure(decData(id+3), g_decArgo_presDef);
       else
          pres = g_decArgo_presDef;
@@ -1106,7 +1106,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*6)) || ...
                   if (techId1023Done == 0)
                      dataStruct = get_apx_tech_data_init_struct(msgRed);
                      dataStruct.label = 'Number of temperature samples collected between 50dbars and the surface';
-                     dataStruct.techId = 1023;
+                     dataStruct.techId = 1022;
                      dataStruct.value = num2str(decData(1));
                      o_techData{end+1} = dataStruct;
                      techId1023Done = 1;
@@ -1147,7 +1147,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*6)) || ...
                   
                   dataStruct = get_apx_tech_data_init_struct(msgRed);
                   dataStruct.label = 'Number of descent pressure marks';
-                  dataStruct.techId = 1026;
+                  dataStruct.techId = 1025;
                   dataStruct.value = num2str(decData(3));
                   o_techData{end+1} = dataStruct;
                   
@@ -1191,7 +1191,7 @@ if (((profileLength >= 0) && (length(profData) > profileLength*6)) || ...
                
                dataStruct = get_apx_tech_data_init_struct(msgRed);
                dataStruct.label = 'Number of descent pressure marks';
-               dataStruct.techId = 1026;
+               dataStruct.techId = 1025;
                dataStruct.value = num2str(nbPresMark);
                o_techData{end+1} = dataStruct;
             end

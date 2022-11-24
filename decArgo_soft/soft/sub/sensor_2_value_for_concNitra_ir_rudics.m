@@ -8,7 +8,7 @@
 %   a_concNitraCounts : input nitrate concentration counts
 %
 % OUTPUT PARAMETERS :
-%   o_concNitraValues : output nitrate concentration counts
+%   o_concNitraValues : output nitrate concentration values
 %
 % EXAMPLES :
 %

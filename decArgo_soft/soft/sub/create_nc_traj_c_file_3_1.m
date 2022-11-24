@@ -1172,7 +1172,7 @@ for idParam = 1:length(measAddParamName)
    end
    
    netcdf.putVar(fCdf, trajectoryParametersVarId, ...
-      fliplr([idParam-1  0]), fliplr([1 length(valueStr)]), valueStr');
+      fliplr([nbMeasParam+idParam-1  0]), fliplr([1 length(valueStr)]), valueStr');
 end
 
 valueStr = ' ';

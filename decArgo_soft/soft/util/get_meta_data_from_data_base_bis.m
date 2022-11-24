@@ -22,6 +22,8 @@ function get_meta_data_from_data_base_bis()
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNemo_info\_configParamNames\nemo_DB_export_from_VB_20160818.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\apex_DB_export_fromVB_20160817_20160823.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
@@ -187,10 +189,9 @@ for idFloat = 1:length(floatList)
    idDriftPeriod = find(strcmp(paramCodeList(idForWmo), 'PR_IMMERSION_DRIFT_PERIOD') == 1, 1);
    driftPeriod = '';
    if (~isempty(idDriftPeriod))
-      driftPeriod = paramValueList{idForWmo(idDriftPeriod)};
-      if ((driftPeriod == 999) || (driftPeriod == 9999) || (driftPeriod == 0))
-         driftPeriod = -1;
-      else
+      if (~strcmp(paramValueList{idForWmo(idDriftPeriod)}, '999') && ...
+            ~strcmp(paramValueList{idForWmo(idDriftPeriod)}, '9999'))
+         driftPeriod = paramValueList{idForWmo(idDriftPeriod)};
          driftPeriod = num2str(str2num(driftPeriod)/60);
       end
    end

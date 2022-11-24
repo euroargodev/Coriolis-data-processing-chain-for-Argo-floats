@@ -25,7 +25,7 @@
 %   11/06/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_doxyValues] = compute_DOXY_27_bis(a_tPhaseDoxyValues, ...
-   a_presValues, a_tempValues, a_salValues, a_tabDoxyCoef)
+   a_presValues, a_tempValues, a_psalValues, a_tabDoxyCoef)
 
 % output parameters initialization
 o_doxyValues = [];

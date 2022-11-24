@@ -573,7 +573,7 @@ if ((a_deepCycle == 1) || (g_decArgo_secondIridiumSession == 0))
       measStruct.paramList = [paramPres paramTemp paramSal];
       
       pres = sensor_2_value_for_pressure_204_to_209(tabTech(41));
-      temp = sensor_2_value_for_temperature_204_to_210(tabTech(42));
+      temp = sensor_2_value_for_temperature_204_to_211(tabTech(42));
       psal = tabTech(43)/1000;
       
       measStruct.paramData = [pres temp psal];

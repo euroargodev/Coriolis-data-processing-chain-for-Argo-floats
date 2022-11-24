@@ -26,6 +26,8 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2016-04-10_spec_2016-05-16\'; 
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2016-05-23_spec_2016-05-23\';
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2016-06-27_spec_2016-06-27\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2016-08-01_spec_2016-07-28\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2016-08-01_spec_2016-08-30\';
 
 
 % top directory of the NetCDF files to check
@@ -54,7 +56,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_ma
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 
 
 % meta-data file exported from Coriolis data base
@@ -74,8 +76,8 @@ CHECK_NC_META = 1;
 % CHECK_NC_TRAJ = 0;
 % CHECK_NC_MULTI_PROF = 0;
 % CHECK_NC_MONO_PROF = 0;
-% CHECK_NC_TECH = 1;
-% CHECK_NC_META = 0;
+% CHECK_NC_TECH = 0;
+% CHECK_NC_META = 1;
 
 
 if (nargin == 0)
@@ -144,9 +146,9 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
    [floatDac] = get_float_dac(floatNum, metaWmoList, metaData);
-%    floatDac = 'incois';
+   floatDac = 'incois';
 %    floatDac = 'aoml';
-%    floatDac = 'coriolis';
+   floatDac = 'coriolis';
    
    for idType = 1:5
 
@@ -186,14 +188,27 @@ for idFloat = 1:nbFloats
             ncFileName = ncFiles(idFile).name;
             ncFilePathName = [ncFileDir '/' ncFileName];
             
-            cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
-               'java -classpath ' DIR_JAVA_CHECKER ' ' ...
-               '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
-               lower(floatDac) ' ' ...
-               DIR_JAVA_CHECKER '/spec ' ...
-               DIR_OUTPUT_REPORT_FILES ' ' ...
-               ncFileDir ' ' ...
-               ncFileName];
+            cmd = '';
+            if (ispc)
+               cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+                  'java -classpath ' DIR_JAVA_CHECKER ' ' ...
+                  '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
+                  lower(floatDac) ' ' ...
+                  DIR_JAVA_CHECKER '/spec ' ...
+                  DIR_OUTPUT_REPORT_FILES ' ' ...
+                  ncFileDir ' ' ...
+                  ncFileName];
+            elseif (isunix)
+               cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+                  DIR_JAVA_CHECKER '/ArgoFileChecker.csh ' ...
+                  lower(floatDac) ' ' ...
+                  DIR_OUTPUT_REPORT_FILES ' ' ...
+                  ncFileDir ' ' ...
+                  ncFileName];
+            else
+               fprintf('Cannot determine operating system\n');
+               return;
+            end
             
             [status, cmdOut] = system(cmd);
             if (status == 0)

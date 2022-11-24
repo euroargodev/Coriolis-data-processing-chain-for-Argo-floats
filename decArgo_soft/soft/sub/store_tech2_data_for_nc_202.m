@@ -78,7 +78,7 @@ if (a_deepCycle == 1)
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 221];
-   g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210(tabTech2(10));
+   g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_211(tabTech2(10));
    
    % the two following items have moved to TRAJ file
    %    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;

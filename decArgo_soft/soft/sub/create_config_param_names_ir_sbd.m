@@ -368,7 +368,7 @@ switch (a_decoderId)
          end
       end
       
-   case {210} % Arvor-ARN Iridium
+   case {210, 211} % Arvor-ARN Iridium
       
       for id = [0 4:10 17:26 29:31]
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);

@@ -9,7 +9,7 @@
 %   a_presDef     : pressure default value
 %
 % OUTPUT PARAMETERS :
-%   o_value : pressure value
+%   o_value : pressure values
 %
 % EXAMPLES :
 %

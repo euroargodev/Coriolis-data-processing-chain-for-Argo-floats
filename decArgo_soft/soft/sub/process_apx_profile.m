@@ -43,6 +43,7 @@ for idP = 1:length(profiles)
    
    % initialize a NetCDF profile structure and fill it with decoded profile data
    profStruct = get_profile_init_struct(a_cycleNum, -1, -1, -1);
+   profStruct.sensorNumber = 0;
    
    % positioning system
    profStruct.posSystem = 'ARGOS';

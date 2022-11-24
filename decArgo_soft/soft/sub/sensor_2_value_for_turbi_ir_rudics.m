@@ -8,7 +8,7 @@
 %   a_turbiCounts : input turbidity counts
 %
 % OUTPUT PARAMETERS :
-%   o_turbiValues : output turbidity counts
+%   o_turbiValues : output turbidity values
 %
 % EXAMPLES :
 %

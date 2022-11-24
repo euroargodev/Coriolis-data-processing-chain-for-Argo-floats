@@ -8,7 +8,7 @@
 %   a_sensorValue : current counts
 %
 % OUTPUT PARAMETERS :
-%   o_value : current value
+%   o_value : current values
 %
 % EXAMPLES :
 %

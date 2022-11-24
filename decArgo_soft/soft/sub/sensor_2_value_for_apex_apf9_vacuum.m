@@ -8,7 +8,7 @@
 %   a_sensorValue : vacuum counts
 %
 % OUTPUT PARAMETERS :
-%   o_value : vacuum value
+%   o_value : vacuum values
 %
 % EXAMPLES :
 %

@@ -3947,7 +3947,8 @@ if (~isempty(g_rtqc_trajData))
       % create the sorted list of profile and trajectory common parameters
       ncProfTrajXNameList = intersect(ncProfParamXNameList, ncTrajParamXNameList);
       
-      % put PRES, TEMP and PSAL on top of the list (for debugging purposes only)
+      % put PRES, TEMP and PSAL on top of the list (for debugging purposes and
+      % to ignore PSAL if the link cannot be done (see below))
       for idP = 1:length(paramList)
          idParam = find(strcmp(paramList{idP}, ncProfTrajXNameList) == 1, 1);
          if (idParam ~= idP)
@@ -4034,8 +4035,28 @@ if (~isempty(g_rtqc_trajData))
                      end
                   end
                   if (found == 0)
-                     fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to PSAL RT adjustment)\n', ...
-                        a_floatNum, idMeas);
+                     % most of the time the link fails because PSAL has been
+                     % adjusted; we will try to link the measurements again
+                     % without considering PSAL
+                     for idProf = 1:size(profNmeasXIndex, 2)
+                        profData = dataProf{idProf};
+                        for idLev = 1:size(profNmeasXIndex, 3)
+                           if ((size(profData, 2) > 2) && (size(dataTraj, 2) > 2))
+                              if (~any(profData(idLev, [1:2 4:end]) ~= dataTraj(idMeas, [1:2 4:end])))
+                                 idLength = 1;
+                                 while (profNmeasXIndex(idLength, idProf, idLev) ~= 0)
+                                    idLength = idLength + 1;
+                                 end
+                                 profNmeasXIndex(idLength, idProf, idLev) = idMeas;
+                                 found = 1;
+                              end
+                           end
+                        end
+                     end
+                     if (found == 0)
+                        fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to parameter RT adjustment)\n', ...
+                           a_floatNum, idMeas);
+                     end
                   end
                end
             end

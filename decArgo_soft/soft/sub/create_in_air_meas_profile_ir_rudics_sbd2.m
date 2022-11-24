@@ -65,7 +65,7 @@ if (a_doProfile.presCutOffProf ~= g_decArgo_presDef)
    
    if (~isempty(idLevNearSurface))
       unpumpedProfile = a_doProfile;
-      unpumpedProfile.primarySamplingProfileFlag = 2;
+      unpumpedProfile.primarySamplingProfileFlag = 0;
       unpumpedProfile.vertSamplingScheme = unpumpedProfile.vertSamplingScheme{2};      
       unpumpedProfile.data = unpumpedProfile.data(idLevNearSurface(1):end, :);
       if (~isempty(unpumpedProfile.dataQc))

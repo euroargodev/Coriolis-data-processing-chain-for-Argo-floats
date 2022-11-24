@@ -8,7 +8,7 @@
 %   a_phaseCounts : input C1 or C2 phase counts
 %
 % OUTPUT PARAMETERS :
-%   o_phaseValues : output C1 or C2 phase counts
+%   o_phaseValues : output C1 or C2 phase values
 %
 % EXAMPLES :
 %

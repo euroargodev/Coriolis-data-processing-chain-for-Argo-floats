@@ -8,7 +8,7 @@
 %   a_phaseCounts : input D phase counts
 %
 % OUTPUT PARAMETERS :
-%   o_phaseValues : output D phase counts
+%   o_phaseValues : output D phase values
 %
 % EXAMPLES :
 %

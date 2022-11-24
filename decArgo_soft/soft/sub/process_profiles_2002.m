@@ -155,7 +155,8 @@ for idProf = 1:2
       % create the profile structure
       primarySamplingProfileFlag = 1;
       profStruct = get_profile_init_struct(g_decArgo_cycleNum, -1, -1, primarySamplingProfileFlag);
-      
+      profStruct.sensorNumber = 0;
+
       % profile direction
       if (idProf == 1)
          profStruct.direction = 'D';
@@ -212,7 +213,7 @@ for idProf = 1:2
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_210_2001_2002( ...
+      [profStruct] = add_profile_date_and_location_201_to_211_2001_2002( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

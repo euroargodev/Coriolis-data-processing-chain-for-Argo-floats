@@ -3,10 +3,12 @@
 % process the data of given cycle.
 %
 % SYNTAX :
-%  set_float_config_argos(a_cyNum)
+%  set_float_config_argos(a_cyNum, a_assignCycleToConf)
 %
 % INPUT PARAMETERS :
-%   a_cyNum : concerned cycle number
+%   a_cyNum             : concerned cycle number
+%   a_assignCycleToConf : 1 if the cycle number should be assigned to the
+%                         configuration, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -18,7 +20,7 @@
 % RELEASES :
 %   05/10/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function set_float_config_argos(a_cyNum)
+function set_float_config_argos(a_cyNum, a_assignCycleToConf)
 
 % float configuration
 global g_decArgo_floatConfig;
@@ -161,8 +163,10 @@ if ((configNum == -1) || (configNum == 0))
 end
 
 % assign the config to the current cycle
-g_decArgo_floatConfig.USE.CYCLE(end+1) = a_cyNum;
-g_decArgo_floatConfig.USE.CONFIG(end+1) = configNum;
+if (a_assignCycleToConf == 1)
+   g_decArgo_floatConfig.USE.CYCLE(end+1) = a_cyNum;
+   g_decArgo_floatConfig.USE.CONFIG(end+1) = configNum;
+end
      
 % print_config_in_csv_file_ir_sbd('setConfig_', 3, g_decArgo_floatConfig);
 

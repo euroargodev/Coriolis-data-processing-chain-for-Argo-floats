@@ -9,7 +9,7 @@
 %   a_salDef      : salinity default value
 %
 % OUTPUT PARAMETERS :
-%   o_value : salinity value
+%   o_value : salinity values
 %
 % EXAMPLES :
 %

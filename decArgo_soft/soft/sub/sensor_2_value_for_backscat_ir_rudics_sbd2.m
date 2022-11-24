@@ -8,7 +8,7 @@
 %   a_backscatCounts : input backscatter counts
 %
 % OUTPUT PARAMETERS :
-%   o_backscatValues : output backscatter counts
+%   o_backscatValues : output backscatter values
 %
 % EXAMPLES :
 %

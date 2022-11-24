@@ -74,7 +74,7 @@ if (~isempty(a_tabTech))
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
             cycleNumberFromTech = a_tabTech(idPos(idP), 3);
             
-         case {210}
+         case {210, 211}
             % Arvor-ARN Iridium
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
             cycleNumberFromTech = a_tabTech(idPos(idP), 2);

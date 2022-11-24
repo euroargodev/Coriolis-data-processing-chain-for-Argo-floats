@@ -107,14 +107,14 @@ for idCy = 1:length(tabCyNum)
          idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_LMT);
          idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_LMT);
          a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
-
+         
          idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_Surface);
          idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_Surface);
          a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = [];
          a_tabTrajNMeas(idCyDeep).tabMeas = [a_tabTrajNMeas(idCyDeep).tabMeas; a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2)];
          
          a_tabTrajNMeas(idCySurf) = [];
-
+         
          % sort trajectory data structures according to the predefined
          % measurement code order
          [a_tabTrajNMeas(idCyDeep)] = sort_trajectory_data(a_tabTrajNMeas(idCyDeep), a_decoderId);
@@ -165,26 +165,36 @@ if (~isempty(a_tabTrajNCycle))
             % merge juldFirstMessage, juldFirstLocation, juldLastLocation and
             % juldLastMessage of the deep and surface records
             
+            % juldFirstMessage cannot be empty
             tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstMessage];
             tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
             a_tabTrajNCycle(idCyDeep(1)).juldFirstMessage = min(tabDate);
             
-            tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstLocation];
-            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            % juldFirstLocation can be empty
+            idF = find(~strcmp({a_tabTrajNCycle(idCyDeep).juldFirstLocation}, ''));
+            tabDate = [a_tabTrajNCycle(idCyDeep(idF)).juldFirstLocation];
+            tabDateStatus = [a_tabTrajNCycle(idCyDeep(idF)).juldFirstLocationStatus];
+            idDel = find(tabDate == g_decArgo_ncDateDef);
+            tabDate(idDel) = [];
+            tabDateStatus(idDel) = [];
             if (~isempty(tabDate))
-               a_tabTrajNCycle(idCyDeep(1)).juldFirstLocation = min(tabDate);
-            else
-               a_tabTrajNCycle(idCyDeep(1)).juldFirstLocation = g_decArgo_ncDateDef;
+               [a_tabTrajNCycle(idCyDeep(1)).juldFirstLocation, idMin] = min(tabDate);
+               a_tabTrajNCycle(idCyDeep(1)).juldFirstLocationStatus = tabDateStatus(idMin);
             end
             
-            tabDate = [a_tabTrajNCycle(idCyDeep).juldLastLocation];
-            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            % juldLastLocation can be empty
+            idF = find(~strcmp({a_tabTrajNCycle(idCyDeep).juldLastLocation}, ''));
+            tabDate = [a_tabTrajNCycle(idCyDeep(idF)).juldLastLocation];
+            tabDateStatus = [a_tabTrajNCycle(idCyDeep(idF)).juldLastLocationStatus];
+            idDel = find(tabDate == g_decArgo_ncDateDef);
+            tabDate(idDel) = [];
+            tabDateStatus(idDel) = [];
             if (~isempty(tabDate))
-               a_tabTrajNCycle(idCyDeep(1)).juldLastLocation = max(tabDate);
-            else
-               a_tabTrajNCycle(idCyDeep(1)).juldLastLocation = g_decArgo_ncDateDef;
+               [a_tabTrajNCycle(idCyDeep(1)).juldLastLocation, idMax] = max(tabDate);
+               a_tabTrajNCycle(idCyDeep(1)).juldLastLocationStatus = tabDateStatus(idMax);
             end
             
+            % juldLastMessage cannot be empty
             tabDate = [a_tabTrajNCycle(idCyDeep).juldLastMessage];
             tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
             a_tabTrajNCycle(idCyDeep(1)).juldLastMessage = max(tabDate);
@@ -213,7 +223,7 @@ if (~isempty(a_tabTrajNCycle))
       tabCyNum = sort(unique([a_tabTrajNCycle.cycleNumber]));
       for idCy = 1:length(tabCyNum)
          cycleNum = tabCyNum(idCy);
-         
+
          idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] ~= 1));
          idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
          
@@ -222,28 +232,50 @@ if (~isempty(a_tabTrajNCycle))
                
                % merge juldFirstMessage, juldFirstLocation, juldLastLocation and
                % juldLastMessage of the deep and surface records
-
-               tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstMessage a_tabTrajNCycle(idCySurf(end)).juldFirstMessage];
+               
+               % juldFirstMessage cannot be empty
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstMessage a_tabTrajNCycle(idCySurf).juldFirstMessage];
                tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
                a_tabTrajNCycle(idCyDeep).juldFirstMessage = min(tabDate);
                
-               tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstLocation a_tabTrajNCycle(idCySurf(end)).juldFirstLocation];
-               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               % juldFirstLocation can be empty
+               tabDate = [];
+               tabDateStatus = [];
+               if (~isempty(a_tabTrajNCycle(idCyDeep).juldFirstLocation))
+                  tabDate = [tabDate a_tabTrajNCycle(idCyDeep).juldFirstLocation];
+                  tabDateStatus = [tabDateStatus a_tabTrajNCycle(idCyDeep).juldFirstLocationStatus];
+               end
+               idF = find(~strcmp({a_tabTrajNCycle(idCySurf).juldFirstLocation}, ''));
+               tabDate = [tabDate a_tabTrajNCycle(idCySurf(idF)).juldFirstLocation];
+               tabDateStatus = [tabDateStatus a_tabTrajNCycle(idCySurf(idF)).juldFirstLocationStatus];
+               idDel = find(tabDate == g_decArgo_ncDateDef);
+               tabDate(idDel) = [];
+               tabDateStatus(idDel) = [];
                if (~isempty(tabDate))
-                  a_tabTrajNCycle(idCyDeep).juldFirstLocation = min(tabDate);
-               else
-                  a_tabTrajNCycle(idCyDeep).juldFirstLocation = g_decArgo_ncDateDef;
+                  [a_tabTrajNCycle(idCyDeep).juldFirstLocation, idMin] = min(tabDate);
+                  a_tabTrajNCycle(idCyDeep).juldFirstLocationStatus = tabDateStatus(idMin);
                end
                
-               tabDate = [a_tabTrajNCycle(idCyDeep).juldLastLocation a_tabTrajNCycle(idCySurf(end)).juldLastLocation];
-               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               % juldLastLocation can be empty
+               tabDate = [];
+               tabDateStatus = [];
+               if (~isempty(a_tabTrajNCycle(idCyDeep).juldLastLocation))
+                  tabDate = [tabDate a_tabTrajNCycle(idCyDeep).juldLastLocation];
+                  tabDateStatus = [tabDateStatus a_tabTrajNCycle(idCyDeep).juldLastLocationStatus];
+               end
+               idF = find(~strcmp({a_tabTrajNCycle(idCySurf).juldLastLocation}, ''));
+               tabDate = [tabDate a_tabTrajNCycle(idCySurf(idF)).juldLastLocation];
+               tabDateStatus = [tabDateStatus a_tabTrajNCycle(idCySurf(idF)).juldLastLocationStatus];
+               idDel = find(tabDate == g_decArgo_ncDateDef);
+               tabDate(idDel) = [];
+               tabDateStatus(idDel) = [];
                if (~isempty(tabDate))
-                  a_tabTrajNCycle(idCyDeep).juldLastLocation = max(tabDate);
-               else
-                  a_tabTrajNCycle(idCyDeep).juldLastLocation = g_decArgo_ncDateDef;
+                  [a_tabTrajNCycle(idCyDeep).juldLastLocation, idMax] = max(tabDate);
+                  a_tabTrajNCycle(idCyDeep).juldLastLocationStatus = tabDateStatus(idMax);
                end
                
-               tabDate = [a_tabTrajNCycle(idCyDeep).juldLastMessage a_tabTrajNCycle(idCySurf(end)).juldLastMessage];
+               % juldLastMessage cannot be empty
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldLastMessage a_tabTrajNCycle(idCySurf).juldLastMessage];
                tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
                a_tabTrajNCycle(idCyDeep).juldLastMessage = max(tabDate);
                
@@ -262,7 +294,7 @@ if (~isempty(a_tabTrajNCycle))
          if (~isempty(idCPrec) && ...
                ~isempty(a_tabTrajNCycle(idC).juldCycleStart) && ...
                (a_tabTrajNCycle(idC).juldCycleStart ~= g_decArgo_ncDateDef))
-
+            
             a_tabTrajNCycle(idCPrec).juldTransmissionEnd = a_tabTrajNCycle(idC).juldCycleStart;
             a_tabTrajNCycle(idCPrec).juldTransmissionEndStatus = a_tabTrajNCycle(idC).juldCycleStartStatus;
          end

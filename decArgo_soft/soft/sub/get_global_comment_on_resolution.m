@@ -45,7 +45,7 @@ switch (a_decoderId)
       % ARVOR DEEP 3500
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210}
+   case {205, 204, 210, 211}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
@@ -58,7 +58,7 @@ switch (a_decoderId)
       % Provor-DO Iridium
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
 
-   case {1001, 1002, 1003, 1005, 1006}
+   case {1001, 1002, 1003, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
       % Apex Argos
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       

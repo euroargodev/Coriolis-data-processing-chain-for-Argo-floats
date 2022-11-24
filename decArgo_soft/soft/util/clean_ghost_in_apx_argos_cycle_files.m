@@ -21,7 +21,7 @@
 function clean_ghost_in_apx_argos_cycle_files(varargin)
 
 % directory of the argos files to check
-DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\TEST_20160223\OUT\tmp\';
+DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT_FINAL\';
 
 % directory to store the log and CSV files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -151,18 +151,25 @@ for idFloat = 1:nbFloats
          if ((tabLastMsgDateBis(idCy)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
             [argosLocDate, argosDataDate] = ...
                read_argos_file_fmt1_rough(tabFilename{idCy}, floatArgosId);
-            argosDate = [argosLocDate; argosDataDate];
-            argosDate = sort(argosDate);
-            argosDate = argosDate-compute_duration(tabCycleNumber(idCy), tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
-            argosPathFileName = tabFilename{idCy};
-            while (~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
-               
-               % a ghost message is detected, move it to a dedicated file
-               [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
-               argosPathFileName = subFileNameList{1};
-               
-               argosDate(end) = [];
-               fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+            
+            % in bad transmission conditions the algorithm can fail; we must
+            % then check the data to confirm the ghost
+            if (any(diff(sort(argosDataDate))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+               argosDate = [argosLocDate; argosDataDate];
+               argosDate = sort(argosDate);
+               argosDate = argosDate-compute_duration(tabCycleNumber(idCy), tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
+               argosPathFileName = tabFilename{idCy};
+               while (~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+                  
+                  % a ghost message is detected, move it to a dedicated file
+                  [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
+                  argosPathFileName = subFileNameList{1};
+                  
+                  argosDate(end) = [];
+                  fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+               end
+            else
+               fprintf('=> THIS IS NOT A GHOST\n');
             end
          end
       end

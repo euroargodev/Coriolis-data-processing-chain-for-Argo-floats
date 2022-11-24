@@ -1,14 +1,14 @@
 % ------------------------------------------------------------------------------
-% Convert sensor counts values for chlorophyll a.
+% Convert sensor counts values for chlorophyll A.
 %
 % SYNTAX :
 %  [o_chloroAValues] = sensor_2_value_for_chloroA_ir_rudics_sbd2(a_chloroACounts)
 %
 % INPUT PARAMETERS :
-%   a_chloroACounts : input chlorophyll a counts
+%   a_chloroACounts : input chlorophyll A counts
 %
 % OUTPUT PARAMETERS :
-%   o_chloroAValues : output chlorophyll a counts
+%   o_chloroAValues : output chlorophyll A values
 %
 % EXAMPLES :
 %

@@ -23,7 +23,22 @@ function co_cls_correct_argos_raw_file()
 tabInputDirName = [];
 % tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_cycle\ori\';
 % tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\tmp_20160227\';
-tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\archive_cycle_20160823\ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\spool_20160824\ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\archive_cycle_all_20160823\ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\110813_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\082213_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\021208_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\032213_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\110613_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\090413_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\Apex_set2\121512_ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing\ori\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\Complement_argos_V110813\ori\';
+tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823\';
+
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

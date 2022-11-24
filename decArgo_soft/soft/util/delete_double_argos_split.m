@@ -26,9 +26,16 @@ function delete_double_argos_split()
 % DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split';
 % DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split';
 % DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split';
-DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
-DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split\';
-DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\recup\argos_split_CORRECT\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing\';
+% DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\split_raw_sans_doubles_FINAL_119Apex\tmp\';
+DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\base_traitements_20160823\';
+
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -52,7 +59,7 @@ for idDir = 1:nbDirs
          
          fprintf('%03d/%03d Processing directory %s\n', idDir, nbDirs, dirName);
 
-         % look for possible duplicated files
+         % look for possible duplicated files and delete files with no date
          fileList = [];
          files = dir(dirPathName);
          nbFiles = length(files);
@@ -60,7 +67,14 @@ for idDir = 1:nbDirs
 
             fileName = files(idFile).name;
             if ~(strcmp(fileName, '.') || strcmp(fileName, '..'))
-               fileList{end+1} = fileName(1:end-7);
+               
+               if (isempty(strfind(fileName, '-'))) % no date in the file
+                  filePathName = [dirPathName '/' fileName];
+                  fprintf('INFO: File %s deleted (no date)\n', fileName);
+                  delete(filePathName);
+               else
+                  fileList{end+1} = fileName(1:end-7);
+               end
             end
          end
          fileList = unique(fileList);
@@ -72,34 +86,23 @@ for idDir = 1:nbDirs
             while (~stop)
                if (length(dir([dirPathName '/' fileList{idFile} '*'])) > 1)
 
-                  dFiles = dir([dirPathName '/' fileList{idFile} '*']);
-                  if (length(fileList{idFile}) == 7)
-                     idDel = [];
-                     nbDFiles = length(dFiles);
-                     for id = 1:nbDFiles
-                        if (~isempty(strfind(dFiles(id).name, '-')))
-                           idDel = [idDel id];
-                        end
-                     end
-                     dFiles(idDel) = [];
-                  end
-                  
-                  deleted = 0;
+                  dFiles = dir([dirPathName '/' fileList{idFile} '*']);                  
                   nbDFiles = length(dFiles);
+                  deleted = 0;
                   for id1 = 1:nbDFiles
+                     
+                     fileName1 = [dirPathName '/' dFiles(id1).name];
+                     fid1 = fopen(fileName1, 'r');
+                     if (fid1 == -1)
+                        fprintf('ERROR: Unable to open file: %s\n', fileName1);
+                        return;
+                     end
+                     file1Contents = textscan(fid1, '%s');
+                     fclose(fid1);
+                     file1Contents = file1Contents{:};
+                        
                      for id2 = id1+1:nbDFiles
-
-                        % compare the 2 file contents
-
-                        fileName1 = [dirPathName '/' dFiles(id1).name];
-                        fid1 = fopen(fileName1, 'r');
-                        if (fid1 == -1)
-                           fprintf('ERROR: Unable to open file: %s\n', fileName1);
-                           return;
-                        end
-                        file1Contents = textscan(fid1, '%s');
-                        fclose(fid1);
-
+                        
                         fileName2 = [dirPathName '/' dFiles(id2).name];
                         fid2 = fopen(fileName2, 'r');
                         if (fid2 == -1)
@@ -108,10 +111,10 @@ for idDir = 1:nbDirs
                         end
                         file2Contents = textscan(fid2, '%s');
                         fclose(fid2);
-
-                        compRes = 1;
-                        file1Contents = file1Contents{:};
                         file2Contents = file2Contents{:};
+
+                        % compare the 2 file contents
+                        compRes = 1;
                         for idL = 1:min([length(file1Contents) length(file2Contents)])
                            if ((length(file1Contents) >= idL) && (length(file2Contents) >= idL))
                               if (strcmp(file1Contents{idL}, file2Contents{idL}) == 0)

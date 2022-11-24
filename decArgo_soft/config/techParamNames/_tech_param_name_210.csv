@@ -32,7 +32,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 130;46;RTC state indicator (normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
 131;47;Coherence problem counter;NUMBER_CTDError_COUNT;CTD error count
 132;58;GPS session duration;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
-133;60;Pump duration (buoyancy retrieve for GPS acquisition);TIME_AdditionnalPumpActionsAtSurfaceForGPSAcquisition_seconds;duration of additional pump actions at the surface performed during GPS acquisition in case of insufiscient buoyancy
+133;60;Pump duration (buoyancy retrieve for GPS acquisition);TIME_PumpActionsAdditionalAtSurfaceForGPSAcquisition_seconds ;duration of additional pump actions at the surface performed during GPS acquisition in case of insufficient buoyancy
 134;61;Antenna status (0=DontKnow 1=Ok 2=Short 3=Open);FLAG_AntennaStatus_NUMBER;Flag indicating the status of the antenna (see manual)
 135;63;End of life start hour;CLOCK_EOLStart_YYYYMMDDHHMMSS;Clock time when End of Life mode starts
 200;3;Number of descent CTD packets;NUMBER_DescentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
@@ -45,8 +45,8 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 207;10;Number of CTD measurements in drift;NUMBER_ParkCTDSamplesInternal_COUNT;Park  measurements - Internal counter
 208;11;Number of ascent slices in shallow zone;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
 209;12;Number of ascent slices in deep zone;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
-210;13;"Number of ""CTD near surface"" measurements";NUMBER_NearSurfaceSamplesInternal_COUNT;"""Near surface""  measurements - Internal counter"
-211;14;"Number of ""CTD in air"" measurements";NUMBER_InAirSamplesInternal_COUNT;"""In air""  measurements - Internal counter"
+210;13;"Number of ""CTD near surface"" measurements";NUMBER_NearSurfaceSamples_COUNT;"""Near surface""  measurements - Internal counter"
+211;14;"Number of ""CTD in air"" measurements";NUMBER_InAirSamples_COUNT;"""In air""  measurements - Internal counter"
 212;15;Sub-Surface pressure;PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).
 213;21;Number of grounding;FLAG_Grounded_NUMBER;grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded
 214;23;1st grounding day relative to cycle start;CLOCK_TimeGrounded_FloatDay;Day number when the float grounds for the first time (relative to mission start day).
@@ -64,17 +64,17 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 226;36;1st emergency ascent relative day (to 1st cycle day);CLOCK_TimeOfFirstEmergencyAscent_FloatDay;Day number of the float first emergency ascent (relative to mission start day).
 227;37;Nb of remote file received;FLAG_RemoteControlMessageOK_COUNT;Number of remote control successfully considered.
 228;38;Nb of remote file rejected;FLAG_RemoteControlMessageKO_COUNT;Number of remote control rejected by the float (due to out of range value or remote control syntax error).
-229;39;Nb of remote command received;FLAG_RemoteControlCommandOK_COUNT;Number of remote control commands successfully considered.
-230;40;Nb of remote command rejected;FLAG_RemoteControlCommandKO_COUNT;Number of remote control commands rejected by the float.
+229;39;Nb of remote command received;NUMBER_RemoteControlCommandOK_COUNT;Number of remote control commands successfully considered.
+230;40;Nb of remote command rejected;NUMBER_RemoteControlCommandKO_COUNT;Number of remote control commands rejected by the float.
 231;41;Previous iridium transmission duration;TIME_PreviousIridiumSession_seconds;Duration on the previous Iridium session
 232;42;Number of SBD session for reception;NUMBER_IridiumMessagesReceivedPreviousSession_COUNT;Number of Incoming Iridium Messages Received during previous session
 233;43;Number of SBD session for transmission;NUMBER_IridiumMessagesSentPreviousSession_COUNT;Number of Incoming Iridium Messages Sent during previous session
 234;44;Pump actions before float begins ascent;NUMBER_PumpActionsToStartAscent_COUNT;Number of pump actions needed to start the ascent.
 235;45;Internal vaccum at ascent start-up;PRESSURE_InternalVacuumProfileStart_mbar;Internal tube pressure [mbar] in profile depth
 236;46;Last reset hour : hh;CLOCK_LastReset_YYYYMMDDHHMMSS;Clock time of the last reset of the float
-237;52;Autotest (0: ko, 1: ok);FLAG_FloatStatus_LOGICAL;Flag indicating the status of the Float (see manual) (could be reported as hex)
-238;53;Detailled autotest;FLAG_FloatStatus_NUMBER;Flag indicating the status of the Float (see manual) (could be reported as hex)
-239;54;Parameter integrity test;FLAG_FloatMemoryIntegrityStatus_LOGICAL;memory contents test
+237;52;Autotest (0: ko, 1: ok);FLAG_InitialCheckError_LOGICAL;Auto-test is performed at the beginning of the mission: Flag 0 = Problem, 1 = OK
+238;53;Detailled autotest;FLAG_InitialCheckError_NUMBER;Detailed auto-test for float hardware resulting in a detailed code for each tested sub-part (see manual)
+239;54;Parameter integrity test;FLAG_InitialMemoryIntegrityCheck_LOGICAL;Software check on the float memory contents (0 if problems were found and 1 if no problem occured)
 240;55;Positive buoyancy at deployment;FLAG_StatusBladderStateAtLaunch_NUMBER;External bladder state at deployment (0: float stay at surface, 1: heavy float at deployment)
 241;56;CTD status (0 : no error, 1: fast pressure default time-out, 2: fast pressure broken frame, 16: CTD default time-out, 32: CTD broken frame);FLAG_CTDStatus_NUMBER;Flag indicating the status of the CTD (see manual) (could be reported as hex)
 242;57;Float phase during CTD default detection;FLAG_CTDErrorCyclePhase_NUMBER;Phase of the float life or cycle when the CTD occurred.  See the manual for phase definition - this will vary with float type

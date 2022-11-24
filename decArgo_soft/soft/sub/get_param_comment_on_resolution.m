@@ -479,7 +479,7 @@ switch (a_decoderId)
             
       end
       
-   case {210}
+   case {210, 211}
       % ARVOR ARN Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -558,7 +558,7 @@ switch (a_decoderId)
             
       end
       
-   case {1001, 1002, 1003, 1005, 1006}
+   case {1001, 1002, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
       % Apex Argos
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -583,6 +583,57 @@ switch (a_decoderId)
                g_MC_AST_Float; ...
                g_MC_AET_Float; ...
                g_MC_TST_Float];
+            listMcStr = sprintf('%d ', listMc);
+            o_comment = sprintf('%s resolution is 1 second, except for measurement codes [%s] for which %s resolution is 1 minute', ...
+               a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'JULD_DESCENT_START', ...
+               'JULD_FIRST_STABILIZATION', ...
+               'JULD_DESCENT_END', ...
+               'JULD_PARK_START', ...
+               'JULD_PARK_END', ...
+               'JULD_DEEP_DESCENT_END', ...
+               'JULD_DEEP_PARK_START', ...
+               'JULD_ASCENT_START', ...
+               'JULD_DEEP_ASCENT_START', ...
+               'JULD_ASCENT_END', ...
+               'JULD_TRANSMISSION_START', ...
+               'JULD_TRANSMISSION_END'}
+            
+            o_resolution = double(1/86400); % 1 second
+
+         case {'JULD_FIRST_MESSAGE', ...
+               'JULD_FIRST_LOCATION', ...
+               'JULD_LAST_LOCATION', ...
+               'JULD_LAST_MESSAGE'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+      end
+      
+   case {1003}
+      % Apex Argos
+      switch (a_paramName)
+         case {'PRES', 'PRES_ADJUSTED'}
+            
+            o_resolution = single(0.1);
+            
+            listMc = [ ...
+               g_MC_DescProf];
+            listMcStr = sprintf('%d ', listMc);
+            o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
+               a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
+            
+         case {'JULD', 'JULD_ADJUSTED'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+            listMc = [ ...
+               g_MC_AST_Float];
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 1 second, except for measurement codes [%s] for which %s resolution is 1 minute', ...
                a_paramName, listMcStr(1:end-1), a_paramName);

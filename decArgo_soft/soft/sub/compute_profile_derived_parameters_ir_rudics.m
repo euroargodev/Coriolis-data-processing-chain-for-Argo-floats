@@ -841,7 +841,7 @@ o_profSuna = [];
 global g_decArgo_qcDef;
 global g_decArgo_qcNoQc;
 
-WAITING_FOR_FITLM_MATLAB_FUNCTION = 0;
+FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
 % list of parameters of the profile
@@ -862,7 +862,7 @@ else
 end
 
 % compute NITRATE data and add them in the profile structure
-if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
    paramToDeriveList = [ ...
       {'MOLAR_NITRATE'} ...
       ];
@@ -900,7 +900,7 @@ if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
 end
 
 % compute NITRATE data and add them in the profile structure
-if (~WAITING_FOR_FITLM_MATLAB_FUNCTION)
+if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
    paramToDeriveList = [ ...
       {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
       ];

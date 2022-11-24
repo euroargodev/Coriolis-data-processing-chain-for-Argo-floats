@@ -446,7 +446,8 @@ for idMes = 1:size(a_tabSensors, 1)
                tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29_32(oxyCounts27);
                [doxyValues] = compute_DOXY_27_bis(tPhaseDoxyValues', ...
                   presValues', tempValues', salValues', ...
-                  [0.0027    0.0001    0.0000  233.2640   -0.3682  -52.1783    4.5674]);
+                  [0 1 0 0 0 0 0;
+                  0.00266358 0.000110368 0.00000214173 233.264 -0.368247 -52.1783 4.56739]);
                if (any((doxyValues < 130) | (doxyValues > 400)))
                   o_tabDecoderId(idMes) = 30;
                else
@@ -742,7 +743,8 @@ for idMes = 1:size(a_tabSensors, 1)
                tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29_32(oxyCounts27);
                [doxyValues] = compute_DOXY_27_bis(tPhaseDoxyValues', ...
                   presValues', tempValues', salValues', ...
-                  [0.0027    0.0001    0.0000  233.2640   -0.3682  -52.1783    4.5674]);
+                  [0 1 0 0 0 0 0;
+                  0.00266358 0.000110368 0.00000214173 233.264 -0.368247 -52.1783 4.56739]);
                if (any((doxyValues < 130) | (doxyValues > 400)))
                   o_tabDecoderId(idMes) = 30;
                else

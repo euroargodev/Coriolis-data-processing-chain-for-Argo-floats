@@ -193,6 +193,58 @@ g_decArgo_floatConfig.USE.CYCLE = [];
 g_decArgo_floatConfig.USE.CONFIG = [];
 g_decArgo_configDone = 1;
 
+% the META file of Argos floats is never updated when the configuration variable
+% GENERATE_NC_META is set to 2
+% we should then create now all the possible configurations for these floats
+
+% check if auto-increment of parking pressure is used
+confName = 'CONFIG_TC17_';
+idPosTc17 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
+driftDepthIncrement = configValues(idPosTc17);
+if (~isnan(driftDepthIncrement) && (driftDepthIncrement ~= 0))
+   
+   % there is a new configuration for each cycle number
+   confName = 'CONFIG_MC0_';
+   idPosMc0 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
+   numberOfCycles = configValues(idPosMc0);
+   if (isnan(driftDepthIncrement))
+      numberOfCycles = 255;
+   end
+   cycleNumList = 0:numberOfCycles;
+else
+   
+   confName = 'CONFIG_MC1_';
+   idPosMc1 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
+   nbCyclesFirstMission = configValues(idPosMc1);
+   
+   % the configuration differs before and after nbCyclesFirstMission (and
+   % possibly during the transition cycle)
+   cycleNumList = [0 1 2 nbCyclesFirstMission nbCyclesFirstMission+1 nbCyclesFirstMission+2];
+   
+   % check if alternated profile pressure is used
+   confName = 'CONFIG_TC14_';
+   idPosTc14 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
+   secondProfRepRate = configValues(idPosTc14);
+   if (~isnan(secondProfRepRate) && (secondProfRepRate ~= 1))
+      
+      % the configuration differs during alternated profile and before and after
+      % nbCyclesFirstMission
+      cycleNumList = [cycleNumList secondProfRepRate+1];
+      i = 2;
+      while ((secondProfRepRate+1)*i < nbCyclesFirstMission+1)
+         cycleNumList = [cycleNumList (secondProfRepRate+1)*i];
+         i = i + 1;
+      end
+      cycleNumList = [cycleNumList (secondProfRepRate+1)*i];
+   end
+end
+cycleNumList = sort(unique(cycleNumList));
+
+% create all possible configurations for the float mission
+for idCy = 1:length(cycleNumList)
+   set_float_config_argos(cycleNumList(idCy), 0);
+end
+
 % compute the pressure to cut-off the ascending profile
 [g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF, ...
    g_decArgo_jsonMetaData.PRES_STOP_CTD_PUMP] = compute_cutoff_pres(a_decoderId);

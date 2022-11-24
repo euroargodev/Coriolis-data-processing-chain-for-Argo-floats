@@ -31,6 +31,7 @@ o_defaultPrimaryProf = [];
 
 % collect information on profiles
 profInfo = [];
+profVss = [];
 for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    direction = 2;
@@ -39,6 +40,7 @@ for idProf = 1:length(a_tabProfiles)
    end
    profInfo = [profInfo; ...
       [profile.outputCycleNumber direction profile.primarySamplingProfileFlag]];
+   profVss{end+1} = profile.vertSamplingScheme;
 end
 
 % look for the near-surface profile (unpumped part of the primary profile)
@@ -72,6 +74,7 @@ if (~isempty(idSecondary))
    o_defaultPrimaryProf.data = [];
    o_defaultPrimaryProf.dataQc = [];
    o_defaultPrimaryProf.configMissionNumber = secondaryProf.configMissionNumber;
+   o_defaultPrimaryProf.sensorNumber = secondaryProf.sensorNumber;
    o_defaultPrimaryProf.updated = 0;
    
 else
@@ -90,6 +93,7 @@ else
    o_defaultPrimaryProf.paramList = create_primary_parameter_list(a_decoderId);
    o_defaultPrimaryProf.data = [];
    o_defaultPrimaryProf.dataQc = [];
+   o_defaultPrimaryProf.sensorNumber = 0;
    o_defaultPrimaryProf.updated = 0;
    
 end

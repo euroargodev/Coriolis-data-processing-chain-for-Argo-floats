@@ -1523,6 +1523,9 @@ global g_decArgo_qcStrDef;
 % QC flag values (char)
 global g_decArgo_qcStrNoQc;
 global g_decArgo_qcStrMissing;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrBad;
+
 
 
 % check if Input file profile has been cut (due to pumped/unpumped CTD data)

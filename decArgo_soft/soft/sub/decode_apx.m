@@ -141,6 +141,78 @@ switch (a_decoderId)
             decode_data_apx_6(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
       end
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1007} % 082213
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_7(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_7(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1008} % 021208
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_8(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_8(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1009} % 032213
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_9(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_9(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1010} % 110613&090413
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_10(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_surfData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_10(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1011} % 121512
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_11(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_11(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1012} % 110813
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_12(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_auxInfo, o_profData, o_parkData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_12(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData, a_decoderId);
+      end
+      
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in decode_apex_argos_data for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

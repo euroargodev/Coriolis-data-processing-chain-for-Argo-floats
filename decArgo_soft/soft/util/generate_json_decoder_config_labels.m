@@ -28,7 +28,7 @@ function generate_json_decoder_config_labels()
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_27.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_31.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_32.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_32.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_105.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_201.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_202.csv';
@@ -41,9 +41,11 @@ decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNam
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
 
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1001.csv';
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1001.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1002.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1004.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1008.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_1011.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_2001.csv';
 
@@ -163,14 +165,18 @@ else
       case {206}
          decIdList = [206, 207, 208, 209];
       case {210}
-         decIdList = [210];
+         decIdList = [210, 211];
          
       case {1001}
-         decIdList = [1001 1005];
+         decIdList = [1001 1005 1007 1009 1010];
       case {1002}
          decIdList = [1002 1003 1006];
       case {1004}
          decIdList = [1004];
+      case {1008}
+         decIdList = [1008];
+      case {1011}
+         decIdList = [1011 1012];
          
       case {2001}
          decIdList = [2001 2002];

@@ -47,12 +47,12 @@ for idField = 1:length(confDataFieldNames)
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       case {105, 106, 107, 108, 109}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
-      case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210}
+      case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       case {301, 302, 303}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
          
-      case {1001, 1002, 1003, 1004, 1005, 1006}
+      case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
          
       case {2001, 2002}

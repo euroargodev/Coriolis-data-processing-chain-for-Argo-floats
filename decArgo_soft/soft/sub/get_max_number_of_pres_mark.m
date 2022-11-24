@@ -30,16 +30,22 @@ global g_decArgo_floatNum;
 global g_decArgo_cycleNum;
 
 
+% (29-1) = 28 bytes - number of bytes with misc. information before the Pmark
+% pressures
 switch (a_decoderId)
    
    case {1001, 1005} % 071412, 061810
       o_nbMaxPresMark = 22;
    
-   case {1002, 1003, 1006} % 062608, 061609, 093008
-      o_nbMaxPresMark = 22;
+   case {1002, 1003, 1006, 1007, 1008}
+      % 062608, 061609, 093008, 082213, 021208
+      o_nbMaxPresMark = 25;
       
    case {1004} % 021009
       o_nbMaxPresMark = 24;
+
+   case {1009, 1010, 1011, 1012} % 032213, 110613&090413, 121512, 110813
+      o_nbMaxPresMark = 23;
 
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in get_max_number_of_pres_mark for decoderId #%d\n', ...

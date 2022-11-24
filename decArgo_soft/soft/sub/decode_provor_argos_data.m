@@ -738,7 +738,7 @@ for idCy = 1:length(a_cycleList)
          end
          
          % update and assign the current configuration to the decoded cycle
-         set_float_config_argos(g_decArgo_cycleNum);
+         set_float_config_argos(g_decArgo_cycleNum, 1);
 
          cycleProfiles = [];
          parkDate = [];
@@ -989,7 +989,7 @@ for idCy = 1:length(a_cycleList)
          end
          
          % update and assign the current configuration to the decoded cycle
-         set_float_config_argos(g_decArgo_cycleNum);
+         set_float_config_argos(g_decArgo_cycleNum, 1);
 
          cycleProfiles = [];
          parkDate = [];

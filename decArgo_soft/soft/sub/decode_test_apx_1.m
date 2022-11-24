@@ -170,22 +170,36 @@ for idL = 1:size(a_sensorData, 1)
          o_miscInfo{end+1} = dataStruct;
       end      
       
-      dataStruct = get_apx_meta_data_init_struct(msgRed);
-      dataStruct.label = 'Mission prelude start date';
-      dataStruct.metaConfigLabel = 'STARTUP_DATE';
-      dataStruct.metaFlag = 1;
-      dataStruct.value = format_date_yyyymmddhhmiss_dec_argo(mean(decDateBis' - decDataBis(:, 6)/86400));
-      dataStruct.techParamCode = 'STARTUP_DATE';
-      dataStruct.techParamId = 2089;
-      dataStruct.techParamValue = datestr(mean(decDateBis' - decDataBis(:, 6)/86400)+g_decArgo_janFirst1950InMatlab, 'dd/mm/yyyy HH:MM:SS');
-      o_metaData = [o_metaData; dataStruct];
+      if (~isempty(decDataBis))
+         dataStruct = get_apx_meta_data_init_struct(msgRed);
+         dataStruct.label = 'Mission prelude start date';
+         dataStruct.metaConfigLabel = 'STARTUP_DATE';
+         dataStruct.metaFlag = 1;
+         dataStruct.value = format_date_yyyymmddhhmiss_dec_argo(mean(decDateBis' - decDataBis(:, 6)/86400));
+         dataStruct.techParamCode = 'STARTUP_DATE';
+         dataStruct.techParamId = 2089;
+         dataStruct.techParamValue = datestr(mean(decDateBis' - decDataBis(:, 6)/86400)+g_decArgo_janFirst1950InMatlab, 'dd/mm/yyyy HH:MM:SS');
+         o_metaData = [o_metaData; dataStruct];
+      else
+         dataStruct = get_apx_meta_data_init_struct(msgRed);
+         dataStruct.label = 'Mission prelude start date';
+         dataStruct.metaConfigLabel = 'STARTUP_DATE';
+         dataStruct.metaFlag = 1;
+         dataStruct.value = format_date_yyyymmddhhmiss_dec_argo(msgDate - decData(6)/86400);
+         dataStruct.techParamCode = 'STARTUP_DATE';
+         dataStruct.techParamId = 2089;
+         dataStruct.techParamValue = datestr(msgDate - decData(6)/86400+g_decArgo_janFirst1950InMatlab, 'dd/mm/yyyy HH:MM:SS');
+         o_metaData = [o_metaData; dataStruct];
+      end
       
-      dataStruct = get_apx_misc_data_init_struct('Test msg', msgNum, msgRed, msgDate);
-      dataStruct.label = '=> averaged start of the Mission Prelude date';
-      dataStruct.value = julian_2_gregorian_dec_argo(mean(decDateBis' - decDataBis(:, 6)/86400));
-      dataStruct.format = ' %s';
-      dataStruct.unit = 'RTC time';
-      o_miscInfo{end+1} = dataStruct;
+      if (~isempty(decDataBis))
+         dataStruct = get_apx_misc_data_init_struct('Test msg', msgNum, msgRed, msgDate);
+         dataStruct.label = '=> averaged start of the Mission Prelude date';
+         dataStruct.value = julian_2_gregorian_dec_argo(mean(decDateBis' - decDataBis(:, 6)/86400));
+         dataStruct.format = ' %s';
+         dataStruct.unit = 'RTC time';
+         o_miscInfo{end+1} = dataStruct;
+      end
       
       dataStruct = get_apx_misc_data_init_struct('Test msg', msgNum, msgRed, msgDate);
       dataStruct.label = 'Float status word';
@@ -588,20 +602,20 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.format = '%s';
       o_miscInfo{end+1} = dataStruct;
       
-      updated = 0;
+      alreadySet = 0;
       if (~isempty(o_metaData))
          idF = find([o_metaData.techParamId] == 961);
          if (~isempty(idF))
+            alreadySet = 1;
             if (o_metaData(idF).dataRed < msgRed)
                o_metaData(idF).dataRed = msgRed;
                o_metaData(idF).value = sprintf('%s%s%s', ...
                   dec2hex(decData(2), 2), dec2hex(decData(3), 2), dec2hex(decData(4), 2));
                o_metaData(idF).techParamValue = o_metaData(idF).value;
-               updated = 1;
             end
          end
       end
-      if (updated == 0)
+      if (alreadySet == 0)
          dataStruct = get_apx_meta_data_init_struct(msgRed);
          dataStruct.label = 'Firmware revision date';
          dataStruct.metaConfigLabel = 'FIRMWARE_VERSION';

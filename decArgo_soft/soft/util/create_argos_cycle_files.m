@@ -37,8 +37,14 @@ function create_argos_cycle_files(varargin)
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing_cycle\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split\';
 % DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing_cycle\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\split_raw_sans_doubles_FINAL_119Apex\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\fichiers_cycle_non_identifiés_119Apex\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\base_traitements_20160823\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\base_traitements_20160823_cycle\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

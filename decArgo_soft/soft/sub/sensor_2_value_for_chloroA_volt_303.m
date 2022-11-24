@@ -8,7 +8,7 @@
 %   a_chloroVoltCounts : input chlorophyll counts
 %
 % OUTPUT PARAMETERS :
-%   o_chloroVoltValues : output chlorophyll counts
+%   o_chloroVoltValues : output chlorophyll values
 %
 % EXAMPLES :
 %

@@ -8,7 +8,7 @@
 %   a_turbiVoltCounts : input turbidity counts
 %
 % OUTPUT PARAMETERS :
-%   o_turbiVoltValues : output turbidity counts
+%   o_turbiVoltValues : output turbidity values
 %
 % EXAMPLES :
 %

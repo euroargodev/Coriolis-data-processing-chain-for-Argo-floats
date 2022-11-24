@@ -90,13 +90,18 @@ global g_decArgo_floatNum;
 global g_decArgo_cycleNum;
 
 
-switch (a_decoderId)   
-   case {1001, 1002, 1003, 1005, 1006} % 071412, 062608, 061609, 061810, 093008
+switch (a_decoderId)
+   
+   case {1001, 1002, 1003, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
+      % 071412, 062608, 061609, 061810, 093008, 082213, 021208, 032213,
+      % 110613&090413, 121512, 110813
       o_downTimeEnd = 1;
       o_ascentStartTime = 1;
+      
    case {1004} % 021009
       o_downTimeEnd = 0;
       o_ascentStartTime = 0;
+      
    otherwise
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in down_time_provided for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

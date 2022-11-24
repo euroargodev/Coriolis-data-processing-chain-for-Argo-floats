@@ -9,7 +9,7 @@
 %   a_bPhaseDoxyDef : B phase default value
 %
 % OUTPUT PARAMETERS :
-%   o_phaseValues : output B phase counts
+%   o_phaseValues : output B phase values
 %
 % EXAMPLES :
 %

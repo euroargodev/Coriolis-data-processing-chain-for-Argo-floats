@@ -66,9 +66,9 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {210} % Arvor-ARN Iridium
+   case {210, 211} % Arvor-ARN Iridium
       
-      init_float_config_ir_sbd_210(a_launchDate);
+      init_float_config_ir_sbd_210_211(a_launchDate);
       
       
    otherwise

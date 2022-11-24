@@ -756,7 +756,7 @@ if (a_deepCycle == 1)
          paramDoxy = get_netcdf_param_attributes('DOXY');
          measStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
          
-         pres = sensor_2_value_for_pressure_202_210(tabTech2(10));
+         pres = sensor_2_value_for_pressure_202_210_211(tabTech2(10));
          temp = sensor_2_value_for_temperature_201_202_203(tabTech2(11));
          psal = sensor_2_value_for_salinity_201_202_203(tabTech2(12));
          c1PhaseDoxy = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(tabTech2(13));
@@ -772,7 +772,7 @@ if (a_deepCycle == 1)
          paramSal = get_netcdf_param_attributes('PSAL');
          measStruct.paramList = [paramPres paramTemp paramSal];
          
-         pres = sensor_2_value_for_pressure_202_210(tabTech2(10));
+         pres = sensor_2_value_for_pressure_202_210_211(tabTech2(10));
          temp = sensor_2_value_for_temperature_201_202_203(tabTech2(11));
          psal = sensor_2_value_for_salinity_201_202_203(tabTech2(12));
          measStruct.paramData = [pres temp psal];

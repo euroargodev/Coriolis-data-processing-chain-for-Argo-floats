@@ -36,8 +36,24 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in
 
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT\';
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110813_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\082213_1_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\021208\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\021208_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\032213\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\032213_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110613\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\110613_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\090413\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\090413_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\121512\';
+% DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\Apex_set2\121512_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160914\fichiers_cycle_apex_233_floats_bascule_20160823_CORRECT_FINAL\';
 
 
 % directory to store the log file
@@ -451,7 +467,7 @@ for idFile = 1:nbFiles
          if (lastArgosMsgDate < launchDate + preludeDuration/24 + cycleDuration/48)
             % it is a DPF cycle, cycle number should be #0 or #1
             if ((~isempty(prevNum) && (prevNum == 0)) || ...
-                  (lastArgosMsgDate > dpfFirstDeepCycleDuration/24))
+                  (lastArgosMsgDate > launchDate + preludeDuration/24 + dpfFirstDeepCycleDuration/24))
                cycleNumber = 1;
             else
                cycleNumber = 0;

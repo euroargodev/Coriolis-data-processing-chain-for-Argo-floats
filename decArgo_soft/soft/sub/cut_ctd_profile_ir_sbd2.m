@@ -134,7 +134,13 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
    
    if (~isempty(idLevNearSurface))
       nearSurfaceProfile = a_tabProfile;
-      nearSurfaceProfile.primarySamplingProfileFlag = 2;
+      if (nearSurfaceProfile.sensorNumber == 0)
+         % CTD profile
+         nearSurfaceProfile.primarySamplingProfileFlag = 2;
+      elseif (nearSurfaceProfile.sensorNumber == 1)
+         % DOXY profile
+         nearSurfaceProfile.primarySamplingProfileFlag = 0;
+      end
       nearSurfaceProfile.vertSamplingScheme = nearSurfaceProfile.vertSamplingScheme{2};      
       nearSurfaceProfile.data = nearSurfaceProfile.data(idLevNearSurface(1):end, :);
       if (~isempty(nearSurfaceProfile.dataQc))

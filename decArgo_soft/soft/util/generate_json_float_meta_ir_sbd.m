@@ -22,10 +22,10 @@ function generate_json_float_meta_ir_sbd()
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150519.txt';
-% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_ARVOR_I_5-43_21060628.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_ARVOR_I_5-43_21060628.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -38,8 +38,8 @@ floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/_nke_ir_sbd_all.t
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/provor_do_ir.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/arvor_2do.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_v2.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
@@ -244,7 +244,7 @@ for idFloat = 1:length(floatList)
    configBddStruct = get_config_bdd_struct(dacFormatId);
    configBddStructNames = fieldnames(configBddStruct);
    
-   if (strcmp(dacFormatId, '5.43'))
+   if (strcmp(dacFormatId, '5.43') || strcmp(dacFormatId, '5.44'))
       
       nbConfig = 1;
       configParamVal = cell(length(configStructNames), nbConfig);
@@ -280,6 +280,12 @@ for idFloat = 1:length(floatList)
                      
                      if (strcmp(configBddStructValue, 'PR_IMMERSION_DRIFT_PERIOD') == 1)
                         configParamVal{idBSN, idConf} = num2str(str2num(metaData{idForWmo(idF(idDim)), 4})/60);
+                     elseif (strcmp(configBddStructValue, 'PRCFG_Pressure_coefficient_B'))
+                        % this coefficient is transmitted without any digit,
+                        % consequently to avoid creating one useless
+                        % configuration we truncate this parameter for the
+                        % launch configuration
+                        configParamVal{idBSN, idConf} = num2str(fix(str2num(metaData{idForWmo(idF(idDim)), 4})));
                      else
                         configParamVal{idBSN, idConf} = metaData{idForWmo(idF(idDim)), 4};
                      end
@@ -1021,7 +1027,7 @@ switch (a_dacFormatId)
          'CONFIG_PT26_InternalPressureCalibrationCoef1', '0.125', ...
          'CONFIG_PT27_InternalPressureCalibrationCoef2', '0', ...
          'CONFIG_PX00_Direction', '');
-   case {'5.43'}
+   case {'5.43', '5.44'}
       o_configStruct = struct( ...
          'CONFIG_MC00_NumberOfCycles', '300', ...
          'CONFIG_MC01_NbCyclesFirstMission', '300', ...
@@ -1339,7 +1345,7 @@ switch (a_dacFormatId)
          'CONFIG_PT27_InternalPressureCalibrationCoef2', 'PRCFG_Pressure_coefficient_B', ...
          'CONFIG_PX0_Direction', 'DIRECTION');
       
-   case {'5.43'}
+   case {'5.43', '5.44'}
       o_configStruct = struct( ...
          'CONFIG_MC00_NumberOfCycles', 'CONFIG_MaxCycles_NUMBER', ...
          'CONFIG_MC01_NbCyclesFirstMission', 'NB_CYCLE_FIRST_MISSION', ...

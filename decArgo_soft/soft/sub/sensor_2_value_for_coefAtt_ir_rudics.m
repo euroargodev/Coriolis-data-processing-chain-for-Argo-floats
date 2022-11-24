@@ -8,7 +8,7 @@
 %   a_coefAttCounts : input coef attenuation counts
 %
 % OUTPUT PARAMETERS :
-%   o_coefAttValues : output coef attenuation counts
+%   o_coefAttValues : output coef attenuation values
 %
 % EXAMPLES :
 %

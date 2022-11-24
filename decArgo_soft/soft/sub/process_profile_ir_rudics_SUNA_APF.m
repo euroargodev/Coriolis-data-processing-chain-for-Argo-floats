@@ -41,7 +41,7 @@ global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseAscProf;
 
-WAITING_FOR_FITLM_MATLAB_FUNCTION = 0;
+FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
 % unpack the input data
@@ -90,7 +90,7 @@ for idCy = 1:length(cycleNumList)
                
                dataAPF = [];
                for idL = 1:length(idDataAPF)
-                  if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+                  if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                      dataAPF = [dataAPF; ...
                         a_dataSUNAAPFDate(idDataAPF(idL), 4:end)' ...
                         a_dataSUNAAPFCTDPres(idDataAPF(idL), 4:end)' ...
@@ -146,7 +146,7 @@ for idCy = 1:length(cycleNumList)
                   paramSUNAAPFIntRelHumidity = get_netcdf_param_attributes('HUMIDITY_NITRATE');
                   paramSUNAAPFDarkSpecMean = get_netcdf_param_attributes('UV_INTENSITY_DARK_NITRATE');
                   paramSUNAAPFDarkSpecStd = get_netcdf_param_attributes('UV_INTENSITY_DARK_NITRATE_STD');
-                  if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+                  if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                      paramSUNAAPFSensorNitra = get_netcdf_param_attributes('MOLAR_NITRATE');
                   end
                   paramSUNAAPFAbsFitRes = get_netcdf_param_attributes('FIT_ERROR_NITRATE');
@@ -155,7 +155,7 @@ for idCy = 1:length(cycleNumList)
                   % convert decoder default values to netCDF fill values
                   dataAPF(find(dataAPF(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
                   
-                  if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+                  if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                      profStruct.paramList = [ ...
                         paramSUNAAPFCTDPres paramSUNAAPFCTDTemp paramSUNAAPFCTDSal ...
                         paramSUNAAPFIntTemp paramSUNAAPFSpecTemp paramSUNAAPFIntRelHumidity ...
@@ -170,7 +170,7 @@ for idCy = 1:length(cycleNumList)
                   end
                   profStruct.dateList = paramJuld;
                   
-                  if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+                  if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                      profStruct.paramNumberWithSubLevels = 11;
                   else
                      profStruct.paramNumberWithSubLevels = 10;

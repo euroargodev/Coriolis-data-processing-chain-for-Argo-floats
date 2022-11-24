@@ -1,0 +1,70 @@
+{
+   "FLOAT_LIST_FILE_NAME" : "",
+   
+   "EXPECTED_CYCLE_LIST" : "99999",
+   
+   "FLOAT_TRANSMISSION_TYPE" : "2",
+   
+   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/json_float_info/",
+
+   "HEX_ARGOS_FILE_FORMAT" : "",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "",
+   "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "",
+   
+   "DIR_INPUT_RSYNC_DATA" : "/home/coriolis_exp/spool/co01/co0101/co010111/rsync/",
+   "DIR_INPUT_RSYNC_LOG" : "/home/coriolis_exp/spool/co01/co0101/co010111/rsync_list/",
+
+   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/techParamNames/",
+   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/configParamNames/",
+
+   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/json_float_meta_ir_rudics_remocean/",
+   
+   "DIR_INPUT_DM_BUFFER_LIST" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/float_dm_buffer_lists",
+
+   "IRIDIUM_DATA_DIRECTORY" : "/home/coriolis_exp/spool/co04/co0414/co041404/ir_rudics_remocean/iridium/",
+
+   "DIR_OUTPUT_LOG_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/ir_rudics_remocean/log/",
+   "DIR_OUTPUT_CSV_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/ir_rudics_remocean/csv/",
+   "DIR_OUTPUT_XML_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/ir_rudics_remocean/xml/",
+   "DIR_OUTPUT_NETCDF_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/ir_rudics_remocean/nc/",
+
+   "GENERATE_NC_TRAJ" : "2",
+   "GENERATE_NC_MULTI_PROF" : "0",
+   "GENERATE_NC_MONO_PROF" : "2",
+   "GENERATE_NC_TECH" : "2",
+   "GENERATE_NC_META" : "2",   
+
+   "ADD_THREE_MINUTES" : "0",
+   "CYCLE_2_SBD_DATA_FILE_NAME" : "",
+   "FLOAT_WITH_DAMPING_DISK_FILE_NAME" : "",
+   
+   "APPLY_RTQC" : "1",
+
+   "TEST001_PLATFORM_IDENTIFICATION" : "1",
+   "TEST002_IMPOSSIBLE_DATE" : "1",
+   "TEST003_IMPOSSIBLE_LOCATION" : "1",
+   "TEST004_POSITION_ON_LAND" : "1",
+   "TEST005_IMPOSSIBLE_SPEED" : "1",
+   "TEST006_GLOBAL_RANGE" : "1",
+   "TEST007_REGIONAL_RANGE" : "1",
+   "TEST008_PRESSURE_INCREASING" : "1",
+   "TEST009_SPIKE" : "1",
+   "TEST011_GRADIENT" : "1",
+   "TEST012_DIGIT_ROLLOVER" : "1",
+   "TEST013_STUCK_VALUE" : "1",
+   "TEST014_DENSITY_INVERSION" : "1",
+   "TEST015_GREY_LIST" : "1",
+   "TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT" : "0",
+   "TEST018_FROZEN_PRESSURE" : "0",
+   "TEST019_DEEPEST_PRESSURE" : "1",
+   "TEST020_QUESTIONABLE_ARGOS_POSITION" : "1",
+   "TEST021_NS_UNPUMPED_SALINITY" : "1",
+   "TEST022_NS_MIXED_AIR_WATER" : "1",
+   "TEST023_DEEP_FLOAT" : "1",
+   "TEST057_DOXY" : "1",
+   "TEST063_CHLA" : "1",
+
+   "TEST004_ETOPO2_FILE" : "/home/coriolis_exp/dat/co03/bathy/ETOPO2v2g_i2_MSB.bin",
+   "TEST015_GREY_LIST_FILE" : "/home/coriolis_exp/spool/co05/co0508/ar_greylist.txt"
+}

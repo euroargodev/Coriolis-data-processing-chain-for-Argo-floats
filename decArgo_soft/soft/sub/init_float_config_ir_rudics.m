@@ -67,7 +67,7 @@ g_decArgo_rtOffsetInfo = [];
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
-WAITING_FOR_FITLM_MATLAB_FUNCTION = 0;
+FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
 % create static configuration names
@@ -489,7 +489,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       end
       
       % create the NITRATE calibration arrays
-      if (~WAITING_FOR_FITLM_MATLAB_FUNCTION)
+      if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          if (ismember(6, g_decArgo_sensorList))
             if (isfield(g_decArgo_calibInfo, 'SUNA'))
                calibData = g_decArgo_calibInfo.SUNA;

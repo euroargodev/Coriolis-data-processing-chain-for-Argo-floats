@@ -157,7 +157,8 @@ for idProf = 1:3
          primarySamplingProfileFlag = 2;
       end
       profStruct = get_profile_init_struct(a_cycleNum, -1, -1, primarySamplingProfileFlag);
-      
+      profStruct.sensorNumber = 0;
+
       % profile direction
       if (idProf == 1)
          profStruct.direction = 'D';

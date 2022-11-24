@@ -411,7 +411,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211}
       
       % Arvor deep 4000
       % Arvor deep 3500
@@ -453,24 +453,24 @@ switch (a_decoderId)
       end
       
       % TEMPORARY CODE
-      if (a_decoderId == 210)
-         
-         % exclude configuration labels not accepted yet by the GDAC checker
-         exclusionList = [ ...
-            {'CONFIG_InAirMeasurementPeriodicity_NUMBER'} ...
-            {'CONFIG_InAirMeasurementSamplingTime_seconds'} ...
-            {'CONFIG_InAirMeasurementPhaseDuration_minutes'} ...
-            {'CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec'} ...
-            ];
-         idDel = [];
-         for idL = 1:length(configName)
-            if (ismember(configName{idL}, exclusionList))
-               idDel = [idDel idL];
-            end
-         end
-         configName(idDel) = [];
-         configValue(idDel, :) = [];
-      end
+      %       if ((a_decoderId == 210) || (a_decoderId == 211))
+      %
+      %          % exclude configuration labels not accepted yet by the GDAC checker
+      %          exclusionList = [ ...
+      %             {'CONFIG_InAirMeasurementPeriodicity_NUMBER'} ...
+      %             {'CONFIG_InAirMeasurementSamplingTime_seconds'} ...
+      %             {'CONFIG_InAirMeasurementPhaseDuration_minutes'} ...
+      %             {'CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec'} ...
+      %             ];
+      %          idDel = [];
+      %          for idL = 1:length(configName)
+      %             if (ismember(configName{idL}, exclusionList))
+      %                idDel = [idDel idL];
+      %             end
+      %          end
+      %          configName(idDel) = [];
+      %          configValue(idDel, :) = [];
+      %       end
       
       % create the launch configuration
       launchConfigName = configName;
@@ -508,7 +508,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX floats
       
-   case {1001, 1002, 1003, 1004, 1005, 1006}
+   case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012}
             
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
@@ -1401,6 +1401,7 @@ for idConfName = 1:length(launchConfigName)
 end
 
 if (~isempty(launchConfigValue))
+   launchConfigValue(isnan(launchConfigValue)) =  netcdf.getAtt(fCdf, launchConfigParameterValueVarId, '_FillValue');
    netcdf.putVar(fCdf, launchConfigParameterValueVarId, 0, length(launchConfigValue), launchConfigValue);
 end
 
@@ -1412,6 +1413,7 @@ for idConfName = 1:length(missionConfigName)
 end
 
 if (~isempty(missionConfigValue))
+   missionConfigValue(isnan(missionConfigValue)) =  netcdf.getAtt(fCdf, configParameterValueVarId, '_FillValue');
    netcdf.putVar(fCdf, configParameterValueVarId, [0 0], size(missionConfigValue), missionConfigValue);
 end
 

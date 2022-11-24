@@ -27,23 +27,12 @@ global g_decArgo_floatNum;
 % directory of json meta-data files
 global g_decArgo_dirInputJsonFloatMetaDataFile;
 
-% arrays to store calibration information
-global g_decArgo_calibInfo;
-g_decArgo_calibInfo = [];
-
 % structure to store miscellaneous meta-data
 global g_decArgo_jsonMetaData;
 g_decArgo_jsonMetaData = [];
 
 % float configuration
 global g_decArgo_floatConfig;
-
-% arrays to store RT offset information
-global g_decArgo_rtOffsetInfo;
-g_decArgo_rtOffsetInfo = [];
-
-% default values
-global g_decArgo_janFirst1950InMatlab;
 
 % configuration creation flag
 global g_decArgo_configDone;
@@ -145,7 +134,9 @@ if (g_decArgo_realtimeFlag == 0)
                switch (a_decoderId)
                   
                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                  case {1001, 1002, 1003, 1004, 1005} % 071412, 062608, 061609, 021009, 061810
+                  case {1001, 1002, 1003, 1004, 1005, 1007, 1010, 1011, 1012}
+                     % 071412, 062608, 061609, 021009, 061810, 082213,
+                     % 110613&090413, 121512, 110813
                      % only one sensor (SBE41)
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
@@ -191,8 +182,8 @@ if (g_decArgo_realtimeFlag == 0)
                      end
                      
                      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                  case {1006} % 093008
-                     % two sensors (SBE41 and Aanderaa 3830)
+                  case {1006, 1008, 1009} % 093008, 021208, 032213
+                     % two sensors (SBE41 and Aanderaa 3830/4330)
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
                         if (((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_1') || ...
@@ -462,90 +453,6 @@ end
 transRepPeriod = get_float_config_argos_3('CONFIG_REP_');
 if (~isempty(transRepPeriod))
    g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod;
-end
-
-% retrieve the RT offsets
-if (isfield(jsonMetaData, 'RT_OFFSET'))
-   g_decArgo_rtOffsetInfo.param = [];
-   g_decArgo_rtOffsetInfo.value = [];
-   g_decArgo_rtOffsetInfo.date = [];
-   
-   rtData = jsonMetaData.RT_OFFSET;
-   params = unique(struct2cell(rtData.PARAM));
-   for idParam = 1:length(params)
-      param = params{idParam};
-      fieldNames = fields(rtData.PARAM);
-      tabValue = [];
-      tabDate = [];
-      for idF = 1:length(fieldNames)
-         fieldName = fieldNames{idF};
-         if (strcmp(rtData.PARAM.(fieldName), param) == 1)
-            idPos = strfind(fieldName, '_');
-            paramNum = fieldName(idPos+1:end);
-            value = str2num(rtData.VALUE.(['VALUE_' paramNum]));
-            tabValue = [tabValue value];
-            date = rtData.DATE.(['DATE_' paramNum]);
-            date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-            tabDate = [tabDate date];
-         end
-      end
-      [tabDate, idSorted] = sort(tabDate);
-      tabValue = tabValue(idSorted);
-      
-      % store the RT offsets
-      g_decArgo_rtOffsetInfo.param{end+1} = param;
-      g_decArgo_rtOffsetInfo.value{end+1} = tabValue;
-      g_decArgo_rtOffsetInfo.date{end+1} = tabDate;
-   end
-end
-
-% add DO calibration coefficients
-if (a_decoderId == 1006)
-   
-   % read the calibration coefficients in the json meta-data file
-
-   % fill the calibration coefficients
-   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
-      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
-         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
-         for idF = 1:length(fieldNames)
-            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
-         end
-      end
-   end
-   
-   % create the tabPhaseCoef, tabDoxyCoef and arrays
-   if (isfield(g_decArgo_calibInfo, 'OPTODE'))
-      calibData = g_decArgo_calibInfo.OPTODE;
-      
-      tabPhaseCoef = [];
-      for id = 0:3
-         fieldName = ['PhaseCoef' num2str(id)];
-         if (isfield(calibData, fieldName))
-            tabPhaseCoef(id+1) = calibData.(fieldName);
-         else
-            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-            return;
-         end
-      end
-      
-      tabDoxyCoef = [];
-      for idI = 0:4
-         for idJ = 0:3
-            fieldName = ['CCoef' num2str(idI) num2str(idJ)];
-            if (isfield(calibData, fieldName))
-               tabDoxyCoef(idI+1, idJ+1) = calibData.(fieldName);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-               return;
-            end
-         end
-      end
-      g_decArgo_calibInfo.OPTODE.TabPhaseCoef = tabPhaseCoef;      
-      g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
-   else
-      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-   end
 end
 
 return;

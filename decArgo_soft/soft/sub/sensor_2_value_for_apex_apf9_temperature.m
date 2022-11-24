@@ -9,7 +9,7 @@
 %   a_tempDef     : temperature default value
 %
 % OUTPUT PARAMETERS :
-%   o_value : temperature value
+%   o_value : temperature values
 %
 % EXAMPLES :
 %

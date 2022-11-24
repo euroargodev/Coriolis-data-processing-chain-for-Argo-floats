@@ -41,7 +41,7 @@
    },
    "TECH_PARAM_6" :
    {
-      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_DEC_ID" : "1000",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Number of TSP samples in this message block",
       "TECH_PARAM_NAME" : "NUMBER_AscendingCTDSamplesInternalCounter_COUNT",
@@ -49,7 +49,7 @@
    },
    "TECH_PARAM_7" :
    {
-      "TECH_PARAM_DEC_ID" : "1002",
+      "TECH_PARAM_DEC_ID" : "1001",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Same as the Test Message 1 Status word",
       "TECH_PARAM_NAME" : "FLAG_FloatStatus_hex",
@@ -57,7 +57,7 @@
    },
    "TECH_PARAM_8" :
    {
-      "TECH_PARAM_DEC_ID" : "1003",
+      "TECH_PARAM_DEC_ID" : "1002",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Surface pressure at end of Up Time [centibars]",
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetNotTruncated_dbar",
@@ -65,7 +65,7 @@
    },
    "TECH_PARAM_9" :
    {
-      "TECH_PARAM_DEC_ID" : "1004",
+      "TECH_PARAM_DEC_ID" : "1003",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Internal vacuum at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "PRESSURE_InternalVacuumParkEnd_inHg",
@@ -73,7 +73,7 @@
    },
    "TECH_PARAM_10" :
    {
-      "TECH_PARAM_DEC_ID" : "1005",
+      "TECH_PARAM_DEC_ID" : "1004",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "The air bladder pressure after each argos transmission [counts]",
       "TECH_PARAM_NAME" : "PRESSURE_AirBladder_COUNT",
@@ -81,7 +81,7 @@
    },
    "TECH_PARAM_11" :
    {
-      "TECH_PARAM_DEC_ID" : "1006",
+      "TECH_PARAM_DEC_ID" : "1005",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Piston position when surface detected [counts]",
       "TECH_PARAM_NAME" : "POSITION_PistonSurface_COUNT",
@@ -89,7 +89,7 @@
    },
    "TECH_PARAM_12" :
    {
-      "TECH_PARAM_DEC_ID" : "1007",
+      "TECH_PARAM_DEC_ID" : "1006",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Piston position at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "POSITION_PistonParkEnd_COUNT",
@@ -97,7 +97,7 @@
    },
    "TECH_PARAM_13" :
    {
-      "TECH_PARAM_DEC_ID" : "1008",
+      "TECH_PARAM_DEC_ID" : "1007",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Piston position at end of last Deep descent phase [counts]",
       "TECH_PARAM_NAME" : "POSITION_PistonProfile_COUNT",
@@ -105,7 +105,7 @@
    },
    "TECH_PARAM_14" :
    {
-      "TECH_PARAM_DEC_ID" : "1009",
+      "TECH_PARAM_DEC_ID" : "1008",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "SBE41 status word 16 bits",
       "TECH_PARAM_NAME" : "FLAG_CTDStatus_hex",
@@ -113,7 +113,7 @@
    },
    "TECH_PARAM_15" :
    {
-      "TECH_PARAM_DEC_ID" : "1010",
+      "TECH_PARAM_DEC_ID" : "1009",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Cumulative piston on time during ascent [seconds]",
       "TECH_PARAM_NAME" : "TIME_MotorDriveDuringAscent_seconds",
@@ -121,7 +121,7 @@
    },
    "TECH_PARAM_16" :
    {
-      "TECH_PARAM_DEC_ID" : "1011",
+      "TECH_PARAM_DEC_ID" : "1010",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery voltage at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "VOLTAGE_BatteryParkEnd_volts",
@@ -129,7 +129,7 @@
    },
    "TECH_PARAM_17" :
    {
-      "TECH_PARAM_DEC_ID" : "1012",
+      "TECH_PARAM_DEC_ID" : "1011",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery current at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "CURRENT_BatteryParkEnd_mA",
@@ -137,7 +137,7 @@
    },
    "TECH_PARAM_18" :
    {
-      "TECH_PARAM_DEC_ID" : "1013",
+      "TECH_PARAM_DEC_ID" : "1012",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery voltage while SBE41 sampling at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "VOLTAGE_BatterySBEParkEnd_volts",
@@ -145,7 +145,7 @@
    },
    "TECH_PARAM_19" :
    {
-      "TECH_PARAM_DEC_ID" : "1014",
+      "TECH_PARAM_DEC_ID" : "1013",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery current while SBE41 sampling at end of Park phase [counts]",
       "TECH_PARAM_NAME" : "CURRENT_BatterySBEParkEnd_mA",
@@ -153,7 +153,7 @@
    },
    "TECH_PARAM_20" :
    {
-      "TECH_PARAM_DEC_ID" : "1015",
+      "TECH_PARAM_DEC_ID" : "1014",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery voltage measured just before the end of the initial piston extension beginning Profile phase [counts]",
       "TECH_PARAM_NAME" : "VOLTAGE_BatteryProfileNoLoad_volts",
@@ -161,7 +161,7 @@
    },
    "TECH_PARAM_21" :
    {
-      "TECH_PARAM_DEC_ID" : "1016",
+      "TECH_PARAM_DEC_ID" : "1015",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery current measured just before the end of the initial piston extension beginning Profile phase [counts]",
       "TECH_PARAM_NAME" : "CURRENT_BatteryInitialAtProfileDepth_mA ",
@@ -169,7 +169,7 @@
    },
    "TECH_PARAM_22" :
    {
-      "TECH_PARAM_DEC_ID" : "1017",
+      "TECH_PARAM_DEC_ID" : "1016",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery voltage while air pump running [counts]",
       "TECH_PARAM_NAME" : "VOLTAGE_BatterySurfaceAirPumpOn_volts",
@@ -177,7 +177,7 @@
    },
    "TECH_PARAM_23" :
    {
-      "TECH_PARAM_DEC_ID" : "1018",
+      "TECH_PARAM_DEC_ID" : "1017",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Battery current while air pump running [counts]",
       "TECH_PARAM_NAME" : "CURRENT_BatterySurfaceAirPumpOn_mA ",
@@ -185,7 +185,7 @@
    },
    "TECH_PARAM_24" :
    {
-      "TECH_PARAM_DEC_ID" : "1019",
+      "TECH_PARAM_DEC_ID" : "1018",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "The number of 6-second pulses of the air pump required to inflate the air bladder",
       "TECH_PARAM_NAME" : "NUMBER_AirPumpPulsesToInflateBladder_COUNT",
@@ -193,7 +193,7 @@
    },
    "TECH_PARAM_25" :
    {
-      "TECH_PARAM_DEC_ID" : "1020",
+      "TECH_PARAM_DEC_ID" : "1019",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Integrated Measure of (Volt-Sec) of volume of air pumped during telemetry cycle.",
       "TECH_PARAM_NAME" : "VOLTAGETIME_IntegratedAirPumpVolume_voltseconds",
@@ -201,7 +201,7 @@
    },
    "TECH_PARAM_26" :
    {
-      "TECH_PARAM_DEC_ID" : "1021",
+      "TECH_PARAM_DEC_ID" : "1020",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Number of active-ballast adjustments made during the park phase",
       "TECH_PARAM_NAME" : "NUMBER_RepositionsDuringPark_COUNT",
@@ -209,7 +209,7 @@
    },
    "TECH_PARAM_27" :
    {
-      "TECH_PARAM_DEC_ID" : "1022",
+      "TECH_PARAM_DEC_ID" : "1021",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "The ice evasion record for the most recent 8 profiles. The most recent profile is in the position of the least significant bit. Asserted bits indicate profiles where the ice-detection algorithm terminated true.",
       "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
@@ -217,7 +217,7 @@
    },
    "TECH_PARAM_28" :
    {
-      "TECH_PARAM_DEC_ID" : "1023",
+      "TECH_PARAM_DEC_ID" : "1022",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Number of mixed-layer samples taken",
       "TECH_PARAM_NAME" : "NUMBER_MixedLayerSamples_COUNT",
@@ -225,7 +225,7 @@
    },
    "TECH_PARAM_29" :
    {
-      "TECH_PARAM_DEC_ID" : "1024",
+      "TECH_PARAM_DEC_ID" : "1023",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "The infimum of the mixed-layer median temperature since the last successful telemetry",
       "TECH_PARAM_NAME" : "TEMP_MixedLayerInfimum_degC",
@@ -233,7 +233,7 @@
    },
    "TECH_PARAM_30" :
    {
-      "TECH_PARAM_DEC_ID" : "1025",
+      "TECH_PARAM_DEC_ID" : "1024",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Number of hourly park-level PT samples",
       "TECH_PARAM_NAME" : "NUMBER_ParkSamples_COUNT",
@@ -241,7 +241,7 @@
    },
    "TECH_PARAM_31" :
    {
-      "TECH_PARAM_DEC_ID" : "1026",
+      "TECH_PARAM_DEC_ID" : "1025",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Number of descent pressure marks",
       "TECH_PARAM_NAME" : "NUMBER_PRESSamplesDuringDescentToPark_COUNT",

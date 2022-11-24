@@ -615,11 +615,11 @@ for idSpoolFile = 1:length(tabAllFileNames)
             g_decArgo_nbOf13Or11TypePacketExpected = 0;
             g_decArgo_nbOf14Or12TypePacketExpected = 0;
             
-         case {210} % Arvor-ARN Iridium
+         case {210, 211} % Arvor-ARN Iridium
             
             % decode the collected data
             [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, deepCycle] = ...
-               decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 0);
+               decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 0, a_decoderId);
             
             g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
             g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
@@ -1156,12 +1156,12 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210(dataCTD(:, 32:46));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_211(dataCTD(:, 32:46));
          [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_202_203(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_202_203(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210(dataCTDO(:, 16:22));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_211(dataCTDO(:, 16:22));
          [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_202_203(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_202_203(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
@@ -1419,7 +1419,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_211(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1652,7 +1652,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_211(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1886,7 +1886,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTDO))
          [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 23:29));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_211(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 51:57));
@@ -2188,26 +2188,26 @@ switch (a_decoderId)
             case 2
                % CTD only
                [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 32:46));
-               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 47:61));
+               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_211(dataCTDO(:, 47:61));
                [dataCTDO(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 62:76));
             case 1
                % CTD + Aanderaa 4330
                [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 23:29));
+               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_211(dataCTDO(:, 23:29));
                [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
                [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
                [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 51:57));
             case 4
                % CTD + SBE 63
                [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 20:28));
-               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 29:37));
+               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_211(dataCTDO(:, 29:37));
                [dataCTDO(:, 38:46)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 38:46));
                [dataCTDO(:, 47:55)] = sensor_2_value_for_phase_delay_doxy_209(dataCTDO(:, 47:55));
                [dataCTDO(:, 56:64)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 56:64));
             case 5
                % CTD + Aanderaa 4330 + SBE 63
                [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 12:16));
-               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 17:21));
+               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_211(dataCTDO(:, 17:21));
                [dataCTDO(:, 22:26)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 22:26));
                [dataCTDO(:, 27:36)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 27:36));
                [dataCTDO(:, 37:41)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 37:41));
@@ -2457,7 +2457,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {210} % Arvor-ARN Iridium
+   case {210, 211} % Arvor-ARN Iridium
       
       if (a_completedBuffer == 0)
          % print what is missing in the buffer
@@ -2466,7 +2466,7 @@ switch (a_decoderId)
       
       % decode the collected data
       [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum] = ...
-         decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 1);
+         decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 1, a_decoderId);
                   
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
@@ -2497,22 +2497,22 @@ switch (a_decoderId)
             
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_211(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_211(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_211(dataCTD(:, 62:76));
       end
       
       % create drift data set
       [parkDate, parkTransDate, ...
          parkPres, parkTemp, parkSal] = ...
-         create_prv_drift_210(dataCTD, g_decArgo_julD2FloatDayOffset);
+         create_prv_drift_210_211(dataCTD, g_decArgo_julD2FloatDayOffset);
       
       % create descending and ascending profiles
       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
          ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
          nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
          inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal] = ...
-         create_prv_profile_210(dataCTD, g_decArgo_julD2FloatDayOffset);
+         create_prv_profile_210_211(dataCTD, g_decArgo_julD2FloatDayOffset);
       
       % compute the main dates of the cycle
       [cycleStartDate, ...
@@ -2531,17 +2531,17 @@ switch (a_decoderId)
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, ...
          deepCycle] = ...
-         compute_prv_dates_210(tabTech1, tabTech2, irSessionNum);
+         compute_prv_dates_210_211(tabTech1, tabTech2, irSessionNum);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
          % output CSV file
          
          % print float technical messages in CSV file
-         print_tech_data_in_csv_file_210(tabTech1, tabTech2, deepCycle);
+         print_tech_data_in_csv_file_210_211(tabTech1, tabTech2, deepCycle);
          
          % print dated data in CSV file
-         print_dates_in_csv_file_210( ...
+         print_dates_in_csv_file_210_211( ...
             cycleStartDate, ...
             descentToParkStartDate, ...
             firstStabDate, firstStabPres, ...
@@ -2577,15 +2577,15 @@ switch (a_decoderId)
             ascProfDate, ascProfPres, ascProfTemp, ascProfSal);
          
          % print "near surface" and "in air" measurements in CSV file
-         print_in_air_meas_in_csv_file_210( ...
+         print_in_air_meas_in_csv_file_210_211( ...
             nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal);
          
          % print EV and pump data in CSV file
-         print_hydraulic_data_in_csv_file_210(evAct, pumpAct);
+         print_hydraulic_data_in_csv_file_210_211(evAct, pumpAct);
          
          % print float parameters in CSV file
-         print_float_prog_param_in_csv_file_210(floatParam);
+         print_float_prog_param_in_csv_file_210_211(floatParam);
          
       else
          
@@ -2598,7 +2598,7 @@ switch (a_decoderId)
          tabProfiles = [];
          if (~isempty(dataCTD))
             
-            [tabProfiles] = process_profiles_210( ...
+            [tabProfiles] = process_profiles_210_211( ...
                descProfDate, descProfPres, descProfTemp, descProfSal, ...
                ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
                g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
@@ -2635,7 +2635,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_210( ...
+         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_210_211( ...
             g_decArgo_cycleNum, deepCycle, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -2666,17 +2666,17 @@ switch (a_decoderId)
          if (irSessionNum == 1)
             
             % store NetCDF technical data
-            store_tech1_data_for_nc_210(tabTech1, deepCycle);
-            store_tech2_data_for_nc_210(tabTech2, deepCycle);
+            store_tech1_data_for_nc_210_211(tabTech1, deepCycle);
+            store_tech2_data_for_nc_210_211(tabTech2, deepCycle);
             
             % update NetCDF technical data
             update_technical_data_argos_sbd(a_decoderId);
             
             % TEMPORARY CODE
-            idDel = find(ismember(g_decArgo_outputNcParamIndex(:, 5), ...
-               [133, 134, 203, 204, 210, 211, 229, 230, 237, 238, 239]));
-            g_decArgo_outputNcParamIndex(idDel, :) = [];
-            g_decArgo_outputNcParamValue(idDel) = [];
+            %             idDel = find(ismember(g_decArgo_outputNcParamIndex(:, 5), ...
+            %                [133, 134, 203, 204, 210, 211, 229, 230, 237, 238, 239]));
+            %             g_decArgo_outputNcParamIndex(idDel, :) = [];
+            %             g_decArgo_outputNcParamValue(idDel) = [];
             
             o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
             o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];

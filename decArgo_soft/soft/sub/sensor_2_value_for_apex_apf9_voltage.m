@@ -8,7 +8,7 @@
 %   a_sensorValue : voltage counts
 %
 % OUTPUT PARAMETERS :
-%   o_value : voltage value
+%   o_value : voltage values
 %
 % EXAMPLES :
 %

@@ -495,4 +495,31 @@ for idMes = 1:size(a_tabData, 1)
    end
 end
 
+% if the DO sensor failed during the profile some packets have CTD only and
+% others CTDO (Ex: 6901760 descending profile #1)
+% we should merge data so that only o_dataCTDO output array should be empty
+if (~isempty(o_dataCTD) && ~isempty(o_dataCTDO))
+   
+   o_dataCTD(:, [9:16 24:31 39:46 54:61 69:76]) = [];
+   o_dataCTD(:, 1) = o_dataCTD(:, 1) + 7;
+   o_dataCTD = [o_dataCTD ...
+      ones(size(o_dataCTD, 1), 7)*g_decArgo_c1C2PhaseDoxyCountsDef ...
+      ones(size(o_dataCTD, 1), 7)*g_decArgo_c1C2PhaseDoxyCountsDef ...
+      ones(size(o_dataCTD, 1), 7)*g_decArgo_tempDoxyCountsDef ...
+      ];
+   o_dataCTDO = cat(1, o_dataCTDO, o_dataCTD);
+   
+   % when the DO sensor fails the measurement is 65535
+   c1c2PhaseDoxy = o_dataCTDO(:, 37:50);
+   idDef = find(c1c2PhaseDoxy == 65535);
+   c1c2PhaseDoxy(idDef) = g_decArgo_c1C2PhaseDoxyCountsDef;
+   o_dataCTDO(:, 37:50) = c1c2PhaseDoxy;
+   tempDoxy = o_dataCTDO(:, 51:57);
+   idDef = find(tempDoxy == 65535);
+   tempDoxy(idDef) = g_decArgo_tempDoxyCountsDef;
+   o_dataCTDO(:, 51:57) = tempDoxy;
+
+   o_dataCTD = [];
+end
+
 return;
