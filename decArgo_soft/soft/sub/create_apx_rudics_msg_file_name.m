@@ -4,12 +4,12 @@
 %
 % SYNTAX :
 %  [o_logFileName] = create_apx_rudics_log_file_name(a_filePathName, ...
-%    a_floatWmo, a_floatId, a_floatLaunchDate, a_floatEndDate)
+%    a_floatWmo, a_floatRudicsId, a_floatLaunchDate, a_floatEndDate)
 %
 % INPUT PARAMETERS :
 %   a_filePathName    : input file path name
 %   a_floatWmo        : float WMO number
-%   a_floatId         : float Rudics Id
+%   a_floatRudicsId   : float Rudics Id
 %   a_floatDecId      : float decoder Id
 %   a_floatLaunchDate : float launch date
 %   a_floatLaunchDate : float end decoding date
@@ -25,7 +25,7 @@
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_msgFileName] = create_apx_rudics_msg_file_name(a_filePathName, ...
-   a_floatWmo, a_floatId, a_floatDecId, ...
+   a_floatWmo, a_floatRudicsId, a_floatDecId, ...
    a_floatLaunchDate, a_floatEndDate)
 
 % output parameters initialization
@@ -62,11 +62,11 @@ if (error == 1)
    return;
 end
 
-[profInfo] = parse_apx_ir_rudics_profile_info(profInfoDataStr);
-[driftData] = parse_apx_ir_rudics_drift_data(driftMeasDataStr, a_floatDecId);
+[profInfo] = parse_apx_ir_profile_info(profInfoDataStr);
+[driftData] = parse_apx_ir_drift_data(driftMeasDataStr, a_floatDecId);
 [gpsLocDate, gpsLocLon, gpsLocLat, ...
    gpsLocNbSat, gpsLocAcqTime, ...
-   gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_rudics_gps_fix(gpsFixDataStr);
+   gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
 
 dates = [];
 if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
@@ -105,7 +105,7 @@ else
 end
 
 o_msgFileName = sprintf('%04d_%s_%s_%d_%s_%08d.msg', ...
-   a_floatId, ...
+   a_floatRudicsId, ...
    datestr(fileNameDate + g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
    inputCyNum, ...
    a_floatWmo, ...

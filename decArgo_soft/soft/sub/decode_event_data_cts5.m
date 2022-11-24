@@ -62,6 +62,11 @@ global g_MC_TET;
 global g_MC_Grounded;
 
 
+% global g_decArgo_cycleNumFloat;
+% if (g_decArgo_cycleNumFloat == 85)
+%    a=1
+% end
+
 if (a_ptnNum == 0)
    return;
 end
@@ -274,24 +279,27 @@ if (~isempty(idF1))
             ([g_decArgo_eventData{idFCyPtn, 6}] == g_decArgo_eventData{idFCyPtn(idF1(id)), 6}+1/86400));
       end
       if (~isempty(idF2))
-         g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
-            'GPS LOCATION', 'JULD', g_decArgo_eventData{idFCyPtn(idF1(id)), 5}{:}, []);
-         g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
-            g_MC_Surface, 'JULD', ...
-            'GPS location date', g_decArgo_eventData{idFCyPtn(idF1(id)), 5}{:}, ...
-            a_cyNum, a_ptnNum);
-         g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
-         g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
-            g_MC_Surface, 'LATITUDE', ...
-            'GPS location latitude', g_decArgo_eventData{idFCyPtn(idF2), 5}{1}, ...
-            a_cyNum, a_ptnNum);
-         g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
-         g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
-            g_MC_Surface, 'LONGITUDE', ...
-            'GPS location longitude', g_decArgo_eventData{idFCyPtn(idF2), 5}{2}, ...
-            a_cyNum, a_ptnNum);
-         g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
-         g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
+         % LATITUDE/LONGITUDE can be empty for some GPS fixes
+         if (~isempty(g_decArgo_eventData{idFCyPtn(idF2), 5}))
+            g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+               'GPS LOCATION', 'JULD', g_decArgo_eventData{idFCyPtn(idF1(id)), 5}{:}, []);
+            g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
+               g_MC_Surface, 'JULD', ...
+               'GPS location date', g_decArgo_eventData{idFCyPtn(idF1(id)), 5}{:}, ...
+               a_cyNum, a_ptnNum);
+            g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
+            g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
+               g_MC_Surface, 'LATITUDE', ...
+               'GPS location latitude', g_decArgo_eventData{idFCyPtn(idF2), 5}{1}, ...
+               a_cyNum, a_ptnNum);
+            g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
+            g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
+               g_MC_Surface, 'LONGITUDE', ...
+               'GPS location longitude', g_decArgo_eventData{idFCyPtn(idF2), 5}{2}, ...
+               a_cyNum, a_ptnNum);
+            g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
+            g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
+         end
       end
    end
 end
@@ -314,21 +322,21 @@ end
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 47);
 if (~isempty(idF))
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      177, 'Surface pressure (dbar)', g_decArgo_eventData{idFCyPtn(idF), 5}{:});
+      177, 'Surface pressure (dbar)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
 
 % internal pressure
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 48);
 if (~isempty(idF))
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      103, 'Internal pressure (mbar)', g_decArgo_eventData{idFCyPtn(idF), 5}{:});
+      103, 'Internal pressure (mbar)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
 
 % battery voltage
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 49);
 if (~isempty(idF))
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
-      104, 'Battery voltage (V)', g_decArgo_eventData{idFCyPtn(idF), 5}{:});
+      104, 'Battery voltage (V)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
 
 % buoyancy actions

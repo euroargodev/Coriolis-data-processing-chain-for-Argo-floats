@@ -875,7 +875,7 @@ switch (a_decoderId)
       % APEX Iridium Rudics & Navis floats
       
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, ...
-         1201}
+         1201, 1314}
             
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);

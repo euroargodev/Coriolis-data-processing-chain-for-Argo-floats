@@ -103,19 +103,19 @@ for idFile = 1:length(fileIdList)
       end
       
       dates = [];
-      driftData = parse_apx_ir_rudics_drift_data(driftMeasDataStr, a_decoderId);
+      driftData = parse_apx_ir_drift_data(driftMeasDataStr, a_decoderId);
       if (~isempty(driftData))
          measDates = driftData.dates;
          measDates(find(measDates == driftData.dateList.fillValue)) = [];
          dates = [dates; measDates];
       end
-      profInfo = parse_apx_ir_rudics_profile_info(profInfoDataStr);
+      profInfo = parse_apx_ir_profile_info(profInfoDataStr);
       if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
          dates = [dates; profInfo.ProfTime];
       end
       [gpsLocDate, gpsLocLon, gpsLocLat, ...
          gpsLocNbSat, gpsLocAcqTime, ...
-         gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_rudics_gps_fix(gpsFixDataStr);
+         gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
       if (~isempty(gpsLocDate))
          dates = [dates; gpsLocDate];
       end
@@ -411,19 +411,19 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
          end
          
          dates = [];
-         driftData = parse_apx_ir_rudics_drift_data(driftMeasDataStr, a_decoderId);
+         driftData = parse_apx_ir_drift_data(driftMeasDataStr, a_decoderId);
          if (~isempty(driftData))
             measDates = driftData.dates;
             measDates(find(measDates == driftData.dateList.fillValue)) = [];
             dates = [dates; measDates];
          end
-         profInfo = parse_apx_ir_rudics_profile_info(profInfoDataStr);
+         profInfo = parse_apx_ir_profile_info(profInfoDataStr);
          if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
             dates = [dates; profInfo.ProfTime];
          end
          [gpsLocDate, gpsLocLon, gpsLocLat, ...
             gpsLocNbSat, gpsLocAcqTime, ...
-            gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_rudics_gps_fix(gpsFixDataStr);
+            gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
          if (~isempty(gpsLocDate))
             dates = [dates; gpsLocDate];
          end

@@ -341,7 +341,7 @@ switch (a_decoderId)
    case {213}
       % Provor-ARN-DO Iridium
       
-      for id = [0 4:10 17:26 29:31]
+      for id = [0 4:10 17:27 29:31]
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
@@ -366,7 +366,7 @@ switch (a_decoderId)
       % Arvor-ARN-Ice Iridium
       % Provor-ARN-DO-Ice Iridium
       
-      for id = [0 4:10 17:26 29:31]
+      for id = [0 4:10 17:27 29:31]
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};

@@ -2,7 +2,7 @@
 % Decode PROVOR packet data.
 %
 % SYNTAX :
-%  [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
+%  [o_tabTech1, o_tabTech2, o_dataCTD, o_dataCTDO, o_evAct, o_pumpAct, ...
 %    o_floatParam1, o_floatParam2, o_cycleNumberList] = ...
 %    decode_prv_data_ir_sbd_214(a_tabData, a_tabDataDates, a_procLevel, a_cycleNumberList)
 %
@@ -16,7 +16,8 @@
 % OUTPUT PARAMETERS :
 %   o_tabTech1        : decoded data of technical msg #1
 %   o_tabTech2        : decoded data of technical msg #2
-%   o_dataCTDO        : decoded data from CTD
+%   o_dataCTD         : decoded CTD data
+%   o_dataCTDO        : decoded CTDO data
 %   o_evAct           : EV decoded data from hydraulic packet
 %   o_pumpAct         : pump decoded data from hydraulic packet
 %   o_floatParam1     : decoded parameter #1 data
@@ -29,15 +30,16 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   10/16/2017 - RNU - creation
+%   11/07/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
+function [o_tabTech1, o_tabTech2, o_dataCTD, o_dataCTDO, o_evAct, o_pumpAct, ...
    o_floatParam1, o_floatParam2, o_cycleNumberList] = ...
    decode_prv_data_ir_sbd_214(a_tabData, a_tabDataDates, a_procLevel, a_cycleNumberList)
 
 % output parameters initialization
 o_tabTech1 = [];
 o_tabTech2 = [];
+o_dataCTD = [];
 o_dataCTDO = [];
 o_evAct = [];
 o_pumpAct = [];
@@ -282,6 +284,113 @@ for idMes = 1:size(a_tabData, 1)
          o_tabTech2 = [o_tabTech2; ...
             cycleNum packType tabTech2(1:59)' sbdFileDate];
          
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {1, 2, 3, 13, 14}
+         % CTD packets
+         
+         % message data frame
+         msgData = a_tabData(idMes, 2:end);
+         
+         % first item bit number
+         firstBit = 1;
+         % item bit lengths
+         tabNbBits = [ ...
+            16 16 8 8 ...
+            repmat(16, 1, 45) ...
+            repmat(8, 1, 3) ...
+            ];
+         % get item bits
+         ctdValues = get_bits(firstBit, tabNbBits, msgData);
+         
+         cycleNum = ctdValues(1) + g_decArgo_cycleNumOffset;
+         
+         if (~isempty(a_cycleNumberList) && ~ismember(cycleNum, a_cycleNumberList))
+            continue;
+         end
+
+         if (~any(ctdValues(2:end) ~= 0))
+            fprintf('WARNING: Float #%d, Cycle #%d: One empty packet type #%d has been received\n', ...
+               g_decArgo_floatNum, cycleNum, ...
+               packType);
+            continue;
+         end
+
+         idFCy = find(g_decArgo_cycleList == cycleNum);
+         if (isempty(idFCy))
+            idFCy = length(g_decArgo_cycleList) + 1;
+            g_decArgo_cycleList(idFCy) = cycleNum;
+         end
+         
+         if (packType == 1)
+            if (length(g_decArgo_nbOf1Or8TypePacketReceived) < idFCy)
+               g_decArgo_nbOf1Or8TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf1Or8TypePacketReceived(idFCy) = g_decArgo_nbOf1Or8TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 2)
+            if (length(g_decArgo_nbOf2Or9TypePacketReceived) < idFCy)
+               g_decArgo_nbOf2Or9TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf2Or9TypePacketReceived(idFCy) = g_decArgo_nbOf2Or9TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 3)
+            if (length(g_decArgo_nbOf3Or10TypePacketReceived) < idFCy)
+               g_decArgo_nbOf3Or10TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf3Or10TypePacketReceived(idFCy) = g_decArgo_nbOf3Or10TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 13)
+            if (length(g_decArgo_nbOf13Or11TypePacketReceived) < idFCy)
+               g_decArgo_nbOf13Or11TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf13Or11TypePacketReceived(idFCy) = g_decArgo_nbOf13Or11TypePacketReceived(idFCy) + 1;
+            end
+         elseif (packType == 14)
+            if (length(g_decArgo_nbOf14Or12TypePacketReceived) < idFCy)
+               g_decArgo_nbOf14Or12TypePacketReceived(idFCy) = 1;
+            else
+               g_decArgo_nbOf14Or12TypePacketReceived(idFCy) = g_decArgo_nbOf14Or12TypePacketReceived(idFCy) + 1;
+            end
+         end
+         
+         if (a_procLevel == 0)
+            continue;
+         end
+         
+         % there are 15 PTS measurements per packet
+         
+         % store raw data values
+         tabDate = [];
+         tabPres = [];
+         tabTemp = [];
+         tabPsal = [];
+         for idBin = 1:15
+            if (idBin > 1)
+               measDate = g_decArgo_dateDef;
+            else
+               measDate = ctdValues(2)/24 + ctdValues(3)/1440 + ctdValues(4)/86400;
+            end
+            
+            pres = ctdValues(3*(idBin-1)+5);
+            temp = ctdValues(3*(idBin-1)+6);
+            psal = ctdValues(3*(idBin-1)+7);
+            
+            if ~((pres == 0) && (temp == 0) && (psal == 0))
+               tabDate = [tabDate; measDate];
+               tabPres = [tabPres; pres];
+               tabTemp = [tabTemp; temp];
+               tabPsal = [tabPsal; psal];
+            else
+               tabDate = [tabDate; g_decArgo_dateDef];
+               tabPres = [tabPres; g_decArgo_presCountsDef];
+               tabTemp = [tabTemp; g_decArgo_tempCountsDef];
+               tabPsal = [tabPsal; g_decArgo_salCountsDef];
+            end
+         end
+         
+         o_dataCTD = [o_dataCTD; ...
+            cycleNum packType ctdValues(1) tabDate' ones(1, length(tabDate))*-1 tabPres' tabTemp' tabPsal'];
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {8, 9, 10, 11, 12}
          % CTDO packets

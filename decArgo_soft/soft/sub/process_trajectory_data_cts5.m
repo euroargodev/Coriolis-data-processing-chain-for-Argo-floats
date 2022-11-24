@@ -981,9 +981,11 @@ for idCyc = 1:length(cycleNumList)
          paramPres = get_netcdf_param_attributes('PRES');
          paramPres.resolution = single(1);
          measStruct.paramList = paramPres;
-         measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
-         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         if (any(strcmp(paramName, 'PRES'))) % to cope with anomaly of 6902670 #112,01
+            measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
       end
       
       %%%%%%%%%%%%%%%%%%%%%%

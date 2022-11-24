@@ -58,7 +58,7 @@ switch (a_floatTransType)
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
-         case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201} % Apex Ir Rudics & navis floats
+         case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201, 1314} % Apex Ir Rudics & navis floats
             o_profJuldRes = double(1/86400); % 1 second
             
          otherwise
@@ -81,6 +81,9 @@ switch (a_floatTransType)
          case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215}
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
+            
+         case {1314} % Apex Ir Sbd
+            o_profJuldRes = double(1/86400); % 1 second
             
          case {2001, 2002}
             o_profJuldRes = double(1/86400); % 1 second

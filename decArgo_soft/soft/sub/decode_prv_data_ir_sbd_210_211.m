@@ -45,7 +45,7 @@ o_evAct = [];
 o_pumpAct = [];
 o_floatParam = [];
 o_irSessionNum = 0;
-o_deepCycle = [];
+o_deepCycle = -1;
 o_resetDetected = 0;
 
 % current float WMO number
@@ -567,8 +567,21 @@ if (a_procLevel > 0)
             g_decArgo_floatNum);
       end
    else
-      fprintf('WARNING: Float #%d: Cycle number cannot be determined\n', ...
-         g_decArgo_floatNum);
+      ignoredPacketTypes = sprintf('%d ', sort(a_tabData(:, 1)));
+      fprintf('WARNING: Float #%d: Cycle number cannot be determined => ignore data of current buffer (packet types: %s)\n', ...
+         g_decArgo_floatNum, ...
+         ignoredPacketTypes(1:end-1));
+      
+      % reset data
+      o_tabTech1 = [];
+      o_tabTech2 = [];
+      o_dataCTD = [];
+      o_evAct = [];
+      o_pumpAct = [];
+      o_floatParam = [];
+      o_irSessionNum = 0;
+      o_deepCycle = -1;
+      o_resetDetected = 0;
    end
    
    % anomaly-managment: when the float is switched to EOL mode the first

@@ -31,36 +31,36 @@ global g_decArgo_outputCsvFileId;
 
 idForCyNumSet = find(a_clockOffsetData.clockSetCycleNum >= g_decArgo_cycleNum);
 for idCS = 1:length(idForCyNumSet)
-   clockoffsetCycleNum = a_clockOffsetData.clockoffsetCycleNum{idForCyNumSet(idCS)};
-   clockoffsetJuldUtc = a_clockOffsetData.clockoffsetJuldUtc{idForCyNumSet(idCS)};
-   clockoffsetValue = a_clockOffsetData.clockoffsetValue{idForCyNumSet(idCS)};
+   clockOffsetCycleNum = a_clockOffsetData.clockOffsetCycleNum{idForCyNumSet(idCS)};
+   clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{idForCyNumSet(idCS)};
+   clockOffsetValue = a_clockOffsetData.clockOffsetValue{idForCyNumSet(idCS)};
    
-   idForCyNum = find(clockoffsetCycleNum == g_decArgo_cycleNum);
+   idForCyNum = find(clockOffsetCycleNum == g_decArgo_cycleNum);
    for idCO = 1:length(idForCyNum)
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Clock offset; -; -; Clock offset on %s (UTC); %d seconds\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
-         julian_2_gregorian_dec_argo(clockoffsetJuldUtc(idForCyNum(idCO))), ...
-         clockoffsetValue(idForCyNum(idCO)));
-      if (idCO == length(idForCyNum))
+         julian_2_gregorian_dec_argo(clockOffsetJuldUtc(idForCyNum(idCO))), ...
+         clockOffsetValue(idForCyNum(idCO)));
+      if (idForCyNum(idCO) == length(clockOffsetCycleNum))
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Clock set; -; -; Clock set on %s (UTC)\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            julian_2_gregorian_dec_argo(clockoffsetJuldUtc(idForCyNum(idCO))));
+            julian_2_gregorian_dec_argo(clockOffsetJuldUtc(idForCyNum(idCO))));
       end
    end   
 end
 
-if (~isempty(a_clockOffsetData.clockoffsetCycleNum))
-   if (any(a_clockOffsetData.clockoffsetCycleNum{end} == g_decArgo_cycleNum))
-      clockoffsetCycleNum = a_clockOffsetData.clockoffsetCycleNum{end};
-      clockoffsetJuldUtc = a_clockOffsetData.clockoffsetJuldUtc{end};
-      clockoffsetValue = a_clockOffsetData.clockoffsetValue{end};
+if (~isempty(a_clockOffsetData.clockOffsetCycleNum))
+   if (any(a_clockOffsetData.clockOffsetCycleNum{end} == g_decArgo_cycleNum))
+      clockOffsetCycleNum = a_clockOffsetData.clockOffsetCycleNum{end};
+      clockOffsetJuldUtc = a_clockOffsetData.clockOffsetJuldUtc{end};
+      clockOffsetValue = a_clockOffsetData.clockOffsetValue{end};
       
-      idForCyNum = find(clockoffsetCycleNum == g_decArgo_cycleNum);
+      idForCyNum = find(clockOffsetCycleNum == g_decArgo_cycleNum);
       for idCO = 1:length(idForCyNum)
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Clock offset; -; -; Clock offset on %s (UTC); %d seconds\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            julian_2_gregorian_dec_argo(clockoffsetJuldUtc(idForCyNum(idCO))), ...
-            clockoffsetValue(idForCyNum(idCO)));
+            julian_2_gregorian_dec_argo(clockOffsetJuldUtc(idForCyNum(idCO))), ...
+            clockOffsetValue(idForCyNum(idCO)));
       end
    end
 end

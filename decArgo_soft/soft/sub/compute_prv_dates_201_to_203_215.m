@@ -144,7 +144,7 @@ elseif (length(idF1) == 1)
          
          % the descent duration can be > 24 h (see 6901757 #7)
          nbDays = 0;
-         while (a_tabTech(1, 16)*100/((o_firstStabDate-o_descentToParkStartDate)*86400) > MAX_DESC_SPEED)
+         while (a_tabTech(id, 16)*100/((o_firstStabDate-o_descentToParkStartDate)*86400) > MAX_DESC_SPEED)
             o_firstStabDate = o_firstStabDate + 1;
             nbDays = nbDays + 1;
          end
@@ -162,7 +162,7 @@ elseif (length(idF1) == 1)
       
       % the descent duration can be > 24 h (see 6901757 #7)
       nbDays = 0;
-      vertDist = abs(a_tabTech(1, 16)-a_tabTech(1, 17));
+      vertDist = abs(a_tabTech(id, 16)-a_tabTech(id, 17));
       while (vertDist*100/((o_descentToParkEndDate-o_firstStabDate)*86400) > MAX_DESC_SPEED)
          o_descentToParkEndDate = o_descentToParkEndDate + 1;
          nbDays = nbDays + 1;
@@ -229,15 +229,17 @@ elseif (length(idF1) == 1)
       end
       
       % the descent duration can be > 24 h (see 6901757 #7)
-      nbDays = 0;
-      vertDist = abs(a_tabTech(1, 29)-(a_tabTech(1, 21)+a_tabTech(1, 22))/2);
-      while (vertDist*100/((o_descentToProfEndDate-o_descentToProfStartDate)*86400) > MAX_DESC_SPEED)
-         o_descentToProfStartDate = o_descentToProfStartDate - 1;
-         nbDays = nbDays + 1;
-      end
-      if (nbDays > 0)
-         fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+      if (a_tabTech(id, 29) > 0) % a_tabTech(id, 29) == 0 means that it is not set because the float didn't wait at profile pressure
+         nbDays = 0;
+         vertDist = abs(a_tabTech(id, 29)-(a_tabTech(id, 21)+a_tabTech(id, 22))/2);
+         while (vertDist*100/((o_descentToProfEndDate-o_descentToProfStartDate)*86400) > MAX_DESC_SPEED)
+            o_descentToProfStartDate = o_descentToProfStartDate - 1;
+            nbDays = nbDays + 1;
+         end
+         if (nbDays > 0)
+            fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+         end
       end
    end
    

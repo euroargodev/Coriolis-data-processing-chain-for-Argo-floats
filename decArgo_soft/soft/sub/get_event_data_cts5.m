@@ -93,29 +93,57 @@ idFCy = find([g_decArgo_eventData{:, 4}] == 89);
 cyNumList = cell2mat([g_decArgo_eventData{idFCy, 5}]);
 idFPtn = find([g_decArgo_eventData{:, 4}] == 90);
 ptnNumList = cell2mat([g_decArgo_eventData{idFPtn, 5}]);
-cyclePatternNumFloat = a_cyclePatternNumFloat(find(a_cyclePatternNumFloat(:, 2) ~= 0), :);
+
+cycNumAutotest = [];
+idAutotest = [];
+idFileList = find([g_decArgo_eventData{:, 4}] == 28);
+for idFile = 1:length(idFileList)
+   if (any(strfind(g_decArgo_eventData{idFileList(idFile), 5}{:}, '_autotest_')))
+      fileName = g_decArgo_eventData{idFileList(idFile), 5}{:};
+      idFUs = strfind(fileName, '_');
+      cyNum = str2num(fileName(idFUs(1)+1:idFUs(2)-1));
+      cycNumAutotest = [cycNumAutotest cyNum];
+      idAutotest = [idAutotest idFileList(idFile)];
+   end
+end
+
+% cyclePatternNumFloat = a_cyclePatternNumFloat(find(a_cyclePatternNumFloat(:, 2) ~= 0), :);
+cyclePatternNumFloat = a_cyclePatternNumFloat;
 cyclePatternNumFloat(find(cyclePatternNumFloat(:, 1) < g_decArgo_firstCycleNumCts5), :) = [];
 cyclePatternNumFloat = cat(2, cyclePatternNumFloat, nan(size(cyclePatternNumFloat, 1), 4));
 for idL = 1:size(cyclePatternNumFloat, 1)
    cyNum = cyclePatternNumFloat(idL, 1);
    ptnNum = cyclePatternNumFloat(idL, 2);
-
-   idFC = find(cyNumList == cyNum);
-   idFP = find(ptnNumList == ptnNum);
-   if (isempty(idFC) || isempty(idFP))
-      continue;
-   end
-   idFCycle = idFCy(idFC);
-   idFPattern = idFPtn(idFP);
-   idF = find(idFPattern > idFCycle);
-   idFPattern = idFPattern(idF(1));
-   cyclePatternNumFloat(idL, 3) = idFCycle;
-   cyclePatternNumFloat(idL, 4) = idFPattern;
    
-   if (ptnNum > 1)
-      cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 4);
+   %    if ((cyNum == 89) && (ptnNum == 0))
+   %       a=1
+   %    end
+
+   if (ptnNum == 0)
+      idF = find(cycNumAutotest == cyNum);
+      if (~isempty(idF))
+         cyclePatternNumFloat(idL, 3) = idAutotest(idF(end)); % you can have more than one autotest file for the same cycle
+         cyclePatternNumFloat(idL, 4) = idAutotest(idF(end));
+         cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 3);
+      end
    else
-      cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 3);
+      idFC = find(cyNumList == cyNum);
+      idFP = find(ptnNumList == ptnNum);
+      if (isempty(idFC) || isempty(idFP))
+         continue;
+      end
+      idFCycle = idFCy(idFC);
+      idFPattern = idFPtn(idFP);
+      idF = find(idFPattern > idFCycle);
+      idFPattern = idFPattern(idF(1));
+      cyclePatternNumFloat(idL, 3) = idFCycle;
+      cyclePatternNumFloat(idL, 4) = idFPattern;
+      
+      if (ptnNum > 1)
+         cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 4);
+      else
+         cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 3);
+      end
    end
 end
 
@@ -253,6 +281,8 @@ timeOffset = 455812984;
 curBit = 1;
 ignoreEvts = 0;
 ignoreNextEvt = 0;
+clockError = 0;
+evtJulDPrec = [];
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
@@ -288,24 +318,24 @@ while ((curBit-1)/8 < lastByteNum)
          % see for example float 6902829:
          % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
          % in that case we ignore following events until the next #12 event
-         ignoreNextEvt = 0;
+         stopClockError = 1;
          if (evtNum == 12)
             % check if the new RTC set date is after float launch date - 365
             if (evtData{:} > a_launchDate - 365)
-               if (ignoreEvts == 1)
-                  fprintf('WARNING: RTC correctly set to %s in file %s => end of ignored events\n', ...
+               if (clockError == 1)
+                  fprintf('WARNING: RTC correctly set to %s in file %s => end of event date correction\n', ...
                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
-                  ignoreEvts = 0;
-                  ignoreNextEvt = 1;
+                  clockError = 0;
+                  stopClockError = 0;
                end
             else
-               ignoreEvts = 1;
-               fprintf('WARNING: RTC erroneously set to %s in file %s => start of ignored events\n', ...
+               fprintf('WARNING: RTC erroneously set to %s in file %s => start of event date correction\n', ...
                   julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+               clockError = 1;
             end
          end
          
-         if (retrieve && ~ignoreEvts && ~ignoreNextEvt)
+         if (retrieve)
             evtNew = cell(1, 3);
             if (~isempty(g_decArgo_eventData))
                evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
@@ -314,12 +344,53 @@ while ((curBit-1)/8 < lastByteNum)
             end
             evtNew{1, 2} = evtNum;
             evtNew{1, 3} = evtData;
-            evtNew{1, 4} = evtJulD;
+            if ((clockError == 0) && (stopClockError == 1))
+               evtNew{1, 4} = evtJulD;
+               evtJulDPrec = evtJulD;
+            else
+               evtNew{1, 4} = fix(evtJulDPrec) + evtJulD - fix(evtJulD);
+               if (ismember(evtNum, [12 66]))
+                  evtNew{1, 3} = evtNew(1, 4);
+               end
+            end
             g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
-         elseif (retrieve && (ignoreEvts || ignoreNextEvt))
-            fprintf('WARNING: event #%d ignored in file %s (due to erroneus RTC value)\n', ...
-               evtNum, a_inputFilePathName);
          end
+         
+         % first version
+         %          if (0)
+         %             ignoreNextEvt = 0;
+         %             if (evtNum == 12)
+         %                % check if the new RTC set date is after float launch date - 365
+         %                if (evtData{:} > a_launchDate - 365)
+         %                   if (ignoreEvts == 1)
+         %                      fprintf('WARNING: RTC correctly set to %s in file %s => end of ignored events\n', ...
+         %                         julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+         %                      ignoreEvts = 0;
+         %                      ignoreNextEvt = 1;
+         %                   end
+         %                else
+         %                   ignoreEvts = 1;
+         %                   fprintf('WARNING: RTC erroneously set to %s in file %s => start of ignored events\n', ...
+         %                      julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+         %                end
+         %             end
+         %
+         %             if (retrieve && ~ignoreEvts && ~ignoreNextEvt)
+         %                evtNew = cell(1, 3);
+         %                if (~isempty(g_decArgo_eventData))
+         %                   evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
+         %                else
+         %                   evtNew{1, 1} = 1;
+         %                end
+         %                evtNew{1, 2} = evtNum;
+         %                evtNew{1, 3} = evtData;
+         %                evtNew{1, 4} = evtJulD;
+         %                g_decArgo_eventData = cat(1, g_decArgo_eventData, evtNew);
+         %             elseif (retrieve && (ignoreEvts || ignoreNextEvt))
+         %                fprintf('WARNING: event #%d ignored in file %s (due to erroneus RTC value)\n', ...
+         %                   evtNum, a_inputFilePathName);
+         %             end
+         %          end
       else
          fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);

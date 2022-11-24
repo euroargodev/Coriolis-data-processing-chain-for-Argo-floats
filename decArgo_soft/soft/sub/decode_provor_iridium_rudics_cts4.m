@@ -447,6 +447,11 @@ if (~a_floatDmFlag)
       end
       for idSpoolFile = 1:length(tabAllFileNames)
          
+         %          if (idSpoolFile > 500)
+         %             a=1
+         %             break;
+         %          end
+         
          % move the next file into the buffer directory
          if (g_decArgo_virtualBuff)
             add_to_list(tabAllFileNames{idSpoolFile}, 'buffer');
@@ -858,11 +863,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % assign second Iridium session to end of previous cycle and merge first/last
    % msg and location times
-   if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_generateNcTraj ~= 0))
-      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
-         o_tabTrajNMeas, o_tabTrajNCycle);
-   end
-   
+   [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_sbd2( ...
+      o_tabTrajNMeas, o_tabTrajNCycle);
+      
    % add interpolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
@@ -877,6 +880,10 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
       add_configuration_number_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+   
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
    % set QC parameters to '3' when the sensor state is ko
    [o_tabProfiles, o_tabTrajNMeas] = update_qc_from_sensor_state_ir_rudics_sbd2( ...

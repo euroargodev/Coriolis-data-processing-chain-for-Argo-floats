@@ -269,7 +269,7 @@ for outputCycleNumber = min(tabNcTechIndex(:, 6)):max(tabNcTechIndex(:, 6))
    if (~isempty(idParam))
       for idP = 1:length(idParam)
          idPar = idParam(idP);
-         
+
          idParamName = find(g_decArgo_outputNcParamId == tabNcTechIndex(idPar, 5));
          paramName = char(g_decArgo_outputNcParamLabel{idParamName});
          

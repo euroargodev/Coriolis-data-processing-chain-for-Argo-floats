@@ -221,7 +221,7 @@ for idCy = 1:length(a_cycleList)
          
          % output CSV file
          
-         print_misc_info_in_csv_file(miscInfo);
+         print_misc_info_in_csv_file(miscInfo, '');
          print_park_data_in_csv_file(parkData);
          print_ast_data_in_csv_file(astData);
          print_prof_data_in_csv_file(profData);
@@ -342,6 +342,10 @@ if (isempty(g_decArgo_outputCsvFileId))
    % update the output cycle number in the structures
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
+   
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames);

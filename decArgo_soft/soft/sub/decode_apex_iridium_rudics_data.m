@@ -7,13 +7,13 @@
 %    o_tabNcTechIndex, o_tabNcTechVal, ...
 %    o_structConfig] = decode_apex_iridium_rudics_data( ...
 %    a_floatNum, a_cycleList, ...
-%    a_decoderId, a_floatId)
+%    a_decoderId, a_floatRudicsId)
 %
 % INPUT PARAMETERS :
-%   a_floatNum  : float WMO number
-%   a_cycleList : list of cycles to be decoded
-%   a_decoderId : float decoder Id
-%   a_floatId   : float Rudics Id
+%   a_floatNum      : float WMO number
+%   a_cycleList     : list of cycles to be decoded
+%   a_decoderId     : float decoder Id
+%   a_floatRudicsId : float Rudics Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : decoded profiles
@@ -36,7 +36,7 @@ function [o_tabProfiles, ...
    o_tabNcTechIndex, o_tabNcTechVal, ...
    o_structConfig] = decode_apex_iridium_rudics_data( ...
    a_floatNum, a_cycleList, ...
-   a_decoderId, a_floatId, a_floatLaunchDate, a_floatEndDate)
+   a_decoderId, a_floatRudicsId, a_floatLaunchDate, a_floatEndDate)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -72,7 +72,7 @@ g_decArgo_configDone = 0;
 
 % cycle timings storage
 global g_decArgo_timeData;
-g_decArgo_timeData = get_apx_ir_rudics_float_time_init_struct;
+g_decArgo_timeData = get_apx_ir_float_time_init_struct;
 
 % pressure offset storage
 global g_decArgo_presOffsetData;
@@ -110,7 +110,6 @@ global g_decArgo_rsyncFloatWmoList;
 global g_decArgo_rsyncFloatSbdFileList;
 
 % report information structure
-global g_decArgo_reportData;
 global g_decArgo_reportStruct;
 
 % generate nc flag
@@ -123,7 +122,7 @@ global g_decArgo_rsyncLogFileUsedList;
 
 
 % create the float directory
-floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatId) '_' num2str(a_floatNum) '/'];
+floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatRudicsId) '_' num2str(a_floatNum) '/'];
 if ~(exist(floatIriDirName, 'dir') == 7)
    mkdir(floatIriDirName);
 end
@@ -151,7 +150,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
-init_float_config_apx_ir_rudics(a_decoderId);
+init_float_config_apx_ir(a_decoderId);
 
 % print DOXY and FLBB coef in the output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -172,7 +171,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    g_decArgo_outputNcParamValue = [];
    
    % create the configuration parameter names for the META NetCDF file
-   [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_ir_rudics(a_decoderId);
+   [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_ir(a_decoderId);
 end
 
 if (g_decArgo_realtimeFlag)
@@ -191,14 +190,14 @@ if (g_decArgo_realtimeFlag)
       nbFiles);
    
    % create list of cycles to decode
-   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatId), a_floatLaunchDate, a_decoderId);
+   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatRudicsId), a_floatLaunchDate, a_decoderId);
    
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, a_cycleList);
 end
 
 % retrieve RTC offset information from all existing log files
-g_decArgo_clockOffset = get_clock_offset_apx_ir_rudics(a_floatNum, a_floatId);
+g_decArgo_clockOffset = get_clock_offset_apx_ir_rudics(a_floatNum, a_floatRudicsId, a_decoderId);
 
 % decode msg and log file of the cycle list
 for idCy = 1:length(a_cycleList)
@@ -213,7 +212,7 @@ for idCy = 1:length(a_cycleList)
    fprintf('Cycle #%d\n', cycleNum);
    
    % retrieve the files of the current cycle
-   [msgFileList, logFileList] = get_files_iridium_rudics_apx(a_floatNum, a_floatId, cycleNum);
+   [msgFileList, logFileList] = get_files_iridium_apx(a_floatNum, a_floatRudicsId, cycleNum, g_decArgo_archiveDirectory);
    
    % decode the files of the current cycle
    
@@ -234,18 +233,18 @@ for idCy = 1:length(a_cycleList)
          gpsDataMsg, gpsInfoMsg, ...
          timeDataLog, ...
          g_decArgo_presOffsetData] = ...
-         decode_apx_ir_rudics(msgFileList, logFileList, g_decArgo_presOffsetData, a_decoderId);
+         decode_apx_ir(msgFileList, logFileList, g_decArgo_presOffsetData, a_decoderId);
       
       % create the configuration and assign it to the current cycle
-      create_float_config_apx_ir_rudics(configInfoLog, configInfoMsg);
+      create_float_config_apx_ir(configInfoLog, configInfoMsg, a_decoderId);
       
       % compute additional dates
-      timeDataLog = compute_additional_times_apx_ir_rudics(timeDataLog, driftData);
+      timeDataLog = compute_additional_times_apx_ir(timeDataLog, driftData);
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle (from .msg file) and check that those of the previous
       % cycle (from .log file) are already stored
-      techData = store_gps_data_apx_ir_rudics(gpsDataLog, gpsDataMsg, g_decArgo_cycleNum, techData);
+      techData = store_gps_data_apx_ir(gpsDataLog, gpsDataMsg, g_decArgo_cycleNum, techData);
       
       % apply pressure adjustment
       [surfPresInfo, surfDataLog, ...
@@ -256,7 +255,7 @@ for idCy = 1:length(a_cycleList)
          surfDataBladderDeflated, surfDataBladderInflated, surfDataMsg, ...
          timeDataLog, ...
          g_decArgo_presOffsetData] = ...
-         adjust_pres_from_surf_offset_apx_ir_rudics(surfDataLog, ...
+         adjust_pres_from_surf_offset_apx_ir(surfDataLog, ...
          pMarkDataMsg, pMarkDataLog, ...
          driftData, parkData, parkDataEng, ...
          profLrData, profHrData, ...
@@ -272,7 +271,7 @@ for idCy = 1:length(a_cycleList)
          nearSurfData, ...
          surfDataBladderDeflated, surfDataBladderInflated, surfDataMsg, ...
          timeDataLog] = ...
-         compute_derived_parameters_apx_ir_rudics(surfDataLog, ...
+         compute_derived_parameters_apx_ir(surfDataLog, ...
          driftData, parkData, parkDataEng, ...
          profLrData, profHrData, ...
          nearSurfData, ...
@@ -289,7 +288,7 @@ for idCy = 1:length(a_cycleList)
          nearSurfData, ...
          surfDataBladderDeflated, surfDataBladderInflated, ...
          timeDataLog] = ...
-         adjust_clock_offset_apx_ir_rudics(surfDataLog, ...
+         adjust_clock_offset_apx_ir(surfDataLog, ...
          pMarkDataLog, ...
          driftData, parkData, ...
          profLrData, ...
@@ -309,28 +308,28 @@ for idCy = 1:length(a_cycleList)
          
          print_misc_info_in_csv_file(techInfo, 'Msg');
          print_misc_info_in_csv_file(surfPresInfo, 'Surf. P');
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(surfDataLog, 'Surf. (evts)', 'Log', -1);
+         print_sampled_measurements_in_csv_file_apx_ir(surfDataLog, 'Surf. (evts)', 'Log', -1);
          print_gps_fix_in_csv_file(gpsDataLog, 'Log', -1);
          print_misc_info_in_csv_file(miscInfoMsg, 'Msg');
          print_misc_info_in_csv_file(miscInfoLog, 'Log');
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(pMarkDataMsg, 'PMark', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(pMarkDataLog, 'PMark (evts)', 'Log', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(driftData, 'Drift', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(parkData, 'Park', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(parkDataEng, 'Park (eng)', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(pMarkDataMsg, 'PMark', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(pMarkDataLog, 'PMark (evts)', 'Log', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(driftData, 'Drift', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(parkData, 'Park', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(parkDataEng, 'Park (eng)', 'Msg', 0);
          if (~isempty(timeDataLog) && ~isempty(timeDataLog.parkEndMeas))
-            print_sampled_measurements_in_csv_file_apx_ir_rudics(timeDataLog.parkEndMeas, 'Park (evts)', 'Log', 0);
+            print_sampled_measurements_in_csv_file_apx_ir(timeDataLog.parkEndMeas, 'Park (evts)', 'Log', 0);
          end
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(profLrData, 'Profile LR', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(profHrData, 'Profile HR', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(nearSurfData, 'Near surf.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(surfDataBladderDeflated, 'Surf. blad. defl.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(surfDataBladderInflated, 'Surf. blad. infl.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir_rudics(surfDataMsg, 'Surf.', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(profLrData, 'Profile LR', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(profHrData, 'Profile HR', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(nearSurfData, 'Near surf.', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(surfDataBladderDeflated, 'Surf. blad. defl.', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(surfDataBladderInflated, 'Surf. blad. infl.', 'Msg', 0);
+         print_sampled_measurements_in_csv_file_apx_ir(surfDataMsg, 'Surf.', 'Msg', 0);
          print_gps_fix_in_csv_file(gpsDataMsg, 'Msg', 0);
          
          print_clock_offset_in_csv_file(g_decArgo_clockOffset);
-         print_dates_in_csv_file_apx_ir_rudics(surfDataLog, ...
+         print_dates_in_csv_file_apx_ir(surfDataLog, ...
             pMarkDataLog, ...
             driftData, parkData, ...
             profLrData, ...
@@ -348,7 +347,7 @@ for idCy = 1:length(a_cycleList)
          % PROF NetCDF file
          
          % process profile data for PROF NetCDF file
-         [cycleProfile] = process_apx_ir_rudics_profile(profLrData, profHrData, nearSurfData, ...
+         [cycleProfile] = process_apx_ir_profile(profLrData, profHrData, nearSurfData, ...
             cycleNum, g_decArgo_presOffsetData);
          
          print = 0;
@@ -377,7 +376,7 @@ for idCy = 1:length(a_cycleList)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir_rudics( ...
+         [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir( ...
             g_decArgo_cycleNum, ...
             surfDataLog, ...
             pMarkDataMsg, pMarkDataLog, ...
@@ -396,7 +395,7 @@ for idCy = 1:length(a_cycleList)
          % TECH NetCDF file
          
          % store technical data for output NetCDF files
-         store_tech_data_for_nc_apx_ir_rudics(techData);
+         store_tech_data_for_nc_apx_ir(techData);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -430,8 +429,12 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   
    % create output float configuration
-   [o_structConfig] = create_output_float_config_apx_ir_rudics( ...
+   [o_structConfig] = create_output_float_config_apx_ir( ...
       decArgoConfParamNames, ncConfParamNames);
    
    if (g_decArgo_realtimeFlag == 1)

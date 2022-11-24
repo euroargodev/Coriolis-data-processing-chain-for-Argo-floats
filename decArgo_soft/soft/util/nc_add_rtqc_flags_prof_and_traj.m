@@ -464,9 +464,6 @@ for idFloat = 1:nbFloats
             end
             
             fprintf('%s\n', monoProfInputFileName);
-            %             if (any(strfind(monoProfInputFileName, '083')))
-            %                a=1
-            %             end
             
             % perform RTQC on profile data
             add_rtqc_to_profile_file(floatNum, ...

@@ -43,6 +43,7 @@ global g_decArgo_cycleNum;
 % global default values
 global g_decArgo_presDef;
 global g_decArgo_coefAttCountsDef;
+global g_decArgo_coefAttDef;
 global g_decArgo_dateDef;
 
 % cycle phases
@@ -132,13 +133,18 @@ for idCy = 1:length(cycleNumList)
                   % convert decoder default values to netCDF fill values
                   dataMean(find(dataMean(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
                   dataMean(find(dataMean(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
-                  dataMean(find(dataMean(:, 3) == g_decArgo_coefAttCountsDef), 3) = paramAttCoef.fillValue;
+                  dataMean(find(dataMean(:, 3) == g_decArgo_coefAttDef), 3) = paramAttCoef.fillValue;
                   
                   profStruct.paramList = [paramPres ...
                      paramAttCoef];
                   profStruct.dateList = paramJuld;
                   
                   profStruct.data = dataMean(:, 2:end);
+                  % manage wiring mistake of float 6902828
+                  if (g_decArgo_floatNum == 6902828)
+                     idNoDef = find(profStruct.data(:, 2) ~= paramAttCoef.fillValue);
+                     profStruct.data(idNoDef, 2) = 0.002129 - profStruct.data(idNoDef, 2);
+                  end
                   profStruct.dates = dataMean(:, 1);
                   
                   % measurement dates
@@ -224,9 +230,9 @@ for idCy = 1:length(cycleNumList)
                      % convert decoder default values to netCDF fill values
                      data(find(data(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
                      data(find(data(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
-                     data(find(data(:, 3) == g_decArgo_coefAttCountsDef), 3) = paramAttCoef.fillValue;
-                     data(find(data(:, 4) == g_decArgo_coefAttCountsDef), 4) = paramAttCoefStDev.fillValue;
-                     data(find(data(:, 5) == g_decArgo_coefAttCountsDef), 5) = paramAttCoefMed.fillValue;
+                     data(find(data(:, 3) == g_decArgo_coefAttDef), 3) = paramAttCoef.fillValue;
+                     data(find(data(:, 4) == g_decArgo_coefAttDef), 4) = paramAttCoefStDev.fillValue;
+                     data(find(data(:, 5) == g_decArgo_coefAttDef), 5) = paramAttCoefMed.fillValue;
                      
                      profStruct.paramList = [paramPres ...
                         paramAttCoef ...
@@ -235,6 +241,13 @@ for idCy = 1:length(cycleNumList)
                      profStruct.dateList = paramJuld;
                      
                      profStruct.data = data(:, 2:end);
+                     % manage wiring mistake of float 6902828
+                     if (g_decArgo_floatNum == 6902828)
+                        idNoDef = find(profStruct.data(:, 2) ~= paramAttCoef.fillValue);
+                        profStruct.data(idNoDef, 2) = 0.002129 - profStruct.data(idNoDef, 2);
+                        idNoDef = find(profStruct.data(:, 4) ~= paramAttCoef.fillValue);
+                        profStruct.data(idNoDef, 4) = 0.002129 - profStruct.data(idNoDef, 4);
+                     end
                      profStruct.dates = data(:, 1);
                      
                      % measurement dates

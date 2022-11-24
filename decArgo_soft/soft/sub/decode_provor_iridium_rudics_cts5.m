@@ -354,9 +354,10 @@ for idFlCy = 1:length(floatCycleList)
       g_decArgo_cycleNum = 0;
    end
    
-   %       if (floatCyNum > 30)
-   %          break;
-   %       end
+   %    if (floatCyNum > 20)
+   %       a=1
+   %       break;
+   %    end
    
    % get files to process
    idDel = [];
@@ -619,22 +620,28 @@ if (isempty(g_decArgo_outputCsvFileId))
          profNum = tabCyclesToProcessAgain(idL, 2);
          
          % reprocess profile data
-         idFProf = find(([o_tabProfiles.cycleNumber] == cyNum) & ...
-            ([o_tabProfiles.profileNumber] == profNum));
+         idFProfPayload = find(([o_tabProfiles.cycleNumber] == cyNum) & ...
+            ([o_tabProfiles.profileNumber] == profNum) & ...
+            ([o_tabProfiles.sensorNumber] ~= 0));
+         idFProfCtd = find(([o_tabProfiles.cycleNumber] == cyNum) & ...
+            ([o_tabProfiles.profileNumber] == profNum) & ...
+            ([o_tabProfiles.sensorNumber] == 0));
          
-         tabProfiles = o_tabProfiles(idFProf);
-         o_tabProfiles(idFProf) = [];
+         tabProfilesPayload = o_tabProfiles(idFProfPayload);
+         tabProfilesCtd = o_tabProfiles(idFProfCtd);
+         o_tabProfiles(idFProfPayload) = [];
+         o_tabProfiles(idFProfCtd) = [];
          
          % merge profiles (all data from a given sensor together)
-         [tabProfiles] = merge_profile_meas_ir_rudics_cts5_from_payload(tabProfiles);
+         [tabProfilesPayload] = merge_profile_meas_ir_rudics_cts5_from_payload(tabProfilesPayload);
          
          % add the vertical sampling scheme from configuration information
-         [tabProfiles] = add_vertical_sampling_scheme_ir_rudics_cts5_from_payload(tabProfiles);
+         [tabProfilesPayload] = add_vertical_sampling_scheme_ir_rudics_cts5_from_payload(tabProfilesPayload);
          
          % compute derived parameters of the profiles
-         [tabProfiles] = compute_profile_derived_parameters_ir_rudics(tabProfiles, a_decoderId);
+         [tabProfilesCtdAndPayload] = compute_profile_derived_parameters_ir_rudics([tabProfilesPayload tabProfilesCtd], a_decoderId);
          
-         o_tabProfiles = [o_tabProfiles tabProfiles];
+         o_tabProfiles = [o_tabProfiles tabProfilesCtdAndPayload];
          
          % reprocess trajectory data
          idFNMeas = find(([o_tabTrajNMeas.cycleNumber] == cyNum) & ...
@@ -642,7 +649,7 @@ if (isempty(g_decArgo_outputCsvFileId))
             ([o_tabTrajNMeas.surfOnly] == 0));
          
          % collect trajectory data for TRAJ NetCDF file
-         [tabTrajIndex, tabTrajData] = collect_profile_trajectory_data_cts5(tabProfiles);
+         [tabTrajIndex, tabTrajData] = collect_profile_trajectory_data_cts5(tabProfilesCtdAndPayload);
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5(tabTrajIndex, tabTrajData, g_decArgo_firstCycleNumCts5);
@@ -674,12 +681,16 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
    
    % add MTIME to AUX profiles
-   o_tabProfiles = finalize_profile_aux_ir_rudics_cts5(o_tabProfiles);
+   o_tabProfiles = finalize_profile_ir_rudics_cts5(o_tabProfiles);
    
    % merge multiple N_CYCLE and N_MEAS records for a given output cycle number
    % and add not present (but expected for this float family) Measurement Codes
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_rudics_cts5( ...
       o_tabTrajNMeas, o_tabTrajNCycle);
+   
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
    if (g_decArgo_realtimeFlag == 1)
       

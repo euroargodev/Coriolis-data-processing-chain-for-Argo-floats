@@ -865,6 +865,10 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd_nva( ...
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_sbd( ...
       decArgoConfParamNames, ncConfParamNames, a_decoderId);

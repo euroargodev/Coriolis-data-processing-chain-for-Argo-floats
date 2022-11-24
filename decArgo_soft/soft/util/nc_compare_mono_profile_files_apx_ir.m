@@ -29,6 +29,7 @@ function nc_compare_mono_profile_files_apx_ir(varargin)
 % DIR_INPUT_BASE_NC_FILES = 'H:\archive_201708\coriolis\';
 % DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\DM_data\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_apx_ir_20170918\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt_prev\';
 
 % top directory of new NetCDF mono-profile files
 % DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
@@ -40,6 +41,7 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\RT_d
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_EDAC_20170918\';
 DIR_INPUT_NEW_NC_FILES = 'H:\archive_201609\coriolis\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -80,6 +82,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudic
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_102815.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_navis_ir_rudics_061113.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_DM.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_sbd_090215.txt';
 
 % flag to print data measurements (when different) in the log file
 PRINT_DIFF_DATA_FLAG = 1;
@@ -1224,9 +1227,6 @@ if (exist(a_profFilePathName, 'file') == 2)
          fillValueStr = [];
          for idParam = 1:length(paramForProf)
             paramStr = paramForProf{idParam};
-            %             if (strcmp(paramStr, 'FLUORESCENCE_CHLA'))
-            %                a=1
-            %             end
             
             if (isempty(fCdfB))
                paramData = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramStr));

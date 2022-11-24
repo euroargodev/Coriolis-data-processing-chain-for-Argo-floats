@@ -134,10 +134,12 @@ for idProf = 1:3
       tabPres = a_descProfPres;
       tabTemp = a_descProfTemp;
       tabSal = a_descProfSal;
-      tabC1PhaseDoxy = a_descProfC1PhaseDoxy;
-      tabC2PhaseDoxy = a_descProfC2PhaseDoxy;
-      tabTempDoxy = a_descProfTempDoxy;
-      tabDoxy = a_descProfDoxy;
+      if (~isempty(a_descProfC1PhaseDoxy) && any(a_descProfC1PhaseDoxy ~= g_decArgo_c1C2PhaseDoxyDef))
+         tabC1PhaseDoxy = a_descProfC1PhaseDoxy;
+         tabC2PhaseDoxy = a_descProfC2PhaseDoxy;
+         tabTempDoxy = a_descProfTempDoxy;
+         tabDoxy = a_descProfDoxy;
+      end
       
       % profiles must be ordered chronologically (and finally from top to bottom
       % in the NetCDF files)
@@ -145,10 +147,12 @@ for idProf = 1:3
       tabPres = flipud(tabPres);
       tabTemp = flipud(tabTemp);
       tabSal = flipud(tabSal);
-      tabC1PhaseDoxy = flipud(tabC1PhaseDoxy);
-      tabC2PhaseDoxy = flipud(tabC2PhaseDoxy);
-      tabTempDoxy = flipud(tabTempDoxy);
-      tabDoxy = flipud(tabDoxy);
+      if (~isempty(a_descProfC1PhaseDoxy) && any(a_descProfC1PhaseDoxy ~= g_decArgo_c1C2PhaseDoxyDef))
+         tabC1PhaseDoxy = flipud(tabC1PhaseDoxy);
+         tabC2PhaseDoxy = flipud(tabC2PhaseDoxy);
+         tabTempDoxy = flipud(tabTempDoxy);
+         tabDoxy = flipud(tabDoxy);
+      end
       
       % update the profile completed flag
       nbMeaslist = [];
@@ -169,10 +173,12 @@ for idProf = 1:3
             tabPres = a_ascProfPres(1:idLev(end));
             tabTemp = a_ascProfTemp(1:idLev(end));
             tabSal = a_ascProfSal(1:idLev(end));
-            tabC1PhaseDoxy = a_ascProfC1PhaseDoxy(1:idLev(end));
-            tabC2PhaseDoxy = a_ascProfC2PhaseDoxy(1:idLev(end));
-            tabTempDoxy = a_ascProfTempDoxy(1:idLev(end));
-            tabDoxy = a_ascProfDoxy(1:idLev(end));
+            if (~isempty(a_ascProfC1PhaseDoxy) && any(a_ascProfC1PhaseDoxy ~= g_decArgo_c1C2PhaseDoxyDef))
+               tabC1PhaseDoxy = a_ascProfC1PhaseDoxy(1:idLev(end));
+               tabC2PhaseDoxy = a_ascProfC2PhaseDoxy(1:idLev(end));
+               tabTempDoxy = a_ascProfTempDoxy(1:idLev(end));
+               tabDoxy = a_ascProfDoxy(1:idLev(end));
+            end
          end
       else
          % unpumped profile
@@ -182,10 +188,12 @@ for idProf = 1:3
             tabPres = a_ascProfPres(idLev(1):end);
             tabTemp = a_ascProfTemp(idLev(1):end);
             tabSal = a_ascProfSal(idLev(1):end);
-            tabC1PhaseDoxy = a_ascProfC1PhaseDoxy(idLev(1):end);
-            tabC2PhaseDoxy = a_ascProfC2PhaseDoxy(idLev(1):end);
-            tabTempDoxy = a_ascProfTempDoxy(idLev(1):end);
-            tabDoxy = a_ascProfDoxy(idLev(1):end);
+            if (~isempty(a_ascProfC1PhaseDoxy) && any(a_ascProfC1PhaseDoxy ~= g_decArgo_c1C2PhaseDoxyDef))
+               tabC1PhaseDoxy = a_ascProfC1PhaseDoxy(idLev(1):end);
+               tabC2PhaseDoxy = a_ascProfC2PhaseDoxy(idLev(1):end);
+               tabTempDoxy = a_ascProfTempDoxy(idLev(1):end);
+               tabDoxy = a_ascProfDoxy(idLev(1):end);
+            end
          end
       end
       
@@ -226,27 +234,39 @@ for idProf = 1:3
       paramPres = get_netcdf_param_attributes('PRES');
       paramTemp = get_netcdf_param_attributes('TEMP');
       paramSal = get_netcdf_param_attributes('PSAL');
-      paramC1PhaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
-      paramC2PhaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
-      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-      paramDoxy = get_netcdf_param_attributes('DOXY');
+      if (~isempty(tabC1PhaseDoxy))
+         paramC1PhaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
+         paramC2PhaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
+         paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         paramDoxy = get_netcdf_param_attributes('DOXY');
+      end
       
       % convert decoder default values to netCDF fill values
       tabDate(find(tabDate == g_decArgo_dateDef)) = paramJuld.fillValue;
       tabPres(find(tabPres == g_decArgo_presDef)) = paramPres.fillValue;
       tabTemp(find(tabTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
       tabSal(find(tabSal == g_decArgo_salDef)) = paramSal.fillValue;
-      tabC1PhaseDoxy(find(tabC1PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC1PhaseDoxy.fillValue;
-      tabC2PhaseDoxy(find(tabC2PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC2PhaseDoxy.fillValue;
-      tabTempDoxy(find(tabTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
-      tabDoxy(find(tabDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
+      if (~isempty(tabC1PhaseDoxy))
+         tabC1PhaseDoxy(find(tabC1PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC1PhaseDoxy.fillValue;
+         tabC2PhaseDoxy(find(tabC2PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC2PhaseDoxy.fillValue;
+         tabTempDoxy(find(tabTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
+         tabDoxy(find(tabDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
+      end
       
       % add parameter variables to the profile structure
-      profStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
+      if (~isempty(tabC1PhaseDoxy))
+         profStruct.paramList = [paramPres paramTemp paramSal paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxy paramDoxy];
+      else
+         profStruct.paramList = [paramPres paramTemp paramSal];
+      end
       profStruct.dateList = paramJuld;
       
       % add parameter data to the profile structure
-      profStruct.data = [tabPres tabTemp tabSal tabC1PhaseDoxy tabC2PhaseDoxy tabTempDoxy tabDoxy];
+      if (~isempty(tabC1PhaseDoxy))
+         profStruct.data = [tabPres tabTemp tabSal tabC1PhaseDoxy tabC2PhaseDoxy tabTempDoxy tabDoxy];
+      else
+         profStruct.data = [tabPres tabTemp tabSal];
+      end
       profStruct.dates = tabDate;
       
       % measurement dates
@@ -261,7 +281,7 @@ for idProf = 1:3
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_213_2001_2002( ...
+      [profStruct] = add_profile_date_and_location_201_to_215_2001_2002( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

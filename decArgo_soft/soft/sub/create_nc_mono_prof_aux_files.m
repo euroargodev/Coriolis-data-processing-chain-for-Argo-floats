@@ -177,11 +177,28 @@ for idProf = 1:length(a_tabProfiles)
          
          % check if the file need to be created
          generate = 1;
-         if (g_decArgo_floatTransType == 2)
+         if (g_decArgo_floatTransType == 1)
+            
+            % Argos floats
+            
+            if (g_decArgo_generateNcMonoProf == 2)
+               
+               if ((g_decArgo_realtimeFlag == 1) && (g_decArgo_processModeAll == 0))
+                  
+                  % in this configuration, only new profile files are created
+                  % (never updated)
+                  if (exist(ncPathFileName, 'file') == 2)
+                     generate = 0;
+                  end
+               end
+            end
+            
+         elseif ((g_decArgo_floatTransType == 2) || ...
+               (g_decArgo_floatTransType == 4))
             
             % Iridium RUDICS floats
             % Iridium SBD ProvBioII floats
-            
+
             if (g_decArgo_generateNcMonoProf == 2)
                
                if (g_decArgo_realtimeFlag == 1)
@@ -198,6 +215,24 @@ for idProf = 1:length(a_tabProfiles)
                   % in this configuration, the file is created/updated if:
                   % - it doesn't exist
                   if (exist(ncPathFileName, 'file') == 2)
+                     generate = 0;
+                  end
+               end
+            end
+            
+         elseif (g_decArgo_floatTransType == 3)
+            
+            % Iridium SBD floats
+
+            if (g_decArgo_generateNcMonoProf == 2)
+               
+               if (g_decArgo_realtimeFlag == 1)
+                  
+                  % in this configuration, the file is created/updated if:
+                  % - it doesn't exist
+                  % - it exists but the profile structure has been updated
+                  if ((exist(ncPathFileName, 'file') == 2) && ...
+                        (isempty(find([a_tabProfiles(idProfInFile).updated] == 1, 1))))
                      generate = 0;
                   end
                end

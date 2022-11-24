@@ -635,7 +635,7 @@ switch (a_decoderId)
    case {214} % Provor-ARN-DO-Ice Iridium 5.75
       
       % decode the collected data
-      [allCyTabTech1, allCyTabTech2, allCyDataCTDO, allCyEvAct, allCyPumpAct, ...
+      [allCyTabTech1, allCyTabTech2, allCyDataCTD, allCyDataCTDO, allCyEvAct, allCyPumpAct, ...
          allCyFloatParam1, allCyFloatParam2, cycleNumberList] = ...
          decode_prv_data_ir_sbd_214(sbdDataData, sbdDataDate, 1, a_cycleNumberList);
       
@@ -668,6 +668,10 @@ switch (a_decoderId)
                   if (~isempty(allCyTabTech2))
                      allCyTabTech2(:, 1) = allCyTabTech2(:, 3) + g_decArgo_cycleNumOffset;
                      cycleNumberList = allCyTabTech2(:, 1);
+                  end
+                  if (~isempty(allCyDataCTD))
+                     allCyDataCTD(:, 1) = allCyDataCTD(:, 3) + g_decArgo_cycleNumOffset;
+                     cycleNumberList = allCyDataCTD(:, 1);
                   end
                   if (~isempty(allCyDataCTDO))
                      allCyDataCTDO(:, 1) = allCyDataCTDO(:, 3) + g_decArgo_cycleNumOffset;
@@ -721,6 +725,13 @@ switch (a_decoderId)
             cyTabTech2 = allCyTabTech2(find(allCyTabTech2(:, 1) == g_decArgo_cycleNum), :);
             cyTabTech2 = cyTabTech2(:, 2:end);
             cyTabTech2Done = zeros(size(cyTabTech2, 1), 1);
+         end
+         cyDataCTD = [];
+         cyDataCTDDone = [];
+         if (~isempty(allCyDataCTD))
+            cyDataCTD = allCyDataCTD(find(allCyDataCTD(:, 1) == g_decArgo_cycleNum), :);
+            cyDataCTD = cyDataCTD(:, 2:end);
+            cyDataCTDDone = zeros(size(cyDataCTD, 1), 1);
          end
          cyDataCTDO = [];
          cyDataCTDODone = [];
@@ -808,6 +819,8 @@ switch (a_decoderId)
             cyTabTech1Done = 1;
             tabTech2 = cyTabTech2;
             cyTabTech2Done = 1;
+            dataCTD = cyDataCTD;
+            cyDataCTDDone = ones(size(cyDataCTDDone));
             dataCTDO = cyDataCTDO;
             cyDataCTDODone = ones(size(cyDataCTDODone));
             evAct = cyEvAct;
@@ -835,6 +848,12 @@ switch (a_decoderId)
             if (~isempty(tabTech2))
                fprintf('   -> TECH2    (%d)\n', size(tabTech2, 1));
             end
+            if (~isempty(dataCTD))
+               typeList = unique(dataCTD(:, 1));
+               for idType = 1:length(typeList)
+                  fprintf('   -> CTD #%02d (%d)\n', typeList(idType), size(dataCTD(find(dataCTD(:, 1) == typeList(idType)), :), 1));
+               end
+            end
             if (~isempty(dataCTDO))
                typeList = unique(dataCTDO(:, 1));
                for idType = 1:length(typeList)
@@ -860,6 +879,12 @@ switch (a_decoderId)
          if (~isempty(tabTech2))
             % message and measurement counts are set to 0 for a surface cycle
             if (any(tabTech2(4:7) ~= 0))
+               deepCycleFlag = 1;
+            end
+         end
+         if (~isempty(dataCTD))
+            % no deep measurements are transmitted for a surface cycle
+            if (any(ismember(dataCTD(:, 1), [1 2 3 13])))
                deepCycleFlag = 1;
             end
          end
@@ -890,6 +915,11 @@ switch (a_decoderId)
          store_gps_data_ir_sbd(tabTech1, g_decArgo_cycleNum, a_decoderId);
          
          % convert counts to physical values
+         if (~isempty(dataCTD))
+            [dataCTD(:, 33:47)] = sensor_2_value_for_pressure_202_210_to_214(dataCTD(:, 33:47));
+            [dataCTD(:, 48:62)] = sensor_2_value_for_temperature_204_to_214(dataCTD(:, 48:62));
+            [dataCTD(:, 63:77)] = sensor_2_value_for_salinity_210_to_214(dataCTD(:, 63:77));
+         end
          if (~isempty(dataCTDO))
             [dataCTDO(:, 17:23)] = sensor_2_value_for_pressure_202_210_to_214(dataCTDO(:, 17:23));
             [dataCTDO(:, 24:30)] = sensor_2_value_for_temperature_204_to_214(dataCTDO(:, 24:30));
@@ -897,12 +927,12 @@ switch (a_decoderId)
             [dataCTDO(:, 38:51)] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_215(dataCTDO(:, 38:51));
             [dataCTDO(:, 52:58)] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_215(dataCTDO(:, 52:58));
          end
-
+         
          % create drift data set
          [parkDate, parkTransDate, ...
             parkPres, parkTemp, parkSal, ...
             parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy] = ...
-            create_prv_drift_214(dataCTDO, g_decArgo_julD2FloatDayOffset);
+            create_prv_drift_214(dataCTD, dataCTDO, g_decArgo_julD2FloatDayOffset);
          
          % create descending and ascending profiles
          [descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -913,7 +943,7 @@ switch (a_decoderId)
             nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, ...
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
             inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy] = ...
-            create_prv_profile_214(dataCTDO, g_decArgo_julD2FloatDayOffset);
+            create_prv_profile_214(dataCTD, dataCTDO, g_decArgo_julD2FloatDayOffset);
          
          % compute DOXY
          descProfDoxy = [];
@@ -1014,7 +1044,7 @@ switch (a_decoderId)
                ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ascProfDoxy);
             
             % print "near surface" and "in air" measurements in CSV file
-            print_in_air_meas_in_csv_file_213_to_215( ...
+            print_in_air_meas_in_csv_file_210_to_215( ...
                nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
                nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, nearSurfDoxy, ...
                inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
@@ -1035,7 +1065,7 @@ switch (a_decoderId)
             
             % process profile data for PROF NetCDF file
             tabProfiles = [];
-            if (~isempty(dataCTDO))
+            if ~(isempty(descProfPres) && isempty(ascProfPres))
                
                [tabProfiles] = process_profiles_214( ...
                   descProfDate, descProfPres, descProfTemp, descProfSal, ...

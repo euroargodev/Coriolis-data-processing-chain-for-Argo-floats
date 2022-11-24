@@ -89,6 +89,8 @@ end
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
    g_decArgo_bddUpdateItemLabels = [];
+   g_decArgo_reportStruct = [];
+   
    floatNum = a_floatList(idFloat);
    
    if (g_decArgo_realtimeFlag == 0)
@@ -223,6 +225,39 @@ for idFloat = 1:nbFloats
          floatNum, floatCycleList, ...
          floatDecId, str2num(floatArgosId), ...
          floatLaunchDate, floatEndDate);
+      
+   elseif (g_decArgo_floatTransType == 3)
+      
+      % Iridium SBD floats
+      
+      if (g_decArgo_realtimeFlag == 0)
+         if ((isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1)))
+            % initialize data structure to store report information
+            g_decArgo_reportStruct = get_report_init_struct(floatNum, '');
+         end
+      end
+      
+      % update GPS data global variable
+      g_decArgo_gpsData = [];
+      if (floatLaunchLon ~= g_decArgo_argosLonDef)
+         g_decArgo_gpsData{1} = -1;
+         g_decArgo_gpsData{2} = -1;
+         g_decArgo_gpsData{3} = -1;
+         g_decArgo_gpsData{4} = floatLaunchDate;
+         g_decArgo_gpsData{5} = floatLaunchLon;
+         g_decArgo_gpsData{6} = floatLaunchLat;
+         g_decArgo_gpsData{7} = 0;
+         g_decArgo_gpsData{8} = ' ';
+         g_decArgo_gpsData{9} = g_decArgo_dateDef;
+      end
+      
+      [tabProfiles, ...
+         tabTrajNMeas, tabTrajNCycle, ...
+         tabNcTechIndex, tabNcTechVal, ...
+         structConfig] = decode_apex_iridium_sbd_data( ...
+         floatNum, floatDecId, str2num(floatArgosId), ...
+         floatLaunchDate, floatEndDate);
+
    end
    
    if (isempty(g_decArgo_outputCsvFileId))

@@ -145,11 +145,22 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       if (~isempty(primaryProfile.dataQc))
          primaryProfile.dataQc = primaryProfile.dataQc(1:idLevPrimary(end), :);
       end
-      datesPrimary = primaryProfile.dates(1:idLevPrimary(end), 1);
-      primaryProfile.dates = datesPrimary;
-      datesPrimary(find(datesPrimary == primaryProfile.dateList(1).fillValue)) = [];
-      primaryProfile.minMeasDate = min(datesPrimary);
-      primaryProfile.maxMeasDate = max(datesPrimary);
+      if (~isempty(primaryProfile.dataAdj))
+         primaryProfile.dataAdj = primaryProfile.dataAdj(1:idLevPrimary(end), :);
+         if (~isempty(primaryProfile.dataAdjQc))
+            primaryProfile.dataAdjQc = primaryProfile.dataAdjQc(1:idLevPrimary(end), :);
+         end
+      end
+      if (~isempty(primaryProfile.dates))
+         primaryProfile.dates = primaryProfile.dates(1:idLevPrimary(end), 1);
+         if (~isempty(primaryProfile.datesAdj))
+            primaryProfile.datesAdj = primaryProfile.datesAdj(1:idLevPrimary(end), 1);
+         end
+         datesPrimary = primaryProfile.dates;
+         datesPrimary(find(datesPrimary == primaryProfile.dateList(1).fillValue)) = [];
+         primaryProfile.minMeasDate = min(datesPrimary);
+         primaryProfile.maxMeasDate = max(datesPrimary);
+      end
 
       o_cutProfiles = [o_cutProfiles primaryProfile];
    end
@@ -168,11 +179,22 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       if (~isempty(nearSurfaceProfile.dataQc))
          nearSurfaceProfile.dataQc = nearSurfaceProfile.dataQc(idLevNearSurface(1):end, :);
       end
-      datesNearSurface = nearSurfaceProfile.dates(idLevNearSurface(1):end, 1);
-      nearSurfaceProfile.dates = datesNearSurface;
-      datesNearSurface(find(datesNearSurface == nearSurfaceProfile.dateList(1).fillValue)) = [];
-      nearSurfaceProfile.minMeasDate = min(datesNearSurface);
-      nearSurfaceProfile.maxMeasDate = max(datesNearSurface);
+      if (~isempty(nearSurfaceProfile.dataAdj))
+         nearSurfaceProfile.dataAdj = nearSurfaceProfile.dataAdj(idLevNearSurface(1):end, :);
+         if (~isempty(nearSurfaceProfile.dataAdjQc))
+            nearSurfaceProfile.dataAdjQc = nearSurfaceProfile.dataAdjQc(idLevNearSurface(1):end, :);
+         end
+      end
+      if (~isempty(nearSurfaceProfile.dates))
+         nearSurfaceProfile.dates = nearSurfaceProfile.dates(idLevNearSurface(1):end, 1);
+         if (~isempty(nearSurfaceProfile.datesAdj))
+            nearSurfaceProfile.datesAdj = nearSurfaceProfile.datesAdj(idLevNearSurface(1):end, 1);
+         end
+         datesNearSurface = nearSurfaceProfile.dates;
+         datesNearSurface(find(datesNearSurface == nearSurfaceProfile.dateList(1).fillValue)) = [];
+         nearSurfaceProfile.minMeasDate = min(datesNearSurface);
+         nearSurfaceProfile.maxMeasDate = max(datesNearSurface);
+      end
 
       o_cutProfiles = [o_cutProfiles nearSurfaceProfile];
    end

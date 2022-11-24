@@ -954,6 +954,10 @@ if (isempty(g_decArgo_outputCsvFileId))
       add_configuration_number_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
 
+   % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
+   % consistency
+   [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
+   
    % set QC parameters to '3' when the sensor state is ko
    [o_tabProfiles, o_tabTrajNMeas] = update_qc_from_sensor_state_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas);

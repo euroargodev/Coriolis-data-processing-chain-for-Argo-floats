@@ -1777,7 +1777,7 @@ firstStabilization.time{end+1} = get_cts5_time_data_init_struct(...
 firstStabilization.traj{end+1} = get_cts5_traj_data_init_struct(...
    g_MC_FST, 'JULD', ...
    'First stabilization date');
-gpsLoc.traj{end}.group = g_decArgo_trajItemGroupNum;
+firstStabilization.traj{end}.group = g_decArgo_trajItemGroupNum;
 
 firstStabilization.id{end+1} = 7;
 firstStabilization.func{end+1} = [];
@@ -1790,7 +1790,7 @@ firstStabilization.time{end+1} = [];
 firstStabilization.traj{end+1} = get_cts5_traj_data_init_struct(...
    g_MC_FST, 'PRES', ...
    'First stabilization pressure (dbar)');
-gpsLoc.traj{end}.group = g_decArgo_trajItemGroupNum;
+firstStabilization.traj{end}.group = g_decArgo_trajItemGroupNum;
 g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
 
 descentToParkingDepth = init_basic_struct;
@@ -2770,14 +2770,22 @@ alarmPresSwitch.id{end+1} = 1;
 alarmPresSwitch.name{end+1} = 'pressure switch alarm received';
 alarmPresSwitch.tech{end+1} = get_cts5_tech_data_init_struct(170, 'Pressure switch alarm received');
 
+% the event which raised the EOL mode is not reported in this firware version
+% (error in the documentation)
+% alarmEOL = init_basic_struct;
+% alarmEOL.patternStart = 'End of life (';
+% alarmEOL.patternEnd = ')';
+% alarmEOL.pattern = '';
+% alarmEOL.count = 0;
+% alarmEOL.id{end+1} = 0;
+% alarmEOL.name{end+1} = 'EOL alarm received';
+% alarmEOL.fmt{end+1} = '%s';
+% alarmEOL.tech{end+1} = get_cts5_tech_data_init_struct(171, 'EOL alarm received');
 alarmEOL = init_basic_struct;
-alarmEOL.patternStart = 'End of life (';
-alarmEOL.patternEnd = ')';
-alarmEOL.pattern = '';
+alarmEOL.pattern = 'End of life';
 alarmEOL.count = 0;
-alarmEOL.id{end+1} = 0;
+alarmEOL.id{end+1} = 1;
 alarmEOL.name{end+1} = 'EOL alarm received';
-alarmEOL.fmt{end+1} = '%s';
 alarmEOL.tech{end+1} = get_cts5_tech_data_init_struct(171, 'EOL alarm received');
 
 alarmRescue = init_basic_struct;

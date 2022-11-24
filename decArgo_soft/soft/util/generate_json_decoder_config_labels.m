@@ -38,7 +38,8 @@ decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNam
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_205.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_210.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_212.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_213.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_214.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_215.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_301.csv';
@@ -181,9 +182,11 @@ else
       case {210}
          decIdList = [210, 211];
       case {212}
-         decIdList = [212 214];
+         decIdList = [212];
       case {213}
          decIdList = [213];
+      case {214}
+         decIdList = [214];
       case {215}
          decIdList = [215];
 
@@ -216,7 +219,7 @@ else
       case {1105}
          decIdList = [1105];
       case {1108}
-         decIdList = [1108 1109 1113];
+         decIdList = [1108 1109 1113 1314];
       case {1111}
          decIdList = [1111];
          

@@ -469,10 +469,6 @@ for idParam = 1:length(inputDmParamList)
          paramAdjValue = unique(profParamAdj(idOk) - profParam(idOk));
          paramAdjErrValue = unique(paramAdjErr(find(paramAdjErr ~= paramAdjErrFillValue)));
          
-%          if (strcmp(paramName, 'TEMP') && (paramAdjValue ~= 0))
-%             a=1
-%          end
-         
          profParameter = parameter(:, :, 1, profId);
          paramId = [];
          for idParam = 1:size(profParameter, 2)

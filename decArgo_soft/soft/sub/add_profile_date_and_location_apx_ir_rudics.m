@@ -102,19 +102,26 @@ for idP = 1:length(o_tabProfiles)
       end
       
       % set MTIME values
-      if (prof.date ~= g_decArgo_dateDef)
-         idMtime  = find(strcmp({prof.paramList.name}, 'MTIME') == 1, 1);
-         if (~isempty(idMtime))
-            paramJuld = get_netcdf_param_attributes('JULD');
-            idDef = find(prof.data(:, idMtime) == paramJuld.fillValue);
-            idNoDef = find(prof.data(:, idMtime) ~= paramJuld.fillValue);
+      idMtime  = find(strcmp({prof.paramList.name}, 'MTIME') == 1, 1);
+      if (~isempty(idMtime))
+         paramMtime = get_netcdf_param_attributes('MTIME');
+         if (prof.date ~= g_decArgo_dateDef)
+            % we compute MTIME as JULD-prof.date
+            idDef = find(prof.data(:, idMtime) == paramMtime.fillValue);
+            idNoDef = find(prof.data(:, idMtime) ~= paramMtime.fillValue);
             prof.data(idDef, idMtime) = prof.paramList(idMtime).fillValue;
             prof.data(idNoDef, idMtime) = prof.data(idNoDef, idMtime) - prof.date;
             if (~isempty(prof.dataAdj))
-               idDef = find(prof.dataAdj(:, idMtime) == paramJuld.fillValue);
-               idNoDef = find(prof.dataAdj(:, idMtime) ~= paramJuld.fillValue);
+               idDef = find(prof.dataAdj(:, idMtime) == paramMtime.fillValue);
+               idNoDef = find(prof.dataAdj(:, idMtime) ~= paramMtime.fillValue);
                prof.dataAdj(idDef, idMtime) = prof.paramList(idMtime).fillValue;
                prof.dataAdj(idNoDef, idMtime) = prof.dataAdj(idNoDef, idMtime) - prof.date;
+            end
+         else
+            % we are not able to compute MTIME
+            prof.data(:, idMtime) = ones(size(prof.data, 1), 1)*paramMtime.fillValue;
+            if (~isempty(prof.dataAdj))
+               prof.dataAdj(:, idMtime) = ones(size(prof.dataAdj, 1), 1)*paramMtime.fillValue;
             end
          end
       end

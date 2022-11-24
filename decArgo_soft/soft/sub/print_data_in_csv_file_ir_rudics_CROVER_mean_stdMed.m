@@ -35,6 +35,7 @@ global g_decArgo_outputCsvFileId;
 
 % global default values
 global g_decArgo_coefAttCountsDef;
+global g_decArgo_coefAttDef;
 global g_decArgo_dateDef;
 
 % unpack the input data
@@ -66,7 +67,7 @@ end
 if (isempty(idDataStdMed))
 
    % mean data only
-   fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; cROVER; Date; PRES (dbar); CP660 (count)\n', ...
+   fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; cROVER; Date; PRES (dbar); CP660 (1/m)\n', ...
       g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(a_phaseNum));
 
    dataMean = [];
@@ -82,6 +83,11 @@ if (isempty(idDataStdMed))
 
    dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
    dataMean(:, 4) = sensor_2_value_for_coefAtt_ir_rudics(dataMean(:, 4));
+   % manage wiring mistake of float 6902828
+   if (g_decArgo_floatNum == 6902828)
+      idNoDef = find(dataMean(:, 4) ~= g_decArgo_coefAttDef);
+      dataMean(idNoDef, 4) = 0.002129 - dataMean(idNoDef, 4);
+   end
 
    for idL = 1:size(dataMean, 1)
       if (dataMean(idL, 1) ~= g_decArgo_dateDef)
@@ -108,7 +114,7 @@ else
 
       % mean and stdMed data
       fprintf(g_decArgo_outputCsvFileId, ['%d; %d; %d; %s; cROVER; Date; PRES (dbar); ' ...
-         'CP660 (count); CP660_STD (count); CP660_MED (count)\n'], ...
+         'CP660 (1/m); CP660_STD (1/m); CP660_MED (1/m)\n'], ...
          g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(a_phaseNum));
 
       % merge the data
@@ -162,6 +168,13 @@ else
       data(:, 4) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 4));
       data(:, 5) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 5));
       data(:, 6) = sensor_2_value_for_coefAtt_ir_rudics(data(:, 6));
+      % manage wiring mistake of float 6902828
+      if (g_decArgo_floatNum == 6902828)
+         idNoDef = find(data(:, 4) ~= g_decArgo_coefAttDef);
+         data(idNoDef, 4) = 0.002129 - data(idNoDef, 4);
+         idNoDef = find(data(:, 6) ~= g_decArgo_coefAttDef);
+         data(idNoDef, 6) = 0.002129 - data(idNoDef, 6);
+      end
 
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

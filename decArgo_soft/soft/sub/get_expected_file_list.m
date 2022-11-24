@@ -176,6 +176,21 @@ if (ismember(a_cyNum, g_decArgo_eventDataUnseenCycleNum))
    end
    
    o_expectedFileList = unique(o_expectedFileList);
+   
+   % manage split files
+   idF = strfind(o_expectedFileList, '#');
+   if (~isempty(cell2mat(idF)))
+      for idFile = 1:length(o_expectedFileList)
+         [~, fileName, fileNameExt] = fileparts(o_expectedFileList{idFile});
+         idF = strfind(fileName, '#');
+         if (~isempty(idF))
+            o_expectedFileList{idFile} = [fileName(1:idF(1)-1) fileNameExt];
+         end
+      end
+   end
+   
+   o_expectedFileList = unique(o_expectedFileList);
+   
 end
 
 o_expectedFileList = o_expectedFileList';

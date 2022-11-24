@@ -26,7 +26,7 @@ function [o_ok] = concat_files(a_inputDirName, a_inputFiles, a_outputDirName, a_
 % output parameters initialization
 o_ok = 1;
 
-% concatenate files in the provider order
+% concatenate files in the provided order
 for idF = 1:length(a_inputFiles)
    inputFilePathName = [a_inputDirName a_inputFiles{idF}];
    outputFilePathName = [a_outputDirName a_outputFile];

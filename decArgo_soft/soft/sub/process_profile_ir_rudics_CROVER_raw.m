@@ -33,9 +33,12 @@ function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_CROVER_raw( ...
 o_tabProfiles = [];
 o_tabDrift = [];
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % global default values
 global g_decArgo_presDef;
-global g_decArgo_coefAttCountsDef;
+global g_decArgo_coefAttDef;
 global g_decArgo_dateDef;
 
 % cycle phases
@@ -106,13 +109,18 @@ for idCy = 1:length(cycleNumList)
                   % convert decoder default values to netCDF fill values
                   data(find(data(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
                   data(find(data(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
-                  data(find(data(:, 3) == g_decArgo_coefAttCountsDef), 3) = paramAttCoef.fillValue;
+                  data(find(data(:, 3) == g_decArgo_coefAttDef), 3) = paramAttCoef.fillValue;
                   
                   profStruct.paramList = [paramPres ...
                      paramAttCoef];
                   profStruct.dateList = paramJuld;
                   
                   profStruct.data = data(:, 2:end);
+                  % manage wiring mistake of float 6902828
+                  if (g_decArgo_floatNum == 6902828)
+                     idNoDef = find(profStruct.data(:, 2) ~= paramAttCoef.fillValue);
+                     profStruct.data(idNoDef, 2) = 0.002129 - profStruct.data(idNoDef, 2);
+                  end
                   profStruct.dates = data(:, 1);
                   
                   % measurement dates

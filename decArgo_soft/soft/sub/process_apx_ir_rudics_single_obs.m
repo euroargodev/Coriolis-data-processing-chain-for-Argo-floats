@@ -135,9 +135,11 @@ switch (a_decoderId)
          o_singleData.data(2:4) = [];
       end
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1102, 1106, 1108, 1113} % 120210 & 060612 & 062813_2 & 110216
-      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {1102, 1103, 1104, 1106, 1107, 1108, 1109, 1113, 1314}
+      % 120210 & 012811 & 020212 & 060612 & 062813_1 & 062813_2 & 062813_3 &
+      % 110216 & 090215
+
       if (length(a_engData) ~= 3)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
@@ -183,57 +185,8 @@ switch (a_decoderId)
       
       % add parameter data to the data structure
       o_singleData.data = [measPres measTemp measSal];
-      
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1103, 1104, 1107, 1109} % 012811 & 020212 & 062813_1 & 062813_3
-      
-      if (length(a_engData) ~= 3)
-         fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum);
-         return;
-      end
-      
-      % extract data
-      if (~strcmp(a_engData{1}, 'nan'))
-         measPres = a_engData{1};
-         measPres = str2double(measPres(1:end-4));
-      else
-         measPres = g_decArgo_presDef;
-      end
-      if (~strcmp(a_engData{2}, 'nan'))
-         measTemp = a_engData{2};
-         measTemp = str2double(measTemp(1:end-1));
-      else
-         measTemp = g_decArgo_tempDef;
-      end
-      if (~strcmp(a_engData{3}, 'nan'))
-         measSal = a_engData{3};
-         measSal = str2double(measSal(1:end-3));
-      else
-         measSal = g_decArgo_salDef;
-      end
-      
-      % create the parameters
-      paramPres = get_netcdf_param_attributes('PRES');
-      paramTemp = get_netcdf_param_attributes('TEMP');
-      paramSal = get_netcdf_param_attributes('PSAL');
-      
-      % convert decoder default values to netCDF fill values
-      measPres(find(measPres == g_decArgo_presDef)) = paramPres.fillValue;
-      measTemp(find(measTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
-      measSal(find(measSal == g_decArgo_salDef)) = paramSal.fillValue;
-      
-      % store single data
-      o_singleData = get_apx_profile_data_init_struct;
-      
-      % add parameter variables to the data structure
-      o_singleData.paramList = [paramPres paramTemp paramSal];
-      
-      % add parameter data to the data structure
-      o_singleData.data = [measPres measTemp measSal];
-      
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {1105} % 030512
       
       if (length(a_engData) ~= 5)
@@ -352,9 +305,9 @@ switch (a_decoderId)
          end
       end
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1110, 1112} % 092813 & 102815
-      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {1110, 1111, 1112} % 092813 & 073014 & 102815
+
       if (length(a_engData) ~= 5)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
             g_decArgo_floatNum, ...
@@ -476,131 +429,7 @@ switch (a_decoderId)
          o_singleData.data(2:3) = [];
       end
       
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1111} % 073014
-      
-      if (length(a_engData) ~= 5)
-         fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum);
-         return;
-      end
-      
-      if (any(strfind(a_engData{3}, '/')))
-         newData = strtrim(strsplit(a_engData{3}, ' '));
-         if ((newData{2} == '/') && (newData{6} == '/'))
-            tmpData(1) = a_engData(1);
-            tmpData(2) = a_engData(2);
-            tmpData(3) = newData(1);
-            tmpData(4) = newData(3);
-            tmpData(5) = newData(4);
-            tmpData(6) = newData(5);
-            tmpData(7) = newData(7);
-            tmpData(8) = a_engData(4);
-            tmpData(9) = a_engData(5);
-            a_engData = tmpData;
-         end
-      end
-      
-      if (length(a_engData) ~= 9)
-         fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum);
-         return;
-      end
-      
-      % extract data
-      if (~strcmp(a_engData{1}, 'nan'))
-         measPres = a_engData{1};
-         measPres = str2double(measPres(1:end-4));
-      else
-         measPres = g_decArgo_presDef;
-      end
-      if (~strcmp(a_engData{2}, 'nan'))
-         measTemp = a_engData{2};
-         measTemp = str2double(measTemp(1:end-1));
-      else
-         measTemp = g_decArgo_tempDef;
-      end
-      if (~strcmp(a_engData{3}, 'nan'))
-         measSal = a_engData{3};
-         measSal = str2double(measSal(1:end-3));
-      else
-         measSal = g_decArgo_salDef;
-      end
-      if (~strcmp(a_engData{4}, 'nan'))
-         measTempDoxy = str2double(a_engData{4});
-      else
-         measTempDoxy = g_decArgo_tempDoxyDef;
-      end
-      if (~strcmp(a_engData{5}, 'nan'))
-         measTPhaseDoxy = a_engData{5};
-         measTPhaseDoxy = str2double(measTPhaseDoxy(1:end-1));
-      else
-         measTPhaseDoxy = g_decArgo_tPhaseDoxyDef;
-      end
-      if (~strcmp(a_engData{6}, 'nan'))
-         measRPhaseDoxy = str2double(a_engData{6});
-      else
-         measRPhaseDoxy = g_decArgo_rPhaseDoxyDef;
-      end
-      if (~strcmp(a_engData{7}, 'nan'))
-         measFluorescenceChla = str2double(a_engData{7});
-      else
-         measFluorescenceChla = g_decArgo_fluorescenceChlaDef;
-      end
-      if (~strcmp(a_engData{8}, 'nan'))
-         measBetaBackscqttering700 = str2double(a_engData{8});
-      else
-         measBetaBackscqttering700 = g_decArgo_betaBackscattering700Def;
-      end
-      if (~strcmp(a_engData{9}, 'nan'))
-         measTempCpuChla = str2double(a_engData{9});
-      else
-         measTempCpuChla = g_decArgo_tempCpuChlaDef;
-      end
-      
-      % create the parameters
-      paramPres = get_netcdf_param_attributes('PRES');
-      paramTemp = get_netcdf_param_attributes('TEMP');
-      paramSal = get_netcdf_param_attributes('PSAL');
-      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-      paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
-      paramRPhaseDoxy = get_netcdf_param_attributes('RPHASE_DOXY');
-      paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-      paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-      paramTempCpuChla = get_netcdf_param_attributes('TEMP_CPU_CHLA');
-      
-      % convert decoder default values to netCDF fill values
-      measPres(find(measPres == g_decArgo_presDef)) = paramPres.fillValue;
-      measTemp(find(measTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
-      measSal(find(measSal == g_decArgo_salDef)) = paramSal.fillValue;
-      measTempDoxy(find(measTempDoxy == g_decArgo_tempDoxyDef)) = paramTempDoxy.fillValue;
-      measTPhaseDoxy(find(measTPhaseDoxy == g_decArgo_tPhaseDoxyDef)) = paramTPhaseDoxy.fillValue;
-      measRPhaseDoxy(find(measRPhaseDoxy == g_decArgo_rPhaseDoxyDef)) = paramRPhaseDoxy.fillValue;
-      measFluorescenceChla(find(measFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
-      measBetaBackscqttering700(find(measBetaBackscqttering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
-      measTempCpuChla(find(measTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
-      
-      % store single data
-      o_singleData = get_apx_profile_data_init_struct;
-      
-      % add parameter variables to the data structure
-      o_singleData.paramList = [paramPres paramTemp paramSal ...
-         paramTempDoxy paramTPhaseDoxy paramRPhaseDoxy ...
-         paramFluorescenceChla paramBetaBackscattering700 paramTempCpuChla];
-      
-      % add parameter data to the data structure
-      o_singleData.data = [measPres measTemp measSal ...
-         measTempDoxy measTPhaseDoxy measRPhaseDoxy ...
-         measFluorescenceChla measBetaBackscqttering700 measTempCpuChla];      
-      
-      if (a_surfDataFlag)
-         o_singleData.paramList(2:3) = [];
-         o_singleData.data(2:3) = [];
-      end
-      
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {1201} % 061113
       
       if (length(a_engData) ~= 6)

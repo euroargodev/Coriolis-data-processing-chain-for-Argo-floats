@@ -2,14 +2,15 @@
 % Retrieve the list of existing cycles of an Apex Iridium Rudics float.
 %
 % SYNTAX :
-%  [o_cycleList] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, a_floatId)
+%  [o_cycleList, o_restricted] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, a_floatRudicsId)
 %
 % INPUT PARAMETERS :
-%   a_floatNum : float WMO number
-%   a_floatId  : float Rudics Id
+%   a_floatNum      : float WMO number
+%   a_floatRudicsId : float Rudics Id
 %
 % OUTPUT PARAMETERS :
-%   o_cycleList : existing cycles list
+%   o_cycleList  : existing cycles list
+%   o_restricted : restricted cycle list flag
 %
 % EXAMPLES :
 %
@@ -19,10 +20,11 @@
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleList] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, a_floatId)
+function [o_cycleList, o_restricted] = get_float_cycle_list_iridium_rudics_apx(a_floatNum, a_floatRudicsId)
 
 % output parameters initialization
 o_cycleList = [];
+o_restricted = 0;
 
 % configuration values
 global g_decArgo_expectedCycleList;
@@ -33,14 +35,14 @@ global g_decArgo_archiveDirectory;
 
 
 % search for existing Iridium cycles
-iriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatId) '_' num2str(a_floatNum) '/archive/'];
+iriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatRudicsId) '_' num2str(a_floatNum) '/archive/'];
 if ~(exist(iriDirName, 'dir') == 7)
    fprintf('ERROR: Iridium directory not found: %s\n', iriDirName);
    return;
 end
 
 existingCycles = [];
-fileNames = dir([iriDirName sprintf('%04d', a_floatId) '*' num2str(a_floatNum) '*']);
+fileNames = dir([iriDirName sprintf('%04d', a_floatRudicsId) '*' num2str(a_floatNum) '*']);
 for idFile = 1:length(fileNames)
    fileName = fileNames(idFile).name;
    idF1 = strfind(fileName, num2str(a_floatNum));
@@ -62,6 +64,10 @@ else
 end
 
 o_cycleList = sort(o_cycleList);
+
+if (length(existingCycles) > length(o_cycleList))
+   o_restricted = 1;
+end
 
 return;
 

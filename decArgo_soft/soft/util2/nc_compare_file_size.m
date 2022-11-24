@@ -20,14 +20,15 @@
 function nc_compare_file_size(varargin)
 
 % top directory of the first set of NetCDF files
-DIR_INPUT_NC_FILES1 = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv1\';
+DIR_INPUT_NC_FILES1 = 'H:\archive_201709\coriolis\';
 
 % top directory of the second set of NetCDF files
-DIR_INPUT_NC_FILES2 = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv2\';
+DIR_INPUT_NC_FILES2 = 'H:\archive_201709\coriolis\';
 
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_ir_rudics_rem_dm.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % directory to store the log and the csv files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

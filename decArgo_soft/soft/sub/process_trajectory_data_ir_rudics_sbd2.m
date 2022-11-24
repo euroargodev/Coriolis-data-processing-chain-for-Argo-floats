@@ -1618,7 +1618,7 @@ for idCyc = 1:length(cycleNumList)
    %    profNum = 0;
    for idProf = 1:length(profileNumList)
       profNum = profileNumList(idProf);
-            
+
       % collect the SBD dates of the packets (unfortunately msg types 254 and
       % 255 have no phase information and cannot be used, because they can be
       % received during a second Iridium session or during an usual
@@ -1686,35 +1686,45 @@ for idCyc = 1:length(cycleNumList)
             trajNCycleStruct.juldAscentEnd = a_tabTrajData{idPackTech}.ascentEndDate;
             trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
             
-            if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum) && ...
-                  ~isempty(a_tabTrajData{idPackTech}.transStartDate))
-               
-               % transmission start date
-               trajNCycleStruct.juldTransmissionStart = a_tabTrajData{idPackTech}.transStartDate;
-               trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_3;
-               
-               % GPS locations
-               gpsDate = [a_tabTrajData{idPackTech}.gpsDate];
-               
-               % first message date
-               trajNCycleStruct.juldFirstMessage = min(packTimes);
-               trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
-               
-               % first location date
-               trajNCycleStruct.juldFirstLocation = min(gpsDate);
-               trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
-               
-               % last location date
-               trajNCycleStruct.juldLastLocation = max(gpsDate);
-               trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
-               
-               % last message date
-               trajNCycleStruct.juldLastMessage = max(packTimes);
-               trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
-               
-               % transmission end date
-               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-               trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+            if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum))
+               if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
+                  
+                  % transmission start date
+                  trajNCycleStruct.juldTransmissionStart = a_tabTrajData{idPackTech}.transStartDate;
+                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_3;
+                  
+                  % GPS locations
+                  gpsDate = [a_tabTrajData{idPackTech}.gpsDate];
+                  
+                  % first message date
+                  trajNCycleStruct.juldFirstMessage = min(packTimes);
+                  trajNCycleStruct.juldFirstMessageStatus = g_JULD_STATUS_4;
+                  
+                  % first location date
+                  trajNCycleStruct.juldFirstLocation = min(gpsDate);
+                  trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+                  
+                  % last location date
+                  trajNCycleStruct.juldLastLocation = max(gpsDate);
+                  trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
+                  
+                  % last message date
+                  trajNCycleStruct.juldLastMessage = max(packTimes);
+                  trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
+                  
+                  % transmission end date
+                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+               else
+                  
+                  % transmission start date
+                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
+                  
+                  % transmission end date
+                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+               end
             end
             
             % clock offset
@@ -1868,6 +1878,18 @@ for idCyc = 1:length(cycleNumList)
                   trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
                   
                   % transmission end date
+                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+               end
+               
+               if (isempty(trajNCycleStruct.juldTransmissionStart))
+                  % set the correct status for transmission start date
+                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
+               end
+               
+               if (isempty(trajNCycleStruct.juldTransmissionEnd))
+                  % set the correct status for  transmission end date
                   trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
                   trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
                end

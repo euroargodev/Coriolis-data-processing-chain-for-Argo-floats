@@ -22,6 +22,8 @@ function extract_conf_tech_apx_ir_rudics(varargin)
 
 % directory of rudics files
 DIR_INPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out\';
+DIR_INPUT_IR_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DATA\FINAL\ascii_6902036\';
+
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -126,9 +128,6 @@ for idFloat = 1:nbFloats
    cycleList = unique(cycleList);
    
    for cyNum = cycleList
-      %       if (cyNum == 27)
-      %          a=1
-      %       end
       fileNames = dir([dirPathFileName '/' '*' num2str(floatNum) sprintf('_%03d_', cyNum) '*.msg']);
       for idFile = 1:length(fileNames)
          fileName = fileNames(idFile).name;
@@ -151,7 +150,7 @@ for idFloat = 1:nbFloats
          end
          
          if (~isempty(configDataStr))
-            configData = parse_apx_ir_rudics_config_data(configDataStr);
+            configData = parse_apx_ir_config_data(configDataStr);
             fieldNames = fieldnames(configData);
             configName = fieldNames(1:2:end);
             values = struct2cell(configData);
@@ -181,7 +180,7 @@ for idFloat = 1:nbFloats
          end
          
          if (~isempty(engineeringDataStr))
-            engData = parse_apx_ir_rudics_engineering_data(engineeringDataStr);
+            engData = parse_apx_ir_engineering_data(engineeringDataStr);
             
             for idEng = 1:length(engData)
                

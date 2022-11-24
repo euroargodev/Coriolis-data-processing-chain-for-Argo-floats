@@ -153,12 +153,12 @@ if (STEP_1)
                   continue;
                end
                
-               [configData] = parse_apx_ir_rudics_config_data(configDataStr);
-               [profInfo] = parse_apx_ir_rudics_profile_info(profInfoDataStr);
-               [driftData] = parse_apx_ir_rudics_drift_data(driftMeasDataStr, decId);
+               [configData] = parse_apx_ir_config_data(configDataStr);
+               [profInfo] = parse_apx_ir_profile_info(profInfoDataStr);
+               [driftData] = parse_apx_ir_drift_data(driftMeasDataStr, decId);
                [gpsLocDate, gpsLocLon, gpsLocLat, ...
                   gpsLocNbSat, gpsLocAcqTime, ...
-                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_rudics_gps_fix(gpsFixDataStr);
+                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
                
                dates = [];
                if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
@@ -573,8 +573,8 @@ if (STEP_5)
                continue;
             end
             
-            [configData] = parse_apx_ir_rudics_config_data(configDataStr);
-            [profInfo] = parse_apx_ir_rudics_profile_info(profInfoDataStr);
+            [configData] = parse_apx_ir_config_data(configDataStr);
+            [profInfo] = parse_apx_ir_profile_info(profInfoDataStr);
             
             if (~isempty(configData) && isfield(configData, 'floatRudicsId'))
                if (foatId ~= str2num(configData.floatRudicsId))
@@ -599,11 +599,11 @@ if (STEP_5)
             
             if (~isempty(wmoList))
                
-               [driftData] = parse_apx_ir_rudics_drift_data(driftMeasDataStr, decId);
+               [driftData] = parse_apx_ir_drift_data(driftMeasDataStr, decId);
                
                [gpsLocDate, gpsLocLon, gpsLocLat, ...
                   gpsLocNbSat, gpsLocAcqTime, ...
-                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_rudics_gps_fix(gpsFixDataStr);
+                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
                
                floatWmo = [];
                dates = [];
