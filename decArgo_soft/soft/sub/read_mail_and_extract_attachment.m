@@ -86,13 +86,15 @@ while 1
       break
    end
    lineNum = lineNum + 1;
-      
+   
    % collect information
-   if (~isempty(strfind(line, BOUNDARY)))
-      idPos = strfind(line, BOUNDARY);
-      boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
-      boundaryCode = regexprep(boundaryCode, '-', '');
-      boundaryDone = 1;
+   if (boundaryDone == 0) % use the first boundary only
+      if (~isempty(strfind(line, BOUNDARY)))
+         idPos = strfind(line, BOUNDARY);
+         boundaryCode = strtrim(line(idPos+length(BOUNDARY):end-1));
+         boundaryCode = regexprep(boundaryCode, '-', '');
+         boundaryDone = 1;
+      end
    end
    if (~isempty(strfind(line, BOUNDARY2)) && (boundaryDone == 0)) % use the first boundary only
       idPos = strfind(line, BOUNDARY2);
