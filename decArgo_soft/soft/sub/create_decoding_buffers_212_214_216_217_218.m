@@ -300,6 +300,25 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 690300
          id = find(tabCyNum == 121);
          tabSession(id) = max(tabSession(id));
          tabBase(id) = 0;         
+         
+         % from cycle 123: difficult transmission => stored in memory => full
+         % memory ? dead at cycle 133 ?
+         % cycles 124 to 127 delayed
+         % cycles 128 to 132 missing (memory full ?)
+         % last transmission cycle 133
+         
+         id = find(tabCyNum == 122);
+         sessionNum122 = max(tabSession(id));
+         
+         for n = 1:5
+            id = find(tabCyNum == 122+n);
+            tabSession(id) = sessionNum122 + n;
+            tabBase(id) = 0;
+         end
+         
+         id = find(tabCyNum == 133);
+         tabSession(id) = sessionNum122 + 11;
+         tabBase(id) = 0;
    end
 end
 

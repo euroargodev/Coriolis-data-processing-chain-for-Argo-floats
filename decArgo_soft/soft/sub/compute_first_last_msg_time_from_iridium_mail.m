@@ -36,26 +36,81 @@ o_lastMsgTime = g_decArgo_dateDef;
 
 
 % specific
-if (g_decArgo_floatNum == 6903256)
-   if (a_cycleNumber == 4)
-      return
-   elseif (a_cycleNumber == 6)
-      idFCyNum = find(([a_iridiumMailData.cycleNumber] == a_cycleNumber) | ...
-         ([a_iridiumMailData.cycleNumber] == 4));
-      if (~isempty(idFCyNum))
-         idFCyNum(end) = [];
-         timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
-         o_firstMsgTime = min(timeList);
-         o_lastMsgTime = max(timeList);
-      end
-      return
-   elseif (a_cycleNumber == 11)
-      idFCyNum = find([a_iridiumMailData.cycleNumber] == 4);
-      if (~isempty(idFCyNum))
-         timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
-         o_firstMsgTime = max(timeList);
-         o_lastMsgTime = max(timeList);
-      end
+if (ismember(g_decArgo_floatNum, [6903256, 6902957]))
+   switch g_decArgo_floatNum
+      case 6903256
+         if (a_cycleNumber == 4)
+            return
+         elseif (a_cycleNumber == 6)
+            idFCyNum = find(([a_iridiumMailData.cycleNumber] == a_cycleNumber) | ...
+               ([a_iridiumMailData.cycleNumber] == 4));
+            if (~isempty(idFCyNum))
+               idFCyNum(end) = [];
+               timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+               o_firstMsgTime = min(timeList);
+               o_lastMsgTime = max(timeList);
+            end
+            return
+         elseif (a_cycleNumber == 11)
+            idFCyNum = find([a_iridiumMailData.cycleNumber] == 4);
+            if (~isempty(idFCyNum))
+               timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+               o_firstMsgTime = max(timeList);
+               o_lastMsgTime = max(timeList);
+            end
+            return
+         end
+      case 6902957
+         % cycle duration is 24 h => errors in mail <-> cycle attribution
+         if (ismember(a_cycleNumber, [118:122]))
+            switch a_cycleNumber
+               case 118
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(1:4);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 119
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(5:9);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 120
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(1:6);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 121
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(7:11);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 122
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(1:5);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+            end
+         end
    end
 end
 
