@@ -237,7 +237,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6902814, 6903230, 3901963, 6903265, 3901645, ...
-      6903006, 6901880, 6902957, 6902849, 6902853]))
+      6903006, 6901880, 6902957, 6902849, 6902853, 6903019]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -382,6 +382,16 @@ if (ismember(g_decArgo_floatNum, [ ...
          
          % delayed transmission cycle #223 (2 sessions)
          id = find((tabCyNum == 223) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+
+      case 6903019
+         % delayed transmission cycle #150 (2 sessions)
+         id = find((tabCyNum == 150) & (tabPackType == 0));
          idForSession = find(tabSession == tabSession(id(1)));
          tabBase(id(1)) = 1;
          tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
