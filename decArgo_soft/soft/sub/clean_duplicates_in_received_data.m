@@ -43,7 +43,7 @@ if ((size(rawData, 1) ~= size(unique(rawData, 'rows'), 1)))
       end
       if (length(idEq) > 1)
          % packet type
-         packType = o_decDataTab(idEq(1)).decData{:}(1);
+         packType = o_decDataTab(idEq(1)).packType;
          packetName = get_packet_name(packType, a_decoderId);
          
          if (length(idEq) == 2)
@@ -100,9 +100,9 @@ switch (a_decoderId)
          case 5
             o_packetName = 'one parameter packet #1';
          case 6
-            o_packetName = 'one parameter packet #2';
-         case 7
             o_packetName = 'one hydraulic packet';
+         case 7
+            o_packetName = 'one parameter packet #2';
          otherwise
             o_packetName = 'one data packet';
       end
