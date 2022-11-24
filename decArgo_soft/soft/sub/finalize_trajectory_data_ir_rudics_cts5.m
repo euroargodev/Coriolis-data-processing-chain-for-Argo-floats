@@ -226,24 +226,33 @@ function [o_tabTrajNMeas] = merge_N_MEAS_records_cts5( ...
 % output parameters initialization
 o_tabTrajNMeas = [];
 
-% global measurement codes
-global g_MC_Surface;
 
-
-% according to CTS5 measurement codes, only the GPS MC of the surface records
-% have to be added to the one of the deep record
 for idD1 = 1:length(a_idToMerge)
    tabMeas = a_tabTrajNMeas(a_idToMerge(idD1)).tabMeas;
-   if (~isempty(tabMeas))
-      idSurface = find([tabMeas.measCode] == g_MC_Surface);
-      for idD2 = 1:length(idSurface)
-         a_tabTrajNMeas(a_idBase).tabMeas = [ ...
-            a_tabTrajNMeas(a_idBase).tabMeas; ...
-            tabMeas(idD2)];
-      end
-   end
+   a_tabTrajNMeas(a_idBase).tabMeas = [a_tabTrajNMeas(a_idBase).tabMeas; ...
+      tabMeas];
 end
-   
+
+% PREVIOUS VERSION START - (surface TEMP of cycle #0 is missing in TRAJ file)
+% % global measurement codes
+% global g_MC_Surface;
+%
+%
+% % according to CTS5 measurement codes, only the GPS MC of the surface records
+% % have to be added to the one of the deep record
+% for idD1 = 1:length(a_idToMerge)
+%    tabMeas = a_tabTrajNMeas(a_idToMerge(idD1)).tabMeas;
+%    if (~isempty(tabMeas))
+%       idSurface = find([tabMeas.measCode] == g_MC_Surface);
+%       for idD2 = 1:length(idSurface)
+%          a_tabTrajNMeas(a_idBase).tabMeas = [ ...
+%             a_tabTrajNMeas(a_idBase).tabMeas; ...
+%             tabMeas(idD2)];
+%       end
+%    end
+% end
+% PREVIOUS VERSION END - (surface TEMP of cycle #0 is missing in TRAJ file)
+
 % store output data
 o_tabTrajNMeas = a_tabTrajNMeas;
 

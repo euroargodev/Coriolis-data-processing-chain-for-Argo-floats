@@ -30,9 +30,9 @@ o_lastByteNum = length(a_data);
 if (size(a_data, 1) > size(a_data, 2))
    a_data = a_data';
 end
-idF1 = find(fliplr(a_data) ~= a_pattern);
-if (idF1(1) > 1)
-   o_lastByteNum = length(a_data) - idF1(1) + 1;
+idF1 = find(fliplr(a_data) ~= a_pattern, 1, 'first');
+if (idF1 > 1)
+   o_lastByteNum = length(a_data) - idF1 + 1;
 end
 
 return

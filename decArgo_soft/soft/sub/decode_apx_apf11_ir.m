@@ -108,13 +108,13 @@ if (~isempty(a_scienceLogFileList))
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {1321, 1121, 1122} % 2.10.1.S, 2.10.4.R & 2.11.3.R, 2.13.1.R
+      case {1321, 1121, 1122, 1123} % 2.10.1.S, 2.10.4.R & 2.11.3.R, 2.13.1.R, 2.12.3.R
          
          [o_miscInfoSci, o_techData, o_gpsDataSci, ...
             o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
             o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
             o_cycleTimeData] = ...
-            decode_science_log_apx_apf11_ir_1121_1122_1321(a_scienceLogFileList, o_cycleTimeData);
+            decode_science_log_apx_apf11_ir_1121_to_1123_1321(a_scienceLogFileList, o_cycleTimeData);
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
@@ -158,6 +158,14 @@ if (~isempty(a_systemLogFileList))
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...
             decode_system_log_apx_apf11_ir_1122(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData);
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         
+      case {1123} % 2.12.3.R
+         
+         [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
+            o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...
+            decode_system_log_apx_apf11_ir_1123(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData);
 
       otherwise
          

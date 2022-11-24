@@ -157,6 +157,7 @@ else
       
       for idS = 1:length(sufixList)
          paramName = [parameterName sufixList{idS}];
+         
          paramQcName = sprintf('%s_QC', paramName);
          
          if ((idS == 1) || ((idS > 1) && (var_is_present_dec_argo(fCdf, paramName))))

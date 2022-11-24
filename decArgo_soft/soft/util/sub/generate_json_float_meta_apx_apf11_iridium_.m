@@ -5,7 +5,7 @@
 % SYNTAX :
 %  generate_json_float_meta_apx_apf11_iridium_( ...
 %    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
-%    a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
+%    a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName  : meta-data file exported from Coriolis data base
@@ -17,6 +17,7 @@
 %   a_csvDirName         : directory to store the CSV file (when DB update is needed)
 %   a_rudicsFlag         : 1 if it is a RUDICS transmission, 0 for a SBD
 %                          transmission
+%   a_rtVersionFlag      : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -30,7 +31,7 @@
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_apx_apf11_iridium_( ...
    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
-   a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag)
+   a_calibFileName, a_configDirName, a_outputDirName, a_csvDirName, a_rudicsFlag, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -223,7 +224,7 @@ for idFloat = 1:length(floatList)
          continue
       end
    else
-      if (~ismember(dacFormatId, [{'2.10.4.R'} {'2.11.3.R'} {'2.13.1.R'}]))
+      if (~ismember(dacFormatId, [{'2.10.4.R'} {'2.11.3.R'} {'2.12.3.R'} {'2.13.1.R'}]))
          fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
             floatNum, dacFormatId);
          continue
@@ -365,7 +366,7 @@ for idFloat = 1:length(floatList)
    
    % add the calibration coefficients for OPTODE sensor (coming from the data base)
    switch (dacFormatId)
-      case {'2.11.1.S', '2.11.3.S', '2.12.2.1.S', '2.11.3.R', '2.13.1.R'}
+      case {'2.11.1.S', '2.11.3.S', '2.12.2.1.S', '2.11.3.R', '2.12.3.R', '2.13.1.R'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -449,7 +450,7 @@ for idFloat = 1:length(floatList)
          bddConfName = [];
          floatConfName = confNames{idC};
          if (strcmp(floatConfName, 'iridium')) % see 6903699 & 6903700
-            if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.11.3.R'}]))
+            if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.11.3.R'} {'2.12.3.R'}]))
                continue
             elseif (ismember(dacFormatId, [{'2.13.1.R'}]))
                floatConfValue = confData.(floatConfName){1};
@@ -527,7 +528,7 @@ for idFloat = 1:length(floatList)
             end
             
             nbLoops = 1;
-            if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.11.3.R'}]))
+            if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.12.3.R'} {'2.11.3.R'}]))
                if (strcmp(floatConfName, 'float_id'))
                   nbLoops = 2;
                end
@@ -595,22 +596,43 @@ for idFloat = 1:length(floatList)
                      get_tech_id(bddConfName), 1, floatConfValue, bddConfName);
                   
                   if (diffFlag == 0)
-                     fprintf('WARNING: Float #%d: MISSING: Meta-data ''%s'': launch float value (''%s'') is missing in the data base => DB contents should be updated (see %s)\n', ...
-                        floatNum, ...
-                        bddConfName, ...
-                        floatConfValue, ...
-                        csvFilePathName);
+                     if (a_rtVersionFlag == 0)
+                        fprintf('WARNING: Float #%d: MISSING: Meta-data ''%s'': launch float value (''%s'') is missing in the data base => DB contents should be updated (see %s)\n', ...
+                           floatNum, ...
+                           bddConfName, ...
+                           floatConfValue, ...
+                           csvFilePathName);
+                     else
+                        fprintf('WARNING: Float #%d: MISSING: Meta-data ''%s'': launch float value (''%s'') is missing in the data base => DB contents should be updated\n', ...
+                           floatNum, ...
+                           bddConfName, ...
+                           floatConfValue);
+                     end
                   else
-                     fprintf('WARNING: Float #%d: DIFFER: Meta-data ''%s'': launch float value (''%s'') and data base value (''%s'') differ => DB contents should be updated (see %s)\n', ...
-                        floatNum, ...
-                        bddConfName, ...
-                        floatConfValue, ...
-                        bddConfvalue, ...
-                        csvFilePathName);
+                     if (a_rtVersionFlag == 0)
+                        fprintf('WARNING: Float #%d: DIFFER: Meta-data ''%s'': launch float value (''%s'') and data base value (''%s'') differ => DB contents should be updated (see %s)\n', ...
+                           floatNum, ...
+                           bddConfName, ...
+                           floatConfValue, ...
+                           bddConfvalue, ...
+                           csvFilePathName);
+                     else
+                        fprintf('WARNING: Float #%d: DIFFER: Meta-data ''%s'': launch float value (''%s'') and data base value (''%s'') differ => DB contents should be updated\n', ...
+                           floatNum, ...
+                           bddConfName, ...
+                           floatConfValue, ...
+                           bddConfvalue);
+                     end
                   end
                end
             end
          end
+      end
+   end
+   
+   if (strcmp(metaStruct.PTT, 'n/a'))
+      if (isfield(metaStruct, 'FLOAT_RUDICS_ID'))
+         metaStruct.PTT = metaStruct.FLOAT_RUDICS_ID;
       end
    end
    
@@ -827,7 +849,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S', '2.12.3.R'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -966,7 +988,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S', '2.12.3.R'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...

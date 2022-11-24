@@ -28,10 +28,12 @@ function correct_iridium_mail_files(varargin)
 % input directory
 INPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST\CTS3\IN\';
 % INPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST\NOVA\IN\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT\';
 
 % output directory
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST\CTS3\OUT\';
 % OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST\NOVA\OUT\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

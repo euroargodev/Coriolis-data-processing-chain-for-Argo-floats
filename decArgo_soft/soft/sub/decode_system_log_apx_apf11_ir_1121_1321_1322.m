@@ -109,7 +109,7 @@ for idFile = 1:length(a_systemLogFileList)
          strcmp({events.functionName}, 'test') | ...
          strcmp({events.functionName}, 'log_test_results'));
       if (~isempty(idEvts))
-         metaData = process_apx_apf11_ir_meta_data_evts_1121_1321_1322(events(idEvts));
+         metaData = process_apx_apf11_ir_meta_data_evts_1121_1123_1321_1322(events(idEvts));
          o_metaData = [o_metaData metaData];
       end
    end
@@ -137,7 +137,7 @@ for idFile = 1:length(a_systemLogFileList)
    % pressure offset
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT'));
    if (~isempty(idEvts))
-      pressureOffset = process_apx_apf11_ir_pres_offset_evts_1121_1321_1322(events(idEvts));
+      pressureOffset = process_apx_apf11_ir_pres_offset_evts_1121_1123_1321_1322(events(idEvts));
       if (~isempty(pressureOffset))
          dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
          dataStruct.label = 'Pressure offset';
@@ -166,7 +166,7 @@ for idFile = 1:length(a_systemLogFileList)
       strcmp({events.functionName}, 'upload_file') | ...
       strcmp({events.functionName}, 'zmodem_upload_files'));
    if (~isempty(idEvts))
-      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_1321_1322(events(idEvts), o_cycleTimeData);
+      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_1123_1321_1322(events(idEvts), o_cycleTimeData);
       if (~isempty(o_cycleTimeData) && ~isempty(o_cycleTimeData.descentStartDateSys))
          descentStartTime = o_cycleTimeData.descentStartDateSys;
       end
@@ -176,7 +176,7 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT') | ...
       strcmp({events.functionName}, 'DEEPDESCENT'));
    if (~isempty(idEvts))
-      grounding = process_apx_apf11_ir_grounding_evts_1121_1321_1322(events(idEvts));
+      grounding = process_apx_apf11_ir_grounding_evts_1121_1123_1321_1322(events(idEvts));
       if (~isempty(grounding))
          dataStruct = get_apx_misc_data_init_struct('Grounding', [], [], []);
          dataStruct.label = 'Grounding date & pressure';

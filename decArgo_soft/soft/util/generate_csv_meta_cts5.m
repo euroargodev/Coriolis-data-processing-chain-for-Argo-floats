@@ -32,6 +32,7 @@ SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_1.06.012_fromVB_20180904.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -312,7 +313,7 @@ switch a_inputSensorName
    case 'UVP'
       o_sensorName = {'AUX_PARTICLES_PLANKTON_CAMERA'};
       o_sensorDimLevel = [801];
-      o_sensorMaker = {'Hydroptic'};
+      o_sensorMaker = {'HYDROPTIC'};
       o_sensorModel = {'UVP6-LP'};
 
    otherwise

@@ -64,7 +64,7 @@ g_decArgo_jsonMetaData = jsonMetaData;
 if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
    o_floatRudicsId = jsonMetaData.FLOAT_RUDICS_ID;
 end
-if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, [1121, 1122]))
+if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, [1121, 1122, 1123]))
    fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
    return
 end

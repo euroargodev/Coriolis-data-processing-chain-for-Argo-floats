@@ -267,7 +267,7 @@ for idFile = 1:length(a_systemLogFileList)
    % buoyancy activity
    idEvts = find(strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))
-      buoyancy = process_apx_apf11_ir_buoyancy_evts_1122(events(idEvts));
+      buoyancy = process_apx_apf11_ir_buoyancy_evts_1122_1123(events(idEvts));
       o_buoyancy = [o_buoyancy; buoyancy];
    end
 

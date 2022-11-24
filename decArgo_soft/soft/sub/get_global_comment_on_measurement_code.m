@@ -473,7 +473,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];      
 
-   case {122, 123, 124, 125}
+   case {122, 123, 124, 125, 126}
       % Provor CTS5
       o_mcList = [ ...
          g_MC_Launch ...
@@ -831,7 +831,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];      
 
-   case {1121, 1122, 1322}
+   case {1121, 1122, 1123, 1322}
       % Apex APF11 Iridium (with DO sensor)
       o_mcList = [ ...
          g_MC_Launch ...
@@ -1014,7 +1014,7 @@ global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 global g_MC_InAirSingleMeasRelativeToTET;
 
 
-apexApf11IrDecoderIdList = [1121, 1321, 1322];
+apexApf11IrDecoderIdList = [1121, 1122, 1123, 1321, 1322];
 
 if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
 

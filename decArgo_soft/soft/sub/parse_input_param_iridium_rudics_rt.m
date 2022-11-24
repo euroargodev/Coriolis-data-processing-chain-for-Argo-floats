@@ -197,8 +197,11 @@ for idFile = 1:length(ryncLogList)
             % CTS4 Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
          case {121, 122, 123, 124, 125}
-            % CTS5 Iridium RUDICS floats (rsync to Villefranche global server)
+            % CTS5-OSEAN Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
+         case {126}
+            % CTS5-USEA Iridium RUDICS floats
+            floatFiles = parse_rsync_log_ir_rudics_cts5_usea(ryncLogList{idFile}, floatLoginName);
          otherwise
             fprintf('ERROR: don''t know how to parse rsync log file for decId #%d => exit\n', floatDecId);
             o_inputError = 1;

@@ -21,9 +21,11 @@ function correct_iridium_mail_files_from_finland()
 
 % input directory
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\300234063600090_3901845\archive_ori\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT\300234067778190\';
 
 % output directory
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\300234063600090_3901845\archive_cor\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\300234067778190';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 

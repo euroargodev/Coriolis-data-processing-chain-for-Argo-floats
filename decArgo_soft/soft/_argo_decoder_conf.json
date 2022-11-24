@@ -1,47 +1,44 @@
 {
-   "FLOAT_LIST_FILE_NAME" : "",
+   "FLOAT_LIST_FILE_NAME" : ":/Users/jprannou/_RNU/DecArgo_soft/lists/_apex_apf11_iridium-rudics_2.11.3_finlande.txt",
    
    "EXPECTED_CYCLE_LIST" : "99999",
    
-   "FLOAT_TRANSMISSION_TYPE" : "1",
+   "FLOAT_TRANSMISSION_TYPE" : "2",
    
-   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_config_floats/json_float_info/",
+   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "C:/Users/jprannou/_DATA/IN/decArgo_config_floats/json_float_info/",
 
-   "HEX_ARGOS_FILE_FORMAT" : "1",
-   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "/home/coriolis_dev/val/spool/co01/co0101/co010102/archive/cycle/",
-   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "",
-   "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "3",
+   "HEX_ARGOS_FILE_FORMAT" : "unused",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "unused",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "unused",
+   "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "unused",
    
-   "DIR_INPUT_RSYNC_DATA" : "",
-   "DIR_INPUT_RSYNC_LOG" : "",
+   "DIR_INPUT_RSYNC_DATA" : "C:/Users/jprannou/_DATA/IN/RSYNC/APEX_APF11_IR_RUDICS/rsync_data/",
+   "DIR_INPUT_RSYNC_LOG" : "C:/Users/jprannou/_DATA/IN/RSYNC/APEX_APF11_IR_RUDICS/rsync_list/",
 
-   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/techParamNames/", 
-   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/configParamNames/",
+   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_techParamNames/",
+   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_configParamNames/",
 
-   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_config_floats/json_float_meta_argos/",
-
-   "IRIDIUM_DATA_DIRECTORY" : "",
-
-   "DIR_OUTPUT_LOG_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/log/",
-   "DIR_OUTPUT_XML_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/xml/",
+   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "C:/Users/jprannou/_DATA/IN/decArgo_config_floats/json_float_meta_ir_rudics_apex/",
    
-   "DIR_OUTPUT_NETCDF_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/nc/",
-   "DIR_OUTPUT_CSV_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/csv/",
+   "DIR_INPUT_DM_BUFFER_LIST" : "unused",
+
+   "IRIDIUM_DATA_DIRECTORY" : "C:/Users/jprannou/_DATA/IN/IRIDIUM_DATA/APEX_APF11_IR_RUDICS_RT/",
+
+   "DIR_OUTPUT_LOG_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/log/",
+   "DIR_OUTPUT_CSV_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/csv/",
+   "DIR_OUTPUT_XML_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/xml/",
+   "DIR_OUTPUT_NETCDF_FILE" : "C:/Users/jprannou/_DATA/OUT/nc_output_decArgo_rt/",
    
    "PROCESS_REMAINING_BUFFERS" : "0",    
-	  
+
    "GENERATE_NC_TRAJ" : "2",
-   "GENERATE_NC_MULTI_PROF" : "0",
+   "GENERATE_NC_MULTI_PROF" : "2",
    "GENERATE_NC_MONO_PROF" : "2",
    "GENERATE_NC_TECH" : "2",
-   "GENERATE_NC_META" : "2",   
-
-   "ADD_THREE_MINUTES" : "0",
-   "CYCLE_2_SBD_DATA_FILE_NAME" : "",
-   "FLOAT_WITH_DAMPING_DISK_FILE_NAME" : "",
+   "GENERATE_NC_META" : "2",     
 
    "APPLY_RTQC" : "1",
-
+   
    "TEST001_PLATFORM_IDENTIFICATION" : "1",
    "TEST002_IMPOSSIBLE_DATE" : "1",
    "TEST003_IMPOSSIBLE_LOCATION" : "1",
@@ -68,7 +65,10 @@
    "TEST059_NITRATE" : "1",
    "TEST062_BBP" : "1",
    "TEST063_CHLA" : "1",
+   
+   "TEST004_GEBCO_FILE" : "C:/Users/jprannou/_RNU/_ressources/GEBCO_2020/GEBCO_2020.nc",
+   "TEST015_GREY_LIST_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/ar_greylist.txt",
 
-   "TEST004_ETOPO2_FILE" : "/home/coriolis_dev/val/dat/co03/bathy/ETOPO2v2g_i2_MSB.bin",
-   "TEST015_GREY_LIST_FILE" : "/home/coriolis_dev/val/spool/co05/co0508/ar_greylist.txt"
+   "ADD_THREE_MINUTES" : "0"
+
 }

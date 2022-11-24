@@ -21,9 +21,13 @@ function move_and_rename_iridium_sbd_mail_files_italy()
 
 % input directory
 INPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\data_from_italy\Iridium_IN\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\data_from_italy\Iridium_IN\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_IN\';
 
 % output directory
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\data_from_italy\Iridium_OUT\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\data_from_italy\Iridium_OUT\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 

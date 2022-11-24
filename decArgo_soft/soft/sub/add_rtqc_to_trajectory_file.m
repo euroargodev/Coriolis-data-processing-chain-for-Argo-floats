@@ -2101,6 +2101,13 @@ global g_decArgo_qcStrDef;           % ' '
 global g_JULD_STATUS_fill_value;
 
 
+nValuesDimParamList = [ ...
+   {'UV_INTENSITY_NITRATE'} ...
+   {'NB_SIZE_SPECTRA_PARTICLES'} ...
+   {'GREY_SIZE_SPECTRA_PARTICLES'} ...
+   {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
+   ];
+
 % modify the N_HISTORY dimension of the C traj file
 [ok] = update_n_history_dim_in_traj_file(a_cTrajFileName, 2);
 if (ok == 0)
@@ -2220,7 +2227,7 @@ for idFile = 1:2
             paramInfo = get_netcdf_param_attributes(paramName2);
             paramData = get_data_from_name(paramName, ncTrajData);
             
-            if (~strcmp(paramName2, 'UV_INTENSITY_NITRATE'))
+            if (~ismember(paramName2, nValuesDimParamList))
                idF = find(paramData == paramInfo.fillValue);
                dataQc(idF) = g_decArgo_qcStrDef;
             else

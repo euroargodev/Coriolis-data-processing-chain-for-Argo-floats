@@ -99,9 +99,9 @@ if (isempty(idDataStdMed))
    dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
    dataMean(:, 6) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 6));
    paramCHLA = get_netcdf_param_attributes('CHLA');
-   dataMean(:, 7) = compute_CHLA_105_to_112_121_to_125_1121_1122_1322(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+   dataMean(:, 7) = compute_CHLA_105_to_112_121_to_126_1121_to_1123_1322(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 %    paramBBP700 = get_netcdf_param_attributes('BBP700');
-%    dataMean(:, 8) = compute_BBP700_105_to_112_121_to_125_1121_1122_1322(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+%    dataMean(:, 8) = compute_BBP700_105_to_112_121_to_126_1121_to_1123_1322(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
 %    paramBBP532 = get_netcdf_param_attributes('BBP532');
 %    dataMean(:, 9) = compute_BBP532_108_109(dataMean(:, 6), g_decArgo_backscatDef, paramBBP532.fillValue);
    
@@ -207,7 +207,7 @@ else
       data(:, 11) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 11));
       data(:, 12) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 12));
       paramCHLA = get_netcdf_param_attributes('CHLA');
-      data(:, 13) = compute_CHLA_105_to_112_121_to_125_1121_1122_1322(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+      data(:, 13) = compute_CHLA_105_to_112_121_to_126_1121_to_1123_1322(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
       
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

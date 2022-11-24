@@ -42,8 +42,12 @@ switch (a_decoderId)
       o_platformType = 'PROVOR_III';
       
    case {121, 122, 123, 124, 125}
-      % PROVOR APMT (CTS5)
+      % PROVOR APMT-OSEAN (CTS5)
       o_platformType = 'PROVOR_IV';
+      
+   case {126}
+      % PROVOR APMT-USEA (CTS5)
+      o_platformType = 'PROVOR_V';
       
    case {201, 202, 203, 215, 216, 218, 221}
       % DEEP ARVOR
@@ -76,7 +80,7 @@ switch (a_decoderId)
       
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, ...
          1314, ...
-         1121, 1122, ...
+         1121, 1122, 1123, ...
          1321, 1322}
       % Apex Iridium
       o_platformType = 'APEX';

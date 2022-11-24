@@ -26,6 +26,7 @@ INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_dat
 INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\sbd_incoming\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\sbd_incoming\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\POPSTAR\co012204\archive\message\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_IN\';
 
 % output directory
 OUTPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message_renamed\';
@@ -33,6 +34,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_da
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\justin\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\justin\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\POPSTAR\IN\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
@@ -73,9 +75,10 @@ for idF = 1:length(files)
                fileName, length(imei));
          end
                   
-         idFUs = strfind(fileName, '_');
-         idFExt = strfind(fileName, '.txt');
-         pidNum = fileName(idFUs(end)+1:idFExt-1);
+%          idFUs = strfind(fileName, '_');
+%          idFExt = strfind(fileName, '.txt');
+%          pidNum = fileName(idFUs(end)+1:idFExt-1);
+                  pidNum = '0000';
          
          for idFile = 1:length(imei)
             

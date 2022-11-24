@@ -53,7 +53,7 @@ global g_decArgo_generateNcFlag;
 
 
 % no data to save
-if (isempty(a_tabNcTechIndex) && isempty(a_tabNcTechVal) && isempty(a_tabTechNMeas))
+if (isempty(a_tabNcTechIndex) && isempty(a_tabTechNMeas))
    return
 end
 

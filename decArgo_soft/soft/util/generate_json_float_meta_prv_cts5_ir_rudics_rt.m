@@ -66,9 +66,12 @@ try
    [inputError, logLines] = parse_input_param(varargin);
    
    % log file creation
+   logDirName = '';
    if (~isempty(g_cogj_outputLogDirName))
+      logDirName = g_cogj_outputLogDirName;
       logFileName = [g_cogj_outputLogDirName '/generate_json_float_meta_prv_cts5_ir_rudics_rt_' currentTime '.log'];
    else
+      logDirName = tempdir;
       logFileName = [tempdir '/generate_json_float_meta_prv_cts5_ir_rudics_rt_' currentTime '.log'];
    end
    
@@ -82,6 +85,7 @@ try
    
    if (~inputError)
       % generate JSON meta-data files
+      rtVersionFlag = 1;
       generate_json_float_meta_prv_cts5_ir_rudics_(...
          g_cogj_floatMetaFileName, ...
          g_cogj_sensorListFileName, ...
@@ -89,7 +93,9 @@ try
          g_cogj_calibFileName, ...
          g_cogj_configDirName, ...
          g_cogj_sunaConfigDirName, ...
-         g_cogj_outputJsonDirName);
+         g_cogj_outputJsonDirName, ...
+         logDirName, ...
+         rtVersionFlag);
    end
    
    diary off;

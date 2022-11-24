@@ -576,7 +576,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125}
+   case {121, 122, 123, 124, 125, 126}
       
       % CTS5 floats
       
@@ -605,6 +605,36 @@ switch (a_decoderId)
          else
             inputStaticConfigName = [inputStaticConfigName; staticConfigName(idC)];
             inputStaticConfigValue = [inputStaticConfigValue; staticConfigValue(idC)];
+         end
+      end
+      
+      % CTS5-USEA
+      if (a_decoderId == 126)
+         if (isfield(metaData, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FLOAT_SIM_CARD_NUMBER'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FLOAT_SIM_CARD_NUMBER];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FLOAT_SIM_CARD_NUMBER', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FIRMWARE_VERSION_SECONDARY'];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FIRMWARE_VERSION_SECONDARY];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_UVP_CONFIG_PARAMETERS'))
+            fieldNames = fields(metaData.META_AUX_UVP_CONFIG_PARAMETERS);
+            for idConf = 1:11
+               if (idConf == 11)
+                  confName = 'META_AUX_UVP_HW_CONF_PARAMETERS';
+               else
+                  confName = sprintf('META_AUX_UVP_ACQ_CONF_%02d_PARAMETERS', idConf);
+               end
+               inputAuxMetaName = [inputAuxMetaName; confName];
+               inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_UVP_CONFIG_PARAMETERS.(fieldNames{idConf})];
+               inputAuxMetaDescription = [inputAuxMetaDescription; ...
+                  g_decArgo_outputNcConfParamDescription(find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1))];
+            end
          end
       end
       
@@ -763,7 +793,7 @@ switch (a_decoderId)
       end
       missionConfigName(idDel) = [];
       missionConfigValue(idDel, :) = [];
-
+      
       % create/update NetCDF META_AUX file
       if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
             ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
@@ -1357,7 +1387,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1121, 1122, 1321, 1322}
+   case {1121, 1122, 1123, 1321, 1322}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);

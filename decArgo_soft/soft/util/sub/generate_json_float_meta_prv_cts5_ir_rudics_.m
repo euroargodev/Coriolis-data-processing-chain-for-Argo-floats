@@ -6,7 +6,7 @@
 %  generate_json_float_meta_prv_cts5_ir_rudics_( ...
 %    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
 %    a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
-%    a_outputDirName)
+%    a_outputDirName, a_logDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName  : meta-data file exported from Coriolis data base
@@ -17,6 +17,8 @@
 %   a_configDirName      : directory of float configuration at launch files
 %   a_sunaConfigDirName  : directory of SUNA configuration files
 %   a_outputDirName      : directory of individual json float meta-data files
+%   a_logDirName         : directory of log file
+%   a_rtVersionFlag      : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -32,7 +34,7 @@
 function generate_json_float_meta_prv_cts5_ir_rudics_( ...
    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
    a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
-   a_outputDirName)
+   a_outputDirName, a_logDirName, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -224,7 +226,7 @@ for idFloat = 1:length(floatList)
    end
 
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'}]))
+   if (~ismember(dacFormatId, [{'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} {'7.11'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -380,7 +382,7 @@ for idFloat = 1:length(floatList)
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)
-      case {'7.01', '7.02', '7.04'}
+      case {'7.01', '7.02', '7.04', '7.11'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -506,24 +508,110 @@ for idFloat = 1:length(floatList)
    else
       configReportFileName = [a_configDirName '/' loginName '.txt'];
    end
-   [configParamNames, configParamValues] = get_conf_at_launch_cts5(configReportFileName, sensorList, dacFormatId);
-      
-   % delete some configuration parameters
-   %   listToDelete = [ ...
-   %      {'CONFIG_PI_0'} ...
-   %      {'CONFIG_PI_1'} ...
-   %      {'CONFIG_PI_2'} ...
-   %      ];
-   %   for idDel = 1:length(listToDelete)
-   %      configParamName = listToDelete{idDel};
-   %
-   %      idParam = find(strcmp(configParamName, configParamNames) == 1);
-   %      if (~isempty(idParam))
-   %         configParamNames(idParam) = [];
-   %         configParamValues(idParam) = [];
-   %      end
-   %   end
+   [configParamNames, configParamValues] = get_conf_at_launch_cts5(configReportFileName, dacFormatId);
    
+   % for CTS5-USEA only
+   if (ismember(dacFormatId, [{'7.11'}]))
+      
+      % remove unused sensors from configuration
+      
+      sensorListNum = [];
+      sensorListName = [];
+      for id = 1:length(sensorList)
+         sensorName = sensorList{id};
+         switch (sensorName)
+            case 'CTD'
+               sensorListNum = [sensorListNum 1];
+               sensorListName = [sensorListName {'CONFIG_APMT_SBE41_'}];
+            case 'OPTODE'
+               sensorListNum = [sensorListNum 2];
+               sensorListName = [sensorListName {'CONFIG_APMT_DO_'}];
+            case 'OCR'
+               sensorListNum = [sensorListNum 3];
+               sensorListName = [sensorListName {'CONFIG_APMT_OCR_'}];
+            case 'ECO3'
+               sensorListNum = [sensorListNum 4];
+               sensorListName = [sensorListName {'CONFIG_APMT_ECO_'}];
+            case 'TRANSISTOR_PH'
+               sensorListNum = [sensorListNum 5];
+               sensorListName = [sensorListName {'CONFIG_APMT_SBEPH_'}];
+            case 'CROVER'
+               sensorListNum = [sensorListNum 6];
+               sensorListName = [sensorListName {'CONFIG_APMT_CROVER_'}];
+            case 'SUNA'
+               sensorListNum = [sensorListNum 7];
+               sensorListName = [sensorListName {'CONFIG_APMT_SUNA_'}];
+            case 'UVP'
+               sensorListNum = [sensorListNum 8];
+               sensorListName = [sensorListName {'CONFIG_APMT_UVP6_'}];
+            otherwise
+               fprintf('ERROR: unknown sensor name (%s) for float %d\n', ...
+                  sensorName, floatNum);
+         end
+      end
+      
+      idDel = [];
+      for id = 1:length(configParamNames)
+         configParamName = configParamNames{id};
+         if ((length(configParamName) > length('CONFIG_APMT_SENSOR_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_SENSOR_', length('CONFIG_APMT_SENSOR_'))))
+            sensorNum = str2double(configParamName(20:21));
+            if (~ismember(sensorNum, sensorListNum))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_SBE41_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_SBE41_', length('CONFIG_APMT_SBE41_'))))
+            if (~ismember('CONFIG_APMT_SBE41_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_DO_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_DO_', length('CONFIG_APMT_DO_'))))
+            if (~ismember('CONFIG_APMT_DO_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_OCR_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_OCR_', length('CONFIG_APMT_OCR_'))))
+            if (~ismember('CONFIG_APMT_OCR_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_ECO_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_ECO_', length('CONFIG_APMT_ECO_'))))
+            if (~ismember('CONFIG_APMT_ECO_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_SBEPH_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_SBEPH_', length('CONFIG_APMT_SBEPH_'))))
+            if (~ismember('CONFIG_APMT_SBEPH_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_CROVER_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_CROVER_', length('CONFIG_APMT_CROVER_'))))
+            if (~ismember('CONFIG_APMT_CROVER_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_SUNA_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_SUNA_', length('CONFIG_APMT_SUNA_'))))
+            if (~ismember('CONFIG_APMT_SUNA_', sensorListName))
+               idDel = [idDel id];
+            end
+         elseif ((length(configParamName) > length('CONFIG_APMT_UVP6_')) && ...
+               (strncmp(configParamName, 'CONFIG_APMT_UVP6_', length('CONFIG_APMT_UVP6_'))))
+            if (~ismember('CONFIG_APMT_UVP6_', sensorListName))
+               idDel = [idDel id];
+            end
+         end
+      end
+      
+      configParamNames(idDel) = [];
+      configParamValues(idDel) = [];
+      
+      % consider XML meta-data file
+      if (a_rtVersionFlag == 0)
+         metaDataFileName = [a_configDirName '/' loginName '_metadata.xml'];
+         [metaStruct] = get_meta_data_cts5(metaDataFileName, metaStruct, sensorListNum, floatNum, a_logDirName);
+      end
+   end
+      
    % add static configuration parameters stored in the data base
    
    dbConfigParamName = [ ...

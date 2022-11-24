@@ -2,10 +2,11 @@
 % Decode CTD data transmitted by a CTS5 float.
 %
 % SYNTAX :
-%  [o_ctdData] = decode_apmt_ctd(a_inputFilePathName)
+%  [o_ctdData] = decode_apmt_ctd(a_inputFilePathName, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : APMT CTD file to decode
+%   a_decoderId         : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_ctdData : CTD decoded data
@@ -18,7 +19,7 @@
 % RELEASES :
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ctdData] = decode_apmt_ctd(a_inputFilePathName)
+function [o_ctdData] = decode_apmt_ctd(a_inputFilePathName, a_decoderId)
 
 % output parameters initialization
 o_ctdData = [];
@@ -38,22 +39,17 @@ end
 data = fread(fId);
 fclose(fId);
 
-% for id = 1:length(data)
-%    fprintf('%4d: ''%c''\n', id, data(id));
-% end
-
 % find the position of the last useful byte
 lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 
 % decode the data according to the first byte flag
-if (data(1) == 1)
-   o_ctdData = decode_apmt_ctd_extended(data, lastByteNum);
-elseif (data(1) == 2)
-   fprintf('WARNING: decode_apmt_ctd_standard not implemented yet\n');
-   return
-else
-   fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
-   return
+switch (data(1))
+   case {1}
+      o_ctdData = decode_apmt_ctd_extended(data, lastByteNum, a_decoderId);
+   case {2}
+      fprintf('WARNING: decode_apmt_ctd_standard not implemented yet\n');
+   otherwise
+      fprintf('ERROR: Unexpected file type byte in file: %s\n', a_inputFilePathName);
 end
 
 return

@@ -24,10 +24,12 @@ function correct_iridium_mail_files_from_germany()
 
 % input directory
 INPUT_DIR_NAME = 'C:\Users\lrichier\Desktop\MISSING_DATA\20190312\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT\300234067778190\';
 
 % output directory
 OUTPUT_DIR_NAME = 'C:\Users\lrichier\Desktop\MISSING_DATA\OUT\';
 OUTPUT_DIR_NAME = 'C:\Users\lrichier\Desktop\MISSING_DATA\20190312\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\300234067778190';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 

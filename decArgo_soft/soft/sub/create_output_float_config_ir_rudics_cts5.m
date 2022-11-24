@@ -78,7 +78,7 @@ staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
 notWantedStaticConfigNames = [];
 
 % static parameters
-for paramNum = [6:8 11:15 17:20 22:25]
+for paramNum = [6:8 11:15 17:20 22:28]
    notWantedStaticConfigNames{end+1} = sprintf('CONFIG_APMT_ALARM_P%02d', paramNum);
 end
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_IRIDIUM_RUDICS_P02';

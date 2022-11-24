@@ -70,14 +70,14 @@
 function nc_copy_mono_profile_qc(varargin)
 
 % top directory of input NetCDF files containing the Qc values
-DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\dbqc\';
+DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20200907\dbqc\';
 
 % top directory of input NetCDF files to be updated (executive DAC, thus top
 % directory of the DAC name directories)
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\edac\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20200907\edac\';
 
 % top directory of output NetCDF updated files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\out\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20200907\out\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';

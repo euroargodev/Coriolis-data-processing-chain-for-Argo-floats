@@ -138,6 +138,7 @@ global g_decArgo_treatMedian;
 global g_decArgo_treatMin;
 global g_decArgo_treatMax;
 global g_decArgo_treatStDev;
+global g_decArgo_treatDecimatedRaw;
 
 % common long_name for nc files
 global g_decArgo_longNameOfParamAdjErr;
@@ -178,6 +179,7 @@ global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
+global g_decArgo_cts5PhaseSurface;
 
 % codes for CTS5 treatment types (used to decode CTD data)
 global g_decArgo_cts5Treat_AM_SD_MD;
@@ -186,6 +188,7 @@ global g_decArgo_cts5Treat_AM_MD;
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_SS;
+global g_decArgo_cts5Treat_DW;
 
 % DOXY coefficients
 global g_decArgo_doxy_nomAirPress;
@@ -502,7 +505,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '035g';
+g_decArgo_decoderVersion = '036a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -559,6 +562,7 @@ g_decArgo_treatMedian = 10;
 g_decArgo_treatMin = 11;
 g_decArgo_treatMax = 12;
 g_decArgo_treatStDev = 13;
+g_decArgo_treatDecimatedRaw = 14;
 
 g_decArgo_longNameOfParamAdjErr = 'Contains the error on the adjusted values as determined by the delayed mode QC process';
 
@@ -598,6 +602,7 @@ g_decArgo_cts5PhasePark = 2;
 g_decArgo_cts5PhaseDeepProfile = 3;
 g_decArgo_cts5PhaseShortPark = 4;
 g_decArgo_cts5PhaseAscent = 5;
+g_decArgo_cts5PhaseSurface = 6;
 
 % codes for CTS5 treatment types (used to decode CTD data)
 g_decArgo_cts5Treat_AM_SD_MD = 1; % mean + st dev + median
@@ -606,6 +611,7 @@ g_decArgo_cts5Treat_AM_MD = 3; % mean + median
 g_decArgo_cts5Treat_RW = 4; % raw
 g_decArgo_cts5Treat_AM = 5; % mean
 g_decArgo_cts5Treat_SS = 6; % sub-surface point (last pumped raw measurement)
+g_decArgo_cts5Treat_DW = 7; % decimated raw
 
 % DOXY coefficients
 g_decArgo_doxy_nomAirPress = 1013.25;

@@ -90,9 +90,7 @@ for idFloat = 1:nbFloats
          cFileFlag = 1;
          nc_prof_adj_2_csv_file(profFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
       end
-      
-      %       if (0)
-      
+            
       % convert multi-profile b file
       profFileName = sprintf('%d_Bprof.nc', floatNum);
       profFilePathName = [ncFileDirRef profFileName];
@@ -130,7 +128,7 @@ for idFloat = 1:nbFloats
       else
          fprintf('WARNING: Directory not found: %s\n', ncFileDir);
       end
-      
+            
       % convert mono-profile aux files
       ncAuxFileDir = [ncFileDirRef '/auxiliary/profiles/'];
       
@@ -151,7 +149,6 @@ for idFloat = 1:nbFloats
             nc_prof_adj_2_csv_file(ncFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
          end
       end
-      %       end
    else
       fprintf('WARNING: Directory not found: %s\n', ncFileDirRef);
    end
@@ -209,6 +206,7 @@ paramWithExtraDimList = [ ...
    {'UV_INTENSITY_NITRATE'} ...
    {'NB_SIZE_SPECTRA_PARTICLES'} ...
    {'GREY_SIZE_SPECTRA_PARTICLES'} ...
+   {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
    ];
 
 % open NetCDF file
@@ -638,7 +636,7 @@ if (a_writeQcFlag == 0)
                   fprintf(fidOut, '; %s', ...
                      paramName);
                else
-                  for id1 = 1:size(dataTmp, 1);
+                  for id1 = 1:size(dataTmp, 1)
                      fprintf(fidOut, '; %s', ...
                         sprintf('%s_%d', paramName, id1));
                   end
@@ -665,7 +663,7 @@ if (a_writeQcFlag == 0)
                            fprintf(fidOut, '; %s', ...
                               paramName);
                         else
-                           for id1 = 1:size(dataTmp, 1);
+                           for id1 = 1:size(dataTmp, 1)
                               fprintf(fidOut, '; %s', ...
                                  sprintf('%s_%d', paramName, id1));
                            end
@@ -694,7 +692,7 @@ if (a_writeQcFlag == 0)
                         fprintf(fidOut, '; %s', ...
                            paramName);
                      else
-                        for id1 = 1:size(dataTmp, 1);
+                        for id1 = 1:size(dataTmp, 1)
                            fprintf(fidOut, '; %s', ...
                               sprintf('%s_%d', paramName, id1));
                         end
@@ -729,7 +727,7 @@ if (a_writeQcFlag == 0)
                      profileParamQcTmp(idP));
                   dataTmp = paramData{idF};
                   if (ismember(parameterName, paramWithExtraDimList))
-                     for id1 = 2:size(dataTmp, 1);
+                     for id1 = 2:size(dataTmp, 1)
                         fprintf(fidOut, '; ');
                      end
                   end
@@ -770,7 +768,7 @@ if (a_writeQcFlag == 0)
                            profileParamQcTmp(idP));
                         dataTmp = paramData{idF};
                         if (ismember(parameterName, paramWithExtraDimList))
-                           for id1 = 2:size(dataTmp, 1);
+                           for id1 = 2:size(dataTmp, 1)
                               fprintf(fidOut, '; ');
                            end
                         end
@@ -809,13 +807,13 @@ if (a_writeQcFlag == 0)
                   format = [format '; ' paramFormat{idF}];
                else
                   if (ndims(dataTmp) == 2) % when N_PROF = 1
-                     for id1 = 1:size(dataTmp, 1);
+                     for id1 = 1:size(dataTmp, 1)
                         data = [data double(dataTmp(id1, :)')];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
                      end
                   else
-                     for id1 = 1:size(dataTmp, 1);
+                     for id1 = 1:size(dataTmp, 1)
                         data = [data double(dataTmp(id1, :, idP)')];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
@@ -845,13 +843,13 @@ if (a_writeQcFlag == 0)
                         format = [format '; ' paramFormat{idF}];
                      else
                         if (ndims(dataTmp) == 2) % when N_PROF = 1
-                           for id1 = 1:size(dataTmp, 1);
+                           for id1 = 1:size(dataTmp, 1)
                               data = [data double(dataTmp(id1, :)')];
                               dataFillValue = [dataFillValue paramFillValue{idF}];
                               format = [format '; ' paramFormat{idF}];
                            end
                         else
-                           for id1 = 1:size(dataTmp, 1);
+                           for id1 = 1:size(dataTmp, 1)
                               data = [data double(dataTmp(id1, :, idP)')];
                               dataFillValue = [dataFillValue paramFillValue{idF}];
                               format = [format '; ' paramFormat{idF}];
@@ -883,13 +881,13 @@ if (a_writeQcFlag == 0)
                         format = [format '; ' paramFormat{idF}];
                      else
                         if (ndims(dataTmp) == 2) % when N_PROF = 1
-                           for id1 = 1:size(dataTmp, 1);
+                           for id1 = 1:size(dataTmp, 1)
                               data = [data double(dataTmp(id1, :)')];
                               dataFillValue = [dataFillValue paramFillValue{idF}];
                               format = [format '; ' paramFormat{idF}];
                            end
                         else
-                           for id1 = 1:size(dataTmp, 1);
+                           for id1 = 1:size(dataTmp, 1)
                               data = [data double(dataTmp(id1, :, idP)')];
                               dataFillValue = [dataFillValue paramFillValue{idF}];
                               format = [format '; ' paramFormat{idF}];
@@ -906,7 +904,7 @@ if (a_writeQcFlag == 0)
       end
       
       fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
-      for idLev = 1:size(data, 1);
+      for idLev = 1:size(data, 1)
          if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
             fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
                a_floatNum, cycleNumber(idP), idP, idLev);
@@ -1051,7 +1049,7 @@ else
                   fprintf(fidOut, '; %s', ...
                      paramName);
                else
-                  for id1 = 1:size(dataTmp, 1);
+                  for id1 = 1:size(dataTmp, 1)
                      fprintf(fidOut, '; %s', ...
                         sprintf('%s_%d', paramName, id1));
                   end
@@ -1082,7 +1080,7 @@ else
                               fprintf(fidOut, '; %s', ...
                                  paramName);
                            else
-                              for id1 = 1:size(dataTmp, 1);
+                              for id1 = 1:size(dataTmp, 1)
                                  fprintf(fidOut, '; %s', ...
                                     sprintf('%s_%d', paramName, id1));
                               end
@@ -1115,7 +1113,7 @@ else
                         fprintf(fidOut, '; %s', ...
                            paramName);
                      else
-                        for id1 = 1:size(dataTmp, 1);
+                        for id1 = 1:size(dataTmp, 1)
                            fprintf(fidOut, '; %s', ...
                               sprintf('%s_%d', paramName, id1));
                         end
@@ -1153,7 +1151,7 @@ else
                      profileParamQcTmp(idP));
                   dataTmp = paramData{idF};
                   if (ismember(parameterName, paramWithExtraDimList))
-                     for id1 = 2:size(dataTmp, 1);
+                     for id1 = 2:size(dataTmp, 1)
                         fprintf(fidOut, '; ');
                      end
                   end
@@ -1197,7 +1195,7 @@ else
                            profileParamQcTmp(idP));
                         dataTmp = paramData{idF};
                         if (ismember(parameterName, paramWithExtraDimList))
-                           for id1 = 2:size(dataTmp, 1);
+                           for id1 = 2:size(dataTmp, 1)
                               fprintf(fidOut, '; ');
                            end
                         end
@@ -1220,6 +1218,7 @@ else
       format = '';
       for idParam = 1:nParam
          parameterName = strtrim(stationParameters(:, idParam, idP)');
+
          if (isempty(parameterName))
             continue
          end
@@ -1237,13 +1236,13 @@ else
                   format = [format '; ' paramFormat{idF}];
                else
                   if (ndims(dataTmp) == 2) % when N_PROF = 1
-                     for id1 = 1:size(dataTmp, 1);
+                     for id1 = 1:size(dataTmp, 1)
                         data = [data double(dataTmp(id1, :)')];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
                      end
                   else
-                     for id1 = 1:size(dataTmp, 1);
+                     for id1 = 1:size(dataTmp, 1)
                         data = [data double(dataTmp(id1, :, idP)')];
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
@@ -1285,13 +1284,13 @@ else
                               format = [format '; ' paramFormat{idF}];
                            else
                               if (ndims(dataTmp) == 2) % when N_PROF = 1
-                                 for id1 = 1:size(dataTmp, 1);
+                                 for id1 = 1:size(dataTmp, 1)
                                     data = [data double(dataTmp(id1, :)')];
                                     dataFillValue = [dataFillValue paramFillValue{idF}];
                                     format = [format '; ' paramFormat{idF}];
                                  end
                               else
-                                 for id1 = 1:size(dataTmp, 1);
+                                 for id1 = 1:size(dataTmp, 1)
                                     data = [data double(dataTmp(id1, :, idP)')];
                                     dataFillValue = [dataFillValue paramFillValue{idF}];
                                     format = [format '; ' paramFormat{idF}];
@@ -1334,7 +1333,7 @@ else
                         dataFillValue = [dataFillValue paramFillValue{idF}];
                         format = [format '; ' paramFormat{idF}];
                      else
-                        for id1 = 1:size(dataTmp, 1);
+                        for id1 = 1:size(dataTmp, 1)
                            data = [data double(dataTmp(id1, :, idP)')];
                            dataFillValue = [dataFillValue paramFillValue{idF}];
                            format = [format '; ' paramFormat{idF}];
@@ -1360,7 +1359,7 @@ else
       end
       
       fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
-      for idLev = 1:size(data, 1);
+      for idLev = 1:size(data, 1)
          if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
             fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
                a_floatNum, cycleNumber(idP), idP, idLev);

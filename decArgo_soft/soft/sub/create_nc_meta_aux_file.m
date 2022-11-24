@@ -140,6 +140,7 @@ end
 dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
 string4096DimId = netcdf.defDim(fCdf, 'STRING4096', 4096);
 string1024DimId = netcdf.defDim(fCdf, 'STRING1024', 1024);
+string512DimId = netcdf.defDim(fCdf, 'STRING512', 512);
 string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
 string128DimId = netcdf.defDim(fCdf, 'STRING128', 128);
 string64DimId = netcdf.defDim(fCdf, 'STRING64', 64);
@@ -262,7 +263,7 @@ floatMetaDataNameVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_NAME', 'NC_CHAR', 
 netcdf.putAtt(fCdf, floatMetaDataNameVarId, 'long_name', 'Name of miscellaneous float metadata');
 netcdf.putAtt(fCdf, floatMetaDataNameVarId, '_FillValue', ' ');
 
-floatMetaDataValueVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_VALUE', 'NC_CHAR', fliplr([nFloatMetaDataDimId string128DimId]));
+floatMetaDataValueVarId = netcdf.defVar(fCdf, 'FLOAT_META_DATA_VALUE', 'NC_CHAR', fliplr([nFloatMetaDataDimId string512DimId]));
 netcdf.putAtt(fCdf, floatMetaDataValueVarId, 'long_name', 'Value of miscellaneous float metadata');
 netcdf.putAtt(fCdf, floatMetaDataValueVarId, '_FillValue', ' ');
 

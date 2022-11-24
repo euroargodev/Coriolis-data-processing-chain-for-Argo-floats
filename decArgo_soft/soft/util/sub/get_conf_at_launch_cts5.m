@@ -3,11 +3,10 @@
 %
 % SYNTAX :
 %  [o_confParamNames, o_confParamValues] = get_conf_at_launch_cts5( ...
-%    a_configReportFileName, a_configDefaultFilename, a_sensorList, a_dacFormatId)
+%    a_configReportFileName, a_dacFormatId)
 %
 % INPUT PARAMETERS :
 %   a_configReportFileName : predeployment configuration sheet file name
-%   a_sensorList           : list of the sensors mounted on the float
 %   a_dacFormatId          : DAC version of the float
 %
 % OUTPUT PARAMETERS :
@@ -23,7 +22,7 @@
 %   02/21/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_confParamNames, o_confParamValues] = get_conf_at_launch_cts5( ...
-   a_configReportFileName, a_sensorList, a_dacFormatId)
+   a_configReportFileName, a_dacFormatId)
 
 % output parameters initialization
 o_confParamNames = [];
@@ -42,6 +41,8 @@ switch (a_dacFormatId)
       decoderId = 124;
    case {'7.05'}
       decoderId = 125;
+   case {'7.11'}
+      decoderId = 126;
    otherwise
       fprintf('ERROR: Cannot find decoderId from DAC version ''%s'' in get_conf_at_launch_cts5\n', ...
          a_dacFormatId);
