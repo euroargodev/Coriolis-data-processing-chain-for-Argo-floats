@@ -72,6 +72,8 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
 % for virtual buffers management
+global g_decArgo_virtualBuff;
+g_decArgo_virtualBuff = 1;
 global g_decArgo_spoolFileList;
 global g_decArgo_bufFileList;
 
