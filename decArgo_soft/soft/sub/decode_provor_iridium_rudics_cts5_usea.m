@@ -737,6 +737,7 @@ mpeData = [];
 hydrocMData = [];
 hydrocCData = [];
 
+apmtTimeFromTech = [];
 techDataFromApmtTech = [];
 timeDataFromApmtTech = [];
 for typeNum = typeOrderList
