@@ -681,7 +681,8 @@ evtJulDPrec = [];
 NB_EVENTS = 500;
 evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
 cpt = 1;
-while ((curBit-1)/8 < lastByteNum)
+stop = 0;
+while (((curBit-1)/8 < lastByteNum) && (~stop))
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
@@ -794,9 +795,9 @@ while ((curBit-1)/8 < lastByteNum)
          %             end
          %          end
       else
-         fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
+         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         return
+         stop = 1;
       end
    end
 end
@@ -877,7 +878,8 @@ evtJulDPrec = [];
 NB_EVENTS = 500;
 evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
 cpt = 1;
-while ((curBit-1)/8 < lastByteNum)
+stop = 0;
+while (((curBit-1)/8 < lastByteNum) && (~stop))
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
@@ -990,9 +992,9 @@ while ((curBit-1)/8 < lastByteNum)
          %             end
          %          end
       else
-         fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
+         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         return
+         stop = 1;
       end
    end
 end
@@ -1073,7 +1075,8 @@ evtJulDPrec = [];
 NB_EVENTS = 500;
 evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
 cpt = 1;
-while ((curBit-1)/8 < lastByteNum)
+stop = 0;
+while (((curBit-1)/8 < lastByteNum) && (~stop))
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
@@ -1149,11 +1152,10 @@ while ((curBit-1)/8 < lastByteNum)
             evtAll(cpt, :) = evtNew;
             cpt = cpt + 1;
          end
-
       else
-         fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
+         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         return
+         stop = 1;
       end
    end
 end
