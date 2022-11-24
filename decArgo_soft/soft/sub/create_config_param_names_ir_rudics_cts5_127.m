@@ -48,6 +48,7 @@ apmtSensorList = [ ...
    {'Suna'}
    {'Uvp'}
    {'Opus'}
+   {'Ramses'}
    ];
 
 % create configuration names for decoder and associated one for NetCDF
@@ -64,7 +65,8 @@ configInfoList = [ ...
    {'SECURITY'} {0:4} {[158:161 241]}; ...
    {'SURFACE_APPROACH'} {1} {162}; ...
    {'SURFACE_ACQUISITION'} {0:1} {249:250}; ...
-   {'ICE'} {1:3} {163:165}; ...
+   {'ICE_AVOIDANCE'} {1:4} {262:265}; ...
+   {'ISA'} {1:4} {266:269}; ...
    {'IRIDIUM_RUDICS'} {[0:1 3:7]} {[301:303 166:169]}; ...
    {'MOTOR'} {0:1} {[304 170]}; ...
    {'PAYLOAD'} {0:3} {[305 306 171 172]}; ...
@@ -83,7 +85,8 @@ configInfoList = [ ...
    {'CROVER'} {0} {331}; ...
    {'SUNA'} {0} {332}; ...
    {'UVP6'} {0} {316}; ...
-   {'OPUS'} {0} {333} ...
+   {'OPUS'} {0} {333}; ...
+   {'RAMSES'} {0} {339} ...
    ];
 
 for idConfig = 1:length(configInfoList)
@@ -111,6 +114,10 @@ for idConfig = 1:length(configInfoList)
             paramIdList = paramIdList + 1100;
             sensorNum = 15;
          end
+         if (idS == 10) % <short_sensor_name> = 'Ramses'
+            paramIdList = paramIdList + 1200;
+            sensorNum = 14;
+         end
          for idZ = 1:5
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, (idZ-1)*9 + paramNumList(idP));
@@ -129,6 +136,9 @@ for idConfig = 1:length(configInfoList)
          if (idS == 9) % <short_sensor_name> = 'Opus'
             paramIdList = paramIdList + 1100;
          end
+         if (idS == 10) % <short_sensor_name> = 'Ramses'
+            paramIdList = paramIdList + 1200;
+         end
          for idZ = 1:4
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, (idZ-1) + paramNumList(idP));
@@ -146,6 +156,9 @@ for idConfig = 1:length(configInfoList)
          end
          if (idS == 9) % <short_sensor_name> = 'Opus'
             paramIdList = paramIdList + 1100;
+         end
+         if (idS == 10) % <short_sensor_name> = 'Ramses'
+            paramIdList = paramIdList + 1200;
          end
          for idP = 1:length(paramNumList)
             decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
@@ -205,6 +218,15 @@ for idConfig = 1:length(configInfoList)
                   ncConfNames{end+1} = paramName;
                   ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
                end
+            end
+         elseif (idS == 10) % <short_sensor_name> = 'Ramses'
+            paramNumList = [54:56];
+            paramIdList = [271:273];
+            for idP = 1:length(paramNumList)
+               decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
+               idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
+               ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
          end
       end

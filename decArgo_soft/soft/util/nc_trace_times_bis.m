@@ -37,7 +37,8 @@ global g_NTT_CT_UPDATE_DATA_SET;
 % g_NTT_NC_DIR = 'E:\201905-ArgoData\coriolis\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\TRAJ_DM\IN\NC\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\nc_avec_dm\';
+% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\nc\';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -49,7 +50,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_TRAJ_DM_test.
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_5.46_5.74.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.76.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\Rem_DM\rem_in_dm.txt';
 
 % display help information on available commands
 display_help;

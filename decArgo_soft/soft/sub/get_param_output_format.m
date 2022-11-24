@@ -38,7 +38,7 @@ switch (a_decoderId)
             o_fortranFormat = 'F8.2';
       end
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1314}
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
       % Apex Iridium Rudics & Sbd
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}

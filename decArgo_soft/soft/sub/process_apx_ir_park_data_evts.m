@@ -157,7 +157,7 @@ for idM= 1:length(a_parkMeasStr)
             fprintf('DEC_INFO: %sAnomaly detected while parsing park end measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          end
          
-      case {1110, 1111, 1112} % 092813 & 073014 & 102815
+      case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
 
          PATTERN1 = 'PTS/O2,T2,TPhase,RawTemp:';
          PATTERN2 = 'FLBB FSig, BbSig, TSig:';
@@ -367,7 +367,7 @@ if ~(isempty(a_parkDate) && isempty(data) && isempty(data1) && isempty(data2))
             o_parkData.datesStatus = repmat(g_JULD_STATUS_2, size(o_parkData.dates));
          end
          
-      case {1110, 1111, 1112} % 092813 & 073014 & 102815
+      case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
          
          % create the parameters
          paramJuld = get_netcdf_param_attributes('JULD');

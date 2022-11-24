@@ -80,7 +80,7 @@ end
 g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
 
 % add DO calibration coefficients
-if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]))
+if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114, 1201]))
    
    % read the calibration coefficients in the json meta-data file
 
@@ -116,7 +116,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
             g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef = tabDoxyCoef;
          end
          
-      case {1104, 1105, 1110, 1111}
+      case {1104, 1105, 1110, 1111, 1114}
          
          if (isfield(g_decArgo_calibInfo, 'OPTODE'))
             calibData = g_decArgo_calibInfo.OPTODE;
@@ -180,7 +180,17 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1201]
                   return
                end
             end
-                        
+            if (a_decoderId == 1114)
+               for id = 0:1
+                  fieldName = ['ConcCoef' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabDoxyCoef(6, id+1) = calibData.(fieldName);
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+                     return
+                  end
+               end
+            end
             g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
          end         
          

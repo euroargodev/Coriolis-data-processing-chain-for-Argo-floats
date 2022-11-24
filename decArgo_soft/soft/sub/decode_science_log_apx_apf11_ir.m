@@ -850,7 +850,7 @@ if (~isempty(o_profDo) && any(isnan(o_profDo.dates)))
    % add do measurements Ids
    presAll = [presAll; [doId nan(size(doId, 1), 2)]];
 
-   % fil do pressures and times
+   % fill do pressures and times
    presDo = ones(size(do, 1), 1)*paramPres.fillValue;
    presDates = ones(size(do, 1), 1)*paramJuld.fillValue;
    

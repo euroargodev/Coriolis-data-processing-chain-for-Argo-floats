@@ -66,7 +66,7 @@ end
 for idMsg = 1:size(sbdDataTab, 1)
    
    % decode the collected data
-   decodedData = decode_prv_data_ir_rudics_cts4_111_113_114(sbdDataTab(idMsg, :), ...
+   decodedData = decode_prv_data_ir_rudics_cts4_111_113_114_115(sbdDataTab(idMsg, :), ...
       a_sbdFileName, a_sbdFileDate, size(sbdDataTab, 1)*140);
    o_decodedData = cat(2, o_decodedData, decodedData);
 end

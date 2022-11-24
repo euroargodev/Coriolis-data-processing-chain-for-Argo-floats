@@ -142,7 +142,6 @@ for idMsg = 1:size(sbdDataTab, 1)
             a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
          o_decodedData = [o_decodedData decodedData];
          
-         
       otherwise
          fprintf('WARNING: Float #%d: Nothing implemented yet in decode_sbd_file for decoderId #%d\n', ...
             g_decArgo_floatNum, ...

@@ -693,7 +693,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
-   % v
+   % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
    % perform PARAMETER adjustment
@@ -1260,6 +1260,10 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
          tabTrajNCycle = tabTrajNCycle(trajNCycleIds);
       end
    end
+   
+   % sort trajectory data structures according to the predefined
+   % measurement code order
+   [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
    
    o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
    o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

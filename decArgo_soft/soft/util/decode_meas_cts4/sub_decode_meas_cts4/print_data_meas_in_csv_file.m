@@ -89,6 +89,8 @@ cyNum = a_dataStruct.cycleNumber;
 profNum = a_dataStruct.profileNumber;
 phaseNum = a_dataStruct.phaseNumber;
 paramList = a_dataStruct.paramList;
+paramNumberWithSubLevels = a_dataStruct.paramNumberWithSubLevels;
+paramNumberOfSubLevels = a_dataStruct.paramNumberOfSubLevels;
 data = a_dataStruct.data;
 dates = a_dataStruct.dates;
 sensorNum = a_dataStruct.sensorNumber;
@@ -97,8 +99,16 @@ format = '%s';
 header = 'Login name; Sensor num; Cycle num; Profile num; Phase; Date';
 for idParam = 1:length(paramList)
    paramInfo = get_netcdf_param_attributes(paramList(idParam).name);
-   format = [format ';' paramInfo.cFormat];
-   header = [header '; ' paramList(idParam).name];
+   if (~ismember(idParam, paramNumberWithSubLevels))
+      format = [format ';' paramInfo.cFormat];
+      header = [header '; ' paramList(idParam).name];
+   else
+      idSL = find(paramNumberWithSubLevels == idParam);
+      format = [format repmat([';' paramInfo.cFormat], 1, paramNumberOfSubLevels(idSL))];
+      for idS = 1:paramNumberOfSubLevels(idSL)
+         header = [header '; ' paramList(idParam).name '_' num2str(idS)];
+      end
+   end
 end
 format = [format '\n'];
 

@@ -235,8 +235,9 @@ switch (a_decoderId)
          {'CONFIG_DEBUG'} ...
          ];
       
-   case {1111}
+   case {1111, 1114}
       % 073014
+      % 073014_2
       
       configIds = [ ...
          {'CONFIG_ASCEND'} ...

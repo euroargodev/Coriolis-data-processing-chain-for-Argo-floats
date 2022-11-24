@@ -22,17 +22,22 @@ function decode_meas_cts4(varargin)
 
 % input directory of float transmitted files
 DIR_INPUT_FILES = 'C:\Users\jprannou\_DATA\ESSAIS_BASSIN\DATA\IN\';
+DIR_INPUT_FILES = 'C:\Users\jprannou\_DATA\ESSAIS_BASSIN_20210611\DATA\';
 
 % directory of output CSV files
-DIR_OUTPUT_FILES = 'C:\Users\jprannou\_DATA\ESSAIS_BASSIN\DATA\OUT\';
+DIR_OUTPUT_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % input directory of float META.json files
 DIR_META_JSON_FILES = 'C:\Users\jprannou\_DATA\ESSAIS_BASSIN\META_JSON\';
+DIR_META_JSON_FILES = 'C:\Users\jprannou\_DATA\ESSAIS_BASSIN_20210611\META_JSON\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 FLOAT_DECODER_ID = 111;
+
+FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
+
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -43,6 +48,16 @@ init_default_values;
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 g_decArgo_julD2FloatDayOffset = [];
+
+global g_decArgo_floatTransType;
+g_decArgo_floatTransType = 2;
+
+% float configuration
+global g_decArgo_floatConfig;
+
+% to manage fitlm function for NITRATE processin
+global g_temp_fitlmNotAvailable;
+g_temp_fitlmNotAvailable = FITLM_MATLAB_FUNCTION_NOT_AVAILABLE;
 
 
 if (nargin == 0)
@@ -89,6 +104,12 @@ for idFile = 1:length(sbdFiles)
    decodedData = decode_sbd_file_cts4(sbdFileName, sbdFilePathName, sbdFileDate);
    decodedDataTab = cat(2, decodedDataTab, decodedData);
 end
+
+% assign all the (cycle, profile) to the unique configuration
+cyProfList = unique([[decodedDataTab.cyNumRaw]' [decodedDataTab.profNumRaw]'], 'rows');
+g_decArgo_floatConfig.USE.CYCLE = cyProfList(:, 1)';
+g_decArgo_floatConfig.USE.PROFILE = cyProfList(:, 2)';
+g_decArgo_floatConfig.USE.CONFIG = zeros(1, size(cyProfList, 1));
 
 % process decoded data
 [tabProfiles, tabDrift] = process_decoded_data_cts4(decodedDataTab, FLOAT_DECODER_ID);

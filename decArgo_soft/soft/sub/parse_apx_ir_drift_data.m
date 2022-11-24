@@ -42,9 +42,9 @@ end
 
 switch (a_decoderId)
    
-   case {1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113} % 030410 & 020212 & 030512 & 062813_1 & 092813 & 073014 & 102815 & 110216
+   case {1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114} % 030410 & 020212 & 030512 & 062813_1 & 092813 & 073014 & 102815 & 110216 & 073014_2
       
-      [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_13(a_driftMeasDataStr);
+      [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr);
       
    case {1314} % 090215
       
@@ -70,7 +70,7 @@ return
 % Parse Apex Iridium Rudics drift data.
 %
 % SYNTAX :
-%  [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_13(a_driftMeasDataStr)
+%  [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr)
 %
 % INPUT PARAMETERS :
 %   a_driftMeasDataStr : input ASCII drift data
@@ -86,7 +86,7 @@ return
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_13(a_driftMeasDataStr)
+function [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr)
 
 % output parameters initialization
 o_driftData = [];

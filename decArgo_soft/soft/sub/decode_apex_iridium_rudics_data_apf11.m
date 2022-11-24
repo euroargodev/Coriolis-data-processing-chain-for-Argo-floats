@@ -418,7 +418,7 @@ for idCy = 1:length(a_cycleList)
             cycleNum, g_decArgo_presOffsetData);
          
          % remove temporary dates (they have been used in profile generation)
-         [profDo] = remove_temporary_dates_from_profile_apx_apf11_ir(profDo);
+         %          [profDo] = remove_temporary_dates_from_profile_apx_apf11_ir(profDo);
          
          print = 0;
          if (print == 1)

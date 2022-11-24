@@ -1418,6 +1418,10 @@ switch (a_decoderId)
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
             cyProfPhaseList, tabTrajIndex, tabTrajData, a_decoderId);
          
+         % sort trajectory data structures according to the predefined
+         % measurement code order
+         [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+         
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
          o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
          

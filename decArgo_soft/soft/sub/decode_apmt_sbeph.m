@@ -2,11 +2,10 @@
 % Decode SBEPH data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_sbephData] = decode_apmt_sbeph(a_data, a_lastByteNum)
+%  [o_sbephData] = decode_apmt_sbeph(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input SBEPH data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_inputFilePathName : APMT SBEPH file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_sbephData : SBEPH decoded data

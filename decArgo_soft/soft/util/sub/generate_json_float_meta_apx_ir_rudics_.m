@@ -172,7 +172,7 @@ for idFloat = 1:length(floatList)
          {'012811'} {'020212'} {'060612'} {'062813.1'} ...
          {'030512'} ...
          {'062813.2'} {'062813.3'} {'110216'} {'051216'} ...
-         {'073014'} ...
+         {'073014'} {'073014_2'} ...
          {'061113'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
@@ -256,6 +256,7 @@ for idFloat = 1:length(floatList)
    % calibration information
    
    switch (dacFormatId)
+      
       case {'030410'}
          idF = find(strncmp(metaData(idForWmo, 5), 'SEABIRD_IDO_COEF_', length('SEABIRD_IDO_COEF_')) == 1);
          calibDataDb = [];
@@ -301,6 +302,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
          end
+         
       case {'020212'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
@@ -329,6 +331,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
+         
       case {'030512', '092813', '073014'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
@@ -379,6 +382,64 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
          end
+         
+      case {'073014_2'}
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1));
+         calibData = [];
+         for id = 1:length(idF)
+            calibName = metaData{idForWmo(idF(id)), 5};
+            if (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+               fieldName = ['TempCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1)
+               fieldName = ['ConcCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1)
+               fieldName = ['FoilCoefA' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_A')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1)
+               fieldName = ['FoilCoefB' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_B')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1)
+               fieldName = ['FoilPolyDegT' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_T')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1)
+               fieldName = ['FoilPolyDegO' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_O')+1:end)];
+            end
+            calibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibData))
+            calibrationCoefficient = [];
+            calibrationCoefficient.OPTODE = calibData;
+            
+            metaStruct.CALIBRATION_COEFFICIENT = calibrationCoefficient;
+         end
+         
+         idF = find((strncmp(metaData(idForWmo, 5), 'FLBB_Chlorophyll', length('FLBB_Chlorophyll')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'FLBB_Backscattering', length('FLBB_Backscattering')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = metaData{idForWmo(idF(id)), 5};
+            if (strcmp(calibName, 'FLBB_ChlorophyllScaleFactor'))
+               fieldName = 'ScaleFactChloroA';
+            elseif (strcmp(calibName, 'FLBB_ChlorophyllDarkCount'))
+               fieldName = 'DarkCountChloroA';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringScaleFactor'))
+               fieldName = 'ScaleFactBackscatter700';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringDarkCount'))
+               fieldName = 'DarkCountBackscatter700';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringKhiCoef'))
+               fieldName = 'KhiCoefBackscatter';
+            end
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
+         end
+         
       case {'062813.1', '110216'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
@@ -398,6 +459,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
+         
       case {'102815'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
@@ -439,6 +501,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
          end
+         
       case {'061113'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
@@ -811,7 +874,7 @@ switch (a_dacFormatId)
          'CONFIG_DEBUG_LogVerbosity', '', ...
          'CONFIG_DPF_DeepProfileFirstFloat', '', ...
          'CONFIG_DIR_ProfilingDirection', '');
-   case {'073014'}
+   case {'073014', '073014_2'}
       o_configStruct = struct( ...
          'CONFIG_ASCEND_AscentTimeOut', '', ...
          'CONFIG_NUDGE_AscentBuoyancyNudge', '', ...
@@ -1084,7 +1147,7 @@ switch (a_dacFormatId)
          'CONFIG_DEBUG_LogVerbosity', 'PRCFG_Verbosity', ...
          'CONFIG_DPF_DeepProfileFirstFloat', 'DEEP_PROFILE_FIRST', ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION');
-   case {'073014'}
+   case {'073014', '073014_2'}
       o_configStruct = struct( ...
          'CONFIG_ASCEND_AscentTimeOut', 'MissionCfgAscentTimeoutPeriod', ...
          'CONFIG_NUDGE_AscentBuoyancyNudge', 'MissionCfgBuoyancyNudge', ...

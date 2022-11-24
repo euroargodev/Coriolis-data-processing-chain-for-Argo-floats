@@ -236,6 +236,7 @@ for idFloat = 1:nbFloats
    tabTechAuxNMeas = [];
    if (g_decArgo_floatTransType == 1)
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Argos floats
       
       if ((g_decArgo_realtimeFlag == 1) || ...
@@ -266,6 +267,7 @@ for idFloat = 1:nbFloats
       
    elseif (g_decArgo_floatTransType == 2)
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Iridium RUDICS floats
       
       % update GPS data global variable
@@ -325,6 +327,7 @@ for idFloat = 1:nbFloats
       
    elseif (g_decArgo_floatTransType == 3)
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Iridium SBD floats
       
       % update GPS data global variable
@@ -373,6 +376,7 @@ for idFloat = 1:nbFloats
 
    elseif (g_decArgo_floatTransType == 4)
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Iridium SBD ProvBioII floats
       
       % update GPS data global variable

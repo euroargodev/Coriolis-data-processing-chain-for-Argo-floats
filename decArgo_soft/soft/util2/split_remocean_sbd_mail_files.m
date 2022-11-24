@@ -38,7 +38,7 @@ init_default_values;
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % if we only want to check existing split SBD files
-CHECK_BUFF_ONLY = 1;
+CHECK_BUFF_ONLY = 0;
 
 % to generate a CSV file without buffer contents
 GENERATE_CSV_OUTPUT = 1;

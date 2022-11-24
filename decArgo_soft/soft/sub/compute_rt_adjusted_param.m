@@ -272,7 +272,7 @@ return
 % Perform real time linear adjustment on any parameter (but DOXY) profile data.
 %
 % SYNTAX :
-%  [o_tabProfiles] = compute_rt_adjusted_param_from_db(a_tabProfiles, a_decoderId)
+%  [o_tabProfiles] = compute_rt_adjusted_param_from_db(a_tabProfiles)
 %
 % INPUT PARAMETERS :
 %   a_tabProfiles : input profile structures
@@ -519,8 +519,10 @@ if (~isempty(doSlope))
          end
          
          % adjust DOXY for this profile
-         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), ...
-            doSlope, doOffset, doDrift, doInclineT, doAdjError, startDateToIncreasePpoxErrorWithTime, a_launchDate, a_decoderId);
+         [ok, profile] = adjust_doxy_profile( ...
+            profile, o_tabProfiles(setdiff(idProfs, idProf)), ...
+            doSlope, doOffset, doDrift, doInclineT, ...
+            doAdjError, startDateToIncreasePpoxErrorWithTime, a_launchDate, a_decoderId);
          if (ok)
             profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramAdjId];
             o_tabProfiles(idProf) = profile;
@@ -586,8 +588,10 @@ return
 % Perform real time adjustment on one DOXY profile data.
 %
 % SYNTAX :
-%  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-%    a_slope, a_offset, a_doDrift, a_doInclineT, a_adjError, a_adjDate, a_launchDate, a_decoderId)
+%  [o_ok, o_profile] = adjust_doxy_profile( ...
+%    a_profile, a_tabProfiles, ...
+%    a_slope, a_offset, a_doDrift, a_doInclineT, ...
+%    a_adjError, a_adjDate, a_launchDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_profile     : input DOXY profile structure
@@ -614,8 +618,10 @@ return
 % RELEASES :
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
-   a_slope, a_offset, a_doDrift, a_doInclineT, a_adjError, a_adjDate, a_launchDate, a_decoderId)
+function [o_ok, o_profile] = adjust_doxy_profile( ...
+   a_profile, a_tabProfiles, ...
+   a_slope, a_offset, a_doDrift, a_doInclineT, ...
+   a_adjError, a_adjDate, a_launchDate, a_decoderId)
 
 % output parameters initialization
 o_ok = 0;

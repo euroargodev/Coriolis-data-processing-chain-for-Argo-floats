@@ -40,9 +40,9 @@ switch (a_decoderId)
       
       [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_105_to_110_112_sbd2(a_tabTrajNMeas, a_tabTrajNCycle);
 
-   case {111, 113, 114}
+   case {111, 113, 114, 115}
       
-      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_111_113_114(a_tabTrajNMeas, a_tabTrajNCycle);
+      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_111_113_114_115(a_tabTrajNMeas, a_tabTrajNCycle);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in merge_first_last_msg_time_ir_rudics_sbd2 for decoderId #%d\n', ...

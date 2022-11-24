@@ -55,6 +55,9 @@ for idType = 1:size(g_decArgo_fileTypeListCts5, 1)
       end
       
       switch (g_decArgo_fileTypeListCts5{idType, 1})
+         case {2}
+            % don't consider metadata.xml file because cycle # and pattern # may
+            % be wrong (see 6903706)
          case {3}
             % only cycle #, no pattern #
             [val, count, errmsg, nextindex] = sscanf(fileName(1:g_decArgo_fileTypeListCts5{idType, 4}), [g_decArgo_filePrefixCts5 g_decArgo_fileTypeListCts5{idType, 3}]);

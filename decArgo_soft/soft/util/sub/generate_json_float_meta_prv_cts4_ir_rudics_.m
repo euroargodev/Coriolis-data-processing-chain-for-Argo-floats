@@ -224,7 +224,7 @@ for idFloat = 1:length(floatList)
    end
    
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'5.9'} {'5.91'} {'5.92'} {'5.93'} {'5.94'} {'6.01'} {'6.11'} {'6.12'} {'6.13'}]))
+   if (~ismember(dacFormatId, [{'5.9'} {'5.91'} {'5.92'} {'5.93'} {'5.94'} {'6.01'} {'6.11'} {'6.12'} {'6.13'} {'6.14'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -395,7 +395,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
-      case {'5.92', '5.93', '6.01', '6.11', '6.12', '6.13'}
+      case {'5.92', '5.93', '6.01', '6.11', '6.12', '6.13', '6.14'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -519,7 +519,7 @@ for idFloat = 1:length(floatList)
    % retrieve configuration names and values at launch from configuration
    % commands report files
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
-   if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}, {'6.13'}]))
+   if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}, {'6.13'}, {'6.14'}]))
       configDefaultFilename = [a_configDirName '/defaultConfiguration_v1.txt'];
       [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList, floatNum);
    else

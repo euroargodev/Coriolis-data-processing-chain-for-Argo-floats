@@ -196,7 +196,7 @@ for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
       switch (floatDecId)
-         case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114}
+         case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115}
             % CTS4 Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
          case {121, 122, 123, 124, 125}

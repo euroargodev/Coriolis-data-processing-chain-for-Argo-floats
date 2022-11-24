@@ -101,7 +101,7 @@ if (~isempty(idEvts))
                fprintf('DEC_INFO: %sAnomaly detected while parsing surface measurements (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
             end
             
-         case {1110, 1111, 1112} % 092813 & 073014 & 102815
+         case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
             
             HEADER = 'P/O2,T2,TPhase,RPhase,RawTemp/FSig,BbSig,TSig:';
             if (any(strfind(dataStr, HEADER)))
@@ -189,7 +189,7 @@ if (~isempty(data))
          % add date status to the data structure
          o_surfData.datesStatus = repmat(g_JULD_STATUS_2, size(o_surfData.dates));
          
-      case {1110, 1111, 1112} % 092813 & 073014 & 102815
+      case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
          
          % create the parameters
          paramJuld = get_netcdf_param_attributes('JULD');

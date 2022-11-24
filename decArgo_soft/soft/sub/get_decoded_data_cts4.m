@@ -521,7 +521,7 @@ o_groundingIntVacuum = [];
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {111, 113, 114} % Remocean V3.00 and higher
+   case {111, 113, 114, 115} % Remocean V3.00 and higher
       
       % retrieve data
       for idSbd = 1:length(a_decDataTab)

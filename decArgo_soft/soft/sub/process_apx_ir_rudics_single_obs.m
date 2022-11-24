@@ -306,7 +306,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1110, 1111, 1112} % 092813 & 073014 & 102815
+   case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
 
       if (length(a_engData) ~= 5)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...

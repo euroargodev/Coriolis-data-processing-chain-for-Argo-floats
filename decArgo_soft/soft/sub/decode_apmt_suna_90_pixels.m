@@ -2,14 +2,13 @@
 % Decode SUNA data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_sbephData] = decode_apmt_suna_90_pixels(a_data, a_lastByteNum)
+%  [o_sunaData] = decode_apmt_suna_90_pixels(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input SUNA data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_inputFilePathName : APMT SUNA file to decode
 %
 % OUTPUT PARAMETERS :
-%   o_sbephData : SUNA decoded data
+%   o_sunaData : SUNA decoded data
 %
 % EXAMPLES :
 %
@@ -19,10 +18,10 @@
 % RELEASES :
 %   01/21/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_sbephData] = decode_apmt_suna_90_pixels(a_inputFilePathName)
+function [o_sunaData] = decode_apmt_suna_90_pixels(a_inputFilePathName)
 
 % output parameters initialization
-o_sbephData = [];
+o_sunaData = [];
 
 % codes for CTS5 phases (used to decode CTD data)
 global g_decArgo_cts5PhaseDescent;
@@ -254,6 +253,6 @@ if (~isempty(currentDataStruct))
    dataStruct{end+1} = currentDataStruct;
 end
 
-o_sbephData = dataStruct;
+o_sunaData = dataStruct;
 
 return

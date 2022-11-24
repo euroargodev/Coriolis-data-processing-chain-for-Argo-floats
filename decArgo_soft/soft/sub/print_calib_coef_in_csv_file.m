@@ -241,7 +241,7 @@ switch (a_decoderId)
          end
       end
       
-   case {1105, 1110, 1111}
+   case {1105, 1110, 1111, 1114}
       
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; CALIBRATION COEFFICIENTS\n', ...
          g_decArgo_floatNum, -1);
@@ -289,6 +289,13 @@ switch (a_decoderId)
             fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; Aanderaa 4330; %s; %g\n', ...
                g_decArgo_floatNum, -1, ...
                ['FoilPolyDegO' num2str(idC-1)], tabDoxyCoef(5, idC));
+         end
+         if (isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
+            for idC = 1:2
+               fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; Aanderaa 4330; %s; %g\n', ...
+                  g_decArgo_floatNum, -1, ...
+                  ['ConcCoef' num2str(idC-1)], tabDoxyCoef(6, idC));
+            end
          end
       end
       

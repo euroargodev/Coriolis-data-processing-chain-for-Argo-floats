@@ -577,7 +577,7 @@ fileTypes = zeros(size(fileNames));
 for idF = 1:length(fileNames)
    fileName = fileNames{idF};
    if (~isempty(g_decArgo_patternNumFloat))
-      typeList = [1 2 4:16]; % types with pattern #
+      typeList = [1 2 4:17]; % types with pattern #
       for idType = typeList
          idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
          if (length(fileName) > g_decArgo_fileTypeListCts5{idFL, 4})
@@ -617,14 +617,14 @@ fileNames(idXmlFile) = [];
 fileTypes(idXmlFile) = [];
 
 % set the configuration only if data has been received
-if (~isempty(intersect(fileTypes, 6:14)))
+if (~isempty(intersect(fileTypes, 6:17)))
    % we should set the configuration before decoding apmt configuration
    % (which concerns the next cycle and pattern)
    set_float_config_ir_rudics_cts5_usea(g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat);
 end
 
 % the files should be processed in the following order
-typeOrderList = [3 4 6:16 5 1];
+typeOrderList = [3 4 6:17 5 1];
 % 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 5: usual order i.e. tech first, data after and EOL at the end
 % 1: last the apmt configuration because it concerns the next cycle and pattern
 
@@ -639,6 +639,7 @@ uvpBlackData = [];
 apmtCrover = [];
 apmtSbeph = [];
 apmtSuna = [];
+ramsesData = [];
 opusLightData = [];
 opusBlackData = [];
 techDataFromApmtTech = [];
@@ -937,6 +938,24 @@ for typeNum = typeOrderList
                   print_data_in_csv_file_ir_rudics_cts5_OPUS(opusLightDataDec, opusBlackDataDec);
                end
                
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            case 17
+               % '*_ramses*.hex'
+               
+               fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
+               ramsesData = decode_apmt_ramses([fileNameInfo{4} fileNameInfo{1}]);
+               
+               if (~isempty(g_decArgo_outputCsvFileId))
+                  
+                  for idFile2 = 1:length(fileNameInfo{2})
+                     fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+                        fileNameInfo{2}{idFile2});
+                  end
+                  
+                  print_data_in_csv_file_ir_rudics_cts5_RAMSES(ramsesData);
+               end
+               
             otherwise
                fprintf('WARNING: Nothing define yet to process file: %s\n', ...
                   fileNamesForType{idFile});
@@ -962,7 +981,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
    % print time data in csv file
    print_dates_in_csv_file_ir_rudics_cts5_usea( ...
       timeDataFromApmtTech, apmtCtd, apmtDo, apmtEco, apmtOcr, uvpLpmData, uvpBlackData, ...
-      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData);
+      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData, ramsesData);
 end
 
 % output NetCDF data
@@ -1151,15 +1170,15 @@ if (isempty(g_decArgo_outputCsvFileId))
       tabDrift = [tabDrift tabDriftUvpLpm];
       tabSurf = [tabSurf tabSurfUvpLpm];
       
-      if (~isempty(tabSurfUvpLpm))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-LPM data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
+      %       if (~isempty(tabSurfUvpLpm))
+      %          % only OPTODE and OCR sensor surface mesurements are implement in
+      %          % compute_surface_derived_parameters_ir_rudics_cts5
+      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-LPM data processing not implemented yet\n', ...
+      %             g_decArgo_floatNum, ...
+      %             g_decArgo_cycleNum, ...
+      %             g_decArgo_cycleNumFloat, ...
+      %             g_decArgo_patternNumFloat);
+      %       end
       
       % merge profiles (all data from a given sensor together)
       [tabProfilesUvpLpm] = merge_profile_meas_ir_rudics_cts5_usea_uvp_lpm(tabProfilesUvpLpm);
@@ -1179,15 +1198,15 @@ if (isempty(g_decArgo_outputCsvFileId))
       tabDrift = [tabDrift tabDriftUvpBlack];
       tabSurf = [tabSurf tabSurfUvpBlack];
       
-      if (~isempty(tabSurfUvpBlack))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-BLACK data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
+      %       if (~isempty(tabSurfUvpBlack))
+      %          % only OPTODE and OCR sensor surface mesurements are implement in
+      %          % compute_surface_derived_parameters_ir_rudics_cts5
+      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-BLACK data processing not implemented yet\n', ...
+      %             g_decArgo_floatNum, ...
+      %             g_decArgo_cycleNum, ...
+      %             g_decArgo_cycleNumFloat, ...
+      %             g_decArgo_patternNumFloat);
+      %       end
       
       % merge profiles (all data from a given sensor together)
       [tabProfilesUvpBlack] = merge_profile_meas_ir_rudics_cts5_usea_uvp_black(tabProfilesUvpBlack);
@@ -1207,15 +1226,15 @@ if (isempty(g_decArgo_outputCsvFileId))
       tabDrift = [tabDrift tabDriftOpusLight];
       tabSurf = [tabSurf tabSurfOpusLight];
       
-      if (~isempty(tabSurfOpusLight))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-LIGHT data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
+      %       if (~isempty(tabSurfOpusLight))
+      %          % only OPTODE and OCR sensor surface mesurements are implement in
+      %          % compute_surface_derived_parameters_ir_rudics_cts5
+      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-LIGHT data processing not implemented yet\n', ...
+      %             g_decArgo_floatNum, ...
+      %             g_decArgo_cycleNum, ...
+      %             g_decArgo_cycleNumFloat, ...
+      %             g_decArgo_patternNumFloat);
+      %       end
       
       % merge profiles (all data from a given sensor together)
       [tabProfilesOpusLight] = merge_profile_meas_ir_rudics_cts5_usea_opus_light(tabProfilesOpusLight);
@@ -1235,15 +1254,15 @@ if (isempty(g_decArgo_outputCsvFileId))
       tabDrift = [tabDrift tabDriftOpusBlack];
       tabSurf = [tabSurf tabSurfOpusBlack];
       
-      if (~isempty(tabSurfOpusBlack))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-BLACK data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
+      %       if (~isempty(tabSurfOpusBlack))
+      %          % only OPTODE and OCR sensor surface mesurements are implement in
+      %          % compute_surface_derived_parameters_ir_rudics_cts5
+      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-BLACK data processing not implemented yet\n', ...
+      %             g_decArgo_floatNum, ...
+      %             g_decArgo_cycleNum, ...
+      %             g_decArgo_cycleNumFloat, ...
+      %             g_decArgo_patternNumFloat);
+      %       end
       
       % merge profiles (all data from a given sensor together)
       [tabProfilesOpusBlack] = merge_profile_meas_ir_rudics_cts5_usea_opus_black(tabProfilesOpusBlack);
@@ -1252,6 +1271,34 @@ if (isempty(g_decArgo_outputCsvFileId))
       [tabProfilesOpusBlack] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOpusBlack);
       
       o_tabProfiles = [o_tabProfiles tabProfilesOpusBlack];
+   end
+   
+   %%%%%%%%%%%%%%%%%%%%
+   if (~isempty(ramsesData))
+      
+      % create profiles (as they are transmitted)
+      [tabProfilesRamses, tabDriftRamses, tabSurfRamses] = ...
+         process_profile_ir_rudics_cts5_usea_ramses(ramsesData, apmtTimeFromTech, g_decArgo_gpsData);
+      tabDrift = [tabDrift tabDriftRamses];
+      tabSurf = [tabSurf tabSurfRamses];
+      
+      %       if (~isempty(tabSurfRamses))
+      %          % only OPTODE and OCR sensor surface mesurements are implement in
+      %          % compute_surface_derived_parameters_ir_rudics_cts5
+      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface RAMSES data processing not implemented yet\n', ...
+      %             g_decArgo_floatNum, ...
+      %             g_decArgo_cycleNum, ...
+      %             g_decArgo_cycleNumFloat, ...
+      %             g_decArgo_patternNumFloat);
+      %       end
+      
+      % merge profiles (all data from a given sensor together)
+      [tabProfilesRamses] = merge_profile_meas_ir_rudics_cts5_usea_ramses(tabProfilesRamses);
+      
+      % add the vertical sampling scheme from configuration information
+      [tabProfilesRamses] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesRamses);
+      
+      o_tabProfiles = [o_tabProfiles tabProfilesRamses];
    end
    
    %%%%%%%%%%%%%%%%%%%%
@@ -1293,7 +1340,12 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech, subSurfaceMeas);
    
    % process trajectory data for TRAJ NetCDF file
-   [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5_usea(tabTrajIndex, tabTrajData, a_firstCycleNum);
+   [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5_usea( ...
+      tabTrajIndex, tabTrajData, a_firstCycleNum);
+   
+   % sort trajectory data structures according to the predefined
+   % measurement code order
+   [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
    
    o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
    o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];

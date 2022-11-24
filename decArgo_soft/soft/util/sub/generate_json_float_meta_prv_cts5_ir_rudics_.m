@@ -627,6 +627,9 @@ for idFloat = 1:length(floatList)
             case 'UVP'
                sensorListNum = [sensorListNum 8];
                sensorListName = [sensorListName {'CONFIG_APMT_UVP6_'}];
+            case 'RAMSES'
+               sensorListNum = [sensorListNum 14];
+               sensorListName = [sensorListName {'CONFIG_APMT_RAMSES_'}];
             case 'OPUS'
                sensorListNum = [sensorListNum 15];
                sensorListName = [sensorListName {'CONFIG_APMT_OPUS_'}];

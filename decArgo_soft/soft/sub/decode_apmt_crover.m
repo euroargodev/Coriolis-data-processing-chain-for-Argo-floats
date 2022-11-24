@@ -2,11 +2,10 @@
 % Decode CROVER data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_croverData] = decode_apmt_crover(a_data, a_lastByteNum)
+%  [o_croverData] = decode_apmt_crover(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
-%   a_data        : input CROVER data to decode
-%   a_lastByteNum : number of the last useful byte of the data
+%   a_inputFilePathName : APMT CROVER file to decode
 %
 % OUTPUT PARAMETERS :
 %   o_croverData : CROVER decoded data

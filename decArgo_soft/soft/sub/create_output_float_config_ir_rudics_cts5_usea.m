@@ -93,6 +93,7 @@ notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_05_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_06_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_07_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_08_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P00';
 
 % remove them from output lists
@@ -281,6 +282,8 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_END_OF_LIFE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SURFACE_APPROACH_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_P00';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_AVOIDANCE_P00';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ISA_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P01';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P02';
@@ -294,6 +297,7 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_06_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_07_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_08_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P53';
 
 idDel = [];
 for idConfParam = 1:length(notWantedDynamicConfigNames)

@@ -213,7 +213,7 @@ switch (a_decoderId)
             
       end      
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 115, 301, 302, 303}
       % PROVOR CTS4 & ARVOR CM
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -959,7 +959,7 @@ switch (a_decoderId)
 
       end
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1314}
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
       % Apex Iridium Rudics & Sbd
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -971,7 +971,7 @@ switch (a_decoderId)
                   g_MC_AST
                   g_MC_AscProfDeepestBin
                   g_MC_AET];
-            elseif (ismember(a_decoderId, [1101, 1105, 1110, 1111, 1112])) % Apex Iridium Rudics & Sbd with surface measurement
+            elseif (ismember(a_decoderId, [1101, 1105, 1110, 1111, 1112, 1114])) % Apex Iridium Rudics & Sbd with surface measurement
                listMc1 = [ ...
                   g_MC_AST
                   g_MC_AscProfDeepestBin

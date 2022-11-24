@@ -27,7 +27,7 @@ floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NOVA.t
 floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_REM_sbd.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APMT.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX_IR.txt';
+floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX_IR.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_Arvor_C.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NEMO.txt';
 

@@ -350,6 +350,26 @@ global g_decArgo_doxy_202_205_302_pCoef1;
 global g_decArgo_doxy_202_205_302_pCoef2;
 global g_decArgo_doxy_202_205_302_pCoef3;
 
+global g_decArgo_doxy_202_204_303_a0;
+global g_decArgo_doxy_202_204_303_a1;
+global g_decArgo_doxy_202_204_303_a2;
+global g_decArgo_doxy_202_204_303_a3;
+global g_decArgo_doxy_202_204_303_a4;
+global g_decArgo_doxy_202_204_303_a5;
+global g_decArgo_doxy_202_204_303_d0;
+global g_decArgo_doxy_202_204_303_d1;
+global g_decArgo_doxy_202_204_303_d2;
+global g_decArgo_doxy_202_204_303_d3;
+global g_decArgo_doxy_202_204_303_sPreset;
+global g_decArgo_doxy_202_204_303_b0;
+global g_decArgo_doxy_202_204_303_b1;
+global g_decArgo_doxy_202_204_303_b2;
+global g_decArgo_doxy_202_204_303_b3;
+global g_decArgo_doxy_202_204_303_c0;
+global g_decArgo_doxy_202_204_303_pCoef1;
+global g_decArgo_doxy_202_204_303_pCoef2;
+global g_decArgo_doxy_202_204_303_pCoef3;
+
 global g_decArgo_doxy_202_205_303_a0;
 global g_decArgo_doxy_202_205_303_a1;
 global g_decArgo_doxy_202_205_303_a2;
@@ -463,7 +483,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '042d';
+g_decArgo_decoderVersion = '043a';
 
 % list of managed decoders
 
@@ -480,7 +500,7 @@ g_decArgo_decoderIdListNkeIridium = [ ...
    g_decArgo_decoderIdListNkeIridiumDeep ...
    g_decArgo_decoderIdListNkeIridiumRbr];
 g_decArgo_decoderIdListNkeCts4NotIce = [105, 106, 107, 109, 110, 112];
-g_decArgo_decoderIdListNkeCts4Ice = [111 113 114];
+g_decArgo_decoderIdListNkeCts4Ice = [111 113 114 115];
 g_decArgo_decoderIdListNkeCts4 = [ ...
    g_decArgo_decoderIdListNkeCts4NotIce ...
    g_decArgo_decoderIdListNkeCts4Ice];
@@ -500,7 +520,7 @@ g_decArgo_decoderIdListNke = [ ...
    g_decArgo_decoderIdListNkeMisc];
 
 g_decArgo_decoderIdListApexApf9Argos = [1001:1016];
-g_decArgo_decoderIdListApexApf9IridiumRudics = [1101:1113];
+g_decArgo_decoderIdListApexApf9IridiumRudics = [1101:1114];
 g_decArgo_decoderIdListApexApf9IridiumSbd = [1314];
 g_decArgo_decoderIdListApexApf9Iridium = [ ...
    g_decArgo_decoderIdListApexApf9IridiumRudics ...
@@ -609,6 +629,7 @@ g_decArgo_provorCts5UseaFileTypeListRsync = [ ...
    {'_crover'} {'.hex'}; ... % CTS5-USEA
    {'_sbeph'} {'.hex'}; ... % CTS5-USEA
    {'_suna'} {'.hex'}; ... % CTS5-USEA
+   {'_ramses'} {'.hex'}; ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
@@ -632,6 +653,7 @@ g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
    {'*_crover*.hex'} ... % CTS5-USEA
    {'*_sbeph*.hex'} ... % CTS5-USEA
    {'*_suna*.hex'} ... % CTS5-USEA
+   {'*_ramses*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeList = [ ...
@@ -652,6 +674,7 @@ g_decArgo_provorCts5UseaFileTypeList = [ ...
    {'*_crover*.hex'} ... % CTS5-USEA
    {'*_sbeph*.hex'} ... % CTS5-USEA
    {'*_suna*.hex'} ... % CTS5-USEA
+   {'*_ramses*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5OseanFileTypeListAll = [ ...
@@ -683,6 +706,7 @@ g_decArgo_provorCts5UseaFileTypeListAll = [ ...
    {14} {'*_suna*.hex'} {'_%u_%u_suna'} {16} {'_%03d_%02d_suna*.hex'}; ...
    {15} {'*_opus_blk*.hex'} {'_%u_%u_opus_blk'} {20} {'_%03d_%02d_opus_blk*.hex'}; ...
    {16} {'*_opus_lgt*.hex'} {'_%u_%u_opus_lgt'} {20} {'_%03d_%02d_opus_lgt*.hex'}; ...
+   {17} {'*_ramses*.hex'} {'_%u_%u_ramses'} {18} {'_%03d_%02d_ramses*.hex'}; ...
    ];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -994,6 +1018,26 @@ g_decArgo_doxy_202_205_302_c0 = -4.88682e-7;
 g_decArgo_doxy_202_205_302_pCoef1 = 0.1;
 g_decArgo_doxy_202_205_302_pCoef2 = 0.00022;
 g_decArgo_doxy_202_205_302_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_204_303_a0 = 2.00856;
+g_decArgo_doxy_202_204_303_a1 = 3.22400;
+g_decArgo_doxy_202_204_303_a2 = 3.99063;
+g_decArgo_doxy_202_204_303_a3 = 4.80299;
+g_decArgo_doxy_202_204_303_a4 = 9.78188e-1;
+g_decArgo_doxy_202_204_303_a5 = 1.71069;
+g_decArgo_doxy_202_204_303_d0 = 24.4543;
+g_decArgo_doxy_202_204_303_d1 = -67.4509;
+g_decArgo_doxy_202_204_303_d2 = -4.8489;
+g_decArgo_doxy_202_204_303_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_303_sPreset = 0;
+g_decArgo_doxy_202_204_303_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_303_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_303_b2 = -1.03410e-2;
+g_decArgo_doxy_202_204_303_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_303_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_303_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_303_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_303_pCoef3 = 0.0419;
 
 g_decArgo_doxy_202_205_303_a0 = 2.00856;
 g_decArgo_doxy_202_205_303_a1 = 3.22400;

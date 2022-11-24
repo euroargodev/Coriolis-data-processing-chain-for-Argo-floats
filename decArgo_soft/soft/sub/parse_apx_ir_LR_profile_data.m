@@ -68,10 +68,10 @@ switch (a_decoderId)
       [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
          parse_apx_ir_LR_profile_data_7_13(a_profLowResMeasDataStr);
       
-   case {1110, 1111, 1112} % 092813 & 073014 & 102815
+   case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
       
       [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-         parse_apx_ir_LR_profile_data_10_to_12(a_profLowResMeasDataStr);
+         parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr);
                   
    case {1201} % 061113
       
@@ -995,7 +995,7 @@ return
 %
 % SYNTAX :
 %  [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-%    parse_apx_ir_LR_profile_data_10_to_12(a_profLowResMeasDataStr)
+%    parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr)
 %
 % INPUT PARAMETERS :
 %   a_profLowResMeasDataStr : input ASCII LR profile data
@@ -1014,7 +1014,7 @@ return
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-   parse_apx_ir_LR_profile_data_10_to_12(a_profLowResMeasDataStr)
+   parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr)
 
 % output parameters initialization
 o_parkData = [];

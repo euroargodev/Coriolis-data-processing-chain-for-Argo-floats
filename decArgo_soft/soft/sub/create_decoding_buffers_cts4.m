@@ -114,7 +114,7 @@ while (~stop)
 end
 
 % specific
-if (ismember(a_decoderId, [111, 113]))
+if (ismember(a_decoderId, [111, 113, 115]))
    % sensor parameter packets of surface cycle have a bad cycle number
    % (cycle number + 1 would be expected)
    idSurfSensorParam = find((tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
@@ -318,7 +318,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idDel) = 1;
          idDel = find((tabSession == 374) & (tabCyNum == 18600) & (tabPackType == 0));
          tabDone(idDel) = 1;
-                  
+
    end
 end
 
@@ -477,7 +477,7 @@ end
 % end
 
 % specific
-if (ismember(a_decoderId, [111, 113]))
+if (ismember(a_decoderId, [111, 113, 115]))
    % sensor tech packets are transmitted again during surface cycle (remove
    % it from decoding buffers)
    idSurfSensorTech = find((tabPackType == 250) & (tabDeep == 0) & (tabCyNum > 0));
@@ -956,7 +956,7 @@ function [o_packTypeDesc] = get_pack_type_desc( ...
 o_packTypeDesc = '';
 
 switch (a_decoderId)
-   case {111, 113, 114}
+   case {111, 113, 114, 115}
       switch (a_packType)
          case 0
             % sensor data

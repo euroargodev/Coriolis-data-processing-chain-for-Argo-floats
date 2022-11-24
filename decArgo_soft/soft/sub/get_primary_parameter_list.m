@@ -59,7 +59,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
 
-   case {105, 106, 107, 109, 110, 111, 112, 113, 114}
+   case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115}
 
       % remocean floats
       o_paramList = [ ...
@@ -198,7 +198,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {1110, 1111, 1112}
+   case {1110, 1111, 1112, 1114}
       
       % Apex Ir Rudics
       o_paramList = [ ...

@@ -152,7 +152,6 @@ function [o_newFileName] = modify_sbd_file(a_fileDirName, a_fileName, a_fileCyCo
 % output parameters initialization
 o_newFileName = [];
 
-
 % check if the file need to be modified
 idFUs = strfind(a_fileName, '_');
 packType = str2num(a_fileName(idFUs(2)+1:idFUs(3)-1));

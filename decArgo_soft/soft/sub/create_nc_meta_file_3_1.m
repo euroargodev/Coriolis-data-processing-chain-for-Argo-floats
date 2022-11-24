@@ -461,7 +461,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 301, 302, 303}
       
       % Remocean floats
       
@@ -1563,8 +1563,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);      
       
       % create/update NetCDF META_AUX file
-      % icicic
-      create_nc_meta_aux_file( ...
+         create_nc_meta_aux_file( ...
          [], [], [], [], ...
          [], [], [], ...
          launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
@@ -1574,7 +1573,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX Iridium Rudics & Navis floats
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, ...
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, ...
          1201, 1314}
             
       % retrieve mandatory configuration names for this decoder

@@ -213,9 +213,9 @@ for idCy = 1:length(a_cycleList)
    % decode the files of the current cycle
    
    % 030410 & 120210 & 012811 & 020212 & 030512 & 060612 & 062813_1 & 062813_2 &
-   % 062813_3 & 092813 & 073014 & 102815 & 061113
+   % 062813_3 & 092813 & 073014 & 102815 & 073014_2 & 061113
    if (ismember(a_decoderId, [1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, ...
-         1109, 1110, 1111, 1112, 1113, 1201]))
+         1109, 1110, 1111, 1112, 1113, 1114, 1201]))
       
       [miscInfoMsg, miscInfoLog, ...
          configInfoMsg, configInfoLog, techInfo, techData, ...

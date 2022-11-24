@@ -1471,46 +1471,6 @@ numberOfSamplesECO.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of 
 numberOfSamplesECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numberOfSamplesSBEPH = init_basic_struct;
-numberOfSamplesSBEPH.pattern = 'SBEPH=%u/%u/%u/%u/%u/%u points';
-numberOfSamplesSBEPH.count = 6;
-numberOfSamplesSBEPH.id{end+1} = 1;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to parking depth';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of SBEPH samples during descent to parking depth');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-numberOfSamplesSBEPH.id{end+1} = 2;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at parking depth';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of SBEPH samples during drift at parking depth');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-numberOfSamplesSBEPH.id{end+1} = 3;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to profile depth';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of SBEPH samples during descent to profile depth');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-numberOfSamplesSBEPH.id{end+1} = 4;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at profile depth';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of SBEPH samples during drift at profile depth');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-numberOfSamplesSBEPH.id{end+1} = 5;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during ascent to surface';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of SBEPH samples during ascent to surface');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-numberOfSamplesSBEPH.id{end+1} = 6;
-numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH surface samples';
-numberOfSamplesSBEPH.fmt{end+1} = '%d';
-numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of SBEPH surface samples');
-numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numberOfSamplesCROVER = init_basic_struct;
 numberOfSamplesCROVER.pattern = 'CROVER=%u/%u/%u/%u/%u/%u points';
 numberOfSamplesCROVER.count = 6;
@@ -1549,6 +1509,46 @@ numberOfSamplesCROVER.name{end+1} = 'number of CROVER surface samples';
 numberOfSamplesCROVER.fmt{end+1} = '%d';
 numberOfSamplesCROVER.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of CROVER surface samples');
 numberOfSamplesCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesSBEPH = init_basic_struct;
+numberOfSamplesSBEPH.pattern = 'SBEPH=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesSBEPH.count = 6;
+numberOfSamplesSBEPH.id{end+1} = 1;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to parking depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of SBEPH samples during descent to parking depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 2;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at parking depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of SBEPH samples during drift at parking depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 3;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during descent to profile depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of SBEPH samples during descent to profile depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 4;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during drift at profile depth';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of SBEPH samples during drift at profile depth');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 5;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH samples during ascent to surface';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of SBEPH samples during ascent to surface');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+numberOfSamplesSBEPH.id{end+1} = 6;
+numberOfSamplesSBEPH.name{end+1} = 'number of SBEPH surface samples';
+numberOfSamplesSBEPH.fmt{end+1} = '%d';
+numberOfSamplesSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of SBEPH surface samples');
+numberOfSamplesSBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numberOfSamplesSUNA = init_basic_struct;
@@ -1671,6 +1671,46 @@ numberOfSamplesUvp6Blk.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number
 numberOfSamplesUvp6Blk.tech{end}.shortSensorName = 'UvpBlk';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesRAMSES = init_basic_struct;
+numberOfSamplesRAMSES.pattern = 'RAMSES=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesRAMSES.count = 6;
+numberOfSamplesRAMSES.id{end+1} = 1;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES samples during descent to parking depth';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of RAMSES samples during descent to parking depth');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+numberOfSamplesRAMSES.id{end+1} = 2;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES samples during drift at parking depth';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of RAMSES samples during drift at parking depth');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+numberOfSamplesRAMSES.id{end+1} = 3;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES samples during descent to profile depth';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of RAMSES samples during descent to profile depth');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+numberOfSamplesRAMSES.id{end+1} = 4;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES samples during drift at profile depth';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of RAMSES samples during drift at profile depth');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+numberOfSamplesRAMSES.id{end+1} = 5;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES samples during ascent to surface';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of RAMSES samples during ascent to surface');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+numberOfSamplesRAMSES.id{end+1} = 6;
+numberOfSamplesRAMSES.name{end+1} = 'number of RAMSES surface samples';
+numberOfSamplesRAMSES.fmt{end+1} = '%d';
+numberOfSamplesRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of RAMSES surface samples');
+numberOfSamplesRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numberOfSamplesOpusLgt = init_basic_struct;
 numberOfSamplesOpusLgt.pattern = 'OPUS-LGT=%u/%u/%u/%u/%u/%u points';
 numberOfSamplesOpusLgt.count = 6;
@@ -1762,11 +1802,12 @@ o_techInfoStruct.DATA{end+1} = numberOfSamplesSBE41;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesDO;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOCR;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesECO;
-o_techInfoStruct.DATA{end+1} = numberOfSamplesSBEPH;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesCROVER;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesSBEPH;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesSUNA;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesUvp6Lpm;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesUvp6Blk;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesRAMSES;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOpusLgt;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOpusBlk;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1789,6 +1830,15 @@ processingVsStandbye.id{end+1} = 1;
 processingVsStandbye.name{end+1} = 'processing vs standbye ratio (%)';
 processingVsStandbye.fmt{end+1} = '%d';
 processingVsStandbye.tech{end+1} = get_cts5_tech_data_init_struct(142, 'Processing vs standbye ratio (%)');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+measurementVsStandbye = init_basic_struct;
+measurementVsStandbye.pattern = 'Measure=%u %%';
+measurementVsStandbye.count = 1;
+measurementVsStandbye.id{end+1} = 1;
+measurementVsStandbye.name{end+1} = 'measurement vs standbye ratio (%)';
+measurementVsStandbye.fmt{end+1} = '%d';
+measurementVsStandbye.tech{end+1} = get_cts5_tech_data_init_struct(195, 'Measurement vs standbye ratio (%)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 hydraulicActions = init_basic_struct;
@@ -1862,16 +1912,6 @@ sensorActivationECO.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated
 sensorActivationECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorActivationSBEPH = init_basic_struct;
-sensorActivationSBEPH.pattern = 'SBEPH=%u min';
-sensorActivationSBEPH.count = 1;
-sensorActivationSBEPH.id{end+1} = 1;
-sensorActivationSBEPH.name{end+1} = 'cumulated SBEPH activations duration (min)';
-sensorActivationSBEPH.fmt{end+1} = '%d';
-sensorActivationSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SBEPH activations duration (min)');
-sensorActivationSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorActivationCROVER = init_basic_struct;
 sensorActivationCROVER.pattern = 'CROVER=%u min';
 sensorActivationCROVER.count = 1;
@@ -1880,6 +1920,16 @@ sensorActivationCROVER.name{end+1} = 'cumulated CROVER activations duration (min
 sensorActivationCROVER.fmt{end+1} = '%d';
 sensorActivationCROVER.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated CROVER activations duration (min)');
 sensorActivationCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationSBEPH = init_basic_struct;
+sensorActivationSBEPH.pattern = 'SBEPH=%u min';
+sensorActivationSBEPH.count = 1;
+sensorActivationSBEPH.id{end+1} = 1;
+sensorActivationSBEPH.name{end+1} = 'cumulated SBEPH activations duration (min)';
+sensorActivationSBEPH.fmt{end+1} = '%d';
+sensorActivationSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated SBEPH activations duration (min)');
+sensorActivationSBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorActivationSUNA = init_basic_struct;
@@ -1902,6 +1952,16 @@ sensorActivationUVP6.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulate
 sensorActivationUVP6.tech{end}.shortSensorName = 'Uvp';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationRAMSES = init_basic_struct;
+sensorActivationRAMSES.pattern = 'RAMSES=%u min';
+sensorActivationRAMSES.count = 1;
+sensorActivationRAMSES.id{end+1} = 1;
+sensorActivationRAMSES.name{end+1} = 'cumulated RAMSES activations duration (min)';
+sensorActivationRAMSES.fmt{end+1} = '%d';
+sensorActivationRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated RAMSES activations duration (min)');
+sensorActivationRAMSES.tech{end}.shortSensorName = 'Ramses';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorActivationOPUS = init_basic_struct;
 sensorActivationOPUS.pattern = 'OPUS=%u min';
 sensorActivationOPUS.count = 1;
@@ -1916,6 +1976,7 @@ sensorActivationOPUS.tech{end}.shortSensorName = 'Opus';
 o_techInfoStruct.POWER = [];
 o_techInfoStruct.POWER{end+1} = patternDuration;
 o_techInfoStruct.POWER{end+1} = processingVsStandbye;
+o_techInfoStruct.POWER{end+1} = measurementVsStandbye;
 o_techInfoStruct.POWER{end+1} = hydraulicActions;
 o_techInfoStruct.POWER{end+1} = modemActivation;
 o_techInfoStruct.POWER{end+1} = gpsActivation;
@@ -1923,10 +1984,11 @@ o_techInfoStruct.POWER{end+1} = sensorActivationSBE41;
 o_techInfoStruct.POWER{end+1} = sensorActivationDO;
 o_techInfoStruct.POWER{end+1} = sensorActivationOCR;
 o_techInfoStruct.POWER{end+1} = sensorActivationECO;
-o_techInfoStruct.POWER{end+1} = sensorActivationSBEPH;
 o_techInfoStruct.POWER{end+1} = sensorActivationCROVER;
+o_techInfoStruct.POWER{end+1} = sensorActivationSBEPH;
 o_techInfoStruct.POWER{end+1} = sensorActivationSUNA;
 o_techInfoStruct.POWER{end+1} = sensorActivationUVP6;
+o_techInfoStruct.POWER{end+1} = sensorActivationRAMSES;
 o_techInfoStruct.POWER{end+1} = sensorActivationOPUS;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2315,16 +2377,6 @@ sensorErrorBadValueECO.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number
 sensorErrorBadValueECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorErrorBadValueSBEPH = init_basic_struct;
-sensorErrorBadValueSBEPH.pattern = 'SBEPH value (%u)';
-sensorErrorBadValueSBEPH.count = 1;
-sensorErrorBadValueSBEPH.id{end+1} = 1;
-sensorErrorBadValueSBEPH.name{end+1} = 'number of BAD VALUE errors for SBEPH sensor';
-sensorErrorBadValueSBEPH.fmt{end+1} = '%d';
-sensorErrorBadValueSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for SBEPH sensor');
-sensorErrorBadValueSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBadValueCROVER = init_basic_struct;
 sensorErrorBadValueCROVER.pattern = 'CROVER value (%u)';
 sensorErrorBadValueCROVER.count = 1;
@@ -2333,6 +2385,16 @@ sensorErrorBadValueCROVER.name{end+1} = 'number of BAD VALUE errors for CROVER s
 sensorErrorBadValueCROVER.fmt{end+1} = '%d';
 sensorErrorBadValueCROVER.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for CROVER sensor');
 sensorErrorBadValueCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueSBEPH = init_basic_struct;
+sensorErrorBadValueSBEPH.pattern = 'SBEPH value (%u)';
+sensorErrorBadValueSBEPH.count = 1;
+sensorErrorBadValueSBEPH.id{end+1} = 1;
+sensorErrorBadValueSBEPH.name{end+1} = 'number of BAD VALUE errors for SBEPH sensor';
+sensorErrorBadValueSBEPH.fmt{end+1} = '%d';
+sensorErrorBadValueSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for SBEPH sensor');
+sensorErrorBadValueSBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBadValueSUNA = init_basic_struct;
@@ -2353,6 +2415,16 @@ sensorErrorBadValueUVP6.name{end+1} = 'number of BAD VALUE errors for UVP6 senso
 sensorErrorBadValueUVP6.fmt{end+1} = '%d';
 sensorErrorBadValueUVP6.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for UVP6 sensor');
 sensorErrorBadValueUVP6.tech{end}.shortSensorName = 'Uvp';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueRAMSES = init_basic_struct;
+sensorErrorBadValueRAMSES.pattern = 'RAMSES value (%u)';
+sensorErrorBadValueRAMSES.count = 1;
+sensorErrorBadValueRAMSES.id{end+1} = 1;
+sensorErrorBadValueRAMSES.name{end+1} = 'number of BAD VALUE errors for RAMSES sensor';
+sensorErrorBadValueRAMSES.fmt{end+1} = '%d';
+sensorErrorBadValueRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for RAMSES sensor');
+sensorErrorBadValueRAMSES.tech{end}.shortSensorName = 'Ramses';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBadValueOPUS = init_basic_struct;
@@ -2405,16 +2477,6 @@ sensorErrorNoReplyECO.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number 
 sensorErrorNoReplyECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorErrorNoReplySBEPH = init_basic_struct;
-sensorErrorNoReplySBEPH.pattern = 'SBEPH default (%u)';
-sensorErrorNoReplySBEPH.count = 1;
-sensorErrorNoReplySBEPH.id{end+1} = 1;
-sensorErrorNoReplySBEPH.name{end+1} = 'number of NO REPLY errors for SBEPH sensor';
-sensorErrorNoReplySBEPH.fmt{end+1} = '%d';
-sensorErrorNoReplySBEPH.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for SBEPH sensor');
-sensorErrorNoReplySBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorNoReplyCROVER = init_basic_struct;
 sensorErrorNoReplyCROVER.pattern = 'CROVER default (%u)';
 sensorErrorNoReplyCROVER.count = 1;
@@ -2423,6 +2485,16 @@ sensorErrorNoReplyCROVER.name{end+1} = 'number of NO REPLY errors for CROVER sen
 sensorErrorNoReplyCROVER.fmt{end+1} = '%d';
 sensorErrorNoReplyCROVER.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for CROVER sensor');
 sensorErrorNoReplyCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplySBEPH = init_basic_struct;
+sensorErrorNoReplySBEPH.pattern = 'SBEPH default (%u)';
+sensorErrorNoReplySBEPH.count = 1;
+sensorErrorNoReplySBEPH.id{end+1} = 1;
+sensorErrorNoReplySBEPH.name{end+1} = 'number of NO REPLY errors for SBEPH sensor';
+sensorErrorNoReplySBEPH.fmt{end+1} = '%d';
+sensorErrorNoReplySBEPH.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for SBEPH sensor');
+sensorErrorNoReplySBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorNoReplySUNA = init_basic_struct;
@@ -2443,6 +2515,16 @@ sensorErrorNoReplyUVP6.name{end+1} = 'number of NO REPLY errors for UVP6 sensor'
 sensorErrorNoReplyUVP6.fmt{end+1} = '%d';
 sensorErrorNoReplyUVP6.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for UVP6 sensor');
 sensorErrorNoReplyUVP6.tech{end}.shortSensorName = 'Uvp';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplyRAMSES = init_basic_struct;
+sensorErrorNoReplyRAMSES.pattern = 'RAMSES default (%u)';
+sensorErrorNoReplyRAMSES.count = 1;
+sensorErrorNoReplyRAMSES.id{end+1} = 1;
+sensorErrorNoReplyRAMSES.name{end+1} = 'number of NO REPLY errors for RAMSES sensor';
+sensorErrorNoReplyRAMSES.fmt{end+1} = '%d';
+sensorErrorNoReplyRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for RAMSES sensor');
+sensorErrorNoReplyRAMSES.tech{end}.shortSensorName = 'Ramses';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorNoReplyOPUS = init_basic_struct;
@@ -2491,15 +2573,6 @@ sensorErrorBrokenECO.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN a
 sensorErrorBrokenECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorErrorBrokenSBEPH = init_basic_struct;
-sensorErrorBrokenSBEPH.pattern = 'SBEPH broken';
-sensorErrorBrokenSBEPH.count = 0;
-sensorErrorBrokenSBEPH.id{end+1} = 1;
-sensorErrorBrokenSBEPH.name{end+1} = 'BROKEN alarm for SBEPH sensor';
-sensorErrorBrokenSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for SBEPH sensor');
-sensorErrorBrokenSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenCROVER = init_basic_struct;
 sensorErrorBrokenCROVER.pattern = 'CROVER broken';
 sensorErrorBrokenCROVER.count = 0;
@@ -2507,6 +2580,15 @@ sensorErrorBrokenCROVER.id{end+1} = 1;
 sensorErrorBrokenCROVER.name{end+1} = 'BROKEN alarm for CROVER sensor';
 sensorErrorBrokenCROVER.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for CROVER sensor');
 sensorErrorBrokenCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenSBEPH = init_basic_struct;
+sensorErrorBrokenSBEPH.pattern = 'SBEPH broken';
+sensorErrorBrokenSBEPH.count = 0;
+sensorErrorBrokenSBEPH.id{end+1} = 1;
+sensorErrorBrokenSBEPH.name{end+1} = 'BROKEN alarm for SBEPH sensor';
+sensorErrorBrokenSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for SBEPH sensor');
+sensorErrorBrokenSBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenSUNA = init_basic_struct;
@@ -2525,6 +2607,15 @@ sensorErrorBrokenUVP6.id{end+1} = 1;
 sensorErrorBrokenUVP6.name{end+1} = 'BROKEN alarm for UVP6 sensor';
 sensorErrorBrokenUVP6.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for UVP6 sensor');
 sensorErrorBrokenUVP6.tech{end}.shortSensorName = 'Uvp';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenRAMSES = init_basic_struct;
+sensorErrorBrokenRAMSES.pattern = 'RAMSES broken';
+sensorErrorBrokenRAMSES.count = 0;
+sensorErrorBrokenRAMSES.id{end+1} = 1;
+sensorErrorBrokenRAMSES.name{end+1} = 'BROKEN alarm for RAMSES sensor';
+sensorErrorBrokenRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for RAMSES sensor');
+sensorErrorBrokenRAMSES.tech{end}.shortSensorName = 'Ramses';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenOPUS = init_basic_struct;
@@ -2576,16 +2667,6 @@ sensorErrorDataSizeECO.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA S
 sensorErrorDataSizeECO.tech{end}.shortSensorName = 'Eco';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sensorErrorDataSizeSBEPH = init_basic_struct;
-sensorErrorDataSizeSBEPH.pattern = 'SBEPH size (%f KB)';
-sensorErrorDataSizeSBEPH.count = 1;
-sensorErrorDataSizeSBEPH.id{end+1} = 1;
-sensorErrorDataSizeSBEPH.name{end+1} = 'DATA SIZE alarm for SBEPH sensor (KB)';
-sensorErrorDataSizeSBEPH.fmt{end+1} = '%g';
-sensorErrorDataSizeSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for SBEPH sensor (KB)');
-sensorErrorDataSizeSBEPH.tech{end}.shortSensorName = 'Sfet';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeCROVER = init_basic_struct;
 sensorErrorDataSizeCROVER.pattern = 'CROVER size (%f KB)';
 sensorErrorDataSizeCROVER.count = 1;
@@ -2594,6 +2675,16 @@ sensorErrorDataSizeCROVER.name{end+1} = 'DATA SIZE alarm for CROVER sensor (KB)'
 sensorErrorDataSizeCROVER.fmt{end+1} = '%g';
 sensorErrorDataSizeCROVER.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for CROVER sensor (KB)');
 sensorErrorDataSizeCROVER.tech{end}.shortSensorName = 'Crover';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeSBEPH = init_basic_struct;
+sensorErrorDataSizeSBEPH.pattern = 'SBEPH size (%f KB)';
+sensorErrorDataSizeSBEPH.count = 1;
+sensorErrorDataSizeSBEPH.id{end+1} = 1;
+sensorErrorDataSizeSBEPH.name{end+1} = 'DATA SIZE alarm for SBEPH sensor (KB)';
+sensorErrorDataSizeSBEPH.fmt{end+1} = '%g';
+sensorErrorDataSizeSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for SBEPH sensor (KB)');
+sensorErrorDataSizeSBEPH.tech{end}.shortSensorName = 'Sfet';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeSUNA = init_basic_struct;
@@ -2624,6 +2715,16 @@ sensorErrorDataSizeUvp6Blk.name{end+1} = 'DATA SIZE alarm for UVP6-BLK sensor (K
 sensorErrorDataSizeUvp6Blk.fmt{end+1} = '%g';
 sensorErrorDataSizeUvp6Blk.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for UVP6-BLK sensor (KB)');
 sensorErrorDataSizeUvp6Blk.tech{end}.shortSensorName = 'UvpBlk';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeRAMSES = init_basic_struct;
+sensorErrorDataSizeRAMSES.pattern = 'RAMSES size (%f KB)';
+sensorErrorDataSizeRAMSES.count = 1;
+sensorErrorDataSizeRAMSES.id{end+1} = 1;
+sensorErrorDataSizeRAMSES.name{end+1} = 'DATA SIZE alarm for RAMSES sensor (KB)';
+sensorErrorDataSizeRAMSES.fmt{end+1} = '%g';
+sensorErrorDataSizeRAMSES.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for RAMSES sensor (KB)');
+sensorErrorDataSizeRAMSES.tech{end}.shortSensorName = 'Ramses';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeOpusLgt = init_basic_struct;
@@ -2688,38 +2789,42 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueECO;
-o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueUVP6;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyECO;
-o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyUVP6;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenECO;
-o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenUVP6;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOCR;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeECO;
-o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeCROVER;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBEPH;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSUNA;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeUvp6Lpm;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeUvp6Blk;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOpusLgt;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOpusBlk;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2784,6 +2889,82 @@ freeSpaceUVP6.tech{end+1} = get_cts5_tech_data_init_struct(232, 'Available space
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 o_techInfoStruct.SENSOR_UVP6 = [];
 o_techInfoStruct.SENSOR_UVP6{end+1} = freeSpaceUVP6;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+firstAscentFrameSBEPH = init_basic_struct;
+firstAscentFrameSBEPH.pattern = 'First=%f/%f/%f/%f at %f dbar';
+firstAscentFrameSBEPH.count = 5;
+firstAscentFrameSBEPH.id{end+1} = 1;
+firstAscentFrameSBEPH.name{end+1} = 'Vref measurement value of SBEPH first ascent frame';
+firstAscentFrameSBEPH.fmt{end+1} = '%g';
+firstAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(240, 'Vref measurement value of SBEPH first ascent frame');
+firstAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+firstAscentFrameSBEPH.id{end+1} = 2;
+firstAscentFrameSBEPH.name{end+1} = 'Vk measurement value of SBEPH first ascent frame';
+firstAscentFrameSBEPH.fmt{end+1} = '%g';
+firstAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(241, 'Vk measurement value of SBEPH first ascent frame');
+firstAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+firstAscentFrameSBEPH.id{end+1} = 3;
+firstAscentFrameSBEPH.name{end+1} = 'Lk measurement value of SBEPH first ascent frame';
+firstAscentFrameSBEPH.fmt{end+1} = '%g';
+firstAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(242, 'Lk measurement value of SBEPH first ascent frame');
+firstAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+firstAscentFrameSBEPH.id{end+1} = 4;
+firstAscentFrameSBEPH.name{end+1} = 'Lb measurement value of SBEPH first ascent frame';
+firstAscentFrameSBEPH.fmt{end+1} = '%g';
+firstAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(243, 'Lb measurement value of SBEPH first ascent frame');
+firstAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+firstAscentFrameSBEPH.id{end+1} = 5;
+firstAscentFrameSBEPH.name{end+1} = 'PRES measurement value of SBEPH first ascent frame';
+firstAscentFrameSBEPH.fmt{end+1} = '%g';
+firstAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(239, 'PRES measurement value of SBEPH first ascent frame');
+firstAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+lastAscentFrameSBEPH = init_basic_struct;
+lastAscentFrameSBEPH.pattern = 'First=%f/%f/%f/%f at %f dbar';
+lastAscentFrameSBEPH.count = 5;
+lastAscentFrameSBEPH.id{end+1} = 1;
+lastAscentFrameSBEPH.name{end+1} = 'Vref measurement value of SBEPH last ascent frame';
+lastAscentFrameSBEPH.fmt{end+1} = '%g';
+lastAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(245, 'Vref measurement value of SBEPH last ascent frame');
+lastAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+lastAscentFrameSBEPH.id{end+1} = 2;
+lastAscentFrameSBEPH.name{end+1} = 'Vk measurement value of SBEPH last ascent frame';
+lastAscentFrameSBEPH.fmt{end+1} = '%g';
+lastAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(246, 'Vk measurement value of SBEPH last ascent frame');
+lastAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+lastAscentFrameSBEPH.id{end+1} = 3;
+lastAscentFrameSBEPH.name{end+1} = 'Lk measurement value of SBEPH last ascent frame';
+lastAscentFrameSBEPH.fmt{end+1} = '%g';
+lastAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(247, 'Lk measurement value of SBEPH last ascent frame');
+lastAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+lastAscentFrameSBEPH.id{end+1} = 4;
+lastAscentFrameSBEPH.name{end+1} = 'Lb measurement value of SBEPH last ascent frame';
+lastAscentFrameSBEPH.fmt{end+1} = '%g';
+lastAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(248, 'Lb measurement value of SBEPH last ascent frame');
+lastAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+lastAscentFrameSBEPH.id{end+1} = 5;
+lastAscentFrameSBEPH.name{end+1} = 'PRES measurement value of SBEPH last ascent frame';
+lastAscentFrameSBEPH.fmt{end+1} = '%g';
+lastAscentFrameSBEPH.tech{end+1} = get_cts5_tech_data_init_struct(244, 'PRES measurement value of SBEPH last ascent frame');
+lastAscentFrameSBEPH.tech{end}.shortSensorName = 'Sfet';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+o_techInfoStruct.SENSOR_SBEPH = [];
+o_techInfoStruct.SENSOR_SBEPH{end+1} = firstAscentFrameSBEPH;
+o_techInfoStruct.SENSOR_SBEPH{end+1} = lastAscentFrameSBEPH;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

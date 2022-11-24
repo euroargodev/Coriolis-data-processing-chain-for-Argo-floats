@@ -420,34 +420,39 @@ if (~isempty(profDo))
    profDoStruct.configMissionNumber = configMissionNumber;
    
    % add MTIME to data
-   if (profDo.temporaryDates ~= 1)
-      if (~isempty(profDo.dateList))
-         if (any(profDo.dates ~= profDo.dateList.fillValue))
-            % we temporarily store JULD as MTIME (because profile date will be
-            % computed later)
-            mtimeData = profDo.dates;
-            mtimeData(find(mtimeData == profDo.dateList.fillValue)) = paramMtime.fillValue;
-         else
-            mtimeData = ones(size(profDo.data, 1), 1)*paramMtime.fillValue;
-         end
-         profDoStruct.paramList = [paramMtime profDoStruct.paramList];
-         if (~isempty(profDoStruct.paramDataMode))
-            profDoStruct.paramDataMode = [' ' profDoStruct.paramDataMode];
-         end
-         profDoStruct.data = cat(2, mtimeData, double(profDoStruct.data));
-         
-         if (~isempty(profDo.dataAdj))
-            mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
-            profDoStruct.dataAdj = cat(2, mtimeDataAdj, double(profDoStruct.dataAdj));
-         end
+   if (~isempty(profDo.dateList))
+      if (any(profDo.dates ~= profDo.dateList.fillValue))
+         % we temporarily store JULD as MTIME (because profile date will be
+         % computed later)
+         mtimeData = profDo.dates;
+         mtimeData(find(mtimeData == profDo.dateList.fillValue)) = paramMtime.fillValue;
+      else
+         mtimeData = ones(size(profDo.data, 1), 1)*paramMtime.fillValue;
       end
-   else
+      profDoStruct.paramList = [paramMtime profDoStruct.paramList];
+      if (~isempty(profDoStruct.paramDataMode))
+         profDoStruct.paramDataMode = [' ' profDoStruct.paramDataMode];
+      end
+      profDoStruct.data = cat(2, mtimeData, double(profDoStruct.data));
+      
+      if (~isempty(profDo.dataAdj))
+         mtimeDataAdj = ones(size(profDo.dataAdj, 1), 1)*paramMtime.fillValue;
+         profDoStruct.dataAdj = cat(2, mtimeDataAdj, double(profDoStruct.dataAdj));
+      end
+   end
+   
+   % if DO dates have been estimated by the decoder, set PRES_QC and MTIME_QC to
+   % '2'
+   if (profDo.temporaryDates == 1)
       idPres = find(strcmp({profDoStruct.paramList.name}, 'PRES'), 1);
+      idMtime = find(strcmp({profDoStruct.paramList.name}, 'MTIME'), 1);
       profDoStruct.dataQc = ones(size(profDoStruct.data))*g_decArgo_qcDef;
       profDoStruct.dataQc(:, idPres) = g_decArgo_qcProbablyGood;
+      profDoStruct.dataQc(:, idMtime) = g_decArgo_qcProbablyGood;
       if (~isempty(profDoStruct.dataAdj))
          profDoStruct.dataAdjQc = ones(size(profDoStruct.data))*g_decArgo_qcDef;
          profDoStruct.dataAdjQc(:, idPres) = g_decArgo_qcProbablyGood;
+         profDoStruct.dataAdjQc(:, idMtime) = g_decArgo_qcProbablyGood;
       end
    end
 end

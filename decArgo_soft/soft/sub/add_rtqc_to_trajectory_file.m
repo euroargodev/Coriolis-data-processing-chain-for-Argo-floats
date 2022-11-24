@@ -111,6 +111,9 @@
 %                             moved)
 %                             - a measurement with QC = '3' is tested by other
 %                             quality control tests
+%   06/21/2021 - RNU - V 3.1: JULD_QC and JULD_ADJUSTED_QC should not be
+%                             initialized anymore (in APF11 DO profiles with the
+%                             timestamp issue, JULD_QC is set to '2'
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -149,7 +152,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '3.0';
+g_decArgo_addRtqcToTrajVersion = '3.1';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -634,25 +637,30 @@ testFailedList = zeros(lastTestNum, 1);
 % set QC = ' ' for unused values and QC = '0' for existing values
 
 % JULD_QC
-% initialize JULD_QC (except when JULD_STATUS = '9')
-idUpdate = find(juldStatus ~= g_JULD_STATUS_9);
-if (~isempty(idUpdate))
-   juldQc(idUpdate) = g_decArgo_qcStrDef;
-end
-idNoDef = find(juld ~= paramJuld.fillValue);
-if (~isempty(idNoDef))
-   juldQc(idNoDef) = g_decArgo_qcStrNoQc;
-end
-% JULD_ADJUSTED_QC
-% initialize JULD_ADJUSTED_QC (except when JULD_ADJUSTED_STATUS = '9')
-idUpdate = find(juldAdjStatus ~= g_JULD_STATUS_9);
-if (~isempty(idUpdate))
-   juldAdjQc(idUpdate) = g_decArgo_qcStrDef;
-end
-idNoDef = find(juldAdj ~= paramJuld.fillValue);
-if (~isempty(idNoDef))
-   juldAdjQc(idNoDef) = g_decArgo_qcStrNoQc;
-end
+
+% JULD_QC and JULD_ADJUSTED_QC should not be initialized anymore (in APF11 DO
+% profiles with the timestamp issue, JULD_QC is set to '2')
+
+% % initialize JULD_QC (except when JULD_STATUS = '9')
+% idUpdate = find(juldStatus ~= g_JULD_STATUS_9);
+% if (~isempty(idUpdate))
+%    juldQc(idUpdate) = g_decArgo_qcStrDef;
+% end
+% idNoDef = find(juld ~= paramJuld.fillValue);
+% if (~isempty(idNoDef))
+%    juldQc(idNoDef) = g_decArgo_qcStrNoQc;
+% end
+% % JULD_ADJUSTED_QC
+% % initialize JULD_ADJUSTED_QC (except when JULD_ADJUSTED_STATUS = '9')
+% idUpdate = find(juldAdjStatus ~= g_JULD_STATUS_9);
+% if (~isempty(idUpdate))
+%    juldAdjQc(idUpdate) = g_decArgo_qcStrDef;
+% end
+% idNoDef = find(juldAdj ~= paramJuld.fillValue);
+% if (~isempty(idNoDef))
+%    juldAdjQc(idNoDef) = g_decArgo_qcStrNoQc;
+% end
+
 % POSITION_QC
 positionQc = repmat(g_decArgo_qcStrDef, size(positionQc));
 if (a_justAfterDecodingFlag == 1)

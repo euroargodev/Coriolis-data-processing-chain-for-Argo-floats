@@ -31,8 +31,9 @@ o_configSectionList = [ ...
    {'SECURITY'} ...
    {'SURFACE_APPROACH'} ...
    {'SURFACE_ACQUISITION'} ...
-   {'ICE'} ...
    {'CYCLE'} ...
+   {'ICE_AVOIDANCE'} ...
+   {'ISA'} ...
    {'IRIDIUM_RUDICS'} ...
    {'MOTOR'} ...
    {'PAYLOAD'} ...
@@ -51,6 +52,7 @@ o_configSectionList = [ ...
    {'SENSOR_10'} ...
    {'SENSOR_11'} ...
    {'SENSOR_11'} ...
+   {'SENSOR_14'} ...
    {'SENSOR_15'} ...
    {'SDA14'} ...
    {'SPECIAL'} ...
@@ -64,7 +66,9 @@ o_configSectionList = [ ...
    {'SBEPH'} ...
    {'CROVER'} ...
    {'SUNA'} ...
+   {'RAMSES'} ...
    {'OPUS'} ...
+   {'UVP6'} ...
    {'UVP6'} ...
    {'GUI'} ...
    ];
@@ -516,31 +520,6 @@ for idP = 0:1
    o_configInfoStruct.SURFACE_ACQUISITION{end+1} = param;
 end
 
-o_configInfoStruct.ICE = [];
-for idP = 0:3
-   param = init_basic_struct;
-   param.num = idP;
-   switch (idP)
-      case 0
-         param.fmtIn = '%u';
-         param.name = 'enable/disable ice detection';
-         param.fmtOut = '%d';
-      case 1
-         param.fmtIn = '%u';
-         param.name = 'depth for "slow" start of ascent (dbar)';
-         param.fmtOut = '%d';
-      case 2
-         param.fmtIn = '%u';
-         param.name = 'depth for execution of ice detection test (dbar)';
-         param.fmtOut = '%d';
-      case 3
-         param.fmtIn = '%u';
-         param.name = 'duration of ice detection test';
-         param.fmtOut = '%d';
-   end
-   o_configInfoStruct.ICE{end+1} = param;
-end
-
 o_configInfoStruct.CYCLE = [];
 for idP = 0:2
    param = init_basic_struct;
@@ -560,6 +539,64 @@ for idP = 0:2
          param.fmtOut = '%d';
    end
    o_configInfoStruct.CYCLE{end+1} = param;
+end
+
+o_configInfoStruct.ICE_AVOIDANCE = [];
+for idP = 0:4
+   param = init_basic_struct;
+   param.num = idP;
+   switch (idP)
+      case 0
+         param.fmtIn = '%s';
+         param.name = 'enable/disable ice avoidance';
+         param.fmtOut = '%s';
+      case 1
+         param.fmtIn = '%u';
+         param.name = 'depth for "slow" start of ascent (dbar)';
+         param.fmtOut = '%d';
+      case 2
+         param.fmtIn = '%u';
+         param.name = 'maximum duration period without trying a transmission session (month)';
+         param.fmtOut = '%d';
+      case 3
+         param.fmtIn = '%u';
+         param.name = 'systematic abort profile period after ISA detection (days)';
+         param.fmtOut = '%d';
+      case 4
+         param.fmtIn = '%u';
+         param.name = 'Systematic abort profile period after collision or cover detection (days)';
+         param.fmtOut = '%d';
+   end
+   o_configInfoStruct.ICE_AVOIDANCE{end+1} = param;
+end
+
+o_configInfoStruct.ISA = [];
+for idP = 0:4
+   param = init_basic_struct;
+   param.num = idP;
+   switch (idP)
+      case 0
+         param.fmtIn = '%s';
+         param.name = 'enable/disable ISA detection';
+         param.fmtOut = '%s';
+      case 1
+         param.fmtIn = '%u';
+         param.name = 'collection starting depth (dbar)';
+         param.fmtOut = '%d';
+      case 2
+         param.fmtIn = '%u';
+         param.name = 'collection stopping depth (dbar)';
+         param.fmtOut = '%d';
+      case 3
+         param.fmtIn = '%f';
+         param.name = 'median temperature threshold (degC)';
+         param.fmtOut = '%g';
+      case 4
+         param.fmtIn = '%u';
+         param.name = 'successive detections counter threshold';
+         param.fmtOut = '%d';
+   end
+   o_configInfoStruct.ISA{end+1} = param;
 end
 
 o_configInfoStruct.IRIDIUM_RUDICS = [];
@@ -978,6 +1015,32 @@ for idP = 54:60
    o_configInfoStruct.SENSOR_11{end+1} = param;
 end
 
+% RAMSES
+o_configInfoStruct.SENSOR_14 = o_configInfoStruct.SENSOR_;
+for idP = 54:60
+   param = init_basic_struct;
+   param.num = idP;
+   switch (idP)
+      case 54
+         param.fmtIn = '%u';
+         param.name = 'spectrum pixel begin';
+         param.fmtOut = '%d';
+      case 55
+         param.fmtIn = '%u';
+         param.name = 'spectrum pixel end';
+         param.fmtOut = '%d';
+      case 56
+         param.fmtIn = '%u';
+         param.name = 'spectrum binning';
+         param.fmtOut = '%d';
+      case 60
+         param.fmtIn = '%u';
+         param.name = 'surface - sampling period / in-air measurements (sec)';
+         param.fmtOut = '%d';
+   end
+   o_configInfoStruct.SENSOR_14{end+1} = param;
+end
+
 % OPUS
 o_configInfoStruct.SENSOR_15 = o_configInfoStruct.SENSOR_;
 for idP = 54:70
@@ -1199,6 +1262,14 @@ param.fmtIn = '%u';
 param.name = 'serial port number';
 param.fmtOut = '%d';
 o_configInfoStruct.UVP6{end+1} = param;
+
+o_configInfoStruct.RAMSES = [];
+param = init_basic_struct;
+param.num = 0;
+param.fmtIn = '%u';
+param.name = 'serial port number';
+param.fmtOut = '%d';
+o_configInfoStruct.RAMSES{end+1} = param;
 
 o_configInfoStruct.OPUS = [];
 param = init_basic_struct;

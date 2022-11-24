@@ -330,6 +330,8 @@ sensors.sensor_opus.sensor_lamp.sn = '';
 sensors.sensor_opus.waterbase.length = '';
 sensors.sensor_opus.waterbase.intensities = '';
 
+sensors.sensor_ramses = [];
+
 o_metaDataStruct.profiler = profiler;
 o_metaDataStruct.telecom = telecom;
 o_metaDataStruct.hardware = hardware;

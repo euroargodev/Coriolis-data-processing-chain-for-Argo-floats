@@ -46,9 +46,9 @@ switch (a_decoderId)
       [o_profHrData, o_profHrInfo] = ...
          decode_apx_ir_HR_profile_data_1(a_profHighResMeasDataStr);
       
-   case {1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1314}
+   case {1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
       % 120210 & 012811 & 020212 & 030512 & 060612 & 062813_1 & 062813_2 &
-      % 062813_3 & 092813 & 073014 & 102815 & 110216 & 090215
+      % 062813_3 & 092813 & 073014 & 102815 & 110216 & 073014_2 & 090215
       
       [o_profHrData, o_profHrInfo] = ...
          decode_apx_ir_HR_profile_data_2_to_14(a_profHighResMeasDataStr);

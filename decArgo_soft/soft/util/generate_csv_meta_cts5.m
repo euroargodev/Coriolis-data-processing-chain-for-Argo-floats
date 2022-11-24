@@ -37,6 +37,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Expo
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.13_6903095_6903096.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.12_Ramses_6903706.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
@@ -227,7 +228,7 @@ for idFloat = 1:nbFloats
          %          fprintf(fidOut, '%d;418;%d;%s;PREDEPLOYMENT_CALIB_COMMENT;%s\n', floatNum, paramDimLevel(idP), calibComment, floatVersion);
       end
    end
-      
+   
    % SUNA output pixel numbers information
    if (~isempty(find(strcmp(sensorList, 'SUNA') == 1, 1)))
       [pixelBegin, pixelEnd] = get_output_pixel(outputPixelData, floatNum);
@@ -301,13 +302,13 @@ switch a_inputSensorName
       o_sensorDimLevel = [301 302 303];
       o_sensorMaker = [{'WETLABS'} {'WETLABS'} {'WETLABS'}];
       o_sensorModel = [{'ECO_FLBBCD'} {'ECO_FLBBCD'} {'ECO_FLBBCD'}];
-            
+      
    case 'ECO2'
       o_sensorName = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'}];
       o_sensorDimLevel = [301 302];
       o_sensorMaker = [{'WETLABS'} {'WETLABS'}];
       o_sensorModel = [{'ECO_FLBB_2K'} {'ECO_FLBB_2K'}];
-            
+      
    case 'CROVER'
       o_sensorName = {'TRANSMISSOMETER_CP660'};
       o_sensorDimLevel = [501];
@@ -325,19 +326,25 @@ switch a_inputSensorName
       o_sensorDimLevel = [701];
       o_sensorMaker = {'SBE'};
       o_sensorModel = {'SEAFET'};
-
+      
    case 'UVP'
       o_sensorName = {'AUX_PARTICLES_PLANKTON_CAMERA'};
       o_sensorDimLevel = [801];
       o_sensorMaker = {'HYDROPTIC'};
       o_sensorModel = {'UVP6-LP'};
-
+      
    case 'OPUS'
       o_sensorName = {'AUX_SPECTROPHOTOMETER_NITRATE'};
       o_sensorDimLevel = [901];
       o_sensorMaker = {'TRIOS'};
       o_sensorModel = {'OPUS_DS'};
-
+      
+   case 'RAMSES'
+      o_sensorName = {'AUX_RADIOMETER_DOWN_IRR'};
+      o_sensorDimLevel = [1201];
+      o_sensorMaker = {'TRIOS'};
+      o_sensorModel = {'RAMSES_ACC'};
+      
    otherwise
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
 end
@@ -390,7 +397,7 @@ for idSensor = 1:length(a_sensorList)
          techParIdList = [ ...
             {'2196'}; ...
             {'2197'}; ...
-            {'2198'} ...      
+            {'2198'} ...
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
             get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
@@ -474,7 +481,7 @@ for idSensor = 1:length(a_sensorList)
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
             get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
-
+         
       case 'CROVER'
          codeList = [ ...
             {'CROVER_IN_PUMPED_STREAM'}; ...
@@ -492,7 +499,7 @@ for idSensor = 1:length(a_sensorList)
             {''} ...
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
-            get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);         
+            get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
          
       case 'SUNA'
          codeList = [ ...
@@ -512,13 +519,16 @@ for idSensor = 1:length(a_sensorList)
          
       case 'TRANSISTOR_PH'
          % nothing yet
-
+         
       case 'UVP'
          % nothing yet
-
+         
       case 'OPUS'
          % nothing yet
-
+         
+      case 'RAMSES'
+         % nothing yet
+         
       otherwise
          fprintf('ERROR: No sensor misc information for %s\n', a_sensorList{idSensor});
    end
@@ -664,7 +674,7 @@ return
 
 % ------------------------------------------------------------------------------
 function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
-   
+
 o_platformFamily = [];
 
 global g_decArgo_floatNum;
@@ -700,7 +710,7 @@ return
 
 % ------------------------------------------------------------------------------
 function [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
-   
+
 o_platformType = [];
 
 global g_decArgo_floatNum;
@@ -736,7 +746,7 @@ return
 
 % ------------------------------------------------------------------------------
 function [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
-   
+
 o_wmoInstType = [];
 
 global g_decArgo_floatNum;
@@ -859,7 +869,7 @@ switch a_inputSensorName
          {'count'} {'count'} ...
          {'mg/m3'} {'m-1'} ...
          ];
-            
+      
    case 'CROVER'
       o_paramName = [ ...
          {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'} {'CP660'} ...
@@ -1045,6 +1055,36 @@ switch a_inputSensorName
          {'count'} ...
          ];
       
+   case 'RAMSES'
+      o_paramName = [ ...
+         {'RADIOMETER_INTEGRATION_TIME'} ...
+         {'RADIOMETER_PRE_PRES'} ...
+         {'RADIOMETER_POST_PRES'} ...
+         {'RADIOMETER_PRE_INCLINATION'} ...
+         {'RADIOMETER_POST_INCLINATION'} ...
+         {'RADIOMETER_DARK_AVERAGE'} ...
+         {'RAW_DOWNWELLING_IRRADIANCE'} ...
+         ];
+      o_paramDimLevel = [1201 1202 1203 1204 1205 1206 1207];
+      o_paramSensor = [ ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} ...
+         ];
+      o_paramUnits = [ ...
+         {'msec'} ...
+         {'decibar'} ...
+         {'decibar'} ...
+         {'degree'} ...
+         {'degree'} ...
+         {'count'} ...
+         {'count'} ...
+         ];
+      
    otherwise
       fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputSensorName);
 end
@@ -1176,7 +1216,7 @@ switch a_parameterName
       o_calibEquation = '';
       o_calibCoef = '';
       o_calibComment = '';
-            
+      
    case {'TEMP_DOXY'}
       o_calibEquation = '';
       o_calibCoef = '';
@@ -1218,7 +1258,7 @@ switch a_parameterName
          case {121, 122, 123, 124, 125}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
-
+            
          otherwise
             fprintf('ERROR: No calib information for parameter %s of float #%d (decId %d)\n', a_parameterName, a_floatNum, a_decId);
       end
@@ -1229,7 +1269,7 @@ switch a_parameterName
             num_2_str(darkCountChloroA), num_2_str(scaleFactChloroA));
          o_calibComment = 'No DARK_CHLA_O provided';
       end
-            
+      
       % ECO3
    case {'BBP700'}
       
@@ -1367,7 +1407,7 @@ switch a_parameterName
       o_calibEquation = 'none';
       o_calibCoef = 'none';
       o_calibComment = 'Intensity of ultra violet flux dark measurement from nitrate sensor';
-            
+      
    case {'FIT_ERROR_NITRATE'}
       o_calibEquation = '';
       o_calibCoef = '';

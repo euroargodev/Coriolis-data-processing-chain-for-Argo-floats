@@ -103,6 +103,13 @@ global g_decArgo_presDef;
 % float configuration
 global g_decArgo_floatConfig;
 
+% QC flag values (numerical)
+global g_decArgo_qcDef;
+global g_decArgo_qcProbablyGood;
+
+% QC flag values (char)
+global g_decArgo_qcStrProbablyGood;
+
 
 % if (a_cycleNum == 73)
 %    a=1
@@ -576,8 +583,27 @@ if (~isempty(phaseDates))
             end
             profData = a_profRafos;
       end
+            
+      % some CTD_P have no timestamp (see 7900580 #45)
+      idDel = find(profData.dates == paramJuld.fillValue);
+      if (~isempty(idDel))
+         profData.dates(idDel) = [];
+         if (~isempty(profData.datesAdj))
+            profData.datesAdj(idDel) = [];
+         end
+         if (~isempty(profData.datesStatus))
+            profData.datesStatus(idDel) = [];
+         end
+         profData.data(idDel, :) = [];
+         if (~isempty(profData.dataAdj))
+            profData.dataAdj(idDel, :) = [];
+         end
+         if (~isempty(profData.dataRed))
+            profData.dataRed(idDel, :) = [];
+         end
+      end
       
-      if (isempty(profData.dates) || ~any(profData.dates ~= paramJuld.fillValue))
+      if (isempty(profData.dates))
          continue
       end
       
@@ -630,6 +656,16 @@ if (~isempty(phaseDates))
                time, ...
                timeAdj, ...
                g_JULD_STATUS_2);
+            % if DO dates have been estimated by the decoder, set JULD_QC to '2'
+            if ((doDataFlag) && (profData.temporaryDates))
+               if (~isempty(measStruct.juldQc))
+                  measStruct.juldQc = g_decArgo_qcStrProbablyGood;
+               end
+               if (~isempty(measStruct.juldAdjQc))
+                  measStruct.juldAdjQc = g_decArgo_qcStrProbablyGood;
+               end
+            end
+
             if (~isempty(measStruct))
                
                measStruct.paramList = profData.paramList;
@@ -637,12 +673,27 @@ if (~isempty(phaseDates))
                measStruct.paramNumberWithSubLevels = profData.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = profData.paramNumberOfSubLevels;
                measStruct.paramData = profData.data(idMeas, :);
+               
                if (ismember(measList{idML}, [{'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}]))
                   measStruct.sensorNumber = 999;
                end
-
+               
+               % if DO dates have been estimated by the decoder, set PRES_QC to '2'
+               if ((doDataFlag) && (profData.temporaryDates))
+                  measStruct.paramDataQc = ones(size(measStruct.paramData))*g_decArgo_qcDef;
+                  idPres = find(strcmp({measStruct.paramList.name}, 'PRES'), 1);
+                  measStruct.paramDataQc(:, idPres) = g_decArgo_qcProbablyGood;
+               end
+               
                if (~isempty(profData.dataAdj))
                   measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
+                  % if DO dates have been estimated by the decoder, set PRES_QC to '2'
+                  if ((doDataFlag) && (profData.temporaryDates))
+                     measStruct.paramDataAdjQc = ones(size(measStruct.paramDataAdj))*g_decArgo_qcDef;
+                     idPres = find(strcmp({measStruct.paramList.name}, 'PRES'), 1);
+                     measStruct.paramDataAdjQc(:, idPres) = g_decArgo_qcProbablyGood;
+                  end
+                  
                   deleteFlag = 1;
                   for idParam = 1:length(measStruct.paramList)
                      if (measStruct.paramDataMode(idParam) == 'A')
