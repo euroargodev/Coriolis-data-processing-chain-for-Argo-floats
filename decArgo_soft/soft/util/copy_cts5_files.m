@@ -215,6 +215,15 @@ for idFloat = 1:nbFloats
             copy_file([inputDirName '/' loginName '/' inFile.name], outFile);
             fprintf('MISC: %s replaced by %s\n', outFile, [inputDirName '/' loginName '/' inFile.name]);
          end
+         
+      case 6903124
+         % files: 3e82_255_01_do.hex, 3e82_255_01_eco.hex, 3e82_255_01_ocr.hex, 
+         % 3e82_255_01_ramses.hex, 3aa9_system_00116.hex should not be kept
+         delFile = dir([floatOutputDirName '/3e82_255_01_*.hex']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
+         end
    end
 end
 
