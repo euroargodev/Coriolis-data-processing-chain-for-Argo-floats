@@ -38,14 +38,17 @@ global g_JULD_STATUS_4;
 % default values
 global g_decArgo_argosLonDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+
 
 o_measStruct.measCode = a_measCode;
 o_measStruct.juld = a_time;
 o_measStruct.juldStatus = g_JULD_STATUS_4;
-o_measStruct.juldQc = '0';
+o_measStruct.juldQc = g_decArgo_qcStrNoQc;
 o_measStruct.juldAdj = a_time;
 o_measStruct.juldAdjStatus = g_JULD_STATUS_4;
-o_measStruct.juldAdjQc = '0';
+o_measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
 
 if (a_posLon ~= g_decArgo_argosLonDef)
    o_measStruct.longitude = a_posLon;

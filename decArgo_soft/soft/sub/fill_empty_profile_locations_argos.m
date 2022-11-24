@@ -32,6 +32,10 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% QC flag values (char)
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrInterpolated;
+
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
@@ -65,7 +69,7 @@ for idProf = 1:length(a_tabProfiles)
                locLat = a_floatSurfData.cycleData(idCy).argosLocLat;
                locQc = a_floatSurfData.cycleData(idCy).argosLocQc;
                
-               idGoodLoc = find(locQc == '1');
+               idGoodLoc = find(locQc == g_decArgo_qcStrGood);
                if (~isempty(idGoodLoc))
                   prevLocDate = locDate(idGoodLoc(end));
                   prevLocLon = locLon(idGoodLoc(end));
@@ -106,7 +110,7 @@ for idProf = 1:length(a_tabProfiles)
                   locLat = a_floatSurfData.cycleData(idCy).argosLocLat;
                   locQc = a_floatSurfData.cycleData(idCy).argosLocQc;
                   
-                  idGoodLoc = find(locQc == '1');
+                  idGoodLoc = find(locQc == g_decArgo_qcStrGood);
                   if (~isempty(idGoodLoc))
                      nextLocDate = locDate(idGoodLoc(1));
                      nextLocLon = locLon(idGoodLoc(1));
@@ -130,7 +134,7 @@ for idProf = 1:length(a_tabProfiles)
                a_tabProfiles(idProf).locationDate = profile.date;
                a_tabProfiles(idProf).locationLon = interpLocLon;
                a_tabProfiles(idProf).locationLat = interpLocLat;
-               a_tabProfiles(idProf).locationQc = '8';
+               a_tabProfiles(idProf).locationQc = g_decArgo_qcStrInterpolated;
             else
                fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
                   g_decArgo_floatNum, ...

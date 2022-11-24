@@ -125,6 +125,12 @@ for idFloat = 1:nbFloats
       end
    end
    
+   % check that it is an APEX float
+   if (floatDecId < 1000)
+      fprintf('ERROR: Float #%d is a PROVOR => not decoded\n', floatNum);
+      continue;
+   end
+   
    % read the NetCDF TECH parameter names
    if (isempty(g_decArgo_outputCsvFileId))
       if (g_decArgo_generateNcTech ~= 0)
@@ -233,7 +239,8 @@ for idFloat = 1:nbFloats
    
    if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1))
          % apply RTQC to NetCDF profile files
-         add_rtqc_flags_to_netcdf_profile_data(g_decArgo_reportStruct, floatDecId);
+         add_rtqc_flags_to_netcdf_profile_and_trajectory_data( ...
+            g_decArgo_reportStruct, floatDecId);
    end
    
    % store the information for the XML report

@@ -71,8 +71,8 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 623;251;Max T° of OPTODE (m°C);CONFIG_OptodeMaxTransmittedTemperature_mdegC;Maximum value of transmitted Optode temperature measurements (in milli-DegC).
 628;251;Min irradiance 1 of OCR;CONFIG_OcrMinTransmittedDownIrr<I>_COUNT;Minimum value of transmitted Ocr <param> #<I> measurements (in counts).
 629;251;Max irradiance 1 of OCR;CONFIG_OcrMaxTransmittedDownIrr<I>_COUNT;Maximum value of transmitted Ocr <param> #<I> measurements (in counts).
-634;251;Min irradiance 4 of OCR;CONFIG_OcrMinTransmittedPAR_COUNT;Minimum value of transmitted Ocr Photosynthetic Active Radiation measurements (in counts).
-635;251;Max irradiance 4 of OCR;CONFIG_OcrMaxTransmittedPAR_COUNT;Maximum value of transmitted Ocr Photosynthetic Active Radiation measurements (in counts).
+634;251;Min irradiance 4 of OCR;CONFIG_OcrMinTransmittedPar_COUNT;Minimum value of transmitted Ocr Photosynthetic Active Radiation measurements (in counts).
+635;251;Max irradiance 4 of OCR;CONFIG_OcrMaxTransmittedPar_COUNT;Maximum value of transmitted Ocr Photosynthetic Active Radiation measurements (in counts).
 640;251;Min scattering of ECO3 (counts);CONFIG_EcoMinTransmittedBeta_COUNT;Minimum value of transmitted <sensor short name> beta measurements (in counts).
 641;251;Max scattering of ECO3 (counts);CONFIG_EcoMaxTransmittedBeta_COUNT;Minimum value of transmitted  <sensor short name> beta measurements (in counts).
 642;251;Min CDOM of ECO3 (counts);CONFIG_EcoMinTransmittedCdomFluorescence_COUNT;Minimum value of transmitted <sensor short name> Fluorescence of <param> measurements (in counts).
@@ -86,8 +86,8 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 663;251;Min beam attenuation of CROVER;CONFIG_CroverMinTransmittedBeamAttenuation_m^-1 ;Minimum value of transmitted Crover beam attenuation measurements (in 1/m).
 664;251;Max beam attenuation of CROVER;CONFIG_CroverMaxTransmittedBeamAttenuation_m^-1 ;Maximum value of transmitted Crover beam attenuation measurements (in 1/m).
 669;251;"« APF Frame » transmission of SUNA (""nitrate concentration"" = 0, ""spectrum APF frame"" = 1)";CONFIG_SunaDataType_NUMBER;Type of transmitted data from te Suna sensor (0 : nitrate concentration, 1 : APF frame spectrum).
-670;251;Min concentration of SUNA;CONFIG_SunaMinTransmittedNitratEconcentration_umole/L;Minimum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L).
-671;251;Max concentration of SUNA;CONFIG_SunaMaxTransmittedNitratEconcentration_umole/L;Maximum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L).
+670;251;Min concentration of SUNA;CONFIG_SunaMinTransmittedNitrateConcentration_umole/L;Minimum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L).
+671;251;Max concentration of SUNA;CONFIG_SunaMaxTransmittedNitrateConcentration_umole/L;Maximum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L).
 100000;-1;Not in float user manual;CONFIG_VectorBoardShowModeOn_LOGICAL;Is the vector board show mode ON? (Yes/No).
 100001;-1;Not in float user manual;CONFIG_SensorBoardShowModeOn_LOGICAL;Is the sensor board show mode ON? (Yes/No).
 116003;-1;Not in float user manual;CONFIG_SunaApfFrameOutputPixelBegin_NUMBER;The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels.

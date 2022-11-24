@@ -191,6 +191,7 @@ o_profOcr = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -218,7 +219,7 @@ for idP = 1:length(paramToDeriveList)
          a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
       end
       downIrr380Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = 0;
+      downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, end+1) = downIrr380Qc;
       
       a_profOcr.paramList = [a_profOcr.paramList derivedParam];
@@ -247,7 +248,7 @@ for idP = 1:length(paramToDeriveList)
          a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
       end
       downIrr412Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr412Qc(find(downIrr412 ~= derivedParam.fillValue)) = 0;
+      downIrr412Qc(find(downIrr412 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, end+1) = downIrr412Qc;
       
       a_profOcr.paramList = [a_profOcr.paramList derivedParam];
@@ -276,7 +277,7 @@ for idP = 1:length(paramToDeriveList)
          a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
       end
       downIrr490Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = 0;
+      downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, end+1) = downIrr490Qc;
       
       a_profOcr.paramList = [a_profOcr.paramList derivedParam];
@@ -305,7 +306,7 @@ for idP = 1:length(paramToDeriveList)
          a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
       end
       downParQc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downParQc(find(downPar ~= derivedParam.fillValue)) = 0;
+      downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, end+1) = downParQc;
       
       a_profOcr.paramList = [a_profOcr.paramList derivedParam];
@@ -348,6 +349,7 @@ o_profEco3 = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -375,7 +377,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = chlaQc;
       
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -443,7 +445,7 @@ else
                a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
             end
             bbp700Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = 0;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
             a_profEco3.dataQc(:, end+1) = bbp700Qc;
          else
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
@@ -484,7 +486,7 @@ else
                a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
             end
             bbp532Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-            bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = 0;
+            bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
             a_profEco3.dataQc(:, end+1) = bbp532Qc;
          else
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
@@ -519,7 +521,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       cdomQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      cdomQc(find(cdom ~= derivedParam.fillValue)) = 0;
+      cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = cdomQc;
       
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -681,6 +683,7 @@ o_profEco3 = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -708,7 +711,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = chlaQc;
       
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -737,7 +740,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       bbp700Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = 0;
+      bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = bbp700Qc;
       
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -766,7 +769,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       bbp532Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = 0;
+      bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = bbp532Qc;
       
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -795,7 +798,7 @@ for idP = 1:length(paramToDeriveList)
          a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
       end
       cdomQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      cdomQc(find(cdom ~= derivedParam.fillValue)) = 0;
+      cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = cdomQc;
 
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
@@ -836,6 +839,9 @@ o_profSuna = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+WAITING_FOR_FITLM_MATLAB_FUNCTION = 1;
 
 
 % list of parameters of the profile
@@ -856,43 +862,45 @@ else
 end
 
 % compute NITRATE data and add them in the profile structure
-paramToDeriveList = [ ...
-   {'MOLAR_NITRATE'} ...
-   ];
-derivedParamList = [ ...
-   {'NITRATE'} ...
-   ];
-paramPres = get_netcdf_param_attributes('PRES');
-paramTemp = get_netcdf_param_attributes('TEMP');
-paramPsal = get_netcdf_param_attributes('PSAL');
-for idP = 1:length(paramToDeriveList)
-   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
-   if (~isempty(idF))
-      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      nitrate = compute_profile_NITRATE_105_to_109( ...
-         a_profSuna.data(:, idF), ...
-         paramToDerive.fillValue, derivedParam.fillValue, ...
-         a_profSuna.data(:, 1), ctdMeasData, ...
-         paramPres.fillValue, ...
-         paramTemp.fillValue, ...
-         paramPsal.fillValue);
-      
-      a_profSuna.data(:, end+1) = nitrate;
-      if (isempty(a_profSuna.dataQc))
-         a_profSuna.dataQc = ones(size(a_profSuna.data, 1), size(a_profSuna.data, 2)-1)*g_decArgo_qcDef;
+if (WAITING_FOR_FITLM_MATLAB_FUNCTION)
+   paramToDeriveList = [ ...
+      {'MOLAR_NITRATE'} ...
+      ];
+   derivedParamList = [ ...
+      {'NITRATE'} ...
+      ];
+   paramPres = get_netcdf_param_attributes('PRES');
+   paramTemp = get_netcdf_param_attributes('TEMP');
+   paramPsal = get_netcdf_param_attributes('PSAL');
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         
+         nitrate = compute_profile_NITRATE_105_to_109( ...
+            a_profSuna.data(:, idF), ...
+            paramToDerive.fillValue, derivedParam.fillValue, ...
+            a_profSuna.data(:, 1), ctdMeasData, ...
+            paramPres.fillValue, ...
+            paramTemp.fillValue, ...
+            paramPsal.fillValue);
+         
+         a_profSuna.data(:, end+1) = nitrate;
+         if (isempty(a_profSuna.dataQc))
+            a_profSuna.dataQc = ones(size(a_profSuna.data, 1), size(a_profSuna.data, 2)-1)*g_decArgo_qcDef;
+         end
+         nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
+         nitrateQc(find(nitrate ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+         a_profSuna.dataQc(:, end+1) = nitrateQc;
+         
+         a_profSuna.paramList = [a_profSuna.paramList derivedParam];
       end
-      nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
-      nitrateQc(find(nitrate ~= derivedParam.fillValue)) = 0;
-      a_profSuna.dataQc(:, end+1) = nitrateQc;
-      
-      a_profSuna.paramList = [a_profSuna.paramList derivedParam];
    end
 end
 
 % compute NITRATE data and add them in the profile structure
-if (0)
+if (~WAITING_FOR_FITLM_MATLAB_FUNCTION)
    paramToDeriveList = [ ...
       {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
       ];
@@ -927,7 +935,7 @@ if (0)
             a_profSuna.dataQc = ones(size(a_profSuna.data, 1), size(a_profSuna.data, 2)-1)*g_decArgo_qcDef;
          end
          nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
-         nitrateQc(find(nitrate ~= derivedParam.fillValue)) = 0;
+         nitrateQc(find(nitrate ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
          a_profSuna.dataQc(:, end+1) = nitrateQc;
          
          a_profSuna.paramList = [a_profSuna.paramList derivedParam];
@@ -972,6 +980,7 @@ o_profOptode = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -1037,7 +1046,7 @@ else
                a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
             end
             doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
-            doxyQc(find(doxy ~= derivedParam.fillValue)) = 0;
+            doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
             a_profOptode.dataQc(:, end+1) = doxyQc;
          else
             a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;

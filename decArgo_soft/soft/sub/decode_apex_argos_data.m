@@ -180,27 +180,32 @@ for idCy = 1:length(a_cycleList)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      case {1001} % 071412
+      case {1001, 1002, 1003, 1004, 1005, 1006} % 071412, 062608, 061609, 021009, 061810, 093008
          
-         [miscInfo, auxInfo, profData, parkData, metaData, techData, trajData, ...
+         [miscInfo, auxInfo, profData, profNstData, parkData, astData, surfData, metaData, techData, trajData, ...
             timeInfo, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
-            decode_apx_1(argosDataData, argosDataUsed, argosDataDate, sensorData, sensorDate, ...
+            decode_apx(argosDataData, argosDataUsed, argosDataDate, sensorData, sensorDate, ...
             cycleNum, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
          
          % create the configuration
          if (g_decArgo_configDone == 0)
             create_float_config_apx_argos(metaData, a_decoderId);
+            if (~isempty(g_decArgo_outputCsvFileId))
+               if (a_decoderId == 1006)
+                  print_calib_coef_in_csv_file(a_decoderId);
+               end
+            end
          end
          
          % apply pressure adjustment
-         [miscInfo, profData, parkData, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
-            adjust_pres_from_surf_offset(miscInfo, profData, parkData, g_decArgo_timeData, ...
-            cycleNum, g_decArgo_presOffsetData);
+         [miscInfo, profData, profNstData, parkData, astData, surfData, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
+            adjust_pres_from_surf_offset(miscInfo, profData, profNstData, parkData, astData, surfData, ...
+            g_decArgo_timeData, cycleNum, g_decArgo_presOffsetData, a_decoderId);
          
          % compute the times of the cycle
          finalStep = 0;
-         if ((idCy == length(a_cycleList)) || ~isempty(g_decArgo_outputCsvFileId))
-            %          if ((idCy == length(a_cycleList)))
+         %          if ((idCy == length(a_cycleList)) || ~isempty(g_decArgo_outputCsvFileId))
+         if ((idCy == length(a_cycleList)))
             finalStep = 1;
          end
          g_decArgo_timeData = compute_apx_times(g_decArgo_timeData, timeInfo, cycleNum, ...
@@ -215,7 +220,10 @@ for idCy = 1:length(a_cycleList)
             
             print_misc_info_in_csv_file(miscInfo);
             print_park_data_in_csv_file(parkData);
+            print_ast_data_in_csv_file(astData);
             print_prof_data_in_csv_file(profData);
+            print_prof_nst_data_in_csv_file(profNstData);
+            print_surf_data_in_csv_file(surfData);
             print_aux_info_in_csv_file(auxInfo);
             print_aux_data_in_csv_file(g_decArgo_timeData);
             print_time_data_in_csv_file(g_decArgo_timeData, ...
@@ -229,7 +237,7 @@ for idCy = 1:length(a_cycleList)
             % PROF NetCDF file
             
             % process profile data for PROF NetCDF file
-            [cycleProfile] = process_apx_profile(profData, cycleNum, ...
+            [cycleProfile] = process_apx_profile(profData, profNstData, cycleNum, ...
                g_decArgo_timeData, g_decArgo_presOffsetData, a_floatSurfData, a_decoderId);
             
             print = 0;
@@ -242,7 +250,7 @@ for idCy = 1:length(a_cycleList)
                      paramList = prof.paramList;
                      paramList = sprintf('%s ', paramList.name);
                      profLength = size(prof.data, 1);
-                     fprintf('   ->%2d: Profile #%d dir=%c length=%d param=(%s)\n', ...
+                     fprintf('   ->%2d: Profile #%d dir = %c length = %d param =(%s)\n', ...
                         idP, prof.profileNumber, prof.direction, ...
                         profLength, paramList(1:end-1));
                   end
@@ -266,10 +274,10 @@ for idCy = 1:length(a_cycleList)
             
             % process trajectory data for TRAJ NetCDF file
             % (store all but times in the TRAJ structures)
-            [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_1001( ...
+            [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_apx( ...
                cycleNum, ...
                addLaunchData, a_floatSurfData, ...
-               trajData, parkData, profData, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
+               trajData, parkData, astData, profData, surfData, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
             
             o_tabTrajNMeas = [o_tabTrajNMeas; tabTrajNMeas];
             o_tabTrajNCycle = [o_tabTrajNCycle; tabTrajNCycle];
@@ -278,7 +286,7 @@ for idCy = 1:length(a_cycleList)
             % TECH NetCDF file
             
             % store technical data for output NetCDF files
-            store_tech_data_for_nc_1001(techData);
+            store_tech_data_for_nc_apx(techData);
             
             % update NetCDF technical data
             update_technical_data_argos_sbd(a_decoderId);
@@ -319,18 +327,18 @@ if (isempty(g_decArgo_outputCsvFileId))
    else
       addLaunchData = 0;
    end
-   [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_time_1001( ...
+   [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_time_apx( ...
       addLaunchData, a_floatSurfData, ...
       g_decArgo_timeData, g_decArgo_presOffsetData, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % sort trajectory data structures according to the predefined measurement
    % code order
    [o_tabTrajNMeas] = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
-
+   
    % update the output cycle number in the structures
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
-      
+   
    % create output float configuration
    [o_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames);
    

@@ -21,10 +21,11 @@ function co_cls_correct_argos_raw_file()
 
 % input directory(ies) to process
 tabInputDirName = [];
-tabInputDirName{end+1} = 'C:\users\RNU\Argo\argos_2\';
+% tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_cycle\ori\';
+tabInputDirName{end+1} = 'C:\Users\jprannou\_DATA\tmp_20160227\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\users\RNU\Argo\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % flag to process also sub-directories
 SUB_DIR_FLAG = 1;

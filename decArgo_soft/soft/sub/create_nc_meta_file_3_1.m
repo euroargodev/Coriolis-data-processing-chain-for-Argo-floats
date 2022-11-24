@@ -479,10 +479,8 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX floats
       
-   case {1001}
-      
-      % 071412
-      
+   case {1001, 1002, 1003, 1004, 1005, 1006}
+            
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
       

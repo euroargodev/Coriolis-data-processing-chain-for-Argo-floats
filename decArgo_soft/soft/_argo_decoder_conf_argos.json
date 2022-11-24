@@ -8,7 +8,7 @@
    "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/json_float_info/",
 
    "HEX_ARGOS_FILE_FORMAT" : "1",
-   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "C:/Users/jprannou/_DATA/IN/split_argos/out_rt/",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "C:/Users/jprannou/_DATA/IN/split_apex_061609/in_split_cycle_final/",
    "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "unused",
    "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "3",
    
@@ -18,7 +18,7 @@
    "DIR_INPUT_JSON_TECH_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_techParamNames/",
    "DIR_INPUT_JSON_CONF_LABEL_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/_configParamNames/",
 
-   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "C:/Users/jprannou/_RNU/DecArgo_info/json_float_meta_argos/",
+   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/json_float_meta_argos/",
    
    "DIR_INPUT_DM_BUFFER_LIST" : "unused",
 
@@ -26,7 +26,7 @@
 
    "DIR_OUTPUT_LOG_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/log/",
    "DIR_OUTPUT_CSV_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/csv/",
-   "DIR_OUTPUT_XML_FILE" : "unused",
+   "DIR_OUTPUT_XML_FILE" : "C:/Users/jprannou/_RNU/DecArgo_soft/work/xml/",
    "DIR_OUTPUT_NETCDF_FILE" : "C:/Users/jprannou/_DATA/OUT/nc_output_decArgo_rt/",
 
    "GENERATE_NC_TRAJ" : "1",
@@ -35,7 +35,7 @@
    "GENERATE_NC_TECH" : "1",
    "GENERATE_NC_META" : "1",   
 
-   "APPLY_RTQC" : "0",
+   "APPLY_RTQC" : "1",
    
    "TEST001_PLATFORM_IDENTIFICATION" : "1",
    "TEST002_IMPOSSIBLE_DATE" : "1",
@@ -51,12 +51,14 @@
    "TEST013_STUCK_VALUE" : "1",
    "TEST014_DENSITY_INVERSION" : "1",
    "TEST015_GREY_LIST" : "1",
-   "TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT" : "1",
-   "TEST018_FROZEN_PRESSURE" : "1",
+   "TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT" : "0",
+   "TEST018_FROZEN_PRESSURE" : "0",
    "TEST019_DEEPEST_PRESSURE" : "1",
+   "TEST020_QUESTIONABLE_ARGOS_POSITION" : "1",
    "TEST021_NS_UNPUMPED_SALINITY" : "1",
    "TEST022_NS_MIXED_AIR_WATER" : "1",
    "TEST023_DEEP_FLOAT" : "1",
+   "TEST057_DOXY" : "1",
    "TEST063_CHLA" : "1",
    
    "TEST004_ETOPO2_FILE" : "C:/Users/jprannou/_RNU/Argo/_ressources/ETOPO2/ETOPO2v2g_i2_MSB.bin",

@@ -30,6 +30,9 @@ o_profStruct = [];
 % default values
 global g_decArgo_dateDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrGood;
+
 
 % find the corresponding cycle index in the float surface data structure
 idCycle = find(a_floatSurfData.cycleNumbers == a_cycleNum);
@@ -64,12 +67,12 @@ if (~isempty(a_floatSurfData.cycleData(idCycle).argosLocDate))
    locLat = a_floatSurfData.cycleData(idCycle).argosLocLat;
    locQc = a_floatSurfData.cycleData(idCycle).argosLocQc;
    
-   idGoodLoc = find(locQc == '1');
+   idGoodLoc = find(locQc == g_decArgo_qcStrGood);
    if (~isempty(idGoodLoc))
       a_profStruct.locationDate = locDate(idGoodLoc(1));
       a_profStruct.locationLon = locLon(idGoodLoc(1));
       a_profStruct.locationLat = locLat(idGoodLoc(1));
-      a_profStruct.locationQc = '1';
+      a_profStruct.locationQc = g_decArgo_qcStrGood;
    end
 end
 

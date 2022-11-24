@@ -62,6 +62,9 @@ global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 % decoder configuration values
 global g_decArgo_generateNcTech;
 
+% flag to detect a second Iridium session
+global g_decArgo_secondIridiumSession;
+
 
 % if it is the first deep cycle or if the first deep cycle already occured, we
 % add 1 to cycle numbers
@@ -174,10 +177,14 @@ for idMes = 1:size(a_tabData, 1)
          fprintf('cyle #%d\n', g_decArgo_cycleNum);
          
          % subsurface information are set to 0 for a surface cycle
-         if ((length(unique(tabTech(3:42))) == 1) && (unique(tabTech(3:42)) == 0))
-            o_deepCycle = 0;
+         if (g_decArgo_secondIridiumSession == 0)
+            if ((length(unique(tabTech(3:42))) == 1) && (unique(tabTech(3:42)) == 0))
+               o_deepCycle = 0;
+            else
+               o_deepCycle = 1;
+            end
          else
-            o_deepCycle = 1;
+            o_deepCycle = 0;
          end
          
          % compute float time

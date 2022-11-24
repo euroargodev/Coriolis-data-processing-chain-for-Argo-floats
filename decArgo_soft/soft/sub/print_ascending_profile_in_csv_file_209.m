@@ -56,7 +56,7 @@ if (~isempty(a_ascProfPres))
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); DOXY (micromol/kg); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (°C); DOXY2 (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
-      for idMes = 1:length(a_ascProfPres)
+      for idMes = 1:length(a_ascProfPres)-1
          mesDate = a_ascProfDate(idMes);
          if (mesDate == g_decArgo_dateDef)
             mesDateStr = '';
@@ -76,7 +76,7 @@ if (~isempty(a_ascProfPres))
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); C1PHASE_DOXY (degree); C2PHASE_DOXY (degree); TEMP_DOXY (°C); DOXY (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
-      for idMes = 1:length(a_ascProfPres)
+      for idMes = 1:length(a_ascProfPres)-1
          mesDate = a_ascProfDate(idMes);
          if (mesDate == g_decArgo_dateDef)
             mesDateStr = '';
@@ -95,7 +95,7 @@ if (~isempty(a_ascProfPres))
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU); PHASE_DELAY_DOXY (usec); TEMP_DOXY2 (°C); DOXY2 (micromol/kg)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
-      for idMes = 1:length(a_ascProfPres)
+      for idMes = 1:length(a_ascProfPres)-1
          mesDate = a_ascProfDate(idMes);
          if (mesDate == g_decArgo_dateDef)
             mesDateStr = '';
@@ -114,7 +114,7 @@ if (~isempty(a_ascProfPres))
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; AscProf; Description; UTC time; PRES (dbar); TEMP (°C); PSAL (PSU)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       
-      for idMes = 1:length(a_ascProfPres)
+      for idMes = 1:length(a_ascProfPres)-1
          mesDate = a_ascProfDate(idMes);
          if (mesDate == g_decArgo_dateDef)
             mesDateStr = '';

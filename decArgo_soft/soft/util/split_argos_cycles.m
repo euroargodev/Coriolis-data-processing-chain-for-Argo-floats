@@ -19,8 +19,10 @@
 % ------------------------------------------------------------------------------
 function split_argos_cycles(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\split_argos\process\ori';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\split_argos\process\ori_split';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori2';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

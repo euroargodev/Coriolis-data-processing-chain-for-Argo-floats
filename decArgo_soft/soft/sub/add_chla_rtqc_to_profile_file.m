@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, o_chlaAdjInfo] = ...
-%    add_chla_rtqc_to_profile_file( ...
+%    add_chla_rtqc_to_profile_file(a_floatNum, a_cyNum, ...
 %    a_profPresFluoChla, a_profPresFluoChlaQc, a_presFluoChlaDataFillValue, ...
 %    a_profFluoChla, a_profFluoChlaQc, a_fluoChlaDataFillValue, ...
 %    a_profChla, a_profChlaQc, a_chlaDataFillValue, ...
@@ -13,6 +13,8 @@
 %    a_profPsal, a_profPsalQc, a_psalDataFillValue)
 %
 % INPUT PARAMETERS :
+%   a_floatNum                  : float WMO number
+%   a_cyNum                     : cycle number
 %   a_profPresFluoChla          : pressures of the FLUORESCENCE_CHLA parameter
 %                                 profile
 %   a_profPresFluoChlaQc        : pressure Qcs of the FLUORESCENCE_CHLA
@@ -53,7 +55,7 @@
 %   01/05/2015 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, o_chlaAdjInfo] = ...
-   add_chla_rtqc_to_profile_file( ...
+   add_chla_rtqc_to_profile_file(a_floatNum, a_cyNum, ...
    a_profPresFluoChla, a_profPresFluoChlaQc, a_presFluoChlaDataFillValue, ...
    a_profFluoChla, a_profFluoChlaQc, a_fluoChlaDataFillValue, ...
    a_profChla, a_profChlaQc, a_chlaDataFillValue, ...
@@ -91,7 +93,8 @@ chlaQcValue = g_decArgo_qcStrGood;
 chlaAdjQcValue = g_decArgo_qcStrGood;
 
 if (isempty(a_darkChla) || isempty(a_scaleChla))
-   fprintf('RTQC_WARNING: empty DARK_CHLA/SCALE_CHLA: unable to process RTQC CHLA\n');
+   fprintf('RTQC_WARNING: Float #%d Cycle #%d: Empty DARK_CHLA/SCALE_CHLA: unable to process RTQC CHLA\n', ...
+      a_floatNum, a_cyNum);
    return;
 end
 
@@ -153,7 +156,7 @@ if (~isempty(idNoDefAndGood))
       idF = find((sigma - sigma10) > MLD_LIMIT);
       if (~isempty(idF))
          mld = profPres(idF(1));
-         fprintf('mld: %g\n', mld);
+         %          fprintf('mld: %g\n', mld);
 
          profPresFluoChla = a_profPresFluoChla(idNoDefAndGood);
          profFluoChla = a_profFluoChla(idNoDefAndGood);
@@ -165,13 +168,13 @@ if (~isempty(idNoDefAndGood))
             
             if (abs(newDarkChlaTmp - a_darkChla) <= 0.2*a_darkChla)
                newDarkChla = newDarkChlaTmp;
-               if (newDarkChla ~= a_lastDarkChla)
-                  fprintf('newDarkChla: %g (rounded value of median value: %g)\n', ...
-                     newDarkChla, median(profFluoChla(idF)));
-               else
-                  fprintf('same darkChla: %g (rounded value of median value: %g)\n', ...
-                     newDarkChla, median(profFluoChla(idF)));
-               end
+               %                if (newDarkChla ~= a_lastDarkChla)
+               %                   fprintf('newDarkChla: %g (rounded value of median value: %g)\n', ...
+               %                      newDarkChla, median(profFluoChla(idF)));
+               %                else
+               %                   fprintf('same darkChla: %g (rounded value of median value: %g)\n', ...
+               %                      newDarkChla, median(profFluoChla(idF)));
+               %                end
                if (newDarkChla ~= a_darkChla)
                   chlaQcValue = char(max(chlaQcValue, g_decArgo_qcStrCorrectable));
                   chlaAdjQcValue = char(max(chlaAdjQcValue, g_decArgo_qcStrGood));

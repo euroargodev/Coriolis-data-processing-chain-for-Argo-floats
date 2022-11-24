@@ -20,10 +20,10 @@
 function check_argos_raw_files(varargin)
 
 % directory of the argos files to check
-DIR_INPUT_ARGOS_FILES = 'C:\users\RNU\Argo\argos_20140925_cycle\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle - copie\';
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\users\RNU\Argo\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % min non-trans duration (in hour) to use the ghost detection
 MIN_NON_TRANS_DURATION_FOR_GHOST = 7;
@@ -111,11 +111,12 @@ for idFloat = 1:nbFloats
    floatFrameLen = listFrameLen(idF);
    
    % select and sort the Argos files of the float
-   argosFiles = dir([DIR_INPUT_ARGOS_FILES '/' sprintf('*%d*%d*', floatArgosId, floatNum)]);
+   dirInputFloat = [DIR_INPUT_ARGOS_FILES '/' sprintf('%06d', floatArgosId) '/'];
+   argosFiles = dir([dirInputFloat '/' sprintf('*%d*%d*', floatArgosId, floatNum)]);
    for idFile = 1:length(argosFiles)
       
       argosFileName = argosFiles(idFile).name;
-      argosFilePathName = [DIR_INPUT_ARGOS_FILES '/' argosFileName];
+      argosFilePathName = [dirInputFloat '/' argosFileName];
       
       [argosLocDate, argosDataDate] = ...
          read_argos_file_fmt1_rough(argosFilePathName, floatArgosId);

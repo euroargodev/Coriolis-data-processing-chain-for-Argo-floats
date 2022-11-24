@@ -78,7 +78,87 @@ if (~isempty(dataFiles))
    o_tabNcTechIndex = a_tabNcTechIndex;
    o_tabNcTechVal = a_tabNcTechVal;
    
+   % to reduce the amount of data to be stored in the .mat file, we only keep
+   % parameter names (instead of the entire parameter structure)
+   % before using it we should then replace the parameter names by their
+   % structure information
+   [o_tabProfiles, o_tabTrajNMeas] = increase_param_info(o_tabProfiles, o_tabTrajNMeas);
+   
    g_decArgo_processedDataLoadedFlag = 1;
+end
+
+return;
+
+% ------------------------------------------------------------------------------
+% For each parameter, replace parameter name by structure parameter information.
+%
+% SYNTAX :
+%  [o_tabProfiles, o_tabTrajNMeas] = increase_param_info(a_tabProfiles, a_tabTrajNMeas)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles  : input profile data
+%   a_tabTrajNMeas : input trajectory N_MEASUREMENT data
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles  : output profile data
+%   o_tabTrajNMeas : output trajectory N_MEASUREMENT data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/05/2016 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles, o_tabTrajNMeas] = increase_param_info(a_tabProfiles, a_tabTrajNMeas)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+o_tabTrajNMeas = a_tabTrajNMeas;
+
+
+% process profile parameters
+for idProf = 1:length(o_tabProfiles)
+   if (~isempty(o_tabProfiles(idProf).paramList))
+      if (iscell(o_tabProfiles(idProf).paramList))
+         paramListIn = o_tabProfiles(idProf).paramList;
+         paramListOut = [];
+         for idParam = 1:length(paramListIn)
+            param = get_netcdf_param_attributes(paramListIn{idParam});
+            paramListOut = [paramListOut param];
+         end
+         o_tabProfiles(idProf).paramList = paramListOut;
+      end
+   end
+   if (~isempty(o_tabProfiles(idProf).dateList))
+      if (iscell(o_tabProfiles(idProf).dateList))
+         dateListIn = o_tabProfiles(idProf).dateList;
+         dateListOut = [];
+         for idParam = 1:length(dateListIn)
+            param = get_netcdf_param_attributes(dateListIn{idParam});
+            dateListOut = [dateListOut param];
+         end
+         o_tabProfiles(idProf).dateList = dateListOut;
+      end
+   end
+end
+
+% process trajectory parameters
+for idTrajNMeas = 1:length(o_tabTrajNMeas)
+   for idMeas = 1:length(o_tabTrajNMeas(idTrajNMeas).tabMeas)
+      if (~isempty(o_tabTrajNMeas(idTrajNMeas).tabMeas(idMeas).paramList))
+         if (iscell(o_tabTrajNMeas(idTrajNMeas).tabMeas(idMeas).paramList))
+            paramListIn = o_tabTrajNMeas(idTrajNMeas).tabMeas(idMeas).paramList;
+            paramListOut = [];
+            for idParam = 1:length(paramListIn)
+               param = get_netcdf_param_attributes(paramListIn{idParam});
+               paramListOut = [paramListOut param];
+            end
+            o_tabTrajNMeas(idTrajNMeas).tabMeas(idMeas).paramList = paramListOut;
+         end
+      end
+   end
 end
 
 return;

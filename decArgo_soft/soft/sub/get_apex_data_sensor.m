@@ -91,9 +91,9 @@ nbMesCrcOk = 0;
 msgNums = sort(unique(o_argosDataData(:, 2)));
 if (any(msgNums > a_nbArgosMsgMax))
    idDel = find(msgNums > a_nbArgosMsgMax);
-   %    ignoredStr = sprintf('#%d, ', msgNums(idDel));
-   %    fprintf('WARNING: Float #%d Cycle #%d: ignored Argos data message %s\n', ...
-   %       g_decArgo_floatNum, g_decArgo_cycleNum, ignoredStr(1:end-2));
+%    ignoredStr = sprintf('#%d, ', msgNums(idDel));
+%    fprintf('WARNING: Float #%d Cycle #%d: ignored Argos data message %s\n', ...
+%       g_decArgo_floatNum, g_decArgo_cycleNum, ignoredStr(1:end-2));
    msgNums(idDel) = [];
 end
 for idNum = 1:length(msgNums)

@@ -60,7 +60,7 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {1001} % 071412
+   case {1001, 1002, 1003, 1004, 1005, 1006} %071412 , 062608, 061609, 021009, 061810, 093008
       if (a_cycleNumber == 0)
          [o_argosLocDate, o_argosLocLon, o_argosLocLat, o_argosLocAcc, o_argosLocSat, ...
             o_argosDataData, o_argosDataUsed, o_argosDataDate, o_sensorData, o_sensorDate] = ...

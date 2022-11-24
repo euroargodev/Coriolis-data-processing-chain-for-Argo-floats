@@ -35,11 +35,17 @@ for idProf = 1:length(a_tabProfiles)
          [cutProfiles] = cut_profile(profile);
          tabProfiles = [tabProfiles cutProfiles];
       else
-         a_tabProfiles(idProf).primarySamplingProfileFlag = 1;
-         tabProfiles = [tabProfiles a_tabProfiles(idProf)];
+         if (profile.sensorNumber == 0)
+            % CTD profile
+            profile.primarySamplingProfileFlag = 1;
+         elseif (profile.sensorNumber == 1)
+            % DOXY profile
+            profile.primarySamplingProfileFlag = 0;
+         end
+         tabProfiles = [tabProfiles profile];
       end
    else
-      tabProfiles = [tabProfiles a_tabProfiles(idProf)];
+      tabProfiles = [tabProfiles profile];
    end
 end
 
@@ -119,9 +125,18 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
    
    if (~isempty(idLevPrimary))
       primaryProfile = a_tabProfile;
-      primaryProfile.primarySamplingProfileFlag = 1;
+      if (primaryProfile.sensorNumber == 0)
+         % CTD profile
+         primaryProfile.primarySamplingProfileFlag = 1;
+      elseif (primaryProfile.sensorNumber == 1)
+         % DOXY profile
+         primaryProfile.primarySamplingProfileFlag = 0;
+      end
       primaryProfile.vertSamplingScheme = primaryProfile.vertSamplingScheme{1};      
       primaryProfile.data = primaryProfile.data(1:idLevPrimary(end), :);
+      if (~isempty(primaryProfile.dataQc))
+         primaryProfile.dataQc = primaryProfile.dataQc(1:idLevPrimary(end), :);
+      end
       datesPrimary = primaryProfile.dates(1:idLevPrimary(end), 1);
       primaryProfile.dates = datesPrimary;
       datesPrimary(find(datesPrimary == primaryProfile.dateList(1).fillValue)) = [];
@@ -136,6 +151,9 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       nearSurfaceProfile.primarySamplingProfileFlag = 2;
       nearSurfaceProfile.vertSamplingScheme = nearSurfaceProfile.vertSamplingScheme{2};      
       nearSurfaceProfile.data = nearSurfaceProfile.data(idLevNearSurface(1):end, :);
+      if (~isempty(nearSurfaceProfile.dataQc))
+         nearSurfaceProfile.dataQc = nearSurfaceProfile.dataQc(idLevNearSurface(1):end, :);
+      end
       datesNearSurface = nearSurfaceProfile.dates(idLevNearSurface(1):end, 1);
       nearSurfaceProfile.dates = datesNearSurface;
       datesNearSurface(find(datesNearSurface == nearSurfaceProfile.dateList(1).fillValue)) = [];
@@ -147,7 +165,13 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
 
 else
    
-   a_tabProfile.primarySamplingProfileFlag = 1;
+   if (a_tabProfile.sensorNumber == 0)
+      % CTD profile
+      a_tabProfile.primarySamplingProfileFlag = 1;
+   elseif (a_tabProfile.sensorNumber == 1)
+      % DOXY profile
+      a_tabProfile.primarySamplingProfileFlag = 0;
+   end
    a_tabProfile.vertSamplingScheme = a_tabProfile.vertSamplingScheme{1};
    
    o_cutProfiles = a_tabProfile;

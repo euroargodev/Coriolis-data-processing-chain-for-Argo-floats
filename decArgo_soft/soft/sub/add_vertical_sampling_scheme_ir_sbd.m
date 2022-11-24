@@ -38,13 +38,7 @@ global g_decArgo_presDef;
 % add the vertical sampling scheme for each profile
 for idP = 1:length(a_tabProfiles)
    prof = a_tabProfiles(idP);
-   
-   % in air measurement
-   if (prof.primarySamplingProfileFlag == 3)
-      a_tabProfiles(idP).vertSamplingScheme = 'In-air sampling: spot-sampled, unpumped []';
-      continue;
-   end
-   
+      
    [configNames, configValues] = get_float_config_ir_sbd(prof.cycleNumber);
    if (~isempty(configNames))
       

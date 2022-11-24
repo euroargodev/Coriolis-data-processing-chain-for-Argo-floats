@@ -80,7 +80,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       200];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbPackDesc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for drift
@@ -89,7 +89,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       201];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbPackDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for ascent
@@ -98,7 +98,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       202];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbPackAsc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins in zone <Z> for descent
@@ -107,7 +107,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDescZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -115,7 +115,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDescZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -123,14 +123,14 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDescZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       250 a_cycleNum a_profNum ...
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDescZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -138,7 +138,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDescZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins for drift
@@ -147,7 +147,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       204];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb bins in zone <Z> for ascent
@@ -156,7 +156,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasAscZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -164,7 +164,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasAscZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -172,7 +172,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasAscZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -180,7 +180,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasAscZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -188,7 +188,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRNbMeasAscZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Sensor state
@@ -197,7 +197,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       206];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechOCRSensorState(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'OCR'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Ocr'}w];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
 end

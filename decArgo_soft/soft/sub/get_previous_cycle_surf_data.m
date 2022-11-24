@@ -37,6 +37,9 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrGood;
+
 % output parameters initialization
 o_prevCycleNum = [];
 o_lastLocDate = g_decArgo_dateDef;
@@ -58,7 +61,7 @@ if (~isempty(idPrevCycle))
       locLat = a_floatSurfData.cycleData(idPrevCycle).argosLocLat;
       locQc = a_floatSurfData.cycleData(idPrevCycle).argosLocQc;
       
-      idGoodLoc = find(locQc == '1');
+      idGoodLoc = find(locQc == g_decArgo_qcStrGood);
       if (~isempty(idGoodLoc))
          o_lastLocDate = locDate(idGoodLoc(end));
          o_lastLocLon = locLon(idGoodLoc(end));

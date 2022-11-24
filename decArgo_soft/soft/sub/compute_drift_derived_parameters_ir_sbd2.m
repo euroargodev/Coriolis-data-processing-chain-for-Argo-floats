@@ -190,6 +190,7 @@ o_driftFlbb = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -217,7 +218,7 @@ for idP = 1:length(paramToDeriveList)
          a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), size(a_driftFlbb.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftFlbb.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftFlbb.dataQc(:, end+1) = chlaQc;
       
       a_driftFlbb.paramList = [a_driftFlbb.paramList derivedParam];
@@ -290,7 +291,7 @@ else
                a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), size(a_driftFlbb.data, 2)-1)*g_decArgo_qcDef;
             end
             bbp700Qc = ones(size(a_driftFlbb.data, 1), 1)*g_decArgo_qcDef;
-            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = 0;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
             a_driftFlbb.dataQc(:, end+1) = bbp700Qc;
          else
             a_driftFlbb.data(:, end+1) = ones(size(a_driftFlbb.data, 1), 1)*derivedParam.fillValue;
@@ -336,6 +337,7 @@ o_driftFlntu = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -363,7 +365,7 @@ for idP = 1:length(paramToDeriveList)
          a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), size(a_driftFlntu.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftFlntu.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftFlntu.dataQc(:, end+1) = chlaQc;
       
       a_driftFlntu.paramList = [a_driftFlntu.paramList derivedParam];
@@ -392,7 +394,7 @@ for idP = 1:length(paramToDeriveList)
          a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), size(a_driftFlntu.data, 2)-1)*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_driftFlntu.data, 1), 1)*g_decArgo_qcDef;
-      turbiQc(find(turbi ~= derivedParam.fillValue)) = 0;
+      turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftFlntu.dataQc(:, end+1) = turbiQc;
       
       a_driftFlntu.paramList = [a_driftFlntu.paramList derivedParam];
@@ -432,6 +434,7 @@ o_driftCyc = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -459,7 +462,7 @@ for idP = 1:length(paramToDeriveList)
          a_driftCyc.dataQc = ones(size(a_driftCyc.data, 1), size(a_driftCyc.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_driftCyc.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftCyc.dataQc(:, end+1) = chlaQc;
       
       a_driftCyc.paramList = [a_driftCyc.paramList derivedParam];
@@ -499,6 +502,7 @@ o_driftStm = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -526,7 +530,7 @@ for idP = 1:length(paramToDeriveList)
          a_driftStm.dataQc = ones(size(a_driftStm.data, 1), size(a_driftStm.data, 2)-1)*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_driftStm.data, 1), 1)*g_decArgo_qcDef;
-      turbiQc(find(turbi ~= derivedParam.fillValue)) = 0;
+      turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftStm.dataQc(:, end+1) = turbiQc;
       
       a_driftStm.paramList = [a_driftStm.paramList derivedParam];
@@ -649,6 +653,7 @@ o_driftOptode = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -668,11 +673,11 @@ if (isempty(a_driftCtd))
       ];
    for idP = 1:length(derivedParamList)
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      o_driftOptode.data(:, end+1) = ones(size(o_driftOptode.data, 1), 1)*derivedParam.fillValue;
-      if (~isempty(o_driftOptode.dataQc))
-         o_driftOptode.dataQc(:, end+1) = ones(size(o_driftOptode.data, 1), 1)*g_decArgo_qcDef;
+      a_driftOptode.data(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*derivedParam.fillValue;
+      if (~isempty(a_driftOptode.dataQc))
+         a_driftOptode.dataQc(:, end+1) = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
       end
-      o_driftOptode.paramList = [o_driftOptode.paramList derivedParam];
+      a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
    end
    
 else
@@ -727,7 +732,7 @@ else
                   a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), size(a_driftOptode.data, 2)-1)*g_decArgo_qcDef;
                end
                doxyQc = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
-               doxyQc(find(doxy ~= derivedParam.fillValue)) = 0;
+               doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                a_driftOptode.dataQc(:, end+1) = doxyQc;
                
                a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
@@ -779,7 +784,7 @@ else
                   a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), size(a_driftOptode.data, 2)-1)*g_decArgo_qcDef;
                end
                doxyQc = ones(size(a_driftOptode.data, 1), 1)*g_decArgo_qcDef;
-               doxyQc(find(doxy ~= derivedParam.fillValue)) = 0;
+               doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                a_driftOptode.dataQc(:, end+1) = doxyQc;
                
                a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];

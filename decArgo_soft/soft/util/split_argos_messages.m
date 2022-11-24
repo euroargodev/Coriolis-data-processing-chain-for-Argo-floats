@@ -20,8 +20,11 @@
 % ------------------------------------------------------------------------------
 function split_argos_messages(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\ArgosProcessing\apex_argos_20140326\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\ArgosProcessing\apex_argos\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_message_20160208\ori\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\archive_cycle\ori_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\tmp\ori_split\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -100,7 +103,7 @@ else
       end
       for idM = firstM:lastM
 
-         dirName = sprintf('%04d_%02d', idY, idM);
+         dirName = sprintf('%04d%02d', idY, idM);
          dirPathName = [DIR_INPUT_ARGOS_FILES '/' dirName];
 
          if (isdir(dirPathName))

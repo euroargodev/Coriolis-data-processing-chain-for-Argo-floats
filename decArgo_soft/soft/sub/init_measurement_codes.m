@@ -53,10 +53,10 @@ global g_MC_AST_Float;
 global g_MC_AscProfDeepestBin;
 global g_MC_SpyInAscProf;
 global g_MC_AscProf;
+global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
 global g_MC_AET_Float;
-global g_MC_InAirMeasBeforeTST;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
@@ -64,6 +64,7 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_fill_value;
@@ -119,10 +120,10 @@ g_MC_AST_Float = 502;
 g_MC_AscProfDeepestBin = 503;
 g_MC_SpyInAscProf = 589;
 g_MC_AscProf = 590;
+g_MC_MedianValueInAscProf = 595;
 g_MC_LastAscPumpedCtd = 599;
 g_MC_AET = 600;
 g_MC_AET_Float = 602;
-g_MC_InAirMeasBeforeTST = 690;
 g_MC_TST = 700;
 g_MC_TST_Float = 701;
 g_MC_FMT = 702;
@@ -130,6 +131,7 @@ g_MC_Surface = 703;
 g_MC_LMT = 704;
 g_MC_TET = 800;
 g_MC_Grounded = 901;
+g_MC_InAirSingleMeas = 1099;
 
 % status values
 g_JULD_STATUS_fill_value = ' ';

@@ -135,7 +135,11 @@ for idCy = 1:length(a_cycleList)
    ascentStartDate = g_decArgo_dateDef;
    ascentEndDate = g_decArgo_dateDef;
    transStartDate = g_decArgo_dateDef;
-               
+   firstGroundingDate = g_decArgo_dateDef;
+   firstGroundingPres = g_decArgo_presDef;
+   firstEmergencyAscentDate = g_decArgo_dateDef;
+   firstEmergencyAscentPres = g_decArgo_presDef;
+
    cycleNum = a_cycleList(idCy);
    g_decArgo_cycleNum = cycleNum;
    
@@ -740,6 +744,15 @@ for idCy = 1:length(a_cycleList)
 
          if (deepCycle == 1)
             
+            % pressure associated with some cycle timings
+            if (~isempty(tabTech1))
+               firstGroundingPres = tabTech1(14);
+               firstEmergencyAscentPres = tabTech1(45);
+            end
+            if (~isempty(tabTech2))
+               firstStabPres = tabTech2(9);
+            end
+            
             if (~isempty(tabTech2))
                
                % determine the main dates of the cycle
@@ -836,12 +849,6 @@ for idCy = 1:length(a_cycleList)
             
             if (deepCycle == 1)
                if (~isempty(tabTech2))
-                  
-                  % pressure associated with some cycle timings
-                  firstGroundingPres = tabTech1(14);
-                  firstEmergencyAscentPres = tabTech1(45);
-                  firstStabPres = tabTech2(9);
-                  
                   print_dates_in_csv_file_30( ...
                      floatClockDrift, lastArgosMsgDateOfPrevCycle, ...
                      cycleStartDate, descentStartDate, ...
@@ -924,6 +931,7 @@ for idCy = 1:length(a_cycleList)
                firstStabDate,  firstStabPres, descentEndDate, ...
                descentToProfStartDate, descentToProfEndDate, ...
                ascentStartDate, ascentEndDate, transStartDate, ...
+               firstGroundingDate, firstGroundingPres, ...
                cycleProfiles, ...
                parkDate, parkTransDate, parkPres, parkTemp, parkSal, ...
                tabTech1, tabTech2, a_decoderId, deepCycle);

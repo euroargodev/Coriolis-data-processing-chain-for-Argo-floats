@@ -35,12 +35,20 @@ global g_NTT_FLOAT_TIMES;
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decApx\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule\';
+g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_all\';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -75,6 +83,9 @@ g_NTT_ADJ = 1;
 
 % display float times
 g_NTT_FLOAT_TIMES = 0;
+
+% default values initialization
+init_default_values;
 
 close(findobj('Name', 'Times'));
 warning off;
@@ -216,6 +227,20 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrProbablyGood;
+global g_decArgo_qcStrCorrectable;
+global g_decArgo_qcStrBad;
+global g_decArgo_qcStrChanged;
+global g_decArgo_qcStrUnused1;
+global g_decArgo_qcStrUnused2;
+global g_decArgo_qcStrInterpolated;
+global g_decArgo_qcStrMissing;
+
+
 % plot the current float
 figure(g_NTT_FIG_TIMES_HANDLE);
 clf;
@@ -318,7 +343,6 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
    %          cycleTimeMeta = cycleTime(end)/24;
    %       end
    %    end
-   cycleTimeMeta
    if (cycleTimeMeta == -1)
       fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) => CONFIG_CycleTime_days set to 10\n', ...
          metaFileName);
@@ -729,7 +753,7 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
          tabLat = latitude(idCycle(idArgosLoc));
          tabPosQc = posAcc(idCycle(idArgosLoc));
          
-         idGoodPos = find((tabPosQc == '1') | (tabPosQc == '2') | (tabPosQc == '3') | (tabPosQc == 'G'));
+         idGoodPos = find((tabPosQc == g_decArgo_qcStrGood) | (tabPosQc == g_decArgo_qcStrProbablyGood) | (tabPosQc == g_decArgo_qcStrCorrectable) | (tabPosQc == 'G'));
          tabLon = tabLon(idGoodPos);
          tabLat = tabLat(idGoodPos);
          

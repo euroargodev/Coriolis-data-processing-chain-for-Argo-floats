@@ -1137,7 +1137,7 @@ if (~isempty(idF1))
          o_paramAccuracy = '0.005';
          fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'DOXY'))
-         o_paramAccuracy = '8';
+         o_paramAccuracy = '10%';
          fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramAccuracy = '2';
@@ -1161,7 +1161,7 @@ if (~isempty(idF1))
          o_paramResolution = '0.001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'DOXY'))
-         o_paramResolution = '1';
+         o_paramResolution = '0.001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'NITRATE'))
          o_paramResolution = '0.01';

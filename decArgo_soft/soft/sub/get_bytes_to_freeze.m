@@ -37,7 +37,7 @@ global g_decArgo_floatNum;
 % for each float version, create the list of bytes to freeze before the
 % redundancy step
 switch (a_decoderId)
-   case {1001} % 071412
+   case {1001, 1005} % 071412, 061810
       o_testMsgBytesToFreeze{1, 1} = 1;
       o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
       o_testMsgBytesToFreeze{2, 1} = 2;
@@ -45,6 +45,30 @@ switch (a_decoderId)
       
       o_dataMsgBytesToFreeze{1, 1} = 1;
       o_dataMsgBytesToFreeze{1, 2} = [3 12 26:31];
+   case {1002, 1003} % 062608, 061609
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 19:22];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
+   case {1004} % 021009
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 22:25];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
+   case {1006} % 093008
+      o_testMsgBytesToFreeze{1, 1} = 1;
+      o_testMsgBytesToFreeze{1, 2} = [3 9 10 13:17];
+      o_testMsgBytesToFreeze{2, 1} = 2;
+      o_testMsgBytesToFreeze{2, 2} = [3 21:24];
+      
+      o_dataMsgBytesToFreeze{1, 1} = 1;
+      o_dataMsgBytesToFreeze{1, 2} = [3 13 27:31];
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_bytes_to_freeze for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

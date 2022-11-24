@@ -74,7 +74,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       200];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbPackDesc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for drift
@@ -83,7 +83,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       201];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbPackDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for ascent
@@ -92,7 +92,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       202];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbPackAsc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins in zone <Z> for descent
@@ -101,7 +101,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDescZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -109,7 +109,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDescZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -117,14 +117,14 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDescZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       250 a_cycleNum a_profNum ...
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDescZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -132,7 +132,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDescZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins for drift
@@ -141,7 +141,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       204];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb bins in zone <Z> for ascent
@@ -150,7 +150,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasAscZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -158,7 +158,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasAscZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -166,7 +166,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasAscZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -174,7 +174,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasAscZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -182,7 +182,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSNbMeasAscZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Sensor state
@@ -191,7 +191,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       206];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCYCLOPSSensorState(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CYCLOPS'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Cyclops'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
 end

@@ -72,7 +72,7 @@ if (isempty(idDataStdMed))
    % mean data only
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; %d; %s; OXY; Date; PRES (dbar); DPHASE_DOXY (degree); TEMP_DOXY (°C)\n', ...
       g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(a_phaseNum));
-
+   
    dataMean = [];
    for idL = 1:length(idDataMean)
       dataMean = [dataMean; ...
@@ -84,7 +84,7 @@ if (isempty(idDataStdMed))
    end
    idDel = find((dataMean(:, 3) == 0) & (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0));
    dataMean(idDel, :) = [];
-
+   
    dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
    dataMean(:, 4) = sensor_2_value_for_Dphase_ir_sbd2(dataMean(:, 4));
    dataMean(:, 5) = sensor_2_value_for_temperature_ir_rudics_sbd2(dataMean(:, 5));
@@ -105,20 +105,20 @@ if (isempty(idDataStdMed))
             dataMean(idL, 3:5));
       end
    end
-
+   
 else
    if (isempty(idDataMean))
       fprintf('WARNING: Float #%d Cycle #%d: OXY standard deviation and median data without associated mean data\n', ...
          g_decArgo_floatNum, a_cycleNum);
    else
-
+      
       % mean and stdMed data
       fprintf(g_decArgo_outputCsvFileId, ['%d; %d; %d; %s; OXY; Date; PRES (dbar); ' ...
          'DPHASE_DOXY (degree); TEMP_DOXY (°C); ' ...
          'DPHASE_DOXY_STD (degree); TEMP_DOXY_STD (°C); ' ...
          'DPHASE_DOXY_MED (degree); TEMP_DOXY_MED (°C)\n'], ...
          g_decArgo_floatNum, a_cycleNum, a_profNum, get_phase_name(a_phaseNum));
-
+      
       % merge the data
       dataMean = [];
       for idL = 1:length(idDataMean)
@@ -131,7 +131,7 @@ else
       end
       idDel = find((dataMean(:, 3) == 0) & (dataMean(:, 4) == 0) & (dataMean(:, 5) == 0));
       dataMean(idDel, :) = [];
-
+      
       dataStdMed = [];
       for idL = 1:length(idDataStdMed)
          dataStdMed = [dataStdMed; ...
@@ -145,23 +145,24 @@ else
          (dataStdMed(:, 3) == 0) & (dataStdMed(:, 4) == 0) & ...
          (dataStdMed(:, 5) == 0));
       dataStdMed(idDel, :) = [];
-
+      
       data = cat(2, dataMean, ...
          ones(size(dataMean, 1), 1)*g_decArgo_oxyPhaseCountsDef, ...
          ones(size(dataMean, 1), 1)*g_decArgo_tempCountsDef, ...
          ones(size(dataMean, 1), 1)*g_decArgo_oxyPhaseCountsDef, ...
          ones(size(dataMean, 1), 1)*g_decArgo_tempCountsDef);
-
+      
       for idL = 1:size(dataStdMed, 1)
          idOk = find(data(:, 3) == dataStdMed(idL, 1));
          if (~isempty(idOk))
             if (length(idOk) > 1)
-               idOk2 = find(idOk == idL);
-               if (~isempty(idOk2))
-                  idOk = idOk(idOk2);
+               idF = find(data(idOk, 6) == g_decArgo_oxyPhaseCountsDef, 1);
+               if (~isempty(idF))
+                  idOk = idOk(idF);
                else
-                  fprintf('WARNING: Float #%d Cycle #%d: OXY standard deviation and median data without associated mean data\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: cannot fit OXY standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
+                  continue;
                end
             end
             data(idOk, 6:9) = dataStdMed(idL, 2:5);
@@ -170,7 +171,7 @@ else
                g_decArgo_floatNum, a_cycleNum);
          end
       end
-
+      
       data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
       data(:, 4) = sensor_2_value_for_Dphase_ir_sbd2(data(:, 4));
       data(:, 5) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 5));
@@ -178,7 +179,7 @@ else
       data(:, 7) = sensor_2_value_for_temperature_without_offset_ir_rudics_sbd2(data(:, 7));
       data(:, 8) = sensor_2_value_for_Dphase_ir_sbd2(data(:, 8));
       data(:, 9) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 9));
-
+      
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)
             if (data(idL, 2) == 1)

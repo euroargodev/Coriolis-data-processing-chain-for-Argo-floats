@@ -2,7 +2,8 @@
 % Read a NetCDF trajectory file contents.
 %
 % SYNTAX :
-%  [o_nMeasData, o_nCycleData] = read_file_traj_3_1(a_inputPathFileName, a_withAdj)
+%  [o_nMeasData, o_nCycleData, o_historyData] = read_file_traj_3_1( ...
+%    a_inputPathFileName, a_withAdj)
 %
 % INPUT PARAMETERS :
 %   a_inputPathFileName : trajectory file path name
@@ -11,6 +12,7 @@
 % OUTPUT PARAMETERS :
 %   o_nMeasData  : N_MEASUREMENT data
 %   o_nCycleData : N_CYCLE data
+%   o_nCycleData : HISTORY data
 %
 % EXAMPLES :
 %
@@ -20,17 +22,23 @@
 % RELEASES :
 %   06/12/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_nMeasData, o_nCycleData] = read_file_traj_3_1(a_inputPathFileName, a_withAdj)
+function [o_nMeasData, o_nCycleData, o_historyData] = read_file_traj_3_1( ...
+   a_inputPathFileName, a_withAdj)
 
 % output parameters initialization
 o_nMeasData = [];
 o_nCycleData = [];
+o_historyData = [];
 
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 global g_decArgo_qcDef;
+
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrUnused2;
 
 % sort the parameters according to a given list
 SORT_PARAM = 1;
@@ -153,9 +161,9 @@ else
             data = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramName));
             if (var_is_present_dec_argo(fCdf, paramQcName))
                dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramQcName));
-               dataQc(find(dataQc == ' ')) = '7';
+               dataQc(find(dataQc == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
                dataQc = str2num(dataQc);
-               dataQc(find(dataQc == 7)) = -1;
+               dataQc(find(dataQc == str2num(g_decArgo_qcStrUnused2))) = -1;
             else
                dataQc = ones(size(data, 1), 1)*g_decArgo_qcDef;
             end
@@ -212,9 +220,9 @@ else
                data = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramName));
                if (var_is_present_dec_argo(fCdf, paramQcName))
                   dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramQcName));
-                  dataQc(find(dataQc == ' ')) = '7';
+                  dataQc(find(dataQc == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
                   dataQc = str2num(dataQc);
-                  dataQc(find(dataQc == 7)) = -1;
+                  dataQc(find(dataQc == str2num(g_decArgo_qcStrUnused2))) = -1;
                else
                   dataQc = ones(size(data, 1), 1)*g_decArgo_qcDef;
                end
@@ -520,6 +528,36 @@ else
             'dataMode', netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE')));
       end
    end
+   
+   % retrieve HISTORY information
+   historyItemList = [ ...
+      {'HISTORY_INSTITUTION'} ...
+      {'HISTORY_STEP'} ...
+      {'HISTORY_SOFTWARE'} ...
+      {'HISTORY_SOFTWARE_RELEASE'} ...
+      {'HISTORY_REFERENCE'} ...
+      {'HISTORY_DATE'} ...
+      {'HISTORY_ACTION'} ...
+      {'HISTORY_PARAMETER'} ...
+      {'HISTORY_PREVIOUS_VALUE'} ...
+      {'HISTORY_INDEX_DIMENSION'} ...
+      {'HISTORY_START_INDEX'} ...
+      {'HISTORY_STOP_INDEX'} ...
+      {'HISTORY_QCTEST'} ...
+      ];
+   for idH = 1:length(historyItemList)
+      varName = historyItemList{idH};
+      if (var_is_present_dec_argo(fCdf, varName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      else
+         fprintf('WARNING: Variable %s is missing in file %s\n', ...
+            varName, inputFileName);
+         varValue = [];
+      end
+      o_historyData{end+1} = varName;
+      o_historyData{end+1} = varValue;
+   end
+
 end
 
 netcdf.close(fCdf);

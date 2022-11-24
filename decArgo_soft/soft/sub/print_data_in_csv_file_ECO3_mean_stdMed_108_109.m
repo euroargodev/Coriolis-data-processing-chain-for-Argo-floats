@@ -179,12 +179,13 @@ else
          idOk = find(data(:, 3) == dataStdMed(idL, 1));
          if (~isempty(idOk))
             if (length(idOk) > 1)
-               idOk2 = find(idOk == idL);
-               if (~isempty(idOk2))
-                  idOk = idOk(idOk2);
+               idF = find(data(idOk, 7) == g_decArgo_chloroACountsDef, 1);
+               if (~isempty(idF))
+                  idOk = idOk(idF);
                else
-                  fprintf('WARNING: Float #%d Cycle #%d: ECO3 standard deviation and median data without associated mean data\n', ...
+                  fprintf('WARNING: Float #%d Cycle #%d: cannot fit ECO3 standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                      g_decArgo_floatNum, a_cycleNum);
+                  continue;
                end
             end
             data(idOk, 7:12) = dataStdMed(idL, 2:7);

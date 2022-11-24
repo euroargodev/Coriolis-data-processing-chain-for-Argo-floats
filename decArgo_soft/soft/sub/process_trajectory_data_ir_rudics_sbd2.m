@@ -515,7 +515,11 @@ for idCyc = 1:length(cycleNumList)
                for idSL = 1:nbSubLevels
                   dataCol = data(:, idSL);
                   dataCol(find(dataCol == paramList(idParam).fillValue)) = [];
-                  meanData = [meanData mean(dataCol)];
+                  if (~isempty(dataCol))
+                     meanData = [meanData mean(dataCol)];
+                  else
+                     meanData = [meanData paramList(idParam).fillValue];
+                  end
                end
                
                if (~isempty(meanData))

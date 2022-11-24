@@ -52,7 +52,7 @@ for idField = 1:length(confDataFieldNames)
       case {301, 302, 303}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
          
-      case {1001}
+      case {1001, 1002, 1003, 1004, 1005, 1006}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
       otherwise
          fprintf('WARNING: Nothing done yet in get_nc_config_parameters_json for decoderId #%d\n', a_decoderId);

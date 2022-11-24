@@ -122,6 +122,11 @@ return;
 % ------------------------------------------------------------------------------
 function nc_traj_2_csv_file(a_inputPathFileName, a_outputPathFileName)
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrUnused2;
+
+
 % input and output file names
 [inputPath, inputName, inputExt] = fileparts(a_inputPathFileName);
 [outputPath, outputName, outputExt] = fileparts(a_outputPathFileName);
@@ -130,7 +135,7 @@ ourputFileName = [outputName outputExt];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 
 % read the trajectory file contents
-[nMeasData nCycleData] = read_file_traj_3_1(a_inputPathFileName, 0);
+[nMeasData, nCycleData, historyData] = read_file_traj_3_1(a_inputPathFileName, 0);
 
 % create CSV file
 fidOut = fopen(a_outputPathFileName, 'wt');
@@ -188,8 +193,8 @@ for idParam = 1:length(nMeasData.paramNameList)
          
          paramFormat = char(nMeasData.paramDataFormat(idParam));
          paramFormats = [paramFormats '; ' paramFormat];
-         paramQcFormats = [paramQcFormats '; %c'];
       end
+      paramQcFormats = [paramQcFormats '; %c'];
    end
 end
 
@@ -356,9 +361,9 @@ for cycleNumber = -1:max(cycles)
          
          paramData = nMeasData.paramData(idMeas(idM), :);
          paramQcData = nMeasData.paramQcData(idMeas(idM), :);
-         paramQcData(find(paramQcData == -1)) = 7;
+         paramQcData(find(paramQcData == -1)) = str2num(g_decArgo_qcStrUnused2);
          paramQcData = num2str(paramQcData')';
-         paramQcData(find(paramQcData == '7')) = ' ';
+         paramQcData(find(paramQcData == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
          
          if (isempty(nMeasData.juldAdj))
             fprintf(fidOut, ['%s; MEAS #%04d; %3d; %s; %s; %c; %c; ; ; ; %8.3f; %7.3f; %c; %c; %s' paramFormats paramQcFormats '\n'], ...
@@ -433,6 +438,36 @@ for cycleNumber = -1:max(cycles)
    if (~isempty(idMeas))
       fprintf(fidOut, '%s\n', ...
          nMeasData.platformNumber);
+   end
+end
+
+% print HISTORY data
+nHistory = 0;
+idVal = find(strcmp(historyData, 'HISTORY_INSTITUTION') == 1, 1);
+if (~isempty(idVal))
+   [~, nHistory] = size(historyData{idVal+1});
+end
+
+for idH = 1:nHistory
+   for id = 1:2:length(historyData)
+      histoName = historyData{id};
+      histoValue = historyData{id+1};
+      if (isnumeric(histoValue))
+         fprintf(fidOut, ' %s; HISTORY; %d; %s; %g\n', ...
+            nMeasData.platformNumber, idH, ...
+            strtrim(histoName), ...
+            histoValue(idH));
+      elseif (strcmp(histoName, 'HISTORY_INDEX_DIMENSION'))
+         fprintf(fidOut, ' %s; HISTORY; %d; %s; %c\n', ...
+            nMeasData.platformNumber, idH, ...
+            strtrim(histoName), ...
+            strtrim(histoValue(idH)));
+      else
+         fprintf(fidOut, ' %s; HISTORY; %d; %s; %s\n', ...
+            nMeasData.platformNumber, idH, ...
+            strtrim(histoName), ...
+            strtrim(histoValue(:, idH)'));
+      end
    end
 end
 

@@ -82,6 +82,9 @@ o_profStruct = a_profStruct;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% QC flag values (char)
+global g_decArgo_qcStrInterpolated;
+
 % global default values
 global g_decArgo_dateDef;
 
@@ -133,7 +136,7 @@ if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
       a_profStruct.locationDate = a_profStruct.date;
       a_profStruct.locationLon = interpLocLon;
       a_profStruct.locationLat = interpLocLat;
-      a_profStruct.locationQc = '8';
+      a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
       
       % to update the associated NetCDF file
       maxCycleNum = max(a_gpsLocCycleNum);

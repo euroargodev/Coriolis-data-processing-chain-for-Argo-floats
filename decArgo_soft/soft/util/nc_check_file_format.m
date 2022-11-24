@@ -20,21 +20,27 @@
 function nc_check_file_format(varargin)
 
 % directory of the JAVA checker
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2015-09-22_spec_2015-09-22\'; 
-% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2015-09-22_spec_2015-11-16\'; 
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_2015-12-07_spec_2016-01-13\'; 
 
 % top directory of the NetCDF files to check
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_tech\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_deep\';
 
 % directory to store checker reports
 DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
 
 % default list of floats to check
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt'; 
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_prv_ir_all.txt'; 
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt'; 
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_prv_ir_all.txt'; 
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt'; 
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt'; 
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt'; 
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all.txt'; 
 
 % meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
 
 % directory to store the log and csv files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
@@ -46,11 +52,11 @@ CHECK_NC_MONO_PROF = 1;
 CHECK_NC_TECH = 1;
 CHECK_NC_META = 1;
 
-% CHECK_NC_TRAJ = 0;
-% CHECK_NC_MULTI_PROF = 0;
-% CHECK_NC_MONO_PROF = 0;
-% CHECK_NC_TECH = 0;
-% CHECK_NC_META = 1;
+CHECK_NC_TRAJ = 0;
+CHECK_NC_MULTI_PROF = 0;
+CHECK_NC_MONO_PROF = 0;
+CHECK_NC_TECH = 1;
+CHECK_NC_META = 0;
 
 
 if (nargin == 0)

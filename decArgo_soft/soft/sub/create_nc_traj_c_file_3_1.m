@@ -28,6 +28,10 @@ function create_nc_traj_c_file_3_1( ...
 % current float WMO number
 global g_decArgo_floatNum;
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+
 % configuration values
 global g_decArgo_dirOutputNetcdfFile;
 global g_decArgo_applyRtqc;
@@ -1312,15 +1316,15 @@ for idNM = 1:length(a_tabTrajNMeas)
             netcdf.putVar(fCdf, measParamVarId, measPos, size(paramData, 1), paramData);
             
             if (isempty(meas.paramDataQc))
-               paramDataQcStr = repmat(' ', size(paramData, 1), 1);
-               paramDataQcStr(find(paramData ~= measParam.fillValue)) = '0';
+               paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
+               paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
             else
                paramDataQc = meas.paramDataQc(:, idParam);
                if ((length(unique(paramDataQc)) == 1) && (unique(paramDataQc) == g_decArgo_qcDef))
-                  paramDataQcStr = repmat(' ', size(paramData, 1), 1);
-                  paramDataQcStr(find(paramData ~= measParam.fillValue)) = '0';
+                  paramDataQcStr = repmat(g_decArgo_qcStrDef, size(paramData, 1), 1);
+                  paramDataQcStr(find(paramData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
                else
-                  paramDataQcStr = repmat(' ', length(paramDataQc), 1);
+                  paramDataQcStr = repmat(g_decArgo_qcStrDef, length(paramDataQc), 1);
                   idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                   paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                end
@@ -1340,15 +1344,15 @@ for idNM = 1:length(a_tabTrajNMeas)
                netcdf.putVar(fCdf, measParamAdjVarId, measPos, size(paramAdjData, 1), paramAdjData);
                
                if (isempty(meas.paramDataQc))
-                  paramAdjDataQcStr = repmat(' ', size(paramAdjData, 1), 1);
-                  paramAdjDataQcStr(find(paramAdjData ~= measParam.fillValue)) = '0';
+                  paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                  paramAdjDataQcStr(find(paramAdjData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
                else
                   paramAdjDataQc = meas.paramDataQc(:, idParam);
                   if ((length(unique(paramAdjDataQc)) == 1) && (unique(paramAdjDataQc) == g_decArgo_qcDef))
-                     paramAdjDataQcStr = repmat(' ', size(paramAdjData, 1), 1);
-                     paramAdjDataQcStr(find(paramAdjData ~= measParam.fillValue)) = '0';
+                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
+                     paramAdjDataQcStr(find(paramAdjData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;
                   else
-                     paramAdjDataQcStr = repmat(' ', length(paramAdjDataQc), 1);
+                     paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, length(paramAdjDataQc), 1);
                      idNoDef = find(paramAdjDataQc ~= g_decArgo_qcDef);
                      paramAdjDataQcStr(idNoDef) = num2str(paramAdjDataQc(idNoDef));
                   end

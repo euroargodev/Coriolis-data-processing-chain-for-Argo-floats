@@ -35,6 +35,9 @@ o_nCycleTime = [];
 % default values
 global g_decArgo_dateDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+
 
 if ((a_time ~= g_decArgo_dateDef) || (a_timeAdj ~= g_decArgo_dateDef))
 
@@ -44,12 +47,12 @@ if ((a_time ~= g_decArgo_dateDef) || (a_timeAdj ~= g_decArgo_dateDef))
    if (a_time ~= g_decArgo_dateDef)
       o_measStruct.juld = a_time;
       o_measStruct.juldStatus = a_timeStatus;
-      o_measStruct.juldQc = '0';
+      o_measStruct.juldQc = g_decArgo_qcStrNoQc;
    end
    if (a_timeAdj ~= g_decArgo_dateDef)
       o_measStruct.juldAdj = a_timeAdj;
       o_measStruct.juldAdjStatus = a_timeStatus;
-      o_measStruct.juldAdjQc = '0';
+      o_measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
    end
    
    if (a_timeAdj ~= g_decArgo_dateDef)

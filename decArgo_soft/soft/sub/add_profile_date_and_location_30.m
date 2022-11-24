@@ -30,6 +30,11 @@ o_profStruct = [];
 % default values
 global g_decArgo_dateDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrInterpolated;
+
 
 % find the corresponding cycle index in the float surface data structure
 idCycle = find(a_floatSurfData.cycleNumbers == a_cycleNum);
@@ -86,7 +91,7 @@ if (a_profStruct.direction == 'D')
       a_profStruct.locationDate = lastLocDate;
       a_profStruct.locationLon = lastLocLon;
       a_profStruct.locationLat = lastLocLat;
-      a_profStruct.locationQc = '1';
+      a_profStruct.locationQc = g_decArgo_qcStrGood;
    else
       
       % the previous cycle is missing
@@ -97,7 +102,7 @@ if (a_profStruct.direction == 'D')
             a_profStruct.locationDate = a_floatSurfData.launchDate;
             a_profStruct.locationLon = a_floatSurfData.launchLon;
             a_profStruct.locationLat = a_floatSurfData.launchLat;
-            a_profStruct.locationQc = '0';
+            a_profStruct.locationQc = g_decArgo_qcStrNoQc;
          end
       else
          % otherwise interpolate between existing locations
@@ -110,7 +115,7 @@ if (a_profStruct.direction == 'D')
                a_profStruct.locationDate = profLocDate;
                a_profStruct.locationLon = profLocLon;
                a_profStruct.locationLat = profLocLat;
-               a_profStruct.locationQc = '8';
+               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
             end
          end
       end
@@ -149,12 +154,12 @@ else
       locLat = a_floatSurfData.cycleData(idCycle).argosLocLat;
       locQc = a_floatSurfData.cycleData(idCycle).argosLocQc;
       
-      idGoodLoc = find(locQc == '1');
+      idGoodLoc = find(locQc == g_decArgo_qcStrGood);
       if (~isempty(idGoodLoc))
          a_profStruct.locationDate = locDate(idGoodLoc(1));
          a_profStruct.locationLon = locLon(idGoodLoc(1));
          a_profStruct.locationLat = locLat(idGoodLoc(1));
-         a_profStruct.locationQc = '1';
+         a_profStruct.locationQc = g_decArgo_qcStrGood;
       end
    end
 

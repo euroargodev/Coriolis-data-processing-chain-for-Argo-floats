@@ -1,3 +1,4 @@
+
 % ------------------------------------------------------------------------------
 % Initialize global default values.
 %
@@ -55,6 +56,7 @@ global g_decArgo_molarDoxyDef;
 global g_decArgo_mlplDoxyDef;
 global g_decArgo_tPhaseDoxyDef;
 global g_decArgo_c1C2PhaseDoxyDef;
+global g_decArgo_bPhaseDoxyDef;
 global g_decArgo_phaseDelayDoxyDef;
 global g_decArgo_tempDoxyDef;
 global g_decArgo_doxyDef;
@@ -139,6 +141,8 @@ global g_decArgo_qcStrProbablyGood;
 global g_decArgo_qcStrCorrectable;
 global g_decArgo_qcStrBad;
 global g_decArgo_qcStrChanged;
+global g_decArgo_qcStrUnused1;
+global g_decArgo_qcStrUnused2;
 global g_decArgo_qcStrInterpolated;
 global g_decArgo_qcStrMissing;
 
@@ -179,6 +183,7 @@ g_decArgo_molarDoxyDef = 999;
 g_decArgo_mlplDoxyDef = 999;
 g_decArgo_tPhaseDoxyDef = 999.999;
 g_decArgo_c1C2PhaseDoxyDef = 999.999;
+g_decArgo_bPhaseDoxyDef = 999.999;
 g_decArgo_phaseDelayDoxyDef = 99999.999;
 g_decArgo_tempDoxyDef = 99.999;
 g_decArgo_doxyDef = 999.999;
@@ -218,7 +223,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '003a';
+g_decArgo_decoderVersion = '003k';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -286,6 +291,8 @@ g_decArgo_qcStrProbablyGood = '2';
 g_decArgo_qcStrCorrectable = '3';
 g_decArgo_qcStrBad = '4';
 g_decArgo_qcStrChanged = '5';
+g_decArgo_qcStrUnused1 = '6';
+g_decArgo_qcStrUnused2 = '7';
 g_decArgo_qcStrInterpolated = '8';
 g_decArgo_qcStrMissing = '9';
 

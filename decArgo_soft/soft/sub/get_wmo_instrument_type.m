@@ -44,7 +44,7 @@ switch (a_decoderId)
    case {302, 303}
       o_wmoInstType = '837';
       
-   case {1001}
+   case {1001, 1002, 1003, 1004, 1005, 1006}
       o_wmoInstType = '846';
       
    otherwise

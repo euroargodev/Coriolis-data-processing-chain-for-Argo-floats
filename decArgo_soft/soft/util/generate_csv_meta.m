@@ -24,10 +24,13 @@ function generate_csv_meta(varargin)
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ArvorARN\meta_provor_4.52_20150416.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
 
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta_updated.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_iridium_meta_updated.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
+
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -325,14 +328,18 @@ o_sensorList = [];
 % get the list of sensors for this float
 switch a_decId
    
-   case {1, 3, 11, 12, 17, 24, 30, 204, 205}
+   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205}
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 201, 202, 203, 206, 207, 208, 209}
+   case {4, 19, 25, 27, 28, 29, 201, 202, 203, 206, 207, 208}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
-
+      
+   case {209}
+      % CTDO float with 2 DO sensors
+      o_sensorList = [{'CTD'}; {'OPTODE'}; {'OPTODE2'}];
+      
    otherwise
       fprintf('ERROR: Unknown sensor list for decId #%d => nothing done for this float\n', a_decId);
 end
@@ -378,6 +385,18 @@ switch a_inputSensorName
          ];
       ifEmptySensorModelList = [ ...
          {'AANDERAA_OPTODE_4330'} ...
+         ];
+      
+   case 'OPTODE2'
+      o_sensorName = [ ...
+         {'OPTODE_DOXY2'} ...
+         ];
+      o_sensorDimLevel = [102];
+      ifEmptySensorMakerList = [ ...
+         {'SBE'} ...
+         ];
+      ifEmptySensorModelList = [ ...
+         {'SBE63_OPTODE'} ...
          ];
 
    otherwise
@@ -513,7 +532,7 @@ switch a_inputSensorName
                {'degree'} {'micromole/kg'} ...
                ];
             
-         case {201, 202, 203, 206, 207, 208, 209}
+         case {201, 202, 203, 206, 207, 208}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} ...
@@ -526,10 +545,44 @@ switch a_inputSensorName
                {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} ...
                ];
             
+         case {209}
+            
+            o_paramName = [ ...
+               {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY2'} ...
+               ];
+            o_paramDimLevel = [101 102 103 104 105];
+            o_paramSensor = [ ...
+               {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} ...
+               ];
+            o_paramUnits = [ ...
+               {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} {'millibar'} ...
+               ];
+            
          otherwise
             fprintf('ERROR: Unknown OPTODE sensor parameter list for decId #%d => nothing done for this float\n', a_decId);
       end
 
+   case 'OPTODE2'
+      
+      switch a_decId
+            
+         case {209}
+            
+            o_paramName = [ ...
+               {'PHASE_DELAY_DOXY'} {'TEMP_DOXY2'} {'DOXY2'} {'PPOX_DOXY2'} ...
+               ];
+            o_paramDimLevel = [101 102 103 104];
+            o_paramSensor = [ ...
+               {'OPTODE_DOXY2'} {'OPTODE_DOXY2'} {'OPTODE_DOXY2'} {'OPTODE_DOXY2'} ...
+               ];
+            o_paramUnits = [ ...
+               {'microsecond'} {'degree_Celsius'} {'micromole/kg'} {'millibar'} ...
+               ];
+            
+         otherwise
+            fprintf('ERROR: Unknown OPTODE sensor parameter list for decId #%d => nothing done for this float\n', a_decId);
+      end
+      
    otherwise
       fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputName);
 end
@@ -583,7 +636,7 @@ if (~isempty(idF1))
          o_paramAccuracy = '0.005';
          fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
       elseif (strcmp(a_paramName, 'DOXY'))
-         o_paramAccuracy = '8';
+         o_paramAccuracy = '10%';
          fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing => set to ''%s''\n', a_paramName, o_paramAccuracy);
       end
    end
@@ -604,7 +657,7 @@ if (~isempty(idF1))
          o_paramResolution = '0.001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       elseif (strcmp(a_paramName, 'DOXY'))
-         o_paramResolution = '1';
+         o_paramResolution = '0.001';
          fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing => set to ''%s''\n', a_paramName, o_paramResolution);
       end
    end

@@ -86,24 +86,24 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX floats
-   case {1001}
+   case {1001, 1002, 1003, 1004, 1005, 1006}
       
       % 1 - DPF = yes and N = 1 (2 configurations):
       %     - config #1: cycle duration reduced, profile pres = TP
       %     - config #2: cycle duration = CT, profile pres = TP
-      % 2 - DPF = yes and N > 1 and N ~= 234 (3 configurations):
+      % 2 - DPF = yes and N > 1 and N ~= 234/254 (3 configurations):
       %     - config #1: cycle duration reduced, profile pres = TP
       %     - config #2: cycle duration = CT, profile pres = PRKP
       %     - config #3: cycle duration = CT, profile pres = TP
-      % 3 - DPF = yes and N = 234 (2 configurations):
+      % 3 - DPF = yes and N = 234/254 (2 configurations):
       %     - config #1: cycle duration reduced, profile pres = TP
       %     - config #2: cycle duration = CT, profile pres = PRKP
       % 4 - DPF = no and N = 1 (1 configuration):
       %     - config #1: cycle duration = CT, profile pres = TP
-      % 5 - DPF = no and N > 1 and N ~= 234 (2 configurations):
+      % 5 - DPF = no and N > 1 and N ~= 234/254 (2 configurations):
       %     - config #1: cycle duration = CT, profile pres = PRKP
       %     - config #2: cycle duration = CT, profile pres = TP
-      % 6 - DPF = no and N = 234 (1 configuration):
+      % 6 - DPF = no and N = 234/254 (1 configuration):
       %     - config #1: cycle duration = CT, profile pres = PRKP
       
       % retrieve configuration parameters
@@ -114,7 +114,7 @@ switch (a_decoderId)
       
       if ~(isempty(dpfFloatFlag) || isempty(parkAndProfileCycleLength))
          if (dpfFloatFlag == 1)
-            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == 234))
+            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value(a_decoderId)))
                if (a_cycleNum <= 1)
                   o_configMissionNumber = 1;
                else
@@ -132,7 +132,7 @@ switch (a_decoderId)
                end
             end
          else
-            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == 234))
+            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value(a_decoderId)))
                o_configMissionNumber = 1;
             else
                if (rem(a_cycleNum, parkAndProfileCycleLength) == 0)
@@ -149,6 +149,53 @@ switch (a_decoderId)
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_config_mission_number_argos for decoderId #%d\n', ...
+         g_decArgo_floatNum, ...
+         a_decoderId);
+      
+end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Get the park and profile specific value (that causes all profiles to start at
+% park depth) for a given decoder.
+%
+% SYNTAX :
+%  [o_specificValue] = get_park_and_prof_specific_value(a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_specificValue : PnP specific value for this decoder Id
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   12/21/2015 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_specificValue] = get_park_and_prof_specific_value(a_decoderId)
+
+% output parameters initialization
+o_specificValue = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+
+switch (a_decoderId)
+   
+   case {1001, 1005} % 071412, 061810
+      o_specificValue = 234;
+      
+   case {1002, 1003, 1004, 1006} % 062608, 061609, 021009, 093008
+      o_specificValue = 254;
+      
+   otherwise
+      fprintf('WARNING: Float #%d: Nothing done yet in get_park_and_prof_specific_value for decoderId #%d\n', ...
          g_decArgo_floatNum, ...
          a_decoderId);
       

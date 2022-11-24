@@ -143,8 +143,9 @@ if (g_decArgo_realtimeFlag == 0)
                end
             else
                switch (a_decoderId)
-                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                  case {1001} % 071412
+                  
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  case {1001, 1002, 1003, 1004, 1005} % 071412, 062608, 061609, 021009, 061810
                      % only one sensor (SBE41)
                      fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
                      for idF = 1:length(fieldNames)
@@ -188,6 +189,60 @@ if (g_decArgo_realtimeFlag == 0)
                            end
                         end
                      end
+                     
+                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  case {1006} % 093008
+                     % two sensors (SBE41 and Aanderaa 3830)
+                     fieldNames = fields(jsonMetaData.(dataStruct.metaConfigLabel));
+                     for idF = 1:length(fieldNames)
+                        if (((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_1') || ...
+                              strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_2') || ...
+                              strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_3')) && ...
+                              strcmp(dataStruct.techParamCode, 'SENSOR_SERIAL_NO_1')) || ...
+                              ((strcmp(fieldNames{idF}, 'SENSOR_SERIAL_NO_4')) && ...
+                              strcmp(dataStruct.techParamCode, 'SENSOR_SERIAL_NO_2')))
+                           if (~strcmp(jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), dataStruct.techParamValue))
+                              if (VERBOSE == 1)
+                                 if (g_decArgo_bddUpdateCsvFileId == -1)
+                                    % output CSV file creation
+                                    g_decArgo_bddUpdateCsvFileName = [g_decArgo_dirOutputCsvFile '/data_to_update_bdd_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+                                    g_decArgo_bddUpdateCsvFileId = fopen(g_decArgo_bddUpdateCsvFileName, 'wt');
+                                    if (g_decArgo_bddUpdateCsvFileId == -1)
+                                       fprintf('ERROR: Unable to create CSV output file: %s\n', g_decArgo_bddUpdateCsvFileName);
+                                       return;
+                                    end
+                                    
+                                    header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
+                                    fprintf(g_decArgo_bddUpdateCsvFileId, '%s\n', header);
+                                 end
+                                 
+                                 fprintf(g_decArgo_bddUpdateCsvFileId, '%d;%d;%d;%s;%s\n', ...
+                                    g_decArgo_floatNum, ...
+                                    dataStruct.techParamId, idF, dataStruct.techParamValue, 'SENSOR_SERIAL_NO');
+                                 
+                                 fprintf('WARNING: Float #%d: Meta-data ''%s.%s'': decoder value (''%s'') and configuration value (''%s'') differ => BDD contents should be updated (see %s)\n', ...
+                                    g_decArgo_floatNum, ...
+                                    dataStruct.metaConfigLabel, ...
+                                    fieldNames{idF}, ...
+                                    dataStruct.techParamValue, ...
+                                    jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}), ...
+                                    g_decArgo_bddUpdateCsvFileName);
+                              end
+                           else
+                              if (VERBOSE == 1)
+                                 if (ONLY_DIFF == 1)
+                                    fprintf('INFO: Float #%d: Meta-data ''%s.%s'': decoder value (''%s'') and configuration value (''%s'')\n', ...
+                                       g_decArgo_floatNum, ...
+                                       dataStruct.metaConfigLabel, ...
+                                       fieldNames{idF}, ...
+                                       dataStruct.techParamValue, ...
+                                       jsonMetaData.(dataStruct.metaConfigLabel).(fieldNames{idF}));
+                                 end
+                              end
+                           end
+                        end
+                     end
+                     
                   otherwise
                      fprintf('WARNING: Float #%d: Nothing done yet in create_float_config_apx_argos for decoderId #%d\n', ...
                         g_decArgo_floatNum, ...
@@ -343,19 +398,19 @@ end
 % 1 - DPF = yes and N = 1 (2 configurations):
 %     - config #1: cycle duration reduced, profile pres = TP
 %     - config #2: cycle duration = CT, profile pres = TP
-% 2 - DPF = yes and N > 1 and N ~= 234 (3 configurations):
+% 2 - DPF = yes and N > 1 and N ~= 234/254 (3 configurations):
 %     - config #1: cycle duration reduced, profile pres = TP
 %     - config #2: cycle duration = CT, profile pres = PRKP
 %     - config #3: cycle duration = CT, profile pres = TP
-% 3 - DPF = yes and N = 234 (2 configurations):
+% 3 - DPF = yes and N = 234/254 (2 configurations):
 %     - config #1: cycle duration reduced, profile pres = TP
 %     - config #2: cycle duration = CT, profile pres = PRKP
 % 4 - DPF = no and N = 1 (1 configuration):
 %     - config #1: cycle duration = CT, profile pres = TP
-% 5 - DPF = no and N > 1 and N ~= 234 (2 configurations):
+% 5 - DPF = no and N > 1 and N ~= 234/254 (2 configurations):
 %     - config #1: cycle duration = CT, profile pres = PRKP
 %     - config #2: cycle duration = CT, profile pres = TP
-% 6 - DPF = no and N = 234 (1 configuration):
+% 6 - DPF = no and N = 234/254 (1 configuration):
 %     - config #1: cycle duration = CT, profile pres = PRKP
 
 % store the configuration
@@ -437,6 +492,55 @@ if (isfield(jsonMetaData, 'RT_OFFSET'))
       g_decArgo_rtOffsetInfo.param{end+1} = param;
       g_decArgo_rtOffsetInfo.value{end+1} = tabValue;
       g_decArgo_rtOffsetInfo.date{end+1} = tabDate;
+   end
+end
+
+% add DO calibration coefficients
+if (a_decoderId == 1006)
+   
+   % read the calibration coefficients in the json meta-data file
+
+   % fill the calibration coefficients
+   if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+      if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
+         fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+         for idF = 1:length(fieldNames)
+            g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+         end
+      end
+   end
+   
+   % create the tabPhaseCoef, tabDoxyCoef and arrays
+   if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+      calibData = g_decArgo_calibInfo.OPTODE;
+      
+      tabPhaseCoef = [];
+      for id = 0:3
+         fieldName = ['PhaseCoef' num2str(id)];
+         if (isfield(calibData, fieldName))
+            tabPhaseCoef(id+1) = calibData.(fieldName);
+         else
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+            return;
+         end
+      end
+      
+      tabDoxyCoef = [];
+      for idI = 0:4
+         for idJ = 0:3
+            fieldName = ['CCoef' num2str(idI) num2str(idJ)];
+            if (isfield(calibData, fieldName))
+               tabDoxyCoef(idI+1, idJ+1) = calibData.(fieldName);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+               return;
+            end
+         end
+      end
+      g_decArgo_calibInfo.OPTODE.TabPhaseCoef = tabPhaseCoef;      
+      g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
+   else
+      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
    end
 end
 

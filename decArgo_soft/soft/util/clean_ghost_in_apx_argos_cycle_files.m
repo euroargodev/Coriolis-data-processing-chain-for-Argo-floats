@@ -21,7 +21,7 @@
 function clean_ghost_in_apx_argos_cycle_files(varargin)
 
 % directory of the argos files to check
-DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_argos\out\';
+DIR_INPUT_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\TEST_20160223\OUT\tmp\';
 
 % directory to store the log and CSV files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -85,7 +85,6 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    tabCycleNumber = [];
-   %    tabFirstMsgDate = [];
    tabLastMsgDate = [];
    tabFilename = [];
    
@@ -126,55 +125,47 @@ for idFloat = 1:nbFloats
       [val1, count1, errmsg1, nextindex1] = sscanf(argosFileName, '%d_%d-%d-%d-%d-%d-%d_%d_%d.txt');
       if (isempty(errmsg1) && (count1 == 9) && (val1(8) == floatNum))
          cycleNumber = val1(9);
-         if (cycleNumber >= floatDpfFlag)
+         if (cycleNumber > floatDpfFlag)
             tabCycleNumber = [tabCycleNumber; cycleNumber];
-            %             tabFirstMsgDate = [tabFirstMsgDate; min(argosDataDate)];
             tabLastMsgDate = [tabLastMsgDate; max(argosDataDate)];
             tabFilename{end+1} = argosFilePathName;
          end
       end
    end
    
-   %    tabFirstMsgDateBis = tabFirstMsgDate-compute_duration(tabCycleNumber, tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
-   tabLastMsgDateBis = tabLastMsgDate-compute_duration(tabCycleNumber, tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
-   
-   for idCy = 1:length(tabCycleNumber)
+   if (~isempty(tabCycleNumber))
       
-      tabLast = tabLastMsgDateBis;
-      tabLast(idCy) = [];
+      tabLastMsgDateBis = tabLastMsgDate-compute_duration(tabCycleNumber, tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
       
-      if ((tabLastMsgDateBis(idCy)-mean(tabLast))*24 > 0)
-         fprintf('Cycle #%3d: LAST %s\n', ...
-            tabCycleNumber(idCy), ...
-            format_time_dec_argo((tabLastMsgDateBis(idCy)-mean(tabLast))*24));
-      end
-      
-      if ((tabLastMsgDateBis(idCy)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
-         [argosLocDate, argosDataDate] = ...
-            read_argos_file_fmt1_rough(tabFilename{idCy}, floatArgosId);
-         argosDate = [argosLocDate; argosDataDate];
-         argosDate = sort(argosDate);
-         argosDate = argosDate-compute_duration(tabCycleNumber(idCy), tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
-         argosPathFileName = tabFilename{idCy};
-         while (~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
-            
-            % a ghost message is detected, move it to a dedicated file
-            [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
-            argosPathFileName = subFileNameList{1};
-            
-            argosDate(end) = [];
-            fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+      for idCy = 1:length(tabCycleNumber)
+         
+         tabLast = tabLastMsgDateBis;
+         tabLast(idCy) = [];
+         
+         if ((tabLastMsgDateBis(idCy)-mean(tabLast))*24 > 0)
+            fprintf('Cycle #%3d: LAST %s\n', ...
+               tabCycleNumber(idCy), ...
+               format_time_dec_argo((tabLastMsgDateBis(idCy)-mean(tabLast))*24));
+         end
+         
+         if ((tabLastMsgDateBis(idCy)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
+            [argosLocDate, argosDataDate] = ...
+               read_argos_file_fmt1_rough(tabFilename{idCy}, floatArgosId);
+            argosDate = [argosLocDate; argosDataDate];
+            argosDate = sort(argosDate);
+            argosDate = argosDate-compute_duration(tabCycleNumber(idCy), tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
+            argosPathFileName = tabFilename{idCy};
+            while (~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+               
+               % a ghost message is detected, move it to a dedicated file
+               [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
+               argosPathFileName = subFileNameList{1};
+               
+               argosDate(end) = [];
+               fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+            end
          end
       end
-      
-      %       tabFirst = tabFirstMsgDateBis;
-      %       tabFirst(idCy) = [];
-      %
-      %       if ((mean(tabFirst)-tabFirstMsgDateBis(idCy))*24 > 0)
-      %          fprintf('Cycle #%3d: FIRST %s\n', ...
-      %             tabCycleNumber(idCy), ...
-      %             format_time_dec_argo((mean(tabFirst)-tabFirstMsgDateBis(idCy))*24));
-      %       end
    end
 end
 

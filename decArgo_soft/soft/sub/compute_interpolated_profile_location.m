@@ -43,6 +43,9 @@ global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrGood;
+
 
 % find a good location in the previous cycles
 prevLocDate = g_decArgo_dateDef;
@@ -63,7 +66,7 @@ if (~isempty(idPrevCycles))
          locLat = a_floatSurfData.cycleData(idCy).argosLocLat;
          locQc = a_floatSurfData.cycleData(idCy).argosLocQc;
          
-         idGoodLoc = find(locQc == '1');
+         idGoodLoc = find(locQc == g_decArgo_qcStrGood);
          if (~isempty(idGoodLoc))
             prevLocDate = locDate(idGoodLoc(end));
             prevLocLon = locLon(idGoodLoc(end));
@@ -100,7 +103,7 @@ if (prevLocDate ~= g_decArgo_dateDef)
       locLat = a_floatSurfData.cycleData(idCy).argosLocLat;
       locQc = a_floatSurfData.cycleData(idCy).argosLocQc;
       
-      idGoodLoc = find(locQc == '1');
+      idGoodLoc = find(locQc == g_decArgo_qcStrGood);
       if (~isempty(idGoodLoc))
          curLocDate = locDate(idGoodLoc(1));
          curLocLon = locLon(idGoodLoc(1));

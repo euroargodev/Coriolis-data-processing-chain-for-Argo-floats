@@ -21,9 +21,15 @@ function get_meta_data_from_data_base()
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
 floatListFileName = '';
 
 % directory to store the log and csv file
@@ -154,8 +160,11 @@ for idFloat = 1:length(floatList)
    idDriftPeriod = find(strcmp(paramCodeList(idForWmo), 'PR_IMMERSION_DRIFT_PERIOD') == 1, 1);
    driftPeriod = '';
    if (~isempty(idDriftPeriod))
-      driftPeriod = paramValueList{idForWmo(idDriftPeriod)};
-      driftPeriod = num2str(str2num(driftPeriod)/60);
+      if (~strcmp(paramValueList{idForWmo(idDriftPeriod)}, '999') && ...
+            ~strcmp(paramValueList{idForWmo(idDriftPeriod)}, '9999'))
+         driftPeriod = paramValueList{idForWmo(idDriftPeriod)};
+         driftPeriod = num2str(str2num(driftPeriod)/60);
+      end
    end
    
    idLaunchDate = find(strcmp(paramCodeList(idForWmo), 'PR_LAUNCH_DATETIME') == 1, 1);

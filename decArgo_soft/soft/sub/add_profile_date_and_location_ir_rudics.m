@@ -42,6 +42,9 @@ global g_decArgo_phaseSatTrans;
 % global default values
 global g_decArgo_dateDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrInterpolated;
+
 
 % unpack the input data
 a_gpsLocCycleNum = a_gpsData{1};
@@ -133,7 +136,7 @@ if (a_profStruct.direction == 'A')
                   a_profStruct.locationDate = a_profStruct.date;
                   a_profStruct.locationLon = interpLocLon;
                   a_profStruct.locationLat = interpLocLat;
-                  a_profStruct.locationQc = '8';
+                  a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
                else
                   fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
                      g_decArgo_floatNum, ...
@@ -242,7 +245,7 @@ else
                      a_profStruct.locationDate = a_profStruct.date;
                      a_profStruct.locationLon = interpLocLon;
                      a_profStruct.locationLat = interpLocLat;
-                     a_profStruct.locationQc = '8';
+                     a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
                   else
                      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
                         g_decArgo_floatNum, ...

@@ -23,7 +23,7 @@ function generate_json_float_meta_ir_sbd()
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150519.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_2DO_20150630.txt';
-floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_ArvorDeep_v2_20150707.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -35,7 +35,7 @@ floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/coriolis_prv_5.42
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/_nke_ir_sbd_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/provor_do_ir.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/arvor_2do.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_v2.txt';
+% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_v2.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 

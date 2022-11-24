@@ -68,7 +68,7 @@ switch (a_decoderId)
       % PROVOR Argos
       % ARVOR Argos
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(1);
             
@@ -80,6 +80,10 @@ switch (a_decoderId)
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(1);
             
          case {'JULD', 'JULD_ADJUSTED'}
             
@@ -130,7 +134,7 @@ switch (a_decoderId)
    case {30}
       % ARVOR Argos ARN
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(1);
             
@@ -143,6 +147,10 @@ switch (a_decoderId)
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(1);
             
          case {'JULD', 'JULD_ADJUSTED'}
             
@@ -201,7 +209,7 @@ switch (a_decoderId)
    case {105, 106, 107, 108, 109, 301, 302, 303}
       % PROVOR REMOCEAN & ARVOR CM
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(0.1);
             
@@ -220,6 +228,10 @@ switch (a_decoderId)
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
             
          case {'JULD', 'JULD_ADJUSTED'}
             
@@ -277,7 +289,7 @@ switch (a_decoderId)
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(0.1);
                         
@@ -300,6 +312,10 @@ switch (a_decoderId)
             o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 1 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
             
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
+
          case {'JULD', 'JULD_ADJUSTED'}
             
             o_resolution = double(1/86400); % 1 second
@@ -354,7 +370,7 @@ switch (a_decoderId)
       % Provor-DO Iridium
       % Arvor-2DO Iridium
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(0.1);
                         
@@ -371,6 +387,10 @@ switch (a_decoderId)
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
             
          case {'JULD', 'JULD_ADJUSTED'}
             
@@ -416,10 +436,10 @@ switch (a_decoderId)
             
       end
       
-   case {1001}
+   case {1001, 1002, 1003, 1005, 1006}
       % Apex Argos
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED'}
             
             o_resolution = single(0.1);
             
@@ -428,6 +448,10 @@ switch (a_decoderId)
             listMcStr = sprintf('%d ', listMc);
             o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
             
          case {'JULD', 'JULD_ADJUSTED'}
             
@@ -441,6 +465,51 @@ switch (a_decoderId)
             o_comment = sprintf('%s resolution is 1 second, except for measurement codes [%s] for which %s resolution is 1 minute', ...
                a_paramName, listMcStr(1:end-1), a_paramName);
             
+         case {'JULD_DESCENT_START', ...
+               'JULD_FIRST_STABILIZATION', ...
+               'JULD_DESCENT_END', ...
+               'JULD_PARK_START', ...
+               'JULD_PARK_END', ...
+               'JULD_DEEP_DESCENT_END', ...
+               'JULD_DEEP_PARK_START', ...
+               'JULD_ASCENT_START', ...
+               'JULD_DEEP_ASCENT_START', ...
+               'JULD_ASCENT_END', ...
+               'JULD_TRANSMISSION_START', ...
+               'JULD_TRANSMISSION_END'}
+            
+            o_resolution = double(1/86400); % 1 second
+
+         case {'JULD_FIRST_MESSAGE', ...
+               'JULD_FIRST_LOCATION', ...
+               'JULD_LAST_LOCATION', ...
+               'JULD_LAST_MESSAGE'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+      end
+      
+   case {1004}
+      % Apex Argos
+      switch (a_paramName)
+         case {'PRES', 'PRES_ADJUSTED'}
+            
+            o_resolution = single(0.1);
+            
+            listMc = [ ...
+               g_MC_DescProf];
+            listMcStr = sprintf('%d ', listMc);
+            o_comment = sprintf('%s resolution is 0.1 dbar, except for measurement codes [%s] for which %s resolution is 10 dbar', ...
+               a_paramName, listMcStr(1:end-1), a_paramName);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
+            
+         case {'JULD', 'JULD_ADJUSTED'}
+            
+            o_resolution = double(1/86400); % 1 second
+                        
          case {'JULD_DESCENT_START', ...
                'JULD_FIRST_STABILIZATION', ...
                'JULD_DESCENT_END', ...

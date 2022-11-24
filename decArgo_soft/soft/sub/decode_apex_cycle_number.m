@@ -45,7 +45,7 @@ if (a_checkTestMsg == 1)
    dataSensor = [];
    bytePos = 6;
    switch (a_decoderId)
-      case {1001} % 071412
+      case {1001, 1002, 1003, 1004, 1005, 1006} % 071412, 062608, 061609, 021009, 061810, 093008
          
          nbTestMsg = 2;
          [~, ~, ~, ~, ~, ~, ~, ~, testSensor, ~] = get_apex_test_sensor(a_argosPathFileName, ...
@@ -92,7 +92,7 @@ else
    sensor = [];
    bytePos = 6;
    switch (a_decoderId)
-      case {1001} % 071412
+      case {1001, 1002, 1003, 1004, 1005, 1006} % 071412, 062608, 061609, 021009, 061810, 093008
          [~, ~, ~, ~, ~, ~, ~, ~, sensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
             a_ArgosId, 31, dataMsgBytesToFreeze, 999999999);
 

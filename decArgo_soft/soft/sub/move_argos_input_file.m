@@ -164,23 +164,45 @@ else
       fprintf('\n#@# CONCAT %d Argos file(s) already exist(s) for float #%d and cycle #%d => concatenating contents before processing\n', ...
          length(existingCycleFiles), a_floatNum, a_cycleNumber);
       
-      % concatenate all the file contents in a new file
-      baseFileName = existingCycleFiles(1).name;
-      baseFilePathName = [g_decArgo_tmpArgosIdDirectory 'concat_' baseFileName];
+      % sort the files to concatenate according to the date of their name
+      listFileName{1} = newArgosFileName;
+      listFilePathName{1} = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
+      fileDate = datenum(newArgosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
+      listFileDate(1) = fileDate;
       for idFile = 1:length(existingCycleFiles)
-         existingCycleFile = existingCycleFiles(idFile).name;
-         fprintf('#@# CONCAT %s\n', existingCycleFile);
-         newFilePathName = [argosIdDirName existingCycleFile];
-         if (concatenate_files(baseFilePathName, newFilePathName) == 0)
+         fileName = existingCycleFiles(idFile).name;
+         filePathName = [argosIdDirName existingCycleFiles(idFile).name];
+         fileDate = datenum(fileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
+         listFileName{end+1} = fileName;
+         listFilePathName{end+1} = filePathName;
+         listFileDate(end+1) = fileDate;
+      end
+      [listFileDate, idSort] = sort(listFileDate);
+      listFileName = listFileName(idSort);
+      listFilePathName = listFilePathName(idSort);
+      
+      % the newArgosFileName can be updated
+      if (idSort(1) ~= 1)
+         baseFileName = listFileName{1};
+         baseFileDate = datenum(baseFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
+         baseFileName = sprintf('%06d_%s_%d_%03d.txt', ...
+            a_floatArgosId, ...
+            datestr(baseFileDate+g_decArgo_janFirst1950InMatlab, 'yyyy-mm-dd-HH-MM-SS'), ...
+            a_floatNum, ...
+            a_cycleNumber);
+      else
+         baseFileName = newArgosFileName;
+      end
+      
+      % concatenate all the file contents in a new file
+      baseFilePathName = [g_decArgo_tmpArgosIdDirectory 'concat_' baseFileName];
+      for idFile = 1:length(listFileName)
+         filePathName = listFilePathName{idFile};
+         fprintf('#@# CONCAT %s\n', filePathName);
+         if (concatenate_files(baseFilePathName, filePathName) == 0)
             o_ok = 0;
             return;
          end
-      end
-      newFilePathName = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
-      fprintf('#@# CONCAT %s\n\n', inputArgosFileName);
-      if (concatenate_files(baseFilePathName, newFilePathName) == 0)
-         o_ok = 0;
-         return;
       end
       
       % delete the temporary Argos input file
@@ -198,19 +220,22 @@ else
       newArgosFileName = baseFileName;
       
       if (g_decArgo_processModeAll == 1)
+
+         % delete concatenated files
+         for idFile = 1:length(listFilePathName)
+            if (idSort(idFile) ~= 1)
+               delete(listFilePathName{idFile});
+               %                fprintf('DEC_INFO: Deleting file %s\n', ...
+               %                   listFilePathName{idFile});
+            end
+         end
+         
          % move the temporary Argos input file for processing
          fileNameIn = [g_decArgo_tmpArgosIdDirectory newArgosFileName];
          fileNamOut = [argosIdDirName newArgosFileName];
          if (move_file(fileNameIn, fileNamOut) == 0)
             o_ok = 0;
             return;
-         end
-         
-         % delete concatenated files
-         for idFile = 2:length(existingCycleFiles)
-            delete([argosIdDirName existingCycleFiles(idFile).name]);
-            fprintf('DEC_INFO: Deleting file %s\n', ...
-               [argosIdDirName existingCycleFiles(idFile).name]);
          end
          
          % delete the temporary sub-directory

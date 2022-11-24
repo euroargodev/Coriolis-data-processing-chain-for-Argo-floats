@@ -33,28 +33,32 @@ o_measStruct = get_traj_one_meas_init_struct();
 global g_decArgo_dateDef;
 global g_decArgo_ncDateDef;
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+
 o_measStruct.measCode = a_measCode;
 if (a_time ~= g_decArgo_dateDef)
    if (a_time ~= -1)
       if (~isempty(a_clockDrift))
          o_measStruct.juld = a_time + a_clockDrift;
          o_measStruct.juldStatus = a_timeStatus;
-         o_measStruct.juldQc = '0';
+         o_measStruct.juldQc = g_decArgo_qcStrNoQc;
          o_measStruct.juldAdj = a_time;
          o_measStruct.juldAdjStatus = a_timeStatus;
-         o_measStruct.juldAdjQc = '0';
+         o_measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
       else
          o_measStruct.juld = a_time;
          o_measStruct.juldStatus = a_timeStatus;
-         o_measStruct.juldQc = '0';
+         o_measStruct.juldQc = g_decArgo_qcStrNoQc;
       end
    else
       o_measStruct.juld = g_decArgo_ncDateDef;
       o_measStruct.juldStatus = a_timeStatus;
-      o_measStruct.juldQc = ' ';
+      o_measStruct.juldQc = g_decArgo_qcStrDef;
       o_measStruct.juldAdj = g_decArgo_ncDateDef;
       o_measStruct.juldAdjStatus = a_timeStatus;
-      o_measStruct.juldAdjQc = ' ';
+      o_measStruct.juldAdjQc = g_decArgo_qcStrDef;
    end
 end
 

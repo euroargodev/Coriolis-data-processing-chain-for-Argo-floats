@@ -117,8 +117,6 @@ if (isempty(presCutOffProf))
 end
 
 % process the descending and ascending profiles
-% for idProf = 1:4 % if IN_AIR measurement is stored in a dedicated profile
-% (N_PROF = 3)
 for idProf = 1:3
    
    tabDate = [];
@@ -177,7 +175,7 @@ for idProf = 1:3
       
    else
       
-      % ascending profile
+      % ascending profiles
       if (idProf == 2)
          
          % primary profile
@@ -202,6 +200,8 @@ for idProf = 1:3
       elseif (idProf == 3)
          
          % unpumped profile
+         % the last (shallower) measurement is sampled in the air (it will be
+         % stored in the TRAJ file with MC = 1100)
          idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres <= presCutOffProf));
          if (length(idLev) > 1)
             tabDate = a_ascProfDate(idLev(1):end-1);
@@ -218,26 +218,6 @@ for idProf = 1:3
                tabPhaseDelayDoxy = a_ascProfPhaseDelayDoxy(idLev(1):end-1);
                tabTempDoxySbe = a_ascProfTempDoxySbe(idLev(1):end-1);
                tabDoxySbe = a_ascProfDoxySbe(idLev(1):end-1);
-            end
-         end
-      else
-         
-         % in air profile
-         if (~isempty(idLev))
-            tabDate = a_ascProfDate(end);
-            tabPres = a_ascProfPres(end);
-            tabTemp = a_ascProfTemp(end);
-            tabSal = a_ascProfSal(end);
-            if (~isempty(a_ascProfC1PhaseDoxy))
-               tabC1PhaseDoxy = a_ascProfC1PhaseDoxy(end);
-               tabC2PhaseDoxy = a_ascProfC2PhaseDoxy(end);
-               tabTempDoxyAa = a_ascProfTempDoxyAa(end);
-               tabDoxyAa = a_ascProfDoxyAa(end);
-            end
-            if (~isempty(a_ascProfPhaseDelayDoxy))
-               tabPhaseDelayDoxy = a_ascProfPhaseDelayDoxy(end);
-               tabTempDoxySbe = a_ascProfTempDoxySbe(end);
-               tabDoxySbe = a_ascProfDoxySbe(end);
             end
          end
       end
@@ -259,8 +239,6 @@ for idProf = 1:3
       primarySamplingProfileFlag = 1;
       if (idProf == 3)
          primarySamplingProfileFlag = 2;
-      elseif (idProf == 4)
-         primarySamplingProfileFlag = 3;
       end
       profStruct = get_profile_init_struct(g_decArgo_cycleNum, -1, -1, primarySamplingProfileFlag);
       
@@ -289,14 +267,8 @@ for idProf = 1:3
          paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY');
          paramTempDoxySbe = get_netcdf_param_attributes('TEMP_DOXY2');
       end
-            
-      if (idProf == 4)
-         paramDoxyAA = get_netcdf_param_attributes('DOXY_AIR');
-         paramDoxySbe = get_netcdf_param_attributes('DOXY2_AIR');
-      else
-         paramDoxyAA = get_netcdf_param_attributes('DOXY');
-         paramDoxySbe = get_netcdf_param_attributes('DOXY2');
-      end
+      paramDoxyAA = get_netcdf_param_attributes('DOXY');
+      paramDoxySbe = get_netcdf_param_attributes('DOXY2');
       
       if (~isempty(tabDate))
          

@@ -178,6 +178,11 @@ return;
 function nc_prof_2_csv_file(a_inputPathFileName, a_outputPathFileName, ...
    a_floatNum, a_comparisonFlag, a_writeQcFlag, a_cfileFlag)
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrUnused2;
+
+
 % input and output file names
 [inputPath, inputName, inputExt] = fileparts(a_inputPathFileName);
 [outputPath, outputName, outputExt] = fileparts(a_outputPathFileName);
@@ -1015,9 +1020,9 @@ else
                dataQcTmp = paramDataQc{idF};
                if (~isempty(dataQcTmp))
                   dataQcTmp = dataQcTmp(:, idP);
-                  dataQcTmp(find(dataQcTmp == ' ')) = '7';
+                  dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
                   dataQcTmp = str2num(dataQcTmp);
-                  dataQcTmp(find(dataQcTmp == 7)) = -1;
+                  dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
                   data = [data double(dataQcTmp)];
                   dataFillValue = [dataFillValue -1];
                   format = [format '; ' '%d'];
@@ -1050,9 +1055,9 @@ else
                      dataQcTmp = paramDataQc{idF};
                      if (~isempty(dataQcTmp))
                         dataQcTmp = dataQcTmp(:, idP);
-                        dataQcTmp(find(dataQcTmp == ' ')) = '7';
+                        dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
                         dataQcTmp = str2num(dataQcTmp);
-                        dataQcTmp(find(dataQcTmp == 7)) = -1;
+                        dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
                         data = [data double(dataQcTmp)];
                         dataFillValue = [dataFillValue -1];
                         format = [format '; ' '%d'];

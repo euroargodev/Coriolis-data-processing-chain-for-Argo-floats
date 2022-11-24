@@ -41,7 +41,7 @@ switch (a_floatTransType)
             o_profJuldRes = double(1/1440); % 1 minutes
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
-         case {1001}
+         case {1001, 1002, 1003, 1004, 1005, 1006}
             o_profJuldRes = double(1/86400); % 1 second
             o_profJulDComment = '';
 

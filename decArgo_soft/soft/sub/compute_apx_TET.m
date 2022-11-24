@@ -40,11 +40,17 @@ global g_decArgo_dateDef;
 % estimate TET and clock drift from LMTs
 o_timeData = estimate_TET(o_timeData);
 
+% configuration information
+dpfFloatFlag = o_timeData.configParam.dpfFloatFlag;
+if (isempty(dpfFloatFlag))
+   dpfFloatFlag = 1;
+end
+
 % for float versions which provide DOWN_TIME end: TET = DOWN_TIME end + UP_TIME
 if (o_timeData.configParam.downTimeEndProvidedFlag)
 
    % interpolate DOWN_TIME end to fill missing ones
-   idUsed = find([o_timeData.cycleNum] > 0);
+   idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
    cycleNumber = o_timeData.cycleNum(idUsed);
    downTimeEnd = [o_timeData.cycleTime(idUsed).downTimeEndFloat];
    
@@ -64,7 +70,7 @@ if (o_timeData.configParam.downTimeEndProvidedFlag)
    end
    
    % compute float clock drift from DOWN_TIME end
-   idUsed = find([o_timeData.cycleNum] > 0);
+   idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
    cycleNumber = o_timeData.cycleNum(idUsed);
    downTimeEnd = [o_timeData.cycleTime(idUsed).downTimeEndFloat];
    idDated = find(downTimeEnd ~= g_decArgo_dateDef);
@@ -80,10 +86,15 @@ if (o_timeData.configParam.downTimeEndProvidedFlag)
       polyCoef = polyfit(xVal, yVal, 1);
       
       tabVal = polyval(polyCoef, compute_duration(cycleNumber, cycleNumber(1), cycleTimes));
-      clockDrift = (tabVal(end) - (cycleNumber(end)-cycleNumber(1))*cycleTime/24 - tabVal(1))*86400*365/(tabVal(end)-tabVal(1));
+      % the estimated clock drift (clock drift = float time - UTC time)
+      % clock drift is > 0 when the float RTC is too late and then a positive
+      % offset should be substracted to float times
+      % here we are fitting DOWN_TIME ends (i.e. float times), thus
+      clockOffset = (tabVal(end) - (cycleNumber(end)-cycleNumber(1))*cycleTime/24 - tabVal(1))*86400;
+      clockDrift = clockOffset/abs(tabVal(1) - tabVal(end))*365;
       fprintf('clock drift from DOWN_TIME end: %s per year\n', format_time_dec_argo(clockDrift/3600));
       if (~isempty(o_timeData.clockDriftInSecPerYear))
-         o_timeData.clockDriftInSecPerYear = o_timeData.clockDriftInSecPerYear - clockDrift;
+         o_timeData.clockDriftInSecPerYear = o_timeData.clockDriftInSecPerYear + clockDrift;
          fprintf('clock drift USED: %s per year\n', format_time_dec_argo(o_timeData.clockDriftInSecPerYear/3600));
       end
    end
@@ -120,15 +131,17 @@ if (o_timeData.configParam.downTimeEndProvidedFlag)
          tet1Adj = adjust_apx_time(tet1, o_timeData.clockDriftInSecPerYear, [], g_decArgo_dateDef);
          tet2 = [o_timeData.cycleTime(idUsed).transEndTime2];
          idDated = find((tet1Adj ~= g_decArgo_dateDef) & (tet2 ~= g_decArgo_dateDef));
-         clockOffsetAtLaunch = mean(tet2(idDated) - tet1Adj(idDated));
-         fprintf('Clock offset at launch estimated: %s\n', format_time_dec_argo(clockOffsetAtLaunch*24));
-         if (~isempty(o_timeData.clockOffsetAtLaunch))
-            fprintf('Clock offset at launch measured: %s\n', format_time_dec_argo(o_timeData.clockOffsetAtLaunch*24));
-            fprintf('Clock offset at launch difference: %s\n', format_time_dec_argo((clockOffsetAtLaunch-o_timeData.clockOffsetAtLaunch)*24));
+         if (~isempty(idDated))
+            clockOffsetAtLaunch = tet1Adj(idDated(1)) - tet2(idDated(1));
+            fprintf('Clock offset at launch estimated: %s\n', format_time_dec_argo(clockOffsetAtLaunch*24));
+            if (~isempty(o_timeData.clockOffsetAtLaunch))
+               fprintf('Clock offset at launch measured: %s\n', format_time_dec_argo(o_timeData.clockOffsetAtLaunch*24));
+               fprintf('Clock offset at launch difference: %s\n', format_time_dec_argo((clockOffsetAtLaunch-o_timeData.clockOffsetAtLaunch)*24));
+            end
+            o_timeData.clockOffsetAtLaunch = clockOffsetAtLaunch;
+            idDated = find(tet1 ~= g_decArgo_dateDef);
+            o_timeData.clockOffsetAtLaunchRefDate = tet1(idDated(1));
          end
-         o_timeData.clockOffsetAtLaunch = clockOffsetAtLaunch;
-         idDated = find(tet1 ~= g_decArgo_dateDef);
-         o_timeData.clockOffsetAtLaunchRefDate = tet1(idDated(1));
       end
    end
 end
@@ -164,8 +177,14 @@ o_timeData = a_timeData;
 global g_decArgo_dateDef;
 
 
+% configuration information
+dpfFloatFlag = a_timeData.configParam.dpfFloatFlag;
+if (isempty(dpfFloatFlag))
+   dpfFloatFlag = 1;
+end
+
 % estimate UP_TIME from TET and DOWN_TIME end
-idUsed = find([o_timeData.cycleNum] > 0);
+idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
 tabTet = [o_timeData.cycleTime(idUsed).transEndTime2];
 downTimeEnd = [o_timeData.cycleTime(idUsed).downTimeEndFloat];
 idDated = find((tabTet ~= g_decArgo_dateDef) & (downTimeEnd ~= g_decArgo_dateDef));
@@ -217,8 +236,12 @@ MAX_CLOCK_DRIFT = 20; % in minutes per year
 
 % configuration information
 cycleTime = o_timeData.configParam.cycleTime;
+dpfFloatFlag = a_timeData.configParam.dpfFloatFlag;
+if (isempty(dpfFloatFlag))
+   dpfFloatFlag = 1;
+end
 
-idUsed = find([o_timeData.cycleNum] > 0);
+idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
 cycleNumber = o_timeData.cycleNum(idUsed);
 lastMsgTime = [o_timeData.cycleTime(idUsed).lastMsgTime];
 cycleTimes = ones(max(cycleNumber), 1)*cycleTime;
@@ -233,7 +256,7 @@ tabTet1 = max(maxEnvTime) + compute_duration(cycleNumber, cycleNumber(1), cycleT
 tabTet1 = num2cell(tabTet1);
 [o_timeData.cycleTime(idUsed).transEndTime2] = deal(tabTet1{:});
 
-% for cycle #0: TET = LMT
+% for cycle #0 (and #1 if DPF float): TET = LMT
 idNotDated = find([o_timeData.cycleTime.transEndTime2] == g_decArgo_dateDef);
 lmtOfNotDated = [o_timeData.cycleTime(idNotDated).lastMsgTime];
 lmtOfNotDated = num2cell(lmtOfNotDated);
@@ -342,8 +365,12 @@ if (length(cycleNumber) >= NB_CYCLE_MIN)
    % the TETs are on the line
    tabTet2 = polyval(polyCoefFinal, compute_duration(cycleNumber, cycleNumber(1), cycleTimes));
    
-   % the estimated clock drift
-   clockDrift = (tabTet2(end) - (cycleNumber(end)-cycleNumber(1))*cycleTime/24 - tabTet2(1))*86400*365/(tabTet2(end)-tabTet2(1));
+   % the estimated clock drift (clock drift = float time - UTC time)
+   % clock drift is > 0 when the float RTC is too late and then a positive
+   % offset should be substracted to float times
+   % here we are fitting Tet2 (based on LMTs i.e. UTC times), thus
+   clockOffset = (tabTet2(1) - (tabTet2(end) - (cycleNumber(end)-cycleNumber(1))*cycleTime/24))*86400;
+   clockDrift = clockOffset/abs(tabTet2(1) - tabTet2(end))*365;
    if (clockDrift/60 > MAX_CLOCK_DRIFT)
       % the algorithm failed (there is probably a jump of the RTC)
       fprintf('WARNING: Float #%d: estimated clock drift (%s per year) > MAX_CLOCK_DRIFT (= %s per year)>  => TET cannot be estimated\n', ...

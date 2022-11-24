@@ -22,9 +22,11 @@ function move_and_rename_iridium_sbd_mail_files()
 % input directory
 INPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message\';
 INPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message_refused\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_data_rt\300234061653240\';
 
 % output directory
 OUTPUT_DIR_NAME = 'E:\message_ir_sbd_20150331\message_renamed\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\Desktop\justin\_DATA\IN\IRIDIUM_DATA\sbd_data_rt\300234061653240_out\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\users\RNU\Argo\work\'; 

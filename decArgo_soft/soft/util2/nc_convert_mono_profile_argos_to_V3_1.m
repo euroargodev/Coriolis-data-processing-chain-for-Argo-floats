@@ -344,6 +344,13 @@ global g_cofc_ncConvertMonoProfileVersion;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrBad;
+global g_decArgo_qcStrMissing;
+
 
 % list of variables that will be retrieved from V3.1 meta.nc file to fill the
 % V3.1 prof.nc ones
@@ -476,9 +483,9 @@ idValPresQc = idVal;
 corDone = 0;
 for idP = 1:length(dataMode)
    if (dataMode(idP) == 'D')
-      if (any(presQc(:, idP) == '0'))
-         idFQc0 = find(presQc(:, idP) == '0');
-         presQc(idFQc0, idP) = '1';
+      if (any(presQc(:, idP) == g_decArgo_qcStrNoQc))
+         idFQc0 = find(presQc(:, idP) == g_decArgo_qcStrNoQc);
+         presQc(idFQc0, idP) = g_decArgo_qcStrGood;
          fprintf('INFO: %d %s values set to ''1'' (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'PRES_QC', 'PRES_QC', a_outputFileName);
          corDone = 1;
@@ -501,8 +508,8 @@ if (~isempty(idVal))
    
    corDone = 0;
    for idP = 1:length(dataMode)
-      if (any(cndcQc(:, idP) == '0'))
-         idFQc0 = find(cndcQc(:, idP) == '0');
+      if (any(cndcQc(:, idP) == g_decArgo_qcStrNoQc))
+         idFQc0 = find(cndcQc(:, idP) == g_decArgo_qcStrNoQc);
          cndcQc(idFQc0, idP) = psalQc(idFQc0, idP);
          fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'CNDC_QC', 'PSAL_QC', 'CNDC_QC', a_outputFileName);
@@ -527,8 +534,8 @@ tempAdjQc = inputMeasData{2*idVal};
 corDone = 0;
 for idP = 1:length(dataMode)
    if (dataMode(idP) == 'D')
-      if (any((tempQc(:, idP) == '0') & (tempAdjQc(:, idP) ~= ' ')))
-         idFQc0 = find((tempQc(:, idP) == '0') & (tempAdjQc(:, idP) ~= ' '));
+      if (any((tempQc(:, idP) == g_decArgo_qcStrNoQc) & (tempAdjQc(:, idP) ~= g_decArgo_qcStrDef)))
+         idFQc0 = find((tempQc(:, idP) == g_decArgo_qcStrNoQc) & (tempAdjQc(:, idP) ~= g_decArgo_qcStrDef));
          tempQc(idFQc0, idP) = tempAdjQc(idFQc0, idP);
          fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'TEMP_QC', 'TEMP_ADJUSTED_QC', 'TEMP_QC', a_outputFileName);
@@ -554,8 +561,8 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((psalQc(:, idP) == '0') & (psalAdjQc(:, idP) ~= ' ')))
-            idFQc0 = find((psalQc(:, idP) == '0') & (psalAdjQc(:, idP) ~= ' '));
+         if (any((psalQc(:, idP) == g_decArgo_qcStrNoQc) & (psalAdjQc(:, idP) ~= g_decArgo_qcStrDef)))
+            idFQc0 = find((psalQc(:, idP) == g_decArgo_qcStrNoQc) & (psalAdjQc(:, idP) ~= g_decArgo_qcStrDef));
             psalQc(idFQc0, idP) = psalAdjQc(idFQc0, idP);
             fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
                length(idFQc0), 'PSAL_QC', 'PSAL_ADJUSTED_QC', 'PSAL_QC', a_outputFileName);
@@ -581,8 +588,8 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any(cndcAdjQc(:, idP) == '0'))
-            idFQc0 = find(cndcAdjQc(:, idP) == '0');
+         if (any(cndcAdjQc(:, idP) == g_decArgo_qcStrNoQc))
+            idFQc0 = find(cndcAdjQc(:, idP) == g_decArgo_qcStrNoQc);
             cndcAdjQc(idFQc0, idP) = psalAdjQc(idFQc0, idP);
             fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
                length(idFQc0), 'CNDC_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'CNDC_ADJUSTED_QC', a_outputFileName);
@@ -610,9 +617,9 @@ for idP = 1:length(dataMode)
          idVal = find(strcmp(paramNameAdjQc, inputMeasData(1:2:end)) == 1, 1);
          paramAdjQc = inputMeasData{2*idVal};
          
-         if (any(paramAdjQc(:, idP) == '4'))
+         if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
             paramStruct = get_netcdf_param_attributes_3_1(paramName);
-            idFQc4 = find(paramAdjQc(:, idP) == '4');
+            idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
 
             paramNameAdj = [paramName '_ADJUSTED'];
             idVal = find(strcmp(paramNameAdj, inputMeasData(1:2:end)) == 1, 1);
@@ -686,9 +693,9 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((cndcAdjQc(:, idP) == ' ') & (cndcQc(:, idP) ~= ' ') & (cndcAdjValue(:, idP) == paramStruct.fillValue)))
-            idFQcFv = find((cndcAdjQc(:, idP) == ' ') & (cndcQc(:, idP) ~= ' ') & (cndcAdjValue(:, idP) == paramStruct.fillValue));
-            cndcAdjQc(idFQcFv, idP) = '4';
+         if (any((cndcAdjQc(:, idP) == g_decArgo_qcStrDef) & (cndcQc(:, idP) ~= g_decArgo_qcStrDef) & (cndcAdjValue(:, idP) == paramStruct.fillValue)))
+            idFQcFv = find((cndcAdjQc(:, idP) == g_decArgo_qcStrDef) & (cndcQc(:, idP) ~= g_decArgo_qcStrDef) & (cndcAdjValue(:, idP) == paramStruct.fillValue));
+            cndcAdjQc(idFQcFv, idP) = g_decArgo_qcStrBad;
             fprintf('INFO: %d %s values set to ''4'' (because %s ~= '' '') (file %s)\n', ...
                length(idFQcFv), 'CNDC_ADJUSTED_QC', 'CNDC_QC', a_outputFileName);
             corDone = 1;
@@ -717,9 +724,9 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= '4')))
-            idFQc4 = find((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= '4'));
-            cndcAdjQc(idFQc4, idP) = '4';
+         if (any((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= g_decArgo_qcStrBad)))
+            idFQc4 = find((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= g_decArgo_qcStrBad));
+            cndcAdjQc(idFQc4, idP) = g_decArgo_qcStrBad;
             fprintf('INFO: %d %s values set to ''4'' (because %s ~= FillValue and %s == FillValue) (file %s)\n', ...
                length(idFQc4), 'CNDC_ADJUSTED_QC', 'CNDC', 'CNDC_ADJUSTED', a_outputFileName);
             corDone = 1;
@@ -773,17 +780,17 @@ for idParam = 1:length(paramlist)
          
          
          idMiss1 = find((paramValue(1:nbLev, idP) == paramStruct.fillValue) & ...
-            (paramQcValue(1:nbLev, idP) ~= '9'));
+            (paramQcValue(1:nbLev, idP) ~= g_decArgo_qcStrMissing));
          if (~isempty(idMiss1))
-            paramQcValue(idMiss1, idP) = '9';
+            paramQcValue(idMiss1, idP) = g_decArgo_qcStrMissing;
             fprintf('INFO: %d %s values set to ''9'' (because %s is missing) (file %s)\n', ...
                length(idMiss1), paramQcName, paramName, a_outputFileName);
             corDone1 = 1;
          end
          idMiss2 = find((paramValue(1:nbLev, idP) == paramStruct.fillValue) & ...
-            (paramAdjQcValue(1:nbLev, idP) ~= '9') & (paramAdjQcValue(1:nbLev, idP) ~= ' '));
+            (paramAdjQcValue(1:nbLev, idP) ~= g_decArgo_qcStrMissing) & (paramAdjQcValue(1:nbLev, idP) ~= g_decArgo_qcStrDef));
          if (~isempty(idMiss2))
-            paramAdjQcValue(idMiss2, idP) = '9';
+            paramAdjQcValue(idMiss2, idP) = g_decArgo_qcStrMissing;
             fprintf('INFO: %d %s values set to ''9'' (because %s is missing) (file %s)\n', ...
                length(idMiss2), paramAdjQcName, paramName, a_outputFileName);
             corDone2 = 1;
@@ -1317,7 +1324,7 @@ for idVar = 1:length(wantedInputMeasVars)
          idVal = find(strcmp(paramAdjQcName, inputMeasData(1:2:end)) == 1, 1);
          paramAdjQcValue = inputMeasData{2*idVal};
          profQualityFlag2 = compute_profile_quality_flag(paramAdjQcValue);
-         if (profQualityFlag2 ~= ' ')
+         if (profQualityFlag2 ~= g_decArgo_qcStrDef)
             profQualityFlag = profQualityFlag2;
          end
          varValue = profQualityFlag;
@@ -1349,7 +1356,7 @@ if (~isempty(confMissionNumber))
    end
 end
 
-% if the cycle number has not been checked (float notin ANDRO), put a 'comment'
+% if the cycle number has not been checked (float not in ANDRO), put a 'comment'
 % global attrubute
 if (noCorCyNum == 1)
    netcdf.reDef(fCdf);
@@ -1510,6 +1517,13 @@ global g_cofc_ncConvertMonoProfileVersion;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrMissing;
+
 
 % check if Input file profile has been cut (due to pumped/unpumped CTD data)
 
@@ -1617,9 +1631,9 @@ idValPresQc = idVal;
 corDone = 0;
 for idP = 1:length(dataMode)
    if (dataMode(idP) == 'D')
-      if (any(presQc(:, idP) == '0'))
-         idFQc0 = find(presQc(:, idP) == '0');
-         presQc(idFQc0, idP) = '1';
+      if (any(presQc(:, idP) == g_decArgo_qcStrNoQc))
+         idFQc0 = find(presQc(:, idP) == g_decArgo_qcStrNoQc);
+         presQc(idFQc0, idP) = g_decArgo_qcStrGood;
          fprintf('INFO: %d %s values set to ''1'' (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'PRES_QC', 'PRES_QC', a_outputFileName);
          corDone = 1;
@@ -1642,8 +1656,8 @@ if (~isempty(idVal))
    
    corDone = 0;
    for idP = 1:length(dataMode)
-      if (any(cndcQc(:, idP) == '0'))
-         idFQc0 = find(cndcQc(:, idP) == '0');
+      if (any(cndcQc(:, idP) == g_decArgo_qcStrNoQc))
+         idFQc0 = find(cndcQc(:, idP) == g_decArgo_qcStrNoQc);
          cndcQc(idFQc0, idP) = psalQc(idFQc0, idP);
          fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'CNDC_QC', 'PSAL_QC', 'CNDC_QC', a_outputFileName);
@@ -1668,8 +1682,8 @@ tempAdjQc = inputMeasData{2*idVal};
 corDone = 0;
 for idP = 1:length(dataMode)
    if (dataMode(idP) == 'D')
-      if (any((tempQc(:, idP) == '0') & (tempAdjQc(:, idP) ~= ' ')))
-         idFQc0 = find((tempQc(:, idP) == '0') & (tempAdjQc(:, idP) ~= ' '));
+      if (any((tempQc(:, idP) == g_decArgo_qcStrNoQc) & (tempAdjQc(:, idP) ~= g_decArgo_qcStrDef)))
+         idFQc0 = find((tempQc(:, idP) == g_decArgo_qcStrNoQc) & (tempAdjQc(:, idP) ~= g_decArgo_qcStrDef));
          tempQc(idFQc0, idP) = tempAdjQc(idFQc0, idP);
          fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
             length(idFQc0), 'TEMP_QC', 'TEMP_ADJUSTED_QC', 'TEMP_QC', a_outputFileName);
@@ -1695,8 +1709,8 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((psalQc(:, idP) == '0') & (psalAdjQc(:, idP) ~= ' ')))
-            idFQc0 = find((psalQc(:, idP) == '0') & (psalAdjQc(:, idP) ~= ' '));
+         if (any((psalQc(:, idP) == g_decArgo_qcStrNoQc) & (psalAdjQc(:, idP) ~= g_decArgo_qcStrDef)))
+            idFQc0 = find((psalQc(:, idP) == g_decArgo_qcStrNoQc) & (psalAdjQc(:, idP) ~= g_decArgo_qcStrDef));
             psalQc(idFQc0, idP) = psalAdjQc(idFQc0, idP);
             fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
                length(idFQc0), 'PSAL_QC', 'PSAL_ADJUSTED_QC', 'PSAL_QC', a_outputFileName);
@@ -1722,8 +1736,8 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any(cndcAdjQc(:, idP) == '0'))
-            idFQc0 = find(cndcAdjQc(:, idP) == '0');
+         if (any(cndcAdjQc(:, idP) == g_decArgo_qcStrNoQc))
+            idFQc0 = find(cndcAdjQc(:, idP) == g_decArgo_qcStrNoQc);
             cndcAdjQc(idFQc0, idP) = psalAdjQc(idFQc0, idP);
             fprintf('INFO: %d %s values set to %s values (because %s = ''0'') (file %s)\n', ...
                length(idFQc0), 'CNDC_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'CNDC_ADJUSTED_QC', a_outputFileName);
@@ -1751,9 +1765,9 @@ for idP = 1:length(dataMode)
          idVal = find(strcmp(paramNameAdjQc, inputMeasData(1:2:end)) == 1, 1);
          paramAdjQc = inputMeasData{2*idVal};
          
-         if (any(paramAdjQc(:, idP) == '4'))
+         if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
             paramStruct = get_netcdf_param_attributes_3_1(paramName);
-            idFQc4 = find(paramAdjQc(:, idP) == '4');
+            idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
 
             paramNameAdj = [paramName '_ADJUSTED'];
             idVal = find(strcmp(paramNameAdj, inputMeasData(1:2:end)) == 1, 1);
@@ -1827,9 +1841,9 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((cndcAdjQc(:, idP) == ' ') & (cndcQc(:, idP) ~= ' ') & (cndcAdjValue(:, idP) == paramStruct.fillValue)))
-            idFQcFv = find((cndcAdjQc(:, idP) == ' ') & (cndcQc(:, idP) ~= ' ') & (cndcAdjValue(:, idP) == paramStruct.fillValue));
-            cndcAdjQc(idFQcFv, idP) = '4';
+         if (any((cndcAdjQc(:, idP) == g_decArgo_qcStrDef) & (cndcQc(:, idP) ~= g_decArgo_qcStrDef) & (cndcAdjValue(:, idP) == paramStruct.fillValue)))
+            idFQcFv = find((cndcAdjQc(:, idP) == g_decArgo_qcStrDef) & (cndcQc(:, idP) ~= g_decArgo_qcStrDef) & (cndcAdjValue(:, idP) == paramStruct.fillValue));
+            cndcAdjQc(idFQcFv, idP) = g_decArgo_qcStrBad;
             fprintf('INFO: %d %s values set to ''4'' (because %s ~= '' '') (file %s)\n', ...
                length(idFQcFv), 'CNDC_ADJUSTED_QC', 'CNDC_QC', a_outputFileName);
             corDone = 1;
@@ -1858,9 +1872,9 @@ if (~isempty(idVal))
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
-         if (any((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= '4')))
-            idFQc4 = find((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= '4'));
-            cndcAdjQc(idFQc4, idP) = '4';
+         if (any((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= g_decArgo_qcStrBad)))
+            idFQc4 = find((cndcValue(:, idP) ~= paramStruct.fillValue) & (cndcAdjValue(:, idP) == paramStruct.fillValue) & (cndcAdjQc(:, idP) ~= g_decArgo_qcStrBad));
+            cndcAdjQc(idFQc4, idP) = g_decArgo_qcStrBad;
             fprintf('INFO: %d %s values set to ''4'' (because %s ~= FillValue and %s == FillValue) (file %s)\n', ...
                length(idFQc4), 'CNDC_ADJUSTED_QC', 'CNDC', 'CNDC_ADJUSTED', a_outputFileName);
             corDone = 1;
@@ -1914,17 +1928,17 @@ for idParam = 1:length(paramlist)
          
          
          idMiss1 = find((paramValue(1:nbLev, idP) == paramStruct.fillValue) & ...
-            (paramQcValue(1:nbLev, idP) ~= '9'));
+            (paramQcValue(1:nbLev, idP) ~= g_decArgo_qcStrMissing));
          if (~isempty(idMiss1))
-            paramQcValue(idMiss1, idP) = '9';
+            paramQcValue(idMiss1, idP) = g_decArgo_qcStrMissing;
             fprintf('INFO: %d %s values set to ''9'' (because %s is missing) (file %s)\n', ...
                length(idMiss1), paramQcName, paramName, a_outputFileName);
             corDone1 = 1;
          end
          idMiss2 = find((paramValue(1:nbLev, idP) == paramStruct.fillValue) & ...
-            (paramAdjQcValue(1:nbLev, idP) ~= '9') & (paramAdjQcValue(1:nbLev, idP) ~= ' '));
+            (paramAdjQcValue(1:nbLev, idP) ~= g_decArgo_qcStrMissing) & (paramAdjQcValue(1:nbLev, idP) ~= g_decArgo_qcStrDef));
          if (~isempty(idMiss2))
-            paramAdjQcValue(idMiss2, idP) = '9';
+            paramAdjQcValue(idMiss2, idP) = g_decArgo_qcStrMissing;
             fprintf('INFO: %d %s values set to ''9'' (because %s is missing) (file %s)\n', ...
                length(idMiss2), paramAdjQcName, paramName, a_outputFileName);
             corDone2 = 1;
@@ -2796,7 +2810,7 @@ for idParam = 1:length(paramForProf)
                if (idS == 2)
                   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 0, 1, profQualityFlag);
                else
-                  if (profQualityFlag ~= ' ')
+                  if (profQualityFlag ~= g_decArgo_qcStrDef)
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 0, 1, profQualityFlag);
                   end
                end
@@ -2816,7 +2830,7 @@ for idParam = 1:length(paramForProf)
                if (idS == 2)
                   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 1, 1, profQualityFlag);
                else
-                  if (profQualityFlag ~= ' ')
+                  if (profQualityFlag ~= g_decArgo_qcStrDef)
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 1, 1, profQualityFlag);
                   end
                end
@@ -2852,7 +2866,7 @@ if (~isempty(confMissionNumber))
    end
 end
 
-% if the cycle number has not been checked (float notin ANDRO), put a 'comment'
+% if the cycle number has not been checked (float not in ANDRO), put a 'comment'
 % global attrubute
 if (noCorCyNum == 1)
    netcdf.reDef(fCdf);

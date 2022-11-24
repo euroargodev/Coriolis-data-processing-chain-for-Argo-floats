@@ -34,7 +34,7 @@ switch (a_decoderId)
    case {105, 106, 107, 108, 109, 201, 202, 203, 204, 205, 206, 207, 208, 209, 301, 302, 303}
       o_posSystem = 'GPS';
       
-   case {1001}
+   case {1001, 1002, 1003, 1004, 1005, 1006}
       o_posSystem = 'ARGOS';
 
    otherwise

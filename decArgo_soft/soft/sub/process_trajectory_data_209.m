@@ -19,7 +19,8 @@
 %    a_parkPhaseDelayDoxy, a_parkTempDoxySbe, a_parkDoxySbe, ...
 %    a_ascProfDate, a_ascProfPres, a_ascProfTemp, a_ascProfSal, ...
 %    a_ascProfC1PhaseDoxy, a_ascProfC2PhaseDoxy, a_ascProfTempDoxyAa, a_ascProfDoxyAa, ...
-%    a_ascProfPhaseDelayDoxy, a_ascProfTempDoxySbe, a_ascProfDoxySbe)
+%    a_ascProfPhaseDelayDoxy, a_ascProfTempDoxySbe, a_ascProfDoxySbe, ...
+%    a_surfDoxyAa, a_surfDoxySbe)
 %
 % INPUT PARAMETERS :
 %   a_cycleNum               : current cycle number
@@ -63,6 +64,8 @@
 %   a_ascProfPhaseDelayDoxy  : ascending profile PHASE_DELAY_DOXY
 %   a_ascProfTempDoxySbe     : ascending profile TEMP_DOXY2 (SBE sensor)
 %   a_ascProfDoxySbe         : ascending profile DOXY2 (SBE sensor)
+%   a_surfDoxyAa             : surface PPOX_DOXY (Aanderaa sensor)
+%   a_surfDoxySbe            : surface PPOX_DOXY (SBE sensor)
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -93,7 +96,8 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_209( ...
    a_parkPhaseDelayDoxy, a_parkTempDoxySbe, a_parkDoxySbe, ...
    a_ascProfDate, a_ascProfPres, a_ascProfTemp, a_ascProfSal, ...
    a_ascProfC1PhaseDoxy, a_ascProfC2PhaseDoxy, a_ascProfTempDoxyAa, a_ascProfDoxyAa, ...
-   a_ascProfPhaseDelayDoxy, a_ascProfTempDoxySbe, a_ascProfDoxySbe)
+   a_ascProfPhaseDelayDoxy, a_ascProfTempDoxySbe, a_ascProfDoxySbe, ...
+   a_surfDoxyAa, a_surfDoxySbe)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -121,13 +125,13 @@ global g_MC_AscProfDeepestBin;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
-global g_MC_InAirMeasBeforeTST;
 global g_MC_TST;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -582,9 +586,11 @@ if (a_deepCycle == 1)
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % IN AIR MEASUREMENT
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    % the last level of the ascending profile is sampled in the air
-   if (~isempty(a_ascProfDate))
+   % (we check that we have an unpumped profile)
+   if (~isempty(a_ascProfDate) && ~isempty(a_surfDoxyAa)&& ~isempty(a_surfDoxySbe) && ...
+         any([a_tabProfiles.primarySamplingProfileFlag] == 2))
       
       % create the parameters
       paramPres = get_netcdf_param_attributes('PRES');
@@ -593,10 +599,10 @@ if (a_deepCycle == 1)
       paramC1PhaseDoxy = get_netcdf_param_attributes('C1PHASE_DOXY');
       paramC2PhaseDoxy = get_netcdf_param_attributes('C2PHASE_DOXY');
       paramTempDoxyAa = get_netcdf_param_attributes('TEMP_DOXY');
-      paramDoxyAA = get_netcdf_param_attributes('DOXY');
+      paramPpoxDoxyAA = get_netcdf_param_attributes('PPOX_DOXY');
       paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY');
       paramTempDoxySbe = get_netcdf_param_attributes('TEMP_DOXY2');
-      paramDoxySbe = get_netcdf_param_attributes('DOXY2');
+      paramPpoxDoxySbe = get_netcdf_param_attributes('PPOX_DOXY2');
 
       % convert decoder default values to netCDF fill values
       a_ascProfPres(find(a_ascProfPres == g_decArgo_presDef)) = paramPres.fillValue;
@@ -606,63 +612,67 @@ if (a_deepCycle == 1)
          a_ascProfC1PhaseDoxy(find(a_ascProfC1PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC1PhaseDoxy.fillValue;
          a_ascProfC2PhaseDoxy(find(a_ascProfC2PhaseDoxy == g_decArgo_c1C2PhaseDoxyDef)) = paramC2PhaseDoxy.fillValue;
          a_ascProfTempDoxyAa(find(a_ascProfTempDoxyAa == g_decArgo_tempDoxyDef)) = paramTempDoxyAa.fillValue;
-         a_ascProfDoxyAa(find(a_ascProfDoxyAa == g_decArgo_doxyDef)) = paramDoxyAA.fillValue;
+         a_surfDoxyAa(find(a_surfDoxyAa == g_decArgo_doxyDef)) = paramPpoxDoxyAA.fillValue;
       end
       if (~isempty(a_ascProfPhaseDelayDoxy))
          a_ascProfPhaseDelayDoxy(find(a_ascProfPhaseDelayDoxy == g_decArgo_phaseDelayDoxyDef)) = paramPhaseDelayDoxy.fillValue;
          a_ascProfTempDoxySbe(find(a_ascProfTempDoxySbe == g_decArgo_tempDoxyDef)) = paramTempDoxySbe.fillValue;
-         a_ascProfDoxySbe(find(a_ascProfDoxySbe == g_decArgo_doxyDef)) = paramDoxySbe.fillValue;
+         a_surfDoxySbe(find(a_surfDoxySbe == g_decArgo_doxyDef)) = paramPpoxDoxySbe.fillValue;
       end
       
       % create the in air measurement
       if (a_ascProfDate(end) ~= g_decArgo_dateDef)
-         measStruct = create_one_meas_float_time(g_MC_InAirMeasBeforeTST, a_ascProfDate(end), g_JULD_STATUS_2, floatClockDrift);
+         measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, a_ascProfDate(end), g_JULD_STATUS_2, floatClockDrift);
       else
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_InAirMeasBeforeTST;
+         measStruct.measCode = g_MC_InAirSingleMeas;
       end
       
       % fill parameter list and data
       if (~isempty(a_ascProfC1PhaseDoxy) && ~isempty(a_ascProfPhaseDelayDoxy))
          % add parameter variables to the structure
          measStruct.paramList = [paramPres paramTemp paramSal ...
-            paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxyAa paramDoxyAA ...
-            paramPhaseDelayDoxy paramTempDoxySbe paramDoxySbe];
+            paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxyAa paramPpoxDoxyAA ...
+            paramPhaseDelayDoxy paramTempDoxySbe paramPpoxDoxySbe];
          
          % add parameter data to the structure
          measStruct.paramData = [a_ascProfPres(end) a_ascProfTemp(end) a_ascProfSal(end) ...
-            a_ascProfC1PhaseDoxy(end) a_ascProfC2PhaseDoxy(end) a_ascProfTempDoxyAa(end) a_ascProfDoxyAa(end) ...
-            a_ascProfPhaseDelayDoxy(end) a_ascProfTempDoxySbe(end) a_ascProfDoxySbe(end)];
-         measStruct.paramDataQc = [0 0 3 ...
-            0 0 0 0 ...
-            3 0 3];
+            a_ascProfC1PhaseDoxy(end) a_ascProfC2PhaseDoxy(end) a_ascProfTempDoxyAa(end) a_surfDoxyAa ...
+            a_ascProfPhaseDelayDoxy(end) a_ascProfTempDoxySbe(end) a_surfDoxySbe];
+         % done in traj RTQC
+         %          measStruct.paramDataQc = [0 0 3 ...
+         %             0 0 0 0 ...
+         %             3 0 3];
       elseif (~isempty(a_ascProfC1PhaseDoxy))
          % add parameter variables to the structure
          measStruct.paramList = [paramPres paramTemp paramSal ...
-            paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxyAa paramDoxyAA];
+            paramC1PhaseDoxy paramC2PhaseDoxy paramTempDoxyAa paramPpoxDoxyAA];
          
          % add parameter data to the structure
          measStruct.paramData = [a_ascProfPres(end) a_ascProfTemp(end) a_ascProfSal(end) ...
-            a_ascProfC1PhaseDoxy(end) a_ascProfC2PhaseDoxy(end) a_ascProfTempDoxyAa(end) a_ascProfDoxyAa(end)];
-         measStruct.paramDataQc = [0 0 3 ...
-            0 0 0 0];
+            a_ascProfC1PhaseDoxy(end) a_ascProfC2PhaseDoxy(end) a_ascProfTempDoxyAa(end) a_surfDoxyAa];
+         % done in traj RTQC
+         %          measStruct.paramDataQc = [0 0 3 ...
+         %             0 0 0 0];
       elseif (~isempty(a_ascProfPhaseDelayDoxy))
          % add parameter variables to the structure
          measStruct.paramList = [paramPres paramTemp paramSal ...
-            paramPhaseDelayDoxy paramTempDoxySbe paramDoxySbe];
+            paramPhaseDelayDoxy paramTempDoxySbe paramPpoxDoxySbe];
          
          % add parameter data to the structure
          measStruct.paramData = [a_ascProfPres(end) a_ascProfTemp(end) a_ascProfSal(end) ...
-            a_ascProfPhaseDelayDoxy(end) a_ascProfTempDoxySbe(end) a_ascProfDoxySbe(end)];
-         measStruct.paramDataQc = [0 0 3 ...
-            3 0 3];
+            a_ascProfPhaseDelayDoxy(end) a_ascProfTempDoxySbe(end) a_surfDoxySbe];
+         % done in traj RTQC
+         %          measStruct.paramDataQc = [0 0 3 ...
+         %             3 0 3];
       else
          % add parameter variables to the structure
          measStruct.paramList = [paramPres paramTemp paramSal];
          
          % add parameter data to the structure
          measStruct.paramData = [a_ascProfPres(end) a_ascProfTemp(end) a_ascProfSal(end)];
-         measStruct.paramDataQc = [0 0 3];
+         % done in traj RTQC
+         %          measStruct.paramDataQc = [0 0 3];
       end
       
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

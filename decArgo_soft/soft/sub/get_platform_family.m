@@ -33,7 +33,7 @@ switch (a_decoderId)
       % PROVOR Argos
       o_platformFamily = 'FLOAT';
       
-   case {3, 17, 30}
+   case {3, 17, 30, 31}
       % ARVOR Argos
       o_platformFamily = 'FLOAT';
       

@@ -103,7 +103,38 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
                g_decArgo_floatNum, -1, ...
                ['ConcCoef' num2str(idC-1)], tabDoxyCoef(6, idC));
          end
-      end      
+      end
+      
+      % for Arvor 2DO print SBE coef also
+      if (a_decoderId == 209)
+      end
+   end
+end
+
+% for Arvor 2DO print SBE coef also
+if (a_decoderId == 209)
+   if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
+      tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
+      % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
+      
+      for idC = 1:3
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+            g_decArgo_floatNum, -1, ...
+            ['SBEOptodeA' num2str(idC-1)], tabDoxyCoef(1, idC));
+      end
+      for idC = 1:2
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+            g_decArgo_floatNum, -1, ...
+            ['SBEOptodeB' num2str(idC-1)], tabDoxyCoef(1, idC+3));
+      end
+      for idC = 1:3
+         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+            g_decArgo_floatNum, -1, ...
+            ['SBEOptodeC' num2str(idC-1)], tabDoxyCoef(1, idC+5));
+      end
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+         g_decArgo_floatNum, -1, ...
+         'SBEOptodeE', tabDoxyCoef(1, 9));
    end
 end
 

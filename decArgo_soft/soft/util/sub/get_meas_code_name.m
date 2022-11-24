@@ -34,6 +34,7 @@ global g_MC_SpyInDescToPark;
 global g_MC_DescProf;
 global g_MC_MaxPresInDescToPark;
 global g_MC_DescProfDeepestBin;
+global g_MC_DET;
 global g_MC_PST;
 global g_MC_SpyAtPark;
 global g_MC_DriftAtPark;
@@ -56,10 +57,11 @@ global g_MC_AST_Float;
 global g_MC_AscProfDeepestBin;
 global g_MC_SpyInAscProf;
 global g_MC_AscProf;
+global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
 global g_MC_AET_Float;
-global g_MC_InAirMeasBeforeTST;
+global g_MC_InAirSingleMeas;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
@@ -103,6 +105,9 @@ switch (a_measCode)
       
    case g_MC_DescProfDeepestBin
       o_measCodeName = sprintf('%03d: DESC_PROF_DEEPEST_MEAS', a_measCode);
+      
+   case g_MC_DET
+      o_measCodeName = sprintf('%03d: DESCENT_END', a_measCode);
       
    case g_MC_PST
       o_measCodeName = sprintf('%03d: PARK_START', a_measCode);
@@ -170,6 +175,9 @@ switch (a_measCode)
    case g_MC_AscProf
       o_measCodeName = sprintf('%03d: ASC_PROF', a_measCode);
       
+   case g_MC_MedianValueInAscProf
+      o_measCodeName = sprintf('%03d: MEDIAN_IN_ASC_PROF', a_measCode);
+      
    case g_MC_LastAscPumpedCtd
       o_measCodeName = sprintf('%03d: LAST_PUMPED_CTD_MEAS', a_measCode);
       
@@ -179,7 +187,7 @@ switch (a_measCode)
    case g_MC_AET_Float
       o_measCodeName = sprintf('%03d: ASCENT_END_FROM_FLOAT', a_measCode);
       
-   case g_MC_InAirMeasBeforeTST
+   case g_MC_InAirSingleMeas
       o_measCodeName = sprintf('%03d: IN_AIR_MEAS', a_measCode);
 
    case g_MC_TST

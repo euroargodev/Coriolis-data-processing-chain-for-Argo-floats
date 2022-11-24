@@ -28,6 +28,9 @@ global g_decArgo_floatConfig;
 % number of the first deep cycle
 global g_decArgo_firstDeepCycleNumber;
 
+% flag to detect a second Iridium session
+global g_decArgo_secondIridiumSession;
+
 
 % update the configuration
       
@@ -80,8 +83,10 @@ idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == a_cyNum);
 
 if (~isempty(idUsedConf))
    
-   fprintf('WARNING: Float #%d: config already exists for cycle #%d => updating the current one\n', ...
-      g_decArgo_floatNum, a_cyNum);
+   if (g_decArgo_secondIridiumSession == 0)
+      fprintf('WARNING: Float #%d: config already exists for cycle #%d => updating the current one\n', ...
+         g_decArgo_floatNum, a_cyNum);
+   end
    
    if ((configNum == -1) || (configNum == 0))
       idConf = find(g_decArgo_floatConfig.DYNAMIC.NUMBER == ...

@@ -44,9 +44,15 @@ for idFile = 1:length(a_listFileNames)
    fileName = a_listFileNames{idFile};
    fileNameIn = [a_inputDir '/' fileName];
    fileNamOut = [a_outputDir '/' fileName];
-   if (move_file(fileNameIn, fileNamOut) == 0)
-      o_ok = 0;
-      continue;
+   
+   if ((g_decArgo_realtimeFlag == 1) && (a_updateXmlReportFlag == 1))
+      % in RT we delete the processed files
+      delete(fileNameIn);
+   else
+      if (move_file(fileNameIn, fileNamOut) == 0)
+         o_ok = 0;
+         continue;
+      end
    end
    
    if (a_updateXmlReportFlag == 1)

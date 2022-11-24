@@ -28,6 +28,10 @@
 function [o_locDate, o_locLon, o_locLat, o_locQc] = ...
    compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, a_cycleNumber)
 
+% QC flag values (char)
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrProbablyGood;
+
 % output parameters initialization
 o_locDate = [];
 o_locLon = [];
@@ -48,9 +52,9 @@ if (~isempty(idFCyNum))
    o_locLon = sum(lonList.*weight)/sum(weight);
    o_locLat = sum(latList.*weight)/sum(weight);
    if (mean(radiusList) < 5)
-      o_locQc = '1';
+      o_locQc = g_decArgo_qcStrGood;
    else
-      o_locQc = '2';
+      o_locQc = g_decArgo_qcStrProbablyGood;
    end
 end
 

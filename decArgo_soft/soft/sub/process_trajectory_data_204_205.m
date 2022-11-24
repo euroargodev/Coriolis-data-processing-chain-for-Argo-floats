@@ -123,6 +123,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% flag to detect a second Iridium session
+global g_decArgo_secondIridiumSession;
+
 
 % unpack GPS data
 gpsLocCycleNum = a_gpsData{1};
@@ -158,7 +161,7 @@ if (~isempty(a_tabTech))
    tabTech = a_tabTech(end, :);
 end
 
-if (a_deepCycle == 1)
+if ((a_deepCycle == 1) || (g_decArgo_secondIridiumSession == 0))
       
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % POSITIONING SYSTEM AND TRANSMISSION SYSTEM TIMES AND LOCATIONS

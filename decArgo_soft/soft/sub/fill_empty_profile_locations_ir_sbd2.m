@@ -86,6 +86,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% QC flag values (char)
+global g_decArgo_qcStrInterpolated;
+
 % global default values
 global g_decArgo_dateDef;
 
@@ -142,7 +145,7 @@ if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef) && 
       a_profStruct.locationDate = a_profStruct.date;
       a_profStruct.locationLon = interpLocLon;
       a_profStruct.locationLat = interpLocLat;
-      a_profStruct.locationQc = '8';
+      a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
       a_profStruct.iridiumLocation = 0;
       
       % to update the associated NetCDF file

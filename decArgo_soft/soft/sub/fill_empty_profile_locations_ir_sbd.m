@@ -32,6 +32,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% QC flag values (char)
+global g_decArgo_qcStrInterpolated;
+
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
@@ -89,7 +92,7 @@ for idProf = 1:length(a_tabProfiles)
             a_tabProfiles(idProf).locationDate = profile.date;
             a_tabProfiles(idProf).locationLon = interpLocLon;
             a_tabProfiles(idProf).locationLat = interpLocLat;
-            a_tabProfiles(idProf).locationQc = '8';
+            a_tabProfiles(idProf).locationQc = g_decArgo_qcStrInterpolated;
             a_tabProfiles(idProf).iridiumLocation = 0;
             
             % to update the associated NetCDF file

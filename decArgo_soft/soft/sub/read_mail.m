@@ -34,9 +34,6 @@ MESSAGE_SIZE = 'Message Size (bytes):';
 UNIT_LOCATION = 'Unit Location:';
 CEP_RADIUS = 'CEPradius =';
 
-BOUNDARY = 'boundary="';
-SBD_FILE_NAME = 'filename="';
-
 % mail file path name to process
 mailFilePathName = [a_dirName '/' a_fileName];
 

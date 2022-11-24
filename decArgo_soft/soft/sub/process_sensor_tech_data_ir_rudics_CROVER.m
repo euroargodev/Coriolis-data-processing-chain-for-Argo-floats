@@ -68,7 +68,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       200];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbPackDesc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for drift
@@ -77,7 +77,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       201];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbPackDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for ascent
@@ -86,7 +86,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       202];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbPackAsc(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins in zone <Z> for descent
@@ -95,7 +95,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDescZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -103,7 +103,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDescZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -111,14 +111,14 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDescZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
       250 a_cycleNum a_profNum ...
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDescZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -126,7 +126,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       203];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDescZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
    % Nb bins for drift
@@ -135,7 +135,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       204];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasDrift(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb bins in zone <Z> for ascent
@@ -144,7 +144,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasAscZ1(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'1'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'1'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -152,7 +152,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasAscZ2(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'2'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'2'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -160,7 +160,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasAscZ3(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'3'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'3'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -168,7 +168,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasAscZ4(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'4'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'4'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...
@@ -176,7 +176,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       205];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERNbMeasAscZ5(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'} {'<Z>'} {'5'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'} {'<Z>'} {'5'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Sensor state
@@ -185,7 +185,7 @@ for id = 1:length(idPack)
       g_decArgo_outputNcParamLabelInfoCounter*-1 ...
       206];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechCROVERSensorState(idP, 3);
-   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'CROVER'}];
+   g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Crover'}];
    g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
 
 end

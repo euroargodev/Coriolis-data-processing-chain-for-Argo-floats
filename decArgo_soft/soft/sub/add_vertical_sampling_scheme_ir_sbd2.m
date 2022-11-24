@@ -341,7 +341,14 @@ for idP = 1:length(a_tabProfiles)
                   vssTextNearSurface = [vssTextNearSurface ' mixed, unpumped [' descriptionNearSurface ']'];
             end
             
-            a_tabProfiles(idP).vertSamplingScheme = [{vssTextPrimary} {vssTextNearSurface}];
+            if (prof.sensorNumber == 0)
+               % CTD profile
+               a_tabProfiles(idP).vertSamplingScheme = [{vssTextPrimary} {vssTextNearSurface}];
+            elseif (prof.sensorNumber == 1)
+               % DOXY profile
+               vssTextSecondary = regexprep(vssTextPrimary, 'Primary sampling:', 'Secondary sampling:');
+               a_tabProfiles(idP).vertSamplingScheme = [{vssTextSecondary} {vssTextNearSurface}];
+            end
          end
          
       else
@@ -413,8 +420,14 @@ for idP = 1:length(a_tabProfiles)
                vssText = [vssText ' mixed [' description ']'];
          end
          
-         a_tabProfiles(idP).vertSamplingScheme = vssText;
-         
+         if (prof.sensorNumber == 0)
+            % CTD profile
+            a_tabProfiles(idP).vertSamplingScheme = vssText;
+         elseif (prof.sensorNumber == 1)
+            % DOXY profile
+            vssTextSecondary = regexprep(vssText, 'Primary sampling:', 'Secondary sampling:');
+            a_tabProfiles(idP).vertSamplingScheme = vssTextSecondary;
+         end
       end
    end
 end

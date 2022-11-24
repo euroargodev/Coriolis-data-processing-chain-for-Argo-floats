@@ -44,7 +44,7 @@ end
 
 coefA = a_clockDrift/365;
 coefB = clockOffset - coefA*clockOffsetRefDate/86400;
-timeAdj = time + time*coefA/86400 + coefB;
+timeAdj = time - (time*coefA/86400 + coefB);
 
 o_timeAdj(idDated) = timeAdj;
 

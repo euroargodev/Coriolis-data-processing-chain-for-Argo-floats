@@ -43,12 +43,27 @@ end
 idF = find([g_decArgo_iridiumMailData.cycleNumber] == -1);
 for id = 1:length(idF)
    if (g_decArgo_iridiumMailData(idF(id)).attachementFileFlag == 0)
-      if ((idF(id) > 1) && (idF(id) < length(g_decArgo_iridiumMailData)))
-         if (abs(g_decArgo_iridiumMailData(idF(id)).timeOfSessionJuld - g_decArgo_iridiumMailData(idF(id)-1).timeOfSessionJuld) < ...
-               abs(g_decArgo_iridiumMailData(idF(id)).timeOfSessionJuld - g_decArgo_iridiumMailData(idF(id)+1).timeOfSessionJuld))
-            g_decArgo_iridiumMailData(idF(id)).cycleNumber = g_decArgo_iridiumMailData(idF(id)-1).cycleNumber;
-         else
-            g_decArgo_iridiumMailData(idF(id)).cycleNumber = g_decArgo_iridiumMailData(idF(id)+1).cycleNumber;
+      idF2 = find([g_decArgo_iridiumMailData.cycleNumber] == -1);
+      if (~isempty(idF2))
+         cyNumBefore = -1;
+         if ((min(idF2)-1 > 0) && (min(idF2)-1 <= length(g_decArgo_iridiumMailData)))
+            cyNumBefore = g_decArgo_iridiumMailData(min(idF2)-1).cycleNumber;
+         end
+         cyNumAfter = -1;
+         if ((max(idF2)+1 > 0) && (max(idF2)+1 <= length(g_decArgo_iridiumMailData)))
+            cyNumAfter = g_decArgo_iridiumMailData(max(idF2)+1).cycleNumber;
+         end
+         if ((idF(id) > 1) && (idF(id) < length(g_decArgo_iridiumMailData)))
+            if (abs(g_decArgo_iridiumMailData(idF(id)).timeOfSessionJuld - g_decArgo_iridiumMailData(idF(id)-1).timeOfSessionJuld) < ...
+                  abs(g_decArgo_iridiumMailData(idF(id)).timeOfSessionJuld - g_decArgo_iridiumMailData(idF(id)+1).timeOfSessionJuld))
+               if (cyNumBefore ~= -1)
+                  g_decArgo_iridiumMailData(idF(id)).cycleNumber = cyNumBefore;
+               end
+            else
+               if (cyNumAfter ~= -1)
+                  g_decArgo_iridiumMailData(idF(id)).cycleNumber = cyNumAfter;
+               end
+            end
          end
       end
    end

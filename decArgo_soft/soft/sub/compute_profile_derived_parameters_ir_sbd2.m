@@ -195,6 +195,7 @@ o_profFlbb = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -222,7 +223,7 @@ for idP = 1:length(paramToDeriveList)
          a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profFlbb.dataQc(:, end+1) = chlaQc;
       
       a_profFlbb.paramList = [a_profFlbb.paramList derivedParam];
@@ -288,7 +289,7 @@ else
                a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
             end
             bbp700Qc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
-            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = 0;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
             a_profFlbb.dataQc(:, end+1) = bbp700Qc;
          else
             a_profFlbb.data(:, end+1) = ones(size(a_profFlbb.data, 1), 1)*derivedParam.fillValue;
@@ -323,7 +324,7 @@ for idP = 1:length(paramToDeriveList)
          a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), size(a_profFlbb.data, 2)-1)*g_decArgo_qcDef;
       end
       cdomQc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
-      cdomQc(find(cdom ~= derivedParam.fillValue)) = 0;
+      cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profFlbb.dataQc(:, end+1) = cdomQc;
       
       a_profFlbb.paramList = [a_profFlbb.paramList derivedParam];
@@ -363,6 +364,7 @@ o_profFlntu = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -390,7 +392,7 @@ for idP = 1:length(paramToDeriveList)
          a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), size(a_profFlntu.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profFlntu.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profFlntu.dataQc(:, end+1) = chlaQc;
       
       a_profFlntu.paramList = [a_profFlntu.paramList derivedParam];
@@ -419,7 +421,7 @@ for idP = 1:length(paramToDeriveList)
          a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), size(a_profFlntu.data, 2)-1)*g_decArgo_qcDef;
       end
       turbiQc = ones(size(a_profFlntu.data, 1), 1)*g_decArgo_qcDef;
-      turbiQc(find(turbi ~= derivedParam.fillValue)) = 0;
+      turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profFlntu.dataQc(:, end+1) = turbiQc;
       
       a_profFlntu.paramList = [a_profFlntu.paramList derivedParam];
@@ -459,6 +461,7 @@ o_profCyc = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -486,7 +489,7 @@ for idP = 1:length(paramToDeriveList)
          a_profCyc.dataQc = ones(size(a_profCyc.data, 1), size(a_profCyc.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profCyc.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profCyc.dataQc(:, end+1) = chlaQc;
       
       a_profCyc.paramList = [a_profCyc.paramList derivedParam];
@@ -526,6 +529,7 @@ o_profStm = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 
 % list of parameters of the profile
@@ -553,7 +557,7 @@ for idP = 1:length(paramToDeriveList)
          a_profStm.dataQc = ones(size(a_profStm.data, 1), size(a_profStm.data, 2)-1)*g_decArgo_qcDef;
       end
       chlaQc = ones(size(a_profStm.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = 0;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profStm.dataQc(:, end+1) = chlaQc;
       
       a_profStm.paramList = [a_profStm.paramList derivedParam];
@@ -710,6 +714,7 @@ o_profOptode = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -784,7 +789,7 @@ else
                      a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
                   end
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
-                  doxyQc(find(doxy ~= derivedParam.fillValue)) = 0;
+                  doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                   a_profOptode.dataQc(:, end+1) = doxyQc;
                else
                   a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
@@ -837,7 +842,7 @@ else
                      a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
                   end
                   doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
-                  doxyQc(find(doxy ~= derivedParam.fillValue)) = 0;
+                  doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
                   a_profOptode.dataQc(:, end+1) = doxyQc;
                else
                   a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;

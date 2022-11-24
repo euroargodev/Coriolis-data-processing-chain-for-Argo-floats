@@ -20,14 +20,14 @@ function compress_directories()
 
 % input directory
 % INPUT_DIR_NAME = 'C:\users\RNU\Argo\argos\coriolis\bascule_20140303\message_20140306_by_month_split_raw\';
-INPUT_DIR_NAME = 'E:\HDD\bascule_20140326\newfloats\cycle&message_raw_sans_double_cycle\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing\';
 
 % output directory
 % OUTPUT_DIR_NAME = 'E:\HDD\message_20140306_by_month_split_raw_zip\';
-OUTPUT_DIR_NAME = 'E:\HDD\bascule_20140326\newfloats\cycle&message_raw_sans_double_cycle_zip\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\historical_processing_zip2\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\users\RNU\Argo\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 
 % create the output directories

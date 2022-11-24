@@ -31,6 +31,12 @@ global g_JULD_STATUS_3;
 global g_decArgo_dateDef;
 
 
+% configuration information
+dpfFloatFlag = o_timeData.configParam.dpfFloatFlag;
+if (isempty(dpfFloatFlag))
+   dpfFloatFlag = 1;
+end
+
 % retrieve adjustment parameters
 clockOffset = o_timeData.clockOffsetAtLaunch;
 clockOffsetRefDate = o_timeData.clockOffsetAtLaunchRefDate;
@@ -81,12 +87,13 @@ for idCy = 1:length(o_timeData.cycleNum)
       refDate, clockDrift, clockOffset, clockOffsetRefDate);
    refDate = gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(refDate));
    refDateAdj = gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(refDateAdj));
-   o_timeData.cycleTime(idCy).clockOffset = refDateAdj - refDate;
+   o_timeData.cycleTime(idCy).clockOffset = refDate - refDateAdj;
    %    fprintf('Cycle #%d: clock offset %s\n', ...
    %       o_timeData.cycleNum(idCy), format_time_dec_argo(o_timeData.cycleTime(idCy).clockOffset*24));
    
-   if (o_timeData.cycleNum(idCy) == 0)
-      o_timeData.cycleTime(idCy).transEndTime1 = o_timeData.cycleTime(idCy).lastMsgTime - ...
+   if ((o_timeData.cycleNum(idCy) == 0) || ...
+         (dpfFloatFlag == 1) && (o_timeData.cycleNum(idCy) == 1))
+      o_timeData.cycleTime(idCy).transEndTime1 = o_timeData.cycleTime(idCy).lastMsgTime + ...
          o_timeData.cycleTime(idCy).clockOffset;
    end
    
@@ -115,70 +122,42 @@ for idCy = 1:length(o_timeData.cycleNum)
       o_timeData.cycleTime(idCy).downTimeEndAdj = adjust_apx_time( ...
          o_timeData.cycleTime(idCy).downTimeEndFloat, clockDrift, clockOffset, clockOffsetRefDate);
       o_timeData.cycleTime(idCy).downTimeEndStatus = o_timeData.cycleTime(idCy).downTimeEndFloatStatus;
-   else
-      % otherwise DOWN_TIME end = TET (estimated from LMTs) - UP_TIME
-      if (o_timeData.cycleNum(idCy) > 0)
-         if (~isempty(o_timeData.configParam.upTime))
-            if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
-               o_timeData.cycleTime(idCy).downTimeEnd = g_decArgo_dateDef;
-               o_timeData.cycleTime(idCy).downTimeEndAdj = o_timeData.cycleTime(idCy).transEndTimeAdj - o_timeData.configParam.upTime/24;
-               o_timeData.cycleTime(idCy).downTimeEndStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
-            end
-         end
-      end
-   end
-   
-   % PET
-   % PET not set when PARK P = PROF P (since PET = AST)
-   % otherwise PET = TET - UP_TIME - DPDP hours
-   if (o_timeData.cycleNum(idCy) > 0)
-      if (~isempty(o_timeData.cycleParkPres) && ...
-            ~isempty(o_timeData.configParam.upTime) && ...
-            ~isempty(o_timeData.configParam.deepProfileDescentPeriod))
-         if (o_timeData.cycleParkPres(idCy) ~= o_timeData.cycleProfPres(idCy))
-            if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
-               % TET is computed
-               if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
-                  o_timeData.cycleTime(idCy).parkEndTime = o_timeData.cycleTime(idCy).transEndTime ...
-                     - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
-                  o_timeData.cycleTime(idCy).parkEndTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                     - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
-                  o_timeData.cycleTime(idCy).parkEndTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
-               end
-            elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
-               % TET is estimated
-               if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
-                  o_timeData.cycleTime(idCy).parkEndTime = g_decArgo_dateDef;
-                  o_timeData.cycleTime(idCy).parkEndTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                     - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
-                  o_timeData.cycleTime(idCy).parkEndTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
-               end
-            end
-         end
-      end
+      %    else
+      %       % otherwise DOWN_TIME end = TET (estimated from LMTs) - UP_TIME
+      %       if (o_timeData.cycleNum(idCy) > 0)
+      %          if (~isempty(o_timeData.configParam.upTime))
+      %             if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
+      %                o_timeData.cycleTime(idCy).downTimeEnd = g_decArgo_dateDef;
+      %                o_timeData.cycleTime(idCy).downTimeEndAdj = o_timeData.cycleTime(idCy).transEndTimeAdj - o_timeData.configParam.upTime/24;
+      %                o_timeData.cycleTime(idCy).downTimeEndStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+      %             end
+      %          end
+      %       end
    end
    
    % AST
    % AST = TET - UP_TIME when PARK P = PROF P
-   if (~isempty(o_timeData.cycleParkPres) && ...
-         ~isempty(o_timeData.configParam.upTime))
-      if (o_timeData.cycleParkPres(idCy) == o_timeData.cycleProfPres(idCy))
-         if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
-            % TET is computed
-            if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
-               o_timeData.cycleTime(idCy).ascentStartTime = o_timeData.cycleTime(idCy).transEndTime ...
-                  - o_timeData.configParam.upTime/24;
-               o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                  - o_timeData.configParam.upTime/24;
-               o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
-            end
-         elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
-            % TET is estimated
-            if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
-               o_timeData.cycleTime(idCy).ascentStartTime = g_decArgo_dateDef;
-               o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
-                  - o_timeData.configParam.upTime/24;
-               o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+   if (o_timeData.cycleNum(idCy) > 0)
+      if (~isempty(o_timeData.cycleParkPres) && ~isempty(o_timeData.cycleProfPres) && ...
+            ~isempty(o_timeData.configParam.upTime))
+         if (o_timeData.cycleParkPres(idCy) == o_timeData.cycleProfPres(idCy))
+            if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
+               % TET is computed
+               if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
+                  o_timeData.cycleTime(idCy).ascentStartTime = o_timeData.cycleTime(idCy).transEndTime ...
+                     - o_timeData.configParam.upTime/24;
+                  o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                     - o_timeData.configParam.upTime/24;
+                  o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+               end
+            elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
+               % TET is estimated
+               if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
+                  o_timeData.cycleTime(idCy).ascentStartTime = g_decArgo_dateDef;
+                  o_timeData.cycleTime(idCy).ascentStartTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                     - o_timeData.configParam.upTime/24;
+                  o_timeData.cycleTime(idCy).ascentStartTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+               end
             end
          end
       end
@@ -190,22 +169,59 @@ for idCy = 1:length(o_timeData.cycleNum)
          o_timeData.cycleTime(idCy).ascentStartTimeFloat, clockDrift, clockOffset, clockOffsetRefDate);
    end
    
-   % DDET
-   % DDET = AST
-   if (o_timeData.configParam.ascentStartTimeProvidedFlag)
-      o_timeData.cycleTime(idCy).deepDescentEndTime = o_timeData.cycleTime(idCy).ascentStartTimeFloat;
-      o_timeData.cycleTime(idCy).deepDescentEndTimeAdj = o_timeData.cycleTime(idCy).ascentStartTimeFloatAdj;
-      o_timeData.cycleTime(idCy).deepDescentEndTimeStatus = o_timeData.cycleTime(idCy).ascentStartTimeFloatStatus;
-   else
-      if (o_timeData.cycleTime(idCy).ascentStartTimeStatus == g_JULD_STATUS_3)
-         % AST is computed
-         o_timeData.cycleTime(idCy).deepDescentEndTime = o_timeData.cycleTime(idCy).ascentStartTime;
-      elseif (o_timeData.cycleTime(idCy).ascentStartTimeStatus == g_JULD_STATUS_1)
-         % AST is estimated
-         o_timeData.cycleTime(idCy).deepDescentEndTime = g_decArgo_dateDef;
+   % PET
+   % PET = AST when PARK P = PROF P
+   % PET = TET - UP_TIME - DPDP hours when PARK P ~= PROF P
+   if (o_timeData.cycleNum(idCy) > 0)
+      if (~isempty(o_timeData.cycleParkPres) && ~isempty(o_timeData.cycleProfPres))
+         if (o_timeData.cycleParkPres(idCy) == o_timeData.cycleProfPres(idCy))
+            o_timeData.cycleTime(idCy).parkEndTime = o_timeData.cycleTime(idCy).ascentStartTime;
+            o_timeData.cycleTime(idCy).parkEndTimeAdj = o_timeData.cycleTime(idCy).ascentStartTimeAdj;
+            o_timeData.cycleTime(idCy).parkEndTimeStatus = o_timeData.cycleTime(idCy).ascentStartTimeStatus;
+         else
+            if (~isempty(o_timeData.configParam.upTime) && ...
+                  ~isempty(o_timeData.configParam.deepProfileDescentPeriod))
+               if (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_3)
+                  % TET is computed
+                  if (o_timeData.cycleTime(idCy).transEndTime ~= g_decArgo_dateDef)
+                     o_timeData.cycleTime(idCy).parkEndTime = o_timeData.cycleTime(idCy).transEndTime ...
+                        - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
+                     o_timeData.cycleTime(idCy).parkEndTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                        - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
+                     o_timeData.cycleTime(idCy).parkEndTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+                  end
+               elseif (o_timeData.cycleTime(idCy).transEndTimeStatus == g_JULD_STATUS_1)
+                  % TET is estimated
+                  if (o_timeData.cycleTime(idCy).transEndTimeAdj ~= g_decArgo_dateDef)
+                     o_timeData.cycleTime(idCy).parkEndTime = g_decArgo_dateDef;
+                     o_timeData.cycleTime(idCy).parkEndTimeAdj = o_timeData.cycleTime(idCy).transEndTimeAdj ...
+                        - (o_timeData.configParam.upTime + o_timeData.configParam.deepProfileDescentPeriod)/24;
+                     o_timeData.cycleTime(idCy).parkEndTimeStatus = o_timeData.cycleTime(idCy).transEndTimeStatus;
+                  end
+               end
+            end
+         end
       end
-      o_timeData.cycleTime(idCy).deepDescentEndTimeAdj = o_timeData.cycleTime(idCy).ascentStartTimeAdj;
-      o_timeData.cycleTime(idCy).deepDescentEndTimeStatus = o_timeData.cycleTime(idCy).ascentStartTimeStatus;
+   end   
+   
+   % DDET
+   % DDET = AST (or AST float if provided)
+   if (o_timeData.cycleNum(idCy) > 0)
+      if (o_timeData.configParam.ascentStartTimeProvidedFlag)
+         o_timeData.cycleTime(idCy).deepDescentEndTime = o_timeData.cycleTime(idCy).ascentStartTimeFloat;
+         o_timeData.cycleTime(idCy).deepDescentEndTimeAdj = o_timeData.cycleTime(idCy).ascentStartTimeFloatAdj;
+         o_timeData.cycleTime(idCy).deepDescentEndTimeStatus = o_timeData.cycleTime(idCy).ascentStartTimeFloatStatus;
+      else
+         if (o_timeData.cycleTime(idCy).ascentStartTimeStatus == g_JULD_STATUS_3)
+            % AST is computed
+            o_timeData.cycleTime(idCy).deepDescentEndTime = o_timeData.cycleTime(idCy).ascentStartTime;
+         elseif (o_timeData.cycleTime(idCy).ascentStartTimeStatus == g_JULD_STATUS_1)
+            % AST is estimated
+            o_timeData.cycleTime(idCy).deepDescentEndTime = g_decArgo_dateDef;
+         end
+         o_timeData.cycleTime(idCy).deepDescentEndTimeAdj = o_timeData.cycleTime(idCy).ascentStartTimeAdj;
+         o_timeData.cycleTime(idCy).deepDescentEndTimeStatus = o_timeData.cycleTime(idCy).ascentStartTimeStatus;
+      end
    end
    
    % TST from transmission strategy: done in compute_apx_times
@@ -225,7 +241,7 @@ for idCy = 1:length(o_timeData.cycleNum)
    
 end
 
-% finalize DST and descendinf pressure mark times
+% finalize DST and descending pressure mark times
 for idCy = 1:length(o_timeData.cycleNum)
    
    % DST

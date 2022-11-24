@@ -24,7 +24,8 @@
 function set_cycle_number_of_argos_cycle_file(varargin)
 
 % directory of the Argos cycle files
-DIR_INPUT_ARGOS_FILES = 'E:\HDD\archive_cycle_co_20141201\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final\';
+% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT_final\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

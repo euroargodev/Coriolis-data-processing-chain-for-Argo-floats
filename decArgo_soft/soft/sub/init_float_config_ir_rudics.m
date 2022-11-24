@@ -67,6 +67,8 @@ g_decArgo_rtOffsetInfo = [];
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
+WAITING_FOR_FITLM_MATLAB_FUNCTION = 1;
+
 
 % create static configuration names
 configNames1 = [];
@@ -478,49 +480,51 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       end
       
       % create the NITRATE calibration arrays
-      if (ismember(6, g_decArgo_sensorList))
-         if (isfield(g_decArgo_calibInfo, 'SUNA'))
-            calibData = g_decArgo_calibInfo.SUNA;
-            tabOpticalWavelengthUv = [];
-            tabENitrate = [];
-            tabESwaNitrate = [];
-            tabUvIntensityRefNitrate = [];
-            for id = 1:256
-               fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
-               if (isfield(calibData, fieldName))
-                  tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
-               else
-                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-                  return;
+      if (~WAITING_FOR_FITLM_MATLAB_FUNCTION)
+         if (ismember(6, g_decArgo_sensorList))
+            if (isfield(g_decArgo_calibInfo, 'SUNA'))
+               calibData = g_decArgo_calibInfo.SUNA;
+               tabOpticalWavelengthUv = [];
+               tabENitrate = [];
+               tabESwaNitrate = [];
+               tabUvIntensityRefNitrate = [];
+               for id = 1:256
+                  fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabOpticalWavelengthUv = [tabOpticalWavelengthUv calibData.(fieldName)];
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                     return;
+                  end
+                  fieldName = ['E_NITRATE_' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabENitrate = [tabENitrate calibData.(fieldName)];
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                     return;
+                  end
+                  fieldName = ['E_SWA_NITRATE_' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                     return;
+                  end
+                  fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                     return;
+                  end
                end
-               fieldName = ['E_NITRATE_' num2str(id)];
-               if (isfield(calibData, fieldName))
-                  tabENitrate = [tabENitrate calibData.(fieldName)];
-               else
-                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-                  return;
-               end
-               fieldName = ['E_SWA_NITRATE_' num2str(id)];
-               if (isfield(calibData, fieldName))
-                  tabESwaNitrate = [tabESwaNitrate calibData.(fieldName)];
-               else
-                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-                  return;
-               end
-               fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
-               if (isfield(calibData, fieldName))
-                  tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
-               else
-                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
-                  return;
-               end
+               g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
+               g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
+               g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
+               g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
             end
-            g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
-            g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
-            g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
-            g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
-         else
-            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
          end
       end
       

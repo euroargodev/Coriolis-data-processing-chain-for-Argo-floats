@@ -35,7 +35,11 @@ UNIT_LOCATION = 'Unit Location:';
 CEP_RADIUS = 'CEPradius =';
 
 BOUNDARY = 'boundary="';
-SBD_FILE_NAME = 'filename="';
+% 01/19/2016: in co_20151217T000434Z_300234060350130_001113_000000_6279.txt,
+% 001114, 001115, 001116 and 001117 attachment file name is provided without '"'
+% (Ex: filename=300234060350130_001113.sbd;)
+% SBD_FILE_NAME = 'filename="';
+SBD_FILE_NAME = 'filename=';
 BOUNDARY_END = '----------';
 
 % mail file path name to process
@@ -143,8 +147,15 @@ while 1
          if (attachementFileDone == 0)
             if (~isempty(strfind(line, SBD_FILE_NAME)))
                idPos = strfind(line, SBD_FILE_NAME);
-               attachementFileName = strtrim(line(idPos+length(SBD_FILE_NAME):end-1));
-               attachementFileDone = 1;
+               attachementFileNameTmp = strtrim(line(idPos+length(SBD_FILE_NAME):end));
+               attachementFileNameTmp = regexprep(attachementFileNameTmp, '"', '');
+               idPos2 = strfind(attachementFileNameTmp, '.sbd');
+               if (~isempty(idPos2))
+                  attachementFileName = attachementFileNameTmp(1:idPos2+length('.sbd')-1);
+                  attachementFileDone = 1;
+               else
+                  fprintf('ERROR: Inconsistent attachement file name in mail file: %s => attachement ignored\n', a_fileName);
+               end
             end
          else
             if (sbdDataStart == 0)

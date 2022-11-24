@@ -31,6 +31,7 @@ o_tabTrajNMeas = [];
 
 % global default values
 global g_decArgo_qcDef;
+global g_decArgo_qcCorrectable;
 
 % array to store ko sensor states
 global g_decArgo_koSensorState;
@@ -59,17 +60,16 @@ if (~isempty(g_decArgo_koSensorState))
             
                parameterList = prof.paramList;
                for idParam = 1:length(parameterList)
-                  
                   profParam = parameterList(idParam);
                   if (strcmp(profParam.name, 'PRES') && (prof.sensorNumber ~= 0))
-                     % PRES_QC is not modified (except if it is the CTD sensor
+                     % PRES_QC is not modified (except if it is the CTD sensor)
                      continue;
                   end
-                  
+                  profParam.name
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, idParam);
                   paramDataQc = ones(length(paramData), 1)*g_decArgo_qcDef;
-                  paramDataQc(find(paramData ~= param.fillValue)) = 3;
+                  paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
                   dataQc(:, idParam) = paramDataQc;
                end
             else
@@ -103,7 +103,7 @@ if (~isempty(g_decArgo_koSensorState))
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, firstCol:lastCol);
                   paramDataQc = ones(size(paramData))*g_decArgo_qcDef;
-                  paramDataQc(find(paramData ~= param.fillValue)) = 3;
+                  paramDataQc(find(paramData ~= param.fillValue)) = g_decArgo_qcCorrectable;
                   dataQc(:, firstCol:lastCol) = paramDataQc;
                end
             end
@@ -149,7 +149,7 @@ if (~isempty(g_decArgo_koSensorState))
                         param = get_netcdf_param_attributes(measParam.name);
                         measData = tabMeasOne.paramData(:, idParam);
                         measDataQc = ones(length(measData), 1)*g_decArgo_qcDef;
-                        measDataQc(find(measData ~= param.fillValue)) = 3;
+                        measDataQc(find(measData ~= param.fillValue)) = g_decArgo_qcCorrectable;
                         paramDataQc(:, idParam) = measDataQc;
                      end
                   else
@@ -184,7 +184,7 @@ if (~isempty(g_decArgo_koSensorState))
                         param = get_netcdf_param_attributes(measParam.name);
                         measData = tabMeasOne.paramData(:, firstCol:lastCol);
                         measDataQc = ones(size(measData))*g_decArgo_qcDef;
-                        measDataQc(find(measData ~= param.fillValue)) = 3;
+                        measDataQc(find(measData ~= param.fillValue)) = g_decArgo_qcCorrectable;
                         paramDataQc(:, firstCol:lastCol) = measDataQc;
                      end
                   end

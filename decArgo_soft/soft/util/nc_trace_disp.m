@@ -37,12 +37,19 @@ global g_NTD_COMPUTE_BOUNDARIES;
 
 % top directory of NetCDF files to plot
 g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_rem_for_rtqc\';
 
 % directory to store pdf output
 g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
 
 % number of displacements to plot
 g_NTD_DEFAULT_NB_PLOT_CYCLE = 5;
@@ -200,6 +207,19 @@ init_measurement_codes;
 % global measurement codes
 global g_MC_Launch;
 global g_MC_Surface;
+
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrProbablyGood;
+global g_decArgo_qcStrCorrectable;
+global g_decArgo_qcStrBad;
+global g_decArgo_qcStrChanged;
+global g_decArgo_qcStrUnused1;
+global g_decArgo_qcStrUnused2;
+global g_decArgo_qcStrInterpolated;
+global g_decArgo_qcStrMissing;
 
 
 g_NTD_ID_CYCLE = a_idCycle;
@@ -430,7 +450,7 @@ if ((g_NTD_ID_FLOAT ~= a_idFloat) || (g_NTD_LOAD_FLOAT == 1))
       idCycleArgosLoc = find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999));
       if (~isempty(idCycleArgosLoc))
          tabPosAcc = posAcc(idCycle(idCycleArgosLoc));
-         idGoodPos = find((tabPosAcc == '1') | (tabPosAcc == '2') | (tabPosAcc == '3') | ...
+         idGoodPos = find((tabPosAcc == g_decArgo_qcStrGood) | (tabPosAcc == g_decArgo_qcStrProbablyGood) | (tabPosAcc == g_decArgo_qcStrCorrectable) | ...
             (tabPosAcc == 'G'));
          maxNbLoc = max([maxNbLoc length(idGoodPos)]);
       end
@@ -461,7 +481,7 @@ if ((g_NTD_ID_FLOAT ~= a_idFloat) || (g_NTD_LOAD_FLOAT == 1))
             tabPosAcc = posAcc(idCycle(idCycleArgosLoc));
             tabPosQc = posQc(idCycle(idCycleArgosLoc));
             
-            idGoodPos = find((tabPosAcc == '1') | (tabPosAcc == '2') | (tabPosAcc == '3') | ...
+            idGoodPos = find((tabPosAcc == g_decArgo_qcStrGood) | (tabPosAcc == g_decArgo_qcStrProbablyGood) | (tabPosAcc == g_decArgo_qcStrCorrectable) | ...
                (tabPosAcc == 'G'));
             tabDate = tabDate(idGoodPos);
             tabLon = tabLon(idGoodPos);
@@ -470,7 +490,7 @@ if ((g_NTD_ID_FLOAT ~= a_idFloat) || (g_NTD_LOAD_FLOAT == 1))
             tabPosQc = tabPosQc(idGoodPos);
             
             if (g_NTD_QC == 1)
-               idKo = find((tabPosQc == '3') | (tabPosQc == '4'));
+               idKo = find((tabPosQc == g_decArgo_qcStrCorrectable) | (tabPosQc == g_decArgo_qcStrBad));
                tabDate(idKo) = [];
                tabLon(idKo) = [];
                tabLat(idKo) = [];
@@ -824,7 +844,7 @@ if (idCycleStart == 1)
       startQc = g_NTD_startLon;
       
       if (g_NTD_QC == 1)
-         idKo = find((startQc == '3') | (startQc == '4'));
+         idKo = find((startQc == g_decArgo_qcStrCorrectable) | (startQc == g_decArgo_qcStrBad));
          startLon(idKo) = [];
          startLat(idKo) = [];
          
@@ -1057,7 +1077,7 @@ elseif (strcmp(a_eventData.Character, '-'))
    if (g_NTD_NB_PLOT_CYCLE > 1)
       g_NTD_NB_PLOT_CYCLE = g_NTD_NB_PLOT_CYCLE - 1;
    end
-   fprintf('PLot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
+   fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1067,7 +1087,7 @@ elseif (strcmp(a_eventData.Character, '+'))
    if (g_NTD_NB_PLOT_CYCLE < g_NTD_NB_CYCLE)
       g_NTD_NB_PLOT_CYCLE = g_NTD_NB_PLOT_CYCLE + 1;
    end
-   fprintf('PLot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
+   fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1075,7 +1095,7 @@ elseif (strcmp(a_eventData.Character, '+'))
 elseif (strcmp(a_eventData.Key, 'a'))
    g_NTD_COMPUTE_BOUNDARIES = 1;
    g_NTD_NB_PLOT_CYCLE = g_NTD_NB_CYCLE;
-   fprintf('PLot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
+   fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    g_NTD_ID_CYCLE = 0;
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    
@@ -1084,7 +1104,7 @@ elseif (strcmp(a_eventData.Key, 'a'))
 elseif (strcmp(a_eventData.Key, 'd'))
    g_NTD_COMPUTE_BOUNDARIES = 1;
    g_NTD_NB_PLOT_CYCLE = g_NTD_DEFAULT_NB_PLOT_CYCLE;
-   fprintf('PLot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
+   fprintf('Plot of %d displacements per set\n', g_NTD_NB_PLOT_CYCLE);
    g_NTD_ID_CYCLE = 0;
    plot_argos(g_NTD_ID_FLOAT, g_NTD_ID_CYCLE);
    

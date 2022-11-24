@@ -53,6 +53,16 @@ MIN_NON_TRANS_DURATION_FOR_GHOST = g_decArgo_minNonTransDurForGhost;
 [pathstr, inputArgosFileName, ext] = fileparts(g_decArgo_inputArgosFile);
 inputArgosFileName = [inputArgosFileName ext];
 
+% correct CLS header (the number of lines in the satellite pass should be
+% correct, otherwise the file will not be entirely read)
+% once this is done all the satellite pass is read (and float meassage badly
+% formated are ignored)
+[ok] = correct_cycle_file_cls_header(g_decArgo_inputArgosFile);
+if (ok == 0)
+   fprintf('ERROR: Unable to correct CLS headers in input Argos file (%s)\n', inputArgosFileName);
+   return;
+end
+
 % find the WMO number of the float
 idPos = strfind(inputArgosFileName, '_');
 if (~isempty(idPos))
@@ -609,7 +619,7 @@ else
             end
             
             if (~isempty(nextNum))
-               if (nextNum == 1)
+               if ((nextNum == 0) || (nextNum == 1))
                   cycleNumber = 0;
                else
                   if (lastArgosMsgDate < launchDate + preludeDuration/24 + cycleDuration/48)
@@ -713,8 +723,8 @@ else
             
             if (~isempty(tabCycleNumberBis))
                
-               tabLastMsgDateBis = tabLastMsgDateBis-compute_duration(tabCycleNumberBis, tabCycleNumberBis(1), ones(max(tabCycleNumberBis)+1, 1)*floatCycleTime)';
-               lastArgosMsgDateBis = lastArgosMsgDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(tabCycleNumberBis)+1, 1)*floatCycleTime)';
+               tabLastMsgDateBis = tabLastMsgDateBis-compute_duration(tabCycleNumberBis, tabCycleNumberBis(1), ones(max(tabCycleNumberBis), 1)*floatCycleTime)';
+               lastArgosMsgDateBis = lastArgosMsgDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
                
                %                if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > 0)
                %                   fprintf('Cycle #%3d: LAST %s\n', ...
@@ -725,7 +735,7 @@ else
                if ((lastArgosMsgDateBis-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST)
                   argosDate = [argosLocDate; argosDataDate];
                   argosDate = sort(argosDate);
-                  argosDate = argosDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(tabCycleNumberBis)+1, 1)*floatCycleTime)';
+                  argosDate = argosDate-compute_duration(cycleNumber, tabCycleNumberBis(1), ones(max(cycleNumber), 1)*floatCycleTime)';
                   
                   if (g_decArgo_processModeAll == 1)
                      argosDirName = [g_decArgo_dirInputHexArgosFileFormat1 '/' sprintf('%06d', floatArgosId) '/'];
@@ -826,5 +836,183 @@ for id = 1:length(a_tabEndCyNum)
 end
 
 o_duration = o_duration/24;
+
+return;
+
+% ------------------------------------------------------------------------------
+% Correction of the Argos HEX data.
+% The correction only concerns the number of lines of the satellite pass.
+%
+% SYNTAX :
+%  [o_ok] = correct_cycle_file_cls_header(a_inputArgosFile)
+%
+% INPUT PARAMETERS :
+%   a_inputArgosFile : input Argos cycle file
+%
+% OUTPUT PARAMETERS :
+%   o_ok : processing report flag (1 if everything is all right, 0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO : 
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/23/2016 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = correct_cycle_file_cls_header(a_inputArgosFile)
+
+% output parameters initialization
+o_ok = 0;
+
+   
+if (exist(a_inputArgosFile, 'file') == 2)
+       
+   % process the file
+   fIdIn = fopen(a_inputArgosFile, 'r');
+   if (fIdIn == -1)
+      fprintf('ERROR: Error while opening file : %s\n', a_inputArgosFile);
+      return;
+   end
+   
+   % first step: looking for satellite pass header and storing the number of
+   % lines of each satellite pass
+   tabNbLinesToReadCor = [];
+   tabNbLinesToReadOri = [];
+   startLine = -1;
+   lineNum = 0;
+   while (1)
+      line = fgetl(fIdIn);
+      if (line == -1)
+         if (startLine ~= -1)
+            tabNbLinesToReadCor = [tabNbLinesToReadCor; lineNum-startLine+1];
+         end
+         break;
+      end
+      lineNum = lineNum + 1;
+      
+      % looking for satellite pass header
+      [val1, count1, errmsg1, nextindex1] = sscanf(line, '%d %d %d %d %c %c %d-%d-%d %d:%d:%f %f %f %f %d');
+      [val2, count2, errmsg2, nextindex2] = sscanf(line, '%d %d %d %d %c');
+      [val3, count3, errmsg3, nextindex3] = sscanf(line, '%d %d %d %d %c %d-%d-%d %d:%d:%f %d %x %x %x %x');
+      if ((isempty(errmsg1) && (count1 == 16)) || ...
+            (isempty(errmsg2) && (count2 == 5) && (val2(2) > 99)) || ...
+            (isempty(errmsg3) && (count3 == 16) && (isempty(find(val3(13:end) > 255, 1)))))
+         
+         if (startLine ~= -1)
+            tabNbLinesToReadCor = [tabNbLinesToReadCor; lineNum-startLine];
+         end
+         startLine = lineNum;
+         tabNbLinesToReadOri = [tabNbLinesToReadOri; val1(3)];
+      end
+   end
+   
+   fclose(fIdIn);
+   
+   % second step: writing of output file with the updated number of lines of
+   % each satellite pass
+   if (~isempty(tabNbLinesToReadCor))
+      
+      if (~isempty(find((tabNbLinesToReadCor-tabNbLinesToReadOri) ~= 0, 1)))
+         
+         % error(s) detected => correct the file
+         
+         % argos input file name
+         [inputArgosFilePath, inputArgosFile, ext] = fileparts(a_inputArgosFile);
+         inputArgosFileName = [inputArgosFile ext];
+         
+         % create a temporary directory
+         tmpDir = [inputArgosFilePath '/tmp_' inputArgosFile '/'];
+         if (exist(tmpDir, 'dir') == 7)
+            rmdir(tmpDir, 's');
+         end
+         mkdir(tmpDir);
+         outputArgosFile = [tmpDir inputArgosFile ext];
+         
+         % input file
+         fIdIn = fopen(a_inputArgosFile, 'r');
+         if (fIdIn == -1)
+            fprintf('ERROR: Error while opening file : %s\n', a_inputArgosFile);
+            return;
+         end
+         
+         % output file
+         fIdOut = fopen(outputArgosFile, 'wt');
+         if (fIdOut == -1)
+            fprintf('ERROR: Error while creating file : %s\n', outputArgosFile);
+            return;
+         end
+         
+         lineNum = 0;
+         for id = 1:length(tabNbLinesToReadCor)
+            started = 0;
+            nbLinesToCopy = tabNbLinesToReadCor(id);
+            while (nbLinesToCopy > 0)
+               line = fgetl(fIdIn);
+               if (line == -1)
+                  break;
+               end
+               lineNum = lineNum + 1;
+               
+               if (started == 1)
+                  nbLinesToCopy = nbLinesToCopy - 1;
+               end
+               
+               % looking for satellite pass header
+               [val1, count1, errmsg1, nextindex1] = sscanf(line, '%d %d %d %d %c %c %d-%d-%d %d:%d:%f %f %f %f %d');
+               [val2, count2, errmsg2, nextindex2] = sscanf(line, '%d %d %d %d %c');
+               [val3, count3, errmsg3, nextindex3] = sscanf(line, '%d %d %d %d %c %d-%d-%d %d:%d:%f %d %x %x %x %x');
+               if ((isempty(errmsg1) && (count1 == 16)) || ...
+                     (isempty(errmsg2) && (count2 == 5) && (val2(2) > 99)) || ...
+                     (isempty(errmsg3) && (count3 == 16) && (isempty(find(val3(13:end) > 255, 1)))))
+                  
+                  started = 1;
+                  nbLinesToCopy = nbLinesToCopy - 1;
+                  if (tabNbLinesToReadCor(id) > 1)
+                     if (val1(3) ~= tabNbLinesToReadCor(id))
+                        idBlank = strfind(line, ' ');
+                        
+                        idB1 = idBlank(1);
+                        idB = idBlank(2);
+                        pos = 3;
+                        while ((idB == idB1+1) && (pos <= length(idBlank)))
+                           idB = idBlank(pos);
+                           pos = pos + 1;
+                        end
+                        idB2 = idB;
+                        idB = idBlank(pos);
+                        pos = pos + 1;
+                        while ((idB == idB2+1) && (pos <= length(idBlank)))
+                           idB = idBlank(pos);
+                           pos = pos + 1;
+                        end
+                        idB3 = idB;
+                        
+                        line = [line(1:idB2) num2str(tabNbLinesToReadCor(id)) line(idB3:end)];
+                        fprintf('ERROR: CLS header corrected line %d (%d instead of %d) in file %s\n', ...
+                           lineNum, tabNbLinesToReadCor(id), val1(3), inputArgosFileName);
+                     end
+                  end
+               end
+               
+               if (tabNbLinesToReadCor(id) > 1)
+                  fprintf(fIdOut, '%s\n', line);
+               end
+            end
+         end
+         
+         fclose(fIdOut);
+         fclose(fIdIn);
+         
+         % replace the input file by the corrected one
+         move_file(outputArgosFile, a_inputArgosFile);
+         
+         % delete the temporary directory
+         rmdir(tmpDir, 's');
+      end
+   end
+end
+
+o_ok = 1;
 
 return;

@@ -48,6 +48,10 @@ global g_decArgo_rsyncLogFileUnderProcessList;
 % DOM node of XML report
 global g_decArgo_xmlReportDOMNode;
 
+% default values
+global g_decArgo_janFirst1950InMatlab;
+global g_decArgo_dateDef;
+
 
 % check input parameters
 rsyncLogInputParam = 0;
@@ -211,7 +215,7 @@ for idFloat = 1:length(uFloatImei)
             idEq = find(strcmp(tabFloatImei, uFloatImei{idFloat}) == 1);
             for idFile = 1:length(idEq)
                
-               fileName = tabFloatMailFiles{idEq(idFile)};
+               fileName = tabFloatSbdFiles{idEq(idFile)};
                idF = strfind(fileName, '/');
                fileName = fileName(idF+1:end);
                fileDate = datenum([fileName(4:11) fileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;

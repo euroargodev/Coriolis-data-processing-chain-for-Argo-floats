@@ -189,18 +189,19 @@ for idCy = 1:length(cycleNumList)
                      idOk = find(data(:, 2) == dataStdMed(idL, 1));
                      if (~isempty(idOk))
                         if (length(idOk) > 1)
-                           idOk2 = find(idOk == idL);
-                           if (~isempty(idOk2))
-                              idOk = idOk(idOk2);
+                           idF = find(data(idOk, 4) == g_decArgo_concNitraCountsDef, 1);
+                           if (~isempty(idF))
+                              idOk = idOk(idF);
                            else
-                              fprintf('WARNING: Float #%d Cycle #%d: SUNA standard deviation and median data without associated mean data\n', ...
-                                 g_decArgo_floatNum, a_cycleNum);
+                              fprintf('WARNING: Float #%d Cycle #%d: cannot fit SUNA standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
+                                 g_decArgo_floatNum, g_decArgo_cycleNum);
+                              continue;
                            end
                         end
                         data(idOk, 4:5) = dataStdMed(idL, 2:3);
                      else
                         fprintf('WARNING: Float #%d Cycle #%d: SUNA standard deviation and median data without associated mean data\n', ...
-                           g_decArgo_floatNum, a_cycleNum);
+                           g_decArgo_floatNum, g_decArgo_cycleNum);
                      end
                   end
                   

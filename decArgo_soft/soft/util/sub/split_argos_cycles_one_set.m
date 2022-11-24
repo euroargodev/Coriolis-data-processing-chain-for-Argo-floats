@@ -91,7 +91,7 @@ for idFile = 1:nbFiles
                   else
                      stop = 1;
                   end
-                  if (fileNum == 1000)
+                  if (fileNum == 10000)
                      fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
                   end
                end
@@ -210,7 +210,7 @@ for idFile = 1:nbFiles
                   else
                      stop = 1;
                   end
-                  if (fileNum == 1000)
+                  if (fileNum == 10000)
                      fprintf('ERROR: Unable to find an output file name %s\n', outputFilePathName);
                   end
                end

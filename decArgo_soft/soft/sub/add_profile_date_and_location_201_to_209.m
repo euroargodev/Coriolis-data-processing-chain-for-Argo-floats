@@ -44,6 +44,10 @@ global g_decArgo_dateDef;
 % number of the first deep cycle
 global g_decArgo_firstDeepCycleNumber;
 
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrInterpolated;
+
 
 % add profile date dans location
 if (a_profStruct.direction == 'D')
@@ -97,7 +101,7 @@ if (a_profStruct.direction == 'D')
          a_profStruct.locationDate = gpsLocDate(idLocLaunch);
          a_profStruct.locationLon = gpsLocLon(idLocLaunch);
          a_profStruct.locationLat = gpsLocLat(idLocLaunch);
-         a_profStruct.locationQc = '0';
+         a_profStruct.locationQc = g_decArgo_qcStrNoQc;
          a_profStruct.iridiumLocation = 0;
          
       elseif (a_profStruct.date ~= g_decArgo_dateDef)
@@ -137,7 +141,7 @@ if (a_profStruct.direction == 'D')
                a_profStruct.locationDate = a_profStruct.date;
                a_profStruct.locationLon = interpLocLon;
                a_profStruct.locationLat = interpLocLat;
-               a_profStruct.locationQc = '8';
+               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
                a_profStruct.iridiumLocation = 0;
             else
                fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
@@ -251,7 +255,7 @@ else
                a_profStruct.locationDate = a_profStruct.date;
                a_profStruct.locationLon = interpLocLon;
                a_profStruct.locationLat = interpLocLat;
-               a_profStruct.locationQc = '8';
+               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
                a_profStruct.iridiumLocation = 0;
             else
                fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...

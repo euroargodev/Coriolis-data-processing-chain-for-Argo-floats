@@ -28,6 +28,9 @@ o_completed = 0;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% flag to detect a second Iridium session
+global g_decArgo_secondIridiumSession;
+
 % arrays to store rough information on received data
 global g_decArgo_0TypePacketReceivedFlag;
 global g_decArgo_4TypePacketReceivedFlag;
@@ -51,6 +54,15 @@ if ((g_decArgo_0TypePacketReceivedFlag == 1) && ...
    % the buffer is complete
    o_completed = 1;
    
+   % set the "second Iridium session" flag
+   if ((g_decArgo_nbOf1Or8Or11Or14TypePacketExpected == 0) && ...
+         (g_decArgo_nbOf2Or9Or12Or15TypePacketExpected == 0) && ...
+         (g_decArgo_nbOf3Or10Or13Or16TypePacketExpected == 0))
+      g_decArgo_secondIridiumSession = 1;
+   else
+      g_decArgo_secondIridiumSession = 0;
+   end
+      
 elseif (a_whyFlag == 1)
    
    switch (a_decoderId)

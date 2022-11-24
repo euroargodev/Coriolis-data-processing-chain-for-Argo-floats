@@ -28,18 +28,22 @@ global g_NTP_PRINT;
 global g_NTP_ID_FLOAT;
 global g_NTP_FLOAT_LIST;
 global g_NTP_nbCyles;
+global g_NTP_PROF_NUM;
 
 global g_NTP_NAME_PARAM1;
 global g_NTP_NAME_PARAM2;
 
 g_NTP_NAME_PARAM1 = 'TURBIDITY';
 g_NTP_NAME_PARAM1 = 'CHLA';
+g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
 g_NTP_NAME_PARAM1 = 'TEMP';
 
 g_NTP_NAME_PARAM2 = 'TURBIDITY';
 g_NTP_NAME_PARAM2 = 'CHLA2';
+g_NTP_NAME_PARAM2 = 'DOXY';
 g_NTP_NAME_PARAM2 = 'PSAL';
-g_NTP_NAME_PARAM2 = 'NITRATE';
+% g_NTP_NAME_PARAM2 = 'NITRATE';
+% g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -49,6 +53,13 @@ g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\new_062608.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;
@@ -73,6 +84,12 @@ g_NTP_PRINT = 0;
 
 % force the plot of the first float
 g_NTP_ID_FLOAT = -1;
+
+% set profile # to plot
+g_NTP_PROF_NUM = 1;
+
+% default values initialization
+init_default_values;
 
 close(findobj('Name', 'Temperature and salinity'));
 warning off;
@@ -149,6 +166,7 @@ global g_NTP_tabParam2;
 global g_NTP_tabParam2Qc;
 global g_NTP_idCycle;
 global g_NTP_nbCyles;
+global g_NTP_PROF_NUM;
 
 global g_NTP_NAME_PARAM1;
 global g_NTP_NAME_PARAM2;
@@ -157,6 +175,19 @@ global g_NTP_UNITS_PARAM2;
 global g_NTP_PARAM_PRES_FILL_VAL;
 global g_NTP_NAME_PARAM1_FILL_VAL;
 global g_NTP_NAME_PARAM2_FILL_VAL;
+
+% QC flag values (char)
+global g_decArgo_qcStrDef;
+global g_decArgo_qcStrNoQc;
+global g_decArgo_qcStrGood;
+global g_decArgo_qcStrProbablyGood;
+global g_decArgo_qcStrCorrectable;
+global g_decArgo_qcStrBad;
+global g_decArgo_qcStrChanged;
+global g_decArgo_qcStrUnused1;
+global g_decArgo_qcStrUnused2;
+global g_decArgo_qcStrInterpolated;
+global g_decArgo_qcStrMissing;
 
 
 g_NTP_idCycle = a_idCycle;
@@ -202,6 +233,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
       {'DIRECTION'} ...
       {'STATION_PARAMETERS'} ...
       {'PRES'} ...
+      {'PRES_QC'} ...
       ];
    if (param1File == 'c')
       wantedCVars = [ ...
@@ -242,10 +274,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
    % arrays to store the data
    tabCycles1 = [];
    tabPres1 = [];
+   tabPres1Qc = [];
    tabParam1 = [];
    tabParam1Qc = [];
    tabCycles2 = [];
    tabPres2 = [];
+   tabPres2Qc = [];
    tabParam2 = [];
    tabParam2Qc = [];
    
@@ -256,7 +290,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
       
       [profData] = get_data_from_nc_file(profFileName, wantedCVars);
       
-      if (~isempty(profData))
+      if (~isempty(profData) && (g_NTP_PROF_NUM == 1))
          
          idVal = find(strcmp('FORMAT_VERSION', profData(1:2:end)) == 1, 1);
          profFileFormatVersion = strtrim(profData{2*idVal}');
@@ -276,6 +310,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
          idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
          profPres = profData{2*idVal};
          
+         idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
+         profPresQc = profData{2*idVal};
+         
          if (param1File == 'c')
             idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
             profParam1 = profData{2*idVal};
@@ -286,6 +323,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             idProf = find(profDir == 'A');
             tabCycles1 = cycleNumberProf(idProf);
             tabPres1 = profPres(:, idProf);
+            tabPres1Qc = profPresQc(:, idProf);
             tabParam1 = profParam1(:, idProf);
             tabParam1Qc = profParam1Qc(:, idProf);
          end
@@ -300,6 +338,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             idProf = find(profDir == 'A');
             tabCycles2 = cycleNumberProf(idProf);
             tabPres2 = profPres(:, idProf);
+            tabPres2Qc = profPresQc(:, idProf);
             tabParam2 = profParam2(:, idProf);
             tabParam2Qc = profParam2Qc(:, idProf);
          end
@@ -342,6 +381,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
             profPres = profData{2*idVal};
             
+            idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
+            profPresQc = profData{2*idVal};
+            
             if (param1File == 'c')
                
                idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
@@ -356,8 +398,10 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                   for idParam = 1:inputNParam
                      param = deblank(stationParameters(:, idParam, idProf)');
                      if (strcmp(param, g_NTP_NAME_PARAM1))
-                        profNum = idProf;
-                        break;
+                        if (idProf >= g_NTP_PROF_NUM)
+                           profNum = idProf;
+                           break;
+                        end
                      end
                   end
                   if (~isempty(profNum))
@@ -367,6 +411,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
                   tabCycles1 = [tabCycles1; cycleNumberProf(profNum)];
                   pres1 = profPres(:, profNum);
+                  pres1Qc = profPresQc(:, profNum);
                   param1 = profParam1(:, profNum);
                   param1Qc = profParam1Qc(:, profNum);
                end
@@ -378,6 +423,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         tabPres1 = cat(1, ...
                            tabPres1, ...
                            repmat(paramPres.fillValue, nLineToAdd, size(tabPres1, 2)));
+                        tabPres1Qc = cat(1, ...
+                           tabPres1Qc, ...
+                           repmat(' ', nLineToAdd, size(tabPres1Qc, 2)));
                         tabParam1 = cat(1, ...
                            tabParam1, ...
                            repmat(param1Struct.fillValue, nLineToAdd, size(tabParam1, 2)));
@@ -389,6 +437,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         pres1 = cat(1, ...
                            pres1, ...
                            repmat(paramPres.fillValue, nLineToAdd, 1));
+                        pres1Qc = cat(1, ...
+                           pres1Qc, ...
+                           repmat(' ', nLineToAdd, 1));
                         param1 = cat(1, ...
                            param1, ...
                            repmat(param1Struct.fillValue, nLineToAdd, 1));
@@ -397,10 +448,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                            repmat(' ', nLineToAdd, 1));
                      end
                      tabPres1 = [tabPres1 pres1];
+                     tabPres1Qc = [tabPres1Qc pres1Qc];
                      tabParam1 = [tabParam1 param1];
                      tabParam1Qc = [tabParam1Qc param1Qc];
                   else
                      tabPres1 = pres1;
+                     tabPres1Qc = pres1Qc;
                      tabParam1 = param1;
                      tabParam1Qc = param1Qc;
                   end
@@ -416,22 +469,24 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                profParam2Qc = profData{2*idVal};
                
                pres2 = [];
-               profNum = '';
-               for idProf = 1:inputNProf
-                  for idParam = 1:inputNParam
-                     param = deblank(stationParameters(:, idParam, idProf)');
-                     if (strcmp(param, g_NTP_NAME_PARAM2))
-                        profNum = idProf;
-                        break;
-                     end
-                  end
-                  if (~isempty(profNum))
-                     break;
-                  end
-               end
+               %                   profNum = '';
+               %                   for idProf = 1:inputNProf
+               %                      for idParam = 1:inputNParam
+               %                         param = deblank(stationParameters(:, idParam, idProf)');
+               %                         if (strcmp(param, g_NTP_NAME_PARAM2))
+               %                            profNum = idProf;
+               %                            break;
+               %                         end
+               %                      end
+               %                      if (~isempty(profNum))
+               %                         break;
+               %                      end
+               %                   end
+
                if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
                   tabCycles2 = [tabCycles2; cycleNumberProf(profNum)];
                   pres2 = profPres(:, profNum);
+                  pres2Qc = profPresQc(:, profNum);
                   param2 = profParam2(:, profNum);
                   param2Qc = profParam2Qc(:, profNum);
                end
@@ -443,6 +498,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         tabPres2 = cat(1, ...
                            tabPres2, ...
                            repmat(paramPres.fillValue, nLineToAdd, size(tabPres2, 2)));
+                        tabPres2Qc = cat(1, ...
+                           tabPres2Qc, ...
+                           repmat(' ', nLineToAdd, size(tabPres2Qc, 2)));
                         tabParam2 = cat(1, ...
                            tabParam2, ...
                            repmat(param2Struct.fillValue, nLineToAdd, size(tabParam2, 2)));
@@ -454,6 +512,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         pres2 = cat(1, ...
                            pres2, ...
                            repmat(paramPres.fillValue, nLineToAdd, 1));
+                        pres2Qc = cat(1, ...
+                           pres2Qc, ...
+                           repmat(' ', nLineToAdd, 1));
                         param2 = cat(1, ...
                            param2, ...
                            repmat(param2Struct.fillValue, nLineToAdd, 1));
@@ -462,10 +523,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                            repmat(' ', nLineToAdd, 1));
                      end
                      tabPres2 = [tabPres2 pres2];
+                     tabPres2Qc = [tabPres2Qc pres2Qc];
                      tabParam2 = [tabParam2 param2];
                      tabParam2Qc = [tabParam2Qc param2Qc];
                   else
                      tabPres2 = pres2;
+                     tabPres2Qc = pres2Qc;
                      tabParam2 = param2;
                      tabParam2Qc = param2Qc;
                   end
@@ -509,6 +572,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
             profPres = profData{2*idVal};
             
+            idVal = find(strcmp('PRES_QC', profData(1:2:end)) == 1, 1);
+            profPresQc = profData{2*idVal};
+            
             if (param1File ~= 'c')
                
                idVal = find(strcmp(g_NTP_NAME_PARAM1, profData(1:2:end)) == 1, 1);
@@ -534,6 +600,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
                   tabCycles1 = [tabCycles1; cycleNumberProf(profNum)];
                   pres1 = profPres(:, profNum);
+                  pres1Qc = profPresQc(:, profNum);
                   param1 = profParam1(:, profNum);
                   param1Qc = profParam1Qc(:, profNum);
                end
@@ -545,6 +612,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         tabPres1 = cat(1, ...
                            tabPres1, ...
                            repmat(paramPres.fillValue, nLineToAdd, size(tabPres1, 2)));
+                        tabPres1Qc = cat(1, ...
+                           tabPres1Qc, ...
+                           repmat(' ', nLineToAdd, size(tabPres1Qc, 2)));
                         tabParam1 = cat(1, ...
                            tabParam1, ...
                            repmat(param1Struct.fillValue, nLineToAdd, size(tabParam1, 2)));
@@ -556,6 +626,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         pres1 = cat(1, ...
                            pres1, ...
                            repmat(paramPres.fillValue, nLineToAdd, 1));
+                        pres1Qc = cat(1, ...
+                           pres1Qc, ...
+                           repmat(' ', nLineToAdd, 1));
                         param1 = cat(1, ...
                            param1, ...
                            repmat(param1Struct.fillValue, nLineToAdd, 1));
@@ -564,10 +637,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                            repmat(' ', nLineToAdd, 1));
                      end
                      tabPres1 = [tabPres1 pres1];
+                     tabPres1Qc = [tabPres1Qc pres1Qc];
                      tabParam1 = [tabParam1 param1];
                      tabParam1Qc = [tabParam1Qc param1Qc];
                   else
                      tabPres1 = pres1;
+                     tabPres1Qc = pres1Qc;
                      tabParam1 = param1;
                      tabParam1Qc = param1Qc;
                   end
@@ -583,22 +658,24 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                profParam2Qc = profData{2*idVal};
                
                pres2 = [];
-               profNum = '';
-               for idProf = 1:inputNProf
-                  for idParam = 1:inputNParam
-                     param = deblank(stationParameters(:, idParam, idProf)');
-                     if (strcmp(param, g_NTP_NAME_PARAM2))
-                        profNum = idProf;
-                        break;
-                     end
-                  end
-                  if (~isempty(profNum))
-                     break;
-                  end
-               end
+               %                profNum = '';
+               %                for idProf = 1:inputNProf
+               %                   for idParam = 1:inputNParam
+               %                      param = deblank(stationParameters(:, idParam, idProf)');
+               %                      if (strcmp(param, g_NTP_NAME_PARAM2))
+               %                         profNum = idProf;
+               %                         break;
+               %                      end
+               %                   end
+               %                   if (~isempty(profNum))
+               %                      break;
+               %                   end
+               %                end
+               
                if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
                   tabCycles2 = [tabCycles2; cycleNumberProf(profNum)];
                   pres2 = profPres(:, profNum);
+                  pres2Qc = profPresQc(:, profNum);
                   param2 = profParam2(:, profNum);
                   param2Qc = profParam2Qc(:, profNum);
                end
@@ -610,6 +687,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         tabPres2 = cat(1, ...
                            tabPres2, ...
                            repmat(paramPres.fillValue, nLineToAdd, size(tabPres2, 2)));
+                        tabPres2Qc = cat(1, ...
+                           tabPres2Qc, ...
+                           repmat(' ', nLineToAdd, size(tabPres2Qc, 2)));
                         tabParam2 = cat(1, ...
                            tabParam2, ...
                            repmat(param2Struct.fillValue, nLineToAdd, size(tabParam2, 2)));
@@ -621,6 +701,9 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                         pres2 = cat(1, ...
                            pres2, ...
                            repmat(paramPres.fillValue, nLineToAdd, 1));
+                        pres2Qc = cat(1, ...
+                           pres2Qc, ...
+                           repmat(' ', nLineToAdd, 1));
                         param2 = cat(1, ...
                            param2, ...
                            repmat(param2Struct.fillValue, nLineToAdd, 1));
@@ -629,10 +712,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                            repmat(' ', nLineToAdd, 1));
                      end
                      tabPres2 = [tabPres2 pres2];
+                     tabPres2Qc = [tabPres2Qc pres2Qc];
                      tabParam2 = [tabParam2 param2];
                      tabParam2Qc = [tabParam2Qc param2Qc];
                   else
                      tabPres2 = pres2;
+                     tabPres2Qc = pres2Qc;
                      tabParam2 = param2;
                      tabParam2Qc = param2Qc;
                   end
@@ -647,9 +732,11 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
    % global arrays to store the data
    g_NTP_cycles = [];
    g_NTP_tabPres1 = [];
+   g_NTP_tabPres1Qc = [];
    g_NTP_tabParam1 = [];
    g_NTP_tabParam1Qc = [];
    g_NTP_tabPres2 = [];
+   g_NTP_tabPres2Qc = [];
    g_NTP_tabParam2 = [];
    g_NTP_tabParam2Qc = [];
    
@@ -660,10 +747,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
       idF1 = find(tabCycles1 == cyNum);
       if (~isempty(idF1))
          g_NTP_tabPres1 = [g_NTP_tabPres1 tabPres1(:, idF1)];
+         g_NTP_tabPres1Qc = [g_NTP_tabPres1Qc tabPres1Qc(:, idF1)];
          g_NTP_tabParam1 = [g_NTP_tabParam1 tabParam1(:, idF1)];
          g_NTP_tabParam1Qc = [g_NTP_tabParam1Qc tabParam1Qc(:, idF1)];
       else
          g_NTP_tabPres1 = [g_NTP_tabPres1 repmat(paramPres.fillValue, size(tabPres1, 1), 1)];
+         g_NTP_tabPres1Qc = [g_NTP_tabPres1Qc repmat(' ', size(tabPres1Qc, 1), 1)];
          g_NTP_tabParam1 = [g_NTP_tabParam1 repmat(param1Struct.fillValue, size(tabParam1, 1), 1)];
          g_NTP_tabParam1Qc = [g_NTP_tabParam1Qc repmat(' ', size(tabParam1Qc, 1), 1)];
       end
@@ -671,10 +760,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
       idF2 = find(tabCycles2 == cyNum);
       if (~isempty(idF2))
          g_NTP_tabPres2 = [g_NTP_tabPres2 tabPres2(:, idF2)];
+         g_NTP_tabPres2Qc = [g_NTP_tabPres2Qc tabPres2Qc(:, idF2)];
          g_NTP_tabParam2 = [g_NTP_tabParam2 tabParam2(:, idF2)];
          g_NTP_tabParam2Qc = [g_NTP_tabParam2Qc tabParam2Qc(:, idF2)];
       else
          g_NTP_tabPres2 = [g_NTP_tabPres2 repmat(paramPres.fillValue, size(tabPres2, 1), 1)];
+         g_NTP_tabPres2Qc = [g_NTP_tabPres2Qc repmat(' ', size(tabPres2Qc, 1), 1)];
          g_NTP_tabParam2 = [g_NTP_tabParam2 repmat(param2Struct.fillValue, size(tabParam2, 1), 1)];
          g_NTP_tabParam2Qc = [g_NTP_tabParam2Qc repmat(' ', size(tabParam2Qc, 1), 1)];
       end
@@ -709,11 +800,13 @@ maxPres1 = -g_NTP_PARAM_PRES_FILL_VAL;
 xParam1Data = ones(maxMesAscProf, g_NTP_nbCyles)*g_NTP_NAME_PARAM1_FILL_VAL;
 xParam1DataQc = repmat(' ', maxMesAscProf, g_NTP_nbCyles);
 yParam1Data = ones(maxMesAscProf, g_NTP_nbCyles)*g_NTP_PARAM_PRES_FILL_VAL;
+yParam1DataQc = repmat(' ', maxMesAscProf, g_NTP_nbCyles);
 for idCy = 1:g_NTP_nbCyles
    if (a_idCycle+1+idCy-1 <= length(g_NTP_cycles))
       xParam1Data(:, idCy) = g_NTP_tabParam1(:, a_idCycle+1+idCy-1);
       xParam1DataQc(:, idCy) = g_NTP_tabParam1Qc(:, a_idCycle+1+idCy-1);
       yParam1Data(:, idCy) = g_NTP_tabPres1(:, a_idCycle+1+idCy-1);
+      yParam1DataQc(:, idCy) = g_NTP_tabPres1Qc(:, a_idCycle+1+idCy-1);
    end
 end
 param1Data = xParam1Data(find(xParam1Data ~= g_NTP_NAME_PARAM1_FILL_VAL));
@@ -724,31 +817,54 @@ if (~isempty(param1Data))
    minPres1 = min(pres1Data);
    maxPres1 = max(pres1Data);
    
+   if (minParam1 ~= g_NTP_NAME_PARAM1_FILL_VAL)
+      minAxeParam1 = minParam1 - (maxParam1-minParam1)/6;
+      maxAxeParam1 = maxParam1 + (maxParam1-minParam1)/6;
+      if (minAxeParam1 == maxAxeParam1)
+         minAxeParam1 = minAxeParam1 - 0.5;
+      end
+   end
+   
    for idCy = 1:g_NTP_nbCyles
       if (a_idCycle+1+idCy-1 <= length(g_NTP_cycles))
          xParam1 = xParam1Data(:, idCy);
          xParam1Qc = xParam1DataQc(:, idCy);
          yParam1 = yParam1Data(:, idCy);
-         
+         yParam1Qc = yParam1DataQc(:, idCy);
+
          idKo = find((xParam1 == g_NTP_NAME_PARAM1_FILL_VAL) | (yParam1 == g_NTP_PARAM_PRES_FILL_VAL));
          xParam1(idKo) = [];
          xParam1Qc(idKo) = [];
          yParam1(idKo) = [];
+         yParam1Qc(idKo) = [];
          
          if (~isempty(xParam1))
-            idQc0 = find(xParam1Qc == '0');
+            idQc0 = find(xParam1Qc == g_decArgo_qcStrNoQc);
             plot(param1Axes, xParam1(idQc0), yParam1(idQc0), 'b.');
             hold(param1Axes, 'on');
-            idQc1 = find((xParam1Qc == '1') | (xParam1Qc == '2') | (xParam1Qc == '5') | (xParam1Qc == '8'));
+            idQc1 = find((xParam1Qc == g_decArgo_qcStrGood) | (xParam1Qc == g_decArgo_qcStrProbablyGood) | (xParam1Qc == g_decArgo_qcStrChanged) | (xParam1Qc == g_decArgo_qcStrInterpolated));
             plot(param1Axes, xParam1(idQc1), yParam1(idQc1), 'g.');
             hold(param1Axes, 'on');
-            idQc3 = find(xParam1Qc == '3');
-            plot(param1Axes, xParam1(idQc3), yParam1(idQc3), 'c.');
+            idQc3 = find(xParam1Qc == g_decArgo_qcStrCorrectable);
+            plot(param1Axes, xParam1(idQc3), yParam1(idQc3), 'm.');
             hold(param1Axes, 'on');
-            idQc4 = find(xParam1Qc == '4');
+            idQc4 = find(xParam1Qc == g_decArgo_qcStrBad);
             plot(param1Axes, xParam1(idQc4), yParam1(idQc4), 'r.');
             hold(param1Axes, 'on');
             plot(param1Axes, xParam1, yParam1, 'b-');
+            hold(param1Axes, 'on');
+            
+            idQc0 = find(yParam1Qc == g_decArgo_qcStrNoQc);
+            plot(param1Axes, ones(length(idQc0), 1)*minAxeParam1, yParam1(idQc0), 'b.');
+            hold(param1Axes, 'on');
+            idQc1 = find((yParam1Qc == g_decArgo_qcStrGood) | (yParam1Qc == g_decArgo_qcStrProbablyGood) | (yParam1Qc == g_decArgo_qcStrChanged) | (yParam1Qc == g_decArgo_qcStrInterpolated));
+            plot(param1Axes, ones(length(idQc1), 1)*minAxeParam1, yParam1(idQc1), 'g.');
+            hold(param1Axes, 'on');
+            idQc3 = find(yParam1Qc == g_decArgo_qcStrCorrectable);
+            plot(param1Axes, ones(length(idQc3), 1)*minAxeParam1, yParam1(idQc3), 'm.');
+            hold(param1Axes, 'on');
+            idQc4 = find(yParam1Qc == g_decArgo_qcStrBad);
+            plot(param1Axes, ones(length(idQc4), 1)*minAxeParam1, yParam1(idQc4), 'r.');
             hold(param1Axes, 'on');
          end
       end
@@ -767,11 +883,13 @@ maxPres2 = -g_NTP_PARAM_PRES_FILL_VAL;
 xParam2Data = ones(maxMesAscProf, g_NTP_nbCyles)*g_NTP_NAME_PARAM2_FILL_VAL;
 xParam2DataQc = repmat(' ', maxMesAscProf, g_NTP_nbCyles);
 yParam2Data = ones(maxMesAscProf, g_NTP_nbCyles)*g_NTP_PARAM_PRES_FILL_VAL;
+yParam2DataQc = repmat(' ', maxMesAscProf, g_NTP_nbCyles);
 for idCy = 1:g_NTP_nbCyles
    if (a_idCycle+1+idCy-1 <= length(g_NTP_cycles))
       xParam2Data(:, idCy) = g_NTP_tabParam2(:, a_idCycle+1+idCy-1);
       xParam2DataQc(:, idCy) = g_NTP_tabParam2Qc(:, a_idCycle+1+idCy-1);
       yParam2Data(:, idCy) = g_NTP_tabPres2(:, a_idCycle+1+idCy-1);
+      yParam2DataQc(:, idCy) = g_NTP_tabPres2Qc(:, a_idCycle+1+idCy-1);
    end
 end
 param2Data = xParam2Data(find(xParam2Data ~= g_NTP_NAME_PARAM2_FILL_VAL));
@@ -781,29 +899,52 @@ if (~isempty(param2Data))
    pres2Data = yParam2Data(find(yParam2Data ~= g_NTP_PARAM_PRES_FILL_VAL));
    minPres2 = min(pres2Data);
    maxPres2 = max(pres2Data);
+      
+   if (minParam2 ~= g_NTP_NAME_PARAM2_FILL_VAL)
+      minAxeParam2 = minParam2 - (maxParam2-minParam2)/6;
+      maxAxeParam2 = maxParam2 + (maxParam2-minParam2)/6;
+      if (minAxeParam2 == maxAxeParam2)
+         minAxeParam2 = minAxeParam2 - 0.1;
+      end
+   end
    
    for idCy = 1:g_NTP_nbCyles
       if (a_idCycle+1+idCy-1 <= length(g_NTP_cycles))
          xParam2 = xParam2Data(:, idCy);
          xParam2Qc = xParam2DataQc(:, idCy);
          yParam2 = yParam2Data(:, idCy);
+         yParam2Qc = yParam2DataQc(:, idCy);
          
          idKo = find((xParam2 == g_NTP_NAME_PARAM2_FILL_VAL) | (yParam2 == g_NTP_PARAM_PRES_FILL_VAL));
          xParam2(idKo) = [];
          xParam2Qc(idKo) = [];
          yParam2(idKo) = [];
+         yParam2Qc(idKo) = [];
          
          if (~isempty(xParam2))
-            idQc0 = find(xParam2Qc == '0');
+            idQc0 = find(xParam2Qc == g_decArgo_qcStrNoQc);
             plot(param2Axes, xParam2(idQc0), yParam2(idQc0), 'b.');
             hold(param2Axes, 'on');
-            idQc1 = find((xParam2Qc == '1') | (xParam2Qc == '2') | (xParam2Qc == '5') | (xParam2Qc == '8'));
+            idQc1 = find((xParam2Qc == g_decArgo_qcStrGood) | (xParam2Qc == g_decArgo_qcStrProbablyGood) | (xParam2Qc == g_decArgo_qcStrChanged) | (xParam2Qc == g_decArgo_qcStrInterpolated));
             plot(param2Axes, xParam2(idQc1), yParam2(idQc1), 'g.');
             hold(param2Axes, 'on');
-            idQc3 = find((xParam2Qc == '3') | (xParam2Qc == '4'));
+            idQc3 = find((xParam2Qc == g_decArgo_qcStrCorrectable) | (xParam2Qc == g_decArgo_qcStrBad));
             plot(param2Axes, xParam2(idQc3), yParam2(idQc3), 'r.');
             hold(param2Axes, 'on');
             plot(param2Axes, xParam2, yParam2, 'b-');
+            hold(param2Axes, 'on');
+            
+            idQc0 = find(yParam2Qc == g_decArgo_qcStrNoQc);
+            plot(param2Axes, ones(length(idQc0), 1)*minAxeParam2, yParam2(idQc0), 'b.');
+            hold(param2Axes, 'on');
+            idQc1 = find((yParam2Qc == g_decArgo_qcStrGood) | (yParam2Qc == g_decArgo_qcStrProbablyGood) | (yParam2Qc == g_decArgo_qcStrChanged) | (yParam2Qc == g_decArgo_qcStrInterpolated));
+            plot(param2Axes, ones(length(idQc1), 1)*minAxeParam2, yParam2(idQc1), 'g.');
+            hold(param2Axes, 'on');
+            idQc3 = find(yParam2Qc == g_decArgo_qcStrCorrectable);
+            plot(param2Axes, ones(length(idQc3), 1)*minAxeParam2, yParam2(idQc3), 'm.');
+            hold(param2Axes, 'on');
+            idQc4 = find(yParam2Qc == g_decArgo_qcStrBad);
+            plot(param2Axes, ones(length(idQc4), 1)*minAxeParam2, yParam2(idQc4), 'r.');
             hold(param2Axes, 'on');
          end
       end
@@ -823,8 +964,14 @@ maxAxePres1 = maxPres1;
 if (minPres1 ~= g_NTP_PARAM_PRES_FILL_VAL)
    if (minAxePres1 > 0)
       minAxePres1 = 0;
+   elseif (g_NTP_PROF_NUM ~= 1)
+      minAxePres1 = 5*floor(minAxePres1/5);
    end
-   maxAxePres1 = 100*ceil(maxAxePres1/100);
+   if (g_NTP_PROF_NUM == 1)
+      maxAxePres1 = 100*ceil(maxAxePres1/100);
+   else
+      maxAxePres1 = 5*ceil(maxAxePres1/5);
+   end
    if (maxAxePres1 == 0)
       maxAxePres1 = 1;
    end
@@ -838,7 +985,11 @@ if (minPres2 ~= g_NTP_PARAM_PRES_FILL_VAL)
    if (minAxePres2 > 0)
       minAxePres2 = 0;
    end
-   maxAxePres2 = 100*ceil(maxAxePres2/100);
+   if (g_NTP_PROF_NUM == 1)
+      maxAxePres2 = 100*ceil(maxAxePres2/100);
+   else
+      maxAxePres2 = 5*ceil(maxAxePres2/5);
+   end
    if (maxAxePres2 == 0)
       maxAxePres2 = 1;
    end

@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_OXY_mean_stdMed( ...
 %    a_dataOXYMean, a_dataOXYStdMed, ...
-%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE)
+%    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD)
 %
 % INPUT PARAMETERS :
 %   a_dataOXYMean            : mean OXY data
@@ -13,6 +13,7 @@
 %   a_ascentEndDate          : ascent end date
 %   a_gpsData                : information on GPS locations
 %   a_sensorTechOPTODE       : OPTODE technical data
+%   a_sensorTechCTD          : CTD technical data
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles : created output profiles
@@ -28,7 +29,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift] = process_profile_ir_rudics_OXY_mean_stdMed( ...
    a_dataOXYMean, a_dataOXYStdMed, ...
-   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE)
+   a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechOPTODE, a_sensorTechCTD)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -56,6 +57,13 @@ global g_decArgo_phaseAscProf;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+
+% get the pressure cut-off for CTD ascending profile (from the CTD technical
+% data)
+presCutOffProfFromTech = [];
+if (~isempty(a_sensorTechCTD) && ~isempty(a_sensorTechCTD{17}))
+   presCutOffProfFromTech = a_sensorTechCTD{17};
+end
 
 % unpack the input data
 a_dataOXYMeanDate = a_dataOXYMean{1};
@@ -94,9 +102,39 @@ for idCy = 1:length(cycleNumList)
                (phaseNum == g_decArgo_phaseParkDrift) || ...
                (phaseNum == g_decArgo_phaseAscProf))
 
-            profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, 0);
+            profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, -1);
             profStruct.sensorNumber = 1;
 
+            if (phaseNum == g_decArgo_phaseAscProf)
+               if (~isempty(presCutOffProfFromTech))
+                  if (size(presCutOffProfFromTech, 2) == 3)
+                     idPresCutOffProf = find((presCutOffProfFromTech(:, 1) == cycleNum) & ...
+                        (presCutOffProfFromTech(:, 2) == profNum));
+                     if (~isempty(idPresCutOffProf))
+                        profStruct.presCutOffProf = presCutOffProfFromTech(idPresCutOffProf(1), 3);
+                        profStruct.subSurfMeasReceived = 1;
+                     end
+                  end
+               else
+                  % get the pressure cut-off for CTD ascending profile (from the
+                  % configuration)
+                  [configPC0113] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_13');
+                  if (~isempty(configPC0113) && ~isnan(configPC0113))
+                     profStruct.presCutOffProf = configPC0113;
+                     
+                     fprintf('DEC_WARNING: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data => value retrieved from the configuration\n', ...
+                        g_decArgo_floatNum, ...
+                        cycleNum, ...
+                        profNum);
+                  else
+                     fprintf('ERROR: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the configuration => CTD profile not split\n', ...
+                        g_decArgo_floatNum, ...
+                        cycleNum, ...
+                        profNum);
+                  end
+               end
+            end            
+            
             % select the data (according to cycleNum, profNum and phaseNum)
             idDataMean = find((a_dataOXYMeanDate(:, 1) == cycleNum) & ...
                (a_dataOXYMeanDate(:, 2) == profNum) & ...
@@ -219,12 +257,13 @@ for idCy = 1:length(cycleNumList)
                      idOk = find(data(:, 2) == dataStdMed(idL, 1));
                      if (~isempty(idOk))
                         if (length(idOk) > 1)
-                           idOk2 = find(idOk == idL);
-                           if (~isempty(idOk2))
-                              idOk = idOk(idOk2);
+                           idF = find(data(idOk, 6) == g_decArgo_oxyPhaseCountsDef, 1);
+                           if (~isempty(idF))
+                              idOk = idOk(idF);
                            else
-                              fprintf('WARNING: Float #%d Cycle #%d: OXY standard deviation and median data without associated mean data\n', ...
+                              fprintf('WARNING: Float #%d Cycle #%d: cannot fit OXY standard deviation and median data with associated mean data => standard deviation and median data ignored\n', ...
                                  g_decArgo_floatNum, g_decArgo_cycleNum);
+                              continue;
                            end
                         end
                         data(idOk, 6:11) = dataStdMed(idL, 2:7);

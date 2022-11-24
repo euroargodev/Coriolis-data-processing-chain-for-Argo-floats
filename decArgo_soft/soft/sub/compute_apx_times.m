@@ -91,13 +91,13 @@ else
       cycleTimeStruct.transStartTimeFloat = transStartDateFromFloat;
       cycleTimeStruct.transStartTimeFloatStatus = g_JULD_STATUS_3;
    end
-   [~, tinit] = find_struct(a_timeInfo, 'label', 'tinit', 'value');
-   if (~isempty(tinit))
-      cycleTimeStruct.timeOfProfileInit = tinit;
+   [~, tpi] = find_struct(a_timeInfo, 'label', 'tpi', 'value');
+   if (~isempty(tpi))
+      cycleTimeStruct.timeOfProfileInit = tpi;
    end
    
-   if (~isempty(downTimeEnd) && ~isempty(tinit))
-      cycleTimeStruct.ascentStartTimeFloat = downTimeEnd + tinit;
+   if (~isempty(downTimeEnd) && ~isempty(tpi))
+      cycleTimeStruct.ascentStartTimeFloat = downTimeEnd + tpi;
       cycleTimeStruct.ascentStartTimeFloatStatus = g_JULD_STATUS_3;
    end
 end

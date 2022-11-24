@@ -21,8 +21,24 @@
 % ------------------------------------------------------------------------------
 function move_and_rename_apx_argos_files(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_argos\in\';
-DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_argos\out\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_062608\ori_split_cycle_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_021009\in_split_cycle_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\in_split_cycle_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_093008\in_split_cycle_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061810\118188\in_split_cycle_final\';
+
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT_final\';
+
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -48,12 +64,21 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
+global g_decArgo_dateDef;
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
 g_decArgo_realtimeFlag = 0;
 global g_decArgo_delayedModeFlag;
 g_decArgo_delayedModeFlag = 0;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% global input parameter information
+global g_decArgo_inputArgosFile;
+
+global g_decArgo_dpfSplitDone;
 
 % default values initialization
 init_default_values;
@@ -113,6 +138,8 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+   g_decArgo_floatNum = floatNum;
+   g_decArgo_dpfSplitDone = 0;
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
@@ -124,12 +151,13 @@ for idFloat = 1:nbFloats
       continue;
    end
    floatArgosId = str2num(listArgosId{idF});
+   floatEndDate = listEndDate(idF);
    
    % select and sort the Argos files of the float
    argosFileNames = [];
    argosFileFirstMsgDate = [];
    dirInputFloat = [DIR_INPUT_ARGOS_FILES '/' sprintf('%06d', floatArgosId) '/'];
-   argosFiles = dir([dirInputFloat '/' sprintf('*%d*', floatArgosId)]);
+   argosFiles = dir([dirInputFloat '/' sprintf('*%d*%d*', floatArgosId, floatNum)]);
    for idFile = 1:length(argosFiles)
       
       argosFileName = argosFiles(idFile).name;
@@ -140,9 +168,25 @@ for idFloat = 1:nbFloats
          [val1, count1, errmsg1, nextindex1] = sscanf(argosFileName(1:27), '%d_%d-%d-%d-%d-%d-%d_');
          
          if (isempty(errmsg1) && (count1 == 7))
+            
+            if (floatEndDate ~= g_decArgo_dateDef)
+               
+               % check if the file should be considered
+               fileDate = datenum(argosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - g_decArgo_janFirst1950InMatlab;
+               if (fileDate > floatEndDate)
+                  fprintf('INFO: Date of input file (%s) is after float end decoding date (%s) => file stored without cycle number (i.e. not decoded)\n', ...
+                     julian_2_gregorian_dec_argo(fileDate), ...
+                     julian_2_gregorian_dec_argo(floatEndDate));
+                  g_decArgo_inputArgosFile = argosFilePathName;
+                  move_argos_input_file(floatArgosId, fileDate, floatNum, [], 'UUU');
+                  continue;
+               end
+            end
+
             argosFileNames{end+1} = argosFilePathName;
             argosFileFirstMsgDate(end+1) = datenum(argosFileName(8:26), 'yyyy-mm-dd-HH-MM-SS') - ...
                g_decArgo_janFirst1950InMatlab;
+            
          else
             fprintf('ERROR: Not expected file name: %s => file not considered\n', argosFileName);
          end
@@ -200,6 +244,8 @@ global g_decArgo_inputArgosFile;
 global g_decArgo_minNonTransDurForNewCycle;
 global g_decArgo_minNumMsgForNotGhost;
 
+global g_decArgo_dpfSplitDone;
+
 % minimum number of float messages for not only ghosts in contents
 NB_MSG_MIN = g_decArgo_minNumMsgForNotGhost;
 
@@ -237,7 +283,6 @@ tabFirstMsgDate = [];
 tabLastMsgDate = [];
    
 % first loop to decode cycle number from transmitted data
-dpfSplitDone = 0;
 remainingArgosFileNames = [];
 remainingFileCycleNumber = [];
 nbFiles = length(a_argosFileNames);
@@ -296,7 +341,7 @@ for idFile = 1:nbFiles
          
          % check if the input file contains data of prelude phase and first deep
          % cycle (generally occurs for DPF floats)
-         if (isempty(tabCycleNumber) && (dpfSplitDone == 0))
+         if (isempty(tabCycleNumber) && (g_decArgo_dpfSplitDone == 0))
 
             diffArgosDataDates = diff(argosDataDate)*24;
             if (max(diffArgosDataDates) > dpfFirstDeepCycleDuration/2)
@@ -316,7 +361,7 @@ for idFile = 1:nbFiles
                end
             end
          end
-         
+         g_decArgo_dpfSplitDone = 1;
          for idFile2 = 1:length(subFileNameList)
             
             argosFileName = subFileNameList{idFile2};
@@ -400,7 +445,7 @@ for idFile = 1:nbFiles
    end   
    
    if (~isempty(nextNum))
-      if (nextNum == 1)
+      if ((nextNum == 0) || (nextNum == 1))
          cycleNumber = 0;
       else
          if (lastArgosMsgDate < launchDate + preludeDuration/24 + cycleDuration/48)

@@ -20,8 +20,8 @@
 % ------------------------------------------------------------------------------
 function select_argos_files(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\archive_cycle_argos_20151005\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collecte_20151006\rsync_sbd_20151005\';
+DIR_INPUT_ARGOS_FILES = 'E:\HDD\_bascule_20140326\_merge_final\cycle_message_misc_split_raw_sans_doubles_zip';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_CORRECT_final';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

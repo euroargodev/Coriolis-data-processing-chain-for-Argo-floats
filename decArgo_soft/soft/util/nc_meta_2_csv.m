@@ -22,7 +22,7 @@ function nc_meta_2_csv(varargin)
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rnuokRem&PrvIr\';
-
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_conf\coriolis\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';

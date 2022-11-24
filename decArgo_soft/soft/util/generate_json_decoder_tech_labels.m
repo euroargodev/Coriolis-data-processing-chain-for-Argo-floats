@@ -35,7 +35,10 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_301.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_302.csv';
 
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_techParamNames\_forDecApx\_tech_param_name_1001.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1001.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1002.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1003.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1004.csv';
 
 if ~(exist(decoderTechLabelsFileName, 'file') == 2)
    fprintf('ERROR: Technical information file not found: %s\n', decoderTechLabelsFileName);
@@ -143,7 +146,13 @@ else
          decIdList = [302 303];
          
       case {1001}
-         decIdList = [1001];
+         decIdList = [1001 1005];
+      case {1002}
+         decIdList = [1002 1006];
+      case {1003}
+         decIdList = [1003];
+      case {1004}
+         decIdList = [1004];
          
       otherwise
          fprintf('ERROR: Unknown decId list associate to decId #%d\n', decId);

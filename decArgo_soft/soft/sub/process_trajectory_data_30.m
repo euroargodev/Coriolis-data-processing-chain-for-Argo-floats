@@ -10,6 +10,7 @@
 %    a_firstStabDate, a_firstStabPres, a_descentEndDate, ...
 %    a_descentToProfStartDate, a_descentToProfEndDate, ...
 %    a_ascentStartDate, a_ascentEndDate, a_transStartDate, ...
+%    a_firstGroundingDate, a_firstGroundingPres, ...
 %    a_cycleProfiles, ...
 %    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
 %    a_tabTech1, a_tabTech2, a_decoderId, a_deepCycle)
@@ -29,6 +30,8 @@
 %   a_ascentStartDate        : ascent start date
 %   a_ascentEndDate          : ascent end date
 %   a_transStartDate         : transmission start date
+%   a_firstGroundingDate     : first grounding date
+%   a_firstGroundingPres     : first grounding pressure
 %   a_cycleProfiles          : profiles data
 %   a_parkDate               : date of parking measurements
 %   a_parkTransDate          : transmitted (=1) or computed (=0) date of parking
@@ -61,6 +64,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_30( ...
    a_firstStabDate, a_firstStabPres, a_descentEndDate, ...
    a_descentToProfStartDate, a_descentToProfEndDate, ...
    a_ascentStartDate, a_ascentEndDate, a_transStartDate, ...
+   a_firstGroundingDate, a_firstGroundingPres, ...
    a_cycleProfiles, ...
    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
    a_tabTech1, a_tabTech2, a_decoderId, a_deepCycle)
@@ -96,6 +100,7 @@ global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
+global g_MC_Grounded;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -515,12 +520,22 @@ if (a_deepCycle == 1)
    
    if (~isempty(a_tabTech1))
       
-      % grounded information
-      if (a_tabTech1(5) == 0)
-         grounded = 'N';
-      else
+      % grounding information
+      grounded = 'N';
+      if (a_firstGroundingDate ~= g_decArgo_dateDef)
+         measStruct = create_one_meas_float_time(g_MC_Grounded, a_firstGroundingDate, g_JULD_STATUS_2, floatClockDrift);
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramPres.resolution = single(1);
+         measStruct.paramList = paramPres;
+         measStruct.paramData = a_firstGroundingPres;
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          grounded = 'Y';
       end
+      % surface grounding
+      if (a_tabTech1(5) == 1)
+         grounded = 'Y';
+      end
+      
       trajNCycleStruct.grounded = grounded;
       
    end

@@ -31,6 +31,9 @@ global g_MC_Launch;
 % global time status
 global g_JULD_STATUS_4;
 
+% QC flag values (char)
+global g_decArgo_qcStrNoQc;
+
 
 % unpack the GPS data
 
@@ -55,10 +58,10 @@ if (~isempty(g_decArgo_gpsData))
       measStruct.measCode = g_MC_Launch;
       measStruct.juld = gpsLocDate(idLaunch);
       measStruct.juldStatus = g_JULD_STATUS_4;
-      measStruct.juldQc = '0';
+      measStruct.juldQc = g_decArgo_qcStrNoQc;
       measStruct.juldAdj = gpsLocDate(idLaunch);
       measStruct.juldStatus = g_JULD_STATUS_4;
-      measStruct.juldAdjQc = '0';
+      measStruct.juldAdjQc = g_decArgo_qcStrNoQc;
       measStruct.latitude = gpsLocLat(idLaunch);
       measStruct.longitude = gpsLocLon(idLaunch);
       measStruct.posAccuracy = gpsLocAccuracy(idLaunch);

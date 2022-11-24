@@ -20,20 +20,9 @@
 % ------------------------------------------------------------------------------
 function select_data_files()
 
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/_nke_ir_sbd_rem_all.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/nke_all_with_DM.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/arvor_ir_all.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/new_argos.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists/provor_do_ir.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_all_with_DM_bis_20151003.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
 
-% inputDirName = 'E:\archive_201510\201510-ArgoData\coriolis\';
-% inputDirName = 'E:\archive_201510\201510-ArgoData\incois\';
-% inputDirName = 'E:\archive_201510\201510-ArgoData\bodc\';
-% inputDirName = 'C:\Users\jprannou\_RNU\Andro\data\juste_dep_20140218\';
-inputDirName = 'E:\archive_201505\coriolis\';
-% inputDirName = 'E:\archive_201510\201510-ArgoData\DATA\coriolis\';
+inputDirName = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 
 fprintf('Floats from list: %s\n', floatListFileName);

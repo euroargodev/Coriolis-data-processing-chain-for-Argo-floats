@@ -367,7 +367,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
 
    % move the next file into the buffer directory
    move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_spoolDirectory, g_decArgo_bufferDirectory, 0, 0);
-   
+      
    % extract the attachement
    [mailContents, attachmentFound] = read_mail_and_extract_attachment(tabAllFileNames{idSpoolFile}, g_decArgo_bufferDirectory);
    g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
@@ -2154,9 +2154,11 @@ switch (a_decoderId)
       descProfDoxyAa = [];
       parkDoxyAa = [];
       ascProfDoxyAa = [];
+      surfDoxyAa = [];
       descProfDoxySbe = [];
       parkDoxySbe = [];
       ascProfDoxySbe = [];
+      surfDoxySbe = [];
       if (~isempty(dataCTDO))
          % Aanderaa
          % C1/2PHASE_DOXY -> DOXY using third method: "Stern-Volmer equation"
@@ -2174,6 +2176,9 @@ switch (a_decoderId)
             [ascProfDoxyAa] = compute_DOXY_201_203_206_209( ...
                ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxyAa, ...
                ascProfPres, ascProfSal);
+            [surfDoxyAa] = compute_PPOX_DOXY_AANDERAA_209( ...
+               ascProfC1PhaseDoxy(end), ascProfC2PhaseDoxy(end), ascProfTempDoxyAa(end), ...
+               ascProfPres(end));
          end
          % SBE
          if (~isempty(descProfPhaseDelayDoxy))
@@ -2190,6 +2195,9 @@ switch (a_decoderId)
             [ascProfDoxySbe] = compute_DOXY_SBE_209( ...
                ascProfPhaseDelayDoxy, ascProfTempDoxySbe, ...
                ascProfPres, ascProfSal);
+            [surfDoxySbe] = compute_PPOX_DOXY_SBE_209( ...
+               ascProfPhaseDelayDoxy(end), ascProfTempDoxySbe(end), ...
+               ascProfPres(end));
          end
       end
       
@@ -2272,6 +2280,12 @@ switch (a_decoderId)
             ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxyAa, ascProfDoxyAa, ...
             ascProfPhaseDelayDoxy, ascProfTempDoxySbe, ascProfDoxySbe);
                   
+         % print surface data in CSV file
+         print_surface_data_in_csv_file_209( ...
+            ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
+            ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxyAa, surfDoxyAa, ...
+            ascProfPhaseDelayDoxy, ascProfTempDoxySbe, surfDoxySbe);
+                  
          % print float parameters in CSV file
          print_float_prog_param_in_csv_file_206_to_209(floatParam);
          
@@ -2344,7 +2358,8 @@ switch (a_decoderId)
             parkPhaseDelayDoxy, parkTempDoxySbe, parkDoxySbe, ...
             ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
             ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxyAa, ascProfDoxyAa, ...
-            ascProfPhaseDelayDoxy, ascProfTempDoxySbe, ascProfDoxySbe);
+            ascProfPhaseDelayDoxy, ascProfTempDoxySbe, ascProfDoxySbe, ...
+            surfDoxyAa, surfDoxySbe);
          
          % sort trajectory data structures according to the predefined
          % measurement code order
