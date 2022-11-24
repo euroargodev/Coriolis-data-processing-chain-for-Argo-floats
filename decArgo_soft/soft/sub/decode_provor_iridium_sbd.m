@@ -365,7 +365,7 @@ ignore_duplicated_mail_files(g_decArgo_spoolDirectory, g_decArgo_archiveDirector
 if (g_decArgo_realtimeFlag)
    
    % process mail files according to stored buffers
-
+   
    % read the buffer list file
    [mailFileNameList, mailFileRank] = read_buffer_list(a_floatNum, g_decArgo_historyDirectory);
    
@@ -401,6 +401,21 @@ if (g_decArgo_realtimeFlag)
                remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
             else
                move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
+            end
+         else
+            % specific
+            % 3901598: co_20190119T061121Z_300234064737400_001169_000000_4032.txt
+            % contains 3 ascending profile data packets (for cycle #86) that have been
+            % already received. We must ignore it to avoid generating a fake second
+            % buffer for this cycle
+            if (g_decArgo_floatNum == 3901598)
+               if (strcmp(mailFileNameList{idFileList(idF)}, 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt'))
+                  if (g_decArgo_virtualBuff)
+                     remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
+                  else
+                     move_files_ir_sbd(mailFileNameList(idFileList(idF)), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
+                  end
+               end
             end
          end
       end
@@ -504,8 +519,23 @@ for idSpoolFile = 1:length(tabAllFileNames)
       if (idSpoolFile < length(tabAllFileNames))
          continue
       end
+   else
+      % specific
+      % 3901598: co_20190119T061121Z_300234064737400_001169_000000_4032.txt
+      % contains 3 ascending profile data packets (for cycle #86) that have been
+      % already received. We must ignore it to avoid generating a fake second
+      % buffer for this cycle
+      if (g_decArgo_floatNum == 3901598)
+         if (strcmp(tabAllFileNames{idSpoolFile}, 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt'))
+            if (g_decArgo_virtualBuff)
+               remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
+            else
+               move_files_ir_sbd(tabAllFileNames(idSpoolFile), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 0);
+            end
+         end
+      end
    end
-      
+   
    % process the files of the buffer directory
    
    % retrieve information on the files in the buffer
@@ -543,36 +573,13 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % specific
    % 3901850: MOMSN = 2512 is missing, we must artificially separate first and
    % second Iridium session (which start with MOMSN = 2514 (and 2515)
-   %    if (g_decArgo_floatNum == 3901850)
-   %       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, '_300234063600100_002515_')))
-   %          newFile = regexprep(tabAllFileNames{idSpoolFile}, '.txt', '.sbd');
-   %          idNext = find(strcmp(newFile, tabFileNames));
-   %          idOld = setdiff(1:length(tabFileNames), idNext);
-   %          tabOldFileNames = tabFileNames(idOld);
-   %          tabOldFileDates = tabFileDates(idOld);
-   %          tabOldFileSizes = tabFileSizes(idOld);
-   %          if (g_decArgo_realtimeFlag)
-   %             idNext2 = find(strcmp(tabAllFileNames{idSpoolFile}, bufferMailFileNames));
-   %             idOld2 = setdiff(1:length(bufferMailFileNames), idNext2);
-   %             if (~isempty(idOld2))
-   %                write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
-   %                bufferRank = bufferRank + 1;
-   %                bufferMailFileNames(idOld2) = [];
-   %                bufferMailFileDates(idOld2) = [];
-   %             end
-   %          end
-   %       end
-   %    end
    if (g_decArgo_floatNum == 3901850)
       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, '_300234063600100_002513_')))
-%          newFile = regexprep(tabAllFileNames{idSpoolFile}, '.txt', '.sbd');
-%          idNext = find(strcmp(newFile, tabFileNames));
          idOld = 1:length(tabFileNames);
          tabOldFileNames = tabFileNames(idOld);
          tabOldFileDates = tabFileDates(idOld);
          tabOldFileSizes = tabFileSizes(idOld);
          if (g_decArgo_realtimeFlag)
-%             idNext2 = find(strcmp(tabAllFileNames{idSpoolFile}, bufferMailFileNames));
             idOld2 = 1:length(bufferMailFileNames);
             if (~isempty(idOld2))
                write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames(idOld2), bufferRank);
@@ -707,10 +714,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
             decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 0);
             
          case {205} % Arvor Iridium 5.41 & 5.42
-
+            
             % decode the collected data
             decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-                        
+            
          case {206, 207, 208} % Provor-DO Iridium 5.71 & 5.7 & 5.72
             
             % decode the collected data
@@ -732,10 +739,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
             decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 0);
             
          case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
-   
+            
             % decode the collected data
-            decode_prv_data_ir_sbd_215(sbdDataData, sbdDataDate, 0);            
-
+            decode_prv_data_ir_sbd_215(sbdDataData, sbdDataDate, 0);
+            
          otherwise
             fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
                g_decArgo_floatNum, ...
@@ -748,7 +755,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       
       if ((okToProcess) || ...
             ((idSpoolFile == length(tabAllFileDates) && (~g_decArgo_realtimeFlag))))
-               
+         
          if (g_decArgo_realtimeFlag)
             if (okToProcess)
                write_buffer_list_ir_rudics_sbd_sbd2(a_floatNum, bufferMailFileNames, bufferRank);
@@ -854,7 +861,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       
       % save the list of used rsync log files in the history directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'used', ...
-         unique(g_decArgo_rsyncLogFileUsedList));      
+         unique(g_decArgo_rsyncLogFileUsedList));
    end
 end
 
@@ -1046,8 +1053,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -1273,7 +1280,7 @@ switch (a_decoderId)
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
-                  
+         
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
          o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
@@ -1294,8 +1301,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -1534,7 +1541,7 @@ switch (a_decoderId)
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
          o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
-
+         
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
          
@@ -1551,8 +1558,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -1785,7 +1792,7 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {205} % Arvor Iridium 5.41 & 5.42
-
+      
       % decode the collected data
       [tabTech, dataCTD, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
@@ -1794,8 +1801,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -2038,8 +2045,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -2703,7 +2710,7 @@ switch (a_decoderId)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
       end
-                        
+      
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
          g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
@@ -2723,14 +2730,14 @@ switch (a_decoderId)
       if (g_decArgo_cycleNum == 0)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
-
+      
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
       store_gps_data_ir_sbd(tabTech1, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
-            
+      
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217(dataCTD(:, 32:46));
@@ -2817,7 +2824,7 @@ switch (a_decoderId)
             [], [], [], [], ...
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
             [], [], [], []);
-
+         
          % print EV and pump data in CSV file
          print_hydraulic_data_in_csv_file_210_211_213(evAct, pumpAct);
          
@@ -2888,7 +2895,7 @@ switch (a_decoderId)
             nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
             evAct, pumpAct, a_decoderId);
-
+         
          % sort trajectory data structures according to the predefined
          % measurement code order
          [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
@@ -2933,7 +2940,7 @@ switch (a_decoderId)
       [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, ...
          irSessionNum, deepCycle, resetDetected] = ...
          decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 1);
-
+      
       completedBuffer = a_completedBuffer;
       if (isempty(completedBuffer))
          % decode from buffer list mode
@@ -2944,7 +2951,7 @@ switch (a_decoderId)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
       end
-                        
+      
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
          g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
@@ -2970,7 +2977,7 @@ switch (a_decoderId)
       store_gps_data_ir_sbd(tabTech1, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
-      update_mail_data_ir_sbd(a_sbdFileNameList);      
+      update_mail_data_ir_sbd(a_sbdFileNameList);
       
       % convert counts to physical values
       if (~isempty(dataCTDO))
@@ -2987,7 +2994,7 @@ switch (a_decoderId)
          parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy] = ...
          create_prv_drift_206_to_208_213(dataCTDO, g_decArgo_julD2FloatDayOffset, a_decoderId);
       
-      % create descending and ascending profiles      
+      % create descending and ascending profiles
       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
          descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxy, ...
          ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
@@ -3049,14 +3056,14 @@ switch (a_decoderId)
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres] = ...
          compute_prv_dates_210_211_213(tabTech1, tabTech2, deepCycle, a_refDay);
-
+      
       if (~isempty(g_decArgo_outputCsvFileId))
          
          % output CSV file
          
          % print float technical messages in CSV file
          print_tech_data_in_csv_file_213(tabTech1, tabTech2, deepCycle);
-
+         
          % print dated data in CSV file
          print_dates_in_csv_file_210_211_213( ...
             cycleStartDate, ...
@@ -3078,8 +3085,8 @@ switch (a_decoderId)
             ascProfDate, ascProfPres, ...
             nearSurfDate, nearSurfPres, ...
             inAirDate, inAirPres, ...
-            evAct, pumpAct);         
-
+            evAct, pumpAct);
+         
          % print descending profile in CSV file
          print_desc_profile_in_csv_file_201_to_203_206_to_208_213_to_217( ...
             descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -3127,7 +3134,7 @@ switch (a_decoderId)
                ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ascProfDoxy, ...
                g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
                descentToParkStartDate, ascentEndDate, transStartDate, tabTech2, a_decoderId);
-
+            
             % add the vertical sampling scheme from configuration
             % information
             [tabProfiles] = add_vertical_sampling_scheme_ir_sbd(tabProfiles, a_decoderId);
@@ -3157,7 +3164,7 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TRAJ NetCDF file
-                  
+         
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_213( ...
             g_decArgo_cycleNum, deepCycle, irSessionNum, ...
@@ -3178,7 +3185,7 @@ switch (a_decoderId)
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
             inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy, inAirPpoxDoxy, ...
             evAct, pumpAct, a_decoderId);
-
+         
          % sort trajectory data structures according to the predefined
          % measurement code order
          [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
@@ -3221,8 +3228,8 @@ switch (a_decoderId)
       if (isempty(completedBuffer))
          % decode from buffer list mode
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-      end         
-         
+      end
+      
       if (completedBuffer == 0)
          % print what is missing in the buffer
          is_buffer_completed_ir_sbd(1, a_decoderId);
@@ -3285,7 +3292,7 @@ switch (a_decoderId)
          inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
          inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy] = ...
          create_prv_profile_215_216(dataCTD, dataCTDO, 1);
-
+      
       % compute DOXY
       descProfDoxy = [];
       parkDoxy = [];
@@ -3366,7 +3373,7 @@ switch (a_decoderId)
             nearSurfDate, nearSurfPres, ...
             inAirDate, inAirPres, ...
             evAct, pumpAct, 2);
-
+         
          % print descending profile in CSV file
          print_desc_profile_in_csv_file_201_to_203_206_to_208_213_to_217( ...
             descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -3389,7 +3396,7 @@ switch (a_decoderId)
             nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, nearSurfPpoxDoxy, ...
             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
             inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy, inAirPpoxDoxy);
-
+         
          % print EV and pump data in CSV file
          print_hydraulic_data_in_csv_file_201_to_203_215_216(evAct, pumpAct, 2);
          
@@ -3484,7 +3491,7 @@ switch (a_decoderId)
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
-                  
+         
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
          o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
@@ -3492,7 +3499,7 @@ switch (a_decoderId)
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
          
-      end      
+      end
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
