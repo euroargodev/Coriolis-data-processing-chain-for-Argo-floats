@@ -290,6 +290,17 @@ for sesNum = sessionList
    end
 end
 
+% specific
+if (ismember(g_decArgo_floatNum, [ ...
+      6903800]))
+   switch g_decArgo_floatNum
+      case 6903800
+         % float picked up by a fisherman during cycle #34
+         id = find((tabCyNum > 34));
+         tabDone(id) = 1;
+   end
+end
+
 % process the remaining SBD
 for sesNum = sessionList
    idForSession = find((tabSession == sesNum) & (tabDone == 0));
@@ -381,7 +392,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6904068, 6900791, 6903064, 6904067, 6904068]))
+      6904068, 6900791, 6903064, 6904067, 6904068, 6903800]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -423,6 +434,15 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 18) = tabRank(id);
          tabRankByCycle(tabCyNum == 18) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 18) = tabRankByDate(id);
+         % cycle #30 packets are in 2 sessions (beacause of Ice command sent ?)
+         id = find((tabCyNum == 30) & (tabBase == 1));
+         tabBase(id(2)) = 1;
+         id = id(1);
+         tabRank(tabCyNum == 30) = tabRank(id);
+         tabRankByCycle(tabCyNum == 30) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 30) = tabRankByDate(id);
+         tabSession(tabCyNum == 30) = tabSession(id);
+         tabSessionDeep(tabCyNum == 30) = tabSessionDeep(id);
       case 6904068
          % cycle #17 data are separated
          id = find((tabCyNum == 17) & (tabBase == 1));
@@ -454,16 +474,25 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 26) = tabRank(id(1));
          tabRankByCycle(tabCyNum == 26) = tabRankByCycle(id(1));
          tabRankByDate(tabCyNum == 26) = tabRankByDate(id(1));
+      case 6903800
+         % float picked up by a fisherman during cycle #34
+         id = find((tabCyNum > 34));
+         tabRank(id) = -1;
+         tabRankByCycle(id) = -1;
+         tabRankByDate(id) = -1;
+         tabSession(id) = -1;
+         tabSessionDeep(id) = -1;
    end
    
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
    if (~isempty(g_decArgo_outputCsvFileId))
-      
+
       % update tabCompleted array
       cyNumList = unique(tabRankByCycle);
+      cyNumList(cyNumList < 0) = [];
       for cyNum = 1:length(cyNumList)
          idForCheck = find(tabRankByCycle == cyNumList(cyNum));
-         
+
          % check current session contents
          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
          if (completed == 1)

@@ -39,7 +39,7 @@ for idFile = 1:length(a_tabSbdFileName)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903230, 6903256, 6902957, 6901880]))
+if (ismember(g_decArgo_floatNum, [6903230, 6903256, 6902957, 6901880, 6903800]))
    switch g_decArgo_floatNum
       case 6903230
          idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2018/06/26 06:02:14'));
@@ -76,6 +76,11 @@ if (ismember(g_decArgo_floatNum, [6903230, 6903256, 6902957, 6901880]))
          idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2020/11/03 06:22:17'));
          if (~isempty(idF))
             g_decArgo_iridiumMailData(idF).cycleNumber = 64;
+         end
+      case 6903800
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] > gregorian_2_julian_dec_argo('2021/10/12 06:34:57'));
+         if (~isempty(idF))
+            [g_decArgo_iridiumMailData(idF).cycleNumber] = deal(34);
          end
    end
 end
