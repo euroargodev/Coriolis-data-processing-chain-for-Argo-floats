@@ -44,6 +44,9 @@ function synthfull=ARGO_simplified_profile(varargin)
 %             adjusted fields, add bgcFloatFlag as optional input
 % 01.04.2022, gap data do not get a QC of '8' if either bounding point has
 %             QC '0', PRES/PRES_ADJUSTED do not get a QC of '8' either
+% 09.06.2022, add Coriolis csv export accessories to git-controlled local version
+% 09.06.2022, remove ic parameters TEMP_CNDC, MTIME, NB_sample_... and
+%             statistical parameters ..._MED, ..._STD from parameter selection
 
 % output CSV file information
 global g_cocs_fidCsvFile;
@@ -302,6 +305,15 @@ end
 bgcparams=cellfun(@(x,y)x(y),bgcparams,fnamesind,'uniform',0);
 % unique BGC parameters
 ubgcparams=unique(cat(1, bgcparams{:}));
+% without any intermediate core ic parameter: TEMP_CNDC, MTIME, NB_sample_...,
+ikeep=~ismember(ubgcparams,{'TEMP_CNDC';'MTIME'}) & cellfun(@isempty,regexpi(ubgcparams,'^NB_SAMPLE_'));
+ubgcparams=ubgcparams(ikeep);
+% without any statistical parameter: ..._MED, ..._STD
+ikeep=cellfun(@isempty,regexpi(ubgcparams,'_MED$')) & cellfun(@isempty,regexpi(ubgcparams,'_STD$'));
+ubgcparams=ubgcparams(ikeep);
+clear ikeep
+% --> unique BGC b parameters
+
 
 %% make check: are there bgc-params in the file??
 if isempty(ubgcparams) % there are no bgc-params to align
@@ -526,7 +538,7 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
         cpnames=strrep(strrep(cellstr(lower(names(ind,:))),lower(cnames{1}),''),lower('CONFIG_'),'');
         voffset=values(ind);
         try % get corresponding full-length sensor name: index to param_sensors / sensors
-           sensorind=cellfun(@(x)find(~cellfun(@isempty,strfind(lower(sensors),lower(x)))),cpnames);
+            sensorind=cellfun(@(x)find(~cellfun(@isempty,strfind(lower(sensors),lower(x)))),cpnames);
         catch me
            if (verbose>0)
               disp(['S-PROF_WARNING: File ' bfilestr '.nc: Could not identify some short sensor name in meta file ' strjoin(cpnames,'; ')])
@@ -765,8 +777,8 @@ while ~isempty(i)
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
-       %synthfull=[]; return
-       useind=[]; % default to empty presaxis if failed
+        %synthfull=[]; return
+        useind=[]; % default to empty presaxis if failed
         break % loop of pressure levels from bottom
     end
 end
