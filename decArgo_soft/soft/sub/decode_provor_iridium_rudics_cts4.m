@@ -862,8 +862,8 @@ else
       
       if (g_decArgo_delayedModeFlag)
          
-         sbdFiles = dir([g_decArgo_archiveDirectory '/' sprintf('*_%s_*.b*.sbd', ...
-            a_floatLoginName)]);
+         sbdFiles = [dir([g_decArgo_archiveDirectory '/*.b64']); ...
+            dir([g_decArgo_archiveDirectory '/*.bin'])];
          
          if (isempty(sbdFiles))
             

@@ -93,6 +93,9 @@ if (isempty(floatLoginName))
    return;
 end
 
+% set directory of float rsync log files
+g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
+
 % get archive directory
 checkRsyncLog = 0;
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' floatLoginName '_' num2str(floatWmo) '/'];
