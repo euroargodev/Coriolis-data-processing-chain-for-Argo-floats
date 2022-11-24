@@ -266,46 +266,6 @@ if (a_cycleNum > 0)
 end
 
 % add GPS fixes of the current cycle
-if (a_cycleNum == 0)
-   for idF = 1:length(a_gpsDataLog)
-      
-      gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
-      gpsLocProfNum = [gpsLocProfNum; -1];
-      gpsLocPhase = [gpsLocPhase; -1];
-      gpsLocDate = [gpsLocDate; a_gpsDataLog{idF}.gpsFixDate];
-      gpsLocLon = [gpsLocLon; a_gpsDataLog{idF}.gpsFixLon];
-      gpsLocLat = [gpsLocLat; a_gpsDataLog{idF}.gpsFixLat];
-      gpsLocQc = [gpsLocQc; 0];
-      gpsLocAccuracy = [gpsLocAccuracy; 'G'];
-      gpsLocSbdFileDate = [gpsLocSbdFileDate; g_decArgo_dateDef];
-      
-      if (a_gpsDataLog{idF}.gpsFixAcqTime ~= -1)
-         techData = get_apx_tech_data_init_struct(1);
-         techData.label = 'GPS fix obtained in N seconds';
-         techData.techId = 1037;
-         techData.value = num2str(a_gpsDataLog{idF}.gpsFixAcqTime);
-         techData.cyNum = a_cycleNum;
-         o_techData{end+1} = techData;
-      end
-      
-      if (a_gpsDataLog{idF}.gpsFixNbSat ~= -1)
-         techData = get_apx_tech_data_init_struct(1);
-         techData.label = 'GPS nb sat';
-         techData.techId = 1038;
-         techData.value = num2str(a_gpsDataLog{idF}.gpsFixNbSat);
-         techData.cyNum = a_cycleNum;
-         o_techData{end+1} = techData;
-      end
-      
-      techData = get_apx_tech_data_init_struct(1);
-      techData.label = 'GPS valid fix';
-      techData.techId = 1040;
-      techData.value = num2str(1);
-      techData.cyNum = a_cycleNum;
-      o_techData{end+1} = techData;
-   end
-end
-
 for idF = 1:length(a_gpsDataMsg)
    
    gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
@@ -342,6 +302,50 @@ for idF = 1:length(a_gpsDataMsg)
    techData.value = num2str(1);
    techData.cyNum = a_cycleNum;
    o_techData{end+1} = techData;
+end
+
+if (a_cycleNum == 0)
+   for idF = 1:length(a_gpsDataLog)
+      
+      if (any(gpsLocDate == a_gpsDataLog{idF}.gpsFixDate))
+         continue
+      end
+      
+      gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
+      gpsLocProfNum = [gpsLocProfNum; -1];
+      gpsLocPhase = [gpsLocPhase; -1];
+      gpsLocDate = [gpsLocDate; a_gpsDataLog{idF}.gpsFixDate];
+      gpsLocLon = [gpsLocLon; a_gpsDataLog{idF}.gpsFixLon];
+      gpsLocLat = [gpsLocLat; a_gpsDataLog{idF}.gpsFixLat];
+      gpsLocQc = [gpsLocQc; 0];
+      gpsLocAccuracy = [gpsLocAccuracy; 'G'];
+      gpsLocSbdFileDate = [gpsLocSbdFileDate; g_decArgo_dateDef];
+      
+      if (a_gpsDataLog{idF}.gpsFixAcqTime ~= -1)
+         techData = get_apx_tech_data_init_struct(1);
+         techData.label = 'GPS fix obtained in N seconds';
+         techData.techId = 1037;
+         techData.value = num2str(a_gpsDataLog{idF}.gpsFixAcqTime);
+         techData.cyNum = a_cycleNum;
+         o_techData{end+1} = techData;
+      end
+      
+      if (a_gpsDataLog{idF}.gpsFixNbSat ~= -1)
+         techData = get_apx_tech_data_init_struct(1);
+         techData.label = 'GPS nb sat';
+         techData.techId = 1038;
+         techData.value = num2str(a_gpsDataLog{idF}.gpsFixNbSat);
+         techData.cyNum = a_cycleNum;
+         o_techData{end+1} = techData;
+      end
+      
+      techData = get_apx_tech_data_init_struct(1);
+      techData.label = 'GPS valid fix';
+      techData.techId = 1040;
+      techData.value = num2str(1);
+      techData.cyNum = a_cycleNum;
+      o_techData{end+1} = techData;
+   end
 end
 
 % compute the JAMSTEC QC for the GPS locations of the current cycle

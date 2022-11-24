@@ -84,7 +84,7 @@ for idEv = 1:length(a_events)
             fprintf('DEC_INFO: %sAnomaly detected while parsing GPS information (from evts) ''%s'' => ignored\n', errorHeader, gpsData1{2});
             continue
          end
-         gpscycleNum = val(1);
+         gpsCycleNum = val(1);
          gpsLocAcqTime = val(2);
          
          [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Fix: %f %f %d/%d/%d %d %d');
@@ -101,7 +101,7 @@ for idEv = 1:length(a_events)
          gpsLocNbSat = val(7);
          
          % store GPS fixes
-         gpsFixStruct = get_apx_gps_fix_init_struct(gpscycleNum);
+         gpsFixStruct = get_apx_gps_fix_init_struct(gpsCycleNum);
          gpsFixStruct.gpsFixDate = gpsLocDate;
          gpsFixStruct.gpsFixLat = gpsLocLat;
          gpsFixStruct.gpsFixLon = gpsLocLon;

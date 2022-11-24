@@ -142,7 +142,24 @@ for idF = 1:length(fieldNames)
    rawData = configData.(fieldNames{idF}).raw;
    for idI = 1:length(rawData)
       data = rawData{idI};
+      % present in float 6902968 (first CTS5 UVP), should not be considered
+      % should be considered from CTS5-USEA version (decId 126)
+      if (a_decoderId == 124)
+         if (strcmp(data, 'P60=0'))
+            continue
+         end
+      end
       idFEq = strfind(data, '=');
+      % manage known errors
+      if (isempty(idFEq))
+         if (strcmp(data, 'P6False'))
+            dataOri = data;
+            data = 'P6=False';
+            fprintf('WARNING: read_apmt_config: ''%s'' replaced by ''%s'' in the ''%s'' section of the file: %s\n', ...
+               dataOri, data, fieldNames{idF}, a_inputFilePathName);
+            idFEq = strfind(data, '=');
+         end
+      end
       if (~isempty(idFEq))
          paramNum = str2num(data(2:idFEq(1)-1));
          paramInfoStruct = configInfoStruct.(fieldNames{idF}){paramNum+1};

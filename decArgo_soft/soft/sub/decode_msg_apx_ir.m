@@ -83,13 +83,13 @@ if (isempty(a_msgFileList))
 end
 
 if (length(a_msgFileList) > 1)
-   fprintf('DEC_WARNING: Float #%d Cycle #%d: multiple (%d) msg file for this cycle => only the first one is considered (except for GPS fixes which are retrieved from all files)\n', ...
+   fprintf('DEC_WARNING: Float #%d Cycle #%d: multiple (%d) msg file for this cycle => only the last one is considered (except for GPS fixes which are retrieved from all files)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, length(a_msgFileList));
 end
 
 for idFile = 1:length(a_msgFileList)
    
-   msgFilePathName = a_msgFileList{1};
+   msgFilePathName = a_msgFileList{idFile};
    
    % read input file
    [error, ...
