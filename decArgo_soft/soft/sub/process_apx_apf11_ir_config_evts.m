@@ -79,12 +79,20 @@ for idEv = 1:length(events)
    else
       if (~isempty(configRec))
          line = evt.message;
+         
          if ((line(1) == '<') && (line(end) == '>'))
+            
             phase = line(2:end-1);
             if (~isfield(configStruct, phase))
                configStruct.(phase) = [];
             end
+            
          elseif (strncmpi(line, 'SAMPLE', length('SAMPLE')))
+            
+            sampType = 'SAMPLE';
+            if (~isfield(configStruct.(phase), sampType))
+               configStruct.(phase).(sampType) = [];
+            end
             
             % default values
             start = 2000;
@@ -107,8 +115,8 @@ for idEv = 1:length(events)
             end
             
             sensor = info{2};
-            if (~isfield(configStruct.(phase), sensor))
-               configStruct.(phase).(sensor) = [];
+            if (~isfield(configStruct.(phase).(sampType), sensor))
+               configStruct.(phase).(sampType).(sensor) = [];
             end
             
             if (length(info) >= 3)
@@ -124,9 +132,15 @@ for idEv = 1:length(events)
                count = str2num(info{6});
             end
             
-            configStruct.(phase).(sensor) = [configStruct.(phase).(sensor); ...
+            configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
                start stop interval count];
+            
          elseif (strncmpi(line, 'PROFILE', length('PROFILE')))
+            
+            sampType = 'PROFILE';
+            if (~isfield(configStruct.(phase), sampType))
+               configStruct.(phase).(sampType) = [];
+            end
             
             % default values
             start = 2000;
@@ -144,8 +158,13 @@ for idEv = 1:length(events)
             end
             
             sensor = info{2};
-            if (~isfield(configStruct.(phase), sensor))
-               configStruct.(phase).(sensor) = [];
+            if (strcmp(sensor, 'PTSH'))
+               sensor = 'PH';
+               bin_size = 1;
+               rate = -1;
+            end
+            if (~isfield(configStruct.(phase).(sampType), sensor))
+               configStruct.(phase).(sampType).(sensor) = [];
             end
             
             if (length(info) >= 3)
@@ -161,8 +180,39 @@ for idEv = 1:length(events)
                rate = str2num(info{6});
             end
             
-            configStruct.(phase).(sensor) = [configStruct.(phase).(sensor); ...
+            configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
                start stop bin_size rate];
+            
+         elseif (strncmpi(line, 'MEASURE', length('MEASURE')))
+            
+            sampType = 'MEASURE';
+            if (~isfield(configStruct.(phase), sampType))
+               configStruct.(phase).(sampType) = [];
+            end
+            
+            % default values
+            start = -1;
+            stop = -1;
+            interval = -1;
+            count = -1;
+            
+            info = textscan(line, '%s');
+            info = info{:};
+            
+            if (~strcmpi(info{1}, 'MEASURE'))
+               fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, vitFilePathName);
+               return;
+            end
+                        
+            sensor = info{2};
+            if (~isfield(configStruct.(phase).(sampType), sensor))
+               configStruct.(phase).(sampType).(sensor) = [];
+            end
+            
+            configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
+               start stop interval count];
+
          end
       end
    end

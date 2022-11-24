@@ -59,7 +59,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
 
-   case {105, 106, 107, 109, 110, 111}
+   case {105, 106, 107, 109, 110, 111, 112}
 
       % remocean floats
       o_paramList = [ ...
@@ -91,7 +91,7 @@ switch (a_decoderId)
          {'PSAL'} ...
          ];
       
-   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217}
+   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 1322}
       
       % Arvor Deep
       % Provor-DO Iridium

@@ -36,9 +36,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110, 301, 302, 303}
+   case {105, 106, 107, 109, 110, 112, 301, 302, 303}
       
-      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_105_to_110_sbd2(a_tabTrajNMeas, a_tabTrajNCycle);
+      [o_tabTrajNMeas, o_tabTrajNCycle] = merge_first_last_msg_time_ir_rudics_105_to_110_112_sbd2(a_tabTrajNMeas, a_tabTrajNCycle);
 
    case {111}
       

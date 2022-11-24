@@ -1207,7 +1207,7 @@ if (~isempty(a_tabSensors))
                251 -1 -1 -1 -1 sbdFileDate];
             
             % update float configuration
-            update_float_config_ir_rudics_105_to_110_sbd2(251, sbdFileDate, ...
+            update_float_config_ir_rudics_105_to_110_112_sbd2(251, sbdFileDate, ...
                [measModSensorNum' measParamType' measParamNum' measOldVal' measNewVal']);
             
          case 252
@@ -1363,7 +1363,7 @@ if (~isempty(a_tabSensors))
                254 -1 values(7) values(8) -1 sbdFileDate];
             
             % update float configuration
-            update_float_config_ir_rudics_105_to_110_sbd2(254, packJulD, values(7:36));
+            update_float_config_ir_rudics_105_to_110_112_sbd2(254, packJulD, values(7:36));
             
          case 255
             % float prog param data
@@ -1407,7 +1407,7 @@ if (~isempty(a_tabSensors))
                255 -1 values(7) values(8) -1 sbdFileDate];
             
             % update float configuration
-            update_float_config_ir_rudics_105_to_110_sbd2(255, packJulD, values(7:84));
+            update_float_config_ir_rudics_105_to_110_112_sbd2(255, packJulD, values(7:84));
             
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for packet type #%d\n', ...

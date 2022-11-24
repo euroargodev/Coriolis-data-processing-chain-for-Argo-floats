@@ -4,7 +4,8 @@
 % SYNTAX :
 %  [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_apf11_ir( ...
 %    a_cycleNum, ...
-%    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
+%    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+%    a_profCtdCp, a_profCtdCpH, ...
 %    a_gpsData, a_grounding, a_buoyancy, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData, ...
@@ -15,7 +16,10 @@
 %   a_profCtdP        : CTD_P data
 %   a_profCtdPt       : CTD_PT data
 %   a_profCtdPts      : CTD_PTS data
+%   a_profCtdPtsh     : CTD_PTSH data
+%   a_profDo          : O2 data
 %   a_profCtdCp       : CTD_CP data
+%   a_profCtdCpH      : CTD_CP_H data
 %   a_gpsData         : GPS data
 %   a_grounding       : grounding data
 %   a_buoyancy        : buoyancy data
@@ -34,11 +38,12 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/05/2018 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_apf11_ir( ...
    a_cycleNum, ...
-   a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
+   a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+   a_profCtdCp, a_profCtdCpH, ...
    a_gpsData, a_grounding, a_buoyancy, ...
    a_cycleTimeData, ...
    a_clockOffsetData, ...
@@ -61,6 +66,8 @@ global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_TST;
 global g_MC_Surface;
+global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
+global g_MC_SurfaceDoMeasAfterAirBladderInflation;
 global g_MC_TET;
 global g_MC_Grounded;
 
@@ -141,6 +148,7 @@ ascentEndDate = a_cycleTimeData.ascentEndDateSci;
 ascentEndAdjDate = a_cycleTimeData.ascentEndAdjDateSci;
 ascentEndPres = a_cycleTimeData.ascentEndPresSci;
 ascentEndAdjPres = a_cycleTimeData.ascentEndAdjPresSci;
+bladderInflationStartDate = a_cycleTimeData.bladderInflationStartDateSys;
 transStartDate = a_cycleTimeData.transStartDate;
 transStartAdjDate = a_cycleTimeData.transStartAdjDate;
 transEndDate = a_cycleTimeData.transEndDate;
@@ -421,7 +429,7 @@ if (~isempty(transEndDate))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CTD_P, CTD_PT and CTD_PTS MEASUREMENTS (because all are dated)
+% CTD_P, CTD_PT, CTD_PTS, CTD_PTSH, O2 MEASUREMENTS (because all are dated)
 % stored with MC-10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -459,6 +467,10 @@ if (~isempty(ascentEndDate))
    phaseDates = [phaseDates ascentEndDate];
    phaseMeasCode = [phaseMeasCode g_MC_AET];
 end
+if (~isempty(bladderInflationStartDate))
+   phaseDates = [phaseDates bladderInflationStartDate];
+   phaseMeasCode = [phaseMeasCode g_MC_TST];
+end
 if (~isempty(transStartDate))
    phaseDates = [phaseDates transStartDate];
    phaseMeasCode = [phaseMeasCode g_MC_TST];
@@ -466,109 +478,189 @@ end
 [phaseDates, idSort] = sort(phaseDates);
 phaseMeasCode = phaseMeasCode(idSort);
 
-for idSet = 1:3
-   if (idSet == 1)
-      if (isempty(a_profCtdP))
-         continue;
-      end
-      profCtd = a_profCtdP;
-   elseif (idSet == 2)
-      if (isempty(a_profCtdPt))
-         continue;
-      end
-      profCtd = a_profCtdPt;
-   else
-      if (isempty(a_profCtdPts))
-         continue;
-      end
-      profCtd = a_profCtdPts;
+measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
+for idML = 1:length(measList)
+   doDataFlag = 0;
+   switch (measList{idML})
+      case 'CTD_P'
+         if (isempty(a_profCtdP))
+            continue;
+         end
+         profData = a_profCtdP;
+      case 'CTD_PT'
+         if (isempty(a_profCtdPt))
+            continue;
+         end
+         profData = a_profCtdPt;
+      case 'CTD_PTS'
+         if (isempty(a_profCtdPts))
+            continue;
+         end
+         profData = a_profCtdPts;
+      case 'CTD_PTSH'
+         if (isempty(a_profCtdPtsh))
+            continue;
+         end
+         profData = a_profCtdPtsh;
+      case 'O2'
+         if (isempty(a_profDo))
+            continue;
+         end
+         profData = a_profDo;
+         doDataFlag = 1;
    end
    
    for idPhase = 1:length(phaseDates)+1
       if (idPhase <= length(phaseDates))
          if (idPhase > 1)
-            idData = find((profCtd.dates > phaseDates(idPhase-1)) & ...
-               (profCtd.dates <= phaseDates(idPhase)));
+            idData = find((profData.dates > phaseDates(idPhase-1)) & ...
+               (profData.dates <= phaseDates(idPhase)));
          else
             if (a_cycleNum > 0)
-               idData = find(profCtd.dates <= phaseDates(idPhase));
+               idData = find(profData.dates <= phaseDates(idPhase));
             else
-               idData = 1:length(profCtd.dates);
+               idData = 1:length(profData.dates);
             end
          end
-         refMeasCode = phaseMeasCode(idPhase);
+         measCode = phaseMeasCode(idPhase) - 10;
       else
-         idData = find(profCtd.dates > phaseDates(idPhase-1))';
-         refMeasCode = g_MC_TET;
+         idData = find(profData.dates > phaseDates(idPhase-1))';
+         measCode = g_MC_TET - 10;
+      end
+      
+      if (doDataFlag)
+         if (~isempty(bladderInflationStartDate))
+            if ((idPhase <= length(phaseDates)) && (phaseDates(idPhase) == bladderInflationStartDate))
+               measCode = g_MC_SurfaceDoMeasBeforeAirBladderInflation;
+            elseif ((idPhase > 1) && (phaseDates(idPhase-1) == bladderInflationStartDate))
+               measCode = g_MC_SurfaceDoMeasAfterAirBladderInflation;
+            end
+         end
       end
       
       for idM = 1:length(idData)
          idMeas = idData(idM);
-         time = profCtd.dates(idMeas);
+         time = profData.dates(idMeas);
          timeAdj = g_decArgo_dateDef;
-         if (~isempty(profCtd.datesAdj))
-            timeAdj = profCtd.datesAdj(idMeas);
+         if (~isempty(profData.datesAdj))
+            timeAdj = profData.datesAdj(idMeas);
          end
          [measStruct, ~] = create_one_meas_float_time_bis( ...
-            refMeasCode-10, ...
+            measCode, ...
             time, ...
             timeAdj, ...
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
-            measStruct.paramList = profCtd.paramList;
-            measStruct.paramData = profCtd.data(idMeas, :);
-            if (~isempty(profCtd.dataAdj))
-               measStruct.paramDataAdj = profCtd.dataAdj(idMeas, :);
+            measStruct.paramList = profData.paramList;
+            measStruct.paramData = profData.data(idMeas, :);
+            if (~isempty(profData.dataAdj))
+               measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          end
       end
-   end
+   end   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % REPRESENTATIVE PARKING MEASUREMENTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~isempty(a_profCtdPts) && ~isempty(parkStartDate) && ~isempty(parkEndDate))
+if (~isempty(parkStartDate) && ~isempty(parkEndDate))
    
-   idData = find((a_profCtdPts.dates >= parkStartDate) & ...
-      (a_profCtdPts.dates <= parkEndDate));
+   % RPP measurements
+   measStruct = get_traj_one_meas_init_struct();
+   measStruct.measCode = g_MC_RPP;
    
-   if (~isempty(idData))
+   paramList = [];
+   paramDataStruct = [];
+   paramDataAdjStruct = [];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'}];
+   for idML = 1:length(measList)
+      switch (measList{idML})
+         case 'CTD_P'
+            if (isempty(a_profCtdP))
+               continue;
+            end
+            profData = a_profCtdP;
+         case 'CTD_PT'
+            if (isempty(a_profCtdPt))
+               continue;
+            end
+            profData = a_profCtdPt;
+         case 'CTD_PTS'
+            if (isempty(a_profCtdPts))
+               continue;
+            end
+            profData = a_profCtdPts;
+         case 'CTD_PTSH'
+            if (isempty(a_profCtdPtsh))
+               continue;
+            end
+            profData = a_profCtdPtsh;
+         case 'O2'
+            if (isempty(a_profDo))
+               continue;
+            end
+            profData = a_profDo;
+      end
       
-      % RPP measurements
-      measStruct = get_traj_one_meas_init_struct();
-      measStruct.measCode = g_MC_RPP;
-      for idParam = 1:length(a_profCtdPts.paramList)
-         paramData = a_profCtdPts.data(idData, idParam);
-         paramData(find(paramData == a_profCtdPts.paramList(idParam).fillValue)) = [];
-         paramDataAdj = [];
-         if (~isempty(a_profCtdPts.dataAdj))
-            paramDataAdj = a_profCtdPts.dataAdj(idData, idParam);
-            paramDataAdj(find(paramData == a_profCtdPts.paramList(idParam).fillValue)) = [];
-         end
-         if (~isempty(paramData))
-            measStruct.paramList = [measStruct.paramList a_profCtdPts.paramList(idParam)];
-            measStruct.paramData = [measStruct.paramData mean(paramData)];
-            if (~isempty(paramDataAdj))
-               measStruct.paramDataAdj = [measStruct.paramDataAdj mean(paramDataAdj)];
+      idData = find((profData.dates >= parkStartDate) & ...
+         (profData.dates <= parkEndDate));
+      
+      if (~isempty(idData))
+         for idParam = 1:length(profData.paramList)
+            paramName = profData.paramList(idParam).name;
+            paramData = profData.data(idData, idParam);
+            paramData(find(paramData == profData.paramList(idParam).fillValue)) = [];
+            paramDataAdj = [];
+            if (~isempty(profData.dataAdj))
+               paramDataAdj = profData.dataAdj(idData, idParam);
+               paramDataAdj(find(paramData == profData.paramList(idParam).fillValue)) = [];
             end
+            if (~isempty(paramData))
+               idF = [];
+               if (~isempty(paramList))
+                  idF = find(strcmp({paramList.name}, paramName));
+               end
+               if (isempty(idF))
+                  paramList = [paramList profData.paramList(idParam)];
+                  paramDataStruct.(paramName) = paramData;
+                  if (~isempty(paramDataAdj))
+                     paramDataAdjStruct.(paramName) = paramDataAdj;
+                  end
+               else
+                  paramDataStruct.(paramName) = [paramDataStruct.(paramName); paramData];
+                  if (~isempty(paramDataAdj))
+                     paramDataAdjStruct.(paramName) = [paramDataAdjStruct.(paramName); paramDataAdj];
+                  end
+               end
+            end               
          end
       end
-      if (~isempty(measStruct.paramList))
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-         
-         idPres = find(strcmp({measStruct.paramList.name}, 'PRES') == 1);
-         if (~isempty(idPres))
-            if (~isempty(measStruct.paramDataAdj))
-               trajNCycleStruct.repParkPres = measStruct.paramDataAdj(idPres);
-            else
-               trajNCycleStruct.repParkPres = measStruct.paramData(idPres);
-            end
+   end
+      
+   if (~isempty(paramList))
+      measStruct.paramList = paramList;
+      for idParam = 1:length(paramList)
+         measStruct.paramData = [measStruct.paramData mean(paramDataStruct.(paramList(idParam).name))];
+         if (isfield(paramDataAdjStruct, paramList(idParam).name))
+            measStruct.paramDataAdj = [measStruct.paramDataAdj mean(paramDataAdjStruct.(paramList(idParam).name))];
+         else
+            measStruct.paramDataAdj = [measStruct.paramDataAdj paramList(idParam).fillValue];
          end
-         trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
       end
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+
+      idPres = find(strcmp({measStruct.paramList.name}, 'PRES') == 1);
+      if (~isempty(idPres))
+         if (~isempty(measStruct.paramDataAdj))
+            trajNCycleStruct.repParkPres = measStruct.paramDataAdj(idPres);
+         else
+            trajNCycleStruct.repParkPres = measStruct.paramData(idPres);
+         end
+      end
+      trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
    end
 end
 
@@ -576,73 +668,123 @@ end
 % DEEPEST BIN OF THE ASCENDING PROFILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% select PTS measurements sampled during the ascending profile
-profCtdPts = [];
-if (~isempty(a_profCtdPts) && ...
-      ~isempty(ascentStartDate) && ...
-      ~isempty(ascentEndDate) && ...
-      any((a_profCtdPts.dates >= ascentStartDate) & (a_profCtdPts.dates <= ascentEndDate)))
-   profCtdPts = a_profCtdPts;
-   idProfMeas = find(((a_profCtdPts.dates >= ascentStartDate) & (a_profCtdPts.dates <= ascentEndDate)));
-   profCtdPts.data = profCtdPts.data(idProfMeas, :);
-   if (~isempty(profCtdPts.dataAdj))
-      profCtdPts.dataAdj = profCtdPts.dataAdj(idProfMeas, :);
-   end
-   profCtdPts.dates = profCtdPts.dates(idProfMeas, :);
-   if (~isempty(profCtdPts.datesAdj))
-      profCtdPts.datesAdj = profCtdPts.datesAdj(idProfMeas, :);
-   end
-   idPresCtdPts = find(strcmp({profCtdPts.paramList.name}, 'PRES'));
-end
-
-if (~isempty(a_profCtdCp))
-   idPresCtdCp = find(strcmp({a_profCtdCp.paramList.name}, 'PRES'));
-end
-
-% choose the data set to be used
-ctdPtsFlag = -1;
-if (~isempty(profCtdPts) && ~isempty(a_profCtdCp))
-   if (max(profCtdPts.data(:, idPresCtdPts)) >= max(a_profCtdCp.data(:, idPresCtdCp)))
-      ctdPtsFlag = 1;
-      [~, idMax] = max(profCtdPts.data(:, idPresCtdPts));
-   else
-      ctdPtsFlag = 0;
-      [~, idMax] = max(a_profCtdCp.data(:, idPresCtdCp));
-   end
-elseif (~isempty(profCtdPts))
-   ctdPtsFlag = 1;
-   [~, idMax] = max(profCtdPts.data(:, idPresCtdPts));
-elseif (~isempty(a_profCtdCp))
-   ctdPtsFlag = 0;
-   [~, idMax] = max(a_profCtdCp.data(:, idPresCtdCp));
-end
-
-% create the N_MEAS
-if (ctdPtsFlag == 1)
-   time = profCtdPts.dates(idMax);
-   timeAdj = profCtdPts.datesAdj(idMax);
-   [measStruct, ~] = create_one_meas_float_time_bis( ...
-      g_MC_AscProfDeepestBin, ...
-      time, ...
-      timeAdj, ...
-      g_JULD_STATUS_2);
-   if (~isempty(measStruct))
-      measStruct.paramList = profCtdPts.paramList;
-      measStruct.paramData = profCtdPts.data(idMax, :);
-      if (~isempty(profCtdPts.dataAdj))
-         measStruct.paramDataAdj = profCtdPts.dataAdj(idMax, :);
+if (~isempty(ascentStartDate) && ...
+      ~isempty(ascentEndDate))
+   
+   profMax = [];
+   presMax = [];
+   presMaxTime = g_decArgo_dateDef;
+   presMaxTimeAdj = g_decArgo_dateDef;
+   idMax = [];
+   measList = [{'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'CTD_CP'} {'CTD_CP_H'}];
+   for idML = 1:length(measList)
+      switch (measList{idML})
+         case 'CTD_PTS'
+            if (isempty(a_profCtdPts))
+               continue;
+            end
+            profData = a_profCtdPts;
+         case 'CTD_PTSH'
+            if (isempty(a_profCtdPtsh))
+               continue;
+            end
+            profData = a_profCtdPtsh;
+         case 'O2'
+            if (isempty(a_profDo))
+               continue;
+            end
+            profData = a_profDo;
+         case 'CTD_CP'
+            if (isempty(a_profCtdCp))
+               continue;
+            end
+            profData = a_profCtdCp;
+         case 'CTD_CP_H'
+            if (isempty(a_profCtdCpH))
+               continue;
+            end
+            profData = a_profCtdCpH;
       end
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      
+      if (isempty(profData.dates))
+         idData = 1:size(profData.data, 1);
+      else
+         idData = find((profData.dates >= ascentStartDate) & ...
+            (profData.dates <= ascentEndDate));
+      end
+      
+      if (~isempty(idData))
+         idPres = find(strcmp({profData.paramList.name}, 'PRES'));
+         if (~isempty(idPres))
+            presData = profData.data(idData, idPres);
+            idOk = find(presData ~= paramPres.fillValue);
+            presData = presData(idOk);
+            if (~isempty(presData))
+               if (isempty(presMax))
+                  [presMax, idMax] = max(presData);
+                  profMax = profData;
+                  idMax = idData(idOk(idMax));
+                  if (isempty(profData.dates))
+                     presMaxTime = g_decArgo_dateDef;
+                     presMaxTimeAdj = g_decArgo_dateDef;
+                  else
+                     presMaxTime = profData.dates(idMax);
+                     if (~isempty(profData.datesAdj))
+                        presMaxTimeAdj = profData.datesAdj(idMax);
+                     else
+                        presMaxTimeAdj = g_decArgo_dateDef;
+                     end
+                  end
+               elseif (max(presData) > presMax)
+                  [presMax, idMax] = max(presData);
+                  profMax = profData;
+                  idMax = idData(idOk(idMax));
+                  if (isempty(profData.dates))
+                     presMaxTime = g_decArgo_dateDef;
+                     presMaxTimeAdj = g_decArgo_dateDef;
+                  else
+                     presMaxTime = profData.dates(idMax);
+                     if (~isempty(profData.datesAdj))
+                        presMaxTimeAdj = profData.datesAdj(idMax);
+                     else
+                        presMaxTimeAdj = g_decArgo_dateDef;
+                     end
+                  end
+               end
+            end
+         end
+      end
    end
-elseif (ctdPtsFlag == 0)
-   measStruct = get_traj_one_meas_init_struct();
-   measStruct.measCode = g_MC_AscProfDeepestBin;
-   measStruct.paramList = a_profCtdCp.paramList;
-   measStruct.paramData = a_profCtdCp.data(idMax, :);
-   if (~isempty(a_profCtdCp.dataAdj))
-      measStruct.paramDataAdj = a_profCtdCp.dataAdj(idMax, :);
+   
+   % create the N_MEAS
+   if (~isempty(profMax))
+      if (~isempty(presMaxTime))
+         time = presMaxTime;
+         timeAdj = presMaxTimeAdj;
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_AscProfDeepestBin, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStruct))
+            measStruct.paramList = profMax.paramList;
+            measStruct.paramData = profMax.data(idMax, :);
+            if (~isempty(profMax.dataAdj))
+               measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
+            end
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
+      else
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_AscProfDeepestBin;
+         measStruct.paramList = profMax.paramList;
+         measStruct.paramData = profMax.data(idMax, :);
+         if (~isempty(profMax.dataAdj))
+            measStruct.paramDataAdj = profMax.dataAdj(idMax, :);
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
    end
-   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -800,8 +942,13 @@ gpsLocDate = a_gpsData{4};
 gpsLocLon = a_gpsData{5};
 gpsLocLat = a_gpsData{6};
 gpsLocQc = a_gpsData{7};
-gpsLocNbSat = a_gpsData{10};
-gpsLocTimeToFix = a_gpsData{11};
+if ((size(a_gpsData, 1) == 1) && (length(a_gpsData) == 9)) % launch location only
+   gpsLocNbSat = -1;
+   gpsLocTimeToFix = -1;
+else
+   gpsLocNbSat = a_gpsData{10};
+   gpsLocTimeToFix = a_gpsData{11};
+end
 
 % GPS data for the previous cycle
 if (a_cycleNum > 0)

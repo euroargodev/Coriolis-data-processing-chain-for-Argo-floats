@@ -100,4 +100,48 @@ g_decArgo_floatConfig.USE.CONFIG = [];
 % retrieve the RT offsets
 g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
 
+% add calibration coefficients
+% read the calibration coefficients in the json meta-data file
+
+% fill the calibration coefficients
+if (isfield(jsonMetaData, 'CALIBRATION_COEFFICIENT'))
+   if (~isempty(jsonMetaData.CALIBRATION_COEFFICIENT))
+      fieldNames = fields(jsonMetaData.CALIBRATION_COEFFICIENT);
+      for idF = 1:length(fieldNames)
+         g_decArgo_calibInfo.(fieldNames{idF}) = jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
+      end
+   end
+end
+
+% create the tabDoxyCoef array
+if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   if (any(strcmp(struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'OPTODE')))
+      if (isfield(g_decArgo_calibInfo, 'OPTODE'))
+         calibData = g_decArgo_calibInfo.OPTODE;
+         tabDoxyCoef = [];
+         for id = 0:3
+            fieldName = ['PhaseCoef' num2str(id)];
+            if (isfield(calibData, fieldName))
+               tabDoxyCoef(1, id+1) = calibData.(fieldName);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+               return;
+            end
+         end
+         for id = 0:6
+            fieldName = ['SVUFoilCoef' num2str(id)];
+            if (isfield(calibData, fieldName))
+               tabDoxyCoef(2, id+1) = calibData.(fieldName);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+               return;
+            end
+         end
+         g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
+      else
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+      end
+   end
+end
+
 return;

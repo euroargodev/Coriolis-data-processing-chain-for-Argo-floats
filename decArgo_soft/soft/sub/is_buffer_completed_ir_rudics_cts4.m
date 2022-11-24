@@ -35,9 +35,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110}
+   case {105, 106, 107, 109, 110, 112}
       
-      [o_completed, o_cycleProf] = is_buffer_completed_ir_rudics_cts4_105_to_110;
+      [o_completed, o_cycleProf] = is_buffer_completed_ir_rudics_cts4_105_to_110_112;
 
    case {111}
       

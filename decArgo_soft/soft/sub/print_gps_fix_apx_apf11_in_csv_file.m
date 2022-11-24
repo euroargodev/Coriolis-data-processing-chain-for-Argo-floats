@@ -43,8 +43,13 @@ gpsLocCycleNum = a_gpsData{1};
 gpsLocDate = a_gpsData{4};
 gpsLocLon = a_gpsData{5};
 gpsLocLat = a_gpsData{6};
-gpsLocNbSat = a_gpsData{10};
-gpsLocTimeToFix = a_gpsData{11};
+if ((size(a_gpsData, 1) == 1) && (length(a_gpsData) == 9)) % launch location only
+   gpsLocNbSat = -1;
+   gpsLocTimeToFix = -1;
+else
+   gpsLocNbSat = a_gpsData{10};
+   gpsLocTimeToFix = a_gpsData{11};
+end
 
 idForCy = find((gpsLocCycleNum == a_cycleNumber));
 if (~isempty(idForCy))

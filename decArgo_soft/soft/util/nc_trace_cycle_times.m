@@ -57,10 +57,11 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.65.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -976,95 +977,6 @@ if (g_NTCT_cycles(a_idCycle+1) == 0)
    end
 end
 
-xSpyInDescToPark = g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :);
-ySpyInDescToPark = g_NTCT_SpyInDescToPark_pres(a_idCycle+1, :);
-idDel = find((xSpyInDescToPark == g_dateDef) & (ySpyInDescToPark == g_presDef));
-xSpyInDescToPark(idDel) = [];
-ySpyInDescToPark(idDel) = [];
-if (~isempty(xSpyInDescToPark))
-   plot(presAxes, xSpyInDescToPark, ySpyInDescToPark, 'k');
-   hold on;
-   
-   evSpyInDescToPark = g_NTCT_SpyInDescToPark_evFlag(a_idCycle+1, 1:length(xSpyInDescToPark));
-   idEv = find(evSpyInDescToPark > 0);
-   plot(presAxes, xSpyInDescToPark(idEv), ySpyInDescToPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
-   idPump = find(evSpyInDescToPark == -1);
-   plot(presAxes, xSpyInDescToPark(idPump), ySpyInDescToPark(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-end
-
-xSpyAtPark = g_NTCT_SpyAtPark_juld(a_idCycle+1, :);
-ySpyAtPark = g_NTCT_SpyAtPark_pres(a_idCycle+1, :);
-idDel = find((xSpyAtPark == g_dateDef) & (ySpyAtPark == g_presDef));
-xSpyAtPark(idDel) = [];
-ySpyAtPark(idDel) = [];
-if (~isempty(xSpyAtPark))
-   plot(presAxes, xSpyAtPark, ySpyAtPark, 'k');
-   hold on;
-   
-   evSpyAtPark = g_NTCT_SpyAtPark_evFlag(a_idCycle+1, 1:length(xSpyAtPark));
-   idEv = find(evSpyAtPark > 0);
-   plot(presAxes, xSpyAtPark(idEv), ySpyAtPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
-   idPump = find(evSpyAtPark == -1);
-   plot(presAxes, xSpyAtPark(idPump), ySpyAtPark(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-end
-
-xSpyInDescToProf = g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :);
-ySpyInDescToProf = g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :);
-idDel = find((xSpyInDescToProf == g_dateDef) & (ySpyInDescToProf == g_presDef));
-xSpyInDescToProf(idDel) = [];
-ySpyInDescToProf(idDel) = [];
-if (~isempty(xSpyInDescToProf))
-   plot(presAxes, xSpyInDescToProf, ySpyInDescToProf, 'k');
-   hold on;
-   
-   evSpyInDescToProf = g_NTCT_SpyInDescToProf_evFlag(a_idCycle+1, 1:length(xSpyInDescToProf));
-   idEv = find(evSpyInDescToProf > 0);
-   plot(presAxes, xSpyInDescToProf(idEv), ySpyInDescToProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
-   idPump = find(evSpyInDescToProf == -1);
-   plot(presAxes, xSpyInDescToProf(idPump), ySpyInDescToProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-end
-
-xSpyAtProf = g_NTCT_SpyAtProf_juld(a_idCycle+1, :);
-ySpyAtProf = g_NTCT_SpyAtProf_pres(a_idCycle+1, :);
-idDel = find((xSpyAtProf == g_dateDef) & (ySpyAtProf == g_presDef));
-xSpyAtProf(idDel) = [];
-ySpyAtProf(idDel) = [];
-if (~isempty(xSpyAtProf))
-   plot(presAxes, xSpyAtProf, ySpyAtProf, 'k');
-   hold on;
-   
-   evSpyAtProf = g_NTCT_SpyAtProf_evFlag(a_idCycle+1, 1:length(xSpyAtProf));
-   idEv = find(evSpyAtProf > 0);
-   plot(presAxes, xSpyAtProf(idEv), ySpyAtProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
-   idPump = find(evSpyAtProf == -1);
-   plot(presAxes, xSpyAtProf(idPump), ySpyAtProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-end
-
-xSpyInAscProf = g_NTCT_SpyInAscProf_juld(a_idCycle+1, :);
-ySpyInAscProf = g_NTCT_SpyInAscProf_pres(a_idCycle+1, :);
-idDel = find((xSpyInAscProf == g_dateDef) & (ySpyInAscProf == g_presDef));
-xSpyInAscProf(idDel) = [];
-ySpyInAscProf(idDel) = [];
-firstSurfDate = g_dateDef;
-firstSurfPres = g_presDef;
-if (~isempty(xSpyInAscProf))
-   plot(presAxes, xSpyInAscProf, ySpyInAscProf, 'k');
-   hold on;
-   
-   evSpyInAscProf = g_NTCT_SpyInAscProf_evFlag(a_idCycle+1, 1:length(xSpyInAscProf));
-   idEv = find(evSpyInAscProf > 0);
-   plot(presAxes, xSpyInAscProf(idEv), ySpyInAscProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
-   idPump = find(evSpyInAscProf == -1);
-   plot(presAxes, xSpyInAscProf(idPump), ySpyInAscProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-   
-   firstSurfDate = fliplr(xSpyInAscProf);
-   firstSurfPres = fliplr(ySpyInAscProf);
-   if (length(firstSurfDate) > 2)
-      firstSurfDate = firstSurfDate(3);
-      firstSurfPres = firstSurfPres(3);
-   end
-end
-
 xSurface1 = g_NTCT_Surface1_juld(a_idCycle+1, :);
 ySurface1 = g_NTCT_Surface1_pres(a_idCycle+1, :);
 idDel = find((xSurface1 == g_dateDef) & (ySurface1 == g_presDef));
@@ -1153,6 +1065,95 @@ yInAirSeriesOfMeas(idDel) = [];
 if (~isempty(xInAirSeriesOfMeas))
    plot(presAxes, xInAirSeriesOfMeas, yInAirSeriesOfMeas, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
    hold on;
+end
+
+xSpyInDescToPark = g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :);
+ySpyInDescToPark = g_NTCT_SpyInDescToPark_pres(a_idCycle+1, :);
+idDel = find((xSpyInDescToPark == g_dateDef) & (ySpyInDescToPark == g_presDef));
+xSpyInDescToPark(idDel) = [];
+ySpyInDescToPark(idDel) = [];
+if (~isempty(xSpyInDescToPark))
+   plot(presAxes, xSpyInDescToPark, ySpyInDescToPark, 'k');
+   hold on;
+   
+   evSpyInDescToPark = g_NTCT_SpyInDescToPark_evFlag(a_idCycle+1, 1:length(xSpyInDescToPark));
+   idEv = find(evSpyInDescToPark > 0);
+   plot(presAxes, xSpyInDescToPark(idEv), ySpyInDescToPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyInDescToPark == -1);
+   plot(presAxes, xSpyInDescToPark(idPump), ySpyInDescToPark(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+end
+
+xSpyAtPark = g_NTCT_SpyAtPark_juld(a_idCycle+1, :);
+ySpyAtPark = g_NTCT_SpyAtPark_pres(a_idCycle+1, :);
+idDel = find((xSpyAtPark == g_dateDef) & (ySpyAtPark == g_presDef));
+xSpyAtPark(idDel) = [];
+ySpyAtPark(idDel) = [];
+if (~isempty(xSpyAtPark))
+   plot(presAxes, xSpyAtPark, ySpyAtPark, 'k');
+   hold on;
+   
+   evSpyAtPark = g_NTCT_SpyAtPark_evFlag(a_idCycle+1, 1:length(xSpyAtPark));
+   idEv = find(evSpyAtPark > 0);
+   plot(presAxes, xSpyAtPark(idEv), ySpyAtPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyAtPark == -1);
+   plot(presAxes, xSpyAtPark(idPump), ySpyAtPark(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+end
+
+xSpyInDescToProf = g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :);
+ySpyInDescToProf = g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :);
+idDel = find((xSpyInDescToProf == g_dateDef) & (ySpyInDescToProf == g_presDef));
+xSpyInDescToProf(idDel) = [];
+ySpyInDescToProf(idDel) = [];
+if (~isempty(xSpyInDescToProf))
+   plot(presAxes, xSpyInDescToProf, ySpyInDescToProf, 'k');
+   hold on;
+   
+   evSpyInDescToProf = g_NTCT_SpyInDescToProf_evFlag(a_idCycle+1, 1:length(xSpyInDescToProf));
+   idEv = find(evSpyInDescToProf > 0);
+   plot(presAxes, xSpyInDescToProf(idEv), ySpyInDescToProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyInDescToProf == -1);
+   plot(presAxes, xSpyInDescToProf(idPump), ySpyInDescToProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+end
+
+xSpyAtProf = g_NTCT_SpyAtProf_juld(a_idCycle+1, :);
+ySpyAtProf = g_NTCT_SpyAtProf_pres(a_idCycle+1, :);
+idDel = find((xSpyAtProf == g_dateDef) & (ySpyAtProf == g_presDef));
+xSpyAtProf(idDel) = [];
+ySpyAtProf(idDel) = [];
+if (~isempty(xSpyAtProf))
+   plot(presAxes, xSpyAtProf, ySpyAtProf, 'k');
+   hold on;
+   
+   evSpyAtProf = g_NTCT_SpyAtProf_evFlag(a_idCycle+1, 1:length(xSpyAtProf));
+   idEv = find(evSpyAtProf > 0);
+   plot(presAxes, xSpyAtProf(idEv), ySpyAtProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyAtProf == -1);
+   plot(presAxes, xSpyAtProf(idPump), ySpyAtProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+end
+
+xSpyInAscProf = g_NTCT_SpyInAscProf_juld(a_idCycle+1, :);
+ySpyInAscProf = g_NTCT_SpyInAscProf_pres(a_idCycle+1, :);
+idDel = find((xSpyInAscProf == g_dateDef) & (ySpyInAscProf == g_presDef));
+xSpyInAscProf(idDel) = [];
+ySpyInAscProf(idDel) = [];
+firstSurfDate = g_dateDef;
+firstSurfPres = g_presDef;
+if (~isempty(xSpyInAscProf))
+   plot(presAxes, xSpyInAscProf, ySpyInAscProf, 'k');
+   hold on;
+   
+   evSpyInAscProf = g_NTCT_SpyInAscProf_evFlag(a_idCycle+1, 1:length(xSpyInAscProf));
+   idEv = find(evSpyInAscProf > 0);
+   plot(presAxes, xSpyInAscProf(idEv), ySpyInAscProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyInAscProf == -1);
+   plot(presAxes, xSpyInAscProf(idPump), ySpyInAscProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+   
+   firstSurfDate = fliplr(xSpyInAscProf);
+   firstSurfPres = fliplr(ySpyInAscProf);
+   if (length(firstSurfDate) > 2)
+      firstSurfDate = firstSurfDate(3);
+      firstSurfPres = firstSurfPres(3);
+   end
 end
 
 xSurface = g_NTCT_Surface_juld(a_idCycle+1, :);

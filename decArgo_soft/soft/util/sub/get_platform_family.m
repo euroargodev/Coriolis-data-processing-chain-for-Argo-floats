@@ -69,6 +69,10 @@ switch (a_decoderId)
       % NOVA & DOVA
       o_platformFamily = 'FLOAT';
       
+   case {1321, 1322}
+      % Apex APF11
+      o_platformFamily = 'FLOAT';
+      
    otherwise
       fprintf('ERROR: Float #%d: No platform family assigned to decoderId #%d\n', ...
          g_decArgo_floatNum, ...

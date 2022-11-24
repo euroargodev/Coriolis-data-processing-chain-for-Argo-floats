@@ -4,7 +4,7 @@
 % SYNTAX :
 % function [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
 %    o_structConfig] = decode_apex_argos_data( ...
 %    a_floatNum, a_cycleList, a_excludedCycleList, ...
 %    a_decoderId, a_floatArgosId, ...
@@ -26,6 +26,7 @@
 %   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
 %   o_tabNcTechIndex : decoded technical index information
 %   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
 %   o_structConfig   : NetCDF float configuration
 %
 % EXAMPLES :
@@ -38,7 +39,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
    o_structConfig] = decode_apex_argos_data( ...
    a_floatNum, a_cycleList, a_excludedCycleList, ...
    a_decoderId, a_floatArgosId, ...
@@ -50,6 +51,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -187,7 +189,7 @@ for idCy = 1:length(a_cycleList)
          1021, 1022]))
       
       [miscInfo, auxInfo, profData, profNstData, parkData, astData, surfData, metaData, techData, trajData, ...
-         timeInfo, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
+         timeInfo, tabTechNMeas, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
          decode_apx_argos(argosDataData, argosDataUsed, argosDataDate, sensorData, sensorDate, ...
          cycleNum, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
       
@@ -301,6 +303,10 @@ for idCy = 1:length(a_cycleList)
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
          
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         end
+
       end
       
    else
@@ -341,9 +347,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabTrajNMeas] = sort_trajectory_data(o_tabTrajNMeas, a_decoderId);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
-   
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = update_output_cycle_number_ir_sbd( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+
    % perform CHLA and NITRATE adjustment
    [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatSurfData.launchDate);
 

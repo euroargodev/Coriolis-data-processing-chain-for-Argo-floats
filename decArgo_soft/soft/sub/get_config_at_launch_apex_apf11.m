@@ -118,6 +118,10 @@ while (1)
       break;
    end
    line = deblank(line);
+   if (any(line == '#'))
+      idF = strfind(line, '#');
+      line = line(1:idF(1)-1);
+   end
 
    % empty line
    if (isempty(line))

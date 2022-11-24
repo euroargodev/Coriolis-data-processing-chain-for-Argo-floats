@@ -33,9 +33,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110}
+   case {105, 106, 107, 109, 110, 112}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts4_105_to_110;
+      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts4_105_to_110_112;
 
    case {111}
       

@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  print_dates_apx_apf11_in_csv_file( ...
-%    a_profCtdP, a_profCtdPt, a_profCtdPts, ...
+%    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_cycleTimeData, a_gpsData, ...
 %    a_grounding, a_buoyancy, a_vitalsData)
 %
@@ -11,6 +11,8 @@
 %   a_profCtdP      : CTD_P data
 %   a_profCtdPt     : CTD_PT data
 %   a_profCtdPts    : CTD_PTS data
+%   a_profCtdPtsh   : CTD_PTSH data
+%   a_profDo        : O2 data
 %   a_cycleTimeData : cycle timings data
 %   a_gpsData       : GPS data
 %   a_grounding     : grounding data
@@ -25,10 +27,10 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/27/2018 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_dates_apx_apf11_in_csv_file( ...
-   a_profCtdP, a_profCtdPt, a_profCtdPts, ...
+   a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_cycleTimeData, a_gpsData, ...
    a_grounding, a_buoyancy, a_vitalsData)
          
@@ -77,6 +79,26 @@ allTabCyNum = [allTabCyNum tabCyNum];
 [tabDate, tabDateAdj, ...
    tabPres, tabPresAdj, ...
    tabLabel, tabCyNum] = format_profile_dates(a_profCtdPts, 'CTD_PTS', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profCtdPtsh, 'CTD_PTSH', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profDo, 'O2', g_decArgo_cycleNum);
 allTabDate = [allTabDate tabDate];
 allTabDateAdj = [allTabDateAdj tabDateAdj];
 allTabPres = [allTabPres tabPres];
@@ -312,8 +334,13 @@ gpsLocCycleNum = a_gpsData{1};
 gpsLocDate = a_gpsData{4};
 gpsLocLon = a_gpsData{5};
 gpsLocLat = a_gpsData{6};
-gpsLocNbSat = a_gpsData{10};
-gpsLocTimeToFix = a_gpsData{11};
+if ((size(a_gpsData, 1) == 1) && (length(a_gpsData) == 9)) % launch location only
+   gpsLocNbSat = -1;
+   gpsLocTimeToFix = -1;
+else
+   gpsLocNbSat = a_gpsData{10};
+   gpsLocTimeToFix = a_gpsData{11};
+end
 
 % collect GPS fix measurements
 if (g_decArgo_cycleNum > 0)
@@ -466,7 +493,7 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/10/2017 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabDate, o_tabDateAdj, ...
    o_tabPres, o_tabPresAdj, ...

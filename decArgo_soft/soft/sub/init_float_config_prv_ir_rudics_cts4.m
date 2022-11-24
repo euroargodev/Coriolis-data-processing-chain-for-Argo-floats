@@ -26,9 +26,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110}
+   case {105, 106, 107, 109, 110, 112}
       
-      init_float_config_prv_ir_rudics_cts4_105_to_110(a_launchDate, a_decoderId);
+      init_float_config_prv_ir_rudics_cts4_105_to_110_112(a_launchDate, a_decoderId);
 
    case {111}
       

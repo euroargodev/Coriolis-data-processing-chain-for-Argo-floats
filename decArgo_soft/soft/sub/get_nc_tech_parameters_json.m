@@ -40,7 +40,7 @@ end
 % read tech parameters file
 techData = loadjson(jsonInputFileName);
 
-apexApf11IrDecoderIdList = [1321];
+apexApf11IrDecoderIdList = [1321 1322];
 techDataFieldNames = fieldnames(techData);
 for idField = 1:length(techDataFieldNames)
    techItemData = getfield(techData, char(techDataFieldNames(idField)));

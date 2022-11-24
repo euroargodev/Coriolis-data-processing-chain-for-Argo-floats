@@ -244,7 +244,7 @@ for idFloat = 1:length(floatList)
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
-   sensorList = get_sensor_list(wmoNumber);
+   sensorList = get_sensor_list_cts4(wmoNumber);
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
    
    % add the calibration coefficients for FLBB sensor (coming from the

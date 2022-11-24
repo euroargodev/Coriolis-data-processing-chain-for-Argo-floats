@@ -297,19 +297,35 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramDoxy];
                dataStruct.data = [dataStruct.data doxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute DOXY
-                  doxy = compute_DOXY_SBE_1013_1015_1101(dataStruct.dataAdj(:, idFrequencyDoxy), ...
-                     paramFrequencyDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     dataStruct.dataAdj(:, idTemp), ...
-                     dataStruct.dataAdj(:, idPsal), ...
-                     paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                     paramDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute DOXY
+               %                   doxy = compute_DOXY_SBE_1013_1015_1101(dataStruct.dataAdj(:, idFrequencyDoxy), ...
+               %                      paramFrequencyDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      dataStruct.dataAdj(:, idTemp), ...
+               %                      dataStruct.dataAdj(:, idPsal), ...
+               %                      paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+               %                      paramDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -335,19 +351,35 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramDoxy];
             dataStruct.data = [dataStruct.data doxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute DOXY
-               doxy = compute_DOXY_SBE_1013_1015_1101(dataStruct.dataAdj(:, idFrequencyDoxy), ...
-                  paramFrequencyDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  dataStruct.dataAdj(:, idTemp), ...
-                  dataStruct.dataAdj(:, idPsal), ...
-                  paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                  paramDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute DOXY
+            %                doxy = compute_DOXY_SBE_1013_1015_1101(dataStruct.dataAdj(:, idFrequencyDoxy), ...
+            %                   paramFrequencyDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   dataStruct.dataAdj(:, idTemp), ...
+            %                   dataStruct.dataAdj(:, idPsal), ...
+            %                   paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+            %                   paramDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -391,22 +423,38 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramDoxy];
                dataStruct.data = [dataStruct.data doxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute DOXY
-                  doxy = compute_DOXY_1104_1105_1110_1111( ...
-                     dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramTPhaseDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     dataStruct.dataAdj(:, idTemp), ...
-                     dataStruct.dataAdj(:, idPsal), ...
-                     paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                     paramDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute DOXY
+               %                   doxy = compute_DOXY_1104_1105_1110_1111( ...
+               %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramTPhaseDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      dataStruct.dataAdj(:, idTemp), ...
+               %                      dataStruct.dataAdj(:, idPsal), ...
+               %                      paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+               %                      paramDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -438,22 +486,38 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramDoxy];
             dataStruct.data = [dataStruct.data doxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute DOXY
-               doxy = compute_DOXY_1104_1105_1110_1111( ...
-                  dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                  dataStruct.dataAdj(:, idTempDoxy), ...
-                  paramTPhaseDoxy.fillValue, ...
-                  paramTempDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  dataStruct.dataAdj(:, idTemp), ...
-                  dataStruct.dataAdj(:, idPsal), ...
-                  paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                  paramDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute DOXY
+            %                doxy = compute_DOXY_1104_1105_1110_1111( ...
+            %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
+            %                   dataStruct.dataAdj(:, idTempDoxy), ...
+            %                   paramTPhaseDoxy.fillValue, ...
+            %                   paramTempDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   dataStruct.dataAdj(:, idTemp), ...
+            %                   dataStruct.dataAdj(:, idPsal), ...
+            %                   paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+            %                   paramDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -497,22 +561,38 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramDoxy];
                dataStruct.data = [dataStruct.data doxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute DOXY
-                  doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
-                     dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramTPhaseDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     dataStruct.dataAdj(:, idTemp), ...
-                     dataStruct.dataAdj(:, idPsal), ...
-                     paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                     paramDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute DOXY
+               %                   doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramTPhaseDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      dataStruct.dataAdj(:, idTemp), ...
+               %                      dataStruct.dataAdj(:, idPsal), ...
+               %                      paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+               %                      paramDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -544,22 +624,39 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramDoxy];
             dataStruct.data = [dataStruct.data doxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute DOXY
-               doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
-                  dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                  dataStruct.dataAdj(:, idTempDoxy), ...
-                  paramTPhaseDoxy.fillValue, ...
-                  paramTempDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  dataStruct.dataAdj(:, idTemp), ...
-                  dataStruct.dataAdj(:, idPsal), ...
-                  paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                  paramDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-            end
+            
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute DOXY
+            %                doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+            %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
+            %                   dataStruct.dataAdj(:, idTempDoxy), ...
+            %                   paramTPhaseDoxy.fillValue, ...
+            %                   paramTempDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   dataStruct.dataAdj(:, idTemp), ...
+            %                   dataStruct.dataAdj(:, idPsal), ...
+            %                   paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+            %                   paramDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -658,23 +755,39 @@ switch (a_decoderId)
                   dataStruct.paramList = [dataStruct.paramList paramDoxy];
                   dataStruct.data = [dataStruct.data doxy];
                   
-                  if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
-                     % compute DOXY
-                     dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
-                     doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
-                        dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                        dataStruct.dataAdj(:, idTempDoxy), ...
-                        paramTPhaseDoxy.fillValue, ...
-                        paramTempDoxy.fillValue, ...
-                        dataStruct.dataAdj(:, idPres), ...
-                        dataAdjCtd(:, 2), ...
-                        dataAdjCtd(:, 3), ...
-                        paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                        paramDoxy.fillValue);
-                     
-                     % add DOXY to the data structure
-                     dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-                  end
+                  % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+                  % Hamburg"
+                  % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+                  % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+                  % the calculation for the adjustment must involve the parameter itself
+                  % (e.g., with an offset or slope). If a different parameter used for
+                  % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+                  % transitions onto the parameter itself and does not put it into mode
+                  % 'A'. The <PARAM> field is always calculated with other parameters in
+                  % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+                  % "real"  parameter  adjustment  as  defined above.  A calculation
+                  % without  a  "real"  parameter  adjustment  but  involving  other
+                  % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+                  % recorded in the BGC-Argofiles.
+                  
+                  % there is no need to compute derived parameters with PRES_ADJUSTED
+                  %                   if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
+                  %                      % compute DOXY
+                  %                      dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
+                  %                      doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+                  %                         dataStruct.dataAdj(:, idTPhaseDoxy), ...
+                  %                         dataStruct.dataAdj(:, idTempDoxy), ...
+                  %                         paramTPhaseDoxy.fillValue, ...
+                  %                         paramTempDoxy.fillValue, ...
+                  %                         dataStruct.dataAdj(:, idPres), ...
+                  %                         dataAdjCtd(:, 2), ...
+                  %                         dataAdjCtd(:, 3), ...
+                  %                         paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+                  %                         paramDoxy.fillValue);
+                  %
+                  %                      % add DOXY to the data structure
+                  %                      dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+                  %                   end
                end
                
                o_outputData{idS} = dataStruct;
@@ -705,23 +818,39 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramDoxy];
                dataStruct.data = [dataStruct.data doxy];
                
-               if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
-                  % compute DOXY
-                  dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
-                  doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
-                     dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramTPhaseDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     dataAdjCtd(:, 2), ...
-                     dataAdjCtd(:, 3), ...
-                     paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                     paramDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
+               %                   % compute DOXY
+               %                   dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
+               %                   doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramTPhaseDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      dataAdjCtd(:, 2), ...
+               %                      dataAdjCtd(:, 3), ...
+               %                      paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+               %                      paramDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+               %                end
             end
             
             o_outputData = dataStruct;
@@ -814,22 +943,38 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramDoxy];
                dataStruct.data = [dataStruct.data doxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute DOXY
-                  doxy = compute_DOXY_SBE_1201( ...
-                     dataStruct.dataAdj(:, idPhaseDelayDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramPhaseDelayDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     dataStruct.dataAdj(:, idTemp), ...
-                     dataStruct.dataAdj(:, idPsal), ...
-                     paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                     paramDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute DOXY
+               %                   doxy = compute_DOXY_SBE_1201( ...
+               %                      dataStruct.dataAdj(:, idPhaseDelayDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramPhaseDelayDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      dataStruct.dataAdj(:, idTemp), ...
+               %                      dataStruct.dataAdj(:, idPsal), ...
+               %                      paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+               %                      paramDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -861,22 +1006,38 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramDoxy];
             dataStruct.data = [dataStruct.data doxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute DOXY
-               doxy = compute_DOXY_SBE_1201( ...
-                  dataStruct.dataAdj(:, idPhaseDelayDoxy), ...
-                  dataStruct.dataAdj(:, idTempDoxy), ...
-                  paramPhaseDelayDoxy.fillValue, ...
-                  paramTempDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  dataStruct.dataAdj(:, idTemp), ...
-                  dataStruct.dataAdj(:, idPsal), ...
-                  paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
-                  paramDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj doxy];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute DOXY
+            %                doxy = compute_DOXY_SBE_1201( ...
+            %                   dataStruct.dataAdj(:, idPhaseDelayDoxy), ...
+            %                   dataStruct.dataAdj(:, idTempDoxy), ...
+            %                   paramPhaseDelayDoxy.fillValue, ...
+            %                   paramTempDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   dataStruct.dataAdj(:, idTemp), ...
+            %                   dataStruct.dataAdj(:, idPsal), ...
+            %                   paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue, ...
+            %                   paramDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj doxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -962,20 +1123,36 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramPpoxDoxy];
                dataStruct.data = [dataStruct.data ppoxDoxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute PPOX_DOXY
-                  ppoxDoxy = compute_PPOX_DOXY_1105_1110_1111( ...
-                     dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramTPhaseDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     paramPres.fillValue, ...
-                     paramPpoxDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute PPOX_DOXY
+               %                   ppoxDoxy = compute_PPOX_DOXY_1105_1110_1111( ...
+               %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramTPhaseDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      paramPres.fillValue, ...
+               %                      paramPpoxDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -1003,20 +1180,36 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramPpoxDoxy];
             dataStruct.data = [dataStruct.data ppoxDoxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute PPOX_DOXY
-               ppoxDoxy = compute_PPOX_DOXY_1105_1110_1111( ...
-                  dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                  dataStruct.dataAdj(:, idTempDoxy), ...
-                  paramTPhaseDoxy.fillValue, ...
-                  paramTempDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  paramPres.fillValue, ...
-                  paramPpoxDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute PPOX_DOXY
+            %                ppoxDoxy = compute_PPOX_DOXY_1105_1110_1111( ...
+            %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
+            %                   dataStruct.dataAdj(:, idTempDoxy), ...
+            %                   paramTPhaseDoxy.fillValue, ...
+            %                   paramTempDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   paramPres.fillValue, ...
+            %                   paramPpoxDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -1054,20 +1247,36 @@ switch (a_decoderId)
                dataStruct.paramList = [dataStruct.paramList paramPpoxDoxy];
                dataStruct.data = [dataStruct.data ppoxDoxy];
                
-               if (~isempty(dataStruct.dataAdj))
-                  % compute PPOX_DOXY
-                  ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
-                     dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                     dataStruct.dataAdj(:, idTempDoxy), ...
-                     paramTPhaseDoxy.fillValue, ...
-                     paramTempDoxy.fillValue, ...
-                     dataStruct.dataAdj(:, idPres), ...
-                     paramPres.fillValue, ...
-                     paramPpoxDoxy.fillValue);
-                  
-                  % add DOXY to the data structure
-                  dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
-               end
+               % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+               % Hamburg"
+               % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+               % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+               % the calculation for the adjustment must involve the parameter itself
+               % (e.g., with an offset or slope). If a different parameter used for
+               % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+               % transitions onto the parameter itself and does not put it into mode
+               % 'A'. The <PARAM> field is always calculated with other parameters in
+               % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+               % "real"  parameter  adjustment  as  defined above.  A calculation
+               % without  a  "real"  parameter  adjustment  but  involving  other
+               % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+               % recorded in the BGC-Argofiles.
+               
+               % there is no need to compute derived parameters with PRES_ADJUSTED
+               %                if (~isempty(dataStruct.dataAdj))
+               %                   % compute PPOX_DOXY
+               %                   ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+               %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
+               %                      dataStruct.dataAdj(:, idTempDoxy), ...
+               %                      paramTPhaseDoxy.fillValue, ...
+               %                      paramTempDoxy.fillValue, ...
+               %                      dataStruct.dataAdj(:, idPres), ...
+               %                      paramPres.fillValue, ...
+               %                      paramPpoxDoxy.fillValue);
+               %
+               %                   % add DOXY to the data structure
+               %                   dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
+               %                end
             end
             
             o_outputData{idS} = dataStruct;
@@ -1095,20 +1304,36 @@ switch (a_decoderId)
             dataStruct.paramList = [dataStruct.paramList paramPpoxDoxy];
             dataStruct.data = [dataStruct.data ppoxDoxy];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute PPOX_DOXY
-               ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
-                  dataStruct.dataAdj(:, idTPhaseDoxy), ...
-                  dataStruct.dataAdj(:, idTempDoxy), ...
-                  paramTPhaseDoxy.fillValue, ...
-                  paramTempDoxy.fillValue, ...
-                  dataStruct.dataAdj(:, idPres), ...
-                  paramPres.fillValue, ...
-                  paramPpoxDoxy.fillValue);
-               
-               % add DOXY to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute PPOX_DOXY
+            %                ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+            %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
+            %                   dataStruct.dataAdj(:, idTempDoxy), ...
+            %                   paramTPhaseDoxy.fillValue, ...
+            %                   paramTempDoxy.fillValue, ...
+            %                   dataStruct.dataAdj(:, idPres), ...
+            %                   paramPres.fillValue, ...
+            %                   paramPpoxDoxy.fillValue);
+            %
+            %                % add DOXY to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj ppoxDoxy];
+            %             end
          end
          
          o_outputData = dataStruct;
@@ -1171,15 +1396,32 @@ if (iscell(o_outputData))
          dataStruct.paramList = [dataStruct.paramList paramChla];
          dataStruct.data = [dataStruct.data chla];
          
-         if (~isempty(dataStruct.dataAdj))
-            % compute CHLA
-            chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
-               dataStruct.dataAdj(:, idFluorescenceChla), ...
-               paramFluorescenceChla.fillValue, paramChla.fillValue);
-            
-            % add CHLA to the data structure
-            dataStruct.dataAdj = [dataStruct.dataAdj chla];
-         end
+         % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+         % Hamburg"
+         % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+         % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+         % the calculation for the adjustment must involve the parameter itself
+         % (e.g., with an offset or slope). If a different parameter used for
+         % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+         % transitions onto the parameter itself and does not put it into mode
+         % 'A'. The <PARAM> field is always calculated with other parameters in
+         % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+         % "real"  parameter  adjustment  as  defined above.  A calculation
+         % without  a  "real"  parameter  adjustment  but  involving  other
+         % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+         % recorded in the BGC-Argofiles.
+         
+         % there is no need to compute derived parameters with PRES_ADJUSTED
+         
+         %          if (~isempty(dataStruct.dataAdj))
+         %             % compute CHLA
+         %             chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
+         %                dataStruct.dataAdj(:, idFluorescenceChla), ...
+         %                paramFluorescenceChla.fillValue, paramChla.fillValue);
+         %
+         %             % add CHLA to the data structure
+         %             dataStruct.dataAdj = [dataStruct.dataAdj chla];
+         %          end
       end
       
       o_outputData{idS} = dataStruct;
@@ -1198,15 +1440,31 @@ else
       dataStruct.paramList = [dataStruct.paramList paramChla];
       dataStruct.data = [dataStruct.data chla];
       
-      if (~isempty(dataStruct.dataAdj))
-         % compute CHLA
-         chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
-            dataStruct.dataAdj(:, idFluorescenceChla), ...
-            paramFluorescenceChla.fillValue, paramChla.fillValue);
-         
-         % add CHLA to the data structure
-         dataStruct.dataAdj = [dataStruct.dataAdj chla];
-      end
+      % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+      % Hamburg"
+      % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+      % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+      % the calculation for the adjustment must involve the parameter itself
+      % (e.g., with an offset or slope). If a different parameter used for
+      % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+      % transitions onto the parameter itself and does not put it into mode
+      % 'A'. The <PARAM> field is always calculated with other parameters in
+      % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+      % "real"  parameter  adjustment  as  defined above.  A calculation
+      % without  a  "real"  parameter  adjustment  but  involving  other
+      % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+      % recorded in the BGC-Argofiles.
+      
+      % there is no need to compute derived parameters with PRES_ADJUSTED
+      %       if (~isempty(dataStruct.dataAdj))
+      %          % compute CHLA
+      %          chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
+      %             dataStruct.dataAdj(:, idFluorescenceChla), ...
+      %             paramFluorescenceChla.fillValue, paramChla.fillValue);
+      %
+      %          % add CHLA to the data structure
+      %          dataStruct.dataAdj = [dataStruct.dataAdj chla];
+      %       end
    end
    
    o_outputData = dataStruct;
@@ -1262,20 +1520,20 @@ if (iscell(o_outputData))
       
       if (~isempty(idBetaBackscattering70))
          ctdData = [];
-         ctdDataAdj = [];
+         %          ctdDataAdj = [];
          if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
             ctdData = dataStruct.data(:, [idPres idTemp idPsal]);
-            if (~isempty(dataStruct.dataAdj))
-               ctdDataAdj = dataStruct.dataAdj(:, [idPres idTemp idPsal]);
-            end
+            %             if (~isempty(dataStruct.dataAdj))
+            %                ctdDataAdj = dataStruct.dataAdj(:, [idPres idTemp idPsal]);
+            %             end
          else
             if (~isempty(a_lrCtdData) || ~isempty(a_hrCtdData))
                [ctdData, ctdDataAdj] = get_shallowest_ctd(a_lrCtdData, a_hrCtdData);
                if (~isempty(ctdData))
                   ctdData = repmat(ctdData, size(dataStruct.data, 1), 1);
-                  if (~isempty(ctdData))
-                     ctdDataAdj = repmat(ctdDataAdj, size(dataStruct.data, 1), 1);
-                  end
+                  %                   if (~isempty(ctdData))
+                  %                      ctdDataAdj = repmat(ctdDataAdj, size(dataStruct.data, 1), 1);
+                  %                   end
                end
             end
          end
@@ -1292,17 +1550,33 @@ if (iscell(o_outputData))
             dataStruct.paramList = [dataStruct.paramList paramBbp700];
             dataStruct.data = [dataStruct.data bbp700];
             
-            if (~isempty(dataStruct.dataAdj))
-               % compute BBP700
-               bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
-                  dataStruct.dataAdj(:, idBetaBackscattering70), ...
-                  paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
-                  ctdDataAdj, ...
-                  paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
-               
-               % add CHLA to the data structure
-               dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
-            end
+            % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+            % Hamburg"
+            % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+            % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+            % the calculation for the adjustment must involve the parameter itself
+            % (e.g., with an offset or slope). If a different parameter used for
+            % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+            % transitions onto the parameter itself and does not put it into mode
+            % 'A'. The <PARAM> field is always calculated with other parameters in
+            % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+            % "real"  parameter  adjustment  as  defined above.  A calculation
+            % without  a  "real"  parameter  adjustment  but  involving  other
+            % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+            % recorded in the BGC-Argofiles.
+            
+            % there is no need to compute derived parameters with PRES_ADJUSTED
+            %             if (~isempty(dataStruct.dataAdj))
+            %                % compute BBP700
+            %                bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+            %                   dataStruct.dataAdj(:, idBetaBackscattering70), ...
+            %                   paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+            %                   ctdDataAdj, ...
+            %                   paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+            %
+            %                % add CHLA to the data structure
+            %                dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
+            %             end
          end
       end
       
@@ -1317,20 +1591,20 @@ else
    
    if (~isempty(idBetaBackscattering70))
       ctdData = [];
-      ctdDataAdj = [];
+      %       ctdDataAdj = [];
       if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
          ctdData = dataStruct.data(:, [idPres idTemp idPsal]);
-         if (~isempty(dataStruct.dataAdj))
-            ctdDataAdj = dataStruct.dataAdj(:, [idPres idTemp idPsal]);
-         end
+         %          if (~isempty(dataStruct.dataAdj))
+         %             ctdDataAdj = dataStruct.dataAdj(:, [idPres idTemp idPsal]);
+         %          end
       else
          if (~isempty(a_lrCtdData) || ~isempty(a_hrCtdData))
             [ctdData, ctdDataAdj] = get_shallowest_ctd(a_lrCtdData, a_hrCtdData);
             if (~isempty(ctdData))
                ctdData = repmat(ctdData, size(dataStruct.data, 1), 1);
-               if (~isempty(ctdData))
-                  ctdDataAdj = repmat(ctdDataAdj, size(dataStruct.data, 1), 1);
-               end
+               %                if (~isempty(ctdData))
+               %                   ctdDataAdj = repmat(ctdDataAdj, size(dataStruct.data, 1), 1);
+               %                end
             end
          end
       end
@@ -1347,17 +1621,33 @@ else
          dataStruct.paramList = [dataStruct.paramList paramBbp700];
          dataStruct.data = [dataStruct.data bbp700];
          
-         if (~isempty(dataStruct.dataAdj))
-            % compute BBP700
-            bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
-               dataStruct.dataAdj(:, idBetaBackscattering70), ...
-               paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
-               ctdDataAdj, ...
-               paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
-            
-            % add CHLA to the data structure
-            dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
-         end
+         % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+         % Hamburg"
+         % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+         % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
+         % the calculation for the adjustment must involve the parameter itself
+         % (e.g., with an offset or slope). If a different parameter used for
+         % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+         % transitions onto the parameter itself and does not put it into mode
+         % 'A'. The <PARAM> field is always calculated with other parameters in
+         % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+         % "real"  parameter  adjustment  as  defined above.  A calculation
+         % without  a  "real"  parameter  adjustment  but  involving  other
+         % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
+         % recorded in the BGC-Argofiles.
+         
+         % there is no need to compute derived parameters with PRES_ADJUSTED
+         %          if (~isempty(dataStruct.dataAdj))
+         %             % compute BBP700
+         %             bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+         %                dataStruct.dataAdj(:, idBetaBackscattering70), ...
+         %                paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
+         %                ctdDataAdj, ...
+         %                paramPres.fillValue, paramTemp.fillValue, paramSal.fillValue);
+         %
+         %             % add CHLA to the data structure
+         %             dataStruct.dataAdj = [dataStruct.dataAdj bbp700];
+         %          end
       end
    end
    

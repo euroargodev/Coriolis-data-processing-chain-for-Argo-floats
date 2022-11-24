@@ -40,6 +40,10 @@ global g_decArgo_argosLatDef;
 global g_decArgo_gpsData;
 
 
+if (isempty(a_gpsDataSci) && isempty(a_gpsDataSys))
+   return;
+end
+
 % unpack  GPS data
 gpsLocCycleNum = g_decArgo_gpsData{1};
 gpsLocDate = g_decArgo_gpsData{4};
@@ -47,7 +51,7 @@ gpsLocLon = g_decArgo_gpsData{5};
 gpsLocLat = g_decArgo_gpsData{6};
 gpsLocQc = g_decArgo_gpsData{7};
 gpsLocAccuracy = g_decArgo_gpsData{8};
-if (length(g_decArgo_gpsData) == 9)
+if ((size(g_decArgo_gpsData, 1) == 1) && (length(g_decArgo_gpsData) == 9))
    gpsLocNbSat = -1;
    gpsLocTimeToFix = -1;
 else

@@ -47,7 +47,21 @@ else
    zoneNum = idT(end) + 1;
 end
 
-if (~isnan(driftSampPeriod(zoneNum)) && (driftSampPeriod(zoneNum) ~= -1))
+% float anomaly: if the drift measurement is present it should have been sampled
+% in a zone where driftSampPeriod > 0 => look in surrounding zones
+if ((driftSampPeriod(zoneNum) == -1) || (driftSampPeriod(zoneNum) == 0))
+   [~, idMin] = min(abs(zoneThreshold-a_firstPres));
+   % possible zoneNum are idMin and idMin + 1 check the value that have not been
+   % checked
+   if (zoneNum == idMin)
+      zoneNum = idMin + 1;
+   else
+      zoneNum = idMin;
+   end
+end
+
+if (~isnan(driftSampPeriod(zoneNum)) && ...
+      (driftSampPeriod(zoneNum) ~= -1) && (driftSampPeriod(zoneNum) ~= 0))
    
    for id = 1:length(a_pressure)-1
             

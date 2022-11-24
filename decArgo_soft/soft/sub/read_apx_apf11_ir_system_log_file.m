@@ -66,7 +66,14 @@ while 1
    
    idSep = strfind(line, '|');
    if (length(idSep) < 3)
-      fprintf('WARNING: System_log parsing: Less than 3 separators in line "%s" => ignored\n', line);
+      if (isempty(idSep))
+         % this line is last part of previous event
+         if (~isempty(o_events))
+            o_events(end).message = [o_events(end).message line];
+         end
+      else
+         fprintf('WARNING: System_log parsing: Less than 3 separators in line "%s" => ignored\n', line);
+      end
       continue;
    end
    

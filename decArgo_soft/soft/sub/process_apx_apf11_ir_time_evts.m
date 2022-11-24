@@ -56,6 +56,18 @@ for idEv = 1:length(events)
    end
 end
 
+% from 'SURFACE' events
+PATTERN_BLADDER_INFLATION_START = 'Inflating air bladder';
+
+events = a_events(find(strcmp({a_events.functionName}, 'SURFACE')));
+for idEv = 1:length(events)
+   evt = events(idEv);
+   dataStr = evt.message;
+   if (any(strfind(dataStr, PATTERN_BLADDER_INFLATION_START)))
+      o_cycleTimeData.bladderInflationStartDateSys = evt.timestamp;
+   end
+end
+
 % from 'sky_search' events
 PATTERN_TRANSMISSION_START = 'Found sky.';
 

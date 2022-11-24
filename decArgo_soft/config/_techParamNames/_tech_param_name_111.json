@@ -116,7 +116,7 @@
       "TECH_PARAM_DEC_ID" : "115",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "Cumulative valve actions at the surface",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of solenoid valve actions at the surface until the crossing of the GAP threshold. Number computed by the float from previous cycles behaviour."
    },
    "TECH_PARAM_16" :
@@ -124,7 +124,7 @@
       "TECH_PARAM_DEC_ID" : "116",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "Additionnal valve actions at the surface",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of solenoid valve actions at the surface until the crossing of the GAP threshold. These actions are performed after the NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT previous ones."
    },
    "TECH_PARAM_17" :
@@ -132,7 +132,7 @@
       "TECH_PARAM_DEC_ID" : "117",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "Buoyancy inversion start day (relative to mission start day)",
-      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_BuoyancyInversionStart_FloatDay",
+      "TECH_PARAM_NAME" : "CLOCK_BuoyancyInversionStart_FloatDay",
       "TECH_PARAM_DESCRIPTION" : "Time when the float starts the buoyancy inversion phase when ice was detected during ascent."
    },
    "TECH_PARAM_18" :
@@ -140,7 +140,7 @@
       "TECH_PARAM_DEC_ID" : "118",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "Buoyancy inversion start hour (resolution : 1 minute)",
-      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_BuoyancyInversionStart_HHMM",
+      "TECH_PARAM_NAME" : "CLOCK_BuoyancyInversionStart_HHMM",
       "TECH_PARAM_DESCRIPTION" : "Time when the float starts the buoyancy inversion phase when ice was detected during ascent."
    },
    "TECH_PARAM_19" :
@@ -148,7 +148,7 @@
       "TECH_PARAM_DEC_ID" : "119",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "",
-      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_BuoyancyInversionStart_YYYYMMDDHHMMSS",
+      "TECH_PARAM_NAME" : "CLOCK_BuoyancyInversionStart_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Time when the float starts the buoyancy inversion phase when ice was detected during ascent."
    },
    "TECH_PARAM_20" :
@@ -156,7 +156,7 @@
       "TECH_PARAM_DEC_ID" : "120",
       "TECH_PARAM_MSG_ID" : "253",
       "TECH_PARAM_MSG_LABEL" : "Number of valve actions",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_BuoyancyInversionValveActions_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_BuoyancyInversionValveActions_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent."
    },
    "TECH_PARAM_21" :

@@ -70,7 +70,7 @@ end
 descentStartTime = [];
 for idFile = 1:length(a_systemLogFileList)
    
-   sysFilePathName = a_systemLogFileList{1};
+   sysFilePathName = a_systemLogFileList{idFile};
    
    % read input file
    [error, events] = read_apx_apf11_ir_system_log_file(sysFilePathName, 1);
@@ -78,6 +78,10 @@ for idFile = 1:length(a_systemLogFileList)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s => ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sysFilePathName);
       return;
+   end
+   
+   if (isempty(events))
+      continue;
    end
 
    % retrieve useful information
@@ -88,7 +92,8 @@ for idFile = 1:length(a_systemLogFileList)
          strcmp({events.functionName}, 'go_to_state') | ...
          strcmp({events.functionName}, 'test'));
       if (~isempty(idEvts))
-         o_metaData = process_apx_apf11_ir_meta_data_evts(events(idEvts));
+         metaData = process_apx_apf11_ir_meta_data_evts(events(idEvts));
+         o_metaData = [o_metaData metaData];
       end
    end
    
@@ -126,6 +131,7 @@ for idFile = 1:length(a_systemLogFileList)
    
    % timing events
    idEvts = find(strcmp({events.functionName}, 'go_to_state') | ...
+      strcmp({events.functionName}, 'SURFACE') | ...
       strcmp({events.functionName}, 'sky_search') | ...
       strcmp({events.functionName}, 'upload_file'));
    if (~isempty(idEvts))
@@ -162,7 +168,8 @@ for idFile = 1:length(a_systemLogFileList)
    % GPS data
    idEvts = find(strcmp({events.functionName}, 'GPS'));
    if (~isempty(idEvts))
-      o_gpsData = process_apx_apf11_ir_gps_evts(events(idEvts));
+      gpsData = process_apx_apf11_ir_gps_evts(events(idEvts));
+      o_gpsData = [o_gpsData; gpsData];
    end
 end
 

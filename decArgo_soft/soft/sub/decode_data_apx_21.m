@@ -3,7 +3,8 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_profData, o_metaData, o_techData, ...
-%    o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+%    o_trajData, o_timeInfo, o_tabTechNMeas, ...
+%    o_timeData, o_presOffsetData] = ...
 %    decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
 %    a_sensorData, a_sensorDate, a_cycleNum, a_timeData, a_presOffsetData)
 %
@@ -24,6 +25,7 @@
 %   o_techData       : technical data
 %   o_trajData       : trajectory data
 %   o_timeInfo       : time info from test and data messages
+%   o_tabTechNMeas   : N_MEASUREMENT structure of technical data time series
 %   o_timeData       : updated cycle time data structure
 %   o_presOffsetData : updated pressure offset data structure
 %
@@ -33,10 +35,11 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/10/2018 - RNU - creation
+%   07/16/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_profData, o_metaData, o_techData, ...
-   o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+   o_trajData, o_timeInfo, o_tabTechNMeas, ...
+   o_timeData, o_presOffsetData] = ...
    decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
    a_sensorData, a_sensorDate, a_cycleNum, a_timeData, a_presOffsetData)
 
@@ -47,6 +50,7 @@ o_metaData = [];
 o_techData = [];
 o_trajData = [];
 o_timeInfo = [];
+o_tabTechNMeas = [];
 o_timeData = a_timeData;
 o_presOffsetData = a_presOffsetData;
 
@@ -89,6 +93,9 @@ NB_PARAM_BYTE = 6;
 profData = ones(778, 1)*hex2dec('FF'); % 778 = 24 + 754
 profReceived = zeros(778, 1);
 profRedundancy = ones(778, 1)*-1;
+
+% to store time series of tech data
+techSeries = [];
 
 % process each sensor data message
 profileLength = -1;
@@ -519,14 +526,35 @@ for idL = 1:size(a_sensorData, 1)
       end
       
       tabSurfPres = [];
+      techSeries.SURF_PRES = [];
+      techSeries.SURF_PRES.value = [];
+      techSeries.SURF_PRES.time = [];
       for id = 1:length(idListFB)
-         tabSurfPres(end+1) = sensor_2_value_for_apex_apf11_pressure_1byte(decDataBis(id, 9));
+         surfPresValue = sensor_2_value_for_apex_apf11_pressure_1byte(decDataBis(id, 9));
+         techSeries.SURF_PRES.value(end+1) = surfPresValue;
+         techSeries.SURF_PRES.time(end+1) = decDateBis(id);        
+         tabSurfPres(end+1) = surfPresValue;
       end
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Averaged surface pressure during transmission';
       dataStruct.techId = 1003;
       dataStruct.value = num2str(round(mean(tabSurfPres)*1000)/1000);
       o_techData{end+1} = dataStruct;
+      
+      % 'Surface pressure at end of Up Time' is always 0 for this float firmware
+      % => this item is not used for PressOffset.
+      % We use 'Averaged surface pressure during transmission' instead.
+      dataStruct = get_apx_tech_data_init_struct(msgRed);
+      dataStruct.label = 'Averaged surface pressure during transmission';
+      dataStruct.techId = 1004;
+      dataStruct.value = num2str(round(mean(tabSurfPres)*1000)/1000);
+      o_techData{end+1} = dataStruct;
+
+      % 'Surface pressure at end of Up Time' is always 0 for this float firmware
+      % => this item is not used for PressOffset.
+      % We use 'Averaged surface pressure during transmission' instead.
+      o_presOffsetData.cycleNum(end+1) = a_cycleNum;
+      o_presOffsetData.cyclePresOffset(end+1) = round(mean(tabSurfPres)*1000)/1000;
       
       dataStruct = get_apx_misc_data_init_struct('Data msg', msgNum, msgRed, msgDate);
       dataStruct.label = 'Surface pressure at end of Up Time';
@@ -537,14 +565,20 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.unit = 'dbar';
       o_miscInfo{end+1} = dataStruct;
       
-      dataStruct = get_apx_tech_data_init_struct(msgRed);
-      dataStruct.label = 'Surface pressure at end of Up Time';
-      dataStruct.techId = 1004;
-      dataStruct.value = num2str(round(sensor_2_value_for_apex_apf11_pressure(decData(10))*1000)/1000);
-      o_techData{end+1} = dataStruct;
+      % 'Surface pressure at end of Up Time' is always 0 for this float firmware
+      % => this item is not used for PressOffset.
+      % We use 'Averaged surface pressure during transmission' instead.
+      %       dataStruct = get_apx_tech_data_init_struct(msgRed);
+      %       dataStruct.label = 'Surface pressure at end of Up Time';
+      %       dataStruct.techId = 1004;
+      %       dataStruct.value = num2str(round(sensor_2_value_for_apex_apf11_pressure(decData(10))*1000)/1000);
+      %       o_techData{end+1} = dataStruct;
       
-      o_presOffsetData.cycleNum(end+1) = a_cycleNum;
-      o_presOffsetData.cyclePresOffset(end+1) = sensor_2_value_for_apex_apf11_pressure(decData(10));
+      % 'Surface pressure at end of Up Time' is always 0 for this float firmware
+      % => this item is not used for PressOffset.
+      % We use 'Averaged surface pressure during transmission' instead.
+      %       o_presOffsetData.cycleNum(end+1) = a_cycleNum;
+      %       o_presOffsetData.cyclePresOffset(end+1) = sensor_2_value_for_apex_apf11_pressure(decData(10));
       
       dataStruct = get_apx_misc_data_init_struct('Data msg', msgNum, msgRed, msgDate);
       dataStruct.label = 'Piston position when surface detected';
@@ -1311,6 +1345,13 @@ if (nbLev > 0)
    
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed];
+end
+
+if (~isempty(techSeries))
+   if (isfield(techSeries, 'SURF_PRES') && ~isempty(techSeries.SURF_PRES.value))
+      o_tabTechNMeas = create_technical_time_series_apx_21_22( ...
+         techSeries.SURF_PRES, 'SURFACE_PRESSURE_DBAR');
+   end
 end
 
 return;

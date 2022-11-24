@@ -70,6 +70,14 @@ if (~isempty(a_sampleCfg))
    [~, idMis] = max([a_sampleCfg{:, 1}]);
    sampleConfData = a_sampleCfg{idMis, 2};
    [configSampName, configSampVal] = create_sampling_configuration(sampleConfData);
+   % clear existing sampling configuration
+   idF = find(cellfun(@(x) strcmp(x(1:14), 'CONFIG_SAMPLE_'), configNames));
+   newConfigValues(idF) = nan;
+   idF = find(cellfun(@(x) strcmp(x(1:15), 'CONFIG_PROFILE_'), configNames));
+   newConfigValues(idF) = nan;
+   idF = find(cellfun(@(x) strcmp(x(1:15), 'CONFIG_MEASURE_'), configNames));
+   newConfigValues(idF) = nan;
+   % update existing sampling configuration
    for id = 1:length(configSampName)
       configName = configSampName{id};
       configValue = str2double(configSampVal{id});

@@ -253,7 +253,7 @@ for idFloat = 1:length(floatList)
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
-   sensorList = get_sensor_list(wmoNumber);
+   sensorList = get_sensor_list_cts4(wmoNumber);
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
    
    % add the calibration coefficients for ECO3 and OCR sensors (coming from the
@@ -357,6 +357,37 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
+      case {'5.94'}
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = char(metaData(idForWmo(idF(id)), 5));
+            if (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+               fieldName = ['TempCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_CONC_COEF_', length('AANDERAA_OPTODE_CONC_COEF_')) == 1)
+               fieldName = ['ConcCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_A', length('AANDERAA_OPTODE_FOIL_COEFF_A')) == 1)
+               fieldName = ['FoilCoefA' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_A')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_COEFF_B', length('AANDERAA_OPTODE_FOIL_COEFF_B')) == 1)
+               fieldName = ['FoilCoefB' calibName(length('AANDERAA_OPTODE_FOIL_COEFF_B')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_T', length('AANDERAA_OPTODE_FOIL_POLYDEG_T')) == 1)
+               fieldName = ['FoilPolyDegT' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_T')+1:end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_FOIL_POLYDEG_O', length('AANDERAA_OPTODE_FOIL_POLYDEG_O')) == 1)
+               fieldName = ['FoilPolyDegO' calibName(length('AANDERAA_OPTODE_FOIL_POLYDEG_O')+1:end)];
+            end
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end               
    end
    
    % add the calibration information for SUNA sensor

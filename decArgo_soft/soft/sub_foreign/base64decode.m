@@ -51,7 +51,7 @@ if nargin<2, outfname=''; end
 %       fclose(fid);
 %    end
 % end
-x = uint8(x(:)); % unify format
+% x = uint8(x(:)); % unify format
 
 %% Perform conversion
 switch (alg)

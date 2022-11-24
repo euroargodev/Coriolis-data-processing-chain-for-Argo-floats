@@ -45,7 +45,7 @@ switch (a_decoderId)
       % Apex Iridium & Navis
       o_specificValue = 254;
 
-   case {1021, 1022, 1321}
+   case {1021, 1022, 1321, 1322}
       % APF11 Argos & iridium (no specific value)
       o_specificValue = -1;
       

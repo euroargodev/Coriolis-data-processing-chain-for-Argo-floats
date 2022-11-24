@@ -198,229 +198,245 @@ if (~isempty(o_profData))
          profDataAdj(idNoDef, idPres) = profDataAdj(idNoDef, idPres) - a_presOffset;
          o_profData.dataAdj = profDataAdj;
          
-         idDoxy = find(strcmp({profParamList.name}, 'DOXY') == 1, 1);
-         if (~isempty(idDoxy))
-            
-            % compute DOXY with the adjusted pressure
-            switch (a_decoderId)
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               case {1006, 1008, 1014, 1016} % 093008, 021208, 082807, 090810
-                  
-                  idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
-                  idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
-                  idBPhaseDoxy = find(strcmp({profParamList.name}, 'BPHASE_DOXY') == 1, 1);
-                  idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
-                  if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idBPhaseDoxy) && ~isempty(idTempDoxy))
-                     
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramTemp = get_netcdf_param_attributes('TEMP');
-                     paramSal = get_netcdf_param_attributes('PSAL');
-                     paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
-                     paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-                     paramDoxy = get_netcdf_param_attributes('DOXY');
-                     
-                     profDataAdj(:, idDoxy) = compute_DOXY_1006_1008_1014_1016( ...
-                        profDataAdj(:, idBPhaseDoxy), ...
-                        profDataAdj(:, idTempDoxy), ...
-                        paramBPhaseDoxy.fillValue, ...
-                        paramTempDoxy.fillValue, ...
-                        profDataAdj(:, idPres), ...
-                        profDataAdj(:, idTemp), ...
-                        profDataAdj(:, idPsal), ...
-                        paramPres.fillValue, ...
-                        paramTemp.fillValue, ...
-                        paramSal.fillValue, ...
-                        paramDoxy.fillValue);
-                     
-                     o_profData.dataAdj = profDataAdj;
-                  end
-                  
-                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               case {1009} % 032213
-                  
-                  idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
-                  idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
-                  idTPhaseDoxy = find(strcmp({profParamList.name}, 'TPHASE_DOXY') == 1, 1);
-                  idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
-                  if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
-                     
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramTemp = get_netcdf_param_attributes('TEMP');
-                     paramSal = get_netcdf_param_attributes('PSAL');
-                     paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
-                     paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-                     paramDoxy = get_netcdf_param_attributes('DOXY');
-                     
-                     profDataAdj(:, idDoxy) = compute_DOXY_1009_1107_1112_1113_1201( ...
-                        profDataAdj(:, idTPhaseDoxy), ...
-                        profDataAdj(:, idTempDoxy), ...
-                        paramTPhaseDoxy.fillValue, ...
-                        paramTempDoxy.fillValue, ...
-                        profDataAdj(:, idPres), ...
-                        profDataAdj(:, idTemp), ...
-                        profDataAdj(:, idPsal), ...
-                        paramPres.fillValue, ...
-                        paramTemp.fillValue, ...
-                        paramSal.fillValue, ...
-                        paramDoxy.fillValue);
-                     
-                     o_profData.dataAdj = profDataAdj;
-                  end
-                  
-                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               case {1013, 1015} % 071807, 020110
-                  
-                  idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
-                  idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
-                  idFrequencyDoxy = find(strcmp({profParamList.name}, 'FREQUENCY_DOXY') == 1, 1);
-                  if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idFrequencyDoxy))
-                     
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramTemp = get_netcdf_param_attributes('TEMP');
-                     paramSal = get_netcdf_param_attributes('PSAL');
-                     paramFrequencyDoxy = get_netcdf_param_attributes('FREQUENCY_DOXY');
-                     paramDoxy = get_netcdf_param_attributes('DOXY');
-                     
-                     profDataAdj(:, idDoxy) = compute_DOXY_SBE_1013_1015_1101( ...
-                        profDataAdj(:, idFrequencyDoxy), ...
-                        paramFrequencyDoxy.fillValue, ...
-                        profDataAdj(:, idPres), ...
-                        profDataAdj(:, idTemp), ...
-                        profDataAdj(:, idPsal), ...
-                        paramPres.fillValue, ...
-                        paramTemp.fillValue, ...
-                        paramSal.fillValue, ...
-                        paramDoxy.fillValue);
-                     
-                     o_profData.dataAdj = profDataAdj;
-                  end
-                  
-               otherwise
-                  fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in adjust_profile to adjust DOXY for decoderId #%d\n', ...
-                     g_decArgo_floatNum, ...
-                     g_decArgo_cycleNum, ...
-                     a_decoderId);
-                  
-            end
-         end
-         
-         idPpoxDoxy = find(strcmp({profParamList.name}, 'PPOX_DOXY') == 1, 1);
-         if (~isempty(idPpoxDoxy))
-            
-            % compute PPOX_DOXY with the adjusted pressure
-            switch (a_decoderId)
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               case {1006, 1008, 1014, 1016} % 093008, 021208, 082807, 090810
-                  
-                  idBPhaseDoxy = find(strcmp({profParamList.name}, 'BPHASE_DOXY') == 1, 1);
-                  idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
-                  if (~isempty(idBPhaseDoxy) && ~isempty(idTempDoxy))
-                     
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
-                     paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-                     paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
-                     
-                     profDataAdj(:, idPpoxDoxy) = compute_PPOX_DOXY_1006_1008_1014_1016( ...
-                        profDataAdj(:, idBPhaseDoxy), ...
-                        profDataAdj(:, idTempDoxy), ...
-                        paramBPhaseDoxy.fillValue, ...
-                        paramTempDoxy.fillValue, ...
-                        profDataAdj(:, idPres), ...
-                        paramPres.fillValue, ...
-                        paramPpoxDoxy.fillValue);
-                     
-                     o_profData.dataAdj = profDataAdj;
-                  end
-                  
-                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               case {1009} % 032213
-                  
-                  idTPhaseDoxy = find(strcmp({profParamList.name}, 'TPHASE_DOXY') == 1, 1);
-                  idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
-                  if (~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
-                     
-                     paramPres = get_netcdf_param_attributes('PRES');
-                     paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
-                     paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-                     paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
-                     
-                     profDataAdj(:, idPpoxDoxy) = compute_PPOX_DOXY_1009_1112_1201( ...
-                        profDataAdj(:, idTPhaseDoxy), ...
-                        profDataAdj(:, idTempDoxy), ...
-                        paramTPhaseDoxy.fillValue, ...
-                        paramTempDoxy.fillValue, ...
-                        profDataAdj(:, idPres), ...
-                        paramPres.fillValue, ...
-                        paramPpoxDoxy.fillValue);
-                     
-                     o_profData.dataAdj = profDataAdj;
-                  end
-                  
-               otherwise
-                  fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in adjust_profile to adjust DOXY for decoderId #%d\n', ...
-                     g_decArgo_floatNum, ...
-                     g_decArgo_cycleNum, ...
-                     a_decoderId);
-                  
-            end
-         end
-         
-         idBbp700 = find(strcmp({profParamList.name}, 'BBP700') == 1, 1);
-         if (~isempty(idBbp700))
-            
-            idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
-            idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
-            idBetaBackscattering700 = find(strcmp({profParamList.name}, 'BETA_BACKSCATTERING700') == 1, 1);
-            ptsDataAdj = [];
-            if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idBetaBackscattering700))
-               ptsDataAdj = profDataAdj(:, [idPres idTemp idPsal]);
-            else
-               if (~isempty(a_ctdData))
-                  idPres = find(strcmp({profParamList.name}, 'PRES') == 1, 1);
-                  idTemp = find(strcmp({a_ctdData.paramList.name}, 'TEMP') == 1, 1);
-                  idPsal = find(strcmp({a_ctdData.paramList.name}, 'PSAL') == 1, 1);
-                  
-                  if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
-                     
-                     paramTemp = get_netcdf_param_attributes('TEMP');
-                     paramSal = get_netcdf_param_attributes('PSAL');
+         % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
+         % Hamburg"
+         % https://urldefense.proofpoint.com/v2/url?u=http-3A__www.argodatamgt.org_content_download_30911_209493_file_minutes-5FBGC6-5FADMT18.pdf&d=DwMF-g&c=cxWN2QSDopt5SklNfbjIjg&r=fgAxvhIEa8xKbewlJSCnqTNKEp7iVpQijLXqty7F4o0&m=b51VrZMSU8AESLU7IdtseumUTfmUSYt6_AJ3vWzt3YU&s=l3BdX_Ig0NcqRyqmx5lO7HjLecBuUPhaXmkmIo3g6yw&e=
+         % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time), 
+         % the calculation for the adjustment must involve the parameter itself 
+         % (e.g., with an offset or slope). If a different parameter used for 
+         % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
+         % transitions onto the parameter itself and does not put it into mode 
+         % 'A'. The <PARAM> field is always calculated with other parameters in 
+         % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
+         % "real"  parameter  adjustment  as  defined above.  A calculation  
+         % without  a  "real"  parameter  adjustment  but  involving  other  
+         % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not 
+         % recorded in the BGC-Argofiles.
 
-                     idLev = find((a_ctdData.dataAdj(:, idTemp) ~= paramTemp.fillValue) & ...
-                        (a_ctdData.dataAdj(:, idPsal) ~= paramSal.fillValue));
-                     if (~isempty(idLev))
-                        idLev = idLev(end);
-                        ptsDataAdj = [profDataAdj(:, idPres) ...
-                           ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idTemp) ...
-                           ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idPsal)];
-                     end
-                  end
-               end
-            end
-            
-            if (~isempty(ptsDataAdj))
-               
-               paramPres = get_netcdf_param_attributes('PRES');
-               paramTemp = get_netcdf_param_attributes('TEMP');
-               paramSal = get_netcdf_param_attributes('PSAL');
-               paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-               paramBbp700 = get_netcdf_param_attributes('BBP700');
-               
-               profDataAdj(:, idBbp700) = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
-                  profDataAdj(:, idBetaBackscattering700), ...
-                  paramBetaBackscattering700.fillValue, ...
-                  paramBbp700.fillValue, ...
-                  ptsDataAdj, ...
-                  paramPres.fillValue, ...
-                  paramTemp.fillValue, ...
-                  paramSal.fillValue);
-               
-               o_profData.dataAdj = profDataAdj;
-               
-            end
-         end
+         % there is no need to compute derived parameters with PRES_ADJUSTED
+         %          idDoxy = find(strcmp({profParamList.name}, 'DOXY') == 1, 1);
+         %          if (~isempty(idDoxy))
+         %
+         %             % compute DOXY with the adjusted pressure
+         %             switch (a_decoderId)
+         %
+         %                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %                case {1006, 1008, 1014, 1016} % 093008, 021208, 082807, 090810
+         %
+         %                   idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
+         %                   idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
+         %                   idBPhaseDoxy = find(strcmp({profParamList.name}, 'BPHASE_DOXY') == 1, 1);
+         %                   idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
+         %                   if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idBPhaseDoxy) && ~isempty(idTempDoxy))
+         %
+         %                      paramPres = get_netcdf_param_attributes('PRES');
+         %                      paramTemp = get_netcdf_param_attributes('TEMP');
+         %                      paramSal = get_netcdf_param_attributes('PSAL');
+         %                      paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
+         %                      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         %                      paramDoxy = get_netcdf_param_attributes('DOXY');
+         %
+         %                      profDataAdj(:, idDoxy) = compute_DOXY_1006_1008_1014_1016( ...
+         %                         profDataAdj(:, idBPhaseDoxy), ...
+         %                         profDataAdj(:, idTempDoxy), ...
+         %                         paramBPhaseDoxy.fillValue, ...
+         %                         paramTempDoxy.fillValue, ...
+         %                         profDataAdj(:, idPres), ...
+         %                         profDataAdj(:, idTemp), ...
+         %                         profDataAdj(:, idPsal), ...
+         %                         paramPres.fillValue, ...
+         %                         paramTemp.fillValue, ...
+         %                         paramSal.fillValue, ...
+         %                         paramDoxy.fillValue);
+         %
+         %                      o_profData.dataAdj = profDataAdj;
+         %                   end
+         %
+         %                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %                case {1009} % 032213
+         %
+         %                   idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
+         %                   idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
+         %                   idTPhaseDoxy = find(strcmp({profParamList.name}, 'TPHASE_DOXY') == 1, 1);
+         %                   idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
+         %                   if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
+         %
+         %                      paramPres = get_netcdf_param_attributes('PRES');
+         %                      paramTemp = get_netcdf_param_attributes('TEMP');
+         %                      paramSal = get_netcdf_param_attributes('PSAL');
+         %                      paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
+         %                      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         %                      paramDoxy = get_netcdf_param_attributes('DOXY');
+         %
+         %                      profDataAdj(:, idDoxy) = compute_DOXY_1009_1107_1112_1113_1201( ...
+         %                         profDataAdj(:, idTPhaseDoxy), ...
+         %                         profDataAdj(:, idTempDoxy), ...
+         %                         paramTPhaseDoxy.fillValue, ...
+         %                         paramTempDoxy.fillValue, ...
+         %                         profDataAdj(:, idPres), ...
+         %                         profDataAdj(:, idTemp), ...
+         %                         profDataAdj(:, idPsal), ...
+         %                         paramPres.fillValue, ...
+         %                         paramTemp.fillValue, ...
+         %                         paramSal.fillValue, ...
+         %                         paramDoxy.fillValue);
+         %
+         %                      o_profData.dataAdj = profDataAdj;
+         %                   end
+         %
+         %                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %                case {1013, 1015} % 071807, 020110
+         %
+         %                   idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
+         %                   idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
+         %                   idFrequencyDoxy = find(strcmp({profParamList.name}, 'FREQUENCY_DOXY') == 1, 1);
+         %                   if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idFrequencyDoxy))
+         %
+         %                      paramPres = get_netcdf_param_attributes('PRES');
+         %                      paramTemp = get_netcdf_param_attributes('TEMP');
+         %                      paramSal = get_netcdf_param_attributes('PSAL');
+         %                      paramFrequencyDoxy = get_netcdf_param_attributes('FREQUENCY_DOXY');
+         %                      paramDoxy = get_netcdf_param_attributes('DOXY');
+         %
+         %                      profDataAdj(:, idDoxy) = compute_DOXY_SBE_1013_1015_1101( ...
+         %                         profDataAdj(:, idFrequencyDoxy), ...
+         %                         paramFrequencyDoxy.fillValue, ...
+         %                         profDataAdj(:, idPres), ...
+         %                         profDataAdj(:, idTemp), ...
+         %                         profDataAdj(:, idPsal), ...
+         %                         paramPres.fillValue, ...
+         %                         paramTemp.fillValue, ...
+         %                         paramSal.fillValue, ...
+         %                         paramDoxy.fillValue);
+         %
+         %                      o_profData.dataAdj = profDataAdj;
+         %                   end
+         %
+         %                otherwise
+         %                   fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in adjust_profile to adjust DOXY for decoderId #%d\n', ...
+         %                      g_decArgo_floatNum, ...
+         %                      g_decArgo_cycleNum, ...
+         %                      a_decoderId);
+         %
+         %             end
+         %          end
+         %
+         %          idPpoxDoxy = find(strcmp({profParamList.name}, 'PPOX_DOXY') == 1, 1);
+         %          if (~isempty(idPpoxDoxy))
+         %
+         %             % compute PPOX_DOXY with the adjusted pressure
+         %             switch (a_decoderId)
+         %
+         %                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %                case {1006, 1008, 1014, 1016} % 093008, 021208, 082807, 090810
+         %
+         %                   idBPhaseDoxy = find(strcmp({profParamList.name}, 'BPHASE_DOXY') == 1, 1);
+         %                   idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
+         %                   if (~isempty(idBPhaseDoxy) && ~isempty(idTempDoxy))
+         %
+         %                      paramPres = get_netcdf_param_attributes('PRES');
+         %                      paramBPhaseDoxy = get_netcdf_param_attributes('BPHASE_DOXY');
+         %                      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         %                      paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
+         %
+         %                      profDataAdj(:, idPpoxDoxy) = compute_PPOX_DOXY_1006_1008_1014_1016( ...
+         %                         profDataAdj(:, idBPhaseDoxy), ...
+         %                         profDataAdj(:, idTempDoxy), ...
+         %                         paramBPhaseDoxy.fillValue, ...
+         %                         paramTempDoxy.fillValue, ...
+         %                         profDataAdj(:, idPres), ...
+         %                         paramPres.fillValue, ...
+         %                         paramPpoxDoxy.fillValue);
+         %
+         %                      o_profData.dataAdj = profDataAdj;
+         %                   end
+         %
+         %                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %                case {1009} % 032213
+         %
+         %                   idTPhaseDoxy = find(strcmp({profParamList.name}, 'TPHASE_DOXY') == 1, 1);
+         %                   idTempDoxy = find(strcmp({profParamList.name}, 'TEMP_DOXY') == 1, 1);
+         %                   if (~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
+         %
+         %                      paramPres = get_netcdf_param_attributes('PRES');
+         %                      paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
+         %                      paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
+         %                      paramPpoxDoxy = get_netcdf_param_attributes('PPOX_DOXY');
+         %
+         %                      profDataAdj(:, idPpoxDoxy) = compute_PPOX_DOXY_1009_1112_1201( ...
+         %                         profDataAdj(:, idTPhaseDoxy), ...
+         %                         profDataAdj(:, idTempDoxy), ...
+         %                         paramTPhaseDoxy.fillValue, ...
+         %                         paramTempDoxy.fillValue, ...
+         %                         profDataAdj(:, idPres), ...
+         %                         paramPres.fillValue, ...
+         %                         paramPpoxDoxy.fillValue);
+         %
+         %                      o_profData.dataAdj = profDataAdj;
+         %                   end
+         %
+         %                otherwise
+         %                   fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in adjust_profile to adjust DOXY for decoderId #%d\n', ...
+         %                      g_decArgo_floatNum, ...
+         %                      g_decArgo_cycleNum, ...
+         %                      a_decoderId);
+         %
+         %             end
+         %          end
+         %
+         %          idBbp700 = find(strcmp({profParamList.name}, 'BBP700') == 1, 1);
+         %          if (~isempty(idBbp700))
+         %
+         %             idTemp = find(strcmp({profParamList.name}, 'TEMP') == 1, 1);
+         %             idPsal = find(strcmp({profParamList.name}, 'PSAL') == 1, 1);
+         %             idBetaBackscattering700 = find(strcmp({profParamList.name}, 'BETA_BACKSCATTERING700') == 1, 1);
+         %             ptsDataAdj = [];
+         %             if (~isempty(idTemp) && ~isempty(idPsal) && ~isempty(idBetaBackscattering700))
+         %                ptsDataAdj = profDataAdj(:, [idPres idTemp idPsal]);
+         %             else
+         %                if (~isempty(a_ctdData))
+         %                   idPres = find(strcmp({profParamList.name}, 'PRES') == 1, 1);
+         %                   idTemp = find(strcmp({a_ctdData.paramList.name}, 'TEMP') == 1, 1);
+         %                   idPsal = find(strcmp({a_ctdData.paramList.name}, 'PSAL') == 1, 1);
+         %
+         %                   if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal))
+         %
+         %                      paramTemp = get_netcdf_param_attributes('TEMP');
+         %                      paramSal = get_netcdf_param_attributes('PSAL');
+         %
+         %                      idLev = find((a_ctdData.dataAdj(:, idTemp) ~= paramTemp.fillValue) & ...
+         %                         (a_ctdData.dataAdj(:, idPsal) ~= paramSal.fillValue));
+         %                      if (~isempty(idLev))
+         %                         idLev = idLev(end);
+         %                         ptsDataAdj = [profDataAdj(:, idPres) ...
+         %                            ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idTemp) ...
+         %                            ones(size(profDataAdj, 1), 1)*a_ctdData.dataAdj(idLev, idPsal)];
+         %                      end
+         %                   end
+         %                end
+         %             end
+         %
+         %             if (~isempty(ptsDataAdj))
+         %
+         %                paramPres = get_netcdf_param_attributes('PRES');
+         %                paramTemp = get_netcdf_param_attributes('TEMP');
+         %                paramSal = get_netcdf_param_attributes('PSAL');
+         %                paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
+         %                paramBbp700 = get_netcdf_param_attributes('BBP700');
+         %
+         %                profDataAdj(:, idBbp700) = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+         %                   profDataAdj(:, idBetaBackscattering700), ...
+         %                   paramBetaBackscattering700.fillValue, ...
+         %                   paramBbp700.fillValue, ...
+         %                   ptsDataAdj, ...
+         %                   paramPres.fillValue, ...
+         %                   paramTemp.fillValue, ...
+         %                   paramSal.fillValue);
+         %
+         %                o_profData.dataAdj = profDataAdj;
+         %
+         %             end
+         %          end
       end
    end
 end

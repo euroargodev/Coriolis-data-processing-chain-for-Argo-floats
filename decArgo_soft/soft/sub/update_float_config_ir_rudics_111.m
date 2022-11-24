@@ -84,7 +84,7 @@ switch a_packetType
       else
          
          % specific parameters
-         for id = 0:18
+         for id = 0:19
             name = sprintf('CONFIG_PC_%d_1_%d', a_data(1), id);
             idPos = find(strcmp(name, configNames) == 1, 1);
             if (~isempty(idPos))

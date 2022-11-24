@@ -1856,13 +1856,13 @@ if (~isempty(a_tabSensors))
                % item bit lengths
                tabNbBits = [6 2 ...
                   16 8 8 ...
-                  32 repmat(32, 1, 19), ... % there are at most 19 specific parameters
-                  432];
+                  32 repmat(32, 1, 20), ... % there are at most 20 specific parameters
+                  400];
                % get item bits
                values = get_bits(firstBit, tabNbBits, msgData);
                
-               values(7:25) = typecast(uint32(values(7:25)), 'single');
-               values(26:55) = nan;
+               values(7:26) = typecast(uint32(values(7:26)), 'single');
+               values(27:55) = nan;
             end
             
             cycleNum = values(3);

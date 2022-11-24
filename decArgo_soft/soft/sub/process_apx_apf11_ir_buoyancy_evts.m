@@ -32,7 +32,8 @@ global g_decArgo_presDef;
 idEvts = find(strcmp({a_events.functionName}, 'PARK'));
 events = a_events(idEvts);
 
-PATTERN_PRES_START = 'Too Shallow:';
+PATTERN_PRES_START1 = 'Too Shallow:';
+PATTERN_PRES_START2 = 'Too Deep:';
 PATTERN_PRES_END = 'dbar';
 PATTERN_ADJUSTING = 'Adjusting Buoyancy to';
 
@@ -40,7 +41,7 @@ checkTime = [];
 checkLabel = [];
 for idEv = 1:length(events)
    dataStr = events(idEv).message;
-   if (any(strfind(dataStr, PATTERN_PRES_START)))
+   if (any(strfind(dataStr, PATTERN_PRES_START1)) || any(strfind(dataStr, PATTERN_PRES_START2)))
       checkTime(end+1) = events(idEv).timestamp;
       checkLabel{end+1} = dataStr;
    end
@@ -51,10 +52,17 @@ for idEv = 1:length(events)
    if (any(strfind(dataStr, PATTERN_ADJUSTING)))
       [~, idMin] = min(abs(checkTime - events(idEv).timestamp));
       buoyancyPresStr = checkLabel{idMin};
-      idF1 = strfind(buoyancyPresStr, PATTERN_PRES_START);
+      idF1 = strfind(buoyancyPresStr, PATTERN_PRES_START1);
+      patternLength = length(PATTERN_PRES_START1);
+      pumpFlag = 0;
+      if (isempty(idF1))
+         idF1 = strfind(buoyancyPresStr, PATTERN_PRES_START2);
+         patternLength = length(PATTERN_PRES_START2);
+         pumpFlag = 1;
+      end
       idF2 = strfind(buoyancyPresStr, PATTERN_PRES_END);
-      buoyancyPres = str2double(buoyancyPresStr(idF1+length(PATTERN_PRES_START)+1:idF2-1));
-      o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef buoyancyPres g_decArgo_presDef]];
+      buoyancyPres = str2double(buoyancyPresStr(idF1+patternLength+1:idF2-1));
+      o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef buoyancyPres g_decArgo_presDef pumpFlag]];
    end
 end
 
@@ -87,7 +95,7 @@ for idEv = 1:length(events)
          idF1 = strfind(buoyancyPresStr, PATTERN_PRES_START);
          idF2 = strfind(buoyancyPresStr, PATTERN_PRES_END);
          buoyancyPres = str2double(buoyancyPresStr(idF1+length(PATTERN_PRES_START)+1:idF2(2)-1));
-         o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef buoyancyPres g_decArgo_presDef]];
+         o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef buoyancyPres g_decArgo_presDef 1]];
       end
    end
 end

@@ -430,7 +430,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
-   case {105, 106, 107, 108, 109, 110, 111, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 301, 302, 303}
       
       % Remocean floats
       
@@ -1080,7 +1080,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1321}
+   case {1321, 1322}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);

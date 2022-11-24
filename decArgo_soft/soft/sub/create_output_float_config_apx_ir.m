@@ -50,7 +50,7 @@ finalConfigName(idDel) = [];
 finalConfigValue(idDel, :) = [];
 
 % APF11 floats
-if (ismember(a_decoderId, [1321]))
+if (ismember(a_decoderId, [1321 1322]))
    
    % convert CONFIG_AR_AscentRate from dbar/s to mm/s
    idF1 = find(strcmp(finalConfigName, 'CONFIG_AR_AscentRate'));
@@ -71,6 +71,36 @@ if (ismember(a_decoderId, [1321]))
       finalConfigName(idDel) = [];
       finalConfigValue(idDel, :) = [];
    end
+   
+   % create sensor list
+   if (a_decoderId == 1321)
+      sensorList = {'CTD'};
+   else
+      sensorList = get_sensor_list_apex_apf11(g_decArgo_floatNum);
+   end
+   sensorListConfig = [];
+   for idS = 1:length(sensorList)
+      switch (sensorList{idS})
+         case 'CTD'
+            sensorListConfig = [sensorListConfig; {'Ctd'}];
+         case 'OPTODE'
+            sensorListConfig = [sensorListConfig; {'Optode'}];
+         case 'TRANSISTOR_PH'
+            sensorListConfig = [sensorListConfig; {'Ph'}];
+         otherwise
+            fprintf('ERROR: Float #%d: Sensor not managed yet in configuration labels: ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               sensorList{idS});
+      end
+   end
+   
+   sensorList = [ ...
+      {'PTS'} {'Ctd'}; ...
+      {'CTD'} {'Ctd'}; ...
+      {'PTSH'} {'Ph'}; ...
+      {'PH'} {'Ph'}; ...
+      {'OPT'} {'Optode'}; ...
+   ];
 end
 
 % convert decoder names into NetCDF ones
@@ -87,10 +117,10 @@ if (~isempty(a_decArgoConfParamNames))
       else
          
          % Apex APF11 floats
-         if (ismember(a_decoderId, [1321]))
-            if (ismember(finalConfigName{idConfParam}(1:idFUs(2)-1), ['CONFIG_SAMPLE' 'CONFIG_PROFILE']))
+         if (ismember(a_decoderId, [1321 1322]))
+            if (ismember(finalConfigName{idConfParam}(1:idFUs(2)-1), ['CONFIG_SAMPLE' 'CONFIG_PROFILE' 'CONFIG_MEASURE']))
 
-               phaseName = '';
+               % retrieve phase name
                if (~isempty(strfind(finalConfigName{idConfParam}, '_PARK_')))
                   phaseName = 'ParkDriftPhase';
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_ASCENT_')))
@@ -98,9 +128,22 @@ if (~isempty(a_decArgoConfParamNames))
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_SURFACE_')))
                   phaseName = 'SurfaceDriftPhase';
                else
-                  fprintf('ERROR: Float #%d: Cannot find expected phase name in configuration parameter : ''%s''\n', ...
+                  fprintf('ERROR: Float #%d: Cannot find phase name associated to ''%s''\n', ...
                      g_decArgo_floatNum, ...
                      finalConfigName{idConfParam});
+                  continue;
+               end
+               
+               % retrieve sensor name
+               sensorNameIn = finalConfigName{idConfParam}(idFUs(3)+1:idFUs(4)-1);
+               idS = find(strcmp(sensorNameIn, sensorList(:, 1)));
+               if (~isempty(idS))
+                  sensorNameOut = sensorList{idS, 2};
+               else
+                  fprintf('ERROR: Float #%d: Cannot find sensor name associated to ''%s''\n', ...
+                     g_decArgo_floatNum, ...
+                     sensorNameIn);
+                  continue;
                end
                
                if (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_SAMPLE'))
@@ -109,25 +152,25 @@ if (~isempty(a_decArgoConfParamNames))
                      case 'NumberOfZones'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE01') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {'Ctd'} ...
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
                            {'<vertical_phase_name>'} {phaseName}]);
                      case 'StartPressure'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE02') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {'Ctd'} ...
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
                            {'<vertical_phase_name>'} {phaseName} ...
                            {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      case 'StopPressure'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE03') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {'Ctd'} ...
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
                            {'<vertical_phase_name>'} {phaseName} ...
                            {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      case 'DepthInterval'
                         if (~any(finalConfigValue(idConfParam, :) == 0))
                            idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE04') == 1);
                            finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                              [{'<short_sensor_name>'} {'Ctd'} ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
                               {'<vertical_phase_name>'} {phaseName} ...
                               {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                         else
@@ -136,14 +179,14 @@ if (~isempty(a_decArgoConfParamNames))
                            finalConfigValue(idConfParam, :) = finalConfigValue(idF3, :);
                            idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE05') == 1);
                            finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                              [{'<short_sensor_name>'} {'Ctd'} ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
                               {'<vertical_phase_name>'} {phaseName} ...
                               {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                         end
                      case 'NumberOfSamples'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE06') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {'Ctd'} ...
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
                            {'<vertical_phase_name>'} {phaseName} ...
                            {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      otherwise
@@ -158,23 +201,51 @@ if (~isempty(a_decArgoConfParamNames))
                   switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
                      case 'NumberOfZones'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE01') == 1);
-                        finalConfigName{idConfParam} = a_ncConfParamNames{idF2};
+                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                           [{'<short_sensor_name>'} {sensorNameOut}]);
                      case 'StartPressure'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE02') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
+                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      case 'StopPressure'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE03') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
+                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      case 'BinSize'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE04') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
+                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                      case 'SampleRate'
                         idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE05') == 1);
                         finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
+                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                     case 'TimeInterval'
+                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_PROFILE06') == 1);
+                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                           [{'<short_sensor_name>'} {sensorNameOut} ...
+                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                     otherwise
+                        fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
+                           g_decArgo_floatNum, ...
+                           finalConfigName{idConfParam}(idFUs(end)+1:end), ...
+                           a_decoderId);
+                  end
+                  
+               elseif (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_MEASURE'))
+                  
+                  switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
+                     case 'NumberOfSamples'
+                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_MEASURE01') == 1);
+                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                           [{'<short_sensor_name>'} {sensorNameOut}]);
+                     case 'TimeInterval'
+                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_MEASURE02') == 1);
+                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                           [{'<short_sensor_name>'} {sensorNameOut}]);
                      otherwise
                         fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
                            g_decArgo_floatNum, ...

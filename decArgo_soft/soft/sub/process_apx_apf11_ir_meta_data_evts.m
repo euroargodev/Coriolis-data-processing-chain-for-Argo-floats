@@ -92,6 +92,10 @@ for idEv = 1:length(events)
    end
 end
 
+if (isempty(o_metaData))
+   return;
+end
+
 % finalize meta-data
 idF1 = find(strcmp({o_metaData.metaConfigLabel}, 'FLOAT_ID'));
 if (~isempty(idF1))
@@ -246,7 +250,7 @@ end
 return;
 
 % ------------------------------------------------------------------------------
-% Retrive meta-data information from event label.
+% Retrieve meta-data information from event label.
 %
 % SYNTAX :
 %  [o_metaData] = get_meta(a_eventdata, a_metaData)

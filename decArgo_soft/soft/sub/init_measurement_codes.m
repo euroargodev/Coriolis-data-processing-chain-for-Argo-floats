@@ -1,3 +1,4 @@
+
 % ------------------------------------------------------------------------------
 % Initialize measurement code values.
 %
@@ -67,6 +68,8 @@ global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
+global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
+global g_MC_SurfaceDoMeasAfterAirBladderInflation;
 global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
@@ -141,6 +144,8 @@ g_MC_TST_Float = 701;
 g_MC_FMT = 702;
 g_MC_Surface = 703;
 g_MC_LMT = 704;
+g_MC_SurfaceDoMeasBeforeAirBladderInflation = 710;
+g_MC_SurfaceDoMeasAfterAirBladderInflation = 711;
 g_MC_SingleMeasToTET = 799;
 g_MC_TET = 800;
 g_MC_Grounded = 901;

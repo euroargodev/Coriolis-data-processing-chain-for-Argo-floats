@@ -51,6 +51,7 @@ sbdFiles = dir([a_inputDirName '*.sbd']);
 o_nbSbdFiles = length(sbdFiles);
 
 prevMomsn = -1;
+prevData = [];
 dataList = [];
 currentData = [];
 % store SBD data in the 'dataList' structure
@@ -103,6 +104,14 @@ for iFile = 1:length(sbdFiles)
    elseif (sbdData(1) == 2)
       
       % following data
+      
+      % no header received for SBD file contents (the first SBD file considered
+      % is chosen according to float date, thus the header SBD file could have
+      % been ignored)
+      if (isempty(prevData) && isempty(currentData))
+         fprintf('INFO: convert_sbd_files_apex_apf11_iridium_sbd: Starting with SBD with no header in file : %s => ignored\n', sbdFileName);
+         continue;
+      end
       
       % SBD file contents transmitted twice
       if (~isempty(prevData) && (length(sbdData) == length(prevData)) && ~any(sbdData ~= prevData))

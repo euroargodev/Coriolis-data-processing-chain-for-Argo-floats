@@ -114,6 +114,10 @@ notWantedDynamicConfigNames = [notWantedDynamicConfigNames ...
    {'CONFIG_PC_0_1_11'}];
 notWantedDynamicConfigNames = [notWantedDynamicConfigNames ...
    {'CONFIG_PC_0_1_12'}];
+for idP = 11:19
+   notWantedDynamicConfigNames = [notWantedDynamicConfigNames ...
+      {sprintf('CONFIG_PC_3_1_%d', idP)}];
+end
 
 % delete unused PM (PM8 to PM52 and PM03 to PM07)
 for id = 8:52

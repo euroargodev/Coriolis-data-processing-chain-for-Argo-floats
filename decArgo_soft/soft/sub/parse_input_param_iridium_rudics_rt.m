@@ -191,9 +191,9 @@ for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
       switch (floatDecId)
-         case {105, 106, 107, 108, 109, 110}
+         case {105, 106, 107, 108, 109, 110, 112}
             % CTS4 Iridium RUDICS floats (rsync to Villefranche global server)
-            floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110(ryncLogList{idFile}, floatLoginName);
+            floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110_112(ryncLogList{idFile}, floatLoginName);
          case {111}
             % CTS4 Iridium RUDICS floats (ftp to individual float account + internal rsync at Coriolis)
             floatFiles = parse_rsync_log_ir_rudics_cts4_111(ryncLogList{idFile}, floatLoginName);

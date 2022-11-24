@@ -71,6 +71,8 @@ global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
+global g_MC_SurfaceDoMeasBeforeAirBladderInflation;
+global g_MC_SurfaceDoMeasAfterAirBladderInflation;
 global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
@@ -226,6 +228,12 @@ switch (a_measCode)
 
    case g_MC_LMT
       o_measCodeName = sprintf('%03d: LAST_MESSAGE', a_measCode);
+      
+   case g_MC_SurfaceDoMeasBeforeAirBladderInflation
+      o_measCodeName = sprintf('%03d: SURF_DO_BEFORE_BLADDER_INFLATION', a_measCode);
+
+   case g_MC_SurfaceDoMeasAfterAirBladderInflation
+      o_measCodeName = sprintf('%03d: SURF_DO_AFTER_BLADDER_INFLATION', a_measCode);
 
    case g_MC_SingleMeasToTET
       o_measCodeName = sprintf('%03d: SURFACE_SINGLE_MEAS', a_measCode);

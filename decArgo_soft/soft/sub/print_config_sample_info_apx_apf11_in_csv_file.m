@@ -38,15 +38,19 @@ for idS = 1:size(a_configdata, 1)
    phaseLabel = fieldnames(configData);
    for idP = 1:length(phaseLabel)
       phase = phaseLabel{idP};
-      sensorLabel = fieldnames(configData.(phase));
-      for idC = 1:length(sensorLabel)
-         sensor = sensorLabel{idC};
-         data = configData.(phase).(sensor);
-         for idZ = 1:size(data, 1)
-            val = sprintf('%d;', data(idZ, :));
-            fprintf(g_decArgo_outputCsvFileId, '%d; %d; SampleCfg; Sys; %d; %s; %s; %s\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, ...
-               idS, phase, sensor, val);
+      sampTypes = fieldnames(configData.(phase));
+      for idST = 1:length(sampTypes)
+         sampType = sampTypes{idST};
+         sensorLabel = fieldnames(configData.(phase).(sampType));
+         for idC = 1:length(sensorLabel)
+            sensor = sensorLabel{idC};
+            data = configData.(phase).(sampType).(sensor);
+            for idZ = 1:size(data, 1)
+               val = sprintf('%d;', data(idZ, :));
+               fprintf(g_decArgo_outputCsvFileId, '%d; %d; SampleCfg; Sys; %d; %s; %s; %s; %s\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, ...
+                  idS, phase, sampType, sensor, val);
+            end
          end
       end
    end

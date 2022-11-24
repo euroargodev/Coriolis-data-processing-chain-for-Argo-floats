@@ -37,7 +37,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformType = 'ARVOR';
       
-   case {105, 106, 107, 108, 109, 110, 111, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 301}
       % PROVOR CTS4
       o_platformType = 'PROVOR_III';
       
@@ -71,7 +71,7 @@ switch (a_decoderId)
       o_platformType = 'APEX';
       
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, ...
-         1314, 1321}
+         1314, 1321, 1322}
       % Apex Iridium
       o_platformType = 'APEX';
       

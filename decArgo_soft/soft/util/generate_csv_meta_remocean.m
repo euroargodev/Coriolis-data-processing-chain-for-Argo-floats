@@ -177,7 +177,7 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    
    % get the list of sensors for this float
-   [sensorList] = get_sensor_list(floatNum);
+   [sensorList] = get_sensor_list_cts4(floatNum);
    if (isempty(sensorList))
       continue;
    end

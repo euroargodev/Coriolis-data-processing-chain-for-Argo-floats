@@ -219,6 +219,12 @@ for idFloat = 1:length(floatList)
       metaData, idForWmo, dimLevlist, ...
       metaStruct, mandatoryList1, mandatoryList2);
    
+   % add the list of the sensor mounted on the float (because SENSOR variable is
+   % not correctly filled yet), this list is used by the decoder to check the
+   % expected data
+   sensorList = get_sensor_list_apex_apf11(floatNum);
+   metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
+
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
@@ -226,6 +232,48 @@ for idFloat = 1:length(floatList)
          floatNum);
       continue;
    end
+   
+   % add the calibration coefficients for OPTODE sensor (coming from the data base)
+   switch (dacFormatId)
+      case {'2.11.1'}
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = metaData{idForWmo(idF(id)), 5};
+            if (strncmp(calibName, 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1)
+               fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+               fieldName = ['TempCoef' calibName(end)];
+            end
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end
+   end   
+
+   % add the calibration information for TRANSISTOR_PH sensor
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH') == 1))
+      
+      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_')) == 1));
+      phCalibData = [];
+      for id = 1:length(idF)
+         calibName = metaData{idForWmo(idF(id)), 5};
+         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')) == 1)
+            fieldName = ['k' calibName(end)];
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')) == 1)
+            fieldName = ['f' calibName(end)];
+         end
+         phCalibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
+      end
+      if (~isempty(phCalibData))
+         metaStruct.CALIBRATION_COEFFICIENT.TRANSISTOR_PH = phCalibData;
+      end
+   end   
    
    % configuration parameters
    
@@ -567,7 +615,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1'}
+   case {'2.10.1', '2.11.1'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -650,7 +698,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1'}
+   case {'2.10.1', '2.11.1'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...
@@ -806,7 +854,8 @@ o_metaStruct = struct( ...
    'SBE_PRES_COEF_PTCB2', 'SBE_PRES_COEF_PTCB2', ...
    'SBE_PRES_COEF_PTHA0', 'SBE_PRES_COEF_PTHA0', ...
    'SBE_PRES_COEF_PTHA1', 'SBE_PRES_COEF_PTHA1', ...
-   'SBE_PRES_COEF_PTHA2', 'SBE_PRES_COEF_PTHA2');
+   'SBE_PRES_COEF_PTHA2', 'SBE_PRES_COEF_PTHA2', ...
+   'SENSOR_MOUNTED_ON_FLOAT', '');
 
 return;
 

@@ -37,7 +37,7 @@ switch (a_decoderId)
       % Arvor, Seabird conductivity sensor
       o_wmoInstType = '844';
       
-   case {105, 106, 107, 108, 109, 110, 111, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 301}
       % PROVOR_III float
       o_wmoInstType = '836';
       
@@ -56,7 +56,7 @@ switch (a_decoderId)
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
          1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
          1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, ...
-         1112, 1113, 1314, 1321}
+         1112, 1113, 1314, 1321, 1322}
       % Webb Research, Seabird sensor
       o_wmoInstType = '846';
       

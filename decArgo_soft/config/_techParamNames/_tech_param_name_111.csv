@@ -13,12 +13,12 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 111;253;Real Time Clock state;FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
 112;253;Buoyancy reduction start day (relative to mission start day);CLOCK_InitialValveActionDescentToPark_FloatDay;Time in the day when the float first activated the valve during its descent
 113;253;Buoyancy reduction start hour (resolution: 1 minute);CLOCK_InitialValveActionDescentToPark_HHMM;Time in the day when the float first activated the valve during its descent
-115;253;Cumulative valve actions at the surface;TECH_AUX_NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT;Number of solenoid valve actions at the surface until the crossing of the GAP threshold. Number computed by the float from previous cycles behaviour.
-116;253;Additionnal valve actions at the surface;TECH_AUX_NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT;Number of solenoid valve actions at the surface until the crossing of the GAP threshold. These actions are performed after the NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT previous ones.
-117;253;Buoyancy inversion start day (relative to mission start day);TECH_AUX_CLOCK_BuoyancyInversionStart_FloatDay;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
-118;253;Buoyancy inversion start hour (resolution : 1 minute);TECH_AUX_CLOCK_BuoyancyInversionStart_HHMM;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
-119;253;;TECH_AUX_CLOCK_BuoyancyInversionStart_YYYYMMDDHHMMSS;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
-120;253;Number of valve actions;TECH_AUX_NUMBER_BuoyancyInversionValveActions_COUNT;Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent.
+115;253;Cumulative valve actions at the surface;NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT;Number of solenoid valve actions at the surface until the crossing of the GAP threshold. Number computed by the float from previous cycles behaviour.
+116;253;Additionnal valve actions at the surface;NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT;Number of solenoid valve actions at the surface until the crossing of the GAP threshold. These actions are performed after the NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT previous ones.
+117;253;Buoyancy inversion start day (relative to mission start day);CLOCK_BuoyancyInversionStart_FloatDay;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
+118;253;Buoyancy inversion start hour (resolution : 1 minute);CLOCK_BuoyancyInversionStart_HHMM;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
+119;253;;CLOCK_BuoyancyInversionStart_YYYYMMDDHHMMSS;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
+120;253;Number of valve actions;NUMBER_BuoyancyInversionValveActions_COUNT;Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent.
 121;253;Descent to parking depth start day (relative to mission start day);CLOCK_StartDescentToPark_FloatDay;time after the crossing  the gap threshold 
 122;253;Descent to parking depth start hour (resolution: 1 minute);CLOCK_StartDescentToPark_HHMM;time after the crossing  the gap threshold (tenths of an hour since midnight)
 123;253;First stabilization day (relative to mission start day);CLOCK_InitialStabilizationDuringDescentToPark_FloatDay;time when first stabilization appears during descent to park 

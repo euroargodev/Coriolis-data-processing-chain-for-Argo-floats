@@ -34,9 +34,9 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110}
+   case {105, 106, 107, 109, 110, 112}
       
-      print_float_tech_data_in_csv_file_ir_rudics_105_to_110_one( ...
+      print_float_tech_data_in_csv_file_ir_rudics_105_to_110_112_one( ...
          a_cycleNum, a_profNum, a_phaseNum, a_dataIndex, ...
          a_tabTech);
 

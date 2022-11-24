@@ -109,7 +109,7 @@ if (checkRsyncLog == 1)
    [ryncLogList] = get_rsync_log_dir_file_names_ir_rudics(g_decArgo_dirInputRsyncLog);
    
    for idFile = 1:length(ryncLogList)
-      floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110(ryncLogList{idFile}, floatLoginName);
+      floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110_112(ryncLogList{idFile}, floatLoginName);
       if (~isempty(floatFiles))
          tabFloatSbdFiles = [tabFloatSbdFiles floatFiles];
       end

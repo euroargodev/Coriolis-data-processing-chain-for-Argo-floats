@@ -5,28 +5,28 @@
    
    "FLOAT_TRANSMISSION_TYPE" : "1",
    
-   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/json_float_info/",
+   "DIR_INPUT_JSON_FLOAT_DECODING_PARAMETERS_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_config_floats/json_float_info/",
 
    "HEX_ARGOS_FILE_FORMAT" : "1",
-   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "/home/coriolis_exp/spool/co01/co0101/co010102/archive/cycle/",
+   "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_1" : "/home/coriolis_dev/val/spool/co01/co0101/co010102/archive/cycle/",
    "DIR_INPUT_HEX_ARGOS_FILE_FORMAT_2" : "",
    "HEX_ARGOS_DATA_DIRECTORY_STRUCTURE" : "3",
    
    "DIR_INPUT_RSYNC_DATA" : "",
    "DIR_INPUT_RSYNC_LOG" : "",
 
-   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/techParamNames/", 
-   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/configParamNames/",
+   "DIR_INPUT_JSON_TECH_LABEL_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/techParamNames/", 
+   "DIR_INPUT_JSON_CONF_LABEL_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_20160708/decArgo_soft/config/configParamNames/",
 
-   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/json_float_meta_argos/",
+   "DIR_INPUT_JSON_FLOAT_META_DATA_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/decArgo_config_floats/json_float_meta_argos/",
 
    "IRIDIUM_DATA_DIRECTORY" : "",
 
-   "DIR_OUTPUT_LOG_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/argos/log/",
-   "DIR_OUTPUT_XML_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/argos/xml/",
+   "DIR_OUTPUT_LOG_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/log/",
+   "DIR_OUTPUT_XML_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/xml/",
    
-   "DIR_OUTPUT_NETCDF_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/argos/nc/",
-   "DIR_OUTPUT_CSV_FILE" : "/home/coriolis_exp/spool/co04/co0414/co041404/argos/csv/",
+   "DIR_OUTPUT_NETCDF_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/nc/",
+   "DIR_OUTPUT_CSV_FILE" : "/home/coriolis_dev/val/spool/co04/co0414/co041404/argos/csv/",
    
    "GENERATE_NC_TRAJ" : "2",
    "GENERATE_NC_MULTI_PROF" : "0",
@@ -66,5 +66,5 @@
    "TEST063_CHLA" : "1",
 
    "TEST004_ETOPO2_FILE" : "/home/coriolis_exp/dat/co03/bathy/ETOPO2v2g_i2_MSB.bin",
-   "TEST015_GREY_LIST_FILE" : "/home/coriolis_exp/spool/co05/co0508/ar_greylist.txt"
+   "TEST015_GREY_LIST_FILE" : "/home/coriolis_dev/val/spool/co05/co0508/ar_greylist.txt"
 }

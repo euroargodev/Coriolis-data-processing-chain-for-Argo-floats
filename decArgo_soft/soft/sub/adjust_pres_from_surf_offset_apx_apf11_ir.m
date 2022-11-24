@@ -3,17 +3,22 @@
 % (according to Argo QC manual). Then, adjust decoded PRES measurements.
 %
 % SYNTAX :
-%  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
+%  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
+%    o_profCtdCp, o_profCtdCpH, ...
 %    o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
 %    adjust_pres_from_surf_offset_apx_apf11_ir( ...
-%    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
+%    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+%    a_profCtdCp, a_profCtdCpH, ...
 %    a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 %
 % INPUT PARAMETERS :
 %   a_profCtdP       : input CTD_P data
 %   a_profCtdPt      : input CTD_PT data
 %   a_profCtdPts     : input CTD_PTS data
+%   a_profCtdPtsh    : input CTD_PTSH data
+%   a_profDo         : input O2 data
 %   a_profCtdCp      : input CTD_CP data
+%   a_profCtdCpH     : input CTD_CP_H data
 %   a_grounding      : input grounding data
 %   a_buoyancy       : input buoyancy data
 %   a_cycleTimeData  : input cycle timings data
@@ -23,7 +28,10 @@
 %   o_profCtdP       : output CTD_P data
 %   o_profCtdPt      : output CTD_PT data
 %   o_profCtdPts     : output CTD_PTS data
+%   o_profCtdPtsh    : output CTD_PTSH data
+%   o_profDo         : output O2 data
 %   o_profCtdCp      : output CTD_CP data
+%   o_profCtdCpH     : output CTD_CP_H data
 %   o_grounding      : output grounding data
 %   o_buoyancy       : output buoyancy data
 %   o_cycleTimeData  : output cycle timings data
@@ -35,12 +43,14 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/27/2018 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
+function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
+   o_profCtdCp, o_profCtdCpH, ...
    o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
    adjust_pres_from_surf_offset_apx_apf11_ir( ...
-   a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
+   a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
+   a_profCtdCp, a_profCtdCpH, ...
    a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 
 % output parameters initialization
@@ -48,7 +58,10 @@ o_surfPresInfo = [];
 o_profCtdP = a_profCtdP;
 o_profCtdPt = a_profCtdPt;
 o_profCtdPts = a_profCtdPts;
+o_profCtdPtsh = a_profCtdPtsh;
+o_profDo = a_profDo;
 o_profCtdCp = a_profCtdCp;
+o_profCtdCpH = a_profCtdCpH;
 o_grounding = a_grounding;
 o_buoyancy = a_buoyancy;
 o_cycleTimeData = a_cycleTimeData;
@@ -89,7 +102,10 @@ if (~isempty(presOffset))
    o_profCtdP = adjust_profile(o_profCtdP, presOffset);
    o_profCtdPt = adjust_profile(o_profCtdPt, presOffset);
    o_profCtdPts = adjust_profile(o_profCtdPts, presOffset);
+   o_profCtdPtsh = adjust_profile(o_profCtdPtsh, presOffset);
+   o_profDo = adjust_profile(o_profDo, presOffset);
    o_profCtdCp = adjust_profile(o_profCtdCp, presOffset);
+   o_profCtdCpH = adjust_profile(o_profCtdCpH, presOffset);
    
    for idG =1:size(o_grounding, 1)
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);
@@ -132,7 +148,7 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/10/2017 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_presOffset] = get_pres_offset(a_presOffsetData, a_cycleNum)
 
@@ -199,7 +215,7 @@ return;
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/10/2017 - RNU - creation
+%   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profData] = adjust_profile(a_profData, a_presOffset)
 

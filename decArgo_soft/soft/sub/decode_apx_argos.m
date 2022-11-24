@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_auxInfo, o_profData, o_profNstData, o_parkData, o_astData, o_metaData, o_techData, o_trajData, ...
-%    o_timeInfo, o_timeData, o_presOffsetData] = ...
+%    o_timeInfo, o_tabTechNMeas, o_timeData, o_presOffsetData] = ...
 %    decode_apx_argos(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, ...
 %    a_cycleNum, a_timeData, a_presOffsetData, a_decoderId)
 %
@@ -29,6 +29,7 @@
 %   o_techData       : technical data
 %   o_trajData       : trajectory data
 %   o_timeInfo       : time info from test and data messages
+%   o_tabTechNMeas   : N_MEASUREMENT structure of technical data time series
 %   o_timeData       : updated cycle time data structure
 %   o_presOffsetData : updated pressure offset data structure
 %
@@ -41,7 +42,7 @@
 %   01/19/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_auxInfo, o_profData, o_profNstData, o_parkData, o_astData, o_surfData, o_metaData, o_techData, o_trajData, ...
-   o_timeInfo, o_timeData, o_presOffsetData] = ...
+   o_timeInfo, o_tabTechNMeas, o_timeData, o_presOffsetData] = ...
    decode_apx_argos(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, ...
    a_cycleNum, a_timeData, a_presOffsetData, a_decoderId)
 
@@ -57,6 +58,7 @@ o_metaData = [];
 o_techData = [];
 o_trajData = [];
 o_timeInfo = [];
+o_tabTechNMeas = [];
 o_timeData = a_timeData;
 o_presOffsetData = a_presOffsetData;
 
@@ -269,7 +271,7 @@ switch (a_decoderId)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
             decode_test_apx_21_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
       else
-         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_tabTechNMeas, o_timeData, o_presOffsetData] = ...
             decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData);
       end
       
@@ -281,7 +283,7 @@ switch (a_decoderId)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
             decode_test_apx_21_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
       else
-         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_tabTechNMeas, o_timeData, o_presOffsetData] = ...
             decode_data_apx_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData);
       end
       

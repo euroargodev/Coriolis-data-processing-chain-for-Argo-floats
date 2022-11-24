@@ -156,7 +156,7 @@ for idFloat = 1:nbFloats
    fprintf(fidOut, '%d;13;1;%s;PR_PROBE_CODE;%s\n', floatNum, wmoInstType, floatVersion);
    
    % get the list of sensors for this float
-   [sensorList] = get_sensor_list(floatDecId);
+   [sensorList] = get_sensor_list_cts4(floatDecId);
    if (isempty(sensorList))
       continue;
    end
@@ -327,7 +327,7 @@ end
 return;
 
 % ------------------------------------------------------------------------------
-function [o_sensorList] = get_sensor_list(a_decId)
+function [o_sensorList] = get_sensor_list_cts4(a_decId)
 
 o_sensorList = [];
 

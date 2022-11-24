@@ -33,6 +33,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_hea
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp\ori\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\TMP\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
@@ -40,7 +41,7 @@ DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\tmp_process_prv\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos_out\';
 DIR_OUTPUT = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori_out\';
-DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\Desktop\TMP\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -588,6 +589,10 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+   if (ismember(floatNum, [6901260])) % 1 day cycle duration floats
+      MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = 10; % 10 hours
+   end
+   
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    

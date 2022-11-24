@@ -20,10 +20,12 @@
 function nc_compare_file_size(varargin)
 
 % top directory of the first set of NetCDF files
-DIR_INPUT_NC_FILES1 = 'H:\archive_201709\coriolis\';
+DIR_INPUT_NC_FILES1 = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
+% DIR_INPUT_NC_FILES1 = 'H:\archive_201801\coriolis\';
 
 % top directory of the second set of NetCDF files
-DIR_INPUT_NC_FILES2 = 'H:\archive_201709\coriolis\';
+DIR_INPUT_NC_FILES2 = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic\';
+% DIR_INPUT_NC_FILES2 = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
 
 
 % default list of floats to convert
@@ -77,7 +79,7 @@ fprintf(fidOut, '%s\n', header);
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
