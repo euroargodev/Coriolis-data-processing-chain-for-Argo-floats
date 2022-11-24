@@ -46,6 +46,9 @@ g_decArgo_rtOffsetInfo = [];
 % json meta-data
 global g_decArgo_jsonMetaData;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11IridiumRudics;
+
 
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
@@ -64,7 +67,7 @@ g_decArgo_jsonMetaData = jsonMetaData;
 if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
    o_floatRudicsId = jsonMetaData.FLOAT_RUDICS_ID;
 end
-if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, [1121, 1122, 1123]))
+if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11IridiumRudics))
    fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
    return
 end

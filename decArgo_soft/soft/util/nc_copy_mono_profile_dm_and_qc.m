@@ -39,6 +39,8 @@
 %                             'DOWN_IRRADIANCE555' parameters
 %   11/04/2020 - RNU - V 1.5: copy, in NEW file, the global attributes only
 %                             present in OLD file
+%   11/12/2020 - RNU - V 1.6: correction of a bug in the copy of
+%                             UV_INTENSITY_NITRATE data in output file
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_dm_and_qc(varargin)
 
@@ -79,7 +81,7 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % program version
 global g_cocd_ncCopyMonoProfileDmAndQcVersion;
-g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.5';
+g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.6';
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64);' for the current action
 global g_cocd_historyReferenceToReport;
@@ -1690,7 +1692,7 @@ if (~isempty(a_dmProfIdToUpdate))
                % for UV_INTENSITY_NITRATE
                value = a_profStructOld.data.(param)(profId, :, :);
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
-                  fliplr([profId-1 0 0]), fliplr([1 size(value, 2) size(value, 3)]), value);
+                  fliplr([profId-1 0 0]), fliplr(size(value)), permute(value, fliplr(1:ndims(value))));
             end
             
             if ~((a_profStructOld.bFileFlag == 1) && (strcmp(paramName, 'PRES')))

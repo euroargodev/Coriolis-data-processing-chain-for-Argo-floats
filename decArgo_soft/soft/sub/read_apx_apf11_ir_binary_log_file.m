@@ -3,13 +3,14 @@
 %
 % SYNTAX :
 %  [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
-%    a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag)
+%    a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_logFileName    : binary log file name
 %   a_logFileType    : log file type ('science' or 'vitals')
 %   a_fromLaunchFlag : consider events from float launch date
 %   a_outputCsvFlag  : 1 to write data in a CSV file, 0 otherwise
+%   a_decoderId      : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_error : error flag
@@ -24,7 +25,7 @@
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_error, o_data] = read_apx_apf11_ir_binary_log_file( ...
-   a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag)
+   a_logFileName, a_logFileType, a_fromLaunchFlag, a_outputCsvFlag, a_decoderId)
 
 % output parameters initialization
 o_error = 0;
@@ -86,7 +87,7 @@ while (1)
    
    recLength = sbdData(recCurPos);
    recId = sbdData(recCurPos+1);
-   decStruct = get_decoding_info(a_logFileType, recId);
+   decStruct = get_decoding_info(a_logFileType, recId, a_decoderId);
    if (~isempty(decStruct))
       % timestamp
       dataTime = flipud(sbdData(recCurPos+2:recCurPos+5));
@@ -149,7 +150,7 @@ while (1)
          
       end
       if (~isfield(o_data, [decStruct(1).recType '_labels']))
-         o_data.([decStruct(1).recType '_labels']) = get_binary_log_data_labels(decStruct(1).recType);
+         o_data.([decStruct(1).recType '_labels']) = get_binary_log_data_labels(decStruct(1).recType, a_decoderId);
       end
    else
       fprintf('ERROR: %s file reader: recId #%d not managed yet - data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType, recId);
@@ -174,6 +175,7 @@ return
 % INPUT PARAMETERS :
 %   a_logFileType : log file type ('science' or 'vitals')
 %   a_recordId    : record Id
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_decStruct : decoding information
@@ -186,10 +188,14 @@ return
 % RELEASES :
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decStruct] = get_decoding_info(a_logFileType, a_recordId)
+function [o_decStruct] = get_decoding_info(a_logFileType, a_recordId, a_decoderId)
 
 % output parameters initialization
 o_decStruct = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 switch (a_logFileType)
    
@@ -272,14 +278,103 @@ switch (a_logFileType)
                'outputType', [{'single'} {'single'} {'single'} {'single'} {'single'} {'single'} {'single'} {'single'} {'single'} {'single'}], ...
                'outputFormat', [{'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'}] ...
                );
+         case 51
+            if (~ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
+
+               if (g_decArgo_floatNum ~= 6903552)
+                  
+                  fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
+                  
+                  % nominal case
+                  
+                  % # LOG_SCIENCE_FLBB_BB
+                  % science.add_record_with_id(51, 'FLBB_BB', 'Thhhh', ('timestamp', 'chl_sig', 'bsc_sig0', 'bsc_sig1','therm_sig'))
+                  
+                  o_decStruct = struct( ...
+                     'recType', 'FLBB_BB', ...
+                     'tabBytes', [{2} {2} {2} {2}], ...
+                     'tabFunc', {@uint16, @uint16, @uint16, @uint16}, ...
+                     'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
+                     'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'}] ...
+                     );
+               else
+                  
+                  % specific
+                  
+                  % for float 6903552 FLBB_CD is transmitted as FLBB_BB
+                  
+                  o_decStruct = struct( ...
+                     'recType', 'FLBB_CD', ...
+                     'tabBytes', [{2} {2} {2} {2}], ...
+                     'tabFunc', {@uint16, @uint16, @uint16, @uint16}, ...
+                     'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
+                     'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'}] ...
+                     );
+               end
+            end
          case 52
-            o_decStruct = struct( ...
-               'recType', 'FLBB_CD', ...
-               'tabBytes', [{2} {2} {2} {2} {2} {2} {2}], ...
-               'tabFunc', {@uint16, @uint16, @uint16, @uint16, @uint16, @uint16, @uint16}, ...
-               'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
-               'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'}] ...
-               );
+            if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323]))
+               
+               % # LOG_SCIENCE_FLBB_CD
+               % science.addtype(52, 'FLBB_CD', 'Thhhhhhh', ('timestamp', 'chl_wave', 'chl_sig', 'bsc_wave', 'bcs_sig', 'cd_wave', 'cd_sig', 'therm_sig'))
+               
+               o_decStruct = struct( ...
+                  'recType', 'FLBB_CD', ...
+                  'tabBytes', [{2} {2} {2} {2} {2} {2} {2}], ...
+                  'tabFunc', {@uint16, @uint16, @uint16, @uint16, @uint16, @uint16, @uint16}, ...
+                  'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
+                  'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'}] ...
+                  );
+            else
+               
+               fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
+
+               % since 2.15.0
+               % # LOG_SCIENCE_FLBB_CD
+               % science.add_record_with_id(52, 'FLBB_CD', 'Thhhh', ('timestamp', 'chl_sig', 'bcs_sig', 'cd_sig', 'therm_sig'))
+               
+               o_decStruct = struct( ...
+                  'recType', 'FLBB_CD', ...
+                  'tabBytes', [{2} {2} {2} {2}], ...
+                  'tabFunc', {@uint16, @uint16, @uint16, @uint16}, ...
+                  'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
+                  'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'}] ...
+                  );
+            end
+         case 54
+            if (~ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
+
+               if (g_decArgo_floatNum ~= 6903552)
+                  
+                  fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
+                  
+                  % nominal case
+                  
+                  % # LOG_SCIENCE_FLBB_BB_CFG
+                  % science.add_record_with_id(54, 'FLBB_BB_CFG', 'Thhh', ('timestamp', 'chl_wave', 'bsc_wave0', 'bsc_wave1'))
+                  
+                  o_decStruct = struct( ...
+                     'recType', 'FLBB_BB_CFG', ...
+                     'tabBytes', [{2} {2} {2}], ...
+                     'tabFunc', {@uint16, @uint16, @uint16}, ...
+                     'outputType', [{'uint16'} {'uint16'} {'uint16'}], ...
+                     'outputFormat', [{'%d'} {'%d'} {'%d'}] ...
+                     );
+               else
+                  
+                  % specific
+                  
+                  % for float 6903552 FLBB_CD_CFG is transmitted as FLBB_BB_CFG
+                  
+                  o_decStruct = struct( ...
+                     'recType', 'FLBB_CD_CFG', ...
+                     'tabBytes', [{2} {2} {2}], ...
+                     'tabFunc', {@uint16, @uint16, @uint16}, ...
+                     'outputType', [{'uint16'} {'uint16'} {'uint16'}], ...
+                     'outputFormat', [{'%d'} {'%d'} {'%d'}] ...
+                     );
+               end
+            end            
          case 61
             o_decStruct = struct( ...
                'recType', 'OCR_504I', ...
@@ -357,6 +452,7 @@ switch (a_logFileType)
          'CTD_CP_H', [], ...
          'O2', [], ...
          'FLBB_CD', [], ...
+         'FLBB_CD_CFG', [], ...
          'OCR_504I', [] ...
          );
       
@@ -374,10 +470,11 @@ return
 % Get the decoded data labels list associated to a given record type.
 %
 % SYNTAX :
-% function [o_recLabels] = get_binary_log_data_labels(a_recType)
+% function [o_recLabels] = get_binary_log_data_labels(a_recType, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_recType : record type
+%   a_recType   : record type
+%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_recLabels : associated labels list
@@ -390,7 +487,7 @@ return
 % RELEASES :
 %   04/13/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_recLabels] = get_binary_log_data_labels(a_recType)
+function [o_recLabels] = get_binary_log_data_labels(a_recType, a_decoderId)
 
 % output parameters initialization
 o_recLabels = [];
@@ -418,7 +515,13 @@ switch (a_recType)
    case 'O2'
       o_recLabels = [{'timestamp'} {'O2'} {'AirSat'} {'Temp'} {'CalPhase'} {'TCPhase'} {'C1RPh'} {'C2RPh'} {'C1Amp'} {'C2Amp'} {'RawTemp'}];
    case 'FLBB_CD'
-      o_recLabels = [{'timestamp'} {'chl_wave'} {'chl_sig'} {'bsc_wave'} {'bcs_sig'} {'cd_wave'} {'cd_sig'} {'therm_sig'}];
+      if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
+         o_recLabels = [{'timestamp'} {'chl_wave'} {'chl_sig'} {'bsc_wave'} {'bcs_sig'} {'cd_wave'} {'cd_sig'} {'therm_sig'}];
+      else
+         o_recLabels = [{'timestamp'} {'chl_sig'} {'bcs_sig'} {'cd_sig'} {'therm_sig'}];
+      end
+   case 'FLBB_CD_CFG'
+      o_recLabels = [{'timestamp'} {'chl_wave'} {'bsc_wave'} {'cd_wave'}];
    case 'OCR_504I'
       o_recLabels = [{'timestamp'} {'channel1'} {'channel2'} {'channel3'} {'channel4'}];
 

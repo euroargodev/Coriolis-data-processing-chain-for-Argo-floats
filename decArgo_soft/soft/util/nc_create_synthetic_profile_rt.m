@@ -148,6 +148,10 @@ global g_cocs_cycleDir;
 % output CSV file Id
 global g_cocs_fidCsvFile;
 g_cocs_fidCsvFile = -1;
+global g_cocs_floatWmoStr;
+g_cocs_floatWmoStr = '-';
+global g_cocs_cycleNumStr;
+g_cocs_cycleNumStr = '-';
 
 
 % startTime
@@ -216,6 +220,7 @@ try
             [~, cProfFileName, ~] = fileparts(g_cocs_floatCProfFileName);
             idF = strfind(cProfFileName, '_');
             g_cocs_floatNum = str2double(cProfFileName(2:idF-1));
+            g_cocs_floatWmoStr = cProfFileName(2:idF-1);
             if (cProfFileName(end) == 'D')
                g_cocs_cycleDir = 'D';
                cProfFileName(end) = [];
@@ -223,20 +228,24 @@ try
                g_cocs_cycleDir = '';
             end
             g_cocs_cycleNum = str2double(cProfFileName(idF+1:end));
+            g_cocs_cycleNumStr = cProfFileName(idF+1:end);
          else
             [~, bProfFileName, ~] = fileparts(g_cocs_floatBProfFileName);
             idF = strfind(bProfFileName, '_');
             g_cocs_floatNum = str2double(bProfFileName(3:idF-1));
+            g_cocs_floatWmoStr = bProfFileName(3:idF-1);
             if (bProfFileName(end) == 'D')
                g_cocs_cycleDir = 'D';
                bProfFileName(end) = [];
             else
                g_cocs_cycleDir = '';
             end
-            g_cocs_cycleNum = str2double(bProfFileName(idF+1:end));            
+            g_cocs_cycleNum = str2double(bProfFileName(idF+1:end)); 
+            g_cocs_cycleNumStr = bProfFileName(idF+1:end);
          end
       else
          g_cocs_floatNum = str2double(g_cocs_floatWmo);
+         g_cocs_floatWmoStr = g_cocs_floatWmo;
       end
       
       % output CSV file name

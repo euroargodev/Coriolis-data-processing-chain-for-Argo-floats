@@ -71,7 +71,7 @@ clear tabPackType;
 clear tabCyNum;
 
 % specific
-if (ismember(g_decArgo_floatNum, [3902104 7900510 3902101]))
+if (ismember(g_decArgo_floatNum, [3902104 7900510 3902101 3902107]))
    switch g_decArgo_floatNum
       case 3902104
          % the float transmitted cycle #51 twice
@@ -98,6 +98,11 @@ if (ismember(g_decArgo_floatNum, [3902104 7900510 3902101]))
             ([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:23:51')) | ...
             ([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/02/07 09:24:03'))) & ...
             ([a_decodedData.packType] == 10));
+         a_decodedData(idDel) = [];
+      case 3902107
+         % packet type 7 transmitted twice in first transmitted session of cycle
+         % #113, ignore the second one
+         idDel = find([a_decodedData.fileDate] == gregorian_2_julian_dec_argo('2020/12/12 23:16:14'));
          a_decodedData(idDel) = [];
    end
 end

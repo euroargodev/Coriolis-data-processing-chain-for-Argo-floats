@@ -2,7 +2,7 @@
 % Get cycle time information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_1123_1321_1322(a_events, a_cycleTimeData)
+%  [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_23_26_27(a_events, a_cycleTimeData)
 %
 % INPUT PARAMETERS :
 %   a_events        : input system_log file event data
@@ -19,7 +19,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_1123_1321_1322(a_events, a_cycleTimeData)
+function [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_23_26_27(a_events, a_cycleTimeData)
 
 % output parameters initialization
 o_cycleTimeData = a_cycleTimeData;
@@ -96,16 +96,14 @@ for idEv = 1:length(events)
 end
 
 % from 'sky_search' events
-PATTERN_TRANSMISSION_START_1 = 'Found sky.';
-PATTERN_TRANSMISSION_START_2 = 'Found the sky';
+PATTERN_TRANSMISSION_START = 'Found the sky';
 
 events = a_events(find(strcmp({a_events.functionName}, 'sky_search')));
 firstTimeAfterAED = [];
 for idEv = 1:length(events)
    evt = events(idEv);
    dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_TRANSMISSION_START_1)) || ...
-         any(strfind(dataStr, PATTERN_TRANSMISSION_START_2)))
+   if (any(strfind(dataStr, PATTERN_TRANSMISSION_START)))
       if ((isempty(firstTimeAfterAED) || (firstTimeAfterAED > evt.timestamp)) && ...
             ((isempty(startTime)) || (startTime < evt.timestamp))) % to not consider times before AED
          firstTimeAfterAED = evt.timestamp;
@@ -115,21 +113,6 @@ end
 if (~isempty(firstTimeAfterAED))
    if (isempty(o_cycleTimeData.transStartDate) || (o_cycleTimeData.transStartDate > firstTimeAfterAED))
       o_cycleTimeData.transStartDate = firstTimeAfterAED;
-   end
-end
-
-% from 'upload_file' events
-PATTERN_TRANSMISSION_END = 'Upload Complete:';
-
-events = a_events(find(strcmp({a_events.functionName}, 'upload_file')));
-lastTime = [];
-for idEv = 1:length(events)
-   evt = events(idEv);
-   dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_TRANSMISSION_END)))
-      if ((isempty(lastTime) || (lastTime < evt.timestamp)))
-         lastTime = evt.timestamp;
-      end
    end
 end
 

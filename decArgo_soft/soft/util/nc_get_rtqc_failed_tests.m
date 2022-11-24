@@ -25,6 +25,8 @@ FLOAT_LIST_FILE_NAME = '';
 
 % directory of Argo NetCDF files
 DIR_INPUT_NC_FILES = 'E:\201902-ArgoData\coriolis';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

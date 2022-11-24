@@ -24,7 +24,7 @@ function convert_apex_apf11_files_to_csv(varargin)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\apf11_ir_sbd.txt';
 
 % output directory
 DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_RUDICS\20190114\CSV\';
@@ -113,9 +113,18 @@ for idFloat = 1:nbFloats
    % find the float login_name
    [floatLoginName] = find_login_name(floatNum, numWmo, tabImei);
    if (isempty(floatLoginName))
-      return
+      fprintf('Unable to find float login name for float #%d => float ignored\n', floatNum);
+      continue
    end
    
+   % find decoder Id
+   idF = find(numWmo == floatNum, 1);
+   if (isempty(idF))
+      fprintf('No information on float #%d - nothing done for this float\n', floatNum);
+      continue
+   end
+   floatDecId = listDecId(idF);
+
    % create float output directory
    floatOutputDir = [dirOutputCsvFiles '\' floatNumStr '\'];
    mkdir(floatOutputDir);
@@ -127,14 +136,14 @@ for idFloat = 1:nbFloats
    % process binary files
    binSciFiles = dir([floatFileDir '*.science_log.bin']);
    for iFile = 1:length(binSciFiles)
-      [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 0, 1);
+      [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 0, 1, floatDecId);
       if (error)
          fprintf('ERROR while processing file %s\n', [floatFileDir binSciFiles(iFile).name]);
       end
    end
    binVitFiles = dir([floatFileDir '*.vitals_log.bin']);
    for iFile = 1:length(binVitFiles)
-      [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals', 0, 1);
+      [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals', 0, 1, floatDecId);
       if (error)
          fprintf('ERROR while processing file %s\n', [floatFileDir binVitFiles(iFile).name]);
       end

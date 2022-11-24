@@ -91,6 +91,10 @@ global g_decArgo_floatLaunchDate;
 global g_decArgo_floatLaunchLon;
 global g_decArgo_floatLaunchLat;
 
+% decoder Id check flag
+global g_decArgo_decIdCheckFlag;
+
+
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
    [listWmoNum, listDecId, listArgosId, listFrameLen, ...
@@ -115,6 +119,8 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchLon = '';
    g_decArgo_floatLaunchLat = '';
 
+   g_decArgo_decIdCheckFlag = 0;
+   
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
    

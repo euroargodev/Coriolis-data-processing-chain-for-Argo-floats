@@ -111,6 +111,14 @@ for idFloat = 1:nbFloats
       continue
    end
    
+   % find decoder Id
+   idF = find(numWmo == floatNum, 1);
+   if (isempty(idF))
+      fprintf('No information on float #%d - nothing done for this float\n', floatNum);
+      continue
+   end
+   floatDecId = listDecId(idF);
+   
    % float output directory
    floatOutputDir = [DIR_WORK '\' floatNumStr '\'];
    mkdir(floatOutputDir);
@@ -290,11 +298,11 @@ for idFloat = 1:nbFloats
       tic;
       binSciFiles = dir([floatFileDir '*.science_log.bin']);
       for iFile = 1:length(binSciFiles)
-         read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 0, 1);
+         read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 0, 1, floatDecId);
       end
       binVitFiles = dir([floatFileDir '*.vitals_log.bin']);
       for iFile = 1:length(binVitFiles)
-         read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals', 0, 1);
+         read_apx_apf11_ir_binary_log_file([floatFileDir binVitFiles(iFile).name], 'vitals', 0, 1, floatDecId);
       end
       ellapsedTime = toc;
       fprintf('=> %d binary files converted (%.1f sec)\n', length(binSciFiles)+length(binVitFiles), ellapsedTime);

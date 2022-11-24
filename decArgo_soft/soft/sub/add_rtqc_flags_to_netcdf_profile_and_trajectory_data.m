@@ -234,7 +234,7 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
             scaleFactorChla = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
             darKCountChla = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
          else
-            fprintf('RTQC_WARNING: Float #%d: inconsistent ECO2 sensor calibration information\n', ...
+            fprintf('RTQC_ERROR: Float #%d: inconsistent ECO2 sensor calibration information\n', ...
                floatNum);
          end
       elseif (isfield(g_decArgo_calibInfo, 'ECO3'))
@@ -243,7 +243,7 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
             scaleFactorChla = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
             darKCountChla = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
          else
-            fprintf('RTQC_WARNING: Float #%d: inconsistent ECO3 sensor calibration information\n', ...
+            fprintf('RTQC_ERROR: Float #%d: inconsistent ECO3 sensor calibration information\n', ...
                floatNum);
          end
       elseif (isfield(g_decArgo_calibInfo, 'FLBB'))
@@ -252,7 +252,7 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
             scaleFactorChla = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
             darKCountChla = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
          else
-            fprintf('RTQC_WARNING: Float #%d: inconsistent FLBB sensor calibration information\n', ...
+            fprintf('RTQC_ERROR: Float #%d: inconsistent FLBB sensor calibration information\n', ...
                floatNum);
          end
       elseif (isfield(g_decArgo_calibInfo, 'FLNTU'))
@@ -261,7 +261,7 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
             scaleFactorChla = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
             darKCountChla = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
          else
-            fprintf('RTQC_WARNING: Float #%d: inconsistent FLNTU sensor calibration information\n', ...
+            fprintf('RTQC_ERROR: Float #%d: inconsistent FLNTU sensor calibration information\n', ...
                floatNum);
          end
       end

@@ -2,7 +2,7 @@
 % Get buoyancy information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1122_1123(a_events)
+%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -16,9 +16,9 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/04/2020 - RNU - creation
+%   11/24/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1122_1123(a_events)
+function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25(a_events)
 
 % output parameters initialization
 o_buoyancy = [];
@@ -32,16 +32,16 @@ global g_decArgo_presDef;
 idEvts = find(strcmp({a_events.functionName}, 'BuoyEngine'));
 events = a_events(idEvts);
 
-PATTERN_1 = 'Adjusting Buoyancy to';
-PATTERN_2 = 'Buoyancy Start Position:';
+PATTERN = 'adjusting from';
 for idEv = 1:length(events)
    dataStr = events(idEv).message;
-   if (any(strfind(dataStr, PATTERN_1)))
-      pistonStop = str2double(dataStr(length(PATTERN_1)+1:end));
-      if (idEv < length(events))
-         dataStr2 = events(idEv+1).message;
-         if (any(strfind(dataStr2, PATTERN_2)))
-            pistonStart = str2double(dataStr2(length(PATTERN_2)+1:end));
+   if (any(strfind(dataStr, PATTERN)))
+      buoy = textscan(dataStr, '%s', 'delimiter', ' ');
+      buoy = buoy{:};
+      if (size(buoy, 1) == 5)
+         if (strcmp(buoy{1}, 'adjusting') && strcmp(buoy{2}, 'from') && strcmp(buoy{4}, 'to'))
+            pistonStart = str2double(buoy{3});
+            pistonStop = str2double(buoy{5});
             if (pistonStop - pistonStart > 0)
                pumpFlag = 1;
             else

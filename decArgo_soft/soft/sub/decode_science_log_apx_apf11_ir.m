@@ -4,12 +4,14 @@
 % SYNTAX :
 %  [o_miscInfo, o_techData, o_gpsData, ...
 %    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
-%    decode_science_log_apx_apf11_ir_1322(a_scienceLogFileList, a_cycleTimeData)
+%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+%    o_cycleTimeData] = ...
+%    decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_scienceLogFileList : list of science_log files
 %   a_cycleTimeData      : input cycle timings data
+%   a_decoderId          : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_miscInfo      : misc information from science_log files
@@ -23,6 +25,7 @@
 %   o_profCtdCp     : CTD_CP data
 %   o_profCtdCpH    : CTD_CP_H data
 %   o_profFlbbCd    : FLBB_CD data
+%   o_profFlbbCdCfg : FLBB_CD_CFG data
 %   o_profOcr504I   : OCR_504I data
 %   o_cycleTimeData : cycle timings data
 %
@@ -32,12 +35,13 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   07/10/2018 - RNU - creation
+%   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_techData, o_gpsData, ...
    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-   o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
-   decode_science_log_apx_apf11_ir_1322(a_scienceLogFileList, a_cycleTimeData)
+   o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+   o_cycleTimeData] = ...
+   decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData, a_decoderId)
 
 % output parameters initialization
 o_miscInfo = [];
@@ -51,6 +55,7 @@ o_profDo = [];
 o_profCtdCp = [];
 o_profCtdCpH = [];
 o_profFlbbCd = [];
+o_profFlbbCdCfg = [];
 o_profOcr504I = [];
 
 o_cycleTimeData = a_cycleTimeData;
@@ -86,6 +91,7 @@ expectedFields = [ ...
    {'CTD_CP_H'} ...
    {'O2'} ...
    {'FLBB_CD'} ...
+   {'FLBB_CD_CFG'} ...
    {'OCR_504I'} ...
    ];
 
@@ -94,14 +100,16 @@ usedMessages = [ ...
    {'Park Descent Mission'} ...
    {'Park Mission'} ...
    {'Deep Descent Mission'} ...
-   {'Profiling Mission'} ...
+   {'Profiling Mission'} ... % replaced by 'ASCENT' since 2.13.1.R version
    {'CP Started'} ...
    {'CP Stopped'} ...
    {'Surface Mission'} ...
+   {'ASCENT'} ... % replaces 'Profiling Mission' since 2.13.1.R version
    ];
 
 ignoredMessages = [ ...
    {'Firmware: '} ...
+   {'Username: '} ...
    {'Float ID: '} ...
    {'CP Already Stopped'} ...
    {'Recovery Mission'} ...
@@ -116,6 +124,7 @@ ctdCp = [];
 ctdCpH = [];
 do = [];
 flbbCd = [];
+flbbCdCfg = [];
 ocr504I = [];
 for idFile = 1:length(a_scienceLogFileList)
 
@@ -127,7 +136,7 @@ for idFile = 1:length(a_scienceLogFileList)
    else
       fromLaunchFlag = 0;
    end
-   [error, data] = read_apx_apf11_ir_binary_log_file(sciFilePathName, 'science', fromLaunchFlag, 0);
+   [error, data] = read_apx_apf11_ir_binary_log_file(sciFilePathName, 'science', fromLaunchFlag, 0, a_decoderId);
    if (error == 1)
       fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, sciFilePathName);
@@ -178,7 +187,7 @@ for idFile = 1:length(a_scienceLogFileList)
                                  o_cycleTimeData.parkStartDateSci = msg{idM, 1};
                               case 4
                                  o_cycleTimeData.parkEndDateSci = msg{idM, 1};
-                              case 5
+                              case {5, 9}
                                  o_cycleTimeData.ascentStartDateSci = msg{idM, 1};
                                  % when PARK _PRES = PROF_PRES, 'Profiling
                                  % Mission' corresponds to PARK_END_DATE
@@ -265,6 +274,8 @@ for idFile = 1:length(a_scienceLogFileList)
                      do = [do; data.(fieldName)];
                   case 'FLBB_CD'
                      flbbCd = [flbbCd; data.(fieldName)];
+                  case 'FLBB_CD_CFG'
+                     flbbCdCfg = [flbbCdCfg; data.(fieldName)];
                   case 'OCR_504I'
                      ocr504I = [ocr504I; data.(fieldName)];
                end
@@ -447,9 +458,22 @@ if (~isempty(flbbCd))
    o_profFlbbCd = get_apx_profile_data_init_struct;
    o_profFlbbCd.dateList = paramJuld;
    o_profFlbbCd.dates = flbbCd(:, 1);
-   o_profFlbbCd.paramList = [paramPres paramChlWave paramFluorescenceChla paramBscWave ...
-      paramBetaBackscattering700 paramCdWave paramFluorescenceCdom paramThermSig];
+   if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
+      o_profFlbbCd.paramList = [paramPres paramChlWave paramFluorescenceChla paramBscWave ...
+         paramBetaBackscattering700 paramCdWave paramFluorescenceCdom paramThermSig];
+   else
+      o_profFlbbCd.paramList = [paramPres paramFluorescenceChla ...
+         paramBetaBackscattering700 paramFluorescenceCdom paramThermSig];
+   end
    o_profFlbbCd.data = [ones(size(flbbCd, 1), 1)*paramPres.fillValue flbbCd(:, 2:end)];
+end
+
+if (~isempty(flbbCdCfg))
+   o_profFlbbCdCfg = get_apx_profile_data_init_struct;
+   o_profFlbbCdCfg.dateList = paramJuld;
+   o_profFlbbCdCfg.dates = flbbCdCfg(:, 1);
+   o_profFlbbCdCfg.paramList = [paramPres paramChlWave paramBscWave paramCdWave];
+   o_profFlbbCdCfg.data = [ones(size(flbbCdCfg, 1), 1)*paramPres.fillValue flbbCdCfg(:, 2:end)];
 end
 
 if (~isempty(ocr504I))

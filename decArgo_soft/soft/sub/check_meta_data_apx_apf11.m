@@ -57,12 +57,12 @@ for idM = 1:length(a_metaData)
                idF = find(strcmp(sensorCell, itemList{idI}));
                if (~isempty(idF))
                   decValue = metaData.techParamValue;
-                  fieldName = sensorFields{idF};
-                  dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                   jsonValue = '';
-                  if (isfield(g_decArgo_jsonMetaData.SENSOR_MODEL, ['SENSOR_MODEL_' num2str(dimLevel)]))
-                     jsonValue = g_decArgo_jsonMetaData.SENSOR_MODEL.(['SENSOR_MODEL_' num2str(dimLevel)]);
+                  number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+                  if (isfield(g_decArgo_jsonMetaData.SENSOR_MODEL, ['SENSOR_MODEL_' num2str(number)]))
+                     jsonValue = g_decArgo_jsonMetaData.SENSOR_MODEL.(['SENSOR_MODEL_' num2str(number)]);
                   end
+                  dimLevel = idI;
                   
                   decValueList{end+1} = decValue;
                   jsonValueList{end+1} = jsonValue;
@@ -79,12 +79,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_PRES'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
                end
+               dimLevel = 1;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -100,12 +100,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_TEMP'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
                end
+               dimLevel = 2;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -121,12 +121,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_CNDC'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
                end
+               dimLevel = 3;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -142,12 +142,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_PRES'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]);
                end
+               dimLevel = 1;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -163,12 +163,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_TEMP'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]);
                end
+               dimLevel = 2;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -184,12 +184,12 @@ for idM = 1:length(a_metaData)
             idF = find(strcmp(sensorCell, 'CTD_CNDC'));
             if (~isempty(idF))
                decValue = metaData.techParamValue;
-               fieldName = sensorFields{idF};
-               dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
                jsonValue = '';
-               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]))
-                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(dimLevel)]);
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT, ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(number)]);
                end
+               dimLevel = 3;
                
                decValueList{end+1} = decValue;
                jsonValueList{end+1} = jsonValue;
@@ -198,202 +198,442 @@ for idM = 1:length(a_metaData)
                dimLevelList = [dimLevelList dimLevel];
             end
             
-            %          case 'OPTODE_SERIAL_NUMBER'
-            %             sensorStruct = g_decArgo_jsonMetaData.SENSOR;
-            %             sensorFields = fields(sensorStruct);
-            %             sensorCell = struct2cell(sensorStruct);
-            %             idF = find(strcmp(sensorCell, 'OPTODE_DOXY'));
-            %             if (~isempty(idF))
-            %                decValue = metaData.techParamValue;
-            %                fieldName = sensorFields{idF};
-            %                dimLevel = str2num(regexprep(fieldName, 'SENSOR_', ''));
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(dimLevel)]))
-            %                   jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(dimLevel)]);
-            %                end
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
+         case 'OPTODE_SERIAL_NUMBER'
+            sensorStruct = g_decArgo_jsonMetaData.SENSOR;
+            sensorFields = fields(sensorStruct);
+            sensorCell = struct2cell(sensorStruct);
+            idF = find(strcmp(sensorCell, 'OPTODE_DOXY'));
+            if (~isempty(idF))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+               if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                  jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
+               end
+               dimLevel = 101;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
             
-            %          case 'AANDERAA_OPTODE_PHASE_COEF_0'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef0'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef0);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_PHASE_COEF_1'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef1'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef1);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_PHASE_COEF_2'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef2'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef2);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_PHASE_COEF_3'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef3'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef3);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_0'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef0'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef0);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_1'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef1'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef1);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_2'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef2'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef2);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_3'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef3'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef3);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_4'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef4'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef4);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_5'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef5'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef5);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
-            %
-            %          case 'AANDERAA_OPTODE_COEF_6'
-            %             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
-            %                decValue = metaData.techParamValue;
-            %                jsonValue = '';
-            %                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef6'))
-            %                   jsonValue = sprintf('%g', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef6);
-            %                end
-            %                dimLevel = 1;
-            %
-            %                decValueList{end+1} = decValue;
-            %                jsonValueList{end+1} = jsonValue;
-            %                paramCodeList{end+1} = metaData.techParamCode;
-            %                paramIdList = [paramIdList metaData.techParamId];
-            %                dimLevelList = [dimLevelList dimLevel];
-            %             end
+         case 'AANDERAA_OPTODE_PHASE_COEF_0'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef0'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef0);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_PHASE_COEF_1'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef1'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef1);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_PHASE_COEF_2'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef2'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef2);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_PHASE_COEF_3'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'PhaseCoef3'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.PhaseCoef3);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_0'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef0'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef0);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_1'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef1'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef1);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_2'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef2'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef2);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_3'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef3'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef3);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_4'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef4'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef4);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_5'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef5'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef5);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'AANDERAA_OPTODE_COEF_6'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OPTODE'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE, 'SVUFoilCoef6'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OPTODE.SVUFoilCoef6);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_SERIAL_NUMBER'
+            sensorStruct = g_decArgo_jsonMetaData.SENSOR;
+            sensorFields = fields(sensorStruct);
+            sensorCell = struct2cell(sensorStruct);
+            sensorNames = [{'RADIOMETER_DOWN_IRR380'} {'RADIOMETER_DOWN_IRR412'} {'RADIOMETER_DOWN_IRR490'} {'RADIOMETER_PAR'}];
+            for idS = 1:length(sensorNames)
+               idF = find(strcmp(sensorCell, sensorNames{idS}));
+               if (~isempty(idF))
+                  decValue = metaData.techParamValue;
+                  jsonValue = '';
+                  number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+                  if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                     jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
+                  end
+                  dimLevel = 200 + idS;
+                  
+                  decValueList{end+1} = decValue;
+                  jsonValueList{end+1} = jsonValue;
+                  paramCodeList{end+1} = metaData.techParamCode;
+                  paramIdList = [paramIdList metaData.techParamId];
+                  dimLevelList = [dimLevelList dimLevel];
+               end
+            end
+            
+         case 'OCR_A0_LAMBDA_380'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda380'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda380);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A0_LAMBDA_412'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda412'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda412);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A0_LAMBDA_490'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda490'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A0_PAR'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0PAR'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0PAR);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_LAMBDA_380'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda380'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda380);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_LAMBDA_412'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda412'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda412);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_LAMBDA_490'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda490'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_PAR'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1PAR'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1PAR);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_LAMBDA_380'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda380'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda380);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_LAMBDA_412'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda412'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda412);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_LAMBDA_490'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda490'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_PAR'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmPAR'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmPAR);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'FLBB_SERIAL_NUMBER'
+            sensorStruct = g_decArgo_jsonMetaData.SENSOR;
+            sensorFields = fields(sensorStruct);
+            sensorCell = struct2cell(sensorStruct);
+            sensorNames = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'} {'FLUOROMETER_CDOM'}];
+            for idS = 1:length(sensorNames)
+               idF = find(strcmp(sensorCell, sensorNames{idS}));
+               if (~isempty(idF))
+                  decValue = metaData.techParamValue;
+                  jsonValue = '';
+                  number = str2num(regexprep(sensorFields{idF}, 'SENSOR_', ''));
+                  if (isfield(g_decArgo_jsonMetaData.SENSOR_SERIAL_NO, ['SENSOR_SERIAL_NO_' num2str(number)]))
+                     jsonValue = g_decArgo_jsonMetaData.SENSOR_SERIAL_NO.(['SENSOR_SERIAL_NO_' num2str(number)]);
+                  end
+                  dimLevel = 300 + idS;
+                  
+                  decValueList{end+1} = decValue;
+                  jsonValueList{end+1} = jsonValue;
+                  paramCodeList{end+1} = metaData.techParamCode;
+                  paramIdList = [paramIdList metaData.techParamId];
+                  dimLevelList = [dimLevelList dimLevel];
+               end
+            end
             
          otherwise
             decValue = metaData.techParamValue;

@@ -2,7 +2,7 @@
 % Get buoyancy information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1121_1321_1322(a_events)
+%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1121_26_1321_22(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1121_1321_1322(a_events)
+function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1121_26_1321_22(a_events)
 
 % output parameters initialization
 o_buoyancy = [];
@@ -27,6 +27,21 @@ o_buoyancy = [];
 global g_decArgo_dateDef;
 global g_decArgo_presDef;
 
+
+% buoyancy during descent
+idEvts = find(strcmp({a_events.functionName}, 'PARKDESCENT') | ...
+   strcmp({a_events.functionName}, 'DEEPDESCENT'));
+events = a_events(idEvts);
+
+PATTERN_1 = 'Adjusting Buoyancy to ParkDescentCount';
+PATTERN_2 = 'Adjusting Buoyancy to ';
+for idEv = 1:length(events)
+   dataStr = events(idEv).message;
+   if (any(strfind(dataStr, PATTERN_1)) || any(strfind(dataStr, PATTERN_2)))
+      pumpFlag = 0;
+      o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef g_decArgo_presDef g_decArgo_presDef pumpFlag]];
+   end
+end
 
 % buoyancy during parking drift
 idEvts = find(strcmp({a_events.functionName}, 'PARK'));
@@ -100,27 +115,18 @@ for idEv = 1:length(events)
    end
 end
 
-% buoyancy events
-idEvts = find(strcmp({a_events.functionName}, 'BuoyEngine'));
+% remaining buoyancy actions
+idEvts = find(strcmp({a_events.functionName}, 'ASCENT') | ...
+   strcmp({a_events.functionName}, 'SURFACE'));
 events = a_events(idEvts);
 
-PATTERN_1 = 'Adjusting Buoyancy to';
-PATTERN_2 = 'Buoyancy Start Position:';
+PATTERN = 'Adjusting Buoyancy to ';
 for idEv = 1:length(events)
    dataStr = events(idEv).message;
-   if (any(strfind(dataStr, PATTERN_1)))
-      pistonStop = str2double(dataStr(length(PATTERN_1)+1:end));
-      if (idEv < length(events))
-         dataStr2 = events(idEv+1).message;
-         if (any(strfind(dataStr2, PATTERN_2)))
-            pistonStart = str2double(dataStr2(length(PATTERN_2)+1:end));
-            if (pistonStop - pistonStart > 0)
-               pumpFlag = 1;
-            else
-               pumpFlag = 0;
-            end
-            o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef g_decArgo_presDef g_decArgo_presDef pumpFlag]];
-         end
+   if (any(strfind(dataStr, PATTERN)))
+      if (isempty(o_buoyancy) || ~any(o_buoyancy(:, 1) == events(idEv).timestamp))
+         pumpFlag = 1;
+         o_buoyancy = [o_buoyancy; [events(idEv).timestamp g_decArgo_dateDef g_decArgo_presDef g_decArgo_presDef pumpFlag]];
       end
    end
 end

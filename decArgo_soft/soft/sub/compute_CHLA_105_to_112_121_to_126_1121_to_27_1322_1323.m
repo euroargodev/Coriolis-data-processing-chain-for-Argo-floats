@@ -2,7 +2,7 @@
 % Compute CHLA from FLUORESCENCE_CHLA provided by the ECO2 or ECO3 sensor.
 %
 % SYNTAX :
-%  [o_CHLA] = compute_CHLA_105_to_112_121_to_126_1121_to_1123_1322(a_FLUORESCENCE_CHLA, ...
+%  [o_CHLA] = compute_CHLA_105_to_112_121_to_126_1121_to_27_1322_1323(a_FLUORESCENCE_CHLA, ...
 %    a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
 %
 % INPUT PARAMETERS :
@@ -21,7 +21,7 @@
 % RELEASES :
 %   06/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_CHLA] = compute_CHLA_105_to_112_121_to_126_1121_to_1123_1322(a_FLUORESCENCE_CHLA, ...
+function [o_CHLA] = compute_CHLA_105_to_112_121_to_126_1121_to_27_1322_1323(a_FLUORESCENCE_CHLA, ...
    a_FLUORESCENCE_CHLA_fill_value, a_CHLA_fill_value)
 
 % current float WMO number
@@ -63,7 +63,7 @@ if (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
          darkCountChloroA = double(g_decArgo_calibInfo.ECO3.darkCountChloroA_O);
       end
    else
-      fprintf('WARNING: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum);
       return
@@ -92,7 +92,7 @@ elseif (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
          darkCountChloroA = double(g_decArgo_calibInfo.ECO2.darkCountChloroA_O);
       end
    else
-      fprintf('WARNING: Float #%d Cycle #%d: inconsistent ECO2 sensor calibration information\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d: inconsistent ECO2 sensor calibration information\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum);
       return

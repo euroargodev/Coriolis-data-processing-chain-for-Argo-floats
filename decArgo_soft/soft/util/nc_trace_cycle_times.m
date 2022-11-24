@@ -166,6 +166,9 @@ global g_NTCT_SpyAtProf_evFlag;
 global g_NTCT_SpyInAscProf_juld;
 global g_NTCT_SpyInAscProf_pres;
 global g_NTCT_SpyInAscProf_evFlag;
+global g_NTCT_SpyAtSurface_juld;
+global g_NTCT_SpyAtSurface_pres;
+global g_NTCT_SpyAtSurface_evFlag;
 
 global g_NTCT_Surface1_juld;
 global g_NTCT_Surface1_pres;
@@ -261,6 +264,7 @@ global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
 global g_MC_AET_Float;
+global g_MC_SpyAtSurface;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
@@ -498,7 +502,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
    
    % buoyancy activitity
-   idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf])); % 239 = 250-11 for Apex
+   idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf g_MC_SpyAtSurface])); % 239 = 250-11 for Apex
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
    
    g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
@@ -516,6 +520,9 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    g_NTCT_SpyInAscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_SpyInAscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_SpyInAscProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+   g_NTCT_SpyAtSurface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_SpyAtSurface_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+   g_NTCT_SpyAtSurface_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
    
    if (~isempty(valveAct))
       for idC = 1:length(g_NTCT_cycles)
@@ -577,6 +584,18 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+            end
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtSurface));
+         if (~isempty(idF))
+            g_NTCT_SpyAtSurface_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_SpyAtSurface_pres(idC, 1:length(idF)) = pres(idF);
+            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtSurface));
+            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+            if (length(idF) ~= length(idF2))
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+            else
+               g_NTCT_SpyAtSurface_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
          end
       end
@@ -931,6 +950,7 @@ timeData = [
    g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :), ...
    g_NTCT_SpyAtProf_juld(a_idCycle+1, :), ...
    g_NTCT_SpyInAscProf_juld(a_idCycle+1, :), ...
+   g_NTCT_SpyAtSurface_juld(a_idCycle+1, :), ...
    g_NTCT_Surface1_juld(a_idCycle+1, :), ...
    g_NTCT_DescProf_juld(a_idCycle+1, :), ...
    g_NTCT_DriftAtPark1_juld(a_idCycle+1, :), ...
@@ -965,6 +985,7 @@ presData = [ 0, ...
    g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :), ...
    g_NTCT_SpyAtProf_pres(a_idCycle+1, :), ...
    g_NTCT_SpyInAscProf_pres(a_idCycle+1, :), ...
+   g_NTCT_SpyAtSurface_pres(a_idCycle+1, :), ...
    g_NTCT_Surface1_pres(a_idCycle+1, :), ...
    g_NTCT_DescProf_pres(a_idCycle+1, :), ...
    g_NTCT_DriftAtPark1_pres(a_idCycle+1, :), ...
@@ -1168,6 +1189,31 @@ if (~isempty(xSpyInAscProf))
    
    firstSurfDate = fliplr(xSpyInAscProf);
    firstSurfPres = fliplr(ySpyInAscProf);
+   if (length(firstSurfDate) > 2)
+      firstSurfDate = firstSurfDate(3);
+      firstSurfPres = firstSurfPres(3);
+   end
+end
+
+xSpyAtSurface = g_NTCT_SpyAtSurface_juld(a_idCycle+1, :);
+ySpyAtSurface = g_NTCT_SpyAtSurface_pres(a_idCycle+1, :);
+idDel = find((xSpyAtSurface == g_dateDef) | (ySpyAtSurface == g_presDef));
+xSpyAtSurface(idDel) = [];
+ySpyAtSurface(idDel) = [];
+firstSurfDate = g_dateDef;
+firstSurfPres = g_presDef;
+if (~isempty(xSpyAtSurface))
+   plot(presAxes, xSpyAtSurface, ySpyAtSurface, 'k');
+   hold on;
+   
+   evSpyAtSurface = g_NTCT_SpyAtSurface_evFlag(a_idCycle+1, 1:length(xSpyAtSurface));
+   idEv = find(evSpyAtSurface > 0);
+   plot(presAxes, xSpyAtSurface(idEv), ySpyAtSurface(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyAtSurface == -1);
+   plot(presAxes, xSpyAtSurface(idPump), ySpyAtSurface(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+   
+   firstSurfDate = fliplr(xSpyAtSurface);
+   firstSurfPres = fliplr(ySpyAtSurface);
    if (length(firstSurfDate) > 2)
       firstSurfDate = firstSurfDate(3);
       firstSurfPres = firstSurfPres(3);

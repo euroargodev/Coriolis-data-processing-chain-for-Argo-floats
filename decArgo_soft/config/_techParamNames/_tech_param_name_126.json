@@ -3,7 +3,7 @@
    {
       "TECH_PARAM_DEC_ID" : "100",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Numéro de pattern.",
+      "TECH_PARAM_MSG_LABEL" : "NumÃ©ro de pattern.",
       "TECH_PARAM_NAME" : "NUMBER_SubCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_SubCycle_NUMBER"
    },
@@ -11,7 +11,7 @@
    {
       "TECH_PARAM_DEC_ID" : "101",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Numéro de cycle (flotteur).",
+      "TECH_PARAM_MSG_LABEL" : "NumÃ©ro de cycle (flotteur).",
       "TECH_PARAM_NAME" : "NUMBER_InternalCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_InternalCycle_NUMBER"
    },
@@ -1027,7 +1027,7 @@
    {
       "TECH_PARAM_DEC_ID" : "174",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage à la remontée",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage Ã  la remontÃ©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is hanged during ascent."
    },
@@ -1035,7 +1035,7 @@
    {
       "TECH_PARAM_DEC_ID" : "175",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage à la remontée",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage Ã  la remontÃ©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float escaped from hanging during ascent."
    },
@@ -1043,7 +1043,7 @@
    {
       "TECH_PARAM_DEC_ID" : "176",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Remontée d'urgence",
+      "TECH_PARAM_MSG_LABEL" : "RemontÃ©e d'urgence",
       "TECH_PARAM_NAME" : "CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "date of emergency ascent"
    },
@@ -1051,7 +1051,7 @@
    {
       "TECH_PARAM_DEC_ID" : "177",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Pression mesurée en surface",
+      "TECH_PARAM_MSG_LABEL" : "Pression mesurÃ©e en surface",
       "TECH_PARAM_NAME" : "PRES_Now_dbar",
       "TECH_PARAM_DESCRIPTION" : "test message data reporting pressure at the surface during drift - cycle 0"
    },

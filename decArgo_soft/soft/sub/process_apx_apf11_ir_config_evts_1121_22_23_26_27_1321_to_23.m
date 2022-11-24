@@ -2,7 +2,7 @@
 % Get configuration information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts(a_events)
+%  [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts_1121_22_23_26_27_1321_to_23(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -19,7 +19,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts(a_events)
+function [o_missionCfg, o_sampleCfg] = process_apx_apf11_ir_config_evts_1121_22_23_26_27_1321_to_23(a_events)
 
 % output parameters initialization
 o_missionCfg = [];

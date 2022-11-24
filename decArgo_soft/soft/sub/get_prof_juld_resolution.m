@@ -61,7 +61,7 @@ switch (a_floatTransType)
          case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1201, 1314} % Apex Ir Rudics & navis floats
             o_profJuldRes = double(1/86400); % 1 second
             
-         case {1121, 1122, 1123} % Apex APF11 Ir
+         case {1121, 1122, 1123, 1124, 1125, 1126, 1127} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
          case {3001} % NEMO
@@ -91,7 +91,7 @@ switch (a_floatTransType)
          case {1314} % Apex Ir Sbd
             o_profJuldRes = double(1/86400); % 1 second
             
-         case {1321, 1322} % Apex APF11 Ir
+         case {1321, 1322, 1323} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
          case {2001, 2002}

@@ -947,6 +947,14 @@ if (~isempty(ascentEndDate))
    phaseDates = [phaseDates ascentEndDate];
    phaseMeasCode = [phaseMeasCode g_MC_AET];
 end
+if (~isempty(bladderInflationStartDate))
+   phaseDates = [phaseDates bladderInflationStartDate];
+   phaseMeasCode = [phaseMeasCode g_MC_TST];
+end
+if (~isempty(transStartDate))
+   phaseDates = [phaseDates transStartDate];
+   phaseMeasCode = [phaseMeasCode g_MC_TST];
+end
 [phaseDates, idSort] = sort(phaseDates);
 phaseMeasCode = phaseMeasCode(idSort);
 

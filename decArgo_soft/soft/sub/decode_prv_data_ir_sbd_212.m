@@ -38,6 +38,9 @@ global g_decArgo_presCountsDef;
 global g_decArgo_tempCountsDef;
 global g_decArgo_salCountsDef;
 
+% decoder Id check flag
+global g_decArgo_decIdCheckFlag;
+
 
 % packet type
 packType = a_tabData(1);
@@ -90,7 +93,9 @@ switch (packType)
       cycleNum = tabTech1(1);
       
       % check decoder Id
-      check_decoder_id(tabTech1(3), 212, g_decArgo_floatNum);
+      if (g_decArgo_decIdCheckFlag == 0)
+         check_decoder_id(tabTech1(3), 212, g_decArgo_floatNum);
+      end
       
       % compute the offset between float days and julian days
       julD2FloatDayOffset = -1;

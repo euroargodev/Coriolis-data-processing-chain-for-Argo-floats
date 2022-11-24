@@ -60,8 +60,8 @@ switch (a_decoderId)
          a_floatNum, a_decoderId, a_floatImei, ...
          a_floatLaunchDate, a_floatEndDate);
 
-   case {1321, 1322}
-      % APEX APF11 (2.10.1.S, 2.11.1.S, 2.11.3.S, 2.12.2.1.S)
+   case {1321, 1322, 1323}
+      % APEX APF11 (2.10.1.S, 2.11.1.S, 2.12.2.1.S)
       
       [o_tabProfiles, ...
          o_tabTrajNMeas, o_tabTrajNCycle, ...

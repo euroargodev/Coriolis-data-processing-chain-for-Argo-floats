@@ -33,6 +33,9 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11Iridium;
+
 
 % current (and final) configuration
 finalConfigNum = g_decArgo_floatConfig.NUMBER;
@@ -50,7 +53,7 @@ finalConfigName(idDel) = [];
 finalConfigValue(idDel, :) = [];
 
 % APF11 floats
-if (ismember(a_decoderId, [1121, 1122, 1123, 1321, 1322]))
+if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
    
    % convert CONFIG_AR_AscentRate from dbar/s to mm/s
    idF1 = find(strcmp(finalConfigName, 'CONFIG_AR_AscentRate'));
@@ -105,7 +108,7 @@ if (~isempty(a_decArgoConfParamNames))
       else
          
          % Apex APF11 floats
-         if (ismember(a_decoderId, [1121, 1122, 1123, 1321, 1322]))
+         if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
             if (ismember(finalConfigName{idConfParam}(1:idFUs(2)-1), ['CONFIG_SAMPLE' 'CONFIG_PROFILE' 'CONFIG_MEASURE']))
 
                % retrieve phase name

@@ -4,13 +4,14 @@
 % SYNTAX :
 %  [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
 %    o_gpsData, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_cycleTimeData, o_presOffsetData] = ...
-%    decode_system_log_apx_apf11_ir_1123(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
+%    decode_system_log_apx_apf11_ir_1123(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_systemLogFileList : list of system_log files
 %   a_cycleTimeData     : cycle timings data
 %   a_presOffsetData    : pressure offset information
 %   a_techData          : input TECH data
+%   a_decoderId         : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_miscInfo       : misc information from science_log files
@@ -36,7 +37,7 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
    o_gpsData, o_grounding, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_presOffsetData] = ...
-   decode_system_log_apx_apf11_ir_1123(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
+   decode_system_log_apx_apf11_ir_1123(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
 
 % output parameters initialization
 o_miscInfo = [];
@@ -67,6 +68,9 @@ global g_decArgo_cycleNumListIceDetected;
 
 % ice float flag
 global g_decArgo_iceFloat;
+
+% decoder Id check flag
+global g_decArgo_decIdCheckFlag;
 
 
 if (isempty(a_systemLogFileList))
@@ -102,14 +106,22 @@ for idFile = 1:length(a_systemLogFileList)
 
    % retrieve useful information
    
+   % check decoder Id
+   if (g_decArgo_decIdCheckFlag == 0)
+      idEvts = find(strcmp({events.functionName}, 'Firmware'));
+      if (~isempty(idEvts))
+         check_apx_apf11_decoder_id(events(idEvts), a_decoderId);
+      end
+   end
+   
    % meta-data information
-   if (~isempty(g_decArgo_outputCsvFileId))
+   if (~isempty(g_decArgo_outputCsvFileId) && (g_decArgo_cycleNum == 0))
       idEvts = find(strcmp({events.functionName}, 'Float ID') | ...
          strcmp({events.functionName}, 'go_to_state') | ...
          strcmp({events.functionName}, 'test') | ...
          strcmp({events.functionName}, 'log_test_results'));
       if (~isempty(idEvts))
-         metaData = process_apx_apf11_ir_meta_data_evts_1121_1123_1321_1322(events(idEvts));
+         metaData = process_apx_apf11_ir_meta_data_evts_1121_23_26_27_1321_to_23(events(idEvts));
          o_metaData = [o_metaData metaData];
       end
    end
@@ -117,12 +129,10 @@ for idFile = 1:length(a_systemLogFileList)
    % configuration information
    idEvts = find( ...
       strcmp({events.functionName}, 'MissionCfg') | ...
-      strcmp({events.functionName}, 'mission_cfg') | ...
-      strcmp({events.functionName}, 'SampleCfg') | ...
       strcmp({events.functionName}, 'sample_cfg') ...
       );
    if (~isempty(idEvts))
-      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts(events(idEvts));
+      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1121_22_23_26_27_1321_to_23(events(idEvts));
       o_missionCfg = [o_missionCfg; missionCfg];
       o_sampleCfg = [o_sampleCfg; sampleCfg];
       
@@ -142,7 +152,7 @@ for idFile = 1:length(a_systemLogFileList)
    % pressure offset
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT'));
    if (~isempty(idEvts))
-      pressureOffset = process_apx_apf11_ir_pres_offset_evts_1121_1123_1321_1322(events(idEvts));
+      pressureOffset = process_apx_apf11_ir_pres_offset_1121_22_23_26_27_1321_to_23(events(idEvts));
       if (~isempty(pressureOffset))
          dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
          dataStruct.label = 'Pressure offset';
@@ -168,10 +178,9 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'go_to_state') | ...
       strcmp({events.functionName}, 'SURFACE') | ...
       strcmp({events.functionName}, 'sky_search') | ...
-      strcmp({events.functionName}, 'upload_file') | ...
       strcmp({events.functionName}, 'zmodem_upload_files'));
    if (~isempty(idEvts))
-      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_1123_1321_1322(events(idEvts), o_cycleTimeData);
+      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1121_23_26_27(events(idEvts), o_cycleTimeData);
       if (~isempty(o_cycleTimeData) && ~isempty(o_cycleTimeData.descentStartDateSys))
          descentStartTime = o_cycleTimeData.descentStartDateSys;
       end
@@ -274,7 +283,7 @@ for idFile = 1:length(a_systemLogFileList)
    % buoyancy activity
    idEvts = find(strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))
-      buoyancy = process_apx_apf11_ir_buoyancy_evts_1122_1123(events(idEvts));
+      buoyancy = process_apx_apf11_ir_buoyancy_evts_1122_23(events(idEvts));
       o_buoyancy = [o_buoyancy; buoyancy];
    end
 

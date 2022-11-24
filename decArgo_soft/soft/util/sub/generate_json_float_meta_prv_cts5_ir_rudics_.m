@@ -606,10 +606,8 @@ for idFloat = 1:length(floatList)
       configParamValues(idDel) = [];
       
       % consider XML meta-data file
-      if (a_rtVersionFlag == 0)
-         metaDataFileName = [a_configDirName '/' loginName '_metadata.xml'];
-         [metaStruct] = get_meta_data_cts5(metaDataFileName, metaStruct, sensorListNum, floatNum, a_logDirName);
-      end
+      metaDataFileName = [a_configDirName '/' loginName '_metadata.xml'];
+      [metaStruct] = get_meta_data_cts5(metaDataFileName, metaStruct, sensorListNum, floatNum, a_logDirName, a_rtVersionFlag);
    end
       
    % add static configuration parameters stored in the data base

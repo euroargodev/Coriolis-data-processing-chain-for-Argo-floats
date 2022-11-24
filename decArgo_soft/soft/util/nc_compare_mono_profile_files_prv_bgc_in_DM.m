@@ -140,6 +140,8 @@ fprintf(fidOut, '%s\n', header);
 lineNum = 1;
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
+   
+   diffDataParamList = [];
 
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
@@ -354,7 +356,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDate, profLocDate, profLon, profLat, ...
-            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
+            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramList] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG);
          
          profIdInNew = descProfNumBase2New(idProf);
@@ -367,6 +369,8 @@ for idFloat = 1:nbFloats
             julian_2_gregorian(profLocDate(profIdInNew)), profLon(profIdInNew), profLat(profIdInNew), ...
             profMode(profIdInNew), profCut(profIdInNew), profNbLevels(profIdInNew), fileVersion);
          lineNum = lineNum + 1;
+         
+         diffDataParamList = [diffDataParamList paramList{profIdInNew}];
          
          if (PRINT_DIFF_DATA_FLAG == 1)
             fprintf('Float %d cycle #%d prof #%d: descent profile only in NEW set (N_LEVELS = %d)\n', ...
@@ -394,7 +398,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDate, profLocDate, profLon, profLat, ...
-            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
+            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramList] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG);
          
          profIdInBase = descProfNumBase(idProf);
@@ -407,6 +411,8 @@ for idFloat = 1:nbFloats
             julian_2_gregorian(profLocDate(profIdInBase)), profLon(profIdInBase), profLat(profIdInBase), ...
             profMode(profIdInBase), profCut(profIdInBase), profNbLevels(profIdInBase), fileVersion);
          lineNum = lineNum + 1;
+         
+         diffDataParamList = [diffDataParamList paramList{profIdInBase}];
          
          if (PRINT_DIFF_DATA_FLAG == 1)
             fprintf('Float %d cycle #%d prof #%d: descent profile only in BASE set (N_LEVELS = %d)\n', ...
@@ -435,7 +441,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDateBase, profLocDateBase, profLonBase, profLatBase, ...
-            profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, dataStrBase, paramStrBase] = ...
+            profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, dataStrBase, paramStrBase, paramBaseList] = ...
             get_nc_profile_info(profFileNameBase, 1);
 
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
@@ -449,7 +455,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDateNew, profLocDateNew, profLonNew, profLatNew, ...
-            profModeNew, profCutNew, profNbLevelsNew, fileVersionNew, dataStrNew, paramStrNew] = ...
+            profModeNew, profCutNew, profNbLevelsNew, fileVersionNew, dataStrNew, paramStrNew, paramNewList] = ...
             get_nc_profile_info(profFileNameNew, 1);
          
          % create the comparison flags
@@ -495,6 +501,11 @@ for idFloat = 1:nbFloats
                end
             end
          end
+         
+         if (profDataFlag == 1)
+            diffDataParamList = [diffDataParamList paramBaseList{profIdInBase} paramNewList{profIdInNew}];
+         end
+         
          if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
             fprintf('Float %d cycle #%d prof #%d: descent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
                floatNum, descCyNumBase(idProf), profIdInBase, ...
@@ -662,7 +673,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDate, profLocDate, profLon, profLat, ...
-            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
+            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramList] = ...
             get_nc_profile_info(profFileNameNew, PRINT_DIFF_DATA_FLAG);
          
          profIdInNew = ascProfNumBase2New(idProf);
@@ -675,6 +686,8 @@ for idFloat = 1:nbFloats
             julian_2_gregorian(profLocDate(profIdInNew)), profLon(profIdInNew), profLat(profIdInNew), ...
             profMode(profIdInNew), profCut(profIdInNew), profNbLevels(profIdInNew), fileVersion);
          lineNum = lineNum + 1;
+         
+         diffDataParamList = [diffDataParamList paramList{profIdInNew}];
          
          if (PRINT_DIFF_DATA_FLAG == 1)
             fprintf('Float %d cycle #%d prof #%d: ascent profile only in NEW set (N_LEVELS = %d)\n', ...
@@ -702,7 +715,7 @@ for idFloat = 1:nbFloats
             end
          end
          [profDate, profLocDate, profLon, profLat, ...
-            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr] = ...
+            profMode, profCut, profNbLevels, fileVersion, dataStr, paramStr, paramList] = ...
             get_nc_profile_info(profFileNameBase, PRINT_DIFF_DATA_FLAG);
          
          profIdInBase = ascProfNumBase(idProf);
@@ -715,6 +728,8 @@ for idFloat = 1:nbFloats
             julian_2_gregorian(profLocDate(profIdInBase)), profLon(profIdInBase), profLat(profIdInBase), ...
             profMode(profIdInBase), profCut(profIdInBase), profNbLevels(profIdInBase), fileVersion);
          lineNum = lineNum + 1;
+         
+         diffDataParamList = [diffDataParamList paramList{profIdInBase}];
          
          if (PRINT_DIFF_DATA_FLAG == 1)
             fprintf('Float %d cycle #%d prof #%d: ascent profile only in BASE set (N_LEVELS = %d)\n', ...
@@ -744,7 +759,7 @@ for idFloat = 1:nbFloats
          end
          [profDateBase, profLocDateBase, profLonBase, profLatBase, ...
             profModeBase, profCutBase, profNbLevelsBase, fileVersionBase, ...
-            dataStrBase, paramStrBase] = ...
+            dataStrBase, paramStrBase, paramBaseList] = ...
             get_nc_profile_info(profFileNameBase, 1);
 
          profFileNameNew = [DIR_INPUT_NEW_NC_FILES ...
@@ -759,7 +774,7 @@ for idFloat = 1:nbFloats
          end
          [profDateNew, profLocDateNew, profLonNew, profLatNew, ...
             profModeNew, profCutNew, profNbLevelsNew, fileVersionNew, ...
-            dataStrNew, paramStrNew] = ...
+            dataStrNew, paramStrNew, paramNewList] = ...
             get_nc_profile_info(profFileNameNew, 1);
          
          % create the comparison flags
@@ -805,6 +820,11 @@ for idFloat = 1:nbFloats
                end
             end
          end
+         
+         if (profDataFlag == 1)
+            diffDataParamList = [diffDataParamList paramBaseList{profIdInBase} paramNewList{profIdInNew}];
+         end
+         
          if ((profDataFlag == 1) && (PRINT_DIFF_DATA_FLAG == 1))
             fprintf('Float %d cycle #%d prof #%d: ascent profiles differ (BASE: N_LEVELS = %d; NEW: N_LEVELS = %d)\n', ...
                floatNum, ascCyNumBase(idProf), profIdInBase, ...
@@ -864,7 +884,20 @@ for idFloat = 1:nbFloats
    fprintf(fidOut, '%d; %d\n', ...
       lineNum, floatNum);
    lineNum = lineNum + 1;
-
+   
+   diffDataParamList = unique(diffDataParamList, 'stable');
+   paramList = [];
+   for idParam = 1:length(diffDataParamList)
+      paramInfo = get_netcdf_param_attributes(diffDataParamList{idParam});
+      if (paramInfo.paramType == 'b')
+         paramList{end+1} = diffDataParamList{idParam};
+      end
+   end
+   if (~isempty(paramList))
+      fprintf('\nFloat #%d: parameters for which data differ:\n', floatNum);
+      fprintf('{''%s''} ...\n', paramList{:});
+      fprintf('\n');
+   end
 end
 
 fclose(fidOut);
@@ -1067,7 +1100,7 @@ return
 %   03/26/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profDate, o_profLocDate, o_profLon, o_profLat, ...
-   o_profMode, o_profCut, o_profNbLevels, o_fileVersion, o_dataStr, o_paramStr] = ...
+   o_profMode, o_profCut, o_profNbLevels, o_fileVersion, o_dataStr, o_paramStr, o_paramList] = ...
    get_nc_profile_info(a_profFilePathName, a_dataFlag)
          
 % output parameters initialization
@@ -1081,6 +1114,7 @@ o_profNbLevels = [];
 o_fileVersion = [];
 o_dataStr = [];
 o_paramStr = [];
+o_paramList = [];
 
 % default values
 global g_dateDef;
@@ -1206,6 +1240,7 @@ if (exist(a_profFilePathName, 'file') == 2)
          paramStr(end-1:end) = [];
          o_paramStr{idProf} = paramStr;
       end
+      o_paramList = paramForProf2;
       
       % collect parameter data
       dataFormat = [];

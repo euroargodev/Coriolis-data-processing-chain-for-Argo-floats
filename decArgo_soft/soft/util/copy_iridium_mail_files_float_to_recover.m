@@ -49,13 +49,13 @@ DIR_INPUT_SPOOL_DATA = '/home/coriolis_exp/spool/co01/co0101/co010106/message';
 FLOAT_INFORMATION_FILE_NAME = '/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/argoFloatInfo/_provor_floats_information_co.txt';
 
 % directory to store duplicated mail files
-% DIR_OUTPUT_DATA = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/iridium/';
+DIR_OUTPUT_DATA = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/iridium/';
 
 % directory to store the log file
 DIR_LOG_FILE = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/log';
 
 % maximum age of files to consider (in hours)
-% MAX_FILE_AGE_IN_HOUR = 48;
+MAX_FILE_AGE_IN_HOUR = 48;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DEFAULT CONFIGURATION - END
