@@ -51,20 +51,31 @@ ptnList = [ ...
    ];
 for idL = 1:length(logData)
    % we are looking for lines with the pattern:
-   % f+++++++++ floatLoginName/xxxxxx
+   % f+++++++++ xxxxxx
    % with xxxxxx containing both information (pattern and extension) listed in ptnList
-   if (~isempty(strfind(infoData{idL}, ptn1)) && ~isempty(strfind(logData{idL}, ptn2)))
-      filePathName = logData{idL};
-      [filePath, fileName, fileExt] = fileparts(filePathName);
-      if (isempty(strfind(filePath, '/')))
-         for idPtn = 1:size(ptnList, 1)
-            if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
-                  strcmp(fileExt, ptnList{idPtn, 2}))
-               o_floatFiles{end+1} = filePathName;
-               break;
-            end
+   %    if (~isempty(strfind(infoData{idL}, ptn1)) && ~isempty(strfind(logData{idL}, ptn2)))
+   if (~isempty(strfind(infoData{idL}, ptn1)))
+      
+      fileName = logData{idL};
+      for idPtn = 1:size(ptnList, 1)
+         if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
+               strcmp(fileExt, ptnList{idPtn, 2}))
+            o_floatFiles{end+1} = [ptn2 fileName];
+            break;
          end
       end
+      
+      %       filePathName = logData{idL};
+      %       [filePath, fileName, fileExt] = fileparts(filePathName);
+      %       if (isempty(strfind(filePath, '/')))
+      %          for idPtn = 1:size(ptnList, 1)
+      %             if (~isempty(strfind(fileName, ptnList{idPtn, 1})) && ...
+      %                   strcmp(fileExt, ptnList{idPtn, 2}))
+      %                o_floatFiles{end+1} = filePathName;
+      %                break;
+      %             end
+      %          end
+      %       end
    end
 end
 

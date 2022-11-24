@@ -35,23 +35,34 @@ logData = textscan(fId, '%s');
 logData = logData{:};
 fclose(fId);
 
+ptn = sprintf('%s/', a_floatLoginName);
 for idL = 1:length(logData)
    line = logData{idL};
    % we are looking for lines with the pattern:
-   % floatLoginName/xxxxxx_xxxxxx_floatLoginName_xxxxx.bin
+   % xxxxxx_xxxxxx_floatLoginName_xxxxx.bin
    if (length(line) > 3)
       if (strcmp(line(end-3:end), '.bin') == 1)
-         if (strncmp(line, a_floatLoginName, length(a_floatLoginName)))
-            filePathName = line;
-            [path, fileName, ~] = fileparts(filePathName);
-            idF = strfind(fileName, '_');
-            if (isempty(strfind(path, '/')) && (length(idF) == 3))
-               floatLogin = fileName(idF(2)+1:idF(3)-1);
-               if (strcmp(path, floatLogin) == 1)
-                  o_floatBinFiles{end+1} = filePathName;
-               end
+         
+         fileName = line;
+         idF = strfind(fileName, '_');
+         if (length(idF) == 3)
+            floatLogin = fileName(idF(2)+1:idF(3)-1);
+            if (strcmp(floatLogin, a_floatLoginName) == 1)
+               o_floatBinFiles{end+1} = [ptn fileName];
             end
          end
+         
+         %          if (strncmp(line, a_floatLoginName, length(a_floatLoginName)))
+         %             filePathName = line;
+         %             [path, fileName, ~] = fileparts(filePathName);
+         %             idF = strfind(fileName, '_');
+         %             if (isempty(strfind(path, '/')) && (length(idF) == 3))
+         %                floatLogin = fileName(idF(2)+1:idF(3)-1);
+         %                if (strcmp(path, floatLogin) == 1)
+         %                   o_floatBinFiles{end+1} = filePathName;
+         %                end
+         %             end
+         %          end
       end
    end
 end
