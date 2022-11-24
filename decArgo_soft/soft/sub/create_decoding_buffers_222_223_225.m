@@ -393,7 +393,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, ...
-      6903059, 6903109, 6903793, 6904236]))
+      6903059, 6903109, 6903793, 6904236 6903046]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -560,6 +560,26 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(tabCyNum == 413) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 413) = tabRankByDate(id);   
          tabDeep(tabCyNum == 413) = 1;
+      case 6903046
+         % cycle #166 data are separated
+         id = find((tabCyNum == 166) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 166) = tabRank(id);
+         tabRankByCycle(tabCyNum == 166) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 166) = tabRankByDate(id);
+         tabSession(tabCyNum == 166) = tabSession(id);
+         tabSessionDeep(tabCyNum == 166) = tabSessionDeep(id);
+         % tech packets and one hydraulic packet are transmitted twice
+         idHydrau = find((tabCyNum == 166) & (tabPackType == 6));
+         idHydrau = idHydrau(1);
+         idTech1 = find((tabCyNum == 166) & (tabPackType == 0));
+         idTech1 = idTech1(end);
+         idTech2 = find((tabCyNum == 166) & (tabPackType == 4));
+         idTech2 = idTech2(end);
+         idDel = [idHydrau idTech1 idTech2];
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
