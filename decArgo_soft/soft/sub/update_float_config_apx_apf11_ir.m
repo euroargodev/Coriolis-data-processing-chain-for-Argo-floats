@@ -402,6 +402,9 @@ switch (a_floatConfLabel)
    case 'MinVacuum'
       o_configName = 'CONFIG_OK_OkInternalVacuum';
       o_configValue = str2double(a_floatConfValue);
+   case 'ParkBottomDeltaPressure'
+      o_configName = 'CONFIG_PBDP_ParkBottomDeltaPressure';
+      o_configValue = str2double(a_floatConfValue);
    case 'ParkBuoyancyNudge'
       o_configName = 'CONFIG_PBN_ParkBuoyancyNudge';
       o_configValue = str2double(a_floatConfValue);
