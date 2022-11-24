@@ -114,6 +114,12 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabTechNMeas = [];
 
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
 % global measurement codes
 global g_MC_CycleStart;
 global g_MC_DST;

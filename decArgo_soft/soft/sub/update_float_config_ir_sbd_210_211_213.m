@@ -26,9 +26,17 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% offset in cycle number (in case of reset of the float)
+global g_decArgo_cycleNumOffset;
+
 % float configuration
 global g_decArgo_floatConfig;
 
+
+% we must use the float internal cycle number to set the configuration values
+% (if the float has been reset float internal cycle number differ from decoder
+% cycle number)
+floatInternalCycleNumber = g_decArgo_cycleNum - g_decArgo_cycleNumOffset;
 
 ID_OFFSET = 1;
 
@@ -75,11 +83,11 @@ end
 confName = 'CONFIG_MC01_';
 idPosMc01 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
 nbCyclesFirstMission = newConfig(idPosMc01);
-if (g_decArgo_cycleNum < nbCyclesFirstMission)
+if (floatInternalCycleNumber < nbCyclesFirstMission)
 
    % first mission
    % copy MC02 in MC002
-   if (g_decArgo_cycleNum ~= 0)
+   if (floatInternalCycleNumber ~= 0)
       confName = 'CONFIG_MC02_';
       idPosMc02 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
       confName = 'CONFIG_MC002_';
@@ -102,8 +110,8 @@ else
    
    % second mission
    % update MC002
-   if (g_decArgo_cycleNum ~= 0)
-      if (g_decArgo_cycleNum == nbCyclesFirstMission)
+   if (floatInternalCycleNumber ~= 0)
+      if (floatInternalCycleNumber == nbCyclesFirstMission)
          
          % compute transition cycle duration
          confName = 'CONFIG_MC02_';
@@ -144,7 +152,7 @@ else
 end
 
 % update PX00
-if (g_decArgo_cycleNum > 0)
+if (floatInternalCycleNumber > 0)
 
    % set the profile direction
    confName = 'CONFIG_MC08_';
@@ -210,7 +218,7 @@ secondProfRepRate = newConfig(idPosMc15);
 if (~isnan(secondProfRepRate) && (secondProfRepRate ~= 1))
    
    % check float internal cycle number VS MC15
-   if ((mod(g_decArgo_cycleNum, secondProfRepRate) == 0) || (g_decArgo_cycleNum == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
+   if ((mod(floatInternalCycleNumber, secondProfRepRate) == 0) || (floatInternalCycleNumber == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
       % profile pressure is MC16
       confName = 'CONFIG_MC16_';
       idPosMc16 = find(strncmp(confName, configNames, length(confName)) == 1, 1);

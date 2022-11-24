@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
-%    o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle] = ...
+%    o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
 %    decode_prv_data_ir_sbd_214(a_tabData, a_tabDataDates, a_procLevel)
 %
 % INPUT PARAMETERS :
@@ -21,7 +21,9 @@
 %   o_floatParam1  : decoded parameter #1 data
 %   o_floatParam2  : decoded parameter #2 data
 %   o_irSessionNum : number of the Iridium session (1 or 2)
-%   o_deepCycle    : deep cycle flag (1 if it is a deep cycle 0 otherwise)
+%   o_deepCycle     : deep cycle flag (1 if it is a deep cycle 0 otherwise)
+%   o_resetDetected : reset detected flag (1 if a reset of the float has been
+%                     detected 0 otherwise)
 %
 % EXAMPLES :
 %
@@ -32,7 +34,7 @@
 %   08/30/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTech1, o_tabTech2, o_dataCTDO, o_evAct, o_pumpAct, ...
-   o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle] = ...
+   o_floatParam1, o_floatParam2, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
    decode_prv_data_ir_sbd_214(a_tabData, a_tabDataDates, a_procLevel)
 
 % output parameters initialization
@@ -45,6 +47,7 @@ o_floatParam1 = [];
 o_floatParam2 = [];
 o_irSessionNum = 0;
 o_deepCycle = [];
+o_resetDetected = 0;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -550,6 +553,7 @@ if (a_procLevel > 0)
             
             g_decArgo_floatLastResetDate = floatLastResetTime;
             g_decArgo_cycleNumOffset = g_decArgo_cycleNum + 1;
+            o_resetDetected = 1;
          end
       end
    end

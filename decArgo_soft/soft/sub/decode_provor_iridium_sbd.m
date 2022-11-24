@@ -2634,7 +2634,8 @@ switch (a_decoderId)
    case {210, 211} % Arvor-ARN Iridium
       
       % decode the collected data
-      [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum, deepCycle] = ...
+      [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum, ...
+         deepCycle, resetDetected] = ...
          decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 1, a_decoderId);
       
       completedBuffer = a_completedBuffer;
@@ -2654,7 +2655,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((g_decArgo_cycleNum > 0) && (deepCycle == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2873,7 +2874,7 @@ switch (a_decoderId)
       
       % decode the collected data
       [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam1, floatParam2, ...
-         irSessionNum, deepCycle] = ...
+         irSessionNum, deepCycle, resetDetected] = ...
          decode_prv_data_ir_sbd_212(sbdDataData, sbdDataDate, 1);
       
       completedBuffer = a_completedBuffer;
@@ -2893,7 +2894,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((g_decArgo_cycleNum > 0) && (deepCycle == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -3111,7 +3112,8 @@ switch (a_decoderId)
    case {213} % Provor-ARN-DO Iridium 5.74
       
       % decode the collected data
-      [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, irSessionNum, deepCycle] = ...
+      [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, ...
+         irSessionNum, deepCycle, resetDetected] = ...
          decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 1);
 
       completedBuffer = a_completedBuffer;
@@ -3131,7 +3133,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((g_decArgo_cycleNum > 0) && (deepCycle == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -3394,7 +3396,7 @@ switch (a_decoderId)
       
       % decode the collected data
       [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam1, floatParam2, ...
-         irSessionNum, deepCycle] = ...
+         irSessionNum, deepCycle, resetDetected] = ...
          decode_prv_data_ir_sbd_214(sbdDataData, sbdDataDate, 1);
       
       completedBuffer = a_completedBuffer;
@@ -3414,7 +3416,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((g_decArgo_cycleNum > 0) && (deepCycle == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       

@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-%    o_floatParam, o_irSessionNum, o_deepCycle] = ...
+%    o_floatParam, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
 %    decode_prv_data_ir_sbd_210_211(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -14,14 +14,16 @@
 %   a_decoderId    : float decoder Id
 %
 % OUTPUT PARAMETERS :
-%   o_tabTech1     : decoded data of technical msg #1
-%   o_tabTech2     : decoded data of technical msg #2
-%   o_dataCTD      : decoded data from CTD
-%   o_evAct        : EV decoded data from hydraulic packet
-%   o_pumpAct      : pump decoded data from hydraulic packet
-%   o_floatParam   : decoded parameter data
-%   o_irSessionNum : number of the Iridium session (1 or 2)
-%   o_deepCycle    : deep cycle flag (1 if it is a deep cycle 0 otherwise)
+%   o_tabTech1      : decoded data of technical msg #1
+%   o_tabTech2      : decoded data of technical msg #2
+%   o_dataCTD       : decoded data from CTD
+%   o_evAct         : EV decoded data from hydraulic packet
+%   o_pumpAct       : pump decoded data from hydraulic packet
+%   o_floatParam    : decoded parameter data
+%   o_irSessionNum  : number of the Iridium session (1 or 2)
+%   o_deepCycle     : deep cycle flag (1 if it is a deep cycle 0 otherwise)
+%   o_resetDetected : reset detected flag (1 if a reset of the float has been
+%                     detected 0 otherwise)
 %
 % EXAMPLES :
 %
@@ -32,7 +34,7 @@
 %   07/04/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-   o_floatParam, o_irSessionNum, o_deepCycle] = ...
+   o_floatParam, o_irSessionNum, o_deepCycle, o_resetDetected] = ...
    decode_prv_data_ir_sbd_210_211(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
 
 % output parameters initialization
@@ -44,6 +46,7 @@ o_pumpAct = [];
 o_floatParam = [];
 o_irSessionNum = 0;
 o_deepCycle = [];
+o_resetDetected = 0;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -548,6 +551,7 @@ if (a_procLevel > 0)
             
             g_decArgo_floatLastResetDate = floatLastResetTime;
             g_decArgo_cycleNumOffset = g_decArgo_cycleNum + 1;
+            o_resetDetected = 1;
          end
       end
    end
