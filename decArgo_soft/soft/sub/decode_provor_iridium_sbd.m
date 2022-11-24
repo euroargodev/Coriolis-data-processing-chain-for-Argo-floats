@@ -161,6 +161,9 @@ global g_decArgo_virtualBuff;
 global g_decArgo_7TypePacketReceivedCyNum;
 g_decArgo_7TypePacketReceivedCyNum = [];
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -227,6 +230,9 @@ end
 
 % initialize float parameter configuration
 init_float_config_ir_sbd(a_launchDate, a_decoderId);
+if (isempty(g_decArgo_floatConfig)) % CONFIG_PG00 not set
+   return;
+end
 
 % print DOXY coef in the output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -3179,13 +3185,18 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((deepCycle == 1) || (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1))
+      if (deepCycle == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
       % update float configuration for the next cycles
       if (~isempty(floatParam))
          update_float_config_ir_sbd(floatParam, a_decoderId);
+      end
+      
+      % assign the configuration received during the prelude to this cycle
+      if (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1)
+         set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
