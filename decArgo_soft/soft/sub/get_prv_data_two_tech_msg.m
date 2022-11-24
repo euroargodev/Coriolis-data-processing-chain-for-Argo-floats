@@ -647,12 +647,18 @@ if (g_decArgo_generateNcTech ~= 0)
       g_decArgo_cycleNum 21];
    g_decArgo_outputNcParamValue{end+1} = nbMesTot-nbMesCrcKo;
    
-   idTech1 = find(o_sensors(:, 1) == 0);
-   idTech2 = find(o_sensors(:, 1) == 1);
-   if (~isempty(idTech1) && ~isempty(idTech2))
-      g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-         g_decArgo_cycleNum 22];
-      g_decArgo_outputNcParamValue{end+1} = min(o_sensors(idTech1, 2), o_sensors(idTech2, 2));
+   if (~isempty(o_sensors))
+      idTech1 = find(o_sensors(:, 1) == 0);
+      idTech2 = find(o_sensors(:, 1) == 1);
+      if (~isempty(idTech1) && ~isempty(idTech2))
+         g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+            g_decArgo_cycleNum 22];
+         g_decArgo_outputNcParamValue{end+1} = min(o_sensors(idTech1, 2), o_sensors(idTech2, 2));
+      else
+         g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+            g_decArgo_cycleNum 22];
+         g_decArgo_outputNcParamValue{end+1} = 0;
+      end
    else
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 22];
