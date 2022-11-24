@@ -326,6 +326,10 @@ if (ismember(g_decArgo_floatNum, [ ...
          offset = session59 + 10 - session70 + 1;
          id = find(tabCyNum >= 70);
          tabSession(id) = tabSession(id) + offset;
+         % packet type 0 4 5 transmitted after data packets
+         id = find((tabCyNum == 97) & (tabPackType == 0), 1);
+         tabSession(id:end) = tabSession(id:end) - 1;
+         tabBase(id) = 0;
       case 6902957
          % packet type 0 4 5 transmitted after data packets
          id = find(tabCyNum == 119);
