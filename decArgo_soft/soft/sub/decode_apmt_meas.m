@@ -25,6 +25,12 @@ function [o_rawData] = decode_apmt_meas(a_rawData, a_nbBits, a_signedFlag, a_inp
 
 % decode the data according to number of bits and signed flag
 switch (a_nbBits)
+   case {8}
+      if (a_signedFlag == 0)
+         o_rawData = typecast(swapbytes(uint8(a_rawData)), 'uint8');
+      else
+         o_rawData = typecast(swapbytes(uint8(a_rawData)), 'int8');
+      end
    case {16}
       if (a_signedFlag == 0)
          o_rawData = typecast(swapbytes(uint16(a_rawData)), 'uint16');
