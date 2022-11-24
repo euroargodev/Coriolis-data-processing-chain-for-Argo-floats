@@ -110,6 +110,15 @@ global g_decArgo_decoderIdListNkeCts5;
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
 global g_decArgo_addParamNbSampleSfet;
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListOxygen;
+global g_decArgo_addParamListPh;
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListBackscattering;
+global g_decArgo_addParamListCdom;
+global g_decArgo_addParamListRadiometry;
+global g_decArgo_addParamListCp;
+global g_decArgo_addParamListTurbidity;
 
 
 % get floats information
@@ -146,7 +155,16 @@ for idFloat = 1:nbFloats
    
    g_decArgo_addParamNbSampleCtd = 0;
    g_decArgo_addParamNbSampleSfet = 0;
-   
+   g_decArgo_addParamListCtd = [];
+   g_decArgo_addParamListOxygen = [];
+   g_decArgo_addParamListPh = [];
+   g_decArgo_addParamListChla = [];
+   g_decArgo_addParamListBackscattering = [];
+   g_decArgo_addParamListCdom = [];
+   g_decArgo_addParamListRadiometry = [];
+   g_decArgo_addParamListCp = [];
+   g_decArgo_addParamListTurbidity = [];
+
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
    
@@ -299,7 +317,7 @@ for idFloat = 1:nbFloats
                structConfig] = decode_provor_iridium_rudics_cts4_delayed( ...
                floatNum, floatCycleList, ...
                floatDecId, floatArgosId, ...
-               floatLaunchDate, floatRefDay);
+               floatLaunchDate, floatRefDay, floatEndDate);
          else
             [tabProfiles, ...
                tabTrajNMeas, tabTrajNCycle, ...

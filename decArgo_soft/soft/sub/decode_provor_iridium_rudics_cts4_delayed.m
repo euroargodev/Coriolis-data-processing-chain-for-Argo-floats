@@ -8,7 +8,7 @@
 %    o_structConfig] = ...
 %    decode_provor_iridium_rudics_cts4_delayed( ...
 %    a_floatNum, a_cycleList, a_decoderId, a_floatLoginName, ...
-%    a_launchDate, a_refDay)
+%    a_launchDate, a_refDay, a_floatEndDate)
 %
 % INPUT PARAMETERS :
 %   a_floatNum       : float WMO number
@@ -17,6 +17,7 @@
 %   a_floatLoginName : float name
 %   a_launchDate     : launch date
 %   a_refDay         : reference day (day of the first descent)
+%   a_floatEndDate   : end date of the data to process
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : decoded profiles
@@ -41,7 +42,7 @@ function [o_tabProfiles, ...
    o_structConfig] = ...
    decode_provor_iridium_rudics_cts4_delayed( ...
    a_floatNum, a_cycleList, a_decoderId, a_floatLoginName, ...
-   a_launchDate, a_refDay)
+   a_launchDate, a_refDay, a_floatEndDate)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -74,6 +75,7 @@ global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
+global g_decArgo_dateDef;
 
 % decoder configuration values
 global g_decArgo_iridiumDataDirectory;
@@ -217,7 +219,16 @@ if (~g_decArgo_realtimeFlag)
                sbdCyFileName, julian_2_gregorian_dec_argo(a_launchDate));
             continue
          end
-         
+
+         if (a_floatEndDate ~= g_decArgo_dateDef)
+            if (cyIrJulD > a_floatEndDate)
+               fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated after float end date (%s)\n', ...
+                  g_decArgo_floatNum, ...
+                  sbdCyFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
+               continue
+            end
+         end
+
          add_to_list_ir_rudics(sbdCyFileName, 'spool');
          nbFiles = nbFiles + 1;
       end
@@ -262,6 +273,15 @@ else
             continue
          end
          
+         if (a_floatEndDate ~= g_decArgo_dateDef)
+            if (cyIrJulD > a_floatEndDate)
+               fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated after float end date (%s)\n', ...
+                  g_decArgo_floatNum, ...
+                  sbdFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
+               continue
+            end
+         end
+
          add_to_list_ir_rudics(sbdFileName, 'spool');
          nbFiles = nbFiles + 1;
       end
