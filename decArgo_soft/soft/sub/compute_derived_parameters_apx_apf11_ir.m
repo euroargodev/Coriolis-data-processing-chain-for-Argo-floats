@@ -218,10 +218,18 @@ switch (a_decoderId)
                   if (~isempty(a_profCtdCp))
                      if (isempty(ctdDataAscent))
                         ctdDataAscent = a_profCtdCp;
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
+                        if (~isempty(ctdDataAscent.dataAdj))
+                           ctdDataAscent.dataAdj = flipud(ctdDataAscent.dataAdj);
+                        end
                      else
                         ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
                         end
                      end
                   end
@@ -229,13 +237,19 @@ switch (a_decoderId)
                      if (isempty(ctdDataAscent))
                         ctdDataAscent = a_profCtdCpH;
                         ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           ctdDataAscent.dataAdj = flipud(ctdDataAscent.dataAdj);
                         end
                      else
                         ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
                         end
                      end
                   end
@@ -641,10 +655,15 @@ switch (a_decoderId)
                   if (~isempty(a_profCtdCp))
                      if (isempty(ctdDataAscent))
                         ctdDataAscent = a_profCtdCp;
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
                      else
                         ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCp.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCp.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
                         end
                      end
                   end
@@ -652,13 +671,19 @@ switch (a_decoderId)
                      if (isempty(ctdDataAscent))
                         ctdDataAscent = a_profCtdCpH;
                         ctdDataAscent.data = ctdDataAscent.data(:, 1:3);
+                        ctdDataAscent.data = flipud(ctdDataAscent.data);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(:, 1:3);
+                           ctdDataAscent.dataAdj = flipud(ctdDataAscent.dataAdj);
                         end
                      else
                         ctdDataAscent.data = [ctdDataAscent.data; a_profCtdCpH.data(:, 1:3)];
+                        [~, idSort] = sort(ctdDataAscent.data(:, 1), 'descend');
+                        ctdDataAscent.data = ctdDataAscent.data(idSort, :);
                         if (~isempty(ctdDataAscent.dataAdj))
                            ctdDataAscent.dataAdj = [ctdDataAscent.dataAdj; a_profCtdCpH.dataAdj(:, 1:3)];
+                           [~, idSort] = sort(ctdDataAscent.dataAdj(:, 1), 'descend');
+                           ctdDataAscent.dataAdj = ctdDataAscent.dataAdj(idSort, :);
                         end
                      end
                   end

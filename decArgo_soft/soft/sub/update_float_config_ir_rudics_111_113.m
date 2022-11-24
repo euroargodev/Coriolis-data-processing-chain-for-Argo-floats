@@ -26,6 +26,15 @@
 function update_float_config_ir_rudics_111_113( ...
    a_floatProgRudics, a_floatProgTech, a_floatProgParam, a_floatProgSensor, a_irSessionNum)
 
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
+% sensor list
+global g_decArgo_sensorList;
+
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -105,6 +114,12 @@ for idConf = 1:size(g_decArgo_floatProgTab, 1)
    end
    for idPack = 1:size(inputFloatProgSensor, 1)
       floatProgSensor = inputFloatProgSensor(idPack, :);
+      if (~ismember(floatProgSensor(2), g_decArgo_sensorList))
+         fprintf('DEC_WARNING: Float #%d Cycle #%d: inconsistent sensor CONF data received (for sensor #%d which is not mounted on the float) - ignoring configuration data\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, ...
+            floatProgSensor(2));
+         continue
+      end
       packDates = [packDates floatProgSensor(1)];
       if (floatProgSensor(3) == 0)
          % standard parameters
