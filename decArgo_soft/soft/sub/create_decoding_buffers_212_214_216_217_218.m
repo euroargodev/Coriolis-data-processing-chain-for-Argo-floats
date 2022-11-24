@@ -237,7 +237,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6902814, 6903230, 3901963, 6903265, 3901645, ...
-      6903006, 6901880, 6902957, 6902849, 6902853, 6903019]))
+      6903006, 6901880, 6902957, 6902849, 6902853, 6903019, 6902989]))
    switch g_decArgo_floatNum
       case 6903230
          % packet type 0 4 5 transmitted after data packets
@@ -396,6 +396,16 @@ if (ismember(g_decArgo_floatNum, [ ...
       case 6903019
          % delayed transmission cycle #150 (2 sessions)
          id = find((tabCyNum == 150) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+
+      case 6902989
+         % delayed transmission of second Iridium session of cycle #108
+         id = find((tabCyNum == 108) & (tabPackType == 0));
          idForSession = find(tabSession == tabSession(id(1)));
          tabBase(id(1)) = 1;
          tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
@@ -751,21 +761,21 @@ if (ismember(g_decArgo_floatNum, [ ...
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
-%    if (~isempty(g_decArgo_outputCsvFileId))
-% 
-%       % update tabCompleted array
-%       cyNumList = unique(tabRankByCycle);
-%       cyNumList(cyNumList < 0) = [];
-%       for cyNum = 1:length(cyNumList)
-%          idForCheck = find(tabRankByCycle == cyNumList(cyNum));
-% 
-%          % check current session contents
-%          [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
-%          if (completed == 1)
-%             tabCompleted(idForCheck) = 1;
-%          end
-%       end
-%    end
+   if (~isempty(g_decArgo_outputCsvFileId))
+
+      % update tabCompleted array
+      cyNumList = unique(tabRankByCycle);
+      cyNumList(cyNumList < 0) = [];
+      for cyNum = 1:length(cyNumList)
+         idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+
+         % check current session contents
+         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+         if (completed == 1)
+            tabCompleted(idForCheck) = 1;
+         end
+      end
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1023,6 +1033,22 @@ end
 idPackDesc = find((a_tabPackType(a_idForCheck) == 1) | (a_tabPackType(a_idForCheck) == 8));
 idPackDrift = find((a_tabPackType(a_idForCheck) == 2) | (a_tabPackType(a_idForCheck) == 9));
 idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForCheck) == 10));
+
+if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
+   if (length(idPackTech1) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
+   end
+   if (length(idPackTech2) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
+   end
+   if (length(idPackProg) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackProg));
+   end
+   return
+end
 
 if (~isempty(idPackDesc))
    recNbDesc = length(idPackDesc);

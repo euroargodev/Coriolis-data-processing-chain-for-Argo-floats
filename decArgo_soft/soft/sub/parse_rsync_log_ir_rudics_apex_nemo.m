@@ -36,9 +36,9 @@ infoData = logData{1};
 logData = logData{2};
 fclose(fId);
 
-ptn1 = sprintf('%s/%s.', a_floatRudicsId, a_floatRudicsId);
+ptn1 = sprintf('%s/%s', a_floatRudicsId, a_floatRudicsId);
 ptn2 = '>f+++++++++';
-ptn3 = sprintf('%s.', a_floatRudicsId);
+ptn3 = sprintf('%s', a_floatRudicsId);
 % we are looking for lines with the pattern:
 % floatRudicsId/floatRudicsId.* or >f+++++++++ floatRudicsId.*
 for idL = 1:length(logData)

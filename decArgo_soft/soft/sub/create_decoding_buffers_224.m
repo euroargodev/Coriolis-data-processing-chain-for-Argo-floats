@@ -623,6 +623,22 @@ idPackDesc = find((a_tabPackType(a_idForCheck) == 1) | (a_tabPackType(a_idForChe
 idPackDrift = find((a_tabPackType(a_idForCheck) == 2) | (a_tabPackType(a_idForCheck) == 9) | (a_tabPackType(a_idForCheck) == 16) | (a_tabPackType(a_idForCheck) == 21));
 idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForCheck) == 10) | (a_tabPackType(a_idForCheck) == 17) | (a_tabPackType(a_idForCheck) == 22));
 
+if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
+   if (length(idPackTech1) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
+   end
+   if (length(idPackTech2) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
+   end
+   if (length(idPackProg) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackProg));
+   end
+   return
+end
+
 if (~isempty(idPackDesc))
    recNbDesc = length(idPackDesc);
    o_deep = 1;

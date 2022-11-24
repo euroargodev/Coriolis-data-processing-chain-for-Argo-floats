@@ -688,6 +688,18 @@ idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForChec
 idPackNearSurface = find((a_tabPackType(a_idForCheck) == 11) | (a_tabPackType(a_idForCheck) == 13));
 idPackInAir = find((a_tabPackType(a_idForCheck) == 12) | (a_tabPackType(a_idForCheck) == 14));
 
+if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1))
+   if (length(idPackTech1) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
+   end
+   if (length(idPackTech2) > 1)
+      fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
+         g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
+   end
+   return
+end
+
 if (~isempty(idPackDesc))
    recNbDesc = length(idPackDesc);
    o_deep = 1;
