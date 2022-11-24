@@ -3,8 +3,8 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_techData, o_gpsData, ...
-%    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
-%    o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
+%    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
+%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
 %    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 %
 % INPUT PARAMETERS :
@@ -18,8 +18,10 @@
 %   o_profCtdP      : CTD_P data
 %   o_profCtdPt     : CTD_PT data
 %   o_profCtdPts    : CTD_PTS data
-%   o_profCtdCp     : CTD_CP data
+%   o_profCtdPtsh   : CTD_PTSH data
 %   o_profDo        : O2 data
+%   o_profCtdCp     : CTD_CP data
+%   o_profCtdCpH    : CTD_CP_H data
 %   o_profFlbbCd    : FLBB_CD data
 %   o_profOcr504I   : OCR_504I data
 %   o_cycleTimeData : cycle timings data
@@ -33,8 +35,8 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_techData, o_gpsData, ...
-   o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_profDo, ...
-   o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
+   o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
+   o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, o_cycleTimeData] = ...
    decode_science_log_apx_apf11_ir_1121_1321(a_scienceLogFileList, a_cycleTimeData)
 
 % output parameters initialization
@@ -44,8 +46,10 @@ o_gpsData = [];
 o_profCtdP = [];
 o_profCtdPt = [];
 o_profCtdPts = [];
-o_profCtdCp = [];
+o_profCtdPtsh = [];
 o_profDo = [];
+o_profCtdCp = [];
+o_profCtdCpH = [];
 o_profFlbbCd = [];
 o_profOcr504I = [];
 
@@ -74,7 +78,9 @@ expectedFields = [ ...
    {'CTD_P'} ...
    {'CTD_PT'} ...
    {'CTD_PTS'} ...
+   {'CTD_PTSH'} ...
    {'CTD_CP'} ...
+   {'CTD_CP_H'} ...
    {'O2'} ...
    {'FLBB_CD'} ...
    {'OCR_504I'} ...
@@ -102,7 +108,9 @@ descentStartTime = [];
 ctdP = [];
 ctdPt = [];
 ctdPts = [];
+ctdPtsh = [];
 ctdCp = [];
+ctdCpH = [];
 do = [];
 flbbCd = [];
 ocr504I = [];
@@ -234,8 +242,12 @@ for idFile = 1:length(a_scienceLogFileList)
                      ctdPt = [ctdPt; data.(fieldName)];
                   case 'CTD_PTS'
                      ctdPts = [ctdPts; data.(fieldName)];
+                  case 'CTD_PTSH'
+                     ctdPtsh = [ctdPtsh; data.(fieldName)];
                   case 'CTD_CP'
                      ctdCp = [ctdCp; data.(fieldName)];
+                  case 'CTD_CP_H'
+                     ctdCpH = [ctdCpH; data.(fieldName)];
                   case 'O2'
                      do = [do; data.(fieldName)];
                   case 'FLBB_CD'
@@ -271,7 +283,9 @@ paramTemp = get_netcdf_param_attributes('TEMP');
 paramTemp.cFormat = '%10.4f';
 paramSal = get_netcdf_param_attributes('PSAL');
 paramSal.cFormat = '%10.4f';
-paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
+
+paramVrsPh = get_netcdf_param_attributes('VRS_PH');
+paramVrsPh.cFormat = '%.6f';
 
 paramO2 = get_netcdf_param_attributes('TEMP_DOXY');
 paramO2.name = 'O2';
@@ -314,6 +328,10 @@ paramRawTemp = get_netcdf_param_attributes('TEMP_DOXY');
 paramRawTemp.name = 'RawTemp';
 paramRawTemp.units = '';
 paramRawTemp.cFormat = '%.5f';
+
+paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
+paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
+paramNbSampleTransistorPh = get_netcdf_param_attributes('NB_SAMPLE_TRANSISTOR_PH');
 
 paramChlWave = get_netcdf_param_attributes('TEMP_DOXY');
 paramChlWave.name = 'chl_wave';
@@ -373,12 +391,13 @@ if (~isempty(ctdPts))
    o_profCtdPts.data = ctdPts(:, 2:end);
 end
 
-if (~isempty(ctdCp))
-   o_profCtdCp = get_apx_profile_data_init_struct;
-   %    o_profCtdCp.dateList = paramJuld;
-   %    o_profCtdCp.dates = ctdCp(:, 1);
-   o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSample];
-   o_profCtdCp.data = ctdCp(:, 2:end);
+if (~isempty(ctdPtsh))
+   o_profCtdPtsh = get_apx_profile_data_init_struct;
+   o_profCtdPtsh.dateList = paramJuld;
+   o_profCtdPtsh.dates = ctdPtsh(:, 1);
+   o_profCtdPtsh.paramList = [paramPres paramTemp paramSal paramVrsPh];
+   o_profCtdPtsh.data = ctdPtsh(:, 2:end);
+   o_profCtdPtsh.data(isnan(o_profCtdPtsh.data(:, 4)), 4) = paramVrsPh.fillValue;
 end
 
 if (~isempty(do))
@@ -392,6 +411,23 @@ if (~isempty(do))
    o_profDo.data(isnan(o_profDo.data(:, 4)), 4) = paramTempDoxy.fillValue;
    o_profDo.data(isnan(o_profDo.data(:, 7)), 7) = paramC1phaseDoxy.fillValue;
    o_profDo.data(isnan(o_profDo.data(:, 8)), 8) = paramC2phaseDoxy.fillValue;
+end
+
+if (~isempty(ctdCp))
+   o_profCtdCp = get_apx_profile_data_init_struct;
+   %    o_profCtdCp.dateList = paramJuld;
+   %    o_profCtdCp.dates = ctdCp(:, 1);
+   o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSample];
+   o_profCtdCp.data = ctdCp(:, 2:end);
+end
+
+if (~isempty(ctdCpH))
+   o_profCtdCpH = get_apx_profile_data_init_struct;
+   %    o_profCtdCpH.dateList = paramJuld;
+   %    o_profCtdCpH.dates = ctdCpH(:, 1);
+   o_profCtdCpH.paramList = [paramPres paramTemp paramSal paramNbSampleCtd paramVrsPh paramNbSampleTransistorPh];
+   o_profCtdCpH.data = ctdCpH(:, 2:end);
+   o_profCtdCpH.data(isnan(o_profCtdCpH.data(:, 5)), 5) = paramVrsPh.fillValue;
 end
 
 if (~isempty(flbbCd))
@@ -414,7 +450,7 @@ if (~isempty(ocr504I))
 end
 
 % add PRES for DO, FLBB and OCR data
-if (~isempty(o_profDo))
+if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I))
    tabJuld = [];
    tabPres = [];
    if (~isempty(o_profCtdP))
@@ -428,6 +464,10 @@ if (~isempty(o_profDo))
    if (~isempty(o_profCtdPts))
       tabJuld = [tabJuld; o_profCtdPts.dates];
       tabPres = [tabPres; o_profCtdPts.data(:, 1)];
+   end
+   if (~isempty(o_profCtdPtsh))
+      tabJuld = [tabJuld; o_profCtdPtsh.dates];
+      tabPres = [tabPres; o_profCtdPtsh.data(:, 1)];
    end
    idDel = find(tabPres == paramPres.fillValue);
    tabJuld(idDel) = [];

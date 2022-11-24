@@ -729,7 +729,7 @@ switch (a_paramName)
                      o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                   end
                end
-               if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
+               if (isempty(o_preCalibCoef))
                   fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
                      g_decArgo_floatNum);
                end
@@ -769,8 +769,8 @@ switch (a_paramName)
                      o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                   end
                end
-               if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
-                  fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+               if (isempty(o_preCalibCoef))
+                  fprintf('WARNING: Float #%d: inconsistent CTD_TEMP calibration information\n', ...
                      g_decArgo_floatNum);
                end
             end
@@ -815,8 +815,8 @@ switch (a_paramName)
                      o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                   end
                end
-               if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
-                  fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+               if (isempty(o_preCalibCoef))
+                  fprintf('WARNING: Float #%d: inconsistent CTD_PSAL calibration information\n', ...
                      g_decArgo_floatNum);
                end
             end
@@ -4768,7 +4768,7 @@ switch (a_decoderId)
             o_preCalibComment = '';
       end
       
-   case {1322, 111, 113}
+   case {1121, 1322, 111, 113}
       switch (a_paramName)
          
          case {'VRS_PH'}

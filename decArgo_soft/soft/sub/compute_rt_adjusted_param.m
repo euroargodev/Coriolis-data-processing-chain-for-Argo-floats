@@ -115,7 +115,8 @@ if (~isempty(doSlope))
          % retrieve associated profiles (needed for 'real' BGC floats since
          % PTS are in separate profiles)
          idProfs = find(([o_tabProfiles.outputCycleNumber] == profile.outputCycleNumber) & ...
-            ([o_tabProfiles.direction] == profile.direction));
+            ([o_tabProfiles.direction] == profile.direction) & ...
+            ([o_tabProfiles.sensorNumber] < 100)); % AUX profiles should not be considered
          
          % adjust DOXY for this profile
          [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset);

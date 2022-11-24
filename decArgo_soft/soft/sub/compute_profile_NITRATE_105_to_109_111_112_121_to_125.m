@@ -269,7 +269,7 @@ if (~isempty(idNoDef))
    % compute NITRATE data (units convertion: micromol/L to micromol/kg)
    o_NITRATE(idNoDef) = tabMolarNitrate ./ rho;
    o_rmsError(idNoDef) = tabRmsError;
-   
+
    % replace complex values with fillValue (ex: 6901865 #34)
    if (any(imag(o_NITRATE) ~= 0))
       idToDef = find(imag(o_NITRATE) ~= 0);
@@ -283,6 +283,21 @@ if (~isempty(idNoDef))
          length(idToDef), ...
          a_profSuna.direction);
    end
+   
+   % replace Inf values with fillValue (ex: 3902122 (183, 0))
+   if (any(isinf(o_NITRATE)))
+      idToDef = find(isinf(o_NITRATE));
+      o_NITRATE(idToDef) = a_NITRATE_fill_value;
+      o_rmsError(idToDef) = nan;
+      
+      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d NITRATE values are Inf => these values are set to fill value in ''%c'' profile of SUNA sensor\n', ...
+         g_decArgo_floatNum, ...
+         a_profSuna.cycleNumber, ...
+         a_profSuna.profileNumber, ...
+         length(idToDef), ...
+         a_profSuna.direction);
+   end
+   
 end
 
 % print processing steps in .csv output file

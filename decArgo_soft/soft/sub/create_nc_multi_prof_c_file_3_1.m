@@ -107,6 +107,11 @@ for idProf = 1:length(a_tabProfiles)
    end
 end
 
+% no primary profile
+if (isempty(profInfo))
+   return
+end
+
 % delete excluded profiles
 if (~isempty(profToDelIdList))
    a_tabProfiles(profToDelIdList) = [];
