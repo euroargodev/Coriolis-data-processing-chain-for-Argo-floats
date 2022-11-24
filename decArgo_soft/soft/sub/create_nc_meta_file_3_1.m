@@ -946,8 +946,24 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX Argos APF11
       
-   case {1021}
+   case {1021, 1022}
             
+      % AUX meta-data
+      inputStaticConfigName = a_structConfig.STATIC_NC.NAMES;
+      inputStaticConfigValue = a_structConfig.STATIC_NC.VALUES;
+
+      inputAuxMetaName = [];
+      inputAuxMetaValue = [];
+      inputAuxMetaDescription = [];
+      for idC = 1:length(inputStaticConfigName)
+         if (strncmp(inputStaticConfigName{idC}, 'META_AUX_', length('META_AUX_')))
+            inputAuxMetaName = [inputAuxMetaName; inputStaticConfigName(idC)];
+            inputAuxMetaValue = [inputAuxMetaValue; inputStaticConfigValue(idC)];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp(inputStaticConfigName(idC), g_decArgo_outputNcConfParamLabel), 1))];
+         end
+      end
+      
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
       
@@ -1057,7 +1073,7 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
-            [], [], [], ...
+            inputAuxMetaName, inputAuxMetaValue, inputAuxMetaDescription, ...
             [], [], ...
             launchAuxConfigName, launchAuxConfigValue, ...
             missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...

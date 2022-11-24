@@ -57,7 +57,7 @@ dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
 mkdir(dirOutStep2);
 mkdir([dirOutStep2 '/132029/']);
 % duplicate the files
-copyfile([dirOutStep1 '/132029/*.txt'], [dirOutStep2 '/132029/']);
+copy_file([dirOutStep1 '/132029/*.txt'], [dirOutStep2 '/132029/']);
 [ok] = delete_double_argos_split_bis(dirOutStep2);
 if (ok == 0)
    fprintf('ERROR: In step2 => exit\n');
@@ -104,8 +104,8 @@ mkdir([dirOutStep5 '/IN/132029_6901596/132029/']);
 mkdir([dirOutStep5 '/IN/132029_6901609/132029/']);
 mkdir([dirOutStep5 '/132029/']);
 % duplicate the files
-copyfile([dirOutStep4 '/132029_6901596/132029/*.txt'], [dirOutStep5 '/IN/132029_6901596/132029/']);
-copyfile([dirOutStep4 '/132029_6901609/132029/*.txt'], [dirOutStep5 '/IN/132029_6901609/132029/']);
+copy_file([dirOutStep4 '/132029_6901596/132029/*.txt'], [dirOutStep5 '/IN/132029_6901596/132029/']);
+copy_file([dirOutStep4 '/132029_6901609/132029/*.txt'], [dirOutStep5 '/IN/132029_6901609/132029/']);
 [ok] = move_and_rename_argos_files_bis(6901596, [dirOutStep5 '/IN/132029_6901596/'], dirOutStep5);
 if (ok == 0)
    fprintf('ERROR: In step5 => exit\n');

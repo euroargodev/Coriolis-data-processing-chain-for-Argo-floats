@@ -54,7 +54,7 @@ if (1) % NOMINAL CASE (CSV to mail file conversion)
       
       [filePath, fileName, fileExt] = fileparts(csvFilePathName);
       txtFilePathName = [filePath fileName '.txt'];
-      copyfile(csvFilePathName, txtFilePathName);
+      copy_file(csvFilePathName, txtFilePathName);
       
       % open and read input CSV file
       fId = fopen(txtFilePathName, 'r');
@@ -157,7 +157,7 @@ if (0) % TO RETRIEVE IMEI VS FLOAT_SN
       
       [filePath, fileName, fileExt] = fileparts(csvFilePathName);
       txtFilePathName = [filePath fileName '.txt'];
-      copyfile(csvFilePathName, txtFilePathName);
+      copy_file(csvFilePathName, txtFilePathName);
       
       % open and read input CSV file
       fId = fopen(txtFilePathName, 'r');

@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_miscInfo, o_profData, o_metaData, o_techData, ...
 %    o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
-%    decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
+%    decode_data_apx_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
 %    a_sensorData, a_sensorDate, a_cycleNum, a_timeData, a_presOffsetData)
 %
 % INPUT PARAMETERS :
@@ -37,7 +37,7 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_profData, o_metaData, o_techData, ...
    o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
-   decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
+   decode_data_apx_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, ...
    a_sensorData, a_sensorDate, a_cycleNum, a_timeData, a_presOffsetData)
 
 % output parameters initialization
@@ -617,10 +617,10 @@ for idL = 1:size(a_sensorData, 1)
       
       dataStruct = get_apx_misc_data_init_struct('Data msg', msgNum, msgRed, msgDate);
       dataStruct.label = 'Quiescent battery current at end of Park phase';
-      dataStruct.raw = decData(16);
+      dataStruct.raw = bitand(bitshift(decData(16), 2), hex2dec('FFFC'));
       dataStruct.rawFormat = '%d';
       dataStruct.rawUnit = 'count';
-      dataStruct.value = sensor_2_value_for_apex_apf11_battery_current(decData(16));
+      dataStruct.value = sensor_2_value_for_apex_apf11_battery_current(bitand(bitshift(decData(16), 2), hex2dec('FFFC')));
       dataStruct.format = '%.3f';
       dataStruct.unit = 'mA';
       o_miscInfo{end+1} = dataStruct;
@@ -628,7 +628,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct = get_apx_tech_data_init_struct(msgRed);
       dataStruct.label = 'Battery current at end of Park phase';
       dataStruct.techId = 1010;
-      dataStruct.value = num2str(round(sensor_2_value_for_apex_apf11_battery_current(decData(16))*1000)/1000);
+      dataStruct.value = num2str(round(sensor_2_value_for_apex_apf11_battery_current(bitand(bitshift(decData(16), 2), hex2dec('FFFC')))*1000)/1000);
       o_techData{end+1} = dataStruct;
       
       dataStruct = get_apx_misc_data_init_struct('Data msg', msgNum, msgRed, msgDate);

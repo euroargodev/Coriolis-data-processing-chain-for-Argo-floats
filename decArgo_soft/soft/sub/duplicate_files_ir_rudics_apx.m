@@ -302,7 +302,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.log']))))
                   end
                   newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt) newFileName(end-3:end)];
                end
-               movefile([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
+               move_file([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
             end
          else
             fprintf('RSYNC_WARNING: Float #%d: Unable to determine cycle number for file ''%s''\n', ...
@@ -335,7 +335,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.log']))))
                end
                newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt) newFileName(end-3:end)];
             end
-            movefile([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
+            move_file([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
          end
       end
    end
@@ -386,7 +386,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
                   end
                   newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt) newFileName(end-3:end)];
                end
-               movefile([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
+               move_file([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
             end
          else
             fprintf('RSYNC_WARNING: Float #%d: Unable to determine cycle number for file ''%s''\n', ...
@@ -473,7 +473,7 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
                end
                newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt) newFileName(end-3:end)];
             end
-            movefile([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
+            move_file([g_decArgo_archiveDirectory fileName], [g_decArgo_archiveDirectory newFileName]);
          end
       end
    end
@@ -535,7 +535,7 @@ if (~isempty(anomalyCyList))
          idF3 = find(idF2 > idF1);
          fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
          
-         movefile(filePathName, [filePath '/' fileNameOut fileExt]);
+         move_file(filePathName, [filePath '/' fileNameOut fileExt]);
          %          fprintf('\t=> File %s moved to %s\n', ...
          %             [fileName fileExt], ...
          %             [fileNameOut fileExt]);
@@ -611,7 +611,7 @@ if (~isempty(anomalyCyList))
                   idF3 = find(idF2 > idF1);
                   fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
                   
-                  movefile(filePathName, [filePath '/' fileNameOut fileExt]);
+                  move_file(filePathName, [filePath '/' fileNameOut fileExt]);
                   %                   log{end+1} = sprintf('\t=> File %s moved to %s\n', ...
                   %                      [fileName fileExt], ...
                   %                      [fileNameOut fileExt]);

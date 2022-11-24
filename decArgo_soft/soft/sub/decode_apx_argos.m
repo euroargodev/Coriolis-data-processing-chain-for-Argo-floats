@@ -267,10 +267,22 @@ switch (a_decoderId)
       
       if (a_cycleNum == 0)
          [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
-            decode_test_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+            decode_test_apx_21_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
       else
          [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
             decode_data_apx_21(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData);
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {1022} % 2.10.4
+      
+      if (a_cycleNum == 0)
+         [o_miscInfo, o_metaData, o_techData, o_timeInfo, o_presOffsetData] = ...
+            decode_test_apx_21_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, o_presOffsetData);
+      else
+         [o_miscInfo, o_profData, o_metaData, o_techData, o_trajData, o_timeInfo, o_timeData, o_presOffsetData] = ...
+            decode_data_apx_22(a_argosDataData, a_argosDataUsed, a_argosDataDate, a_sensorData, a_sensorDate, a_cycleNum, o_timeData, o_presOffsetData);
       end
       
    otherwise

@@ -121,13 +121,29 @@
    },
    "CONF_PARAM_16" :
    {
+      "CONF_PARAM_DEC_ID" : "CONFIG_HRC",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PistonPositionHyperRetraction_COUNT",
+      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent."
+   },
+   "CONF_PARAM_17" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_HRP",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HyperRetractionStopPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float’s density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractPressure is the pressure that the float uses to restore the piston back to the ParkDescentCount."
+   },
+   "CONF_PARAM_18" :
+   {
       "CONF_PARAM_DEC_ID" : "CONFIG_IBD",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The period in days over which the float avoids the surface due to the possible presence of large, crushing icebergs but performs all the other phases during each profiling cycle. The period starts with the first determination of the non-presence of ice after having determined the presence of ice over the previous missions.",
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionSpringInhibitionDelaySinceLastIceEvasion_days",
       "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days/cycles) since the last ice evasiondate to attempt a surfacing.  This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed."
    },
-   "CONF_PARAM_17" :
+   "CONF_PARAM_19" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IMLT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -135,7 +151,7 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetection_degC",
       "CONF_PARAM_DESCRIPTION" : "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
    },
-   "CONF_PARAM_18" :
+   "CONF_PARAM_20" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IDP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -143,7 +159,7 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionMixedLayerPMax_dbar",
       "CONF_PARAM_DESCRIPTION" : "Maximum sampling pressure used by ice cover detection algorithm."
    },
-   "CONF_PARAM_19" :
+   "CONF_PARAM_21" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IEP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -151,7 +167,7 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionStartPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure of the ice detection algorithm."
    },
-   "CONF_PARAM_20" :
+   "CONF_PARAM_22" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_ICEM",
       "CONF_PARAM_LABEL" : "n/a",
@@ -159,7 +175,7 @@
       "CONF_PARAM_NAME" : "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "When is ice detection active - months in reverse order"
    },
-   "CONF_PARAM_21" :
+   "CONF_PARAM_23" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_ITI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -167,7 +183,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureActivationCheckTime_seconds",
       "CONF_PARAM_DESCRIPTION" : "in pressure activated floats this parameter sets how often the float will test whether it is in the water, e.g.  Every 2 hours"
    },
-   "CONF_PARAM_22" :
+   "CONF_PARAM_24" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IBN",
       "CONF_PARAM_LABEL" : "n/a",
@@ -175,7 +191,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FirstBuoyancyNudge_COUNT",
       "CONF_PARAM_DESCRIPTION" : "test message data - initial buoyancy nudge which is used at both the beginning and end of the profile  "
    },
-   "CONF_PARAM_23" :
+   "CONF_PARAM_25" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_LD",
       "CONF_PARAM_LABEL" : "n/a",
@@ -183,7 +199,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_WaterLeakDetection_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Emergency mode upon detection of an internal water leak. If set to no, the float will only log the condition to the system_log.txt file."
    },
-   "CONF_PARAM_24" :
+   "CONF_PARAM_26" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_DEBUG",
       "CONF_PARAM_LABEL" : "n/a",
@@ -191,7 +207,7 @@
       "CONF_PARAM_NAME" : "CONFIG_LoggingVerbosity_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Logging verbosity is an integer (values in range [0,4] for these floats) describing the parameters to be output. An integer in the range [0,4] that determines the logging verbosity with lower values producing more terse logging. A verbosity of 2 yields standard logging."
    },
-   "CONF_PARAM_25" :
+   "CONF_PARAM_27" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PACT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -199,7 +215,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonPositionPressureActivation_COUNT",
       "CONF_PARAM_DESCRIPTION" : "preset piston position for pressure activation"
    },
-   "CONF_PARAM_26" :
+   "CONF_PARAM_28" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MAP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -207,7 +223,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureActivation_dbar",
       "CONF_PARAM_DESCRIPTION" : "depth at which float is set to pressure activate"
    },
-   "CONF_PARAM_27" :
+   "CONF_PARAM_29" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MBC",
       "CONF_PARAM_LABEL" : "n/a",
@@ -215,7 +231,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MinBuoyancy_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The minimum allowable buoyancy position in counts, overriding any other count setting. This configuration parameter prevents the movement of oil from the oil compartment of the bladder into the oil reservoir at the specified count to manage the maximum depth of a descent. In general CONFIG_MinBuoyancy_COUNT should be set less than the CONFIG_PistonProfile_COUNT."
    },
-   "CONF_PARAM_28" :
+   "CONF_PARAM_30" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_OK",
       "CONF_PARAM_LABEL" : "n/a",
@@ -223,7 +239,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OkVacuum_dbar",
       "CONF_PARAM_DESCRIPTION" : "Internal vacuum threshold (counts)."
    },
-   "CONF_PARAM_29" :
+   "CONF_PARAM_31" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PBN",
       "CONF_PARAM_LABEL" : "n/a",
@@ -231,7 +247,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_ParkBuoyancyNudge_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The number of counts to change the piston position from its current position in the direction that will bring the float closer to the Park depth. It is applied after three successive pressure samples that are outside the dead band specified by CONFIG_PressureTargetToleranceDuringDrift_dbar."
    },
-   "CONF_PARAM_30" :
+   "CONF_PARAM_32" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDB",
       "CONF_PARAM_LABEL" : "n/a",
@@ -239,7 +255,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceDuringDrift_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at parking or profile depth (in dbars)."
    },
-   "CONF_PARAM_31" :
+   "CONF_PARAM_33" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PPP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -247,7 +263,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonPark_COUNT",
       "CONF_PARAM_DESCRIPTION" : "preset park piston position, in counts   "
    },
-   "CONF_PARAM_32" :
+   "CONF_PARAM_34" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -255,7 +271,7 @@
       "CONF_PARAM_NAME" : "CONFIG_DescentToParkTimeOut_minutes",
       "CONF_PARAM_DESCRIPTION" : "maximum time a float will try to reach its target depth (park) before aborting this step"
    },
-   "CONF_PARAM_33" :
+   "CONF_PARAM_35" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDTI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -263,7 +279,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_PressureCheckTimeDescentToParkingDepth_seconds",
       "CONF_PARAM_DESCRIPTION" : "The interval in seconds between float samples of the pressure to determine if the Park depth has been reached."
    },
-   "CONF_PARAM_34" :
+   "CONF_PARAM_36" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PRKP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -271,7 +287,7 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
-   "CONF_PARAM_35" :
+   "CONF_PARAM_37" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PTI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -279,7 +295,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeParking_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float drift at park or profile depth."
    },
-   "CONF_PARAM_36" :
+   "CONF_PARAM_38" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_N",
       "CONF_PARAM_LABEL" : "n/a",
@@ -287,7 +303,7 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkAndProfileCycleCounter_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The number of profiles performed from Park depth before a deep profile is done."
    },
-   "CONF_PARAM_37" :
+   "CONF_PARAM_39" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PST",
       "CONF_PARAM_LABEL" : "n/a",
@@ -295,7 +311,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_AutoTestAtDeploymentStopMission_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Park Descent phase at the end of the period determined by CONFIG_MissionPreludeTime_hours only if the self test passes. If the self test fails, the float will go into Emergency mode. If set to no, the float will transition to the Park Descent phase whether or not the self test passes. In addition, the test results, pass or fail, will be logged to the system_log.txt file."
    },
-   "CONF_PARAM_38" :
+   "CONF_PARAM_40" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PRE",
       "CONF_PARAM_LABEL" : "n/a",
@@ -303,7 +319,7 @@
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeTime_minutes",
       "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. It’s crucial in calculating the time of the first descent."
    },
-   "CONF_PARAM_39" :
+   "CONF_PARAM_41" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SPSPC",
       "CONF_PARAM_LABEL" : "n/a",
@@ -311,7 +327,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_CTDPumpStopPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure in decibars added to the most recently measured pressure at the surface, the sum of which is the pressure at which the conductivity, temperature and pressure sampling stops for a pumped type CTD. It is also the pressure at which the Surface phase begins."
    },
-   "CONF_PARAM_40" :
+   "CONF_PARAM_42" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_REP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -319,7 +335,7 @@
       "CONF_PARAM_NAME" : "CONFIG_TransmissionRepetitionPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "transmission repetition rate, metadata for most floats - may be variable for two-way communication"
    },
-   "CONF_PARAM_41" :
+   "CONF_PARAM_43" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_UP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -327,7 +343,7 @@
       "CONF_PARAM_NAME" : "CONFIG_UpTime_minutes",
       "CONF_PARAM_DESCRIPTION" : "preset duration of the 'up' time (start of ascent to start of descent) - changed from : CONFIG_UpTimeInterval_hours and CONFIG_UpTimeOut"
    },
-   "CONF_PARAM_42" :
+   "CONF_PARAM_44" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_VM",
       "CONF_PARAM_LABEL" : "n/a",
@@ -335,7 +351,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_VitalsMask_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Contact Teledyne Webb Research for assistance."
    },
-   "CONF_PARAM_43" :
+   "CONF_PARAM_45" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_TBP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -343,7 +359,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureBladderMax_dbar",
       "CONF_PARAM_DESCRIPTION" : "maximum air bladder pressure setting - units could be COUNT"
    },
-   "CONF_PARAM_44" :
+   "CONF_PARAM_46" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_FRET",
       "CONF_PARAM_LABEL" : "n/a",
@@ -351,7 +367,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonFullRetraction_COUNT",
       "CONF_PARAM_DESCRIPTION" : "n/a"
    },
-   "CONF_PARAM_45" :
+   "CONF_PARAM_47" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_FEXT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -359,7 +375,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonFullExtension_COUNT",
       "CONF_PARAM_DESCRIPTION" : "n/a"
    },
-   "CONF_PARAM_46" :
+   "CONF_PARAM_48" :
    {
       "CONF_PARAM_DEC_ID" : "PTT_HEX",
       "CONF_PARAM_LABEL" : "n/a",
@@ -367,7 +383,7 @@
       "CONF_PARAM_NAME" : "META_AUX_PTT_HEX",
       "CONF_PARAM_DESCRIPTION" : "The Argos Id in hexadecimal as provided by the Argos service provider."
    },
-   "CONF_PARAM_47" :
+   "CONF_PARAM_49" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE01",
       "CONF_PARAM_LABEL" : "n/a",
@@ -375,7 +391,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>NumberOfDepthZone_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_48" :
+   "CONF_PARAM_50" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE02",
       "CONF_PARAM_LABEL" : "n/a",
@@ -383,7 +399,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StartPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_49" :
+   "CONF_PARAM_51" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE03",
       "CONF_PARAM_LABEL" : "n/a",
@@ -391,7 +407,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>StopPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_50" :
+   "CONF_PARAM_52" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE04",
       "CONF_PARAM_LABEL" : "n/a",
@@ -399,7 +415,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_dbar",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_51" :
+   "CONF_PARAM_53" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE05",
       "CONF_PARAM_LABEL" : "n/a",
@@ -407,7 +423,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><vertical_phase_name>DepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <vertical_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_52" :
+   "CONF_PARAM_54" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE06",
       "CONF_PARAM_LABEL" : "n/a",

@@ -101,7 +101,7 @@ for idFloat = 1:nbFloats
       continue;
    end
    floatDecId = listDecId(idF);
-   if (ismember(floatDecId, [1021]))
+   if (ismember(floatDecId, [1021 1022]))
       fprintf('INFO: Clean ghost operation is not possible for decId #%d\n', floatDecId);
       continue;
    end

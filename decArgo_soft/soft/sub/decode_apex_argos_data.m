@@ -181,9 +181,10 @@ for idCy = 1:length(a_cycleList)
    
    % 071412, 062608, 061609, 021009, 061810, 093008, 082213,
    % 021208, 032213, 110613&090413, 121512, 110813, 071807, 082807, 020110,
-   % 090810, 2.8.0
+   % 090810, 2.8.0, 2.10.4
    if (ismember(a_decoderId, [1001, 1002, 1003, 1004, 1005, 1006, 1007, ...
-         1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021]))
+         1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, ...
+         1021, 1022]))
       
       [miscInfo, auxInfo, profData, profNstData, parkData, astData, surfData, metaData, techData, trajData, ...
          timeInfo, g_decArgo_timeData, g_decArgo_presOffsetData] = ...
@@ -207,8 +208,8 @@ for idCy = 1:length(a_cycleList)
       
       % compute the times of the cycle
       finalStep = 0;
-      %       if ((idCy == length(a_cycleList)) || ~isempty(g_decArgo_outputCsvFileId))
-      if ((idCy == length(a_cycleList)))
+      if ((idCy == length(a_cycleList)) || ~isempty(g_decArgo_outputCsvFileId))
+         %       if ((idCy == length(a_cycleList)))
          finalStep = 1;
       end
       g_decArgo_timeData = compute_apx_times(g_decArgo_timeData, timeInfo, cycleNum, ...

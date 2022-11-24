@@ -117,7 +117,7 @@ for idFloat = 1:nbFloats
       argosFileOrDirName = argosFilesOrDirs(idElt).name;
       inputFile = [DIR_INPUT_ARGOS_FILES '/' argosFileOrDirName];
       outputFile = [selectDirName '/' argosFileOrDirName];
-      movefile(inputFile, outputFile);
+      move_file(inputFile, outputFile);
 
    end
 end

@@ -196,7 +196,7 @@ for idFloat = 1:nbFloats
                idF = strfind(fileName, '_');
                newFileName = [fileName(1:idF(4)) cyNumDate{idB, 1} fileName(idF(5):end)];
                if (~strcmp(newFileName, fileName))
-                  movefile([floatOutputDirName '/' fileName], [floatOutputDirName '/' newFileName]);
+                  move_file([floatOutputDirName '/' fileName], [floatOutputDirName '/' newFileName]);
                end
             else
                fprintf('WARNING: unable to determine cycle number for file: %s\n', fileName);
@@ -220,7 +220,7 @@ for idFloat = 1:nbFloats
             idF = strfind(fileName, '_');
             newFileName = [fileName(1:idF(4)) cyNum fileName(idF(5):end)];
             if (~strcmp(newFileName, fileName))
-               movefile([floatOutputDirName '/' fileName], [floatOutputDirName '/' newFileName]);
+               move_file([floatOutputDirName '/' fileName], [floatOutputDirName '/' newFileName]);
             end
          end
       end
@@ -280,7 +280,7 @@ for idFloat = 1:nbFloats
             idF3 = find(idF2 > idF1);
             fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
             
-            movefile(filePathName, [filePath '/' fileNameOut fileExt]);
+            move_file(filePathName, [filePath '/' fileNameOut fileExt]);
             fprintf('\t=> File %s moved to %s\n', ...
                [fileName fileExt], ...
                [fileNameOut fileExt]);
@@ -356,7 +356,7 @@ for idFloat = 1:nbFloats
                      idF3 = find(idF2 > idF1);
                      fileNameOut = [fileName(1:idF2(idF3(1))) 'UUU' fileName(idF2(idF3(2)):end)];
                      
-                     movefile(filePathName, [filePath '/' fileNameOut fileExt]);
+                     move_file(filePathName, [filePath '/' fileNameOut fileExt]);
                      log{end+1} = sprintf('\t=> File %s moved to %s\n', ...
                         [fileName fileExt], ...
                         [fileNameOut fileExt]);

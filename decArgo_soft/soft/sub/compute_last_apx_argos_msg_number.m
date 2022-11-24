@@ -245,7 +245,7 @@ switch (a_decoderId)
       o_lastArgosMsgNum = ceil(((a_profLength*nbBytesPerLevel)-firstDataMsgBytes)/otherDataMsgBytes) + firstDataMsgNum;
       o_nbArgosMsg = o_lastArgosMsgNum;
 
-   case {1021} % 2.8.0
+   case {1021, 1022} % 2.8.0, 2.10.4
       % for APF11 floats:
       % - tests msg are numbered #1 and #2
       % - emergency msg is numbered #9

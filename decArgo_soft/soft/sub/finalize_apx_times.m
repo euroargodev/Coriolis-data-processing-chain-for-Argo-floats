@@ -134,7 +134,7 @@ for idCy = 1:length(o_timeData.cycleNum)
    end
    
    % AST
-   if (~ismember(a_decoderId, [1021]))
+   if (~ismember(a_decoderId, [1021 1022]))
       % AST = TET - UP_TIME when PARK P = PROF P
       if (o_timeData.cycleNum(idCy) > 0)
          if (~isempty(o_timeData.cycleParkPres) && ~isempty(o_timeData.cycleProfPres) && ...
@@ -243,7 +243,7 @@ for idCy = 1:length(o_timeData.cycleNum)
    % AET = TST - 10 minutes: done in compute_apx_times
    
    % AET float = TST float - 10 minutes
-   if (~ismember(a_decoderId, [1021]))
+   if (~ismember(a_decoderId, [1021 1022]))
       if (o_timeData.cycleTime(idCy).transStartTimeFloat ~= g_decArgo_dateDef)
          o_timeData.cycleTime(idCy).ascentEndTimeFloat = o_timeData.cycleTime(idCy).transStartTimeFloat - 10/1440;
          o_timeData.cycleTime(idCy).ascentEndTimeFloatAdj = o_timeData.cycleTime(idCy).transStartTimeFloatAdj - 10/1440;

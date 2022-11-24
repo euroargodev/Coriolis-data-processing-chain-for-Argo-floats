@@ -87,7 +87,7 @@ for idFloat = 1:nbFloats
       if ((~strcmp(argosFileName, '.')) && (~strcmp(argosFileName, '..')))
 
          if (exist(argosFilePathName, 'file') == 2)
-            movefile(argosFilePathName, outputDirName);
+            move_file(argosFilePathName, outputDirName);
          else
             fprintf(': répertoire absent: %s\n', argosFilePathName);
          end

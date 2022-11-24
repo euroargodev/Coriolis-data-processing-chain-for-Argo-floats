@@ -4472,13 +4472,13 @@ mkdir(DIR_TMP_FILE);
 % make a copy of the input mono profile file(s) to be updated
 [~, fileName, fileExtension] = fileparts(ncMonoProfOutputPathFileName);
 tmpNcMonoProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-copyfile(ncMonoProfInputPathFileName, tmpNcMonoProfOutputPathFileName);
+copy_file(ncMonoProfInputPathFileName, tmpNcMonoProfOutputPathFileName);
 
 tmpNcMonoBProfOutputPathFileName = '';
 if (monoBProfFileFlag == 1)
    [~, fileName, fileExtension] = fileparts(ncMonoBProfOutputPathFileName);
    tmpNcMonoBProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-   copyfile(ncMonoBProfInputPathFileName, tmpNcMonoBProfOutputPathFileName);
+   copy_file(ncMonoBProfInputPathFileName, tmpNcMonoBProfOutputPathFileName);
 end
 
 % create the list of data Qc to store in the NetCDF mono profile files
@@ -4517,13 +4517,13 @@ dataQcMList = [];
 if (multiProfFileFlag)
    [~, fileName, fileExtension] = fileparts(ncMultiProfOutputPathFileName);
    tmpNcMultiProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-   copyfile(ncMultiProfInputPathFileName, tmpNcMultiProfOutputPathFileName);
+   copy_file(ncMultiProfInputPathFileName, tmpNcMultiProfOutputPathFileName);
    
    tmpNcMultiBProfOutputPathFileName = '';
    if (multiBProfFileFlag == 1)
       [~, fileName, fileExtension] = fileparts(ncMultiBProfOutputPathFileName);
       tmpNcMultiBProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-      copyfile(ncMultiBProfInputPathFileName, tmpNcMultiBProfOutputPathFileName);
+      copy_file(ncMultiBProfInputPathFileName, tmpNcMultiBProfOutputPathFileName);
    end
    
    % create the list of data to store in the NetCDF multi profile files
@@ -4568,22 +4568,22 @@ if (ok == 1)
    % mono profile file(s)
    [monoProfOutputPath, ~, ~] = fileparts(ncMonoProfOutputPathFileName);
    [~, fileName, fileExtension] = fileparts(tmpNcMonoProfOutputPathFileName);
-   movefile(tmpNcMonoProfOutputPathFileName, [monoProfOutputPath '/' fileName fileExtension]);
+   move_file(tmpNcMonoProfOutputPathFileName, [monoProfOutputPath '/' fileName fileExtension]);
    
    if (monoBProfFileFlag == 1)
       [~, fileName, fileExtension] = fileparts(tmpNcMonoBProfOutputPathFileName);
-      movefile(tmpNcMonoBProfOutputPathFileName, [monoProfOutputPath '/' fileName fileExtension]);
+      move_file(tmpNcMonoBProfOutputPathFileName, [monoProfOutputPath '/' fileName fileExtension]);
    end
    
    % multi profile file(s)
    if (multiProfFileFlag)
       [multiProfOutputPath, ~, ~] = fileparts(ncMultiProfOutputPathFileName);
       [~, fileName, fileExtension] = fileparts(tmpNcMultiProfOutputPathFileName);
-      movefile(tmpNcMultiProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
+      move_file(tmpNcMultiProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
       
       if (multiBProfFileFlag == 1)
          [~, fileName, fileExtension] = fileparts(tmpNcMultiBProfOutputPathFileName);
-         movefile(tmpNcMultiBProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
+         move_file(tmpNcMultiBProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
       end
    end
 

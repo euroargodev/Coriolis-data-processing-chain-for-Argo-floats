@@ -62,7 +62,7 @@ for idF = 1:length(files)
                mkdir(dirName);
             end
 
-            movefile(filePathName, [dirName '/' fileName]);
+            move_file(filePathName, [dirName '/' fileName]);
             nbMoved = nbMoved + 1;
             continue;
          end
@@ -81,7 +81,7 @@ for idF = 1:length(files)
                mkdir(dirName);
             end
 
-            movefile(filePathName, [dirName '/' fileName]);
+            move_file(filePathName, [dirName '/' fileName]);
             nbMoved = nbMoved + 1;
             continue;
          end
@@ -94,7 +94,7 @@ for idF = 1:length(files)
          mkdir(dirName);
       end
 
-      movefile(filePathName, [dirName '/' fileName]);
+      move_file(filePathName, [dirName '/' fileName]);
       nbMoved = nbMoved + 1;
       
    end

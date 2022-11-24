@@ -34,6 +34,9 @@ g_decArgo_calibInfo = [];
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
+% float configuration
+global g_decArgo_floatConfig;
+
 
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
@@ -46,6 +49,20 @@ end
 
 % read meta-data file
 jsonMetaData = loadjson(jsonInputFileName);
+
+% store AUX static meta-data
+staticConfigName = [];
+staticConfigValue = [];
+if (isfield(jsonMetaData, 'PTT_HEX'))
+   if (~isempty(jsonMetaData.PTT_HEX))
+      staticConfigName{end+1} = ['META_AUX_' 'PTT_HEX'];
+      staticConfigValue{end+1} = jsonMetaData.PTT_HEX;
+   end
+end
+
+g_decArgo_floatConfig = [];
+g_decArgo_floatConfig.STATIC_NC.NAMES = staticConfigName;
+g_decArgo_floatConfig.STATIC_NC.VALUES = staticConfigValue;
 
 % retrieve the RT offsets
 g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);

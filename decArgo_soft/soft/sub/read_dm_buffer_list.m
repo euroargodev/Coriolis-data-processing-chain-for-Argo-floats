@@ -166,14 +166,14 @@ if (packType ~= 251)
       mkdir(tmpDirName);
       
       % modify the file contents
-      movefile([a_fileDirName '/' a_fileName], [tmpDirName '/' a_fileName]);
+      move_file([a_fileDirName '/' a_fileName], [tmpDirName '/' a_fileName]);
       ok = set_cy_prof_num(packType, [tmpDirName '/' a_fileName], [tmpDirName '/' newFileName], a_fileCyCor, a_fileProfCor);
       if (~ok)
          fprintf('ERROR: Anomaly in modify_sbd_file while processing file : %s\n', ...
             [tmpDirName '/' a_fileName]);
          return;
       end
-      movefile([tmpDirName '/' newFileName], [a_fileDirName '/' newFileName]);
+      move_file([tmpDirName '/' newFileName], [a_fileDirName '/' newFileName]);
       
       % remove the temporary directory
       rmdir(tmpDirName, 's');

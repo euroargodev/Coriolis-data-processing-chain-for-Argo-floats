@@ -215,7 +215,7 @@ for idFile = 1:length(idFileNoCyLog)
             newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt)];
          end
          newFileName = [newFileName '.log'];
-         movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+         move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
          
          fileInfoList{curFileId, 2} = cyNumStr;
          fileInfoList{curFileId, 5} = newFileName;
@@ -228,7 +228,7 @@ for idFile = 1:length(idFileNoCyLog)
       fileName = fileInfoList{curFileId, 5};
       fileNameTmp2 = fileName;
       fileNameTmp2 = [fileNameTmp2(1:end-4) '_TMP2' fileNameTmp2(end-3:end)];
-      movefile([a_outputDirName fileInfoList{curFileId, 5}], [a_outputDirName fileNameTmp2]);
+      move_file([a_outputDirName fileInfoList{curFileId, 5}], [a_outputDirName fileNameTmp2]);
       fileInfoList{curFileId, 6} = 0;
       
       % split file
@@ -257,7 +257,7 @@ for idFile = 1:length(idFileNoCyLog)
          end
          newFileName = [newFileName '.log'];
          
-         movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+         move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
          
          fileInfoList = [fileInfoList; ...
             2 cyNumStr {min(dates)} {max(dates)} {newFileName} 1];
@@ -306,7 +306,7 @@ for idFile = 1:length(idFileNoCyMsg)
          newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt)];
       end
       newFileName = [newFileName '.msg'];
-      movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+      move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
       
       fileInfoList{curFileId, 2} = cyNumStr;
       fileInfoList{curFileId, 5} = newFileName;
@@ -337,7 +337,7 @@ for idFile = 1:length(idFileNoCyMsg)
             newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt)];
          end
          newFileName = [newFileName '.msg'];
-         movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+         move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
          
          fileInfoList{curFileId, 2} = cyNumStr;
          fileInfoList{curFileId, 5} = newFileName;
@@ -378,7 +378,7 @@ for idFile = 1:length(idFileNoCyLog)
          newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt)];
       end
       newFileName = [newFileName '.log'];
-      movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+      move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
       
       fileInfoList{curFileId, 2} = cyNumStr;
       fileInfoList{curFileId, 5} = newFileName;
@@ -409,7 +409,7 @@ for idFile = 1:length(idFileNoCyLog)
             newFileName = [newFileName(1:idF(5)) sprintf('%08d', pid+cpt)];
          end
          newFileName = [newFileName '.log'];
-         movefile([a_outputDirName fileName], [a_outputDirName newFileName]);
+         move_file([a_outputDirName fileName], [a_outputDirName newFileName]);
          
          fileInfoList{curFileId, 2} = cyNumStr;
          fileInfoList{curFileId, 5} = newFileName;
@@ -504,7 +504,7 @@ for idCy = 1:length(cyList)
          end
       end
       
-      movefile([a_outputDirName fileNameTmp], [a_outputDirName fileName]);
+      move_file([a_outputDirName fileNameTmp], [a_outputDirName fileName]);
       fileInfoList{curFileId, 4} = max([fileInfoList{idFFiles, 4}]);
    end  
 end
@@ -536,7 +536,7 @@ for idCy = 1:length(cyList)
          end
       end
       
-      movefile([a_outputDirName fileNameTmp], [a_outputDirName fileName]);
+      move_file([a_outputDirName fileNameTmp], [a_outputDirName fileName]);
       fileInfoList{curFileId, 4} = max([fileInfoList{idFFiles, 4}]);
    end  
 end

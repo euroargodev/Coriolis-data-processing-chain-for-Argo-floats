@@ -51,7 +51,7 @@ for idFloat = 1:nbFloats
    if ~(exist(txtDirName, 'dir') == 7)
       fprintf(': répertoire absent: %s\n', txtDirName);
    else
-      movefile(txtDirName, outputDirName);
+      move_file(txtDirName, outputDirName);
       fprintf('\n');
    end
 end

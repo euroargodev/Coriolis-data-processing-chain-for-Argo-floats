@@ -564,6 +564,10 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
          
          [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
             g_decArgo_inputArgosFile, floatDecId, floatArgosId, checkTestMsg);
+         if (a_floatNum == 3901639)
+            cycleNumber = -1;
+            cycleNumberCount = -1;
+         end
          if (cycleNumberCount > 1)
             
             % manage possible roll over of profile number counter
@@ -571,11 +575,6 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
                idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);
                if (~isempty(idPrevCycle))
                   idPrevCycle = idPrevCycle(end);
-                  if (cycleNumber < tabCycleNumber(idPrevCycle))
-                     if (floatNum == 3901639)
-                        cycleNumber = cycleNumber + 5;
-                     end
-                  end
                   while (cycleNumber < tabCycleNumber(idPrevCycle))
                      cycleNumber = cycleNumber + 256;
                   end

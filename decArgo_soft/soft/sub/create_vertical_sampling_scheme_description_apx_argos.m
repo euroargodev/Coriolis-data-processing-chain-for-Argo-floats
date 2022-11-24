@@ -43,7 +43,7 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 floats
-   case {1021}
+   case {1021, 1022}
       
       % current configuration
       configName = [];

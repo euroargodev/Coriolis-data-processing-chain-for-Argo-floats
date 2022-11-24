@@ -761,7 +761,7 @@ switch (a_decoderId)
             
       end
       
-   case {1021}
+   case {1021, 1022}
       % Apex Argos APF11
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

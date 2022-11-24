@@ -21,10 +21,11 @@ function generate_json_float_meta_apx_apf11_argos()
 
 % meta-data file exported from Coriolis data base
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Argos\DB_export_APF11_Argos_from_VB_20171204.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Argos\DB_export_APF11_Argos_lot2_from_VB_20180417.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\Argos\DB_export_APF11_Argos_lot2&3_from_VB_20180514.txt';
 
 % list of concerned floats
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.8.0.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_2.10.4.txt';
 
 % directory of configuration files at launch
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';

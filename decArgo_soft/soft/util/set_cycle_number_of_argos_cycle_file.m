@@ -25,7 +25,7 @@ function set_cycle_number_of_argos_cycle_file(varargin)
 
 % directory of the Argos cycle files
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160208\fichiers_cycle_apex_233_floats_bascule_20160217\';
-% DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\rerun\ori_split_cycle_CORRECT_final\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\OUT\FINAL\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

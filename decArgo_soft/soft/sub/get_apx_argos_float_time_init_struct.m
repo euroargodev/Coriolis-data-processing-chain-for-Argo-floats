@@ -103,7 +103,7 @@ switch (a_decoderId)
       o_downTimeEnd = 0;
       o_ascentStartTime = 0;
       
-   case {1021} % 2.8.0
+   case {1021, 1022} % 2.8.0, 2.10.4
       o_downTimeEnd = 1;
       o_ascentStartTime = 0;
       

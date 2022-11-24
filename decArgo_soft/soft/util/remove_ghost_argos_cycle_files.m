@@ -594,7 +594,7 @@ fclose(fIdIn);
 % move the input Argos file
 [filePath, fileName, fileExt] = fileparts(a_filePathName);
 filePathNameToDelete = [filePath fileName '_TO_DELETE' fileExt];
-movefile(a_filePathName, filePathNameToDelete);
+move_file(a_filePathName, filePathNameToDelete);
 
 % create the new Argos files
 for idF = 1:2

@@ -229,7 +229,7 @@ else
       case {1016}
          decIdList = [1016];
       case {1021}
-         decIdList = [1021];
+         decIdList = [1021 1022];
          
       case {1101}
          decIdList = [1101];

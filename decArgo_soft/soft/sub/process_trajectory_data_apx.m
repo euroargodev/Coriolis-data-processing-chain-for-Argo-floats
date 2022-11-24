@@ -212,7 +212,7 @@ if (ismember(a_decoderId, [1013, 1015])) % mean PTS is not provided for these fl
          trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_4;
       end
    end
-elseif (ismember(a_decoderId, [1021])) % mean PTS is not provided for these floats => we use the average of min and max measurements
+elseif (ismember(a_decoderId, [1021 1022])) % mean PTS is not provided for these floats => we use the average of min and max measurements
    
    if (~isempty(a_trajData))
       

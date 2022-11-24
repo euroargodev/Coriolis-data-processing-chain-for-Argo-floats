@@ -285,6 +285,11 @@ for idFloat = 1:length(floatList)
          end
          
          if (~isempty(bddConfName))
+            
+            if (ismember(bddConfName, [{'ActiveIceDetectionMonth'} {'VitalsMask'} {'PTT_HEX'}]))
+               floatConfValue = ['0x' floatConfValue];
+            end
+            
             diffFlag = -1;
             idF = find(strcmp(metaData(idForWmo, 5), bddConfName) & (dimLevlist(idForWmo) == 1));
             if (~isempty(idF))
@@ -321,14 +326,9 @@ for idFloat = 1:length(floatList)
                   fprintf(csvFileId, '%s\n', header);
                end
                
-               floatConfValue2 = floatConfValue;
-               if (ismember(bddConfName, [{'ActiveIceDetectionMonth'} {'VitalsMask'} {'PTT_HEX'}]))
-                  floatConfValue2 = ['''' floatConfValue2];
-               end
-
                fprintf(csvFileId, '%d;%d;%d; %s;%s\n', ...
                   floatNum, ...
-                  get_tech_id(bddConfName), 1, floatConfValue2, bddConfName);
+                  get_tech_id(bddConfName), 1, floatConfValue, bddConfName);
                
                if (diffFlag == 0)
                   fprintf('WARNING: Float #%d: MISSING: Meta-data ''%s'': launch float value (''%s'') is missing in the data base => DB contents should be updated (see %s)\n', ...

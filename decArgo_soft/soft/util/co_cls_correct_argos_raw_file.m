@@ -184,7 +184,7 @@ for idFic = 1:nbFiles
             % no error dected => duplicate the file
             fileIn = filePathName;
             fileOut = [a_outputDir '/' fileName];
-            copyfile(fileIn, fileOut);
+            copy_file(fileIn, fileOut);
          else
             % error(s) detected => correct the file
 

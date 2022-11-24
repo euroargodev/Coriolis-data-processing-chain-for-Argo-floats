@@ -130,7 +130,7 @@ if ~(exist(floatFileDir, 'dir') == 7)
    tic;
    floatFiles = [dir([DIR_TELEDYNE_CODE '*.txt']); dir([DIR_TELEDYNE_CODE '*.gz'])];
    for iFile = 1:length(floatFiles)
-      movefile([DIR_TELEDYNE_CODE floatFiles(iFile).name], floatFileDir);
+      move_file([DIR_TELEDYNE_CODE floatFiles(iFile).name], floatFileDir);
    end
    ellapsedTime = toc;
    fprintf('=> %d float files retrieved (%.1f sec)\n', length(floatFiles), ellapsedTime);
@@ -169,14 +169,14 @@ if ~(exist(asciiFileDir, 'dir') == 7)
    tic;
    binFiles = dir([floatFileDir '*.bin']);
    for iFile = 1:length(binFiles)
-      movefile([floatFileDir binFiles(iFile).name], DIR_TELEDYNE_CODE);
+      move_file([floatFileDir binFiles(iFile).name], DIR_TELEDYNE_CODE);
       cmd = ['cd ' DIR_TELEDYNE_CODE '& python apf11dec.py ' [DIR_TELEDYNE_CODE binFiles(iFile).name]];
       [status, cmdOut] = system(cmd);
       if (status ~= 0)
          fprintf('Anomaly while applying apf11dec.py to %s\n', binFiles(iFile).name);
       end
-      movefile([DIR_TELEDYNE_CODE binFiles(iFile).name], floatFileDir);
-      movefile([DIR_TELEDYNE_CODE regexprep(binFiles(iFile).name, '.bin', '.csv')], asciiFileDir);
+      move_file([DIR_TELEDYNE_CODE binFiles(iFile).name], floatFileDir);
+      move_file([DIR_TELEDYNE_CODE regexprep(binFiles(iFile).name, '.bin', '.csv')], asciiFileDir);
    end
    ellapsedTime = toc;
    fprintf('=> %d binary files converted (%.1f sec)\n', length(binFiles), ellapsedTime);

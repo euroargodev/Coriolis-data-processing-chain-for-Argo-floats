@@ -24,7 +24,6 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARGOS\cycle\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collectes_20161202\tmp2\ori_out\FINAL\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARGOS\cycle\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\OUT\FINAL\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\collecte_4\OUT\FINAL\';
 
 % directory to store the log and CSV files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

@@ -80,12 +80,12 @@ for idNewDir = 1:nbNewDirs
                   end
                   
                   % move the new file in the base dir
-                  movefile(newFilePathName, filePathName);
+                  move_file(newFilePathName, filePathName);
                end
             end
          else
             % move the new dir in the base dir
-            movefile(newDirPathName, DIR_BASE_ARGOS_FILES);
+            move_file(newDirPathName, DIR_BASE_ARGOS_FILES);
          end
       end
    end

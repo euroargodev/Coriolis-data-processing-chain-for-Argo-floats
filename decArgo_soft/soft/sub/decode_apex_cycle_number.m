@@ -69,8 +69,8 @@ if (a_checkTestMsg == 1)
          [~, ~, ~, ~, ~, ~, ~, ~, dataSensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
             a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
 
-      case {1021}
-         % 2.8.0
+      case {1021, 1022}
+         % 2.8.0, 2.10.4
          
          nbTestMsg = 2;
          msgNumOfCyNum = 10;
@@ -133,8 +133,8 @@ else
          [~, ~, ~, ~, ~, ~, ~, ~, sensor, ~] = get_apex_data_sensor(a_argosPathFileName, ...
             a_ArgosId, 31, dataMsgBytesToFreeze, 1, 999999999);
          
-      case {1021}
-         % 2.8.0
+      case {1021, 1022}
+         % 2.8.0, 2.10.4
          
          msgNumOfCyNum = 10;
          bytePos = 7;

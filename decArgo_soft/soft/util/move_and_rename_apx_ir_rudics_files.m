@@ -627,7 +627,7 @@ if (STEP_5)
                         newFileName = [fileName(1:idF(3)) num2str(wmoList) '_TTT' fileName(idF(5):end)];
                         if (~strcmp(newFileName, fileName))
                            %                         fprintf('INFO: Renaming file: %s => %s\n', fileName, newFileName);
-                           movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                           move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                         end
                      else
                         floatWmo = wmoList;
@@ -660,7 +660,7 @@ if (STEP_5)
                   newFileName = [fileName(1:idF(3)) num2str(floatWmo) fileName(idF(2):idF(3)-1) fileName(idF(5):end)];
                   if (~strcmp(newFileName, fileName))
                      %                   fprintf('INFO: Renaming file: %s => %s\n', fileName, newFileName);
-                     movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                     move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                   end
                end
             end
@@ -723,13 +723,13 @@ if (STEP_6)
                      idF = strfind(fileName, '_');
                      newFileName = [fileName(1:idF(3)) num2str(wmoList) '_TTT' fileName(idF(5):end)];
                      if (~strcmp(newFileName, fileName))
-                        movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                        move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                      end
                   else
                      idF = strfind(fileName, '_');
                      newFileName = [fileName(1:idF(3)) num2str(wmoList) fileName(idF(2):idF(3)-1) fileName(idF(5):end)];
                      if (~strcmp(newFileName, fileName))
-                        movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                        move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                      end
                   end
                else
@@ -759,7 +759,7 @@ if (STEP_6)
                      idF = strfind(fileName, '_');
                      newFileName = [fileName(1:idF(3)) num2str(floatWmo) fileName(idF(2):idF(3)-1) fileName(idF(5):end)];
                      if (~strcmp(newFileName, fileName))
-                        movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                        move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                      end
                   end
                end
@@ -821,7 +821,7 @@ if (STEP_6)
                            idF = strfind(fileName, '_');
                            newFileName = [fileName(1:idF(4)) cyNumDate{idB, 1} fileName(idF(5):end)];
                            if (~strcmp(newFileName, fileName))
-                              movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                              move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                            end
                         else
                            fprintf('WARNING: unable to determine cycle number for file: %s\n', fileName);
@@ -850,7 +850,7 @@ if (STEP_6)
                            idF = strfind(fileName, '_');
                            newFileName = [fileName(1:idF(4)) cyNum fileName(idF(5):end)];
                            if (~strcmp(newFileName, fileName))
-                              movefile([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
+                              move_file([dirPathFileName '/' fileName], [dirPathFileName '/' newFileName]);
                            end
                         else
                            fprintf('WARNING: unable to determine cycle number for file: %s\n', fileName);
@@ -1013,7 +1013,7 @@ file_names = [ ...
 
 for idFile = 1:size(file_names, 1)
    if (exist([a_inputFilePathName '/' file_names{idFile, 1}], 'file') == 2)
-      [status, message, messageId] = movefile( ...
+      [status, message, messageId] = move_file( ...
          [a_inputFilePathName '/' file_names{idFile, 1}], [a_inputFilePathName '/' file_names{idFile, 2}]);
       if (status == 0)
          fprintf('ERROR: Unable to rename file: %s (''%s'')\n', ...

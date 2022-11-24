@@ -39,7 +39,7 @@ global g_decArgo_dateDef;
 
 
 % estimate TET and clock drift from LMTs
-if (~ismember(a_decoderId, [1021]))
+if (~ismember(a_decoderId, [1021 1022]))
    o_timeData = estimate_TET(o_timeData);
 end
 
@@ -53,7 +53,7 @@ end
 if (o_timeData.configParam.downTimeEndProvidedFlag)
 
    % interpolate DOWN_TIME end to fill missing ones
-   if (~ismember(a_decoderId, [1021]))
+   if (~ismember(a_decoderId, [1021 1022]))
       idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
       cycleNumber = o_timeData.cycleNum(idUsed);
       downTimeEnd = [o_timeData.cycleTime(idUsed).downTimeEndFloat];
@@ -75,7 +75,7 @@ if (o_timeData.configParam.downTimeEndProvidedFlag)
    end
    
    % compute float clock drift from DOWN_TIME end
-   if (~ismember(a_decoderId, [1021]))
+   if (~ismember(a_decoderId, [1021 1022]))
       idUsed = find([o_timeData.cycleNum] > dpfFloatFlag);
       cycleNumber = o_timeData.cycleNum(idUsed);
       downTimeEnd = [o_timeData.cycleTime(idUsed).downTimeEndFloat];

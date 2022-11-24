@@ -136,7 +136,7 @@ if (g_decArgo_realtimeFlag == 0)
                   
                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                   case {1001, 1002, 1003, 1004, 1005, 1007, 1010, 1011, 1012, ...
-                        1021}
+                        1021, 1022}
                      % 071412, 062608, 061609, 021009, 061810, 082213,
                      % 110613&090413, 121512, 110813, 2.8.0
                      % only one sensor (SBE41)
@@ -311,14 +311,19 @@ if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
    cellConfigValues = struct2cell(jsonMetaData.CONFIG_PARAMETER_VALUE);
    configValues = nan(size(configNames));
    for id = 1:size(configNames, 1)
-      if (~isempty(cellConfigValues{id}))
-         [value, status] = str2num(cellConfigValues{id});
-         if (status == 1)
-            configValues(id) = value;
+      cellConfigValue = cellConfigValues{id};
+      if (~isempty(cellConfigValue))
+         if (strncmp(cellConfigValue, '0x', 2))
+            configValues(id) = hex2dec(cellConfigValue(3:end));
          else
-            fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
-               g_decArgo_floatNum, cellConfigValues{id});
-            return;
+            [value, status] = str2num(cellConfigValue);
+            if (status == 1)
+               configValues(id) = value;
+            else
+               fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+                  g_decArgo_floatNum, cellConfigValue);
+               return;
+            end
          end
       end
    end
@@ -329,7 +334,7 @@ if (g_decArgo_realtimeFlag == 0)
    if (~isempty(a_decMetaData))
       
       % check configuration data consistency
-      if (~ismember(a_decoderId, [1021])) % not relevant for APF11 floats
+      if (~ismember(a_decoderId, [1021 1022])) % not relevant for APF11 floats
          idConfig = find([a_decMetaData.configFlag] == 1);
          for idM = 1:length(idConfig)
             dataStruct = a_decMetaData(idConfig(idM));
@@ -454,7 +459,7 @@ if (configValues(idF) ~= 234)
 end
 
 % APF11 floats
-if (ismember(a_decoderId, [1021]))
+if (ismember(a_decoderId, [1021 1022]))
    
    % convert CONFIG_AR_AscentRate from dbar/s to mm/s
    idF = find(strcmp(configNames, 'CONFIG_AR_AscentRate'));
@@ -498,7 +503,6 @@ end
 %     - config #1: cycle duration = CT, profile pres = PRKP
 
 % store the configuration
-g_decArgo_floatConfig = [];
 g_decArgo_floatConfig.NAMES = configNames;
 g_decArgo_floatConfig.VALUES = floatConfigValues;
 g_decArgo_floatConfig.NUMBER = floatConfigNumbers;
@@ -551,7 +555,7 @@ switch (a_decoderId)
          g_decArgo_timeData.configParam.transRepPeriod = transRepPeriod;
       end
       
-   case {1021} % 2.8.0
+   case {1021, 1022} % 2.8.0, 2.10.4
       
       dpfFloatFlag = get_float_config_argos_3('CONFIG_DPF_');
       if (~isempty(dpfFloatFlag))

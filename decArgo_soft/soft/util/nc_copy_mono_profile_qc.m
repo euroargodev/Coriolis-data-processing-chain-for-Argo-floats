@@ -409,13 +409,13 @@ for idFloat = 1:nbFloats
       end
       
       % make a copy of the input file(s) to be updated
-      copyfile(inputProfCFilePathName, DIR_TMP_FILE);
+      copy_file(inputProfCFilePathName, DIR_TMP_FILE);
       [~, fileName, fileExtension] = fileparts(inputProfCFilePathName);
       outputProfCFilePathName = [DIR_TMP_FILE fileName fileExtension];
       
       outputProfBFilePathName = '';
       if (~isempty(inputProfBFilePathName))
-         copyfile(inputProfBFilePathName, DIR_TMP_FILE);
+         copy_file(inputProfBFilePathName, DIR_TMP_FILE);
          [~, fileName, fileExtension] = fileparts(inputProfBFilePathName);
          outputProfBFilePathName = [DIR_TMP_FILE fileName fileExtension];
       end
@@ -444,7 +444,7 @@ for idFloat = 1:nbFloats
             if (updatedCFile == 1)
                [~, fileName, fileExtension] = fileparts(outputProfCFilePathName);
                finalOutputProfCFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
-               movefile(outputProfCFilePathName, finalOutputProfCFilePathName);
+               move_file(outputProfCFilePathName, finalOutputProfCFilePathName);
                
                fprintf('INFO: Qc file contents successfully reported into prof #%d of c file [Qc file: %s] [c file: %s]\n', ...
                   profNumToUpdate, qcProfFilePathName, finalOutputProfCFilePathName);
@@ -453,7 +453,7 @@ for idFloat = 1:nbFloats
             if (updatedBFile == 1)
                [~, fileName, fileExtension] = fileparts(outputProfBFilePathName);
                finalOutputProfBFilePathName = [DIR_OUTPUT_NC_FILES subPath fileName fileExtension];
-               movefile(outputProfBFilePathName, finalOutputProfBFilePathName);
+               move_file(outputProfBFilePathName, finalOutputProfBFilePathName);
                
                fprintf('INFO: Qc file contents successfully reported into prof #%d of b file [Qc file: %s] [b file: %s]\n', ...
                   profNumToUpdate, qcProfFilePathName, finalOutputProfBFilePathName);

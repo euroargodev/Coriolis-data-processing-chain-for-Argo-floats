@@ -1741,13 +1741,13 @@ mkdir(DIR_TMP_FILE);
 % make a copy of the input trajectory file to be updated
 [~, fileName, fileExtension] = fileparts(ncTrajOutputFilePathName);
 tmpNcTrajOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-copyfile(ncTrajInputFilePathName, tmpNcTrajOutputPathFileName);
+copy_file(ncTrajInputFilePathName, tmpNcTrajOutputPathFileName);
 
 tmpNcBTrajOutputPathFileName = '';
 if (bTrajFileFlag == 1)
    [~, fileName, fileExtension] = fileparts(ncBTrajOutputFilePathName);
    tmpNcBTrajOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-   copyfile(ncBTrajInputFilePathName, tmpNcBTrajOutputPathFileName);
+   copy_file(ncBTrajInputFilePathName, tmpNcBTrajOutputPathFileName);
 end
 
 % create the list of data Qc to store in the NetCDF trajectory
@@ -1778,11 +1778,11 @@ if (ok == 1)
    
    [ncTrajOutputPath, ~, ~] = fileparts(ncTrajOutputFilePathName);
    [~, fileName, fileExtension] = fileparts(tmpNcTrajOutputPathFileName);
-   movefile(tmpNcTrajOutputPathFileName, [ncTrajOutputPath '/' fileName fileExtension]);
+   move_file(tmpNcTrajOutputPathFileName, [ncTrajOutputPath '/' fileName fileExtension]);
    
    if (bTrajFileFlag == 1)
       [~, fileName, fileExtension] = fileparts(ncBTrajOutputFilePathName);
-      movefile(tmpNcBTrajOutputPathFileName, [ncTrajOutputPath '/' fileName fileExtension]);
+      move_file(tmpNcBTrajOutputPathFileName, [ncTrajOutputPath '/' fileName fileExtension]);
    end
    
 end

@@ -106,7 +106,7 @@ for idFloat = 1:nbFloats
    % select the Argos files or directories associated with the floats
    dirIn = [DIR_INPUT_ARGOS_FILES '/' floatArgosId];
    if (exist(dirIn, 'dir') == 7)
-      movefile(dirIn, selectDirName);
+      move_file(dirIn, selectDirName);
       fprintf('ok\n');
    else
       fprintf('WARNING : dir not found : %s\n', floatArgosId);

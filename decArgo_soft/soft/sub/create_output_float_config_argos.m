@@ -64,7 +64,7 @@ if (~isempty(a_decArgoConfParamNames))
          finalConfigName{idConfParam} = a_ncConfParamNames{idF};
       else
          % Apex APF11 floats
-         if (a_decoderId == 1021)
+         if (ismember(a_decoderId, [1021 1022]))
             if (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_SAMPLE'))
                switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
                   case 'NumberOfZones'
@@ -133,6 +133,15 @@ if (~isempty(a_decArgoConfParamNames))
    finalConfigValue(idDel, :) = [];
 
    % output data
+   o_ncConfig.STATIC_NC = [];
+   o_ncConfig.STATIC_NC.NAMES = [];
+   o_ncConfig.STATIC_NC.VALUES = [];
+   if (~isempty(g_decArgo_floatConfig))
+      if (isfield(g_decArgo_floatConfig, 'STATIC_NC'))
+         o_ncConfig.STATIC_NC.NAMES = g_decArgo_floatConfig.STATIC_NC.NAMES;
+         o_ncConfig.STATIC_NC.VALUES = g_decArgo_floatConfig.STATIC_NC.VALUES;
+      end
+   end
    o_ncConfig.NUMBER = finalConfigNum;
    o_ncConfig.NAMES = finalConfigName;
    o_ncConfig.VALUES = finalConfigValue;

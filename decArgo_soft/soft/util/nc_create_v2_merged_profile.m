@@ -2132,7 +2132,7 @@ ncwriteschema(outputFilePathName, outputFileSchema);
 fill_merged_mono_profile_file(outputFilePathName, a_profData);
 
 % update output file
-movefile(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/profiles/' outputFileName]);
+move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/profiles/' outputFileName]);
 
 return;
 
@@ -2620,7 +2620,7 @@ ncwriteschema(outputFilePathName, outputFileSchema);
 fill_synthetic_multi_profile_file(outputFilePathName, a_profData);
 
 % update output file
-movefile(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/' outputFileName]);
+move_file(outputFilePathName, [a_outputDir '/' num2str(a_floatWmo) '/' outputFileName]);
 
 return;
 

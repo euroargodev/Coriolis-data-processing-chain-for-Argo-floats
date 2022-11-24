@@ -106,7 +106,7 @@ end
 fprintf('\nSTEP 2: delete identical satellite passes\n');
 dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
 % duplicate the input directory in the output one
-copyfile(dirOutStep1, dirOutStep2);
+copy_file(dirOutStep1, dirOutStep2);
 [ok] = delete_double_argos_split_bis(dirOutStep2);
 if (ok == 0)
    fprintf('ERROR: In step2 => exit\n');
@@ -141,7 +141,7 @@ mkdir(dirOutStep5);
 % create temporary directory
 mkdir([dirOutStep5 '/IN/']);
 % duplicate the input directory in the output one
-copyfile(dirOutStep4, [dirOutStep5 '/IN/']);
+copy_file(dirOutStep4, [dirOutStep5 '/IN/']);
 [ok] = move_and_rename_apx_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
 if (ok == 0)
    fprintf('ERROR: In step5 => exit\n');
@@ -155,7 +155,7 @@ fprintf('\nSTEP 6: delete ghost messages\n');
 dirOutStep6 = [DIR_OUTPUT '/FINAL/'];
 % mkdir(dirOutStep6);
 % % duplicate the input directory in the output one
-copyfile(dirOutStep5, dirOutStep6);
+copy_file(dirOutStep5, dirOutStep6);
 [ok] = clean_ghost_in_apx_argos_cycle_files_bis(floatList, dirOutStep6);
 if (ok == 0)
    fprintf('ERROR: In step6 => exit\n');
@@ -991,7 +991,7 @@ for idFic = 1:nbFiles
             % no error dected => duplicate the file
             fileIn = filePathName;
             fileOut = [a_outputDir '/' fileName];
-            copyfile(fileIn, fileOut);
+            copy_file(fileIn, fileOut);
          else
             % error(s) detected => correct the file
             
@@ -1422,6 +1422,10 @@ for idFile = 1:nbFiles
             
             [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
                argosFileName, floatDecId, floatArgosId, checkTestMsg);
+            if (a_floatNum == 3901639)
+               cycleNumber = -1;
+               cycleNumberCount = -1;
+            end
             if (cycleNumberCount > 1)
                
                % manage possible roll over of profile number counter
@@ -1429,11 +1433,6 @@ for idFile = 1:nbFiles
                   idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);
                   if (~isempty(idPrevCycle))
                      idPrevCycle = idPrevCycle(end);
-                     if (cycleNumber < tabCycleNumber(idPrevCycle))
-                        if (a_floatNum == 3901639)
-                           cycleNumber = cycleNumber + 5;
-                        end
-                     end
                      while (cycleNumber < tabCycleNumber(idPrevCycle))
                         cycleNumber = cycleNumber + 256;
                      end
@@ -1679,7 +1678,7 @@ for idFloat = 1:nbFloats
       continue;
    end
    floatDecId = listDecId(idF);
-   if (ismember(floatDecId, [1021]))
+   if (ismember(floatDecId, [1021 1022]))
       fprintf('INFO: Clean ghost operation is not possible for decId #%d\n', floatDecId);
       continue;
    end

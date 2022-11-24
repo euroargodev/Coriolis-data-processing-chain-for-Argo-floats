@@ -73,7 +73,7 @@ switch (a_decoderId)
       % Apex Argos
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {1021}
+   case {1021, 1022}
       % Apex Argos APF11
       o_comment = 'JULD variable resolution depends on measurement codes';
       

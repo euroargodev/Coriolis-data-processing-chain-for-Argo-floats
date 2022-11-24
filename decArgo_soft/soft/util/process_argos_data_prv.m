@@ -112,7 +112,7 @@ end
 fprintf('\nSTEP 2: delete identical satellite passes\n');
 dirOutStep2 = [DIR_OUTPUT '/STEP2/'];
 % duplicate the input directory in the output one
-copyfile(dirOutStep1, dirOutStep2);
+copy_file(dirOutStep1, dirOutStep2);
 [ok] = delete_double_argos_split_bis(dirOutStep2);
 if (ok == 0)
    fprintf('ERROR: In step2 => exit\n');
@@ -147,7 +147,7 @@ mkdir(dirOutStep5);
 % create temporary directory
 mkdir([dirOutStep5 '/IN/']);
 % duplicate the input directory in the output one
-copyfile(dirOutStep4, [dirOutStep5 '/IN/']);
+copy_file(dirOutStep4, [dirOutStep5 '/IN/']);
 [ok] = move_and_rename_prv_argos_files_bis(floatList, [dirOutStep5 '/IN/'], dirOutStep5);
 if (ok == 0)
    fprintf('ERROR: In step5 => exit\n');
@@ -984,7 +984,7 @@ for idFic = 1:nbFiles
             % no error dected => duplicate the file
             fileIn = filePathName;
             fileOut = [a_outputDir '/' fileName];
-            copyfile(fileIn, fileOut);
+            copy_file(fileIn, fileOut);
          else
             % error(s) detected => correct the file
 

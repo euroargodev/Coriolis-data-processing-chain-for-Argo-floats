@@ -45,7 +45,7 @@ switch (a_decoderId)
       % 110613&090413, 121512, 110813, 071807, 082807, 020110, 090810
       msgNumOfBlockNum = 1;
             
-   case {1021} % 2.8.0
+   case {1021, 1022} % 2.8.0, 2.10.4
       msgNumOfBlockNum = 10;
       
    otherwise

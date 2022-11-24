@@ -414,6 +414,10 @@ for idFile = 1:nbFiles
                
             [cycleNumber, cycleNumberCount] = decode_apex_cycle_number( ...
                argosFileName, floatDecId, floatArgosId, checkTestMsg);
+            if (a_floatNum == 3901639)
+               cycleNumber = -1;
+               cycleNumberCount = -1;
+            end
             if (cycleNumberCount > 1)
             
                % manage possible roll over of profile number counter
@@ -421,11 +425,6 @@ for idFile = 1:nbFiles
                   idPrevCycle = find(tabLastMsgDate < firstArgosMsgDate);
                   if (~isempty(idPrevCycle))
                      idPrevCycle = idPrevCycle(end);
-                     if (cycleNumber < tabCycleNumber(idPrevCycle))
-                        if (a_floatNum == 3901639)
-                           cycleNumber = cycleNumber + 5;
-                        end
-                     end
                      while (cycleNumber < tabCycleNumber(idPrevCycle))
                         cycleNumber = cycleNumber + 256;
                      end

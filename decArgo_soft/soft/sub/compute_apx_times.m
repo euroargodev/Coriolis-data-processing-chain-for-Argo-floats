@@ -150,7 +150,7 @@ if (a_cycleNum > 0)
    end
    
    % compute AET = TST - 10 minutes
-   if (~ismember(a_decoderId, [1021]))
+   if (~ismember(a_decoderId, [1021 1022]))
       if (cycleTimeStruct.transStartTimeAdj ~= g_decArgo_dateDef)
          cycleTimeStruct.ascentEndTimeAdj = cycleTimeStruct.transStartTimeAdj - 10/1440;
          cycleTimeStruct.ascentEndTimeStatus = cycleTimeStruct.transStartTimeStatus;

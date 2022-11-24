@@ -306,7 +306,7 @@ if (g_decArgo_realtimeFlag == 1)
       % move the input Argos file
       [~, fileName, fileExt] = fileparts(a_filePathName);
       filePathNameToDelete = [outputDir '/' fileName '_TO_DELETE' fileExt];
-      movefile(a_filePathName, filePathNameToDelete);
+      move_file(a_filePathName, filePathNameToDelete);
    else
       
       filePathNameToDelete = '';
@@ -316,7 +316,7 @@ else
    % move the input Argos file
    [outputDir, fileName, fileExt] = fileparts(a_filePathName);
    filePathNameToDelete = [outputDir '/' fileName '_TO_DELETE' fileExt];
-   movefile(a_filePathName, filePathNameToDelete);
+   move_file(a_filePathName, filePathNameToDelete);
 end
 
 % create the new Argos files
