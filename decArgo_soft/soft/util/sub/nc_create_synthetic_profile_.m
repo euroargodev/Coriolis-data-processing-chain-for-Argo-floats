@@ -445,7 +445,8 @@ profDataTab = [];
 if (~isempty(profDataTabC) && ~isempty(profDataTabB))
    for idProfC = 1:length(profDataTabC)
       profData = profDataTabC(idProfC);
-      for idProfB = 1:length(profDataTabB)
+      idProfB = find([profDataTabB.nProfId] == profData.nProfId);
+      if (~isempty(idProfB))
          if (length(profData.presData) ~= length(profDataTabB(idProfB).presData))
             fprintf('ERROR: Float #%d Cycle #%d%c: C and B files don''t have the same number of levels (%d vs %d) - files ignored\n', ...
                g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, ...
@@ -464,6 +465,7 @@ if (~isempty(profDataTabC) && ~isempty(profDataTabB))
 
             return
          end
+
          if (~any((profData.presData - profDataTabB(idProfB).presData) ~= 0))
             profDataB = profDataTabB(idProfB);
             profData.paramList = [profData.paramList profDataB.paramList];
@@ -506,18 +508,47 @@ if (~isempty(profDataTabC) && ~isempty(profDataTabB))
             profData.scientificCalibComment = [profData.scientificCalibComment profDataB.scientificCalibComment];
             profData.scientificCalibDate = [profData.scientificCalibDate profDataB.scientificCalibDate];
             profDataTabB(idProfB) = [];
-            break
+         else
+
+            fprintf('ERROR: Float #%d Cycle #%d%c: C and B files don''t have the same PRES profile for N_PROF = %d - files ignored\n', ...
+               g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profData.nProfId);
+            
+            % CSV output
+            msgType = 'error';
+            message = sprintf('C and B files don''t have the same PRES profile for N_PROF = %d - files ignored.', ...
+               profData.nProfId);
+            [~, fileName, fileExt] = fileparts(a_bProfFileName);
+            g_cocs_inputFile  = [fileName fileExt];
+            fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+               g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
+            return
          end
+      else
+
+         fprintf('ERROR: Float #%d Cycle #%d%c: unable to find N_PROF = %d profile in B file - files ignored\n', ...
+            g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, profData.nProfId);
+
+         % CSV output
+         msgType = 'error';
+         message = sprintf('unable to find N_PROF = %d profile in B file - files ignored.', ...
+            profData.nProfId);
+         [~, fileName, fileExt] = fileparts(a_bProfFileName);
+         g_cocs_inputFile  = [fileName fileExt];
+         fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
+            g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
+
+         return
       end
       profDataTab = [profDataTab profData];
    end
    
    if (~isempty(profDataTabB))
-      fprintf('WARNING: Float #%d Cycle #%d%c: %d B profiles are not used\n', ...
+      fprintf('ERROR: Float #%d Cycle #%d%c: %d B profiles are not used\n', ...
          g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir, length(profDataTabB));
       
       % CSV output
-      msgType = 'warning';
+      msgType = 'error';
       message = sprintf('%d B profiles are not used.', ...
          length(profDataTabB));
       [~, fileName, fileExt] = fileparts(a_bProfFileName);
