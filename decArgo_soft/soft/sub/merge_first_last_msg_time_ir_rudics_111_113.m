@@ -207,8 +207,8 @@ if (~isempty(a_tabTrajNCycle))
    end
    
    % merge first/last msg and location times
-   cycleNumList = [a_tabTrajNMeas.cycleNumber];
-   profNumList = [a_tabTrajNMeas.profileNumber];
+   cycleNumList = [a_tabTrajNCycle.cycleNumber];
+   profNumList = [a_tabTrajNCycle.profileNumber];
    cycleProfList = unique([cycleNumList' profNumList'], 'rows');
    for idCyPr = 1:size(cycleProfList, 1)
       cycleNum = cycleProfList(idCyPr, 1);
