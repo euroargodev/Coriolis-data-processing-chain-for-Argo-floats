@@ -844,16 +844,16 @@
       "CONF_PARAM_DEC_ID" : "688",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Min VRS_PH of SEAFET",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_SfetMinTransmittedVrsPh_mV",
-      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted VRS_PH measurements sampled by the Seafet sensor (in volts)."
+      "CONF_PARAM_NAME" : "CONFIG_SfetMinTransmittedVrsPh_mV",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Vrs_pH measurements (in milli volts)."
    },
    "CONF_PARAM_107" :
    {
       "CONF_PARAM_DEC_ID" : "689",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Max VRS_PH of SEAFET",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_SfetMaxTransmittedVrsPh_mV",
-      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted VRS_PH measurements sampled by the Seafet sensor (in volts)."
+      "CONF_PARAM_NAME" : "CONFIG_SfetMaxTransmittedVrsPh_mV",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Vrs_pH measurements (in milli volts)."
    },
    "CONF_PARAM_108" :
    {

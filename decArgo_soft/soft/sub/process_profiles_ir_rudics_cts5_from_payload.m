@@ -826,7 +826,7 @@ if (~isempty(idF))
    if (o_profStruct.maxMeasDate < a_tabCycleTimes(idF, 4))
       
       % the cycle number is erroneous
-      idF = find(o_profStruct.maxMeasDate > a_tabCycleTimes(:, 4), 1, 'first');
+      idF = find(o_profStruct.maxMeasDate > a_tabCycleTimes(:, 4), 1, 'last');
       if (~isempty(idF))
          
          fprintf('DEC_INFO: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Payload data of sensor #%d and phase #%d moved to Cycle #%d: (Cy,Ptn)=(%d,%d)\n', ...
