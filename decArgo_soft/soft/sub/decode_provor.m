@@ -275,7 +275,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (ismember(floatDecId, [212 214 216 217 218]))
+      if (ismember(floatDecId, [212 214 216 217 218 221]))
          % ICE floats
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...

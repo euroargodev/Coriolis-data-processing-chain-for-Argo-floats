@@ -217,7 +217,7 @@ for idFloat = 1:length(floatList)
    
    % check if the float version is concerned by this tool
    if (a_rudicsFlag == 0)
-      if (~ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'}]))
+      if (~ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.11.3.S'} {'2.12.2.1.S'}]))
          fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
             floatNum, dacFormatId);
          continue
@@ -363,7 +363,7 @@ for idFloat = 1:length(floatList)
    
    % add the calibration coefficients for OPTODE sensor (coming from the data base)
    switch (dacFormatId)
-      case {'2.11.1.S', '2.11.3.S', '2.11.3.R'}
+      case {'2.11.1.S', '2.11.3.S', '2.12.2.1.S', '2.11.3.R'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -727,11 +727,15 @@ for idFloat = 1:length(floatList)
    if (~isempty(idF))
       rtOffsetData = [];
       
+      dimLevelParam = [];
+      dimLevelValueSlope = [];
+      dimLevelDate = [];
       rtOffsetParam = [];
       for id = 1:length(idF)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
          fieldName = ['PARAM_' num2str(dimLevel)];
          rtOffsetParam.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         dimLevelParam = [dimLevelParam dimLevel];
       end
       rtOffsetSlope = [];
       rtOffsetValue = [];
@@ -754,6 +758,7 @@ for idFloat = 1:length(floatList)
                   floatNum, coefStrOri);
                return
             end
+            dimLevelValueSlope = [dimLevelValueSlope dimLevel];
          else
             fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
                floatNum, coefStrOri);
@@ -766,7 +771,35 @@ for idFloat = 1:length(floatList)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
          fieldName = ['DATE_' num2str(dimLevel)];
          rtOffsetDate.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         dimLevelDate = [dimLevelDate dimLevel];
       end
+      
+      % check inputs
+      if (~isempty(setdiff(dimLevelParam, dimLevelValueSlope)))
+         missingDimLev = setdiff(dimLevelParam, dimLevelValueSlope);
+         for idD = 1:length(missingDimLev)
+            fprintf('ERROR: float %d no CALIB_RT_COEFFICIENT provided for DIM_LEVEL %d => exit\n', ...
+               floatNum, missingDimLev(idD));
+         end
+         return
+      elseif (~isempty(setdiff(dimLevelValueSlope, dimLevelParam)))
+         missingDimLev = setdiff(dimLevelValueSlope, dimLevelParam);
+         for idD = 1:length(missingDimLev)
+            fprintf('ERROR: float %d no CALIB_RT_PARAMETER provided for DIM_LEVEL %d => exit\n', ...
+               floatNum, missingDimLev(idD));
+         end
+         return
+      end
+      
+      if (~isempty(setdiff(dimLevelParam, dimLevelDate)))
+         missingDimLev = setdiff(dimLevelParam, dimLevelDate);
+         for idD = 1:length(missingDimLev)
+            fieldName = ['DATE_' num2str(missingDimLev(idD))];
+            rtOffsetDate.(fieldName) = ...
+               datestr(datenum(metaStruct.LAUNCH_DATE, 'dd/mm/yyyy HH:MM:SS'), 'yyyymmddHHMMSS'); % to adjust all profiles
+         end
+      end
+      
       rtOffsetData.PARAM = rtOffsetParam;
       rtOffsetData.SLOPE = rtOffsetSlope;
       rtOffsetData.VALUE = rtOffsetValue;
@@ -831,7 +864,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -915,7 +948,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S'}
+   case {'2.10.1.S', '2.10.4.R', '2.11.1.S', '2.11.3.R', '2.11.3.S', '2.12.2.1.S'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...

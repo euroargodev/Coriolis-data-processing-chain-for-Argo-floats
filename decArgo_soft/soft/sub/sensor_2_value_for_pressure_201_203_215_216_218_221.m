@@ -2,7 +2,7 @@
 % Convert sensor counts to physical values for pressures.
 %
 % SYNTAX :
-%  [o_presValues] = sensor_2_value_for_pressure_201_203_215_216_218(a_presCounts)
+%  [o_presValues] = sensor_2_value_for_pressure_201_203_215_216_218_221(a_presCounts)
 %
 % INPUT PARAMETERS :
 %   a_presCounts : pressure counts
@@ -18,7 +18,7 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_presValues] = sensor_2_value_for_pressure_201_203_215_216_218(a_presCounts)
+function [o_presValues] = sensor_2_value_for_pressure_201_203_215_216_218_221(a_presCounts)
 
 % output parameters initialization
 o_presValues = [];

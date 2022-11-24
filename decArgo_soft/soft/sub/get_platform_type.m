@@ -45,7 +45,7 @@ switch (a_decoderId)
       % PROVOR APMT (CTS5)
       o_platformType = 'PROVOR_IV';
       
-   case {201, 202, 203, 215, 216, 218}
+   case {201, 202, 203, 215, 216, 218, 221}
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       

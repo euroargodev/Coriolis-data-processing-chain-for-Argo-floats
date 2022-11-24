@@ -3,7 +3,7 @@
 % values.
 %
 % SYNTAX :
-%  [o_c1C2PhaseDoxyValues] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(a_c1C2PhaseDoxyCounts)
+%  [o_c1C2PhaseDoxyValues] = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(a_c1C2PhaseDoxyCounts)
 %
 % INPUT PARAMETERS :
 %   a_c1C2PhaseDoxyCounts : C1PHASE_DOXY or C2PHASE_DOXY counts
@@ -19,7 +19,7 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_c1C2PhaseDoxyValues] = sensor_2_value_C1C2Phase_doxy_201_to_203_206_to_209_213_to_218(a_c1C2PhaseDoxyCounts)
+function [o_c1C2PhaseDoxyValues] = sensor_2_value_C1C2Phase_doxy_201T203_206T209_213T218_221(a_c1C2PhaseDoxyCounts)
 
 % output parameters initialization
 o_c1C2PhaseDoxyValues = [];

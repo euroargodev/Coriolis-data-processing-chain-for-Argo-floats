@@ -2,7 +2,7 @@
 % Convert sensor counts to physical values for TEMP_DOXY values.
 %
 % SYNTAX :
-%  [o_tempDoxyValues] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(a_tempDoxyCounts)
+%  [o_tempDoxyValues] = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221(a_tempDoxyCounts)
 %
 % INPUT PARAMETERS :
 %   a_tempDoxyCounts : TEMP_DOXY counts
@@ -18,7 +18,7 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tempDoxyValues] = sensor_2_value_for_temp_doxy_201_to_203_206_to_209_213_to_218(a_tempDoxyCounts)
+function [o_tempDoxyValues] = sensor_2_value_for_temp_doxy_201T203_206T209_213T218_221(a_tempDoxyCounts)
 
 % output parameters initialization
 o_tempDoxyValues = [];

@@ -91,6 +91,7 @@ for idProf = 1:length(a_tabProfiles)
       % interpolate between the 2 locations
       if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef) && ...
             ((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc))
+%             (((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc) || (profile.locationQc == '2')))
          
          % interpolate the locations
          [interpLocLon, interpLocLat] = interpolate_between_2_locations(...

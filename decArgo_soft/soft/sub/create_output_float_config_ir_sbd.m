@@ -53,7 +53,7 @@ switch (a_decoderId)
       
       % nothing for Nova floats
 
-   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218}
+   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218, 221}
       
       % use CONFIG_PT20 to fill CONFIG_PX02 = CONFIG_PT20 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_PT20') == 1, 1);
@@ -79,7 +79,7 @@ switch (a_decoderId)
             end
          end
          
-      elseif (a_decoderId == 218)
+      elseif (ismember(a_decoderId, [218 221]))
 
          if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
             

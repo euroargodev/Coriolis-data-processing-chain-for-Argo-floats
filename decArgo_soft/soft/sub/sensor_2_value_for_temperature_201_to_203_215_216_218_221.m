@@ -2,7 +2,7 @@
 % Convert sensor counts to physical values for temperatures.
 %
 % SYNTAX :
-%  [o_tempValues] = sensor_2_value_for_temperature_201_to_203_215_216_218(a_tempCounts)
+%  [o_tempValues] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(a_tempCounts)
 %
 % INPUT PARAMETERS :
 %   a_tempCounts : temperature counts
@@ -18,7 +18,7 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tempValues] = sensor_2_value_for_temperature_201_to_203_215_216_218(a_tempCounts)
+function [o_tempValues] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(a_tempCounts)
 
 % output parameters initialization
 o_tempValues = [];

@@ -1222,13 +1222,17 @@ for idL = 1:size(a_sensorData, 1)
 end
 
 % decode profile data
-nbLev = floor(length(profData)/NB_PARAM_BYTE);
-if ((profileLength >= 0) && (nbLev > profileLength))
-   nbLev = profileLength;
-end
-if (profileLength == -1)
-   fprintf('DEC_WARNING: Float #%d Cycle #%d: profile length has not been received\n', ...
-      g_decArgo_floatNum, g_decArgo_cycleNum);
+if (~any(profData ~= hex2dec('FF')))
+   nbLev = 0;
+else
+   nbLev = floor(length(profData)/NB_PARAM_BYTE);
+   if ((profileLength >= 0) && (nbLev > profileLength))
+      nbLev = profileLength;
+   end
+   if (profileLength == -1)
+      fprintf('DEC_WARNING: Float #%d Cycle #%d: profile length has not been received\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum);
+   end
 end
 
 if (nbLev > 0)

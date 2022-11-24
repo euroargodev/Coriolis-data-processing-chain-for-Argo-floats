@@ -98,7 +98,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
       cyInfoStr = '';
       uPackTypeList = unique(packTypeList);
       for idP = 1:length(uPackTypeList)
-         cyInfoStr = [cyInfoStr sprintf('#%d ', packTypeList(idP))];
+         cyInfoStr = [cyInfoStr sprintf('#%d ', uPackTypeList(idP))];
          if (length(find(packTypeList == uPackTypeList(idP))) > 1)
             cyInfoStr = [cyInfoStr sprintf('(%d) ', length(find(packTypeList == uPackTypeList(idP))))];
          end

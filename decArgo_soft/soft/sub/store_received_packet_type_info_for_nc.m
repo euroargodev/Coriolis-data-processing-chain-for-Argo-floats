@@ -259,7 +259,7 @@ switch (a_decoderId)
          g_decArgo_cycleNum 1009];
       g_decArgo_outputNcParamValue{end+1} = g_decArgo_nbInAirPacketsReceived;   
       
-   case {218}
+   case {218, 221}
 
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 1001];

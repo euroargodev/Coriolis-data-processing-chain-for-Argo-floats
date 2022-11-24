@@ -598,11 +598,15 @@ for idFloat = 1:length(floatList)
    if (~isempty(idF))
       rtOffsetData = [];
       
+      dimLevelParam = [];
+      dimLevelValueSlope = [];
+      dimLevelDate = [];
       rtOffsetParam = [];
       for id = 1:length(idF)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
          fieldName = ['PARAM_' num2str(dimLevel)];
          rtOffsetParam.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         dimLevelParam = [dimLevelParam dimLevel];
       end
       rtOffsetSlope = [];
       rtOffsetValue = [];
@@ -625,6 +629,7 @@ for idFloat = 1:length(floatList)
                   floatNum, coefStrOri);
                return
             end
+            dimLevelValueSlope = [dimLevelValueSlope dimLevel];
          else
             fprintf('ERROR: while parsing CALIB_RT_COEFFICIENT for float %d (found: ''%s'') => exit\n', ...
                floatNum, coefStrOri);
@@ -637,7 +642,35 @@ for idFloat = 1:length(floatList)
          dimLevel = str2num(metaData{idForWmo(idF(id)), 3});
          fieldName = ['DATE_' num2str(dimLevel)];
          rtOffsetDate.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         dimLevelDate = [dimLevelDate dimLevel];
       end
+      
+      % check inputs
+      if (~isempty(setdiff(dimLevelParam, dimLevelValueSlope)))
+         missingDimLev = setdiff(dimLevelParam, dimLevelValueSlope);
+         for idD = 1:length(missingDimLev)
+            fprintf('ERROR: float %d no CALIB_RT_COEFFICIENT provided for DIM_LEVEL %d => exit\n', ...
+               floatNum, missingDimLev(idD));
+         end
+         return
+      elseif (~isempty(setdiff(dimLevelValueSlope, dimLevelParam)))
+         missingDimLev = setdiff(dimLevelValueSlope, dimLevelParam);
+         for idD = 1:length(missingDimLev)
+            fprintf('ERROR: float %d no CALIB_RT_PARAMETER provided for DIM_LEVEL %d => exit\n', ...
+               floatNum, missingDimLev(idD));
+         end
+         return
+      end
+      
+      if (~isempty(setdiff(dimLevelParam, dimLevelDate)))
+         missingDimLev = setdiff(dimLevelParam, dimLevelDate);
+         for idD = 1:length(missingDimLev)
+            fieldName = ['DATE_' num2str(missingDimLev(idD))];
+            rtOffsetDate.(fieldName) = ...
+               datestr(datenum(metaStruct.LAUNCH_DATE, 'dd/mm/yyyy HH:MM:SS'), 'yyyymmddHHMMSS'); % to adjust all profiles
+         end
+      end
+      
       rtOffsetData.PARAM = rtOffsetParam;
       rtOffsetData.SLOPE = rtOffsetSlope;
       rtOffsetData.VALUE = rtOffsetValue;

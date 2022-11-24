@@ -318,7 +318,7 @@ for idCy = 1:length(cycleList)
    
    % decode the files of the current cycle
    if (ismember(a_decoderId, [1321, 1322]))
-      % 2.10.1.S, 2.11.1.S, 2.11.3.S
+      % 2.10.1.S, 2.11.1.S, 2.11.3.S, 2.12.2.1.S
          
       [miscInfoSci, miscInfoSys, miscEvtsSys, ...
          metaData, missionCfg, sampleCfg, ...

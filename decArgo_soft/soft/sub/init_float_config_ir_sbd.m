@@ -105,6 +105,12 @@ switch (a_decoderId)
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
+   case {221} % Arvor-deep 5.67
+      
+      init_float_config_prv_ir_sbd_221(a_launchDate);
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
    case {219, 220} % Arvor-C Iridium 5.3 & 5.301
       
       init_float_config_prv_ir_sbd_219_220(a_launchDate);

@@ -379,17 +379,17 @@ for idFlCy = 1:length(floatCycleList)
          if (idFlCy == length(floatCycleList))
             idDel = [idDel idFile];
             if (g_decArgo_realtimeFlag)
-               fprintf('INFO: expected file not received yet %s => stop\n', ...
-                  expectedFileName);
+               fprintf('INFO: Float #%d: expected file not received yet %s => stop\n', ...
+                  g_decArgo_floatNum, expectedFileName);
                stop = 1;
                break
             else
-               fprintf('WARNING: expected file not received yet %s\n', ...
-                  expectedFileName);
+               fprintf('WARNING: Float #%d: expected file not received yet %s\n', ...
+                  g_decArgo_floatNum, expectedFileName);
             end
          else
-            fprintf('WARNING: expected file not received %s\n', ...
-               expectedFileName);
+            fprintf('WARNING: Float #%d: expected file not received %s\n', ...
+               g_decArgo_floatNum, expectedFileName);
             idDel = [idDel idFile];
          end
       end
@@ -484,16 +484,16 @@ for idFlCy = 1:length(floatCycleList)
                   idDel = [idDel idFile];
                   if (g_decArgo_realtimeFlag)
                      missingFileList{end+1} = expectedFileName;
-                     fprintf('WARNING: expected file not received %s\n', ...
-                        expectedFileName);
+                     fprintf('WARNING: Float #%d: expected file not received %s\n', ...
+                        g_decArgo_floatNum, expectedFileName);
                      idDel = [idDel idFile];
                   else
-                     fprintf('WARNING: expected file not received yet %s\n', ...
-                        expectedFileName);
+                     fprintf('WARNING: Float #%d: expected file not received yet %s\n', ...
+                        g_decArgo_floatNum, expectedFileName);
                   end
                else
-                  fprintf('WARNING: expected file not received %s\n', ...
-                     expectedFileName);
+                  fprintf('WARNING: Float #%d: expected file not received %s\n', ...
+                     g_decArgo_floatNum, expectedFileName);
                   idDel = [idDel idFile];
                end
             end

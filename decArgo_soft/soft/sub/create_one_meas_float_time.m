@@ -8,7 +8,7 @@
 %
 % INPUT PARAMETERS :
 %   a_measCode   : measurement code associated to the trajectory information
-%   a_time       : time of the event
+%   a_time       : UTC time of the event
 %   a_timeStatus : time status of the event
 %   a_clockDrift : float clock drift
 %

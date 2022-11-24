@@ -47,7 +47,7 @@ switch (a_decoderId)
    case {215, 216}
       o_statNcTechParamList = 1001:1009;
       
-   case {218}
+   case {218, 221}
       o_statNcTechParamList = [1001:1009 1016];
       
    case {219, 220}

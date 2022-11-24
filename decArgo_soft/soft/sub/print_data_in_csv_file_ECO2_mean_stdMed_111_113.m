@@ -92,7 +92,7 @@ if (isempty(idDataStdMed))
    dataMean(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(dataMean(:, 4));
    dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
    paramCHLA = get_netcdf_param_attributes('CHLA');
-   dataMean(:, 6) = compute_CHLA_105_to_112_121_to_125_1322(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+   dataMean(:, 6) = compute_CHLA_105_to_112_121_to_125_1121_1322(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
    
    for idL = 1:size(dataMean, 1)
       if (dataMean(idL, 1) ~= g_decArgo_dateDef)
@@ -185,7 +185,7 @@ else
       data(:, 8) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 8));
       data(:, 9) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 9));
       paramCHLA = get_netcdf_param_attributes('CHLA');
-      data(:, 10) = compute_CHLA_105_to_112_121_to_125_1322(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+      data(:, 10) = compute_CHLA_105_to_112_121_to_125_1121_1322(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

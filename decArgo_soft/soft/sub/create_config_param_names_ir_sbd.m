@@ -625,6 +625,66 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {221} % Arvor-Deep-Ice Iridium 5.67
+      
+      for id = 0:18
+         decConfNames{end+1} = sprintf('CONFIG_PM%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PM%02d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      for id = [0:14 18 21:37]
+         decConfNames{end+1} = sprintf('CONFIG_PT%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PT%02d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      for id = 0:15
+         decConfNames{end+1} = sprintf('CONFIG_PG%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PG%02d', id)) == 1);
+         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+      end
+      for id = 0:5
+         decConfNames{end+1} = sprintf('CONFIG_PX%02d', id);
+         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
+         if (length(idParamName) == 1)
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         elseif (length(idParamName) > 1)
+            fprintf('ERROR: Float #%d: Decoder Id #%d: Multiple NetCDF names for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName(1)};
+         else
+            fprintf('ERROR: Float #%d: Decoder Id #%d: NetCDF name is missing for configuration parameter ''%s''\n', ...
+               g_decArgo_floatNum, ...
+               a_decoderId, decConfNames{end});
+            ncConfNames{end+1} = '';
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {2001, 2002, 2003} % Nova, Dova
       
       for id = [0:9 12:14]

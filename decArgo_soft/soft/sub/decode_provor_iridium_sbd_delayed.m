@@ -163,6 +163,10 @@ g_decArgo_lastDetectionDate = [];
 % float configuration
 global g_decArgo_floatConfig;
 
+% clock offset management
+global g_decArgo_clockOffset;
+g_decArgo_clockOffset = get_clock_offset_prv_ir_init_struct;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];

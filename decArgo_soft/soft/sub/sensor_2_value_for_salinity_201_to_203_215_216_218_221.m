@@ -2,7 +2,7 @@
 % Convert sensor counts to physical values for salinities.
 %
 % SYNTAX :
-%  [o_salValues] = sensor_2_value_for_salinity_201_to_203_215_216_218(a_salCounts)
+%  [o_salValues] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(a_salCounts)
 %
 % INPUT PARAMETERS :
 %   a_salCounts : salinity counts
@@ -18,7 +18,7 @@
 % RELEASES :
 %  10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_salValues] = sensor_2_value_for_salinity_201_to_203_215_216_218(a_salCounts)
+function [o_salValues] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(a_salCounts)
 
 % output parameters initialization
 o_salValues = [];

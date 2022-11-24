@@ -1,0 +1,93 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+224;3;Date de début de cycle : JJ;CLOCK_InitialValveActionDescentToPark_YYYYMMDD;Date of the beginning of buoyancy reduction (relative to mission start day).
+100;6;Jour relatif de début de cycle.;CLOCK_InitialValveActionDescentToPark_FloatDay;Day number of the beginning of buoyancy reduction (relative to mission start day).
+225;7;Heure de début cycle (nombre de minutes dans le jour courant). (BUOYANCY_REDUCTION_START_TIME).;CLOCK_InitialValveActionDescentToPark_HHMM;Date of the beginning of buoyancy reduction (relative to mission start day).
+101;8;Durée de l’activation forfaitaire de l’EV lors de la réduction d’émergence.;TIME_ValveActionsAtSurface_seconds;Duration of the basic valve actions.
+102;9;Nombre de coups EV en surface.;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+103;10;Flag échouage en surface .;FLAG_Beached_NUMBER;is the float beached? - could be logical
+104;11;Heure de début de descente.;CLOCK_StartDescentToPark_HHMM;Number of minutes elapsed in the day at the beginning of the descent to parking depth.
+105;12;Heure de première stabilisation.;CLOCK_InitialStabilizationDuringDescentToPark_HHMM;Number of minutes elapsed in the day when the float first stabilizes during descent to parking depth.
+106;13;Heure de fin de descente.;CLOCK_EndDescentToPark_HHMM;Number of minutes elapsed in the day at the end of the descent to parking depth.
+107;14;Nombre de coups d'électrovanne en plongée vers Pdérive.;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+108;15;Nombre de coups de pompe en plongée vers Pdérive.;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+226;18;Date de début de dérive (JJ du mois seulement);CLOCK_EndDescentToPark_DD;time when park pressure is reached
+109;19;Nombre d'entrée dans la consigne.;NUMBER_DescentToParkEntriesInParkMargin_COUNT;descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+110;20;Nombre de repositionnements en dérive.;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+111;23;Nombre de coups d'EV en dérive à Pdérive.;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
+112;24;Nombre de coups de pompe en dérive à Pdérive.;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
+113;25;Heure début descente profil.;CLOCK_StartDescentToProfile_HHMM;Number of minutes elapsed in the day at the beginning of the descent to profile depth.
+114;26;Heure fin descente profil.;CLOCK_EndDescentToProfile_HHMM;Number of minutes elapsed in the day at the end of the descent to profile depth.
+115;27;Nombre de coups EV descente profil.;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+116;28;Nombre de coups de pompe descente profil.;NUMBER_PumpActionsDuringDescentToProfile_COUNT;number of pump actions during descent to start profile pressure
+117;30;Nombre d'entrées consigne en dérive en attente profil.;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+118;31;Nombre de repositionnements en dérive en attente profil.;NUMBER_RepositionsAtProfileDepth_COUNT;at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV
+119;32;Nombre de coups EV en dérive en attente profil.;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
+120;33;Nombre de coups de pompe en dérive en attente profil.;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
+121;36;Heure de début de remontée.;CLOCK_StartAscentToSurface_HHMM;Number of minutes elapsed in the day at the beginning of the ascent to the surface.
+122;37;Heure de fin de remontée.;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
+123;38;Nombre de coups de pompe en remontée.;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+124;45;Offset de pression.;PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
+125;46;Vide interne en surface.;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+126;47;Tension batterie.;VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
+127;48;Erreur RTC.;FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
+128;49;Compteur de cohérence (nombre d’erreurs de la CTD).;NUMBER_CTDError_COUNT;CTD error count
+129;50;Etat du capteur DO (0 si OK, 1 sinon).;FLAG_OptodeStatus_NUMBER;Flag indicating the status of the Optode (see manual)
+1000;59;GPS valid fix ?;TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).
+130;60;Durée de la session GPS.;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+131;61;Nombre de relances effectuées lors de la session GPS.;NUMBER_RetriesForGPSAcquisition_COUNT;Number of times the GPS had to try to get a valid fix
+132;62;Nombre de télécommandes reçues (pour le cycle en cours).;FLAG_RemoteControlMessageOK_COUNT;Number of remote control successfully considered.
+133;63;Nombre de télécommandes rejetées (pour le cycle en cours).;FLAG_RemoteControlMessageKO_COUNT;Number of remote control rejected by the float (due to out of range value or remote control syntax error).
+134;65;Date de début de fin de vie: HH;CLOCK_EOLStart_YYYYMMDDHHMMSS;Clock time when End of Life mode starts
+135;71;Durée de la précédente session iridium.;TIME_PreviousIridiumSession_seconds;Duration on the previous Iridium session
+136;72;Nombre de SBD recus lors de la précédente session Iridium.;NUMBER_IridiumMessagesReceivedPreviousSession_COUNT;Number of Incoming Iridium Messages Received during previous session
+137;73;Nombre de SBD émis lors de la précédente session Iridium.;NUMBER_IridiumMessagesSentPreviousSession_COUNT;Number of Incoming Iridium Messages Sent during previous session
+138;74;Ecart avec l'heure GPS lors de la remise à l'heure (= clock offset = date flotteur - date GPS);CLOCK_FloatTimeCorrection_MMSS;float internal clock time correction
+200;3;Nombre de paquets de type 1 ou 8 - CTDO descente.;NUMBER_DescentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+201;4;Nombre de paquets de type 2 ou 9 - CTDO dérive.;NUMBER_ParkIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the drift at park depth.
+202;5;Nombre de paquets de type 3 ou 10 - CTDO remontée.;NUMBER_AscentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the ascent from the profile depth to the surface.
+203;6;Nombre de tranches zone surface – descente.;NUMBER_DescendingProfileReductionUpperPart_COUNT;Descending profile reduction Number of slices in shallow zone - NTS
+204;7;Nombre de tranches zone fond - descente.;NUMBER_DescendingProfileReductionLowerPart_COUNT;Descending profile reduction Number of slices in deep zone - NTF
+205;8;Nombre de mesures en dérive à l’immersion de parking.;NUMBER_ParkCTDOSamplesInternal_COUNT;Park  measurements - Internal counter
+206;9;Nombre de tranches zone surface – remontée.;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
+207;10;Nombre de tranches zone fond - remontée.;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
+221;11;Pression du « point de subsurface » (dernier point de mesure « brut » pompé lors du profil ascendant);PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).
+208;17;Nombre d'échouages détectés pendant le cycle.;FLAG_Grounded_NUMBER;grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded
+209;19;Jour flotteur du premier échouage.;CLOCK_TimeGrounded_FloatDay;Day number when the float grounds for the first time (relative to mission start day).
+210;20;Heure du premier échouage.;CLOCK_TimeGrounded_HHMM;time the float grounded
+227;21;Phase 1er échouage;FLAG_FirstGroundingCyclePhase_NUMBER;Phase of the float life or cycle when the first grounding occurred.  See the manual for phase definition - this will vary with float type
+211;22;Nombre d'ouvertures EV à pression constante pour déclarer le premier échouage.;NUMBER_ValveActionsForFirstGroundingDetection_COUNT;Number of valve actions done at constant pressure to set the grounded flag for the first grounding event
+228;24;Jour flotteur du 2ième échouage.;CLOCK_TimeGrounded_FloatDay;Day number when the float grounds for the first time (relative to mission start day).
+229;25;Heure du 2ième échouage.;CLOCK_TimeGrounded_HHMM;time the float grounded
+230;26;Phase 2ième échouage;FLAG_SecondGroundingCyclePhase_NUMBER;Phase of the float life or cycle when the second grounding occurred.  See the manual for phase definition - this will vary with float type
+231;27;Nb d'ouvertures EV à pression constante pour déclarer l'échouage n°2;NUMBER_ValveActionsForSecondGroundingDetection_COUNT;Number of valve actions done at constant pressure to set the grounded flag for the second grounding event
+212;28;Nombre de remontées d'urgence.;NUMBER_EmergencyAscents_COUNT;Number of Emergency ascents - Internal count
+213;29;Heure de la première remontée d'urgence.;CLOCK_TimeOfFirstEmergencyAscent_HHMM;Number of minutes elapsed in the day of the float first emergency ascent.
+214;30;Pression de la première remontée d'urgence.;PRES_FirstEmergencyAscent_dbar;Pressure that triggered the first emergency ascent
+215;31;Nombre de coups de pompe liés à la première remontée d’urgence.;NUMBER_PumpActionsOnFirstEmergencyAscent_COUNT;Emergency ascent - pump actions at emergency depth
+216;32;Jour de première remontée d’urgence.;CLOCK_TimeOfFirstEmergencyAscent_FloatDay;Day number of the float first emergency ascent (relative to mission start day).
+217;33;Nombre de coups de pompe avant décollage effectif quand grounded à la pression de profil.;NUMBER_PumpActionsWhenGroundedAtProfilePressure_COUNT;number of pump actions needed to leave the sea bottom when grounded at profile pressure
+218;34;Vitesse au moment du premier échouage.;SPEED_FirstGrounding_mm/s;Vertical speed during the first grounding
+219;35;Vide interne au fond en début de remontée.;PRESSURE_InternalVacuumProfileStart_mbar;Internal tube pressure [mbar] in profile depth
+220;36;Date du dernier reset flotteur.;CLOCK_LastReset_YYYYMMDDHHMMSS;Clock time of the last reset of the float
+233;43;Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging);FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+234;44;"Number of CTDO ""Near Surface"" measurements";NUMBER_NearSurfaceSamples_COUNT;"""Near surface""  measurements - Internal counter"
+235;45;"Number of CTDO ""In Air"" measurements";NUMBER_InAirSamples_COUNT;"""In air""  measurements - Internal counter"
+236;46;Internal ballast status;TECH_AUX_FLAG_InternalBallastStatus_NUMBER;Flag indicating the status of the internal ballast sensor (0: ok, 1: ko, 2: unknown)
+237;47;Number of empty ballast detections;TECH_AUX_NUMBER_EmptyBallast_COUNT;Number of empty ballast detections.
+238;48;Pressure of the first empty ballast detection;TECH_AUX_PRES_FirstEmptyBallast_dbar;Pressure of the first empty ballast detection.
+239;49;Phase of the first empty ballast detection;TECH_AUX_FLAG_FirstEmptyBallastPhase_NUMBER;Phase of the first empty ballast detection.
+1010;43;Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging);TECH_AUX_FLAG_IceDetection_NUMBER;The ice detection flag reported by the float (0: no detection, 1: ISA detection, 2: satellite mask detection, 4: ascent hanging detection) - see float manual for details.
+1001;-1;Number of descent CTD packets received;TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+1002;-1;Number of drift CTD packets received;TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the drift at park depth.
+1003;-1;Number of ascent CTD packets received;TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface.
+1004;-1;Number of hydraulic packets received;TECH_AUX_NUMBER_HydraulicIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit hydraulic data recorded during the cycle.
+1005;-1;Number of tech #1 packets received;TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT;Number of times technical message #1 has been received.
+1006;-1;Number of tech #2 packets received;TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT;Number of times technical message #2 has been received.
+1007;-1;Number of parameter #1 packets received;TECH_AUX_NUMBER_ParameterMessage1Received_COUNT;Number of times parameter message #1 has been received.
+1008;-1;"Number of ""CTD near surface"" packets received";TECH_AUX_NUMBER_NearSurfaceIridiumPacketsReceived_COUNT;"Number of Iridium packets received to transmit sensor data collected during the ""near surface measurement"" phase."
+1009;-1;"Number of ""CTD in air"" packets received";TECH_AUX_NUMBER_InAirIridiumPacketsReceived_COUNT;"Number of Iridium packets received to transmit sensor data collected during the ""in air measurement"" phase."
+1012;-1;Ice activated flag;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;This float type is equiped with Ice detection algorithm which needs to be activated (before launch or at any time during the mission): reported flag = 1 when Ice detection algorithm is activated for the concerned cycle, = 0 otherwise.
+1013;-1;Deep cycle transmission flag;TECH_AUX_FLAG_DeepCycleTransmission_LOGICAL;Reported flag = 1 when the concerned transmission session occured after a deep cycle (i.e. a subsurface) one, = 0 when the float is programed to stay at the surface before the concerned transmission session.
+1014;-1;Transmission mode (not delayed, trans delayed, ice delayed);TECH_AUX_FLAG_TransmissionDelayed_NUMBER;When the float is not able to transmit the cycle data in real time, the transmission of (part or all of) the data is delayed. Reported flag = 0 when all the cycle data have been transmitted in real time (i.e. during the transmission session of the same cycle), = 1 when the float didn't surface because of ice detection (all cycle data are stored until next transmission session), = 2 when some data transmission has been delayed due to transmission issue (after fail of first transmission attemps data was stored until next transmission session),.
+1015;-1;Buffer completness;TECH_AUX_FLAG_TransmissionCompleted_LOGICAL;Before processing the received data, the decoder checks that all expected data has been received. If not, it waits for following transmission sessions. Finally, if after a given number (decoder configuration parameter) of transmission sessions, missing data still remain, the cycle data are decoder. Reported flag = 1 if all expected cycle data have been received, = 0 otherwise.
+1016;-1;Number of parameter #2 packets received;TECH_AUX_NUMBER_ParameterMessage2Received_COUNT;Number of times parameter message #2 has been received.

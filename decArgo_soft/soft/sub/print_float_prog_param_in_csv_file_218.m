@@ -2,10 +2,11 @@
 % Print parameter message data in output CSV file.
 %
 % SYNTAX :
-%  print_float_prog_param_in_csv_file_218(a_floatParam)
+%  print_float_prog_param_in_csv_file_218(a_floatParam1, a_floatParam2)
 %
 % INPUT PARAMETERS :
-%   a_floatParam : parameter message data
+%   a_floatParam1 : parameter message #1 data
+%   a_floatParam2 : parameter message #2 data
 %
 % OUTPUT PARAMETERS :
 %

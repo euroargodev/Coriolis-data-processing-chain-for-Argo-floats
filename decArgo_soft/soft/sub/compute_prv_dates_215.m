@@ -281,6 +281,8 @@ elseif (length(idF2) == 1)
 
    if ~((length(unique(a_tabTech(id, 18:19))) == 1) && (unique(a_tabTech(id, 18:19)) == 0))
       
+      %       fprintf('\n\nGOUNDING\n\n');
+
       % manage possible roll over of grounding day
       groundingDay = a_tabTech(id, 18);
       if (~isempty(o_cycleStartDate))

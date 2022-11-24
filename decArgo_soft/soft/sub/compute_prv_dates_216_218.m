@@ -201,7 +201,7 @@ if (~isempty(id1) && ~isempty(id2))
    gpsSessionDuration = a_tabTech1(id1, 60);
    if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
       if (o_iceDetected == 0)
-         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
+         fprintf('INFO: Float #%d cycle #%d: the float did not try to reach the surface (still in the IC0 days period) (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
             iceDetectionFlag, gpsValidFix, gpsSessionDuration);
       end
@@ -407,6 +407,8 @@ elseif (length(idF2) == 1)
    id = idF2(1);
 
    if (a_tabTech2(id, 17) > 0)
+      
+      %       fprintf('\n\nGOUNDING\n\n');
       
       % manage possible roll over of grounding day
       groundingDay = a_tabTech2(id, 19);

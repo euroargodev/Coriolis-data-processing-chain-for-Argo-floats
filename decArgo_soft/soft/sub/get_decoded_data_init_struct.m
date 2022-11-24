@@ -35,6 +35,8 @@ o_decodeData = struct( ...
    'expNbDesc', -1, ... % expected number of packets for descending data
    'expNbDrift', -1, ... % expected number of packets for drift data
    'expNbAsc', -1, ... % expected number of packets for ascending data
+   'expNbNearSurface', -1, ... % expected number of measurements for Near Surface data
+   'expNbInAir', -1, ... % expected number of measurements for In Air data
    'rankByCycle', -1, ... % number of the decoding buffer (sorted by cycle number)
    'rankByDate', -1, ... % number of the decoding buffer (sorted by SBD transmission date)
    'deep', -1, ... % 1 for a deep cycle, 0 otherwise

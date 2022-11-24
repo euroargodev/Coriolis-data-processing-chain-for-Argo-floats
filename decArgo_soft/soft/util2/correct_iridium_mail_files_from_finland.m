@@ -20,17 +20,17 @@
 function correct_iridium_mail_files_from_finland()
 
 % input directory
-INPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\MAIL_RECUP\IN\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\300234063600090_3901845\archive_ori\';
 
 % output directory
-OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\MAIL_RECUP\OUT\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\300234063600090_3901845\archive_cor\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
 
 % 0: to only check that input mail files are correctly parsed
 % 1: to generate output mail files
-DO_IT = 1;
+DO_IT = 0;
 
 % patterns used to parse the mail contents
 SUBJECT = 'SBD Msg From Unit:';

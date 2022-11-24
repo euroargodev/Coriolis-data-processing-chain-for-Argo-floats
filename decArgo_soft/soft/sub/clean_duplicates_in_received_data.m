@@ -121,7 +121,7 @@ switch (a_decoderId)
          otherwise
             o_packetName = 'one data packet';
       end
-   case {218}
+   case {218, 221}
       switch (a_packType)
          case 0
             o_packetName = 'one technical packet #1';

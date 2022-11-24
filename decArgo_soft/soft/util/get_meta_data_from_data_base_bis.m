@@ -56,8 +56,10 @@ function get_meta_data_from_data_base_bis()
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\APEX_IRIDIUM_dbExport_USED.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\PROVOR_ARGOS_dbExport_USED.txt';
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\Andro\ANDRO_update_2019\listes_ANDRO_2019\DB_export\PROVOR_IRIDIUM_dbExport_USED.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\ARVORC_dbExport.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\ARVORC_dbExport.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_7900562.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6903268_DBexport.txt';
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';

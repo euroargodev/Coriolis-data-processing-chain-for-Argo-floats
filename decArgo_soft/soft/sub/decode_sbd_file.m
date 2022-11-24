@@ -104,6 +104,14 @@ for idMsg = 1:size(sbdDataTab, 1)
          o_decodedData = [o_decodedData decodedData];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {221} % Arvor-Deep-Ice Iridium 5.67
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_221(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate);
+         o_decodedData = [o_decodedData decodedData];
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {219, 220} % Arvor-C 5.3 & 5.301
          
          % decode the collected data
