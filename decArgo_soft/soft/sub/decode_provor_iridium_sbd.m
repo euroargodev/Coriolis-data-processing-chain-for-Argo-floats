@@ -426,7 +426,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % move the next file into the buffer directory
    add_to_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer');
    remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'spool', 0, 0);
-   
+
    % extract the attachement
    [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
       tabAllFileNames{idSpoolFile}, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
@@ -457,6 +457,22 @@ for idSpoolFile = 1:length(tabAllFileNames)
          end
          if (strcmp(tabAllFileNames{idSpoolFile}, fileNameTodel))
             remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
+         end
+      end
+
+      % 3902127: ignore hydraulic packets because cannot be joined to data buffer
+      % (since inconsistent TECH #2 packets are also present)
+      if (ismember(g_decArgo_floatNum, [3902127]))
+         if (g_decArgo_floatNum == 3902127)
+            if (ismember (tabAllFileNames{idSpoolFile}, [ ...
+                  {'co_20220518T133024Z_300234064973420_002366_000000_27567.txt'} ...
+                  {'co_20220518T133047Z_300234064973420_002367_000000_28196.txt'} ...
+                  {'co_20220518T133905Z_300234064973420_002369_000000_32632.txt'} ...
+                  {'co_20220518T153629Z_300234064973420_002371_000000_32385.txt'} ...
+                  {'co_20220518T173613Z_300234064973420_002373_000000_27998.txt'} ...
+                  ]))
+               remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
+            end
          end
       end
    end
@@ -710,11 +726,23 @@ for idSpoolFile = 1:length(tabAllFileNames)
                g_decArgo_floatNum, ...
                a_decoderId);
       end
-      
+
       % check if the buffer contents can be processed
       [okToProcess] = is_buffer_completed_ir_sbd(0, a_decoderId);
       %       fprintf('Buffer completed : %d\n', okToProcess);
       
+      % specific
+      % 3902127: process separately each EOL transmission
+      if (ismember(g_decArgo_floatNum, [3902127]))
+         if (g_decArgo_floatNum == 3902127)
+            if (length(tabNewFileDates) == 1) && ...
+                  (tabNewFileDates >= gregorian_2_julian_dec_argo('2022/05/18 19:44:24')) && ...
+                  (tabNewFileDates <= gregorian_2_julian_dec_argo('2022/05/24 04:04:27')) 
+               okToProcess = 1;
+            end
+         end
+      end
+
       if ((okToProcess) || ...
             ((idSpoolFile == length(tabAllFileDates) && g_decArgo_processRemainingBuffers)))
          

@@ -668,7 +668,7 @@ fileTypes = zeros(size(fileNames));
 for idF = 1:length(fileNames)
    fileName = fileNames{idF};
    if (~isempty(g_decArgo_patternNumFloat))
-      typeList = [1 2 4:18]; % types with pattern #
+      typeList = [1 2 4:20]; % types with pattern #
       for idType = typeList
          idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
          if (length(fileName) > g_decArgo_fileTypeListCts5{idFL, 4})
@@ -715,8 +715,8 @@ if (~isempty(intersect(fileTypes, 6:17)))
 end
 
 % the files should be processed in the following order
-typeOrderList = [3 4 6:18 5 1];
-% 3, 4, 6 to 18, 5: usual order i.e. tech first, data after and EOL at the end
+typeOrderList = [3 4 6:20 5 1];
+% 3, 4, 6 to 20, 5: usual order i.e. tech first, data after and EOL at the end
 % 1: last the apmt configuration because it concerns the next cycle and pattern
 
 % process the files
@@ -734,6 +734,8 @@ opusLightData = [];
 opusBlackData = [];
 ramsesData = [];
 mpeData = [];
+hydrocMData = [];
+hydrocCData = [];
 
 techDataFromApmtTech = [];
 timeDataFromApmtTech = [];
@@ -1063,6 +1065,30 @@ for typeNum = typeOrderList
                   print_data_in_csv_file_ir_rudics_cts5_MPE(mpeData);
                end
 
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            case {19, 20}
+               % '*_hydroc_c*.hex'
+               % '*_hydroc_m*.hex'
+
+               fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
+               [hydrocMDataDec, hydrocCDataDec] = decode_apmt_hydroc([fileNameInfo{4} fileNameInfo{1}]);
+               if (~isempty(hydrocMDataDec))
+                  hydrocMData = hydrocMDataDec;
+               end
+               if (~isempty(hydrocCDataDec))
+                  hydrocCData = hydrocCDataDec;
+               end
+
+               if (~isempty(g_decArgo_outputCsvFileId))
+
+                  for idFile2 = 1:length(fileNameInfo{2})
+                     fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+                        fileNameInfo{2}{idFile2});
+                  end
+                  print_data_in_csv_file_ir_rudics_cts5_HYDROC(hydrocMDataDec, hydrocCDataDec);
+               end
+
             otherwise
                fprintf('WARNING: Nothing define yet to process file: %s\n', ...
                   fileNamesForType{idFile});
@@ -1088,7 +1114,8 @@ if (~isempty(g_decArgo_outputCsvFileId))
    % print time data in csv file
    print_dates_in_csv_file_ir_rudics_cts5_usea( ...
       timeDataFromApmtTech, apmtCtd, apmtDo, apmtEco, apmtOcr, uvpLpmData, uvpBlackData, ...
-      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData, ramsesData, mpeData);
+      apmtSbeph, apmtCrover, apmtSuna, opusLightData, opusBlackData, ramsesData, mpeData, ...
+      hydrocMData, hydrocCData);
 end
 
 % output NetCDF data
@@ -1326,6 +1353,24 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles = [o_tabProfiles tabProfilesMpe];
       o_tabDrift = [o_tabDrift tabDriftMpe];
       o_tabSurf = [o_tabSurf tabSurfMpe];
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   if (~isempty(hydrocMData) || ~isempty(hydrocCData))
+
+      % create profiles (as they are transmitted)
+      [tabProfilesHydroc, tabDriftHydroc, tabSurfHydroc] = ...
+         process_profile_ir_rudics_cts5_usea_hydroc(hydrocMData, hydrocCData, apmtTimeFromTech, g_decArgo_gpsData);
+
+      % merge profiles (all data from a given sensor together)
+      [tabProfilesHydroc] = merge_profile_meas_ir_rudics_cts5_usea_hydroc(tabProfilesHydroc);
+
+      % add the vertical sampling scheme from configuration information
+      [tabProfilesHydroc] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesHydroc);
+
+      o_tabProfiles = [o_tabProfiles tabProfilesHydroc];
+      o_tabDrift = [o_tabDrift tabDriftHydroc];
+      o_tabSurf = [o_tabSurf tabSurfHydroc];
    end
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

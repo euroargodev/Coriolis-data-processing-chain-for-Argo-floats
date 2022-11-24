@@ -1424,7 +1424,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       fillValue = netcdf.getAtt(fCdf, idVar, '_FillValue');
       data{idVar+1} = repmat(fillValue, 1, length(nMeas.tabMeas));
    end
-   
+
    for idM = 1:length(nMeas.tabMeas)
       meas = nMeas.tabMeas(idM);
 
@@ -1487,17 +1487,7 @@ for idNM = 1:length(a_tabTrajNMeas)
             
             measParamQcName = [measParamName '_QC'];
             measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
-            
-            if (measParam.adjAllowed == 1)
-               % parameter adjusted variable and attributes
-               measParamAdjName = [measParamName '_ADJUSTED'];
-               measParamAdjVarId = netcdf.inqVarID(fCdf, measParamAdjName);
-               
-               % parameter adjusted QC variable and attributes
-               measParamAdjQcName = [measParamName '_ADJUSTED_QC'];
-               measParamAdjQcVarId = netcdf.inqVarID(fCdf, measParamAdjQcName);
-            end
-            
+                        
             % parameter data
             paramData = meas.paramData(:, idParam);
             
@@ -1520,8 +1510,16 @@ for idNM = 1:length(a_tabTrajNMeas)
             end
             data{measParamQcVarId+1}(idM) = paramDataQcStr;
             
-            if (adjustedCycle == 1)
-               
+            if ((adjustedCycle == 1) && (measParam.adjAllowed == 1))
+
+               % parameter adjusted variable and attributes
+               measParamAdjName = [measParamName '_ADJUSTED'];
+               measParamAdjVarId = netcdf.inqVarID(fCdf, measParamAdjName);
+
+               % parameter adjusted QC variable and attributes
+               measParamAdjQcName = [measParamName '_ADJUSTED_QC'];
+               measParamAdjQcVarId = netcdf.inqVarID(fCdf, measParamAdjQcName);
+
                % process RT PRES adjustment of this parameter
                if (~isempty(meas.paramDataAdj) && (meas.paramDataAdj(:, idParam) ~= measParam.fillValue))
                   paramAdjData = meas.paramDataAdj(:, idParam);
@@ -1531,10 +1529,10 @@ for idNM = 1:length(a_tabTrajNMeas)
                      [paramAdjData] = compute_adjusted_pres(paramData, meas.presOffset); % RT PRES adjustment of Apex float
                   end
                end
-               
+
                % store the data
                data{measParamAdjVarId+1}(idM) = paramAdjData;
-               
+
                if (isempty(meas.paramDataQc))
                   paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                   paramAdjDataQcStr(find(paramAdjData ~= measParam.fillValue)) = g_decArgo_qcStrNoQc;

@@ -185,6 +185,15 @@ switch(a_floatNum)
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end
 
+   case 6904226
+      % two prefix are resent in transmitted files '4e88' and 'ffff'
+      renameFile = dir([a_outputDir '/ffff_*.*']);
+      for idF = 1:length(renameFile)
+         fileNameIn = renameFile(idF).name;
+         fileNameOut = regexprep(fileNameIn, 'ffff', '4e88');
+         move_file([a_outputDir '/' fileNameIn], [a_outputDir '/' fileNameOut]);
+      end
+
 end
 
 return

@@ -110,6 +110,18 @@ for idC = 1:length(idEol)
       outputCycleNumberList(idEol(idC)) = cyPrev+1;
    end
 end
+outputCycleNumberList = [a_tabTrajNMeas.outputCycleNumber];
+profileNumberList = [a_tabTrajNMeas.profileNumber];
+idEol = find((outputCycleNumberList == -1));
+idEol = idEol(find(idEol > 1));
+for idC = 1:length(idEol)
+   if (profileNumberList(idEol(idC)) == 0)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      a_tabTrajNMeas(idEol(idC)).outputCycleNumber = cyPrev;
+      outputCycleNumberList(idEol(idC)) = cyPrev;
+   end
+end
+
 % specific
 % assign remaining unassigned cycle numbers (after a study of each float
 % case)
@@ -177,6 +189,18 @@ for idC = 1:length(idEol)
       outputCycleNumberList(idEol(idC)) = cyPrev+1;
    end
 end
+outputCycleNumberList = [a_tabTrajNCycle.outputCycleNumber];
+profileNumberList = [a_tabTrajNCycle.profileNumber];
+idEol = find((outputCycleNumberList == -1));
+idEol = idEol(find(idEol > 1));
+for idC = 1:length(idEol)
+   if (profileNumberList(idEol(idC)) == 0)
+      cyPrev = outputCycleNumberList(idEol(idC)-1);
+      a_tabTrajNCycle(idEol(idC)).outputCycleNumber = cyPrev;
+      outputCycleNumberList(idEol(idC)) = cyPrev;
+   end
+end
+
 % specific
 % assign remaining unassigned cycle numbers (after a study of each float
 % case)

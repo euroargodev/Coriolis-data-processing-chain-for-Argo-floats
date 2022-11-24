@@ -96,6 +96,7 @@ notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_08_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P00';
 
 % remove them from output lists
 idDel = [];
@@ -300,6 +301,7 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_08_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_15_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_14_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P53';
 
 idDel = [];
 for idConfParam = 1:length(notWantedDynamicConfigNames)

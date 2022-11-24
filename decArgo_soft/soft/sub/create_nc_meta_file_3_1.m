@@ -656,6 +656,7 @@ switch (a_decoderId)
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1))];
          end
+
          if (isfield(metaData, 'META_AUX_UVP_CONFIG_PARAMETERS'))
             fieldNames = fields(metaData.META_AUX_UVP_CONFIG_PARAMETERS);
             for idConf = 1:11
@@ -672,6 +673,7 @@ switch (a_decoderId)
                   g_decArgo_outputNcConfParamDescription(find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1))];
             end
          end
+
          if (isfield(metaData, 'META_AUX_OPUS_FIRMWARE_VERSION'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_FIRMWARE_VERSION'];
             idF = find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
@@ -776,6 +778,31 @@ switch (a_decoderId)
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_MPE_MICRORADIOMETER_OFFSET_L];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_MPE_MICRORADIOMETER_OFFSET_L', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+
+         if (isfield(metaData, 'META_AUX_HYDROC_SERIAL_NO'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_SERIAL_NO'];
+            idF = find(strcmp('META_AUX_HYDROC_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_SERIAL_NO];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_HYDROC_FIRMWARE_VERSION'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_FIRMWARE_VERSION'];
+            idF = find(strcmp('META_AUX_HYDROC_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_FIRMWARE_VERSION];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
+         end
+         if (isfield(metaData, 'META_AUX_HYDROC_HARDWARE_VERSION'))
+            inputAuxMetaName = [inputAuxMetaName; 'META_AUX_HYDROC_HARDWARE_VERSION'];
+            idF = find(strcmp('META_AUX_HYDROC_HARDWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+            inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_HYDROC_HARDWARE_VERSION];
+            inputAuxMetaDescription = [inputAuxMetaDescription; ...
+               g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_HYDROC_HARDWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
          end
       end
       

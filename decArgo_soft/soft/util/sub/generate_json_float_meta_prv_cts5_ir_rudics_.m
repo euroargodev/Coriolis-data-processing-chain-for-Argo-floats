@@ -515,7 +515,7 @@ for idFloat = 1:length(floatList)
    
    % retrieve configuration names and values at launch from configuration
    % commands report files
-   if ((floatNum == 6902671) || (floatNum == 6902953))
+   if (ismember(floatNum, [6902671, 6902953, 6904117, 6904226]))
       configReportFileName = [a_configDirName '/' loginName '_' num2str(floatNum) '.txt'];
    else
       configReportFileName = [a_configDirName '/' loginName '.txt'];
@@ -636,6 +636,9 @@ for idFloat = 1:length(floatList)
             case 'MPE'
                sensorListNum = [sensorListNum 17];
                sensorListName = [sensorListName {'CONFIG_APMT_MPE_'}];
+            case 'HYDROC'
+               sensorListNum = [sensorListNum 18];
+               sensorListName = [sensorListName {'CONFIG_APMT_HYDROC_'}];
             otherwise
                fprintf('ERROR: unknown sensor name (%s) for float %d\n', ...
                   sensorName, floatNum);
@@ -703,7 +706,11 @@ for idFloat = 1:length(floatList)
       configParamValues(idDel) = [];
       
       % consider XML meta-data file
-      metaDataFileName = [a_configDirName '/' loginName '_metadata.xml'];
+      if (ismember(floatNum, [6902671, 6902953, 6904117, 6904226]))
+         metaDataFileName = [a_configDirName '/' loginName '_' num2str(floatNum) '_metadata.xml'];
+      else
+         metaDataFileName = [a_configDirName '/' loginName '_metadata.xml'];
+      end
       [metaStruct] = get_meta_data_cts5(metaDataFileName, metaStruct, sensorListNum, ...
          floatNum, a_logDirName, a_rtVersionFlag, dacFormatId);
    end

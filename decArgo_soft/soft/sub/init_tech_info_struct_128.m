@@ -1838,6 +1838,86 @@ numberOfSamplesMPE.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of 
 numberOfSamplesMPE.tech{end}.shortSensorName = 'Mpe';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesHydrocM = init_basic_struct;
+numberOfSamplesHydrocM.pattern = 'HYDROC-M=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesHydrocM.count = 6;
+numberOfSamplesHydrocM.id{end+1} = 1;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M samples during descent to parking depth';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of HYDROC-M samples during descent to parking depth');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+numberOfSamplesHydrocM.id{end+1} = 2;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M samples during drift at parking depth';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of HYDROC-M samples during drift at parking depth');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+numberOfSamplesHydrocM.id{end+1} = 3;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M samples during descent to profile depth';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of HYDROC-M samples during descent to profile depth');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+numberOfSamplesHydrocM.id{end+1} = 4;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M samples during drift at profile depth';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of HYDROC-M samples during drift at profile depth');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+numberOfSamplesHydrocM.id{end+1} = 5;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M samples during ascent to surface';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of HYDROC-M samples during ascent to surface');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+numberOfSamplesHydrocM.id{end+1} = 6;
+numberOfSamplesHydrocM.name{end+1} = 'number of HYDROC-M surface samples';
+numberOfSamplesHydrocM.fmt{end+1} = '%d';
+numberOfSamplesHydrocM.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of HYDROC-M surface samples');
+numberOfSamplesHydrocM.tech{end}.shortSensorName = 'HydrocM';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numberOfSamplesHydrocC = init_basic_struct;
+numberOfSamplesHydrocC.pattern = 'HYDROC-C=%u/%u/%u/%u/%u/%u points';
+numberOfSamplesHydrocC.count = 6;
+numberOfSamplesHydrocC.id{end+1} = 1;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C samples during descent to parking depth';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(216, 'Number of HYDROC-C samples during descent to parking depth');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+numberOfSamplesHydrocC.id{end+1} = 2;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C samples during drift at parking depth';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(217, 'Number of HYDROC-C samples during drift at parking depth');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+numberOfSamplesHydrocC.id{end+1} = 3;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C samples during descent to profile depth';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(218, 'Number of HYDROC-C samples during descent to profile depth');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+numberOfSamplesHydrocC.id{end+1} = 4;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C samples during drift at profile depth';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(219, 'Number of HYDROC-C samples during drift at profile depth');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+numberOfSamplesHydrocC.id{end+1} = 5;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C samples during ascent to surface';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(220, 'Number of HYDROC-C samples during ascent to surface');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+numberOfSamplesHydrocC.id{end+1} = 6;
+numberOfSamplesHydrocC.name{end+1} = 'number of HYDROC-C surface samples';
+numberOfSamplesHydrocC.fmt{end+1} = '%d';
+numberOfSamplesHydrocC.tech{end+1} = get_cts5_tech_data_init_struct(221, 'Number of HYDROC-C surface samples');
+numberOfSamplesHydrocC.tech{end}.shortSensorName = 'HydrocC';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 o_techInfoStruct.DATA = [];
 o_techInfoStruct.DATA{end+1} = dataTransmission;
@@ -1858,6 +1938,8 @@ o_techInfoStruct.DATA{end+1} = numberOfSamplesRAMSES;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOpusLgt;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesOpusBlk;
 o_techInfoStruct.DATA{end+1} = numberOfSamplesMPE;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesHydrocM;
+o_techInfoStruct.DATA{end+1} = numberOfSamplesHydrocC;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2031,6 +2113,16 @@ sensorActivationMPE.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated
 sensorActivationMPE.tech{end}.shortSensorName = 'Mpe';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorActivationHYDROC = init_basic_struct;
+sensorActivationHYDROC.pattern = 'HYDROC=%u min';
+sensorActivationHYDROC.count = 1;
+sensorActivationHYDROC.id{end+1} = 1;
+sensorActivationHYDROC.name{end+1} = 'cumulated HYDROC activations duration (min)';
+sensorActivationHYDROC.fmt{end+1} = '%d';
+sensorActivationHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(222, 'Cumulated HYDROC activations duration (min)');
+sensorActivationHYDROC.tech{end}.shortSensorName = 'Hydroc';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 o_techInfoStruct.POWER = [];
 o_techInfoStruct.POWER{end+1} = patternDuration;
@@ -2050,6 +2142,7 @@ o_techInfoStruct.POWER{end+1} = sensorActivationUVP6;
 o_techInfoStruct.POWER{end+1} = sensorActivationRAMSES;
 o_techInfoStruct.POWER{end+1} = sensorActivationOPUS;
 o_techInfoStruct.POWER{end+1} = sensorActivationMPE;
+o_techInfoStruct.POWER{end+1} = sensorActivationHYDROC;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2507,6 +2600,16 @@ sensorErrorBadValueMPE.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number
 sensorErrorBadValueMPE.tech{end}.shortSensorName = 'Mpe';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBadValueHYDROC = init_basic_struct;
+sensorErrorBadValueHYDROC.pattern = 'HYDROC value (%u)';
+sensorErrorBadValueHYDROC.count = 1;
+sensorErrorBadValueHYDROC.id{end+1} = 1;
+sensorErrorBadValueHYDROC.name{end+1} = 'number of BAD VALUE errors for HYDROC sensor';
+sensorErrorBadValueHYDROC.fmt{end+1} = '%d';
+sensorErrorBadValueHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(228, 'Number of BAD VALUE errors for HYDROC sensor');
+sensorErrorBadValueHYDROC.tech{end}.shortSensorName = 'Hydroc';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorNoReplySBE41 = init_basic_struct;
 sensorErrorNoReplySBE41.pattern = 'SBE41 default (%u)';
 sensorErrorNoReplySBE41.count = 1;
@@ -2617,6 +2720,16 @@ sensorErrorNoReplyMPE.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number 
 sensorErrorNoReplyMPE.tech{end}.shortSensorName = 'Mpe';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorNoReplyHYDROC = init_basic_struct;
+sensorErrorNoReplyHYDROC.pattern = 'HYDROC default (%u)';
+sensorErrorNoReplyHYDROC.count = 1;
+sensorErrorNoReplyHYDROC.id{end+1} = 1;
+sensorErrorNoReplyHYDROC.name{end+1} = 'number of NO REPLY errors for HYDROC sensor';
+sensorErrorNoReplyHYDROC.fmt{end+1} = '%d';
+sensorErrorNoReplyHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(229, 'Number of NO REPLY errors for HYDROC sensor');
+sensorErrorNoReplyHYDROC.tech{end}.shortSensorName = 'Hydroc';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorBrokenSBE41 = init_basic_struct;
 sensorErrorBrokenSBE41.pattern = 'SBE41 broken';
 sensorErrorBrokenSBE41.count = 0;
@@ -2714,6 +2827,26 @@ sensorErrorBrokenMPE.id{end+1} = 1;
 sensorErrorBrokenMPE.name{end+1} = 'BROKEN alarm for MPE sensor';
 sensorErrorBrokenMPE.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for MPE sensor');
 sensorErrorBrokenMPE.tech{end}.shortSensorName = 'Mpe';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorBrokenHYDROC = init_basic_struct;
+sensorErrorBrokenHYDROC.pattern = 'HYDROC broken';
+sensorErrorBrokenHYDROC.count = 0;
+sensorErrorBrokenHYDROC.id{end+1} = 1;
+sensorErrorBrokenHYDROC.name{end+1} = 'BROKEN alarm for HYDROC sensor';
+sensorErrorBrokenHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKEN alarm for HYDROC sensor');
+sensorErrorBrokenHYDROC.tech{end}.shortSensorName = 'Hydroc';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TO BE IMPLEMENT WHEN THE ALARM WILL BE RAISED
+% sensorErrorSequenceHYDROC = init_basic_struct;
+% sensorErrorSequenceHYDROC.pattern = 'HYDROC sequence (%x)';
+% sensorErrorSequenceHYDROC.count = 1;
+% sensorErrorSequenceHYDROC.id{end+1} = 1;
+% sensorErrorSequenceHYDROC.name{end+1} = 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)';
+% sensorErrorSequenceHYDROC.fmt{end+1} = '%d';
+% sensorErrorSequenceHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(253, 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)');
+% sensorErrorSequenceHYDROC.tech{end}.shortSensorName = 'Hydroc';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeSBE41 = init_basic_struct;
@@ -2846,6 +2979,16 @@ sensorErrorDataSizeMPE.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA S
 sensorErrorDataSizeMPE.tech{end}.shortSensorName = 'Mpe';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sensorErrorDataSizeHYDROC = init_basic_struct;
+sensorErrorDataSizeHYDROC.pattern = 'HYDROC size (%f KB)';
+sensorErrorDataSizeHYDROC.count = 1;
+sensorErrorDataSizeHYDROC.id{end+1} = 1;
+sensorErrorDataSizeHYDROC.name{end+1} = 'DATA SIZE alarm for HYDROC sensor (KB)';
+sensorErrorDataSizeHYDROC.fmt{end+1} = '%g';
+sensorErrorDataSizeHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(231, 'DATA SIZE alarm for HYDROC sensor (KB)');
+sensorErrorDataSizeHYDROC.tech{end}.shortSensorName = 'Hydroc';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 o_techInfoStruct.ALARM = [];
 o_techInfoStruct.ALARM{end+1} = alarmPowerOn;
@@ -2896,6 +3039,7 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueMPE;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBadValueHYDROC;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplySBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyOCR;
@@ -2907,6 +3051,7 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyMPE;
+o_techInfoStruct.ALARM{end+1} = sensorErrorNoReplyHYDROC;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOCR;
@@ -2918,6 +3063,8 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenUVP6;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenMPE;
+o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenHYDROC;
+% o_techInfoStruct.ALARM{end+1} = sensorErrorSequenceHYDROC;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOCR;
@@ -2931,6 +3078,7 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOpusLgt;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOpusBlk;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeMPE;
+o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeHYDROC;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

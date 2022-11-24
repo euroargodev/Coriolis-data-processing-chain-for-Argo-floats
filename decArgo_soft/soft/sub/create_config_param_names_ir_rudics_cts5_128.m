@@ -50,6 +50,7 @@ apmtSensorList = [ ...
    {'Opus'}
    {'Ramses'}
    {'Mpe'}
+   {'Hydroc'}
    ];
 
 % create configuration names for decoder and associated one for NetCDF
@@ -89,7 +90,8 @@ configInfoList = [ ...
    {'UVP6'} {0} {316}; ...
    {'OPUS'} {0} {333}; ...
    {'RAMSES'} {0} {339}; ...
-   {'MPE'} {0} {340} ...
+   {'MPE'} {0} {340}; ...
+   {'HYDROC'} {0} {350} ...
    ];
 
 for idConfig = 1:length(configInfoList)
@@ -125,6 +127,10 @@ for idConfig = 1:length(configInfoList)
             paramIdList = paramIdList + 1300;
             sensorNum = 17;
          end
+         if (idS == 12) % <short_sensor_name> = 'Hydroc'
+            paramIdList = paramIdList + 1400;
+            sensorNum = 18;
+         end
          for idZ = 1:5
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, (idZ-1)*9 + paramNumList(idP));
@@ -146,8 +152,11 @@ for idConfig = 1:length(configInfoList)
          if (idS == 10) % <short_sensor_name> = 'Ramses'
             paramIdList = paramIdList + 1200;
          end
-         if (idS == 11) % <short_sensor_name> = 'mpe'
+         if (idS == 11) % <short_sensor_name> = 'Mpe'
             paramIdList = paramIdList + 1300;
+         end
+         if (idS == 12) % <short_sensor_name> = 'Hydroc'
+            paramIdList = paramIdList + 1400;
          end
          for idZ = 1:4
             for idP = 1:length(paramNumList)
@@ -172,6 +181,9 @@ for idConfig = 1:length(configInfoList)
          end
          if (idS == 11) % <short_sensor_name> = 'Mpe'
             paramIdList = paramIdList + 1300;
+         end
+         if (idS == 12) % <short_sensor_name> = 'Hydroc'
+            paramIdList = paramIdList + 1400;
          end
          for idP = 1:length(paramNumList)
             decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
@@ -235,6 +247,15 @@ for idConfig = 1:length(configInfoList)
          elseif (idS == 10) % <short_sensor_name> = 'Ramses'
             paramNumList = [54:56];
             paramIdList = [271:273];
+            for idP = 1:length(paramNumList)
+               decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
+               idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
+               ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
+            end
+         elseif (idS == 12) % <short_sensor_name> = 'Hydroc'
+            paramNumList = [54:59];
+            paramIdList = [278:283];
             for idP = 1:length(paramNumList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));

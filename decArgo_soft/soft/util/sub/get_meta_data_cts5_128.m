@@ -1817,6 +1817,21 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % HYDROC
+      if (any(a_sensorListNum == 18))
+         if (isfield(metaData.sensors, 'sensor_hydroc'))
+            if (~isfield(o_metaStruct, 'META_AUX_HYDROC_SERIAL_NO'))
+               o_metaStruct.META_AUX_HYDROC_SERIAL_NO = metaData.sensors.sensor_hydroc.sensor.sn;
+            end
+            if (~isfield(o_metaStruct, 'META_AUX_HYDROC_FIRMWARE_VERSION'))
+               o_metaStruct.META_AUX_HYDROC_FIRMWARE_VERSION = metaData.sensors.sensor_hydroc.hydroc_board.firmware;
+            end
+            if (~isfield(o_metaStruct, 'META_AUX_HYDROC_HARDWARE_VERSION'))
+               o_metaStruct.META_AUX_HYDROC_HARDWARE_VERSION = metaData.sensors.sensor_hydroc.hydroc_board.hardware;
+            end
+         end
+      end
    end
    
    if (~isempty(g_cogj_csvFileCoefId))

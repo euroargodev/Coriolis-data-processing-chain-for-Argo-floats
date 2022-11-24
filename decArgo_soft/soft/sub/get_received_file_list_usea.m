@@ -67,8 +67,10 @@ else
    % '_%03d_%02d_suna*.hex'
    % '_%03d_%02d_ramses*.hex'
    % '_%03d_%02d_mpe*.hex'
+   % '_%03d_%02d_hydro_c*.hex'
+   % '_%03d_%02d_hydro_m*.hex'
 
-   for idType = [1 4 6:18]
+   for idType = [1 4 6:20]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, a_cyNum, a_ptnNum)]);

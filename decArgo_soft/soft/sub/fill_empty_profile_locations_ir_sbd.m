@@ -100,6 +100,15 @@ if (any(([a_tabProfiles.date] ~= g_decArgo_dateDef) & ...
    profPosSystem = profPosSystem(idSort);
    profPosQc = profPosQc(idSort);
 
+   % remove duplicated profiles
+   [~, idUnique, ~] = unique(profJuld);
+   profJuld = profJuld(idUnique);
+   profJuldLoc = profJuldLoc(idUnique);
+   profLon = profLon(idUnique);
+   profLat = profLat(idUnique);
+   profPosSystem = profPosSystem(idUnique);
+   profPosQc = profPosQc(idUnique);
+
    % Loop 3: interpolate existing locations
    while (any(isnan(profJuldLoc)))
       startId = find(isnan(profJuldLoc), 1) - 1;
@@ -210,20 +219,23 @@ if (any(([a_tabProfiles.date] ~= g_decArgo_dateDef) & ...
       ([o_tabProfiles.locationDate] == g_decArgo_dateDef));
    for idP = 1:length(profList)
 
-      o_tabProfiles(profList(idP)).locationDate = profJuldLoc(profList(idP));
-      o_tabProfiles(profList(idP)).locationLon = profLon(profList(idP));
-      o_tabProfiles(profList(idP)).locationLat = profLat(profList(idP));
-      o_tabProfiles(profList(idP)).locationQc = char(profPosQc(profList(idP)));
-      if (profPosSystem(profList(idP)) == 1)
-         o_tabProfiles(profList(idP)).posSystem = 'GPS';
-      elseif (profPosSystem(profList(idP)) == 2)
-         o_tabProfiles(profList(idP)).posSystem = 'IRIDIUM';
-      elseif (profPosSystem(profList(idP)) == 3)
-         o_tabProfiles(profList(idP)).posSystem = 'NONE';
-      end
+      idF = find(profJuld == o_tabProfiles(profList(idP)).date);
+      if (~isempty(idF))
+         o_tabProfiles(profList(idP)).locationDate = profJuldLoc(idF);
+         o_tabProfiles(profList(idP)).locationLon = profLon(idF);
+         o_tabProfiles(profList(idP)).locationLat = profLat(idF);
+         o_tabProfiles(profList(idP)).locationQc = char(profPosQc(idF));
+         if (profPosSystem(idF) == 1)
+            o_tabProfiles(profList(idP)).posSystem = 'GPS';
+         elseif (profPosSystem(idF) == 2)
+            o_tabProfiles(profList(idP)).posSystem = 'IRIDIUM';
+         elseif (profPosSystem(idF) == 3)
+            o_tabProfiles(profList(idP)).posSystem = 'NONE';
+         end
 
-      % to update the associated NetCDF file
-      o_tabProfiles(profList(idP)).updated = 1;
+         % to update the associated NetCDF file
+         o_tabProfiles(profList(idP)).updated = 1;
+      end
    end
 end
 

@@ -85,156 +85,85 @@ global g_decArgo_qcStrInterpolated;
 global g_decArgo_dateDef;
 
 
-% process dated but not located profiles
-if (any(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
-      ([o_tabProfiles.locationDate] == g_decArgo_dateDef)))
-
-   % gather information on profiles locations
-   profJuld = nan(length(o_tabProfiles)+1, 1);
-   profJuldLoc = nan(size(profJuld));
-   profLon = nan(size(profJuld));
-   profLat = nan(size(profJuld));
-   profPosSystem = nan(size(profJuld));
-   profPosQc = nan(size(profJuld));
-   for idProf = 1:length(profJuld)-1
-      profile = o_tabProfiles(idProf);
-      if (profile.date ~= g_decArgo_dateDef)
-         profJuld(idProf) = profile.date;
-         if (profile.locationDate ~= g_decArgo_dateDef)
-            profJuldLoc(idProf) = profile.locationDate;
-            profLon(idProf) = profile.locationLon;
-            profLat(idProf) = profile.locationLat;
-            profPosSystem(idProf) = 1; % GPS
-            profPosQc(idProf) = profile.locationQc;
-         end
-      end
+% Loop 5: interpolate existing locations
+profList = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
+   ([o_tabProfiles.locationDate] == g_decArgo_dateDef));
+locList = find([o_tabProfiles.locationDate] ~= g_decArgo_dateDef);
+while (~isempty(profList))
+   startId = find([o_tabProfiles(locList).date] < o_tabProfiles(profList(1)).date, 1, 'last');
+   stopId = find([o_tabProfiles(locList).date] > o_tabProfiles(profList(1)).date, 1, 'firs');
+   if (isempty(stopId))
+      break
    end
 
-   % add launch location
-   gpsLocCycleNum = a_gpsData{1};
-   gpsLocDate = a_gpsData{4};
-   gpsLocLon = a_gpsData{5};
-   gpsLocLat = a_gpsData{6};
-   gpsLocQc = a_gpsData{7};
+   % interpolate the locations
+   list = locList(startId)+1:locList(stopId)-1;
+   uDateList = unique([o_tabProfiles(list).date]);
+   [interProfLon, interProfLat] = interpolate_between_2_locations(...
+      o_tabProfiles(locList(startId)).locationDate, o_tabProfiles(locList(startId)).locationLon, o_tabProfiles(locList(startId)).locationLat, ...
+      o_tabProfiles(locList(stopId)).locationDate, o_tabProfiles(locList(stopId)).locationLon, o_tabProfiles(locList(stopId)).locationLat, ...
+      uDateList);
 
-   idLocLaunch = find(gpsLocCycleNum == -1);
-   profJuld(end) = gpsLocDate(idLocLaunch);
-   profJuldLoc(end) = gpsLocDate(idLocLaunch);
-   profLon(end) = gpsLocLon(idLocLaunch);
-   profLat(end) = gpsLocLat(idLocLaunch);
-   profPosSystem(end) = 0;
-   profPosQc(end) = num2str(gpsLocQc(idLocLaunch));
-
-   % remove not dated profiles
-   idDel = find(isnan(profJuld));
-   profJuld(idDel) = [];
-   profJuldLoc(idDel) = [];
-   profLon(idDel) = [];
-   profLat(idDel) = [];
-   profPosSystem(idDel) = [];
-   profPosQc(idDel) = [];
-
-   % sort profiles
-   [~, idSort] = sort(profJuld);
-   profJuld = profJuld(idSort);
-   profJuldLoc = profJuldLoc(idSort);
-   profLon = profLon(idSort);
-   profLat = profLat(idSort);
-   profPosSystem = profPosSystem(idSort);
-   profPosQc = profPosQc(idSort);
-
-   % remove duplicated profiles
-   [~, idUnique, ~] = unique(profJuld);
-   profJuld = profJuld(idUnique);
-   profJuldLoc = profJuldLoc(idUnique);
-   profLon = profLon(idUnique);
-   profLat = profLat(idUnique);
-   profPosSystem = profPosSystem(idUnique);
-   profPosQc = profPosQc(idUnique);
-
-   % Loop 5: interpolate existing locations
-   while (any(isnan(profJuldLoc)))
-      startId = find(isnan(profJuldLoc), 1) - 1;
-      stopId = startId + find(~isnan(profJuldLoc(startId+1:end)), 1);
-      if (isempty(stopId))
-         break
-      end
-
-      % interpolate the locations
-      [profLon(startId+1:stopId-1), profLat(startId+1:stopId-1)] = interpolate_between_2_locations(...
-         profJuldLoc(startId), profLon(startId), profLat(startId), ...
-         profJuldLoc(stopId), profLon(stopId), profLat(stopId), ...
-         profJuld(startId+1:stopId-1));
-      profJuldLoc(startId+1:stopId-1) = profJuld(startId+1:stopId-1);
-      if (profPosSystem(startId) == profPosSystem(stopId))
-         profPosSystem(startId+1:stopId-1) = profPosSystem(startId);
-      else
-         profPosSystem(startId+1:stopId-1) = 3;
-      end
-      profPosQc(startId+1:stopId-1) = g_decArgo_qcStrInterpolated;
+   % assign the interpolated location to the profile
+   for id = 1:length(list)
+      idF = find(o_tabProfiles(list(id)).date == uDateList);
+      o_tabProfiles(list(id)).locationDate = o_tabProfiles(list(id)).date;
+      o_tabProfiles(list(id)).locationLon = interProfLon(idF);
+      o_tabProfiles(list(id)).locationLat = interProfLat(idF);
+      o_tabProfiles(list(id)).locationQc = g_decArgo_qcStrInterpolated;
    end
-
-   % Loop 6: extrapolate existing locations
-   profList = find(isnan(profJuldLoc));
-   if (~isempty(profList))
-
-      idF = find(profJuld < profJuld(profList(1)));
-
-      % look for the previous cycles
-      cyDateList = profJuld(idF);
-      cyLonList = profLon(idF);
-      cyLatList = profLat(idF);
-      [~, idUnique, ~] = unique(cyDateList);
-      cyDateList = cyDateList(idUnique);
-      cyLonList = cyLonList(idUnique);
-      cyLatList = cyLatList(idUnique);
-
-      if (length(cyDateList) > 1)
-
-         % extrapolate the locations
-         [extrapLocLon, extrapLocLat] = extrapolate_locations(...
-            cyDateList(end-1), ...
-            cyLonList(end-1), ...
-            cyLatList(end-1), ...
-            cyDateList(end), ...
-            cyLonList(end), ...
-            cyLatList(end), ...
-            profJuld(profList));
-
-         % assign the extrapolated location to the profile
-         profJuldLoc(profList) = profJuld(profList);
-         profLon(profList) = extrapLocLon;
-         profLat(profList) = extrapLocLat;
-         profPosQc(profList) = g_decArgo_qcStrInterpolated;
-      else
-
-         % use the launch location with a POSITION_QC=3
-         profJuldLoc(profList) = profJuld(profList);
-         profLon(profList) = profLon(profPosSystem == 0);
-         profLat(profList) = profLat(profPosSystem == 0);
-         profPosQc(profList) = g_decArgo_qcStrCorrectable;
-      end
-   end
-
-   % insert new profile locations
    profList = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
       ([o_tabProfiles.locationDate] == g_decArgo_dateDef));
-   for idP = 1:length(profList)
+end
 
-      idF = find(profJuld == o_tabProfiles(profList(idP)).date);
-      if (~isempty(idF))
-         o_tabProfiles(profList(idP)).locationDate = profJuldLoc(idF);
-         o_tabProfiles(profList(idP)).locationLon = profLon(idF);
-         o_tabProfiles(profList(idP)).locationLat = profLat(idF);
-         o_tabProfiles(profList(idP)).locationQc = char(profPosQc(idF));
-         if (profPosSystem(idF) == 1)
-            o_tabProfiles(profList(idP)).posSystem = 'GPS';
-         elseif (profPosSystem(idF) == 3)
-            o_tabProfiles(profList(idP)).posSystem = 'NONE';
-         end
+% Loop 6: extrapolate existing locations
+profList = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
+   ([o_tabProfiles.locationDate] == g_decArgo_dateDef));
+if (~isempty(profList))
 
-         % to update the associated NetCDF file
-         o_tabProfiles(profList(idP)).updated = 1;
+   idF = find([o_tabProfiles.date] < o_tabProfiles(profList(1)).date);
+
+   % look for the previous cycles
+   cyDateList = [o_tabProfiles(idF).date];
+   cyLonList = [o_tabProfiles(idF).locationLon];
+   cyLatList = [o_tabProfiles(idF).locationLat];
+   [~, idUnique, ~] = unique(cyDateList);
+   cyDateList = cyDateList(idUnique);
+   cyLonList = cyLonList(idUnique);
+   cyLatList = cyLatList(idUnique);
+
+   if (length(cyDateList) > 1)
+
+      % extrapolate the locations
+      [extrapLocLon, extrapLocLat] = extrapolate_locations(...
+         cyDateList(end-1), ...
+         cyLonList(end-1), ...
+         cyLatList(end-1), ...
+         cyDateList(end), ...
+         cyLonList(end), ...
+         cyLatList(end), ...
+         [o_tabProfiles(profList).date]);
+
+      % assign the extrapolated location to the profile
+      for id = 1:length(profList)
+         o_tabProfiles(profList(id)).locationDate = o_tabProfiles(profList(id)).date;
+         o_tabProfiles(profList(id)).locationLon = extrapLocLon(id);
+         o_tabProfiles(profList(id)).locationLat = extrapLocLat(id);
+         o_tabProfiles(profList(id)).locationQc = g_decArgo_qcStrInterpolated;
+      end
+   else
+
+      % unpack the input data
+      a_gpsLocCycleNum = a_gpsData{1};
+      a_gpsLocLon = a_gpsData{5};
+      a_gpsLocLat = a_gpsData{6};
+
+      % use the launch location with a POSITION_QC=3
+      for id = 1:length(profList)
+         o_tabProfiles(profList(id)).locationDate = o_tabProfiles(profList(id)).date;
+         o_tabProfiles(profList(id)).locationLon = a_gpsLocLon(a_gpsLocCycleNum == -1);
+         o_tabProfiles(profList(id)).locationLat = a_gpsLocLat(a_gpsLocCycleNum == -1);
+         o_tabProfiles(profList(id)).locationQc = g_decArgo_qcStrCorrectable;
       end
    end
 end

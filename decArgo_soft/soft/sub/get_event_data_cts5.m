@@ -1041,7 +1041,7 @@ global g_decArgo_eventUsedList;
 
 
 % initialize event list
-init_event_lists_126_127;
+init_event_lists_126_127_128;
 evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
@@ -2665,7 +2665,7 @@ return
 % Init event type list and event used list.
 %
 % SYNTAX :
-%  init_event_lists_126_127
+%  init_event_lists_126_127_128
 %
 % INPUT PARAMETERS :
 %
@@ -2679,7 +2679,7 @@ return
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function init_event_lists_126_127
+function init_event_lists_126_127_128
 
 % variable to store event numbers and types
 global g_decArgo_eventNumTypeList;
@@ -2980,7 +2980,8 @@ g_decArgo_eventNumTypeList = [ ...
    289	,	0	; ...
    290	,	0	; ...
    291	,	0	; ...
-   292	,	0	 ...
+   292	,	0	; ...
+   293	,	0	 ...
    ];
 
 g_decArgo_eventUsedList =  [9 10 12 28 31:36 40 45:49 66 67 76 87:89 90 96 100 103:111 113:115 121 124 126 127 141 197 198 204 282 284:287 289:291];

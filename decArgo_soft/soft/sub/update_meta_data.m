@@ -5374,7 +5374,7 @@ switch (a_decoderId)
                   return
                end
                
-               if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
+               if (isempty(floatPixelBegin) || isempty(floatPixelEnd))
                   fprintf('WARNING: Float #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing\n', ...
                      g_decArgo_floatNum);
                   return
@@ -5393,23 +5393,27 @@ switch (a_decoderId)
                
                o_preCalibEq = 'The sensor returns UV_INTENSITY_DARK_NITRATE and UV_INTENSITY_NITRATE(Ntrans), a subset of continuous pixels of UV_INTENSITY_NITRATE(N), N = 1 to 256. The Ntrans indices span the interval [PIXEL_START, PIXEL_END] subset of the original array (1 to 256). Thus Ntrans(i) refers to pixel N = (PIXEL_START+i-1). PIXEL_START and PIXEL_END are defined from calibration data so that the [PIXEL_START, PIXEL_END] interval is the smallest interval of pixels that correspond to the [217 nm, 250 nm] interval of wavelengths. Only a subset of the [PIXEL_START, PIXEL_END] interval is processed to compute nitrate concentration. This subset is defined as the [PIXEL_FIT_START, PIXEL_FIT_END] interval which is the smallest interval of pixels that correspond to the [217 nm, 240 nm] interval of wavelengths (thus PIXEL_FIT_START = PIXEL_START). In the following equations the data are computed for each pixel R = PIXEL_FIT_START to PIXEL_FIT_END; ABSORBANCE_SW(R)=-log10[(UV_INTENSITY_NITRATE(R)-UV_INTENSITY_DARK_NITRATE)/UV_INTENSITY_REF_NITRATE(R)]; F(R,T)=(A+B*T)*exp[(C+D*T)*(OPTICAL_WAVELENGTH_UV(R)-OPTICAL_WAVELENGTH_OFFSET)]; E_SWA_INSITU(R)=E_SWA_NITRATE(R)*F(R,TEMP)/F(R,TEMP_CAL_NITRATE); ABSORBANCE_COR_NITRATE(R)=ABSORBANCE_SW(R)-(E_SWA_INSITU(R)*PSAL)*[1-(0.026*PRES/1000)]; Perform a multilinear regression to get MOLAR_NITRATE with estimated ABSORBANCE_COR_NITRATE(R) with ABSORBANCE_COR_NITRATE(R)=BASELINE_INTERCEPT+BASELINE_SLOPE*OPTICAL_WAVELENGTH_UV(R)+MOLAR_NITRATE*E_NITRATE(R); NITRATE=MOLAR_NITRATE/rho, where rho is the potential density [kg/L] calculated from CTD data';
                
-               if (a_decoderId ~= 126)
-                  uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
-                  opticalWavelengthUvStr = sprintf('%.2f,', tabOpticalWavelengthUv(floatPixelBegin:floatPixelEnd));
-                  eSwaNitrateStr = sprintf('%.8f,', tabESwaNitrate(floatPixelBegin:floatPixelEnd));
-                  eNitrateStr = sprintf('%.8f,', tabENitrate(floatPixelBegin:floatPixelEnd));
-                  o_preCalibCoef = [ ...
-                     sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
-                     floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
-                     'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
-                     sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
-                     g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
-                     'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
-                     sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
-                     'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
-                     'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
-                     ];
-               else
+               % try to set o_preCalibCoef without restriction
+
+               uvIntensityRefNitrateStr = sprintf('%.8f,', tabUvIntensityRefNitrate(floatPixelBegin:floatPixelEnd));
+               opticalWavelengthUvStr = sprintf('%.2f,', tabOpticalWavelengthUv(floatPixelBegin:floatPixelEnd));
+               eSwaNitrateStr = sprintf('%.8f,', tabESwaNitrate(floatPixelBegin:floatPixelEnd));
+               eNitrateStr = sprintf('%.8f,', tabENitrate(floatPixelBegin:floatPixelEnd));
+               o_preCalibCoef = [ ...
+                  sprintf('PIXEL_START=%d, PIXEL_END=%d, PIXEL_FIT_START=%d, PIXEL_FIT_END=%d; ', ...
+                  floatPixelBegin, floatPixelEnd, pixelBegin, pixelEnd) ...
+                  'UV_INTENSITY_REF_NITRATE(Ntrans)=[' uvIntensityRefNitrateStr(1:end-1) ']; ' ...
+                  sprintf('A=%.7f, B=%.5f, C=%.7f, D=%.6f, OPTICAL_WAVELENGTH_OFFSET=%.1f; ', ...
+                  g_decArgo_nitrate_a, g_decArgo_nitrate_b, g_decArgo_nitrate_c, g_decArgo_nitrate_d, g_decArgo_nitrate_opticalWavelengthOffset) ...
+                  'OPTICAL_WAVELENGTH_UV(Ntrans)=[' opticalWavelengthUvStr(1:end-1) ']; ' ...
+                  sprintf('TEMP_CAL_NITRATE=%g; ', tempCalNitrate) ...
+                  'E_SWA_NITRATE(Ntrans)=[' eSwaNitrateStr(1:end-1) ']; ' ...
+                  'E_NITRATE(Ntrans)=[' eNitrateStr(1:end-1) ']' ...
+                  ];
+
+               FORMAT_SIZE = 4096;
+               if (length(o_preCalibCoef) > FORMAT_SIZE)
+
                   % even if these floats only measure NITRATE, their SUNA are
                   % configured to send 90 pixels => we should use the
                   % restrictions of "BISULFIDE floats" to be sure to generate a
@@ -5429,7 +5433,7 @@ switch (a_decoderId)
                         val2(1:idN-1) = [];
                         uvIntensityRefNitrateStr = [uvIntensityRefNitrateStr ',' fliplr(val2)];
                      end
-                     
+
                      if (tabOpticalWavelengthUv(id) == 0)
                         opticalWavelengthUvStr = [opticalWavelengthUvStr sprintf('%d,', tabOpticalWavelengthUv(id))];
                      else
@@ -5439,7 +5443,7 @@ switch (a_decoderId)
                         val2(1:idN-1) = [];
                         opticalWavelengthUvStr = [opticalWavelengthUvStr ',' fliplr(val2)];
                      end
-                     
+
                      if (tabESwaNitrate(id) == 0)
                         eSwaNitrateStr = [eSwaNitrateStr sprintf('%d,', tabESwaNitrate(id))];
                      else
@@ -5461,7 +5465,7 @@ switch (a_decoderId)
                         end
                         eSwaNitrateStr = [eSwaNitrateStr ',' val4];
                      end
-                     
+
                      if (tabENitrate(id) == 0)
                         eNitrateStr = [eNitrateStr sprintf('%d,', tabENitrate(id))];
                      else
@@ -5493,10 +5497,10 @@ switch (a_decoderId)
                      'E_NITRATE(PIXEL_FIT_START:PIXEL_FIT_END)=[' eNitrateStr(2:end) ']' ...
                      ];
                end
-               
+
                o_preCalibComment = 'Nitrate concentration in umol/kg; see Processing Bio-Argo nitrate concentration at the DAC Level, Version 1.1, March 3rd 2018';
             else
-               
+
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
                   fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...

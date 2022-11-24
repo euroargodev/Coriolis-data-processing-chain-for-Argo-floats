@@ -55,6 +55,7 @@ o_configSectionList = [ ...
    {'SENSOR_14'} ...
    {'SENSOR_15'} ...
    {'SENSOR_17'} ...
+   {'SENSOR_18'} ...
    {'SDA14'} ...
    {'SPECIAL'} ...
    {'PRESSURE_ACTIVATION'} ...
@@ -67,6 +68,7 @@ o_configSectionList = [ ...
    {'SBEPH'} ...
    {'CROVER'} ...
    {'SUNA'} ...
+   {'HYDROC'} ...
    {'RAMSES'} ...
    {'OPUS'} ...
    {'UVP6'} ...
@@ -1154,6 +1156,44 @@ for idP = 54:60
    o_configInfoStruct.SENSOR_17{end+1} = param;
 end
 
+% HYDROC
+o_configInfoStruct.SENSOR_18 = o_configInfoStruct.SENSOR_;
+for idP = 54:60
+   param = init_basic_struct;
+   param.num = idP;
+   switch (idP)
+      case 54
+         param.fmtIn = '%u';
+         param.name = 'warm-up time';
+         param.fmtOut = '%d';
+      case 55
+         param.fmtIn = '%u';
+         param.name = 'zero time';
+         param.fmtOut = '%d';
+      case 56
+         param.fmtIn = '%u';
+         param.name = 'flush time';
+         param.fmtOut = '%d';
+      case 57
+         param.fmtIn = '%u';
+         param.name = 'warm-up filter';
+         param.fmtOut = '%d';
+      case 58
+         param.fmtIn = '%u';
+         param.name = 'zero filter';
+         param.fmtOut = '%d';
+      case 59
+         param.fmtIn = '%u';
+         param.name = 'flush filter';
+         param.fmtOut = '%d';
+      case 60
+         param.fmtIn = '%u';
+         param.name = 'surface - sampling period / in-air measurements (sec)';
+         param.fmtOut = '%d';
+   end
+   o_configInfoStruct.SENSOR_18{end+1} = param;
+end
+
 o_configInfoStruct.SPECIAL = [];
 for idP = 0:1
    param = init_basic_struct;
@@ -1329,6 +1369,14 @@ param.fmtIn = '%u';
 param.name = 'serial port number';
 param.fmtOut = '%d';
 o_configInfoStruct.MPE{end+1} = param;
+
+o_configInfoStruct.HYDROC = [];
+param = init_basic_struct;
+param.num = 0;
+param.fmtIn = '%u';
+param.name = 'serial port number';
+param.fmtOut = '%d';
+o_configInfoStruct.HYDROC{end+1} = param;
 
 o_configInfoStruct.GUI = [];
 

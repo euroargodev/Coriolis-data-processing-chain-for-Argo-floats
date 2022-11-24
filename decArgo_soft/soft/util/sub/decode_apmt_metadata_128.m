@@ -240,6 +240,9 @@ hardware.measure_board.model = '';
 hardware.measure_board.sn = '';
 hardware.measure_board.firmware = '';
 
+hardware.extension_board = [];
+hardware.extension_board.model = '';
+
 hardware.hull = [];
 hardware.hull.model = '';
 
@@ -358,6 +361,11 @@ sensors.sensor_mpe.microradiometer.gainml = '';
 sensors.sensor_mpe.microradiometer.offseth = '';
 sensors.sensor_mpe.microradiometer.offsetm = '';
 sensors.sensor_mpe.microradiometer.offsetl = '';
+
+sensors.sensor_hydroc = [];
+sensors.sensor_hydroc.sensor.sn = '';
+sensors.sensor_hydroc.hydroc_board.firmware = '';
+sensors.sensor_hydroc.hydroc_board.hardware = '';
 
 o_metaDataStruct.profiler = profiler;
 o_metaDataStruct.telecom = telecom;

@@ -841,13 +841,21 @@
    },
    "CONF_PARAM_106" :
    {
+      "CONF_PARAM_DEC_ID" : "1575",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / descent to drift depth (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDescentToParkPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the HYDROC during the descent to parking pressure in the depth zone #<N> (in seconds)."
+   },
+   "CONF_PARAM_107" :
+   {
       "CONF_PARAM_DEC_ID" : "176",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / parking depth drift (s)",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_107" :
+   "CONF_PARAM_108" :
    {
       "CONF_PARAM_DEC_ID" : "1176",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -855,7 +863,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the UVP during the drift at parking pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_108" :
+   "CONF_PARAM_109" :
    {
       "CONF_PARAM_DEC_ID" : "1276",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -863,7 +871,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the OPUS during the drift at parking pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_109" :
+   "CONF_PARAM_110" :
    {
       "CONF_PARAM_DEC_ID" : "1376",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -871,7 +879,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the RAMSES during the drift at parking pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_110" :
+   "CONF_PARAM_111" :
    {
       "CONF_PARAM_DEC_ID" : "1476",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -879,7 +887,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the MPE during the drift at parking pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_111" :
+   "CONF_PARAM_112" :
+   {
+      "CONF_PARAM_DEC_ID" : "1576",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / parking depth drift (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the HYDROC during the drift at parking pressure in the depth zone #<N>."
+   },
+   "CONF_PARAM_113" :
    {
       "CONF_PARAM_DEC_ID" : "177",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -887,7 +903,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_112" :
+   "CONF_PARAM_114" :
    {
       "CONF_PARAM_DEC_ID" : "1177",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -895,7 +911,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the UVP during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_113" :
+   "CONF_PARAM_115" :
    {
       "CONF_PARAM_DEC_ID" : "1277",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -903,7 +919,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the OPUS during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_114" :
+   "CONF_PARAM_116" :
    {
       "CONF_PARAM_DEC_ID" : "1377",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -911,7 +927,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the RAMSES during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_115" :
+   "CONF_PARAM_117" :
    {
       "CONF_PARAM_DEC_ID" : "1477",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -919,7 +935,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the MPE during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_116" :
+   "CONF_PARAM_118" :
+   {
+      "CONF_PARAM_DEC_ID" : "1577",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / descent to measurement depth (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the HYDROC during the descent to profile pressure in the depth zone #<N> (in seconds)."
+   },
+   "CONF_PARAM_119" :
    {
       "CONF_PARAM_DEC_ID" : "178",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -927,7 +951,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_117" :
+   "CONF_PARAM_120" :
    {
       "CONF_PARAM_DEC_ID" : "1178",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -935,7 +959,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the UVP during the drift at profile pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_118" :
+   "CONF_PARAM_121" :
    {
       "CONF_PARAM_DEC_ID" : "1278",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -943,7 +967,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the OPUS during the drift at profile pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_119" :
+   "CONF_PARAM_122" :
    {
       "CONF_PARAM_DEC_ID" : "1378",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -951,7 +975,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the RAMSES during the drift at profile pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_120" :
+   "CONF_PARAM_123" :
    {
       "CONF_PARAM_DEC_ID" : "1478",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -959,7 +983,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the MPE during the drift at profile pressure in the depth zone #<N>."
    },
-   "CONF_PARAM_121" :
+   "CONF_PARAM_124" :
+   {
+      "CONF_PARAM_DEC_ID" : "1578",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / measurement depth drift (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the HYDROC during the drift at profile pressure in the depth zone #<N>."
+   },
+   "CONF_PARAM_125" :
    {
       "CONF_PARAM_DEC_ID" : "179",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -967,7 +999,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_122" :
+   "CONF_PARAM_126" :
    {
       "CONF_PARAM_DEC_ID" : "1179",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -975,7 +1007,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the UVP during the ascending profile in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_123" :
+   "CONF_PARAM_127" :
    {
       "CONF_PARAM_DEC_ID" : "1279",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -983,7 +1015,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the OPUS during the ascending profile in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_124" :
+   "CONF_PARAM_128" :
    {
       "CONF_PARAM_DEC_ID" : "1379",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -991,7 +1023,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the RAMSES during the ascending profile in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_125" :
+   "CONF_PARAM_129" :
    {
       "CONF_PARAM_DEC_ID" : "1479",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -999,7 +1031,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the MPE during the ascending profile in the depth zone #<N> (in seconds)."
    },
-   "CONF_PARAM_126" :
+   "CONF_PARAM_130" :
+   {
+      "CONF_PARAM_DEC_ID" : "1579",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 - Sampling period / ascent (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocAscentPhaseDepthZone<N>SamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the HYDROC during the ascending profile in the depth zone #<N> (in seconds)."
+   },
+   "CONF_PARAM_131" :
    {
       "CONF_PARAM_DEC_ID" : "180",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1007,7 +1047,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
-   "CONF_PARAM_127" :
+   "CONF_PARAM_132" :
    {
       "CONF_PARAM_DEC_ID" : "1180",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1015,7 +1055,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the UVP in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
-   "CONF_PARAM_128" :
+   "CONF_PARAM_133" :
    {
       "CONF_PARAM_DEC_ID" : "1280",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1023,7 +1063,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the OPUS in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
-   "CONF_PARAM_129" :
+   "CONF_PARAM_134" :
    {
       "CONF_PARAM_DEC_ID" : "1380",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1031,7 +1071,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the RAMSES in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
-   "CONF_PARAM_130" :
+   "CONF_PARAM_135" :
    {
       "CONF_PARAM_DEC_ID" : "1480",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1039,7 +1079,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDepthZone<N>PowerAcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the MPE in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
    },
-   "CONF_PARAM_131" :
+   "CONF_PARAM_136" :
+   {
+      "CONF_PARAM_DEC_ID" : "1580",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Acquisition type",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the HYDROC in the depth zone #<N> (0 : none, 2 : pulsed, 3 : continuous)."
+   },
+   "CONF_PARAM_137" :
    {
       "CONF_PARAM_DEC_ID" : "181",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1047,7 +1095,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N>  (see float manual for details)."
    },
-   "CONF_PARAM_132" :
+   "CONF_PARAM_138" :
    {
       "CONF_PARAM_DEC_ID" : "1181",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1055,7 +1103,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the UVP in the depth zone #<N>  (see float manual for details)."
    },
-   "CONF_PARAM_133" :
+   "CONF_PARAM_139" :
    {
       "CONF_PARAM_DEC_ID" : "1281",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1063,7 +1111,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the OPUS in the depth zone #<N>  (see float manual for details)."
    },
-   "CONF_PARAM_134" :
+   "CONF_PARAM_140" :
    {
       "CONF_PARAM_DEC_ID" : "1381",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1071,7 +1119,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the RAMSES in the depth zone #<N>  (see float manual for details)."
    },
-   "CONF_PARAM_135" :
+   "CONF_PARAM_141" :
    {
       "CONF_PARAM_DEC_ID" : "1481",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1079,7 +1127,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDepthZone<N>DataProcessingMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data processing output of the MPE in the depth zone #<N>  (see float manual for details)."
    },
-   "CONF_PARAM_136" :
+   "CONF_PARAM_142" :
+   {
+      "CONF_PARAM_DEC_ID" : "1581",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Processing type",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDepthZone<N>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing output of the HYDROC in the depth zone #<N>  (see float manual for details)."
+   },
+   "CONF_PARAM_143" :
    {
       "CONF_PARAM_DEC_ID" : "182",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1087,7 +1143,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the <short_sensor_name> can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
-   "CONF_PARAM_137" :
+   "CONF_PARAM_144" :
    {
       "CONF_PARAM_DEC_ID" : "1182",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1095,7 +1151,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the UVP can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
-   "CONF_PARAM_138" :
+   "CONF_PARAM_145" :
    {
       "CONF_PARAM_DEC_ID" : "1282",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1103,7 +1159,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the OPUS can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
-   "CONF_PARAM_139" :
+   "CONF_PARAM_146" :
    {
       "CONF_PARAM_DEC_ID" : "1382",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1111,7 +1167,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the RAMSES can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
-   "CONF_PARAM_140" :
+   "CONF_PARAM_147" :
    {
       "CONF_PARAM_DEC_ID" : "1482",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1119,7 +1175,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDepthZone<N>DataSynchronizationMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Data of the MPE can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
    },
-   "CONF_PARAM_141" :
+   "CONF_PARAM_148" :
+   {
+      "CONF_PARAM_DEC_ID" : "1582",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Synchronisation type",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDepthZone<N>DataSynchronizationMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data of the HYDROC can be reported as they have been sampled or synchronized with one CTD parameter (PRES or TEMP or PSAL). The synchronization is done with the timely closest sample of the CTD (see float manual for details)."
+   },
+   "CONF_PARAM_149" :
    {
       "CONF_PARAM_DEC_ID" : "183",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1127,7 +1191,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> (in dbar)."
    },
-   "CONF_PARAM_142" :
+   "CONF_PARAM_150" :
    {
       "CONF_PARAM_DEC_ID" : "1183",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1135,7 +1199,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for UVP in the depth zone #<N> (in dbar)."
    },
-   "CONF_PARAM_143" :
+   "CONF_PARAM_151" :
    {
       "CONF_PARAM_DEC_ID" : "1283",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1143,7 +1207,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for OPUS in the depth zone #<N> (in dbar)."
    },
-   "CONF_PARAM_144" :
+   "CONF_PARAM_152" :
    {
       "CONF_PARAM_DEC_ID" : "1383",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1151,7 +1215,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for RAMSES in the depth zone #<N> (in dbar)."
    },
-   "CONF_PARAM_145" :
+   "CONF_PARAM_153" :
    {
       "CONF_PARAM_DEC_ID" : "1483",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1159,7 +1223,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thickness for MPE in the depth zone #<N> (in dbar)."
    },
-   "CONF_PARAM_146" :
+   "CONF_PARAM_154" :
+   {
+      "CONF_PARAM_DEC_ID" : "1583",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zone 1 – Section depth",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thickness for HYDROC in the depth zone #<N> (in dbar)."
+   },
+   "CONF_PARAM_155" :
    {
       "CONF_PARAM_DEC_ID" : "184",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1167,7 +1239,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name>  (in dbar)."
    },
-   "CONF_PARAM_147" :
+   "CONF_PARAM_156" :
    {
       "CONF_PARAM_DEC_ID" : "1184",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1175,7 +1247,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for UVP  (in dbar)."
    },
-   "CONF_PARAM_148" :
+   "CONF_PARAM_157" :
    {
       "CONF_PARAM_DEC_ID" : "1284",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1183,7 +1255,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for OPUS  (in dbar)."
    },
-   "CONF_PARAM_149" :
+   "CONF_PARAM_158" :
    {
       "CONF_PARAM_DEC_ID" : "1384",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1191,7 +1263,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for RAMSES  (in dbar)."
    },
-   "CONF_PARAM_150" :
+   "CONF_PARAM_159" :
    {
       "CONF_PARAM_DEC_ID" : "1484",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1199,7 +1271,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for MPE  (in dbar)."
    },
-   "CONF_PARAM_151" :
+   "CONF_PARAM_160" :
+   {
+      "CONF_PARAM_DEC_ID" : "1584",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Pressure threshold between zones 1 and 2",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for HYDROC  (in dbar)."
+   },
+   "CONF_PARAM_161" :
    {
       "CONF_PARAM_DEC_ID" : "185",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1207,7 +1287,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>WarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short_sensor_name> is powered ON, to provide its first sample (in milli-seconds)."
    },
-   "CONF_PARAM_152" :
+   "CONF_PARAM_162" :
    {
       "CONF_PARAM_DEC_ID" : "1185",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1215,7 +1295,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpWarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the UVP is powered ON, to provide its first sample (in milli-seconds)."
    },
-   "CONF_PARAM_153" :
+   "CONF_PARAM_163" :
    {
       "CONF_PARAM_DEC_ID" : "1285",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1223,7 +1303,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusWarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the OPUS is powered ON, to provide its first sample (in milli-seconds)."
    },
-   "CONF_PARAM_154" :
+   "CONF_PARAM_164" :
    {
       "CONF_PARAM_DEC_ID" : "1385",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1231,7 +1311,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesWarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the RAMSES is powered ON, to provide its first sample (in milli-seconds)."
    },
-   "CONF_PARAM_155" :
+   "CONF_PARAM_165" :
    {
       "CONF_PARAM_DEC_ID" : "1485",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1239,7 +1319,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeWarmUpTime_msec",
       "CONF_PARAM_DESCRIPTION" : "Time, needed after the MPE is powered ON, to provide its first sample (in milli-seconds)."
    },
-   "CONF_PARAM_156" :
+   "CONF_PARAM_166" :
+   {
+      "CONF_PARAM_DEC_ID" : "1585",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Sensor warm-up time (ms)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocWarmUpTime_msec",
+      "CONF_PARAM_DESCRIPTION" : "Time, needed after the HYDROC is powered ON, to provide its first sample (in milli-seconds)."
+   },
+   "CONF_PARAM_167" :
    {
       "CONF_PARAM_DEC_ID" : "186",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1247,7 +1335,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON (in milli-seconds)."
    },
-   "CONF_PARAM_157" :
+   "CONF_PARAM_168" :
    {
       "CONF_PARAM_DEC_ID" : "1186",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1255,7 +1343,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpPowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the UVP between a switch OFF and a switch ON (in milli-seconds)."
    },
-   "CONF_PARAM_158" :
+   "CONF_PARAM_169" :
    {
       "CONF_PARAM_DEC_ID" : "1286",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1263,7 +1351,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusPowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the OPUS between a switch OFF and a switch ON (in milli-seconds)."
    },
-   "CONF_PARAM_159" :
+   "CONF_PARAM_170" :
    {
       "CONF_PARAM_DEC_ID" : "1386",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1271,7 +1359,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesPowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the RAMSES between a switch OFF and a switch ON (in milli-seconds)."
    },
-   "CONF_PARAM_160" :
+   "CONF_PARAM_171" :
    {
       "CONF_PARAM_DEC_ID" : "1486",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1279,7 +1367,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpePowerSwitchDelayMin_msec",
       "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the MPE between a switch OFF and a switch ON (in milli-seconds)."
    },
-   "CONF_PARAM_161" :
+   "CONF_PARAM_172" :
+   {
+      "CONF_PARAM_DEC_ID" : "1586",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Sensor shut down time (ms)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocPowerSwitchDelayMin_msec",
+      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the HYDROC between a switch OFF and a switch ON (in milli-seconds)."
+   },
+   "CONF_PARAM_173" :
    {
       "CONF_PARAM_DEC_ID" : "187",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1287,7 +1383,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short_sensor_name> (0 is the rank of the first sample)."
    },
-   "CONF_PARAM_162" :
+   "CONF_PARAM_174" :
    {
       "CONF_PARAM_DEC_ID" : "1187",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1295,7 +1391,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpFirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the UVP (0 is the rank of the first sample)."
    },
-   "CONF_PARAM_163" :
+   "CONF_PARAM_175" :
    {
       "CONF_PARAM_DEC_ID" : "1287",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1303,7 +1399,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusFirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the OPUS (0 is the rank of the first sample)."
    },
-   "CONF_PARAM_164" :
+   "CONF_PARAM_176" :
    {
       "CONF_PARAM_DEC_ID" : "1387",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1311,7 +1407,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesFirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the RAMSES (0 is the rank of the first sample)."
    },
-   "CONF_PARAM_165" :
+   "CONF_PARAM_177" :
    {
       "CONF_PARAM_DEC_ID" : "1487",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1319,7 +1415,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeFirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the MPE (0 is the rank of the first sample)."
    },
-   "CONF_PARAM_166" :
+   "CONF_PARAM_178" :
+   {
+      "CONF_PARAM_DEC_ID" : "1587",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Filtering index of first valid sample",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocFirstValidSample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the HYDROC (0 is the rank of the first sample)."
+   },
+   "CONF_PARAM_179" :
    {
       "CONF_PARAM_DEC_ID" : "251",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1327,7 +1431,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the <short_sensor_name> sensor during the in air measurement phase."
    },
-   "CONF_PARAM_167" :
+   "CONF_PARAM_180" :
    {
       "CONF_PARAM_DEC_ID" : "1251",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1335,7 +1439,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpInAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the UVP sensor during the in air measurement phase."
    },
-   "CONF_PARAM_168" :
+   "CONF_PARAM_181" :
    {
       "CONF_PARAM_DEC_ID" : "1351",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1343,7 +1447,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusInAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the OPUS sensor during the in air measurement phase."
    },
-   "CONF_PARAM_169" :
+   "CONF_PARAM_182" :
    {
       "CONF_PARAM_DEC_ID" : "1451",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1351,7 +1455,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesInAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the RAMSES sensor during the in air measurement phase."
    },
-   "CONF_PARAM_170" :
+   "CONF_PARAM_183" :
    {
       "CONF_PARAM_DEC_ID" : "1551",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1359,7 +1463,15 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_MpeInAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the MPE sensor during the in air measurement phase."
    },
-   "CONF_PARAM_171" :
+   "CONF_PARAM_184" :
+   {
+      "CONF_PARAM_DEC_ID" : "1651",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Surface - Sampling period / in-air measurements (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocInAirMeasurementSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the HYDROC sensor during the in air measurement phase."
+   },
+   "CONF_PARAM_185" :
    {
       "CONF_PARAM_DEC_ID" : "188",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1367,7 +1479,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure at which the CTD pump is switched off.  As the float ascends, the code looks at the pressure and if <= CONFIG_CTDPumpStopPressure, the CTD is turned off. CTDPumpStopPressure is a firmware threshold and as such, data may continue to be collected for a limited span after the threshold is recognized. Especially in floats that return high resolution discrete data, there might be data collected shallower than the cut off, due to the discrete nature of the pressure data and also due to the time necessary for the firmware to turn off the CTD once the pressure threshold is reached. For example for SOLOII floats the CTD is switched off at 1dbar, and typically the shallowest data is from 0.5 to 0.8 dbar. This shallow data should be carefully assessed for its validity."
    },
-   "CONF_PARAM_172" :
+   "CONF_PARAM_186" :
    {
       "CONF_PARAM_DEC_ID" : "243",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1375,7 +1487,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_CTDFastSampling_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Configure CTD to 1 Hz sampling instead of 0.5 Hz usual one."
    },
-   "CONF_PARAM_173" :
+   "CONF_PARAM_187" :
    {
       "CONF_PARAM_DEC_ID" : "252",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1383,7 +1495,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpDepthZone<N>Configuration_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of  the UVP sensor configuration for the DepthZone<N>. The configuration is defined by UVP_ACQ_CONF_XX_PARAMETERS, where XX is the configuration number."
    },
-   "CONF_PARAM_174" :
+   "CONF_PARAM_188" :
    {
       "CONF_PARAM_DEC_ID" : "253",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1391,7 +1503,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpParkDriftPhaseConfiguration_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of  the UVP sensor configuration for the park drift phase. The configuration is defined by UVP_ACQ_CONF_XX_PARAMETERS, where XX is the configuration number."
    },
-   "CONF_PARAM_175" :
+   "CONF_PARAM_189" :
    {
       "CONF_PARAM_DEC_ID" : "254",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1399,7 +1511,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpParkDriftPhaseNumberAveragedImages_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of averaged images by the UVP sensor for the park drift phase."
    },
-   "CONF_PARAM_176" :
+   "CONF_PARAM_190" :
    {
       "CONF_PARAM_DEC_ID" : "255",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1407,7 +1519,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_UvpParkDriftPhaseSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the UVP during the park drift phase (in seconds)."
    },
-   "CONF_PARAM_177" :
+   "CONF_PARAM_191" :
    {
       "CONF_PARAM_DEC_ID" : "271",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1415,7 +1527,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Pixel start: index of the first wavelength transmitted in full resolution. The size of the transmitted RAMSES spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_178" :
+   "CONF_PARAM_192" :
    {
       "CONF_PARAM_DEC_ID" : "272",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1423,7 +1535,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Pixel end: index of the last wavelength transmitted in binned resolution. The size of the transmitted RAMSES spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_179" :
+   "CONF_PARAM_193" :
    {
       "CONF_PARAM_DEC_ID" : "273",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1431,7 +1543,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesOutputBinningSize_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Binning size: number of wavelengths averaged in binned resolution subset of the spectrum. The size of the transmitted RAMSES spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_180" :
+   "CONF_PARAM_194" :
    {
       "CONF_PARAM_DEC_ID" : "256",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1439,7 +1551,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Pixel start: index of the first wavelength transmitted in full resolution. The size of the transmitted OPUS spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_181" :
+   "CONF_PARAM_195" :
    {
       "CONF_PARAM_DEC_ID" : "257",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1447,7 +1559,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusOutputPixePivot_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Pixel pivot: index of the last wavelength transmitted in full resolution. The binned resolution subset starts at Pixel pivot+1. The size of the transmitted OPUS spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_182" :
+   "CONF_PARAM_196" :
    {
       "CONF_PARAM_DEC_ID" : "258",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1455,7 +1567,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Pixel end: index of the last wavelength transmitted in binned resolution. The size of the transmitted OPUS spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_183" :
+   "CONF_PARAM_197" :
    {
       "CONF_PARAM_DEC_ID" : "259",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1463,7 +1575,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusOutputBinningSize_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Binning size: number of wavelengths averaged in binned resolution subset of the spectrum. The size of the transmitted OPUS spectrum can be adapted by the user according to his need. It is possible to select the transmitted spectrum and also to extend it with a binned resolution subset for higher wavelengths."
    },
-   "CONF_PARAM_184" :
+   "CONF_PARAM_198" :
    {
       "CONF_PARAM_DEC_ID" : "260",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1471,7 +1583,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>AcquisitionMode_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "OPUS acquisition mode can either be 'calibrated' (configuration value = 2) or 'raw' (configuration value = 4) during descent or ascent phases. In 'calibrated' mode, Light spectra are corrected for Dark and Sensor Temperature onboard the OPUS and recorded as 'calibrated' LGT spectra. In 'raw' mode, raw Light spectra are recorded as 'raw' LGT spectra. In 'raw' mode, Dark spectra are taken separately and recorded as BLK with mean and standard deviation between Pixel Start and Pixel Pivot. During Parking and Surface phases, light spectra are recorded in 'raw' mode."
    },
-   "CONF_PARAM_185" :
+   "CONF_PARAM_199" :
    {
       "CONF_PARAM_DEC_ID" : "261",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1479,7 +1591,55 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_OpusDepthZone<N>DarkSubsampling_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "During descent and ascent phases, in case of 'raw' light spectrum acquisition mode, an additional raw dark spectrum is acquired automatically with successive spectrum acquisitions. The measurement interval 'DarkSubsampling' is selected by the user independently for each zone. 0 means no raw dark spectrum BLK is acquired. 1-200 means a raw dark spectrum BLK is acquired every 1 to 200 LGT spectrum acquisitions. During Parking and Surface phases, a raw dark spectrum is acquired before each raw light spectrum acquisition."
    },
-   "CONF_PARAM_186" :
+   "CONF_PARAM_200" :
+   {
+      "CONF_PARAM_DEC_ID" : "278",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Warm-up time (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocWarmUpTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the sensor Warm-up phase"
+   },
+   "CONF_PARAM_201" :
+   {
+      "CONF_PARAM_DEC_ID" : "279",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zero time (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocZeroTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the sensor Zero phase"
+   },
+   "CONF_PARAM_202" :
+   {
+      "CONF_PARAM_DEC_ID" : "280",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Flush time (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocFlushTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the sensor Flush phase"
+   },
+   "CONF_PARAM_203" :
+   {
+      "CONF_PARAM_DEC_ID" : "281",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Warm-up filter (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocWarmUpFilter_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Data bin duration over which data during Warm-up phase are averaged"
+   },
+   "CONF_PARAM_204" :
+   {
+      "CONF_PARAM_DEC_ID" : "282",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Zero filter (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocZeroFilter_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Data bin duration over which data during Zero phase are averaged"
+   },
+   "CONF_PARAM_205" :
+   {
+      "CONF_PARAM_DEC_ID" : "283",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Flush filter (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydrocFlushFilter_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Data bin duration over which data during Flush phase are averaged"
+   },
+   "CONF_PARAM_206" :
    {
       "CONF_PARAM_DEC_ID" : "244",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1487,7 +1647,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_ReduceSubSurfacePhase_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If there is no need to reach the surface (cycle with no transmission phase), the float can start a new descent phase as soon as the 2 dbar thresold is reached (instead of waiting 10 minutes after the crossing of the CONFIG_AscentEndThreshold_dbar threshold)."
    },
-   "CONF_PARAM_187" :
+   "CONF_PARAM_207" :
    {
       "CONF_PARAM_DEC_ID" : "245",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1495,7 +1655,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_BrakeAtSubSurface_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If there is no need to reach the surface (cycle with no transmission phase), the float can brake after the crossing of the CONFIG_AscentEndThreshold_dbar threshold and start a new descent phase."
    },
-   "CONF_PARAM_188" :
+   "CONF_PARAM_208" :
    {
       "CONF_PARAM_DEC_ID" : "246",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1503,7 +1663,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_PressureActivation_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Use the pressure activation feature."
    },
-   "CONF_PARAM_189" :
+   "CONF_PARAM_209" :
    {
       "CONF_PARAM_DEC_ID" : "247",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1511,7 +1671,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureActivation_dbar",
       "CONF_PARAM_DESCRIPTION" : "depth at which float is set to pressure activate"
    },
-   "CONF_PARAM_190" :
+   "CONF_PARAM_210" :
    {
       "CONF_PARAM_DEC_ID" : "248",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1519,7 +1679,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_PressureActivationTimeout_seconds",
       "CONF_PARAM_DESCRIPTION" : "The pressure activation phase starts after the first successfull auto-test and ends (with the start of the float mission) at the end of the CONFIG_AUX_PressureActivationTimeout_seconds period. During this phase the float checks the external pressure and can start its mission as soon as a CONFIG_PressureActivation_dbar pressure is measured."
    },
-   "CONF_PARAM_191" :
+   "CONF_PARAM_211" :
    {
       "CONF_PARAM_DEC_ID" : "189",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1527,7 +1687,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_BatteryValueFirstCalibrationPoint_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Count to volt conversion for battery measurements: counts measurement for the first calibration point."
    },
-   "CONF_PARAM_192" :
+   "CONF_PARAM_212" :
    {
       "CONF_PARAM_DEC_ID" : "190",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1535,7 +1695,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_BatteryValueSecondCalibrationPoint_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Count to volt conversion for battery measurements: counts measurement for the second calibration point."
    },
-   "CONF_PARAM_193" :
+   "CONF_PARAM_213" :
    {
       "CONF_PARAM_DEC_ID" : "191",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1543,7 +1703,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_BatteryValueFirstCalibrationPoint_volts",
       "CONF_PARAM_DESCRIPTION" : "Count to volt conversion for battery measurements: volts measurement for the first calibration point."
    },
-   "CONF_PARAM_194" :
+   "CONF_PARAM_214" :
    {
       "CONF_PARAM_DEC_ID" : "192",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1551,7 +1711,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_BatteryValueSecondCalibrationPoint_volts",
       "CONF_PARAM_DESCRIPTION" : "Count to volt conversion for battery measurements: volts measurement for the second calibration point."
    },
-   "CONF_PARAM_195" :
+   "CONF_PARAM_215" :
    {
       "CONF_PARAM_DEC_ID" : "193",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1559,7 +1719,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_InternalPressureValueFirstCalibrationPoint_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Count to mbar conversion for internal pressure measurements: counts measurement for the first calibration point."
    },
-   "CONF_PARAM_196" :
+   "CONF_PARAM_216" :
    {
       "CONF_PARAM_DEC_ID" : "194",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1567,7 +1727,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_InternalPressureValueSecondCalibrationPoint_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Count to mbar conversion for internal pressure measurements: counts measurement for the second calibration point."
    },
-   "CONF_PARAM_197" :
+   "CONF_PARAM_217" :
    {
       "CONF_PARAM_DEC_ID" : "195",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1575,7 +1735,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_InternalPressureValueFirstCalibrationPoint_mbar",
       "CONF_PARAM_DESCRIPTION" : "Count to mbar conversion for internal pressure measurements: mbar measurement for the first calibration point."
    },
-   "CONF_PARAM_198" :
+   "CONF_PARAM_218" :
    {
       "CONF_PARAM_DEC_ID" : "196",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
@@ -1583,7 +1743,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_InternalPressureValueSecondCalibrationPoint_mbar",
       "CONF_PARAM_DESCRIPTION" : "Count to mbar conversion for internal pressure measurements: mbar measurement for the second calibration point."
    },
-   "CONF_PARAM_199" :
+   "CONF_PARAM_219" :
    {
       "CONF_PARAM_DEC_ID" : "309",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1591,7 +1751,7 @@
       "CONF_PARAM_NAME" : "META_AUX_CTD_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the CTD sensor."
    },
-   "CONF_PARAM_200" :
+   "CONF_PARAM_220" :
    {
       "CONF_PARAM_DEC_ID" : "313",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1599,7 +1759,7 @@
       "CONF_PARAM_NAME" : "META_AUX_DO_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the DO sensor."
    },
-   "CONF_PARAM_201" :
+   "CONF_PARAM_221" :
    {
       "CONF_PARAM_DEC_ID" : "314",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1607,7 +1767,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OCR_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the OCR sensor."
    },
-   "CONF_PARAM_202" :
+   "CONF_PARAM_222" :
    {
       "CONF_PARAM_DEC_ID" : "315",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1615,7 +1775,7 @@
       "CONF_PARAM_NAME" : "META_AUX_ECO_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the ECO sensor."
    },
-   "CONF_PARAM_203" :
+   "CONF_PARAM_223" :
    {
       "CONF_PARAM_DEC_ID" : "330",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1623,7 +1783,7 @@
       "CONF_PARAM_NAME" : "META_AUX_SFET_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the SFET sensor."
    },
-   "CONF_PARAM_204" :
+   "CONF_PARAM_224" :
    {
       "CONF_PARAM_DEC_ID" : "331",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1631,7 +1791,7 @@
       "CONF_PARAM_NAME" : "META_AUX_CROVER_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the CROVER sensor."
    },
-   "CONF_PARAM_205" :
+   "CONF_PARAM_225" :
    {
       "CONF_PARAM_DEC_ID" : "332",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1639,7 +1799,7 @@
       "CONF_PARAM_NAME" : "META_AUX_SUNA_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the SUNA sensor."
    },
-   "CONF_PARAM_206" :
+   "CONF_PARAM_226" :
    {
       "CONF_PARAM_DEC_ID" : "316",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1647,7 +1807,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the UVP sensor."
    },
-   "CONF_PARAM_207" :
+   "CONF_PARAM_227" :
    {
       "CONF_PARAM_DEC_ID" : "333",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1655,7 +1815,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the OPUS sensor."
    },
-   "CONF_PARAM_208" :
+   "CONF_PARAM_228" :
    {
       "CONF_PARAM_DEC_ID" : "339",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1663,7 +1823,7 @@
       "CONF_PARAM_NAME" : "META_AUX_RAMSES_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the RAMSES sensor."
    },
-   "CONF_PARAM_209" :
+   "CONF_PARAM_229" :
    {
       "CONF_PARAM_DEC_ID" : "340",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1671,7 +1831,15 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_SERIAL_PORT_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Serial port number used by the MPE sensor."
    },
-   "CONF_PARAM_210" :
+   "CONF_PARAM_230" :
+   {
+      "CONF_PARAM_DEC_ID" : "350",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "serial port number",
+      "CONF_PARAM_NAME" : "META_AUX_HYDROC_SERIAL_PORT_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Serial port number used by the HYDROC sensor."
+   },
+   "CONF_PARAM_231" :
    {
       "CONF_PARAM_DEC_ID" : "317",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1679,7 +1847,7 @@
       "CONF_PARAM_NAME" : "META_AUX_FLOAT_SIM_CARD_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "SIM card number of the float."
    },
-   "CONF_PARAM_211" :
+   "CONF_PARAM_232" :
    {
       "CONF_PARAM_DEC_ID" : "318",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1687,7 +1855,7 @@
       "CONF_PARAM_NAME" : "META_AUX_FIRMWARE_VERSION_SECONDARY",
       "CONF_PARAM_DESCRIPTION" : "Firmware version of secondary controller board."
    },
-   "CONF_PARAM_212" :
+   "CONF_PARAM_233" :
    {
       "CONF_PARAM_DEC_ID" : "319",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1695,7 +1863,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_HW_CONF_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP HW_CONF configuration parameters: Camera_ref, Acquisition_mode, Default_acquisition_configuration, Delay_after_power_up_on_time_mode, Light_ref, Correction_table_activation, Time_between_lighting_power_up_and_trigger, Time_between_lighting_trigger_and_acquisition, Pressure_sensor_ref, Pressure offset, Storage_capacity, Minimum_remaining_memory_for_thumbnail_saving, Baud_Rate, IP_adress, Black_level, Shutter, Gain, Threshold, Aa, Exp, Pixel_Size, Image_volume, Calibration_date, Last_parameters_modification, Operator_email, 18 parameters defining the lower bounds (in µM ESD) of the 18 classes of particles sizes."
    },
-   "CONF_PARAM_213" :
+   "CONF_PARAM_234" :
    {
       "CONF_PARAM_DEC_ID" : "320",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1703,7 +1871,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_01_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_01 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_214" :
+   "CONF_PARAM_235" :
    {
       "CONF_PARAM_DEC_ID" : "321",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1711,7 +1879,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_02_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_02 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_215" :
+   "CONF_PARAM_236" :
    {
       "CONF_PARAM_DEC_ID" : "322",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1719,7 +1887,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_03_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_03 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_216" :
+   "CONF_PARAM_237" :
    {
       "CONF_PARAM_DEC_ID" : "323",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1727,7 +1895,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_04_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_04 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_217" :
+   "CONF_PARAM_238" :
    {
       "CONF_PARAM_DEC_ID" : "324",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1735,7 +1903,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_05_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_05 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_218" :
+   "CONF_PARAM_239" :
    {
       "CONF_PARAM_DEC_ID" : "325",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1743,7 +1911,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_06_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_06 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_219" :
+   "CONF_PARAM_240" :
    {
       "CONF_PARAM_DEC_ID" : "326",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1751,7 +1919,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_07_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_07 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_220" :
+   "CONF_PARAM_241" :
    {
       "CONF_PARAM_DEC_ID" : "327",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1759,7 +1927,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_08_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_08 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_221" :
+   "CONF_PARAM_242" :
    {
       "CONF_PARAM_DEC_ID" : "328",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1767,7 +1935,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_09_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_09 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_222" :
+   "CONF_PARAM_243" :
    {
       "CONF_PARAM_DEC_ID" : "329",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1775,7 +1943,7 @@
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_10_PARAMETERS",
       "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_10 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
    },
-   "CONF_PARAM_223" :
+   "CONF_PARAM_244" :
    {
       "CONF_PARAM_DEC_ID" : "334",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1783,7 +1951,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_FIRMWARE_VERSION",
       "CONF_PARAM_DESCRIPTION" : "Firmware version of the OPUS sensor"
    },
-   "CONF_PARAM_224" :
+   "CONF_PARAM_245" :
    {
       "CONF_PARAM_DEC_ID" : "335",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1791,7 +1959,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO",
       "CONF_PARAM_DESCRIPTION" : "Serial number of the OPUS sensor lamp module"
    },
-   "CONF_PARAM_225" :
+   "CONF_PARAM_246" :
    {
       "CONF_PARAM_DEC_ID" : "336",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1799,7 +1967,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_LENGTH",
       "CONF_PARAM_DESCRIPTION" : "Length of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_226" :
+   "CONF_PARAM_247" :
    {
       "CONF_PARAM_DEC_ID" : "337",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1807,7 +1975,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_INTENSITIES",
       "CONF_PARAM_DESCRIPTION" : "Intensities of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_227" :
+   "CONF_PARAM_248" :
    {
       "CONF_PARAM_DEC_ID" : "338",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1815,7 +1983,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_WAVELENGTHS",
       "CONF_PARAM_DESCRIPTION" : "Wavelengths of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_228" :
+   "CONF_PARAM_249" :
    {
       "CONF_PARAM_DEC_ID" : "341",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1823,7 +1991,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_ACQUISITION_AVERAGE",
       "CONF_PARAM_DESCRIPTION" : "The number of internal optical sensor measurements that are averaged to generate a reported data point from the MPE optical sensor."
    },
-   "CONF_PARAM_229" :
+   "CONF_PARAM_250" :
    {
       "CONF_PARAM_DEC_ID" : "342",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1831,7 +1999,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_ACQUISITION_RATE",
       "CONF_PARAM_DESCRIPTION" : "The rate in Hz at which the internal optical sensor is making measurements. The Rate parameter combined with the Average parameter sets the effective output rate of reported data points from the MPE sensor (If Average = 123, and Rate = 125, then MPE output rate is approximately 1Hz)."
    },
-   "CONF_PARAM_230" :
+   "CONF_PARAM_251" :
    {
       "CONF_PARAM_DEC_ID" : "343",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1839,7 +2007,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W",
       "CONF_PARAM_DESCRIPTION" : "The responsivity in raw MPE output per calibrated units for the optical sensor in Water.  To calibrate data collected in water, divide the MPE optical sensor output by ResponsivityW."
    },
-   "CONF_PARAM_231" :
+   "CONF_PARAM_252" :
    {
       "CONF_PARAM_DEC_ID" : "344",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1847,7 +2015,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A",
       "CONF_PARAM_DESCRIPTION" : "The responsivity in raw MPE output per calibrated units for the optical sensor in Air. To calibrate data collected in air, divide the MPE optical sensor output by ResponsivityA."
    },
-   "CONF_PARAM_232" :
+   "CONF_PARAM_253" :
    {
       "CONF_PARAM_DEC_ID" : "345",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1855,7 +2023,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_GAIN_HM",
       "CONF_PARAM_DESCRIPTION" : "The ratio of gains between the High and Medium stages of the MPE optical sensor electronics. For data traceability only. Not necessary for data processing. "
    },
-   "CONF_PARAM_233" :
+   "CONF_PARAM_254" :
    {
       "CONF_PARAM_DEC_ID" : "346",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1863,7 +2031,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_GAIN_ML",
       "CONF_PARAM_DESCRIPTION" : "The ratio of gains between the Medium and Low stages of the MPE optical sensor electronics. For data traceability only. Not necessary for data processing. "
    },
-   "CONF_PARAM_234" :
+   "CONF_PARAM_255" :
    {
       "CONF_PARAM_DEC_ID" : "347",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1871,7 +2039,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_H",
       "CONF_PARAM_DESCRIPTION" : "The High gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_235" :
+   "CONF_PARAM_256" :
    {
       "CONF_PARAM_DEC_ID" : "348",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1879,7 +2047,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_M",
       "CONF_PARAM_DESCRIPTION" : "The Medium gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_236" :
+   "CONF_PARAM_257" :
    {
       "CONF_PARAM_DEC_ID" : "349",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1887,7 +2055,31 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_L",
       "CONF_PARAM_DESCRIPTION" : "The Low gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_237" :
+   "CONF_PARAM_258" :
+   {
+      "CONF_PARAM_DEC_ID" : "351",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "SENSOR SN=CO2T-0821-004",
+      "CONF_PARAM_NAME" : "META_AUX_HYDROC_SERIAL_NO",
+      "CONF_PARAM_DESCRIPTION" : "Serial number of the HYDROC sensor"
+   },
+   "CONF_PARAM_259" :
+   {
+      "CONF_PARAM_DEC_ID" : "352",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "HYDROC_BOARD Firmware=20130911",
+      "CONF_PARAM_NAME" : "META_AUX_HYDROC_FIRMWARE_VERSION",
+      "CONF_PARAM_DESCRIPTION" : "Firmware version of the HYDROC sensor"
+   },
+   "CONF_PARAM_260" :
+   {
+      "CONF_PARAM_DEC_ID" : "353",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "HYDROC_BOARD Hardware=2018042401",
+      "CONF_PARAM_NAME" : "META_AUX_HYDROC_HARDWARE_VERSION",
+      "CONF_PARAM_DESCRIPTION" : "Hardware version of the HYDROC sensor"
+   },
+   "CONF_PARAM_261" :
    {
       "CONF_PARAM_DEC_ID" : "116003",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1895,7 +2087,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_238" :
+   "CONF_PARAM_262" :
    {
       "CONF_PARAM_DEC_ID" : "116004",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1903,7 +2095,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_239" :
+   "CONF_PARAM_263" :
    {
       "CONF_PARAM_DEC_ID" : "113002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1911,7 +2103,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaAngle_angularDeg",
       "CONF_PARAM_DESCRIPTION" : "Angle of Beta measurements  (in degrees) "
    },
-   "CONF_PARAM_240" :
+   "CONF_PARAM_264" :
    {
       "CONF_PARAM_DEC_ID" : "133011",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1919,7 +2111,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of EcoBeta  #1measurements (in nanometer)."
    },
-   "CONF_PARAM_241" :
+   "CONF_PARAM_265" :
    {
       "CONF_PARAM_DEC_ID" : "133010",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1927,7 +2119,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco Beta  #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_242" :
+   "CONF_PARAM_266" :
    {
       "CONF_PARAM_DEC_ID" : "123103",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1935,7 +2127,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_243" :
+   "CONF_PARAM_267" :
    {
       "CONF_PARAM_DEC_ID" : "123101",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1943,7 +2135,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_244" :
+   "CONF_PARAM_268" :
    {
       "CONF_PARAM_DEC_ID" : "123102",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1951,7 +2143,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_245" :
+   "CONF_PARAM_269" :
    {
       "CONF_PARAM_DEC_ID" : "123100",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1959,7 +2151,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_246" :
+   "CONF_PARAM_270" :
    {
       "CONF_PARAM_DEC_ID" : "123003",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1967,7 +2159,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_247" :
+   "CONF_PARAM_271" :
    {
       "CONF_PARAM_DEC_ID" : "123001",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1975,7 +2167,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_248" :
+   "CONF_PARAM_272" :
    {
       "CONF_PARAM_DEC_ID" : "123002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1983,7 +2175,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_249" :
+   "CONF_PARAM_273" :
    {
       "CONF_PARAM_DEC_ID" : "123000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1991,7 +2183,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_250" :
+   "CONF_PARAM_274" :
    {
       "CONF_PARAM_DEC_ID" : "113000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1999,7 +2191,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_251" :
+   "CONF_PARAM_275" :
    {
       "CONF_PARAM_DEC_ID" : "132013",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2007,7 +2199,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_252" :
+   "CONF_PARAM_276" :
    {
       "CONF_PARAM_DEC_ID" : "132023",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2015,7 +2207,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth2_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_253" :
+   "CONF_PARAM_277" :
    {
       "CONF_PARAM_DEC_ID" : "132033",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2023,7 +2215,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth3_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_254" :
+   "CONF_PARAM_278" :
    {
       "CONF_PARAM_DEC_ID" : "132012",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2031,7 +2223,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #1measurements (in nanometer)."
    },
-   "CONF_PARAM_255" :
+   "CONF_PARAM_279" :
    {
       "CONF_PARAM_DEC_ID" : "132022",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2039,7 +2231,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength2_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_256" :
+   "CONF_PARAM_280" :
    {
       "CONF_PARAM_DEC_ID" : "132032",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2047,7 +2239,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength3_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_257" :
+   "CONF_PARAM_281" :
    {
       "CONF_PARAM_DEC_ID" : "112000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2055,7 +2247,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_258" :
+   "CONF_PARAM_282" :
    {
       "CONF_PARAM_DEC_ID" : "111000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2063,7 +2255,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_259" :
+   "CONF_PARAM_283" :
    {
       "CONF_PARAM_DEC_ID" : "111007",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2071,7 +2263,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_260" :
+   "CONF_PARAM_284" :
    {
       "CONF_PARAM_DEC_ID" : "111008",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2079,7 +2271,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
    },
-   "CONF_PARAM_261" :
+   "CONF_PARAM_285" :
    {
       "CONF_PARAM_DEC_ID" : "116000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2087,7 +2279,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_262" :
+   "CONF_PARAM_286" :
    {
       "CONF_PARAM_DEC_ID" : "116005",
       "CONF_PARAM_TYPE" : "CONFIG",

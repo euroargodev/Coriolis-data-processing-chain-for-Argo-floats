@@ -122,6 +122,8 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 15];
          case 'MPE'
             sensorList = [sensorList 17];
+         case 'HYDROC'
+            sensorList = [sensorList 18];
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...
@@ -184,6 +186,7 @@ switch (a_decoderId)
          {'OPUS'} {0} {[]}; ...
          {'UVP6'} {0} {[]}; ...
          {'MPE'} {0} {[]}; ...
+         {'HYDROC'} {0} {[]}; ...
          ];
    otherwise
       fprintf('ERROR: Static configuration parameters not defined yet for deciId #%d\n', ...
@@ -304,6 +307,10 @@ for idConfig = 1:length(configInfoList)
             end
          elseif (sensorNum == 15)
             for miscNum = [54:57 61:70]
+               configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
+            end
+         elseif (sensorNum == 18)
+            for miscNum = 54:59
                configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
             end
          end

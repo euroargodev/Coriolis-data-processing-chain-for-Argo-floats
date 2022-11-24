@@ -606,7 +606,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
-      6900790, 6901880, 6903229, 6903795, 6903703, 6902802]))
+      6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -708,6 +708,25 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(id) = tabRank(idF101(1));
          tabRankByCycle(id) = tabRankByCycle(idF101(1));
          tabRankByDate(id) = tabRankByDate(idF101(1)); 
+         tabSession(idF101) = tabSession(idF101(1));
+         tabCompleted(idF101) = 1;
+         % cycle #116 in 2 sessions
+         idF116 = find(tabCyNum == 116);
+         sessions = unique(tabSession(idF116));
+         id = find((tabCyNum == 116) & (tabSession == sessions(2)));
+         tabRank(id) = tabRank(idF116(1));
+         tabRankByCycle(id) = tabRankByCycle(idF116(1));
+         tabRankByDate(id) = tabRankByDate(idF116(1)); 
+         tabSession(idF116) = tabSession(idF116(1));
+         tabCompleted(idF116) = 1;
+         % cycle #120 in 2 sessions
+         idF120 = find(tabCyNum == 120);
+         sessions = unique(tabSession(idF120));
+         id = find((tabCyNum == 120) & (tabSession == sessions(2)));
+         tabRank(id) = tabRank(idF120(1));
+         tabRankByCycle(id) = tabRankByCycle(idF120(1));
+         tabRankByDate(id) = tabRankByDate(idF120(1)); 
+         tabSession(idF120) = tabSession(idF120(1));
       case 6903229
          % cycle #120 in 2 sessions
          idRef120 = find((tabCyNum == 120) & (tabBase == 1));
@@ -802,6 +821,38 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idF:end) = tabRank(idF:end) + offset;
          offset = unique(tabRankByCycle(idCy1)) - tabRankByCycle(idF) + 1;
          tabRankByCycle(idF:end) = tabRankByCycle(idF:end) + offset;
+      case 6902861
+         % for delayed cycle #129, second Iridium session is also
+         % transmitted, it should be in dedicated buffer
+         idF = find((tabCyNum == 128) & (tabPackType == 0));
+         rank128 = tabRank(idF(2));
+         rankByCycle128 = tabRankByCycle(idF(2));
+         idF = find((tabCyNum == 129) & (tabPackType == 0));
+         id129_1 = idF(1);
+         id129_2 = idF(2);
+         tabRank(id129_1:id129_2-1) = rank128 + 1;
+         tabRankByCycle(id129_1:id129_2-1) = rankByCycle128 + 1;
+         tabDeep(id129_1:id129_2-1) = 1;
+         idF = find(tabCyNum == 129);
+         tabRank(id129_2:idF(end)) = rank128 + 2;
+         tabRankByCycle(id129_2:idF(end)) = rankByCycle128 + 2;
+         tabGo(idF) = 1;
+         idF = find((tabCyNum == 130) & (tabPackType == 0));
+         id130_1 = idF(1);
+         id130_2 = idF(2);
+         tabRank(id130_1:id129_1-1) = rank128 + 3;
+         tabRankByCycle(id130_1:id129_1-1) = rankByCycle128 + 3;
+         tabRank(id130_2:end) = tabRank(id130_2:end) + 2;
+         tabRankByCycle(id130_2:end) = tabRankByCycle(id130_2:end) + 1;
+      case 7900522
+         % cycle #107 in 2 sessions
+         id = find((tabCyNum == 107) & (tabBase == 1));
+         id = id(1);
+         tabRank(tabCyNum == 107) = tabRank(id);
+         tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 107) = tabRankByDate(id);   
+         tabSession(tabCyNum == 107) = tabSession(id);   
+         tabCompleted(tabCyNum == 107) = 1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
@@ -1081,21 +1132,21 @@ idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForChec
 if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
    if (length(idPackTech1) > 1)
       % specific
-      if (g_decArgo_floatNum ~= 6902802)
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
       end
    end
    if (length(idPackTech2) > 1)
       % specific
-      if (g_decArgo_floatNum ~= 6902802)
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
       end
    end
    if (length(idPackProg) > 1)
       % specific
-      if (g_decArgo_floatNum ~= 6902802)
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackProg));
       end
