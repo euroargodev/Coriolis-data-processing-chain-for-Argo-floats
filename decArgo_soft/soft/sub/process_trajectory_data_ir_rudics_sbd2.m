@@ -170,6 +170,7 @@ cycleNumList = sort(unique(a_tabTrajIndex(:, 2)));
 profNumList = sort(unique(a_tabTrajIndex(:, 3)));
 for idCyc = 1:length(cycleNumList)
    cycleNum = cycleNumList(idCyc);
+
    for idPrf = 1:length(profNumList)
       profNum = profNumList(idPrf);
       
@@ -644,6 +645,14 @@ for idCyc = 1:length(cycleNumList)
                id = idPackData(idMeas);
                
                offsetInDataArray = 0;
+
+               % measurements from AUX sensor should be excluded because the RPP has
+               % no 'sensorNumber' information (and then AUX data cannot be excluded
+               % from 'b' TRAJ file
+               if (a_tabTrajData{id}.sensorNumber > 100)
+                  continue
+               end
+
                listParam = a_tabTrajData{id}.paramList;
                for idParam = 1:length(listParam)
                   paramName = listParam(idParam).name;

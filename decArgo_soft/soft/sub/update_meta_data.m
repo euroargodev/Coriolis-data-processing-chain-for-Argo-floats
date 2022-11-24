@@ -3806,7 +3806,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE380 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE380 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3836,7 +3836,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE412 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE412 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3866,7 +3866,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE443 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE443 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3896,7 +3896,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE490 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE490 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3926,7 +3926,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE555 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE555 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3956,7 +3956,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE670 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE670 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -3986,7 +3986,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWNWELLING_PAR calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
@@ -4016,7 +4016,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR2 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWNWELLING_PAR2 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'MPE') && ...
@@ -4270,7 +4270,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
@@ -4347,7 +4347,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
@@ -4403,7 +4403,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent BBP532 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing BBP532 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
@@ -4464,7 +4464,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
@@ -4693,7 +4693,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
@@ -4761,7 +4761,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
@@ -4830,7 +4830,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
@@ -4909,7 +4909,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
@@ -5117,7 +5117,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent CDOM calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing CDOM calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
@@ -5349,7 +5349,7 @@ switch (a_decoderId)
 
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
-                  fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...
+                  fprintf('ERROR: Float #%d: missing NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
                   return
                elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
@@ -5504,7 +5504,7 @@ switch (a_decoderId)
 
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
-                  fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...
+                  fprintf('ERROR: Float #%d: missing NITRATE calibration information\n', ...
                      g_decArgo_floatNum);
                   return
                elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
@@ -5661,7 +5661,7 @@ switch (a_decoderId)
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: inconsistent NITRATE calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing NITRATE calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'SUNA') && ...
@@ -6635,7 +6635,7 @@ switch (a_paramName)
 
    case {'SIDE_SCATTERING_TURBIDITY'}
       o_param = 'SIDE_SCATTERING_TURBIDITY';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
       o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6645,7 +6645,7 @@ switch (a_paramName)
 
    case {'TURBIDITY'}
       o_param = 'TURBIDITY';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
       o_paramUnits = 'ntu';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6655,7 +6655,7 @@ switch (a_paramName)
 
    case {'VOLTAGE_TURBIDITY'}
       o_param = 'VOLTAGE_TURBIDITY';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6665,7 +6665,7 @@ switch (a_paramName)
 
    case {'TURBIDITY2'}
       o_param = 'TURBIDITY2';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
       o_paramUnits = 'ntu';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6675,7 +6675,7 @@ switch (a_paramName)
 
    case {'SIDE_SCATTERING_TURBIDITY_STD'}
       o_param = 'SIDE_SCATTERING_TURBIDITY_STD';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
       o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6685,7 +6685,7 @@ switch (a_paramName)
 
    case {'SIDE_SCATTERING_TURBIDITY_MED'}
       o_param = 'SIDE_SCATTERING_TURBIDITY_MED';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
       o_paramUnits = 'count';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6695,7 +6695,7 @@ switch (a_paramName)
 
    case {'VOLTAGE_TURBIDITY_STD'}
       o_param = 'VOLTAGE_TURBIDITY_STD';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6705,7 +6705,7 @@ switch (a_paramName)
 
    case {'VOLTAGE_TURBIDITY_MED'}
       o_param = 'VOLTAGE_TURBIDITY_MED';
-      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';

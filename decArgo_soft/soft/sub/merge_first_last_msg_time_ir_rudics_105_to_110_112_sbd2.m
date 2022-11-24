@@ -128,6 +128,7 @@ uCycleNum = sort(unique(cycleNumList));
 idDel = [];
 for idCyc = 1:length(uCycleNum)
    cycleNum = uCycleNum(idCyc);
+
    if (cycleNum > 0)
       
       idData = find( ...
@@ -209,6 +210,7 @@ if (~isempty(a_tabTrajNCycle))
    uCycleNum = sort(unique(cycleNumList));
    for idCyc = 1:length(uCycleNum)
       cycleNum = uCycleNum(idCyc);
+
       if (cycleNum > 0)
          
          idData = find( ...

@@ -21,6 +21,7 @@ function generate_json_float_meta_arvor_c_ir_sbd()
 
 % meta-data file exported from Coriolis data base
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\ARVORC_dbExport.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_ArvorC_20220912.txt';
 
 % list of concerned floats
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';

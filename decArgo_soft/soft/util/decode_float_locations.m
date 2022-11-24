@@ -997,7 +997,7 @@ for idFile = 1:length(fileNames)
    floatFileName = [archiveFloatFilesDirectory fileName(1:end-3)];
 
    % read float file
-   [error, events] = read_apx_apf11_ir_system_log_file(floatFileName, 0);
+   [error, events] = read_apx_apf11_ir_system_log_file(floatFileName, 0, 'GPS');
    if (error == 1)
       fprintf('ERROR: Float #%d: Error in file: %s - ignored\n', ...
          a_floatNum, floatFileName);

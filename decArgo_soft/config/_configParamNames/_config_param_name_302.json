@@ -316,7 +316,7 @@
       "CONF_PARAM_DEC_ID" : "500",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the descent to parking pressure in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToParkPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_41" :
@@ -324,7 +324,7 @@
       "CONF_PARAM_DEC_ID" : "501",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the drift at parking pressure in the depth zone #<Z> (in minutes).",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtParkPresSamplingPeriod_minutes",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_42" :
@@ -332,7 +332,7 @@
       "CONF_PARAM_DEC_ID" : "502",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the descent to profile pressure in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_43" :
@@ -340,7 +340,7 @@
       "CONF_PARAM_DEC_ID" : "503",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the drift at profile pressure in the depth zone #<Z> (in minutes).",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtProfilePresSamplingPeriod_minutes",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_44" :
@@ -348,7 +348,7 @@
       "CONF_PARAM_DEC_ID" : "504",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period of the <Sensor> during the ascending profile in the depth zone #<Z> (in seconds).",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>AscentSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_45" :
@@ -468,7 +468,7 @@
       "CONF_PARAM_DEC_ID" : "613",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Maximum value of transmitted CTD salinity measurements (in milli-PSU).",
-      "CONF_PARAM_NAME" : "CONFIG_CtdIgnoreSamplesWhenPumpActive_LOGICAL",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_CtdIgnoreSamplesWhenPumpActive_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Ignore sample measurements acquired while the hydraulic pump is running (Yes=1/No=0). "
    },
    "CONF_PARAM_60" :

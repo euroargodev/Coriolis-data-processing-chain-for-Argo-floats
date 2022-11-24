@@ -60,7 +60,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220822\';
+% g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220822\';
 % g_NTP_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output

@@ -83,6 +83,7 @@ DIR_INPUT_NC_FILES = 'H:\archive_201801\aoml\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'D:\202209-ArgoData\coriolis\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';

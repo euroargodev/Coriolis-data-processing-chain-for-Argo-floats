@@ -491,6 +491,14 @@ for idP = 1:length(a_tabProfiles)
          %          end
       end
    end
+
+   % to put CYCLOPS and SEAPOINT data to PROF_AUX files
+   if ((prof.sensorNumber == 7) && any(strcmp({prof.paramList.name}, 'FLUORESCENCE_VOLTAGE_CHLA')))
+      a_tabProfiles(idP).sensorNumber = 102;
+   end
+   if ((prof.sensorNumber == 8) && any(strcmp({prof.paramList.name}, 'VOLTAGE_TURBIDITY')))
+      a_tabProfiles(idP).sensorNumber = 103;
+   end
 end
 
 o_tabProfiles = a_tabProfiles;

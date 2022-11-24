@@ -104,6 +104,26 @@ for idField = 1:length(confDataFieldNames)
             o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
          end
       end
+   elseif (ismember(a_decoderId, [303]))
+      if (ismember(o_ncParamIds(idField), [1500:1506 1508])) % one set for each AUX <short_sensor_name>
+         for idZ = 1:5
+            paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
+               [{'<N>'} {num2str(idZ)}]);
+            nbExtra = nbExtra + 1;
+            o_ncParamIds(length(confDataFieldNames)+nbExtra) = o_ncParamIds(idField) + 1000;
+            o_ncParamNames(length(confDataFieldNames)+nbExtra) = {paramName};
+            o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
+         end
+      elseif (ismember(o_ncParamIds(idField), [1509])) % one set for each AUX <short_sensor_name>
+         for idZ = 1:5
+            paramName = create_param_name_ir_rudics_sbd2(confItemData.CONF_PARAM_NAME, ...
+               [{'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);
+            nbExtra = nbExtra + 1;
+            o_ncParamIds(length(confDataFieldNames)+nbExtra) = o_ncParamIds(idField) + 1000;
+            o_ncParamNames(length(confDataFieldNames)+nbExtra) = {paramName};
+            o_ncParamDescriptions(length(confDataFieldNames)+nbExtra) = o_ncParamDescriptions(idField);
+         end
+      end
    end
 end
 

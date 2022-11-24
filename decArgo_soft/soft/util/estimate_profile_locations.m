@@ -219,7 +219,7 @@ end
 
 % TEMP - START / look for QC = 9 loc or grounded cycles
 % fprintf('@@FLOAT@@%d', a_floatNum);
-% 
+%
 % if (any((a_floatData.positionQc == g_decArgo_qcMissing)))
 %    fprintf('@@QC=9 (%d)', length(find(a_floatData.positionQc == g_decArgo_qcMissing)));
 % end
@@ -230,9 +230,9 @@ end
 %       (a_floatData.positionQc == g_decArgo_qcMissing)) & ...
 %       (a_floatData.grounded == 1))));
 % end
-% 
+%
 % fprintf('\n');
-% 
+%
 % return
 % TEMP - END
 
@@ -626,7 +626,7 @@ for idLoop = 1:2
       % plot legend
       legend(legendPlots, legendLabels, 'Location', 'NorthEastOutside', 'Tag', 'Legend');
 
-      if (done || (range == RANGE_STOP))
+      if (done || (range == g_estProfLoc_lastRange))
          print('-dpng', [a_outputDir '/' pngFileName]);
       end
 
@@ -1506,7 +1506,7 @@ for idP = 1:length(a_lat)
       idLigEnd = length(lat);
    end
    %    latVal = lat(fliplr(idLigStart:idLigEnd));
-   
+
    % a_lon(idP) is in the [-180, 180[ interval
    % it can be in 3 zones:
    % case 1: [-180, minLon[
@@ -1516,12 +1516,12 @@ for idP = 1:length(a_lat)
       % case 2
       idColStart = find(lon <= a_lon(idP), 1, 'last');
       idColEnd = find(lon >= a_lon(idP), 1, 'first');
-      
+
       elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
       for idL = idLigStart:idLigEnd
          elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
       end
-      
+
       %       lonVal = lon(idColStart:idColEnd);
    elseif (a_lon(idP) < minLon)
       % case 1
@@ -1529,16 +1529,16 @@ for idP = 1:length(a_lat)
       for idL = idLigStart:idLigEnd
          elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
       end
-      
+
       %       lonVal1 = lon(end);
-      
+
       elev2 = nan(length(idLigStart:idLigEnd), 1);
       for idL = idLigStart:idLigEnd
          elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
       end
-      
+
       %       lonVal2 = lon(1) + 360;
-      
+
       elev = cat(2, elev1, elev2);
       %       lonVal = cat(1, lonVal1, lonVal2);
       clear elev1 elev2
@@ -1548,16 +1548,16 @@ for idP = 1:length(a_lat)
       for idL = idLigStart:idLigEnd
          elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
       end
-      
+
       %       lonVal1 = lon(end);
-      
+
       elev2 = nan(length(idLigStart:idLigEnd), 1);
       for idL = idLigStart:idLigEnd
          elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
       end
-      
+
       %       lonVal2 = lon(1) + 360;
-      
+
       elev = cat(2, elev1, elev2);
       %       lonVal = cat(1, lonVal1, lonVal2);
       clear elev1 elev2
@@ -1583,7 +1583,7 @@ for idP = 1:length(a_lat)
          end
       end
    end
-   
+
    clear elev
 end
 
@@ -1741,7 +1741,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -1828,7 +1828,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -1841,18 +1841,18 @@ o_ncData = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
       return
    end
-   
+
    % retrieve variables from NetCDF file
    for idVar = 1:length(a_wantedVars)
       varName = a_wantedVars{idVar};
-      
+
       if (var_is_present_dec_argo(fCdf, varName))
          varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
          o_ncData = [o_ncData {varName} {varValue}];
@@ -1861,9 +1861,9 @@ if (exist(a_ncPathFileName, 'file') == 2)
          %             varName, a_ncPathFileName);
          o_ncData = [o_ncData {varName} {' '}];
       end
-      
+
    end
-   
+
    netcdf.close(fCdf);
 end
 
@@ -1884,7 +1884,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -2227,12 +2227,12 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          % case A3
          idColStart = find(lon <= a_lonMin, 1, 'last');
          idColEnd = find(lon >= a_lonMax, 1, 'first');
-         
+
          elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal = lon(idColStart:idColEnd);
       elseif ((a_lonMin < minLon) && ...
             (a_lonMax >= minLon) && (a_lonMax <= maxLon))
@@ -2241,19 +2241,19 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
          end
-         
+
          lonVal1 = lon(end);
-         
+
          idColStart = 1;
          idColEnd = find(lon >= a_lonMax, 1, 'first');
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal2 = lon(idColStart:idColEnd) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2262,21 +2262,21 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          % case A4
          idColStart = find(lon <= a_lonMin, 1, 'last');
          idColEnd = length(lon);
-         
+
          elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal1 = lon(idColStart:idColEnd);
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), 1);
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
          end
-         
+
          lonVal2 = lon(1) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2287,16 +2287,16 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
          end
-         
+
          lonVal1 = lon(end);
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), 1);
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
          end
-         
+
          lonVal2 = lon(1) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2307,43 +2307,43 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
          end
-         
+
          lonVal1 = lon(end);
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), 1);
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
          end
-         
+
          lonVal2 = lon(1) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2         
+         clear elev1 elev2 lonVal1 lonVal2
       end
    else % case B
       if (a_lonMin <= maxLon) && (a_lonMax >= minLon + 360)
          % case B2
          idColStart = find(lon <= a_lonMin, 1, 'last');
          idColEnd = length(lon);
-         
+
          elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal1 = lon(idColStart:idColEnd);
-         
+
          idColStart = 1;
          idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal2 = lon(idColStart:idColEnd) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2351,21 +2351,21 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          % case B1
          idColStart = find(lon <= a_lonMin, 1, 'last');
          idColEnd = length(lon);
-         
+
          elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal1 = lon(idColStart:idColEnd);
-                  
+
          elev2 = nan(length(idLigStart:idLigEnd), 1);
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
          end
-         
+
          lonVal2 = lon(1) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2375,19 +2375,19 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
          end
-         
+
          lonVal1 = lon(end);
-         
+
          idColStart = 1;
          idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-         
+
          lonVal2 = lon(idColStart:idColEnd) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
@@ -2397,31 +2397,31 @@ if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
          for idL = idLigStart:idLigEnd
             elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
          end
-         
+
          lonVal1 = lon(end);
-         
+
          elev2 = nan(length(idLigStart:idLigEnd), 1);
          for idL = idLigStart:idLigEnd
             elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
          end
-         
+
          lonVal2 = lon(1) + 360;
-         
+
          elev = cat(2, elev1, elev2);
          lonVal = cat(1, lonVal1, lonVal2);
          clear elev1 elev2 lonVal1 lonVal2
       end
-      
+
    end
 else % return the whole set of longitudes
    idColStart = 1;
    idColEnd = length(lon);
-   
+
    elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
    for idL = idLigStart:idLigEnd
       elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
    end
-   
+
    lonVal = lon(idColStart:idColEnd);
 end
 
@@ -2445,7 +2445,7 @@ function [range,A12,A21]=distance_lpo(lat,long,argu1,argu2);
 %
 %         [RANGE,AF,AR]=DIST(LAT,LONG) computes the ranges RANGE between
 %         points specified in the LAT and LONG vectors (decimal degrees with
-%         positive indicating north/east). Forward and reverse bearings 
+%         positive indicating north/east). Forward and reverse bearings
 %         (degrees) are returned in AF, AR.
 %
 %         [RANGE,GLAT,GLONG]=DIST(LAT,LONG,N) computes N-point geodesics
@@ -2503,7 +2503,7 @@ function [range,A12,A21]=distance_lpo(lat,long,argu1,argu2);
 %C PETER WORCESTER, AS TOLD TO BRUCE CORNUELLE...1983 MAY 27
 %C
 
-spheroid='wgs84'; 
+spheroid='wgs84';
 geodes=0;
 if (nargin >= 3),
    if (isstr(argu1)),
@@ -2517,32 +2517,32 @@ if (nargin >= 3),
 end;
 
 if (spheroid(1:3)=='sph'),
-      A = 6371000.0;
-      B = A;
-      E = sqrt(A*A-B*B)/A;
-      EPS= E*E/(1-E*E);
-elseif (spheroid(1:3)=='cla'), 
-      A = 6378206.4E0;
-      B = 6356583.8E0;
-      E= sqrt(A*A-B*B)/A;
-      EPS = E*E/(1.-E*E);
+   A = 6371000.0;
+   B = A;
+   E = sqrt(A*A-B*B)/A;
+   EPS= E*E/(1-E*E);
+elseif (spheroid(1:3)=='cla'),
+   A = 6378206.4E0;
+   B = 6356583.8E0;
+   E= sqrt(A*A-B*B)/A;
+   EPS = E*E/(1.-E*E);
 elseif(spheroid(1:3)=='iau'),
-      A = 6378160.e0;
-      B = 6356774.516E0;
-      E = sqrt(A*A-B*B)/A; 
-      EPS = E*E/(1.-E*E);
+   A = 6378160.e0;
+   B = 6356774.516E0;
+   E = sqrt(A*A-B*B)/A;
+   EPS = E*E/(1.-E*E);
 elseif(spheroid(1:3)=='wgs'),
 
-%c on 9/11/88, Peter Worcester gave me the constants for the 
-%c WGS84 spheroid, and he gave A (semi-major axis), F = (A-B)/A
-%c (flattening) (where B is the semi-minor axis), and E is the
-%c eccentricity, E = ( (A**2 - B**2)**.5 )/ A
-%c the numbers from peter are: A=6378137.; 1/F = 298.257223563
-%c E = 0.081819191
-      A = 6378137.;
-      E = 0.081819191;
-      B = sqrt(A.^2 - (A*E).^2);
-      EPS= E*E/(1.-E*E);
+   %c on 9/11/88, Peter Worcester gave me the constants for the
+   %c WGS84 spheroid, and he gave A (semi-major axis), F = (A-B)/A
+   %c (flattening) (where B is the semi-minor axis), and E is the
+   %c eccentricity, E = ( (A**2 - B**2)**.5 )/ A
+   %c the numbers from peter are: A=6378137.; 1/F = 298.257223563
+   %c E = 0.081819191
+   A = 6378137.;
+   E = 0.081819191;
+   B = sqrt(A.^2 - (A*E).^2);
+   EPS= E*E/(1.-E*E);
 
 else
    error('dist: Unknown spheroid specified!');
@@ -2550,7 +2550,7 @@ end;
 
 
 NN=max(size(lat));
-if (NN ~= max(size(long))), 
+if (NN ~= max(size(long))),
    error('dist: Lat, Long vectors of different sizes!');
 end
 
@@ -2561,21 +2561,21 @@ lat=lat(:)*pi/180;     % convert to radians
 long=long(:)*pi/180;
 
 lat(lat==0)=eps*ones(sum(lat==0),1);  % Fixes some nasty 0/0 cases in the
-                                      % geodesics stuff
+% geodesics stuff
 
 PHI1=lat(1:NN-1);    % endpoints of each segment
 XLAM1=long(1:NN-1);
 PHI2=lat(2:NN);
 XLAM2=long(2:NN);
 
-                    % wiggle lines of constant lat to prevent numerical probs.
-if (any(PHI1==PHI2)), 
+% wiggle lines of constant lat to prevent numerical probs.
+if (any(PHI1==PHI2)),
    for ii=1:NN-1,
       if (PHI1(ii)==PHI2(ii)), PHI2(ii)=PHI2(ii)+ 1e-14; end;
    end;
 end;
-                     % wiggle lines of constant long to prevent numerical probs.
-if (any(XLAM1==XLAM2)), 
+% wiggle lines of constant long to prevent numerical probs.
+if (any(XLAM1==XLAM2)),
    for ii=1:NN-1,
       if (XLAM1(ii)==XLAM2(ii)), XLAM2(ii)=XLAM2(ii)+ 1e-14; end;
    end;
@@ -2607,7 +2607,7 @@ A21P=atan((1.)./CTA21P);
 
 %C    GET THE QUADRANT RIGHT
 DLAM2=(abs(DLAM)<pi).*DLAM + (DLAM>=pi).*(-2*pi+DLAM) + ...
-        (DLAM<=-pi).*(2*pi+DLAM);
+   (DLAM<=-pi).*(2*pi+DLAM);
 A12=A12+(A12<-pi)*2*pi-(A12>=pi)*2*pi;
 A12=A12+pi*sign(-A12).*( sign(A12) ~= sign(DLAM2) );
 A21P=A21P+(A21P<-pi)*2*pi-(A21P>=pi)*2*pi;
@@ -2618,7 +2618,7 @@ A21P=A21P+pi*sign(-A21P).*( sign(A21P) ~= sign(-DLAM2) );
 
 SSIG=sin(DLAM).*cos(PSI2)./sin(A12);
 % At this point we are OK if the angle < 90...but otherwise
-% we get the wrong branch of asin! 
+% we get the wrong branch of asin!
 % This fudge will correct every case on a sphere, and *almost*
 % every case on an ellipsoid (wrong hnadling will be when
 % angle is almost exactly 90 degrees)
@@ -2628,9 +2628,9 @@ if ( any(abs(dd2-2) < 2*((B-A)/A))^2 ),
    disp('dist: Warning...point(s) too close to 90 degrees apart');
 end;
 bigbrnch=dd2>2;
- 
+
 SIG=asin(SSIG).*(bigbrnch==0) + (pi-asin(SSIG)).*bigbrnch;
-     
+
 SSIGC=-sin(DLAM).*cos(PHI1)./sin(A21P);
 SIGC=asin(SSIGC);
 A21 = A21P - DPHI2.*sin(A21P).*tan(SIG/2.0);
@@ -2651,18 +2651,18 @@ range=xnu1.*SIG.*(1.0+TERM1+TERM2+TERM3+TERM4);
 
 if (geodes),
 
-%c now calculate the locations along the ray path. (for extra accuracy, could
-%c do it from start to halfway, then from end for the rest, switching from A12
-%c to A21...
-%c started to use Rudoe's formula, page 117 in Bomford...(1980, fourth edition)
-%c but then went to Clarke's best formula (pg 118)
+   %c now calculate the locations along the ray path. (for extra accuracy, could
+   %c do it from start to halfway, then from end for the rest, switching from A12
+   %c to A21...
+   %c started to use Rudoe's formula, page 117 in Bomford...(1980, fourth edition)
+   %c but then went to Clarke's best formula (pg 118)
 
-%RP I am doing this twice because this formula doesn't work when we go
-%past 90 degrees! 
-    Ngd1=round(Ngeodes/2);
+   %RP I am doing this twice because this formula doesn't work when we go
+   %past 90 degrees!
+   Ngd1=round(Ngeodes/2);
 
-% First time...away from point 1
-    if (Ngd1>1),
+   % First time...away from point 1
+   if (Ngd1>1),
       wns=ones(1,Ngd1);
       CP1CA12 = (cos(PHI1).*cos(A12)).^2;
       R2PRM = -EPS.*CP1CA12;
@@ -2672,33 +2672,33 @@ if (geodes),
       R2PRM=R2PRM*wns;
       R3PRM=R3PRM*wns;
 
-%c  now have to loop over positions
+      %c  now have to loop over positions
       RLRAT = (range./xnu1)*([0:Ngd1-1]/(Ngeodes-1));
 
       THETA = RLRAT.*(1 - (RLRAT.^2).*(C1 - C2.*RLRAT));
       C3 = 1.0 - (R2PRM.*(THETA.^2))/2.0 - (R3PRM.*(THETA.^3))/6.0;
       DSINPSI =(sin(PHI1)*wns).*cos(THETA) + ...
-               ((cos(PHI1).*cos(A12))*wns).*sin(THETA);
-%try to identify the branch...got to other branch if range> 1/4 circle
-       PSI = asin(DSINPSI);
+         ((cos(PHI1).*cos(A12))*wns).*sin(THETA);
+      %try to identify the branch...got to other branch if range> 1/4 circle
+      PSI = asin(DSINPSI);
 
       DCOSPSI = cos(PSI);
       DSINDLA = (sin(A12)*wns).*sin(THETA)./DCOSPSI;
       DTANPHI=(1.0+EPS)*(1.0 - (E^2)*C3.*(sin(PHI1)*wns)./DSINPSI).*tan(PSI);
-%C compute output latitude (phi) and long (xla) in radians
-%c I believe these are absolute, and don't need source coords added
+      %C compute output latitude (phi) and long (xla) in radians
+      %c I believe these are absolute, and don't need source coords added
       PHI = atan(DTANPHI);
-%  fix branch cut stuff - 
+      %  fix branch cut stuff -
       otherbrcnh= sign(DLAM2*wns) ~= sign([sign(DLAM2) diff(DSINDLA')'] );
       XLA = XLAM1*wns + asin(DSINDLA).*(otherbrcnh==0) + ...
-                       (pi-asin(DSINDLA)).*(otherbrcnh);
-    else
+         (pi-asin(DSINDLA)).*(otherbrcnh);
+   else
       PHI=PHI1;
       XLA=XLAM1;
-    end;
-      
-% Now we do the same thing, but in the reverse direction from the receiver!
-    if (Ngeodes-Ngd1>1),
+   end;
+
+   % Now we do the same thing, but in the reverse direction from the receiver!
+   if (Ngeodes-Ngd1>1),
       wns=ones(1,Ngeodes-Ngd1);
       CP2CA21 = (cos(PHI2).*cos(A21)).^2;
       R2PRM = -EPS.*CP2CA21;
@@ -2708,40 +2708,40 @@ if (geodes),
       R2PRM=R2PRM*wns;
       R3PRM=R3PRM*wns;
 
-%c  now have to loop over positions
+      %c  now have to loop over positions
       RLRAT = (range./xnu2)*([0:Ngeodes-Ngd1-1]/(Ngeodes-1));
 
       THETA = RLRAT.*(1 - (RLRAT.^2).*(C1 - C2.*RLRAT));
       C3 = 1.0 - (R2PRM.*(THETA.^2))/2.0 - (R3PRM.*(THETA.^3))/6.0;
       DSINPSI =(sin(PHI2)*wns).*cos(THETA) + ...
-               ((cos(PHI2).*cos(A21))*wns).*sin(THETA);
-%try to identify the branch...got to other branch if range> 1/4 circle
+         ((cos(PHI2).*cos(A21))*wns).*sin(THETA);
+      %try to identify the branch...got to other branch if range> 1/4 circle
       PSI = asin(DSINPSI);
 
       DCOSPSI = cos(PSI);
       DSINDLA = (sin(A21)*wns).*sin(THETA)./DCOSPSI;
       DTANPHI=(1.0+EPS)*(1.0 - (E^2)*C3.*(sin(PHI2)*wns)./DSINPSI).*tan(PSI);
-%C compute output latitude (phi) and long (xla) in radians
-%c I believe these are absolute, and don't need source coords added
+      %C compute output latitude (phi) and long (xla) in radians
+      %c I believe these are absolute, and don't need source coords added
       PHI = [PHI fliplr(atan(DTANPHI))];
-% fix branch cut stuff
+      % fix branch cut stuff
       otherbrcnh= sign(-DLAM2*wns) ~= sign( [sign(-DLAM2) diff(DSINDLA')'] );
       XLA = [XLA fliplr(XLAM2*wns + asin(DSINDLA).*(otherbrcnh==0) + ...
-                       (pi-asin(DSINDLA)).*(otherbrcnh))];
-    else
+         (pi-asin(DSINDLA)).*(otherbrcnh))];
+   else
       PHI = [PHI PHI2];
       XLA = [XLA XLAM2];
-    end;
+   end;
 
-%c convert to degrees
-      A12 = PHI*180/pi;
-      A21 = XLA*180/pi;
-      range=range*([0:Ngeodes-1]/(Ngeodes-1));
+   %c convert to degrees
+   A12 = PHI*180/pi;
+   A21 = XLA*180/pi;
+   range=range*([0:Ngeodes-1]/(Ngeodes-1));
 
 
 else
 
-%C*** CONVERT TO DECIMAL DEGREES
+   %C*** CONVERT TO DECIMAL DEGREES
    A12=A12*180/pi;
    A21=A21*180/pi;
    if (rowvec),

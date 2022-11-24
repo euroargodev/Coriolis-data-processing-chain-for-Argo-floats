@@ -48,7 +48,7 @@ if (~isempty(a_iridiumMailData))
    cycleNumList(cycleNumList == -1) = [];
    for idCy = 1:length(cycleNumList)
       cycleNum = cycleNumList(idCy);
-      
+
       idNMeasForCy = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
       if (isempty(idNMeasForCy))
          trajNMeasStruct = get_traj_n_meas_init_struct(cycleNum, -1);

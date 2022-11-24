@@ -220,7 +220,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    if (g_decArgo_generateNcMeta ~= 0)
       % create the configuration parameter names for the META NetCDF file
-      [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_sbd2(a_decoderId);
+      [decArgoConfParamNames, ncConfParamNames, ncConfParamIds] = create_config_param_names_ir_sbd2(a_decoderId);
    end
 end
 
@@ -882,7 +882,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_sbd2( ...
-      decArgoConfParamNames, ncConfParamNames, a_decoderId);
+      decArgoConfParamNames, ncConfParamNames, ncConfParamIds, a_decoderId);
    
    % add configuration number and output cycle number
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...

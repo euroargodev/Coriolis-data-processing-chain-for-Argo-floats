@@ -449,13 +449,29 @@
    },
    "TECH_PARAM_57" :
    {
+      "TECH_PARAM_DEC_ID" : "1200",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Packet number for X type in descent",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<Sensor>DescentIridiumMessages_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit <Sensor> data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth)."
+   },
+   "TECH_PARAM_58" :
+   {
       "TECH_PARAM_DEC_ID" : "201",
       "TECH_PARAM_MSG_ID" : "250",
       "TECH_PARAM_MSG_LABEL" : "Packet number for X type in drift",
       "TECH_PARAM_NAME" : "NUMBER_<Sensor>ParkIridiumMessages_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit <Sensor> data collected during the drift at park depth."
    },
-   "TECH_PARAM_58" :
+   "TECH_PARAM_59" :
+   {
+      "TECH_PARAM_DEC_ID" : "1201",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Packet number for X type in drift",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<Sensor>ParkIridiumMessages_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit <Sensor> data collected during the drift at park depth."
+   },
+   "TECH_PARAM_60" :
    {
       "TECH_PARAM_DEC_ID" : "202",
       "TECH_PARAM_MSG_ID" : "250",
@@ -463,7 +479,15 @@
       "TECH_PARAM_NAME" : "NUMBER_<Sensor>AscentIridiumMessages_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit <Sensor> data collected during the ascent from the profile depth to the surface."
    },
-   "TECH_PARAM_59" :
+   "TECH_PARAM_61" :
+   {
+      "TECH_PARAM_DEC_ID" : "1202",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Packet number for X type in ascent",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<Sensor>AscentIridiumMessages_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets used to transmit <Sensor> data collected during the ascent from the profile depth to the surface."
+   },
+   "TECH_PARAM_62" :
    {
       "TECH_PARAM_DEC_ID" : "203",
       "TECH_PARAM_MSG_ID" : "250",
@@ -471,7 +495,15 @@
       "TECH_PARAM_NAME" : "NUMBER_<Sensor>DescentSamplesDepthZone<Z>_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <Sensor> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth). Depth zone number: <Z> = 1..5"
    },
-   "TECH_PARAM_60" :
+   "TECH_PARAM_63" :
+   {
+      "TECH_PARAM_DEC_ID" : "1203",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Descent, nb points zone 1",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<Sensor>DescentSamplesDepthZone<Z>_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <Sensor> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth). Depth zone number: <Z> = 1..5"
+   },
+   "TECH_PARAM_64" :
    {
       "TECH_PARAM_DEC_ID" : "204",
       "TECH_PARAM_MSG_ID" : "250",
@@ -479,7 +511,15 @@
       "TECH_PARAM_NAME" : "NUMBER_Park<Sensor>SamplesInternal_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Park  measurements - Internal counter"
    },
-   "TECH_PARAM_61" :
+   "TECH_PARAM_65" :
+   {
+      "TECH_PARAM_DEC_ID" : "1204",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Nb points in drift",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_Park<Sensor>SamplesInternal_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Park  measurements - Internal counter"
+   },
+   "TECH_PARAM_66" :
    {
       "TECH_PARAM_DEC_ID" : "205",
       "TECH_PARAM_MSG_ID" : "250",
@@ -487,7 +527,15 @@
       "TECH_PARAM_NAME" : "NUMBER_<Sensor>AscentSamplesDepthZone<Z>_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <Sensor> in the depth zone #<Z> during the ascent from the profile depth to the surface. Depth zone number: <Z> = 1..5"
    },
-   "TECH_PARAM_62" :
+   "TECH_PARAM_67" :
+   {
+      "TECH_PARAM_DEC_ID" : "1205",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "Ascent, nb points zone 1",
+      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<Sensor>AscentSamplesDepthZone<Z>_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <Sensor> in the depth zone #<Z> during the ascent from the profile depth to the surface. Depth zone number: <Z> = 1..5"
+   },
+   "TECH_PARAM_68" :
    {
       "TECH_PARAM_DEC_ID" : "206",
       "TECH_PARAM_MSG_ID" : "250",
@@ -495,7 +543,15 @@
       "TECH_PARAM_NAME" : "FLAG_<Sensor>Status_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "The <Sensor> is OK (Yes/No)."
    },
-   "TECH_PARAM_63" :
+   "TECH_PARAM_69" :
+   {
+      "TECH_PARAM_DEC_ID" : "1206",
+      "TECH_PARAM_MSG_ID" : "250",
+      "TECH_PARAM_MSG_LABEL" : "X type status sensor (1: normal, 0 if problem)",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_<Sensor>Status_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "The <Sensor> is OK (Yes/No)."
+   },
+   "TECH_PARAM_70" :
    {
       "TECH_PARAM_DEC_ID" : "207",
       "TECH_PARAM_MSG_ID" : "250",
@@ -503,7 +559,7 @@
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar",
       "TECH_PARAM_DESCRIPTION" : "Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected."
    },
-   "TECH_PARAM_64" :
+   "TECH_PARAM_71" :
    {
       "TECH_PARAM_DEC_ID" : "209",
       "TECH_PARAM_MSG_ID" : "250",
@@ -511,7 +567,7 @@
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetCorrectedNotReset_1cBarResolution_dbar",
       "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative offset but no further correction required. Autocorrected"
    },
-   "TECH_PARAM_65" :
+   "TECH_PARAM_72" :
    {
       "TECH_PARAM_DEC_ID" : "208",
       "TECH_PARAM_MSG_ID" : "250",

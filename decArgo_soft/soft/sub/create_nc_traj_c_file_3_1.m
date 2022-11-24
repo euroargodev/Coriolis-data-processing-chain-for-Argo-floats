@@ -1887,7 +1887,7 @@ end
 if (~isempty(cycles))
    for idNC = 1:length(a_tabTrajNCycle)
       nCycle = a_tabTrajNCycle(idNC);
-      
+
       idC = find(cycles == nCycle.outputCycleNumber);
       
       if (~isempty(nCycle.juldDescentStart))

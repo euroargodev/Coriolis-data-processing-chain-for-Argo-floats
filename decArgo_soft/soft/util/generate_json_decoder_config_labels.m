@@ -33,7 +33,7 @@ function generate_json_decoder_config_labels()
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_111.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_121.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_124.csv';
-decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_126.csv';
+% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_126.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_127.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_128.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_129.csv';
@@ -56,7 +56,7 @@ decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNam
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_224.csv';
 
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_301.csv';
-% decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_302.csv';
+decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_302.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_303.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_206.csv';
 % decoderConfLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_configParamNames\_config_param_name_30.csv';

@@ -12,9 +12,9 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 110;16;Internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
 111;17;Batteries voltage drop at Pmax, pump ON (with regard to Unom = 10.0 V) (in dV) ;VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 112;18;Internal temperature;TEMPERATURE_InternalVacuumAtSurface_degC;internal tube temperature at the surface
-113;19;Descent speed;SPEED_DescentToPark_cm/s;Average vertical speed during the descent to parking depth
-114;20;Ascent speed;SPEED_AscentToSurface_cm/s;Average vertical speed during the ascent to surface
+113;19;Descent speed;TECH_AUX_SPEED_DescentToPark_cm/s;Average vertical speed during the descent to parking depth
+114;20;Ascent speed;TECH_AUX_SPEED_AscentToSurface_cm/s;Average vertical speed during the ascent to surface
 115;21;Number of ascent CTD messages;NUMBER_AscentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the ascent from the profile depth to the surface.
 116;30;RTC state indicator ( normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK
-117;31;Defect mode;FLAG_CycleStatus_NUMBER;Flag indicating the status of the cycle (0: nominal, 1: grounding at surface, 2: grounding at pressure shallower than min pressure, 3: max pressure reached during descent, 4: max pressure reached during drift, 5: low battery (less than 6.6V), 6: number of programmed cycle is reached, 10: no programmed date for surfacing after present date, 11: message at deployment, 12 : Mission start again after wait at surface).
-1000;-1;Number of ascent CTD packets received;NUMBER_AscentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface.
+117;31;Defect mode;TECH_AUX_FLAG_CycleStatus_NUMBER;Flag indicating the status of the cycle (0: nominal, 1: grounding at surface, 2: grounding at pressure shallower than min pressure, 3: max pressure reached during descent, 4: max pressure reached during drift, 5: low battery (less than 6.6V), 6: number of programmed cycle is reached, 10: no programmed date for surfacing after present date, 11: message at deployment, 12 : Mission start again after wait at surface).
+1000;-1;Number of ascent CTD packets received;TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface.

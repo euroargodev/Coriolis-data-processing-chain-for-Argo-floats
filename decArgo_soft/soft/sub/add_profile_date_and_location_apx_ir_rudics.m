@@ -56,7 +56,7 @@ end
 % process all the profiles of the list
 for idP = 1:length(o_tabProfiles)
    prof = o_tabProfiles(idP);
-   
+
    if (isempty(prof.bounceFlag) || (strcmp(prof.bounceFlag, 'BS')))
       if (prof.direction == 'A')
          

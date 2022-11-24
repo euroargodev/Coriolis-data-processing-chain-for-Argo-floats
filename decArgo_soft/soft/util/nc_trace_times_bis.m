@@ -53,6 +53,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\Rem_DM\rem_in_dm.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
 
 % display help information on available commands
 display_help;
@@ -411,9 +412,9 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
    %       end
    %    end
    if (cycleTimeMeta == -1)
-      fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) - CONFIG_CycleTime_days set to 10\n', ...
+      fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) - CONFIG_CycleTime_days set to 1\n', ...
          metaFileName);
-      cycleTimeMeta = 10;
+      cycleTimeMeta = 1;
       
       %       fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s)\n', ...
       %          metaFileName);

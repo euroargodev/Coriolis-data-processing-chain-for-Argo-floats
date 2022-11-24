@@ -420,6 +420,7 @@ for idFlCy = 1:length(floatCycleList)
       for idFlCyPtn = 1:length(idF)
          floatPtnNum = g_decArgo_cyclePatternNumFloat(idF(idFlCyPtn), 2);
 
+
          % retrieve useful information from event data
          decode_event_data_cts5(floatCyNum, floatPtnNum);
 

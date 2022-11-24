@@ -25,6 +25,8 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_NEW_NC_FILES\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\OUT\';
+% DIR_INPUT_NC_FILES = 'D:\202209-ArgoData\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';

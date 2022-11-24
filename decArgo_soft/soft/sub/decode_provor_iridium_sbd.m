@@ -721,12 +721,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             
             % decode the collected data
             decode_prv_data_ir_sbd_215(sbdDataData, sbdDataDate, 0);
-            
-         case {219, 220} % Arvor-C 5.3 & 5.301
-            
-            % decode the collected data
-            decode_prv_data_ir_sbd_219_220(sbdDataData, sbdDataDate, 0);
-            
+                        
          otherwise
             fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
                g_decArgo_floatNum, ...

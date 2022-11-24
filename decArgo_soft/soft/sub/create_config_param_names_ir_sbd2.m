@@ -2,7 +2,8 @@
 % Create configuration parameter lists of decoder names and NetCDF names.
 %
 % SYNTAX :
-%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_sbd2(a_decoderId)
+%  [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
+%    create_config_param_names_ir_sbd2(a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_decoderId : float decoder Id
@@ -19,11 +20,13 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_sbd2(a_decoderId)
+function [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
+   create_config_param_names_ir_sbd2(a_decoderId)
 
 % output parameters initialization
 o_decArgoConfParamNames = [];
 o_ncConfParamNames = [];
+o_ncConfParamIds = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -41,7 +44,7 @@ switch (a_decoderId)
       
    case {302, 303} % Arvor CM
       
-      [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_sbd2_302_303(a_decoderId);
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_sbd2_302_303(a_decoderId);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to create configuration parameter names for decoderId #%d\n', ...

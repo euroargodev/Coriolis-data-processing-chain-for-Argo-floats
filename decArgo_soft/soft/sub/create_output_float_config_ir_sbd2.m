@@ -22,7 +22,7 @@
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ncConfig] = create_output_float_config_ir_sbd2( ...
-   a_decArgoConfParamNames, a_ncConfParamNames, a_decoderId)
+   a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds, a_decoderId)
 
 % output parameters initialization
 o_ncConfig = [];
@@ -267,37 +267,68 @@ finalConfigValue(idDel, :) = [];
 staticConfigName = g_decArgo_floatConfig.STATIC.NAMES;
 staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
 
-staticConfigNameBefore = staticConfigName;
-finalConfigNameBefore = finalConfigName;
 % convert decoder names into NetCDF ones
-if (~isempty(a_decArgoConfParamNames))
-   for idConfParam = 1:length(staticConfigName)
-      idF = find(strcmp(staticConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
-      if (~isempty(idF))
-         staticConfigName{idConfParam} = a_ncConfParamNames{idF};
-      else
-         fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
-            g_decArgo_floatNum, ...
-            staticConfigName{idConfParam});
+staticConfigId = [];
+finalConfigId = [];
+if (isempty(a_ncConfParamIds))
+   if (~isempty(a_decArgoConfParamNames))
+      for idConfParam = 1:length(staticConfigName)
+         idF = find(strcmp(staticConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
+         if (~isempty(idF))
+            staticConfigName{idConfParam} = a_ncConfParamNames{idF};
+         else
+            fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+               g_decArgo_floatNum, ...
+               staticConfigName{idConfParam});
+         end
+      end
+      for idConfParam = 1:length(finalConfigName)
+         idF = find(strcmp(finalConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
+         if (~isempty(idF))
+            finalConfigName{idConfParam} = a_ncConfParamNames{idF};
+         else
+            fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+               g_decArgo_floatNum, ...
+               finalConfigName{idConfParam});
+         end
       end
    end
-   for idConfParam = 1:length(finalConfigName)
-      idF = find(strcmp(finalConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
-      if (~isempty(idF))
-         finalConfigName{idConfParam} = a_ncConfParamNames{idF};
-      else
-         fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
-            g_decArgo_floatNum, ...
-            finalConfigName{idConfParam});
+else
+   staticConfigId = ones(size(staticConfigName))*-1;
+   finalConfigId = ones(size(finalConfigName))*-1;
+   if (~isempty(a_decArgoConfParamNames))
+      for idConfParam = 1:length(staticConfigName)
+         idF = find(strcmp(staticConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
+         if (~isempty(idF))
+            staticConfigName{idConfParam} = a_ncConfParamNames{idF};
+            staticConfigId(idConfParam) = a_ncConfParamIds(idF);
+         else
+            fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+               g_decArgo_floatNum, ...
+               staticConfigName{idConfParam});
+         end
+      end
+      for idConfParam = 1:length(finalConfigName)
+         idF = find(strcmp(finalConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
+         if (~isempty(idF))
+            finalConfigName{idConfParam} = a_ncConfParamNames{idF};
+            finalConfigId(idConfParam) = a_ncConfParamIds(idF);
+         else
+            fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+               g_decArgo_floatNum, ...
+               finalConfigName{idConfParam});
+         end
       end
    end
 end
 
 % output data
 o_ncConfig.STATIC_NC.NAMES = staticConfigName;
+o_ncConfig.STATIC_NC.IDS = staticConfigId;
 o_ncConfig.STATIC_NC.VALUES = staticConfigValue;
 o_ncConfig.DYNAMIC_NC.NUMBER = finalConfigNum;
 o_ncConfig.DYNAMIC_NC.NAMES = finalConfigName;
+o_ncConfig.DYNAMIC_NC.IDS = finalConfigId;
 o_ncConfig.DYNAMIC_NC.VALUES = finalConfigValue;
 
 % tmp = [];

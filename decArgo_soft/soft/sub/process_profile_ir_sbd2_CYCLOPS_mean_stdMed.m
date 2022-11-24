@@ -85,7 +85,14 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
          (phaseNum == g_decArgo_phaseAscProf))
       
       profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, 0);
-      profStruct.sensorNumber = 7;
+      if (phaseNum == g_decArgo_phaseParkDrift)
+         % to put CYCLOPS data to TRAJ_AUX files
+         profStruct.sensorNumber = 102;
+      else
+         % must keep original sensor number to retrieve configuration
+         % information for tyhe VSS (in add_vertical_sampling_scheme_ir_rudics)
+         profStruct.sensorNumber = 7;
+      end
       
       % select the data (according to cycleNum, profNum and phaseNum)
       idDataMean = find((a_dataCYCLOPSMeanDate(:, 1) == cycleNum) & ...

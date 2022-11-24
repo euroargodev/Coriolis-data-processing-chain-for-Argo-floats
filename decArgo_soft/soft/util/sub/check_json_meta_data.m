@@ -33,27 +33,33 @@ fieldNames = fields(a_metaDataStruct);
 for idField = 1:length(fieldNames)
    fieldName = fieldNames{idField};
    if (any(strcmp(fieldName, lenInfo(:, 1))))
-     idF = find(strcmp(fieldName, lenInfo(:, 1)), 1);
-     maxLength = lenInfo{idF, 2};
-     info = a_metaDataStruct.(fieldName);
-     if (~isempty(info))
-        if (ischar(info))
-           if (length(info) > maxLength)
-              fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
-                 a_floatNum, fieldName, maxLength, info);
-              o_ok = 0;
-           end
-        elseif (iscell(info))
-           for idL = 1:size(info, 1)
-              info2 = info{idL, :};
-              if (length(info2) > maxLength)
-                 fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
-                    a_floatNum, fieldName, maxLength, info2);
-                 o_ok = 0;
-              end
-           end
-        end
-     end
+      idF = find(strcmp(fieldName, lenInfo(:, 1)), 1);
+      maxLength = lenInfo{idF, 2};
+      info = a_metaDataStruct.(fieldName);
+      if (~isempty(info))
+         if (ischar(info))
+            if (strncmp(info, 'AUX_', length('AUX_')))
+               info = info(5:end);
+            end
+            if (length(info) > maxLength)
+               fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
+                  a_floatNum, fieldName, maxLength, info);
+               o_ok = 0;
+            end
+         elseif (iscell(info))
+            for idL = 1:size(info, 1)
+               info2 = info{idL, :};
+               if (strncmp(info2, 'AUX_', length('AUX_')))
+                  info2 = info2(5:end);
+               end
+               if (length(info2) > maxLength)
+                  fprintf('ERROR: Float #%d: max length of ''%s'' is %d (''%s'' cannot be accepted) - no json file generated\n', ...
+                     a_floatNum, fieldName, maxLength, info2);
+                  o_ok = 0;
+               end
+            end
+         end
+      end
    end
 end
 

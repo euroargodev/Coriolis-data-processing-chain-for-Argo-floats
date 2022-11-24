@@ -22,7 +22,7 @@ function nc_traj_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo2\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo2\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN\';
 

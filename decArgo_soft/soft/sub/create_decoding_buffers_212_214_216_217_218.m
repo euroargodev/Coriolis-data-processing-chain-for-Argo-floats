@@ -964,6 +964,7 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(id) = tabRankByCycle(id(1));
          tabDelayed(id) = 1;
          tabCompleted(id) = 1;
+         % cycles #59 to #88 data are transmitted twice
          for cyNum = 59:88
             id = find(tabCyNum == cyNum);
             idDel = id(end-2:end);

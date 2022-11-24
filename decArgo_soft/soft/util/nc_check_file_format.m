@@ -28,7 +28,7 @@ DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_chec
 
 % top directory of the NetCDF files to check
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220829\OUT\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220829\OUT\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20220822\OUT\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_NEW_NC_FILES\';
@@ -47,7 +47,9 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_all.txt'
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts4_21.xx_2.xx_not_DM_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts4_21.xx_2.xx_DM_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\nemo_list_20220829.txt';
-
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_c_5.3_5.301_all.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
@@ -141,7 +143,7 @@ for idFloat = 1:nbFloats
    jsonInputFileName = [DIR_JSON_FLOAT_META '/' sprintf('%d_meta.json', floatNum)];
    
    floatDac = 'INCOIS';
-   floatDac = 'CORIOLIS';
+%    floatDac = 'CORIOLIS';
    if (exist(jsonInputFileName, 'file') == 2)
       % read meta-data file
       metaData = loadjson(jsonInputFileName);

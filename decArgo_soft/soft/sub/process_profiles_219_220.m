@@ -97,7 +97,7 @@ end
 profStruct.configMissionNumber = 1;
 
 % add vertical sampling scheme
-profStruct.vertSamplingScheme = 'Primary and near-surface sampling: averaged []';
+profStruct.vertSamplingScheme = 'Primary sampling: averaged []';
 
 o_tabProfiles = profStruct;
 

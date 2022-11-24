@@ -1281,7 +1281,7 @@ if (~isempty(a_tabSensors))
             
             cycleNum = tabTech(9);
             g_decArgo_cycleNum = cycleNum;
-            
+
             % packet date
             packJulD = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(1:6)), 'ddmmyyHHMMSS') - g_decArgo_janFirst1950InMatlab;
             
