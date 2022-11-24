@@ -216,6 +216,19 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265]))
          id = find((tabCyNum == 12) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+         % cycles 66 to 68 are surface cycles transmitted in delayed
+         id = find((tabCyNum == 66) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 66) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 67) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 67) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 68) & (tabPackType == 0), 1, 'first');
+         tabSession(id:end) = tabSession(id:end) + 1;
+         id = find((tabCyNum == 68) & (tabPackType == 0), 1, 'last');
+         tabSession(id:end) = tabSession(id:end) + 1;
       case 6903265
          % surface message types [0 4 5] of cycles 100 to 110 were
          % transmitted in the same session #102, we must separate them by
