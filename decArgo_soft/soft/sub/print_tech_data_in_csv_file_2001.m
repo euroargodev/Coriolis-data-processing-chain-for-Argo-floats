@@ -40,8 +40,9 @@ if (size(a_tabTech, 1) > 1)
    fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(a_tabTech, 1));
-elseif (size(a_tabTech, 1) == 1)
-   id = 1;
+end
+
+for id = 1:size(a_tabTech, 1)
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; TECHNICAL PACKET CONTENTS\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum);
@@ -105,25 +106,25 @@ elseif (size(a_tabTech, 1) == 1)
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of CTD points in descent profile; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 19+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of packets for descent profile data; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 20+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of CTD points in ascent profile; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 21+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of packets for ascent profile data; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 22+ID_OFFSET));
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of CTD points in drift at parking depth; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 23+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of packets for drift at parking depth data; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 24+ID_OFFSET));
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of packets in pressure; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 25+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; CTD pressure offset; %.1f dbar\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 26+ID_OFFSET));
    
@@ -147,7 +148,7 @@ elseif (size(a_tabTech, 1) == 1)
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of failed acquisitions CTD; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 33+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; CTD command error flag; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 34+ID_OFFSET));
    
@@ -194,10 +195,10 @@ elseif (size(a_tabTech, 1) == 1)
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; CTD Average command flag; %d\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, missionErrorCtdAverageFlag);
    end
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of power resets Iridium; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 35+ID_OFFSET));
-
+   
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Number of incoming packets of previous session; %d\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 36+ID_OFFSET));
    
@@ -233,7 +234,6 @@ elseif (size(a_tabTech, 1) == 1)
    
    fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; Time needed to transmit last technical packet; %d seconds; => %s\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 50+ID_OFFSET), format_time_dec_argo(a_tabTech(id, 50+ID_OFFSET)/3600));
-
 end
 
 return;

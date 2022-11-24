@@ -301,6 +301,16 @@ end
 if (a_procLevel > 0)
    if (g_decArgo_ackPacket == 0)
       if (~isempty(tabCycleNum))
+         
+         % during EOL mode, current cycle data and cycle #255 data can be
+         % transmitted simultaneously (see 6903195 #123)
+         if (length(unique(tabCycleNum)) ~= 1)
+            uTabCycleNumBis = unique(tabCycleNum(find(tabCycleNum ~= 255)));
+            if (length(uTabCycleNumBis) == 1)
+               tabCycleNum(find(tabCycleNum == 255)) = uTabCycleNumBis;
+            end
+         end
+         
          if (length(unique(tabCycleNum)) == 1)
             g_decArgo_cycleNum = unique(tabCycleNum);
             
@@ -325,6 +335,12 @@ if (a_procLevel > 0)
                g_decArgo_eolMode = 1;
                %                fprintf('WARNING: Float #%d Cycle #%d: Float anomaly (cycle number repeated twice)\n', ...
                %                   g_decArgo_floatNum, g_decArgo_cycleNum);
+            end
+            
+            if (g_decArgo_cycleNum < g_decArgo_cycleNumPrev)
+               g_decArgo_cycleNum = 256;
+               o_deepCycle = 0;
+               g_decArgo_eolMode = 1;
             end
             
             % output NetCDF files

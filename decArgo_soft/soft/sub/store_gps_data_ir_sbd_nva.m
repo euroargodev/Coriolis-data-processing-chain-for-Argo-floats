@@ -45,8 +45,9 @@ if (~isempty(a_tabTech))
       fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
          size(a_tabTech, 1));
-   elseif (size(a_tabTech, 1) == 1)
-      id = 1;
+   end
+      
+   for id = 1:size(a_tabTech, 1)
       
       % no GPS fix in the TECH message
       if (a_tabTech(id, 40+ID_OFFSET) == 0) && ...

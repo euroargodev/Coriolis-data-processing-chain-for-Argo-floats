@@ -112,10 +112,13 @@ ID_OFFSET = 1;
 
 % technical message
 if (size(a_tabTech, 1) > 1)
-   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer)\n', ...
+   fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message in the buffer) => using the last one\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       size(a_tabTech, 1));
-elseif (size(a_tabTech, 1) == 1)
+   a_tabTech = a_tabTech(end, :);
+end
+
+if (size(a_tabTech, 1) == 1)
    id = 1;
    
    % create a structure to store the cycle timings
