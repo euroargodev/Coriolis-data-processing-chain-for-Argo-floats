@@ -34,7 +34,7 @@ global g_decArgo_presDef;
 
 switch (a_decoderId)
    
-   case {105, 106, 107, 109, 110}
+   case {105, 106, 107, 109, 110, 301}
       
       % convert counts to values
       o_presValues = a_presCounts;
