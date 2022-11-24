@@ -570,11 +570,24 @@ for idSpoolFile = 1:length(tabAllFileNames)
       end
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % specific
+   
    % 3901850: MOMSN = 2512 is missing, we must artificially separate first and
-   % second Iridium session (which start with MOMSN = 2514 (and 2515)
-   if (g_decArgo_floatNum == 3901850)
-      if (~isempty(strfind(tabAllFileNames{idSpoolFile}, '_300234063600100_002513_')))
+   % second Iridium session (which start with MOMSN = 2514 (and 2515))
+   
+   % 6902798: some expected data are missing for cycle #110, as there is a
+   % second Iridium session we must artificially separate first session (which
+   % ends with MOMSN = 2021) and second Iridium session
+   
+   if (ismember(g_decArgo_floatNum, [3901850, 6902798]))
+      if (g_decArgo_floatNum == 3901850)
+         filePattern = '_300234063600100_002513_';
+      end
+      if (g_decArgo_floatNum == 6902798)
+         filePattern = '_300234064631980_002021_';
+      end
+      if (~isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
          idOld = 1:length(tabFileNames);
          tabOldFileNames = tabFileNames(idOld);
          tabOldFileDates = tabFileDates(idOld);
@@ -590,7 +603,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          end
       end
    end
-   
+
    idNew = setdiff(1:length(tabFileNames), idOld);
    tabNewFileNames = tabFileNames(idNew);
    tabNewFileDates = tabFileDates(idNew);
