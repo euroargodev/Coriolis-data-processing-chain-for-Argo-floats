@@ -104,6 +104,24 @@ if (isempty(floatWmo))
    return;
 end
 
+% retrieve float login name and float decId
+[floatWmo, floatLoginName, ...
+   floatDecVersion, floatDecId, ...
+   floatFrameLen, ...
+   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
+   floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
+   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
+if (isempty(floatLoginName))
+   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
+   o_inputError = 1;
+   return;
+end
+
+% g_decArgo_dirInputRsyncLog depends on decoder version 
+if (ismember(floatDecId, [111]))
+   g_decArgo_dirInputRsyncLog = [g_decArgo_dirInputRsyncLog '/' floatLoginName '/'];
+end
+
 % check the corresponding directories and files
 rsyncLogPathFile = [];
 if (~isempty(rsyncLogFile))
@@ -120,19 +138,6 @@ if (allRsyncLogFlag == 1)
       o_inputError = 1;
       return;
    end
-end
-
-% retrieve float login name and float decId
-[floatWmo, floatLoginName, ...
-   floatDecVersion, floatDecId, ...
-   floatFrameLen, ...
-   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
-   floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
-   floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
-if (isempty(floatLoginName))
-   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
-   o_inputError = 1;
-   return;
 end
 
 % create the g_decArgo_historyDirectory directory (used below when there is no
@@ -185,12 +190,20 @@ tabRsyncLogFiles = [];
 for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
-      if (~ismember(floatDecId, [121 122 123]))
-         % CTS4 Iridium RUDICS floats
-         floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
-      else
-         % CTS5 Iridium RUDICS floats
-         floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
+      switch (floatDecId)
+         case {105, 106, 107, 108, 109, 110}
+            % CTS4 Iridium RUDICS floats (rsync to Villefranche global server)
+            floatFiles = parse_rsync_log_ir_rudics_cts4_105_to_110(ryncLogList{idFile}, floatLoginName);
+         case {111}
+            % CTS4 Iridium RUDICS floats (ftp to individual float account + internal rsync at Coriolis)
+            floatFiles = parse_rsync_log_ir_rudics_cts4_111(ryncLogList{idFile}, floatLoginName);
+         case {121 122 123}
+            % CTS5 Iridium RUDICS floats (rsync to Villefranche global server)
+            floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
+         otherwise
+            fprintf('ERROR: don''t know how to parse rsync log file for decId #%d => exit\n', floatDecId);
+            o_inputError = 1;
+            return;
       end
    elseif ((floatDecId > 1000) && (floatDecId < 2000))
       % APEX Iridium RUDICS & NAVIS floats

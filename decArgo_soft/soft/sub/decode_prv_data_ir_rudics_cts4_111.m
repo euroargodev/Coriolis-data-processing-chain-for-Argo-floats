@@ -598,9 +598,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -666,9 +666,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -734,10 +734,11 @@ if (~isempty(a_tabSensors))
                         packType, sensorDataType, ...
                         cycleNum, g_decArgo_cycleNum);
                      continue;
-                  end                  
+                  end
+                  
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -807,9 +808,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -872,7 +873,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -881,9 +882,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -950,9 +951,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1020,9 +1021,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1084,7 +1085,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -1093,9 +1094,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1167,9 +1168,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1244,9 +1245,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1315,7 +1316,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -1324,9 +1325,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1392,9 +1393,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1450,7 +1451,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -1459,12 +1460,12 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
-
+                  
                   measDate = ones(1, 21)*g_decArgo_dateDef;
                   measDate(1) = epoch2000_2_julian(values(4));
                   measDateTrans = zeros(1, 21);
@@ -1523,12 +1524,12 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
-
+                  
                   measDate = ones(1, 16)*g_decArgo_dateDef;
                   measDate(1) = epoch2000_2_julian(values(4));
                   measDateTrans = zeros(1, 16);
@@ -1574,7 +1575,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -1583,9 +1584,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1638,7 +1639,7 @@ if (~isempty(a_tabSensors))
                   cycleNum = values(1);
                   profNum = values(2);
                   phaseNum = values(3);
-                                    
+                  
                   if (cycleNum ~= g_decArgo_cycleNum)
                      fprintf('DEC_WARNING: Float #%d Cycle #%d: packType #%d sensorDataType #%d: inconsistent cycle number (#%d instead of #%d) => ignoring packet data\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -1647,9 +1648,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1707,9 +1708,9 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
+                  g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
+                     sensorDataType cycleNum profNum phaseNum];
                   if (a_procLevel == 0)
-                     g_decArgo_0TypeReceivedData = [g_decArgo_0TypeReceivedData; ...
-                        sensorDataType cycleNum profNum phaseNum];
                      continue;
                   end
                   
@@ -1778,7 +1779,7 @@ if (~isempty(a_tabSensors))
             if (a_procLevel == 1)
                continue;
             end
-                        
+            
             % message data frame
             msgData = tabSensors(idMes, 2:end);
             
@@ -1801,10 +1802,10 @@ if (~isempty(a_tabSensors))
                   cycleNum, g_decArgo_cycleNum);
                continue;
             end
-                  
+            
+            g_decArgo_248TypeReceivedData = [g_decArgo_248TypeReceivedData; ...
+               values(7) values(8)];
             if (a_procLevel == 0)
-               g_decArgo_248TypeReceivedData = [g_decArgo_248TypeReceivedData; ...
-                  values(7) values(8)];
                continue;
             end
             
@@ -1878,9 +1879,9 @@ if (~isempty(a_tabSensors))
                   cycleNum, g_decArgo_cycleNum);
             end
             
+            g_decArgo_249TypeReceivedData = [g_decArgo_249TypeReceivedData; ...
+               values([3 4 5 1 2])'];
             if (a_procLevel == 0)
-               g_decArgo_249TypeReceivedData = [g_decArgo_249TypeReceivedData; ...
-                  values([3 4 5 1 2])'];
                continue;
             end
             
@@ -1942,7 +1943,7 @@ if (~isempty(a_tabSensors))
             nbMeasAscZ4 = values(15);
             nbMeasAscZ5 = values(16);
             sensorState = values(17);
-                        
+            
             % for float firmware 3.01, sensor tech packet are transmitted in
             % second iridium session (with incorrect cycle # (-1 vs expected
             % one) => the following check should not be done
@@ -1953,9 +1954,9 @@ if (~isempty(a_tabSensors))
             %                continue;
             %             end
             
+            g_decArgo_250TypeReceivedData = [g_decArgo_250TypeReceivedData; ...
+               sensorType cycleNum profNum nbPackDesc nbPackDrift nbPackAsc];
             if (a_procLevel == 0)
-               g_decArgo_250TypeReceivedData = [g_decArgo_250TypeReceivedData; ...
-                  sensorType cycleNum profNum nbPackDesc nbPackDrift nbPackAsc];
                continue;
             end
             
@@ -2410,9 +2411,9 @@ if (~isempty(a_tabSensors))
             % get item bits
             values = get_bits(firstBit, tabNbBits, msgData);
             
+            g_decArgo_253TypeReceivedData = [g_decArgo_253TypeReceivedData; ...
+               values(9) values(10) values(13)];
             if (a_procLevel == 0)
-               g_decArgo_253TypeReceivedData = [g_decArgo_253TypeReceivedData; ...
-                  values(9) values(10) values(13)];
                continue;
             end
             
@@ -2501,9 +2502,9 @@ if (~isempty(a_tabSensors))
                continue;
             end
             
+            g_decArgo_254TypeReceivedData = [g_decArgo_254TypeReceivedData; ...
+               values(7) values(8)];
             if ((a_procLevel == 0) || (a_procLevel == 1))
-               g_decArgo_254TypeReceivedData = [g_decArgo_254TypeReceivedData; ...
-                  values(7) values(8)];
                continue;
             end
             
@@ -2552,9 +2553,9 @@ if (~isempty(a_tabSensors))
                continue;
             end
             
+            g_decArgo_255TypeReceivedData = [g_decArgo_255TypeReceivedData; ...
+               values(7) values(8)];
             if ((a_procLevel == 0) || (a_procLevel == 1))
-               g_decArgo_255TypeReceivedData = [g_decArgo_255TypeReceivedData; ...
-                  values(7) values(8)];
                continue;
             end
             

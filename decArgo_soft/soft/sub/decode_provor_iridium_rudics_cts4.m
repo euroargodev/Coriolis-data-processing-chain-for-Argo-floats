@@ -99,6 +99,9 @@ global g_decArgo_254TypeReceivedData;
 global g_decArgo_255TypeReceivedData;
 global g_decArgo_253PacketPhaseReceived;
 
+% phase of received data
+global g_decArgo_receivedDataPhase;
+
 % cycle phases
 global g_decArgo_phaseSatTrans;
 global g_decArgo_phaseSurfWait;
@@ -302,7 +305,7 @@ if (~a_floatDmFlag)
             sbdFilePathName = [g_decArgo_dirInputRsyncData '/' ...
                g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
             [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
-            duplicate_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
+            duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_decoderId);
          end
                   
          % some SBD files can be present in the buffer (if the final buffer was not
@@ -400,7 +403,7 @@ if (~a_floatDmFlag)
                tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                decode_sbd_files( ...
                tabFileNames, tabFileDates, tabFileSizes, ...
-               a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
+               a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, 1);
 
             if (~isempty(tabProfiles))
                o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -450,6 +453,7 @@ if (~a_floatDmFlag)
       g_decArgo_254TypeReceivedData = [];
       g_decArgo_255TypeReceivedData = [];
       g_decArgo_253PacketPhaseReceived = [];
+      g_decArgo_receivedDataPhase = [];
             
       % initialize file list
       tabNewFileNames = [];
@@ -578,7 +582,7 @@ if (~a_floatDmFlag)
                tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                decode_sbd_files( ...
                tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
-               a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
+               a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, 0);
             g_decArgo_bufferKo = 0;
             
             if (~isempty(tabProfiles))
@@ -616,6 +620,7 @@ if (~a_floatDmFlag)
             g_decArgo_254TypeReceivedData = [];
             g_decArgo_255TypeReceivedData = [];
             g_decArgo_253PacketPhaseReceived = [];
+            g_decArgo_receivedDataPhase = [];
             
             % create the 'new' file lists
             idNew = setdiff([1:length(tabFileNames)], idOld);
@@ -753,7 +758,7 @@ if (~a_floatDmFlag)
                   tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                   decode_sbd_files( ...
                   tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
-                  a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
+                  a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, 0);
                
                if (~isempty(tabProfiles))
                   o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -797,6 +802,7 @@ if (~a_floatDmFlag)
                g_decArgo_254TypeReceivedData = [];
                g_decArgo_255TypeReceivedData = [];
                g_decArgo_253PacketPhaseReceived = [];
+               g_decArgo_receivedDataPhase = [];
                
                % initialize file list
                tabNewFileNames = [];
@@ -845,7 +851,7 @@ else
                
                [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
                
-               duplicate_files_ir({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory);
+               duplicate_files_ir_cts4({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_decoderId);
             end
             
             fprintf('RSYNC_INFO: duplication done ...\n');
@@ -913,7 +919,7 @@ else
             tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
             decode_sbd_files( ...
             sbdFileNameList(idFile), sbdFileDate(idFile), sbdFileCyNum(idFile), ...
-            a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
+            a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, 1);
          
          %          g_decArgo_nbBuffToProcess = g_decArgo_nbBuffToProcess - 1;
          %          if (g_decArgo_nbBuffToProcess < 0)
@@ -1003,9 +1009,8 @@ return;
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
 %    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-%    decode_sbd_files( ...
-%    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
-%    a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag)
+%    decode_sbd_files(a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
+%    a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, a_buffModeFlag)
 %
 % INPUT PARAMETERS :
 %   a_sbdFileNameList  : list of SBD file names
@@ -1016,6 +1021,7 @@ return;
 %   a_refDay           : reference day (day of the first descent)
 %   a_floatSoftVersion : version of the float's software
 %   a_floatDmFlag      : float DM flag
+%   a_buffModeFlag     : predefined buffer mode flag
 %
 % OUTPUT PARAMETERS :
 %   o_tabProfiles    : decoded profiles
@@ -1036,9 +1042,8 @@ return;
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-   decode_sbd_files( ...
-   a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
-   a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag)
+   decode_sbd_files(a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
+   a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag, a_buffModeFlag)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -1082,6 +1087,16 @@ global g_decArgo_bufferKo;
 
 % cycle phases
 global g_decArgo_phaseSatTrans;
+
+% arrays to store rough information on received data
+global g_decArgo_0TypeReceivedData;
+global g_decArgo_250TypeReceivedData;
+global g_decArgo_253TypeReceivedData;
+global g_decArgo_248TypeReceivedData;
+global g_decArgo_249TypeReceivedData;
+global g_decArgo_254TypeReceivedData;
+global g_decArgo_255TypeReceivedData;
+global g_decArgo_253PacketPhaseReceived;
 
 % phase of received data
 global g_decArgo_receivedDataPhase;
@@ -1394,6 +1409,19 @@ while (procDone == 0)
             
          case {111} % Remocean V3.00 and higher
             
+            if (a_buffModeFlag == 1)
+               % initialize information arrays
+               g_decArgo_0TypeReceivedData = [];
+               g_decArgo_250TypeReceivedData = [];
+               g_decArgo_253TypeReceivedData = [];
+               g_decArgo_248TypeReceivedData = [];
+               g_decArgo_249TypeReceivedData = [];
+               g_decArgo_254TypeReceivedData = [];
+               g_decArgo_255TypeReceivedData = [];
+               g_decArgo_253PacketPhaseReceived = [];
+               g_decArgo_receivedDataPhase = [];
+            end
+            
             % decode sensor data and associated technical data (0, 250, 252 and
             % 253 msg types)
             [cyProfPhaseList, ...
@@ -1406,6 +1434,12 @@ while (procDone == 0)
                tabTech, floatPres, ...
                ~, ~, ~, ~] = ...
                decode_prv_data_ir_rudics_cts4_111(sbdDataData, sbdDataDate, 1);
+            
+            if (a_buffModeFlag == 1)
+               % check the buffer contents to set the
+               % g_decArgo_receivedDataPhase variable
+               is_buffer_completed_ir_rudics_cts4(a_decoderId);
+            end
 
             % assign the current configuration to the decoded cycles and
             % profiles
