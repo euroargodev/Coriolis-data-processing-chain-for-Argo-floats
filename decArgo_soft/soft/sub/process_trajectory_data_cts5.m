@@ -974,17 +974,34 @@ for idCyc = 1:length(cycleNumList)
          data = a_tabTrajData{idPackTech};
          paramName = cell2mat(data);
          paramName = {paramName.paramName};
-         [measStruct, ~] = create_one_meas_float_time_bis(g_MC_Grounded, ...
-            data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
-            data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
-            g_JULD_STATUS_2);
-         paramPres = get_netcdf_param_attributes('PRES');
-         paramPres.resolution = single(1);
-         measStruct.paramList = paramPres;
-         if (any(strcmp(paramName, 'PRES'))) % to cope with anomaly of 6902670 #112,01
-            measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
-            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         if (any(strcmp(paramName, 'JULD')))
+            [measStruct, ~] = create_one_meas_float_time_bis(g_MC_Grounded, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
+               data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
+               g_JULD_STATUS_2);
+            paramPres = get_netcdf_param_attributes('PRES');
+            paramPres.resolution = single(1);
+            measStruct.paramList = paramPres;
+            if (any(strcmp(paramName, 'PRES'))) % to cope with anomaly of 6902670 #112,01
+               measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+               measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            end
+         else
+            % this case means that grounding information comes from Alarm
+            % in TECH file (PRES only) (i.e. there is something wrong in system
+            % file that prevents retrieving information from events data
+            % (JULD+PRES)).
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = g_MC_Grounded;
+            paramPres = get_netcdf_param_attributes('PRES');
+            paramPres.resolution = single(1);
+            measStruct.paramList = paramPres;
+            if (any(strcmp(paramName, 'PRES'))) % to cope with anomaly of 6902670 #112,01
+               measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
+               measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            end
          end
       end
       

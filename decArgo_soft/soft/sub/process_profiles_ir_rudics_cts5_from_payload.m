@@ -803,6 +803,15 @@ global g_decArgo_patternNumFloat;
 % data to their correct cycle)
 global g_decArgo_dataPayloadCorrectedCycle;
 
+% cycle phases
+global g_decArgo_phaseAscProf;
+
+
+% only data sampled during ascent are affected by payload data storage
+% issue
+if (a_profStruct.phaseNumber ~= g_decArgo_phaseAscProf)
+   return
+end
 
 % find cycle start time for the concerned cycle
 idF = find((a_tabCycleTimes(:, 1) == o_profStruct.cycleNumber) & ...
@@ -1011,6 +1020,11 @@ o_tabCycleTimes = [];
 % global measurement codes
 global g_MC_CycleStart;
 global g_MC_DST;
+global g_MC_FST;
+global g_MC_PST;
+global g_MC_PET;
+global g_MC_DPST;
+global g_MC_AST;
 
 
 for idL = 1:size(a_allTrajDataFromApmtTech, 1)
@@ -1022,9 +1036,24 @@ for idL = 1:size(a_allTrajDataFromApmtTech, 1)
    measCodeList = [timedata(idJuld).measCode];
    timeList = [timedata(idJuld).value];
    
-   timeStart = get_time(g_MC_CycleStart, measCodeList, timeList);
+   timeStart = get_time(g_MC_AST, measCodeList, timeList);
+   if (isempty(timeStart))
+      timeStart = get_time(g_MC_DPST, measCodeList, timeList);
+   end
+   if (isempty(timeStart))
+      timeStart = get_time(g_MC_PET, measCodeList, timeList);
+   end
+   if (isempty(timeStart))
+      timeStart = get_time(g_MC_PST, measCodeList, timeList);
+   end
+   if (isempty(timeStart))
+      timeStart = get_time(g_MC_FST, measCodeList, timeList);
+   end
    if (isempty(timeStart))
       timeStart = get_time(g_MC_DST, measCodeList, timeList);
+   end
+   if (isempty(timeStart))
+      timeStart = get_time(g_MC_CycleStart, measCodeList, timeList);
    end
    
    if (~isempty(timeStart))

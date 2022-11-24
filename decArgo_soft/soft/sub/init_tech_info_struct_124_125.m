@@ -1418,14 +1418,15 @@ alarmGroundingParkDrift = init_basic_struct;
 alarmGroundingParkDrift.pattern = 'Grounding Park %u (%u dbar)';
 alarmGroundingParkDrift.count = 2;
 alarmGroundingParkDrift.id{end+1} = 1;
+alarmGroundingParkDrift.name{end+1} = 'grounding (during park drift) alarm received number';
+alarmGroundingParkDrift.fmt{end+1} = '%d';
+alarmGroundingParkDrift.traj{end+1} = [];
+alarmGroundingParkDrift.id{end+1} = 2;
 alarmGroundingParkDrift.name{end+1} = 'grounding (during park drift) alarm received (dbar)';
 alarmGroundingParkDrift.fmt{end+1} = '%d';
 alarmGroundingParkDrift.traj{end+1} = get_cts5_traj_data_init_struct(...
    g_MC_Grounded, 'PRES', ...
    'Grounding (during park drift) alarm received (dbar)');
-alarmGroundingParkDrift.id{end+1} = 2;
-alarmGroundingParkDrift.name{end+1} = 'grounding (during park drift) alarm received number';
-alarmGroundingParkDrift.fmt{end+1} = '%d';
 
 alarmGroundingDescToProf = init_basic_struct;
 alarmGroundingDescToProf.pattern = 'Grounding Deep profile (%u dbar)';

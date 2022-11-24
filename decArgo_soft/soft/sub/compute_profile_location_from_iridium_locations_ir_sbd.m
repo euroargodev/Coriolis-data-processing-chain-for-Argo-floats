@@ -50,8 +50,10 @@ if (~isempty(idFCyNum))
    lonList = [a_iridiumMailData(idFCyNum).unitLocationLon];
    radiusList = [a_iridiumMailData(idFCyNum).cepRadius];
    
-   % NOVA/DOVA Iridium data (recieved from Paul Lane in CSV files) have CEP
-   % Radius set to 0
+   % CEP Radius is initialized to 0 (so that the Iridium location is not
+   % considered if not present in the mail; Ex: co_20190527T062249Z_300234065420780_000939_000000_10565.txt)
+   % note also that NOVA/DOVA Iridium data (recieved from Paul Lane in CSV
+   % files) have CEP Radius set to 0
    idDel = find(radiusList == 0);
    if (~isempty(idDel))
       timeList(idDel) = [];

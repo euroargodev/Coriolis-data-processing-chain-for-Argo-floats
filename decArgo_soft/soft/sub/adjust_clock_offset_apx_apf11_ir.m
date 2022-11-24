@@ -106,11 +106,13 @@ for idB = 1:size(o_buoyancy, 1)
 end
 
 % clock adjustment of vitals information
-fieldNames = fields(o_vitalsData);
-for idF = 1:length(fieldNames)
-   fieldName = fieldNames{idF};
-   for idV = 1:size(o_vitalsData.(fieldName), 1)
-      o_vitalsData.(fieldName)(idV, 2) = adjust_time(o_vitalsData.(fieldName)(idV, 1), o_cycleClockOffset);
+if (~isempty(o_vitalsData))
+   fieldNames = fields(o_vitalsData);
+   for idF = 1:length(fieldNames)
+      fieldName = fieldNames{idF};
+      for idV = 1:size(o_vitalsData.(fieldName), 1)
+         o_vitalsData.(fieldName)(idV, 2) = adjust_time(o_vitalsData.(fieldName)(idV, 1), o_cycleClockOffset);
+      end
    end
 end
 
