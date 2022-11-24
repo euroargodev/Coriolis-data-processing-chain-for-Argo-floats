@@ -185,7 +185,7 @@ tabRsyncLogFiles = [];
 for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
-      if (~ismember(floatDecId, [121 122]))
+      if (~ismember(floatDecId, [121 122 123]))
          % CTS4 Iridium RUDICS floats
          floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
       else
