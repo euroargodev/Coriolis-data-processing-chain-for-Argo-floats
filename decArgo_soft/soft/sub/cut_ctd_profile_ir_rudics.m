@@ -107,7 +107,8 @@ if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
       end
    end
    
-   presMeas = a_tabProfile.data(:, 1);
+   idPres  = find(strcmp({a_tabProfile.paramList.name}, 'PRES') == 1, 1);
+   presMeas = a_tabProfile.data(:, idPres);
    paramPres = get_netcdf_param_attributes('PRES');
    idLevPrimary = find((presMeas ~= paramPres.fillValue) & (presMeas > presCutOffProf));
    % be careful, if acquisition mode is 'raw', the pressure measurements are not
