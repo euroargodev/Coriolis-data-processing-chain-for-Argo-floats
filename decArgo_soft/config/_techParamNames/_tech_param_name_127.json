@@ -498,9 +498,9 @@
    "TECH_PARAM_63" :
    {
       "TECH_PARAM_DEC_ID" : "216",
-      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_ID" : "TECH",
       "TECH_PARAM_MSG_LABEL" : "Nb. park descent",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>DescentToParkSamples_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_<short_sensor_name>DescentToParkSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the surface to parking depth phase."
    },
    "TECH_PARAM_64" :
@@ -530,9 +530,9 @@
    "TECH_PARAM_67" :
    {
       "TECH_PARAM_DEC_ID" : "218",
-      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_ID" : "TECH",
       "TECH_PARAM_MSG_LABEL" : "Nb. measurement descent",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the parking depth to profile depth phase."
    },
    "TECH_PARAM_68" :
@@ -562,9 +562,9 @@
    "TECH_PARAM_71" :
    {
       "TECH_PARAM_DEC_ID" : "220",
-      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_ID" : "TECH",
       "TECH_PARAM_MSG_LABEL" : "Nb. ascent",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>AscentSamples_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_<short_sensor_name>AscentSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the ascent to surface phase."
    },
    "TECH_PARAM_72" :
@@ -586,9 +586,9 @@
    "TECH_PARAM_74" :
    {
       "TECH_PARAM_DEC_ID" : "221",
-      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_ID" : "TECH",
       "TECH_PARAM_MSG_LABEL" : "Nb. Surface",
-      "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>InAirSamples_COUNT",
+      "TECH_PARAM_NAME" : "NUMBER_<short_sensor_name>InAirSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the surface phase."
    },
    "TECH_PARAM_75" :
@@ -857,13 +857,21 @@
    },
    "TECH_PARAM_108" :
    {
+      "TECH_PARAM_DEC_ID" : "238",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "Vector to payload communication fault",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_VectorToPayloadComAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when some communications between vector and payload cards fail."
+   },
+   "TECH_PARAM_109" :
+   {
       "TECH_PARAM_DEC_ID" : "223",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
       "TECH_PARAM_MSG_LABEL" : "Ice avoidance (ISA detection)",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
    },
-   "TECH_PARAM_109" :
+   "TECH_PARAM_110" :
    {
       "TECH_PARAM_DEC_ID" : "224",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -871,7 +879,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceCollisionDetectionAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with a collision."
    },
-   "TECH_PARAM_110" :
+   "TECH_PARAM_111" :
    {
       "TECH_PARAM_DEC_ID" : "225",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -879,7 +887,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
    },
-   "TECH_PARAM_111" :
+   "TECH_PARAM_112" :
    {
       "TECH_PARAM_DEC_ID" : "226",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -887,7 +895,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceSatMaskDetectionAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with the satellite mask."
    },
-   "TECH_PARAM_112" :
+   "TECH_PARAM_113" :
    {
       "TECH_PARAM_DEC_ID" : "227",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -895,7 +903,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm."
    },
-   "TECH_PARAM_113" :
+   "TECH_PARAM_114" :
    {
       "TECH_PARAM_DEC_ID" : "171",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -903,7 +911,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_EndOfLifeAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details)."
    },
-   "TECH_PARAM_114" :
+   "TECH_PARAM_115" :
    {
       "TECH_PARAM_DEC_ID" : "202",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -911,7 +919,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_STRING_EndOfLifeCause",
       "TECH_PARAM_DESCRIPTION" : "Name of the alarm responsible for the End Of Life."
    },
-   "TECH_PARAM_115" :
+   "TECH_PARAM_116" :
    {
       "TECH_PARAM_DEC_ID" : "172",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -919,7 +927,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_EmergencyAscentAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised the float ascends in an emergency mode."
    },
-   "TECH_PARAM_116" :
+   "TECH_PARAM_117" :
    {
       "TECH_PARAM_DEC_ID" : "173",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -927,7 +935,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_FeedbackAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when a feedback occurs."
    },
-   "TECH_PARAM_117" :
+   "TECH_PARAM_118" :
    {
       "TECH_PARAM_DEC_ID" : "203",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -935,7 +943,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_STRING_FeedbackType",
       "TECH_PARAM_DESCRIPTION" : "Type of the feedback."
    },
-   "TECH_PARAM_118" :
+   "TECH_PARAM_119" :
    {
       "TECH_PARAM_DEC_ID" : "204",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -943,7 +951,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FeedbackAccepted_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of accepted feedbacks."
    },
-   "TECH_PARAM_119" :
+   "TECH_PARAM_120" :
    {
       "TECH_PARAM_DEC_ID" : "205",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -951,7 +959,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FeedbackRefused_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of refused feedbacks."
    },
-   "TECH_PARAM_120" :
+   "TECH_PARAM_121" :
    {
       "TECH_PARAM_DEC_ID" : "228",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -959,7 +967,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>ErrorCountAlarm_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised to report error counter of <short_sensor_name> sensor."
    },
-   "TECH_PARAM_121" :
+   "TECH_PARAM_122" :
    {
       "TECH_PARAM_DEC_ID" : "229",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -967,7 +975,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>NoReplyCountAlarm_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised to report no reply counter of <short_sensor_name> sensor."
    },
-   "TECH_PARAM_122" :
+   "TECH_PARAM_123" :
    {
       "TECH_PARAM_DEC_ID" : "230",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -975,7 +983,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_<short_sensor_name>BrokenAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when <short_sensor_name> sensor is broken."
    },
-   "TECH_PARAM_123" :
+   "TECH_PARAM_124" :
    {
       "TECH_PARAM_DEC_ID" : "231",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -983,7 +991,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_<short_sensor_name>DataSizeAlarm_kbyte",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised to report <short_sensor_name> sensor data size (in KB)."
    },
-   "TECH_PARAM_124" :
+   "TECH_PARAM_125" :
    {
       "TECH_PARAM_DEC_ID" : "233",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -991,7 +999,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_SunaSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by the Suna."
    },
-   "TECH_PARAM_125" :
+   "TECH_PARAM_126" :
    {
       "TECH_PARAM_DEC_ID" : "234",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -999,7 +1007,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_SunaPowerCycles_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of power cycles performed by the Suna."
    },
-   "TECH_PARAM_126" :
+   "TECH_PARAM_127" :
    {
       "TECH_PARAM_DEC_ID" : "235",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1007,7 +1015,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_SunaErrors_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of errors reported by the Suna."
    },
-   "TECH_PARAM_127" :
+   "TECH_PARAM_128" :
    {
       "TECH_PARAM_DEC_ID" : "236",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1015,7 +1023,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_VOLTAGE_Suna_volts",
       "TECH_PARAM_DESCRIPTION" : "Suna power supply voltage."
    },
-   "TECH_PARAM_128" :
+   "TECH_PARAM_129" :
    {
       "TECH_PARAM_DEC_ID" : "237",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1023,7 +1031,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CURRENT_Suna_amps",
       "TECH_PARAM_DESCRIPTION" : "Suna power supply current."
    },
-   "TECH_PARAM_129" :
+   "TECH_PARAM_130" :
    {
       "TECH_PARAM_DEC_ID" : "232",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1031,7 +1039,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_UvpMemoryFreeSpace_gbyte",
       "TECH_PARAM_DESCRIPTION" : "Remaining space in the SD card of the UVP sensor (in GB)."
    },
-   "TECH_PARAM_130" :
+   "TECH_PARAM_131" :
    {
       "TECH_PARAM_DEC_ID" : "174",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1039,7 +1047,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is hanged during ascent."
    },
-   "TECH_PARAM_131" :
+   "TECH_PARAM_132" :
    {
       "TECH_PARAM_DEC_ID" : "175",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1047,7 +1055,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float escaped from hanging during ascent."
    },
-   "TECH_PARAM_132" :
+   "TECH_PARAM_133" :
    {
       "TECH_PARAM_DEC_ID" : "176",
       "TECH_PARAM_MSG_ID" : "TECH",
@@ -1055,7 +1063,7 @@
       "TECH_PARAM_NAME" : "CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "date of emergency ascent"
    },
-   "TECH_PARAM_133" :
+   "TECH_PARAM_134" :
    {
       "TECH_PARAM_DEC_ID" : "177",
       "TECH_PARAM_MSG_ID" : "TECH",
@@ -1063,7 +1071,7 @@
       "TECH_PARAM_NAME" : "PRES_Now_dbar",
       "TECH_PARAM_DESCRIPTION" : "test message data reporting pressure at the surface during drift - cycle 0"
    },
-   "TECH_PARAM_134" :
+   "TECH_PARAM_135" :
    {
       "TECH_PARAM_DEC_ID" : "178",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1071,7 +1079,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_BrakingDuringDescentAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the descent speed is too high and the float brakes."
    },
-   "TECH_PARAM_135" :
+   "TECH_PARAM_136" :
    {
       "TECH_PARAM_DEC_ID" : "179",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1079,7 +1087,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_PRES_BrakingDuringDescentAlarm_dbar",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the descent speed is too high and the float brakes."
    },
-   "TECH_PARAM_136" :
+   "TECH_PARAM_137" :
    {
       "TECH_PARAM_DEC_ID" : "180",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1087,7 +1095,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceDetectionByIsaAlgorithm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Time of ice detection by the ISA algorithm."
    },
-   "TECH_PARAM_137" :
+   "TECH_PARAM_138" :
    {
       "TECH_PARAM_DEC_ID" : "181",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1095,7 +1103,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceDetection_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Time of ice detection."
    },
-   "TECH_PARAM_138" :
+   "TECH_PARAM_139" :
    {
       "TECH_PARAM_DEC_ID" : "182",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
@@ -1103,7 +1111,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_PRES_IceDetection_dbar",
       "TECH_PARAM_DESCRIPTION" : "Pressure of ice detection."
    },
-   "TECH_PARAM_139" :
+   "TECH_PARAM_140" :
    {
       "TECH_PARAM_DEC_ID" : "183",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",

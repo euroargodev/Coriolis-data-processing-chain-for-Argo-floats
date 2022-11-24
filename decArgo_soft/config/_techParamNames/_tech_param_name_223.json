@@ -299,7 +299,7 @@
    {
       "TECH_PARAM_DEC_ID" : "136",
       "TECH_PARAM_MSG_ID" : "65",
-      "TECH_PARAM_MSG_LABEL" : "Ecart avec l'heure GPS lors de la remise à l'heure (= clock offset = date flotteur - date GPS)",
+      "TECH_PARAM_MSG_LABEL" : "Ecart avec l'heure GPS lors de la remise Ã  l'heure (= clock offset = date flotteur - date GPS)",
       "TECH_PARAM_NAME" : "CLOCK_FloatTimeCorrection_MMSS",
       "TECH_PARAM_DESCRIPTION" : "float internal clock time correction"
    },

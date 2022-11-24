@@ -100,7 +100,7 @@ end
 configNameToIgnore = [{'CONFIG_PPP_ParkPistonPosition'} {'CONFIG_TPP_ProfilePistonPosition'}];
 listIdParamToIgnore = [];
 for idC = 1:length(configNames)
-   if (~isempty(find(strcmp(configNames{idC}, configNameToIgnore) == 1, 1)))
+   if (ismember(configNames{idC}, configNameToIgnore))
       listIdParamToIgnore = [listIdParamToIgnore; idC];
    end
 end
@@ -164,6 +164,20 @@ if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
          g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
       else
          fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for OPTODE sensor\n', g_decArgo_floatNum);
+      end
+   end
+end
+
+% create the tabDoxyCoef array
+if (isfield(jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   if (any(strcmp(struct2cell(jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'RAFOS')))
+      % if RAFOS field already exists it has been recovered from the json
+      % meta-data file otherwise we set a default one
+      if (~isfield(g_decArgo_calibInfo, 'RAFOS'))
+         calibData = [];
+         calibData.SlopeRafosTOA = 0.3075; % Olaf Boebel specifications (8 Mar 2021 08:57:18)
+         calibData.OffsetRafosTOA = -80; % Olaf Boebel specifications (8 Mar 2021 08:57:18)
+         g_decArgo_calibInfo.RAFOS = calibData;
       end
    end
 end

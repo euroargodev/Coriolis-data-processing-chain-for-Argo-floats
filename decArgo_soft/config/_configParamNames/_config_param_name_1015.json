@@ -133,7 +133,7 @@
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "Mission prelude period [hours]",
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeTime_hours",
-      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. It’s crucial in calculating the time of the first descent."
+      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. Itâ€™s crucial in calculating the time of the first descent."
    },
    "CONF_PARAM_18" :
    {
@@ -188,16 +188,16 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_X01",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "Misc. configuration information",
-      "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength_nm",
-      "CONF_PARAM_DESCRIPTION" : "Wavelength of <short sensor name> Beta  #<I> measurements (in nanometer)."
+      "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength1_nm",
+      "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco Beta #1 measurements (in nanometer)."
    },
    "CONF_PARAM_25" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_X02",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "Misc. configuration information",
-      "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth_nm",
-      "CONF_PARAM_DESCRIPTION" : "Bandwidth of <short sensor name> Beta  #<I> measurements (in nanometer)."
+      "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth1_nm",
+      "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco Beta #1 measurements (in nanometer)."
    },
    "CONF_PARAM_26" :
    {

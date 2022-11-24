@@ -101,6 +101,10 @@ global g_decArgo_decoderIdListNkeCts4Ice;
 global g_decArgo_decoderIdListNkeCts5Osean;
 global g_decArgo_decoderIdListNkeCts5;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamNbSampleSfet;
+
 
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
@@ -125,11 +129,14 @@ for idFloat = 1:nbFloats
    g_decArgo_floatLaunchDate = '';
    g_decArgo_floatLaunchLon = '';
    g_decArgo_floatLaunchLat = '';
-
+   
    g_decArgo_decIdCheckFlag = 0;
    
    g_decArgo_paramAdjInfo = [];
-   g_decArgo_paramAdjId = 1;   
+   g_decArgo_paramAdjId = 1;
+   
+   g_decArgo_addParamNbSampleCtd = 0;
+   g_decArgo_addParamNbSampleSfet = 0;
    
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
@@ -329,7 +336,7 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{9} = g_decArgo_dateDef;
       end
       
-      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224]))
+      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225]))
          % ICE floats
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...

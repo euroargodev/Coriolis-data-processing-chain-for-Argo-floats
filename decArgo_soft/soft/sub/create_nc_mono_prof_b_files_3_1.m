@@ -234,7 +234,7 @@ for idProf = 1:length(tabProfiles)
          parameterList = prof.paramList;
          profileData = prof.data;
          for idParam = 1:length(parameterList)
-            if (((parameterList(idParam).paramType ~= 'c') || ...
+            if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                   strcmp(parameterList(idParam).name, 'PRES')) && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
@@ -387,7 +387,7 @@ for idProf = 1:length(tabProfiles)
                         % profile parameter data
                         parameterList = prof.paramList;
                         for idParam = 1:length(parameterList)
-                           if ((parameterList(idParam).paramType ~= 'c') || ...
+                           if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                                  strcmp(parameterList(idParam).name, 'PRES'))
                               profParam = parameterList(idParam);
                               profParamName = profParam.name;
@@ -812,7 +812,7 @@ for idProf = 1:length(tabProfiles)
             parameterList = prof.paramList;
             for idParam = 1:length(parameterList)
                
-               if ((parameterList(idParam).paramType ~= 'c') || ...
+               if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES'))
                   
                   profParam = parameterList(idParam);
@@ -876,7 +876,7 @@ for idProf = 1:length(tabProfiles)
                   end
                   
                   % parameter QC variable and attributes
-                  if (profParam.paramType ~= 'c')
+                  if ((profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
                            strcmp(profParam.name(end-3:end), '_MED'))
                         
@@ -893,7 +893,7 @@ for idProf = 1:length(tabProfiles)
                   end
                   
                   % parameter adjusted variable and attributes
-                  if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                  if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      
                      profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                      if (~var_is_present_dec_argo(fCdf, profParamAdjName))
@@ -1109,7 +1109,7 @@ for idProf = 1:length(tabProfiles)
             paramPos = 0;
             for idParam = 1:length(parameterList)
                
-               if (((parameterList(idParam).paramType ~= 'c') || ...
+               if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
@@ -1283,7 +1283,7 @@ for idProf = 1:length(tabProfiles)
             parameterDataMode = prof.paramDataMode;
             for idParam = 1:length(parameterList)
                
-               if ((parameterList(idParam).paramType ~= 'c') || ...
+               if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES'))
                   
                   profParam = parameterList(idParam);
@@ -1301,7 +1301,7 @@ for idProf = 1:length(tabProfiles)
                      profParamQcVarId = netcdf.inqVarID(fCdf, profParamQcName);
                   end
                   
-                  if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                  if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      % parameter adjusted variable and attributes
                      profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                      profParamAdjVarId = netcdf.inqVarID(fCdf, profParamAdjName);
@@ -1358,7 +1358,7 @@ for idProf = 1:length(tabProfiles)
                         end
                         
                         if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                              (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                              (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                            
                            % parameter adjusted data
                            paramAdjData = prof.dataAdj(:, idParam);
@@ -1466,7 +1466,7 @@ for idProf = 1:length(tabProfiles)
                            end
                            
                            if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                               
                               % parameter adjusted data
                               paramAdjData = prof.dataAdj(:, firstCol:lastCol);
@@ -1514,7 +1514,7 @@ for idProf = 1:length(tabProfiles)
                            end
                            
                            if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                                 (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                               
                               % parameter adjusted data
                               paramAdjData = prof.dataAdj(:, firstCol:lastCol);
@@ -1608,7 +1608,7 @@ for idProf = 1:length(tabProfiles)
                   paramName = paramAdjInfo{4};
                   
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if (paramInfo.paramType ~= 'c')
+                  if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                      paramEquation = paramAdjInfo{5};
                      paramCoefficient = paramAdjInfo{6};
                      paramComment = paramAdjInfo{7};
@@ -1726,7 +1726,7 @@ for idProf = 1:length(tabProfiles)
             paramPos = 0;
             for idParam = 1:length(parameterList)
                
-               if (((parameterList(idParam).paramType ~= 'c') || ...
+               if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                      strcmp(parameterList(idParam).name, 'PRES')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))

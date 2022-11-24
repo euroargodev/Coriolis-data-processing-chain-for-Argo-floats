@@ -83,7 +83,8 @@ o_profStruct = struct( ...
    'updated', 0, ... % 1 if the associated nc file must be updated
    'rtOffset', g_decArgo_rtOffsetInfo, ...
    'rtParamAdjIdList', [], ... % list of information on RT param adjustment for the profile (first column of g_decArgo_paramAdjInfo)
-   'fakeProfFlag', 0 ... % 1 if it is a 'default' profile created by the decoder to pass the java checker
+   'fakeProfFlag', 0, ... % 1 if it is a 'default' profile created by the decoder to pass the java checker
+   'bounceFlag', '' ... 
    );
 
 return

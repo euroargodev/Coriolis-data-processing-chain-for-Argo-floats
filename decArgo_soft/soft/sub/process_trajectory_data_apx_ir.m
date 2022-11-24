@@ -824,20 +824,7 @@ end
 pMaxHrValue = [];
 pMaxHrId = [];
 if (~isempty(a_profHrData))
-   
-   % remove NB_SAMPLE parameter
-   idNbSample  = find(strcmp({a_profHrData.paramList.name}, 'NB_SAMPLE') == 1, 1);
-   if (~isempty(idNbSample))
-      a_profHrData.paramList(idNbSample) = [];
-      if (~isempty(a_profHrData.paramDataMode))
-         a_profHrData.paramDataMode(idNbSample) = [];
-      end
-      a_profHrData.data(:, idNbSample) = [];
-      if (~isempty(a_profHrData.dataAdj))
-         a_profHrData.dataAdj(:, idNbSample) = [];
-      end
-   end
-   
+      
    idPres = find(strcmp({a_profHrData.paramList.name}, 'PRES') == 1);
    if (~isempty(idPres))
       presData = a_profHrData.data(:, idPres);

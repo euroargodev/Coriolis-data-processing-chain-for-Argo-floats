@@ -767,7 +767,7 @@ if (monoBProfFileFlag == 1)
             if (~isempty(paramName))
                ncBParamNameList{end+1} = paramName;
                paramInfo = get_netcdf_param_attributes(paramName);
-               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                   ncBParamAdjNameList = [ncBParamAdjNameList ...
                      {[paramName '_ADJUSTED']} ...
                      ];
@@ -1069,7 +1069,7 @@ if (multiProfFileFlag)
                if (~isempty(paramName))
                   ncBMParamNameList{end+1} = paramName;
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+                  if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                      ncBMParamAdjNameList = [ncBMParamAdjNameList ...
                         {[paramName '_ADJUSTED']} ...
                         ];
@@ -1189,7 +1189,7 @@ if (multiProfFileFlag)
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % DATA STRUCTURE
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         
+   
    dataStruct.paramDataModeM = paramDataModeM;
    
    dataStruct.ncMParamNameList = ncMParamNameList;
@@ -1566,7 +1566,7 @@ if (testFlagList(19) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1601,7 +1601,7 @@ if (testFlagList(21) == 1)
          {'DOXY'} ...
          {'DOXY2'} ...
          ];
-
+      
       for idProf = 1:length(juld)
          if (strncmp(vssList{idProf}, 'Near-surface sampling:', length('Near-surface sampling:')))
             
@@ -1655,7 +1655,7 @@ if (testFlagList(21) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1866,7 +1866,7 @@ if (testFlagList(22) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1906,7 +1906,7 @@ if (testFlagList(6) == 1)
                idNoDefPres = find(profPres ~= presDataFillValue);
                presDataQc(idProf, idNoDefPres) = set_qc(presDataQc(idProf, idNoDefPres), g_decArgo_qcStrGood);
                dataStruct.(presDataQcName) = presDataQc;
-                              
+               
                testDoneList(6, idProf) = 1;
                
                idNoDef = find(profPres ~= presDataFillValue);
@@ -1936,7 +1936,7 @@ if (testFlagList(6) == 1)
             end
          end
       end
-   end   
+   end
    
    % SPECIFIC TO OTHER PARAMETERS
    
@@ -1995,7 +1995,7 @@ if (testFlagList(6) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2079,7 +2079,7 @@ if (testFlagList(7) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2278,7 +2278,7 @@ if (testFlagList(9) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2372,7 +2372,7 @@ if (testFlagList(11) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2467,7 +2467,7 @@ if (testFlagList(25) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2542,7 +2542,7 @@ if (testFlagList(12) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2626,7 +2626,7 @@ if (testFlagList(13) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2746,7 +2746,7 @@ if (testFlagList(15) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2809,7 +2809,7 @@ if (multiProfFileFlag)
                   adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
                   paramName = paramAdjNameQc(1:adjPos-1);
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if (paramInfo.paramType == 'c')
+                  if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                      % 'c' parameters
                      if (dataModeCFile(idProf) ~= 'R')
                         % use <PARAM>_ADJUSTED_QC
@@ -2891,7 +2891,7 @@ if (testFlagList(16) == 1)
       {'PRES'} {'TEMP_DOXY'} {1} {1}; ...
       {'PRES'} {'TEMP_DOXY2'} {1} {1}; ...
       ];
-
+   
    for idProf = 1:length(juld)
       
       % test only primay profiles (because we use multi-profile data to look for
@@ -3013,7 +3013,7 @@ if (testFlagList(16) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3286,7 +3286,7 @@ if (testFlagList(23) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3341,7 +3341,7 @@ if (testFlagList(57) == 1)
    
    for idP = 1:length(test57ParameterList2)
       paramName = test57ParameterList2{idP};
-         
+      
       for idProf = 1:length(juld)
          
          for idDM = 1:2
@@ -3508,7 +3508,7 @@ if (testFlagList(57) == 1)
             end
          end
       end
-   end   
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3594,7 +3594,7 @@ if (multiProfFileFlag)
                adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
                paramName = paramAdjNameQc(1:adjPos-1);
                paramInfo = get_netcdf_param_attributes(paramName);
-               if (paramInfo.paramType == 'c')
+               if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                   % 'c' parameters
                   if (dataModeCFile(idProf) ~= 'R')
                      % use <PARAM>_ADJUSTED_QC
@@ -3671,7 +3671,7 @@ end
 if (~isempty(g_rtqc_trajData))
    
    % create the list of MCs concerned by this report
-      
+   
    profMeasCode = [];
    if (direction(1) == 'A')
       profMeasCode = g_MC_AscProfDeepestBin;
@@ -4892,27 +4892,27 @@ return
 
 % ------------------------------------------------------------------------------
 % Retrieve parameter data from the data structure according to its data mode.
-% 
+%
 % SYNTAX :
 %  [o_paramData, o_paramDataQc, o_paramDataFillValue, ...
 %    o_paramDataMode, o_paramDataQcName] = ...
 %    get_param_data(a_paramName, a_dataStruct, a_profId, a_wantedDataMode)
-% 
+%
 % INPUT PARAMETERS :
 %   a_paramName      : name of the parameter data
 %   a_dataStruct     : data structure
 %   a_profId         : profile Id
 %   a_wantedDataMode : data mode of the parameter to retrieve
-% 
+%
 % OUTPUT PARAMETERS :
 %   o_paramData          : parameter data
 %   o_paramDataQc        : parameter data QC
 %   o_paramDataFillValue : parameter data Fill Value
 %   o_paramDataMode      : parameter data mode
 %   o_paramDataQcName    : parameter data QC field name in the data structure
-% 
+%
 % EXAMPLES :
-% 
+%
 % SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
@@ -5005,27 +5005,27 @@ return
 % ------------------------------------------------------------------------------
 % Retrieve parameter data from the data structure according to its data mode.
 % Similar to get_param_data but with multi-profile file data.
-% 
+%
 % SYNTAX :
 %  [o_paramData, o_paramDataQc, o_paramDataFillValue, ...
 %    o_paramDataMode, o_paramDataQcName] = ...
 %    get_param_data_m(a_paramName, a_dataStruct, a_profId, a_wantedDataMode)
-% 
+%
 % INPUT PARAMETERS :
 %   a_paramName      : name of the parameter data
 %   a_dataStruct     : data structure
 %   a_profId         : profile Id
 %   a_wantedDataMode : data mode of the parameter to retrieve
-% 
+%
 % OUTPUT PARAMETERS :
 %   o_paramData          : parameter data
 %   o_paramDataQc        : parameter data QC
 %   o_paramDataFillValue : parameter data Fill Value
 %   o_paramDataMode      : parameter data mode
 %   o_paramDataQcName    : parameter data QC field name in the data structure
-% 
+%
 % EXAMPLES :
-% 
+%
 % SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
@@ -5118,18 +5118,18 @@ return
 % ------------------------------------------------------------------------------
 % Retrieve CTD data from the data structure according to the primary profile
 % data mode.
-% 
+%
 % SYNTAX :
 %  [o_profPresCtd, o_profPresCtdQc, o_presCtdDataFillValue, ...
 %    o_profTempCtd, o_profTempCtdQc, o_tempCtdDataFillValue, ...
 %    o_profPsalCtd, o_profPsalCtdQc, o_psalCtdDataFillValue] = ...
 %    get_ctd_data(a_floatNum, a_dataStruct, a_vssList)
-% 
+%
 % INPUT PARAMETERS :
 %   a_floatNum   : float WMO number
 %   a_dataStruct : data structure
 %   a_vssList    : list of VSS
-% 
+%
 % OUTPUT PARAMETERS :
 %   o_profPresCtd          : CTD PRES data
 %   o_profPresCtdQc        : CTD PRES QC data
@@ -5140,9 +5140,9 @@ return
 %   o_profPsalCtd          : CTD PSAL data
 %   o_profPsalCtdQc        : CTD PSAL QC data
 %   o_psalCtdDataFillValue : CTD PSAL fill value
-% 
+%
 % EXAMPLES :
-% 
+%
 % SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------

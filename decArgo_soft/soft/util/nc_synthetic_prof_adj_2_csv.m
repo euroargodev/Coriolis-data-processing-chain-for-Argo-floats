@@ -31,7 +31,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudic
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_deep_5.64.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default values initialization
 init_default_values;

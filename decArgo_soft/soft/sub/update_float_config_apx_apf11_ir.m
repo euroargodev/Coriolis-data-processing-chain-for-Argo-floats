@@ -120,6 +120,7 @@ if (~isempty(a_sampleCfg))
    
    % if new sampling configuration parameters are encountered
    addConfigNames = [];
+   addConfigIds = [];
    addConfigValues = [];
 
    % select the last sample set
@@ -337,14 +338,32 @@ switch (a_floatConfLabel)
    case 'HyperRetractPressure'
       o_configName = 'CONFIG_HRP_HyperRetractPressure';
       o_configValue = str2double(a_floatConfValue);
+   case 'IceAscentTimeout'
+      o_configName = 'CONFIG_IAT_IceAscentTimeout';
+      o_configValue = str2double(a_floatConfValue);
    case 'IceBreakupDays'
       o_configName = 'CONFIG_IBD_IceBreakupDays';
       o_configValue = str2double(a_floatConfValue);
    case 'IceCriticalT'
       o_configName = 'CONFIG_IMLT_IceDetectionTemperature';
       o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentCount'
+      o_configName = 'CONFIG_IDCO_IceDescentCount';
+      o_configValue = str2double(a_floatConfValue);
    case 'IceDescentCycles'
       o_configName = 'CONFIG_IDC_IceDescentCycles';
+      o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentNudge'
+      o_configName = 'CONFIG_IDN_IceDescentNudge';
+      o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentPressure'
+      o_configName = 'CONFIG_IDPRES_IceDescentPressure';
+      o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentTimeout'
+      o_configName = 'CONFIG_IDT_IceDescentTimeout';
+      o_configValue = str2double(a_floatConfValue);
+   case 'IceDescentTimerInterval'
+      o_configName = 'CONFIG_IDTI_IceDescentTimerInterval';
       o_configValue = str2double(a_floatConfValue);
    case 'IceDetectionP'
       o_configName = 'CONFIG_IDP_IceDetectionMaxPres';

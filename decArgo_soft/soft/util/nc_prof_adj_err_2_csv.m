@@ -35,7 +35,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\TRAJ_DM\ANDRO_2019\listes\provor_arvor_iridium_189.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default values initialization
 init_default_values;

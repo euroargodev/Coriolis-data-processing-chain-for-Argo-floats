@@ -33,8 +33,8 @@ global g_decArgo_decoderIdListMtime;
 
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
-   105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
-   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, ...
+   105, 106, 107, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
+   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
    1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, 1123, 1124, 1125, 1126, 1127, ...
@@ -455,6 +455,53 @@ if (isfield(o_metaData, 'PARAMETER'))
       end
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % update RAFOS meta-data
+   
+   [o_metaData] = update_parameter_list_rafos(o_metaData, a_decoderId);
+   
+   paramList = struct2cell(o_metaData.PARAMETER);
+   for idP = 1:length(paramList)
+      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_rafos(paramList{idP}, a_decoderId);
+      if (~isempty(param))
+         
+         % check meta data length
+         FORMAT_SIZE = 4096;
+         if (length(preCalibEq) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
+            preCalibEq = preCalibEq(1:FORMAT_SIZE);
+         end
+         if (length(preCalibCoef) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
+            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
+         end
+         if (length(preCalibComment) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
+            preCalibComment = preCalibComment(1:FORMAT_SIZE);
+         end
+         
+         for idF = 1:length(fieldList)
+            if (isempty(o_metaData.(fieldList{idF})))
+               for id = 1:length(paramList)
+                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+               end
+            end
+         end
+         
+         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
+         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
+         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
+         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
+         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
+         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
+         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
+      end
+   end   
+   
 else
    fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information - parameter information cannot be updated\n', ...
       g_decArgo_floatNum);
@@ -708,11 +755,19 @@ return
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_ctd(a_metaData)
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+
+
 paramList = [ ...
    {'PRES'} ...
    {'TEMP'} ...
    {'PSAL'} ...
    ];
+
+if (g_decArgo_addParamNbSampleCtd)
+   paramList = [paramList {'NB_SAMPLE_CTD'}];
+end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -764,6 +819,7 @@ o_preCalibComment = '';
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeIridiumRbr;
+global g_decArgo_decoderIdListApexApf11Iridium;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -804,50 +860,49 @@ switch (a_paramName)
          end
       end
       
-      switch (a_decoderId)
-         case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
-            % Apex APF11 Iridium
-            if (isfield(o_metaData, 'SBE_PRES_COEF_PA0'))
-               o_preCalibEq = 'y=thermistor_output (counts); t=PTHA0+PTHA1*y+PTHA2*y^2; x=instrument_output-PTCA0-PTCA1*t-PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (PSIA)=PA0+PA1*n+PA2*n^2';
-               if (isfield(o_metaData, 'SBE_PRES_COEF_PA0') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PA1') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PA2') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTHA0') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTHA1') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTHA2') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCA0') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCA1') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCA2') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCB0') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCB1') && ...
-                     isfield(o_metaData, 'SBE_PRES_COEF_PTCB2'))
-                  o_preCalibCoef = sprintf('%s, %s, %s; %s, %s, %s; %s, %s, %s; %s, %s, %s', ...
-                     o_metaData.SBE_PRES_COEF_PTHA0, ...
-                     o_metaData.SBE_PRES_COEF_PTHA1, ...
-                     o_metaData.SBE_PRES_COEF_PTHA2, ...
-                     o_metaData.SBE_PRES_COEF_PTCA0, ...
-                     o_metaData.SBE_PRES_COEF_PTCA1, ...
-                     o_metaData.SBE_PRES_COEF_PTCA2, ...
-                     o_metaData.SBE_PRES_COEF_PTCB0, ...
-                     o_metaData.SBE_PRES_COEF_PTCB1, ...
-                     o_metaData.SBE_PRES_COEF_PTCB2, ...
-                     o_metaData.SBE_PRES_COEF_PA0, ...
-                     o_metaData.SBE_PRES_COEF_PA1, ...
-                     o_metaData.SBE_PRES_COEF_PA2);
-               end
-               if (isfield(o_metaData, 'PARAMETER'))
-                  paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
-                  fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-                  if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                        isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                     o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
-                  end
-               end
-               if (isempty(o_preCalibCoef))
-                  fprintf('ERROR: Float #%d: inconsistent CTD_PRES calibration information\n', ...
-                     g_decArgo_floatNum);
+      if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
+         % Apex APF11 Iridium
+         if (isfield(o_metaData, 'SBE_PRES_COEF_PA0'))
+            o_preCalibEq = 'y=thermistor_output (counts); t=PTHA0+PTHA1*y+PTHA2*y^2; x=instrument_output-PTCA0-PTCA1*t-PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (PSIA)=PA0+PA1*n+PA2*n^2';
+            if (isfield(o_metaData, 'SBE_PRES_COEF_PA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB2'))
+               o_preCalibCoef = sprintf('%s, %s, %s; %s, %s, %s; %s, %s, %s; %s, %s, %s', ...
+                  o_metaData.SBE_PRES_COEF_PTHA0, ...
+                  o_metaData.SBE_PRES_COEF_PTHA1, ...
+                  o_metaData.SBE_PRES_COEF_PTHA2, ...
+                  o_metaData.SBE_PRES_COEF_PTCA0, ...
+                  o_metaData.SBE_PRES_COEF_PTCA1, ...
+                  o_metaData.SBE_PRES_COEF_PTCA2, ...
+                  o_metaData.SBE_PRES_COEF_PTCB0, ...
+                  o_metaData.SBE_PRES_COEF_PTCB1, ...
+                  o_metaData.SBE_PRES_COEF_PTCB2, ...
+                  o_metaData.SBE_PRES_COEF_PA0, ...
+                  o_metaData.SBE_PRES_COEF_PA1, ...
+                  o_metaData.SBE_PRES_COEF_PA2);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
+            if (isempty(o_preCalibCoef))
+               fprintf('ERROR: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+         end
       end
       
    case {'TEMP'}
@@ -883,39 +938,38 @@ switch (a_paramName)
          end
       end
       
-      switch (a_decoderId)
-         case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
-            % Apex APF11 Iridium
-            if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0'))
-               o_preCalibEq = 'n=instrument_output (counts); temperature ITS-90 (°C)=1/{a0+a1[ln(n)]+a2[ln^2(n)]+a3[ln^3(n)]}-273.15';
-               if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0') && ...
-                     isfield(o_metaData, 'SBE_TEMP_COEF_TA1') && ...
-                     isfield(o_metaData, 'SBE_TEMP_COEF_TA2') && ...
-                     isfield(o_metaData, 'SBE_TEMP_COEF_TA3'))
-                  o_preCalibCoef = sprintf('%s, %s, %s, %s', ...
-                     o_metaData.SBE_TEMP_COEF_TA0, ...
-                     o_metaData.SBE_TEMP_COEF_TA1, ...
-                     o_metaData.SBE_TEMP_COEF_TA2, ...
-                     o_metaData.SBE_TEMP_COEF_TA3);
-               end
-               if (isfield(o_metaData, 'PARAMETER'))
-                  paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
-                  fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-                  if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                        isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                     o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
-                  end
-               end
-               if (isempty(o_preCalibCoef))
-                  fprintf('ERROR: Float #%d: inconsistent CTD_TEMP calibration information\n', ...
-                     g_decArgo_floatNum);
+      if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
+         % Apex APF11 Iridium
+         if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0'))
+            o_preCalibEq = 'n=instrument_output (counts); temperature ITS-90 (°C)=1/{a0+a1[ln(n)]+a2[ln^2(n)]+a3[ln^3(n)]}-273.15';
+            if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA1') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA2') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA3'))
+               o_preCalibCoef = sprintf('%s, %s, %s, %s', ...
+                  o_metaData.SBE_TEMP_COEF_TA0, ...
+                  o_metaData.SBE_TEMP_COEF_TA1, ...
+                  o_metaData.SBE_TEMP_COEF_TA2, ...
+                  o_metaData.SBE_TEMP_COEF_TA3);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
+            if (isempty(o_preCalibCoef))
+               fprintf('ERROR: Float #%d: inconsistent CTD_TEMP calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+         end
       end
       
    case {'PSAL'}
       o_param = 'PSAL';
-      o_paramSensor = 'CTD_PSAL';
+      o_paramSensor = 'CTD_CNDC';
       o_paramUnits = 'psu';
       if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
          o_paramAccuracy = '0.005';
@@ -946,41 +1000,50 @@ switch (a_paramName)
          end
       end
       
-      switch (a_decoderId)
-         case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
-            % Apex APF11 Iridium
-            if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC'))
-               o_preCalibEq = 'f=instrument_output (Hz)*sqrt(1.0+WBOTC*t)/1000.0; t=temperature (°C); p=pressure (decibars); d=CTcor; e=CPcor; conductivity (S/m)=(g+h*f^2+i*f^3+j*f^4)/(1+d*t+e*p)';
-               if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_CTCOR') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_CPCOR') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_G') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_H') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_I') && ...
-                     isfield(o_metaData, 'SBE_CNDC_COEF_J'))
-                  o_preCalibCoef = sprintf('%s; %s; %s; %s, %s, %s, %s', ...
-                     o_metaData.SBE_CNDC_COEF_WBOTC, ...
-                     o_metaData.SBE_CNDC_COEF_CTCOR, ...
-                     o_metaData.SBE_CNDC_COEF_CPCOR, ...
-                     o_metaData.SBE_CNDC_COEF_G, ...
-                     o_metaData.SBE_CNDC_COEF_H, ...
-                     o_metaData.SBE_CNDC_COEF_I, ...
-                     o_metaData.SBE_CNDC_COEF_J);
-               end
-               if (isfield(o_metaData, 'PARAMETER'))
-                  paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
-                  fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-                  if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                        isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                     o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
-                  end
-               end
-               if (isempty(o_preCalibCoef))
-                  fprintf('ERROR: Float #%d: inconsistent CTD_PSAL calibration information\n', ...
-                     g_decArgo_floatNum);
+      if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
+         % Apex APF11 Iridium
+         if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC'))
+            o_preCalibEq = 'f=instrument_output (Hz)*sqrt(1.0+WBOTC*t)/1000.0; t=temperature (°C); p=pressure (decibars); d=CTcor; e=CPcor; conductivity (S/m)=(g+h*f^2+i*f^3+j*f^4)/(1+d*t+e*p)';
+            if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_CTCOR') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_CPCOR') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_G') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_H') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_I') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_J'))
+               o_preCalibCoef = sprintf('%s; %s; %s; %s, %s, %s, %s', ...
+                  o_metaData.SBE_CNDC_COEF_WBOTC, ...
+                  o_metaData.SBE_CNDC_COEF_CTCOR, ...
+                  o_metaData.SBE_CNDC_COEF_CPCOR, ...
+                  o_metaData.SBE_CNDC_COEF_G, ...
+                  o_metaData.SBE_CNDC_COEF_H, ...
+                  o_metaData.SBE_CNDC_COEF_I, ...
+                  o_metaData.SBE_CNDC_COEF_J);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
+            if (isempty(o_preCalibCoef))
+               fprintf('ERROR: Float #%d: inconsistent CTD_CNDC calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+         end
       end
+      
+   case {'NB_SAMPLE_CTD'}
+      o_param = 'NB_SAMPLE_CTD';
+      o_paramSensor = 'CTD_PRES';
+      o_paramUnits = 'dimensionless';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
       
 end
 
@@ -1023,9 +1086,9 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, ...
-         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223}
-      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223]))
+   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 114, ...
+         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223, 225}
+      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223, 225]))
          if (a_decoderId == 124) % no optode on CTS5 UVP #6902968
             if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
                   any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -1046,7 +1109,7 @@ switch (a_decoderId)
                {'DOXY'} ...
                ];
          end
-      elseif (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113])) % CTS3 with PPOX_DOXY
+      elseif (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114])) % CTS3 with PPOX_DOXY
          paramList = [ ...
             {'TEMP_DOXY'} ...
             {'C1PHASE_DOXY'} ...
@@ -1439,6 +1502,7 @@ global g_decArgo_doxy_102_207_206_b1;
 global g_decArgo_doxy_102_207_206_b2;
 global g_decArgo_doxy_102_207_206_b3;
 global g_decArgo_doxy_102_207_206_c0;
+
 
 switch (a_decoderId)
    case {4, 19, 25}
@@ -2047,8 +2111,8 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 110, 111, 113, 121, 122, 124, 126, 127, ...
-         201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, ...
+   case {107, 109, 110, 111, 113, 114, 121, 122, 124, 126, 127, ...
+         201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, 225, ...
          1121, 1122, 1123, 1124, 1125, 1126, 1127, 1322, 1323}
       % CASE_202_205_304
       switch (a_paramName)
@@ -3141,7 +3205,7 @@ global g_decArgo_calibInfo;
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3260,7 +3324,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -3475,7 +3539,7 @@ switch (a_decoderId)
             end
             
             o_param = 'DOWN_IRRADIANCE670';
-            o_paramSensor = 'AUX_RADIOMETER_DOWN_IRR670';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR670';
             o_paramUnits = 'W/m^2/nm';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -3542,7 +3606,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -3632,7 +3696,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -3914,7 +3978,7 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          301, 302, 303, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
@@ -3992,7 +4056,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -4276,7 +4340,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -4342,7 +4406,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127, ...
+   case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
       switch (a_paramName)
          
@@ -4431,7 +4495,7 @@ function [o_metaData] = update_parameter_list_nitrate(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 109, 111, 112, 121, 122, 123, 124, 125, 126}
+   case {105, 106, 107, 109, 111, 112, 114, 121, 122, 123, 124, 125, 126}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -4524,7 +4588,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127}
+   case {105, 106, 107, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127}
       switch (a_paramName)
          
          case {'UV_INTENSITY_NITRATE'}
@@ -5081,6 +5145,10 @@ return
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleSfet;
+
+
 paramList = [];
 switch (a_decoderId)
    case {121, 122, 123, 124, 125}
@@ -5095,7 +5163,7 @@ switch (a_decoderId)
             {'PH_IN_SITU_TOTAL'} ...
             ];
       end
-   case {1322, 1323, 111, 113, 126, 127}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 111, 113, 126, 127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -5103,6 +5171,9 @@ switch (a_decoderId)
             {'PH_IN_SITU_FREE'} ...
             {'PH_IN_SITU_TOTAL'} ...
             ];
+         if (g_decArgo_addParamNbSampleSfet)
+            paramList = [paramList {'NB_SAMPLE_SFET'}];
+         end
       end
 end
 
@@ -5313,7 +5384,8 @@ switch (a_decoderId)
             o_preCalibComment = '';
       end
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1322, 1323, 111, 113}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 111, 113, 114}
+      
       switch (a_paramName)
          
          case {'VRS_PH'}
@@ -5438,6 +5510,174 @@ switch (a_decoderId)
                   transPhF1, transPhF2, transPhF3, transPhF4);
             end
             o_preCalibComment = '';
+            
+         case {'NB_SAMPLE_SFET'}
+            o_param = 'NB_SAMPLE_SFET';
+            o_paramSensor = 'TRANSISTOR_PH';
+            o_paramUnits = 'dimensionless';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'n/a';
+            o_preCalibCoef = 'n/a';
+            o_preCalibComment = '';
+
+      end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Update parameter list for rafos associated parameters.
+%
+% SYNTAX :
+%  [o_metaData] = update_parameter_list_rafos(a_metaData, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_metaData  : input meta-data to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_metaData : output updated meta-data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/24/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaData] = update_parameter_list_rafos(a_metaData, a_decoderId)
+
+paramList = [];
+switch (a_decoderId)
+   case {1125}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('AUX_ACOUSTIC_GEOLOCATION', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'COR'} ...
+            {'RAW_TOA'} ...
+            {'TOA'} ...
+            {'RAFOS_RTC_TIME'} ...
+            ];
+      end
+end
+
+% add parameter associated fields
+o_metaData = generate_parameter_fields(a_metaData, paramList);
+
+return
+
+% ------------------------------------------------------------------------------
+% Update meta-data for rafos associated parameters.
+%
+% SYNTAX :
+%  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_rafos(a_paramName, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_paramName : input parameter to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_param           : output updated PARAMETER information
+%   o_paramSensor     : output updated PARAMETER_SENSOR information
+%   o_paramUnits      : output updated PARAMETER_UNITS information
+%   o_paramAccuracy   : output updated PARAMETER_ACCURACY information
+%   o_paramResolution : output updated PARAMETER_RESOLUTION information
+%   o_preCalibEq      : output updated PREDEPLOYMENT_CALIB_EQUATION information
+%   o_preCalibCoef    : output updated PREDEPLOYMENT_CALIB_COEFFICIENT information
+%   o_preCalibComment : output updated PARAMETER_ACCURACY information
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/24/2021 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_rafos(a_paramName, a_decoderId)
+
+% output parameters initialization
+o_param = '';
+o_paramSensor = '';
+o_paramUnits = '';
+o_paramAccuracy = '';
+o_paramResolution = '';
+o_preCalibEq = '';
+o_preCalibCoef = '';
+o_preCalibComment = '';
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% arrays to store calibration information
+global g_decArgo_calibInfo;
+
+
+switch (a_decoderId)
+   case {1125}
+      switch (a_paramName)
+         
+         case {'COR'}
+            o_param = 'COR';
+            o_paramSensor = 'AUX_ACOUSTIC_GEOLOCATION';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = '';
+
+         case {'RAW_TOA'}
+            o_param = 'RAW_TOA';
+            o_paramSensor = 'AUX_ACOUSTIC_GEOLOCATION';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = '';
+
+         case {'TOA'}
+            o_param = 'TOA';
+            o_paramSensor = 'AUX_ACOUSTIC_GEOLOCATION';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('WARNING: Float #%d: missing TOA calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif ((isfield(g_decArgo_calibInfo, 'RAFOS')) && ...
+                  (isfield(g_decArgo_calibInfo.RAFOS, 'SlopeRafosTOA')) && ...
+                  (isfield(g_decArgo_calibInfo.RAFOS, 'OffsetRafosTOA')))
+               slopeRafosTOA = double(g_decArgo_calibInfo.RAFOS.SlopeRafosTOA);
+               offsetRafosTOA = double(g_decArgo_calibInfo.RAFOS.OffsetRafosTOA);
+            else
+               fprintf('ERROR: Float #%d: inconsistent TOA calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            
+            o_preCalibEq = 'TOA = RAW_TOA*SlopeRafosTOA + OffsetRafosTOA';
+            o_preCalibCoef = sprintf('SlopeRafosTOA=%.4f; OffsetRafosTOA=%d', ...
+               slopeRafosTOA, offsetRafosTOA);
+            o_preCalibComment = '';
+            
+         case {'RAFOS_RTC_TIME'}
+            o_param = 'RAFOS_RTC_TIME';
+            o_paramSensor = 'AUX_RAFOS_CLOCK';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = '';
       end
 end
 
@@ -5488,7 +5728,7 @@ if (~isempty(a_paramList))
    for idP = 1:length(a_paramList)
       idF = find(strcmp(a_paramList{idP}, struct2cell(o_metaData.PARAMETER)) == 1, 1);
       if (isempty(idF))
-         fprintf('WARNING: Float #%d: adding ''%s'' to float parameter list\n', ...
+         fprintf('INFO: Float #%d: adding ''%s'' to float parameter list\n', ...
             g_decArgo_floatNum, a_paramList{idP});
          
          nbParam = length(struct2cell(o_metaData.PARAMETER)) + 1;

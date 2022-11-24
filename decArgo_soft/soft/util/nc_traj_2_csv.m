@@ -27,7 +27,7 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % measurement codes initialization
 init_measurement_codes;

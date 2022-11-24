@@ -211,7 +211,7 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'ICE') | ...
       strcmp({events.functionName}, 'ASCENT'));
    if (~isempty(idEvts))
-      iceDetection = process_apx_apf11_ir_ice_evts(events(idEvts));
+      iceDetection = process_apx_apf11_ir_ice_evts_before_2_15_0(events(idEvts));
 
       if (~isempty(iceDetection))
          o_iceDetection = iceDetection;

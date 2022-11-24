@@ -745,8 +745,9 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {223}
+   case {223, 225}
       % Arvor-ARN-DO-Ice Iridium 5.48
+      % Provor-ARN-DO-Ice Iridium 5.76
       
       for id = [0 4:10 17:26 29:31]
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);

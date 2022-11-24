@@ -78,85 +78,177 @@ fclose(fId);
 o_data = get_binary_log_data_init_struct(a_logFileType);
 
 % decode the binary data
-recCurPos = 1;
-while (1)
+if (~strcmp(a_logFileType, 'irad'))
    
-   if (recCurPos > length(sbdData))
-      break
-   end
-   
-   recLength = sbdData(recCurPos);
-   recId = sbdData(recCurPos+1);
-   decStruct = get_decoding_info(a_logFileType, recId, a_decoderId);
-   if (~isempty(decStruct))
-      % timestamp
-      dataTime = flipud(sbdData(recCurPos+2:recCurPos+5));
-      timeStampRaw = get_bits(1, 32, dataTime);
-      timeStamp = g_decArgo_janFirst1970InJulD + timeStampRaw/86400;
+   % for science_log and vitals_log files
+   recCurPos = 1;
+   cpt = 1;
+   while (1)
       
-      if (a_fromLaunchFlag)
-         if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
-            recCurPos = recCurPos + recLength + 1;
-            continue
-         end
+      if (recCurPos > length(sbdData))
+         break
       end
       
-      % data
-      data = sbdData(recCurPos+6:recCurPos+recLength);
-      if (recId == 0)
-         decData = get_bits(1, ones(1, length(data))*8, data);
-         o_data.(decStruct.recType) = [o_data.(decStruct.recType); ...
-            [timeStamp {char(decData')}]];
+      recLength = sbdData(recCurPos);
+      recId = sbdData(recCurPos+1);
+      decStruct = get_decoding_info(a_logFileType, recId, a_decoderId);
+      if (~isempty(decStruct))
+         % timestamp
+         dataTime = flipud(sbdData(recCurPos+2:recCurPos+5));
+         timeStampRaw = get_bits(1, 32, dataTime);
+         if (timeStampRaw == 0)
+            timeStampRaw = nan;
+         end
+         timeStamp = g_decArgo_janFirst1970InJulD + timeStampRaw/86400;
          
-         % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-         if (a_outputCsvFlag == 1)
-            fprintf(outputCsvFileId, '%s%c%s%c%s\n', ...
-               decStruct(1).recType, sep, ...
-               datestr(timeStamp+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), sep, ...
-               char(decData'));
+         if (a_fromLaunchFlag)
+            if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
+               recCurPos = recCurPos + recLength + 1;
+               continue
+            end
          end
          
+         % data
+         data = sbdData(recCurPos+6:recCurPos+recLength);
+         if (recId == 0)
+            decData = get_bits(1, ones(1, length(data))*8, data);
+            o_data.(decStruct.recType) = [o_data.(decStruct.recType); ...
+               [timeStamp {char(decData')}]];
+            
+            % for decoding comparison purposes (check_apex_apf11_ir_float_files)
+            if (a_outputCsvFlag == 1)
+               fprintf(outputCsvFileId, '%s%c%s%c%s\n', ...
+                  decStruct(1).recType, sep, ...
+                  datestr(timeStamp+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), sep, ...
+                  char(decData'));
+            end
+            
+         else
+            
+            % check decoding information VS data length consistency
+            if (5+sum([decStruct.tabBytes]) ~= recLength)
+               fprintf('ERROR: science_log file reader: recId #%d inconsistency in decoding information - data ignored\n', recId);
+               continue
+            end
+            dataVal = nan(1, length(decStruct)+2);
+            dataVal(1) = cpt;
+            cpt = cpt + 1;
+            dataVal(2) = timeStamp;
+            dataCurPos = 1;
+            for id = 1:length(decStruct)
+               dataCur = flipud(data(dataCurPos:dataCurPos+decStruct(id).tabBytes-1)); % get bytes
+               decData = get_bits(1, decStruct(id).tabBytes*8, dataCur); % decode data
+               decData = typecast(decStruct(id).tabFunc(decData), decStruct(id).outputType); % convert to approriate type
+               dataVal(id+2) = str2double(sprintf(decStruct(id).outputFormat, decData)); % format to given resolution
+               dataCurPos = dataCurPos + decStruct(id).tabBytes;
+            end
+            o_data.(decStruct(1).recType) = [o_data.(decStruct(1).recType); ...
+               dataVal];
+            
+            % for decoding comparison purposes (check_apex_apf11_ir_float_files)
+            if (a_outputCsvFlag == 1)
+               format = ['%s' sep '%s'];
+               for id = 1:length(decStruct)
+                  format = [format sep decStruct(id).outputFormat];
+               end
+               if (~isnan(dataVal(2)))
+                  fprintf(outputCsvFileId, [format '\n'], ...
+                     decStruct(1).recType, ...
+                     datestr(dataVal(2)+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), ...
+                     dataVal(3:end));
+               else
+                  fprintf(outputCsvFileId, [format '\n'], ...
+                     decStruct(1).recType, ...
+                     '99999999T999999', ...
+                     dataVal(3:end));
+               end
+            end
+            
+         end
+         if (~isfield(o_data, [decStruct(1).recType '_labels']))
+            o_data.([decStruct(1).recType '_labels']) = get_binary_log_data_labels(decStruct(1).recType, a_decoderId);
+         end
       else
+         fprintf('ERROR: %s file reader: recId #%d not managed yet - data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType, recId);
+      end
+      
+      recCurPos = recCurPos + recLength + 1;
+   end
+else
+   
+   % for irad_log file
+   
+   decStruct = get_decoding_info(a_logFileType, '', a_decoderId);
+   
+   if (~isempty(decStruct))
+      
+      % 4 bytes (timestamp) + 255 x 2 bytes (data) = 514 bytes per meas
+      % check expected information VS data length consistency
+      if (mod(length(sbdData), sum([decStruct.tabBytes])+4) ~= 0)
+         fprintf('ERROR: irad_log file reader: inconsistency in decoding information - data ignored\n');
+         o_error = 1;
+         return
+      end
+      
+      nbLines = length(sbdData)/(sum([decStruct.tabBytes])+4);
+      dataVal = nan(nbLines, length(decStruct)+1);
+      recCurPos = 1;
+      for idL = 1:nbLines
          
-         % check decoding information VS data length consistency
-         if (5+sum([decStruct.tabBytes]) ~= recLength)
-            fprintf('ERROR: science_log file reader: recId #%d inconsistency in decoding information - data ignored\n', recId);
-            continue
+         % timestamp
+         dataTime = flipud(sbdData(recCurPos:recCurPos+3));
+         timeStampRaw = get_bits(1, 32, dataTime);
+         if (timeStampRaw == 0)
+            timeStampRaw = nan;
          end
-         dataVal = nan(1, length(decStruct)+1);
-         dataVal(1) = timeStamp;
-         dataCurPos = 1;
+         timeStamp = g_decArgo_janFirst1970InJulD + timeStampRaw/86400;
+         
+         if (a_fromLaunchFlag)
+            if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
+               recCurPos = recCurPos + sum([decStruct.tabBytes]) + 4 + 1;
+               continue
+            end
+         end
+         
+         % data
+         dataVal(idL, 1) = timeStamp;
+         dataCurPos = recCurPos + 4;
          for id = 1:length(decStruct)
-            dataCur = flipud(data(dataCurPos:dataCurPos+decStruct(id).tabBytes-1)); % get bytes
+            dataCur = flipud(sbdData(dataCurPos:dataCurPos+decStruct(id).tabBytes-1)); % get bytes
             decData = get_bits(1, decStruct(id).tabBytes*8, dataCur); % decode data
             decData = typecast(decStruct(id).tabFunc(decData), decStruct(id).outputType); % convert to approriate type
-            dataVal(id+1) = str2double(sprintf(decStruct(id).outputFormat, decData)); % format to given resolution
+            dataVal(idL, id+1) = str2double(sprintf(decStruct(id).outputFormat, decData)); % format to given resolution
             dataCurPos = dataCurPos + decStruct(id).tabBytes;
          end
-         o_data.(decStruct(1).recType) = [o_data.(decStruct(1).recType); ...
-            dataVal];
          
-         % for decoding comparison purposes (check_apex_apf11_ir_float_files)
-         if (a_outputCsvFlag == 1)
-            format = ['%s' sep '%s'];
-            for id = 1:length(decStruct)
-               format = [format sep decStruct(id).outputFormat];
-            end
-            fprintf(outputCsvFileId, [format '\n'], ...
-               decStruct(1).recType, ...
-               datestr(dataVal(1)+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), ...
-               dataVal(2:end));
-         end
-         
+         recCurPos = dataCurPos;
       end
-      if (~isfield(o_data, [decStruct(1).recType '_labels']))
-         o_data.([decStruct(1).recType '_labels']) = get_binary_log_data_labels(decStruct(1).recType, a_decoderId);
+      
+      o_data.(decStruct(1).recType) = dataVal;
+      
+      % for decoding comparison purposes (check_apex_apf11_ir_float_files)
+      if (a_outputCsvFlag == 1)
+         format = ['%s' sep '%s'];
+         for id = 1:length(decStruct)
+            format = [format sep decStruct(id).outputFormat];
+         end
+         for idL = 1:nbLines
+            if (~isnan(dataVal(idL, 1)))
+               fprintf(outputCsvFileId, [format '\n'], ...
+                  decStruct(1).recType, ...
+                  datestr(dataVal(idL, 1)+g_decArgo_janFirst1950InMatlab, 'yyyymmddTHHMMSS'), ...
+                  dataVal(idL, 2:end));
+            else
+               fprintf(outputCsvFileId, [format '\n'], ...
+                  decStruct(1).recType, ...
+                  '99999999T999999', ...
+                  dataVal(idL, 2:end));
+            end
+         end
       end
    else
-      fprintf('ERROR: %s file reader: recId #%d not managed yet - data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType, recId);
+      fprintf('ERROR: %s file reader: format not managed yet - data ignored (ASK FOR AN UPDATE OF THE DECODER)\n', a_logFileType);
    end
-   
-   recCurPos = recCurPos + recLength + 1;
 end
 
 % for decoding comparison purposes (check_apex_apf11_ir_float_files)
@@ -383,8 +475,43 @@ switch (a_logFileType)
                'outputType', [{'single'} {'single'} {'single'} {'single'}], ...
                'outputFormat', [{'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'}] ...
                );
+         case 110
+            o_decStruct = struct( ...
+               'recType', 'RAFOS_RTC', ...
+               'tabBytes', [{4}], ...
+               'tabFunc', {@uint32}, ...
+               'outputType', [{'uint32'}], ...
+               'outputFormat', [{'%d'}] ...
+               );
+         case 115
+            o_decStruct = struct( ...
+               'recType', 'RAFOS', ...
+               'tabBytes', [{1} {2} {1} {2} {1} {2} {1} {2} {1} {2} {1} {2}], ...
+               'tabFunc', {@uint8, @uint16, @uint8, @uint16, @uint8, @uint16, @uint8, @uint16, @uint8, @uint16, @uint8, @uint16}, ...
+               'outputType', [{'uint8'} {'uint16'} {'uint8'} {'uint16'} {'uint8'} {'uint16'} {'uint8'} {'uint16'} {'uint8'} {'uint16'} {'uint8'} {'uint16'}], ...
+               'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'} {'%d'}] ...
+               );
+         case 125
+            o_decStruct = struct( ...
+               'recType', 'IRAD', ...
+               'tabBytes', [{2} {4} {4} {4} {4}], ...
+               'tabFunc', {@uint16, @uint32, @uint32, @uint32, @uint32}, ...
+               'outputType', [{'uint16'} {'single'} {'single'} {'single'} {'single'}], ...
+               'outputFormat', [{'%d'} {'%.5f'} {'%.5f'} {'%.5f'} {'%.5f'}] ...
+               );
       end
       
+   case 'irad'
+      tabFunc = repmat({'uint16'}, 1, 255);
+      tabFunc = cellfun(@(x) str2func(x), tabFunc, 'UniformOutput', 0);
+      o_decStruct = struct( ...
+         'recType', 'IRAD_SPECTRUM', ...
+         'tabBytes', repmat({2}, 1, 255), ...
+         'tabFunc', tabFunc, ...
+         'outputType', repmat({'uint16'}, 1, 255), ...
+         'outputFormat', repmat({'%d'}, 1, 255) ...
+         );
+
    case 'vitals'
       switch (a_recordId)
          case 0
@@ -453,9 +580,17 @@ switch (a_logFileType)
          'O2', [], ...
          'FLBB_CD', [], ...
          'FLBB_CD_CFG', [], ...
-         'OCR_504I', [] ...
+         'OCR_504I', [], ...
+         'RAFOS_RTC', [], ...
+         'RAFOS', [], ...
+         'IRAD', [] ...
          );
       
+   case 'irad'
+      o_binLogDataStruct = struct( ...
+         'IRAD_SPECTRUM', [] ...
+         );
+
    case 'vitals'
       o_binLogDataStruct = struct( ...
          'Message', [], ...
@@ -524,6 +659,12 @@ switch (a_recType)
       o_recLabels = [{'timestamp'} {'chl_wave'} {'bsc_wave'} {'cd_wave'}];
    case 'OCR_504I'
       o_recLabels = [{'timestamp'} {'channel1'} {'channel2'} {'channel3'} {'channel4'}];
+   case 'RAFOS_RTC'
+      o_recLabels = [{'timestamp'} {'RAFOS_RTC_time'}];
+   case 'RAFOS'
+      o_recLabels = [{'timestamp'} {'correlation1'} {'rawTOA1'} {'correlation2'} {'rawTOA2'} {'correlation3'} {'rawTOA3'} {'correlation4'} {'rawTOA4'} {'correlation5'} {'rawTOA5'} {'correlation6'} {'rawTOA6'} ];
+   case 'IRAD'
+      o_recLabels = [{'timestamp'} {'integration_time'} {'temperature'} {'pressure'} {'pre_inclination'} {'post_inclination'}];
 
    case 'VITALS_CORE'
       o_recLabels = [{'timestamp'} {'air_bladder(dbar)'} {'air_bladder(count)'} ...

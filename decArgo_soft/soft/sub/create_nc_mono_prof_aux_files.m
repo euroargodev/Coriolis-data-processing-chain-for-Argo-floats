@@ -1416,7 +1416,7 @@ for idProf = 1:length(a_tabProfiles)
                   paramName = paramAdjInfo{4};
                   
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if (paramInfo.paramType ~= 'c')
+                  if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                      paramEquation = paramAdjInfo{5};
                      paramCoefficient = paramAdjInfo{6};
                      paramComment = paramAdjInfo{7};

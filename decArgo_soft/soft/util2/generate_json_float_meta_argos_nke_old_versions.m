@@ -43,7 +43,7 @@ metaDataFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersion
 prvFloatInfoFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\misc_info\andro_prv_float_info\_provor_floats_information_all.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 global g_decArgo_janFirst1950InMatlab;
 

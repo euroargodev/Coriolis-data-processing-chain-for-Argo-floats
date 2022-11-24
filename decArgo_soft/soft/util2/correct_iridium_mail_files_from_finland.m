@@ -28,7 +28,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS3\300234063600090_
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\300234067778190';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % 0: to only check that input mail files are correctly parsed
 % 1: to generate output mail files

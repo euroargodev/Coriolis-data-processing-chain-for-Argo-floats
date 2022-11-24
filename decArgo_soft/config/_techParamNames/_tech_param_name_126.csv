@@ -61,18 +61,18 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 139;TECH_AUX;Payload configuration download;TECH_AUX_FLAG_SensorBoardConfigurationReceived_LOGICAL;A new configuration for the sensor board has been received.
 140;TECH_AUX;Script download;TECH_AUX_FLAG_ConfigurationScriptReceived_LOGICAL;A new configuration script file has been received.
 194;TECH_AUX;Number of files associated with the pattern (The following files are not taken into account: technical for self-test or pre-mission, configuration nor command/script acknowledgement. The number of files is expressed prior to the files being broken down for transmission);TECH_AUX_NUMBER_FileSent_COUNT;Number of files sent during the current Iridium RUDICS session.
-216;TECH_AUX;Nb. park descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToParkSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface to parking depth"" phase."
+216;TECH;Nb. park descent;NUMBER_<short_sensor_name>DescentToParkSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface to parking depth"" phase."
 1216;TECH_AUX;Nb. park descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToParkSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface to parking depth"" phase."
 217;TECH;Nb. park drift;NUMBER_<short_sensor_name>ParkSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at parking depth.
 1217;TECH_AUX;Nb. park drift;TECH_AUX_NUMBER_<short_sensor_name>ParkSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at parking depth.
-218;TECH_AUX;Nb. measurement descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""parking depth to profile depth"" phase."
+218;TECH;Nb. measurement descent;NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""parking depth to profile depth"" phase."
 1218;TECH_AUX;Nb. measurement descent;TECH_AUX_NUMBER_<short_sensor_name>DescentToProfileSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""parking depth to profile depth"" phase."
 219;TECH;Nb. measurement drift;NUMBER_<short_sensor_name>ProfileDriftSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at profile depth.
 1219;TECH;Nb. measurement drift;TECH_AUX_NUMBER_<short_sensor_name>ProfileDriftSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at profile depth.
-220;TECH_AUX;Nb. ascent;TECH_AUX_NUMBER_<short_sensor_name>AscentSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""ascent to surface"" phase."
+220;TECH;Nb. ascent;NUMBER_<short_sensor_name>AscentSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""ascent to surface"" phase."
 1220;TECH_AUX;Nb. ascent;TECH_AUX_NUMBER_<short_sensor_name>AscentSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""ascent to surface"" phase."
 200;TECH_AUX;Nb. subsurface;TECH_AUX_NUMBER_SubSurfaceSamples_COUNT;Number of sub-surface samples acquired during ascent profile (the sub-surface sample is the last pumped CTD raw data sampled during ascent).
-221;TECH_AUX;Nb. Surface;TECH_AUX_NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
+221;TECH;Nb. Surface;NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
 1221;TECH_AUX;Nb. Surface;TECH_AUX_NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
 141;TECH_AUX;Pattern duration;TECH_AUX_TIME_CycleDuration_minutes;Duration of the cycle.
 142;TECH_AUX;Processing/standby ratio;TECH_AUX_RATE_ProcessingVsStandByeRatio_percent;Ratio between float activity and stand bye during the cycle.
@@ -106,6 +106,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 168;TECH_AUX;File fault;TECH_AUX_FLAG_FileFailureAlarm_LOGICAL;Alarm raised when a file cannot be transmitted.
 169;TECH_AUX;RTC fault;TECH_AUX_FLAG_RTCFailureAlarm_LOGICAL;Alarm raised when the Real Time Clock fails.
 170;TECH_AUX;Pressure switch fault;TECH_AUX_FLAG_PressureSwitchFailureAlarm_LOGICAL;Alarm raised when the pressure switch fails.
+238;TECH_AUX;Vector to payload communication fault;TECH_AUX_FLAG_VectorToPayloadComAlarm_LOGICAL;Alarm raised when some communications between vector and payload cards fail.
 223;TECH_AUX;Ice avoidance (ISA detection);TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with ISA algorithm.
 224;TECH_AUX;Ice avoidance (collision detection);TECH_AUX_FLAG_IceCollisionDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with a collision.
 225;TECH_AUX;Ice avoidance (aborting profile);TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL;Alarm raised when the profile has been aborted by Ice detection.

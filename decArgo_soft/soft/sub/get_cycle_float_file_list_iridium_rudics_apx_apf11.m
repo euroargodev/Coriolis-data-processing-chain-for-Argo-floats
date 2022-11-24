@@ -38,6 +38,9 @@ global g_decArgo_janFirst1950InMatlab;
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
+% delay to recover config messages before launch date
+global g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate;
+
 
 % search for existing float files
 iriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatRudicsId '_' num2str(a_floatNum) '/archive/'];
@@ -54,11 +57,16 @@ for idFile = 1:length(fileNames)
    cyNum = fileName(length(a_floatRudicsId)+idF1(1)+1:length(a_floatRudicsId)+idF1(2)-1);
    [cyNum, status] = str2num(cyNum);
    if ((status == 1) && ismember(cyNum, a_cycleList))
-      if (isempty(g_decArgo_outputCsvFileId))
-         if (~isempty(a_floatLaunchDate))
-            fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
-            fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+      if (~isempty(a_floatLaunchDate))
+         fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
+         fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+         if (isempty(g_decArgo_outputCsvFileId))
             if (fileDate < a_floatLaunchDate)
+               continue
+            end
+         else
+            % in the CSV decoder, we try to recover production_log files
+            if (fileDate < a_floatLaunchDate - g_decArgo_maxIntervalToRecoverConfigMessageBeforeLaunchDate)
                continue
             end
          end

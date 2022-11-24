@@ -115,7 +115,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       % create the tabDoxyCoef array
       switch (a_decoderId)
          
-         case {111, 113}
+         case {111, 113, 114}
             if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                calibData = g_decArgo_calibInfo.OPTODE;
                tabDoxyCoef = [];

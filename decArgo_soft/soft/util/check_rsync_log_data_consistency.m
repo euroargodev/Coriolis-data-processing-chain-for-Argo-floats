@@ -331,7 +331,7 @@ elseif (((a_decId > 1000) && (a_decId < 2000)) || ...
    o_floatDataFiles(idDel) = [];
    
 elseif ((a_decId > 100) && (a_decId < 200))
-   if (ismember(a_decId, [g_decArgo_decoderIdListNkeCts4))
+   if (ismember(a_decId, g_decArgo_decoderIdListNkeCts4))
       
       o_floatDataFiles = [dir([a_dirName '/*.b64']); dir([a_dirName '/*.bin'])];
       

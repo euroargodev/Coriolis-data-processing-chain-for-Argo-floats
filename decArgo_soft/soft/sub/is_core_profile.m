@@ -23,7 +23,7 @@ function [o_core] = is_core_profile(a_profile)
 o_core = 0;
 
 if (~isempty(a_profile.paramList))
-   if (~any([a_profile.paramList.paramType] ~= 'c'))
+   if (~any(([a_profile.paramList.paramType] ~= 'c') & ([a_profile.paramList.paramType] ~= 'j')))
       o_core = 1;
    end
 end

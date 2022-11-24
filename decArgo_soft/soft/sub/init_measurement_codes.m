@@ -36,6 +36,7 @@ global g_MC_DescProfDeepestBin;
 global g_MC_PST;
 global g_MC_SpyAtPark;
 global g_MC_DriftAtPark;
+global g_MC_RafosCorrelationStart;
 global g_MC_DriftAtParkStd;
 global g_MC_DriftAtParkMeanOfDiff;
 global g_MC_DriftAtParkMean;
@@ -117,6 +118,7 @@ g_MC_MinPresInDriftAtParkSupportMeas = 287;
 g_MC_MaxPresInDriftAtParkSupportMeas = 288;
 g_MC_SpyAtPark = 289;
 g_MC_DriftAtPark = 290;
+g_MC_RafosCorrelationStart = 290; % for TRAJ_AUX of Apex APF11 iridium floats
 g_MC_DriftAtParkStd = 294;
 g_MC_DriftAtParkMeanOfDiff = 293;
 g_MC_DriftAtParkMean = 296;

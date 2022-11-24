@@ -134,7 +134,7 @@ externalPres.traj{end+1} = get_cts5_traj_data_init_struct(...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 internalTemp = init_basic_struct;
-internalTemp.pattern = 'Ti=%f degC';
+internalTemp.pattern = 'Ti=%f °C';
 internalTemp.count = 1;
 internalTemp.id{end+1} = 1;
 internalTemp.name{end+1} = 'internal temperature (degC)';
@@ -2176,6 +2176,14 @@ alarmPresSwitch.count = 0;
 alarmPresSwitch.id{end+1} = 1;
 alarmPresSwitch.name{end+1} = 'pressure switch alarm received';
 alarmPresSwitch.tech{end+1} = get_cts5_tech_data_init_struct(170, 'Pressure switch alarm received');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+alarmRTC = init_basic_struct;
+alarmRTC.pattern = 'EMAP';
+alarmRTC.count = 0;
+alarmRTC.id{end+1} = 1;
+alarmRTC.name{end+1} = 'EMAP alarm received';
+alarmRTC.tech{end+1} = get_cts5_tech_data_init_struct(238, 'EMAP alarm received');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 alarmIceIsa = init_basic_struct;

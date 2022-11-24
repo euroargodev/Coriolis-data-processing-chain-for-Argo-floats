@@ -358,17 +358,18 @@ for idSpoolFile = 1:length(tabAllFileNames)
    
    % specific
    if (ismember(g_decArgo_floatNum, [3901644, 6904105]))
-      if (g_decArgo_floatNum == 3901644)
-         % 2 mails are probably not transmitted by this float
-         if (curMailFileDate == gregorian_2_julian_dec_argo('2020/05/25 07:01:48') || ...
-               curMailFileDate == gregorian_2_julian_dec_argo('2020/05/25 07:04:52'))
-            continue
-         end
-      elseif (g_decArgo_floatNum == 6904105)
-         % one mail sent and received twice
-         if (curMailFileDate == gregorian_2_julian_dec_argo('2021/03/07 07:04:43'))
-            continue
-         end
+      switch g_decArgo_floatNum
+         case 3901644
+            % 2 mails are probably not transmitted by this float
+            if (curMailFileDate == gregorian_2_julian_dec_argo('2020/05/25 07:01:48') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2020/05/25 07:04:52'))
+               continue
+            end
+         case 6904105
+            % one mail sent and received twice
+            if (curMailFileDate == gregorian_2_julian_dec_argo('2021/03/07 07:04:43'))
+               continue
+            end
       end
    end
    

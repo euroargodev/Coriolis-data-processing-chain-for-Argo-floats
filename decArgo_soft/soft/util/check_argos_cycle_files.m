@@ -30,7 +30,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM\IN\ARGOS\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST\';
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % min non-trans duration (in hour) to use the ghost detection
 MIN_NON_TRANS_DURATION_FOR_GHOST = 7;

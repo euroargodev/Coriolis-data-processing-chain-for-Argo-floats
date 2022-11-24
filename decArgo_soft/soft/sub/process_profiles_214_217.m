@@ -90,8 +90,8 @@ if (~isempty(a_tabTech2) && (a_iceDetected == 0))
          size(a_tabTech2, 1));
    end
    tabTech = a_tabTech2(end, :);
-   pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_224(tabTech(16));
-   temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_224(tabTech(17));
+   pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(tabTech(16));
+   temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(tabTech(17));
    psal = tabTech(18)/1000;
    if (any([pres temp psal] ~= 0))
       presCutOffProf = pres;

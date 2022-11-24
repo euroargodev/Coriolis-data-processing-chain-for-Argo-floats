@@ -43,6 +43,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_21
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.76.txt';
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -227,6 +228,7 @@ global g_elevDef;
 init_measurement_codes;
 
 % global measurement codes
+global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
 global g_MC_DST;
@@ -243,6 +245,7 @@ global g_MC_PST;
 global g_MC_SpyAtPark;
 global g_MC_DriftAtPark;
 global g_MC_DriftAtParkStd;
+global g_MC_DriftAtParkMeanOfDiff;
 global g_MC_DriftAtParkMean;
 global g_MC_MinPresInDriftAtPark;
 global g_MC_MaxPresInDriftAtPark;
@@ -263,6 +266,10 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_IceThermalDetectionTrue;
+global g_MC_IceBreakupDetectionFlag;
+global g_MC_IceAscentAbortNum;
+global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
@@ -274,8 +281,13 @@ global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
 
+global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToDST;
+global g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTST;
 global g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
 global g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST;
+global g_MC_InAirSingleMeasRelativeToTET;
 
 
 % plot the current float
@@ -616,8 +628,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       g_MC_DDET-10 ...
       g_MC_AST-10 ...
       g_MC_AscProf ...
+      g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST ...
+      g_MC_InAirSingleMeasRelativeToTST ...
       g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
       g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+      g_MC_InAirSingleMeasRelativeToTET ...
       g_MC_Surface ...
       g_MC_TET-10 ...
       g_MC_Grounded ...
@@ -685,12 +700,17 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          g_NTCT_AscProf_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_AscProf_pres(idC, 1:length(idF)) = pres(idF);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST));
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
+         ((measCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+         (measCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+         (measCode == g_MC_InAirSingleMeasRelativeToTET)));
       if (~isempty(idF))
          g_NTCT_InAirSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_InAirSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST));
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
+         ((measCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+         (measCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST)));
       if (~isempty(idF))
          g_NTCT_NearSurfaceSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_NearSurfaceSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);

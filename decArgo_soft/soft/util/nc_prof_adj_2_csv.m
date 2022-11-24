@@ -21,8 +21,8 @@ function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_AVANT\Rem\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Rem\';
+% DIR_INPUT_NC_FILES = 'D:\TEMPO\TEST_NR_AVANT\Rem\';
+% DIR_INPUT_NC_FILES = 'D:\TEMPO\TEST_NR_APRES\Rem\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
@@ -40,16 +40,16 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_all_decId_2xx_4.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_cts4_atlantos_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_cts4_rem_all_1.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_cts4_rem_all_2.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default values initialization
 init_default_values;
 
 % to compare different set of files do not print current dates
-COMPARISON_MODE = 1;
+COMPARISON_MODE = 0;
 
 % to print the parameter Qc values
 WRITE_QC_FLAG = 1; % if 0 the code should be checked and corrected (failed for BGC floats)
@@ -226,6 +226,7 @@ paramWithExtraDimList = [ ...
    {'NB_SIZE_SPECTRA_PARTICLES'} ...
    {'GREY_SIZE_SPECTRA_PARTICLES'} ...
    {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
+   {'RAW_DOWNWELLING_IRRADIANCE'} ...
    ];
 
 % open NetCDF file

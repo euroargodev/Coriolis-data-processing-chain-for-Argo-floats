@@ -180,7 +180,7 @@ else
       case {105}
          decIdList = [105, 106, 107, 109, 110, 112];
       case {111}
-         decIdList = [111, 113];
+         decIdList = [111, 113, 114];
       case {121}
          decIdList = [121];
       case {122}
@@ -217,7 +217,7 @@ else
       case {221}
          decIdList = [221];
       case {222}
-         decIdList = [222, 223];
+         decIdList = [222, 223, 225];
       case {224}
          decIdList = [224];
          

@@ -27,6 +27,8 @@ FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_ApexRudics_Norway_APF11_2.13.1.R_from_vb_20200528.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_6903552.txt';
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_6903567_test.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_7900973_RAFOS.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.14.3.R_7900563_RAMSES.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
@@ -180,9 +182,9 @@ for idFloat = 1:nbFloats
    fprintf(fidOut, '%d;13;1;%s;PR_PROBE_CODE;%s\n', floatNum, wmoInstType, floatVersion);
    
    % sensor information
+   calibCoefStruct = [];
    if (any(strcmp(sensorList, 'OCR')))
       idF = find(strcmp(calibData(:, 1), num2str(floatNum)));
-      calibCoefStruct = [];
       for id = 1:length(idF)
          fieldName1 = calibData{idF(id), 2};
          fieldName2 = calibData{idF(id), 3};
@@ -304,7 +306,7 @@ switch a_inputSensorName
          o_sensorMaker = [{'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'}];
          o_sensorModel = [{'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'}];
       elseif (okFlag == 2)
-         o_sensorName = [{'RADIOMETER_DOWN_IRR443'} {'RADIOMETER_DOWN_IRR490'} {'RADIOMETER_DOWN_IRR555'} {'AUX_RADIOMETER_DOWN_IRR670'}];
+         o_sensorName = [{'RADIOMETER_DOWN_IRR443'} {'RADIOMETER_DOWN_IRR490'} {'RADIOMETER_DOWN_IRR555'} {'RADIOMETER_DOWN_IRR670'}];
          o_sensorDimLevel = [201 202 203 204];
          o_sensorMaker = [{'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'} {'SATLANTIC'}];
          o_sensorModel = [{'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'} {'SATLANTIC_OCR504_ICSW'}];
@@ -325,7 +327,25 @@ switch a_inputSensorName
       o_sensorDimLevel = [701];
       o_sensorMaker = {'SBE'};
       o_sensorModel = {'SEAFET'};
+      
+   case 'RAFOS'
+      o_sensorName = {'AUX_ACOUSTIC_GEOLOCATION'};
+      o_sensorDimLevel = [1001];
+      o_sensorMaker = {'SEASCAN'};
+      o_sensorModel = {'RAFOS'};
 
+   case 'RAFOS_RTC'
+      o_sensorName = {'AUX_RAFOS_CLOCK'};
+      o_sensorDimLevel = [1101];
+      o_sensorMaker = {'SEASCAN'};
+      o_sensorModel = {'RAFOS_RTC'};
+      
+   case 'RAMSES'
+      o_sensorName = {'AUX_RADIOMETER_DOWN_IRR'};
+      o_sensorDimLevel = [1201];
+      o_sensorMaker = {'TRIOS'};
+      o_sensorModel = {'RAMSES_ACC'};
+      
    otherwise
       fprintf('ERROR: No sensor name for %s\n', a_inputSensorName);
 end
@@ -467,10 +487,19 @@ for idSensor = 1:length(a_sensorList)
             ];
          [techParId, techParDimLev, techParCode, techParValue] = ...
             get_data(codeList, ifEmptyList, techParIdList, a_floatNum, a_metaWmoList, a_metaData);
-
+         
       case 'TRANSISTOR_PH'
          % nothing yet
          
+      case 'RAFOS'
+         % nothing yet
+         
+      case 'RAFOS_RTC'
+         % nothing yet
+
+      case 'RAMSES'
+         % nothing yet
+
       otherwise
          fprintf('ERROR: No sensor misc information for %s\n', a_sensorList{idSensor});
    end
@@ -821,7 +850,7 @@ switch a_inputSensorName
          o_paramDimLevel = [205 206 207 208];
          o_paramSensor = [ ...
             {'RADIOMETER_DOWN_IRR443'} {'RADIOMETER_DOWN_IRR490'} ...
-            {'RADIOMETER_DOWN_IRR555'} {'AUX_RADIOMETER_DOWN_IRR670'} ...
+            {'RADIOMETER_DOWN_IRR555'} {'RADIOMETER_DOWN_IRR670'} ...
             ];
          o_paramUnits = [ ...
             {'W/m^2/nm'} {'W/m^2/nm'} {'W/m^2/nm'} {'W/m^2/nm'} ...
@@ -865,6 +894,46 @@ switch a_inputSensorName
          {'dimensionless'} ...
          ];
 
+   case 'RAFOS'
+      o_paramName = [ ...
+         {'COR'} {'RAW_TOA'} {'TOA'} ...
+         ];
+      o_paramDimLevel = [1001 1002 1003];
+      o_paramSensor = [ ...
+         {'AUX_ACOUSTIC_GEOLOCATION'} {'AUX_ACOUSTIC_GEOLOCATION'} {'AUX_ACOUSTIC_GEOLOCATION'} ...
+         ];
+      o_paramUnits = [ ...
+         {'dimensionless'} {'count'} {'second'} ...
+         ];
+
+   case 'RAFOS_RTC'
+      o_paramName = [ ...
+         {'RAFOS_RTC_TIME'} ...
+         ];
+      o_paramDimLevel = [1101];
+      o_paramSensor = [ ...
+         {'AUX_RAFOS_CLOCK'} ...
+         ];
+      o_paramUnits = [ ...
+         {'second'} ...
+         ];
+
+   case 'RAMSES'
+      o_paramName = [ ...
+         {'RAW_DOWNWELLING_IRRADIANCE'} {'RADIOMETER_INTEGRATION_TIME'} ...
+         {'RADIOMETER_TEMP'} {'RADIOMETER_PRES'} ...
+         {'RADIOMETER_PRE_INCLINATION'} {'RADIOMETER_POST_INCLINATION'} ...
+         ];
+      o_paramDimLevel = [1201 1202 1203 1204 1205 1206];
+      o_paramSensor = [ ...
+         {'AUX_RADIOMETER_DOWN_IRR'} {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} {'AUX_RADIOMETER_DOWN_IRR'} ...
+         {'AUX_RADIOMETER_DOWN_IRR'} {'AUX_RADIOMETER_DOWN_IRR'} ...
+         ];
+      o_paramUnits = [ ...
+         {'count'} {'msec'} {'degree_Celsius'} {'decibar'} {'degree'} {'degree'} ...
+         ];
+      
    otherwise
       fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputSensorName);
 end

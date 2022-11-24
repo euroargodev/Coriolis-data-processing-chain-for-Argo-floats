@@ -37,7 +37,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformType = 'ARVOR';
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301}
       % PROVOR CTS4
       o_platformType = 'PROVOR_III';
       
@@ -53,15 +53,15 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209, 210, 211, 212, 222, 223, 224}
+   case {205, 204, 209, 210, 211, 212, 222, 224}
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       
-   case {206, 207, 208, 213, 214}
+   case {206, 207, 208, 213, 214, 225}
       % Provor-DO Iridium
       o_platformType = 'PROVOR';
             
-   case {217}
+   case {217, 223}
       % ARVOR-DO Iridium
       o_platformType = 'ARVOR';
       

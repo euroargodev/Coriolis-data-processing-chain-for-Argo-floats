@@ -5,11 +5,15 @@
 %  [o_miscInfo, o_techData, o_gpsData, ...
 %    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
 %    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+%    o_profRamses, ...
+%    o_profRafosRtc, o_profRafos, ...
 %    o_cycleTimeData] = ...
-%    decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData, a_decoderId)
+%    decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_iradLogFileList, ...
+%    a_cycleTimeData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_scienceLogFileList : list of science_log files
+%   a_iradLogFileList    : list of irad_log files
 %   a_cycleTimeData      : input cycle timings data
 %   a_decoderId          : float decoder Id
 %
@@ -27,6 +31,9 @@
 %   o_profFlbbCd    : FLBB_CD data
 %   o_profFlbbCdCfg : FLBB_CD_CFG data
 %   o_profOcr504I   : OCR_504I data
+%   o_profRamses    : RAMSES data
+%   o_profRafosRtc  : RAFOS_RTC data
+%   o_profRafos     : RAFOS data
 %   o_cycleTimeData : cycle timings data
 %
 % EXAMPLES :
@@ -40,8 +47,11 @@
 function [o_miscInfo, o_techData, o_gpsData, ...
    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+   o_profRamses, ...
+   o_profRafosRtc, o_profRafos, ...
    o_cycleTimeData] = ...
-   decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData, a_decoderId)
+   decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_iradLogFileList, ...
+   a_cycleTimeData, a_decoderId)
 
 % output parameters initialization
 o_miscInfo = [];
@@ -56,8 +66,10 @@ o_profCtdCp = [];
 o_profCtdCpH = [];
 o_profFlbbCd = [];
 o_profFlbbCdCfg = [];
+o_profRamses = [];
 o_profOcr504I = [];
-
+o_profRafosRtc = [];
+o_profRafos = [];
 o_cycleTimeData = a_cycleTimeData;
 
 % current float WMO number
@@ -71,6 +83,10 @@ global g_decArgo_outputCsvFileId;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamNbSampleSfet;
 
 
 if (isempty(a_scienceLogFileList))
@@ -96,6 +112,9 @@ expectedFields = [ ...
    {'FLBB_CD'} ...
    {'FLBB_CD_CFG'} ...
    {'OCR_504I'} ...
+   {'RAFOS_RTC'} ...
+   {'RAFOS'} ...
+   {'IRAD'} ...
    ];
 
 usedMessages = [ ...
@@ -108,6 +127,9 @@ usedMessages = [ ...
    {'CP Stopped'} ...
    {'Surface Mission'} ...
    {'ASCENT'} ... % replaces 'Profiling Mission' since 2.13.1.R & 2.13.1.1.R version
+   {'ICEDESCENT'} ...
+   {'ICEASCENT'} ...
+   {'RAFOS correlation initiated'} ...
    ];
 
 ignoredMessages = [ ...
@@ -126,9 +148,14 @@ ctdPtsh = [];
 ctdCp = [];
 ctdCpH = [];
 do = [];
+doId = [];
 flbbCd = [];
 flbbCdCfg = [];
 ocr504I = [];
+rafosRtc = [];
+rafos = [];
+ramses = [];
+allPresVal = [];
 for idFile = 1:length(a_scienceLogFileList)
 
    sciFilePathName = a_scienceLogFileList{idFile};
@@ -148,8 +175,8 @@ for idFile = 1:length(a_scienceLogFileList)
    
    % remove CTD_P measurements with FillValue = -999 for PRES
    if (~isempty(data.CTD_P))
-      if (any(data.CTD_P(:, 2) == -999))
-         idF = find(data.CTD_P(:, 2) == -999);
+      if (any(data.CTD_P(:, 3) == -999))
+         idF = find(data.CTD_P(:, 3) == -999);
          fprintf('WARNING: Float #%d Cycle #%d: %d CTD_P measurements (with PRES = -999) in file: %s - removed\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
          data.CTD_P(idF, :) = [];
@@ -158,8 +185,8 @@ for idFile = 1:length(a_scienceLogFileList)
    
    % remove CTD_PT measurements with PRES = 0 and TEMP = 0
    if (~isempty(data.CTD_PT))
-      if (any((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0)))
-         idF = find((data.CTD_PT(:, 2) == 0) & (data.CTD_PT(:, 3) == 0));
+      if (any((data.CTD_PT(:, 3) == 0) & (data.CTD_PT(:, 4) == 0)))
+         idF = find((data.CTD_PT(:, 3) == 0) & (data.CTD_PT(:, 4) == 0));
          fprintf('WARNING: Float #%d Cycle #%d: %d CTD_PT measurements (with PRES = 0 and TEMP = 0) in file: %s - removed\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, length(idF), sciFilePathName);
          data.CTD_PT(idF, :) = [];
@@ -180,30 +207,44 @@ for idFile = 1:length(a_scienceLogFileList)
                         idF = cellfun(@(x) strfind(msgData, x), usedMessages, 'UniformOutput', 0);
                         if (~isempty([idF{:}]))
                            msgId = find(cellfun(@(x) ~isempty(x), idF));
+                           if (length(msgId) > 1)
+                              if (strcmp(msgData, 'ICEASCENT'))
+                                 msgId = msgId(end);
+                              end
+                           end
                            switch (msgId)
-                              case 1
+                              case 1 % 'Prelude/Self Test'
                                  o_cycleTimeData.preludeStartDateSci = msg{idM, 1};
-                              case 2
+                              case 2 % 'Park Descent Mission'
                                  descentStartTime = msg{idM, 1};
                                  o_cycleTimeData.descentStartDateSci = msg{idM, 1};
-                              case 3
+                              case 3 % 'Park Mission'
                                  o_cycleTimeData.parkStartDateSci = msg{idM, 1};
-                              case 4
+                              case 4 % 'Deep Descent Mission'
                                  o_cycleTimeData.parkEndDateSci = msg{idM, 1};
-                              case {5, 9}
+                              case {5, 9} % 'Profiling Mission' or 'ASCENT'
                                  o_cycleTimeData.ascentStartDateSci = msg{idM, 1};
                                  % when PARK _PRES = PROF_PRES, 'Profiling
                                  % Mission' corresponds to PARK_END_DATE
                                  if (isempty(o_cycleTimeData.parkEndDateSci))
                                     o_cycleTimeData.parkEndDateSci = o_cycleTimeData.ascentStartDateSci;
                                  end
-                              case 6
+                              case 6 % 'CP Started'
                                  o_cycleTimeData.continuousProfileStartDateSci = msg{idM, 1};
-                              case 7
+                              case 7 % 'CP Stopped'
                                  o_cycleTimeData.continuousProfileEndDateSci = msg{idM, 1};
-                              case 8
-                                 o_cycleTimeData.ascentEndDateSci = msg{idM, 1};
-                                 o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSci;
+                              case 8 % 'Surface Mission'
+                                 o_cycleTimeData.ascentEndDateSci = [ ...
+                                    o_cycleTimeData.ascentEndDateSci msg{idM, 1}];
+                              case 10 % 'ICEDESCENT'
+                                 o_cycleTimeData.iceDescentStartDateSci = [ ...
+                                    o_cycleTimeData.iceDescentStartDateSci msg{idM, 1}];
+                              case 11 % 'ICEASCENT'
+                                 o_cycleTimeData.iceAscentStartDateSci = [ ...
+                                    o_cycleTimeData.iceAscentStartDateSci msg{idM, 1}];
+                              case 12 % 'RAFOS correlation initiated'
+                                 o_cycleTimeData.rafosCorrelationStartDateSci = [ ...
+                                    o_cycleTimeData.rafosCorrelationStartDateSci msg{idM, 1}];
                               otherwise
                                  fprintf('WARNING: Float #%d Cycle #%d: Message #%d is not managed - ignored\n', ...
                                     g_decArgo_floatNum, g_decArgo_cycleNum, msgId);
@@ -218,69 +259,94 @@ for idFile = 1:length(a_scienceLogFileList)
                         end
                      end
                   case 'GPS'
-                     o_gpsData = [o_gpsData; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     o_gpsData = [o_gpsData; dataVal(:, 2:end)];
                   case 'CTD_bins'
                      info = data.(fieldName);
                      
                      dataStruct = get_apx_misc_data_init_struct('CTD_CP_info', [], [], []);
                      dataStruct.label = 'Number of samples recorded during the mission';
-                     dataStruct.value = info(2);
+                     dataStruct.value = info(3);
                      dataStruct.format = '%d';
                      o_miscInfo{end+1} = dataStruct;
                      
                      dataStruct = get_apx_tech_data_init_struct(1);
                      dataStruct.label = 'Number of samples recorded during the mission';
                      dataStruct.techId = 1001;
-                     dataStruct.value = num2str(info(2));
+                     dataStruct.value = num2str(info(3));
                      dataStruct.cyNum = g_decArgo_cycleNum;
                      o_techData{end+1} = dataStruct;
 
                      dataStruct = get_apx_misc_data_init_struct('CTD_CP_info', [], [], []);
                      dataStruct.label = 'Number of bins recorded during the mission';
-                     dataStruct.value = info(3);
+                     dataStruct.value = info(4);
                      dataStruct.format = '%d';
                      o_miscInfo{end+1} = dataStruct;
                      
                      dataStruct = get_apx_tech_data_init_struct(1);
                      dataStruct.label = 'Number of bins recorded during the mission';
                      dataStruct.techId = 1002;
-                     dataStruct.value = num2str(info(3));
+                     dataStruct.value = num2str(info(4));
                      dataStruct.cyNum = g_decArgo_cycleNum;
                      o_techData{end+1} = dataStruct;
 
                      dataStruct = get_apx_misc_data_init_struct('CTD_CP_info', [], [], []);
                      dataStruct.label = 'Highest pressure in decibars recorded during the mission';
-                     dataStruct.value = info(4);
+                     dataStruct.value = info(5);
                      dataStruct.format = '%.3f';
                      o_miscInfo{end+1} = dataStruct;
                      
                      dataStruct = get_apx_tech_data_init_struct(1);
                      dataStruct.label = 'Highest pressure in decibars recorded during the mission';
                      dataStruct.techId = 1003;
-                     dataStruct.value = num2str(info(4));
+                     dataStruct.value = num2str(info(5));
                      dataStruct.cyNum = g_decArgo_cycleNum;
                      o_techData{end+1} = dataStruct;
 
                   case 'CTD_P'
-                     ctdP = [ctdP; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdP = [ctdP; dataVal(:, 2:end)];
+                     allPresVal = [allPresVal; dataVal(:, 1:3)];
                   case 'CTD_PT'
-                     ctdPt = [ctdPt; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdPt = [ctdPt; dataVal(:, 2:end)];
+                     allPresVal = [allPresVal; dataVal(:, 1:3)];
                   case 'CTD_PTS'
-                     ctdPts = [ctdPts; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdPts = [ctdPts; dataVal(:, 2:end)];
+                     allPresVal = [allPresVal; dataVal(:, 1:3)];
                   case 'CTD_PTSH'
-                     ctdPtsh = [ctdPtsh; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdPtsh = [ctdPtsh; dataVal(:, 2:end)];
+                     allPresVal = [allPresVal; dataVal(:, 1:3)];
                   case 'CTD_CP'
-                     ctdCp = [ctdCp; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdCp = [ctdCp; dataVal(:, 2:end)];
                   case 'CTD_CP_H'
-                     ctdCpH = [ctdCpH; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ctdCpH = [ctdCpH; dataVal(:, 2:end)];
                   case 'O2'
-                     do = [do; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     do = [do; dataVal(:, 2:end)];
+                     doId = [doId; dataVal(:, 1)];
                   case 'FLBB_CD'
-                     flbbCd = [flbbCd; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     flbbCd = [flbbCd; dataVal(:, 2:end)];
                   case 'FLBB_CD_CFG'
-                     flbbCdCfg = [flbbCdCfg; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     flbbCdCfg = [flbbCdCfg; dataVal(:, 2:end)];
                   case 'OCR_504I'
-                     ocr504I = [ocr504I; data.(fieldName)];
+                     dataVal = data.(fieldName);
+                     ocr504I = [ocr504I; dataVal(:, 2:end)];
+                  case 'RAFOS_RTC'
+                     dataVal = data.(fieldName);
+                     rafosRtc = [rafosRtc; dataVal(:, 2:end)];
+                  case 'RAFOS'
+                     dataVal = data.(fieldName);
+                     rafos = [rafos; dataVal(:, 2:end)];
+                  case 'IRAD'
+                     dataVal = data.(fieldName);
+                     ramses = [ramses; dataVal(:, 2:end)];
                end
             else
                fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
@@ -289,6 +355,51 @@ for idFile = 1:length(a_scienceLogFileList)
          end
       end
    end
+end
+
+ramsesSpectrum = [];
+for idFile = 1:length(a_iradLogFileList)
+
+   iradFilePathName = a_iradLogFileList{idFile};
+
+   % read input file
+   if (isempty(g_decArgo_outputCsvFileId))
+      fromLaunchFlag = 1;
+   else
+      fromLaunchFlag = 0;
+   end
+   [error, data] = read_apx_apf11_ir_binary_log_file(iradFilePathName, 'irad', fromLaunchFlag, 0, a_decoderId);
+   if (error == 1)
+      fprintf('ERROR: Float #%d Cycle #%d: Error in file: %s - ignored\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, iradFilePathName);
+      return
+   end
+   
+   dataFields = fieldnames(data);
+   for idFld = 1:length(dataFields)
+      fieldName = dataFields{idFld};
+      switch (fieldName)
+         case 'IRAD_SPECTRUM'
+            ramsesSpectrum = [ramsesSpectrum; data.(fieldName)];
+         otherwise
+            fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s - ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, iradFilePathName);
+      end
+   end
+end
+
+% manage Ice Descent and Ascent cycles
+if (isempty(o_cycleTimeData.iceDescentStartDateSci))
+   o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSci;
+else
+   % store AED of Ice cycles
+   o_cycleTimeData.iceAscentEndDateSci = [ ...
+      o_cycleTimeData.iceDescentStartDateSci(2:end) ...
+      o_cycleTimeData.ascentEndDateSci(end)];
+
+   % first 'ICEDESCENT' is AED of primary profile
+   o_cycleTimeData.ascentEndDateSci = o_cycleTimeData.iceDescentStartDateSci(1);
+   o_cycleTimeData.ascentEndDate = o_cycleTimeData.ascentEndDateSys;
 end
 
 % add cycle number to GPS fixes
@@ -347,9 +458,8 @@ paramC2Amp.cFormat = '%.5f';
 paramRawTemp = get_netcdf_param_attributes('RawTemp');
 paramRawTemp.cFormat = '%.5f';
 
-paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
 paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
-paramNbSampleTransistorPh = get_netcdf_param_attributes('NB_SAMPLE_TRANSISTOR_PH');
+paramNbSampleSfet = get_netcdf_param_attributes('NB_SAMPLE_SFET');
 
 paramChlWave = get_netcdf_param_attributes('chl_wave');
 paramChlWave.cFormat = '%d';
@@ -378,12 +488,31 @@ paramDownIrradiance443 = get_netcdf_param_attributes('DOWN_IRRADIANCE443');
 paramDownIrradiance555 = get_netcdf_param_attributes('DOWN_IRRADIANCE555');
 paramDownIrradiance670 = get_netcdf_param_attributes('DOWN_IRRADIANCE670');
 
+paramRafosRtcTime = get_netcdf_param_attributes('RAFOS_RTC_TIME');
+paramRafosCorrelation = get_netcdf_param_attributes('COR');
+paramRafosRawToa = get_netcdf_param_attributes('RAW_TOA');
+
+paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_INTEGRATION_TIME');
+paramRadiometerTemp = get_netcdf_param_attributes('RADIOMETER_TEMP');
+paramRadiometerPres = get_netcdf_param_attributes('RADIOMETER_PRES');
+paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_PRE_INCLINATION');
+paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_POST_INCLINATION');
+paramRawDownwellingIrradiance = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE');
+
 if (~isempty(ctdP))
    o_profCtdP = get_apx_profile_data_init_struct;
    o_profCtdP.dateList = paramJuld;
    o_profCtdP.dates = ctdP(:, 1);
+   o_profCtdP.dates(isnan(o_profCtdP.dates)) = paramJuld.fillValue;
    o_profCtdP.paramList = [paramPres];
    o_profCtdP.data = ctdP(:, 2);
+   
+   if (any(isnan(o_profCtdP.dates)))
+      idNoDate = find(isnan(o_profCtdP.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated CTD_P measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profCtdP.dates(isnan(o_profCtdP.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(ctdPt))
@@ -392,6 +521,13 @@ if (~isempty(ctdPt))
    o_profCtdPt.dates = ctdPt(:, 1);
    o_profCtdPt.paramList = [paramPres paramTemp];
    o_profCtdPt.data = ctdPt(:, 2:end);
+   
+   if (any(isnan(o_profCtdPt.dates)))
+      idNoDate = find(isnan(o_profCtdPt.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated CTD_PT measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profCtdPt.dates(isnan(o_profCtdPt.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(ctdPts))
@@ -400,6 +536,13 @@ if (~isempty(ctdPts))
    o_profCtdPts.dates = ctdPts(:, 1);
    o_profCtdPts.paramList = [paramPres paramTemp paramSal];
    o_profCtdPts.data = ctdPts(:, 2:end);
+   
+   if (any(isnan(o_profCtdPts.dates)))
+      idNoDate = find(isnan(o_profCtdPts.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated CTD_PTS measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profCtdPts.dates(isnan(o_profCtdPts.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(ctdPtsh))
@@ -409,6 +552,13 @@ if (~isempty(ctdPtsh))
    o_profCtdPtsh.paramList = [paramPres paramTemp paramSal paramVrsPh];
    o_profCtdPtsh.data = ctdPtsh(:, 2:end);
    o_profCtdPtsh.data(isnan(o_profCtdPtsh.data(:, 4)), 4) = paramVrsPh.fillValue;
+   
+   if (any(isnan(o_profCtdPtsh.dates)))
+      idNoDate = find(isnan(o_profCtdPtsh.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated CTD_PTSH measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profCtdPtsh.dates(isnan(o_profCtdPtsh.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(do))
@@ -422,23 +572,65 @@ if (~isempty(do))
    o_profDo.data(isnan(o_profDo.data(:, 4)), 4) = paramTempDoxy.fillValue;
    o_profDo.data(isnan(o_profDo.data(:, 7)), 7) = paramC1phaseDoxy.fillValue;
    o_profDo.data(isnan(o_profDo.data(:, 8)), 8) = paramC2phaseDoxy.fillValue;
+   
+   if (any(isnan(o_profDo.dates)))
+      
+      idNoDate = find(isnan(o_profDo.dates));
+      fprintf('WARNING: Float #%d Cycle #%d: %d not dated O2 measurements in file: %s - PRES is averaged\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      
+      presDo = ones(size(do, 1), 1)*paramPres.fillValue;
+      presDates = ones(size(do, 1), 1)*paramJuld.fillValue;
+      
+      presAll = [allPresVal; [doId nan(size(doId, 1), 2)]];
+      [~, sortId] = sort(presAll(:, 1));
+      presAll = presAll(sortId, :);
+      prevPres = '';
+      lastNanId = [];
+      for id = 1:size(presAll, 1)
+         if (~isnan(presAll(id, 3)))
+            if (~isempty(lastNanId))
+               if (~isempty(prevPres))
+                  presDo(doId == presAll(lastNanId, 1)) = prevPres(3) + (presAll(id, 3) - prevPres(3))/2;
+                  presDates(doId == presAll(lastNanId, 1)) = prevPres(2) + (presAll(id, 2) - prevPres(2))/2;
+               else
+                  presDo(doId == presAll(lastNanId, 1)) = presAll(id, 3);
+                  presDates(doId == presAll(lastNanId, 1)) = presAll(id, 2);
+               end
+               lastNanId = [];
+            end
+            prevPres = presAll(id, :);
+         else
+            lastNanId = [lastNanId; id];
+         end
+      end
+      if (isnan(presAll(end, 3)))
+         if (~isempty(prevPres))
+            presDo(doId == presAll(lastNanId, 1)) = prevPres(3);
+            presDates(doId == presAll(lastNanId, 1)) = prevPres(2);
+         end
+      end
+      
+      o_profDo.dates = presDates; % profil generation process is based on measurements dates
+      o_profDo.data(:, 1) = presDo;
+      o_profDo.temporaryDates = 1;
+   end
 end
 
 if (~isempty(ctdCp))
    o_profCtdCp = get_apx_profile_data_init_struct;
-   %    o_profCtdCp.dateList = paramJuld;
-   %    o_profCtdCp.dates = ctdCp(:, 1);
-   o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSample];
+   o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSampleCtd];
    o_profCtdCp.data = ctdCp(:, 2:end);
+   g_decArgo_addParamNbSampleCtd = 1;
 end
 
 if (~isempty(ctdCpH))
    o_profCtdCpH = get_apx_profile_data_init_struct;
-   %    o_profCtdCpH.dateList = paramJuld;
-   %    o_profCtdCpH.dates = ctdCpH(:, 1);
-   o_profCtdCpH.paramList = [paramPres paramTemp paramSal paramNbSampleCtd paramVrsPh paramNbSampleTransistorPh];
+   o_profCtdCpH.paramList = [paramPres paramTemp paramSal paramNbSampleCtd paramVrsPh paramNbSampleSfet];
    o_profCtdCpH.data = ctdCpH(:, 2:end);
    o_profCtdCpH.data(isnan(o_profCtdCpH.data(:, 5)), 5) = paramVrsPh.fillValue;
+   g_decArgo_addParamNbSampleCtd = 1;
+   g_decArgo_addParamNbSampleSfet = 1;
 end
 
 if (~isempty(flbbCd))
@@ -453,6 +645,13 @@ if (~isempty(flbbCd))
          paramBetaBackscattering700 paramFluorescenceCdom paramThermSig];
    end
    o_profFlbbCd.data = [ones(size(flbbCd, 1), 1)*paramPres.fillValue flbbCd(:, 2:end)];
+   
+   if (any(isnan(o_profFlbbCd.dates)))
+      idNoDate = find(isnan(o_profFlbbCd.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated FLBB_CD measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profFlbbCd.dates(isnan(o_profFlbbCd.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(flbbCdCfg))
@@ -461,16 +660,23 @@ if (~isempty(flbbCdCfg))
    o_profFlbbCdCfg.dates = flbbCdCfg(:, 1);
    o_profFlbbCdCfg.paramList = [paramPres paramChlWave paramBscWave paramCdWave];
    o_profFlbbCdCfg.data = [ones(size(flbbCdCfg, 1), 1)*paramPres.fillValue flbbCdCfg(:, 2:end)];
+   
+   if (any(isnan(o_profFlbbCdCfg.dates)))
+      idNoDate = find(isnan(o_profFlbbCdCfg.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated FLBB_CD_CFG measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profFlbbCdCfg.dates(isnan(o_profFlbbCdCfg.dates)) = paramJuld.fillValue;
+   end
 end
 
 if (~isempty(ocr504I))
    % use calibration coefficients to define which parameters are concerned
    if (isempty(g_decArgo_calibInfo))
       fprintf('ERROR: Float #%d Cycle #%d: Calibration information is missing - cannot determine OCR parameters\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+         g_decArgo_floatNum, g_decArgo_cycleNum);
    elseif (~isfield(g_decArgo_calibInfo, 'OCR'))
       fprintf('ERROR: Float #%d Cycle #%d: OCR sensor calibration information is missing - cannot determine OCR parameters\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+         g_decArgo_floatNum, g_decArgo_cycleNum);
    else
       if (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda380') && ...
             isfield(g_decArgo_calibInfo.OCR, 'A1Lambda380') && ...
@@ -495,6 +701,13 @@ if (~isempty(ocr504I))
          ocr504I(:, 2:4) =  ocr504I(:, 2:4)*0.01;
          o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
          
+         if (any(isnan(o_profOcr504I.dates)))
+            idNoDate = find(isnan(o_profOcr504I.dates));
+            fprintf('ERROR: Float #%d Cycle #%d: %d not dated OCR_504I measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+            o_profOcr504I.dates(isnan(o_profOcr504I.dates)) = paramJuld.fillValue;
+         end
+         
       elseif (isfield(g_decArgo_calibInfo.OCR, 'A0Lambda443') && ...
             isfield(g_decArgo_calibInfo.OCR, 'A1Lambda443') && ...
             isfield(g_decArgo_calibInfo.OCR, 'LmLambda443') && ...
@@ -518,15 +731,83 @@ if (~isempty(ocr504I))
          ocr504I(:, 2:end) =  ocr504I(:, 2:end)*0.01;
          o_profOcr504I.data = [ones(size(ocr504I, 1), 1)*paramPres.fillValue ocr504I(:, 2:end)];
          
+         if (any(isnan(o_profOcr504I.dates)))
+            idNoDate = find(isnan(o_profOcr504I.dates));
+            fprintf('ERROR: Float #%d Cycle #%d: %d not dated OCR_504I measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+            o_profOcr504I.dates(isnan(o_profOcr504I.dates)) = paramJuld.fillValue;
+         end
+         
       else
          fprintf('ERROR: Float #%d Cycle #%d: Found unexpected set of OCR calibration coefficients - cannot determine OCR parameters\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, fieldName, sciFilePathName);
+            g_decArgo_floatNum, g_decArgo_cycleNum);
       end
    end
 end
 
-% add PRES for DO, FLBB and OCR data
-if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I))
+if (~isempty(rafosRtc))
+   o_profRafosRtc = get_apx_profile_data_init_struct;
+   o_profRafosRtc.dateList = paramJuld;
+   o_profRafosRtc.dates = rafosRtc(:, 1);
+   o_profRafosRtc.dates(isnan(o_profRafosRtc.dates)) = paramJuld.fillValue;
+   o_profRafosRtc.paramList = paramRafosRtcTime;
+   o_profRafosRtc.data = rafosRtc(:, 2);
+end
+
+if (~isempty(rafos))
+   o_profRafos = get_apx_profile_data_init_struct;
+   o_profRafos.dateList = paramJuld;
+   o_profRafos.dates = rafos(:, 1);
+   o_profRafos.paramList = [paramRafosCorrelation paramRafosRawToa];
+   o_profRafos.paramNumberWithSubLevels = 1:2;
+   o_profRafos.paramNumberOfSubLevels = [6 6];
+   o_profRafos.data = rafos(:, [2:2:end 3:2:end]);
+   
+   if (any(isnan(o_profRafos.dates)))
+      idNoDate = find(isnan(o_profRafos.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated RAFOS measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profRafos.dates(isnan(o_profRafos.dates)) = paramJuld.fillValue;
+   end
+end
+
+if (~isempty(ramses) && ~isempty(ramsesSpectrum))
+   
+   % merge ramses and ramsesSpectrum data
+   dates = unique([ramses(:, 1) ramsesSpectrum(:, 1)]);
+   data = nan(length(dates), size(ramses, 2)+size(ramsesSpectrum, 2)-2);
+   idF = find(ramses(:, 1) == dates);
+   data(idF, 1:size(ramses, 2)-1) = ramses(:, 2:end);
+   idF = find(ramsesSpectrum(:, 1) == dates);
+   data(idF, size(ramses, 2):end) = ramsesSpectrum(:, 2:end);
+   
+   % create the profile structure
+   o_profRamses = get_apx_profile_data_init_struct;
+   o_profRamses.dateList = paramJuld;
+   o_profRamses.dates = dates;
+   o_profRamses.paramList = [paramPres ...
+      paramRadiometerIntegrationTime ...
+      paramRadiometerTemp paramRadiometerPres ...
+      paramRadiometerPreInclination paramRadiometerPostInclination ...
+      paramRawDownwellingIrradiance];
+   o_profRamses.paramNumberWithSubLevels = 7;
+   o_profRamses.paramNumberOfSubLevels = 255;
+   o_profRamses.data = [ones(size(data, 1), 1)*paramPres.fillValue data];
+   
+   % RADIOMETER_PRES is provided in bars
+   o_profRamses.data(:, 4) = o_profRamses.data(:, 4)*10;
+   
+   if (any(isnan(o_profRamses.dates)))
+      idNoDate = find(isnan(o_profRamses.dates));
+      fprintf('ERROR: Float #%d Cycle #%d: %d not dated RAMSES measurements in file: %s - ASK FOR AN UPDATE OF THE DECODER\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, length(idNoDate), sciFilePathName);
+      o_profRamses.dates(isnan(o_profRamses.dates)) = paramJuld.fillValue;
+   end
+end
+
+% add PRES for DO, FLBB, OCR and RAMSES data
+if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I) || ...
+      ~isempty(o_profRamses))
    tabJuld = [];
    tabPres = [];
    if (~isempty(o_profCtdP))
@@ -562,8 +843,8 @@ if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I))
    
    if (~isempty(tabPres))
       if (~isempty(o_profDo))
-         o_profDo.data(:, 1) = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
-         o_profDo.data(isnan(o_profDo.data(:, 1)), 1) = paramPres.fillValue;
+         interpData = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
+         o_profDo.data(~isnan(interpData), 1) = interpData(~isnan(interpData));
       end
       if (~isempty(o_profFlbbCd))
          o_profFlbbCd.data(:, 1) = interp1(tabJuld, tabPres, o_profFlbbCd.dates, 'linear');
@@ -572,6 +853,10 @@ if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I))
       if (~isempty(o_profOcr504I))
          o_profOcr504I.data(:, 1) = interp1(tabJuld, tabPres, o_profOcr504I.dates, 'linear');
          o_profOcr504I.data(isnan(o_profOcr504I.data(:, 1)), 1) = paramPres.fillValue;
+      end
+      if (~isempty(o_profRamses))
+         o_profRamses.data(:, 1) = interp1(tabJuld, tabPres, o_profRamses.dates, 'linear');
+         o_profRamses.data(isnan(o_profRamses.data(:, 1)), 1) = paramPres.fillValue;
       end
    end
 end
@@ -588,6 +873,24 @@ if (~isempty(o_profCtdP))
          o_cycleTimeData.descentStartPresSci = o_profCtdP.data(idF2);
       else
          o_cycleTimeData.descentStartPresSci = (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2;
+      end
+   end
+   if (~isempty(o_cycleTimeData.rafosCorrelationStartDateSci))
+      dates = o_cycleTimeData.rafosCorrelationStartDateSci;
+      for idD = 1:length(dates)
+         refDateStr = julian_2_gregorian_dec_argo(dates(idD));
+         idF1 = find(o_profCtdP.dates >= dates(idD), 1, 'first');
+         idF2 = find(o_profCtdP.dates <= dates(idD), 1, 'last');
+         if (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF1)), refDateStr))
+            o_cycleTimeData.rafosCorrelationStartPresSci = [ ...
+               o_cycleTimeData.rafosCorrelationStartPresSci o_profCtdP.data(idF1)];
+         elseif (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF2)), refDateStr))
+            o_cycleTimeData.rafosCorrelationStartPresSci = [ ...
+               o_cycleTimeData.rafosCorrelationStartPresSci o_profCtdP.data(idF2)];
+         else
+            o_cycleTimeData.rafosCorrelationStartPresSci = [ ...
+               o_cycleTimeData.rafosCorrelationStartPresSci (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2];
+         end
       end
    end
    if (~isempty(o_cycleTimeData.parkStartDateSci))
@@ -660,6 +963,60 @@ if (~isempty(o_profCtdP))
          o_cycleTimeData.ascentEndPresSci = o_profCtdP.data(idF2);
       else
          o_cycleTimeData.ascentEndPresSci = (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2;
+      end
+   end
+   if (~isempty(o_cycleTimeData.iceDescentStartDateSci))
+      dates = o_cycleTimeData.iceDescentStartDateSci;
+      for idD = 1:length(dates)
+         refDateStr = julian_2_gregorian_dec_argo(dates(idD));
+         idF1 = find(o_profCtdP.dates >= dates(idD), 1, 'first');
+         idF2 = find(o_profCtdP.dates <= dates(idD), 1, 'last');
+         if (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF1)), refDateStr))
+            o_cycleTimeData.iceDescentStartPresSci = [ ...
+               o_cycleTimeData.iceDescentStartPresSci o_profCtdP.data(idF1)];
+         elseif (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF2)), refDateStr))
+            o_cycleTimeData.iceDescentStartPresSci = [ ...
+               o_cycleTimeData.iceDescentStartPresSci o_profCtdP.data(idF2)];
+         else
+            o_cycleTimeData.iceDescentStartPresSci = [ ...
+               o_cycleTimeData.iceDescentStartPresSci (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2];
+         end
+      end
+   end
+   if (~isempty(o_cycleTimeData.iceAscentStartDateSci))
+      dates = o_cycleTimeData.iceAscentStartDateSci;
+      for idD = 1:length(dates)
+         refDateStr = julian_2_gregorian_dec_argo(dates(idD));
+         idF1 = find(o_profCtdP.dates >= dates(idD), 1, 'first');
+         idF2 = find(o_profCtdP.dates <= dates(idD), 1, 'last');
+         if (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF1)), refDateStr))
+            o_cycleTimeData.iceAscentStartPresSci = [ ...
+               o_cycleTimeData.iceAscentStartPresSci o_profCtdP.data(idF1)];
+         elseif (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF2)), refDateStr))
+            o_cycleTimeData.iceAscentStartPresSci = [ ...
+               o_cycleTimeData.iceAscentStartPresSci o_profCtdP.data(idF2)];
+         else
+            o_cycleTimeData.iceAscentStartPresSci = [ ...
+               o_cycleTimeData.iceAscentStartPresSci (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2];
+         end
+      end
+   end
+   if (~isempty(o_cycleTimeData.iceAscentEndDateSci))
+      dates = o_cycleTimeData.iceAscentEndDateSci;
+      for idD = 1:length(dates)
+         refDateStr = julian_2_gregorian_dec_argo(dates(idD));
+         idF1 = find(o_profCtdP.dates >= dates(idD), 1, 'first');
+         idF2 = find(o_profCtdP.dates <= dates(idD), 1, 'last');
+         if (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF1)), refDateStr))
+            o_cycleTimeData.iceAscentEndPresSci = [ ...
+               o_cycleTimeData.iceAscentEndPresSci o_profCtdP.data(idF1)];
+         elseif (strcmp(julian_2_gregorian_dec_argo(o_profCtdP.dates(idF2)), refDateStr))
+            o_cycleTimeData.iceAscentEndPresSci = [ ...
+               o_cycleTimeData.iceAscentEndPresSci o_profCtdP.data(idF2)];
+         else
+            o_cycleTimeData.iceAscentEndPresSci = [ ...
+               o_cycleTimeData.iceAscentEndPresSci (o_profCtdP.data(idF1)+o_profCtdP.data(idF2))/2];
+         end
       end
    end
 end

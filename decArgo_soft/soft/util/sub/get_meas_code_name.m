@@ -211,7 +211,7 @@ switch (a_measCode)
       o_measCodeName = sprintf('%03d: ASCENT_END_FROM_FLOAT', a_measCode);
       
    case g_MC_SpyAtSurface
-      o_measCodeName = sprintf('%03d: SURF_FINAL_PUMP_START', a_measCode);
+      o_measCodeName = sprintf('%03d: BUOY_ACTION_AFTER_AED', a_measCode);
 
    case g_MC_TST
       o_measCodeName = sprintf('%03d: TRANSMISSION_START', a_measCode);

@@ -30,11 +30,13 @@ showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloat
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % list of sensors mounted on floats
-SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+% SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\float_sensor_list.txt';
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_20190604.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_EuroSea_6.13_all.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -316,7 +318,7 @@ switch a_inputSensorName
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110, 111, 113}
+         case {105, 106, 107, 110, 111, 113, 114}
             o_sensorName = [{'FLUOROMETER_CHLA'} {'BACKSCATTERINGMETER_BBP700'} {'FLUOROMETER_CDOM'}];
             o_sensorDimLevel = [301 302 303];
             o_sensorMaker = [{'WETLABS'} {'WETLABS'} {'WETLABS'}];
@@ -433,7 +435,7 @@ for idSensor = 1:length(a_sensorList)
          
       case 'ECO3'
          switch a_decId
-            case {105, 106, 107, 110, 111, 113}
+            case {105, 106, 107, 110, 111, 113, 114}
                codeList = [ ...
                   {'ECO_BETA_ANGLE'}; ...
                   {'ECO_BETA_BANDWIDTH'}; ...
@@ -939,7 +941,7 @@ switch a_inputSensorName
       
    case 'OPTODE'
       switch a_decId
-         case {106, 107, 108, 109, 110, 111, 112, 113}
+         case {106, 107, 108, 109, 110, 111, 112, 113, 114}
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...
                ];
@@ -1001,7 +1003,7 @@ switch a_inputSensorName
    case 'ECO3'
       
       switch a_decId
-         case {105, 106, 107, 110, 111, 113}
+         case {105, 106, 107, 110, 111, 113, 114}
             o_paramName = [ ...
                {'FLUORESCENCE_CHLA'} {'BETA_BACKSCATTERING700'} {'FLUORESCENCE_CDOM'} ...
                {'CHLA'} {'BBP700'} {'CDOM'} ...
@@ -1061,7 +1063,7 @@ switch a_inputSensorName
             ];
       else
          switch a_decId
-            case {105, 106, 107, 108, 109, 111}
+            case {105, 106, 107, 108, 109, 111, 114}
                o_paramName = [ ...
                   {'TEMP_NITRATE'} ...
                   {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
@@ -1356,7 +1358,7 @@ switch a_parameterName
       darkCountChloroA = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110, 111, 113}
+         case {105, 106, 107, 108, 109, 110, 111, 113, 114}
             [scaleFactChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactChloroA');
             [darkCountChloroA] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountChloroA');
             
@@ -1398,7 +1400,7 @@ switch a_parameterName
       khiCoefBackscatter = '';
       switch a_decId
          
-         case {105, 106, 107, 108, 109, 110, 111, 113}
+         case {105, 106, 107, 108, 109, 110, 111, 113, 114}
             [scaleFactBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactBackscatter700');
             [darkCountBackscatter700] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountBackscatter700');
             [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');

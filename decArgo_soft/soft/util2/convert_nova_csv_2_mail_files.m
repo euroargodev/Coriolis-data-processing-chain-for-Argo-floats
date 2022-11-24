@@ -27,7 +27,7 @@ DIR_INPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA\data_csv2\';
 DIR_OUTPUT_MAIL_FILES = 'C:\Users\jprannou\_DATA\IN\NOVA\mail_from_data_csv2\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 
 % create and start log file recording

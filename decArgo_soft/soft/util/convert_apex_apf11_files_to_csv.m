@@ -32,7 +32,7 @@ DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SB
 DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\OUT\APEX_APF11_FILES\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -139,6 +139,13 @@ for idFloat = 1:nbFloats
       [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binSciFiles(iFile).name], 'science', 0, 1, floatDecId);
       if (error)
          fprintf('ERROR while processing file %s\n', [floatFileDir binSciFiles(iFile).name]);
+      end
+   end
+   binIradFiles = dir([floatFileDir '*.irad_log.bin']);
+   for iFile = 1:length(binIradFiles)
+      [error, ~] = read_apx_apf11_ir_binary_log_file([floatFileDir binIradFiles(iFile).name], 'irad', 0, 1, floatDecId);
+      if (error)
+         fprintf('ERROR while processing file %s\n', [floatFileDir binIradFiles(iFile).name]);
       end
    end
    binVitFiles = dir([floatFileDir '*.vitals_log.bin']);
@@ -287,7 +294,7 @@ global g_decArgo_debug_outputCsvDirName;
 
 
 % concat log files
-for idFile = 1:3
+for idFile = 1:4
    if (idFile == 1)
       files = dir([g_decArgo_debug_outputCsvDirName '*.science_log.csv']);
       [idFileList, cyNumList] = sort_apex_apf11_ir_files({files.name});
@@ -297,6 +304,9 @@ for idFile = 1:3
    elseif (idFile == 3)
       files = [dir([g_decArgo_debug_outputCsvDirName '*.production_log.csv']) ; ...
          dir([g_decArgo_debug_outputCsvDirName '*.system_log.csv'])];
+      [idFileList, cyNumList] = sort_apex_apf11_ir_files({files.name});
+   elseif (idFile == 4)
+      files = dir([g_decArgo_debug_outputCsvDirName '*.irad_log.csv']);
       [idFileList, cyNumList] = sort_apex_apf11_ir_files({files.name});
    end
    
@@ -311,6 +321,8 @@ for idFile = 1:3
             outputFileName = [a_floatWmo '_' fileName(1:idF(1)-1) '_ALL_vitals_log.csv'];
          elseif (idFile == 3)
             outputFileName = [a_floatWmo '_' fileName(1:idF(1)-1) '_ALL_system_log.csv'];
+         elseif (idFile == 4)
+            outputFileName = [a_floatWmo '_' fileName(1:idF(1)-1) '_ALL_irad_log.csv'];
          end
          outputFilePathName = [g_decArgo_debug_outputCsvDirName '\..\' outputFileName];
          
@@ -326,6 +338,8 @@ for idFile = 1:3
             fprintf(fIdOut, 'WMO;CY NUM;INFO;TIMESTAMP\n');
          elseif (idFile == 3)
             fprintf(fIdOut, 'WMO;CY NUM;TIMESTAMP;P;INFO\n');
+         elseif (idFile == 4)
+            fprintf(fIdOut, 'WMO;CY NUM;INFO;TIMESTAMP\n');
          end
          
       end
@@ -336,6 +350,8 @@ for idFile = 1:3
          fprintf(fIdOut, '%s;%d;FILE_NAME;-1;%s\n', a_floatWmo, cyNumList(id), files(iFile).name);
       elseif (idFile == 3)
          fprintf(fIdOut, '%s;%d;-1;-1;FILE_NAME: %s\n', a_floatWmo, cyNumList(id), files(iFile).name);
+      elseif (idFile == 4)
+         fprintf(fIdOut, '%s;%d;FILE_NAME;-1;%s\n', a_floatWmo, cyNumList(id), files(iFile).name);
       end
       
       filePathName = [g_decArgo_debug_outputCsvDirName files(iFile).name];

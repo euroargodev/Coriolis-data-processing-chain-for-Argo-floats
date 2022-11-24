@@ -333,7 +333,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217, 223}
+   case {210, 211, 212, 222, 213, 214, 217, 223, 225}
       % Provor/Arvor Iridium with "NS & IA"
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
@@ -341,6 +341,7 @@ switch (a_decoderId)
       % Provor-ARN-DO-Ice Iridium
       % Arvor-ARN-DO-Ice Iridium 5.46
       % Arvor-ARN-DO-Ice Iridium 5.48
+      % Provor-ARN-DO-Ice Iridium 5.76
       o_mcList = [ ...
          g_MC_Launch ...
          g_MC_CycleStart ...
@@ -438,7 +439,7 @@ switch (a_decoderId)
          g_MC_Grounded ...
          ];      
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301, 302, 303}
       % Provor CTS4 & Arvor CM
       o_mcList = [ ...
          g_MC_Launch ...

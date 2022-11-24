@@ -39,7 +39,7 @@ global g_decArgo_outputNcParamId;
 
 
 % add ICE detected flag
-if (ismember(a_decoderId, [212, 222, 214, 217, 218, 221, 223, 224]))
+if (ismember(a_decoderId, [212, 222, 214, 217, 218, 221, 223, 224, 225]))
    if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
       
       % ICE mode is activated

@@ -36,7 +36,7 @@ global g_decArgo_floatNum;
 init_default_values;
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % if we only want to check existing split SBD files
 CHECK_BUFF_ONLY = 0;

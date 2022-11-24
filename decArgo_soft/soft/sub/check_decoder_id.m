@@ -48,7 +48,7 @@ switch (a_decoderId)
       else
          g_decArgo_decIdCheckFlag = 1;
       end
-   case {222, 223}
+   case {222, 223, 225}
       % decId = 222 or 223 => firmware is 5900A05
       % expected checksum:
       % for 5900A05: hex2dec('2C97') = 11415

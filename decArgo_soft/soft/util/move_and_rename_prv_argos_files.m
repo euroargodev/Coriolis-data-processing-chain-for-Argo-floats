@@ -37,7 +37,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_2017062
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170627\OUT\STEP4_FINAL\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % global input parameter information
 global g_decArgo_processModeAll;

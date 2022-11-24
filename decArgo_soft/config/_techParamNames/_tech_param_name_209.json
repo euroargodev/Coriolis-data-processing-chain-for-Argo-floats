@@ -251,7 +251,7 @@
    {
       "TECH_PARAM_DEC_ID" : "130",
       "TECH_PARAM_MSG_ID" : "46",
-      "TECH_PARAM_MSG_LABEL" : "Pressure sensor offset (two’s complement coded)",
+      "TECH_PARAM_MSG_LABEL" : "Pressure sensor offset (twoâ€™s complement coded)",
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar",
       "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected"
    },
@@ -380,7 +380,7 @@
       "TECH_PARAM_DEC_ID" : "148",
       "TECH_PARAM_MSG_ID" : "71",
       "TECH_PARAM_MSG_LABEL" : "SBE optode status (0:Ok, 1:Ko (dialog problem))",
-      "TECH_PARAM_NAME" : "FLAG_Optode2Status_LOGICAL",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_Optode2Status_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Sensor status - 1= OK, 0=not OK"
    },
    "TECH_PARAM_49" :

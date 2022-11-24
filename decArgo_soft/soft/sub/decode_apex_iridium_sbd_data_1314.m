@@ -208,7 +208,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    g_decArgo_outputNcParamValue = [];
    
    % create the configuration parameter names for the META NetCDF file
-   [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_ir(a_decoderId);
+   [decArgoConfParamNames, ncConfParamNames, ncConfParamIds] = create_config_param_names_apx_ir(a_decoderId);
 end
 
 if (g_decArgo_realtimeFlag == 1)
@@ -536,7 +536,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_apx_ir( ...
-      decArgoConfParamNames, ncConfParamNames, a_decoderId);
+      decArgoConfParamNames, ncConfParamNames, ncConfParamIds, a_decoderId);
    
    if (g_decArgo_realtimeFlag == 1)
       

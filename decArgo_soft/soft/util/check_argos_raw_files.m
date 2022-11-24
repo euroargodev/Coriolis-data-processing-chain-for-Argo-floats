@@ -23,7 +23,7 @@ function check_argos_raw_files(varargin)
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\split_apex_061609\in_split_cycle - copie\';
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % min non-trans duration (in hour) to use the ghost detection
 MIN_NON_TRANS_DURATION_FOR_GHOST = 7;

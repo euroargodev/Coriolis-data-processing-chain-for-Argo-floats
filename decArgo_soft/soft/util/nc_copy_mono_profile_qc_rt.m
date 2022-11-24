@@ -718,7 +718,7 @@ if (exist(a_profFilePathName, 'file') == 2)
                end
                paramList = [paramList {paramName}];
                param = get_netcdf_param_attributes_3_1(paramName);
-               if (param.paramType == 'c')
+               if ((param.paramType == 'c') || (param.paramType == 'j'))
                   cParamForProf{end+1} = paramName;
                else
                   bParamForProf{end+1} = paramName;
@@ -1138,8 +1138,8 @@ for idType = 1:2
                else
                   paramInfo = get_netcdf_param_attributes(paramName);
                end
-               if (((paramInfo.paramType == 'c') && (idType == 1)) || ...
-                     ((paramInfo.paramType ~= 'c') && (idType == 2)))
+               if ((((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j')) && (idType == 1)) || ...
+                     (((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j')) && (idType == 2)))
                   updateFile = 1;
                end
             end

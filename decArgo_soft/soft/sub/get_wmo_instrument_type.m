@@ -29,7 +29,7 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213, 214}
+   case {1, 4, 11, 12, 19, 24, 25, 27, 28, 29, 206, 207, 208, 213, 214, 225}
       % PROVOR SBE
       o_wmoInstType = '841';
       
@@ -41,7 +41,7 @@ switch (a_decoderId)
       % ARVOR RBR
       o_wmoInstType = '878';
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301}
       % PROVOR_III SBE
       o_wmoInstType = '836';
       

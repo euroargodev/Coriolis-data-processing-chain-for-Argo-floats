@@ -57,7 +57,7 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_n
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_versions_nc\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_argos.txt';

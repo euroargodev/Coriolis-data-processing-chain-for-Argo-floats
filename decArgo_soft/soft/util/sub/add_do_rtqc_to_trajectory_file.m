@@ -432,7 +432,7 @@ if (bTrajFileFlag == 1)
       if (~isempty(paramName))
          ncBTrajParamNameList{end+1} = paramName;
          paramInfo = get_netcdf_param_attributes(paramName);
-         if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+         if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
             ncBTrajParamAdjNameList = [ncBTrajParamAdjNameList ...
                {[paramName '_ADJUSTED']} ...
                ];

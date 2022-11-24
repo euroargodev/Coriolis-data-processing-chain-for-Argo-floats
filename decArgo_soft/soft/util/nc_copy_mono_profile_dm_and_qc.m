@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Copy DM data and QC values set by the COriolis SCOOP tool.
+% Copy DM data and QC values set by the Coriolis SCOOP tool.
 % We use 2 data set:
 % - the OLD one is supposed to contain DM data and SCOOP QC values
 % - the NEW one is supposed to be a direct decoder output
@@ -41,17 +41,23 @@
 %                             present in OLD file
 %   11/12/2020 - RNU - V 1.6: correction of a bug in the copy of
 %                             UV_INTENSITY_NITRATE data in output file
+%   03/26/2021 - RNU - V 1.7: for ignored parameters, the PARAMETER_DATA_MODE of
+%                             the old file should be replaced by the new file
+%                             one (and the DATA_MODE processed accordingly).
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_dm_and_qc(varargin)
 
 % list of PARAMETER names that should not be considered in the report of SCOOP
 % QCs (only 'B' parameters should be provided; their associated 'I' parameters
 % will also be ignored)
+% IGNORED_PARAMETER_LIST = [ ...
+%    {'DOWN_IRRADIANCE380'} ...
+%    {'DOWN_IRRADIANCE412'} ...
+%    {'DOWN_IRRADIANCE490'} ...
+%    {'DOWNWELLING_PAR'} ...
+%    ];
 IGNORED_PARAMETER_LIST = [ ...
-   {'DOWN_IRRADIANCE380'} ...
-   {'DOWN_IRRADIANCE412'} ...
-   {'DOWN_IRRADIANCE490'} ...
-   {'DOWNWELLING_PAR'} ...
+   {'BBP700'} ...
    ];
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64)' for the
@@ -64,6 +70,7 @@ DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OLD\';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\201809-ArgoData\coriolis\';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OLD\';
 DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
+DIR_INPUT_OLD_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\DIR_INPUT_OLD_NC_FILES\';
 
 % top directory of NEW input NetCDF files
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\NEW\';
@@ -71,17 +78,19 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\REMOCEAN_DECODAGE_DM\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_check_refonte_DO_201809\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\EDAC\coriolis\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\DIR_INPUT_NEW_NC_FILES\';
 
 % top directory of output NetCDF updated files
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_COPY_QC_AND_DM\OUT\';
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\OUT\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % program version
 global g_cocd_ncCopyMonoProfileDmAndQcVersion;
-g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.6';
+g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.7';
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64);' for the current action
 global g_cocd_historyReferenceToReport;
@@ -708,6 +717,31 @@ stationParametersNew = get_data_from_name('STATION_PARAMETERS', profDataNew);
 verticalSamplingSchemeOld = get_data_from_name('VERTICAL_SAMPLING_SCHEME', profDataOld)';
 verticalSamplingSchemeNew = get_data_from_name('VERTICAL_SAMPLING_SCHEME', profDataNew)';
 
+% modify the parameterDataModeOld and dataModeOld for ignored parameters
+% should be set to parameterDataModeNew and then dataModeOld reprocessed
+if (~isempty(a_ignoredParameterListAll))
+   [~, nParam, nProf] = size(stationParametersOld);
+   for idProf = 1:nProf
+      for idParam = 1:nParam
+         paramName = deblank(stationParametersOld(:, idParam, idProf)');
+         if (~isempty(paramName))
+            if (ismember(paramName, a_ignoredParameterListAll))
+               if (parameterDataModeOld(idProf, idParam) ~= parameterDataModeNew(idProf, idParam))
+                  parameterDataModeOld(idProf, idParam) = parameterDataModeNew(idProf, idParam);
+                  if (any(parameterDataModeOld(idProf, :) == 'D'))
+                     dataModeOld(idProf) = 'D';
+                  elseif (~any(parameterDataModeOld(idProf, :) == 'D') && any(parameterDataModeOld(idProf, :) == 'A'))
+                     dataModeOld(idProf) = 'A';
+                  else
+                     dataModeOld(idProf) = 'R';
+                  end
+               end
+            end
+         end
+      end
+   end   
+end
+
 profStructOld = [];
 profStructNew = [];
 parameterListOld = [];
@@ -738,25 +772,25 @@ for idLoop = 1:2
       for idParam = 1:nParam
          paramName = deblank(stationParameters(:, idParam, idProf)');
          if (~isempty(paramName))
-            %             if (~ismember(paramName, a_ignoredParameterListAll))
-            paramInfo = get_netcdf_param_attributes(paramName);
-            profParamList{end+1} = paramName;
-            wantedVars = [wantedVars ...
-               {paramName}];
-            if ~((a_bFileFlag == 1) && (strcmp(paramName, 'PRES')))
+            if (~ismember(paramName, a_ignoredParameterListAll))
+               paramInfo = get_netcdf_param_attributes(paramName);
+               profParamList{end+1} = paramName;
                wantedVars = [wantedVars ...
-                  {[paramName '_QC']} ...
-                  {['PROFILE_' paramName '_QC']} ...
-                  ];
-               if (paramInfo.adjAllowed)
+                  {paramName}];
+               if ~((a_bFileFlag == 1) && (strcmp(paramName, 'PRES')))
                   wantedVars = [wantedVars ...
-                     {[paramName '_ADJUSTED']} ...
-                     {[paramName '_ADJUSTED_QC']} ...
-                     {[paramName '_ADJUSTED_ERROR']} ...
+                     {[paramName '_QC']} ...
+                     {['PROFILE_' paramName '_QC']} ...
                      ];
+                  if (paramInfo.adjAllowed)
+                     wantedVars = [wantedVars ...
+                        {[paramName '_ADJUSTED']} ...
+                        {[paramName '_ADJUSTED_QC']} ...
+                        {[paramName '_ADJUSTED_ERROR']} ...
+                        ];
+                  end
                end
             end
-            %             end
          end
       end
       parameterList = [parameterList; {sort(profParamList)}];

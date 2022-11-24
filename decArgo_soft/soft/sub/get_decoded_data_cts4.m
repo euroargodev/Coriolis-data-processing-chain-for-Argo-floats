@@ -8,7 +8,7 @@
 %    o_sensorTechCTD, o_sensorTechOPTODE, o_sensorTechOCR, ...
 %    o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechSEAFET, ...
 %    o_sensorTechCROVER, o_sensorTechSUNA, ...
-%    o_tabTech, o_floatPres, ...
+%    o_tabTech, o_floatPres, o_grounding, ...
 %    o_floatProgRudics, o_floatProgTech, o_floatProgParam, o_floatProgSensor] = ...
 %    get_decoded_data_cts4(a_decDataTab, a_decoderId)
 %
@@ -39,6 +39,7 @@
 %   o_sensorTechSUNA   : decoded SUNA technical data
 %   o_tabTech          : decoded float technical data
 %   o_floatPres        : decoded float pressure actions
+%   o_grounding        : decoded float grounding data
 %   o_floatProgRudics  : decoded float Iridium config (PI) data (type 248)
 %   o_floatProgTech    : decoded float Tech config (PT and PG) data (type 254)
 %   o_floatProgParam   : decoded float Vector & Mission config (PV and PM) data (type 255)
@@ -58,7 +59,7 @@ function [o_cyProfPhaseList, ...
    o_sensorTechCTD, o_sensorTechOPTODE, o_sensorTechOCR, ...
    o_sensorTechECO2, o_sensorTechECO3, o_sensorTechFLNTU, o_sensorTechSEAFET, ...
    o_sensorTechCROVER, o_sensorTechSUNA, ...
-   o_tabTech, o_floatPres, ...
+   o_tabTech, o_floatPres, o_grounding, ...
    o_floatProgRudics, o_floatProgTech, o_floatProgParam, o_floatProgSensor] = ...
    get_decoded_data_cts4(a_decDataTab, a_decoderId)
 
@@ -97,6 +98,8 @@ o_sensorTechSUNA = [];
 o_tabTech = [];
 
 o_floatPres = [];
+
+o_grounding = [];
 
 o_floatProgRudics = [];
 o_floatProgTech = [];
@@ -510,10 +513,15 @@ o_floatPresActPres = [];
 o_floatPresActTime = [];
 o_floatPresActDuration = [];
 
+o_groundingDate = [];
+o_groundingPres = [];
+o_groundingSetPoint = [];
+o_groundingIntVacuum = [];
+
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {111, 113} % Remocean V3.00 and higher
+   case {111, 113, 114} % Remocean V3.00 and higher
       
       % retrieve data
       for idSbd = 1:length(a_decDataTab)
@@ -822,6 +830,15 @@ switch (a_decoderId)
                      o_dataSEAFETStdMedVrefMed = cat(1, o_dataSEAFETStdMedVrefMed, decData{5});                     
                end
                
+            case 247
+               % grounding data
+
+               decData = a_decDataTab(idSbd).decData;
+               o_groundingDate = cat(1, o_groundingDate, decData{1});
+               o_groundingPres = cat(1, o_groundingPres, decData{2});
+               o_groundingSetPoint = cat(1, o_groundingSetPoint, decData{3});
+               o_groundingIntVacuum = cat(1, o_groundingIntVacuum, decData{4});
+
             case 248
                % RUDICS parameters
                
@@ -1549,9 +1566,18 @@ o_sensorTechSUNA{21} = o_sensorTechSUNAAPFSupplyCurrent;
 o_sensorTechSUNA{22} = o_sensorTechSUNAAPFOutPixelBegin;
 o_sensorTechSUNA{23} = o_sensorTechSUNAAPFOutPixelEnd;
 
-o_floatPres{1} = o_floatPresPumpOrEv;
-o_floatPres{2} = o_floatPresActPres;
-o_floatPres{3} = o_floatPresActTime;
-o_floatPres{4} = o_floatPresActDuration;
+if (~isempty(o_floatPresPumpOrEv))
+   o_floatPres{1} = o_floatPresPumpOrEv;
+   o_floatPres{2} = o_floatPresActPres;
+   o_floatPres{3} = o_floatPresActTime;
+   o_floatPres{4} = o_floatPresActDuration;
+end
+
+if (~isempty(o_groundingDate))
+   o_grounding{1} = o_groundingDate;
+   o_grounding{2} = o_groundingPres;
+   o_grounding{3} = o_groundingSetPoint;
+   o_grounding{4} = o_groundingIntVacuum;
+end
 
 return

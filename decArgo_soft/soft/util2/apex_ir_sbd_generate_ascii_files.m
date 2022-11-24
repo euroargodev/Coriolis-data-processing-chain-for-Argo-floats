@@ -26,7 +26,7 @@ SBD_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DATA\300234062992
 ASCII_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DATA\300234062992840_ascii\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 logFile = [DIR_LOG_FILE '/' 'apex_ir_sbd_generate_ascii_files_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);

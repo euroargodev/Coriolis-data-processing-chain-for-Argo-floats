@@ -111,6 +111,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+
 
 PATTERN1 = 'Sbe41cpSerNo';
 PATTERN2_START = '[';
@@ -222,7 +225,7 @@ paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
 paramSal = get_netcdf_param_attributes('PSAL');
 paramFrequencyDoxy = get_netcdf_param_attributes('FREQUENCY_DOXY');
-paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
+paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
 
 if (~isempty(profHrPres))
    
@@ -231,18 +234,20 @@ if (~isempty(profHrPres))
    profHrTemp(find(profHrTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
    profHrSal(find(profHrSal == g_decArgo_salDef)) = paramSal.fillValue;
    profHrFrequencyDoxy(find(profHrFrequencyDoxy == g_decArgo_frequencyDoxyDef)) = paramFrequencyDoxy.fillValue;
-   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSample.fillValue;
-   profHrNbSample(find(profHrNbSample == 0)) = paramNbSample.fillValue;
+   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSampleCtd.fillValue;
+   profHrNbSample(find(profHrNbSample == 0)) = paramNbSampleCtd.fillValue;
    
    % store prof HR data
    o_profHrData = get_apx_profile_data_init_struct;
    
    % add parameter variables to the data structure
-   o_profHrData.paramList = [paramPres paramTemp paramSal paramFrequencyDoxy paramNbSample];
+   o_profHrData.paramList = [paramPres paramTemp paramSal paramFrequencyDoxy paramNbSampleCtd];
    
    % add parameter data to the data structure
    o_profHrData.data = [profHrPres profHrTemp profHrSal profHrFrequencyDoxy profHrNbSample];
    o_profHrData.data = flipud(o_profHrData.data);
+   
+   g_decArgo_addParamNbSampleCtd = 1;
 end
 
 return
@@ -289,6 +294,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+
 
 PATTERN1 = 'Sbe41cpSerNo';
 PATTERN2_START = '[';
@@ -387,7 +395,7 @@ end
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
 paramSal = get_netcdf_param_attributes('PSAL');
-paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
+paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
 
 if (~isempty(profHrPres))
    
@@ -395,18 +403,20 @@ if (~isempty(profHrPres))
    profHrPres(find(profHrPres(:, 1) == g_decArgo_presDef)) = paramPres.fillValue;
    profHrTemp(find(profHrTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
    profHrSal(find(profHrSal == g_decArgo_salDef)) = paramSal.fillValue;
-   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSample.fillValue;
-   profHrNbSample(find(profHrNbSample == 0)) = paramNbSample.fillValue;
+   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSampleCtd.fillValue;
+   profHrNbSample(find(profHrNbSample == 0)) = paramNbSampleCtd.fillValue;
    
    % store prof HR data
    o_profHrData = get_apx_profile_data_init_struct;
    
    % add parameter variables to the data structure
-   o_profHrData.paramList = [paramPres paramTemp paramSal paramNbSample];
+   o_profHrData.paramList = [paramPres paramTemp paramSal paramNbSampleCtd];
    
    % add parameter data to the data structure
    o_profHrData.data = [profHrPres profHrTemp profHrSal profHrNbSample];
    o_profHrData.data = flipud(o_profHrData.data);
+   
+   g_decArgo_addParamNbSampleCtd = 1;
 end
 
 return
@@ -453,6 +463,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+
 
 PATTERN1 = 'Sbe41cpSerNo';
 PATTERN2_START = '[';
@@ -551,7 +564,7 @@ end
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
 paramSal = get_netcdf_param_attributes('PSAL');
-paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
+paramNbSampleCtd = get_netcdf_param_attributes('NB_SAMPLE_CTD');
 
 if (~isempty(profHrPres))
    
@@ -559,18 +572,20 @@ if (~isempty(profHrPres))
    profHrPres(find(profHrPres(:, 1) == g_decArgo_presDef)) = paramPres.fillValue;
    profHrTemp(find(profHrTemp == g_decArgo_tempDef)) = paramTemp.fillValue;
    profHrSal(find(profHrSal == g_decArgo_salDef)) = paramSal.fillValue;
-   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSample.fillValue;
-   profHrNbSample(find(profHrNbSample == 0)) = paramNbSample.fillValue;
+   profHrNbSample(find(profHrNbSample == g_decArgo_nbSampleDef)) = paramNbSampleCtd.fillValue;
+   profHrNbSample(find(profHrNbSample == 0)) = paramNbSampleCtd.fillValue;
    
    % store prof HR data
    o_profHrData = get_apx_profile_data_init_struct;
    
    % add parameter variables to the data structure
-   o_profHrData.paramList = [paramPres paramTemp paramSal paramNbSample];
+   o_profHrData.paramList = [paramPres paramTemp paramSal paramNbSampleCtd];
    
    % add parameter data to the data structure
    o_profHrData.data = [profHrPres profHrTemp profHrSal profHrNbSample];
    o_profHrData.data = flipud(o_profHrData.data);
+   
+   g_decArgo_addParamNbSampleCtd = 1;
 end
 
 return

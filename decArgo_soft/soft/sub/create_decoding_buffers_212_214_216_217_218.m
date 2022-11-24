@@ -196,7 +196,7 @@ while (~stop)
    end
 end
 
-% the base pachet of the session (packet type 0 4 5) may have been delayed
+% the base packet of the session (packet type 0 4 5) may have been delayed
 % (Ex: float 6902814 #12)
 % => add new session when delay between transmissions exceeds 1 day
 ONE_DAY = 1;
@@ -310,11 +310,17 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 ...
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
          % cycle 59 and 60 delayed
-         id = find(tabCyNum == 59);
-         tabSession(id) = min(tabSession(id));
-         tabBase(id) = 0;
-         id = find(tabCyNum > 60);
-         tabSession(id) = min(tabSession(id)) + 1;
+         session59 = min(tabSession(tabCyNum == 59));
+         for idCy = 59:69
+            id = find(tabCyNum == idCy);
+            tabSession(id) = session59 + (idCy-59);
+            tabBase(id) = 0;
+            tabBase(id(1)) = 1;
+         end
+         session70 = min(tabSession(tabCyNum == 70));
+         offset = session59 + 10 - session70 + 1;
+         id = find(tabCyNum >= 70);
+         tabSession(id) = tabSession(id) + offset;
       case 6902957
          % packet type 0 4 5 transmitted after data packets
          id = find(tabCyNum == 119);
@@ -533,7 +539,7 @@ for idL = 1:length(tabRank)
 end
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137]))
+if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137, 6903865]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -565,6 +571,12 @@ if (ismember(g_decArgo_floatNum, [6903772, 6903773, 3902137]))
          tabRank(id) = -1;
          tabRankByCycle(id) = -1;
          tabRankByDate(id) = -1;
+      case 6903865
+         % cycle #58 data are separated
+         id = find((tabCyNum == 58) & (tabBase == 1));
+         tabRank(tabCyNum == 58) = tabRank(id);
+         tabRankByCycle(tabCyNum == 58) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 58) = tabRankByDate(id);         
    end
 end
 
@@ -633,16 +645,49 @@ for cyNum = cyNumList
 end
 
 % assign cycle number to Iridium mail files
+
+% 1- generate a new table of sessions only based on times (one new session if no
+% transmission during more than one day)
+idTransDelay = find(tabDiffDate > ONE_DAY);
+tabSessionBis = nan(size(tabDate));
+sessionNum = 1;
+start = 1;
+for idT = 1:length(idTransDelay)
+   tabSessionBis(start:idTransDelay(idT)-1) = sessionNum;
+   start = idTransDelay(idT);
+   sessionNum = sessionNum + 1;
+end
+tabSessionBis(start:end) = sessionNum;
+
+% 2- assign a cycle number (the first transmitted one) to each session
 tabSbdFileName = [];
 tabCycleNumber = [];
-idBase = find(tabBase == 1);
-for idB = 1:length(idBase)
-   idForSession = find(tabSession == tabSession(idBase(idB)));
-   sbdFileNameList = unique(tabFileName(idForSession));
-   tabSbdFileName = [tabSbdFileName sbdFileNameList];
-   tabCycleNumber = [tabCycleNumber repmat(tabCyNum(idBase(idB)), 1, length(sbdFileNameList))];
+sessionListDone = [];
+cyNumList = unique(tabCyNum, 'stable');
+for idC = 1:length(cyNumList)
+   idForCyNum = find(tabCyNum == cyNumList(idC), 1, 'first');
+   sessionNum = tabSessionBis(idForCyNum);
+   if (~ismember(sessionNum, sessionListDone))
+      idSessionForCyNum = find(tabSessionBis == sessionNum);
+      sbdFileNameList = unique(tabFileName(idSessionForCyNum));
+      tabSbdFileName = [tabSbdFileName sbdFileNameList];
+      tabCycleNumber = [tabCycleNumber repmat(cyNumList(idC), 1, length(sbdFileNameList))];
+      sessionListDone = [sessionListDone sessionNum];
+   end
 end
 update_mail_data_ir_sbd_delayed(tabSbdFileName, tabCycleNumber);
+
+% PREVIOUS CODE - START
+% assign cycle number to Iridium mail files
+% idBase = find(tabBase == 1);
+% for idB = 1:length(idBase)
+%    idForSession = find(tabSession == tabSession(idBase(idB)));
+%    sbdFileNameList = unique(tabFileName(idForSession));
+%    tabSbdFileName = [tabSbdFileName sbdFileNameList];
+%    tabCycleNumber = [tabCycleNumber repmat(tabCyNum(idBase(idB)), 1, length(sbdFileNameList))];
+% end
+% update_mail_data_ir_sbd_delayed(tabSbdFileName, tabCycleNumber);
+% PREVIOUS CODE - END
 
 % output data
 o_decodedData = a_decodedData;

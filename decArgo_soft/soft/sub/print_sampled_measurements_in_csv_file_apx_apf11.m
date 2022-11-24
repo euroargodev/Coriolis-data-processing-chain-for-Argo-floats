@@ -1,11 +1,11 @@
 % ------------------------------------------------------------------------------
-% Print measurement data in CSV file.
+% Print spectrum measurement data in CSV file.
 %
 % SYNTAX :
 %  print_sampled_measurements_in_csv_file_apx_apf11(a_sampledData, a_measType)
 %
 % INPUT PARAMETERS :
-%   a_sampledData  : measurement data
+%   a_sampledData  : spectrum measurement data
 %   a_measType     : measurement types
 %
 % OUTPUT PARAMETERS :
@@ -16,7 +16,7 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   04/27/2018 - RNU - creation
+%   03/18/2021 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_sampled_measurements_in_csv_file_apx_apf11(a_sampledData, a_measType)
 
@@ -61,16 +61,42 @@ end
 
 paramList = a_sampledData.paramList;
 for idP = 1:length(paramList)
-   fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', paramList(idP).name, paramList(idP).units);
-   format2 = [format2 ';' paramList(idP).cFormat];
+   if (~isempty(a_sampledData.paramNumberWithSubLevels))
+      if (any(idP == a_sampledData.paramNumberWithSubLevels))
+         idF = find(idP == a_sampledData.paramNumberWithSubLevels);
+         for idSl = 1:a_sampledData.paramNumberOfSubLevels(idF)
+            fprintf(g_decArgo_outputCsvFileId, ';%s_%d (%s)', paramList(idP).name, idSl, paramList(idP).units);
+            format2 = [format2 ';' paramList(idP).cFormat];
+         end
+      else
+         fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', paramList(idP).name, paramList(idP).units);
+         format2 = [format2 ';' paramList(idP).cFormat];
+      end
+   else
+      fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', paramList(idP).name, paramList(idP).units);
+      format2 = [format2 ';' paramList(idP).cFormat];
+   end
 end
 
 if (~isempty(a_sampledData.dataAdj))
    fprintf(g_decArgo_outputCsvFileId, ';');
    format2 = [format2 ';'];
    for idP = 1:length(paramList)
-      fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', [paramList(idP).name '_ADJUSTED'], paramList(idP).units);
-      format2 = [format2 ';' paramList(idP).cFormat];
+      if (~isempty(a_sampledData.paramNumberWithSubLevels))
+         if (any(idP == a_sampledData.paramNumberWithSubLevels))
+            idF = find(idP == a_sampledData.paramNumberWithSubLevels);
+            for idSl = 1:a_sampledData.paramNumberOfSubLevels(idF)
+               fprintf(g_decArgo_outputCsvFileId, ';%s_%d (%s)', [paramList(idP).name '_ADJUSTED'], idSl, paramList(idP).units);
+               format2 = [format2 ';' paramList(idP).cFormat];
+            end
+         else
+            fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', [paramList(idP).name '_ADJUSTED'], paramList(idP).units);
+            format2 = [format2 ';' paramList(idP).cFormat];
+         end
+      else
+         fprintf(g_decArgo_outputCsvFileId, ';%s (%s)', [paramList(idP).name '_ADJUSTED'], paramList(idP).units);
+         format2 = [format2 ';' paramList(idP).cFormat];
+      end
    end
 end
 fprintf(g_decArgo_outputCsvFileId, '\n');

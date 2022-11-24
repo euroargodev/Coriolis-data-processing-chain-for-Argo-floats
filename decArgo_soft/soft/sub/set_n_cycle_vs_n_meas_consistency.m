@@ -109,6 +109,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
       juldStatusFinal = [];
       for idNMeas = 1:length(idFNMeas)
          trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
+         trajNMeas.tabMeas([trajNMeas.tabMeas.sensorNumber] > 100) = []; % bounce cycles have theri DST, DET, AST and AET stored in TRAJ_AUX
          if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == measCode))
             idF = find([trajNMeas.tabMeas.measCode] == measCode);
             if (length(idF) == 1)

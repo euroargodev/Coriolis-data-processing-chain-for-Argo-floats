@@ -29,7 +29,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\collecte_20161002\cycle';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARGOS';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

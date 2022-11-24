@@ -3,13 +3,17 @@
 %
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
-%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
+%    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+%    o_profRamses, ...
+%    o_profRafosRtc, o_profRafos, ...
 %    o_grounding, o_iceDetection, o_buoyancy, ...
 %    o_vitalsData, ...
 %    o_cycleClockOffset, o_cycleTimeData] = ...
 %    adjust_clock_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
+%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+%    a_profRamses, ...
+%    a_profRafosRtc, a_profRafos, ...
 %    a_grounding, a_iceDetection, a_buoyancy, ...
 %    a_vitalsData, ...
 %    a_cycleTimeData, ...
@@ -26,6 +30,9 @@
 %   a_profFlbbCd      : input FLBB_CD data
 %   a_profFlbbCdCfg   : input FLBB_CD_CFG data
 %   a_profOcr504I     : input OCR_504I data
+%   a_profRamses      : input RAMSES data
+%   a_profRafosRtc    : input RAFOS_RTC data
+%   a_profRafos       : input RAFOS data
 %   a_grounding       : input grounding data
 %   a_iceDetection    : input ice detection data
 %   a_buoyancy        : input buoyancy data
@@ -44,6 +51,9 @@
 %   o_profFlbbCd       : output FLBB_CD data
 %   o_profFlbbCdCfg    : output FLBB_CD_CFG data
 %   o_profOcr504I      : output OCR_504I data
+%   o_profRamses       : output RAMSES data
+%   o_profRafosRtc     : output RAFOS_RTC data
+%   o_profRafos        : output RAFOS data
 %   o_grounding        : output grounding data
 %   o_iceDetection     : output ice detection data
 %   o_buoyancy         : output buoyancy data
@@ -61,12 +71,16 @@
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+   o_profRamses, ...
+   o_profRafosRtc, o_profRafos, ...
    o_grounding, o_iceDetection, o_buoyancy, ...
    o_vitalsData, ...
    o_cycleClockOffset, o_cycleTimeData] = ...
    adjust_clock_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+   a_profRamses, ...
+   a_profRafosRtc, a_profRafos, ...
    a_grounding, a_iceDetection, a_buoyancy, ...
    a_vitalsData, ...
    a_cycleTimeData, ...
@@ -83,6 +97,9 @@ o_profCtdCpH = a_profCtdCpH;
 o_profFlbbCd = a_profFlbbCd;
 o_profFlbbCdCfg = a_profFlbbCdCfg;
 o_profOcr504I = a_profOcr504I;
+o_profRamses = a_profRamses;
+o_profRafosRtc = a_profRafosRtc;
+o_profRafos = a_profRafos;
 o_grounding = a_grounding;
 o_iceDetection = a_iceDetection;
 o_buoyancy = a_buoyancy;
@@ -99,16 +116,19 @@ end
 o_cycleClockOffset = get_clock_offset_value_apx_apf11_ir(a_clockOffsetData, a_cycleTimeData);
 
 % clock adjustment of profile measurements
-[o_profCtdP] = adjust_profile(o_profCtdP, o_cycleClockOffset);
-[o_profCtdPt] = adjust_profile(o_profCtdPt, o_cycleClockOffset);
-[o_profCtdPts] = adjust_profile(o_profCtdPts, o_cycleClockOffset);
-[o_profCtdPtsh] = adjust_profile(o_profCtdPtsh, o_cycleClockOffset);
-[o_profDo] = adjust_profile(o_profDo, o_cycleClockOffset);
-[o_profCtdCp] = adjust_profile(o_profCtdCp, o_cycleClockOffset);
-[o_profCtdCpH] = adjust_profile(o_profCtdCpH, o_cycleClockOffset);
-[o_profFlbbCd] = adjust_profile(o_profFlbbCd, o_cycleClockOffset);
-[o_profFlbbCdCfg] = adjust_profile(o_profFlbbCdCfg, o_cycleClockOffset);
-[o_profOcr504I] = adjust_profile(o_profOcr504I, o_cycleClockOffset);
+o_profCtdP = adjust_profile(o_profCtdP, o_cycleClockOffset);
+o_profCtdPt = adjust_profile(o_profCtdPt, o_cycleClockOffset);
+o_profCtdPts = adjust_profile(o_profCtdPts, o_cycleClockOffset);
+o_profCtdPtsh = adjust_profile(o_profCtdPtsh, o_cycleClockOffset);
+o_profDo = adjust_profile(o_profDo, o_cycleClockOffset);
+o_profCtdCp = adjust_profile(o_profCtdCp, o_cycleClockOffset);
+o_profCtdCpH = adjust_profile(o_profCtdCpH, o_cycleClockOffset);
+o_profFlbbCd = adjust_profile(o_profFlbbCd, o_cycleClockOffset);
+o_profFlbbCdCfg = adjust_profile(o_profFlbbCdCfg, o_cycleClockOffset);
+o_profOcr504I = adjust_profile(o_profOcr504I, o_cycleClockOffset);
+o_profRamses = adjust_profile(o_profRamses, o_cycleClockOffset);
+o_profRafosRtc = adjust_profile(o_profRafosRtc, o_cycleClockOffset);
+o_profRafos = adjust_profile(o_profRafos, o_cycleClockOffset);
 
 % clock adjustment of grounding information
 for idG = 1:size(o_grounding, 1)
@@ -157,26 +177,54 @@ end
 
 % clock adjustment of misc cycle times
 if (~isempty(o_cycleTimeData))
-   [o_cycleTimeData.preludeStartAdjDateSci] = adjust_time(o_cycleTimeData.preludeStartDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.preludeStartAdjDateSys] = adjust_time(o_cycleTimeData.preludeStartDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.descentStartAdjDateSci] = adjust_time(o_cycleTimeData.descentStartDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.descentStartAdjDateSys] = adjust_time(o_cycleTimeData.descentStartDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.descentEndAdjDate] = adjust_time(o_cycleTimeData.descentEndDate, o_cycleClockOffset);
-   [o_cycleTimeData.parkStartAdjDateSci] = adjust_time(o_cycleTimeData.parkStartDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.parkStartAdjDateSys] = adjust_time(o_cycleTimeData.parkStartDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.parkEndAdjDateSci] = adjust_time(o_cycleTimeData.parkEndDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.parkEndAdjDateSys] = adjust_time(o_cycleTimeData.parkEndDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.deepDescentEndAdjDate] = adjust_time(o_cycleTimeData.deepDescentEndDate, o_cycleClockOffset);
-   [o_cycleTimeData.ascentStartAdjDateSci] = adjust_time(o_cycleTimeData.ascentStartDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.ascentStartAdjDateSys] = adjust_time(o_cycleTimeData.ascentStartDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.continuousProfileStartAdjDateSci] = adjust_time(o_cycleTimeData.continuousProfileStartDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.continuousProfileEndAdjDateSci] = adjust_time(o_cycleTimeData.continuousProfileEndDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.ascentEndAdjDateSci] = adjust_time(o_cycleTimeData.ascentEndDateSci, o_cycleClockOffset);
-   [o_cycleTimeData.ascentEndAdjDateSys] = adjust_time(o_cycleTimeData.ascentEndDateSys, o_cycleClockOffset);
-   [o_cycleTimeData.ascentEndAdjDate] = adjust_time(o_cycleTimeData.ascentEndDate, o_cycleClockOffset);
-   [o_cycleTimeData.transStartAdjDate] = adjust_time(o_cycleTimeData.transStartDate, o_cycleClockOffset);
-   [o_cycleTimeData.transEndAdjDate] = adjust_time(o_cycleTimeData.transEndDate, o_cycleClockOffset);
-   [o_cycleTimeData.ascentAbortAdjDate] = adjust_time(o_cycleTimeData.ascentAbortDate, o_cycleClockOffset);
+   o_cycleTimeData.preludeStartAdjDateSci = adjust_time(o_cycleTimeData.preludeStartDateSci, o_cycleClockOffset);
+   o_cycleTimeData.preludeStartAdjDateSys = adjust_time(o_cycleTimeData.preludeStartDateSys, o_cycleClockOffset);
+   o_cycleTimeData.descentStartAdjDateSci = adjust_time(o_cycleTimeData.descentStartDateSci, o_cycleClockOffset);
+   o_cycleTimeData.descentStartAdjDateSys = adjust_time(o_cycleTimeData.descentStartDateSys, o_cycleClockOffset);
+   o_cycleTimeData.descentEndAdjDate = adjust_time(o_cycleTimeData.descentEndDate, o_cycleClockOffset);
+   for idT = 1:length(o_cycleTimeData.rafosCorrelationStartDateSci)
+      o_cycleTimeData.rafosCorrelationStartAdjDateSci = [o_cycleTimeData.rafosCorrelationStartAdjDateSci ...
+         adjust_time(o_cycleTimeData.rafosCorrelationStartDateSci(idT), o_cycleClockOffset)];
+   end
+   o_cycleTimeData.parkStartAdjDateSci = adjust_time(o_cycleTimeData.parkStartDateSci, o_cycleClockOffset);
+   o_cycleTimeData.parkStartAdjDateSys = adjust_time(o_cycleTimeData.parkStartDateSys, o_cycleClockOffset);
+   o_cycleTimeData.parkEndAdjDateSci = adjust_time(o_cycleTimeData.parkEndDateSci, o_cycleClockOffset);
+   o_cycleTimeData.parkEndAdjDateSys = adjust_time(o_cycleTimeData.parkEndDateSys, o_cycleClockOffset);
+   o_cycleTimeData.deepDescentEndAdjDate = adjust_time(o_cycleTimeData.deepDescentEndDate, o_cycleClockOffset);
+   o_cycleTimeData.ascentStartAdjDateSci = adjust_time(o_cycleTimeData.ascentStartDateSci, o_cycleClockOffset);
+   o_cycleTimeData.ascentStartAdjDateSys = adjust_time(o_cycleTimeData.ascentStartDateSys, o_cycleClockOffset);
+   o_cycleTimeData.continuousProfileStartAdjDateSci = adjust_time(o_cycleTimeData.continuousProfileStartDateSci, o_cycleClockOffset);
+   o_cycleTimeData.continuousProfileEndAdjDateSci = adjust_time(o_cycleTimeData.continuousProfileEndDateSci, o_cycleClockOffset);
+   o_cycleTimeData.ascentEndAdjDateSci = adjust_time(o_cycleTimeData.ascentEndDateSci, o_cycleClockOffset);
+   o_cycleTimeData.ascentEndAdjDateSys = adjust_time(o_cycleTimeData.ascentEndDateSys, o_cycleClockOffset);
+   o_cycleTimeData.ascentEndAdjDate = adjust_time(o_cycleTimeData.ascentEndDate, o_cycleClockOffset);
+   for idT = 1:length(o_cycleTimeData.iceDescentStartDateSci)
+      o_cycleTimeData.iceDescentStartAdjDateSci = [o_cycleTimeData.iceDescentStartAdjDateSci ...
+         adjust_time(o_cycleTimeData.iceDescentStartDateSci(idT), o_cycleClockOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceDescentStartDateSys)
+      o_cycleTimeData.iceDescentStartAdjDateSys = [o_cycleTimeData.iceDescentStartAdjDateSys ...
+         adjust_time(o_cycleTimeData.iceDescentStartDateSys(idT), o_cycleClockOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentStartDateSci)
+      o_cycleTimeData.iceAscentStartAdjDateSci = [o_cycleTimeData.iceAscentStartAdjDateSci ...
+         adjust_time(o_cycleTimeData.iceAscentStartDateSci(idT), o_cycleClockOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentStartDateSys)
+      o_cycleTimeData.iceAscentStartAdjDateSys = [o_cycleTimeData.iceAscentStartAdjDateSys ...
+         adjust_time(o_cycleTimeData.iceAscentStartDateSys(idT), o_cycleClockOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentEndDateSci)
+      o_cycleTimeData.iceAscentEndAdjDateSci = [o_cycleTimeData.iceAscentEndAdjDateSci ...
+         adjust_time(o_cycleTimeData.iceAscentEndDateSci(idT), o_cycleClockOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentEndDateSys)
+      o_cycleTimeData.iceAscentEndAdjDateSys = [o_cycleTimeData.iceAscentEndAdjDateSys ...
+         adjust_time(o_cycleTimeData.iceAscentEndDateSys(idT), o_cycleClockOffset)];
+   end
+   o_cycleTimeData.transStartAdjDate = adjust_time(o_cycleTimeData.transStartDate, o_cycleClockOffset);
+   o_cycleTimeData.transEndAdjDate = adjust_time(o_cycleTimeData.transEndDate, o_cycleClockOffset);
+   o_cycleTimeData.ascentAbortAdjDate = adjust_time(o_cycleTimeData.ascentAbortDate, o_cycleClockOffset);
 end
 
 return

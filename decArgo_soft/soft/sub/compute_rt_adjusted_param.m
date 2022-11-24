@@ -35,12 +35,9 @@ o_tabProfiles = a_tabProfiles;
 % perform DB RT adjustments
 [o_tabProfiles] = compute_rt_adjusted_param_from_db(o_tabProfiles);
 
-% TEMPORARY: waiting for an updated version of the GDAC checker
-if (0)
-   if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
-      % perform PSAL RT adjustment
-      [o_tabProfiles] = compute_rt_adjusted_psal_for_deep_float(o_tabProfiles);
-   end
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumDeep))
+   % perform PSAL RT adjustment
+   [o_tabProfiles] = compute_rt_adjusted_psal_for_deep_float(o_tabProfiles);
 end
 
 % perform DOXY RT adjustment

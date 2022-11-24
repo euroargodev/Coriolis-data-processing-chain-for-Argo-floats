@@ -54,7 +54,7 @@ switch (a_floatTransType)
       
       switch (a_decoderId)
          
-         case {105, 106, 107, 109, 110, 111, 112, 113, 121, 122, 123, 124, 125, 126, 127} % NKE CTS4 and CTS5 floats
+         case {105, 106, 107, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127} % NKE CTS4 and CTS5 floats
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
@@ -84,7 +84,7 @@ switch (a_floatTransType)
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
         
-         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224}
+         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225}
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             

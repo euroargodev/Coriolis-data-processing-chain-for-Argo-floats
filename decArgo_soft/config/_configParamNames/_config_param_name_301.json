@@ -644,15 +644,15 @@
       "CONF_PARAM_DEC_ID" : "137010",
       "CONF_PARAM_MSG_ID" : "-1",
       "CONF_PARAM_MSG_LABEL" : "",
-      "CONF_PARAM_NAME" : "CONFIG_FlbbBetaWavelength_nm",
-      "CONF_PARAM_DESCRIPTION" : "Wavelength of Flbb Beta  measurements (in nanometer)."
+      "CONF_PARAM_NAME" : "CONFIG_FlbbBetaWavelength1_nm",
+      "CONF_PARAM_DESCRIPTION" : "Wavelength of Flbb Beta #1 measurements (in nanometer)."
    },
    "CONF_PARAM_82" :
    {
       "CONF_PARAM_DEC_ID" : "137011",
       "CONF_PARAM_MSG_ID" : "-1",
       "CONF_PARAM_MSG_LABEL" : "",
-      "CONF_PARAM_NAME" : "CONFIG_FlbbBetaBandwidth_nm",
-      "CONF_PARAM_DESCRIPTION" : "Bandwidth of Flbb Beta measurements (in nanometer)."
+      "CONF_PARAM_NAME" : "CONFIG_FlbbBetaBandwidth1_nm",
+      "CONF_PARAM_DESCRIPTION" : "Bandwidth of Flbb Beta #1 measurements (in nanometer)."
    }
 }

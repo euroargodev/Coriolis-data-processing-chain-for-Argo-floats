@@ -76,7 +76,7 @@ for idP = 1:length(profiles)
    
    % add vertical sampling scheme
    if (idP == 1)
-      description = create_vertical_sampling_scheme_description_apx_argos(a_decoderId);
+      description = create_vss_description_apx_argos(a_decoderId);
       profStruct.vertSamplingScheme = sprintf('Primary sampling: discrete [%s]', description);
       profStruct.primarySamplingProfileFlag = 1;
    else

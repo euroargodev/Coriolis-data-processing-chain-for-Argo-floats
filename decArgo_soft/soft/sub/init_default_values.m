@@ -463,7 +463,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '040i';
+g_decArgo_decoderVersion = '041a';
 
 % list of managed decoders
 
@@ -480,7 +480,7 @@ g_decArgo_decoderIdListNkeIridium = [ ...
    g_decArgo_decoderIdListNkeIridiumDeep ...
    g_decArgo_decoderIdListNkeIridiumRbr];
 g_decArgo_decoderIdListNkeCts4NotIce = [105, 106, 107, 109, 110, 112];
-g_decArgo_decoderIdListNkeCts4Ice = [111 113];
+g_decArgo_decoderIdListNkeCts4Ice = [111 113 114];
 g_decArgo_decoderIdListNkeCts4 = [ ...
    g_decArgo_decoderIdListNkeCts4NotIce ...
    g_decArgo_decoderIdListNkeCts4Ice];

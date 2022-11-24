@@ -38,7 +38,6 @@ end
 
 profLrStruct = [];
 profHrStruct = [];
-profHrAuxStruct = [];
 profNsStruct = [];
 
 if (~isempty(a_profLrData))
@@ -118,37 +117,8 @@ if (~isempty(a_profHrData))
    
    % add configuration mission number
    profHrStruct.configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
-   
-   % create an AUX profile with NB_SAMPLE information
-   % HR AUX profiles have 2 parameters PRES and NB_SAMPLE
-   profHrAuxStruct = [];
-   idNbSample  = find(strcmp({profHrStruct.paramList.name}, 'NB_SAMPLE') == 1, 1);
-   if (~isempty(idNbSample))
       
-      profHrAuxStruct = profHrStruct;
-      profHrAuxStruct.sensorNumber = 101; % to go to PROF_AUX file
-      profHrStruct.paramList(idNbSample) = [];
-      if (~isempty(profHrStruct.paramDataMode))
-         profHrStruct.paramDataMode(idNbSample) = [];
-      end
-      profHrStruct.data(:, idNbSample) = [];
-      if (~isempty(profHrStruct.dataAdj))
-         profHrStruct.dataAdj(:, idNbSample) = [];
-      end
-      
-      idPres  = find(strcmp({profHrStruct.paramList.name}, 'PRES') == 1, 1);
-      profHrAuxStruct.paramList = [profHrAuxStruct.paramList(idPres) profHrAuxStruct.paramList(idNbSample)];
-      if (~isempty(profHrAuxStruct.paramDataMode))
-         profHrAuxStruct.paramDataMode = [profHrAuxStruct.paramDataMode(idPres) profHrAuxStruct.paramDataMode(idNbSample)];
-      end
-      profHrAuxStruct.data = [profHrAuxStruct.data(:, idPres) profHrAuxStruct.data(:, idNbSample)];
-      if (~isempty(profHrAuxStruct.dataAdj))
-         profHrAuxStruct.dataAdj = [profHrAuxStruct.dataAdj(:, idPres) profHrAuxStruct.dataAdj(:, idNbSample)];
-      end
-   end
-   
    profHrStruct = squeeze_profile_data(profHrStruct);
-   profHrAuxStruct = squeeze_profile_data(profHrAuxStruct);
    
 end
 
@@ -230,10 +200,10 @@ end
 if (~isempty(profLrStruct) && ~isempty(profHrStruct))
    
    % merge HR and LR profiles to the primary sampling one
-   [profMergedStruct, profLrStruct, profMergedHrAuxStruct, profNsSetFlag] = ...
-      merge_profile_LR_HR(profLrStruct, profHrStruct, profHrAuxStruct, profNsStruct);
+   [profMergedStruct, profLrStruct, profNsSetFlag] = ...
+      merge_profile_LR_HR(profLrStruct, profHrStruct, profNsStruct);
    
-   o_ncProfile = [o_ncProfile profMergedStruct profMergedHrAuxStruct profLrStruct];
+   o_ncProfile = [o_ncProfile profMergedStruct profLrStruct];
    
    if (profNsSetFlag == 0)
       % add the NS profile as a secondary one
@@ -261,12 +231,7 @@ elseif (~isempty(profHrStruct))
    profHrStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
    profHrStruct.primarySamplingProfileFlag = 1;
    
-   if (~isempty(profHrAuxStruct))
-      profHrAuxStruct.vertSamplingScheme = 'Primary sampling: averaged [high resolution profile: 2dbar-bin averaged]';
-      profHrAuxStruct.primarySamplingProfileFlag = 1;
-   end
-   
-   o_ncProfile = [o_ncProfile profHrStruct profHrAuxStruct];
+   o_ncProfile = [o_ncProfile profHrStruct];
    
    % add the NS profile as a secondary one
    if (~isempty(profNsStruct))
@@ -281,19 +246,17 @@ return
 % Merge HR and LR profiles to create the primary sampling one.
 %
 % SYNTAX :
-%  [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct, o_profNsSetFlag] = ...
-%    merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct, a_profNsStruct)
+%  [o_profMergedStruct, o_profLrStruct, o_profNsSetFlag] = ...
+%    merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profNsStruct)
 %
 % INPUT PARAMETERS :
 %   a_profLrStruct    : input LR profile
 %   a_profHrStruct    : input HR profile
-%   a_profHrAuxStruct : input HR AUX profile
 %   a_profNsStruct    : input NS profile
 %
 % OUTPUT PARAMETERS :
 %   o_profMergedStruct      : output merged profile
 %   o_profLrStruct          : output LR profile
-%   o_profMergedHrAuxStruct : output merged HR AUX profile
 %   o_profNsSetFlag         : set to 1 if NS profile has been concatenated
 %                             to LR one
 %
@@ -305,13 +268,12 @@ return
 % RELEASES :
 %   10/02/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profMergedStruct, o_profLrStruct, o_profMergedHrAuxStruct, o_profNsSetFlag] = ...
-   merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profHrAuxStruct, a_profNsStruct)
+function [o_profMergedStruct, o_profLrStruct, o_profNsSetFlag] = ...
+   merge_profile_LR_HR(a_profLrStruct, a_profHrStruct, a_profNsStruct)
 
 % output parameters initialization
 o_profMergedStruct = [];
 o_profLrStruct = [];
-o_profMergedHrAuxStruct = [];
 o_profNsSetFlag = 0;
 
 % current float WMO number
@@ -461,12 +423,7 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
    
    mergedData = a_profHrStruct.data(:, paramListIdHr);
    mergedDataAdj = a_profHrStruct.dataAdj(:, paramListIdHr);
-   
-   if (~isempty(a_profHrAuxStruct))
-      mergedHrAuxData = a_profHrAuxStruct.data;
-      mergedHrAuxDataAdj = a_profHrAuxStruct.dataAdj;
-   end
-   
+      
    presHr = a_profHrStruct.data(:, idPresHr);
    presLr = a_profLrStruct.data(:, idPresLr);
    presHrBis = presHr(presHr ~= a_profHrStruct.paramList(idPresHr).fillValue);
@@ -480,17 +437,6 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
       
       mergedData = cat(1, a_profLrStruct.data(1:idFLastLrDeep, paramListIdLr), mergedData);
       mergedDataAdj = cat(1, a_profLrStruct.dataAdj(1:idFLastLrDeep, paramListIdLr), mergedDataAdj);
-            
-      if (~isempty(a_profHrAuxStruct))
-         mergedHrAuxData = cat(1, ...
-            cat(2, a_profLrStruct.data(1:idFLastLrDeep, idPresLr), ...
-            ones(idFLastLrDeep, 1)*a_profHrAuxStruct.paramList(2).fillValue), ...
-            mergedHrAuxData);
-         mergedHrAuxDataAdj = cat(1, ...
-            cat(2, a_profLrStruct.dataAdj(1:idFLastLrDeep, idPresLr), ...
-            ones(idFLastLrDeep, 1)*a_profHrAuxStruct.paramList(2).fillValue), ...
-            mergedHrAuxDataAdj);
-      end
    end
    
    idFFistLrShallow = find(presLr < presHrShallowest);
@@ -500,17 +446,6 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
       
       mergedData = cat(1, mergedData, a_profLrStruct.data(idFFistLrShallow:end, paramListIdLr));
       mergedDataAdj = cat(1, mergedDataAdj, a_profLrStruct.dataAdj(idFFistLrShallow:end, paramListIdLr));
-            
-      if (~isempty(a_profHrAuxStruct))
-         mergedHrAuxData = cat(1, ...
-            mergedHrAuxData, ...
-            cat(2, a_profLrStruct.data(idFFistLrShallow:end, idPresLr), ...
-            ones(size(a_profLrStruct.data, 1)-idFFistLrShallow+1, 1)*a_profHrAuxStruct.paramList(2).fillValue));
-         mergedHrAuxDataAdj = cat(1, ...
-            mergedHrAuxDataAdj, ...
-            cat(2, a_profLrStruct.dataAdj(idFFistLrShallow:end, idPresLr), ...
-            ones(size(a_profLrStruct.dataAdj, 1)-idFFistLrShallow+1, 1)*a_profHrAuxStruct.paramList(2).fillValue));
-      end
    end
    
    % create the concatenated profile
@@ -541,17 +476,6 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
    % add vertical sampling scheme
    o_profMergedStruct.vertSamplingScheme = vertSamplingScheme;
    o_profMergedStruct.primarySamplingProfileFlag = 1;
-
-   % update HR AUX profiles
-   if (~isempty(a_profHrAuxStruct))
-      o_profMergedHrAuxStruct = a_profHrAuxStruct;
-      
-      o_profMergedHrAuxStruct.data = mergedHrAuxData;
-      o_profMergedHrAuxStruct.dataAdj = mergedHrAuxDataAdj;
-      
-      o_profMergedHrAuxStruct.vertSamplingScheme = o_profMergedStruct.vertSamplingScheme;
-      o_profMergedHrAuxStruct.primarySamplingProfileFlag = 1;
-   end
    
 else
    fprintf('ERROR: Float #%d Cycle #%d: Unable to get PRES data to merge HR and LR profiles\n', ...

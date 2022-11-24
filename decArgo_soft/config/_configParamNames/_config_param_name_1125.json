@@ -137,13 +137,21 @@
    },
    "CONF_PARAM_18" :
    {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IAT",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The amount of time in minutes allowed for the float to ascend from its current depth and reach the surface. Should the float not reach the surface in this period, it will begin the Surface Phase and retry telemetry.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceAscentTimeout_minutes",
+      "CONF_PARAM_DESCRIPTION" : "The amount of time in minutes allowed for the float to ascend from its current depth and reach the surface. Should the float not reach the surface in this period, it will begin the Surface Phase and retry telemetry."
+   },
+   "CONF_PARAM_19" :
+   {
       "CONF_PARAM_DEC_ID" : "CONFIG_IBD",
       "CONF_PARAM_LABEL" : "n/a",
       "CONF_PARAM_DEFINITION" : "The period in days over which the float avoids the surface due to the possible presence of large, crushing icebergs but performs all the other phases during each profiling cycle. The period starts with the first determination of the non-presence of ice after having determined the presence of ice over the previous missions.",
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionSpringInhibitionDelaySinceLastIceEvasion_days",
       "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days/cycles) since the last ice evasiondate to attempt a surfacing.  This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed."
    },
-   "CONF_PARAM_19" :
+   "CONF_PARAM_20" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IMLT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -151,7 +159,15 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetection_degC",
       "CONF_PARAM_DESCRIPTION" : "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
    },
-   "CONF_PARAM_20" :
+   "CONF_PARAM_21" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IDCO",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The delta buoyancy position in counts that will cause the float to descend by IceDescentPressure. The float moves the current buoyancy position by the amount specified. This configuration parameter is dynamically updated during each Ice Descent cycle in accordance with IceDescentNudge.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDescentCount_COUNT",
+      "CONF_PARAM_DESCRIPTION" : "The delta buoyancy position in counts that will cause the float to descend by IceDescentPressure."
+   },
+   "CONF_PARAM_22" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IDC",
       "CONF_PARAM_LABEL" : "n/a",
@@ -159,7 +175,39 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionMaxCycles_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The maximum number of Ice Descent and Ice Ascent cycles the float will perform when it is unable to perform telemetry."
    },
-   "CONF_PARAM_21" :
+   "CONF_PARAM_23" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IDN",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The number of counts to remove from the current buoyancy position so as to incrementally decrease the buoyancy of the float to descend by IceDescentPressure.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDescentNudge_COUNT",
+      "CONF_PARAM_DESCRIPTION" : "The number of counts to remove from the current buoyancy position so as to incrementally decrease the buoyancy of the float to descend by IceDescentPressure."
+   },
+   "CONF_PARAM_24" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IDPRES",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The pressure associated with IceDescentCycles. The float descends from its current depth by the number of decibars specified, limited by the maximum descent depth which is 2000 dbar.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDescentPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "The pressure associated with IceDescentCycles. The float descends from its current depth by the number of decibars specified, limited by the maximum descent depth which is 2000 dbar."
+   },
+   "CONF_PARAM_25" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IDT",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The amount of time in minutes allowed for the float to descend from its current depth by the number of decibars specified by IceDescentPressure. Should the float not reach this depth in this period, it will begin the Ice Ascent cycle. IceDescentTimeout is also used to manage the float’s descent rate.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDescentTimeout_minutes",
+      "CONF_PARAM_DESCRIPTION" : "The amount of time in minutes allowed for the float to ascend from its current depth and reach the surface. Should the float not reach the surface in this period, it will begin the Surface Phase and retry telemetry."
+   },
+   "CONF_PARAM_26" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_IDTI",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "The maximum interval in seconds between float samples of pressure to determine if the float has descended by the number of decibars specified by IceDescentPressure. The float may wake up at a different interval based on the current descent rate.",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDescentTimerInterval_seconds",
+      "CONF_PARAM_DESCRIPTION" : "The maximum interval in seconds between float samples of pressure to determine if the float has descended by the number of decibars specified by IceDescentPressure. The float may wake up at a different interval based on the current descent rate."
+   },
+   "CONF_PARAM_27" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IDP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -167,7 +215,7 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionMixedLayerPMax_dbar",
       "CONF_PARAM_DESCRIPTION" : "Maximum sampling pressure used by ice cover detection algorithm."
    },
-   "CONF_PARAM_22" :
+   "CONF_PARAM_28" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IEP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -175,7 +223,7 @@
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionStartPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure of the ice detection algorithm."
    },
-   "CONF_PARAM_23" :
+   "CONF_PARAM_29" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_ICEM",
       "CONF_PARAM_LABEL" : "n/a",
@@ -183,7 +231,7 @@
       "CONF_PARAM_NAME" : "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "When is ice detection active - months in reverse order"
    },
-   "CONF_PARAM_24" :
+   "CONF_PARAM_30" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_ITI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -191,7 +239,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureActivationCheckTime_seconds",
       "CONF_PARAM_DESCRIPTION" : "in pressure activated floats this parameter sets how often the float will test whether it is in the water, e.g.  Every 2 hours"
    },
-   "CONF_PARAM_25" :
+   "CONF_PARAM_31" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_IBN",
       "CONF_PARAM_LABEL" : "n/a",
@@ -199,7 +247,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FirstBuoyancyNudge_COUNT",
       "CONF_PARAM_DESCRIPTION" : "test message data - initial buoyancy nudge which is used at both the beginning and end of the profile  "
    },
-   "CONF_PARAM_26" :
+   "CONF_PARAM_32" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_LD",
       "CONF_PARAM_LABEL" : "n/a",
@@ -207,7 +255,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EmergencyModeWaterLeakDetection_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Emergency mode upon detection of an internal water leak. If set to no, the float will only log the condition to the system_log.txt file."
    },
-   "CONF_PARAM_27" :
+   "CONF_PARAM_33" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_DEBUG",
       "CONF_PARAM_LABEL" : "n/a",
@@ -215,7 +263,7 @@
       "CONF_PARAM_NAME" : "CONFIG_LoggingVerbosity_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Logging verbosity is an integer (values in range [0,4] for these floats) describing the parameters to be output. An integer in the range [0,4] that determines the logging verbosity with lower values producing more terse logging. A verbosity of 2 yields standard logging."
    },
-   "CONF_PARAM_28" :
+   "CONF_PARAM_34" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PACT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -223,7 +271,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonPositionPressureActivation_COUNT",
       "CONF_PARAM_DESCRIPTION" : "preset piston position for pressure activation"
    },
-   "CONF_PARAM_29" :
+   "CONF_PARAM_35" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MAP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -231,7 +279,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureActivation_dbar",
       "CONF_PARAM_DESCRIPTION" : "depth at which float is set to pressure activate"
    },
-   "CONF_PARAM_30" :
+   "CONF_PARAM_36" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MBC",
       "CONF_PARAM_LABEL" : "n/a",
@@ -239,7 +287,7 @@
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyMinimum_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The minimum allowable buoyancy position in counts, overriding any other count setting. This configuration parameter prevents the movement of oil from the oil compartment of the bladder into the oil reservoir at the specified count to manage the maximum depth of a descent. In general CONFIG_BuoyancyMinimum_COUNT should be set less than the CONFIG_PistonProfile_COUNT."
    },
-   "CONF_PARAM_31" :
+   "CONF_PARAM_37" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_OK",
       "CONF_PARAM_LABEL" : "n/a",
@@ -247,7 +295,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OkVacuum_dbar",
       "CONF_PARAM_DESCRIPTION" : "Internal vacuum threshold (counts)."
    },
-   "CONF_PARAM_32" :
+   "CONF_PARAM_38" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PBN",
       "CONF_PARAM_LABEL" : "n/a",
@@ -255,7 +303,7 @@
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyNudgeToPark_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The number of counts to change the piston position from its current position in the direction that will bring the float closer to the Park depth. It is applied after three successive pressure samples that are outside the dead band specified by CONFIG_PressureTargetToleranceDuringDrift_dbar."
    },
-   "CONF_PARAM_33" :
+   "CONF_PARAM_39" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDB",
       "CONF_PARAM_LABEL" : "n/a",
@@ -263,7 +311,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceDuringDrift_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at parking or profile depth (in dbars)."
    },
-   "CONF_PARAM_34" :
+   "CONF_PARAM_40" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PPP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -271,7 +319,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonPark_COUNT",
       "CONF_PARAM_DESCRIPTION" : "preset park piston position, in counts   "
    },
-   "CONF_PARAM_35" :
+   "CONF_PARAM_41" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -279,7 +327,7 @@
       "CONF_PARAM_NAME" : "CONFIG_DescentToParkTimeOut_minutes",
       "CONF_PARAM_DESCRIPTION" : "maximum time a float will try to reach its target depth (park) before aborting this step"
    },
-   "CONF_PARAM_36" :
+   "CONF_PARAM_42" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PDTI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -287,7 +335,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeDescentToParkingDepth_seconds",
       "CONF_PARAM_DESCRIPTION" : "The interval in seconds between float samples of the pressure to determine if the Park depth has been reached."
    },
-   "CONF_PARAM_37" :
+   "CONF_PARAM_43" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PRKP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -295,7 +343,7 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
    },
-   "CONF_PARAM_38" :
+   "CONF_PARAM_44" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PTI",
       "CONF_PARAM_LABEL" : "n/a",
@@ -303,7 +351,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeParking_seconds",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float drift at park or profile depth."
    },
-   "CONF_PARAM_39" :
+   "CONF_PARAM_45" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_N",
       "CONF_PARAM_LABEL" : "n/a",
@@ -311,7 +359,7 @@
       "CONF_PARAM_NAME" : "CONFIG_ParkAndProfileCycleCounter_COUNT",
       "CONF_PARAM_DESCRIPTION" : "The number of profiles performed from Park depth before a deep profile is done."
    },
-   "CONF_PARAM_40" :
+   "CONF_PARAM_46" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PST",
       "CONF_PARAM_LABEL" : "n/a",
@@ -319,7 +367,7 @@
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeAutoTest_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "If set to yes, the float will transition to the Park Descent phase at the end of the period determined by CONFIG_MissionPreludeTime_hours only if the self test passes. If the self test fails, the float will go into Emergency mode. If set to no, the float will transition to the Park Descent phase whether or not the self test passes. In addition, the test results, pass or fail, will be logged to the system_log.txt file."
    },
-   "CONF_PARAM_41" :
+   "CONF_PARAM_47" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PRE",
       "CONF_PARAM_LABEL" : "n/a",
@@ -327,7 +375,7 @@
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeTime_minutes",
       "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. It’s crucial in calculating the time of the first descent."
    },
-   "CONF_PARAM_42" :
+   "CONF_PARAM_48" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SPSPC",
       "CONF_PARAM_LABEL" : "n/a",
@@ -335,7 +383,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure in decibars added to the most recently measured pressure at the surface, the sum of which is the pressure at which the conductivity, temperature and pressure sampling stops for a pumped type CTD. It is also the pressure at which the Surface phase begins."
    },
-   "CONF_PARAM_43" :
+   "CONF_PARAM_49" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_TSD",
       "CONF_PARAM_LABEL" : "n/a",
@@ -343,7 +391,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_IceFirstTelemetryDay_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "First day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle."
    },
-   "CONF_PARAM_44" :
+   "CONF_PARAM_50" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_TED",
       "CONF_PARAM_LABEL" : "n/a",
@@ -351,7 +399,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_IceEndTelemetryDay_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Last day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle."
    },
-   "CONF_PARAM_45" :
+   "CONF_PARAM_51" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_REP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -359,7 +407,7 @@
       "CONF_PARAM_NAME" : "CONFIG_TransmissionRepetitionPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "transmission repetition rate, metadata for most floats - may be variable for two-way communication"
    },
-   "CONF_PARAM_46" :
+   "CONF_PARAM_52" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_TT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -367,7 +415,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_IceTelemetryTimeout_minutes",
       "CONF_PARAM_DESCRIPTION" : "The amount of time in minutes allowed for the float to complete telemetry. A setting of 0 disables IceTelemetryTimeout, and the time available is instead determined by the remaining UpTime of the Ascent phase."
    },
-   "CONF_PARAM_47" :
+   "CONF_PARAM_53" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_UP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -375,7 +423,7 @@
       "CONF_PARAM_NAME" : "CONFIG_UpTime_minutes",
       "CONF_PARAM_DESCRIPTION" : "preset duration of the 'up' time (start of ascent to start of descent) - changed from : CONFIG_UpTimeInterval_hours and CONFIG_UpTimeOut"
    },
-   "CONF_PARAM_48" :
+   "CONF_PARAM_54" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_VM",
       "CONF_PARAM_LABEL" : "n/a",
@@ -383,7 +431,7 @@
       "CONF_PARAM_NAME" : "CONFIG_AUX_VitalsMask_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Currently only used by engineering to configure the amount of information reported in the vitals_log (contact Teledyne Webb Research for assistance)."
    },
-   "CONF_PARAM_49" :
+   "CONF_PARAM_55" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_TBP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -391,7 +439,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PressureBladderMax_dbar",
       "CONF_PARAM_DESCRIPTION" : "maximum air bladder pressure setting - units could be COUNT"
    },
-   "CONF_PARAM_50" :
+   "CONF_PARAM_56" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_FRET",
       "CONF_PARAM_LABEL" : "n/a",
@@ -399,7 +447,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonFullRetraction_COUNT",
       "CONF_PARAM_DESCRIPTION" : "n/a"
    },
-   "CONF_PARAM_51" :
+   "CONF_PARAM_57" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_FEXT",
       "CONF_PARAM_LABEL" : "n/a",
@@ -407,7 +455,7 @@
       "CONF_PARAM_NAME" : "CONFIG_PistonFullExtension_COUNT",
       "CONF_PARAM_DESCRIPTION" : "n/a"
    },
-   "CONF_PARAM_52" :
+   "CONF_PARAM_58" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_COP",
       "CONF_PARAM_LABEL" : "n/a",
@@ -415,7 +463,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressure_dbar",
       "CONF_PARAM_DESCRIPTION" : "The pressure at which the CTD pump is switched off.  As the float ascends, the code looks at the pressure and if <= CONFIG_CTDPumpStopPressure, the CTD is turned off. CTDPumpStopPressure is a firmware threshold and as such, data may continue to be collected for a limited span after the threshold is recognized. Especially in floats that return high resolution discrete data, there might be data collected shallower than the cut off, due to the discrete nature of the pressure data and also due to the time necessary for the firmware to turn off the CTD once the pressure threshold is reached. For example for SOLOII floats the CTD is switched off at 1dbar, and typically the shallowest data is from 0.5 to 0.8 dbar. This shallow data should be carefully assessed for its validity."
    },
-   "CONF_PARAM_53" :
+   "CONF_PARAM_59" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE01",
       "CONF_PARAM_LABEL" : "n/a",
@@ -423,7 +471,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>NumberOfDepthZone_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of depth zones defined for the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_54" :
+   "CONF_PARAM_60" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE02",
       "CONF_PARAM_LABEL" : "n/a",
@@ -431,7 +479,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StartPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure to define the depth zone  #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_55" :
+   "CONF_PARAM_61" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE03",
       "CONF_PARAM_LABEL" : "n/a",
@@ -439,7 +487,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StopPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_56" :
+   "CONF_PARAM_62" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE04",
       "CONF_PARAM_LABEL" : "n/a",
@@ -447,7 +495,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_dbar",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_57" :
+   "CONF_PARAM_63" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE05",
       "CONF_PARAM_LABEL" : "n/a",
@@ -455,7 +503,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during <cycle_phase_name> in the depth zone #<N> (in minutes)."
    },
-   "CONF_PARAM_58" :
+   "CONF_PARAM_64" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_SAMPLE06",
       "CONF_PARAM_LABEL" : "n/a",
@@ -463,7 +511,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSamples_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
    },
-   "CONF_PARAM_59" :
+   "CONF_PARAM_65" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE01",
       "CONF_PARAM_LABEL" : "n/a",
@@ -471,7 +519,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseNumberOfDepthZone_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of ascent depth zones defined for the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_60" :
+   "CONF_PARAM_66" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE02",
       "CONF_PARAM_LABEL" : "n/a",
@@ -479,7 +527,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Start pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_61" :
+   "CONF_PARAM_67" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE03",
       "CONF_PARAM_LABEL" : "n/a",
@@ -487,7 +535,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StopPres_dbar",
       "CONF_PARAM_DESCRIPTION" : "Stop pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_62" :
+   "CONF_PARAM_68" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE04",
       "CONF_PARAM_LABEL" : "n/a",
@@ -495,7 +543,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SlicesThickness_dbar",
       "CONF_PARAM_DESCRIPTION" : "Slices thicknes of the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_63" :
+   "CONF_PARAM_69" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE05",
       "CONF_PARAM_LABEL" : "n/a",
@@ -503,7 +551,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SampleRate_hertz",
       "CONF_PARAM_DESCRIPTION" : "Sample rate for the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_64" :
+   "CONF_PARAM_70" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PROFILE06",
       "CONF_PARAM_LABEL" : "n/a",
@@ -511,7 +559,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
    },
-   "CONF_PARAM_65" :
+   "CONF_PARAM_71" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MEASURE01",
       "CONF_PARAM_LABEL" : "n/a",
@@ -519,7 +567,7 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementNumberOfSamples_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Number of measurements sampled before and after inflating the air bladder for the <short_sensor_name> sensor during the in air measurement phase."
    },
-   "CONF_PARAM_66" :
+   "CONF_PARAM_72" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_MEASURE02",
       "CONF_PARAM_LABEL" : "n/a",
@@ -527,7 +575,39 @@
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period for the <short_sensor_name> sensor during the in air measurement phase."
    },
-   "CONF_PARAM_67" :
+   "CONF_PARAM_73" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_LISTEN_START",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RafosListeningWindowStartDayTime_minutes",
+      "CONF_PARAM_DESCRIPTION" : "The minute of every day from 12:00 AM in which the RAFOS sensor will turn on to listen (0–1439)."
+   },
+   "CONF_PARAM_74" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_LISTEN_DURATION",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RafosListeningWindowDuration_minutes",
+      "CONF_PARAM_DESCRIPTION" : "The time in minutes of the listening window (0–335 or 0.3075 sec/sample with max 65535 samples)."
+   },
+   "CONF_PARAM_75" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_POWER_START",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>PowerOnStartPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Start pressure to power on the <short_sensor_name> sensor."
+   },
+   "CONF_PARAM_76" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_POWER_STOP",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name><cycle_phase_name>PowerOnStopPres_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Stop pressure to power on the <short_sensor_name> sensor."
+   },
+   "CONF_PARAM_77" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -535,7 +615,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_68" :
+   "CONF_PARAM_78" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_4",
       "CONF_PARAM_LABEL" : "n/a",
@@ -543,7 +623,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_69" :
+   "CONF_PARAM_79" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_5_0_0_1",
       "CONF_PARAM_LABEL" : "n/a",
@@ -551,7 +631,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CroverInPumpedStream_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Bio Argo sensors can either be mounted separately to the Ctd or mounted within the Ctd pumped stream. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_70" :
+   "CONF_PARAM_80" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_5_0_0_6",
       "CONF_PARAM_LABEL" : "n/a",
@@ -559,7 +639,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CroverBeamAttenuationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Crover for  Beam attenuation measurements (in nanometer)"
    },
-   "CONF_PARAM_71" :
+   "CONF_PARAM_81" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_5_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -567,7 +647,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CroverVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_72" :
+   "CONF_PARAM_82" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_3_0_0_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -575,7 +655,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaAngle_angularDeg",
       "CONF_PARAM_DESCRIPTION" : "Angle of Beta measurements  (in degrees) "
    },
-   "CONF_PARAM_73" :
+   "CONF_PARAM_83" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_3_0_1_1",
       "CONF_PARAM_LABEL" : "n/a",
@@ -583,7 +663,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of EcoBeta  #1measurements (in nanometer)."
    },
-   "CONF_PARAM_74" :
+   "CONF_PARAM_84" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_3_0_1_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -591,7 +671,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco Beta  #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_75" :
+   "CONF_PARAM_85" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_1_0_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -599,7 +679,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_76" :
+   "CONF_PARAM_86" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_1_0_1",
       "CONF_PARAM_LABEL" : "n/a",
@@ -607,7 +687,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_77" :
+   "CONF_PARAM_87" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_1_0_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -615,7 +695,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_78" :
+   "CONF_PARAM_88" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_1_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -623,7 +703,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_79" :
+   "CONF_PARAM_89" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_0_0_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -631,7 +711,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_80" :
+   "CONF_PARAM_90" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_0_0_1",
       "CONF_PARAM_LABEL" : "n/a",
@@ -639,7 +719,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_81" :
+   "CONF_PARAM_91" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_0_0_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -647,7 +727,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_82" :
+   "CONF_PARAM_92" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_2_3_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -655,7 +735,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_83" :
+   "CONF_PARAM_93" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_3_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -663,7 +743,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_84" :
+   "CONF_PARAM_94" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_1_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -671,7 +751,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_85" :
+   "CONF_PARAM_95" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_2_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -679,7 +759,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth2_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_86" :
+   "CONF_PARAM_96" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_3_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -687,7 +767,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth3_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_87" :
+   "CONF_PARAM_97" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_4_3",
       "CONF_PARAM_LABEL" : "n/a",
@@ -695,7 +775,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth4_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #4 measurements (in nanometer)."
    },
-   "CONF_PARAM_88" :
+   "CONF_PARAM_98" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_1_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -703,7 +783,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #1measurements (in nanometer)."
    },
-   "CONF_PARAM_89" :
+   "CONF_PARAM_99" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_2_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -711,7 +791,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength2_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_90" :
+   "CONF_PARAM_100" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_3_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -719,7 +799,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength3_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_91" :
+   "CONF_PARAM_101" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_3_2_0_4_2",
       "CONF_PARAM_LABEL" : "n/a",
@@ -727,7 +807,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength4_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #4 measurements (in nanometer)."
    },
-   "CONF_PARAM_92" :
+   "CONF_PARAM_102" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_2_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -735,7 +815,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_93" :
+   "CONF_PARAM_103" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -743,7 +823,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_94" :
+   "CONF_PARAM_104" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_7",
       "CONF_PARAM_LABEL" : "n/a",
@@ -751,7 +831,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_95" :
+   "CONF_PARAM_105" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_1_0_0_8",
       "CONF_PARAM_LABEL" : "n/a",
@@ -759,7 +839,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
    },
-   "CONF_PARAM_96" :
+   "CONF_PARAM_106" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",
@@ -767,7 +847,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_97" :
+   "CONF_PARAM_107" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_6_0_0_5",
       "CONF_PARAM_LABEL" : "n/a",
@@ -775,7 +855,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaWithScoop_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Suna with scoop which redirects flow through Suna optics"
    },
-   "CONF_PARAM_98" :
+   "CONF_PARAM_108" :
    {
       "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_4_0_0_0",
       "CONF_PARAM_LABEL" : "n/a",

@@ -281,19 +281,7 @@ if (~isempty(a_inAirDate))
          measStruct.paramData = [a_inAirPres(idMeas) a_inAirTemp(idMeas) a_inAirSal(idMeas) a_inAirTempCndc(idMeas)];
       end
       
-      % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-      
-      measStructAux = measStruct;
-      measStruct.paramList(4) = [];
-      measStruct.paramData(:, 4) = [];
-      
-      measStructAux.paramList([2 3]) = [];
-      measStructAux.paramData(:, [2 3]) = [];
-      measStructAux.sensorNumber = 101; % to go to PROF_AUX
-      
-      % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-
-      tabMeasStructInAir = [tabMeasStructInAir; measStruct; measStructAux];
+      tabMeasStructInAir = [tabMeasStructInAir; measStruct];
    end
 end
 
@@ -503,14 +491,6 @@ if (a_deepCycle == 1)
             measStruct.paramList = profile.paramList;
             measStruct.paramData = profile.data(idMeas, :);
             
-            % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-            
-            if (profile.sensorNumber > 100)
-               measStruct.sensorNumber = 101; % to go to PROF_AUX
-            end
-            
-            % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          end
       end
@@ -579,19 +559,7 @@ if (a_deepCycle == 1)
             measStruct.paramData = [a_parkPres(idMeas) a_parkTemp(idMeas) a_parkSal(idMeas) a_parkTempCndc(idMeas)];
          end
          
-         % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-         
-         measStructAux = measStruct;
-         measStruct.paramList(4) = [];
-         measStruct.paramData(:, 4) = [];
-         
-         measStructAux.paramList([2 3]) = [];
-         measStructAux.paramData(:, [2 3]) = [];
-         measStructAux.sensorNumber = 101; % to go to PROF_AUX
-         
-         % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct; measStructAux];
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
       
       % RPP measurements
@@ -627,20 +595,8 @@ if (a_deepCycle == 1)
             measStruct.paramList = [paramPres paramTemp paramSal paramTempCndc];
             measStruct.paramData = [mean(a_parkPres(idForMean)) ...
                mean(a_parkTemp(idForMean)) mean(a_parkSal(idForMean)) mean(a_parkTempCndc(idForMean))];
-            
-            % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-            
-            measStructAux = measStruct;
-            measStruct.paramList(4) = [];
-            measStruct.paramData(:, 4) = [];
-            
-            measStructAux.paramList([2 3]) = [];
-            measStructAux.paramData(:, [2 3]) = [];
-            measStructAux.sensorNumber = 101; % to go to PROF_AUX
-            
-            % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-            
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct; measStructAux];
+                        
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             trajNCycleStruct.repParkPres = mean(a_parkPres(idForMean));
             trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
@@ -708,20 +664,8 @@ if (a_deepCycle == 1)
          else
             measStruct.paramData = [a_nearSurfPres(idMeas) a_nearSurfTemp(idMeas) a_nearSurfSal(idMeas) a_nearSurfTempCndc(idMeas)];
          end
-         
-         % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-         
-         measStructAux = measStruct;
-         measStruct.paramList(4) = [];
-         measStruct.paramData(:, 4) = [];
-         
-         measStructAux.paramList([2 3]) = [];
-         measStructAux.paramData(:, [2 3]) = [];
-         measStructAux.sensorNumber = 101; % to go to PROF_AUX
-         
-         % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-         
-         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct; measStructAux];
+                  
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
    end
    

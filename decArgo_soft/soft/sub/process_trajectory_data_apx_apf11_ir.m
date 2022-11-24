@@ -6,7 +6,8 @@
 %    process_trajectory_data_apx_apf11_ir( ...
 %    a_cycleNum, ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
+%    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+%    a_profRafosRtc, a_profRafos, ...
 %    a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData, ...
@@ -23,6 +24,9 @@
 %   a_profCtdCpH      : CTD_CP_H data
 %   a_profFlbbCd      : FLBB_CD data
 %   a_profOcr504I     : OCR_504I data
+%   a_profRamses      : RAMSES data
+%   a_profRafosRtc    : RAFOS_RTC data
+%   a_profRafos       : RAFOS data
 %   a_gpsData         : GPS data
 %   a_grounding       : grounding data
 %   a_iceDetection    : ice detection data
@@ -50,7 +54,8 @@ function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
    process_trajectory_data_apx_apf11_ir( ...
    a_cycleNum, ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
+   a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, a_profRamses, ...
+   a_profRafosRtc, a_profRafos, ...
    a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
    a_cycleTimeData, ...
    a_clockOffsetData, ...
@@ -65,6 +70,7 @@ o_tabTechNMeas = a_tabTechNMeas;
 global g_MC_DST;
 global g_MC_DET;
 global g_MC_PST;
+global g_MC_RafosCorrelationStart;
 global g_MC_PET;
 global g_MC_RPP;
 global g_MC_DDET;
@@ -126,6 +132,7 @@ trajNCycleStruct.dataMode = 'A'; % because clock offset is supposed to be set fo
 % FLOAT CYCLE TIMES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
 paramGpsTimeToFix = get_netcdf_param_attributes('GPS_TIME_TO_FIX');
@@ -133,6 +140,7 @@ paramGpsNbSat = get_netcdf_param_attributes('GPS_NB_SATELLITE');
 paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
 paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
 paramNbSampleIceDetect = get_netcdf_param_attributes('NB_SAMPLE_ICE_DETECTION');
+paramRafosCorStartFlag = get_netcdf_param_attributes('RAFOS_CORRELATION_START_FLAG');
 
 descentStartDate = a_cycleTimeData.descentStartDateSci;
 descentStartAdjDate = a_cycleTimeData.descentStartAdjDateSci;
@@ -142,6 +150,10 @@ descentEndDate = a_cycleTimeData.descentEndDate;
 descentEndAdjDate = a_cycleTimeData.descentEndAdjDate;
 descentEndPres = a_cycleTimeData.descentEndPres;
 descentEndAdjPres = a_cycleTimeData.descentEndAdjPres;
+rafosCorStartDate = a_cycleTimeData.rafosCorrelationStartDateSci;
+rafosCorStartAdjDate = a_cycleTimeData.rafosCorrelationStartAdjDateSci;
+rafosCorStartPres = a_cycleTimeData.rafosCorrelationStartPresSci;
+rafosCorStartAdjPres = a_cycleTimeData.rafosCorrelationStartAdjPresSci;
 parkStartDate = a_cycleTimeData.parkStartDateSci;
 parkStartAdjDate = a_cycleTimeData.parkStartAdjDateSci;
 parkStartPres = a_cycleTimeData.parkStartPresSci;
@@ -508,7 +520,7 @@ end
 phaseMeasCode = phaseMeasCode(idSort);
 
 if (~isempty(phaseDates))
-   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'}];
+   measList = [{'CTD_P'} {'CTD_PT'} {'CTD_PTS'} {'CTD_PTSH'} {'O2'} {'FLBB_CD'} {'OCR_504I'} {'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}];
    for idML = 1:length(measList)
       doDataFlag = 0;
       switch (measList{idML})
@@ -548,20 +560,25 @@ if (~isempty(phaseDates))
                continue
             end
             profData = a_profOcr504I;
-            
-            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
-            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
-            if (~isempty(idDownIrr6670))
-               
-               profData.paramList(idDownIrr6670) = [];
-               if (~isempty(profData.paramDataMode))
-                  profData.paramDataMode(idDownIrr6670) = [];
-               end
-               profData.data(:, idDownIrr6670) = [];
-               if (~isempty(profData.dataAdj))
-                  profData.dataAdj(:, idDownIrr6670) = [];
-               end
+         case 'RAMSES'
+            if (isempty(a_profRamses))
+               continue
             end
+            profData = a_profRamses;
+         case 'RAFOS_RTC'
+            if (isempty(a_profRafosRtc))
+               continue
+            end
+            profData = a_profRafosRtc;
+         case 'RAFOS'
+            if (isempty(a_profRafos))
+               continue
+            end
+            profData = a_profRafos;
+      end
+      
+      if (isempty(profData.dates) || ~any(profData.dates ~= paramJuld.fillValue))
+         continue
       end
       
       for idPhase = 1:length(phaseDates)+1
@@ -617,7 +634,13 @@ if (~isempty(phaseDates))
                
                measStruct.paramList = profData.paramList;
                measStruct.paramDataMode = profData.paramDataMode;
+               measStruct.paramNumberWithSubLevels = profData.paramNumberWithSubLevels;
+               measStruct.paramNumberOfSubLevels = profData.paramNumberOfSubLevels;
                measStruct.paramData = profData.data(idMeas, :);
+               if (ismember(measList{idML}, [{'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}]))
+                  measStruct.sensorNumber = 999;
+               end
+
                if (~isempty(profData.dataAdj))
                   measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
                   deleteFlag = 1;
@@ -694,20 +717,10 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
                continue
             end
             profData = a_profOcr504I;
-            
-            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
-            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
-            if (~isempty(idDownIrr6670))
-               
-               profData.paramList(idDownIrr6670) = [];
-               if (~isempty(profData.paramDataMode))
-                  profData.paramDataMode(idDownIrr6670) = [];
-               end
-               profData.data(:, idDownIrr6670) = [];
-               if (~isempty(profData.dataAdj))
-                  profData.dataAdj(:, idDownIrr6670) = [];
-               end
-            end
+      end
+      
+      if (isempty(profData.dates) || ~any(profData.dates ~= paramJuld.fillValue))
+         continue
       end
       
       idData = find((profData.dates >= parkStartDate) & ...
@@ -819,20 +832,6 @@ if (~isempty(ascentStartDate) && ...
                continue
             end
             profData = a_profOcr504I;
-            
-            % TEMPORARY (ignore DOWN_IRRADIANCE670 which is not in the checker)
-            idDownIrr6670  = find(strcmp({profData.paramList.name}, 'DOWN_IRRADIANCE670'), 1);
-            if (~isempty(idDownIrr6670))
-               
-               profData.paramList(idDownIrr6670) = [];
-               if (~isempty(profData.paramDataMode))
-                  profData.paramDataMode(idDownIrr6670) = [];
-               end
-               profData.data(:, idDownIrr6670) = [];
-               if (~isempty(profData.dataAdj))
-                  profData.dataAdj(:, idDownIrr6670) = [];
-               end
-            end
          case 'CTD_CP'
             if (isempty(a_profCtdCp))
                continue
@@ -1011,7 +1010,7 @@ if (~isempty(a_iceDetection))
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
-   % when thermal detection is TRUE: (JULD, P, NB_SAMPLE) stored in TRAJ_AUX
+   % when thermal detection is TRUE: (JULD, P, NB_SAMPLE_ICE_DETECTION) stored in TRAJ_AUX
    % with MC=599
    if (~isempty(a_iceDetection.thermalDetect.detectTime))
       time = a_iceDetection.thermalDetect.detectTime;
@@ -1042,44 +1041,44 @@ end
 % BUOYANCY ACTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-phaseDates = [];
-phaseMeasCode = [];
-if (~isempty(descentEndDate))
-   phaseDates = [phaseDates descentEndDate];
-   phaseMeasCode = [phaseMeasCode g_MC_DET];
-end
-if (~isempty(parkStartDate))
-   phaseDates = [phaseDates parkStartDate];
-   phaseMeasCode = [phaseMeasCode g_MC_PST];
-end
-if (~isempty(parkEndDate))
-   phaseDates = [phaseDates parkEndDate];
-   phaseMeasCode = [phaseMeasCode g_MC_PET];
-end
-if (~isempty(deepDescentEndDate))
-   phaseDates = [phaseDates deepDescentEndDate];
-   phaseMeasCode = [phaseMeasCode g_MC_DDET];
-end
-if (~isempty(ascentStartDate))
-   phaseDates = [phaseDates ascentStartDate];
-   phaseMeasCode = [phaseMeasCode g_MC_AST];
-end
-if (~isempty(ascentEndDate))
-   phaseDates = [phaseDates ascentEndDate];
-   phaseMeasCode = [phaseMeasCode g_MC_AET];
-end
-if (~isempty(bladderInflationStartDate))
-   phaseDates = [phaseDates bladderInflationStartDate];
-   phaseMeasCode = [phaseMeasCode g_MC_TST];
-end
-if (~isempty(transStartDate))
-   phaseDates = [phaseDates transStartDate];
-   phaseMeasCode = [phaseMeasCode g_MC_TST];
-end
-[phaseDates, idSort] = sort(phaseDates);
-phaseMeasCode = phaseMeasCode(idSort);
-
 if (~isempty(a_buoyancy))
+   
+   phaseDates = [];
+   phaseMeasCode = [];
+   if (~isempty(descentEndDate))
+      phaseDates = [phaseDates descentEndDate];
+      phaseMeasCode = [phaseMeasCode g_MC_DET];
+   end
+   if (~isempty(parkStartDate))
+      phaseDates = [phaseDates parkStartDate];
+      phaseMeasCode = [phaseMeasCode g_MC_PST];
+   end
+   if (~isempty(parkEndDate))
+      phaseDates = [phaseDates parkEndDate];
+      phaseMeasCode = [phaseMeasCode g_MC_PET];
+   end
+   if (~isempty(deepDescentEndDate))
+      phaseDates = [phaseDates deepDescentEndDate];
+      phaseMeasCode = [phaseMeasCode g_MC_DDET];
+   end
+   if (~isempty(ascentStartDate))
+      phaseDates = [phaseDates ascentStartDate];
+      phaseMeasCode = [phaseMeasCode g_MC_AST];
+   end
+   if (~isempty(ascentEndDate))
+      phaseDates = [phaseDates ascentEndDate];
+      phaseMeasCode = [phaseMeasCode g_MC_AET];
+   end
+   if (~isempty(bladderInflationStartDate))
+      phaseDates = [phaseDates bladderInflationStartDate];
+      phaseMeasCode = [phaseMeasCode g_MC_TST];
+   end
+   if (~isempty(transStartDate))
+      phaseDates = [phaseDates transStartDate];
+      phaseMeasCode = [phaseMeasCode g_MC_TST];
+   end
+   [phaseDates, idSort] = sort(phaseDates);
+   phaseMeasCode = phaseMeasCode(idSort);
    
    buoyDates = a_buoyancy(:, 1);
    for idPhase = 1:length(phaseDates)
@@ -1118,6 +1117,109 @@ if (~isempty(a_buoyancy))
             end
             measStructTechNMeas.paramData = 1;
             techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStructTechNMeas];
+         end
+      end
+   end
+   
+   % manage Ice cycles
+   if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
+      
+      for idC = 1:length(a_cycleTimeData.iceDescentStartDateSci)
+         
+         % Descent Start Time
+         time = a_cycleTimeData.iceDescentStartDateSci(idC);
+         timeAdj = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.iceDescentStartAdjDateSci(idC)))
+            timeAdj = a_cycleTimeData.iceDescentStartAdjDateSci(idC);
+         end
+         [measStructAux, ~] = create_one_meas_float_time_bis( ...
+            g_MC_DST, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStructAux))
+            measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+            if (~isempty(descentStartPres))
+               measStructAux.paramList = paramPres;
+               measStructAux.paramData = a_cycleTimeData.iceDescentStartPresSci(idC);
+               if (~isempty(a_cycleTimeData.iceDescentStartAdjPresSci(idC)))
+                  measStructAux.paramDataAdj = a_cycleTimeData.iceDescentStartAdjPresSci(idC);
+                  measStructAux.paramDataMode = 'A';
+               end
+            end
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
+         end
+         
+         % Descent End Time
+         time = a_cycleTimeData.iceAscentStartDateSci(idC);
+         timeAdj = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.iceAscentStartAdjDateSci(idC)))
+            timeAdj = a_cycleTimeData.iceAscentStartAdjDateSci(idC);
+         end
+         [measStructAux, ~] = create_one_meas_float_time_bis( ...
+            g_MC_DET, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStructAux))
+            measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+            if (~isempty(descentStartPres))
+               measStructAux.paramList = paramPres;
+               measStructAux.paramData = a_cycleTimeData.iceAscentStartPresSci(idC);
+               if (~isempty(a_cycleTimeData.iceAscentStartAdjPresSci(idC)))
+                  measStructAux.paramDataAdj = a_cycleTimeData.iceAscentStartAdjPresSci(idC);
+                  measStructAux.paramDataMode = 'A';
+               end
+            end
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
+         end
+         
+         % Ascent Start Time
+         time = a_cycleTimeData.iceAscentStartDateSci(idC);
+         timeAdj = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.iceAscentStartAdjDateSci(idC)))
+            timeAdj = a_cycleTimeData.iceAscentStartAdjDateSci(idC);
+         end
+         [measStructAux, ~] = create_one_meas_float_time_bis( ...
+            g_MC_AST, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStructAux))
+            measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+            if (~isempty(descentStartPres))
+               measStructAux.paramList = paramPres;
+               measStructAux.paramData = a_cycleTimeData.iceAscentStartPresSci(idC);
+               if (~isempty(a_cycleTimeData.iceAscentStartAdjPresSci(idC)))
+                  measStructAux.paramDataAdj = a_cycleTimeData.iceAscentStartAdjPresSci(idC);
+                  measStructAux.paramDataMode = 'A';
+               end
+            end
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
+         end
+         
+         % Ascent End Time
+         time = a_cycleTimeData.iceAscentEndDateSci(idC);
+         timeAdj = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.iceAscentEndAdjDateSci(idC)))
+            timeAdj = a_cycleTimeData.iceAscentEndAdjDateSci(idC);
+         end
+         [measStructAux, ~] = create_one_meas_float_time_bis( ...
+            g_MC_AET, ...
+            time, ...
+            timeAdj, ...
+            g_JULD_STATUS_2);
+         if (~isempty(measStructAux))
+            measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+            if (~isempty(descentStartPres))
+               measStructAux.paramList = paramPres;
+               measStructAux.paramData = a_cycleTimeData.iceAscentEndPresSci(idC);
+               if (~isempty(a_cycleTimeData.iceAscentEndAdjPresSci(idC)))
+                  measStructAux.paramDataAdj = a_cycleTimeData.iceAscentEndAdjPresSci(idC);
+                  measStructAux.paramDataMode = 'A';
+               end
+            end
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
          end
       end
    end
@@ -1202,6 +1304,39 @@ if (~isempty(continuousProfileStartDate) && ~isempty(continuousProfileEndDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RAFOS CORRELATION START
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Rafos correlation start
+if (~isempty(rafosCorStartDate))
+   
+   for idC = 1:length(rafosCorStartDate)
+      time = rafosCorStartDate(idC);
+      timeAdj = g_decArgo_dateDef;
+      if (~isempty(rafosCorStartAdjDate(idC)))
+         timeAdj = rafosCorStartAdjDate(idC);
+      end
+      [measStructAux, ~] = create_one_meas_float_time_bis( ...
+         g_MC_RafosCorrelationStart, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (~isempty(measStructAux))
+         measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+         if (~isempty(rafosCorStartPres))
+            measStructAux.paramList = [paramPres paramRafosCorStartFlag];
+            measStructAux.paramData = [rafosCorStartPres(idC) 1];
+            if (~isempty(rafosCorStartAdjPres(idC)))
+               measStructAux.paramDataAdj = [rafosCorStartAdjPres(idC) -1];
+               measStructAux.paramDataMode = 'A ';
+            end
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
+      end
    end
 end
 

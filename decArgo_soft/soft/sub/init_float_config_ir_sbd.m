@@ -117,11 +117,12 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {222, 223}
+   case {222, 223, 225}
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
-      
-      init_float_config_prv_ir_sbd_222_223(a_launchDate, a_decoderId);
+      % Provor-ARN-DO-Ice Iridium 5.76
+
+      init_float_config_prv_ir_sbd_222_223_225(a_launchDate, a_decoderId);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

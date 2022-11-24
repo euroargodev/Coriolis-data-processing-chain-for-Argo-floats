@@ -36,7 +36,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST\CTS3\OUT\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT2\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % 0: to only check that input mail files are correctly parsed
 % 1: to generate output mail files

@@ -3,7 +3,7 @@
    {
       "TECH_PARAM_DEC_ID" : "100",
       "TECH_PARAM_MSG_ID" : "253",
-      "TECH_PARAM_MSG_LABEL" : "Float’s time (Year, Month, Day, Hour, Minute, Second)",
+      "TECH_PARAM_MSG_LABEL" : "Floatâ€™s time (Year, Month, Day, Hour, Minute, Second)",
       "TECH_PARAM_NAME" : "CLOCK_FloatTime_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "float internal clock time"
    },

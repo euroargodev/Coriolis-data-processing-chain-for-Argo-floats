@@ -497,16 +497,49 @@ for cyNum = cyNumList
 end
 
 % assign cycle number to Iridium mail files
+
+% 1- generate a new table of sessions only based on times (one new session if no
+% transmission during more than one day)
+idTransDelay = find(tabDiffDate > ONE_DAY);
+tabSessionBis = nan(size(tabDate));
+sessionNum = 1;
+start = 1;
+for idT = 1:length(idTransDelay)
+   tabSessionBis(start:idTransDelay(idT)-1) = sessionNum;
+   start = idTransDelay(idT);
+   sessionNum = sessionNum + 1;
+end
+tabSessionBis(start:end) = sessionNum;
+
+% 2- assign a cycle number (the first transmitted one) to each session
 tabSbdFileName = [];
 tabCycleNumber = [];
-idBase = find(tabBase == 1);
-for idB = 1:length(idBase)
-   idForSession = find(tabSession == tabSession(idBase(idB)));
-   sbdFileNameList = unique(tabFileName(idForSession));
-   tabSbdFileName = [tabSbdFileName sbdFileNameList];
-   tabCycleNumber = [tabCycleNumber repmat(tabCyNum(idBase(idB)), 1, length(sbdFileNameList))];
+sessionListDone = [];
+cyNumList = unique(tabCyNum, 'stable');
+for idC = 1:length(cyNumList)
+   idForCyNum = find(tabCyNum == cyNumList(idC), 1, 'first');
+   sessionNum = tabSessionBis(idForCyNum);
+   if (~ismember(sessionNum, sessionListDone))
+      idSessionForCyNum = find(tabSessionBis == sessionNum);
+      sbdFileNameList = unique(tabFileName(idSessionForCyNum));
+      tabSbdFileName = [tabSbdFileName sbdFileNameList];
+      tabCycleNumber = [tabCycleNumber repmat(cyNumList(idC), 1, length(sbdFileNameList))];
+      sessionListDone = [sessionListDone sessionNum];
+   end
 end
 update_mail_data_ir_sbd_delayed(tabSbdFileName, tabCycleNumber);
+
+% PREVIOUS CODE - START
+% assign cycle number to Iridium mail files
+% idBase = find(tabBase == 1);
+% for idB = 1:length(idBase)
+%    idForSession = find(tabSession == tabSession(idBase(idB)));
+%    sbdFileNameList = unique(tabFileName(idForSession));
+%    tabSbdFileName = [tabSbdFileName sbdFileNameList];
+%    tabCycleNumber = [tabCycleNumber repmat(tabCyNum(idBase(idB)), 1, length(sbdFileNameList))];
+% end
+% update_mail_data_ir_sbd_delayed(tabSbdFileName, tabCycleNumber);
+% PREVIOUS CODE - END
 
 % output data
 o_decodedData = a_decodedData;

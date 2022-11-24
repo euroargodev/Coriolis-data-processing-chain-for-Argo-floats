@@ -114,7 +114,7 @@ for idEv = 1:length(events)
       info = info{:};
       
       if (~strcmpi(info{1}, 'SAMPLE'))
-         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
+         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          return
       end
@@ -162,7 +162,7 @@ for idEv = 1:length(events)
       info = info{:};
       
       if (~strcmpi(info{1}, 'PROFILE'))
-         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
+         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          return
       end
@@ -210,7 +210,7 @@ for idEv = 1:length(events)
       info = info{:};
       
       if (~strcmpi(info{1}, 'MEASURE'))
-         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
+         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum);
          return
       end
@@ -222,6 +222,81 @@ for idEv = 1:length(events)
       
       configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
          start stop interval count];
+      
+   elseif (strncmpi(line, 'LISTEN', length('LISTEN')))
+      
+      sampType = 'LISTEN';
+      if (~isfield(configStruct.(phase), sampType))
+         configStruct.(phase).(sampType) = [];
+      end
+      
+      % default values
+      startDayTime = 0;
+      duration = 120;
+      
+      info = textscan(line, '%s');
+      info = info{:};
+      
+      if (~strcmpi(info{1}, 'LISTEN'))
+         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum);
+         return
+      end
+            
+      sensor = info{2};
+      if (~isfield(configStruct.(phase).(sampType), sensor))
+         configStruct.(phase).(sampType).(sensor) = [];
+      end
+            
+      if (length(info) >= 3)
+         startDayTime = str2num(info{3});
+      end
+      if (length(info) >= 4)
+         duration = str2num(info{4});
+      end
+      
+      configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
+         startDayTime duration];
+
+   elseif (strncmpi(line, 'POWER', length('POWER')))
+      
+      sampType = 'POWER';
+      if (~isfield(configStruct.(phase), sampType))
+         configStruct.(phase).(sampType) = [];
+      end
+      
+      % default values
+      start = -1;
+      stop = -1;
+      
+      info = textscan(line, '%s');
+      info = info{:};
+      
+      if (~strcmpi(info{1}, 'POWER'))
+         fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum);
+         return
+      end
+            
+      sensor = info{2};
+      if (~isfield(configStruct.(phase).(sampType), sensor))
+         configStruct.(phase).(sampType).(sensor) = [];
+      end
+            
+      if (length(info) >= 3)
+         start = str2num(info{3});
+      end
+      if (length(info) >= 4)
+         stop = str2num(info{4});
+      end
+      
+      configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
+         start stop];      
+
+   else
+      
+      fprintf('ERROR: Float #%d Cycle #%d: Not managed sample information: %s\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, line);
       
    end
 end

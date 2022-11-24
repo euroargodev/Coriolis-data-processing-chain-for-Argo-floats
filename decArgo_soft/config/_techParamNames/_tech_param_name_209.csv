@@ -46,7 +46,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 143;60;Remote control received;FLAG_RemoteControlMessageOK_COUNT;Number of remote control successfully considered.
 144;61;Remote control rejected;FLAG_RemoteControlMessageKO_COUNT;Number of remote control rejected by the float (due to out of range value or remote control syntax error).
 1000;70;GPS valid fix (1 = valid, 0 = not valid);TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).
-148;71;SBE optode status (0:Ok, 1:Ko (dialog problem));FLAG_Optode2Status_LOGICAL;Sensor status - 1= OK, 0=not OK
+148;71;SBE optode status (0:Ok, 1:Ko (dialog problem));TECH_AUX_FLAG_Optode2Status_LOGICAL;Sensor status - 1= OK, 0=not OK
 149;71;Aanderaa optode status (0:Ok, 1:Ko (dialog problem));FLAG_OptodeStatus_LOGICAL;Sensor status - 1= OK, 0=not OK
 1001;-1;Number of descent CTD packets received;TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
 1002;-1;Number of drift CTD packets received;TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT;Number of Iridium packets received to transmit sensor data collected during the drift at park depth.

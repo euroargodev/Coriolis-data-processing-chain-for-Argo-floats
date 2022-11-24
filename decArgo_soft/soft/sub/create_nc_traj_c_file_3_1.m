@@ -105,7 +105,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       if (~isempty(measParamList))
          measParamNameList = {measParamList.name};
          measParamTypeList = [measParamList.paramType];
-         idCore = find(measParamTypeList == 'c');
+         idCore = find((measParamTypeList == 'c') | (measParamTypeList == 'j'));
          measParamNameAll = [measParamNameAll measParamNameList(idCore)];
       end
    end
@@ -499,7 +499,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       meas = nMeas.tabMeas(idM);
       measParamList = meas.paramList;
       for idParam = 1:length(measParamList)
-         if (measParamList(idParam).paramType == 'c')
+         if ((measParamList(idParam).paramType == 'c') || (measParamList(idParam).paramType == 'j'))
             measParam = measParamList(idParam);
             measParamName = measParam.name;
             measParamNcType = measParam.paramNcType;
@@ -1478,7 +1478,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       measParamList = meas.paramList;
       for idParam = 1:length(measParamList)
          
-         if (measParamList(idParam).paramType == 'c')
+         if ((measParamList(idParam).paramType == 'c') || (measParamList(idParam).paramType == 'j'))
             
             measParam = measParamList(idParam);
             

@@ -24,7 +24,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\tmp\132029';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\tmp\OUT';
 
 % directory to store the log files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default values initialization
 init_default_values;

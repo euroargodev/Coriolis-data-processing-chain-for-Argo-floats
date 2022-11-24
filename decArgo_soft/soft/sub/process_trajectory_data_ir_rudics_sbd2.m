@@ -266,7 +266,7 @@ for idCyc = 1:length(cycleNumList)
       % data during the dive
       
       % store descent surface DO measurements in PPOX_DOXY
-      if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113]))
+      if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114]))
 
          % fill value for JULD parameter
          paramJuld = get_netcdf_param_attributes('JULD');
@@ -966,7 +966,7 @@ for idCyc = 1:length(cycleNumList)
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % store ascent surface DO measurements in PPOX_DOXY
-            if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113]))
+            if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114]))
 
                % fill value for JULD parameter
                paramJuld = get_netcdf_param_attributes('JULD');
@@ -1101,13 +1101,19 @@ for idCyc = 1:length(cycleNumList)
             
             % grounding information
             if (~isempty(a_tabTrajData{idPackTech}.groundingDate))
-               measStruct = create_one_meas_float_time(g_MC_Grounded, a_tabTrajData{idPackTech}.groundingDate, g_JULD_STATUS_2, 0);
-               paramPres = get_netcdf_param_attributes('PRES');
-               paramPres.resolution = single(10);
-               measStruct.paramList = paramPres;
-               measStruct.paramData = a_tabTrajData{idPackTech}.groundingPres;
-               measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               % if packets #247 exists for the firmware we use it to get
+               % grounding data (this packet type was introduced with CTS4 V3.03)
+               if (~any((a_tabTrajIndex(:, 1) == 247) & ...
+                     (a_tabTrajIndex(:, 2) == cycleNum) & ...
+                     (a_tabTrajIndex(:, 3) == profNum)))
+                  measStruct = create_one_meas_float_time(g_MC_Grounded, a_tabTrajData{idPackTech}.groundingDate, g_JULD_STATUS_2, 0);
+                  paramPres = get_netcdf_param_attributes('PRES');
+                  paramPres.resolution = single(10);
+                  measStruct.paramList = paramPres;
+                  measStruct.paramData = a_tabTrajData{idPackTech}.groundingPres;
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               end
             end
                         
             %%%%%%%%%%%%%%%%%%%%%
@@ -1664,6 +1670,50 @@ for idCyc = 1:length(cycleNumList)
                end
             end
          end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%
+      % Grounding data
+      
+      % collect grounding data of the current cycle and profile
+      idPackGrounding  = find( ...
+         (a_tabTrajIndex(:, 1) == 247) & ...
+         (a_tabTrajIndex(:, 2) == cycleNum) & ...
+         (a_tabTrajIndex(:, 3) == profNum));
+      
+      if (~isempty(idPackGrounding))
+         
+         for idGrd = 1:length(idPackGrounding)
+            id = idPackGrounding(idGrd);
+            dates = a_tabTrajData{id}.dates;
+            data = a_tabTrajData{id}.data;
+            
+            for idG = 1:length(dates)
+               measStruct = create_one_meas_float_time(g_MC_Grounded, dates(idG), g_JULD_STATUS_2, 0);
+               idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+               measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+               measStruct.paramData = data(idG, idF);
+               measStruct.cyclePhase = a_tabTrajData{id}.phaseNumber;
+               measData = [measData; measStruct];
+               
+               measStruct = create_one_meas_float_time(g_MC_Grounded, dates(idG), g_JULD_STATUS_2, 0);
+               idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+               measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+               measStruct.paramData = data(idG, idF);
+               measStruct.cyclePhase = a_tabTrajData{id}.phaseNumber;
+               measStruct.sensorNumber = 101; % for TRAJ_AUX
+               measData = [measData; measStruct];
+            end
+         end
+         
+         % sort the data by date
+         measDates = [measData.juld];
+         [measDates, idSort] = sort(measDates);
+         measData = measData(idSort);
+         
+         % store the data
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+         measData = [];
       end
       
       %%%%%%%%%%%%%%%%%%%%%%

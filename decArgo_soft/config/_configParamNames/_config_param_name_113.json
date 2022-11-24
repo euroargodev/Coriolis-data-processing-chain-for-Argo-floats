@@ -299,7 +299,7 @@
    {
       "CONF_PARAM_DEC_ID" : "703",
       "CONF_PARAM_MSG_ID" : "254",
-      "CONF_PARAM_MSG_LABEL" : "Slowdown pressure threshold (floatís speed)",
+      "CONF_PARAM_MSG_LABEL" : "Slowdown pressure threshold (float‚Äôs speed)",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar",
       "CONF_PARAM_DESCRIPTION" : "Pressure threshold to start the slow ascent speed phase."
    },
@@ -308,14 +308,14 @@
       "CONF_PARAM_DEC_ID" : "704",
       "CONF_PARAM_MSG_ID" : "254",
       "CONF_PARAM_MSG_LABEL" : "Pressure acquisition period during ascent",
-      "CONF_PARAM_NAME" : "CONFIG_IceDetectionPressureInterval_dbar",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionPressureInterval_minutes",
       "CONF_PARAM_DESCRIPTION" : "Period of the ice detection algorithm."
    },
    "CONF_PARAM_40" :
    {
       "CONF_PARAM_DEC_ID" : "705",
       "CONF_PARAM_MSG_ID" : "254",
-      "CONF_PARAM_MSG_LABEL" : "Minimum ascent speed during ìslow ascentî",
+      "CONF_PARAM_MSG_LABEL" : "Minimum ascent speed during ‚Äúslow ascent‚Äù",
       "CONF_PARAM_NAME" : "CONFIG_IceDetectionAscentVerticalThresholdForBuoyancyAction_mm/s",
       "CONF_PARAM_DESCRIPTION" : "Similar to CONFIG_AscentVerticalThresholdForBuoyancyAction_dbar but for a float in ice detection mode."
    },
@@ -443,7 +443,7 @@
    {
       "CONF_PARAM_DEC_ID" : "404",
       "CONF_PARAM_MSG_ID" : "255",
-      "CONF_PARAM_MSG_LABEL" : "End Day for ìCycle Periodî 1",
+      "CONF_PARAM_MSG_LABEL" : "End Day for ‚ÄúCycle Period‚Äù 1",
       "CONF_PARAM_NAME" : "CONFIG_InternalCycle<D>LastGregDay_DD",
       "CONF_PARAM_DESCRIPTION" : "Last day to use float cycle duration #<D> (in gregorian day). (D is a number denoting the internal cycle label)"
    },
@@ -451,7 +451,7 @@
    {
       "CONF_PARAM_DEC_ID" : "405",
       "CONF_PARAM_MSG_ID" : "255",
-      "CONF_PARAM_MSG_LABEL" : "End Month for ìCycle Periodî 1",
+      "CONF_PARAM_MSG_LABEL" : "End Month for ‚ÄúCycle Period‚Äù 1",
       "CONF_PARAM_NAME" : "CONFIG_InternalCycle<D>LastGregMonth_MM",
       "CONF_PARAM_DESCRIPTION" : "Last month to use float cycle duration #<D> (in gregorian month). (D is a number denoting the internal cycle label)"
    },
@@ -459,7 +459,7 @@
    {
       "CONF_PARAM_DEC_ID" : "406",
       "CONF_PARAM_MSG_ID" : "255",
-      "CONF_PARAM_MSG_LABEL" : "End Year for ìCycle Periodî 1",
+      "CONF_PARAM_MSG_LABEL" : "End Year for ‚ÄúCycle Period‚Äù 1",
       "CONF_PARAM_NAME" : "CONFIG_InternalCycle<D>LastGregYear_YYYY",
       "CONF_PARAM_DESCRIPTION" : "Last year to use float cycle duration #<D> (in gregorian year, two digits). (D is a number denoting the internal cycle label)"
    },
@@ -476,7 +476,7 @@
       "CONF_PARAM_DEC_ID" : "500",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for X in descent to parking depth (in zone #Z) (in seconds)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToParkPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to parking pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_61" :
@@ -484,7 +484,7 @@
       "CONF_PARAM_DEC_ID" : "501",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for X in parking drift (in zone #Z) (in minutes)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtParkPresSamplingPeriod_minutes",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ParkDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at parking pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_62" :
@@ -492,7 +492,7 @@
       "CONF_PARAM_DEC_ID" : "502",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for X in descent to profile depth (in zone #Z) (in seconds)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DescentToProfilePresSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DescentToProfPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the descent to profile pressure in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_63" :
@@ -500,7 +500,7 @@
       "CONF_PARAM_DEC_ID" : "503",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for X in profile depth drift (in zone #Z) (in minutes)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>DriftAtProfilePresSamplingPeriod_minutes",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>ProfDriftPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the drift at profile pressure in the depth zone #<N> (in minutes)."
    },
    "CONF_PARAM_64" :
@@ -508,7 +508,7 @@
       "CONF_PARAM_DEC_ID" : "504",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Sampling period for X in ascent profile (in zone #Z) (in seconds)",
-      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DepthZone<N>AscentSamplingPeriod_seconds",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>SamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short sensor name> during the ascending profile in the depth zone #<N> (in seconds)."
    },
    "CONF_PARAM_65" :
@@ -563,7 +563,7 @@
    {
       "CONF_PARAM_DEC_ID" : "602",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "1st ´valid sampleª rank of CTD",
+      "CONF_PARAM_MSG_LABEL" : "1st ¬´valid sample¬ª rank of CTD",
       "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short sensor name> (0 is the rank of the first sample)."
    },
@@ -595,7 +595,7 @@
    {
       "CONF_PARAM_DEC_ID" : "607",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "Min temperature of CTD (m∞C)",
+      "CONF_PARAM_MSG_LABEL" : "Min temperature of CTD (m¬∞C)",
       "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedTemperature_mdegC",
       "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd temperature measurements (in milli-DegC)."
    },
@@ -603,7 +603,7 @@
    {
       "CONF_PARAM_DEC_ID" : "608",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "Max temperature of CTD (m∞C)",
+      "CONF_PARAM_MSG_LABEL" : "Max temperature of CTD (m¬∞C)",
       "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedTemperature_mdegC",
       "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd temperature measurements (in milli-DegC)."
    },
@@ -659,7 +659,7 @@
    {
       "CONF_PARAM_DEC_ID" : "617",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "Median temperature (m∞C)",
+      "CONF_PARAM_MSG_LABEL" : "Median temperature (m¬∞C)",
       "CONF_PARAM_NAME" : "CONFIG_IceDetection_degC",
       "CONF_PARAM_DESCRIPTION" : "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
    },
@@ -715,7 +715,7 @@
    {
       "CONF_PARAM_DEC_ID" : "628",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "Min T∞ of OPTODE (m∞C)",
+      "CONF_PARAM_MSG_LABEL" : "Min T¬∞ of OPTODE (m¬∞C)",
       "CONF_PARAM_NAME" : "CONFIG_OptodeMinTransmittedTemperature_mdegC",
       "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Optode temperature measurements (in milli-DegC)."
    },
@@ -723,7 +723,7 @@
    {
       "CONF_PARAM_DEC_ID" : "629",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "Max T∞ of OPTODE (m∞C)",
+      "CONF_PARAM_MSG_LABEL" : "Max T¬∞ of OPTODE (m¬∞C)",
       "CONF_PARAM_NAME" : "CONFIG_OptodeMaxTransmittedTemperature_mdegC",
       "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Optode temperature measurements (in milli-DegC)."
    },
@@ -875,7 +875,7 @@
    {
       "CONF_PARAM_DEC_ID" : "680",
       "CONF_PARAM_MSG_ID" : "251",
-      "CONF_PARAM_MSG_LABEL" : "´ APF Frame ª transmission of SUNA (nitrate concentration = 0, spectrum APF frame = 1)",
+      "CONF_PARAM_MSG_LABEL" : "¬´ APF Frame ¬ª transmission of SUNA (nitrate concentration = 0, spectrum APF frame = 1)",
       "CONF_PARAM_NAME" : "CONFIG_SunaDataType_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Type of transmitted data from te Suna sensor (0 : nitrate concentration, 1 : APF frame spectrum)."
    },

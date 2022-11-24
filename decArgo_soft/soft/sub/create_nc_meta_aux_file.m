@@ -70,6 +70,12 @@ global g_decArgo_outputNcConfParamDescription;
 global g_decArgo_decoderVersion;
 
 
+if (isempty(a_inputAuxMetaName) && isempty(a_inputAuxStaticConfigName) && ...
+      isempty(a_launchAuxConfigName) && isempty(a_missionAuxConfigName) && ...
+      ~isfield(a_metaDataAux, 'SENSOR') && ~isfield(a_metaDataAux, 'PARAMETER'))
+   return
+end
+
 % verbose mode flag
 VERBOSE_MODE = 1;
 
@@ -147,7 +153,6 @@ end
 dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
 string4096DimId = netcdf.defDim(fCdf, 'STRING4096', 4096);
 string1024DimId = netcdf.defDim(fCdf, 'STRING1024', 1024);
-string512DimId = netcdf.defDim(fCdf, 'STRING512', 512);
 string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
 string128DimId = netcdf.defDim(fCdf, 'STRING128', 128);
 string64DimId = netcdf.defDim(fCdf, 'STRING64', 64);
@@ -536,8 +541,13 @@ end
 for idConf = 1:length(a_launchAuxConfigName)
    confName = a_launchAuxConfigName{idConf};
    if (~isempty(a_launchAuxConfigId))
-      idF = find(g_decArgo_outputNcConfParamId == a_launchAuxConfigId(idConf));
-      confDescription = g_decArgo_outputNcConfParamDescription{idF};
+      if (iscell(g_decArgo_outputNcConfParamId))
+         idF = find(strcmp(a_launchAuxConfigId(idConf), g_decArgo_outputNcConfParamId)); % config name Ids are numbers for NKE floats and strings for APF11
+         confDescription = g_decArgo_outputNcConfParamDescription{idF};
+      else
+         idF = find(g_decArgo_outputNcConfParamId == a_launchAuxConfigId(idConf));
+         confDescription = g_decArgo_outputNcConfParamDescription{idF};
+      end
    else
       idDesc = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
       if (isempty(idDesc))

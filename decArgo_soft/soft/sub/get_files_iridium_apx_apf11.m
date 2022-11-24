@@ -1,9 +1,10 @@
 % ------------------------------------------------------------------------------
-% Retrieve the list of science_log, vitals_log system_log, critical_log and
-% production_log (CSV decoder only) files for a float and a given cycle.
+% Retrieve the list of science_log, irad_log, vitals_log system_log, 
+% critical_log and production_log (CSV decoder only) files for a float and a
+% given cycle.
 %
 % SYNTAX :
-%  [o_scienceLogFileList, o_vitalsLogFileList, ...
+%  [o_scienceLogFileList, o_iradLogFileList, o_vitalsLogFileList, ...
 %    o_systemLogFileList, o_criticalLogFileList, ...
 %    o_productionLogFileList] = get_files_iridium_apx_apf11( ...
 %    a_floatRudicsId, a_cycleNum, a_dirName)
@@ -15,6 +16,7 @@
 %
 % OUTPUT PARAMETERS :
 %   o_scienceLogFileList    : list of science_log files
+%   o_iradLogFileList       : list of irad_log files
 %   o_vitalsLogFileList     : list of vitals_log files
 %   o_systemLogFileList     : list of system_log files
 %   o_criticalLogFileList   : list of critical_log files
@@ -28,13 +30,14 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_scienceLogFileList, o_vitalsLogFileList, ...
+function [o_scienceLogFileList, o_iradLogFileList, o_vitalsLogFileList, ...
    o_systemLogFileList, o_criticalLogFileList, ...
    o_productionLogFileList] = get_files_iridium_apx_apf11( ...
    a_floatRudicsId, a_cycleNum, a_dirName)
 
 % output parameters initialization
 o_scienceLogFileList = [];
+o_iradLogFileList = [];
 o_vitalsLogFileList = [];
 o_systemLogFileList = [];
 o_criticalLogFileList = [];
@@ -55,6 +58,12 @@ end
 fileNames = dir([floatIriDirName sprintf('%s.%03d.*.science_log.bin', a_floatRudicsId, a_cycleNum)]);
 for idFile = 1:length(fileNames)
    o_scienceLogFileList{end+1} = [floatIriDirName '/' fileNames(idFile).name];
+end
+
+% irad_log files
+fileNames = dir([floatIriDirName sprintf('%s.%03d.*.irad_log.bin', a_floatRudicsId, a_cycleNum)]);
+for idFile = 1:length(fileNames)
+   o_iradLogFileList{end+1} = [floatIriDirName '/' fileNames(idFile).name];
 end
 
 % vitals_log files

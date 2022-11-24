@@ -84,6 +84,20 @@ for idPhase = 1:length(phaseNames)
             o_configSampVal{end+1} = num2str(10);
             o_configSampName{end+1} = ['CONFIG_MEASURE_' phaseName '_' sensorName '_TimeInterval'];
             o_configSampVal{end+1} = num2str(15);
+         elseif (strcmp(sampType, 'LISTEN'))
+            for idL = 1:size(sampInfo, 1)
+               o_configSampName{end+1} = ['CONFIG_LISTEN_' phaseName '_' sensorName '_StartDayTime'];
+               o_configSampVal{end+1} = num2str(sampInfo(idL, 1));
+               o_configSampName{end+1} = ['CONFIG_LISTEN_' phaseName '_' sensorName '_Duration'];
+               o_configSampVal{end+1} = num2str(sampInfo(idL, 2));
+            end
+         elseif (strcmp(sampType, 'POWER'))
+            for idL = 1:size(sampInfo, 1)
+               o_configSampName{end+1} = ['CONFIG_POWER_' phaseName '_' sensorName '_StartPressure'];
+               o_configSampVal{end+1} = num2str(sampInfo(idL, 1));
+               o_configSampName{end+1} = ['CONFIG_POWER_' phaseName '_' sensorName '_StopPressure'];
+               o_configSampVal{end+1} = num2str(sampInfo(idL, 2));
+            end
          else
             fprintf('ERROR: Unexpected sample type ''%s'' in the sample configuration file\n', sampType);
          end

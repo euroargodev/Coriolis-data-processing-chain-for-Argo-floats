@@ -206,7 +206,7 @@ for idProf = 1:length(tabProfiles)
          parameterList = prof.paramList;
          profileData = prof.data;
          for idParam = 1:length(parameterList)
-            if (parameterList(idParam).paramType == 'c')
+            if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                profParamName = [profParamName; {parameterList(idParam).name}];
                paramNameOfProf = [paramNameOfProf; {parameterList(idParam).name}];
                nbProfLevels = max(nbProfLevels, size(profileData, 1));
@@ -341,7 +341,7 @@ for idProf = 1:length(tabProfiles)
                         nLevelsParam = 0;
                         idNoDefAll = [];
                         for idParam = 1:length(parameterList)
-                           if (parameterList(idParam).paramType == 'c')
+                           if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                               profParam = parameterList(idParam);
                               profParamName = profParam.name;
                               paramInfo = get_netcdf_param_attributes(profParamName);
@@ -718,7 +718,7 @@ for idProf = 1:length(tabProfiles)
             parameterList = prof.paramList;
             for idParam = 1:length(parameterList)
                
-               if (parameterList(idParam).paramType == 'c')
+               if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                   
                   profParam = parameterList(idParam);
                   profParamName = profParam.name;
@@ -975,7 +975,7 @@ for idProf = 1:length(tabProfiles)
             paramPos = 0;
             for idParam = 1:length(parameterList)
                
-               if (parameterList(idParam).paramType == 'c')
+               if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                   
                   valueStr = parameterList(idParam).name;
                   if (length(valueStr) > paramNameLength)
@@ -1132,14 +1132,14 @@ for idProf = 1:length(tabProfiles)
             parameterDataMode = prof.paramDataMode;
             adjInCoreFlag = 0;
             if (~isempty(parameterDataMode))
-               if (any(parameterDataMode([parameterList.paramType] == 'c') == 'A'))
+               if (any(parameterDataMode([parameterList.paramType] == 'c') == 'A') || any(parameterDataMode([parameterList.paramType] == 'j') == 'A'))
                   adjInCoreFlag = 1;
                   netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
                end
             end
             for idParam = 1:length(parameterList)
                
-               if (parameterList(idParam).paramType == 'c')
+               if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                   
                   profParam = parameterList(idParam);
                   
@@ -1281,7 +1281,7 @@ for idProf = 1:length(tabProfiles)
                   paramName = paramAdjInfo{4};
                   
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if (paramInfo.paramType == 'c')
+                  if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                      paramEquation = paramAdjInfo{5};
                      paramCoefficient = paramAdjInfo{6};
                      paramComment = paramAdjInfo{7};
@@ -1323,7 +1323,7 @@ for idProf = 1:length(tabProfiles)
                   for idParam = 1:length(newList)
                      paramName = newList{idParam};
                      paramInfo = get_netcdf_param_attributes(paramName);
-                     if (paramInfo.paramType == 'c')
+                     if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                         
                         tabParam = {paramName};
                         tabEquation = {[paramName '_ADJUSTED = ' paramName]};
@@ -1435,7 +1435,7 @@ for idProf = 1:length(tabProfiles)
             profPos = idP-1+profShiftIfNoPrimary;
             paramPos = 0;
             for idParam = 1:length(parameterList)
-               if (parameterList(idParam).paramType == 'c')
+               if ((parameterList(idParam).paramType == 'c') || (parameterList(idParam).paramType == 'j'))
                   
                   valueStr = parameterList(idParam).name;
                   

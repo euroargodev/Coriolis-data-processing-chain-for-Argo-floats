@@ -98,6 +98,9 @@ global g_decArgo_decIdCheckFlag;
 global g_decArgo_paramAdjInfo;
 global g_decArgo_paramAdjId;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamNbSampleSfet;
 
 % get floats information
 if (g_decArgo_realtimeFlag == 0)
@@ -126,7 +129,10 @@ for idFloat = 1:nbFloats
    g_decArgo_decIdCheckFlag = 0;
    
    g_decArgo_paramAdjInfo = [];
-   g_decArgo_paramAdjId = 1;   
+   g_decArgo_paramAdjId = 1;
+   
+   g_decArgo_addParamNbSampleCtd = 0;
+   g_decArgo_addParamNbSampleSfet = 0;
 
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;

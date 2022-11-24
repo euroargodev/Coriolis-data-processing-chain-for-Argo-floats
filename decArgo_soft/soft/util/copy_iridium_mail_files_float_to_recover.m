@@ -79,7 +79,7 @@ MAX_FILE_AGE_IN_HOUR = 48;
 % DIR_OUTPUT_DATA = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
 % 
 % % directory to store the log file
-% DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+% DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 % 
 % % maximum age of files to consider (in hours)
 % MAX_FILE_AGE_IN_HOUR = 1;

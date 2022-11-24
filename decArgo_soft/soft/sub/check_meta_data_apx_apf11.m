@@ -451,12 +451,60 @@ for idM = 1:length(a_metaData)
                dimLevelList = [dimLevelList dimLevel];
             end
             
+         case 'OCR_A0_LAMBDA_443'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda443'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda443);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
          case 'OCR_A0_LAMBDA_490'
             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
                decValue = metaData.techParamValue;
                jsonValue = '';
                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda490'))
                   jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A0_LAMBDA_555'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda555'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda555);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A0_LAMBDA_670'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A0Lambda670'))
+                  jsonValue = sprintf('%.1f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A0Lambda670);
                end
                dimLevel = 1;
                
@@ -515,12 +563,60 @@ for idM = 1:length(a_metaData)
                dimLevelList = [dimLevelList dimLevel];
             end
             
+         case 'OCR_A1_LAMBDA_443'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda443'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda443);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
          case 'OCR_A1_LAMBDA_490'
             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
                decValue = metaData.techParamValue;
                jsonValue = '';
                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda490'))
                   jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_LAMBDA_555'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda555'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda555);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_A1_LAMBDA_670'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'A1Lambda670'))
+                  jsonValue = sprintf('%e', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.A1Lambda670);
                end
                dimLevel = 1;
                
@@ -579,12 +675,60 @@ for idM = 1:length(a_metaData)
                dimLevelList = [dimLevelList dimLevel];
             end
             
+         case 'OCR_LM_LAMBDA_443'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda443'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda443);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
          case 'OCR_LM_LAMBDA_490'
             if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
                decValue = metaData.techParamValue;
                jsonValue = '';
                if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda490'))
                   jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda490);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_LAMBDA_555'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda555'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda555);
+               end
+               dimLevel = 1;
+               
+               decValueList{end+1} = decValue;
+               jsonValueList{end+1} = jsonValue;
+               paramCodeList{end+1} = metaData.techParamCode;
+               paramIdList = [paramIdList metaData.techParamId];
+               dimLevelList = [dimLevelList dimLevel];
+            end
+            
+         case 'OCR_LM_LAMBDA_670'
+            if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT, 'OCR'))
+               decValue = metaData.techParamValue;
+               jsonValue = '';
+               if (isfield(g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR, 'LmLambda670'))
+                  jsonValue = sprintf('%.3f', g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.OCR.LmLambda670);
                end
                dimLevel = 1;
                

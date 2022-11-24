@@ -85,13 +85,33 @@ metaData = loadjson(jsonInputFileName);
 % update the meta-data contents
 metaData = update_meta_data(metaData, a_decoderId);
 
-% collect AUX meta-data information
-% for SENSOR
-sensorAux = [];
+% initialize create_nc_meta_aux_file input parameters
+inputAuxMetaName = [];
+inputAuxMetaId = [];
+inputAuxMetaValue = [];
+inputAuxMetaDescription = [];
+
+inputAuxStaticConfigName = [];
+inputAuxStaticConfigId = [];
+inputAuxStaticConfigValue = [];
+
+launchAuxConfigName = [];
+launchAuxConfigId = [];
+launchAuxConfigValue = [];
+
+missionAuxConfigName = [];
+missionAuxConfigId = [];
+missionAuxConfigValue = [];
+configMissionNumber = [];
+
 metaDataAux = [];
 metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
 metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
 metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
+
+% collect AUX meta-data information
+% for SENSOR
+sensorAux = [];
 fieldSensorList = [ ...
    {'SENSOR'} ...
    {'SENSOR_MAKER'} ...
@@ -438,7 +458,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301, 302, 303}
       
       % Remocean floats
       
@@ -566,15 +586,12 @@ switch (a_decoderId)
       missionConfigValue(idDel, :) = [];
 
       % create/update NetCDF META_AUX file
-      if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
-            ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
-         create_nc_meta_aux_file( ...
-            inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
-            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      create_nc_meta_aux_file( ...
+         inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
+         inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       nbConfigParam = length(missionConfigName);
 
@@ -856,15 +873,12 @@ switch (a_decoderId)
       missionConfigValue(idDel, :) = [];
       
       % create/update NetCDF META_AUX file
-      if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
-            ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
-         create_nc_meta_aux_file( ...
-            inputAuxMetaName, inputAuxMetaId, inputAuxMetaValue, inputAuxMetaDescription, ...
-            inputAuxStaticConfigName, inputAuxStaticConfigId, inputAuxStaticConfigValue, ...
-            launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      create_nc_meta_aux_file( ...
+         inputAuxMetaName, inputAuxMetaId, inputAuxMetaValue, inputAuxMetaDescription, ...
+         inputAuxStaticConfigName, inputAuxStaticConfigId, inputAuxStaticConfigValue, ...
+         launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
+         missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       nbConfigParam = length(missionConfigName);
       
@@ -1090,28 +1104,20 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);      
 
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxStaticConfigName) || ...
-            ~isempty(launchAuxConfigName) || ...
-            ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            [], [], [], [], ...
-            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      create_nc_meta_aux_file( ...
+         [], [], [], [], ...
+         inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {222, 223, 224}
+   case {222, 223, 224, 225}
       
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Arvor-ARN-Ice RBR Iridium 5.49
+      % Provor-ARN-DO-Ice Iridium 5.76
 
       % select Argo and Auxiliary configuration information
       staticConfigName = a_structConfig.STATIC_NC.NAMES;
@@ -1225,21 +1231,12 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);      
       
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxStaticConfigName) || ...
-            ~isempty(launchAuxConfigName) || ...
-            ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            [], [], [], [], ...
-            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      create_nc_meta_aux_file( ...
+         [], [], [], [], ...
+         inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX Argos floats
@@ -1377,16 +1374,19 @@ switch (a_decoderId)
       
       % clean AUX parameters from output Argo launch configuration
       launchAuxConfigName = [];
+%       launchAuxConfigId = [];
       launchAuxConfigValue = [];
       idDel = [];
       for idC = 1:length(launchConfigName)
          if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+%             launchAuxConfigId = [launchAuxConfigId; launchConfigId(idC)];
             launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
             idDel = [idDel; idC];
          end
       end
       launchConfigName(idDel) = [];
+%       launchConfigId(idDel) = [];
       launchConfigValue(idDel, :) = [];
       
       nbLaunchConfigParam = length(launchConfigName);
@@ -1432,19 +1432,12 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);      
       
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
-            [], [], [], ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      create_nc_meta_aux_file( ...
+         inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
+         [], [], [], ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
@@ -1455,6 +1448,7 @@ switch (a_decoderId)
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);
             
       configName = a_structConfig.NAMES;
+      configId = a_structConfig.IDS;
       configValue = a_structConfig.VALUES;
       
       mandatoryList = [];
@@ -1471,36 +1465,43 @@ switch (a_decoderId)
       
       % select Auxiliary configuration information
       inputAuxConfigName = [];
+      inputAuxConfigId = [];
       inputAuxConfigValue = [];
       for idC = 1:length(configName)
          if (strncmp(configName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             inputAuxConfigName = [inputAuxConfigName; configName(idC)];
+            inputAuxConfigId = [inputAuxConfigId; configId(idC)];
             inputAuxConfigValue = [inputAuxConfigValue; configValue(idC)];
          end
       end      
       
       % create the launch configuration
       launchConfigName = configName;
+      launchConfigId = configId;
       launchConfigValue = configValue(:, 1);
       
       % clean AUX parameters from output Argo launch configuration
       launchAuxConfigName = [];
+      launchAuxConfigId = [];
       launchAuxConfigValue = [];
       idDel = [];
       for idC = 1:length(launchConfigName)
          if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+            launchAuxConfigId = [launchAuxConfigId; launchConfigId(idC)];
             launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
             idDel = [idDel; idC];
          end
       end
       launchConfigName(idDel) = [];
+      launchConfigId(idDel) = [];
       launchConfigValue(idDel, :) = [];
       
       nbLaunchConfigParam = length(launchConfigName);
 
       % create the mission configuration
       missionConfigName = configName;
+      missionConfigId = configId;
       missionConfigValue = configValue;
       
       if (size(configValue, 2) > 1)
@@ -1515,28 +1516,33 @@ switch (a_decoderId)
          end
          idDel = setdiff(idDel, mandatoryList);
          missionConfigName(idDel) = [];
+         missionConfigId(idDel) = [];
          missionConfigValue(idDel, :) = [];
          % don't keep launch mission
          missionConfigValue(:, 1) = [];
          configMissionNumber = a_structConfig.NUMBER(2:end);
       else
          missionConfigName = configName(mandatoryList);
+         missionConfigId = configId(mandatoryList);
          missionConfigValue = configValue(mandatoryList, 1);
          configMissionNumber = 1;
       end
       
       % clean AUX parameters from output Argo configuration
       missionAuxConfigName = [];
+      missionAuxConfigId = [];
       missionAuxConfigValue = [];
       idDel = [];
       for idC = 1:length(missionConfigName)
          if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
+            missionAuxConfigId = [missionAuxConfigId; missionConfigId(idC)];
             missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
             idDel = [idDel; idC];
          end
       end
       missionConfigName(idDel) = [];
+      missionConfigId(idDel) = [];
       missionConfigValue(idDel, :) = [];
       
       % clean piston configuration parameters from output Argo configuration
@@ -1548,24 +1554,19 @@ switch (a_decoderId)
          end
       end
       missionConfigName(idDel) = [];
+      missionConfigId(idDel) = [];
       missionConfigValue(idDel, :) = [];
       
       nbConfigParam = length(missionConfigName);      
       
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            [], [], [], [], ...
-            [], [], [], ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end
+      % icicic
+      create_nc_meta_aux_file( ...
+         [], [], [], [], ...
+         [], [], [], ...
+         launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
+         missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX Iridium Rudics & Navis floats
@@ -1664,19 +1665,12 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);  
       
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            [], [], [], [], ...
-            [], [], [], ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end      
+      create_nc_meta_aux_file( ...
+         [], [], [], [], ...
+         [], [], [], ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % NOVA, DOVA floats
@@ -1855,19 +1849,12 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);  
       
       % create/update NetCDF META_AUX file
-      if (~isempty(inputAuxConfigName) || ~isempty(missionAuxConfigName))
-         % collect AUX meta-data information
-         metaDataAux = [];
-         metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
-         metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
-         metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
-         create_nc_meta_aux_file( ...
-            [], [], [], [], ...
-            [], [], [], ...
-            launchAuxConfigName, [], launchAuxConfigValue, ...
-            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
-            metaDataAux);
-      end           
+      create_nc_meta_aux_file( ...
+         [], [], [], [], ...
+         [], [], [], ...
+         launchAuxConfigName, [], launchAuxConfigValue, ...
+         missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
+         metaDataAux);
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in launch and mission configurations processing for decoderId #%d\n', ...

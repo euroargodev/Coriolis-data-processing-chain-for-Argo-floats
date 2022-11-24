@@ -909,7 +909,7 @@ if (monoBProfFileFlag == 1)
             if (~isempty(paramName))
                ncBParamNameList{end+1} = paramName;
                paramInfo = get_netcdf_param_attributes(paramName);
-               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                   ncBParamAdjNameList = [ncBParamAdjNameList ...
                      {[paramName '_ADJUSTED']} ...
                      ];
@@ -1211,7 +1211,7 @@ if (multiProfFileFlag)
             if (~isempty(paramName))
                ncBMParamNameList{end+1} = paramName;
                paramInfo = get_netcdf_param_attributes(paramName);
-               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                   ncBMParamAdjNameList = [ncBMParamAdjNameList ...
                      {[paramName '_ADJUSTED']} ...
                      ];
@@ -3568,7 +3568,7 @@ if (multiProfFileFlag)
                   adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
                   paramName = paramAdjNameQc(1:adjPos-1);
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  if (paramInfo.paramType == 'c')
+                  if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                      % 'c' parameters
                      if (dataModeCFile(idProf) == 'A')
                         % use <PARAM>_ADJUSTED_QC
@@ -4816,7 +4816,7 @@ if (multiProfFileFlag)
                adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
                paramName = paramAdjNameQc(1:adjPos-1);
                paramInfo = get_netcdf_param_attributes(paramName);
-               if (paramInfo.paramType == 'c')
+               if ((paramInfo.paramType == 'c') || (paramInfo.paramType == 'j'))
                   % 'c' parameters
                   if (dataModeCFile(idProf) == 'A')
                      % use <PARAM>_ADJUSTED_QC

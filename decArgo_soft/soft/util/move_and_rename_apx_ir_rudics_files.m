@@ -43,7 +43,7 @@ DIR_OUTPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_20170904\';
 DIR_OUTPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\data_out_test\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % if we want to set all PID numbers to zero (needed for comparison with V2 RT
 % data

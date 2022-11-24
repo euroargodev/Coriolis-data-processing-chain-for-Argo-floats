@@ -423,6 +423,16 @@ if (a_procLevel > 0)
             g_decArgo_floatNum);
       end
    end
+   
+   % specific
+   if (ismember(g_decArgo_floatNum, [6903222]))
+      switch g_decArgo_floatNum
+         case 6903222
+            if (g_decArgo_cycleNum == 14)
+               o_tabTech(41) = 3; % "Day in the month of last GPS fix" = 5 not consistent, it is 3
+            end
+      end
+   end
 end
 
 return

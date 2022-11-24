@@ -96,7 +96,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       if (~isempty(measParamList))
          measParamNameList = {measParamList.name};
          measParamTypeList = [measParamList.paramType];
-         idNotCore = find(((measParamTypeList ~= 'c') | ...
+         idNotCore = find((((measParamTypeList ~= 'c') & (measParamTypeList ~= 'j')) | ...
             strcmp(measParamNameList, 'PRES')) & ...
             cellfun(@(x) ~strcmp(x(end-3:end), '_STD'), measParamNameList) & ...
             cellfun(@(x) ~strcmp(x(end-3:end), '_MED'), measParamNameList));
@@ -520,7 +520,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
             
             measParamList = meas.paramList;
             for idParam = 1:length(measParamList)
-               if ((measParamList(idParam).paramType ~= 'c') || ...
+               if (((measParamList(idParam).paramType ~= 'c') && (measParamList(idParam).paramType ~= 'j')) || ...
                      strcmp(measParamList(idParam).name, 'PRES'))
                   
                   measParam = measParamList(idParam);
@@ -605,7 +605,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                      end
                         
                      % parameter QC variable and attributes
-                     if (measParam.paramType ~= 'c')
+                     if ((measParam.paramType ~= 'c') && (measParam.paramType ~= 'j'))
                         if ~(strcmp(measParamName(end-3:end), '_STD') || ...
                               strcmp(measParamName(end-3:end), '_MED'))
                            
@@ -624,7 +624,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
                      end
                      
                      % parameter adjusted variable and attributes
-                     if ((measParam.adjAllowed == 1) && (measParam.paramType ~= 'c'))
+                     if ((measParam.adjAllowed == 1) && (measParam.paramType ~= 'c') && (measParam.paramType ~= 'j'))
                         
                         measParamAdjName = [measParamName '_ADJUSTED'];
                         if (~any(strcmp(measParamAdjName, paramNameInFile)))
@@ -1091,7 +1091,7 @@ if (nbMeasParam > 1) % PRES and at least another parameter
             measParamList = meas.paramList;
             for idParam = 1:length(measParamList)
                
-               if ((measParamList(idParam).paramType ~= 'c') || ...
+               if (((measParamList(idParam).paramType ~= 'c') && (measParamList(idParam).paramType ~= 'j')) || ...
                      strcmp(measParamList(idParam).name, 'PRES'))
                   
                   measParam = measParamList(idParam);

@@ -20,7 +20,7 @@
 function find_missing_momsn
 
 % directory to store the log and the csv files
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % choose to check RSYNC_DATA or IRIDIUM_DATA directory
 % if CHECK_RSYNC_DATA = 1, we will check all email files stored in the

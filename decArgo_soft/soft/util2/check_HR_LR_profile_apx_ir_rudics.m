@@ -21,10 +21,10 @@
 function check_HR_LR_profile_apx_ir_rudics(varargin)
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % directory to store the output csv files
-DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

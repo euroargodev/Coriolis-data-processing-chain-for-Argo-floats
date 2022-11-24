@@ -2,10 +2,11 @@
 % Compute derived parameters for Apex APF11 Iridium-SBD floats.
 %
 % SYNTAX :
-%  [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd] = ...
+%  [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd, o_profRafos] = ...
 %    compute_derived_parameters_apx_apf11_ir( ...
 %    a_profCtdPts, a_profCtdCp, a_profDo, ...
 %    a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
+%    a_profRafos, ...
 %    a_cycleTimeData, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -15,6 +16,7 @@
 %   a_profCtdPtsh   : input CTD_PTSH data
 %   a_profCtdCpH    : input CTD_CP_H data
 %   a_profFlbbCd    : input FLBB_CD data
+%   a_profRafos     : input RAFOS data
 %   a_cycleTimeData : input cycle timings data
 %   a_decoderId     : float decoder Id
 %
@@ -23,6 +25,7 @@
 %   o_profCtdPtsh : output CTD_PTSH data
 %   o_profCtdCpH  : output CTD_CP_H data
 %   o_profFlbbCd  : output FLBB_CD data
+%   o_profRafos   : output RAFOS data
 %
 % EXAMPLES :
 %
@@ -32,10 +35,11 @@
 % RELEASES :
 %   07/10/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd] = ...
+function [o_profDo, o_profCtdPtsh, o_profCtdCpH, o_profFlbbCd, o_profRafos] = ...
    compute_derived_parameters_apx_apf11_ir( ...
    a_profCtdPts, a_profCtdCp, a_profDo, ...
    a_profCtdPtsh, a_profCtdCpH, a_profFlbbCd, ...
+   a_profRafos, ...
    a_cycleTimeData, a_decoderId)
 
 % output parameters initialization
@@ -43,6 +47,7 @@ o_profDo = a_profDo;
 o_profCtdPtsh = a_profCtdPtsh;
 o_profCtdCpH = a_profCtdCpH;
 o_profFlbbCd = a_profFlbbCd;
+o_profRafos = a_profRafos;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -53,7 +58,7 @@ global g_decArgo_cycleNum;
 
 switch (a_decoderId)
    
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1322, 1323}
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +128,7 @@ switch (a_decoderId)
                idPark = find(o_profDo.dates < a_cycleTimeData.ascentStartDateSci);
                
                if (length(idPark) > 1)
-
+                  
                   if (~isempty(ctdData))
                      
                      %                      % interpolate and extrapolate PTS data at the times of the OPTODE
@@ -279,7 +284,7 @@ switch (a_decoderId)
                      ctdIntData = compute_interpolated_CTD_measurements( ...
                         ctdDataAscent.data, o_profDo.data(idAscent, idPres), 'A');
                      if (~isempty(ctdIntData))
-
+                        
                         % compute DOXY
                         doxyValues = compute_DOXY_1121_to_27_1322_1323( ...
                            o_profDo.data(idAscent, idC1PhaseDoxy), o_profDo.data(idAscent, idC2PhaseDoxy), o_profDo.data(idAscent, idTempDoxy), ...
@@ -716,7 +721,7 @@ switch (a_decoderId)
                      % measurements
                      ctdIntData = compute_interpolated_CTD_measurements( ...
                         ctdDataAscent.data, o_profFlbbCd.data(idAscent, idPres), 'A');
-
+                     
                      % compute BBP700
                      bbp700Values = compute_BBP700_105_to_112_121_to_127_1121_to_27_1322_1323( ...
                         o_profFlbbCd.data(idAscent, idBetaBackscattering700), ...
@@ -743,6 +748,52 @@ switch (a_decoderId)
                o_profFlbbCd.data(:, idFluorescenceCdom), ...
                paramFluorescenceCdom.fillValue, paramCdom.fillValue);
             o_profFlbbCd.data(:, idCdom) = cdomValues;
+         end
+      end
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % RAFOS
+      
+      if (~isempty(o_profRafos))
+         
+         paramRafosToa = get_netcdf_param_attributes('TOA');
+         paramRafosRawToa = get_netcdf_param_attributes('RAW_TOA');
+         
+         % add TOA to the RAFOS profile
+         o_profRafos.paramList = [o_profRafos.paramList paramRafosToa];
+         o_profRafos.paramNumberWithSubLevels = [ ...
+            o_profRafos.paramNumberWithSubLevels length(o_profRafos.paramList)];
+         o_profRafos.paramNumberOfSubLevels = [ ...
+            o_profRafos.paramNumberOfSubLevels 6];
+         o_profRafos.data = [o_profRafos.data ...
+            ones(size(o_profRafos.data, 1), 6)*paramRafosToa.fillValue];
+         if (~isempty(o_profRafos.dataAdj))
+            o_profRafos.paramDataMode = [o_profRafos.paramDataMode ' '];
+            o_profRafos.dataAdj = [o_profRafos.dataAdj ...
+               ones(size(dataAdj.data, 1), 6)*paramRafosToa.fillValue];
+         end
+         
+         % TOA
+         idRawToa = find(strcmp({o_profRafos.paramList.name}, 'RAW_TOA'), 1);
+         if (~isempty(idRawToa))
+            
+            % compute TOA from RAW_TOA
+            idF = find(o_profRafos.paramNumberWithSubLevels < idRawToa);
+            if (isempty(idF))
+               firstCol = idRawToa;
+            else
+               firstCol = idRawToa + sum(o_profRafos.paramNumberOfSubLevels(idF)) - length(idF);
+            end
+            idF = find(o_profRafos.paramNumberWithSubLevels == idRawToa);
+            if (isempty(idF))
+               lastCol = firstCol;
+            else
+               lastCol = firstCol + o_profRafos.paramNumberOfSubLevels(idF) - 1;
+            end
+            toaValues = compute_TOA( ...
+               o_profRafos.data(:, firstCol:lastCol), ...
+               paramRafosRawToa.fillValue, paramRafosToa.fillValue);
+            o_profRafos.data(:, end-5:end) = toaValues;
          end
       end
 end

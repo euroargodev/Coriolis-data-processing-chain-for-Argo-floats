@@ -104,8 +104,9 @@ for idFile = 1:length(a_vitalsLogFileList)
                         end
                      end
                   case 'VITALS_CORE'
-                     vitalsCore = data.(fieldName);
-                     
+                     dataVal = data.(fieldName);
+                     vitalsCore = dataVal(:, 2:end);
+
                      if (isfield(o_vitalsData, 'VITALS_CORE'))
                         vitalsCorePrev = o_vitalsData.VITALS_CORE;
                         vitalsCoreNew = [vitalsCorePrev; [vitalsCore(:, 1) ones(size(vitalsCore, 1), 1)*g_decArgo_dateDef vitalsCore(:, 2:end)]];
@@ -114,8 +115,9 @@ for idFile = 1:length(a_vitalsLogFileList)
                      end
                      o_vitalsData.VITALS_CORE = vitalsCoreNew;
                   case 'WD_CNT'
-                     wdCnt = data.(fieldName);
-                     
+                     dataVal = data.(fieldName);
+                     wdCnt = dataVal(:, 2:end);
+
                      if (isfield(o_vitalsData, 'WD_CNT'))
                         wdCntPrev = o_vitalsData.WD_CNT;
                         wdCntNew = [wdCntPrev; [wdCnt(:, 1) ones(size(wdCnt, 1), 1)*g_decArgo_dateDef wdCnt(:, 2:end)]];

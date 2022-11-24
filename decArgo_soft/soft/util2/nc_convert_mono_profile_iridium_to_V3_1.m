@@ -59,7 +59,7 @@ DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_old_
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_20200428\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1\list\nke_old_all_iridium.txt';
@@ -499,7 +499,7 @@ if (doxyAdded)
       idValSciCalibDate = find(strcmp('SCIENTIFIC_CALIB_DATE', inputData(1:2:end)) == 1, 1);
    end
    sciCalibDate = inputData{2*idValSciCalibDate};
-
+   
    parameterNew = repmat(' ', size(parameter, 1), inputNParam, inputNCalib, inputNProf);
    sciCalibEqNew = repmat(' ', size(sciCalibEq, 1), inputNParam, inputNCalib, inputNProf);
    sciCalibCoefNew = repmat(' ', size(sciCalibCoef, 1), inputNParam, inputNCalib, inputNProf);
@@ -569,7 +569,7 @@ if (doxyAdded == 1)
    psalValue = inputMeasData{2*idVal};
    idVal = find(strcmp('MOLAR_DOXY', inputMeasData(1:2:end)) == 1, 1);
    molarDoxyValue = inputMeasData{2*idVal};
-      
+   
    presParam = get_netcdf_param_attributes_3_1('PRES');
    tempParam = get_netcdf_param_attributes_3_1('TEMP');
    psalParam = get_netcdf_param_attributes_3_1('PSAL');
@@ -766,7 +766,7 @@ for idP = 1:length(dataMode)
          if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
             paramStruct = get_netcdf_param_attributes_3_1(paramName);
             idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
-
+            
             paramNameAdj = [paramName '_ADJUSTED'];
             idVal = find(strcmp(paramNameAdj, inputMeasData(1:2:end)) == 1, 1);
             paramAdjValue = inputMeasData{2*idVal};
@@ -835,7 +835,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjValue = inputMeasData{2*idVal};
    paramStruct = get_netcdf_param_attributes_3_1('CNDC');
-
+   
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
@@ -866,7 +866,7 @@ if (~isempty(idVal))
    cndcAdjQc = inputMeasData{2*idVal};
    idValCndcAdjQc = idVal;
    paramStruct = get_netcdf_param_attributes_3_1('CNDC');
-
+   
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
@@ -902,7 +902,7 @@ for idP = 1:length(dataMode)
    end
    tabNbLev(end+1) = nbLev;
 end
-   
+
 for idParam = 1:length(paramlist)
    paramName = paramlist{idParam};
    paramQcName = [paramName '_QC'];
@@ -1007,7 +1007,7 @@ for idProf = 1:nProfDim
    end
 end
 if (firstCalibToDel > 1)
-   nCalibDimClean = firstCalibToDel - 1; 
+   nCalibDimClean = firstCalibToDel - 1;
    parameterClean = repmat(' ', size(parameter, 1), size(parameter, 2), nCalibDimClean);
    scientificCalibEquationClean = repmat(' ', size(scientificCalibEquation, 1), size(scientificCalibEquation, 2), nCalibDimClean);
    scientificCalibCoefficientClean = repmat(' ', size(scientificCalibCoefficient, 1), size(scientificCalibCoefficient, 2), nCalibDimClean);
@@ -1031,7 +1031,7 @@ if (firstCalibToDel > 1)
    inputData{2*idValComment} = scientificCalibCommentClean;
    inputData{2*idValDate} = scientificCalibDateClean;
    inputNCalib = nCalibDimClean;
-
+   
    list = sprintf('%d, ', firstCalibToDel:nCalibDim);
    fprintf('INFO: CALIBRATION information empty for N_CALIB = (%s) - removed (file %s)\n', ...
       list(1:end-2), a_outputFileName);
@@ -1070,7 +1070,7 @@ nParamDimCOutput = 0;
 nParamDimBOutput = 1;
 for idParam = 1:length(paramlist)
    paramStruct = get_netcdf_param_attributes_3_1(paramlist{idParam});
-   if (paramStruct.paramType == 'c')
+   if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
       nParamDimCOutput = nParamDimCOutput + 1;
    else
       nParamDimBOutput = nParamDimBOutput + 1;
@@ -1179,11 +1179,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if (paramStruct.paramType == 'c')
+         if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
             continue
          end
       end
@@ -1205,11 +1205,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+         if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
             continue
          end
       end
@@ -1421,7 +1421,7 @@ for idOutFile = 1:nbOutPutFile
    % store PARAMETER value information
    idVal = find(strcmp('PARAMETER', inputData(1:2:end)) == 1, 1);
    parameterValue = inputData{2*idVal};
-
+   
    % copy of the Input file variables into the Output file
    inputFileNHistory = 0;
    for idVar = 1:length(wantedInputVars)
@@ -1464,11 +1464,11 @@ for idOutFile = 1:nbOutPutFile
                   paramName = strtrim(data);
                   paramStruct = get_netcdf_param_attributes_3_1(paramName);
                   if (idOutFile == 1)
-                     if (paramStruct.paramType ~= 'c')
+                     if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                         continue
                      end
                   else
-                     if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+                     if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                         continue
                      end
                   end
@@ -1496,12 +1496,12 @@ for idOutFile = 1:nbOutPutFile
                      end
                      paramStruct = get_netcdf_param_attributes_3_1(paramName);
                      if (idOutFile == 1)
-                        if (paramStruct.paramType ~= 'c')
+                        if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
                         end
                      else
-                        if ((paramStruct.paramType == 'c') || ...
-                              ((paramStruct.paramType ~= 'c') && (paramStruct.adjAllowed == 0)))
+                        if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j') || ...
+                              ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j') && (paramStruct.adjAllowed == 0)))
                            continue
                         end
                      end
@@ -1606,11 +1606,11 @@ for idOutFile = 1:nbOutPutFile
          paramName = varNameIn(length('PROFILE_')+1:end-length('_QC'));
          paramStruct = get_netcdf_param_attributes_3_1(paramName);
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if (paramStruct.paramType == 'c')
+            if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                continue
             end
          end
@@ -1656,11 +1656,11 @@ for idOutFile = 1:nbOutPutFile
          end
          
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+            if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                continue
             end
          end
@@ -1668,11 +1668,11 @@ for idOutFile = 1:nbOutPutFile
          paramName = varNameIn;
          paramStruct = get_netcdf_param_attributes_3_1(paramName);
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+            if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                continue
             end
          end
@@ -2014,7 +2014,7 @@ if (doxyAdded == 1)
    psalValue = inputMeasData{2*idVal};
    idVal = find(strcmp('MOLAR_DOXY', inputMeasData(1:2:end)) == 1, 1);
    molarDoxyValue = inputMeasData{2*idVal};
-      
+   
    presParam = get_netcdf_param_attributes_3_1('PRES');
    tempParam = get_netcdf_param_attributes_3_1('TEMP');
    psalParam = get_netcdf_param_attributes_3_1('PSAL');
@@ -2047,8 +2047,8 @@ if (doxyAdded == 1)
    idValDoxy = find(strcmp('DOXY', inputMeasData(1:2:end)) == 1, 1);
    inputMeasData{2*idValDoxy} = doxyValue;
    
-%    idValProfileDoxyQc = find(strcmp('PROFILE_DOXY_QC', inputMeasData(1:2:end)) == 1, 1);
-%    inputMeasData{2*idValProfileDoxyQc} = repmat(g_decArgo_qcStrDef, size(presValue, 2), 1);
+   %    idValProfileDoxyQc = find(strcmp('PROFILE_DOXY_QC', inputMeasData(1:2:end)) == 1, 1);
+   %    inputMeasData{2*idValProfileDoxyQc} = repmat(g_decArgo_qcStrDef, size(presValue, 2), 1);
    
    idValDoxyQc = find(strcmp('DOXY_QC', inputMeasData(1:2:end)) == 1, 1);
    inputMeasData{2*idValDoxyQc} = doxyQcValue;
@@ -2211,7 +2211,7 @@ for idP = 1:length(dataMode)
          if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
             paramStruct = get_netcdf_param_attributes_3_1(paramName);
             idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
-
+            
             paramNameAdj = [paramName '_ADJUSTED'];
             idVal = find(strcmp(paramNameAdj, inputMeasData(1:2:end)) == 1, 1);
             paramAdjValue = inputMeasData{2*idVal};
@@ -2280,7 +2280,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjValue = inputMeasData{2*idVal};
    paramStruct = get_netcdf_param_attributes_3_1('CNDC');
-
+   
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
@@ -2311,7 +2311,7 @@ if (~isempty(idVal))
    cndcAdjQc = inputMeasData{2*idVal};
    idValCndcAdjQc = idVal;
    paramStruct = get_netcdf_param_attributes_3_1('CNDC');
-
+   
    corDone = 0;
    for idP = 1:length(dataMode)
       if (dataMode(idP) == 'D')
@@ -2347,7 +2347,7 @@ for idP = 1:length(dataMode)
    end
    tabNbLev(end+1) = nbLev;
 end
-   
+
 for idParam = 1:length(paramlist)
    paramName = paramlist{idParam};
    paramQcName = [paramName '_QC'];
@@ -2597,7 +2597,7 @@ for idProf = 1:nProfDim
    end
 end
 if (firstCalibToDel > 1)
-   nCalibDimClean = firstCalibToDel - 1; 
+   nCalibDimClean = firstCalibToDel - 1;
    parameterClean = repmat(' ', size(parameter, 1), size(parameter, 2), nCalibDimClean);
    scientificCalibEquationClean = repmat(' ', size(scientificCalibEquation, 1), size(scientificCalibEquation, 2), nCalibDimClean);
    scientificCalibCoefficientClean = repmat(' ', size(scientificCalibCoefficient, 1), size(scientificCalibCoefficient, 2), nCalibDimClean);
@@ -2621,7 +2621,7 @@ if (firstCalibToDel > 1)
    inputData{2*idValComment} = scientificCalibCommentClean;
    inputData{2*idValDate} = scientificCalibDateClean;
    inputNCalib = nCalibDimClean;
-
+   
    list = sprintf('%d, ', firstCalibToDel:nCalibDim);
    fprintf('INFO: CALIBRATION information empty for N_CALIB = (%s) - removed (file %s)\n', ...
       list(1:end-2), a_outputFileName);
@@ -2669,7 +2669,7 @@ if (doxyAdded)
       idValSciCalibDate = find(strcmp('SCIENTIFIC_CALIB_DATE', inputData(1:2:end)) == 1, 1);
    end
    sciCalibDate = inputData{2*idValSciCalibDate};
-
+   
    parameterNew = repmat(' ', size(parameter, 1), inputNParam, inputNCalib, inputNProf);
    sciCalibEqNew = repmat(' ', size(sciCalibEq, 1), inputNParam, inputNCalib, inputNProf);
    sciCalibCoefNew = repmat(' ', size(sciCalibCoef, 1), inputNParam, inputNCalib, inputNProf);
@@ -2711,7 +2711,7 @@ nParamDimCOutput = 0;
 nParamDimBOutput = 1;
 for idParam = 1:length(paramlist)
    paramStruct = get_netcdf_param_attributes_3_1(paramlist{idParam});
-   if (paramStruct.paramType == 'c')
+   if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
       nParamDimCOutput = nParamDimCOutput + 1;
    else
       nParamDimBOutput = nParamDimBOutput + 1;
@@ -2757,7 +2757,7 @@ for idOutFile = 1:nbOutPutFile
       [pathstr, name, ext] = fileparts(a_outputFileName);
       outputFileName = [pathstr 'B' name ext];
    end
-
+   
    % create the Output file with the updated schema
    if (exist(outputFileName, 'file') == 2)
       delete(outputFileName);
@@ -2768,7 +2768,7 @@ for idOutFile = 1:nbOutPutFile
       end
    end
    ncwriteschema(outputFileName, refFileSchema(1));
-
+   
    % open the Output file to update the schema with the parameter variables
    fCdf = netcdf.open(outputFileName, 'NC_WRITE');
    if (isempty(fCdf))
@@ -2812,7 +2812,7 @@ for idOutFile = 1:nbOutPutFile
    % retrieve the Ids of the dimensions associated with the parameter variables
    nProfDimId = netcdf.inqDimID(fCdf, 'N_PROF');
    nLevelsDimId = netcdf.inqDimID(fCdf, 'N_LEVELS');
-
+   
    % create the variables on global quality of parameter profile
    for idParam = 1:length(paramlist)
       
@@ -2820,11 +2820,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if (paramStruct.paramType == 'c')
+         if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
             continue
          end
       end
@@ -2838,7 +2838,7 @@ for idOutFile = 1:nbOutPutFile
          netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
       end
    end
-
+   
    % create the parameter variables
    for idParam = 1:length(paramlist)
       
@@ -2846,11 +2846,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+         if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
             continue
          end
       end
@@ -3001,9 +3001,9 @@ for idOutFile = 1:nbOutPutFile
          end
       end
    end
-
+   
    netcdf.close(fCdf);
-      
+   
    % update the schema #2 with the Input file dimensions
    refFileSchema(2) = update_dim_in_nc_schema(refFileSchema(2), ...
       'N_PROF', outputNProf);
@@ -3018,10 +3018,10 @@ for idOutFile = 1:nbOutPutFile
       'N_CALIB', inputNCalib);
    refFileSchema(2) = update_dim_in_nc_schema(refFileSchema(2), ...
       'N_LEVELS', outputNLevels);
-
+   
    % update the Output file with the schema
    ncwriteschema(outputFileName, refFileSchema(2));
-
+   
    % open the Output file to add the data
    fCdf = netcdf.open(outputFileName, 'NC_WRITE');
    if (isempty(fCdf))
@@ -3038,7 +3038,7 @@ for idOutFile = 1:nbOutPutFile
    if (var_is_present_dec_argo(fCdf, 'DATA_TYPE'))
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_TYPE'), 0, length(dataType), dataType);
    end
-      
+   
    % list of variables without N_PROF dimension
    list1InputVars = [ ...
       %       {'DATA_TYPE'} ...
@@ -3066,7 +3066,7 @@ for idOutFile = 1:nbOutPutFile
             varNameOut);
       end
    end
-
+   
    % list of variables with N_PROF dimension
    
    % all meta-data variables (list metaVarList) are with N_PROF dimension
@@ -3101,7 +3101,7 @@ for idOutFile = 1:nbOutPutFile
             varName);
       end
    end
-
+   
    % list of variables with N_PROF dimension
    list2InputVars = [ ...
       {'PLATFORM_NUMBER'} ...
@@ -3151,11 +3151,11 @@ for idOutFile = 1:nbOutPutFile
          {'SCIENTIFIC_CALIB_DATE'} ...
          ];
    end
-
+   
    % store PARAMETER value information
    idVal = find(strcmp('PARAMETER', inputData(1:2:end)) == 1, 1);
    parameterValue = inputData{2*idVal};
-                     
+   
    % copy of the list2 Input file variables into the Output file
    for idVar = 1:length(list2InputVars)
       
@@ -3195,11 +3195,11 @@ for idOutFile = 1:nbOutPutFile
                      paramName = strtrim(data);
                      paramStruct = get_netcdf_param_attributes_3_1(paramName);
                      if (idOutFile == 1)
-                        if (paramStruct.paramType ~= 'c')
+                        if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
                         end
                      else
-                        if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+                        if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                            continue
                         end
                      end
@@ -3227,12 +3227,12 @@ for idOutFile = 1:nbOutPutFile
                         end
                         paramStruct = get_netcdf_param_attributes_3_1(paramName);
                         if (idOutFile == 1)
-                           if (paramStruct.paramType ~= 'c')
+                           if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                               continue
                            end
                         else
-                           if ((paramStruct.paramType == 'c') || ...
-                                 ((paramStruct.paramType ~= 'c') && (paramStruct.adjAllowed == 0)))
+                           if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j') || ...
+                                 ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j') && (paramStruct.adjAllowed == 0)))
                               continue
                            end
                         end
@@ -3327,11 +3327,11 @@ for idOutFile = 1:nbOutPutFile
                      paramName = strtrim(data);
                      paramStruct = get_netcdf_param_attributes_3_1(paramName);
                      if (idOutFile == 1)
-                        if (paramStruct.paramType ~= 'c')
+                        if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
                         end
                      else
-                        if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+                        if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                            continue
                         end
                      end
@@ -3359,12 +3359,12 @@ for idOutFile = 1:nbOutPutFile
                         end
                         paramStruct = get_netcdf_param_attributes_3_1(paramName);
                         if (idOutFile == 1)
-                           if (paramStruct.paramType ~= 'c')
+                           if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                               continue
                            end
                         else
-                           if ((paramStruct.paramType == 'c') || ...
-                                 ((paramStruct.paramType ~= 'c') && (paramStruct.adjAllowed == 0)))
+                           if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j') || ...
+                                 ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j') && (paramStruct.adjAllowed == 0)))
                               continue
                            end
                         end
@@ -3427,7 +3427,7 @@ for idOutFile = 1:nbOutPutFile
             varNameOut);
       end
    end
-
+   
    % copy of the measurements into the Output file
    sufixList = [{''} {'_QC'} {'_ADJUSTED'} {'_ADJUSTED_QC'} {'_ADJUSTED_ERROR'}];
    for idParam = 1:length(paramForProf)
@@ -3508,11 +3508,11 @@ for idOutFile = 1:nbOutPutFile
             end
          else
             if (idOutFile == 1)
-               if (paramStruct.paramType ~= 'c')
+               if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                   continue
                end
             else
-               if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+               if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                   continue
                end
             end
@@ -3526,7 +3526,7 @@ for idOutFile = 1:nbOutPutFile
          end
       end
    end
-
+   
    % fill the PARAMETER_DATA_MODE variable
    if (idOutFile == 2)
       if (var_is_present_dec_argo(fCdf, 'PARAMETER_DATA_MODE'))
@@ -3608,7 +3608,7 @@ for idOutFile = 1:nbOutPutFile
          fliplr([currentHistoId idProf-1 0]), ...
          fliplr([1 1 length(value)]), value');
    end
-
+   
    % update the format version of the Output file
    valueStr = '3.1';
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'), 0, length(valueStr), valueStr);
@@ -4023,7 +4023,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -4438,8 +4438,8 @@ if (exist(a_ncPathFileName, 'file') == 2)
          varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
          o_ncData = [o_ncData {varName} {varValue}];
       else
-%          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-%             varName, a_ncPathFileName);
+         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
+         %             varName, a_ncPathFileName);
          o_ncData = [o_ncData {varName} {''}];
       end
       
@@ -4516,14 +4516,14 @@ return
 % ------------------------------------------------------------------------------
 function [o_doxyValues] = compute_DOXY( ...
    a_molarDoxyValues, a_presValues, a_tempValues, a_salValues)
-  
+
 % output parameters initialization
 o_doxyValues = [];
 
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 g_decArgo_calibInfo.OPTODE.DoxyCalibRefSalinity = 0;
-   
+
 
 % compute DOXY
 [o_doxyValues] = compute_DOXY_4_19_25(a_molarDoxyValues, ...

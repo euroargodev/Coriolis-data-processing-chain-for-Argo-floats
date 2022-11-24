@@ -37,7 +37,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformFamily = 'FLOAT';
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 301}
       % PROVOR CTS4
       o_platformFamily = 'FLOAT';
       
@@ -49,15 +49,15 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
-   case {205, 204, 210, 211, 212, 222, 223, 224}
+   case {205, 204, 210, 211, 212, 222, 224}
       % ARVOR Iridium
       o_platformFamily = 'FLOAT';
       
-   case {206, 207, 208, 209, 213, 214}
+   case {206, 207, 208, 209, 213, 214, 225}
       % Provor-DO Iridium
       o_platformFamily = 'FLOAT';
             
-   case {217}
+   case {217, 223}
       % Arvor-DO Iridium
       o_platformFamily = 'FLOAT';
             

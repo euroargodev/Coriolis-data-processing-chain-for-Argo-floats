@@ -37,7 +37,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\POPSTAR\IN\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\6903703\6903703_recup\mails_OUT\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 
 % create and start log file recording

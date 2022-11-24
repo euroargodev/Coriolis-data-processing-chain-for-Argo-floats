@@ -29,6 +29,7 @@ DIR_INPUT_BASE_NC_FILES = 'E:\archive_201505\coriolis\selected\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\OLD\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\BASE\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\GDAC\coriolis\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\DIR_INPUT_OLD_NC_FILES\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\users\RNU\Argo\work\nc_output_decPrv_argos_sans_EOL\';
@@ -38,6 +39,7 @@ DIR_INPUT_NEW_NC_FILES = 'E:\archive_201510\201510-ArgoData\DATA\coriolis\select
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\TMP\NEW\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20201104\WORK\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_COPY\OUT\';
 
 
 % directory to store the log and the csv files
@@ -150,10 +152,16 @@ for idFloat = 1:nbFloats
    [descCyNumBase, descProfNumBase, descProfDateBase, descProfLocDateBase, ...
       ascCyNumBase, ascProfNumBase, ascProfDateBase, ascProfLocDateBase] = ...
       get_nc_profile_dates(DIR_INPUT_BASE_NC_FILES, floatNum, 'Base');
+   if (isempty(descCyNumBase))
+      continue
+   end
 
    [descCyNumNew, descProfNumNew, descProfDateNew, descProfLocDateNew, ...
       ascCyNumNew, ascProfNumNew, ascProfDateNew, ascProfLocDateNew] = ...
       get_nc_profile_dates(DIR_INPUT_NEW_NC_FILES, floatNum, 'New');
+   if (isempty(descCyNumNew))
+      continue
+   end
    
    % only dated profiles are used
    idNotDated = find(descProfDateBase == g_dateDef);
@@ -1051,6 +1059,7 @@ end
 if (isempty(monoProfFiles))
    fprintf('WARNING: no mono-profile %s file for float #%d\n', ...
       a_commentStr, a_floatNum);
+   return
 end
 
 % output parameters

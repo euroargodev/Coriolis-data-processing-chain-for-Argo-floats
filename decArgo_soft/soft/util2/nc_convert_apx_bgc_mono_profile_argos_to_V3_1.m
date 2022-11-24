@@ -60,7 +60,7 @@ DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\OUT_20200428\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_bgc_all.txt';
@@ -197,7 +197,7 @@ for idFloat = 1:nbFloats
    g_cofc_tempAdjErrValue = [];
    g_cofc_cndcAdjErrValue = [];
    g_cofc_psalAdjErrValue = [];
-
+   
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
    
@@ -606,7 +606,7 @@ for idParam = 1:length(paramlist)
          paramNameBis = 'CHLA';
       end
       paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
-      if (paramStruct.paramType == 'c')
+      if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
          wantedInputMeasCVars = [ ...
             wantedInputMeasCVars ...
             {profParamQcName} ...
@@ -924,7 +924,7 @@ if (doxyAdded == 1)
          % compute DOXY
          
          % we need profile location for get_meas_location function
-
+         
          idVal = find(strcmp('LATITUDE', inputData(1:2:end)) == 1, 1);
          latitude = inputData{2*idVal};
          idVal = find(strcmp('LONGITUDE', inputData(1:2:end)) == 1, 1);
@@ -1145,7 +1145,7 @@ for idP = 1:length(dataMode)
             paramNameBis = 'CHLA';
          end
          paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
          
@@ -1443,7 +1443,7 @@ for idParam = 1:length(paramlist)
       paramNameOriBis = 'CHLA';
    end
    paramInfo = get_netcdf_param_attributes_3_1(paramNameOriBis);
-   if (paramInfo.paramType ~= 'c')
+   if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
       continue
    end
    idVal = find(strcmp(paramNameOri, inputMeasCData(1:2:end)) == 1, 1);
@@ -1483,7 +1483,7 @@ for idParam = 1:length(paramlist)
       paramNameOriBis = 'CHLA';
    end
    paramInfo = get_netcdf_param_attributes_3_1(paramNameOriBis);
-   if (paramInfo.paramType ~= 'c')
+   if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
       continue
    end
    idVal = find(strcmp(paramNameOri, inputMeasCData(1:2:end)) == 1, 1);
@@ -1537,11 +1537,11 @@ for idOutFile = 1:2
          end
          paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if (paramStruct.paramType == 'c')
+            if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                continue
             end
          end
@@ -1563,11 +1563,11 @@ for idOutFile = 1:2
       paramAdjQcName = [paramName '_ADJUSTED_QC'];
       paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if (paramStruct.paramType == 'c')
+         if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
             continue
          end
       end
@@ -1667,7 +1667,7 @@ if (~isempty(a_ncToDepLinkData))
       
       % DEP cycle number
       depCyNum = a_ncToDepLinkData(idF, 3);
-            
+      
       DIFF_MIN_JULD_HOURS = 24;
       DIFF_MIN_POS_METERS = 500;
       
@@ -1876,7 +1876,7 @@ nParamDimCOutput = 0;
 nParamDimBOutput = 1;
 for idParam = 1:length(paramlist)
    paramStruct = get_netcdf_param_attributes_3_1(paramlist{idParam});
-   if (paramStruct.paramType == 'c')
+   if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
       nParamDimCOutput = nParamDimCOutput + 1;
    else
       nParamDimBOutput = nParamDimBOutput + 1;
@@ -1989,11 +1989,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if (paramStruct.paramType == 'c')
+         if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
             continue
          end
       end
@@ -2015,11 +2015,11 @@ for idOutFile = 1:nbOutPutFile
       paramStruct = get_netcdf_param_attributes_3_1(paramName);
       
       if (idOutFile == 1)
-         if (paramStruct.paramType ~= 'c')
+         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
             continue
          end
       else
-         if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+         if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
             continue
          end
       end
@@ -2285,11 +2285,11 @@ for idOutFile = 1:nbOutPutFile
                   end
                   paramStruct = get_netcdf_param_attributes_3_1(paramName);
                   if (idOutFile == 1)
-                     if (paramStruct.paramType ~= 'c')
+                     if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                         continue
                      end
                   else
-                     if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+                     if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                         continue
                      end
                   end
@@ -2320,12 +2320,12 @@ for idOutFile = 1:nbOutPutFile
                      end
                      paramStruct = get_netcdf_param_attributes_3_1(paramName);
                      if (idOutFile == 1)
-                        if (paramStruct.paramType ~= 'c')
+                        if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
                         end
                      else
-                        if ((paramStruct.paramType == 'c') || ...
-                              ((paramStruct.paramType ~= 'c') && (paramStruct.adjAllowed == 0)))
+                        if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j') || ...
+                              ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j') && (paramStruct.adjAllowed == 0)))
                            continue
                         end
                      end
@@ -2456,11 +2456,11 @@ for idOutFile = 1:nbOutPutFile
          end
          paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if (paramStruct.paramType == 'c')
+            if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                continue
             end
          end
@@ -2522,11 +2522,11 @@ for idOutFile = 1:nbOutPutFile
          end
          
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+            if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                continue
             end
          end
@@ -2538,11 +2538,11 @@ for idOutFile = 1:nbOutPutFile
          end
          paramStruct = get_netcdf_param_attributes_3_1(paramNameBis);
          if (idOutFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if ((paramStruct.paramType == 'c') && (~strcmp(paramName, 'PRES')))
+            if (((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j')) && (~strcmp(paramName, 'PRES')))
                continue
             end
          end

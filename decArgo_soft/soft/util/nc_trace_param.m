@@ -217,14 +217,14 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
    paramPres = get_netcdf_param_attributes_3_1('PRES');
    param1Struct = get_netcdf_param_attributes_3_1(g_NTP_NAME_PARAM1);
    g_NTP_UNITS_PARAM1 = param1Struct.units;
-   if (param1Struct.paramType == 'c')
+   if ((param1Struct.paramType == 'c') || (param1Struct.paramType == 'j'))
       param1File = 'c';
    else
       param1File = 'b';
    end
    param2Struct = get_netcdf_param_attributes_3_1(g_NTP_NAME_PARAM2);
    g_NTP_UNITS_PARAM2 = param2Struct.units;
-   if (param2Struct.paramType == 'c')
+   if ((param2Struct.paramType == 'c') || (param2Struct.paramType == 'j'))
       param2File = 'c';
    else
       param2File = 'b';

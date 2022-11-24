@@ -34,7 +34,7 @@
 %         #1- from Argo Quality Control Manual V2.9.1: Please note that whenever
 %             PARAM_ADJUSTED_QC = ‘4’, both PARAM_ADJUSTED and
 %             PARAM_ADJUSTED_ERROR should be set to FillValue
-%         #2- if PRES_QC = '0' set PRES_QC = '1' 
+%         #2- if PRES_QC = '0' set PRES_QC = '1'
 %   06/08/2015 - RNU - V 2.4:
 %      - 1 bug in number of input DM parameters => the SCIENTIFIC_CALIB_* are
 %        not copied for some parameters (the last one of the DM input file)
@@ -78,11 +78,11 @@
 %      - if JULD > DATE_CREATION set DATE_CREATION = JULD
 %   10/04/2015 - RNU - V 2.9:
 %      Correction #10: 'on the fly' correction of output DM data.
-%      - if PSAL ~= fillValue and PSAL_ADJUSTED == fillValue 
+%      - if PSAL ~= fillValue and PSAL_ADJUSTED == fillValue
 %        then PSAL_ADJUSTED_QC = '4'
 %   03/01/2016 - RNU - V 3.0:
 %      Correction #11: 'on the fly' correction of output DM data.
-%      - if <PARAM>_QC = fillValue and PSAL_ADJUSTED == fillValue 
+%      - if <PARAM>_QC = fillValue and PSAL_ADJUSTED == fillValue
 %        then PSAL_ADJUSTED_QC = '4'
 %   11/20/2018 - RNU - V 3.1:
 %      Correction #12: 'on the fly' correction of output DM data.
@@ -132,7 +132,7 @@ DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_ir_in_3.1\';
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test\output\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % default list of floats to process
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_071412.txt';
@@ -228,7 +228,7 @@ for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-      
+   
    dmInFloatPath = [DIR_INPUT_DM_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
    rtInFloatPath = [DIR_INPUT_RT_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
    dmOutFloatPath = [DIR_OUTPUT_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
@@ -466,7 +466,7 @@ end
 % output file
 
 % N_PROF and N_LEVELS dimensions
-   
+
 % retrieve PRES measurements from Input DM file
 primaryProfInOutput = 1;
 idVal = find(strcmp('PRES', inputDmData(1:2:end)) == 1, 1);
@@ -483,7 +483,7 @@ else
    nParamDimBOutput = 1;
    for idP = 1:length(inputDmParamList)
       param = get_netcdf_param_attributes_3_1(inputDmParamList{idP});
-      if (param.paramType == 'c')
+      if ((param.paramType == 'c') || (param.paramType == 'j'))
          nParamDimCOutput = nParamDimCOutput + 1;
       else
          nParamDimBOutput = nParamDimBOutput + 1;
@@ -780,7 +780,7 @@ end
 [inputRtCData] = get_data_from_nc_file(a_inputRtCFileName, wantedInputVars);
 
 if (a_bFileFlag == 1)
-
+   
    % retrieve information from input RT B file
    wantedInputVars = [ ...
       {'DATA_TYPE'} ...
@@ -1269,11 +1269,11 @@ for idFile = 1:nbOutputFiles
                         if (~strcmp(param, 'PRES'))
                            paramStruct = get_netcdf_param_attributes_3_1(param);
                            if (idFile == 1)
-                              if (paramStruct.paramType ~= 'c')
+                              if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                                  continue
                               end
                            else
-                              if (paramStruct.paramType == 'c')
+                              if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                                  continue
                               end
                            end
@@ -1289,7 +1289,7 @@ for idFile = 1:nbOutputFiles
                            fliplr([1 1 1 length(data)]), data');
                      end
                   end
-
+                  
                elseif (strncmp(varNameOut, 'HISTORY_', length('HISTORY_')))
                   
                   % variables with a (N_HISTORY, N_PROF, STRING) or (N_HISTORY, N_PROF) dimension
@@ -1401,11 +1401,11 @@ for idFile = 1:nbOutputFiles
                         if (~strcmp(param, 'PRES'))
                            paramStruct = get_netcdf_param_attributes_3_1(param);
                            if (idFile == 1)
-                              if (paramStruct.paramType ~= 'c')
+                              if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                                  continue
                               end
                            else
-                              if (paramStruct.paramType == 'c')
+                              if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                                  continue
                               end
                            end
@@ -1522,7 +1522,7 @@ for idFile = 1:nbOutputFiles
    end
    
    % correction #9:
-   % if JULD > DATE_CREATION set DATE_CREATION = JULD 
+   % if JULD > DATE_CREATION set DATE_CREATION = JULD
    if (var_is_present(fCdf, 'DATE_CREATION') && ...
          var_is_present(fCdf, 'JULD'))
       dateCreation = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
@@ -1539,7 +1539,7 @@ for idFile = 1:nbOutputFiles
             dateCreation, julian_2_gregorian_dec_argo(julDateCreationNew), outputFileName);
       end
    end
-
+   
    if (idFile == 2)
       
       % retrieve parameter of RT input file (same as DM output file) used to
@@ -1560,7 +1560,7 @@ for idFile = 1:nbOutputFiles
             outputStationParameters{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
          end
       end
-   end   
+   end
    
    % copy of the DM input measurements into the DM output file
    sufixList = [{''} {'_QC'} {'_ADJUSTED'} {'_ADJUSTED_QC'} {'_ADJUSTED_ERROR'}];
@@ -1570,11 +1570,11 @@ for idFile = 1:nbOutputFiles
       if (~strcmp(paramNamePrefix, 'PRES'))
          paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
          if (idFile == 1)
-            if (paramStruct.paramType ~= 'c')
+            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
             end
          else
-            if (paramStruct.paramType == 'c')
+            if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                continue
             end
          end
@@ -1594,7 +1594,7 @@ for idFile = 1:nbOutputFiles
                continue
             end
          end
-                  
+         
          paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
          if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
             continue
@@ -1738,7 +1738,7 @@ for idFile = 1:nbOutputFiles
                   end
                end
             end
-
+            
             % input DM data correction #6
             % if <PARAM>_ADJUSTED = fillValue and <PARAM>_QC ~= ' ' and
             % <PARAM>_QC ~= '9' and <PARAM>_QC ~= '4'
@@ -1922,11 +1922,11 @@ for idFile = 1:nbOutputFiles
          if (~strcmp(paramNamePrefix, 'PRES'))
             paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
             if (idFile == 1)
-               if (paramStruct.paramType ~= 'c')
+               if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                   continue
                end
             else
-               if (paramStruct.paramType == 'c')
+               if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
                   continue
                end
             end
@@ -2002,13 +2002,13 @@ for idFile = 1:nbOutputFiles
          end
       end
    end
-
+   
    if (idFile == 2)
       % when MOLAR_DOXY is missing, we try to recover it from RT input file (the
       % corresponding levels is recognized using PRES TEMP and PSAL values)
       molarDoxyAdded = 0;
       if (~isempty(find(strcmp('MOLAR_DOXY', inputDmMissingParamList) ==1, 1)))
-
+         
          % retrieve measurements from input RT C file
          wantedInputVars = [ ...
             {'PRES'} ...
@@ -2023,7 +2023,7 @@ for idFile = 1:nbOutputFiles
          tempInputCMeas = inputRtCMeas{2*idVal};
          idVal = find(strcmp('PSAL', inputRtCMeas(1:2:end)) == 1, 1);
          psalInputCMeas = inputRtCMeas{2*idVal};
-
+         
          % retrieve measurements from input RT B file
          wantedInputVars = [ ...
             {'MOLAR_DOXY'} ...
@@ -2032,7 +2032,7 @@ for idFile = 1:nbOutputFiles
          
          idVal = find(strcmp('MOLAR_DOXY', inputRtBMeas(1:2:end)) == 1, 1);
          molarDoxyInputBMeas = inputRtBMeas{2*idVal};
-
+         
          % retrieve measurements from output DM C file
          wantedInputVars = [ ...
             {'PRES'} ...
@@ -2047,7 +2047,7 @@ for idFile = 1:nbOutputFiles
          tempOutputCMeas = ouputDmCMeas{2*idVal};
          idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
          psalOutputCMeas = ouputDmCMeas{2*idVal};
-
+         
          presParam = get_netcdf_param_attributes_3_1('PRES');
          tempParam = get_netcdf_param_attributes_3_1('TEMP');
          psalParam = get_netcdf_param_attributes_3_1('PSAL');
@@ -2095,7 +2095,7 @@ for idFile = 1:nbOutputFiles
                % update PARAMETER_DATA_MODE
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
                   fliplr([idProf-1 idF-1]), 'R');
-
+               
                fprintf('INFO: MOLAR_DOXY data added in DM output file for profile #%d\n', ...
                   idProf);
                molarDoxyAdded = 1;
@@ -2127,7 +2127,7 @@ for idFile = 1:nbOutputFiles
          psalOutputCMeas = ouputDmCMeas{2*idVal};
          
          molarDoxyOutputBMeas = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'));
-
+         
          presParam = get_netcdf_param_attributes_3_1('PRES');
          tempParam = get_netcdf_param_attributes_3_1('TEMP');
          psalParam = get_netcdf_param_attributes_3_1('PSAL');
@@ -2191,8 +2191,8 @@ for idFile = 1:nbOutputFiles
          else
             fprintf('@#@%d@%s@ @DOXY added\n', ...
                a_floatNum, fileName);
-         end            
-      end      
+         end
+      end
    end
    
    % add history information that concerns the current program
@@ -2255,7 +2255,7 @@ return
 function [o_doxyValues] = compute_DOXY(a_floatNum, ...
    a_jsonFloatInfoDirName, a_jsonFloatMetaDirName, ...
    a_molarDoxyValues, a_presValues, a_tempValues, a_salValues)
-  
+
 % output parameters initialization
 o_doxyValues = [];
 
@@ -2315,7 +2315,7 @@ if ((floatDecId == 4) || (floatDecId == 19))
          end
       end
    end
-
+   
    if (isempty(g_decArgo_calibInfo))
       fprintf('WARNING: Float #%d: DOXY calibration coefficients are missing in the Json meta-data file: %s\n', ...
          a_floatNum, ...
@@ -2333,11 +2333,11 @@ if ((floatDecId == 4) || (floatDecId == 19))
    
    % default values initialization
    init_default_values;
-
+   
    % compute DOXY
    [o_doxyValues] = compute_DOXY_4_19_25(a_molarDoxyValues, ...
       a_presValues, a_tempValues, a_salValues);
-
+   
 else
    
    fprintf('WARNING: Float #%d: DOXY processing not implemented yet for decId #%d\n', ...
@@ -2374,7 +2374,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_cutOffPresVal, o_cutOffPresCy] = get_cutoff_pres(a_floatNum, ...
    a_jsonFloatInfoDirName, a_jsonFloatMetaDirName, a_rtNcDirName)
-  
+
 % output parameters initialization
 o_cutOffPresVal = [];
 o_cutOffPresCy = [];
@@ -2550,7 +2550,7 @@ else
          fprintf('WARNING: Float #%d: Unable to find the nc TECH file of this float\n', ...
             a_floatNum);
       end
-   end  
+   end
 end
 
 return

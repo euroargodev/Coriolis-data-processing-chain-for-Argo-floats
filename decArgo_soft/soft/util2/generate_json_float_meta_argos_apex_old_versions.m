@@ -42,7 +42,7 @@ apexDpfFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersion
 metaDataFile = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\misc_info\andro_meta_data\CorrectedMetadata_20140813.txt';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 global g_decArgo_janFirst1950InMatlab;
 

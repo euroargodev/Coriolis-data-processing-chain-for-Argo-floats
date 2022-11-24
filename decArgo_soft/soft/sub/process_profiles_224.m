@@ -271,19 +271,7 @@ for idProf = 1:2
          profStruct.configMissionNumber = configMissionNumber;
       end
       
-      % TEMPORARY-START (waiting for TEMP_CNDC in checker)
-      
-      profStructAux = profStruct;
-      profStruct.paramList(4) = [];
-      profStruct.data(:, 4) = [];
-      
-      profStructAux.paramList([2 3]) = [];
-      profStructAux.data(:, [2 3]) = [];
-      profStructAux.sensorNumber = profStructAux.sensorNumber + 1000; % to go to PROF_AUX
-      
-      % TEMPORARY-END (waiting for TEMP_CNDC in checker)
-
-      o_tabProfiles = [o_tabProfiles profStruct profStructAux];
+      o_tabProfiles = [o_tabProfiles profStruct];
    end
 end
 

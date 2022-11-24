@@ -26,9 +26,10 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Expo
 dataBaseFileName = 'C:\Users\jprannou\Downloads\new_iridium_meta.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_RBR_6903075_6903076.txt';
+% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_Provor5.76_20210311.txt';
 
 % directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -327,7 +328,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 223}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 223, 225}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -484,18 +485,36 @@ o_predCalibEquation = [];
 o_predCalibCoefficient = [];
 o_predCalibComment = [];
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeIridiumRbr;
+
+
 switch a_inputSensorName
    case  'CTD'
-      o_paramName = [ ...
-         {'PRES'} {'TEMP'} {'PSAL'} ...
-         ];
-      o_paramDimLevel = [1 2 3];
-      o_paramSensor = [ ...
-         {'CTD_PRES'} {'CTD_TEMP'} {'CTD_CNDC'} ...
-         ];
-      o_paramUnits = [ ...
-         {'decibar'} {'degree_Celsius'} {'psu'} ...
-         ];
+      if (~ismember(a_decId, g_decArgo_decoderIdListNkeIridiumRbr))
+         o_paramName = [ ...
+            {'PRES'} {'TEMP'} {'PSAL'} ...
+            ];
+         o_paramDimLevel = [1 2 3];
+         o_paramSensor = [ ...
+            {'CTD_PRES'} {'CTD_TEMP'} {'CTD_CNDC'} ...
+            ];
+         o_paramUnits = [ ...
+            {'decibar'} {'degree_Celsius'} {'psu'} ...
+            ];
+      else
+         % RBR
+         o_paramName = [ ...
+            {'PRES'} {'TEMP'} {'PSAL'} {'TEMP_CNDC'} ...
+            ];
+         o_paramDimLevel = [1 2 3 4];
+         o_paramSensor = [ ...
+            {'CTD_PRES'} {'CTD_TEMP'} {'CTD_CNDC'} {'CTD_CNDC'} ...
+            ];
+         o_paramUnits = [ ...
+            {'decibar'} {'degree_Celsius'} {'psu'}  {'degree_Celsius'} ...
+            ];
+      end
       
    case 'OPTODE'
       
@@ -540,7 +559,7 @@ switch a_inputSensorName
                {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} ...
                ];
             
-         case {213, 214, 215, 216, 217, 218, 221, 223}
+         case {213, 214, 215, 216, 217, 218, 221, 223, 225}
             
             o_paramName = [ ...
                {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...

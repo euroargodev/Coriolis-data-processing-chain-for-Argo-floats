@@ -24,10 +24,10 @@ function extract_conf_tech_apx_ir_sbd(varargin)
 DIR_INPUT_IR_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_IR\APEX_IR_SBD\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % directory to store the output csv files
-DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

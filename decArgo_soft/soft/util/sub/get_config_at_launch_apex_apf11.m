@@ -315,6 +315,79 @@ while (1)
       o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
          start stop interval count];
       
+   elseif (strncmpi(line, 'LISTEN', length('LISTEN')))
+      
+      sampType = 'LISTEN';
+      if (~isfield(o_confData.(phase), sampType))
+         o_confData.(phase).(sampType) = [];
+      end
+      
+      % default values
+      startDayTime = 0;
+      duration = 120;
+      
+      info = textscan(line, '%s');
+      info = info{:};
+      
+      if (~strcmpi(info{1}, 'LISTEN'))
+         fprintf('ERROR: Inconsistent data line #%d of file: %s\n', lineNum, a_filePathName);
+         return
+      end
+            
+      sensor = info{2};
+      if (~isfield(o_confData.(phase).(sampType), sensor))
+         o_confData.(phase).(sampType).(sensor) = [];
+      end
+            
+      if (length(info) >= 3)
+         startDayTime = str2num(info{3});
+      end
+      if (length(info) >= 4)
+         duration = str2num(info{4});
+      end
+      
+      o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
+         startDayTime duration];
+      
+   elseif (strncmpi(line, 'POWER', length('POWER')))
+      
+      sampType = 'POWER';
+      if (~isfield(o_confData.(phase), sampType))
+         o_confData.(phase).(sampType) = [];
+      end
+      
+      % default values
+      start = -1;
+      stop = -1;
+      
+      info = textscan(line, '%s');
+      info = info{:};
+      
+      if (~strcmpi(info{1}, 'POWER'))
+         fprintf('ERROR: Inconsistent data line #%d of file: %s\n', lineNum, a_filePathName);
+         return
+      end
+            
+      sensor = info{2};
+      if (~isfield(o_confData.(phase).(sampType), sensor))
+         o_confData.(phase).(sampType).(sensor) = [];
+      end
+            
+      if (length(info) >= 3)
+         start = str2num(info{3});
+      end
+      if (length(info) >= 4)
+         stop = str2num(info{4});
+      end
+      
+      o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
+         start stop];      
+
+   else
+      
+      fprintf('ERROR: Not managed line #%d of file: %s\n', lineNum, a_filePathName);
+      fclose(fId);
+         
    end
 end
 

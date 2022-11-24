@@ -37,7 +37,7 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 701;254;Number of days to force emergence;CONFIG_IceDetectionMaxDaysNoTransmission_NUMBER;Maximum delay (in days/cycles) of no transmission due to the ice detection algorithm. This parameter is used to disable the ice detection algorithmand force the float to surface even if ice is detected.
 702;254;Number of detection (ISA) to confirm ICE at surface;CONFIG_IceDetectionConsecutiveDetectionBeforeFloatSurfaceInhibition_NUMBER;Number of consecutive ISA detections before float surface inhibition.If fewer consecutive ice detections are made, then the float will immediately seek the surface if mixed layer temp is warm.
 703;254;Slowdown pressure threshold (float’s speed);CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar;Pressure threshold to start the slow ascent speed phase.
-704;254;Pressure acquisition period during ascent;CONFIG_IceDetectionPressureInterval_dbar;Period of the ice detection algorithm.
+704;254;Pressure acquisition period during ascent;CONFIG_IceDetectionPressureInterval_minutes;Period of the ice detection algorithm.
 705;254;Minimum ascent speed during “slow ascent”;CONFIG_IceDetectionAscentVerticalThresholdForBuoyancyAction_mm/s;Similar to CONFIG_AscentVerticalThresholdForBuoyancyAction_dbar but for a float in ice detection mode.
 706;254;Pump action duration;CONFIG_IceDetectionPumpActionMaxTimeAscent_csec;Similar to CONFIG_PumpActionMaxTimeAscent_csec but for a float in ice detection mode.
 707;254;GPS Timeout;CONFIG_GPSTimeout_minutes;Timeout for GPS acquisition.

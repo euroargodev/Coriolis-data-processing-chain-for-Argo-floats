@@ -4,7 +4,8 @@
 % SYNTAX :
 %  print_dates_apx_apf11_in_csv_file( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-%    a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+%    a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, a_profRamses, ...
+%    a_profRafosRtc, a_profRafos, ...
 %    a_cycleTimeData, a_gpsData, ...
 %    a_grounding, a_buoyancy, a_vitalsData)
 %
@@ -17,6 +18,9 @@
 %   a_profFlbbCd    : FLBB_CD data
 %   a_profFlbbCdCfg : FLBB_CD_CFG data
 %   a_profOcr504I   : OCR_504I data
+%   a_profRamses    : RAMSES data
+%   a_profRafosRtc  : RAFOS_RTC data
+%   a_profRafos     : RAFOS data
 %   a_cycleTimeData : cycle timings data
 %   a_gpsData       : GPS data
 %   a_grounding     : grounding data
@@ -35,10 +39,11 @@
 % ------------------------------------------------------------------------------
 function print_dates_apx_apf11_in_csv_file( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
-   a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+   a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, a_profRamses, ...
+   a_profRafosRtc, a_profRafos, ...
    a_cycleTimeData, a_gpsData, ...
    a_grounding, a_buoyancy, a_vitalsData)
-         
+
 % current float WMO number
 global g_decArgo_floatNum;
 
@@ -134,6 +139,36 @@ allTabCyNum = [allTabCyNum tabCyNum];
 [tabDate, tabDateAdj, ...
    tabPres, tabPresAdj, ...
    tabLabel, tabCyNum] = format_profile_dates(a_profOcr504I, 'OCR_504I', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profRamses, 'RAMSES', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profRafosRtc, 'RAFOS_RTC', g_decArgo_cycleNum);
+allTabDate = [allTabDate tabDate];
+allTabDateAdj = [allTabDateAdj tabDateAdj];
+allTabPres = [allTabPres tabPres];
+allTabPresAdj = [allTabPresAdj tabPresAdj];
+allTabLabel = [allTabLabel tabLabel];
+allTabCyNum = [allTabCyNum tabCyNum];
+
+[tabDate, tabDateAdj, ...
+   tabPres, tabPresAdj, ...
+   tabLabel, tabCyNum] = format_profile_dates(a_profRafos, 'RAFOS', g_decArgo_cycleNum);
 allTabDate = [allTabDate tabDate];
 allTabDateAdj = [allTabDateAdj tabDateAdj];
 allTabPres = [allTabPres tabPres];
@@ -377,6 +412,102 @@ if (~isempty(a_cycleTimeData))
       allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
       allTabLabel = [allTabLabel {'ASCENT_END_DATE (system_log)'}];
       allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end
+   for idT = 1:length(a_cycleTimeData.iceDescentStartDateSci)
+      if (~isempty(a_cycleTimeData.iceDescentStartDateSci(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceDescentStartDateSci(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceDescentStartAdjDateSci(idT)];
+         if (isempty(a_cycleTimeData.iceDescentStartAdjDateSci(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres a_cycleTimeData.iceDescentStartPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceDescentStartPresSci(idT)))
+            allTabPres = [allTabPres g_decArgo_presDef];
+         end
+         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceDescentStartAdjPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceDescentStartAdjPresSci(idT)))
+            allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         end
+         allTabLabel = [allTabLabel {sprintf('ICE_DESCENT_START_DATE_%d (science_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
+   end
+   for idT = 1:length(a_cycleTimeData.iceDescentStartDateSys)
+      if (~isempty(a_cycleTimeData.iceDescentStartDateSys(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceDescentStartDateSys(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceDescentStartAdjDateSys(idT)];
+         if (isempty(a_cycleTimeData.iceDescentStartAdjDateSys(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres g_decArgo_presDef];
+         allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         allTabLabel = [allTabLabel {sprintf('ICE_DESCENT_START_DATE_%d (system_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
+   end
+   for idT = 1:length(a_cycleTimeData.iceAscentStartDateSci)
+      if (~isempty(a_cycleTimeData.iceAscentStartDateSci(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceAscentStartDateSci(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceAscentStartAdjDateSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentStartAdjDateSci(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres a_cycleTimeData.iceAscentStartPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentStartPresSci(idT)))
+            allTabPres = [allTabPres g_decArgo_presDef];
+         end
+         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentStartAdjPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentStartAdjPresSci(idT)))
+            allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         end
+         allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_START_DATE_%d (science_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
+   end
+   for idT = 1:length(a_cycleTimeData.iceAscentStartDateSys)
+      if (~isempty(a_cycleTimeData.iceAscentStartDateSys(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceAscentStartDateSys(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceAscentStartAdjDateSys(idT)];
+         if (isempty(a_cycleTimeData.iceAscentStartAdjDateSys(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres g_decArgo_presDef];
+         allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_START_DATE_%d (system_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
+   end
+   for idT = 1:length(a_cycleTimeData.iceAscentEndDateSci)
+      if (~isempty(a_cycleTimeData.iceAscentEndDateSci(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceAscentEndDateSci(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceAscentEndAdjDateSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentEndAdjDateSci(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres a_cycleTimeData.iceAscentEndPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentEndPresSci(idT)))
+            allTabPres = [allTabPres g_decArgo_presDef];
+         end
+         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentEndAdjPresSci(idT)];
+         if (isempty(a_cycleTimeData.iceAscentEndAdjPresSci(idT)))
+            allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         end
+         allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_END_DATE_%d (science_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
+   end
+   for idT = 1:length(a_cycleTimeData.iceAscentEndDateSys)
+      if (~isempty(a_cycleTimeData.iceAscentEndDateSys(idT)))
+         allTabDate = [allTabDate a_cycleTimeData.iceAscentEndDateSys(idT)];
+         allTabDateAdj = [allTabDateAdj a_cycleTimeData.iceAscentEndAdjDateSys(idT)];
+         if (isempty(a_cycleTimeData.iceAscentEndAdjDateSys(idT)))
+            allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+         end
+         allTabPres = [allTabPres g_decArgo_presDef];
+         allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+         allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_END_DATE_%d (system_log)', idT)}];
+         allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+      end
    end
    if (~isempty(a_cycleTimeData.transStartDate))
       allTabDate = [allTabDate a_cycleTimeData.transStartDate];

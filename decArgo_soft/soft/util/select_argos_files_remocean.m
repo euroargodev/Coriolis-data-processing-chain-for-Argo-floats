@@ -24,7 +24,7 @@ DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS4_V1.xx_V2.x
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS4_V1.xx_V2.xx\rsync_data\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

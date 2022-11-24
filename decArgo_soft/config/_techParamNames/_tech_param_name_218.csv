@@ -46,7 +46,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 202;5;Nombre de paquets de type 3 ou 10 - CTDO remontée.;NUMBER_AscentIridiumPackets_COUNT;Number of Iridium packets used to transmit sensor data collected during the ascent from the profile depth to the surface.
 203;6;Nombre de tranches zone surface – descente.;NUMBER_DescendingProfileReductionUpperPart_COUNT;Descending profile reduction Number of slices in shallow zone - NTS
 204;7;Nombre de tranches zone fond - descente.;NUMBER_DescendingProfileReductionLowerPart_COUNT;Descending profile reduction Number of slices in deep zone - NTF
-205;8;Nombre de mesures en dérive à l’immersion de parking.;NUMBER_ParkCTDOSamplesInternal_COUNT;Park  measurements - Internal counter
+205;8;Nombre de mesures en dérive à l’immersion de parking.;NUMBER_ParkCtdSamplesInternal_COUNT;Park  measurements - Internal counter
 206;9;Nombre de tranches zone surface – remontée.;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
 207;10;Nombre de tranches zone fond - remontée.;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
 221;11;Pression du « point de subsurface » (dernier point de mesure « brut » pompé lors du profil ascendant);PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).

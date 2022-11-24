@@ -154,7 +154,7 @@ for outputCycleNumber = outputCycleNumberMin:outputCycleNumberMax
          profileData = prof.data;
          
          for idParam = 1:length(parameterList)
-            if (((parameterList(idParam).paramType ~= 'c') || ...
+            if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                   strcmp(parameterList(idParam).name, 'PRES')) && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
@@ -512,7 +512,7 @@ if (nbProfParam > 0)
       parameterList = prof.paramList;
       for idParam = 1:length(parameterList)
          
-         if ((parameterList(idParam).paramType ~= 'c') || ...
+         if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                strcmp(parameterList(idParam).name, 'PRES'))
             
             profParam = parameterList(idParam);
@@ -576,7 +576,7 @@ if (nbProfParam > 0)
             end
             
             % parameter QC variable and attributes
-            if (profParam.paramType ~= 'c')
+            if ((profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                if ~(strcmp(profParam.name(end-3:end), '_STD') || ...
                      strcmp(profParam.name(end-3:end), '_MED'))
                   
@@ -593,7 +593,7 @@ if (nbProfParam > 0)
             end
             
             % parameter adjusted variable and attributes
-            if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+            if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                
                profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                if (~var_is_present_dec_argo(fCdf, profParamAdjName))
@@ -808,7 +808,7 @@ if (nbProfParam > 0)
       paramPos = 0;
       for idParam = 1:length(parameterList)
          
-         if (((parameterList(idParam).paramType ~= 'c') || ...
+         if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                strcmp(parameterList(idParam).name, 'PRES')) && ...
                ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
@@ -983,7 +983,7 @@ if (nbProfParam > 0)
       parameterDataMode = prof.paramDataMode;
       for idParam = 1:length(parameterList)
          
-         if ((parameterList(idParam).paramType ~= 'c') || ...
+         if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                strcmp(parameterList(idParam).name, 'PRES'))
             
             profParam = parameterList(idParam);
@@ -1002,7 +1002,7 @@ if (nbProfParam > 0)
                profParamQcVarId = netcdf.inqVarID(fCdf, profParamQcName);
             end
             
-            if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+            if ((profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                % parameter adjusted variable and attributes
                profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                profParamAdjVarId = netcdf.inqVarID(fCdf, profParamAdjName);
@@ -1056,7 +1056,7 @@ if (nbProfParam > 0)
                end
                
                if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                     (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                     (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                   
                   % parameter adjusted data
                   paramAdjData = prof.dataAdj(:, idParam);
@@ -1171,7 +1171,7 @@ if (nbProfParam > 0)
                   end
                   
                   if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                        (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                        (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      
                      % parameter adjusted data
                      paramAdjData = prof.dataAdj(:, idParam);
@@ -1219,7 +1219,7 @@ if (nbProfParam > 0)
                   end
                   
                   if (~isempty(parameterDataMode) && (parameterDataMode(idParam) == 'A') && ...
-                        (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c'))
+                        (profParam.adjAllowed == 1) && (profParam.paramType ~= 'c') && (profParam.paramType ~= 'j'))
                      
                      % parameter adjusted data
                      paramAdjData = prof.dataAdj(:, firstCol:lastCol);
@@ -1312,7 +1312,7 @@ if (nbProfParam > 0)
             paramName = paramAdjInfo{4};
 
             paramInfo = get_netcdf_param_attributes(paramName);
-            if (paramInfo.paramType ~= 'c')
+            if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
                paramEquation = paramAdjInfo{5};
                paramCoefficient = paramAdjInfo{6};
                paramComment = paramAdjInfo{7};
@@ -1428,7 +1428,7 @@ if (nbProfParam > 0)
       paramPos = 0;
       for idParam = 1:length(parameterList)
          
-         if (((parameterList(idParam).paramType ~= 'c') || ...
+         if ((((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                strcmp(parameterList(idParam).name, 'PRES')) && ...
                ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))

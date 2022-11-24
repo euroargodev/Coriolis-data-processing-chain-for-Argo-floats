@@ -79,5 +79,5 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 127001;-1;;CONFIG_FlbbChlaFluorescenceEmissionWavelength_nm;Wavelength of Flbb for emission of Chla fluorescence measurements (in nanometer)
 127002;-1;;CONFIG_FlbbChlaFluorescenceExcitationBandwidth_nm;Bandwidth of Flbb for excitation of Chla fluorescence measurements (in nanometer)
 127003;-1;;CONFIG_FlbbChlaFluorescenceEmissionBandwidth_nm;Bandwidth of Flbb for emission of Chla fluorescence measurements (in nanometer)
-137010;-1;;CONFIG_FlbbBetaWavelength_nm;Wavelength of Flbb Beta  measurements (in nanometer).
-137011;-1;;CONFIG_FlbbBetaBandwidth_nm;Bandwidth of Flbb Beta measurements (in nanometer).
+137010;-1;;CONFIG_FlbbBetaWavelength1_nm;Wavelength of Flbb Beta #1 measurements (in nanometer).
+137011;-1;;CONFIG_FlbbBetaBandwidth1_nm;Bandwidth of Flbb Beta #1 measurements (in nanometer).

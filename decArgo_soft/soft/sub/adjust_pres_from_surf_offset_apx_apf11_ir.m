@@ -5,10 +5,12 @@
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
 %    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+%    o_profRamses, ...
 %    o_grounding, o_iceDetection, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
 %    adjust_pres_from_surf_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+%    a_profRamses, ...
 %    a_grounding, a_iceDetection, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 %
 % INPUT PARAMETERS :
@@ -22,6 +24,7 @@
 %   a_profFlbbCd     : input FLBB_CD data
 %   a_profFlbbCdCfg  : input FLBB_CD_CFG data
 %   a_profOcr504I    : input OCR_504I data
+%   a_profRamses     : input RAMSES data
 %   a_grounding      : input grounding data
 %   a_iceDetection   : input ice detection data
 %   a_buoyancy       : input buoyancy data
@@ -39,6 +42,7 @@
 %   o_profFlbbCd     : output FLBB_CD data
 %   o_profFlbbCdCfg  : output FLBB_CD_CFG data
 %   o_profOcr504I    : output OCR_504I data
+%   o_profRamses     : output RAMSES data
 %   o_grounding      : output grounding data
 %   o_iceDetection   : output ice detection data
 %   o_buoyancy       : output buoyancy data
@@ -55,10 +59,12 @@
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profFlbbCdCfg, o_profOcr504I, ...
+   o_profRamses, ...
    o_grounding, o_iceDetection, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
    adjust_pres_from_surf_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profFlbbCdCfg, a_profOcr504I, ...
+   a_profRamses, ...
    a_grounding, a_iceDetection, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 
 % output parameters initialization
@@ -73,6 +79,7 @@ o_profCtdCpH = a_profCtdCpH;
 o_profFlbbCd = a_profFlbbCd;
 o_profFlbbCdCfg = a_profFlbbCdCfg;
 o_profOcr504I = a_profOcr504I;
+o_profRamses = a_profRamses;
 o_grounding = a_grounding;
 o_iceDetection = a_iceDetection;
 o_buoyancy = a_buoyancy;
@@ -121,6 +128,7 @@ if (~isempty(presOffset))
    o_profFlbbCd = adjust_profile(o_profFlbbCd, presOffset);
    o_profFlbbCdCfg = adjust_profile(o_profFlbbCdCfg, presOffset);
    o_profOcr504I = adjust_profile(o_profOcr504I, presOffset);
+   o_profRamses = adjust_profile(o_profRamses, presOffset);
    
    for idG =1:size(o_grounding, 1)
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);
@@ -147,6 +155,10 @@ if (~isempty(presOffset))
 
    o_cycleTimeData.descentStartAdjPresSci = adjust_value(o_cycleTimeData.descentStartPresSci, presOffset);
    o_cycleTimeData.descentEndAdjPres = adjust_value(o_cycleTimeData.descentEndPres, presOffset);
+   for idT = 1:length(o_cycleTimeData.rafosCorrelationStartPresSci)
+      o_cycleTimeData.rafosCorrelationStartAdjPresSci = [o_cycleTimeData.rafosCorrelationStartAdjPresSci ...
+         adjust_value(o_cycleTimeData.rafosCorrelationStartPresSci(idT), presOffset)];
+   end
    o_cycleTimeData.parkStartAdjPresSci = adjust_value(o_cycleTimeData.parkStartPresSci, presOffset);
    o_cycleTimeData.parkEndAdjPresSci = adjust_value(o_cycleTimeData.parkEndPresSci, presOffset);
    o_cycleTimeData.deepDescentEndAdjPres = adjust_value(o_cycleTimeData.deepDescentEndPres, presOffset);
@@ -155,6 +167,18 @@ if (~isempty(presOffset))
    o_cycleTimeData.continuousProfileEndAdjPresSci = adjust_value(o_cycleTimeData.continuousProfileEndPresSci, presOffset);
    o_cycleTimeData.ascentEndAdjPresSci = adjust_value(o_cycleTimeData.ascentEndPresSci, presOffset);
    o_cycleTimeData.ascentAbortAdjPres = adjust_value(o_cycleTimeData.ascentAbortPres, presOffset);
+   for idT = 1:length(o_cycleTimeData.iceDescentStartPresSci)
+      o_cycleTimeData.iceDescentStartAdjPresSci = [o_cycleTimeData.iceDescentStartAdjPresSci ...
+         adjust_value(o_cycleTimeData.iceDescentStartPresSci(idT), presOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentStartPresSci)
+      o_cycleTimeData.iceAscentStartAdjPresSci = [o_cycleTimeData.iceAscentStartAdjPresSci ...
+         adjust_value(o_cycleTimeData.iceAscentStartPresSci(idT), presOffset)];
+   end
+   for idT = 1:length(o_cycleTimeData.iceAscentEndPresSci)
+      o_cycleTimeData.iceAscentEndAdjPresSci = [o_cycleTimeData.iceAscentEndAdjPresSci ...
+         adjust_value(o_cycleTimeData.iceAscentEndPresSci(idT), presOffset)];
+   end
 end
 
 return
@@ -189,6 +213,10 @@ o_presOffset = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
+
+if (isempty(a_presOffsetData))
+   return
+end
 
 % select the pressure offset value to use
 prevPresOffset = [];

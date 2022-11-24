@@ -21,7 +21,7 @@
 function check_argo_decoder_dependencies
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % directories to check
 SOFT_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\';

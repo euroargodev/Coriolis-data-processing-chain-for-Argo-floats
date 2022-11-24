@@ -956,11 +956,14 @@ function [o_packTypeDesc] = get_pack_type_desc( ...
 o_packTypeDesc = '';
 
 switch (a_decoderId)
-   case {111, 113}
+   case {111, 113, 114}
       switch (a_packType)
          case 0
             % sensor data
             o_packTypeDesc = ['Data: ' get_data_desc(a_sensorDataType) '- Phase: ' get_phase_desc(a_phaseNum)];
+         case 247
+            % rudics parameters
+            o_packTypeDesc = 'Grounding data';
          case 248
             % rudics parameters
             o_packTypeDesc = 'Rudics parameters';

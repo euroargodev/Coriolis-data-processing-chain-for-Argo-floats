@@ -28,7 +28,7 @@ OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DATA\Argo_3002
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR_SBD\DATA\Argo_300234062992840_WMO_3902100_RENAMED\';
 
 % directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\'; 
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 
 % create and start log file recording
