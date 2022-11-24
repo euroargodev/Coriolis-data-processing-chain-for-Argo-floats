@@ -502,7 +502,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '034c';
+g_decArgo_decoderVersion = '034d';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
