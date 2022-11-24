@@ -392,7 +392,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068]))
+      6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, 6903059]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -511,25 +511,43 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(tabCyNum == 21) = tabRank(id);
          tabRankByCycle(tabCyNum == 21) = tabRankByCycle(id);
          tabRankByDate(tabCyNum == 21) = tabRankByDate(id);   
-         tabDeep(tabCyNum == 21) = 1;   
+         tabDeep(tabCyNum == 21) = 1;
+      case 6903059
+         % cycle #85: TECH #1, #2 and one hydraulic packet are transmitted twice
+         id = find((tabCyNum == 85) & (tabBase == 1));
+         tabRank(tabRank == tabRank(id(1))) = tabRank(id(2));
+         tabRankByCycle(tabRankByCycle == tabRankByCycle(id(1))) = tabRankByCycle(id(2));
+         tabRankByDate(tabRankByDate == tabRankByDate(id(1))) = tabRankByDate(id(2));
+         tabSession(tabSession == tabSession(id(1))) = tabSession(id(2));
+         tabSessionDeep(tabSessionDeep == tabSessionDeep(id(1))) = tabSessionDeep(id(2));
+         id = find((tabCyNum == 85) & (tabPackType == 0));
+         idDel = id(2);
+         tabBase(idDel) = 0;
+         id = find((tabCyNum == 85) & (tabPackType == 4));
+         idDel = [idDel id(2)];
+         id = find((tabCyNum == 85) & (tabPackType == 6));
+         idDel = [idDel id(2)];
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
    end
-   
+
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
-   if (~isempty(g_decArgo_outputCsvFileId))
+   %    if (~isempty(g_decArgo_outputCsvFileId))
 
-      % update tabCompleted array
-      cyNumList = unique(tabRankByCycle);
-      cyNumList(cyNumList < 0) = [];
-      for cyNum = 1:length(cyNumList)
-         idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+   % update tabCompleted array
+   cyNumList = unique(tabRankByCycle);
+   cyNumList(cyNumList < 0) = [];
+   for cyNum = 1:length(cyNumList)
+      idForCheck = find(tabRankByCycle == cyNumList(cyNum));
 
-         % check current session contents
-         [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
-         if (completed == 1)
-            tabCompleted(idForCheck) = 1;
-         end
+      % check current session contents
+      [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0);
+      if (completed == 1)
+         tabCompleted(idForCheck) = 1;
       end
    end
+   %    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
