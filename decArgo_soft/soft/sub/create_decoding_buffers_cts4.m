@@ -143,7 +143,7 @@ if (g_decArgo_floatNum == 6903240)
    tabExpNbDesc(idF) = 278 - 256;
 end
 if (g_decArgo_floatNum == 6903549)
-   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/2111:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+   startId = find((tabDate == gregorian_2_julian_dec_argo('2019/12/21 11:50:59')) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
    stopId = find(tabSession == tabSession(startId), 1, 'last');
    tabSession(startId:end) = tabSession(startId:end) + 1;
    tabBase(startId) = 1;
