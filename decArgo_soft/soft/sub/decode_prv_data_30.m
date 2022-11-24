@@ -121,7 +121,7 @@ for idMes = 1:size(a_tabSensors, 1)
          
          % output CSV file
          if (~isempty(g_decArgo_outputCsvFileId))
-            print_tech_1_data_in_csv_30(o_tabTech1);
+            print_tech1_data_in_csv_30_32(o_tabTech1);
          end
          
          % check if it is a deep cycle
@@ -194,7 +194,7 @@ for idMes = 1:size(a_tabSensors, 1)
          
          % output CSV file
          if (~isempty(g_decArgo_outputCsvFileId))
-            print_tech_2_data_in_csv_30(o_tabTech2, utcTimeJuld, o_floatClockDrift);
+            print_tech2_data_in_csv_30_32(o_tabTech2, utcTimeJuld, o_floatClockDrift);
          end
          
          % check if it is a deep cycle
@@ -214,7 +214,7 @@ for idMes = 1:size(a_tabSensors, 1)
          
          % output NetCDF files
          if (g_decArgo_generateNcTech ~= 0)
-            store_tech2_data_for_nc_30(o_tabTech2, floatTimeParts, utcTimeJuld, o_floatClockDrift, o_deepCycle);
+            store_tech2_data_for_nc_30_32(o_tabTech2, floatTimeParts, utcTimeJuld, o_floatClockDrift, o_deepCycle);
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -237,7 +237,7 @@ for idMes = 1:size(a_tabSensors, 1)
          
          % output CSV file
          if (~isempty(g_decArgo_outputCsvFileId))
-            print_param_data_in_csv_30(o_tabParam);
+            print_param_data_in_csv_30_32(o_tabParam);
          end
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

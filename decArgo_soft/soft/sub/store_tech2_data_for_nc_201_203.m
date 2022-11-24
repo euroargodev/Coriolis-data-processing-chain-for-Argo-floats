@@ -154,7 +154,7 @@ if (a_deepCycle == 1)
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 214];
-      g_decArgo_outputNcParamValue{end+1} = tabTech2(29);
+      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_201_203(tabTech2(29));
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 215];

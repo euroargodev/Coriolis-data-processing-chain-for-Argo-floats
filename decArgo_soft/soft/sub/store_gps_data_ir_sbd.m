@@ -64,7 +64,7 @@ if (~isempty(a_tabTech))
       switch (a_decoderId)
          
          case {201, 202, 203} % Arvor-deep 4000, Arvor-deep 3500
-            gpsValidFlagFromTech = a_tabTech(idPos(idP), 58);
+            gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
             cycleNumberFromTech = a_tabTech(idPos(idP), 2);
             
          case {205, 204, 206, 207, 208, 209}
@@ -73,6 +73,11 @@ if (~isempty(a_tabTech))
             % Arvor-2DO Iridium 5.73
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
             cycleNumberFromTech = a_tabTech(idPos(idP), 3);
+            
+         case {210}
+            % Arvor-ARN Iridium
+            gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
+            cycleNumberFromTech = a_tabTech(idPos(idP), 2);
             
          otherwise
             fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...

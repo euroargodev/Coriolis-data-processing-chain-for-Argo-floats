@@ -28,6 +28,19 @@ o_metaData = a_metaData;
 global g_decArgo_floatNum;
 
 
+% add a POSITIONING_SYSTEM = 'IRIDIUM' to GPS floats
+if ~(fix(a_decoderId/100) == 1) % this should not be done for Remocean floats
+   if ((isfield(o_metaData, 'POSITIONING_SYSTEM')) && ...
+         (isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_1')) && ...
+         (strcmp(o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_1, 'GPS')) && ...
+         ~(isfield(o_metaData.POSITIONING_SYSTEM, 'POSITIONING_SYSTEM_2')))
+      o_metaData.POSITIONING_SYSTEM.POSITIONING_SYSTEM_2 = 'IRIDIUM';
+      
+      fprintf('INFO: Float #%d: adding ''POSITIONING_SYSTEM = IRIDIUM'' to float positioning systems\n', ...
+         g_decArgo_floatNum);
+   end
+end
+
 fieldList = [ ...
    {'PARAMETER_SENSOR'} ...
    {'PARAMETER_UNITS'} ...
@@ -180,7 +193,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {27, 28, 29}
+   case {27, 28, 29, 32}
       paramList = [ ...
          {'TPHASE_DOXY'} ...
          {'PPOX_DOXY'} ...
@@ -231,6 +244,14 @@ switch (a_decoderId)
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
          ];
+end
+
+% for a_decoderId = 201 we have 5.61 floats (with DO sensor) and 5.63 floats
+% (without DO sensor)
+if (a_decoderId == 201)
+   if ((isfield(a_metaData, 'DAC_FORMAT_ID')) && (str2num(a_metaData.DAC_FORMAT_ID) == 5.63))
+      paramList = [];
+   end
 end
 
 if (~isempty(paramList))
@@ -740,7 +761,7 @@ switch (a_decoderId)
          end
       end
       
-   case {27}
+   case {27, 32}
       % CASE_202_204_204
       switch (a_paramName)
          

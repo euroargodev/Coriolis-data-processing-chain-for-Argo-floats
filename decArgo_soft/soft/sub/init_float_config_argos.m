@@ -44,13 +44,6 @@ g_decArgo_rtOffsetInfo = [];
 global g_decArgo_janFirst1950InMatlab;
 
 
-% if the Argos float version transmits its configuration during the prelude, we
-% will wait until the prelude transmission phase to create the float
-% configurations
-if (a_decoderId == 30)
-   return;
-end
-
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
 
@@ -63,36 +56,42 @@ end
 % read meta-data file
 metaData = loadjson(jsonInputFileName);
 
-% retrieve the configuration
-configNames = [];
-configValues = [];
-configNumbers = [];
-if ((isfield(metaData, 'CONFIG_PARAMETER_NAME')) && ...
-      (isfield(metaData, 'CONFIG_PARAMETER_VALUE')))
+% if the Argos float version transmits its configuration during the prelude, we
+% will wait until the prelude transmission phase to create the float
+% configuration
+if (~ismember(a_decoderId, [30 32]))
    
-   configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
-   cellConfigValues = metaData.CONFIG_PARAMETER_VALUE;
-   configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
-   configNumbers = 1:length(cellConfigValues);
-   for idConf = 1:length(cellConfigValues)
-      cellConfigVals = struct2cell(cellConfigValues{idConf});
-      for idVal = 1:length(cellConfigVals)
-         if (~isempty(cellConfigVals{idVal}))
-            configValues(idVal, idConf) = str2num(cellConfigVals{idVal});
+   % retrieve the configuration
+   configNames = [];
+   configValues = [];
+   configNumbers = [];
+   if ((isfield(metaData, 'CONFIG_PARAMETER_NAME')) && ...
+         (isfield(metaData, 'CONFIG_PARAMETER_VALUE')))
+      
+      configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
+      cellConfigValues = metaData.CONFIG_PARAMETER_VALUE;
+      configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
+      configNumbers = 1:length(cellConfigValues);
+      for idConf = 1:length(cellConfigValues)
+         cellConfigVals = struct2cell(cellConfigValues{idConf});
+         for idVal = 1:length(cellConfigVals)
+            if (~isempty(cellConfigVals{idVal}))
+               configValues(idVal, idConf) = str2num(cellConfigVals{idVal});
+            end
          end
       end
    end
+   
+   % store the configuration
+   g_decArgo_floatConfig = [];
+   g_decArgo_floatConfig.NAMES = configNames;
+   g_decArgo_floatConfig.VALUES = configValues;
+   g_decArgo_floatConfig.NUMBER = configNumbers;
+   
+   % compute the pressure to cut-off the ascending profile
+   [g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF, ...
+      g_decArgo_jsonMetaData.PRES_STOP_CTD_PUMP] = compute_cutoff_pres(a_decoderId);
 end
-
-% store the configuration
-g_decArgo_floatConfig = [];
-g_decArgo_floatConfig.NAMES = configNames;
-g_decArgo_floatConfig.VALUES = configValues;
-g_decArgo_floatConfig.NUMBER = configNumbers;
-
-% compute the pressure to cut-off the ascending profile
-[g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF, ...
-   g_decArgo_jsonMetaData.PRES_STOP_CTD_PUMP] = compute_cutoff_pres(a_decoderId);
 
 % retrieve the RT offsets
 if (isfield(metaData, 'RT_OFFSET'))
@@ -130,8 +129,7 @@ if (isfield(metaData, 'RT_OFFSET'))
 end
 
 % add DO calibration coefficients
-if ((a_decoderId == 4) || (a_decoderId == 19) || (a_decoderId == 25) || ...
-      (a_decoderId == 27) || (a_decoderId == 28) || (a_decoderId == 29))
+if (ismember(a_decoderId, [4 19 25 27 28 29 32]))
    
    % read the calibration coefficients in the json meta-data file
 
@@ -148,7 +146,7 @@ if ((a_decoderId == 4) || (a_decoderId == 19) || (a_decoderId == 25) || ...
    % create the tabDoxyCoef array
    switch (a_decoderId)
       
-      case {27}
+      case {27, 32}
          if (isfield(g_decArgo_calibInfo, 'OPTODE'))
             calibData = g_decArgo_calibInfo.OPTODE;
             tabDoxyCoef = [];

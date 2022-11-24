@@ -75,9 +75,12 @@ for idCy = 1:length(tabCyNum)
    
    idCySurf = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 1));
    if (length(idCySurf) > 1)
-      fprintf('INFO: Float #%d cycle #%d: %d surf N_MEASUREMENT records\n', ...
-         g_decArgo_floatNum, cycleNum, ...
-         length(idCySurf));
+      if (cycleNum > 1)
+         % new firmware (ARN) transmits 2 tech message for cycle #0
+         fprintf('INFO: Float #%d cycle #%d: %d surf N_MEASUREMENT records\n', ...
+            g_decArgo_floatNum, cycleNum, ...
+            length(idCySurf));
+      end
       idDel = [idDel idCySurf(1:end-1)];
    end
 end
@@ -153,11 +156,43 @@ if (~isempty(a_tabTrajNCycle))
    for idCy = 1:length(tabCyNum)
       cycleNum = tabCyNum(idCy);
       
-      idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 0));
+      idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] ~= 1));
       if (length(idCyDeep) > 1)
-         fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records => only the first one is considered\n', ...
-            g_decArgo_floatNum, cycleNum, ...
-            length(idCyDeep));
+         if (cycleNum == 0)
+            
+            % some floats transmit 2 cycle #0
+            
+            % merge juldFirstMessage, juldFirstLocation, juldLastLocation and
+            % juldLastMessage of the deep and surface records
+            
+            tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstMessage];
+            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            a_tabTrajNCycle(idCyDeep(1)).juldFirstMessage = min(tabDate);
+            
+            tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstLocation];
+            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            if (~isempty(tabDate))
+               a_tabTrajNCycle(idCyDeep(1)).juldFirstLocation = min(tabDate);
+            else
+               a_tabTrajNCycle(idCyDeep(1)).juldFirstLocation = g_decArgo_ncDateDef;
+            end
+            
+            tabDate = [a_tabTrajNCycle(idCyDeep).juldLastLocation];
+            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            if (~isempty(tabDate))
+               a_tabTrajNCycle(idCyDeep(1)).juldLastLocation = max(tabDate);
+            else
+               a_tabTrajNCycle(idCyDeep(1)).juldLastLocation = g_decArgo_ncDateDef;
+            end
+            
+            tabDate = [a_tabTrajNCycle(idCyDeep).juldLastMessage];
+            tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+            a_tabTrajNCycle(idCyDeep(1)).juldLastMessage = max(tabDate);
+         else
+            fprintf('ERROR: Float #%d cycle #%d: %d deep N_CYCLE records => only the first one is considered\n', ...
+               g_decArgo_floatNum, cycleNum, ...
+               length(idCyDeep));
+         end
          idDel = [idDel idCyDeep(2:end)];
       end
       
@@ -179,18 +214,38 @@ if (~isempty(a_tabTrajNCycle))
       for idCy = 1:length(tabCyNum)
          cycleNum = tabCyNum(idCy);
          
-         idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 0));
+         idCyDeep = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] ~= 1));
          idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
          
          if (length(idCyDeep) == 1)
             if (~isempty(idCySurf))
                
-               % preserve only the juldFirstMessage, juldFirstLocation,
-               % juldLastLocation and juldLastMessage of the last surface record
-               a_tabTrajNCycle(idCyDeep).juldFirstMessage = a_tabTrajNCycle(idCySurf(end)).juldFirstMessage;
-               a_tabTrajNCycle(idCyDeep).juldFirstLocation = a_tabTrajNCycle(idCySurf(end)).juldFirstLocation;
-               a_tabTrajNCycle(idCyDeep).juldLastLocation = a_tabTrajNCycle(idCySurf(end)).juldLastLocation;
-               a_tabTrajNCycle(idCyDeep).juldLastMessage = a_tabTrajNCycle(idCySurf(end)).juldLastMessage;
+               % merge juldFirstMessage, juldFirstLocation, juldLastLocation and
+               % juldLastMessage of the deep and surface records
+
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstMessage a_tabTrajNCycle(idCySurf(end)).juldFirstMessage];
+               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               a_tabTrajNCycle(idCyDeep).juldFirstMessage = min(tabDate);
+               
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldFirstLocation a_tabTrajNCycle(idCySurf(end)).juldFirstLocation];
+               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               if (~isempty(tabDate))
+                  a_tabTrajNCycle(idCyDeep).juldFirstLocation = min(tabDate);
+               else
+                  a_tabTrajNCycle(idCyDeep).juldFirstLocation = g_decArgo_ncDateDef;
+               end
+               
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldLastLocation a_tabTrajNCycle(idCySurf(end)).juldLastLocation];
+               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               if (~isempty(tabDate))
+                  a_tabTrajNCycle(idCyDeep).juldLastLocation = max(tabDate);
+               else
+                  a_tabTrajNCycle(idCyDeep).juldLastLocation = g_decArgo_ncDateDef;
+               end
+               
+               tabDate = [a_tabTrajNCycle(idCyDeep).juldLastMessage a_tabTrajNCycle(idCySurf(end)).juldLastMessage];
+               tabDate(find(tabDate == g_decArgo_ncDateDef)) = [];
+               a_tabTrajNCycle(idCyDeep).juldLastMessage = max(tabDate);
                
                a_tabTrajNCycle(idCySurf) = [];
             end
@@ -236,7 +291,7 @@ expMcList = [ ...
    ];
 
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
-tabCyNum = tabCyNum(find(tabCyNum > 0));
+tabCyNum = tabCyNum(find(tabCyNum >= 0));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
    
@@ -244,6 +299,13 @@ for idCy = 1:length(tabCyNum)
       % cycle number = -1 is used to store launch location and date only (no
       % need to add all the expected MCs)
       continue;
+   end
+   
+   if (cycleNum == 0)
+      expMcList = [ ...
+         g_MC_TST ...
+         g_MC_TET ...
+         ];
    end
    
    idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);

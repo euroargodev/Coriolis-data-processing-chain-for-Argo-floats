@@ -30,7 +30,7 @@ global g_decArgo_floatNum;
 
 
 % retrieve configuration information
-if (a_decoderId == 30)
+if (ismember(a_decoderId, [30 32]))
    [configNames, configValues] = get_float_config_argos_1(0);
 else
    [configNames, configValues] = get_float_config_argos_1(1);
@@ -56,10 +56,10 @@ if (~isempty(configNames))
                g_decArgo_floatNum);
          end
          
-      case {24, 27, 25, 28, 29, 17, 30, 31}
+      case {24, 27, 25, 28, 29, 17, 30, 31, 32}
          
          % retrieve information from configuration
-         if ((a_decoderId == 27) || (a_decoderId == 28) || (a_decoderId == 29) || (a_decoderId == 31))
+         if (ismember(a_decoderId, [27 28 29 31]))
             ctdPumpSwitchOffPres = get_config_value('CONFIG_PT20_', configNames, configValues);
             
             if (isempty(ctdPumpSwitchOffPres))
@@ -67,7 +67,7 @@ if (~isempty(configNames))
                fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file => using default value (%d dbars)\n', ...
                   g_decArgo_floatNum, ctdPumpSwitchOffPres);
             end
-         elseif (a_decoderId == 30)
+         elseif (ismember(a_decoderId, [30 32]))
             ctdPumpSwitchOffPres = get_config_value('CONFIG_TC18_', configNames, configValues);
             
             if (isempty(ctdPumpSwitchOffPres))

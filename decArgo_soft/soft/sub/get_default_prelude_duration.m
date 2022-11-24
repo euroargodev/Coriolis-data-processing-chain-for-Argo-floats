@@ -32,7 +32,7 @@ switch (a_decoderId)
    case {1, 11, 12, 4, 19}
       o_preludeDuration = 0;
 
-   case {24, 27, 25, 28, 29, 3, 17, 30, 31}
+   case {24, 27, 25, 28, 29, 3, 17, 30, 31, 32}
       o_preludeDuration = 180;
 
    otherwise

@@ -26,7 +26,7 @@ floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NOVA.t
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_REM_sbd.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp.txt';
+floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp.txt';
 
 % directory of individual json float information files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_float_info_files_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -71,10 +71,19 @@ for id = 1:length(listWmoNum)
       return;
    end
 
+   floatType = 'UNKNOWN';
+   if (listDecId(id) < 1000)
+      floatType = 'PROVOR';
+   elseif ((listDecId(id) > 1000) && (listDecId(id) < 2000))
+      floatType = 'APEX';
+   elseif (listDecId(id) > 2000)
+      floatType = 'NOVA';
+   end
+   
    fprintf(fidOut, '{\n');
    fprintf(fidOut, '   "WMO" : "%d",\n', listWmoNum(id));
    fprintf(fidOut, '   "PTT" : "%s",\n', listArgosId{id});
-   fprintf(fidOut, '   "FLOAT_TYPE" : "PROVOR",\n');
+   fprintf(fidOut, '   "FLOAT_TYPE" : "%s",\n', floatType);
    fprintf(fidOut, '   "DECODER_VERSION" : "%s",\n', listDecVer{id});
    fprintf(fidOut, '   "DECODER_ID" : "%d",\n', listDecId(id));
    fprintf(fidOut, '   "FRAME_LENGTH" : "%d",\n', listFrameLen(id));

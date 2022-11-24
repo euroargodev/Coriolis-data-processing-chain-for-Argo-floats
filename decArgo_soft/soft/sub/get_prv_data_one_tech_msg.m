@@ -86,7 +86,7 @@ global g_decArgo_generateNcTech;
 global g_decArgo_dateDef;
 
 % criteria for Life Expiry Message detection
-NUMBER_OF_SUCCESSIVE_TECH_MSG = 10;
+NUMBER_OF_SUCCESSIVE_TECH_MSG = 15;
 
 
 for id = 1:length(a_argosFileName)

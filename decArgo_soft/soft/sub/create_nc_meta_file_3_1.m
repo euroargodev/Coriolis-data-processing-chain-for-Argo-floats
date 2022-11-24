@@ -95,7 +95,7 @@ switch (a_decoderId)
    case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 31}
       % Argos floats
       
-      if ~((a_decoderId == 27) || (a_decoderId == 28) || (a_decoderId == 29))
+      if ~(ismember(a_decoderId, [27 28 29]))
          
          % add the CTD pump cut-off pressure (not in the JSON met-data but computed
          % on the fly according to decoder Id)
@@ -286,7 +286,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
-   case {30}
+   case {30, 32}
       
       % Arvor ARN
       
@@ -411,7 +411,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210}
       
       % Arvor deep 4000
       % Arvor deep 3500
@@ -443,13 +443,34 @@ switch (a_decoderId)
          end
       end
       
+      configValue = inputDynamicConfigValue;
       if (~isempty(inputStaticConfigName))
          staticConfigValue = nan(size(inputStaticConfigName, 1), size(inputDynamicConfigValue, 2));
          if (~isempty(inputStaticConfigValue))
             staticConfigValue(:, 1) = str2num(char(inputStaticConfigValue));
          end
+         configValue = cat(1, staticConfigValue, inputDynamicConfigValue);
       end
-      configValue = cat(1, staticConfigValue, inputDynamicConfigValue);
+      
+      % TEMPORARY CODE
+      if (a_decoderId == 210)
+         
+         % exclude configuration labels not accepted yet by the GDAC checker
+         exclusionList = [ ...
+            {'CONFIG_InAirMeasurementPeriodicity_NUMBER'} ...
+            {'CONFIG_InAirMeasurementSamplingTime_seconds'} ...
+            {'CONFIG_InAirMeasurementPhaseDuration_minutes'} ...
+            {'CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec'} ...
+            ];
+         idDel = [];
+         for idL = 1:length(configName)
+            if (ismember(configName{idL}, exclusionList))
+               idDel = [idDel idL];
+            end
+         end
+         configName(idDel) = [];
+         configValue(idDel, :) = [];
+      end
       
       % create the launch configuration
       launchConfigName = configName;

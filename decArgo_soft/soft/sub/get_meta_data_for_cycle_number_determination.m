@@ -333,7 +333,7 @@ switch (a_floatDecId)
          firstProfileEndDate = a_floatRefDay + refDay + startEndProfHour/24 + profPres/8640;
       end
 
-   case {24, 27, 25, 28, 29, 17, 30, 31}
+   case {24, 27, 25, 28, 29, 17, 30, 31, 32}
       % PM3 (MC5) is the hour of the end of the profile
       if ((refDay ~= g_decArgo_durationDef) && (startEndProfHour ~= -1)) 
          firstProfileEndDate = a_floatRefDay + refDay + startEndProfHour/24;

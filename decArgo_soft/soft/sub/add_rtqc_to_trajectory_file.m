@@ -47,6 +47,9 @@
 %   06/17/2016 - RNU - V 1.5: don't initialize JULD_QC (or JULD_ADJUSTED_QC) to
 %                             '0' if JULD_STATUS (or JULD_ADJUSTED_STATUS) is
 %                             set to '9'.
+%   07/04/2016 - RNU - V 1.6: apply test #22 on data sampled during "near
+%                             surface" and "in air" phases (and stored with
+%                             MC=g_MC_InAirSingleMeas).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -81,7 +84,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '1.5';
+g_decArgo_addRtqcToTrajVersion = '1.6';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -153,6 +156,7 @@ expectedTestList = [ ...
    {'TEST007_REGIONAL_RANGE'} ...
    {'TEST015_GREY_LIST'} ...
    {'TEST021_NS_UNPUMPED_SALINITY'} ...
+   {'TEST022_NS_MIXED_AIR_WATER'} ...
    {'TEST057_DOXY'} ...
    ];
 
@@ -1316,6 +1320,68 @@ if (testFlagList(21) == 1)
          
          testDoneList(21) = 1;
          testFailedList(21) = 1;
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 22: near-surface mixed air/water test
+%
+if (testFlagList(22) == 1)
+   
+   % list of parameters concerned by this test
+   test22ParameterList = [ ...
+      {'TEMP'} ...
+      {'TEMP_DOXY'} ...
+      {'TEMP_DOXY2'} ...
+      ];   
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      for idParam = 1:length(test22ParameterList)
+         paramName = test22ParameterList{idParam};
+         if (idD == 2)
+            paramName = [paramName '_ADJUSTED'];
+         end
+         
+         if (idD == 1)
+            % non adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamNameList;
+            ncTrajParamXDataList = ncTrajParamDataList;
+            ncTrajParamXDataQcList = ncTrajParamDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamFillValueList;
+            
+            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+         else
+            % adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamAdjNameList;
+            ncTrajParamXDataList = ncTrajParamAdjDataList;
+            ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+            
+            idTemp = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+         end
+      
+         if (~isempty(idTemp))
+            
+            data = eval(ncTrajParamXDataList{idTemp});
+            dataQc = eval(ncTrajParamXDataQcList{idTemp});
+            paramFillValue = ncTrajParamXFillValueList{idTemp};
+            idMeas = find( ...
+               (data ~= paramFillValue) & ...
+               (measurementCode == g_MC_InAirSingleMeas));
+            
+            % apply the test
+            dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
+            eval([ncTrajParamXDataQcList{idTemp} ' = dataQc;']);
+            
+            testDoneList(22) = 1;
+            testFailedList(22) = 1;
+         end
       end
    end
 end

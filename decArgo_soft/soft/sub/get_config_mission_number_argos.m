@@ -67,7 +67,7 @@ switch (a_decoderId)
          end
       end
       
-   case {30}
+   case {30, 32}
       
       % retrieve the configuration mission number
       

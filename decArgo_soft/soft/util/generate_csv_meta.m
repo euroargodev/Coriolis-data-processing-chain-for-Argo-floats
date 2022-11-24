@@ -33,6 +33,7 @@ dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -334,7 +335,7 @@ switch a_decId
       % CTD floats
       o_sensorList = [{'CTD'}];
       
-   case {4, 19, 25, 27, 28, 29, 201, 202, 203, 206, 207, 208}
+   case {4, 19, 25, 27, 28, 29, 32, 201, 202, 203, 206, 207, 208}
       % CTDO floats
       o_sensorList = [{'CTD'}; {'OPTODE'}];
       
@@ -521,7 +522,7 @@ switch a_inputSensorName
                {'micromole/l'} {'micromole/kg'} {'millibar'} ...
                ];
             
-         case {27, 28, 29}
+         case {27, 28, 29, 32}
             
             o_paramName = [ ...
                {'TPHASE_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...

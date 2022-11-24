@@ -81,7 +81,8 @@ if (~isempty(refWmo))
          
          if (~isempty(floatDecId))
             if (((fix(floatDecId / 100) == 2) && (floatTransType == 3)) || ...
-                  ((fix(floatDecId / 100) == 3) && (floatTransType == 4)))
+                  ((fix(floatDecId / 100) == 3) && (floatTransType == 4)) || ...
+                  ((fix(floatDecId / 1000) == 2) && (floatTransType == 3)))
                g_decArgo_configFilePathName = tabConfigFilePathName;
                g_decArgo_dirInputJsonFloatDecodingParametersFile = [];
                o_configFileNumber = idConfigFile;

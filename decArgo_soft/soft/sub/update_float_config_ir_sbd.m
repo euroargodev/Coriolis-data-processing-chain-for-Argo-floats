@@ -59,6 +59,12 @@ switch (a_decoderId)
       
       update_float_config_ir_sbd_206_to_209(a_floatParam);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {210} % Arvor-ARN Iridium
+      
+      update_float_config_ir_sbd_210(a_floatParam);
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to update configuration for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

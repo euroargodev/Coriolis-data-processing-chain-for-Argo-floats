@@ -27,6 +27,12 @@ DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\ArgosProcessi
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\Nouveau dossier\cycle\';
 DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\Nouveau dossier\cycle_out\';
 
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle_CORRECT\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\ori_split_cycle_FINAL\';
+
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEP4\';
+DIR_OUTPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\V2\OUT_4.54\STEp4_FINAL\';
+
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 

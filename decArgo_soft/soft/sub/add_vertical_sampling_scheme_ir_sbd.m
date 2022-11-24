@@ -51,6 +51,15 @@ for idP = 1:length(a_tabProfiles)
       
       % add configuration parameters for Argos floats
       switch (a_decoderId)
+         case {204}
+            nbThreshold = 1;
+            descSamplingPeriod = get_config_value('CONFIG_PM05', configNames, configValues);
+            ascSamplingPeriod = get_config_value('CONFIG_PM07', configNames, configValues);
+            parkPres = get_config_value('CONFIG_PM08', configNames, configValues);
+            profilePres = get_config_value('CONFIG_PM09', configNames, configValues);
+            threshold1 = get_config_value('CONFIG_PM10', configNames, configValues);
+            thickSurf = get_config_value('CONFIG_PM11', configNames, configValues);
+            thickBottom = get_config_value('CONFIG_PM12', configNames, configValues);
          case {201, 202, 203, 205, 206, 207, 208, 209}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_PM05', configNames, configValues);
@@ -62,15 +71,18 @@ for idP = 1:length(a_tabProfiles)
             thickSurf = get_config_value('CONFIG_PM12', configNames, configValues);
             thickMiddle = get_config_value('CONFIG_PM13', configNames, configValues);
             thickBottom = get_config_value('CONFIG_PM14', configNames, configValues);
-         case {204}
-            nbThreshold = 1;
-            descSamplingPeriod = get_config_value('CONFIG_PM05', configNames, configValues);
-            ascSamplingPeriod = get_config_value('CONFIG_PM07', configNames, configValues);
-            parkPres = get_config_value('CONFIG_PM08', configNames, configValues);
-            profilePres = get_config_value('CONFIG_PM09', configNames, configValues);
-            threshold1 = get_config_value('CONFIG_PM10', configNames, configValues);
-            thickSurf = get_config_value('CONFIG_PM11', configNames, configValues);
-            thickBottom = get_config_value('CONFIG_PM12', configNames, configValues);
+         case {210}
+            nbThreshold = 2;
+            descSamplingPeriod = get_config_value('CONFIG_MC08_', configNames, configValues);
+            ascSamplingPeriod = get_config_value('CONFIG_MC10_', configNames, configValues);
+            parkPres = get_config_value('CONFIG_MC011_', configNames, configValues);
+            profilePres = get_config_value('CONFIG_MC012_', configNames, configValues);
+            threshold1 = get_config_value('CONFIG_MC17_', configNames, configValues);
+            threshold2 = get_config_value('CONFIG_MC18_', configNames, configValues);
+            thickSurf = get_config_value('CONFIG_MC19_', configNames, configValues);
+            thickMiddle = get_config_value('CONFIG_MC20_', configNames, configValues);
+            thickBottom = get_config_value('CONFIG_MC21_', configNames, configValues);
+
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in add_vertical_sampling_scheme_argos for decoderId #%d\n', ...
                g_decArgo_floatNum, ...

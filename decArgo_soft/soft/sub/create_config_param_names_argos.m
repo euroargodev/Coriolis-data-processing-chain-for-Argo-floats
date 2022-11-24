@@ -45,7 +45,7 @@ switch (a_decoderId)
    case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 31}
       % Argos floats
       
-   case {30}
+   case {30, 32}
       % Arvor ARN
       
       for id = [0 4:9 14:18 21 22]
@@ -68,7 +68,12 @@ switch (a_decoderId)
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
       end
-      for id = [0:13 16 20:23 26 27]
+      if (a_decoderId == 30)
+         idList = [0:13 16 20:23 26 27];
+      else
+         idList = [0:13 16 20:23 26 27 28];
+      end
+      for id = idList
          decConfNames{end+1} = sprintf('CONFIG_TC%d', id);
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};

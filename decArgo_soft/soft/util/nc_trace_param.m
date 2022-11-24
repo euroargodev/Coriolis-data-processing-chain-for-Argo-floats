@@ -35,13 +35,14 @@ global g_NTP_NAME_PARAM2;
 
 g_NTP_NAME_PARAM1 = 'TURBIDITY';
 g_NTP_NAME_PARAM1 = 'CHLA';
-g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
-g_NTP_NAME_PARAM1 = 'TEMP';
+g_NTP_NAME_PARAM1 = 'TPHASE_DOXY';
+% g_NTP_NAME_PARAM1 = 'TEMP';
+% g_NTP_NAME_PARAM1 = 'NITRATE';
 
 g_NTP_NAME_PARAM2 = 'TURBIDITY';
 g_NTP_NAME_PARAM2 = 'CHLA2';
 g_NTP_NAME_PARAM2 = 'DOXY';
-g_NTP_NAME_PARAM2 = 'PSAL';
+% g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'NITRATE';
 % g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
 
@@ -65,6 +66,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nova_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_dova.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

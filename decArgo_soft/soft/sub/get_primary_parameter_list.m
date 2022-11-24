@@ -48,7 +48,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {27, 28, 29}
+   case {27, 28, 29, 32}
       
       % DO Argos floats
       o_paramList = [ ...
@@ -103,7 +103,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {204, 205}
+   case {204, 205, 210}
 
       % Arvor Iridium
       o_paramList = [ ...

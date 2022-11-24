@@ -27,10 +27,6 @@ global g_decArgo_floatNum;
 % directory of json meta-data files
 global g_decArgo_dirInputJsonFloatMetaDataFile;
 
-% arrays to store calibration information
-global g_decArgo_calibInfo;
-g_decArgo_calibInfo = [];
-
 % structure to store miscellaneous meta-data
 global g_decArgo_jsonMetaData;
 g_decArgo_jsonMetaData = [];
@@ -55,7 +51,6 @@ global g_decArgo_configDone;
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
 
 if ~(exist(jsonInputFileName, 'file') == 2)
-   g_decArgo_calibInfo = [];
    fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
    return;
 end
@@ -83,7 +78,7 @@ if (~isempty(a_floatParam))
    
    switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {30} % V4.52
+      case {30, 32} % V4.52 & v4.54
          
          for id = [0:18 21 22 24]
             confName = sprintf('CONFIG_MC%d_', id);
@@ -202,37 +197,4 @@ g_decArgo_configDone = 1;
 [g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF, ...
    g_decArgo_jsonMetaData.PRES_STOP_CTD_PUMP] = compute_cutoff_pres(a_decoderId);
 
-% retrieve the RT offsets
-if (isfield(metaData, 'RT_OFFSET'))
-   g_decArgo_rtOffsetInfo.param = [];
-   g_decArgo_rtOffsetInfo.value = [];
-   g_decArgo_rtOffsetInfo.date = [];
-
-   rtData = metaData.RT_OFFSET;
-   params = unique(struct2cell(rtData.PARAM));
-   for idParam = 1:length(params)
-      param = params{idParam};
-      fieldNames = fields(rtData.PARAM);
-      tabValue = [];
-      tabDate = [];
-      for idF = 1:length(fieldNames)
-         fieldName = fieldNames{idF};
-         if (strcmp(rtData.PARAM.(fieldName), param) == 1)
-            idPos = strfind(fieldName, '_');
-            paramNum = fieldName(idPos+1:end);
-            value = str2num(rtData.VALUE.(['VALUE_' paramNum]));
-            tabValue = [tabValue value];
-            date = rtData.DATE.(['DATE_' paramNum]);
-            date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-            tabDate = [tabDate date];
-         end
-      end
-      [tabDate, idSorted] = sort(tabDate);
-      tabValue = tabValue(idSorted);
-      
-      % store the RT offsets
-      g_decArgo_rtOffsetInfo.param{end+1} = param;
-      g_decArgo_rtOffsetInfo.value{end+1} = tabValue;
-      g_decArgo_rtOffsetInfo.date{end+1} = tabDate;
-   end
-end
+return;

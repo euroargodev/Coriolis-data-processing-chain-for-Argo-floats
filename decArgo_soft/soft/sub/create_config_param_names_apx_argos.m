@@ -42,38 +42,6 @@ switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29}
-      % NKE Argos floats
-      
-   case {30}
-      % Arvor ARN
-      
-      for id = [0 4:9 14:18 21 22]
-         decConfNames{end+1} = sprintf('CONFIG_MC%d', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [2 10 11]
-         decConfNames{end+1} = sprintf('CONFIG_MC%03d', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%03d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0 1:3 6]
-         decConfNames{end+1} = sprintf('CONFIG_AC%d', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('AC%d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0 1 2]
-         decConfNames{end+1} = sprintf('CONFIG_PX%d', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      for id = [0:13 16 20:23 26 27]
-         decConfNames{end+1} = sprintf('CONFIG_TC%d', id);
-         idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('TC%d', id)) == 1);
-         ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
-      end
-      
    case {1001, 1005} % 071412, 061810
       
       configIds = [ ...

@@ -80,8 +80,7 @@ global g_decArgo_generateNcTech;
 global g_decArgo_dateDef;
 
 % criteria for Life Expiry Message detection
-NUMBER_OF_SUCCESSIVE_TECH_MSG = 10;
-
+NUMBER_OF_SUCCESSIVE_TECH_MSG = 15;
 
 for id = 1:length(a_argosFileName)
    if ~(exist(char(a_argosFileName{id}), 'file') == 2)
@@ -138,63 +137,63 @@ end
 eol_detected = 0;
 if (~isempty(tabSensors))
    
-   % during cycle #0, Arvor 4.52 floats stay a the surface and emit technical
+   % during cycle #0, Arvor 4.52 and 4.54 floats stay a the surface and emit technical
    % message #1, #2 and parameter message, this prelude phase should not be
    % taken as an End Of Life phase
-   if ((a_decoderId ~= 30) || ...
-         ((a_decoderId == 30) && (g_decArgo_cycleNum >= 0)))
-      
-      % get the types of the received messages
-      tabType = get_message_type(tabSensors, a_decoderId);
-      
-      nbTechMsg = length(find((tabType == 0) | (tabType == 1)));
-      if (nbTechMsg >= NUMBER_OF_SUCCESSIVE_TECH_MSG)
-         % compute the number of consecutive technical messages received at the end
-         % of the transmission
-         lastDataMsg = find( ...
-            (flipud(tabType) == 2) | ...
-            (flipud(tabType) == 4) | ...
-            (flipud(tabType) == 5) | ...
-            (flipud(tabType) == 6));
-         lastDataMsg = min(lastDataMsg);
-         if (~isempty(lastDataMsg))
-            nbFinalTechMsg = lastDataMsg - 1;
-            idToDelete = (length(tabType)-lastDataMsg+2):length(tabType);
-            % preserve only one technical message #1 and #2 in the received
-            % messages
-            if (isempty(find(tabType(1:end-nbFinalTechMsg) == 0, 1)) || ...
-                  isempty(find(tabType(1:end-nbFinalTechMsg) == 1, 1)))
-               if (isempty(find(tabType(1:end-nbFinalTechMsg) == 0, 1)))
-                  idF0 = find(tabType == 0, 1);
-                  if (~isempty(idF0))
-                     idToDelete = setdiff(idToDelete, idF0);
-                     nbFinalTechMsg = nbFinalTechMsg - 1;
-                  end
-               end
-               if (isempty(find(tabType(1:end-nbFinalTechMsg) == 1, 1)))
-                  idF1 = find(tabType == 1, 1);
-                  if (~isempty(idF1))
-                     idToDelete = setdiff(idToDelete, idF1);
-                     nbFinalTechMsg = nbFinalTechMsg - 1;
-                  end
+   
+   % get the types of the received messages
+   tabType = get_message_type(tabSensors, a_decoderId);
+   
+   nbTechMsg = length(find((tabType == 0) | (tabType == 1)));
+   if (nbTechMsg >= NUMBER_OF_SUCCESSIVE_TECH_MSG)
+      % compute the number of consecutive technical messages received at the end
+      % of the transmission
+      lastDataMsg = find( ...
+         (flipud(tabType) == 2) | ...
+         (flipud(tabType) == 4) | ...
+         (flipud(tabType) == 5) | ...
+         (flipud(tabType) == 6) | ...
+         (flipud(tabType) == 7) | ...
+         (flipud(tabType) == 8) | ...
+         (flipud(tabType) == 9));
+      lastDataMsg = min(lastDataMsg);
+      if (~isempty(lastDataMsg))
+         nbFinalTechMsg = lastDataMsg - 1;
+         idToDelete = (length(tabType)-lastDataMsg+2):length(tabType);
+         % preserve only one technical message #1 and #2 in the received
+         % messages
+         if (isempty(find(tabType(1:end-nbFinalTechMsg) == 0, 1)) || ...
+               isempty(find(tabType(1:end-nbFinalTechMsg) == 1, 1)))
+            if (isempty(find(tabType(1:end-nbFinalTechMsg) == 0, 1)))
+               idF0 = find(tabType == 0, 1);
+               if (~isempty(idF0))
+                  idToDelete = setdiff(idToDelete, idF0);
+                  nbFinalTechMsg = nbFinalTechMsg - 1;
                end
             end
-         else
-            % all the received messages are technical ones
-            nbFinalTechMsg = length(tabType);
-            idToDelete = 1:length(tabType);
+            if (isempty(find(tabType(1:end-nbFinalTechMsg) == 1, 1)))
+               idF1 = find(tabType == 1, 1);
+               if (~isempty(idF1))
+                  idToDelete = setdiff(idToDelete, idF1);
+                  nbFinalTechMsg = nbFinalTechMsg - 1;
+               end
+            end
          end
-         if (nbFinalTechMsg >= NUMBER_OF_SUCCESSIVE_TECH_MSG)
-            fprintf('DEC_INFO: Float #%d Cycle #%d: EOL cycle detected %d Life Expiry Messages ignored (from %s to %s)\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, ...
-               nbTechToDel, ...
-               julian_2_gregorian_dec_argo(tabDates(min(idToDelete))), ...
-               julian_2_gregorian_dec_argo(tabDates(max(idToDelete))));
-            
-            tabSensors(idToDelete, :) = [];
-            tabDates(idToDelete) = [];
-            eol_detected = 1;
-         end
+      else
+         % all the received messages are technical ones
+         nbFinalTechMsg = length(tabType);
+         idToDelete = 1:length(tabType);
+      end
+      if (nbFinalTechMsg >= NUMBER_OF_SUCCESSIVE_TECH_MSG)
+         fprintf('DEC_INFO: Float #%d Cycle #%d: EOL cycle detected %d Life Expiry Messages ignored (from %s to %s)\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, ...
+            length(idToDelete), ...
+            julian_2_gregorian_dec_argo(tabDates(min(idToDelete))), ...
+            julian_2_gregorian_dec_argo(tabDates(max(idToDelete))));
+         
+         tabSensors(idToDelete, :) = [];
+         tabDates(idToDelete) = [];
+         eol_detected = 1;
       end
    end
 end
@@ -360,13 +359,13 @@ end
 % 2 - we compute an Id for each message
 % 3 - we try to select at most one message for each Id
 
-% retrieve the types of all the received messages (only the types 4, 5 and 6
-% will be processed)
+% retrieve the types of all the received messages (only the types 4, 5, 6, 7, 8
+% and 9 will be processed)
 tabType = get_message_type(o_argosDataData, a_decoderId);
 
 % process all the received data messages
 tabArgosCtdMsgDates = [];
-typeNum = [4 5 6];
+typeNum = [4 5 6 7 8 9];
 for idType = 1:length(typeNum)
    
    idForType = find(tabType == typeNum(idType));
@@ -378,8 +377,8 @@ for idType = 1:length(typeNum)
       
       % Id creation
       switch (a_decoderId)
-         case {30}
-            if (typeNum(idType) ~= 5)
+         case {30, 32}
+            if ((typeNum(idType) ~= 5) && (typeNum(idType) ~= 8))
                % for profile CTD messages, Id is the time and the pressure
                % of the first CTD measurement
                firstBit = 21;

@@ -77,6 +77,20 @@ switch (a_decoderId)
       bitsToFreeze = [bitsToFreeze; 1 199 22];
       % technical message #2: unused bits
       bitsToFreeze = [bitsToFreeze; 1 247 2];
+      
+   case {32} % V4.54
+      % all messages: CRC bits
+      bitsToFreeze = [bitsToFreeze; 0 5 16];
+      bitsToFreeze = [bitsToFreeze; 1 5 16];
+      bitsToFreeze = [bitsToFreeze; 2 5 16];
+      bitsToFreeze = [bitsToFreeze; 7 5 16];
+      bitsToFreeze = [bitsToFreeze; 8 5 16];
+      bitsToFreeze = [bitsToFreeze; 9 5 16];
+
+      % technical message #2: float's time
+      bitsToFreeze = [bitsToFreeze; 1 199 22];
+      % technical message #2: unused bits
+      bitsToFreeze = [bitsToFreeze; 1 247 2];
    
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_bits_to_freeze for decoderId #%d\n', ...

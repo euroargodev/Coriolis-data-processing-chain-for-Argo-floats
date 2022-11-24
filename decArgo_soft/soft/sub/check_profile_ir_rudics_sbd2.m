@@ -51,9 +51,9 @@ if (~isempty(profInfo))
    for idCy = 1:length(uOutputCycleNumber)
       for idDir = 1:length(uDirection)
          cycNum = uOutputCycleNumber(idCy);
-         dir = uDirection(idDir);
+         direct = uDirection(idDir);
          
-         idF = find((profInfo(:, 1) == cycNum) & (profInfo(:, 2) == dir));
+         idF = find((profInfo(:, 1) == cycNum) & (profInfo(:, 2) == direct));
          if (~isempty(idF))
             sensorNumbers = profInfo(idF, 3);
             anomaly = 0;

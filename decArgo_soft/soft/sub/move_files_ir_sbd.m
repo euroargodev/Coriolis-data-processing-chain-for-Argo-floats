@@ -87,7 +87,7 @@ for idFile = 1:length(a_listFileNames)
          if (g_decArgo_realtimeFlag == 1)
             % store information for the XML report
             g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles ...
-               {fileName}];
+               {fileNamOut}];
          end
       end
       
@@ -117,6 +117,13 @@ for idFile = 1:length(a_listFileNames)
       end
       %       end
       
+      if (a_updateXmlReportFlag == 1)
+         if (g_decArgo_realtimeFlag == 1)
+            % store information for the XML report
+            g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles ...
+               {fileNameTxtOut}];
+         end
+      end
    end
 end
 

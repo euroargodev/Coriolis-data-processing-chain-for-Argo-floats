@@ -5,8 +5,8 @@
 %  [o_inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, a_profile)
 %
 % INPUT PARAMETERS :
-%   a_decoderId  : float decoder Id
-%   a_ctdProfile : input unpumped data profile
+%   a_decoderId : float decoder Id
+%   a_profile   : input unpumped data profile
 %
 % OUTPUT PARAMETERS :
 %   o_inAirMeasProfile : output IN AIR measurements profile
@@ -77,7 +77,7 @@ if (~isempty(idPres) && ~isempty(idTemp))
                o_inAirMeasProfile = unpumpedProfile;
             end
             
-         case {27}
+         case {27, 32}
             
             idTPhaseDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'TPHASE_DOXY') == 1, 1);
             idDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'DOXY') == 1, 1);
@@ -87,7 +87,7 @@ if (~isempty(idPres) && ~isempty(idTemp))
                
                % compute PPOX_DOXY from TPHASE_DOXY using the Stern-Volmer equation
                unpumpedProfile.data(idNoDef, idDoxy) = ...
-                  compute_PPOX_DOXY_27( ...
+                  compute_PPOX_DOXY_27_32( ...
                   unpumpedProfile.data(idNoDef, idTPhaseDoxy), ...
                   unpumpedProfile.paramList(idTPhaseDoxy).fillValue, ...
                   unpumpedProfile.data(idNoDef, idPres), ...
@@ -290,8 +290,8 @@ if (~isempty(idPres) && ~isempty(idTemp))
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d Profile #%d: PPOX_DOXY processing not implemented yet for decoderId #%d\n', ...
                g_decArgo_floatNum, ...
-               a_profOptode.cycleNumber, ...
-               a_profOptode.profileNumber, ...
+               a_profile.cycleNumber, ...
+               a_profile.profileNumber, ...
                a_decoderId);
       end
    end

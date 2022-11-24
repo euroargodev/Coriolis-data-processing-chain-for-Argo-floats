@@ -26,10 +26,10 @@ o_statNcTechParamList = [];
 
 % list of parameters to initialize with 0 values
 switch (a_decoderId)
-   case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31}
+   case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
       o_statNcTechParamList = [[10:17] 20 21 22 221 224 225 321 323 521 524 525];
       
-   case {201, 202, 203, 204, 205, 206, 207, 208, 209}
+   case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210}
       
    case {1001, 1002, 1003, 1004, 1005, 1006}
       o_statNcTechParamList = 10:19;

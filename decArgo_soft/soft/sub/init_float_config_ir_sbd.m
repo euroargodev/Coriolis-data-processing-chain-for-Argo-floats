@@ -64,11 +64,11 @@ switch (a_decoderId)
       
       init_float_config_ir_sbd_nva_1_2(a_launchDate, a_decoderId);
       
-      %       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %
-      %    case {210} % Arvor-ARN Iridium
-      %
-      %       init_float_config_ir_sbd_210(a_launchDate);
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {210} % Arvor-ARN Iridium
+      
+      init_float_config_ir_sbd_210(a_launchDate);
       
       
    otherwise

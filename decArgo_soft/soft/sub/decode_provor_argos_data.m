@@ -1,3 +1,4 @@
+
 % ------------------------------------------------------------------------------
 % Decode PROVOR Argos messages.
 %
@@ -491,7 +492,7 @@ for idCy = 1:length(a_cycleList)
                      create_prv_drift_without_dates_4_19_25(tabDriftCTDO);
                else
                   [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy] = ...
-                     create_prv_drift_without_dates_27_28_29(tabDriftCTDO);
+                     create_prv_drift_without_dates_27_28_29_32(tabDriftCTDO);
                end
             end
             
@@ -516,7 +517,7 @@ for idCy = 1:length(a_cycleList)
                   create_prv_drift_without_dates_4_19_25(tabDriftCTDO);
             else
                [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy] = ...
-                  create_prv_drift_without_dates_27_28_29(tabDriftCTDO);
+                  create_prv_drift_without_dates_27_28_29_32(tabDriftCTDO);
             end
          end
          
@@ -528,7 +529,7 @@ for idCy = 1:length(a_cycleList)
          else
             [descProfOcc, descProfDate, descProfPres, descProfTemp, descProfSal, descProfRawDoxy, ...
                ascProfOcc, ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy] = ...
-               create_prv_profile_27_28_29(tabProfCTDO, tabTech, descentStartDate, ascentStartDate);
+               create_prv_profile_27_28_29_32(tabProfCTDO, tabTech, descentStartDate, ascentStartDate);
          end
          
          % convert counts to physical values
@@ -543,9 +544,9 @@ for idCy = 1:length(a_cycleList)
          [ascProfSal] = sensor_2_value_for_salinity_argos(ascProfSal);
          
          if ((a_decoderId == 27) || (a_decoderId == 28) || (a_decoderId == 29))
-            [descProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29(descProfRawDoxy);
-            [parkRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29(parkRawDoxy);
-            [ascProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29(ascProfRawDoxy);
+            [descProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(descProfRawDoxy);
+            [parkRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(parkRawDoxy);
+            [ascProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(ascProfRawDoxy);
          end
          
          if ((a_decoderId == 4) || (a_decoderId == 19) || (a_decoderId == 25))
@@ -553,9 +554,9 @@ for idCy = 1:length(a_cycleList)
             [parkDoxy] = compute_DOXY_4_19_25(parkRawDoxy, parkPres, parkTemp, parkSal);
             [ascProfDoxy] = compute_DOXY_4_19_25(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
          elseif (a_decoderId == 27)
-            [descProfDoxy] = compute_DOXY_27(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
-            [parkDoxy] = compute_DOXY_27(parkRawDoxy, parkPres, parkTemp, parkSal);
-            [ascProfDoxy] = compute_DOXY_27(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
+            [descProfDoxy] = compute_DOXY_27_32(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
+            [parkDoxy] = compute_DOXY_27_32(parkRawDoxy, parkPres, parkTemp, parkSal);
+            [ascProfDoxy] = compute_DOXY_27_32(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
          elseif (a_decoderId == 28)
             [descProfDoxy] = compute_DOXY_28(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
             [parkDoxy] = compute_DOXY_28(parkRawDoxy, parkPres, parkTemp, parkSal);
@@ -611,13 +612,13 @@ for idCy = 1:length(a_cycleList)
                   ascProfOcc, ascProfDate, ...
                   ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy);
             else
-               print_descending_profile_in_csv_file_27_28_29( ...
+               print_descending_profile_in_csv_file_27_28_29_32( ...
                   descProfOcc, descProfDate, ...
                   descProfPres, descProfTemp, descProfSal, descProfRawDoxy, descProfDoxy);
-               print_drift_measurements_in_csv_file_27_28_29( ...
+               print_drift_measurements_in_csv_file_27_28_29_32( ...
                   parkOcc, parkDate, parkTransDate, ...
                   parkPres, parkTemp, parkSal, parkRawDoxy, parkDoxy);
-               print_ascending_profile_in_csv_file_27_28_29( ...
+               print_ascending_profile_in_csv_file_27_28_29_32( ...
                   ascProfOcc, ascProfDate, ...
                   ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy);
             end
@@ -636,7 +637,7 @@ for idCy = 1:length(a_cycleList)
                   ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy, ...
                   repRateMetaData, a_decoderId, tabTech);
             else
-               [cycleProfiles] = process_profiles_27_28_29( ...
+               [cycleProfiles] = process_profiles_27_28_29_32( ...
                   a_floatSurfData, cycleNum, ...
                   descProfDate, descProfPres, descProfTemp, descProfSal, descProfRawDoxy, descProfDoxy, ...
                   ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy, ...
@@ -764,7 +765,7 @@ for idCy = 1:length(a_cycleList)
                   descentToProfStartDate, descentToProfEndDate, ...
                   ascentStartDate, ascentEndDate, transStartDate, ...
                   firstGroundingDate, firstEmergencyAscentDate] = ...
-                  compute_prv_dates_30( ...
+                  compute_prv_dates_30_32( ...
                   tabTech2, floatClockDrift, ...
                   a_floatSurfData.launchDate, a_refDay, ...
                   meanParkPres, maxProfPres, ...
@@ -856,7 +857,7 @@ for idCy = 1:length(a_cycleList)
             
             if (deepCycle == 1)
                if (~isempty(tabTech2))
-                  print_dates_in_csv_file_30( ...
+                  print_dates_in_csv_file_30_32( ...
                      floatClockDrift, lastArgosMsgDateOfPrevCycle, ...
                      cycleStartDate, descentStartDate, ...
                      firstStabDate, firstStabPres, descentEndDate, ...
@@ -941,6 +942,266 @@ for idCy = 1:length(a_cycleList)
                firstGroundingDate, firstGroundingPres, ...
                cycleProfiles, ...
                parkDate, parkTransDate, parkPres, parkTemp, parkSal, ...
+               tabTech1, tabTech2, a_decoderId, deepCycle);
+            
+            % sort trajectory data structures according to the predefined
+            % measurement code order
+            [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+            
+            o_tabTrajNMeas = [o_tabTrajNMeas; tabTrajNMeas];
+            o_tabTrajNCycle = [o_tabTrajNCycle; tabTrajNCycle];
+                           
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % TECH NetCDF file
+            
+            % update NetCDF technical data
+            update_technical_data_argos_sbd(a_decoderId);
+            
+            % remove the transmission start time of the previous cycle if it
+            % already exists
+            if (~isempty(o_tabNcTechIndex))
+               if (~isempty(find((o_tabNcTechIndex(:, 2) == g_decArgo_cycleNum-1) & (o_tabNcTechIndex(:, 5) == 1210), 1)))
+                  idDel = find((g_decArgo_outputNcParamIndex(:, 2) == g_decArgo_cycleNum-1) & (g_decArgo_outputNcParamIndex(:, 5) == 1215), 1);
+                  g_decArgo_outputNcParamIndex(idDel, :) = [];
+                  g_decArgo_outputNcParamValue(idDel) = [];
+               end
+            end
+            
+            o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
+            o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
+            
+            g_decArgo_outputNcParamIndex = [];
+            g_decArgo_outputNcParamValue = [];
+            
+         end
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         
+      case {32} % V4.54
+         
+         % decode CTD and technical messages
+         [tabProfCTDO, tabDriftCTDO, tabTech1, tabTech2, tabParam, ...
+            deepCycle, floatClockDrift, meanParkPres, maxProfPres] = ...
+            decode_prv_data_32(sensors, sensorDates);
+         
+         if (g_decArgo_configDone == 0)
+            create_float_config_argos(tabParam, a_decoderId);
+         end
+         
+         % update and assign the current configuration to the decoded cycle
+         set_float_config_argos(g_decArgo_cycleNum);
+
+         cycleProfiles = [];
+         parkDate = [];
+         parkTransDate = [];
+         parkPres = [];
+         parkTemp = [];
+         parkSal = [];
+         parkRawDoxy = [];
+         parkDoxy = [];
+         if (deepCycle == 1)
+            
+            % pressure associated with some cycle timings
+            if (~isempty(tabTech1))
+               firstGroundingPres = tabTech1(14);
+               firstEmergencyAscentPres = tabTech1(45);
+            end
+            if (~isempty(tabTech2))
+               firstStabPres = tabTech2(9);
+            end
+            
+            if (~isempty(tabTech2))
+               
+               % determine the main dates of the cycle
+               [cycleStartDate, descentStartDate, firstStabDate, descentEndDate, ...
+                  descentToProfStartDate, descentToProfEndDate, ...
+                  ascentStartDate, ascentEndDate, transStartDate, ...
+                  firstGroundingDate, firstEmergencyAscentDate] = ...
+                  compute_prv_dates_30_32( ...
+                  tabTech2, floatClockDrift, ...
+                  a_floatSurfData.launchDate, a_refDay, ...
+                  meanParkPres, maxProfPres, ...
+                  a_floatSurfData.cycleData(end).firstMsgTime, ...
+                  a_floatSurfData.cycleData(end).lastCtdMsgTime, ...
+                  lastArgosMsgDateOfPrevCycle);
+               
+               % create drift data set
+               nbDriftMeas = [];
+               if (~isempty(tabTech1))
+                  nbDriftMeas = tabTech1(30);
+               end
+               [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy] = ...
+                  create_prv_drift_32(tabDriftCTDO, nbDriftMeas, ...
+                  descentStartDate, floatClockDrift, ...
+                  descentEndDate, descentToProfStartDate, ...
+                  a_driftSamplingPeriod);
+               
+               if (isempty(parkDate))
+                  % determination of drift measurement dates failed
+                  [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy] = ...
+                     create_prv_drift_without_dates_27_28_29_32(tabDriftCTDO);
+               end
+               
+            else
+               
+               if (~isempty(tabDriftCTDO))
+                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received => unable to define drift measurements order\n', ...
+                     g_decArgo_floatNum, g_decArgo_cycleNum);
+               elseif (~isempty(tabProfCTDO))
+                  fprintf('WARNING: Float #%d Cycle #%d: technical message not received\n', ...
+                     g_decArgo_floatNum, g_decArgo_cycleNum);
+               end
+               
+               % float clock drift can't be determined
+               floatClockDrift = [];
+               
+               % the main dates of the cycle can't be determined
+               
+               % create drift data set
+               [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy] = ...
+                  create_prv_drift_without_dates_27_28_29_32(tabDriftCTDO);
+            end
+            
+            % create descending and ascending profiles
+            [descProfOcc, descProfDate, descProfPres, descProfTemp, descProfSal, descProfRawDoxy, ...
+               ascProfOcc, ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy] = ...
+               create_prv_profile_27_28_29_32(tabProfCTDO, tabTech2, descentStartDate, ascentStartDate);
+            
+            % convert counts to physical values
+            [descProfPres] = sensor_2_value_for_pressure_argos(descProfPres);
+            [parkPres] = sensor_2_value_for_pressure_argos(parkPres);
+            [ascProfPres] = sensor_2_value_for_pressure_argos(ascProfPres);
+            [descProfTemp] = sensor_2_value_for_temperature_argos(descProfTemp);
+            [parkTemp] = sensor_2_value_for_temperature_argos(parkTemp);
+            [ascProfTemp] = sensor_2_value_for_temperature_argos(ascProfTemp);
+            [descProfSal] = sensor_2_value_for_salinity_argos(descProfSal);
+            [parkSal] = sensor_2_value_for_salinity_argos(parkSal);
+            [ascProfSal] = sensor_2_value_for_salinity_argos(ascProfSal);
+            [descProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(descProfRawDoxy);
+            [parkRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(parkRawDoxy);
+            [ascProfRawDoxy] = sensor_2_value_for_tphase_doxy_27_28_29_32(ascProfRawDoxy);
+
+            % compute DOXY
+            [descProfDoxy] = compute_DOXY_27_32(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
+            [parkDoxy] = compute_DOXY_27_32(parkRawDoxy, parkPres, parkTemp, parkSal);
+            [ascProfDoxy] = compute_DOXY_27_32(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
+            
+            % take float clock drift into account to correct float dates
+            if (~isempty(floatClockDrift))
+               [cycleStartDate] = add_clock_drift_in_date(cycleStartDate, floatClockDrift);
+               [descentStartDate] = add_clock_drift_in_date(descentStartDate, floatClockDrift);
+               [firstStabDate] = add_clock_drift_in_date(firstStabDate, floatClockDrift);
+               [descentEndDate] = add_clock_drift_in_date(descentEndDate, floatClockDrift);
+               [descentToProfStartDate] = add_clock_drift_in_date(descentToProfStartDate, floatClockDrift);
+               [descentToProfEndDate] = add_clock_drift_in_date(descentToProfEndDate, floatClockDrift);
+               [ascentStartDate] = add_clock_drift_in_date(ascentStartDate, floatClockDrift);
+               [ascentEndDate] = add_clock_drift_in_date(ascentEndDate, floatClockDrift);
+               [transStartDate] = add_clock_drift_in_date(transStartDate, floatClockDrift);
+               [firstGroundingDate] = add_clock_drift_in_date(firstGroundingDate, floatClockDrift);
+               [firstEmergencyAscentDate] = add_clock_drift_in_date(firstEmergencyAscentDate, floatClockDrift);
+               
+               [descProfDate] = add_clock_drift_in_date(descProfDate, floatClockDrift);
+               [parkDate] = add_clock_drift_in_date(parkDate, floatClockDrift);
+               [ascProfDate] = add_clock_drift_in_date(ascProfDate, floatClockDrift);
+            end
+            
+            % store surface times in the float surface data structure
+            [a_floatSurfData] = set_surf_data(a_floatSurfData, cycleNum, ...
+               descentStartDate, ascentEndDate, transStartDate);
+            
+         end
+         
+         if (~isempty(g_decArgo_outputCsvFileId))
+            
+            % output CSV file
+            
+            if (deepCycle == 1)
+               if (~isempty(tabTech2))
+                  print_dates_in_csv_file_30_32( ...
+                     floatClockDrift, lastArgosMsgDateOfPrevCycle, ...
+                     cycleStartDate, descentStartDate, ...
+                     firstStabDate, firstStabPres, descentEndDate, ...
+                     descentToProfStartDate, descentToProfEndDate, ascentStartDate, ...
+                     ascentEndDate, transStartDate, argosLocDate, argosDataDate, ...
+                     firstGroundingDate, firstGroundingPres, ...
+                     firstEmergencyAscentDate, firstEmergencyAscentPres, ...
+                     descProfDate, descProfPres, ...
+                     parkDate, parkTransDate, parkPres, ...
+                     ascProfDate, ascProfPres);
+               end
+               print_descending_profile_in_csv_file_27_28_29_32( ...
+                  descProfOcc, descProfDate, ...
+                  descProfPres, descProfTemp, descProfSal, descProfRawDoxy, descProfDoxy);
+               print_drift_measurements_in_csv_file_27_28_29_32( ...
+                  parkOcc, parkDate, parkTransDate, ...
+                  parkPres, parkTemp, parkSal, parkRawDoxy, parkDoxy);
+               print_ascending_profile_in_csv_file_27_28_29_32( ...
+                  ascProfOcc, ascProfDate, ...
+                  ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy);
+            end
+         else
+            
+            % output NetCDF files
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % PROF NetCDF file
+            
+            if (deepCycle == 1)
+               
+               % process profile data for PROF NetCDF file
+               [cycleProfiles] = process_profiles_27_28_29_32( ...
+                  a_floatSurfData, cycleNum, ...
+                  descProfDate, descProfPres, descProfTemp, descProfSal, descProfRawDoxy, descProfDoxy, ...
+                  ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ascProfRawDoxy, ascProfDoxy, ...
+                  repRateMetaData, a_decoderId, tabTech1);
+               
+               % add the vertical sampling scheme from configuration information
+               [cycleProfiles] = add_vertical_sampling_scheme_argos(cycleProfiles, a_decoderId);
+               
+               print = 0;
+               if (print == 1)
+                  if (~isempty(cycleProfiles))
+                     fprintf('DEC_INFO: Float #%d Cycle #%d: %d profiles for NetCDF file\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum, length(cycleProfiles));
+                     for idP = 1:length(cycleProfiles)
+                        prof = cycleProfiles(idP);
+                        paramList = prof.paramList;
+                        paramList = sprintf('%s ', paramList.name);
+                        profLength = size(prof.data, 1);
+                        fprintf('   ->%2d: dir=%c length=%d param=(%s)\n', ...
+                           idP, prof.direction, ...
+                           profLength, paramList(1:end-1));
+                     end
+                  else
+                     fprintf('DEC_INFO: Float #%d Cycle #%d: No profiles for NetCDF file\n', ...
+                        g_decArgo_floatNum, g_decArgo_cycleNum);
+                  end
+               end
+               
+               o_tabProfiles = [o_tabProfiles cycleProfiles];
+            end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % TRAJ NetCDF file
+               
+            addLaunchData = 0;
+            if (isempty(o_tabTrajNMeas))
+               % add the float launch position and date
+               addLaunchData = 1;
+            end
+            
+            % process trajectory data for TRAJ NetCDF file
+            [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_32( ...
+               cycleNum, ...
+               addLaunchData, a_floatSurfData, ...
+               floatClockDrift, ...
+               cycleStartDate, descentStartDate, ...
+               firstStabDate,  firstStabPres, descentEndDate, ...
+               descentToProfStartDate, descentToProfEndDate, ...
+               ascentStartDate, ascentEndDate, transStartDate, ...
+               firstGroundingDate, firstGroundingPres, ...
+               cycleProfiles, ...
+               parkDate, parkTransDate, parkPres, parkTemp, parkSal, parkRawDoxy, parkDoxy, ...
                tabTech1, tabTech2, a_decoderId, deepCycle);
             
             % sort trajectory data structures according to the predefined

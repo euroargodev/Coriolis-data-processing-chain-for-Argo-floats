@@ -38,8 +38,8 @@ switch (a_decoderId)
       [o_profStruct] = add_profile_date_and_location_argos_first_float_version( ...
          a_profStruct, a_floatSurfData, a_cycleNum);
 
-   case {30}
-      [o_profStruct] = add_profile_date_and_location_30( ...
+   case {30, 32}
+      [o_profStruct] = add_profile_date_and_location_30_32( ...
          a_profStruct, a_floatSurfData, a_cycleNum);
       
    otherwise

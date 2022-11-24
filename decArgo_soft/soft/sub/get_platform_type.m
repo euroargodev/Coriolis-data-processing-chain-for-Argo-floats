@@ -33,7 +33,7 @@ switch (a_decoderId)
       % PROVOR Argos
       o_platformType = 'PROVOR';
       
-   case {3, 17, 30, 31}
+   case {3, 17, 30, 31, 32}
       % ARVOR Argos
       o_platformType = 'ARVOR';
       
@@ -45,7 +45,7 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209}
+   case {205, 204, 209, 210}
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       

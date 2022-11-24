@@ -66,26 +66,37 @@ staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
 
 % convert decoder names into NetCDF ones
 if (~isempty(a_decArgoConfParamNames))
+   idDel = [];
    for idConfParam = 1:length(staticConfigName)
       idF = find(strcmp(staticConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
       if (~isempty(idF))
          staticConfigName{idConfParam} = a_ncConfParamNames{idF};
       else
-         fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
-            g_decArgo_floatNum, ...
-            staticConfigName{idConfParam});
+         % some of the managed parameters are not saved in the meta.nc file
+         idDel = [idDel; idConfParam];
+         %          fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+         %             g_decArgo_floatNum, ...
+         %             staticConfigName{idConfParam});
       end
    end
+   staticConfigName(idDel) = [];
+   staticConfigValue(idDel, :) = [];
+   
+   idDel = [];
    for idConfParam = 1:length(finalConfigName)
       idF = find(strcmp(finalConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
       if (~isempty(idF))
          finalConfigName{idConfParam} = a_ncConfParamNames{idF};
       else
-         fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
-            g_decArgo_floatNum, ...
-            finalConfigName{idConfParam});
+         % some of the managed parameters are not saved in the meta.nc file
+         idDel = [idDel; idConfParam];
+         %          fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
+         %             g_decArgo_floatNum, ...
+         %             finalConfigName{idConfParam});
       end
    end
+   finalConfigName(idDel) = [];
+   finalConfigValue(idDel, :) = [];
 end
 
 % output data

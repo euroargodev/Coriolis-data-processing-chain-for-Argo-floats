@@ -404,7 +404,7 @@ if (print == 1)
       julian_2_gregorian_dec_argo(o_lastMessageDate));
 end
 
-check = 1;
+check = 0;
 if (check == 1)
    
    % retrieve cycle timings of the previous cycle

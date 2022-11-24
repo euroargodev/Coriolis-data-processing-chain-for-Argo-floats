@@ -100,22 +100,22 @@ dirList = unique(profInfo(:, 2));
 for idCy = 1:length(cyNumList)
    cyNum = cyNumList(idCy);
    for idDir = 1:length(dirList)
-      dir = dirList(idDir);
+      direction = dirList(idDir);
       
       if (~isempty(find( ...
             (profInfo(:, 1) == cyNum) & ...
-            (profInfo(:, 2) == dir), 1)))
+            (profInfo(:, 2) == direction), 1)))
          
          idProfInFile = find( ...
             (profInfo(:, 1) == cyNum) & ...
-            (profInfo(:, 2) == dir));
+            (profInfo(:, 2) == direction));
          idPrimary = find(profInfo(idProfInFile, 3) == 1);
          
          if (isempty(idPrimary))
             
             % create a 'default' primary b profile
             defaultPrimaryProfile = create_default_primary_profile( ...
-               cyNum, dir, ...
+               cyNum, direction, ...
                tabProfiles, a_decoderId);
             
             fprintf('DEC_INFO: Float #%d Output Cycle #%d ''%c'': no primary sampling profile => adding a ''default'' one\n', ...

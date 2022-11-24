@@ -243,16 +243,16 @@ for idFloat = 1:nbFloats
    idForWmo = find(floatWmoList == floatNum);
    %    for idFile = 1:min(3, length(idForWmo))
    for idFile = 1:length(idForWmo)
-      dir = '';
+      direct = '';
       if (profDirList(idForWmo(idFile)) == 2)
-         dir = 'D';
+         direct = 'D';
       end
       
-      dmInFilePathName = [dmInFloatPath sprintf('D%d_%03d%s.nc', floatNum, dmCyNumList(idForWmo(idFile)), dir)];
-      rtInCFilePathName = [rtInFloatPath sprintf('R%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
-      rtInBFilePathName = [rtInFloatPath sprintf('BR%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
-      dmOutCFilePathName = [dmOutFloatPath sprintf('D%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
-      dmOutBFilePathName = [dmOutFloatPath sprintf('BD%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
+      dmInFilePathName = [dmInFloatPath sprintf('D%d_%03d%s.nc', floatNum, dmCyNumList(idForWmo(idFile)), direct)];
+      rtInCFilePathName = [rtInFloatPath sprintf('R%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), direct)];
+      rtInBFilePathName = [rtInFloatPath sprintf('BR%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), direct)];
+      dmOutCFilePathName = [dmOutFloatPath sprintf('D%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), direct)];
+      dmOutBFilePathName = [dmOutFloatPath sprintf('BD%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), direct)];
       
       if ((exist(dmInFilePathName, 'file') == 2) && ...
             (exist(rtInCFilePathName, 'file') == 2))

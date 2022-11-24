@@ -26,7 +26,7 @@ function [o_crcCheckOk] = check_crc_prv(a_sensor, a_decoderId)
 % return;
 
 switch (a_decoderId)
-   case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31}
+   case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
 
       % retrieve Argos message CRC value and set CRC bits (#5 to #20) to 0
       [a_sensor, expectedCrc] = set_bits(0, 5, 16, a_sensor);

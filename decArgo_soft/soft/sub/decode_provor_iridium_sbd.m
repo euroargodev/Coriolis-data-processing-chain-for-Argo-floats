@@ -615,15 +615,15 @@ for idSpoolFile = 1:length(tabAllFileNames)
             g_decArgo_nbOf13Or11TypePacketExpected = 0;
             g_decArgo_nbOf14Or12TypePacketExpected = 0;
             
-            %          case {210} % Arvor-ARN Iridium
-            %
-            %             % decode the collected data
-            %             [tabTech, dataCTD, evAct, pumpAct, floatParam, deepCycle] = ...
-            %                decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            %
-            %             g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
-            %             g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
-            %             g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
+         case {210} % Arvor-ARN Iridium
+            
+            % decode the collected data
+            [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, deepCycle] = ...
+               decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 0);
+            
+            g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
+            g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
+            g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
             
          otherwise
             fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
@@ -1156,12 +1156,12 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202(dataCTD(:, 32:46));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210(dataCTD(:, 32:46));
          [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_202_203(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_202_203(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202(dataCTDO(:, 16:22));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210(dataCTDO(:, 16:22));
          [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_202_203(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_202_203(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
@@ -1419,7 +1419,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_209(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1652,7 +1652,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_209(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1886,7 +1886,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTDO))
          [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_209(dataCTDO(:, 23:29));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 51:57));
@@ -2188,26 +2188,26 @@ switch (a_decoderId)
             case 2
                % CTD only
                [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 32:46));
-               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_209(dataCTDO(:, 47:61));
+               [dataCTDO(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 47:61));
                [dataCTDO(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 62:76));
             case 1
                % CTD + Aanderaa 4330
                [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 16:22));
-               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_209(dataCTDO(:, 23:29));
+               [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 23:29));
                [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
                [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 37:50));
                [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 51:57));
             case 4
                % CTD + SBE 63
                [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 20:28));
-               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_209(dataCTDO(:, 29:37));
+               [dataCTDO(:, 29:37)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 29:37));
                [dataCTDO(:, 38:46)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 38:46));
                [dataCTDO(:, 47:55)] = sensor_2_value_for_phase_delay_doxy_209(dataCTDO(:, 47:55));
                [dataCTDO(:, 56:64)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 56:64));
             case 5
                % CTD + Aanderaa 4330 + SBE 63
                [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209(dataCTDO(:, 12:16));
-               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_209(dataCTDO(:, 17:21));
+               [dataCTDO(:, 17:21)] = sensor_2_value_for_temperature_204_to_210(dataCTDO(:, 17:21));
                [dataCTDO(:, 22:26)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 22:26));
                [dataCTDO(:, 27:36)] = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(dataCTDO(:, 27:36));
                [dataCTDO(:, 37:41)] = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(dataCTDO(:, 37:41));
@@ -2456,234 +2456,236 @@ switch (a_decoderId)
          
       end
       
-      %       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %    case {210} % Arvor-ARN Iridium
-      %
-      %       if (a_completedBuffer == 0)
-      %          % print what is missing in the buffer
-      %          is_buffer_completed_ir_sbd(1, a_decoderId);
-      %       end
-      %
-      %       % decode the collected data
-      %       [tabTech, dataCTD, evAct, pumpAct, floatParam, deepCycle] = ...
-      %          decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
-      %
-      % %       if ((deepCycle == 0) && ...
-      % %             (g_decArgo_cycleNumPrev ~= -1) && ...
-      % %             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
-      % %          % a new cycle number is a deep cycle even if the float didn't dive
-      % %          deepCycle = 1;
-      % %       end
-      %       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
-      %
-      %       if (deepCycle == 1)
-      %          g_decArgo_firstDeepCycleDone = 1;
-      %       end
-      %
-      %       if (g_decArgo_realtimeFlag == 1)
-      %          % update the reports structure cycle list
-      %          g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
-      %       end
-      %
-      %       % assign the current configuration to the decoded cycle
-      % %       if (deepCycle == 1)
-      % %          set_float_config_ir_sbd(g_decArgo_cycleNum);
-      % %       end
-      %
-      % %       % update float configuration for the next cycles
-      % %       if (~isempty(floatParam))
-      % %          update_float_config_ir_sbd(floatParam, a_decoderId);
-      % %       end
-      %
-      % %       % assign the configuration received during the prelude to this cycle
-      % %       if (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1)
-      % %          set_float_config_ir_sbd(g_decArgo_cycleNum);
-      % %       end
-      %
-      % %       % store GPS data and compute JAMSTEC QC for the GPS locations of the
-      % %       % current cycle
-      % %       store_gps_data_ir_sbd(tabTech, a_decoderId);
-      %
-      %       % assign cycle number to Iridium mails currently processed
-      %       update_mail_data_ir_sbd(a_sbdFileNameList);
-      %
-      %       % retrieve the last message time of the previous cycle
-      %       [~, lastMsgDateOfPrevCycle] = ...
-      %          compute_first_last_msg_time_from_iridium_mail(g_decArgo_iridiumMailData, g_decArgo_cycleNum-1);
-      %
-      %       % convert counts to physical values
-      %       if (~isempty(dataCTD))
-      %          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202(dataCTD(:, 32:46));
-      %          [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_202_203(dataCTD(:, 47:61));
-      %          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210(dataCTD(:, 62:76));
-      %       end
-      %
-      %       % create drift data set
-      %       [parkDate, parkTransDate, ...
-      %          parkPres, parkTemp, parkSal] = ...
-      %          create_prv_drift_210(dataCTD, g_decArgo_julD2FloatDayOffset);
-      %
-      %       % create descending and ascending profiles
-      %       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
-      %          ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
-      %          nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
-      %          inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal] = ...
-      %          create_prv_profile_210(dataCTD, g_decArgo_julD2FloatDayOffset);
-      %
-      %       % compute the main dates of the cycle
-      %       [cycleStartDate, ...
-      %          descentToParkStartDate, ...
-      %          firstStabDate, firstStabPres, ...
-      %          descentToParkEndDate, ...
-      %          descentToProfStartDate, ...
-      %          descentToProfEndDate, ...
-      %          ascentStartDate, ...
-      %          ascentEndDate, ...
-      %          transStartDate, ...
-      %          gpsDate, ...
-      %          lastResetDate, ...
-      %          firstGroundingDate, firstGroundingPres, ...
-      %          secondGroundingDate, secondGroundingPres, ...
-      %          eolStartDate, ...
-      %          firstEmergencyAscentDate, firstEmergencyAscentPres] = ...
-      %          compute_prv_dates_210(tabTech);
-      %
-      %       if (~isempty(g_decArgo_outputCsvFileId))
-      %
-      %          % output CSV file
-      %
-      %          % print float technical messages in CSV file
-      %          print_tech_data_in_csv_file_210(tabTech, a_decoderId);
-      %
-      %          % print dated data in CSV file
-      %          print_dates_in_csv_file_210( ...
-      %             cycleStartDate, ...
-      %             descentToParkStartDate, ...
-      %             firstStabDate, firstStabPres, ...
-      %             descentToParkEndDate, ...
-      %             descentToProfStartDate, ...
-      %             descentToProfEndDate, ...
-      %             ascentStartDate, ...
-      %             ascentEndDate, ...
-      %             transStartDate, ...
-      %             gpsDate, ...
-      %             firstGroundingDate, firstGroundingPres, ...
-      %             secondGroundingDate, secondGroundingPres, ...
-      %             eolStartDate, ...
-      %             firstEmergencyAscentDate, firstEmergencyAscentPres, ...
-      %             descProfDate, descProfPres, ...
-      %             parkDate, parkPres, ...
-      %             ascProfDate, ascProfPres, ...
-      %             nearSurfDate, nearSurfPres, ...
-      %             inAirDate, inAirPres, ...
-      %             evAct, pumpAct);
-      %
-      %          % print descending profile in CSV file
-      %          print_descending_profile_in_csv_file_204_205( ...
-      %             descProfDate, descProfPres, descProfTemp, descProfSal);
-      %
-      %          % print drift measurements in CSV file
-      %          print_drift_measurements_in_csv_file_204_205( ...
-      %             parkDate, parkTransDate, ...
-      %             parkPres, parkTemp, parkSal);
-      %
-      %          % print ascending profile in CSV file
-      %          print_ascending_profile_in_csv_file_204_205( ...
-      %             ascProfDate, ascProfPres, ascProfTemp, ascProfSal);
-      %
-      %          % print "near surface" and "in air" measurements in CSV file
-      %          print_in_air_meas_in_csv_file_210( ...
-      %             nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
-      %             inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal);
-      %
-      %          % print EV and pump data in CSV file
-      %          print_hydraulic_data_in_csv_file_210(evAct, pumpAct);
-      %
-      %          % print float parameters in CSV file
-      %          print_float_prog_param_in_csv_file_210(floatParam);
-      %
-      %       else
-      %
-      %          % output NetCDF files
-      %
-      %          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %          % PROF NetCDF file
-      %
-      %          % process profile data for PROF NetCDF file
-      %          tabProfiles = [];
-      %          if (~isempty(dataCTD))
-      %
-      %             [tabProfiles] = process_profiles_204_205( ...
-      %                descProfDate, descProfPres, descProfTemp, descProfSal, ...
-      %                ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
-      %                g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
-      %                descentToParkStartDate, ascentEndDate, transStartDate, tabTech, a_decoderId);
-      %
-      %             % add the vertical sampling scheme from configuration
-      %             % information
-      %             [tabProfiles] = add_vertical_sampling_scheme_ir_sbd(tabProfiles, a_decoderId);
-      %
-      %             print = 0;
-      %             if (print == 1)
-      %                if (~isempty(tabProfiles))
-      %                   fprintf('DEC_INFO: Float #%d Cycle #%d: %d profiles for NetCDF file\n', ...
-      %                      g_decArgo_floatNum, g_decArgo_cycleNum, length(tabProfiles));
-      %                   for idP = 1:length(tabProfiles)
-      %                      prof = tabProfiles(idP);
-      %                      paramList = prof.paramList;
-      %                      paramList = sprintf('%s ', paramList.name);
-      %                      profLength = size(prof.data, 1);
-      %                      fprintf('   ->%2d: dir=%c length=%d param=(%s)\n', ...
-      %                         idP, prof.direction, ...
-      %                         profLength, paramList(1:end-1));
-      %                   end
-      %                else
-      %                   fprintf('DEC_INFO: Float #%d Cycle #%d: No profiles for NetCDF file\n', ...
-      %                      g_decArgo_floatNum, g_decArgo_cycleNum);
-      %                end
-      %             end
-      %
-      %             o_tabProfiles = [o_tabProfiles tabProfiles];
-      %          end
-      %
-      %          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %          % TRAJ NetCDF file
-      %
-      %          % process trajectory data for TRAJ NetCDF file
-      %          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_204_205( ...
-      %             g_decArgo_cycleNum, deepCycle, ...
-      %             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
-      %             cycleStartDate, ...
-      %             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
-      %             descentToProfStartDate, descentToProfEndDate, ...
-      %             ascentStartDate, ascentEndDate, ...
-      %             transStartDate, ...
-      %             firstGroundingDate, firstGroundingPres, ...
-      %             tabTech, ...
-      %             tabProfiles, ...
-      %             parkDate, parkTransDate, ...
-      %             parkPres, parkTemp, parkSal);
-      %
-      %          % sort trajectory data structures according to the predefined
-      %          % measurement code order
-      %          [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
-      %
-      %          o_tabTrajNMeas = [o_tabTrajNMeas; tabTrajNMeas];
-      %          o_tabTrajNCycle = [o_tabTrajNCycle; tabTrajNCycle];
-      %
-      %          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %          % TECH NetCDF file
-      %
-      %          % update NetCDF technical data
-      %          update_technical_data_argos_sbd(a_decoderId);
-      %
-      %          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
-      %          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-      %
-      %          g_decArgo_outputNcParamIndex = [];
-      %          g_decArgo_outputNcParamValue = [];
-      %
-      %       end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {210} % Arvor-ARN Iridium
+      
+      if (a_completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
+      end
+      
+      % decode the collected data
+      [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum] = ...
+         decode_prv_data_ir_sbd_210(sbdDataData, sbdDataDate, 1);
+                  
+      if (g_decArgo_realtimeFlag == 1)
+         % update the reports structure cycle list
+         g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
+      end
+      
+      % assign the current configuration to the decoded cycle
+      if ((g_decArgo_cycleNum > 0) && (irSessionNum == 1))
+         set_float_config_ir_sbd(g_decArgo_cycleNum);
+      end
+      
+      % update float configuration for the next cycles
+      if (~isempty(floatParam))
+         update_float_config_ir_sbd(floatParam, a_decoderId);
+      end
+      
+      % assign the configuration received during the prelude to this cycle
+      if ((g_decArgo_cycleNum == 0) && (irSessionNum == 1))
+         set_float_config_ir_sbd(g_decArgo_cycleNum);
+      end
+      
+      % store GPS data and compute JAMSTEC QC for the GPS locations of the
+      % current cycle
+      store_gps_data_ir_sbd(tabTech1, a_decoderId);
+      
+      % assign cycle number to Iridium mails currently processed
+      update_mail_data_ir_sbd(a_sbdFileNameList);
+            
+      % convert counts to physical values
+      if (~isempty(dataCTD))
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_204_to_210(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210(dataCTD(:, 62:76));
+      end
+      
+      % create drift data set
+      [parkDate, parkTransDate, ...
+         parkPres, parkTemp, parkSal] = ...
+         create_prv_drift_210(dataCTD, g_decArgo_julD2FloatDayOffset);
+      
+      % create descending and ascending profiles
+      [descProfDate, descProfPres, descProfTemp, descProfSal, ...
+         ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
+         nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
+         inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal] = ...
+         create_prv_profile_210(dataCTD, g_decArgo_julD2FloatDayOffset);
+      
+      % compute the main dates of the cycle
+      [cycleStartDate, ...
+         descentToParkStartDate, ...
+         firstStabDate, firstStabPres, ...
+         descentToParkEndDate, ...
+         descentToProfStartDate, ...
+         descentToProfEndDate, ...
+         ascentStartDate, ...
+         ascentEndDate, ...
+         transStartDate, ...
+         gpsDate, ...
+         lastResetDate, ...
+         firstGroundingDate, firstGroundingPres, ...
+         secondGroundingDate, secondGroundingPres, ...
+         eolStartDate, ...
+         firstEmergencyAscentDate, firstEmergencyAscentPres, ...
+         deepCycle] = ...
+         compute_prv_dates_210(tabTech1, tabTech2, irSessionNum);
+      
+      if (~isempty(g_decArgo_outputCsvFileId))
+         
+         % output CSV file
+         
+         % print float technical messages in CSV file
+         print_tech_data_in_csv_file_210(tabTech1, tabTech2, deepCycle);
+         
+         % print dated data in CSV file
+         print_dates_in_csv_file_210( ...
+            cycleStartDate, ...
+            descentToParkStartDate, ...
+            firstStabDate, firstStabPres, ...
+            descentToParkEndDate, ...
+            descentToProfStartDate, ...
+            descentToProfEndDate, ...
+            ascentStartDate, ...
+            ascentEndDate, ...
+            transStartDate, ...
+            gpsDate, ...
+            firstGroundingDate, firstGroundingPres, ...
+            secondGroundingDate, secondGroundingPres, ...
+            eolStartDate, ...
+            firstEmergencyAscentDate, firstEmergencyAscentPres, ...
+            descProfDate, descProfPres, ...
+            parkDate, parkPres, ...
+            ascProfDate, ascProfPres, ...
+            nearSurfDate, nearSurfPres, ...
+            inAirDate, inAirPres, ...
+            evAct, pumpAct);
+         
+         % print descending profile in CSV file
+         print_descending_profile_in_csv_file_204_205( ...
+            descProfDate, descProfPres, descProfTemp, descProfSal);
+         
+         % print drift measurements in CSV file
+         print_drift_measurements_in_csv_file_204_205( ...
+            parkDate, parkTransDate, ...
+            parkPres, parkTemp, parkSal);
+         
+         % print ascending profile in CSV file
+         print_ascending_profile_in_csv_file_204_205( ...
+            ascProfDate, ascProfPres, ascProfTemp, ascProfSal);
+         
+         % print "near surface" and "in air" measurements in CSV file
+         print_in_air_meas_in_csv_file_210( ...
+            nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
+            inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal);
+         
+         % print EV and pump data in CSV file
+         print_hydraulic_data_in_csv_file_210(evAct, pumpAct);
+         
+         % print float parameters in CSV file
+         print_float_prog_param_in_csv_file_210(floatParam);
+         
+      else
+         
+         % output NetCDF files
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % PROF NetCDF file
+         
+         % process profile data for PROF NetCDF file
+         tabProfiles = [];
+         if (~isempty(dataCTD))
+            
+            [tabProfiles] = process_profiles_210( ...
+               descProfDate, descProfPres, descProfTemp, descProfSal, ...
+               ascProfDate, ascProfPres, ascProfTemp, ascProfSal, ...
+               g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
+               descentToParkStartDate, ascentEndDate, transStartDate, tabTech2, a_decoderId);
+            
+            % add the vertical sampling scheme from configuration
+            % information
+            [tabProfiles] = add_vertical_sampling_scheme_ir_sbd(tabProfiles, a_decoderId);
+            
+            print = 0;
+            if (print == 1)
+               if (~isempty(tabProfiles))
+                  fprintf('DEC_INFO: Float #%d Cycle #%d: %d profiles for NetCDF file\n', ...
+                     g_decArgo_floatNum, g_decArgo_cycleNum, length(tabProfiles));
+                  for idP = 1:length(tabProfiles)
+                     prof = tabProfiles(idP);
+                     paramList = prof.paramList;
+                     paramList = sprintf('%s ', paramList.name);
+                     profLength = size(prof.data, 1);
+                     fprintf('   ->%2d: dir=%c length=%d param=(%s)\n', ...
+                        idP, prof.direction, ...
+                        profLength, paramList(1:end-1));
+                  end
+               else
+                  fprintf('DEC_INFO: Float #%d Cycle #%d: No profiles for NetCDF file\n', ...
+                     g_decArgo_floatNum, g_decArgo_cycleNum);
+               end
+            end
+            
+            o_tabProfiles = [o_tabProfiles tabProfiles];
+         end
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % TRAJ NetCDF file
+         
+         % process trajectory data for TRAJ NetCDF file
+         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_210( ...
+            g_decArgo_cycleNum, deepCycle, irSessionNum, ...
+            g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
+            cycleStartDate, ...
+            descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
+            descentToProfStartDate, descentToProfEndDate, ...
+            ascentStartDate, ascentEndDate, ...
+            transStartDate, ...
+            firstGroundingDate, firstGroundingPres, ...
+            secondGroundingDate, secondGroundingPres, ...
+            tabTech1, tabTech2, ...
+            tabProfiles, ...
+            parkDate, parkTransDate, parkPres, parkTemp, parkSal, ...
+            nearSurfDate, nearSurfTransDate, nearSurfPres, nearSurfTemp, nearSurfSal, ...
+            inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
+            evAct, pumpAct, a_decoderId);
+
+         % sort trajectory data structures according to the predefined
+         % measurement code order
+         [tabTrajNMeas] = sort_trajectory_data(tabTrajNMeas, a_decoderId);
+         
+         o_tabTrajNMeas = [o_tabTrajNMeas; tabTrajNMeas];
+         o_tabTrajNCycle = [o_tabTrajNCycle; tabTrajNCycle];
+         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % TECH NetCDF file
+         
+         % store NetCDF technical data
+         if (irSessionNum == 1)
+            
+            % store NetCDF technical data
+            store_tech1_data_for_nc_210(tabTech1, deepCycle);
+            store_tech2_data_for_nc_210(tabTech2, deepCycle);
+            
+            % update NetCDF technical data
+            update_technical_data_argos_sbd(a_decoderId);
+            
+            % TEMPORARY CODE
+            idDel = find(ismember(g_decArgo_outputNcParamIndex(:, 5), ...
+               [133, 134, 203, 204, 210, 211, 229, 230, 237, 238, 239]));
+            g_decArgo_outputNcParamIndex(idDel, :) = [];
+            g_decArgo_outputNcParamValue(idDel) = [];
+            
+            o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
+            o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
+            
+            g_decArgo_outputNcParamIndex = [];
+            g_decArgo_outputNcParamValue = [];
+         end
+         
+      end
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...

@@ -40,6 +40,11 @@ tabSensors = [];
 for idMsg = 1:size(argosDataData, 1)
    sensor = argosDataData(idMsg, :);
    
+   % don't take NULL data message into account
+   if (unique(sensor) == 0)
+      continue;
+   end
+   
    if (check_crc_prv(sensor, a_decoderId) == 1)
       % CRC check succeeded
       idMsgCrcOk = idMsgCrcOk + 1;
@@ -57,10 +62,10 @@ if (~isempty(tabSensors))
    switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {30} % V4.52
+      case {30, 32} % V4.52, V4.54
          
          % decode CTD and technical messages
-         [cycleNumber] = decode_cycle_number_30(sensors);
+         [cycleNumber] = decode_cycle_number_30_32(sensors);
          
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet in decode_cycle_number for decoderId #%d\n', ...

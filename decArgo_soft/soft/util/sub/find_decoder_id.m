@@ -443,7 +443,7 @@ for idMes = 1:size(a_tabSensors, 1)
                presValues = sensor_2_value_for_pressure_argos(presCounts27);
                tempValues = sensor_2_value_for_temperature_argos(tempCounts27);
                salValues = sensor_2_value_for_salinity_argos(salCounts27);
-               tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29(oxyCounts27);
+               tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29_32(oxyCounts27);
                [doxyValues] = compute_DOXY_27_bis(tPhaseDoxyValues', ...
                   presValues', tempValues', salValues', ...
                   [0.0027    0.0001    0.0000  233.2640   -0.3682  -52.1783    4.5674]);
@@ -739,7 +739,7 @@ for idMes = 1:size(a_tabSensors, 1)
                presValues = sensor_2_value_for_pressure_argos(presCounts27);
                tempValues = sensor_2_value_for_temperature_argos(tempCounts27);
                salValues = sensor_2_value_for_salinity_argos(salCounts27);
-               tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29(oxyCounts27);
+               tPhaseDoxyValues = sensor_2_value_for_tphase_doxy_27_28_29_32(oxyCounts27);
                [doxyValues] = compute_DOXY_27_bis(tPhaseDoxyValues', ...
                   presValues', tempValues', salValues', ...
                   [0.0027    0.0001    0.0000  233.2640   -0.3682  -52.1783    4.5674]);

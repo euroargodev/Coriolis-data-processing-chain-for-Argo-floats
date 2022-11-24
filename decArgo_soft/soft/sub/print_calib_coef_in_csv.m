@@ -61,13 +61,18 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; CALIBRATION COEFFICIENTS\n', ...
          g_decArgo_floatNum, -1);
       
-      if (size(tabDoxyCoef, 1) == 1)
+      if (size(tabDoxyCoef) == [2 7])
+         for idC = 1:4
+            fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+               g_decArgo_floatNum, -1, ...
+               ['PhaseCoef' num2str(idC-1)], tabDoxyCoef(1, idC));
+         end
          for idC = 1:7
             fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
                g_decArgo_floatNum, -1, ...
-               ['SVUFoilCoef' num2str(idC-1)], tabDoxyCoef(1, idC));
+               ['SVUFoilCoef' num2str(idC-1)], tabDoxyCoef(2, idC));
          end
-      elseif ((size(tabDoxyCoef, 1) == 5) || (size(tabDoxyCoef, 1) == 6))
+      elseif ((size(tabDoxyCoef) == [5 28]) || (size(tabDoxyCoef) == [6 28]))
          for idC = 1:4
             fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
                g_decArgo_floatNum, -1, ...
@@ -98,12 +103,12 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
                g_decArgo_floatNum, -1, ...
                ['FoilPolyDegO' num2str(idC-1)], tabDoxyCoef(5, idC));
          end
-      end
-      if (size(tabDoxyCoef, 1) == 6)
-         for idC = 1:2
-            fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
-               g_decArgo_floatNum, -1, ...
-               ['ConcCoef' num2str(idC-1)], tabDoxyCoef(6, idC));
+         if (size(tabDoxyCoef) == [6 28])
+            for idC = 1:2
+               fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+                  g_decArgo_floatNum, -1, ...
+                  ['ConcCoef' num2str(idC-1)], tabDoxyCoef(6, idC));
+            end
          end
       end
    end
