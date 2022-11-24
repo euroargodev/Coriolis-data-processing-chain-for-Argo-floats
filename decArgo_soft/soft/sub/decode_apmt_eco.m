@@ -46,7 +46,7 @@ switch (data(1))
    case {7}
       fprintf('WARNING: decode_apmt_eco1 not implemented yet\n');
    case {8}
-      fprintf('WARNING: decode_apmt_eco2 not implemented yet\n');
+      o_ecoData = decode_apmt_eco2(data, lastByteNum);
    case {9}
       o_ecoData = decode_apmt_eco3(data, lastByteNum);
    otherwise

@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
 %    o_gpsData, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_cycleTimeData, o_presOffsetData] = ...
-%    decode_system_log_apx_apf11_ir_1125(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
+%    decode_system_log_apx_apf11_ir_1128(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_systemLogFileList : list of system_log files
@@ -37,7 +37,7 @@
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
    o_gpsData, o_grounding, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_presOffsetData] = ...
-   decode_system_log_apx_apf11_ir_1125(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
+   decode_system_log_apx_apf11_ir_1128(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData, a_decoderId)
 
 % output parameters initialization
 o_miscInfo = [];
@@ -180,7 +180,7 @@ for idFile = 1:length(a_systemLogFileList)
       strcmp({events.functionName}, 'AIR') | ...
       strcmp({events.functionName}, 'COMMS'));
    if (~isempty(idEvts))
-      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1124_25(events(idEvts), o_cycleTimeData);
+      [o_cycleTimeData] = process_apx_apf11_ir_time_evts_1128(events(idEvts), o_cycleTimeData);
       if (~isempty(o_cycleTimeData) && ~isempty(o_cycleTimeData.descentStartDateSys))
          descentStartTime = o_cycleTimeData.descentStartDateSys;
       end

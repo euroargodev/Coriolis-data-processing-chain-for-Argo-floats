@@ -261,8 +261,9 @@ for idCy = 1:length(a_cycleList)
       a_floatRudicsId, cycleNum, g_decArgo_archiveFloatFilesDirectory);
    
    % decode the files of the current cycle
-   if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1125, 1126, 1127]))
-      % 2.11.3.R, 2.13.1.R & 2.13.1.1.R, 2.12.3.R, 2.14.3.R, 2.15.0.R, 2.10.4.R, 2.12.2.1.R
+   if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128]))
+      % 2.11.3.R, 2.13.1.R & 2.13.1.1.R, 2.12.3.R, 2.14.3.R, 2.15.0.R, 2.10.4.R,
+      % 2.12.2.1.R, 2.15.2.R
          
       [miscInfoSci, miscInfoSys, miscEvtsSys, ...
          metaData, missionCfg, sampleCfg, ...

@@ -2,7 +2,7 @@
 % Get surface pressure offset information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_presOffset] = process_apx_apf11_ir_pres_offset_1124_25(a_events)
+%  [o_presOffset] = process_apx_apf11_ir_pres_offset_1124_25_28(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   06/04/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_presOffset] = process_apx_apf11_ir_pres_offset_1124_25(a_events)
+function [o_presOffset] = process_apx_apf11_ir_pres_offset_1124_25_28(a_events)
 
 % output parameters initialization
 o_presOffset = [];

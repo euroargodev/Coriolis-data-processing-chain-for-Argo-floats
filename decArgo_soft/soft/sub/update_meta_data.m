@@ -37,7 +37,7 @@ decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
    201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
-   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, 1123, 1124, 1125, 1126, 1127, ...
+   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, ...
    1314, 1321, 1322, 1323];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001, 2002, 2003];
@@ -1218,7 +1218,7 @@ switch (a_decoderId)
          {'DOXY2'} ...
          ];
       
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -2113,7 +2113,7 @@ switch (a_decoderId)
       
    case {107, 109, 110, 111, 113, 114, 121, 122, 124, 126, 127, ...
          201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, 225, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1322, 1323}
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1322, 1323}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -3219,7 +3219,7 @@ switch (a_decoderId)
             {'DOWNWELLING_PAR'} ...
             ];
       end
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          % for Apex APF11 floats, parameter names is defined from calibration
@@ -3325,7 +3325,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
          
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -3607,7 +3607,7 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3697,7 +3697,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -3980,7 +3980,7 @@ paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
          301, 302, 303, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -4057,7 +4057,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}
@@ -4341,7 +4341,7 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -4407,7 +4407,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 121, 122, 123, 124, 125, 126, 127, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127}
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CDOM'}
@@ -5163,7 +5163,7 @@ switch (a_decoderId)
             {'PH_IN_SITU_TOTAL'} ...
             ];
       end
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 111, 113, 126, 127}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 111, 113, 126, 127}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -5384,7 +5384,7 @@ switch (a_decoderId)
             o_preCalibComment = '';
       end
       
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 111, 113, 114}
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 111, 113, 114}
       
       switch (a_paramName)
          
@@ -5551,7 +5551,7 @@ function [o_metaData] = update_parameter_list_rafos(a_metaData, a_decoderId)
 
 paramList = [];
 switch (a_decoderId)
-   case {1125}
+   case {1125, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('AUX_ACOUSTIC_GEOLOCATION', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -5618,7 +5618,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {1125}
+   case {1125, 1128}
       switch (a_paramName)
          
          case {'COR'}

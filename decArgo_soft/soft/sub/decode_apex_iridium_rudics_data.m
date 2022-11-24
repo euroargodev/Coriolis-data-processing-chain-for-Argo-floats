@@ -67,7 +67,7 @@ switch (a_decoderId)
          a_decoderId, str2num(a_floatRudicsId), ...
          a_floatLaunchDate, a_floatEndDate);
 
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       % APEX APF11 RUDICS
       
       [o_tabProfiles, ...

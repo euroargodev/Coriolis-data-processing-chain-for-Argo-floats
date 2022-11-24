@@ -117,6 +117,13 @@ if (~isempty(versionStr))
          else
             g_decArgo_decIdCheckFlag = 1;
          end
+      case 1128
+         if (~strcmp(versionStr, '2.15.2'))
+            fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
+               g_decArgo_floatNum, a_decoderId);
+         else
+            g_decArgo_decIdCheckFlag = 1;
+         end
          
       otherwise
          

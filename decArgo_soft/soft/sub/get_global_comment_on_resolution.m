@@ -91,7 +91,7 @@ switch (a_decoderId)
       % Apex Iridium Rudics & Sbd
       o_comment = 'PRES variable resolution depends on measurement codes';
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
       % Apex APF11 Iridium
       o_comment = '';
       

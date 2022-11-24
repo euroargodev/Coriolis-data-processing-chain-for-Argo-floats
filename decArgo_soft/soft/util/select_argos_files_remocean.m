@@ -20,7 +20,7 @@
 % ------------------------------------------------------------------------------
 function select_argos_files_remocean(varargin)
 
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\IRIDIUM_DATA\CTS4_V1.xx_V2.xx\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS4_V1.xx_V2.xx\rsync_data\';
 % DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS4_V1.xx_V2.xx\rsync_data\';
 
 % directory to store the log file

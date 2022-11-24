@@ -872,7 +872,7 @@ if (nbMeasParam > 0)
          meas = nMeas.tabMeas(idM);
          
          if (~isempty(meas.paramList))
-            
+
             cycleNumberVarTab(idM) = nMeas.outputCycleNumber;
             measurementCodeVarTab(idM) = meas.measCode;
             

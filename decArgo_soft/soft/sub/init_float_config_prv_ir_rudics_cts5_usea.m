@@ -106,7 +106,7 @@ if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 2];
          case 'OCR'
             sensorList = [sensorList 3];
-         case 'ECO3'
+         case {'ECO3', 'ECO2'}
             sensorList = [sensorList 4];
          case 'TRANSISTOR_PH'
             sensorList = [sensorList 5];

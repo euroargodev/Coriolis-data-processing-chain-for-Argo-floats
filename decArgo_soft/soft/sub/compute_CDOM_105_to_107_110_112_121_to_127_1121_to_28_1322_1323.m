@@ -2,7 +2,7 @@
 % Compute CDOM from FLUORESCENCE_CDOM provided by the ECO3 sensor.
 %
 % SYNTAX :
-%  [o_CDOM] = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_27_1322_1323(a_FLUORESCENCE_CDOM, ...
+%  [o_CDOM] = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_28_1322_1323(a_FLUORESCENCE_CDOM, ...
 %    a_FLUORESCENCE_CDOM_fill_value, a_CDOM_fill_value)
 %
 % INPUT PARAMETERS :
@@ -21,7 +21,7 @@
 % RELEASES :
 %   06/16/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_CDOM] = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_27_1322_1323(a_FLUORESCENCE_CDOM, ...
+function [o_CDOM] = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_28_1322_1323(a_FLUORESCENCE_CDOM, ...
    a_FLUORESCENCE_CDOM_fill_value, a_CDOM_fill_value)
 
 % current float WMO number

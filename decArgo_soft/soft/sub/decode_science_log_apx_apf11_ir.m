@@ -812,7 +812,7 @@ if (~isempty(o_profDo) || ~isempty(o_profFlbbCd) || ~isempty(o_profOcr504I) || .
       end
    end
    
-   if (~isempty(tabPres))
+   if (length(tabPres) > 1)
       if (~isempty(o_profDo))
          interpData = interp1(tabJuld, tabPres, o_profDo.dates, 'linear');
          o_profDo.data(~isnan(interpData), 1) = interpData(~isnan(interpData));

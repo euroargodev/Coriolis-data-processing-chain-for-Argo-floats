@@ -463,7 +463,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '041f';
+g_decArgo_decoderVersion = '042a';
 
 % list of managed decoders
 
@@ -506,7 +506,7 @@ g_decArgo_decoderIdListApexApf9Iridium = [ ...
    g_decArgo_decoderIdListApexApf9IridiumRudics ...
    g_decArgo_decoderIdListApexApf9IridiumSbd];
 g_decArgo_decoderIdListApexApf11Argos = [1021, 1022];
-g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1127];
+g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1128];
 g_decArgo_decoderIdListApexApf11IridiumSbd = [1321:1323];
 g_decArgo_decoderIdListApexApf11Iridium = [ ...
    g_decArgo_decoderIdListApexApf11IridiumRudics ...

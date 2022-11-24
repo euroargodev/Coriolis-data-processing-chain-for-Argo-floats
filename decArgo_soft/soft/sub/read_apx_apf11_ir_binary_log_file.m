@@ -205,7 +205,7 @@ else
          
          if (a_fromLaunchFlag)
             if (~isempty(g_decArgo_floatLaunchDate) && (timeStamp < g_decArgo_floatLaunchDate))
-               recCurPos = recCurPos + sum([decStruct.tabBytes]) + 4 + 1;
+               recCurPos = recCurPos + sum([decStruct.tabBytes]) + 4;
                continue
             end
          end
@@ -223,6 +223,9 @@ else
          
          recCurPos = dataCurPos;
       end
+      
+      % remove nan lines (not set because of launch time criteria)
+      dataVal(find(sum(isnan(dataVal), 2) == size(dataVal, 2)), :) = [];
       
       o_data.(decStruct(1).recType) = dataVal;
       
@@ -255,7 +258,7 @@ end
 if (a_outputCsvFlag == 1)
    fclose(outputCsvFileId);
 end
-         
+
 return
 
 % ------------------------------------------------------------------------------
@@ -372,10 +375,10 @@ switch (a_logFileType)
                );
          case 51
             if (~ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
-
-               if (g_decArgo_floatNum ~= 6903552)
-                  
-                  fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
+               
+               % for floats 6903552, 7900579 and 7900580 FLBB_CD is transmitted as FLBB_BB
+               
+               if (0)
                   
                   % nominal case
                   
@@ -389,11 +392,11 @@ switch (a_logFileType)
                      'outputType', [{'uint16'} {'uint16'} {'uint16'} {'uint16'}], ...
                      'outputFormat', [{'%d'} {'%d'} {'%d'} {'%d'}] ...
                      );
-               else
+               end
+               
+               if (ismember(a_decoderId, [1125])) % issue with version 2.15.0
                   
-                  % specific
-                  
-                  % for float 6903552 FLBB_CD is transmitted as FLBB_BB
+                  % specific when FLBB_CD is transmitted as FLBB_BB
                   
                   o_decStruct = struct( ...
                      'recType', 'FLBB_CD', ...
@@ -419,8 +422,6 @@ switch (a_logFileType)
                   );
             else
                
-               fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
-
                % since 2.15.0
                % # LOG_SCIENCE_FLBB_CD
                % science.add_record_with_id(52, 'FLBB_CD', 'Thhhh', ('timestamp', 'chl_sig', 'bcs_sig', 'cd_sig', 'therm_sig'))
@@ -435,10 +436,12 @@ switch (a_logFileType)
             end
          case 54
             if (~ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
-
-               if (g_decArgo_floatNum ~= 6903552)
+               
+               % for floats 6903552, 7900579 and 7900580 FLBB_CD_CFG is transmitted as FLBB_BB_CFG
+               
+               if (0)
                   
-                  fprintf('ERROR: %s file reader: decId %d: new version of recId #%d implemented but not checked - data used but ASK FOR A CHECK OF THE IMPLEMENTATION\n', a_logFileType, a_decoderId, a_recordId);
+                  % nominal case
                   
                   % nominal case
                   
@@ -452,11 +455,11 @@ switch (a_logFileType)
                      'outputType', [{'uint16'} {'uint16'} {'uint16'}], ...
                      'outputFormat', [{'%d'} {'%d'} {'%d'}] ...
                      );
-               else
+               end
+               
+               if (ismember(a_decoderId, [1125])) % issue with version 2.15.0
                   
-                  % specific
-                  
-                  % for float 6903552 FLBB_CD_CFG is transmitted as FLBB_BB_CFG
+                  % specific when FLBB_CD_CFG is transmitted as FLBB_BB_CFG
                   
                   o_decStruct = struct( ...
                      'recType', 'FLBB_CD_CFG', ...
@@ -466,7 +469,15 @@ switch (a_logFileType)
                      'outputFormat', [{'%d'} {'%d'} {'%d'}] ...
                      );
                end
-            end            
+            end
+         case 55
+            o_decStruct = struct( ...
+               'recType', 'FLBB_CD_CFG', ...
+               'tabBytes', [{2} {2} {2}], ...
+               'tabFunc', {@uint16, @uint16, @uint16}, ...
+               'outputType', [{'uint16'} {'uint16'} {'uint16'}], ...
+               'outputFormat', [{'%d'} {'%d'} {'%d'}] ...
+               );
          case 61
             o_decStruct = struct( ...
                'recType', 'OCR_504I', ...
@@ -511,7 +522,7 @@ switch (a_logFileType)
          'outputType', repmat({'uint16'}, 1, 255), ...
          'outputFormat', repmat({'%d'}, 1, 255) ...
          );
-
+      
    case 'vitals'
       switch (a_recordId)
          case 0
@@ -590,7 +601,7 @@ switch (a_logFileType)
       o_binLogDataStruct = struct( ...
          'IRAD_SPECTRUM', [] ...
          );
-
+      
    case 'vitals'
       o_binLogDataStruct = struct( ...
          'Message', [], ...
@@ -649,6 +660,14 @@ switch (a_recType)
       o_recLabels = [{'timestamp'} {'PRES'} {'TEMP'} {'PSAL'} {'nb_sample'} {'VRS_PH'} {'nb_sample'}];
    case 'O2'
       o_recLabels = [{'timestamp'} {'O2'} {'AirSat'} {'Temp'} {'CalPhase'} {'TCPhase'} {'C1RPh'} {'C2RPh'} {'C1Amp'} {'C2Amp'} {'RawTemp'}];
+      %    case 'FLBB_BB'
+      %       if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
+      %          o_recLabels = [{'timestamp'} {'chl_wave'} {'chl_sig'} {'bsc_wave0'} {'bsc_sig0'} {'bsc_wave1'} {'bsc_sig1'} {'therm_sig'}];
+      %       else
+      %          o_recLabels = [{'timestamp'} {'chl_sig'} {'bsc_sig0'} {'bsc_sig1'} {'therm_sig'}];
+      %       end
+      %    case 'FLBB_BB_CFG'
+      %       o_recLabels = [{'timestamp'} {'chl_wave'} {'bsc_wave'} {'cd_wave'}];
    case 'FLBB_CD'
       if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1126, 1127, 1321, 1322, 1323])) % the decoding template differs for decoders before 2.15.0
          o_recLabels = [{'timestamp'} {'chl_wave'} {'chl_sig'} {'bsc_wave'} {'bcs_sig'} {'cd_wave'} {'cd_sig'} {'therm_sig'}];
@@ -665,7 +684,7 @@ switch (a_recType)
       o_recLabels = [{'timestamp'} {'correlation1'} {'rawTOA1'} {'correlation2'} {'rawTOA2'} {'correlation3'} {'rawTOA3'} {'correlation4'} {'rawTOA4'} {'correlation5'} {'rawTOA5'} {'correlation6'} {'rawTOA6'} ];
    case 'IRAD'
       o_recLabels = [{'timestamp'} {'integration_time'} {'temperature'} {'pressure'} {'pre_inclination'} {'post_inclination'}];
-
+      
    case 'VITALS_CORE'
       o_recLabels = [{'timestamp'} {'air_bladder(dbar)'} {'air_bladder(count)'} ...
          {'battery_voltage(V)'} {'battery_voltage(count)'} {'humidity'} ...

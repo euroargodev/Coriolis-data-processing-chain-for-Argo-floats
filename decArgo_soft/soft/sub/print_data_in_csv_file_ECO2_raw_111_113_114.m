@@ -69,7 +69,7 @@ data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId)
 data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
 data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
 paramCHLA = get_netcdf_param_attributes('CHLA');
-data(:, 6) = compute_CHLA_105_to_112_121_to_127_1121_to_27_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+data(:, 6) = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 
 for idL = 1:size(data, 1)
    if (data(idL, 1) ~= g_decArgo_dateDef)

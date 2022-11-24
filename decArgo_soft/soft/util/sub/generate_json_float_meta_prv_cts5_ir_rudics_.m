@@ -612,7 +612,7 @@ for idFloat = 1:length(floatList)
             case 'OCR'
                sensorListNum = [sensorListNum 3];
                sensorListName = [sensorListName {'CONFIG_APMT_OCR_'}];
-            case 'ECO3'
+            case {'ECO3', 'ECO2'}
                sensorListNum = [sensorListNum 4];
                sensorListName = [sensorListName {'CONFIG_APMT_ECO_'}];
             case 'TRANSISTOR_PH'

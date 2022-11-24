@@ -1445,7 +1445,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);

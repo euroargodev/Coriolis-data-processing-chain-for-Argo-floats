@@ -2,7 +2,7 @@
 % Get buoyancy information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25(a_events)
+%  [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25_28(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   11/24/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25(a_events)
+function [o_buoyancy] = process_apx_apf11_ir_buoyancy_evts_1124_25_28(a_events)
 
 % output parameters initialization
 o_buoyancy = [];

@@ -521,8 +521,8 @@ switch (a_decoderId)
          {'CONFIG_PX_1_4_0_0_0'} ...
          ];
       
-   case {1125}
-      % 2.15.0.R
+   case {1125, 1128}
+      % 2.15.0.R, 2.15.2.R
       
       configIds = [ ...
          {'CONFIG_DIR'} ...

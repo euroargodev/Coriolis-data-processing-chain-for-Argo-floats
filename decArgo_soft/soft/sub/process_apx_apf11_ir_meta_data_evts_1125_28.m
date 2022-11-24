@@ -2,7 +2,7 @@
 % Get meta-data information from Apex APF11 events.
 %
 % SYNTAX :
-%  [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125(a_events)
+%  [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125_28(a_events)
 %
 % INPUT PARAMETERS :
 %   a_events : input system_log file event data
@@ -18,7 +18,7 @@
 % RELEASES :
 %   06/04/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125(a_events)
+function [o_metaData] = process_apx_apf11_ir_meta_data_evts_1125_28(a_events)
 
 % output parameters initialization
 o_metaData = [];

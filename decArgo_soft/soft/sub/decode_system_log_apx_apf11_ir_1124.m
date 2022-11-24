@@ -131,7 +131,7 @@ for idFile = 1:length(a_systemLogFileList)
       strcmp({events.functionName}, 'sample_cfg') ...
       );
    if (~isempty(idEvts))
-      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1124_25(events(idEvts));
+      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1124_25_28(events(idEvts));
       o_missionCfg = [o_missionCfg; missionCfg];
       o_sampleCfg = [o_sampleCfg; sampleCfg];
       
@@ -151,7 +151,7 @@ for idFile = 1:length(a_systemLogFileList)
    % pressure offset
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT'));
    if (~isempty(idEvts))
-      pressureOffset = process_apx_apf11_ir_pres_offset_1124_25(events(idEvts));
+      pressureOffset = process_apx_apf11_ir_pres_offset_1124_25_28(events(idEvts));
       if (~isempty(pressureOffset))
          dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
          dataStruct.label = 'Pressure offset';
@@ -281,7 +281,7 @@ for idFile = 1:length(a_systemLogFileList)
    % buoyancy activity
    idEvts = find(strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))
-      buoyancy = process_apx_apf11_ir_buoyancy_evts_1124_25(events(idEvts));
+      buoyancy = process_apx_apf11_ir_buoyancy_evts_1124_25_28(events(idEvts));
       o_buoyancy = [o_buoyancy; buoyancy];
    end
 
