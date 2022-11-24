@@ -50,6 +50,7 @@
 %   09/25/2018 - RNU - V 1.3: added input parameters 'createOnlyMultiProfFlag' and 'floatWmo'
 %   27/11/2018 - RNU - V 1.4: use the provided XML file name to create log file name
 %                             add information on concerned float when a mandatory parameter is missing
+%   27/11/2018 - RNU - V 1.5: includes version 18.02.2019 for ARGO_simplified_profile
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -62,24 +63,24 @@ global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
 
 % default directory to store the LOG file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
+DIR_LOG_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\log\';
 
 % default directory to store the XML file
-DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
+DIR_XML_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\xml\';
 
 % default base name of the temporary directory 
-DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
+DIR_TMP = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
 if (g_cocs_netCDF4FlagForMonoProf)
-   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
+   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
 else
-   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
+   MONO_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
 end
 if (g_cocs_netCDF4FlagForMultiProf)
-   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
+   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf4_classic.nc';
 else
-   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
+   MULTI_PROF_REF_PROFILE_FILE = 'C:\Users\jprannou\NEW_20190125\_RNU\DecArgo_soft\soft\util\misc/ArgoSProf_V1.0_netcdf_classic.nc';
 end
 
 % input parameters
@@ -111,7 +112,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.4 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.5 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -701,9 +702,9 @@ return
 %   a_logFileName  : log file path name of the run
 %
 % OUTPUT PARAMETERS :
-%   o_infoMsg    : INFO messages
-%   o_warningMsg : WARNING messages
-%   o_errorMsg   : ERROR messages
+%   o_infoMsg     : INFO messages
+%   o_warningMsg  : WARNING messages
+%   o_errorMsg    : ERROR messages
 %
 % EXAMPLES :
 %
@@ -719,6 +720,9 @@ function [o_infoMsg, o_warningMsg, o_errorMsg] = parse_log_file(a_logFileName)
 o_infoMsg = [];
 o_warningMsg = [];
 o_errorMsg = [];
+o_infoMsg2 = [];
+o_warningMsg2 = [];
+o_errorMsg2 = [];
 
 if (~isempty(a_logFileName))
    % read log file
@@ -743,6 +747,12 @@ if (~isempty(a_logFileName))
             o_warningMsg = [o_warningMsg {line(length('WARNING: ')+1:end)}];
          elseif (strncmp(line, 'ERROR: ', length('ERROR: ')))
             o_errorMsg = [o_errorMsg {line(length('ERROR: ')+1:end)}];
+         elseif (strncmp(line, 'S-PROF_INFO: ', length('S-PROF_INFO: ')))
+            o_infoMsg = [o_infoMsg {['S-PROF: ' line(length('S-PROF_INFO: ')+1:end)]}];
+         elseif (strncmp(line, 'S-PROF_WARNING: ', length('S-PROF_WARNING: ')))
+            o_warningMsg = [o_warningMsg {['S-PROF: ' line(length('S-PROF_WARNING: ')+1:end)]}];
+         elseif (strncmp(line, 'S-PROF_ERROR: ', length('S-PROF_ERROR: ')))
+            o_errorMsg = [o_errorMsg {['S-PROF: ' line(length('S-PROF_ERROR: ')+1:end)]}];
          end
          idLine = idLine + 1;
          if (idLine > length(fileContents))

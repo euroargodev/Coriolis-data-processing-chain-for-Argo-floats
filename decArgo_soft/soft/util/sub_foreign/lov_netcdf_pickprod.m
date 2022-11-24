@@ -9,6 +9,7 @@ function S=lov_netcdf_pickprod(filename,varargin)
 % 10.10.2013
 % 31.10.2016, LOV, more specific adaptations to Argo netcdf files (QC field
 %             data type and option to load only specific fields)
+% 10.01.2019, IOW, modified to include dimension information
 %
 % input:
 % filename - (path &) filename of netcdf file
@@ -89,7 +90,24 @@ if nglobal_attr>0
         nameatt=strrep(nameatt,'/','_');
         nameatt=strrep(nameatt,'.','_');
         % 
-        eval(['SDS_info.GLOBAL.' nameatt '=  valueatt;']);        
+        SDS_info.GLOBAL.(nameatt)=valueatt;
+    end
+end
+
+% get dimensions
+if ndims>0
+    for j=1:ndims
+        [nameatt,attlen] = netcdf.inqDim(ncid,j-1);
+        %valueatt=netcdf.getAtt(ncid,i-1,nameatt);
+        %% convert spaces, hyphens, slashes to underscores
+        %nameatt=strrep(nameatt,'_FillValue','FillValue');
+        if strncmp(nameatt,'_',1), nameatt=nameatt(2:end); end
+        nameatt = strrep(nameatt,' ','_');
+        nameatt=strrep(nameatt,'-','_');
+        nameatt=strrep(nameatt,'/','_');
+        nameatt=strrep(nameatt,'.','_');
+        % 
+        SDS_info.GLOBAL.dims.(nameatt)=attlen;        
     end
 end
 
@@ -121,24 +139,28 @@ for i = 1:nvariables;
         nameatt=strrep(nameatt,'.','_');
         if nameatt(1)=='_', nameatt=nameatt(2:end); end
         % 
-        eval(['SDS_info.' name '.' nameatt '=  valueatt;']);        
+        SDS_info.(name).(nameatt)=valueatt;
     end
+    %% get variable dimension names and values
+    [a,b]=arrayfun(@(x)netcdf.inqDim(ncid,x),dimids,'uniform',0);
+    SDS_info.(name).dimname=a;
+    SDS_info.(name).dimvalue=cell2mat(b);
     if loadflag % actually load the data
     % get variable value
-    eval(['SDS_info.' name '.value=netcdf.getVar(ncid,i-1);'])
+    SDS_info.(name).value=netcdf.getVar(ncid,i-1);
     % and replace FillValue with NaN
     if data_type>2
         try
-            eval(['SDS_info.' name '.value(SDS_info.' name '.FillValue==SDS_info.' name '.value)=NaN;'])
+            SDS_info.(name).value(SDS_info.(name).FillValue==SDS_info.(name).value)=NaN;
         catch me
             warning off
-            eval(['SDS_info.' name '.value(99999==SDS_info.' name '.value)=NaN;'])
-            eval(['SDS_info.' name '.value(9.969209968386869e+36==SDS_info.' name '.value)=NaN;'])
+            SDS_info.(name).value(99999==SDS_info.(name).value)=NaN;
+            SDS_info.(name).value(9.969209968386869e+36==SDS_info.(name).value)=NaN;
             %warning on
             %disp(['no FillValue available for ' name ])
         end
         try
-            eval(['SDS_info.' name '.value(SDS_info.' name '.missing_value==SDS_info.' name '.value)=NaN;'])
+            SDS_info.(name).value(SDS_info.(name).missing_value==SDS_info.(name).value)=NaN;
         catch me
             
         end
@@ -146,20 +168,22 @@ for i = 1:nvariables;
     % and tidy up result 
     if data_type==2 & (isempty(strfind(name,'QC')) | ~isempty(strfind(name,'QCTEST'))) % flip character arrays if not QC field
         try
-            eval(['SDS_info.' name '.value=SDS_info.' name '.value'';'])
+            SDS_info.(name).value=SDS_info.(name).value';
+            SDS_info.(name).dimname=SDS_info.(name).dimname([2 1]);
+            SDS_info.(name).dimvalue=SDS_info.(name).dimvalue([2 1]);
         catch me
         end
 
     elseif data_type<3 & isempty(strfind(name,'PROFILE')) % make double for data QC "string" fields
-        eval(['SDS_info.' name '.value=double(SDS_info.' name '.value)-double(''0'');'])
-        eval(['SDS_info.' name '.value(SDS_info.' name '.value==-16)=NaN;']) % double(' ')-double('0')=-16;
+        SDS_info.(name).value=double(SDS_info.(name).value)-double('0');
+        SDS_info.(name).value(SDS_info.(name).value==-16)=NaN; % double(' ')-double('0')=-16;
     elseif data_type>4 % make double for float, double, 
-        eval(['SDS_info.' name '.value=double(SDS_info.' name '.value);'])
+        SDS_info.(name).value=double(SDS_info.(name).value);
 %{
     elseif data_type<3 % make double and sparse for QC "string" fields
-        eval(['SDS_info.' name '.value=sparse(double(SDS_info.' name '.value));'])
+        SDS_info.(name).value=sparse(double(SDS_info.(name).value));
 	elseif data_type>4 % make double and sparse for float and double fields
-        eval(['SDS_info.' name '.value=glsparse(double(SDS_info.' name '.value));'])
+        SDS_info.(name).value=glsparse(double(SDS_info.(name).value));
 %}
     end % tidy up
     end % loadflag
@@ -172,9 +196,9 @@ for i = 1:nvariables;
   
   if strcmp(class(value),'struct') == 1
    %% put number place holder
-     eval(['SDS_info.' name ' =  i;']);
+     SDS_info.(name) =  i;
   else
-      eval(['SDS_info.' name ' =  value;']);
+      SDS_info.(name) =  value;
   end
     %}
 end
@@ -191,7 +215,7 @@ sds_id=hdfsd('select',ncid,sds_index);
       name=strrep(name,'-','_');
       name=strrep(name,'/','_');
       name=strrep(name,'.','_');
-eval(['SDS_prod.' name ' =  jj;']);
+SDS_prod.(name) =  jj;
 end
 
 %% end access to dataset

@@ -34,6 +34,7 @@
 %   08/22/2018 - RNU - V 1.2: manage missing PARAMETER_DATA_MODE when DATA_MODE == 'R'
 %   09/25/2018 - RNU - V 1.3: added input parameters 'floatWmo', 'inputDirName'
 %                             and 'outputDirName'
+%   02/27/2019 - RNU - V 1.4: includes version 18.02.2019 for ARGO_simplified_profile
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -82,7 +83,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.3 (version 29.06.2018 for ARGO_simplify_getpressureaxis_v6)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.4 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
