@@ -33,6 +33,9 @@ global g_decArgo_qcStrInterpolated;
 % global default values
 global g_decArgo_dateDef;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 if (isempty(a_tabProfiles))
    return
@@ -75,6 +78,13 @@ if (any(([a_tabProfiles.date] ~= g_decArgo_dateDef) & ...
    gpsLocQc = a_gpsData{7};
 
    idLocLaunch = find(gpsLocCycleNum == -1);
+   if (gpsLocDate(idLocLaunch) >= min(profJuld(~isnan(profJuld))))
+      fprintf('ERROR: Float #%d: Inconsistent launch date (%s) should be before first profile date (%s)\n', ...
+         g_decArgo_floatNum, ...
+         julian_2_gregorian_dec_argo(gpsLocDate(idLocLaunch)), ...
+         julian_2_gregorian_dec_argo(min(profJuld(~isnan(profJuld)))));
+      return
+   end
    profJuld(end) = gpsLocDate(idLocLaunch);
    profJuldLoc(end) = gpsLocDate(idLocLaunch);
    profLon(end) = gpsLocLon(idLocLaunch);
@@ -136,17 +146,19 @@ if (any(([a_tabProfiles.date] ~= g_decArgo_dateDef) & ...
    for idP = 1:length(profList)
 
       % assign the interpolated location to the profile
-      if (a_tabProfiles(profList(idP)).locationDate2 ~= g_decArgo_dateDef)
-
-         profJuldLoc(profList(idP)) = a_tabProfiles(profList(idP)).locationDate2;
-         profLon(profList(idP)) = a_tabProfiles(profList(idP)).locationLon2;
-         profLat(profList(idP)) = a_tabProfiles(profList(idP)).locationLat2;
-         if (strcmp(a_tabProfiles(profList(idP)).posSystem, 'GPS'))
-            profPosSystem(profList(idP)) = 1;
-         elseif (strcmp(a_tabProfiles(profList(idP)).posSystem, 'IRIDIUM'))
-            profPosSystem(profList(idP)) = 2;
+      idF = find(profJuld(profList(idP)) == [a_tabProfiles.date], 1);
+      if (~isempty(idF))
+         if (a_tabProfiles(idF).locationDate2 ~= g_decArgo_dateDef)
+            profJuldLoc(profList(idP)) = a_tabProfiles(idF).locationDate2;
+            profLon(profList(idP)) = a_tabProfiles(idF).locationLon2;
+            profLat(profList(idP)) = a_tabProfiles(idF).locationLat2;
+            if (strcmp(a_tabProfiles(idF).posSystem, 'GPS'))
+               profPosSystem(profList(idP)) = 1;
+            elseif (strcmp(a_tabProfiles(idF).posSystem, 'IRIDIUM'))
+               profPosSystem(profList(idP)) = 2;
+            end
+            profPosQc(profList(idP)) = a_tabProfiles(idF).locationQc2;
          end
-         profPosQc(profList(idP)) = a_tabProfiles(profList(idP)).locationQc2;
       end
    end
 

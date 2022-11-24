@@ -46,7 +46,9 @@ o_lastCycleFlag = [];
 idForCy = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
 if (~isempty(idForCy))
    cepRadiusCy = [a_iridiumMailData(idForCy).cepRadius];
-   cepRadiusCy(cepRadiusCy == 0) = [];
+   if (~any(cepRadiusCy ~= 0))
+      return
+   end
    idFCyNum = find(([a_iridiumMailData.cycleNumber] == a_cycleNumber) & ...
       ([a_iridiumMailData.cepRadius] == min(cepRadiusCy)));
    if (~isempty(idFCyNum))

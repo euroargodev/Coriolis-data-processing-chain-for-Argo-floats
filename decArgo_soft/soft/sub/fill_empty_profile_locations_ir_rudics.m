@@ -84,6 +84,9 @@ global g_decArgo_qcStrInterpolated;
 % global default values
 global g_decArgo_dateDef;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % process dated but not located profiles
 if (any(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
@@ -118,6 +121,13 @@ if (any(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
    gpsLocQc = a_gpsData{7};
 
    idLocLaunch = find(gpsLocCycleNum == -1);
+   if (gpsLocDate(idLocLaunch) >= min(profJuld(~isnan(profJuld))))
+      fprintf('ERROR: Float #%d: Inconsistent launch date (%s) should be before first profile date (%s)\n', ...
+         g_decArgo_floatNum, ...
+         julian_2_gregorian_dec_argo(gpsLocDate(idLocLaunch)), ...
+         julian_2_gregorian_dec_argo(min(profJuld(~isnan(profJuld)))));
+      return
+   end
    profJuld(end) = gpsLocDate(idLocLaunch);
    profJuldLoc(end) = gpsLocDate(idLocLaunch);
    profLon(end) = gpsLocLon(idLocLaunch);

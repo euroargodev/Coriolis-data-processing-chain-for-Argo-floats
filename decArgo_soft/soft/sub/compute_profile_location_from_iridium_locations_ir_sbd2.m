@@ -60,7 +60,11 @@ else
    else
       cycleNumber = a_cycleNumber - 1;
       idForCy = find([a_iridiumMailData.floatCycleNumber] == cycleNumber);
-      profileNumber = max([a_iridiumMailData(idForCy).floatProfileNumber]);
+      if (~isempty(idForCy))
+         profileNumber = max([a_iridiumMailData(idForCy).floatProfileNumber]);
+      else
+         profileNumber = 1; % to prevent float 2902089 from crashing the decoder
+      end
    end
 end
 

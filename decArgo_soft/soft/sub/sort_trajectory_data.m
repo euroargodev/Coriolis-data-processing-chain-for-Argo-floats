@@ -44,12 +44,12 @@ if (~isempty(o_tabTrajNMeas))
       mcOrderList = get_mc_order_list(a_decoderId);
       if (~isempty(mcOrderList))
          
-         cycleNumList = unique([o_tabTrajNMeas.cycleNumber]);
+         cycleNumList = unique([o_tabTrajNMeas.outputCycleNumber]);
          cycleNumList(cycleNumList == -1) = [];
          for idC = 1:length(cycleNumList)
             cycleNum = cycleNumList(idC);
             
-            idTrajNMeasStruct = find([o_tabTrajNMeas.cycleNumber] == cycleNum);
+            idTrajNMeasStruct = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
             tabMeas = o_tabTrajNMeas(idTrajNMeasStruct).tabMeas;
             if (~isempty(tabMeas))
                measCodeList = [tabMeas.measCode];
@@ -82,12 +82,12 @@ if (~isempty(o_tabTrajNMeas))
       % the dated MCs of a given cycle in chronological order and then insert
       % the remaining MCs (sorted according to their value).
       
-      cycleNumList = unique([o_tabTrajNMeas.cycleNumber]);
+      cycleNumList = unique([o_tabTrajNMeas.outputCycleNumber]);
       for idC = 1:length(cycleNumList)
          cycleNum = cycleNumList(idC);
          
          % N_MEAS of the current cycle
-         idTrajNMeasStruct = find([o_tabTrajNMeas.cycleNumber] == cycleNum);
+         idTrajNMeasStruct = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
          tabMeas = o_tabTrajNMeas(idTrajNMeasStruct).tabMeas;
          
          % create the array of dates of MCs

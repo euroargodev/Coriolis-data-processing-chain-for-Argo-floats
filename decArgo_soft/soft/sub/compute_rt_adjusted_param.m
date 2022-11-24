@@ -998,7 +998,9 @@ for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
                      paramDataAdj(idNoDef) = paramDataAdj(idNoDef)*slopeRtAdj + offsetRtAdj;
                      
                      % store adjusted data
-                     tabMeas.paramDataMode(idParam) = 'A';
+                     if (~isempty(idNoDef))
+                        tabMeas.paramDataMode(idParam) = 'A';
+                     end
                      tabMeas.paramDataAdj(:, firstCol:lastCol) = paramDataAdj;
                      idNoDef = find(paramDataAdj ~= tabMeas.paramList(idParam).fillValue);
                      tabMeas.paramDataAdjQc(idNoDef, idParam) = g_decArgo_qcNoQc;
