@@ -43,7 +43,9 @@ if (~isempty(g_decArgo_gpsData))
    gpsLocQc = g_decArgo_gpsData{7};
    gpsLocAccuracy = g_decArgo_gpsData{8};
    gpsLocSbdFileDate = g_decArgo_gpsData{9};
-   gpsLocInTrajFlag = g_decArgo_gpsData{13};
+   if (length(g_decArgo_gpsData) >= 13)
+      gpsLocInTrajFlag = g_decArgo_gpsData{13}; % not present for NOVA
+   end
 
    % update the JAMSTEC QC of the GPS locations
    
@@ -92,7 +94,10 @@ if (~isempty(g_decArgo_gpsData))
    g_decArgo_gpsData{7} = gpsLocQc;
    g_decArgo_gpsData{8} = gpsLocAccuracy;
    g_decArgo_gpsData{9} = gpsLocSbdFileDate;
-   g_decArgo_gpsData{13} = gpsLocInTrajFlag;
+   if (length(g_decArgo_gpsData) >= 13)
+      g_decArgo_gpsData{13} = gpsLocInTrajFlag; % not present for NOVA
+   end
+
 end
 
 % output data
