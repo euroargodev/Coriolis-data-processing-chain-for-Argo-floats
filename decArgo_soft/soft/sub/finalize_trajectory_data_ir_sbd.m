@@ -228,17 +228,19 @@ else
       end
       
       idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-      idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
-      if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
-         idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
-         if (~isempty(idCyPrec))
-            if (any(~isempty(a_tabTrajNMeas(idCyPrec).tabMeas)))
-               idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
-               if (~isempty(idF2))
-                  
-                  measStruct = create_one_meas_float_time(g_MC_TET, ...
-                     a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
-                  a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+      if (~isempty(a_tabTrajNMeas(idC).tabMeas))
+         idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
+         if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
+            idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
+            if (~isempty(idCyPrec))
+               if (any(~isempty(a_tabTrajNMeas(idCyPrec).tabMeas)))
+                  idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
+                  if (~isempty(idF2))
+                     
+                     measStruct = create_one_meas_float_time(g_MC_TET, ...
+                        a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+                     a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+                  end
                end
             end
          end
