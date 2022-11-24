@@ -100,24 +100,28 @@ if (~isempty(a_tabTech))
             [~, idMin] = min(abs([g_decArgo_timeData.cycleTime(idCycleStruct(idF)).gpsTime] - a_tabTech(idTech, end)));
             idF = idF(idMin);
          end
-         gpsLocDate = [gpsLocDate; g_decArgo_timeData.cycleTime(idCycleStruct(idF)).gpsTimeAdj];
          
-         gpsLocLon = [gpsLocLon; a_tabTech(idTech, 38+ID_OFFSET)];
-         gpsLocLat = [gpsLocLat; a_tabTech(idTech, 37+ID_OFFSET)];
-         gpsLocQc = [gpsLocQc; 0];
-         gpsLocAccuracy = [gpsLocAccuracy; 'G'];
-         gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idTech, end)];
-         
-         % update GPS data global variable
-         g_decArgo_gpsData{1} = gpsLocCycleNum;
-         g_decArgo_gpsData{2} = gpsLocProfNum;
-         g_decArgo_gpsData{3} = gpsLocPhase;
-         g_decArgo_gpsData{4} = gpsLocDate;
-         g_decArgo_gpsData{5} = gpsLocLon;
-         g_decArgo_gpsData{6} = gpsLocLat;
-         g_decArgo_gpsData{7} = gpsLocQc;
-         g_decArgo_gpsData{8} = gpsLocAccuracy;
-         g_decArgo_gpsData{9} = gpsLocSbdFileDate;
+         if (~isempty(g_decArgo_timeData.cycleTime(idCycleStruct(idF)).gpsTimeAdj))
+            
+            gpsLocDate = [gpsLocDate; g_decArgo_timeData.cycleTime(idCycleStruct(idF)).gpsTimeAdj];
+            
+            gpsLocLon = [gpsLocLon; a_tabTech(idTech, 38+ID_OFFSET)];
+            gpsLocLat = [gpsLocLat; a_tabTech(idTech, 37+ID_OFFSET)];
+            gpsLocQc = [gpsLocQc; 0];
+            gpsLocAccuracy = [gpsLocAccuracy; 'G'];
+            gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idTech, end)];
+            
+            % update GPS data global variable
+            g_decArgo_gpsData{1} = gpsLocCycleNum;
+            g_decArgo_gpsData{2} = gpsLocProfNum;
+            g_decArgo_gpsData{3} = gpsLocPhase;
+            g_decArgo_gpsData{4} = gpsLocDate;
+            g_decArgo_gpsData{5} = gpsLocLon;
+            g_decArgo_gpsData{6} = gpsLocLat;
+            g_decArgo_gpsData{7} = gpsLocQc;
+            g_decArgo_gpsData{8} = gpsLocAccuracy;
+            g_decArgo_gpsData{9} = gpsLocSbdFileDate;
+         end
       end
    end
 end

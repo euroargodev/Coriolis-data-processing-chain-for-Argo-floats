@@ -35,6 +35,9 @@ global g_decArgo_applyRtqc;
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
 
+% global input parameter information
+global g_decArgo_processModeAll;
+
 % current float WMO number
 global g_decArgo_floatNum;
 
