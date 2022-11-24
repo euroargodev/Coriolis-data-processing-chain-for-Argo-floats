@@ -3,21 +3,25 @@
 %
 % SYNTAX :
 %  create_nc_meta_aux_file( ...
-%    a_inputAuxMetaName, a_inputAuxMetaValue, a_inputAuxMetaDescription, ...
-%    a_inputAuxStaticConfigName, a_inputAuxStaticConfigValue, ...
-%    a_launchAuxConfigName, a_launchAuxConfigValue, ...
-%    a_missionAuxConfigName, a_missionAuxConfigValue, a_configMissionNumber, ...
+%    a_inputAuxMetaName, a_inputAuxMetaId, a_inputAuxMetaValue, a_inputAuxMetaDescription, ...
+%    a_inputAuxStaticConfigName, a_inputAuxStaticConfigId, a_inputAuxStaticConfigValue, ...
+%    a_launchAuxConfigName, a_launchAuxConfigId, a_launchAuxConfigValue, ...
+%    a_missionAuxConfigName, a_missionAuxConfigId, a_missionAuxConfigValue, a_configMissionNumber, ...
 %    a_metaDataAux)
 %
 % INPUT PARAMETERS :
 %   a_inputAuxMetaName          : AUX meta-data names
+%   a_inputAuxMetaId            : AUX meta-data Ids
 %   a_inputAuxMetaValue         : AUX meta-data values
 %   a_inputAuxMetaDescription   : AUX meta-data description
 %   a_inputAuxStaticConfigName  : static AUX configuration names
+%   a_inputAuxStaticConfigId    : static AUX configuration Ids
 %   a_inputAuxStaticConfigValue : static AUX configuration values
 %   a_launchAuxConfigName       : launch AUX configuration names
+%   a_launchAuxConfigId         : launch AUX configuration Ids
 %   a_launchAuxConfigValue      : launch AUX configuration values
 %   a_missionAuxConfigName      : mission AUX configuration names
+%   a_missionAuxConfigId        : mission AUX configuration Ids
 %   a_missionAuxConfigValue     : mission AUX configuration values
 %   a_configMissionNumber       : mission configuration numbers
 %   a_metaDataAux               : SENSOR AUX meta-data
@@ -33,10 +37,10 @@
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function create_nc_meta_aux_file( ...
-   a_inputAuxMetaName, a_inputAuxMetaValue, a_inputAuxMetaDescription, ...
-   a_inputAuxStaticConfigName, a_inputAuxStaticConfigValue, ...
-   a_launchAuxConfigName, a_launchAuxConfigValue, ...
-   a_missionAuxConfigName, a_missionAuxConfigValue, a_configMissionNumber, ...
+   a_inputAuxMetaName, a_inputAuxMetaId, a_inputAuxMetaValue, a_inputAuxMetaDescription, ...
+   a_inputAuxStaticConfigName, a_inputAuxStaticConfigId, a_inputAuxStaticConfigValue, ...
+   a_launchAuxConfigName, a_launchAuxConfigId, a_launchAuxConfigValue, ...
+   a_missionAuxConfigName, a_missionAuxConfigId, a_missionAuxConfigValue, a_configMissionNumber, ...
    a_metaDataAux)
 
 % current float WMO number
@@ -52,6 +56,9 @@ global g_decArgo_delayedModeFlag;
 
 % report information structure
 global g_decArgo_reportStruct;
+
+% output NetCDF configuration parameter Ids
+global g_decArgo_outputNcConfParamId;
 
 % output NetCDF configuration parameter labels
 global g_decArgo_outputNcConfParamLabel;
@@ -500,7 +507,12 @@ end
 for idConf = 1:length(a_inputAuxStaticConfigName)
    confName = a_inputAuxStaticConfigName{idConf};
    confValue = a_inputAuxStaticConfigValue{idConf};
-   confDescription = g_decArgo_outputNcConfParamDescription{find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1)};
+   if (~isempty(a_inputAuxStaticConfigId))
+      idF = find(g_decArgo_outputNcConfParamId == a_inputAuxStaticConfigId(idConf));
+      confDescription = g_decArgo_outputNcConfParamDescription{idF};
+   else
+      confDescription = g_decArgo_outputNcConfParamDescription{find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1)};
+   end
    confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
    
    netcdf.putVar(fCdf, staticConfigurationParameterNameVarId, ...
@@ -512,33 +524,45 @@ for idConf = 1:length(a_inputAuxStaticConfigName)
 end
 
 % store launch configuration data
+minChar = 999;
+for idConf = 1:length(g_decArgo_outputNcConfParamLabel)
+   confName = fliplr(g_decArgo_outputNcConfParamLabel{idConf});
+   idF = strfind(confName, '>');
+   if (~isempty(idF))
+      minChar = min(minChar, idF(1)-1);
+   end
+end
+
 for idConf = 1:length(a_launchAuxConfigName)
    confName = a_launchAuxConfigName{idConf};
-   idDesc = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
-   if (isempty(idDesc))
-      idFz = strfind(confName, 'Zone');
-      if (length(idFz) == 1)
-         confNameBis = [confName(1:idFz-1) 'Zone<N>' confName(idFz+5:end)];
-         idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
-      elseif (length(idFz) == 2)
-         confNameBis = [confName(1:idFz(1)-1) 'Zone<N>' confName(idFz(1)+5:idFz(2)-1) 'Zone<N+1>' confName(idFz(2)+5:end)];
-         idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
-      end
+   if (~isempty(a_launchAuxConfigId))
+      idF = find(g_decArgo_outputNcConfParamId == a_launchAuxConfigId(idConf));
+      confDescription = g_decArgo_outputNcConfParamDescription{idF};
+   else
+      idDesc = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
       if (isempty(idDesc))
-         % confName(end-11:end) to be sure that we are after the las '>' in all
-         % cases
-         idDescAll = find(cellfun(@(x) (length(x) > 11) && ~isempty(strfind(x(end-11:end), confName(end-11:end))), g_decArgo_outputNcConfParamLabel));
-         if (length(idDescAll) == 1)
-            idDesc = idDescAll;
+         idFz = strfind(confName, 'Zone');
+         if (length(idFz) == 1)
+            confNameBis = [confName(1:idFz-1) 'Zone<N>' confName(idFz+5:end)];
+            idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
+         elseif (length(idFz) == 2)
+            confNameBis = [confName(1:idFz(1)-1) 'Zone<N>' confName(idFz(1)+5:idFz(2)-1) 'Zone<N+1>' confName(idFz(2)+5:end)];
+            idDesc = find(strcmp(confNameBis, g_decArgo_outputNcConfParamLabel), 1);
+         end
+         if (isempty(idDesc))
+            idDescAll = find(cellfun(@(x) (length(x) > minChar-1) && ~isempty(strfind(x(end-(minChar-1):end), confName(end-(minChar-1):end))), g_decArgo_outputNcConfParamLabel));
+            if (length(idDescAll) == 1)
+               idDesc = idDescAll;
+            end
          end
       end
-   end
-   if (~isempty(idDesc))
-      confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
-   else
-      confDescription = 'DESCRIPTION CANNOT BE RETRIEVED';
-      fprintf('ERROR: Float #%d: unable to retrieve description of AUX configuration parameter ''%s''\n', ...
-         g_decArgo_floatNum, confName);
+      if (~isempty(idDesc))
+         confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
+      else
+         confDescription = 'DESCRIPTION CANNOT BE RETRIEVED';
+         fprintf('ERROR: Float #%d: unable to retrieve description of AUX configuration parameter ''%s''\n', ...
+            g_decArgo_floatNum, confName);
+      end
    end
    confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');
 

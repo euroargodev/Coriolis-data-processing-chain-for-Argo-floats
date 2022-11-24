@@ -25,10 +25,10 @@ o_ncConfig = [];
 
 
 % create the configuration parameter names for the META NetCDF file
-[decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_rudics_cts5(a_decoderId);
+[decArgoConfParamNames, ncConfParamNames, ncConfParamIds] = create_config_param_names_ir_rudics_cts5(a_decoderId);
 
 % create output float configuration
-[o_ncConfig] = create_output_float_config(decArgoConfParamNames, ncConfParamNames);
+[o_ncConfig] = create_output_float_config(decArgoConfParamNames, ncConfParamNames, ncConfParamIds);
 
 return
 
@@ -36,14 +36,16 @@ return
 % Create the final configuration that will be used in the meta.nc file.
 %
 % SYNTAX :
-%  [o_ncConfig] = create_output_float_config(a_decArgoConfParamNames, a_ncConfParamNames)
+%  [o_ncConfig] = create_output_float_config( ...
+%    a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
 %
 % INPUT PARAMETERS :
-%   a_decArgoConfParamNames : internal configuration parameter names
-%   a_ncConfParamNames      : NetCDF configuration parameter names
+%    a_decArgoConfParamNames : internal configuration parameter names
+%    a_ncConfParamNames      : NetCDF configuration parameter names
+%    a_ncConfParamIds        : NetCDF configuration parameter Ids
 %
 % OUTPUT PARAMETERS :
-% o_ncConfig : NetCDF configuration
+%    o_ncConfig : NetCDF configuration
 %
 % EXAMPLES :
 %
@@ -53,7 +55,8 @@ return
 % RELEASES :
 %   09/22/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncConfig] = create_output_float_config(a_decArgoConfParamNames, a_ncConfParamNames)
+function [o_ncConfig] = create_output_float_config( ...
+   a_decArgoConfParamNames, a_ncConfParamNames, a_ncConfParamIds)
 
 % output parameters initialization
 o_ncConfig = [];
@@ -313,13 +316,16 @@ finalConfigName(idDel) = [];
 finalConfigValue(idDel, :) = [];
 
 % convert decoder names into NetCDF ones
-staticConfigNameBefore = staticConfigName;
-finalConfigNameBefore = finalConfigName;
+% staticConfigNameBefore = staticConfigName;
+% finalConfigNameBefore = finalConfigName;
+staticConfigId = ones(size(staticConfigName))*-1;
+finalConfigId = ones(size(finalConfigName))*-1;
 if (~isempty(a_decArgoConfParamNames))
    for idConfParam = 1:length(staticConfigName)
       idF = find(strcmp(staticConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
       if (~isempty(idF))
          staticConfigName{idConfParam} = a_ncConfParamNames{idF};
+         staticConfigId(idConfParam) = a_ncConfParamIds(idF);
       else
          fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
             g_decArgo_floatNum, ...
@@ -330,6 +336,7 @@ if (~isempty(a_decArgoConfParamNames))
       idF = find(strcmp(finalConfigName{idConfParam}, a_decArgoConfParamNames) == 1);
       if (~isempty(idF))
          finalConfigName{idConfParam} = a_ncConfParamNames{idF};
+         finalConfigId(idConfParam) = a_ncConfParamIds(idF);
       else
          fprintf('ERROR: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
             g_decArgo_floatNum, ...
@@ -340,9 +347,11 @@ end
 
 % output data
 o_ncConfig.STATIC_NC.NAMES = staticConfigName;
+o_ncConfig.STATIC_NC.IDS = staticConfigId;
 o_ncConfig.STATIC_NC.VALUES = staticConfigValue;
 o_ncConfig.DYNAMIC_NC.NUMBER = finalConfigNum;
 o_ncConfig.DYNAMIC_NC.NAMES = finalConfigName;
+o_ncConfig.DYNAMIC_NC.IDS = finalConfigId;
 o_ncConfig.DYNAMIC_NC.VALUES = finalConfigValue;
 
 % tmp = [];

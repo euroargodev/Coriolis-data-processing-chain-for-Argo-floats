@@ -569,10 +569,10 @@ switch (a_decoderId)
       if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
             ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
          create_nc_meta_aux_file( ...
-            inputAuxMetaName, inputAuxMetaValue, inputAuxMetaDescription, ...
-            inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
+            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -585,21 +585,27 @@ switch (a_decoderId)
       
       % select Argo and Auxiliary configuration information
       staticConfigName = a_structConfig.STATIC_NC.NAMES;
+      staticConfigId = a_structConfig.STATIC_NC.IDS;
       staticConfigValue = a_structConfig.STATIC_NC.VALUES;
-      
+
       inputStaticConfigName = [];
+      inputStaticConfigId = [];
       inputStaticConfigValue = [];
       inputAuxStaticConfigName = [];
+      inputAuxStaticConfigId = [];
       inputAuxStaticConfigValue = [];
       inputAuxMetaName = [];
+      inputAuxMetaId = [];
       inputAuxMetaValue = [];
       inputAuxMetaDescription = [];
       for idC = 1:length(staticConfigName)
          if (strncmp(staticConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             inputAuxStaticConfigName = [inputAuxStaticConfigName; staticConfigName(idC)];
+            inputAuxStaticConfigId = [inputAuxStaticConfigId; staticConfigId(idC)];
             inputAuxStaticConfigValue = [inputAuxStaticConfigValue; staticConfigValue(idC)];
          elseif (strncmp(staticConfigName{idC}, 'META_AUX_', length('META_AUX_')))
             inputAuxMetaName = [inputAuxMetaName; staticConfigName(idC)];
+            inputAuxMetaId = [inputAuxMetaId; staticConfigId(idC)];
             inputAuxMetaValue = [inputAuxMetaValue; staticConfigValue(idC)];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp(staticConfigName(idC), g_decArgo_outputNcConfParamLabel), 1))];
@@ -607,6 +613,7 @@ switch (a_decoderId)
             % not used
          else
             inputStaticConfigName = [inputStaticConfigName; staticConfigName(idC)];
+            inputStaticConfigId = [inputStaticConfigId; staticConfigId(idC)];
             inputStaticConfigValue = [inputStaticConfigValue; staticConfigValue(idC)];
          end
       end
@@ -615,12 +622,16 @@ switch (a_decoderId)
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
          if (isfield(metaData, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FLOAT_SIM_CARD_NUMBER'];
+            idF = find(strcmp('META_AUX_FLOAT_SIM_CARD_NUMBER', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FLOAT_SIM_CARD_NUMBER];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FLOAT_SIM_CARD_NUMBER', g_decArgo_outputNcConfParamLabel), 1))];
          end
          if (isfield(metaData, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_FIRMWARE_VERSION_SECONDARY'];
+            idF = find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_FIRMWARE_VERSION_SECONDARY];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_FIRMWARE_VERSION_SECONDARY', g_decArgo_outputNcConfParamLabel), 1))];
@@ -634,6 +645,8 @@ switch (a_decoderId)
                   confName = sprintf('META_AUX_UVP_ACQ_CONF_%02d_PARAMETERS', idConf);
                end
                inputAuxMetaName = [inputAuxMetaName; confName];
+               idF = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
+               inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
                inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_UVP_CONFIG_PARAMETERS.(fieldNames{idConf})];
                inputAuxMetaDescription = [inputAuxMetaDescription; ...
                   g_decArgo_outputNcConfParamDescription(find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1))];
@@ -641,24 +654,32 @@ switch (a_decoderId)
          end
          if (isfield(metaData, 'META_AUX_OPUS_FIRMWARE_VERSION'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_FIRMWARE_VERSION'];
+            idF = find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_FIRMWARE_VERSION];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_FIRMWARE_VERSION', g_decArgo_outputNcConfParamLabel), 1))];
          end
          if (isfield(metaData, 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO'];
+            idF = find(strcmp('META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO', g_decArgo_outputNcConfParamLabel), 1))];
          end
          if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_LENGTH'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_LENGTH'];
+            idF = find(strcmp('META_AUX_OPUS_WATERBASE_LENGTH', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_LENGTH];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_LENGTH', g_decArgo_outputNcConfParamLabel), 1))];
          end
          if (isfield(metaData, 'META_AUX_OPUS_WATERBASE_INTENSITIES'))
             inputAuxMetaName = [inputAuxMetaName; 'META_AUX_OPUS_WATERBASE_INTENSITIES'];
+            idF = find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1);
+            inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
             inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_OPUS_WATERBASE_INTENSITIES];
             inputAuxMetaDescription = [inputAuxMetaDescription; ...
                g_decArgo_outputNcConfParamDescription(find(strcmp('META_AUX_OPUS_WATERBASE_INTENSITIES', g_decArgo_outputNcConfParamLabel), 1))];
@@ -692,9 +713,10 @@ switch (a_decoderId)
             idMetaName = find(g_decArgo_outputNcParamId == metaStruct.techId);
             metaName = char(g_decArgo_outputNcParamLabel{idMetaName});
             metaDescription = char(g_decArgo_outputNcParamDescription{idMetaName});
-
+            
             if (strncmp(metaName, 'META_AUX_', length('META_AUX_')))
                inputAuxMetaName = [inputAuxMetaName; metaName];
+               inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idMetaName)];
                inputAuxMetaValue = [inputAuxMetaValue; metaStruct.value];
                inputAuxMetaDescription = [inputAuxMetaDescription; metaDescription];
             elseif (strncmp(staticConfigName{idC}, 'META_', length('META_')))
@@ -728,6 +750,7 @@ switch (a_decoderId)
       % we create the dynamic configurations including AUX parameters (they will
       % be selected later)
       inputDynamicConfigName = a_structConfig.DYNAMIC_NC.NAMES;
+      inputDynamicConfigId = a_structConfig.DYNAMIC_NC.IDS;
       inputDynamicConfigValue = a_structConfig.DYNAMIC_NC.VALUES;
       
       % retrieve mandatory configuration names for this decoder
@@ -735,6 +758,7 @@ switch (a_decoderId)
       
       % concat the input configuration information      
       configName = [inputStaticConfigName; inputDynamicConfigName];
+      configId = [inputStaticConfigId; inputDynamicConfigId];
       
       mandatoryList = [];
       for idL = 1:length(mandatoryConfigName)
@@ -763,26 +787,31 @@ switch (a_decoderId)
       
       % create the launch configuration
       launchConfigName = configName;
+      launchConfigId = configId;
       launchConfigValue = configValue(:, 1);
 
       % clean AUX parameters from output Argo launch configuration
       launchAuxConfigName = [];
+      launchAuxConfigId = [];
       launchAuxConfigValue = [];
       idDel = [];
       for idC = 1:length(launchConfigName)
          if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+            launchAuxConfigId = [launchAuxConfigId; launchConfigId(idC)];
             launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
             idDel = [idDel; idC];
          end
       end
       launchConfigName(idDel) = [];
+      launchConfigId(idDel) = [];
       launchConfigValue(idDel, :) = [];
       
       nbLaunchConfigParam = length(launchConfigName);
       
       % create the mission configuration
       missionConfigName = configName;
+      missionConfigId = configId;
       missionConfigValue = configValue;
       
       if (size(configValue, 2) > 1)
@@ -797,38 +826,43 @@ switch (a_decoderId)
          end
          idDel = setdiff(idDel, mandatoryList);
          missionConfigName(idDel) = [];
+         missionConfigId(idDel) = [];
          missionConfigValue(idDel, :) = [];
          % don't keep launch mission
          missionConfigValue(:, 1) = [];
          configMissionNumber = a_structConfig.DYNAMIC_NC.NUMBER(2:end);
       else
          missionConfigName = configName(mandatoryList);
+         missionConfigId = configId(mandatoryList);
          missionConfigValue = configValue(mandatoryList, 1);
          configMissionNumber = 1;
       end
       
       % clean AUX parameters from output Argo configuration
       missionAuxConfigName = [];
+      missionAuxConfigId = [];
       missionAuxConfigValue = [];
       idDel = [];
       for idC = 1:length(missionConfigName)
          if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
             missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
+            missionAuxConfigId = [missionAuxConfigId; missionConfigId(idC)];
             missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
             idDel = [idDel; idC];
          end
       end
       missionConfigName(idDel) = [];
+      missionConfigId(idDel) = [];
       missionConfigValue(idDel, :) = [];
       
       % create/update NetCDF META_AUX file
       if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
             ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
          create_nc_meta_aux_file( ...
-            inputAuxMetaName, inputAuxMetaValue, inputAuxMetaDescription, ...
-            inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            inputAuxMetaName, inputAuxMetaId, inputAuxMetaValue, inputAuxMetaDescription, ...
+            inputAuxStaticConfigName, inputAuxStaticConfigId, inputAuxStaticConfigValue, ...
+            launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
+            missionAuxConfigName, missionAuxConfigId, missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -1065,10 +1099,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
-            [], [], [], ...
-            inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            [], [], [], [], ...
+            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -1200,10 +1234,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
-            [], [], [], ...
-            inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            [], [], [], [], ...
+            inputAuxStaticConfigName, [], inputAuxStaticConfigValue, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -1405,10 +1439,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
-            inputAuxMetaName, inputAuxMetaValue, inputAuxMetaDescription, ...
-            [], [], ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            inputAuxMetaName, [], inputAuxMetaValue, inputAuxMetaDescription, ...
+            [], [], [], ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -1526,10 +1560,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
+            [], [], [], [], ...
             [], [], [], ...
-            [], [], ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end
       
@@ -1637,10 +1671,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
+            [], [], [], [], ...
             [], [], [], ...
-            [], [], ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end      
       
@@ -1828,10 +1862,10 @@ switch (a_decoderId)
          metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
          metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
          create_nc_meta_aux_file( ...
+            [], [], [], [], ...
             [], [], [], ...
-            [], [], ...
-            launchAuxConfigName, launchAuxConfigValue, ...
-            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            launchAuxConfigName, [], launchAuxConfigValue, ...
+            missionAuxConfigName, [], missionAuxConfigValue, configMissionNumber, ...
             metaDataAux);
       end           
       

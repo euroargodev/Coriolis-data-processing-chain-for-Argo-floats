@@ -2,13 +2,15 @@
 % Create configuration parameter lists of decoder names and NetCDF names.
 %
 % SYNTAX :
-%  [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_127
+%  [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
+%    create_config_param_names_ir_rudics_cts5_127
 %
 % INPUT PARAMETERS :
 %
 % OUTPUT PARAMETERS :
 %    o_decArgoConfParamNames : internal configuration parameter names
 %    o_ncConfParamNames      : NetCDF configuration parameter names
+%    o_ncConfParamIds        : NetCDF configuration parameter Ids
 %
 % EXAMPLES :
 %
@@ -18,11 +20,13 @@
 % RELEASES :
 %   02/16/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_decArgoConfParamNames, o_ncConfParamNames] = create_config_param_names_ir_rudics_cts5_127
+function [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
+   create_config_param_names_ir_rudics_cts5_127
 
 % output parameters initialization
 o_decArgoConfParamNames = [];
 o_ncConfParamNames = [];
+o_ncConfParamIds = [];
 
 % output NetCDF configuration parameter Ids
 global g_decArgo_outputNcConfParamId;
@@ -49,6 +53,7 @@ apmtSensorList = [ ...
 % create configuration names for decoder and associated one for NetCDF
 decConfNames = [];
 ncConfNames = [];
+ncConfIds = [];
 configInfoList = [ ...
    {'SYSTEM'} {0:12} {[100:102 300 103:111]}; ...
    {'TECHNICAL'} {0:22} {112:134}; ...
@@ -91,6 +96,7 @@ for idConfig = 1:length(configInfoList)
             decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, patternNum, paramNumList(idP));
             idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
             ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+            ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
          end
       end
    elseif (strcmp(section, 'SENSOR_'))
@@ -112,6 +118,7 @@ for idConfig = 1:length(configInfoList)
                paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
                   [{'<short_sensor_name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)}]);
                ncConfNames{end+1} = paramName;
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
          end
          paramNumList = 46;
@@ -129,6 +136,7 @@ for idConfig = 1:length(configInfoList)
                paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
                   [{'<short_sensor_name>'} {apmtSensorList{idS}} {'<N>'} {num2str(idZ)} {'<N+1>'} {num2str(idZ+1)}]);
                ncConfNames{end+1} = paramName;
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
          end
          paramNumList = [50:52 60];
@@ -145,6 +153,7 @@ for idConfig = 1:length(configInfoList)
             paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
                [{'<short_sensor_name>'} {apmtSensorList{idS}}]);
             ncConfNames{end+1} = paramName;
+            ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
          end
          if (idS == 1) % <short_sensor_name> = 'Ctd'
             paramNumList = [54 55];
@@ -153,6 +162,7 @@ for idConfig = 1:length(configInfoList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
          elseif (idS == 8) % <short_sensor_name> = 'Uvp'
             paramNumList = 54;
@@ -164,6 +174,7 @@ for idConfig = 1:length(configInfoList)
                   paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
                      [{'<N>'} {num2str(idZ)}]);
                   ncConfNames{end+1} = paramName;
+                  ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
                end
             end
             paramNumList = [59 61 62];
@@ -172,6 +183,7 @@ for idConfig = 1:length(configInfoList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
          elseif (idS == 9) % <short_sensor_name> = 'Opus'
             paramNumList = [54:57];
@@ -180,6 +192,7 @@ for idConfig = 1:length(configInfoList)
                decConfNames{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, paramNumList(idP));
                idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
                ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+               ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
             end
             paramNumList = [61 66];
             paramIdList = [260 261];
@@ -190,6 +203,7 @@ for idConfig = 1:length(configInfoList)
                   paramName = create_param_name_ir_rudics_sbd2(g_decArgo_outputNcConfParamLabel{idParamName}, ...
                      [{'<N>'} {num2str(idZ)}]);
                   ncConfNames{end+1} = paramName;
+                  ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
                end
             end
          end
@@ -199,6 +213,7 @@ for idConfig = 1:length(configInfoList)
          decConfNames{end+1} = sprintf('CONFIG_APMT_%s_P%02d', section, paramNumList(idP));
          idParamName = find(g_decArgo_outputNcConfParamId == paramIdList(idP));
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+         ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
       end
    end
 end
@@ -214,6 +229,7 @@ for idT = 0:3
                if (~isempty(idParamName))
                   decConfNames{end+1} = sprintf('CONFIG_PX_%d_%d_%d_%d_%d', idT, idS, idP, idI, idK);
                   ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
+                  ncConfIds = [ncConfIds g_decArgo_outputNcConfParamId(idParamName)];
                end
             end
          end
@@ -229,5 +245,6 @@ end
 % update output parameters
 o_decArgoConfParamNames = decConfNames;
 o_ncConfParamNames = ncConfNames;
+o_ncConfParamIds = ncConfIds;
 
 return
