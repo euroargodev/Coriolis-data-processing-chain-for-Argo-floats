@@ -87,7 +87,7 @@ events = a_events(find(strcmp({a_events.functionName}, 'AIR')));
 for idEv = 1:length(events)
    evt = events(idEv);
    dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_BLADDER_INFLATION_START)))
+   if (isempty(o_cycleTimeData.bladderInflationStartDateSys) && any(strfind(dataStr, PATTERN_BLADDER_INFLATION_START)))
       o_cycleTimeData.bladderInflationStartDateSys = evt.timestamp;
    end
 end
