@@ -511,31 +511,28 @@ if (lmtId ~= a_storeId)
    o_tabTrajNMeas(a_storeId).tabMeas(idF1) = o_tabTrajNMeas(lmtId).tabMeas(idF2);
 end
 
-% all locations are gathered in the last (a_storeId) item => no need to merge
-% GPS locations
+% merge locations
+updated = 0;
+for id = a_mergeId
+   idF1 = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
+   if (~isempty(idF1))
+      idF2 = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
+      date = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
+      for id2 = idF1
+         if (~ismember(o_tabTrajNMeas(id).tabMeas(id2).juld, date))
+            o_tabTrajNMeas(a_storeId).tabMeas = [o_tabTrajNMeas(a_storeId).tabMeas; ...
+               o_tabTrajNMeas(id).tabMeas(id2)];
+            updated = 1;
+         end
+      end
+   end
+end
 
-% % merge locations
-% updated = 0;
-% for id = a_mergeId
-%    idF1 = find([o_tabTrajNMeas(id).tabMeas.measCode] == g_MC_Surface);
-%    if (~isempty(idF1))
-%       idF2 = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
-%       date = [o_tabTrajNMeas(a_storeId).tabMeas(idF2).juld];
-%       for id2 = idF1
-%          if (~ismember(o_tabTrajNMeas(id).tabMeas(id2).juld, date))
-%             o_tabTrajNMeas(a_storeId).tabMeas = [o_tabTrajNMeas(a_storeId).tabMeas; ...
-%                o_tabTrajNMeas(id).tabMeas(id2)];
-%             updated = 1;
-%          end
-%       end
-%    end
-% end
-% 
-% % sort trajectory data structures according to the predefined
-% % measurement code order
-% if (updated)
-%    o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
-% end
+% sort trajectory data structures according to the predefined
+% measurement code order
+if (updated)
+   o_tabTrajNMeas(a_storeId) = sort_trajectory_data(o_tabTrajNMeas(a_storeId), a_decoderId);
+end
 
 return;
 

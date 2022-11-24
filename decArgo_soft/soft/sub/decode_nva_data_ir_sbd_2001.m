@@ -121,7 +121,7 @@ for idMes = 1:size(a_tabData, 1)
          tabCycleNum = [tabCycleNum tabTech(30)];
          
          % determine if it is a deep cycle
-         if (any(tabTech([20 22 24]) ~= 0))
+         if (any(tabTech([20 22 24 25]) ~= 0)) % we should consider hydraulic msg also because if any, the float tried to sink (even if it failed, cf. 6903181)
             o_deepCycle = 1;
          else
             o_deepCycle = 0;
