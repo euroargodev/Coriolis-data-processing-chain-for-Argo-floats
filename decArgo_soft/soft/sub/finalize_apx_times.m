@@ -61,7 +61,7 @@ if (~isempty(parkingPres) && ~isempty(profilePres) && ~isempty(parkAndProfileCyc
    tabCycleNum = o_timeData.cycleNum;
    tabParkPres = ones(size(tabCycleNum))*parkingPres;
    tabProfPres = ones(size(tabCycleNum))*parkingPres;
-   if (parkAndProfileCycleLength ~= 234)
+   if (parkAndProfileCycleLength ~= get_park_and_prof_specific_value_apx(a_decoderId))
       idDeep = find(rem(tabCycleNum, parkAndProfileCycleLength) == 0);
       tabProfPres(idDeep) = profilePres;
    end

@@ -453,7 +453,7 @@ if (isnan(configValues(idF)))
    end
    configValues(idF) = 1;
 end
-if (configValues(idF) ~= 234)
+if (configValues(idF) ~= get_park_and_prof_specific_value_apx(a_decoderId))
    floatConfigValues = [floatConfigValues configValues];
    floatConfigNumbers(end+1) = max(floatConfigNumbers) + 1;
 end
@@ -462,15 +462,14 @@ end
 if (ismember(a_decoderId, [1021 1022]))
    
    % convert CONFIG_AR_AscentRate from dbar/s to mm/s
-   idF = find(strcmp(configNames, 'CONFIG_AR_AscentRate'));
-   if (~isnan(floatConfigValues(idF)))
-      floatConfigValues(idF) = floatConfigValues(idF) * 1000;
-   end
+   idF1 = find(strcmp(configNames, 'CONFIG_AR_AscentRate'));
+   idF2 = find(~isnan(floatConfigValues(idF1, :)));
+   floatConfigValues(idF1, idF2) = floatConfigValues(idF1, idF2) * 1000;
    
    % if CONFIG_ICEM_IceDetectionMask = 0, remove Ice relative configuration
    % parameters
    idF = find(strcmp(configNames, 'CONFIG_ICEM_IceDetectionMask'));
-   if (~isnan(floatConfigValues(idF)) && (floatConfigValues(idF) == 0))
+   if (~any(~isnan(floatConfigValues(idF, :)) & (floatConfigValues(idF, :) ~= 0)))
       idDel = find( ...
          strcmp(configNames, 'CONFIG_IBD_IceBreakupDays') | ...
          strcmp(configNames, 'CONFIG_IMLT_IceDetectionTemperature') | ...
@@ -479,7 +478,7 @@ if (ismember(a_decoderId, [1021 1022]))
          strcmp(configNames, 'CONFIG_ICEM_IceDetectionMask') ...
          );
       configNames(idDel) = [];
-      floatConfigValues(idDel) = [];
+      floatConfigValues(idDel, :) = [];
    end
 end
 

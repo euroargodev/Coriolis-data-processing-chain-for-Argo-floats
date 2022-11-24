@@ -70,6 +70,7 @@ o_mcList = [];
 global g_decArgo_floatNum;
 
 % global measurement codes
+global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
 global g_MC_DST;
@@ -107,6 +108,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
@@ -119,6 +121,7 @@ global g_MC_LMT;
 global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 global g_MC_InAirSeriesOfMeas;
 
 
@@ -791,6 +794,40 @@ switch (a_decoderId)
          g_MC_TET ...
          ];
       
+   case {1321}
+      % Apex APF11 Iridium
+      o_mcList = [ ...
+         g_MC_Launch ...
+         g_MC_DST-10 ...
+         g_MC_DST ...
+         g_MC_DET-11 ...
+         g_MC_DET-10 ...
+         g_MC_DET ...
+         g_MC_PST-11 ...
+         g_MC_PST-10 ...
+         g_MC_PST ...
+         g_MC_PET-11 ...
+         g_MC_PET-10 ...
+         g_MC_PET ...
+         g_MC_RPP ...
+         g_MC_DDET-11 ...
+         g_MC_DDET-10 ...
+         g_MC_DDET ...
+         g_MC_AST-11 ...
+         g_MC_AST-10 ...
+         g_MC_AST ...
+         g_MC_AscProfDeepestBin ...
+         g_MC_AET-11 ...
+         g_MC_AET-10 ...
+         g_MC_AET ...
+         g_MC_TST-10 ...
+         g_MC_TST ...
+         g_MC_Surface ...
+         g_MC_TET-10 ...
+         g_MC_TET ...
+         g_MC_Grounded ...
+         ];      
+
    case {1201}
       % Navis
       o_mcList = [ ...
@@ -885,6 +922,7 @@ function [o_comment] = get_comment(a_measurementCode, a_decoderId)
 o_comment = [];
 
 % global measurement codes
+global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
 global g_MC_DST;
@@ -922,6 +960,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
@@ -931,87 +970,110 @@ global g_MC_TST_Float;
 global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
+global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
 global g_MC_InAirSingleMeas;
 global g_MC_InAirSeriesOfMeas;
 
 
-switch (a_measurementCode)
-   case {g_MC_CycleStart}
-      o_comment = 'cycle start time';
-   case {g_MC_SpyInDescToPark}
-      o_comment = 'buoyancy action during descent to park pressure';
-   case {g_MC_DescProf}
-      if (a_decoderId < 1000)
-         % NKE float
-         o_comment = 'descending profile dated levels';
-      elseif ((a_decoderId > 1000) && (a_decoderId < 2000))
-         % Apex float
-         o_comment = 'descending pressure marks';
-      end
-   case {g_MC_DescProfDeepestBin}
-      o_comment = 'descending profile deepest level';
-   case {g_MC_MaxPresInDescToPark}
-      o_comment = 'max pressure sampled during descent to park pressure';
-   case {g_MC_SpyAtPark}
-      o_comment = 'buoyancy action during drift at park pressure';
-   case {g_MC_MinPresInDriftAtPark}
-      o_comment = 'min pressure sampled during drift at park pressure';
-   case {g_MC_MaxPresInDriftAtPark}
-      o_comment = 'max pressure sampled during drift at park pressure';
-   case {g_MC_RPP}
-      o_comment = 'representative park measurement';
-   case {g_MC_SpyInDescToProf}
-      o_comment = 'buoyancy action during descent to profile pressure';
-   case {g_MC_MaxPresInDescToProf}
-      o_comment = 'max pressure sampled during descent to profile pressure';
-   case {g_MC_SpyAtProf}
-      o_comment = 'buoyancy action during drift at profile pressure';
-   case {g_MC_MinPresInDriftAtProf}
-      o_comment = 'min pressure sampled during drift at profile pressure';
-   case {g_MC_MaxPresInDriftAtProf}
-      o_comment = 'max pressure sampled during drift at profile pressure';
-   case {g_MC_AscProfDeepestBin}
-      o_comment = 'ascending profile deepest level';
-   case {g_MC_SpyInAscProf}
-      o_comment = 'buoyancy action during ascending profile';
-   case {g_MC_AscProf}
-      o_comment = 'ascending profile dated levels';
-   case {g_MC_LastAscPumpedCtd}
-      o_comment = 'last pumped CTD raw measurement sampled during ascending profile';
-   case {g_MC_SpyAtSurface}
-      o_comment = 'start of surface final pump action to acquire max buoyancy';
-   case {g_MC_Grounded}
-      o_comment = 'grounded information';
-      
-      % Apex specific
-   case {g_MC_DriftAtParkMean}
-      o_comment = 'mean of measurements sampled during drift at park pressure';
-   case {g_MC_DriftAtParkMeanOfDiff}
-      o_comment = 'mean of measurement differences sampled during drift at park pressure';
-   case {g_MC_DriftAtParkStd}
-      o_comment = 'standard deviation of measurements sampled during drift at park pressure';
-   case {g_MC_MinPresInDriftAtParkSupportMeas}
-      o_comment = 'supporting meas of min pressure sampled during drift at park pressure';
-   case {g_MC_MaxPresInDriftAtParkSupportMeas}
-      o_comment = 'supporting meas of max pressure sampled during drift at park pressure';
-   case {g_MC_DownTimeEnd}
-      o_comment = 'DOWN TIME end';
-   case {g_MC_MedianValueInAscProf}
-      o_comment = 'median temperature of the samples collected between 50dbars and the surface';
-   case {g_MC_AST_Float}
-      o_comment = 'ascent start time transmitted by Apex float';
-   case {g_MC_AET_Float}
-      o_comment = 'ascent end time transmitted by Apex float';
-   case {g_MC_NearSurfaceSeriesOfMeas}
-      o_comment = 'near surface series of measurements';
-   case {g_MC_InAirSingleMeas}
-      o_comment = 'in air single measurement';
-   case {g_MC_InAirSeriesOfMeas}
-      o_comment = 'in air series of measurements';
-   case {g_MC_TST_Float}
-      o_comment = 'transmission time transmitted by Apex float';     
+apexApf11IrDecoderIdList = [1321];
+
+if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
+
+   switch (a_measurementCode)
+      case {g_MC_CycleStart}
+         o_comment = 'cycle start time';
+      case {g_MC_SpyInDescToPark}
+         o_comment = 'buoyancy action during descent to park pressure';
+      case {g_MC_DescProf}
+         if (a_decoderId < 1000)
+            % NKE float
+            o_comment = 'descending profile dated levels';
+         elseif ((a_decoderId > 1000) && (a_decoderId < 2000))
+            % Apex float
+            o_comment = 'descending pressure marks';
+         end
+      case {g_MC_DescProfDeepestBin}
+         o_comment = 'descending profile deepest level';
+      case {g_MC_MaxPresInDescToPark}
+         o_comment = 'max pressure sampled during descent to park pressure';
+      case {g_MC_SpyAtPark}
+         o_comment = 'buoyancy action during drift at park pressure';
+      case {g_MC_MinPresInDriftAtPark}
+         o_comment = 'min pressure sampled during drift at park pressure';
+      case {g_MC_MaxPresInDriftAtPark}
+         o_comment = 'max pressure sampled during drift at park pressure';
+      case {g_MC_RPP}
+         o_comment = 'representative park measurement';
+      case {g_MC_SpyInDescToProf}
+         o_comment = 'buoyancy action during descent to profile pressure';
+      case {g_MC_MaxPresInDescToProf}
+         o_comment = 'max pressure sampled during descent to profile pressure';
+      case {g_MC_SpyAtProf}
+         o_comment = 'buoyancy action during drift at profile pressure';
+      case {g_MC_MinPresInDriftAtProf}
+         o_comment = 'min pressure sampled during drift at profile pressure';
+      case {g_MC_MaxPresInDriftAtProf}
+         o_comment = 'max pressure sampled during drift at profile pressure';
+      case {g_MC_AscProfDeepestBin}
+         o_comment = 'ascending profile deepest level';
+      case {g_MC_SpyInAscProf}
+         o_comment = 'buoyancy action during ascending profile';
+      case {g_MC_AscProf}
+         o_comment = 'ascending profile dated levels';
+      case {g_MC_LastAscPumpedCtd}
+         o_comment = 'last pumped CTD raw measurement sampled during ascending profile';
+      case {g_MC_SpyAtSurface}
+         o_comment = 'start of surface final pump action to acquire max buoyancy';
+      case {g_MC_Grounded}
+         o_comment = 'grounded information';
+         
+         % Apex specific
+      case {g_MC_DriftAtParkMean}
+         o_comment = 'mean of measurements sampled during drift at park pressure';
+      case {g_MC_DriftAtParkMeanOfDiff}
+         o_comment = 'mean of measurement differences sampled during drift at park pressure';
+      case {g_MC_DriftAtParkStd}
+         o_comment = 'standard deviation of measurements sampled during drift at park pressure';
+      case {g_MC_MinPresInDriftAtParkSupportMeas}
+         o_comment = 'supporting meas of min pressure sampled during drift at park pressure';
+      case {g_MC_MaxPresInDriftAtParkSupportMeas}
+         o_comment = 'supporting meas of max pressure sampled during drift at park pressure';
+      case {g_MC_DownTimeEnd}
+         o_comment = 'DOWN TIME end';
+      case {g_MC_MedianValueInAscProf}
+         o_comment = 'median temperature of the samples collected between 50dbars and the surface';
+      case {g_MC_AST_Float}
+         o_comment = 'ascent start time transmitted by Apex float';
+      case {g_MC_AET_Float}
+         o_comment = 'ascent end time transmitted by Apex float';
+      case {g_MC_NearSurfaceSeriesOfMeas}
+         o_comment = 'near surface series of measurements';
+      case {g_MC_InAirSingleMeas}
+         o_comment = 'in air single measurement';
+      case {g_MC_InAirSeriesOfMeas}
+         o_comment = 'in air series of measurements';
+      case {g_MC_TST_Float}
+         o_comment = 'transmission time transmitted by Apex float';
+   end
+   
+else
+   
+   switch (a_measurementCode)
+      case {g_MC_RPP}
+         o_comment = 'representative park measurement';
+      case {g_MC_AscProfDeepestBin}
+         o_comment = 'ascending profile deepest level';
+      case {g_MC_Grounded}
+         o_comment = 'grounded information';
+         
+      case {g_MC_DET-11, g_MC_PST-11, g_MC_PET-11, g_MC_DDET-11, g_MC_AST-11, g_MC_AET-11}
+         o_comment = 'buoyancy action (recorded while transitioning towards MC+11)';
+      case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_AST-10, g_MC_AET-10, g_MC_TST-10}
+         o_comment = 'series of measurements (recorded while transitioning towards MC+10)';
+   end
+   
 end
 
 return;

@@ -511,7 +511,9 @@ for idConf = 1:length(a_launchAuxConfigName)
    confName = a_launchAuxConfigName{idConf};
    idDesc = find(strcmp(confName, g_decArgo_outputNcConfParamLabel), 1);
    if (isempty(idDesc))
-      idDesc = find(cellfun(@(x) (length(x) > 12) && ~isempty(strfind(x(end-12:end), confName(end-12:end))), g_decArgo_outputNcConfParamLabel), 1);
+      % confName(end-11:end) to be sure that we are after the las '>' in all
+      % cases
+      idDesc = find(cellfun(@(x) (length(x) > 11) && ~isempty(strfind(x(end-11:end), confName(end-11:end))), g_decArgo_outputNcConfParamLabel), 1);
    end
    confDescription = g_decArgo_outputNcConfParamDescription{idDesc};
    confName = regexprep(confName, 'CONFIG_AUX_', 'CONFIG_');

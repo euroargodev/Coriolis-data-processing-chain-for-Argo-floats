@@ -43,12 +43,26 @@ if (~isempty(a_profCtdP))
       % DESCENT_END_TIME
       % computed as time of first P sample within 3% of aimed drift pressure
       idP = find((presVal >= parkPressure*0.97) & (presVal <= parkPressure*1.03));
-      o_cycleTimeData.descentEndDate = min(presTime(idP));
+      if (~isempty(idP))
+         [descentEndDate, idMin] = min(presTime(idP));
+         if (~isempty(a_cycleTimeData.parkEndDateSci) && ...
+               (descentEndDate < a_cycleTimeData.parkEndDateSci))
+            o_cycleTimeData.descentEndDate = descentEndDate;
+            o_cycleTimeData.descentEndPres = presVal(idP(idMin));
+         end
+      end
       
       % DEEP_DESCENT_END_TIME
       % computed as time of first P sample within 3% of aimed profile pressure
       idP = find((presVal >= deepProfilePressure*0.97) & (presVal <= deepProfilePressure*1.03));
-      o_cycleTimeData.deepDescentEndDate = min(presTime(idP));
+      if (~isempty(idP))
+         [deepDescentEndDate, idMin] = min(presTime(idP));
+         if (~isempty(a_cycleTimeData.ascentStartDateSci) && ...
+               (deepDescentEndDate < a_cycleTimeData.ascentStartDateSci))
+            o_cycleTimeData.deepDescentEndDate = deepDescentEndDate;
+            o_cycleTimeData.deepDescentEndPres = presVal(idP(idMin));
+         end
+      end
    end
 end
 

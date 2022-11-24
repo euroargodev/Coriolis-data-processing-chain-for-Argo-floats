@@ -23,18 +23,19 @@ function [o_measCodeName] = get_meas_code_name(a_measCode)
 o_measCodeName = '';
 
 % global measurement codes
+global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
-global g_MC_PressureOffset
 global g_MC_DST;
+global g_MC_PressureOffset
 global g_MC_MinPresInDriftAtParkSupportMeas;
 global g_MC_MaxPresInDriftAtParkSupportMeas;
 global g_MC_FST;
 global g_MC_SpyInDescToPark;
 global g_MC_DescProf;
 global g_MC_MaxPresInDescToPark;
-global g_MC_DescProfDeepestBin;
 global g_MC_DET;
+global g_MC_DescProfDeepestBin;
 global g_MC_PST;
 global g_MC_SpyAtPark;
 global g_MC_DriftAtPark;
@@ -60,12 +61,11 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
 global g_MC_NearSurfaceSeriesOfMeas;
-global g_MC_InAirSingleMeas;
-global g_MC_InAirSeriesOfMeas;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
@@ -74,10 +74,15 @@ global g_MC_LMT;
 global g_MC_SingleMeasToTET;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
+global g_MC_InAirSeriesOfMeas;
 
 
 switch (a_measCode)
-   
+
+   case g_MC_FillValue
+      o_measCodeName = sprintf('%03d: DEFAULT_MC', a_measCode);
+      
    case g_MC_Launch
       o_measCodeName = sprintf('%03d: FLOAT_LAUNCH', a_measCode);
       
@@ -231,6 +236,12 @@ switch (a_measCode)
    case g_MC_Grounded
       o_measCodeName = sprintf('%03d: GROUNDED', a_measCode);
    
+   case {g_MC_DET-11, g_MC_PST-11, g_MC_PET-11, g_MC_DDET-11, g_MC_AST-11, g_MC_AET-11}
+      o_measCodeName = sprintf('%03d: BUOYANCY_ACTION', a_measCode);
+      
+   case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_AST-10, g_MC_AET-10, g_MC_TST-10}
+      o_measCodeName = sprintf('%03d: SERIES_OF_MEAS', a_measCode);
+      
    otherwise
       o_measCodeName = num2str(a_measCode);
       fprintf('WARNING: no meas code name for meas code #%d\n', ...

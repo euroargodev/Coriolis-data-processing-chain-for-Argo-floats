@@ -85,6 +85,10 @@ switch (a_decoderId)
       % Apex Iridium Rudics & Sbd
       o_comment = 'PRES variable resolution depends on measurement codes';
       
+   case {1321}
+      % Apex APF11 Iridium
+      o_comment = '';
+      
    case {1201}
       % Navis
       o_comment = 'PRES variable resolution depends on measurement codes';

@@ -6,12 +6,13 @@
 %  [o_launchDate, o_preludeDuration, o_profilePressure, ...
 %    o_cycleDuration, o_dpfFloatFlag] = ...
 %    get_apx_meta_data_for_cycle_number_determination( ...
-%    a_floatNum, a_floatLaunchDate, a_floatCycleTime)
+%    a_floatNum, a_floatLaunchDate, a_floatCycleTime, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_floatNum        : float WMO number
 %   a_floatLaunchDate : float launch date
 %   a_floatCycleTime  : cycle duration
+%   a_decoderId       : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_launchDate      : float launch date
@@ -31,7 +32,7 @@
 function [o_launchDate, o_preludeDuration, o_profilePressure, ...
    o_cycleDuration, o_dpfFloatFlag] = ...
    get_apx_meta_data_for_cycle_number_determination( ...
-   a_floatNum, a_floatLaunchDate, a_floatCycleTime)
+   a_floatNum, a_floatLaunchDate, a_floatCycleTime, a_decoderId)
 
 % output parameters initialization
 o_launchDate = [];
@@ -184,6 +185,13 @@ if (~isempty(idVal))
          end
       end
       
+   end
+end
+
+apexApf11ArgosDecoderIdList = [1021 1022];
+if (ismember(a_decoderId, apexApf11ArgosDecoderIdList))
+   if (preludeDuration ~= g_decArgo_durationDef)
+      preludeDuration = preludeDuration/60; % PRELUDE duration is in minutes in the APF11 float configuration
    end
 end
 

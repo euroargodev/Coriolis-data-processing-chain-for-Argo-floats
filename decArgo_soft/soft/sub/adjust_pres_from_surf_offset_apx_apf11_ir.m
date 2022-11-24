@@ -100,10 +100,13 @@ if (~isempty(presOffset))
    end
 
    o_cycleTimeData.descentStartAdjPresSci = adjust_value(o_cycleTimeData.descentStartPresSci, presOffset);
+   o_cycleTimeData.descentEndAdjPres = adjust_value(o_cycleTimeData.descentEndPres, presOffset);
    o_cycleTimeData.parkStartAdjPresSci = adjust_value(o_cycleTimeData.parkStartPresSci, presOffset);
    o_cycleTimeData.parkEndAdjPresSci = adjust_value(o_cycleTimeData.parkEndPresSci, presOffset);
+   o_cycleTimeData.deepDescentEndAdjPres = adjust_value(o_cycleTimeData.deepDescentEndPres, presOffset);
    o_cycleTimeData.ascentStartAdjPresSci = adjust_value(o_cycleTimeData.ascentStartPresSci, presOffset);
    o_cycleTimeData.continuousProfileStartAdjPresSci = adjust_value(o_cycleTimeData.continuousProfileStartPresSci, presOffset);
+   o_cycleTimeData.continuousProfileEndAdjPresSci = adjust_value(o_cycleTimeData.continuousProfileEndPresSci, presOffset);
    o_cycleTimeData.ascentEndAdjPresSci = adjust_value(o_cycleTimeData.ascentEndPresSci, presOffset);
 end
 

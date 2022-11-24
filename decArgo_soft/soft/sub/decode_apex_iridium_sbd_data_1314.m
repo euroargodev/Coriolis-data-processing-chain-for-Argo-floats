@@ -185,7 +185,7 @@ if (~isempty(g_decArgo_outputCsvFileId))
 end
 
 % initialize RT offset and DO calibration coefficients from JSON meta-data file
-[floatRudicsId] = init_float_config_apx_ir(a_decoderId);
+floatRudicsId = init_float_config_apx_ir(a_decoderId);
 
 % print DOXY and FLBB coef in the output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -305,15 +305,12 @@ for idCy = 1:length(cycleList)
    
    cycleNum = cycleList(idCy);
    g_decArgo_cycleNum = cycleNum;
-   
-   %    if (cycleNum < 100)
-   %       continue;
-   %    end
-   
+      
    fprintf('Cycle #%d\n', cycleNum);
    
    % retrieve the files of the current cycle
-   [msgFileList, logFileList] = get_files_iridium_apx(a_floatNum, floatRudicsId, cycleNum, g_decArgo_archiveAsciiDirectory);
+   [msgFileList, logFileList] = get_files_iridium_apx( ...
+      a_floatNum, floatRudicsId, cycleNum, g_decArgo_archiveAsciiDirectory);
    
    % decode the files of the current cycle
    
@@ -338,7 +335,7 @@ for idCy = 1:length(cycleList)
       create_float_config_apx_ir(configInfoLog, configInfoMsg, a_decoderId);
       
       % compute additional dates
-      timeDataLog = compute_additional_times_apx_ir(timeDataLog, driftData);
+      timeDataLog = compute_additional_times_apx_ir(timeDataLog, driftData, a_decoderId);
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle (from .msg file) and check that those of the previous
@@ -537,7 +534,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_apx_ir( ...
-      decArgoConfParamNames, ncConfParamNames);
+      decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    if (g_decArgo_realtimeFlag == 1)
       

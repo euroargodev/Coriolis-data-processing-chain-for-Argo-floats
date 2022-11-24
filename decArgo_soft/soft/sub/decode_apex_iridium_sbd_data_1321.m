@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
 %    o_structConfig] = decode_apex_iridium_sbd_data_1321( ...
 %    a_floatNum, a_decoderId, a_floatImei, ...
 %    a_floatLaunchDate, a_floatEndDate)
@@ -22,6 +22,7 @@
 %   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
 %   o_tabNcTechIndex : decoded technical index information
 %   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
 %   o_structConfig   : NetCDF float configuration
 %
 % EXAMPLES :
@@ -34,7 +35,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
    o_structConfig] = decode_apex_iridium_sbd_data_1321( ...
    a_floatNum, a_decoderId, a_floatImei, ...
    a_floatLaunchDate, a_floatEndDate)
@@ -45,6 +46,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 o_structConfig = [];
 
 % default values
@@ -130,7 +132,7 @@ global g_decArgo_iridiumMailData;
 g_decArgo_iridiumMailData = [];
 
 
-REPROCESS = 1; % in debug mode should be set to 0 to skip float files generation from mail files
+REPROCESS = 1; % in debug mode could be set to 0 to skip float files generation from mail files
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' sprintf('%04d', a_floatImei) '_' num2str(a_floatNum) '/'];
@@ -215,52 +217,58 @@ if (g_decArgo_realtimeFlag == 1)
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, '');
 end
+   
+% create list of mail files to decode
+realtimeFlagTmp = g_decArgo_realtimeFlag;
+g_decArgo_realtimeFlag = 0;
+[cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_decoderId);
+g_decArgo_realtimeFlag = realtimeFlagTmp;
 
-if (REPROCESS == 1)
+% store mail file information and extract attachment
+nbMailFiles = 0;
+for idFile = 1:length(cycleFileNameList)
    
-   % create list of mail files to decode
-   realtimeFlagTmp = g_decArgo_realtimeFlag;
-   g_decArgo_realtimeFlag = 0;
-   [cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_decoderId);
-   g_decArgo_realtimeFlag = realtimeFlagTmp;
+   mailFileName = cycleFileNameList{idFile};
+   cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
    
-   % store mail file information and extract attachment
-   nbMailFiles = 0;
-   for idFile = 1:length(cycleFileNameList)
-      
-      mailFileName = cycleFileNameList{idFile};
-      cyIrJulD = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-      
-      if (cyIrJulD < a_floatLaunchDate)
-         fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
+   if (cyIrJulD < a_floatLaunchDate)
+      fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated before float launch date (%s)\n', ...
+         g_decArgo_floatNum, ...
+         mailFileName, julian_2_gregorian_dec_argo(a_floatLaunchDate));
+      continue
+   end
+   
+   if (a_floatEndDate ~= g_decArgo_dateDef)
+      if (cyIrJulD > a_floatEndDate)
+         fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated after float end date (%s)\n', ...
             g_decArgo_floatNum, ...
-            mailFileName, julian_2_gregorian_dec_argo(a_floatLaunchDate));
+            mailFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
          continue
       end
-      
-      if (a_floatEndDate ~= g_decArgo_dateDef)
-         if (cyIrJulD > a_floatEndDate)
-            fprintf('DEC_WARNING: Float #%d: mail file "%s" ignored because dated after float end date (%s)\n', ...
-               g_decArgo_floatNum, ...
-               mailFileName, julian_2_gregorian_dec_argo(a_floatEndDate));
-            continue
-         end
-      end
-      
-      nbMailFiles = nbMailFiles + 1;
-      
-      % extract the attachement
+   end
+   
+   nbMailFiles = nbMailFiles + 1;
+   
+   % extract the attachement
+   if (REPROCESS == 1)
       [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
          mailFileName, g_decArgo_archiveDirectory, g_decArgo_archiveSbdDirectory);
       g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
-      
-      if (g_decArgo_realtimeFlag == 1)
-         % update the report structure
-         g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {mailFileName}];
-      end
-      
+   else
+      [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+         mailFileName, g_decArgo_archiveDirectory, []);
+      g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContents];
    end
-   fprintf('DEC_INFO: %d Iridium mail files to process\n', nbMailFiles);
+
+   if (g_decArgo_realtimeFlag == 1)
+      % update the report structure
+      g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles {mailFileName}];
+   end
+   
+end
+fprintf('DEC_INFO: %d Iridium mail files to process\n', nbMailFiles);
+   
+if (REPROCESS == 1)
    
    % convert SBD files to float files
    [error, nbSbdFiles, nbTestFiles, nbProductionLogFiles, ...
@@ -309,11 +317,11 @@ for idCy = 1:length(cycleList)
    % 2.10.1
    if (ismember(a_decoderId, [1321]))
       
-      [miscInfoSci, miscInfoVit, miscInfoSys, ...
-         missionCfg, sampleCfg, ...
+      [miscInfoSci, miscInfoSys, ...
+         metaData, missionCfg, sampleCfg, ...
          profCtdP, profCtdPt, profCtdPts, profCtdCp, ...
          gpsDataSci, gpsDataSys, grounding, buoyancy, ...
-         vitalsCore, techData, ...
+         vitalsData, techData, ...
          cycleTimeData, g_decArgo_presOffsetData] = ...
          decode_apx_apf11_ir(scienceLogFileList, vitalsLogFileList, ...
          systemLogFileList, criticalLogFileList, ...
@@ -329,7 +337,7 @@ for idCy = 1:length(cycleList)
       % - merge GPS data from both sources (science_log and system_log files)
       % - store GPS data
       % - compute JAMSTEC QC for the GPS locations
-      techData = store_gps_data_apx_apf11_ir(gpsDataSci, gpsDataSys, g_decArgo_cycleNum, techData);
+      store_gps_data_apx_apf11_ir(gpsDataSci, gpsDataSys, g_decArgo_cycleNum);
       
       % apply pressure adjustment
       [profCtdP, profCtdPt, profCtdPts, profCtdCp, ...
@@ -341,16 +349,21 @@ for idCy = 1:length(cycleList)
       % apply clock offset adjustment
       [profCtdP, profCtdPt, profCtdPts, profCtdCp, ...
          grounding, buoyancy, ...
-         vitalsCore, ...
+         vitalsData, ...
          cycleClockOffset, cycleTimeData] = ...
          adjust_clock_offset_apx_apf11_ir( ...
          profCtdP, profCtdPt, profCtdPts, profCtdCp, ...
          grounding, buoyancy, ...
-         vitalsCore, ...
+         vitalsData, ...
          cycleTimeData, ...
          g_decArgo_clockOffset);
       
       if (~isempty(g_decArgo_outputCsvFileId))
+         
+         % check meta-data VS data base contents
+         if (~isempty(metaData))
+            check_meta_data_apx_apf11(metaData);
+         end
          
          % output CSV file
          print_file_info_apx_apf11_in_csv_file(scienceLogFileList, vitalsLogFileList, ...
@@ -359,10 +372,9 @@ for idCy = 1:length(cycleList)
          print_config_mission_info_apx_apf11_in_csv_file(missionCfg);
          print_config_sample_info_apx_apf11_in_csv_file(sampleCfg);
          
-         print_vitals_info_apx_apf11_in_csv_file(vitalsCore);
+         print_vitals_info_apx_apf11_in_csv_file(vitalsData);
          
          print_misc_info_in_csv_file(miscInfoSci, 'Sci');
-         print_misc_info_in_csv_file(miscInfoVit, 'Vit');
          print_misc_info_in_csv_file(miscInfoSys, 'Sys');
 
          print_time_info_apx_apf11_in_csv_file(cycleTimeData);
@@ -386,64 +398,7 @@ for idCy = 1:length(cycleList)
          print_dates_apx_apf11_in_csv_file( ...
             profCtdP, profCtdPt, profCtdPts, ...
             cycleTimeData, g_decArgo_gpsData, ...
-            grounding, buoyancy, vitalsCore);
-
-      end      
-      
-      g_decArgo_timeData = [g_decArgo_timeData cycleTimeData];
-
-      continue;
-      
-      % TBC for NetCDF file generation
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      if (~isempty(g_decArgo_outputCsvFileId))
-         
-         % output CSV file
-         print_file_info_in_csv_file(msgFileList, logFileList);
-         
-         print_misc_info_in_csv_file(configInfoMsg, 'Msg');
-         print_misc_info_in_csv_file(configInfoLog, 'Log');
-         
-         print_misc_info_in_csv_file(techInfo, 'Msg');
-         print_misc_info_in_csv_file(surfPresInfo, 'Surf. P');
-         print_sampled_measurements_in_csv_file_apx_ir(surfDataLog, 'Surf. (evts)', 'Log', -1);
-         print_gps_fix_in_csv_file(gpsDataLog, 'Log', -1);
-         print_misc_info_in_csv_file(miscInfoMsg, 'Msg');
-         print_misc_info_in_csv_file(miscInfoLog, 'Log');
-         print_sampled_measurements_in_csv_file_apx_ir(pMarkDataMsg, 'PMark', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(pMarkDataLog, 'PMark (evts)', 'Log', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(driftData, 'Drift', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(parkData, 'Park', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(parkDataEng, 'Park (eng)', 'Msg', 0);
-         if (~isempty(timeDataLog) && ~isempty(timeDataLog.parkEndMeas))
-            print_sampled_measurements_in_csv_file_apx_ir(timeDataLog.parkEndMeas, 'Park (evts)', 'Log', 0);
-         end
-         print_sampled_measurements_in_csv_file_apx_ir(profLrData, 'Profile LR', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(profHrData, 'Profile HR', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(nearSurfData, 'Near surf.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(surfDataBladderDeflated, 'Surf. blad. defl.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(surfDataBladderInflated, 'Surf. blad. infl.', 'Msg', 0);
-         print_sampled_measurements_in_csv_file_apx_ir(surfDataMsg, 'Surf.', 'Msg', 0);
-         print_gps_fix_in_csv_file(gpsDataMsg, 'Msg', 0);
-         
-         print_clock_offset_in_csv_file(g_decArgo_clockOffset);
-         print_dates_in_csv_file_apx_ir(surfDataLog, ...
-            pMarkDataLog, ...
-            driftData, parkData, ...
-            profLrData, ...
-            nearSurfData, ...
-            surfDataBladderDeflated, surfDataBladderInflated, ...
-            timeDataLog, ...
-            profEndDateMsg, profEndAdjDateMsg, ...
-            gpsDataLog, gpsDataMsg);
+            grounding, buoyancy, vitalsData);
          
       else
          
@@ -453,7 +408,7 @@ for idCy = 1:length(cycleList)
          % PROF NetCDF file
          
          % process profile data for PROF NetCDF file
-         [cycleProfile] = process_apx_ir_profile(profLrData, profHrData, nearSurfData, ...
+         [cycleProfile] = process_apx_apf11_ir_profile(profCtdPts, profCtdCp, cycleTimeData, ...
             cycleNum, g_decArgo_presOffsetData);
          
          print = 0;
@@ -482,20 +437,13 @@ for idCy = 1:length(cycleList)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir( ...
-            g_decArgo_cycleNum, ...
-            surfDataLog, ...
-            pMarkDataMsg, pMarkDataLog, ...
-            driftData, parkData, parkDataEng, ...
-            profLrData, profHrData, ...
-            nearSurfData, ...
-            surfDataBladderDeflated, surfDataBladderInflated, surfDataMsg, ...
-            timeDataLog, g_decArgo_gpsData, ...
-            profEndDateMsg, profEndAdjDateMsg, ...
-            g_decArgo_clockOffset, g_decArgo_presOffsetData, ...
-            o_tabTrajNMeas, o_tabTrajNCycle, ...
-            (~isempty(configInfoMsg) || ~isempty(configInfoLog)), ...
-            a_decoderId);
+         [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_apf11_ir( ...
+            cycleNum, ...
+            profCtdP, profCtdPt, profCtdPts, profCtdCp, ...
+            g_decArgo_gpsData, grounding, buoyancy, ...
+            cycleTimeData, ...
+            g_decArgo_clockOffset, ...
+            o_tabTrajNMeas, o_tabTrajNCycle);
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
@@ -512,7 +460,17 @@ for idCy = 1:length(cycleList)
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
          
+         % create time series of technical data
+         tabTechNMeas = create_technical_time_series_apx_apf11_ir(vitalsData, cycleTimeData, g_decArgo_cycleNum);
+         
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         end
+         
       end
+      
+      g_decArgo_timeData = [g_decArgo_timeData cycleTimeData];
+
    else
       fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet in decode_apex_iridium_sbd_data_1321 for decoderId #%d\n', ...
          g_decArgo_floatNum, ...
@@ -535,16 +493,17 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, g_decArgo_gpsData, g_decArgo_iridiumMailData, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
-   
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+      update_output_cycle_number_ir_sbd( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistency
    [o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNCycle, o_tabTrajNMeas);
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_apx_ir( ...
-      decArgoConfParamNames, ncConfParamNames);
+      decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    if (g_decArgo_realtimeFlag == 1)
       

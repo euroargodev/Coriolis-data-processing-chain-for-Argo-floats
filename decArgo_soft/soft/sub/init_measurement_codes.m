@@ -19,6 +19,7 @@
 function init_measurement_codes(varargin)
 
 % global measurement codes
+global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
 global g_MC_DST;
@@ -56,6 +57,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
 global g_MC_SpyAtSurface;
@@ -91,6 +93,7 @@ global g_RPP_STATUS_6;
 global g_RPP_STATUS_7;
 
 % measurement code values
+g_MC_FillValue = 99999;
 g_MC_Launch = 0;
 g_MC_CycleStart = 89;
 g_MC_DST = 100;
@@ -128,6 +131,7 @@ g_MC_SpyInAscProf = 589;
 g_MC_AscProf = 590;
 g_MC_MedianValueInAscProf = 595;
 g_MC_LastAscPumpedCtd = 599;
+g_MC_ContinuousProfileStartOrStop = 599; % for TRAJ_AUX of Apex APF11 iridium floats
 g_MC_AET = 600;
 g_MC_AET_Float = 602;
 g_MC_SpyAtSurface = 689;

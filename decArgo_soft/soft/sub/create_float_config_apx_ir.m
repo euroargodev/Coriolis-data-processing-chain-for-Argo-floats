@@ -28,13 +28,6 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
-% directory of json meta-data files
-global g_decArgo_dirInputJsonFloatMetaDataFile;
-
-% structure to store miscellaneous meta-data
-global g_decArgo_jsonMetaData;
-g_decArgo_jsonMetaData = [];
-
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -52,6 +45,9 @@ global g_decArgo_bddUpdateItemLabels;
 % mode processing flags
 global g_decArgo_realtimeFlag;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 if (isempty(a_configInfoLog) && isempty(a_configInfoMsg))
    return;
@@ -62,17 +58,6 @@ if (~isempty(g_decArgo_outputCsvFileId))
 else
    CSV_OUTPUT = 0;
 end
-
-% json meta-data file for this float
-jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
-
-if ~(exist(jsonInputFileName, 'file') == 2)
-   fprintf('ERROR: Json meta-data file not found: %s\n', jsonInputFileName);
-   return;
-end
-
-% read meta-data file
-jsonMetaData = loadjson(jsonInputFileName);
 
 % merge both inputs to create the new configuration
 inputConfNames = [];
@@ -140,6 +125,9 @@ end
 % profiling direction
 inputConfNames{end+1} = 'CONFIG_DIR_ProfilingDirection';
 inputConfValues(end+1) = 1;
+
+% json meta-data
+jsonMetaData = g_decArgo_jsonMetaData;
 
 % compare meta and config inputs with the json contents and, in CSV mode,
 % generate the CSV file that should be used to update the BDD
@@ -389,7 +377,7 @@ if (parkAndProfileCycleLength ~= 1)
    idF3 = find(strcmp(configNames, 'CONFIG_TP_ProfilePressure'));
    parkPres = configValues(idF2);
    if (~isnan(parkPres))
-      if (parkAndProfileCycleLength == 254)
+      if (parkAndProfileCycleLength == get_park_and_prof_specific_value_apx(a_decoderId))
          configValues(idF3) = parkPres;
       else
          if ((g_decArgo_cycleNum > 1) && (rem(g_decArgo_cycleNum, parkAndProfileCycleLength) ~= 0))

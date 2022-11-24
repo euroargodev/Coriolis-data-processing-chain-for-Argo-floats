@@ -32,38 +32,44 @@ switch (a_decoderId)
    case {121, 122, 123}
       % PROVOR CTS5
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED'}
-            
-            o_cFormat = '%8.2f';
-            o_fortranFormat = 'F8.2';
-            
-         case {'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
             
             o_cFormat = '%8.2f';
             o_fortranFormat = 'F8.2';
       end
+      
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1314}
       % Apex Iridium Rudics & Sbd
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED'}
-            
-            o_cFormat = '%8.2f';
-            o_fortranFormat = 'F8.2';
-            
-         case {'PRES_ADJUSTED_ERROR'}
+         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
             
             o_cFormat = '%8.2f';
             o_fortranFormat = 'F8.2';
       end
-   case {1201}
-      % Navis
+      
+   case {1321}
+      % Apex APF11 Iridium
       switch (a_paramName)
-         case {'PRES', 'PRES_ADJUSTED'}
+         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
             
             o_cFormat = '%8.2f';
             o_fortranFormat = 'F8.2';
             
-         case {'PRES_ADJUSTED_ERROR'}
+         case {'PSAL', 'PSAL_ADJUSTED', 'PSAL_ADJUSTED_ERROR'}
+            
+            o_cFormat = '%10.4f';
+            o_fortranFormat = 'F10.4';
+            
+         case {'TEMP', 'TEMP_ADJUSTED', 'TEMP_ADJUSTED_ERROR'}
+            
+            o_cFormat = '%10.4f';
+            o_fortranFormat = 'F10.4';
+      end
+      
+   case {1201}
+      % Navis
+      switch (a_paramName)
+         case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
             
             o_cFormat = '%8.2f';
             o_fortranFormat = 'F8.2';

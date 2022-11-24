@@ -148,7 +148,11 @@ for idFloat = 1:length(floatList)
             metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
             if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
-               metaStruct.(metaBddStructField) = 'n/a';
+               if (strcmp(metaBddStructField, 'CONTROLLER_BOARD_TYPE_PRIMARY'))
+                  metaStruct.(metaBddStructField) = 'APF11';
+               else
+                  metaStruct.(metaBddStructField) = 'n/a';
+               end
                %                fprintf('Empty mandatory meta-data ''%s'' set to ''n/a''\n', metaBddStructValue);
             elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
@@ -156,7 +160,7 @@ for idFloat = 1:length(floatList)
          end
       end
    end
-      
+   
    % multi dim data
    itemList = [ ...
       {'TRANS_SYSTEM'} ...
@@ -224,7 +228,7 @@ for idFloat = 1:length(floatList)
    % read launch configuration information
    [missionConfData, systemConfData, sensorsConfData, sampleConfData] = ...
       get_config_at_launch_apex_apf11(a_configDirName, floatNum);
-
+   
    % check that mission and system configuration data are already in the data
    % base
    for idSet = 1:2
@@ -326,7 +330,7 @@ for idFloat = 1:length(floatList)
                   fprintf(csvFileId, '%s\n', header);
                end
                
-               fprintf(csvFileId, '%d;%d;%d; %s;%s\n', ...
+               fprintf(csvFileId, '%d;%d;%d;%s;%s\n', ...
                   floatNum, ...
                   get_tech_id(bddConfName), 1, floatConfValue, bddConfName);
                
@@ -358,7 +362,7 @@ for idFloat = 1:length(floatList)
    end
    configBddStructNames = fieldnames(configBddStruct);
    metaStruct.CONFIG_PARAMETER_NAME = configBddStructNames;
-
+   
    nbConfig = 1;
    configParamVal = cell(length(configBddStructNames), nbConfig);
    configRepRate = cell(1, nbConfig);
@@ -410,7 +414,7 @@ for idFloat = 1:length(floatList)
                else
                   configParamVal{idBSN, idConf} = metaData{idForWmo(idF(idDim)), 4};
                end
-
+               
             end
          else
             % if we want to use default values if the information is
@@ -428,7 +432,7 @@ for idFloat = 1:length(floatList)
       metaStruct.CONFIG_PARAMETER_NAME = [metaStruct.CONFIG_PARAMETER_NAME; configSampName'];
       metaStruct.CONFIG_PARAMETER_VALUE = [metaStruct.CONFIG_PARAMETER_VALUE; configSampVal'];
    end
-      
+   
    % RT_OFFSET
    idF = find(strcmp(metaData(idForWmo, 5), 'CALIB_RT_PARAMETER') == 1);
    if (~isempty(idF))
@@ -494,7 +498,7 @@ for idFloat = 1:length(floatList)
       return;
    end
    g_cogj_reportData{end+1} = outputFileName;
-
+   
 end
 
 if (csvFileId ~= -1)
@@ -530,7 +534,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-
+   
    case {'2.8.0'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
@@ -578,7 +582,7 @@ switch (a_dacFormatId)
          'CONFIG_TBP_MaxAirBladderPressure', 'MissionCfgMaxAirBladderPressure', ...
          'CONFIG_FEXT_PistonFullExtension', 'FullyExtendedPistonPos', ...
          'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos');
-
+      
    case {'2.10.4'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
@@ -628,7 +632,7 @@ switch (a_dacFormatId)
          'CONFIG_TBP_MaxAirBladderPressure', 'MissionCfgMaxAirBladderPressure', ...
          'CONFIG_FEXT_PistonFullExtension', 'FullyExtendedPistonPos', ...
          'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos');
-
+      
    otherwise
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_apx_apf11_argos_ for dacFormatId %s\n', a_dacFormatId);
 end
@@ -662,7 +666,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-
+   
    case {'2.8.0'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
@@ -712,7 +716,7 @@ switch (a_dacFormatId)
          'argos_decimal_id', 'PTT', ...
          'argos_hex_id', 'PTT_HEX', ...
          'argos_frequency', 'TRANS_FREQUENCY');
-
+      
    case {'2.10.4'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
@@ -764,7 +768,7 @@ switch (a_dacFormatId)
          'argos_decimal_id', 'PTT', ...
          'argos_hex_id', 'PTT_HEX', ...
          'argos_frequency', 'TRANS_FREQUENCY');
-
+      
    otherwise
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_apx_apf11_argos_ for dacFormatId %s\n', a_dacFormatId);
 end

@@ -179,7 +179,7 @@ for idL = 1:size(a_sensorData, 1)
          dataStruct.value = format_date_yyyymmddhhmiss_dec_argo(mean(decDateBis' - decDataBis(:, 6)/86400));
          dataStruct.techParamCode = 'STARTUP_DATE';
          dataStruct.techParamId = 2089;
-         dataStruct.techParamValue = datestr(mean(decDateBis' - decDataBis(:, 6)/86400)+g_decArgo_janFirst1950InMatlab, 'dd/mm/yyyy HH:MM:SS');
+         dataStruct.techParamValue = datestr(mean(decDateBis' - decDataBis(:, 6)/86400)+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
          o_metaData = [o_metaData; dataStruct];
       else
          dataStruct = get_apx_meta_data_init_struct(msgRed);
@@ -189,7 +189,7 @@ for idL = 1:size(a_sensorData, 1)
          dataStruct.value = format_date_yyyymmddhhmiss_dec_argo(msgDate - decData(6)/86400);
          dataStruct.techParamCode = 'STARTUP_DATE';
          dataStruct.techParamId = 2089;
-         dataStruct.techParamValue = datestr(msgDate - decData(6)/86400+g_decArgo_janFirst1950InMatlab, 'dd/mm/yyyy HH:MM:SS');
+         dataStruct.techParamValue = datestr(msgDate - decData(6)/86400+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
          o_metaData = [o_metaData; dataStruct];
       end
       

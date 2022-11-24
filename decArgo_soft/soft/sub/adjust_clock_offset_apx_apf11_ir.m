@@ -4,12 +4,12 @@
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
 %    o_grounding, o_buoyancy, ...
-%    o_vitalsCore, ...
+%    o_vitalsData, ...
 %    o_cycleClockOffset, o_cycleTimeData] = ...
 %    adjust_clock_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
 %    a_grounding, a_buoyancy, ...
-%    a_vitalsCore, ...
+%    a_vitalsData, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData)
 %
@@ -20,7 +20,7 @@
 %   a_profCtdCp       : input CTD_CP data
 %   a_grounding       : input grounding data
 %   a_buoyancy        : input buoyancy data
-%   a_vitalsCore      : input vitals data
+%   a_vitalsData      : input vitals data
 %   a_cycleTimeData   : input cycle timings data
 %   a_clockOffsetData : clock offset information
 %
@@ -31,7 +31,7 @@
 %   o_profCtdCp        : output CTD_CP data
 %   o_grounding        : output grounding data
 %   o_buoyancy         : output buoyancy data
-%   o_vitalsCore       : output vitals data
+%   o_vitalsData       : output vitals data
 %   o_cycleClockOffset : applied clock offset
 %   o_cycleTimeData    : output cycle timings data
 %
@@ -45,12 +45,12 @@
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, ...
    o_grounding, o_buoyancy, ...
-   o_vitalsCore, ...
+   o_vitalsData, ...
    o_cycleClockOffset, o_cycleTimeData] = ...
    adjust_clock_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdCp, ...
    a_grounding, a_buoyancy, ...
-   a_vitalsCore, ...
+   a_vitalsData, ...
    a_cycleTimeData, ...
    a_clockOffsetData)
 
@@ -61,7 +61,7 @@ o_profCtdPts = a_profCtdPts;
 o_profCtdCp = a_profCtdCp;
 o_grounding = a_grounding;
 o_buoyancy = a_buoyancy;
-o_vitalsCore = a_vitalsCore;
+o_vitalsData = a_vitalsData;
 o_cycleClockOffset = 0;
 o_cycleTimeData = a_cycleTimeData;
 
@@ -71,7 +71,7 @@ if (isempty(a_clockOffsetData.clockOffsetJuldUtc))
 end
 
 % clock adjustment of the current cycle
-o_cycleClockOffset = get_clock_offset(a_clockOffsetData, a_cycleTimeData);
+o_cycleClockOffset = get_clock_offset_value_apx_apf11_ir(a_clockOffsetData, a_cycleTimeData);
 
 % clock adjustment of profile measurements
 [o_profCtdP] = adjust_profile(o_profCtdP, o_cycleClockOffset);
@@ -90,8 +90,12 @@ for idB = 1:size(o_buoyancy, 1)
 end
 
 % clock adjustment of vitals information
-for idV = 1:size(o_vitalsCore, 1)
-   o_vitalsCore(idV, 2) = adjust_time(o_vitalsCore(idV, 1), o_cycleClockOffset);
+fieldNames = fields(o_vitalsData);
+for idF = 1:length(fieldNames)
+   fieldName = fieldNames{idF};
+   for idV = 1:size(o_vitalsData.(fieldName), 1)
+      o_vitalsData.(fieldName)(idV, 2) = adjust_time(o_vitalsData.(fieldName)(idV, 1), o_cycleClockOffset);
+   end
 end
 
 % clock adjustment of misc cycle times
@@ -117,51 +121,6 @@ if (~isempty(o_cycleTimeData))
 end
 
 return;
-
-% ------------------------------------------------------------------------------
-% Retrieve the clock offset to apply to the times of a given cycle.
-%
-% SYNTAX :
-%  [o_clockOffset] = get_clock_offset(a_clockOffsetData, a_cycleTimeData)
-%
-% INPUT PARAMETERS :
-%   a_clockOffsetData : clock offset information
-%   a_cycleTimeData   : input cycle timings data
-%
-% OUTPUT PARAMETERS :
-%   o_clockOffset : clock offset value
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   04/27/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_clockOffset] = get_clock_offset(a_clockOffsetData, a_cycleTimeData)
-
-% output parameters initialization
-o_clockOffset = 0;
-
-
-times = struct2cell(a_cycleTimeData);
-times = [times{2:end}];
-
-idF1 = find([a_clockOffsetData.clockOffsetJuldUtc] < min(times), 1, 'last');
-idF2 = find([a_clockOffsetData.clockOffsetJuldUtc] > max(times), 1, 'first');
-if (~isempty(idF1) && ~isempty(idF2))
-   offset1 = a_clockOffsetData.clockOffsetValue(idF1);
-   offset2 = a_clockOffsetData.clockOffsetValue(idF2);
-   o_clockOffset = (offset1+offset2)/2;
-   if (abs(o_clockOffset) < 1)
-      o_clockOffset = 0;
-   else
-      o_clockOffset = round(o_clockOffset);
-   end
-end
-
- return;
 
 % ------------------------------------------------------------------------------
 % Apply clock offset adjustment to times of a set of measurements.

@@ -2,7 +2,8 @@
 % Decode science_log files of one cycle of APEX APF11 Iridium data.
 %
 % SYNTAX :
-%  [o_miscInfo, o_gpsData, o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
+%  [o_miscInfo, o_techData, o_gpsData, ...
+%    o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
 %    decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData)
 %
 % INPUT PARAMETERS :
@@ -11,6 +12,7 @@
 %
 % OUTPUT PARAMETERS :
 %   o_miscInfo      : misc information from science_log files
+%   o_techData      : TECH data from science_log files
 %   o_gpsData       : GPS data from science_log files
 %   o_profCtdP      : CTD_P data
 %   o_profCtdPt     : CTD_PT data
@@ -26,11 +28,13 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_miscInfo, o_gpsData, o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
+function [o_miscInfo, o_techData, o_gpsData, ...
+   o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdCp, o_cycleTimeData] = ...
    decode_science_log_apx_apf11_ir(a_scienceLogFileList, a_cycleTimeData)
 
 % output parameters initialization
 o_miscInfo = [];
+o_techData = [];
 o_gpsData = [];
 o_profCtdP = [];
 o_profCtdPt = [];
@@ -154,18 +158,39 @@ for idFile = 1:length(a_scienceLogFileList)
                      dataStruct.format = '%d';
                      o_miscInfo{end+1} = dataStruct;
                      
+                     dataStruct = get_apx_tech_data_init_struct(1);
+                     dataStruct.label = 'Number of samples recorded during the mission';
+                     dataStruct.techId = 1001;
+                     dataStruct.value = num2str(info(2));
+                     dataStruct.cyNum = g_decArgo_cycleNum;
+                     o_techData{end+1} = dataStruct;
+
                      dataStruct = get_apx_misc_data_init_struct('CTD_CP_info', [], [], []);
                      dataStruct.label = 'Number of bins recorded during the mission';
                      dataStruct.value = info(3);
                      dataStruct.format = '%d';
                      o_miscInfo{end+1} = dataStruct;
                      
+                     dataStruct = get_apx_tech_data_init_struct(1);
+                     dataStruct.label = 'Number of bins recorded during the mission';
+                     dataStruct.techId = 1002;
+                     dataStruct.value = num2str(info(3));
+                     dataStruct.cyNum = g_decArgo_cycleNum;
+                     o_techData{end+1} = dataStruct;
+
                      dataStruct = get_apx_misc_data_init_struct('CTD_CP_info', [], [], []);
                      dataStruct.label = 'Highest pressure in decibars recorded during the mission';
                      dataStruct.value = info(4);
                      dataStruct.format = '%.3f';
                      o_miscInfo{end+1} = dataStruct;
                      
+                     dataStruct = get_apx_tech_data_init_struct(1);
+                     dataStruct.label = 'Highest pressure in decibars recorded during the mission';
+                     dataStruct.techId = 1003;
+                     dataStruct.value = num2str(info(4));
+                     dataStruct.cyNum = g_decArgo_cycleNum;
+                     o_techData{end+1} = dataStruct;
+
                   case 'CTD_P'
                      ctdP = [ctdP; data.(fieldName)];
                   case 'CTD_PT'
@@ -198,8 +223,11 @@ end
 % create the parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
+paramPres.cFormat = '%8.2f';
 paramTemp = get_netcdf_param_attributes('TEMP');
+paramTemp.cFormat = '%10.4f';
 paramSal = get_netcdf_param_attributes('PSAL');
+paramSal.cFormat = '%10.4f';
 paramNbSample = get_netcdf_param_attributes('NB_SAMPLE');
 
 if (~isempty(ctdP))

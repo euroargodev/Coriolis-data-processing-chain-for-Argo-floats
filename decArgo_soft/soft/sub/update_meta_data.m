@@ -30,7 +30,7 @@ global g_decArgo_floatNum;
 
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1 3 4 11 12 17 19 24 25 27 28 29 30 31 32 105 106 107 109 110 111 121 122 123 201 202 203 204 205 206 208 209 210 211 212 213 214 215 216 217 301 302 303];
-decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1022 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314];
+decoderIdListApex = [1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1021 1022 1101 1102 1103 1104 1105 1106 1107 1108 1109 1110 1111 1112 1113 1314 1321];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001 2002 2003];
 decoderIdList = [decoderIdListNke decoderIdListApex decoderIdListNavis decoderIdListNova];
@@ -76,7 +76,7 @@ if (isfield(o_metaData, 'PARAMETER'))
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP});
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP}, a_decoderId, o_metaData);
       if (~isempty(param))
          
          % check meta data length
@@ -491,10 +491,12 @@ return;
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, o_metaData)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
+%   a_decoderId : float decoder Id
+%   a_metaData  : input meta-data to be updated
 %
 % OUTPUT PARAMETERS :
 %   o_param           : output updated PARAMETER information
@@ -515,7 +517,7 @@ return;
 %   03/27/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, o_metaData)
 
 % output parameters initialization
 o_param = '';
@@ -526,6 +528,9 @@ o_paramResolution = '';
 o_preCalibEq = '';
 o_preCalibCoef = '';
 o_preCalibComment = '';
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 
 switch (a_paramName)
@@ -540,6 +545,50 @@ switch (a_paramName)
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
       
+      switch (a_decoderId)
+         case {1321}
+            % Apex APF11 Iridium
+            o_preCalibEq = 'y=thermistor_output (counts); t=PTHA0+PTHA1*y+PTHA2*y^2; x=instrument_output-PTCA0-PTCA1*t-PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (PSIA)=PA0+PA1*n+PA2*n^2';
+            if (isfield(o_metaData, 'SBE_PRES_COEF_PA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA2') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB0') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB1') && ...
+                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB2'))
+               o_preCalibCoef = sprintf('%s, %s, %s; %s, %s, %s; %s, %s, %s; %s, %s, %s', ...
+                  o_metaData.SBE_PRES_COEF_PTHA0, ...
+                  o_metaData.SBE_PRES_COEF_PTHA1, ...
+                  o_metaData.SBE_PRES_COEF_PTHA2, ...
+                  o_metaData.SBE_PRES_COEF_PTCA0, ...
+                  o_metaData.SBE_PRES_COEF_PTCA1, ...
+                  o_metaData.SBE_PRES_COEF_PTCA2, ...
+                  o_metaData.SBE_PRES_COEF_PTCB0, ...
+                  o_metaData.SBE_PRES_COEF_PTCB1, ...
+                  o_metaData.SBE_PRES_COEF_PTCB2, ...
+                  o_metaData.SBE_PRES_COEF_PA0, ...
+                  o_metaData.SBE_PRES_COEF_PA1, ...
+                  o_metaData.SBE_PRES_COEF_PA2);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               end
+            end
+            if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
+               fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+      end
+      
    case {'TEMP'}
       o_param = 'TEMP';
       o_paramSensor = 'CTD_TEMP';
@@ -549,6 +598,34 @@ switch (a_paramName)
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
+      
+      switch (a_decoderId)
+         case {1321}
+            % Apex APF11 Iridium
+            o_preCalibEq = 'n=instrument_output (counts); temperature ITS-90 (°C)=1/{a0+a1[ln(n)]+a2[ln^2(n)]+a3[ln^3(n)]}-273.15';
+            if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA1') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA2') && ...
+                  isfield(o_metaData, 'SBE_TEMP_COEF_TA3'))
+               o_preCalibCoef = sprintf('%s, %s, %s, %s', ...
+                  o_metaData.SBE_TEMP_COEF_TA0, ...
+                  o_metaData.SBE_TEMP_COEF_TA1, ...
+                  o_metaData.SBE_TEMP_COEF_TA2, ...
+                  o_metaData.SBE_TEMP_COEF_TA3);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               end
+            end
+            if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
+               fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+      end      
       
    case {'PSAL'}
       o_param = 'PSAL';
@@ -560,6 +637,40 @@ switch (a_paramName)
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
 
+      switch (a_decoderId)
+         case {1321}
+            % Apex APF11 Iridium
+            o_preCalibEq = 'f=instrument_output (Hz)*sqrt(1.0+WBOTC*t)/1000.0; t=temperature (°C); p=pressure (decibars); d=CTcor; e=CPcor; conductivity (S/m)=(g+h*f^2+i*f^3+j*f^4)/(1+d*t+e*p)';
+            if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_CTCOR') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_CPCOR') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_G') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_H') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_I') && ...
+                  isfield(o_metaData, 'SBE_CNDC_COEF_J'))
+               o_preCalibCoef = sprintf('%s; %s; %s; %s, %s, %s, %s', ...
+                  o_metaData.SBE_CNDC_COEF_WBOTC, ...
+                  o_metaData.SBE_CNDC_COEF_CTCOR, ...
+                  o_metaData.SBE_CNDC_COEF_CPCOR, ...
+                  o_metaData.SBE_CNDC_COEF_G, ...
+                  o_metaData.SBE_CNDC_COEF_H, ...
+                  o_metaData.SBE_CNDC_COEF_I, ...
+                  o_metaData.SBE_CNDC_COEF_J);
+            end
+            if (isfield(o_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+               fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
+               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               end
+            end
+            if (isempty(o_preCalibCoef) || isempty(o_preCalibComment))
+               fprintf('WARNING: Float #%d: inconsistent CTD_PRES calibration information\n', ...
+                  g_decArgo_floatNum);
+            end
+      end      
+      
 end
 
 return;

@@ -148,7 +148,11 @@ for idFloat = 1:length(floatList)
             metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
             if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
-               metaStruct.(metaBddStructField) = 'n/a';
+               if (strcmp(metaBddStructField, 'CONTROLLER_BOARD_TYPE_PRIMARY'))
+                  metaStruct.(metaBddStructField) = 'APF11';
+               else
+                  metaStruct.(metaBddStructField) = 'n/a';
+               end
                %                fprintf('Empty mandatory meta-data ''%s'' set to ''n/a''\n', metaBddStructValue);
             elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
@@ -157,6 +161,10 @@ for idFloat = 1:length(floatList)
       end
    end
       
+   if (~isempty(metaStruct.IMEI) && (length(metaStruct.IMEI) >= 7))
+      metaStruct.PTT = metaStruct.IMEI(end-6:end-1);
+   end
+   
    % multi dim data
    itemList = [ ...
       {'TRANS_SYSTEM'} ...
@@ -285,6 +293,11 @@ for idFloat = 1:length(floatList)
          end
          
          if (~isempty(bddConfName))
+            
+            if (ismember(bddConfName, [{'ActiveIceDetectionMonth'} {'VitalsMask'}]))
+               floatConfValue = ['0x' floatConfValue];
+            end
+            
             nbLoops = 1;
             if (strcmp(floatConfName, 'float_id'))
                nbLoops = 2;
@@ -376,6 +389,22 @@ for idFloat = 1:length(floatList)
          configBddStructName = configBddStructNames{idBSN};
          configBddStructValue = configBddStruct.(configBddStructName);
          if (~isempty(configBddStructValue))
+            
+            %             if (strcmp(configBddStructValue, 'CYCLE_TIME') == 1)
+            %                idF1 = find(strcmp(configBddStructNames, 'CONFIG_DOWN_DownTime'));
+            %                idF2 = find(strcmp(configBddStructNames, 'CONFIG_UP_UpTime'));
+            %                if (~isempty(idF1) && ~isempty(idF2))
+            %                   idF3 = find(strcmp(metaData(idForWmo, 5), configBddStruct.(configBddStructNames{idF1})));
+            %                   idF4 = find(strcmp(metaData(idForWmo, 5), configBddStruct.(configBddStructNames{idF2})));
+            %                   if (~isempty(idF3) && ~isempty(idF4))
+            %                      downTime = str2double(metaData{idForWmo(idF3), 4});
+            %                      upTime = str2double(metaData{idForWmo(idF4), 4});
+            %                      configParamVal{idBSN, idConf} = num2str((downTime+upTime)/60);
+            %                   end
+            %                end
+            %                continue;
+            %             end
+            
             idF = find(strcmp(metaData(idForWmo, 5), configBddStructValue) == 1);
             if (~isempty(idF))
                dimLev = dimLevlist(idForWmo(idF));
@@ -386,7 +415,7 @@ for idFloat = 1:length(floatList)
                   fprintf('ERROR\n');
                end
                
-               if (strcmp(configBddStructValue, 'DIRECTION') == 1)
+               if (strcmp(configBddStructValue, 'DIRECTION'))
                   bddValue = metaData{idForWmo(idF(idDim)), 4};
                   if (~isempty(bddValue))
                      if (bddValue == 'A')
@@ -414,12 +443,6 @@ for idFloat = 1:length(floatList)
                         fprintf('ERROR: inconsistent BDD value (''%s'') for ''%s'' information => not considered\n', ...
                            bddValue, configBddStructValue);
                      end
-                  end
-               elseif (strcmp(configBddStructValue, 'ActiveIceDetectionMonth') || ... % parameter provided in hexadecimal in the configuration
-                     strcmp(configBddStructValue, 'PreludeSelfTestFlag'))
-                  bddValue = metaData{idForWmo(idF(idDim)), 4};
-                  if (~isempty(bddValue))
-                     configParamVal{idBSN, idConf} = num2str(hex2dec(metaData{idForWmo(idF(idDim)), 4}));
                   end
                else
                   configParamVal{idBSN, idConf} = metaData{idForWmo(idF(idDim)), 4};
@@ -544,7 +567,7 @@ function [o_configStruct] = get_config_bdd_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'APF11-v2.10.1'}
+   case {'2.10.1'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -592,7 +615,8 @@ switch (a_dacFormatId)
          'CONFIG_VM_VitalsMask', 'VitalsMask', ...
          'CONFIG_TBP_MaxAirBladderPressure', 'MissionCfgMaxAirBladderPressure', ...
          'CONFIG_FEXT_PistonFullExtension', 'FullyExtendedPistonPos', ...
-         'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos');
+         'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos', ...
+         'CONFIG_COP_CtdCutOffPressure', 'CTD_CUT_OFF_PRESSURE');
    otherwise
       fprintf('WARNING: Nothing done yet in generate_json_float_meta_apx_apf11_iridium_ for dacFormatId %s\n', a_dacFormatId);
 end
@@ -626,7 +650,7 @@ function [o_configStruct] = get_config_float_struct(a_dacFormatId)
 o_configStruct = [];
 
 switch (a_dacFormatId)
-   case {'APF11-v2.10.1'}
+   case {'2.10.1'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...
@@ -758,7 +782,31 @@ o_metaStruct = struct( ...
    'CALIB_RT_EQUATION', 'CALIB_RT_EQUATION', ...
    'CALIB_RT_COEFFICIENT', 'CALIB_RT_COEFFICIENT', ...
    'CALIB_RT_COMMENT', 'CALIB_RT_COMMENT', ...
-   'CALIB_RT_DATE', 'CALIB_RT_DATE');
+   'CALIB_RT_DATE', 'CALIB_RT_DATE', ...
+   'CTD_CUT_OFF_PRESSURE', 'CTD_CUT_OFF_PRESSURE', ...
+   'SBE_TEMP_COEF_TA0', 'SBE_TEMP_COEF_TA0', ...
+   'SBE_TEMP_COEF_TA1', 'SBE_TEMP_COEF_TA1', ...
+   'SBE_TEMP_COEF_TA2', 'SBE_TEMP_COEF_TA2', ...
+   'SBE_TEMP_COEF_TA3', 'SBE_TEMP_COEF_TA3', ...
+   'SBE_CNDC_COEF_G', 'SBE_CNDC_COEF_G', ...
+   'SBE_CNDC_COEF_H', 'SBE_CNDC_COEF_H', ...
+   'SBE_CNDC_COEF_I', 'SBE_CNDC_COEF_I', ...
+   'SBE_CNDC_COEF_J', 'SBE_CNDC_COEF_J', ...
+   'SBE_CNDC_COEF_CPCOR', 'SBE_CNDC_COEF_CPCOR', ...
+   'SBE_CNDC_COEF_CTCOR', 'SBE_CNDC_COEF_CTCOR', ...
+   'SBE_CNDC_COEF_WBOTC', 'SBE_CNDC_COEF_WBOTC', ...
+   'SBE_PRES_COEF_PA0', 'SBE_PRES_COEF_PA0', ...
+   'SBE_PRES_COEF_PA1', 'SBE_PRES_COEF_PA1', ...
+   'SBE_PRES_COEF_PA2', 'SBE_PRES_COEF_PA2', ...
+   'SBE_PRES_COEF_PTCA0', 'SBE_PRES_COEF_PTCA0', ...
+   'SBE_PRES_COEF_PTCA1', 'SBE_PRES_COEF_PTCA1', ...
+   'SBE_PRES_COEF_PTCA2', 'SBE_PRES_COEF_PTCA2', ...
+   'SBE_PRES_COEF_PTCB0', 'SBE_PRES_COEF_PTCB0', ...
+   'SBE_PRES_COEF_PTCB1', 'SBE_PRES_COEF_PTCB1', ...
+   'SBE_PRES_COEF_PTCB2', 'SBE_PRES_COEF_PTCB2', ...
+   'SBE_PRES_COEF_PTHA0', 'SBE_PRES_COEF_PTHA0', ...
+   'SBE_PRES_COEF_PTHA1', 'SBE_PRES_COEF_PTHA1', ...
+   'SBE_PRES_COEF_PTHA2', 'SBE_PRES_COEF_PTHA2');
 
 return;
 

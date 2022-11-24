@@ -3,11 +3,12 @@
 %
 % SYNTAX :
 %  [o_timeDataLog] = compute_additional_times_apx_ir( ...
-%    a_timeDataLog, a_driftData)      
+%    a_timeDataLog, a_driftData, a_decoderId)      
 %
 % INPUT PARAMETERS :
 %   a_timeDataLog : input cycle timings from log file
 %   a_driftData   : drift data
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   a_timeDataLog : updated cycle timings from log file
@@ -21,7 +22,7 @@
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_timeDataLog] = compute_additional_times_apx_ir( ...
-   a_timeDataLog, a_driftData)      
+   a_timeDataLog, a_driftData, a_decoderId)      
       
 % output parameters initialization
 o_timeDataLog = a_timeDataLog;
@@ -83,7 +84,7 @@ if (~isempty(a_driftData))
             ~isempty(downTime) && ~isempty(deepProfileDescentTime) && ...
             ~isempty(deepProfilePressure) && ~isempty(parkPressure) && ...
             ~isempty(pnPCycleLen))
-         if (pnPCycleLen == 254)
+         if (pnPCycleLen == get_park_and_prof_specific_value_apx(a_decoderId))
             timeDataLog.parkEndDateBis = timeDataLog.descentStartDateBis + downTime/1440;
          else
             if (rem(g_decArgo_cycleNum, pnPCycleLen) ~= 0)

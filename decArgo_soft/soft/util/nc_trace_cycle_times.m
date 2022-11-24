@@ -185,15 +185,27 @@ global g_NTCT_SpyInAscProf_juld;
 global g_NTCT_SpyInAscProf_pres;
 global g_NTCT_SpyInAscProf_evFlag;
 
+global g_NTCT_Surface1_juld;
+global g_NTCT_Surface1_pres;
 global g_NTCT_DescProf_juld;
 global g_NTCT_DescProf_pres;
+global g_NTCT_DriftAtPark1_juld;
+global g_NTCT_DriftAtPark1_pres;
 global g_NTCT_DriftAtPark_juld;
 global g_NTCT_DriftAtPark_pres;
+global g_NTCT_Desc2Prof1_juld;
+global g_NTCT_Desc2Prof1_pres;
+global g_NTCT_Desc2Prof2_juld;
+global g_NTCT_Desc2Prof2_pres;
 global g_NTCT_AscProf_juld;
 global g_NTCT_AscProf_pres;
+global g_NTCT_NearSurfaceSeriesOfMeas_juld;
+global g_NTCT_NearSurfaceSeriesOfMeas_pres;
 global g_NTCT_InAirSeriesOfMeas_juld;
 global g_NTCT_InAirSeriesOfMeas_pres;
 global g_NTCT_Surface_juld;
+global g_NTCT_Surface2_juld;
+global g_NTCT_Surface2_pres;
 global g_NTCT_Grounded_flag_juld;
 global g_NTCT_Grounded_flag_pres;
 
@@ -518,7 +530,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToPark));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency\n');
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyInDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
@@ -530,7 +542,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtPark));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency\n');
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyAtPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
@@ -542,7 +554,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToProf));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency\n');
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyInDescToProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
@@ -554,7 +566,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtProf));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency\n');
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyAtProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
@@ -566,7 +578,7 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInAscProf));
             %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
             if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency\n');
+               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
             else
                g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
             end
@@ -578,28 +590,60 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf g_MC_InAirSeriesOfMeas g_MC_Surface g_MC_Grounded]));
    nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
    
+   g_NTCT_Surface1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_Surface1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_DescProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_DescProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+   g_NTCT_DriftAtPark1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_DriftAtPark1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_DriftAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_DriftAtPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+   g_NTCT_Desc2Prof1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_Desc2Prof1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+   g_NTCT_Desc2Prof2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_Desc2Prof2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_AscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_AscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+   g_NTCT_NearSurfaceSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_NearSurfaceSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_InAirSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_InAirSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_Surface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_Surface2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+   g_NTCT_Surface2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    g_NTCT_Grounded_flag_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
    g_NTCT_Grounded_flag_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
    
    for idC = 1:length(g_NTCT_cycles)
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST-10));
+      if (~isempty(idF))
+         g_NTCT_Surface1_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_Surface1_pres(idC, 1:length(idF)) = pres(idF);
+      end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DescProf));
       if (~isempty(idF))
          g_NTCT_DescProf_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_DescProf_pres(idC, 1:length(idF)) = pres(idF);
       end
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PST-10));
+      if (~isempty(idF))
+         g_NTCT_DriftAtPark1_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_DriftAtPark1_pres(idC, 1:length(idF)) = pres(idF);
+      end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DriftAtPark));
       if (~isempty(idF))
          g_NTCT_DriftAtPark_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_DriftAtPark_pres(idC, 1:length(idF)) = pres(idF);
+      end
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DDET-10));
+      if (~isempty(idF))
+         g_NTCT_Desc2Prof1_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_Desc2Prof1_pres(idC, 1:length(idF)) = pres(idF);
+      end
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AST-10));
+      if (~isempty(idF))
+         g_NTCT_Desc2Prof2_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_Desc2Prof2_pres(idC, 1:length(idF)) = pres(idF);
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AscProf));
       if (~isempty(idF))
@@ -611,9 +655,19 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          g_NTCT_InAirSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
          g_NTCT_InAirSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
       end
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TST-10));
+      if (~isempty(idF))
+         g_NTCT_NearSurfaceSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_NearSurfaceSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
+      end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Surface));
       if (~isempty(idF))
          g_NTCT_Surface_juld(idC, 1:length(idF)) = juld(idF);
+      end
+      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TET-10));
+      if (~isempty(idF))
+         g_NTCT_Surface2_juld(idC, 1:length(idF)) = juld(idF);
+         g_NTCT_Surface2_pres(idC, 1:length(idF)) = pres(idF);
       end
       idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Grounded));
       if (~isempty(idF))
@@ -858,11 +912,17 @@ timeData = [
    g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :), ...
    g_NTCT_SpyAtProf_juld(a_idCycle+1, :), ...
    g_NTCT_SpyInAscProf_juld(a_idCycle+1, :), ...
+   g_NTCT_Surface1_juld(a_idCycle+1, :), ...
    g_NTCT_DescProf_juld(a_idCycle+1, :), ...
+   g_NTCT_DriftAtPark1_juld(a_idCycle+1, :), ...
    g_NTCT_DriftAtPark_juld(a_idCycle+1, :), ...
+   g_NTCT_Desc2Prof1_juld(a_idCycle+1, :), ...
+   g_NTCT_Desc2Prof2_juld(a_idCycle+1, :), ...
    g_NTCT_AscProf_juld(a_idCycle+1, :), ...
+   g_NTCT_NearSurfaceSeriesOfMeas_juld(a_idCycle+1, :), ...
    g_NTCT_InAirSeriesOfMeas_juld(a_idCycle+1, :), ...
    g_NTCT_Surface_juld(a_idCycle+1, :), ...
+   g_NTCT_Surface2_juld(a_idCycle+1, :), ...
    g_NTCT_Grounded_flag_juld(a_idCycle+1, :), ...
    g_NTCT_CycleStart_juld(a_idCycle+1, :), ...
    g_NTCT_DST_juld(a_idCycle+1, :), ...
@@ -886,10 +946,16 @@ presData = [ 0, ...
    g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :), ...
    g_NTCT_SpyAtProf_pres(a_idCycle+1, :), ...
    g_NTCT_SpyInAscProf_pres(a_idCycle+1, :), ...
+   g_NTCT_Surface1_pres(a_idCycle+1, :), ...
    g_NTCT_DescProf_pres(a_idCycle+1, :), ...
+   g_NTCT_DriftAtPark1_pres(a_idCycle+1, :), ...
    g_NTCT_DriftAtPark_pres(a_idCycle+1, :), ...
+   g_NTCT_Desc2Prof1_pres(a_idCycle+1, :), ...
+   g_NTCT_Desc2Prof2_pres(a_idCycle+1, :), ...
    g_NTCT_AscProf_pres(a_idCycle+1, :), ...
+   g_NTCT_NearSurfaceSeriesOfMeas_pres(a_idCycle+1, :), ...
    g_NTCT_InAirSeriesOfMeas_pres(a_idCycle+1, :), ...
+   g_NTCT_Surface2_pres(a_idCycle+1, :), ...
    g_NTCT_Grounded_flag_pres(a_idCycle+1, :), ...
    g_NTCT_FST_pres(a_idCycle+1, :), ...
    g_NTCT_MinPresInDriftAtPark_pres(a_idCycle+1, :), ...
@@ -999,6 +1065,16 @@ if (~isempty(xSpyInAscProf))
    end
 end
 
+xSurface1 = g_NTCT_Surface1_juld(a_idCycle+1, :);
+ySurface1 = g_NTCT_Surface1_pres(a_idCycle+1, :);
+idDel = find((xSurface1 == g_dateDef) & (ySurface1 == g_presDef));
+xSurface1(idDel) = [];
+ySurface1(idDel) = [];
+if (~isempty(xSurface1))
+   plot(presAxes, xSurface1, ySurface1, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
+   hold on;
+end
+
 xDescProf = g_NTCT_DescProf_juld(a_idCycle+1, :);
 yDescProf = g_NTCT_DescProf_pres(a_idCycle+1, :);
 idDel = find((xDescProf == g_dateDef) & (yDescProf == g_presDef));
@@ -1006,6 +1082,16 @@ xDescProf(idDel) = [];
 yDescProf(idDel) = [];
 if (~isempty(xDescProf))
    plot(presAxes, xDescProf, yDescProf, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
+   hold on;
+end
+
+xDriftAtPark1 = g_NTCT_DriftAtPark1_juld(a_idCycle+1, :);
+yDriftAtPark1 = g_NTCT_DriftAtPark1_pres(a_idCycle+1, :);
+idDel = find((xDriftAtPark1 == g_dateDef) & (yDriftAtPark1 == g_presDef));
+xDriftAtPark1(idDel) = [];
+yDriftAtPark1(idDel) = [];
+if (~isempty(xDriftAtPark1))
+   plot(presAxes, xDriftAtPark1, yDriftAtPark1, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
    hold on;
 end
 
@@ -1019,6 +1105,26 @@ if (~isempty(xDriftAtPark))
    hold on;
 end
 
+xDesc2Prof1 = g_NTCT_Desc2Prof1_juld(a_idCycle+1, :);
+yDesc2Prof1 = g_NTCT_Desc2Prof1_pres(a_idCycle+1, :);
+idDel = find((xDesc2Prof1 == g_dateDef) & (yDesc2Prof1 == g_presDef));
+xDesc2Prof1(idDel) = [];
+yDesc2Prof1(idDel) = [];
+if (~isempty(xDesc2Prof1))
+   plot(presAxes, xDesc2Prof1, yDesc2Prof1, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
+   hold on;
+end
+
+xDesc2Prof2 = g_NTCT_Desc2Prof2_juld(a_idCycle+1, :);
+yDesc2Prof2 = g_NTCT_Desc2Prof2_pres(a_idCycle+1, :);
+idDel = find((xDesc2Prof2 == g_dateDef) & (yDesc2Prof2 == g_presDef));
+xDesc2Prof2(idDel) = [];
+yDesc2Prof2(idDel) = [];
+if (~isempty(xDesc2Prof2))
+   plot(presAxes, xDesc2Prof2, yDesc2Prof2, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
+   hold on;
+end
+
 xAscProf = g_NTCT_AscProf_juld(a_idCycle+1, :);
 yAscProf = g_NTCT_AscProf_pres(a_idCycle+1, :);
 idDel = find((xAscProf == g_dateDef) & (yAscProf == g_presDef));
@@ -1029,21 +1135,31 @@ if (~isempty(xAscProf))
    hold on;
 end
 
-xInAir = g_NTCT_InAirSeriesOfMeas_juld(a_idCycle+1, :);
-yInAir = g_NTCT_InAirSeriesOfMeas_pres(a_idCycle+1, :);
-idDel = find((xInAir == g_dateDef) & (yInAir == g_presDef));
-xInAir(idDel) = [];
-yInAir(idDel) = [];
-if (~isempty(xInAir))
-   plot(presAxes, xInAir, yInAir, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
+xNearSurfaceSeriesOfMeas = g_NTCT_NearSurfaceSeriesOfMeas_juld(a_idCycle+1, :);
+yNearSurfaceSeriesOfMeas = g_NTCT_NearSurfaceSeriesOfMeas_pres(a_idCycle+1, :);
+idDel = find((xNearSurfaceSeriesOfMeas == g_dateDef) & (yNearSurfaceSeriesOfMeas == g_presDef));
+xNearSurfaceSeriesOfMeas(idDel) = [];
+yNearSurfaceSeriesOfMeas(idDel) = [];
+if (~isempty(xNearSurfaceSeriesOfMeas))
+   plot(presAxes, xNearSurfaceSeriesOfMeas, yNearSurfaceSeriesOfMeas, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
    hold on;
 end
 
-xFix = g_NTCT_Surface_juld(a_idCycle+1, :);
-xFix(find(xFix == g_dateDef)) = [];
-yFix = zeros(size(xFix));
-if (~isempty(xFix))
-   plot(presAxes, xFix, yFix, 'cp', 'MarkerFaceColor', 'c', 'MarkerSize', 10);
+xInAirSeriesOfMeas = g_NTCT_InAirSeriesOfMeas_juld(a_idCycle+1, :);
+yInAirSeriesOfMeas = g_NTCT_InAirSeriesOfMeas_pres(a_idCycle+1, :);
+idDel = find((xInAirSeriesOfMeas == g_dateDef) & (yInAirSeriesOfMeas == g_presDef));
+xInAirSeriesOfMeas(idDel) = [];
+yInAirSeriesOfMeas(idDel) = [];
+if (~isempty(xInAirSeriesOfMeas))
+   plot(presAxes, xInAirSeriesOfMeas, yInAirSeriesOfMeas, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
+   hold on;
+end
+
+xSurface = g_NTCT_Surface_juld(a_idCycle+1, :);
+xSurface(find(xSurface == g_dateDef)) = [];
+ySurface = zeros(size(xSurface));
+if (~isempty(xSurface))
+   plot(presAxes, xSurface, ySurface, 'cp', 'MarkerFaceColor', 'c', 'MarkerSize', 10);
    hold on;
 end
 
@@ -1076,6 +1192,16 @@ xTET(find(xTET == g_dateDef)) = [];
 yTET = zeros(size(xTET));
 if (~isempty(xTET))
    plot(presAxes, xTET, yTET, 'mv', 'MarkerFaceColor', 'm');
+   hold on;
+end
+
+xSurface2 = g_NTCT_Surface2_juld(a_idCycle+1, :);
+ySurface2 = g_NTCT_Surface2_pres(a_idCycle+1, :);
+idDel = find((xSurface2 == g_dateDef) & (ySurface2 == g_presDef));
+xSurface2(idDel) = [];
+ySurface2(idDel) = [];
+if (~isempty(xSurface2))
+   plot(presAxes, xSurface2, ySurface2, 'go-', 'MarkerFaceColor', 'g', 'MarkerSize', 3);
    hold on;
 end
 

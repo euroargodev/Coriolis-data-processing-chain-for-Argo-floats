@@ -96,7 +96,6 @@ g_decArgo_profHrCtdDataPrev = -1;
 
 % decoder configuration values
 global g_decArgo_iridiumDataDirectory;
-global g_decArgo_dirInputRsyncData;
 
 % IRIDIUM_DATA sub-directories
 global g_decArgo_archiveDirectory;
@@ -104,10 +103,6 @@ global g_decArgo_historyDirectory;
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
-
-% rsync information
-global g_decArgo_rsyncFloatWmoList;
-global g_decArgo_rsyncFloatSbdFileList;
 
 % report information structure
 global g_decArgo_reportStruct;
@@ -205,10 +200,6 @@ for idCy = 1:length(a_cycleList)
    cycleNum = a_cycleList(idCy);
    g_decArgo_cycleNum = cycleNum;
    
-%    if (cycleNum > 10)
-%       continue;
-%    end
-   
    fprintf('Cycle #%d\n', cycleNum);
    
    % retrieve the files of the current cycle
@@ -239,7 +230,7 @@ for idCy = 1:length(a_cycleList)
       create_float_config_apx_ir(configInfoLog, configInfoMsg, a_decoderId);
       
       % compute additional dates
-      timeDataLog = compute_additional_times_apx_ir(timeDataLog, driftData);
+      timeDataLog = compute_additional_times_apx_ir(timeDataLog, driftData, a_decoderId);
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle (from .msg file) and check that those of the previous
@@ -435,7 +426,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_apx_ir( ...
-      decArgoConfParamNames, ncConfParamNames);
+      decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    if (g_decArgo_realtimeFlag == 1)
             

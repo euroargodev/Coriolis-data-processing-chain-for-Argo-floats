@@ -1,0 +1,34 @@
+{
+   "TECH_PARAM_1" :
+   {
+      "TECH_PARAM_DEC_ID" : "1001",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of samples recorded during the mission",
+      "TECH_PARAM_NAME" : "NUMBER_AscentSamples_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "ascent: total number of samples collected during ascent"
+   },
+   "TECH_PARAM_2" :
+   {
+      "TECH_PARAM_DEC_ID" : "1002",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Number of bins recorded during the mission",
+      "TECH_PARAM_NAME" : "NUMBER_BinsWithData_COUNT   ",
+      "TECH_PARAM_DESCRIPTION" : "number of pressure bins with data"
+   },
+   "TECH_PARAM_3" :
+   {
+      "TECH_PARAM_DEC_ID" : "1003",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Highest pressure in decibars recorded during the mission",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_DeepestSample_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Deepest pressure sampled by the CTD in continuous profiling mode"
+   },
+   "TECH_PARAM_4" :
+   {
+      "TECH_PARAM_DEC_ID" : "1004",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Pressure w/out Offset:   -0.03,Pressure w/ Offset:    0.01, Surface Pressure Offset:   -0.04",
+      "TECH_PARAM_NAME" : "PRES_SurfaceOffsetNotTruncated_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board Not autocorrected"
+   }
+}

@@ -40,6 +40,7 @@ end
 % read tech parameters file
 techData = loadjson(jsonInputFileName);
 
+apexApf11IrDecoderIdList = [1321];
 techDataFieldNames = fieldnames(techData);
 for idField = 1:length(techDataFieldNames)
    techItemData = getfield(techData, char(techDataFieldNames(idField)));
@@ -50,13 +51,15 @@ for idField = 1:length(techDataFieldNames)
    
    % duplicate TECH labels for surface TECH information stored in the TECH_AUX
    % files
-   o_ncParamIds(idField+length(techDataFieldNames)) = str2num(techItemData.TECH_PARAM_DEC_ID) + 10000;
-   if (~strncmp(techItemData.TECH_PARAM_NAME, 'TECH_AUX', length('TECH_AUX')))
-      o_ncParamNames{idField+length(techDataFieldNames)} = ['TECH_AUX_SURFACE_' techItemData.TECH_PARAM_NAME];
-   else
-      o_ncParamNames{idField+length(techDataFieldNames)} = regexprep(techItemData.TECH_PARAM_NAME, 'TECH_AUX_', 'TECH_AUX_SURFACE_');
+   if (~ismember(a_decoderId, apexApf11IrDecoderIdList))
+      o_ncParamIds(idField+length(techDataFieldNames)) = str2num(techItemData.TECH_PARAM_DEC_ID) + 10000;
+      if (~strncmp(techItemData.TECH_PARAM_NAME, 'TECH_AUX', length('TECH_AUX')))
+         o_ncParamNames{idField+length(techDataFieldNames)} = ['TECH_AUX_SURFACE_' techItemData.TECH_PARAM_NAME];
+      else
+         o_ncParamNames{idField+length(techDataFieldNames)} = regexprep(techItemData.TECH_PARAM_NAME, 'TECH_AUX_', 'TECH_AUX_SURFACE_');
+      end
+      o_ncParamDescription{idField+length(techDataFieldNames)} = techItemData.TECH_PARAM_DESCRIPTION;
    end
-   o_ncParamDescription{idField+length(techDataFieldNames)} = techItemData.TECH_PARAM_DESCRIPTION;
 end
 
 % sort the parameter names

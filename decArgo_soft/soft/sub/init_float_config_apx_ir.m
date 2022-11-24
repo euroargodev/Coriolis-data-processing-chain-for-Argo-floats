@@ -40,6 +40,9 @@ g_decArgo_rtOffsetInfo = [];
 % Argos (1), Iridium RUDICS (2), Iridium SBD (3) float
 global g_decArgo_floatTransType;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
@@ -52,6 +55,8 @@ end
 
 % read meta-data file
 jsonMetaData = loadjson(jsonInputFileName);
+g_decArgo_jsonMetaData = jsonMetaData;
+
 if (g_decArgo_floatTransType == 3)
    
    % for Iridium SBD floats only

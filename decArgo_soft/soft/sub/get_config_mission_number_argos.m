@@ -115,7 +115,7 @@ switch (a_decoderId)
       
       if ~(isempty(dpfFloatFlag) || isempty(parkAndProfileCycleLength))
          if (dpfFloatFlag == 1)
-            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value(a_decoderId)))
+            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value_apx(a_decoderId)))
                if (a_cycleNum <= 1)
                   o_configMissionNumber = 1;
                else
@@ -133,7 +133,7 @@ switch (a_decoderId)
                end
             end
          else
-            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value(a_decoderId)))
+            if ((parkAndProfileCycleLength == 1) || (parkAndProfileCycleLength == get_park_and_prof_specific_value_apx(a_decoderId)))
                o_configMissionNumber = 1;
             else
                if (rem(a_cycleNum, parkAndProfileCycleLength) == 0)
@@ -150,56 +150,6 @@ switch (a_decoderId)
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_config_mission_number_argos for decoderId #%d\n', ...
-         g_decArgo_floatNum, ...
-         a_decoderId);
-      
-end
-
-return;
-
-% ------------------------------------------------------------------------------
-% Get the park and profile specific value (that causes all profiles to start at
-% park depth) for a given decoder.
-%
-% SYNTAX :
-%  [o_specificValue] = get_park_and_prof_specific_value(a_decoderId)
-%
-% INPUT PARAMETERS :
-%   a_decoderId : float decoder Id
-%
-% OUTPUT PARAMETERS :
-%   o_specificValue : PnP specific value for this decoder Id
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   12/21/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_specificValue] = get_park_and_prof_specific_value(a_decoderId)
-
-% output parameters initialization
-o_specificValue = [];
-
-% current float WMO number
-global g_decArgo_floatNum;
-
-
-switch (a_decoderId)
-   
-   case {1001, 1005, 1007, 1009, 1010, 1011, 1012, 1015, 1016}
-      % 071412, 061810, 082213, 032213, 110613&090413, 121512, 110813, 020110,
-      % 090810
-      o_specificValue = 234;
-      
-   case {1002, 1003, 1004, 1006, 1008, 1013, 1014}
-      % 062608, 061609, 021009, 093008, 021208, 071807, 082807
-      o_specificValue = 254;
-      
-   otherwise
-      fprintf('WARNING: Float #%d: Nothing done yet in get_park_and_prof_specific_value for decoderId #%d\n', ...
          g_decArgo_floatNum, ...
          a_decoderId);
       

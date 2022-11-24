@@ -6,17 +6,14 @@
 % - compute JAMSTEC QC for the GPS locations
 %
 % SYNTAX :
-%  [o_techData] = store_gps_data_apx_apf11_ir( ...
-%    a_gpsDataSci, a_gpsDataSys, a_cycleNum, a_techData)
+%  store_gps_data_apx_apf11_ir(a_gpsDataSci, a_gpsDataSys, a_cycleNum)
 %
 % INPUT PARAMETERS :
 %   a_gpsDataSci : GPS data from science_log file
 %   a_gpsDataSys : GPS data from system_log file
 %   a_cycleNum   : current cycle number
-%   a_tabTech    : input technical data
 %
 % OUTPUT PARAMETERS :
-%   o_techData : output technical data
 %
 % EXAMPLES :
 %
@@ -26,11 +23,7 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_techData] = store_gps_data_apx_apf11_ir( ...
-   a_gpsDataSci, a_gpsDataSys, a_cycleNum, a_techData)
-
-% output parameters initialization
-o_techData = a_techData;
+function store_gps_data_apx_apf11_ir(a_gpsDataSci, a_gpsDataSys, a_cycleNum)
 
 % current float WMO number
 global g_decArgo_floatNum;

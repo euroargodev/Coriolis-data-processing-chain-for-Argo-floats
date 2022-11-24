@@ -5,7 +5,7 @@
 %  print_dates_apx_apf11_in_csv_file( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, ...
 %    a_cycleTimeData, a_gpsData, ...
-%    a_grounding, a_buoyancy, a_vitalsCore)
+%    a_grounding, a_buoyancy, a_vitalsData)
 %
 % INPUT PARAMETERS :
 %   a_profCtdP      : CTD_P data
@@ -15,7 +15,7 @@
 %   a_gpsData       : GPS data
 %   a_grounding     : grounding data
 %   a_buoyancy      : buoyancy data
-%   a_vitalsCore    : vitals data
+%   a_vitalsData    : vitals data
 %
 % OUTPUT PARAMETERS :
 %
@@ -30,7 +30,7 @@
 function print_dates_apx_apf11_in_csv_file( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, ...
    a_cycleTimeData, a_gpsData, ...
-   a_grounding, a_buoyancy, a_vitalsCore)
+   a_grounding, a_buoyancy, a_vitalsData)
          
 % current float WMO number
 global g_decArgo_floatNum;
@@ -357,13 +357,25 @@ for idB = 1:size(a_buoyancy, 1)
    allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
 end
 
-for idV = 1:size(a_vitalsCore, 1)
-   allTabDate = [allTabDate a_vitalsCore(idV, 1)];
-   allTabDateAdj = [allTabDateAdj a_vitalsCore(idV, 2)];
-   allTabPres = [allTabPres g_decArgo_presDef];
-   allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
-   allTabLabel = [allTabLabel {sprintf('Vitals set #%d', idV)}];
-   allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+if (isfield(a_vitalsData, 'VITALS_CORE'))
+   for idV = 1:size(a_vitalsData.VITALS_CORE, 1)
+      allTabDate = [allTabDate a_vitalsData.VITALS_CORE(idV, 1)];
+      allTabDateAdj = [allTabDateAdj a_vitalsData.VITALS_CORE(idV, 2)];
+      allTabPres = [allTabPres g_decArgo_presDef];
+      allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+      allTabLabel = [allTabLabel {sprintf('Vitals set #%d', idV)}];
+      allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end
+end
+if (isfield(a_vitalsData, 'WD_CNT'))
+   for idV = 1:size(a_vitalsData.WD_CNT, 1)
+      allTabDate = [allTabDate a_vitalsData.WD_CNT(idV, 1)];
+      allTabDateAdj = [allTabDateAdj a_vitalsData.WD_CNT(idV, 2)];
+      allTabPres = [allTabPres g_decArgo_presDef];
+      allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+      allTabLabel = [allTabLabel {sprintf('Watchdog count #%d', idV)}];
+      allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end
 end
 
 % sort the collected dates in chronological order

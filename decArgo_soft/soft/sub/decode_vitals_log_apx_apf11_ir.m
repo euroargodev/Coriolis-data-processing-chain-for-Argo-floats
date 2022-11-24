@@ -2,15 +2,13 @@
 % Decode vitals_log files of one cycle of APEX APF11 Iridium data.
 %
 % SYNTAX :
-%  [o_miscInfo, o_vitalsCore] = ...
-%    decode_vitals_log_apx_apf11_ir(a_vitalsLogFileList)
+%  [o_vitalsData] = decode_vitals_log_apx_apf11_ir(a_vitalsLogFileList)
 %
 % INPUT PARAMETERS :
 %   a_vitalsLogFileList : list of vitals_log files
 %
 % OUTPUT PARAMETERS :
-%   o_miscInfo   : misc information from vitals_log files
-%   o_vitalsCore : vitals data
+%   o_vitalsData : vitals data
 %
 % EXAMPLES :
 %
@@ -20,12 +18,10 @@
 % RELEASES :
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_miscInfo, o_vitalsCore] = ...
-   decode_vitals_log_apx_apf11_ir(a_vitalsLogFileList)
+function [o_vitalsData] = decode_vitals_log_apx_apf11_ir(a_vitalsLogFileList)
 
 % output parameters initialization
-o_miscInfo = [];
-o_vitalsCore = [];
+o_vitalsData = [];
 
 % default values
 global g_decArgo_dateDef;
@@ -82,6 +78,7 @@ for idFile = 1:length(a_vitalsLogFileList)
                switch (fieldName)
                   case 'Message'
                      msg = data.(fieldName);
+                     
                      for idM = 1:size(msg, 1)
                         msgData = msg{idM, 2};
                         idF = cellfun(@(x) strfind(msgData, x), usedMessages, 'UniformOutput', 0);
@@ -98,15 +95,24 @@ for idFile = 1:length(a_vitalsLogFileList)
                      end
                   case 'VITALS_CORE'
                      vitalsCore = data.(fieldName);
-                     o_vitalsCore = [o_vitalsCore; [vitalsCore(:, 1) ones(size(vitalsCore, 1), 1)*g_decArgo_dateDef vitalsCore(:, 2:end)]];
-                  case 'WD_CNT'
-                     info = data.(fieldName);
                      
-                     dataStruct = get_apx_misc_data_init_struct('Watchdog', [], [], []);
-                     dataStruct.label = 'Whatchdog';
-                     dataStruct.value = info(2);
-                     dataStruct.format = '%d';
-                     o_miscInfo{end+1} = dataStruct;
+                     if (isfield(o_vitalsData, 'VITALS_CORE'))
+                        vitalsCorePrev = o_vitalsData.VITALS_CORE;
+                        vitalsCoreNew = [vitalsCorePrev; [vitalsCore(:, 1) ones(size(vitalsCore, 1), 1)*g_decArgo_dateDef vitalsCore(:, 2:end)]];
+                     else
+                        vitalsCoreNew = [vitalsCore(:, 1) ones(size(vitalsCore, 1), 1)*g_decArgo_dateDef vitalsCore(:, 2:end)];
+                     end
+                     o_vitalsData.VITALS_CORE = vitalsCoreNew;
+                  case 'WD_CNT'
+                     wdCnt = data.(fieldName);
+                     
+                     if (isfield(o_vitalsData, 'WD_CNT'))
+                        wdCntPrev = o_vitalsData.WD_CNT;
+                        wdCntNew = [wdCntPrev; [wdCnt(:, 1) ones(size(wdCnt, 1), 1)*g_decArgo_dateDef wdCnt(:, 2:end)]];
+                     else
+                        wdCntNew = [wdCnt(:, 1) ones(size(wdCnt, 1), 1)*g_decArgo_dateDef wdCnt(:, 2:end)];
+                     end
+                     o_vitalsData.WD_CNT = wdCntNew;
                end
             else
                fprintf('ERROR: Float #%d Cycle #%d: Field ''%s'' not expected in file: %s => ignored (ASK FOR AN UPDATE OF THE DECODER)\n', ...

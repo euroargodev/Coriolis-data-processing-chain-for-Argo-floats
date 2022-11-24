@@ -85,6 +85,9 @@ switch (a_floatTransType)
          case {1314} % Apex Ir Sbd
             o_profJuldRes = double(1/86400); % 1 second
             
+         case {1321} % Apex PF11 Ir
+            o_profJuldRes = double(1/86400); % 1 second
+            
          case {2001, 2002}
             o_profJuldRes = double(1/86400); % 1 second
             

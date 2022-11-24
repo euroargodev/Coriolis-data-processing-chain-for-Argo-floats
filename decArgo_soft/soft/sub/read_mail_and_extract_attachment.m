@@ -189,20 +189,20 @@ end
 
 % decode and store attachment contents
 if (~isempty(sbdData))
-   
-   if (~isempty(strfind(a_fileName, mailContents.attachementFileName(1:end-4))))
-      sbdPathFileName = [a_outputDirName '/' a_fileName(1:end-4) '.sbd'];
-      [decodedSbdData] = base64decode(sbdData, sbdPathFileName, 'matlab');
-      info = whos('decodedSbdData');
-      if (info.bytes ~= o_mailContents.messageSize)
-         fprintf('ERROR: Inconsistent attachement size (%d bytes while expecting %d bytes) for mail file: %s\n', ...
-            info.bytes, o_mailContents.messageSize, a_fileName);
+   if (~isempty(a_outputDirName))
+      if (~isempty(strfind(a_fileName, mailContents.attachementFileName(1:end-4))))
+         sbdPathFileName = [a_outputDirName '/' a_fileName(1:end-4) '.sbd'];
+         [decodedSbdData] = base64decode(sbdData, sbdPathFileName, 'matlab');
+         info = whos('decodedSbdData');
+         if (info.bytes ~= o_mailContents.messageSize)
+            fprintf('ERROR: Inconsistent attachement size (%d bytes while expecting %d bytes) for mail file: %s\n', ...
+               info.bytes, o_mailContents.messageSize, a_fileName);
+         end
+         o_attachmentFound = 1;
+      else
+         fprintf('ERROR: Inconsistent attachement file name for mail file: %s => attachement ignored\n', a_fileName);
       end
-      o_attachmentFound = 1;
-   else
-      fprintf('ERROR: Inconsistent attachement file name for mail file: %s => attachement ignored\n', a_fileName);
    end
-   
 elseif (o_mailContents.messageSize > 0)
    fprintf('ERROR: Attachement not retrieved for mail file: %s => attachement ignored\n', a_fileName);
 end

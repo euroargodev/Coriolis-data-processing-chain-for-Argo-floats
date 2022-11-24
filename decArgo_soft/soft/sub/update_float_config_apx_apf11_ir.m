@@ -128,12 +128,8 @@ if (parkAndProfileCycleLength ~= 1)
    idF2 = find(strcmp(configNames, 'CONFIG_TP_ProfilePressure'));
    parkPres = newConfigValues(idF1);
    if (~isnan(parkPres))
-      if (newConfigValues(idF) == 254)
+      if ((g_decArgo_cycleNum > 1) && (rem(g_decArgo_cycleNum, parkAndProfileCycleLength) ~= 0))
          newConfigValues(idF2) = parkPres;
-      else
-         if ((g_decArgo_cycleNum > 1) && (rem(g_decArgo_cycleNum, parkAndProfileCycleLength) ~= 0))
-            newConfigValues(idF2) = parkPres;
-         end
       end
    end
 end
@@ -151,16 +147,36 @@ end
    
 if ((newConfigNum == -1) || (newConfigNum == 0))
    
-   % we add the new configuration
-   g_decArgo_floatConfig.NUMBER(end+1) = ...
-      max(g_decArgo_floatConfig.NUMBER) + 1;
-   g_decArgo_floatConfig.VALUES(:, end+1) = newConfigValues;
-   newConfigNum = g_decArgo_floatConfig.NUMBER(end);
+   if (g_decArgo_cycleNum > 0)
+      
+      % we add the new configuration
+      g_decArgo_floatConfig.NUMBER(end+1) = ...
+         max(g_decArgo_floatConfig.NUMBER) + 1;
+      g_decArgo_floatConfig.VALUES(:, end+1) = newConfigValues;
+      newConfigNum = g_decArgo_floatConfig.NUMBER(end);
+   else
+      
+      % for cycle #0
+      % if newConfigNum == -1 we replace the launch configuration by the new one
+      % configNum == 0 nothing to do (prelude configuration identical to launch
+      % one)
+      if (newConfigNum == -1)
+         if (size(g_decArgo_floatConfig.VALUES, 2) == 1)
+            g_decArgo_floatConfig.VALUES(:, 1) = newConfigValues;
+         else
+            fprintf('ERROR: Float #%d Cycle #%d: Configuration issue (when trying to update launch configuration (inconsistent size of existing configuration)\n', ...
+               g_decArgo_floatNum, ...
+               g_decArgo_cycleNum);
+         end
+      end
+   end
 end
    
 % assign the config to the cycle
-g_decArgo_floatConfig.USE.CYCLE(end+1) = g_decArgo_cycleNum;
-g_decArgo_floatConfig.USE.CONFIG(end+1) = newConfigNum;
+if (g_decArgo_cycleNum > 0)
+   g_decArgo_floatConfig.USE.CYCLE(end+1) = g_decArgo_cycleNum;
+   g_decArgo_floatConfig.USE.CONFIG(end+1) = newConfigNum;
+end
      
 % create_csv_to_print_config_apx_apf11_ir('setConfig_', g_decArgo_floatConfig);
 
@@ -270,7 +286,7 @@ switch (a_floatConfLabel)
       o_configValue = str2double(a_floatConfValue);
    case 'IceMonths'
       o_configName = 'CONFIG_ICEM_IceDetectionMask';
-      o_configValue = str2double(a_floatConfValue);
+      o_configValue = hex2dec(a_floatConfValue);
    case 'IdleTimerInterval'
       o_configName = 'CONFIG_ITI_IdleTimerInterval';
       o_configValue = str2double(a_floatConfValue);
@@ -344,7 +360,7 @@ switch (a_floatConfLabel)
       o_configValue = str2double(a_floatConfValue);
    case 'VitalsMask'
       o_configName = 'CONFIG_VM_VitalsMask';
-      o_configValue = str2double(a_floatConfValue);
+      o_configValue = hex2dec(a_floatConfValue);
    case 'CheckSum'
       % not considered
    case 'float_id'

@@ -1308,7 +1308,7 @@ floatCycleTime = listCycleTime(idFloat);
 
 % retrieve useful float meta-data
 [launchDate, preludeDuration, profilePressure, cycleDuration, dpfFloatFlag] = ...
-   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatLaunchDate, floatCycleTime);
+   get_apx_meta_data_for_cycle_number_determination(a_floatNum, floatLaunchDate, floatCycleTime, floatDecId);
 
 % minimum duration of the first deep cycle for a DPF float (first transmission
 % is expected to occur after an ascent/descent at profile pressure with an

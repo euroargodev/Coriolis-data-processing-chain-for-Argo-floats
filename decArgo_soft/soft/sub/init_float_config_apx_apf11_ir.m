@@ -40,6 +40,9 @@ g_decArgo_calibInfo = [];
 global g_decArgo_rtOffsetInfo;
 g_decArgo_rtOffsetInfo = [];
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % json meta-data file for this float
 jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
@@ -51,11 +54,12 @@ if ~(exist(jsonInputFileName, 'file') == 2)
 end
 
 % read meta-data file
-metaData = loadjson(jsonInputFileName);
+jsonMetaData = loadjson(jsonInputFileName);
+g_decArgo_jsonMetaData = jsonMetaData;
 
 % retrieve float username
-if (isfield(metaData, 'FLOAT_RUDICS_ID'))
-   o_floatRudicsId = metaData.FLOAT_RUDICS_ID;
+if (isfield(jsonMetaData, 'FLOAT_RUDICS_ID'))
+   o_floatRudicsId = jsonMetaData.FLOAT_RUDICS_ID;
 end
 if (isempty(o_floatRudicsId))
    fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
@@ -63,13 +67,17 @@ if (isempty(o_floatRudicsId))
 end
 
 % initialize the configuration with the json meta-data file contents
-configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
+configNames = struct2cell(jsonMetaData.CONFIG_PARAMETER_NAME);
 configValues = nan(length(configNames), 1);
 
-jConfValues = struct2cell(metaData.CONFIG_PARAMETER_VALUE);
+jConfValues = struct2cell(jsonMetaData.CONFIG_PARAMETER_VALUE);
 for id = 1:length(jConfValues)
    if (~isempty(jConfValues{id}))
-      configValues(id) = str2double(jConfValues{id});
+      if (strncmp(jConfValues{id}, '0x', 2))
+         configValues(id) = hex2dec(jConfValues{id}(3:end));
+      else
+         configValues(id) = str2double(jConfValues{id});
+      end
    end
 end
 
@@ -90,6 +98,6 @@ g_decArgo_floatConfig.USE.CYCLE = [];
 g_decArgo_floatConfig.USE.CONFIG = [];
 
 % retrieve the RT offsets
-g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(metaData);
+g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(jsonMetaData);
 
 return;
