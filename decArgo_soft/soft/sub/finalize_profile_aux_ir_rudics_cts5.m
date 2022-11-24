@@ -47,7 +47,7 @@ for idProf = 1:length(a_tabProfiles)
       end
       
       profStruct.paramList = [paramMtime profStruct.paramList];
-      profStruct.data = cat(2, mtimeData, profStruct.data);
+      profStruct.data = cat(2, mtimeData, double(profStruct.data));
       profStruct.paramNumberWithSubLevels = profStruct.paramNumberWithSubLevels + 1;
       
       a_tabProfiles(idProf) = profStruct;

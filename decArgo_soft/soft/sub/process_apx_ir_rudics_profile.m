@@ -77,9 +77,11 @@ if (~isempty(a_profLrData))
          profStructAux.sensorNumber = 101;
          idPres  = find(strcmp({profStruct.paramList.name}, 'PRES') == 1, 1);
          profStructAux.paramList = profStructAux.paramList(idPres);
-         profStructAux.data = profStructAux.data(:, idPres);
+         % BE CAREFUL: profStructAux.data should be a double precision array (to
+         % store final MTIME values with their full resolution
+         profStructAux.data = double(profStructAux.data(:, idPres));
          if (~isempty(profStructAux.dataAdj))
-            profStructAux.dataAdj = profStructAux.dataAdj(:, idPres);
+            profStructAux.dataAdj = double(profStructAux.dataAdj(:, idPres));
          end
          
          paramMtime = get_netcdf_param_attributes('MTIME');
@@ -210,9 +212,11 @@ if (~isempty(a_nearSurfData))
          profStructAux.sensorNumber = 101;
          idPres  = find(strcmp({profStruct.paramList.name}, 'PRES') == 1, 1);
          profStructAux.paramList = profStructAux.paramList(idPres);
-         profStructAux.data = profStructAux.data(:, idPres);
+         % BE CAREFUL: profStructAux.data should be a double precision array (to
+         % store final MTIME values with their full resolution
+         profStructAux.data = double(profStructAux.data(:, idPres));
          if (~isempty(profStructAux.dataAdj))
-            profStructAux.data = profStructAux.dataAdj(:, idPres);
+            profStructAux.data = double(profStructAux.dataAdj(:, idPres));
          end
          
          paramMtime = get_netcdf_param_attributes('MTIME');
