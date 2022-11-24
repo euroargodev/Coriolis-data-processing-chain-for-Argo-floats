@@ -231,12 +231,14 @@ else
       if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
          idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
          if (~isempty(idCyPrec))
-            idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
-            if (~isempty(idF2))
-               
-               measStruct = create_one_meas_float_time(g_MC_TET, ...
-                  a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
-               a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+            if (any(~isempty(a_tabTrajNMeas(idCyPrec).tabMeas)))
+               idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
+               if (~isempty(idF2))
+                  
+                  measStruct = create_one_meas_float_time(g_MC_TET, ...
+                     a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+                  a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+               end
             end
          end
       end
@@ -354,19 +356,21 @@ for idCy = 1:length(tabCyNum)
    end
    
    idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-   measCodeList = unique([a_tabTrajNMeas(idC).tabMeas.measCode]);
-   
-   % add MCs so that all expected ones will be present
-   mcList = setdiff(expMcList, measCodeList);
    measData = [];
-   for idMc = 1:length(mcList)
-      measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
-      measData = [measData; measStruct];
+   if (any(~isempty(a_tabTrajNMeas(idC).tabMeas)))
+      measCodeList = unique([a_tabTrajNMeas(idC).tabMeas.measCode]);
       
-      if (~isempty(a_tabTrajNCycle))
-         idF = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
-         if (~isempty(idF))
-            [a_tabTrajNCycle(idF)] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF), mcList(idMc), g_JULD_STATUS_9);
+      % add MCs so that all expected ones will be present
+      mcList = setdiff(expMcList, measCodeList);
+      for idMc = 1:length(mcList)
+         measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
+         measData = [measData; measStruct];
+         
+         if (~isempty(a_tabTrajNCycle))
+            idF = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
+            if (~isempty(idF))
+               [a_tabTrajNCycle(idF)] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF), mcList(idMc), g_JULD_STATUS_9);
+            end
          end
       end
    end

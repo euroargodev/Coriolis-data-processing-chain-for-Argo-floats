@@ -166,10 +166,12 @@ if (~isempty(id1) && ~isempty(id2))
    if (o_iceDetected == -1)
       [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
       ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-      if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-         o_iceDetected = 2;
-      else
-         o_iceDetected = 0;
+      if (~isempty(ic0Value))
+         if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
+            o_iceDetected = 2;
+         else
+            o_iceDetected = 0;
+         end
       end
    end
    
@@ -178,7 +180,7 @@ if (~isempty(id1) && ~isempty(id2))
    gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
    if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
       if (o_iceDetected == 0)
-         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %s\n', ...
+         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %d\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
             iceDetectionFlag, gpsValidFix, gpsSessionDuration);
       end
@@ -189,10 +191,12 @@ elseif (~isempty(id1))
       % retrieve the IC0 configuration parameter
       [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
       ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-      if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-         o_iceDetected = 2;
-      else
-         o_iceDetected = 0;
+      if (~isempty(ic0Value))
+         if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
+            o_iceDetected = 2;
+         else
+            o_iceDetected = 0;
+         end
       end
    end
    
@@ -201,7 +205,7 @@ elseif (~isempty(id1))
    gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
    if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
       if (o_iceDetected == 0)
-         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection: %d, GPS valid fix: %d, GPS session duration: %s\n', ...
+         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection: %d, GPS valid fix: %d, GPS session duration: %d\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, ...
             o_iceDetected, gpsValidFix, gpsSessionDuration);
       end

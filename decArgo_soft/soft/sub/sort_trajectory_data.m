@@ -48,28 +48,28 @@ if (~isempty(o_tabTrajNMeas))
             
             idTrajNMeasStruct = find([o_tabTrajNMeas.cycleNumber] == cycleNum);
             tabMeas = o_tabTrajNMeas(idTrajNMeasStruct).tabMeas;
-            
-            measCodeList = [tabMeas.measCode];
-            if (~isempty(setdiff(measCodeList, mcOrderList)))
-               fprintf('WARNING: Float #%d Cycle #%d: some MC are not in predefined ordered list (check get_mc_order_list)\n', ...
-                  g_decArgo_floatNum, ...
-                  cycleNum);
+            if (~isempty(tabMeas))
+               measCodeList = [tabMeas.measCode];
+               if (~isempty(setdiff(measCodeList, mcOrderList)))
+                  fprintf('WARNING: Float #%d Cycle #%d: some MC are not in predefined ordered list (check get_mc_order_list)\n', ...
+                     g_decArgo_floatNum, ...
+                     cycleNum);
+               end
+               newList = [];
+               for iMC = 1:length(mcOrderList)
+                  idForMeasCode = find(measCodeList == mcOrderList(iMC));
+                  newList = [newList idForMeasCode];
+               end
+               if (length(newList) == length(tabMeas))
+                  tabMeas = tabMeas(newList);
+               else
+                  fprintf('WARNING: Float #%d Cycle #%d: MC not sorted\n', ...
+                     g_decArgo_floatNum, ...
+                     cycleNum);
+               end
+               
+               o_tabTrajNMeas(idTrajNMeasStruct).tabMeas = tabMeas;
             end
-            newList = [];
-            for iMC = 1:length(mcOrderList)
-               idForMeasCode = find(measCodeList == mcOrderList(iMC));
-               newList = [newList idForMeasCode];
-            end
-            if (length(newList) == length(tabMeas))
-               tabMeas = tabMeas(newList);
-            else
-               fprintf('WARNING: Float #%d Cycle #%d: MC not sorted\n', ...
-                  g_decArgo_floatNum, ...
-                  cycleNum);
-            end
-            
-            o_tabTrajNMeas(idTrajNMeasStruct).tabMeas = tabMeas;
-            
          end
       end
       

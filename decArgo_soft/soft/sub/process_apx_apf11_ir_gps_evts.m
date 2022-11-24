@@ -29,7 +29,7 @@ global g_decArgo_janFirst1950InMatlab;
 
 PATTERN_TIME_TO_FIX_START = 'GPS TimeToFix:';
 PATTERN_TIME_TO_FIX_END = 'secs';
-PATTERN_FIX = 'GPS Fix: ';
+PATTERN_FIX = 'GPS Fix:';
 
 timeToFix = [];
 timeToFixEvtNum = -1;
