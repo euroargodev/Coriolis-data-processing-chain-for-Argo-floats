@@ -136,9 +136,11 @@ for idL = 1:size(cyclePatternNumFloat, 1)
       idFCycle = idFCy(idFC);
       idFPattern = idFPtn(idFP);
       idF = find(idFPattern > idFCycle);
-      idFPattern = idFPattern(idF(1));
-      cyclePatternNumFloat(idL, 3) = idFCycle;
-      cyclePatternNumFloat(idL, 4) = idFPattern;
+      if (~isempty(idF))
+         idFPattern = idFPattern(idF(1));
+         cyclePatternNumFloat(idL, 3) = idFCycle;
+         cyclePatternNumFloat(idL, 4) = idFPattern;
+      end
       
       if (ptnNum > 1)
          cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 4);

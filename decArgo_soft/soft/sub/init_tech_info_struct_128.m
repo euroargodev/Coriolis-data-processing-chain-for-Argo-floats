@@ -594,6 +594,7 @@ groundingDriftParkEscape.func1{end+1} = [];
 groundingDriftParkEscape.func2{end+1} = [];
 groundingDriftParkEscape.name{end+1} = 'grounding (during drift at park) number';
 groundingDriftParkEscape.fmt{end+1} = '%g';
+groundingDriftParkEscape.tech{end+1} = [];
 
 groundingDriftParkEscape.id{end+1} = 8;
 groundingDriftParkEscape.func{end+1} = [];
@@ -806,6 +807,7 @@ groundingDriftProfEscape.func1{end+1} = [];
 groundingDriftProfEscape.func2{end+1} = [];
 groundingDriftProfEscape.name{end+1} = 'grounding (during drift at prof) number';
 groundingDriftProfEscape.fmt{end+1} = '%g';
+groundingDriftProfEscape.tech{end+1} = [];
 
 groundingDriftProfEscape.id{end+1} = 8;
 groundingDriftProfEscape.func{end+1} = [];

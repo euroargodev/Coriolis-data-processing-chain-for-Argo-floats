@@ -420,9 +420,17 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idDel) = 1;
          
       case 6904111
-         % vector pressure sereived during second Iridium session
+         % vector pressure received during second Iridium session
          idBase = find((tabCyNumRaw == 8) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
          idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 800));
+         tabRank(idVectorPres) = tabRank(idBase);
+         tabCyNum(idVectorPres) = tabCyNum(idBase);
+         tabDone(idVectorPres) = tabDone(idBase);
+         tabDelayed(idVectorPres) = tabDelayed(idBase);
+         tabCompleted(idVectorPres) = tabCompleted(idBase);
+
+         idBase = find((tabCyNumRaw == 25) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idVectorPres = find((tabSession == tabSession(idBase)) & (tabCyNum == 2500));
          tabRank(idVectorPres) = tabRank(idBase);
          tabCyNum(idVectorPres) = tabCyNum(idBase);
          tabDone(idVectorPres) = tabDone(idBase);

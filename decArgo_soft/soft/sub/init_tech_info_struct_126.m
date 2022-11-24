@@ -593,6 +593,7 @@ groundingDriftParkEscape.func1{end+1} = [];
 groundingDriftParkEscape.func2{end+1} = [];
 groundingDriftParkEscape.name{end+1} = 'grounding (during drift at park) number';
 groundingDriftParkEscape.fmt{end+1} = '%g';
+groundingDriftParkEscape.tech{end+1} = [];
 
 groundingDriftParkEscape.id{end+1} = 8;
 groundingDriftParkEscape.func{end+1} = [];
@@ -805,6 +806,7 @@ groundingDriftProfEscape.func1{end+1} = [];
 groundingDriftProfEscape.func2{end+1} = [];
 groundingDriftProfEscape.name{end+1} = 'grounding (during drift at prof) number';
 groundingDriftProfEscape.fmt{end+1} = '%g';
+groundingDriftProfEscape.tech{end+1} = [];
 
 groundingDriftProfEscape.id{end+1} = 8;
 groundingDriftProfEscape.func{end+1} = [];
@@ -970,6 +972,8 @@ iceAbort.fmt{end+1} = '%g';
 iceAbort.tech{end+1} = get_cts5_tech_data_init_struct(211, 'Resumed ascent start date');
 iceAbort.tech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
 iceAbort.tech{end}.func1 = '@(x) adjust_time_cts5(x)';
+iceAbort.time{end+1} = [];
+iceAbort.traj{end+1} = [];
 % iceAbort.time{end+1} = get_cts5_time_data_init_struct(...
 %    'DESCENT TO PARK START TIME', 'JULD');
 % iceAbort.traj{end+1} = get_cts5_traj_data_init_struct(...
@@ -1161,6 +1165,7 @@ iceStabilizedDriftAtParkingDepth.func1{end+1} = '@(x) adjust_time_cts5(x)';
 iceStabilizedDriftAtParkingDepth.func2{end+1} = '@(x) julian_2_gregorian_dec_argo(x)';
 iceStabilizedDriftAtParkingDepth.name{end+1} = 'stabilized drift at parking depth start date (ice mode)';
 iceStabilizedDriftAtParkingDepth.fmt{end+1} = '%g';
+iceStabilizedDriftAtParkingDepth.tech{end+1} = [];
 iceStabilizedDriftAtParkingDepth.time{end+1} = get_cts5_time_data_init_struct(...
    'STABILIZED PARK START TIME', 'JULD');
 iceStabilizedDriftAtParkingDepth.traj{end+1} = [];
