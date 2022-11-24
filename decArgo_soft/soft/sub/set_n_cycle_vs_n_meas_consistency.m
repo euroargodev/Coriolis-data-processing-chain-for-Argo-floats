@@ -72,7 +72,7 @@ MC_LIST = [ ...
 for idNCy = 1:length(o_tabTrajNCycle)
    trajNCycle = o_tabTrajNCycle(idNCy);
    cycleNum = trajNCycle.outputCycleNumber;
-   
+
    idFNMeas = find([a_tabTrajNMeas.outputCycleNumber] == cycleNum);
    % check consistency for MC_LIST items
    for idMc = 1:size(MC_LIST, 1)
@@ -85,13 +85,19 @@ for idNCy = 1:length(o_tabTrajNCycle)
          trajNMeas = a_tabTrajNMeas(idFNMeas(idNMeas));
          if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == measCode))
             idF = find([trajNMeas.tabMeas.measCode] == measCode);
-            if (isempty(trajNMeas.tabMeas(idF).juldAdj) || ...
-                  (trajNMeas.tabMeas(idF).juldAdj == g_decArgo_ncDateDef))
-               juld = trajNMeas.tabMeas(idF).juld;
-               juldStatus = trajNMeas.tabMeas(idF).juldStatus;
+            if (length(idF) == 1)
+               if (isempty(trajNMeas.tabMeas(idF).juldAdj) || ...
+                     (trajNMeas.tabMeas(idF).juldAdj == g_decArgo_ncDateDef))
+                  juld = trajNMeas.tabMeas(idF).juld;
+                  juldStatus = trajNMeas.tabMeas(idF).juldStatus;
+               else
+                  juld = trajNMeas.tabMeas(idF).juldAdj;
+                  juldStatus = trajNMeas.tabMeas(idF).juldAdjStatus;
+               end
             else
-               juld = trajNMeas.tabMeas(idF).juldAdj;
-               juldStatus = trajNMeas.tabMeas(idF).juldAdjStatus;
+               fprintf('WARNING: Float #%d Cycle #%d: MC=%d is present %d times in the decoded data\n', ...
+                  g_decArgo_floatNum, cycleNum, ...
+                  measCode, length(idF));
             end
             if (isempty(juldFinal) || (juldFinal == g_decArgo_ncDateDef))
                juldFinal = juld;
