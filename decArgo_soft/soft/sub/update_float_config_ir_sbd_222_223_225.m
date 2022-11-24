@@ -218,11 +218,23 @@ if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~=
          % remove temporary static parameters
          g_decArgo_floatConfig.STATIC.NAMES(idDel) = [];
          g_decArgo_floatConfig.STATIC.VALUES(idDel) = [];
-         
+
+         % check if the first MC01 cycles are done
+         if (floatInternalCycleNumber < nbCyclesFirstMission)
+            g_decArgo_doneOnceFlag = 2; % update after MC01 cycles should be considered once again
+         else
+            g_decArgo_doneOnceFlag = 1; % no need to check again until alternatePeriod or pressureIncrement are modified
+         end
+      end
+   end
+
+   % check if the first MC01 cycles are done
+   if (g_decArgo_doneOnceFlag == 2)
+      if (floatInternalCycleNumber >= nbCyclesFirstMission)
          g_decArgo_doneOnceFlag = 1; % no need to check again until alternatePeriod or pressureIncrement are modified
       end
    end
-   
+
    % update PX00
    if (floatInternalCycleNumber > 0)
       
