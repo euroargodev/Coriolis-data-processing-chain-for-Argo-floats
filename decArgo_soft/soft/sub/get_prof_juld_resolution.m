@@ -44,7 +44,6 @@ switch (a_floatTransType)
          case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, ...
                1011, 1012, 1013, 1014, 1015, 1016}
             o_profJuldRes = double(1/86400); % 1 second
-            o_profJulDComment = '';
 
          otherwise
             fprintf('WARNING: Nothing done yet in get_prof_juld_resolution for decoderId #%d\n', ...
@@ -74,7 +73,6 @@ switch (a_floatTransType)
             
          case {2001, 2002}
             o_profJuldRes = double(1/86400); % 1 second
-            o_profJulDComment = '';
             
          otherwise
             fprintf('WARNING: No JULD profile resolution defined yet for float transmission type #%d and decoder Id #%d\n', ...
@@ -82,10 +80,24 @@ switch (a_floatTransType)
             
       end
       
-   case {4} % Iridium SBD ProvBioII floats
+   case {4} % Iridium SBD CTS4 & CTS5 floats
       
-      o_profJuldRes = double(1/1440); % 1 minute
-      o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';      
+      switch (a_decoderId)
+         
+         case {105, 106, 107, 109}
+            % CTS4 floats
+            o_profJuldRes = double(1/1440); % 1 minute
+            o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
+         
+         case {121}
+            % CTS5 floats
+            o_profJuldRes = double(1/86400); % 1 second
+         
+         otherwise
+            fprintf('WARNING: No JULD profile resolution defined yet for float transmission type #%d and decoder Id #%d\n', ...
+               a_floatTransType, a_decoderId);
+            
+      end
       
    otherwise
       fprintf('WARNING: No JULD profile resolution defined yet for float transmission type #%d\n', ...

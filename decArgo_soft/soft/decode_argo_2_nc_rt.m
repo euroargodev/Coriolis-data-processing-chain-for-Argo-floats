@@ -194,6 +194,17 @@ if (~isempty(g_decArgo_tmpArgosIdDirectory) && (exist(g_decArgo_tmpArgosIdDirect
    end
 end
 
+% when no configuration file has been selected, set the path of the XML report
+if (isempty(g_decArgo_dirOutputXmlFile))
+   if (ispc)
+      g_decArgo_dirOutputXmlFile = '.'; % local dir for windows
+   elseif (isunix)
+      g_decArgo_dirOutputXmlFile = '/tmp'; % local dir for windows
+   end
+   fprintf('WARNING: XML report is stored in ''%s'' directory\n', ...
+      g_decArgo_dirOutputXmlFile);
+end
+
 % create the XML report path file name
 if (~isempty(g_decArgo_xmlReportFileName))
    xmlFileName = [g_decArgo_dirOutputXmlFile '/' g_decArgo_xmlReportFileName];

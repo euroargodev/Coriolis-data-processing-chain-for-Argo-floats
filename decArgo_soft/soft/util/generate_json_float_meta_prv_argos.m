@@ -26,6 +26,7 @@ floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_P
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-52_20160701.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_6902665.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\1901181AndFriends_meta_20161208.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -118,7 +119,7 @@ refFloatList = load(floatListFileName);
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [3901000];
 % floatList = [6901881];
-% floatList = [6900967];
+floatList = [1901180 1901181 1901182];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))

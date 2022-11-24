@@ -122,7 +122,7 @@ if (allRsyncLogFlag == 1)
    end
 end
 
-% retrieve float login name
+% retrieve float login name and float decId
 [floatWmo, floatLoginName, ...
    floatDecVersion, floatDecId, ...
    floatFrameLen, ...
@@ -130,7 +130,7 @@ end
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
    floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatLoginName))
-   fprintf('ERROR: no information on float #%d => exit\n', g_decArgo_dirInputRsyncLog);
+   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
    return;
 end
@@ -173,11 +173,16 @@ end
 tabFloatSbdFiles = [];
 tabRsyncLogFiles = [];
 for idFile = 1:length(ryncLogList)
-   [floatLoginNameList, floatSbdFiles, rsyncLogName] = parse_rsync_log_ir_rudics(ryncLogList{idFile});
-   idF = find(strcmp(floatLoginName, floatLoginNameList) == 1);
-   if (~isempty(idF))
-      tabFloatSbdFiles = [tabFloatSbdFiles floatSbdFiles(idF)];
-      tabRsyncLogFiles = [tabRsyncLogFiles ryncLogList(idFile)];
+   if (~ismember(floatDecId, [121]))
+      % CTS4 Iridium RUDICS floats
+      floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
+   else
+      % CTS5 Iridium RUDICS floats
+      floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
+   end
+   if (~isempty(floatFiles))
+      tabFloatSbdFiles = [tabFloatSbdFiles floatFiles];
+      tabRsyncLogFiles = [tabRsyncLogFiles repmat(ryncLogList(idFile), size(floatFiles))];
    end
 end
 

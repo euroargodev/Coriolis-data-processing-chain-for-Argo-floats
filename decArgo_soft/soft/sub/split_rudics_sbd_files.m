@@ -55,7 +55,7 @@ for idFile = 1:length(sbdFiles)
          sbdData = reshape(sbdData, 140, size(sbdData, 1)/140)';
          for idMsg = 1:size(sbdData, 1)
             data = sbdData(idMsg, :);
-            if (~isempty(find(data ~= 0, 1)))
+            if ~(isempty(find(data ~= 0, 1)) || isempty(find(data ~= 26, 1)))
                save_mono_packet_sbd_files(data, sbdFileDate, loginNameFile, a_outputDirName, cyNumFile);
             end
          end

@@ -131,7 +131,8 @@ for outputCycleNumber = outputCycleNumberMin:outputCycleNumberMax
             
             for idParam = 1:length(parameterList)
                if (((parameterList(idParam).paramType ~= 'c') || ...
-                     strcmp(parameterList(idParam).name, 'PRES')) && ...
+                     strcmp(parameterList(idParam).name, 'PRES') || ...
+                     strcmp(parameterList(idParam).name, 'PRES2')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                   
@@ -459,7 +460,7 @@ if (nbProfParam > 0)
    % global quality of PARAM profile
    for idParam = 1:length(profUniqueParamName)
       profParamName = profUniqueParamName{idParam};
-      if ~(strcmp(profParamName, 'PRES'))
+      if (~strcmp(profParamName, 'PRES') && ~strcmp(profParamName, 'PRES2'))
          ncParamName = sprintf('PROFILE_%s_QC', profParamName);
          
          profileParamQcVarId = netcdf.defVar(fCdf, ncParamName, 'NC_CHAR', nProfDimId);
@@ -491,7 +492,8 @@ if (nbProfParam > 0)
          for idParam = 1:length(parameterList)
             
             if ((parameterList(idParam).paramType ~= 'c') || ...
-                  strcmp(parameterList(idParam).name, 'PRES'))
+                  strcmp(parameterList(idParam).name, 'PRES') || ...
+                  strcmp(parameterList(idParam).name, 'PRES2'))
                
                profParam = parameterList(idParam);
                profParamName = profParam.name;
@@ -788,7 +790,8 @@ if (nbProfParam > 0)
          for idParam = 1:length(parameterList)
             
             if (((parameterList(idParam).paramType ~= 'c') || ...
-                  strcmp(parameterList(idParam).name, 'PRES')) && ...
+                  strcmp(parameterList(idParam).name, 'PRES') || ...
+                  strcmp(parameterList(idParam).name, 'PRES2')) && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                
@@ -953,7 +956,8 @@ if (nbProfParam > 0)
          for idParam = 1:length(parameterList)
             
             if ((parameterList(idParam).paramType ~= 'c') || ...
-                  strcmp(parameterList(idParam).name, 'PRES'))
+                  strcmp(parameterList(idParam).name, 'PRES') || ...
+                  strcmp(parameterList(idParam).name, 'PRES2'))
                
                profParam = parameterList(idParam);
                
@@ -964,7 +968,7 @@ if (nbProfParam > 0)
                
                % parameter QC variable and attributes
                profParamQcVarId = '';
-               if ~(strcmp(profParam.name, 'PRES') || ...
+               if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
                      strcmp(profParam.name(end-3:end), '_STD') || ...
                      strcmp(profParam.name(end-3:end), '_MED'))
                   profParamQcName = sprintf('%s_QC', profParam.name);
@@ -1003,7 +1007,7 @@ if (nbProfParam > 0)
                         idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                         paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                         
-                        if ~(strcmp(profParam.name, 'PRES') || ...
+                        if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
                               strcmp(profParam.name(end-3:end), '_STD') || ...
                               strcmp(profParam.name(end-3:end), '_MED'))
                            profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
@@ -1098,7 +1102,7 @@ if (nbProfParam > 0)
                         idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                         paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                         
-                        if ~(strcmp(profParam.name, 'PRES') || ...
+                        if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
                               strcmp(profParam.name(end-3:end), '_STD') || ...
                               strcmp(profParam.name(end-3:end), '_MED'))
                            profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
@@ -1330,6 +1334,36 @@ if (nbProfParam > 0)
             calibInfo{end+1} = profCalibInfo;
          end
          
+         % add specific comment for PRES2 parameter
+         if (~isempty(find(strcmp({prof.paramList.name}, 'PRES2') == 1, 1)))
+            
+            comment = '';
+            date = '';
+            if (adjustedProfilesList(idP) == 1)
+               comment = 'Not applicable';
+               if (isempty(ncCreationDate))
+                  date = currentDate;
+               else
+                  date = ncCreationDate;
+               end
+            end
+            tabParam = {'PRES2'};
+            tabEquation = {{comment}};
+            tabCoefficient = {{comment}};
+            tabComment = {{'Adjusted values are provided in the core profile file'}};
+            tabDate = {{date}};
+            
+            % store calibration information for this profile
+            profCalibInfo = [];
+            profCalibInfo.profId = idP;
+            profCalibInfo.param = tabParam;
+            profCalibInfo.equation = tabEquation;
+            profCalibInfo.coefficient = tabCoefficient;
+            profCalibInfo.comment = tabComment;
+            profCalibInfo.date = tabDate;
+            calibInfo{end+1} = profCalibInfo;
+         end
+         
          % NO SINCE THE OTHER PARAMETERS ARE in 'R' MODE (NOT DUPLICATED)
          %          % add a SCIENTIFIC_CALIB_COMMENT for duplicated data
          %          calibList = [calibInfo{:}];
@@ -1448,7 +1482,8 @@ if (nbProfParam > 0)
          for idParam = 1:length(parameterList)
             
             if (((parameterList(idParam).paramType ~= 'c') || ...
-                  strcmp(parameterList(idParam).name, 'PRES')) && ...
+                  strcmp(parameterList(idParam).name, 'PRES') || ...
+                  strcmp(parameterList(idParam).name, 'PRES2')) && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                   ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                

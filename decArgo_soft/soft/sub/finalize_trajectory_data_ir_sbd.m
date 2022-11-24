@@ -116,7 +116,7 @@ idDel = [];
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
-   
+
    idCyDeep = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 0));
    if (length(idCyDeep) > 1)
       fprintf('ERROR: Float #%d cycle #%d: %d deep N_MEASUREMENT records => only the first one is considered\n', ...
@@ -127,12 +127,12 @@ for idCy = 1:length(tabCyNum)
    
    idCySurf = find(([a_tabTrajNMeas.cycleNumber] == cycleNum) & ([a_tabTrajNMeas.surfOnly] == 1));
    if (length(idCySurf) > 1)
-      if (cycleNum > 1)
-         % new firmware (ARN) transmits 2 tech message for cycle #0
-         fprintf('INFO: Float #%d cycle #%d: %d surf N_MEASUREMENT records\n', ...
-            g_decArgo_floatNum, cycleNum, ...
-            length(idCySurf));
-      end
+      %       if (cycleNum > 1)
+      %          % new firmware (ARN) transmits 2 tech message for cycle #0
+      %          fprintf('INFO: Float #%d cycle #%d: %d surf N_MEASUREMENT records\n', ...
+      %             g_decArgo_floatNum, cycleNum, ...
+      %             length(idCySurf));
+      %       end
       idDel = [idDel idCySurf(1:end-1)];
    end
 end
@@ -260,9 +260,9 @@ if (~isempty(a_tabTrajNCycle))
       
       idCySurf = find(([a_tabTrajNCycle.cycleNumber] == cycleNum) & ([a_tabTrajNCycle.surfOnly] == 1));
       if (length(idCySurf) > 1)
-         fprintf('INFO: Float #%d cycle #%d: %d surf N_CYCLE records\n', ...
-            g_decArgo_floatNum, cycleNum, ...
-            length(idCySurf));
+         %          fprintf('INFO: Float #%d cycle #%d: %d surf N_CYCLE records\n', ...
+         %             g_decArgo_floatNum, cycleNum, ...
+         %             length(idCySurf));
          idDelFinal = [idDelFinal idCySurf(1:end-1)];
       end
    end

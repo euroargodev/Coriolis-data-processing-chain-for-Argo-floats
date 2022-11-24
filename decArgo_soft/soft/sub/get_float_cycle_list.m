@@ -4,12 +4,13 @@
 %
 % SYNTAX :
 %  [o_cycleList, o_excludedCycleList] = get_float_cycle_list( ...
-%    a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate)
+%    a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, )
 %
 % INPUT PARAMETERS :
 %   a_floatNum            : float WMO number
 %   a_floatArgosIridiumId : float PTT number
 %   a_floatLaunchDate     : float launch data
+%   a_decoderId           : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cycleList         : existing cycle Argos/Iridium data files
@@ -24,7 +25,7 @@
 %   03/13/2011 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_cycleList, o_excludedCycleList] = get_float_cycle_list( ...
-   a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate)
+   a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, a_decoderId)
 
 % output parameters initialization
 o_cycleList = [];
@@ -42,8 +43,15 @@ if (g_decArgo_floatTransType == 1)
 elseif (g_decArgo_floatTransType == 2)
    
    % Iridium RUDICS floats
-   [o_cycleList] = get_float_cycle_list_iridium_rudics(a_floatNum, char(a_floatArgosIridiumId));
-
+   
+      if (~ismember(a_decoderId, [121]))
+         % CTS4 Iridium RUDICS floats
+         [o_cycleList] = get_float_cycle_list_iridium_rudics_cts4(a_floatNum, char(a_floatArgosIridiumId));
+      else
+         % CTS5 Iridium RUDICS floats
+         [o_cycleList] = get_float_cycle_list_iridium_rudics_cts5(a_floatNum, char(a_floatArgosIridiumId));
+      end
+      
 elseif ((g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
    
    % Iridium SBD floats

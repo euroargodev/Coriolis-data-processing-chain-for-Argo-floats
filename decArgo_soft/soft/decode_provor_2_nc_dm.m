@@ -151,6 +151,17 @@ catch
    
 end
 
+% when no configuration file has been selected, set the path of the XML report
+if (isempty(g_decArgo_dirOutputXmlFile))
+   if (ispc)
+      g_decArgo_dirOutputXmlFile = '.'; % local dir for windows
+   elseif (isunix)
+      g_decArgo_dirOutputXmlFile = '/tmp'; % local dir for windows
+   end
+   fprintf('WARNING: XML report is stored in ''%s'' directory\n', ...
+      g_decArgo_dirOutputXmlFile);
+end
+
 % create the XML report path file name
 if (~isempty(g_decArgo_xmlReportFileName))
    xmlFileName = [g_decArgo_dirOutputXmlFile '/' g_decArgo_xmlReportFileName];
@@ -160,8 +171,8 @@ end
 
 % save the XML report
 xmlwrite(xmlFileName, g_decArgo_xmlReportDOMNode);
-if (strcmp(status, 'nok') == 1)
-   edit(xmlFileName);
-end
+% if (strcmp(status, 'nok') == 1)
+%    edit(xmlFileName);
+% end
 
 return;

@@ -55,6 +55,9 @@ o_structConfig = [];
 global g_decArgo_floatNum;
 g_decArgo_floatNum = a_floatNum;
 
+% current cycle number
+global g_decArgo_cycleNum;
+
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
 
@@ -146,6 +149,10 @@ g_decArgo_firstDeepCycleDone = 0;
 % number of the previous decoded cycle
 global g_decArgo_cycleNumPrev;
 g_decArgo_cycleNumPrev = -1;
+
+% shift to apply to transmitted cycle number (see 6901248)
+global g_decArgo_cycleNumShift;
+g_decArgo_cycleNumShift = 0;
 
 % already processed rsync log information
 global g_decArgo_rsyncLogFileUnderProcessList;
@@ -417,7 +424,7 @@ if (g_decArgo_realtimeFlag)
          tabNcTechIndex, tabNcTechVal] = ...
          decode_sbd_files( ...
          tabFileNames, tabFileDates, tabFileSizes, ...
-         a_decoderId, a_launchDate, 0);
+         a_decoderId, a_launchDate, []);
       
       if (~isempty(tabProfiles))
          o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -695,7 +702,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
             g_decArgo_nbOf14Or12TypePacketExpected = 0;
             
          case {205} % Arvor Iridium 5.41 & 5.42
-            
+
             % decode the collected data
             decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
             
@@ -925,12 +932,36 @@ global g_decArgo_outputNcParamValue;
 % RT processing flag
 global g_decArgo_realtimeFlag;
 
+% flag to detect a second Iridium session
+global g_decArgo_secondIridiumSession;
+
 % report information structure
 global g_decArgo_reportStruct;
 
 % SBD sub-directories
 global g_decArgo_bufferDirectory;
 global g_decArgo_archiveSbdDirectory;
+
+% arrays to store rough information on received data
+global g_decArgo_0TypePacketReceivedFlag;
+global g_decArgo_4TypePacketReceivedFlag;
+global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
+global g_decArgo_nbOf1Or8TypePacketExpected;
+global g_decArgo_nbOf1Or8TypePacketReceived;
+global g_decArgo_nbOf2Or9TypePacketExpected;
+global g_decArgo_nbOf2Or9TypePacketReceived;
+global g_decArgo_nbOf3Or10TypePacketExpected;
+global g_decArgo_nbOf3Or10TypePacketReceived;
+global g_decArgo_nbOf13Or11TypePacketExpected;
+global g_decArgo_nbOf13Or11TypePacketReceived;
+global g_decArgo_nbOf14Or12TypePacketExpected;
+global g_decArgo_nbOf14Or12TypePacketReceived;
 
 % array to store GPS data
 global g_decArgo_gpsData;
@@ -1016,6 +1047,31 @@ for idFile = 1:length(a_sbdFileNameList)
    end
 end
 
+% decode from buffer list mode
+if (isempty(a_completedBuffer))
+
+   % initialize information arrays
+   g_decArgo_0TypePacketReceivedFlag = 0;
+   g_decArgo_4TypePacketReceivedFlag = 0;
+   g_decArgo_5TypePacketReceivedFlag = 0;
+   g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
+   g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
+   g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
+   g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
+   g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
+   g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
+   g_decArgo_nbOf1Or8TypePacketExpected = -1;
+   g_decArgo_nbOf1Or8TypePacketReceived = 0;
+   g_decArgo_nbOf2Or9TypePacketExpected = -1;
+   g_decArgo_nbOf2Or9TypePacketReceived = 0;
+   g_decArgo_nbOf3Or10TypePacketExpected = -1;
+   g_decArgo_nbOf3Or10TypePacketReceived = 0;
+   g_decArgo_nbOf13Or11TypePacketExpected = -1;
+   g_decArgo_nbOf13Or11TypePacketReceived = 0;
+   g_decArgo_nbOf14Or12TypePacketExpected = -1;
+   g_decArgo_nbOf14Or12TypePacketReceived = 0;
+end
+
 % decode the data
 
 switch (a_decoderId)
@@ -1024,14 +1080,36 @@ switch (a_decoderId)
    
    case {201, 203} % Arvor-deep 4000
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
-         decode_prv_data_ir_sbd_201_203(sbdDataData, sbdDataDate, 1, a_decoderId);
+         decode_prv_data_ir_sbd_201_203(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone, a_decoderId);
+      
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
+      
+      if (deepCycle == 1)
+         g_decArgo_firstDeepCycleDone = 1;
+      end
       
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
@@ -1050,7 +1128,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -1257,14 +1335,32 @@ switch (a_decoderId)
       
    case {202} % Arvor-deep 3500
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_202(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
       
       if ((deepCycle == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
@@ -1296,7 +1392,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -1503,16 +1599,38 @@ switch (a_decoderId)
       
    case {204} % Arvor Iridium 5.4
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech, dataCTD, floatParam, deepCycle] = ...
-         decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 1);
+         decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
-      if (a_completedBuffer == 0)
+      completedBuffer = a_completedBuffer;
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         % type 5 packets are not concerned by this decoder
+         g_decArgo_5TypePacketReceivedFlag = 1;
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
+      
+      if (completedBuffer == 0)
          if (isempty(tabTech) && ~isempty(dataCTD))
             [cycleNumber] = estimate_cycle_number(dataCTD, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
@@ -1554,7 +1672,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -1735,17 +1853,39 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
    case {205} % Arvor Iridium 5.41 & 5.42
-      
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
+
       % decode the collected data
       [tabTech, dataCTD, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
-      if (a_completedBuffer == 0)
+      completedBuffer = a_completedBuffer;
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         % type 5 packets are not concerned by this decoder
+         g_decArgo_5TypePacketReceivedFlag = 1;
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
+      
+      if (completedBuffer == 0)
          if (isempty(tabTech) && ~isempty(dataCTD))
             [cycleNumber] = estimate_cycle_number(dataCTD, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
@@ -1787,7 +1927,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -1970,16 +2110,38 @@ switch (a_decoderId)
       
    case {206, 207, 208} % Provor-DO Iridium 5.71 & 5.7 & 5.72
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech, dataCTDO, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_206_207_208(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
-      if (a_completedBuffer == 0)
+      completedBuffer = a_completedBuffer;
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         % type 5 packets are not concerned by this decoder
+         g_decArgo_5TypePacketReceivedFlag = 1;
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
+      
+      if (completedBuffer == 0)
          if (isempty(tabTech) && ~isempty(dataCTDO))
             [cycleNumber] = estimate_cycle_number(dataCTDO, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
@@ -2021,7 +2183,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -2267,16 +2429,38 @@ switch (a_decoderId)
       
    case {209} % Arvor-2DO Iridium 5.73
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech, dataCTDO, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_209(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
-      if (a_completedBuffer == 0)
+      completedBuffer = a_completedBuffer;
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         % type 4 packets are not concerned by this decoder
+         g_decArgo_4TypePacketReceivedFlag = 1;
+         
+         g_decArgo_nbOf1Or8TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10TypePacketExpected = 0;
+         g_decArgo_nbOf13Or11TypePacketExpected = 0;
+         g_decArgo_nbOf14Or12TypePacketExpected = 0;
+         
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+         if (g_decArgo_secondIridiumSession == 0)
+            deepCycle = 1;
+         else
+            deepCycle = 0;
+         end
+      end
+      
+      if (completedBuffer == 0)
          if (isempty(tabTech) && ~isempty(dataCTDO))
             [cycleNumber] = estimate_cycle_number_209(dataCTDO, g_decArgo_cycleNum, g_decArgo_julD2FloatDayOffset);
             g_decArgo_cycleNum = cycleNumber;
@@ -2318,7 +2502,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech, a_decoderId);
+      store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);
@@ -2606,15 +2790,26 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {210, 211} % Arvor-ARN Iridium
       
-      if (a_completedBuffer == 0)
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd(1, a_decoderId);
-      end
-      
       % decode the collected data
       [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum] = ...
          decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 1, a_decoderId);
-                  
+      
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd(1, a_decoderId);
+         end
+      else
+         % decode from buffer list mode
+         
+         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
+         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
+         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
+         
+         is_buffer_completed_ir_sbd(0, a_decoderId);
+      end
+                        
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
          g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
@@ -2637,7 +2832,7 @@ switch (a_decoderId)
       
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
-      store_gps_data_ir_sbd(tabTech1, a_decoderId);
+      store_gps_data_ir_sbd(tabTech1, g_decArgo_cycleNum, a_decoderId);
       
       % assign cycle number to Iridium mails currently processed
       update_mail_data_ir_sbd(a_sbdFileNameList);

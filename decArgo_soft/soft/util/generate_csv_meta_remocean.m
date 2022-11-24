@@ -22,15 +22,12 @@ function generate_csv_meta_remocean(varargin)
 
 % calibration coefficients decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % show mode state decoded from data
 showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\ShowMode\show_mode.txt';
-showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\ShowMode\show_mode.txt';
 
 % SUNA output pixel numbers decoded from data
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
-outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';

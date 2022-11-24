@@ -33,7 +33,7 @@ global g_decArgo_dateDef;
 init_default_values;
 
 % directory to store the log and CSV files
-DIR_LOG_FILE = 'C:\users\RNU\Argo\work\';
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % if we only want to check existing split SBD files
 CHECK_BUFF_ONLY = 0;
@@ -120,8 +120,8 @@ for idFloat = 1:nbFloats
       return;
    end
    
-   inputDirName = [irDataDirName '/' logName '/archive/'];
-   outputDirName = [irDataDirName '/' logName '/archive_dm/'];
+   inputDirName = [irDataDirName '/' logName '_' floatNumStr '/archive/'];
+   outputDirName = [irDataDirName '/' logName '_' floatNumStr '/archive_dm/'];
    
    idF = find(numWmo == floatNum, 1);
    if (isempty(idF))

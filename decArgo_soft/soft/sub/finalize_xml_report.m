@@ -70,6 +70,13 @@ for idFloat = 1:length(g_decArgo_reportData)
       newChild.appendChild(newChildBis);
    end
    
+   for idFile = 1:length(reportStruct.outputMetaAuxFiles)
+      newChildBis = docNode.createElement('output_meta_aux_file');
+      textNode = char(reportStruct.outputMetaAuxFiles(idFile));
+      newChildBis.appendChild(docNode.createTextNode(textNode));
+      newChild.appendChild(newChildBis);
+   end
+   
    fileList = reportStruct.outputMonoProfFiles;
    while (~isempty(fileList))
       filePathName = fileList{1};
@@ -93,13 +100,20 @@ for idFloat = 1:length(g_decArgo_reportData)
       end
    end
    
+   for idFile = 1:length(reportStruct.outputMonoProfAuxFiles)
+      newChildBis = docNode.createElement('output_mono-profile_aux_file');
+      textNode = char(reportStruct.outputMonoProfAuxFiles(idFile));
+      newChildBis.appendChild(docNode.createTextNode(textNode));
+      newChild.appendChild(newChildBis);
+   end
+   
    for idFile = 1:length(reportStruct.outputMultiProfFiles)
       newChildBis = docNode.createElement('output_multi-profile_file');
       textNode = char(reportStruct.outputMultiProfFiles(idFile));
       newChildBis.appendChild(docNode.createTextNode(textNode));
       newChild.appendChild(newChildBis);
    end
-   
+      
    for idFile = 1:length(reportStruct.outputTrajFiles)
       newChildBis = docNode.createElement('output_trajectory_file');
       textNode = char(reportStruct.outputTrajFiles(idFile));
@@ -107,9 +121,23 @@ for idFloat = 1:length(g_decArgo_reportData)
       newChild.appendChild(newChildBis);
    end
    
+   for idFile = 1:length(reportStruct.outputTrajAuxFiles)
+      newChildBis = docNode.createElement('output_trajectory_aux_file');
+      textNode = char(reportStruct.outputTrajAuxFiles(idFile));
+      newChildBis.appendChild(docNode.createTextNode(textNode));
+      newChild.appendChild(newChildBis);
+   end
+   
    for idFile = 1:length(reportStruct.outputTechFiles)
       newChildBis = docNode.createElement('output_technical_file');
       textNode = char(reportStruct.outputTechFiles(idFile));
+      newChildBis.appendChild(docNode.createTextNode(textNode));
+      newChild.appendChild(newChildBis);
+   end
+
+   for idFile = 1:length(reportStruct.outputTechAuxFiles)
+      newChildBis = docNode.createElement('output_technical_aux_file');
+      textNode = char(reportStruct.outputTechAuxFiles(idFile));
       newChildBis.appendChild(docNode.createTextNode(textNode));
       newChild.appendChild(newChildBis);
    end

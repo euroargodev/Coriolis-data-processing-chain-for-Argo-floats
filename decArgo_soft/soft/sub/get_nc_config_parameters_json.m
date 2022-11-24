@@ -2,7 +2,7 @@
 % Get NetCDF configuration parameters from _conf_param_name_decid.json file.
 %
 % SYNTAX :
-%  [o_ncParamIds, o_ncParamNames] = get_nc_config_parameters_json( ...
+%  [o_ncParamIds, o_ncParamNames, o_ncParamDescriptions] = get_nc_config_parameters_json( ...
 %    a_ncConfigParamListDir, a_decoderId)
 % 
 % INPUT PARAMETERS :
@@ -10,8 +10,9 @@
 %   a_decoderId            : float decoder Id
 % 
 % OUTPUT PARAMETERS :
-%   o_ncParamIds   : NetCDF configuration parameter numbers
-%   o_ncParamNames : NetCDF configuration parameter names
+%   o_ncParamIds          : NetCDF configuration parameter numbers
+%   o_ncParamNames        : NetCDF configuration parameter names
+%   o_ncParamDescriptions : NetCDF configuration parameter descriptions
 % 
 % EXAMPLES :
 % 
@@ -21,12 +22,13 @@
 % RELEASES :
 %   15/09/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncParamIds, o_ncParamNames] = get_nc_config_parameters_json( ...
+function [o_ncParamIds, o_ncParamNames, o_ncParamDescriptions] = get_nc_config_parameters_json( ...
    a_ncConfigParamListDir, a_decoderId)
 
 % output parameters initialization
 o_ncParamIds = [];
 o_ncParamNames = [];
+o_ncParamDescriptions = [];
 
 % configuration parameter list file name
 jsonInputFileName = [a_ncConfigParamListDir '/' sprintf('_config_param_name_%d.json', a_decoderId)];
@@ -45,7 +47,7 @@ for idField = 1:length(confDataFieldNames)
    switch (a_decoderId)
       case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
-      case {105, 106, 107, 108, 109}
+      case {105, 106, 107, 108, 109, 121}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
       case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
@@ -62,10 +64,12 @@ for idField = 1:length(confDataFieldNames)
          fprintf('WARNING: Nothing done yet in get_nc_config_parameters_json for decoderId #%d\n', a_decoderId);
    end
    o_ncParamNames{idField} = confItemData.CONF_PARAM_NAME;
+   o_ncParamDescriptions{idField} = confItemData.CONF_PARAM_DESCRIPTION;
 end
 
 % sort the parameter names
 [o_ncParamNames, idSort] = sort(o_ncParamNames);
 o_ncParamIds = o_ncParamIds(idSort);
+o_ncParamDescriptions = o_ncParamDescriptions(idSort);
 
 return;

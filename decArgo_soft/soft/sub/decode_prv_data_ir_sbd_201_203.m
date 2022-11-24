@@ -5,14 +5,17 @@
 %  [o_tabTech, ...
 %    o_dataCTD, o_dataCTDO, ...
 %    o_evAct, o_pumpAct, o_floatParam, o_deepCycle] = ...
-%    decode_prv_data_ir_sbd_201_203(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
+%    decode_prv_data_ir_sbd_201_203(a_tabData, a_tabDataDates, ...
+%    a_procLevel, a_firstDeepCycleDone, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_tabData      : data frame to decode
-%   a_tabDataDates : corresponding dates of Iridium SBD
-%   a_procLevel    : processing level (0: collect only rough information, 1:
-%                    decode the data)
-%   a_decoderId    : float decoder Id
+%   a_tabData            : data frame to decode
+%   a_tabDataDates       : corresponding dates of Iridium SBD
+%   a_procLevel          : processing level (0: collect only rough information,
+%                          1: decode the data)
+%   a_firstDeepCycleDone : first deep cycle done flag (1 if the first deep cycle
+%                          has been done)
+%   a_decoderId          : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTech     : decoded technical data
@@ -34,7 +37,8 @@
 function [o_tabTech, ...
    o_dataCTD, o_dataCTDO, ...
    o_evAct, o_pumpAct, o_floatParam, o_deepCycle] = ...
-   decode_prv_data_ir_sbd_201_203(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
+   decode_prv_data_ir_sbd_201_203(a_tabData, a_tabDataDates, ...
+   a_procLevel, a_firstDeepCycleDone, a_decoderId)
 
 % output parameters initialization
 o_tabTech = [];
@@ -50,6 +54,9 @@ global g_decArgo_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
+
+% shift to apply to transmitted cycle number (see 6901248)
+global g_decArgo_cycleNumShift;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -80,6 +87,7 @@ global g_decArgo_generateNcTech;
 
 
 % decode packet data
+floatCycleNumber = [];
 for idMes = 1:size(a_tabData, 1)
    % packet type
    packType = a_tabData(idMes, 1);
@@ -101,8 +109,8 @@ for idMes = 1:size(a_tabData, 1)
       case 0
          % float technical #1 packet
          
+         g_decArgo_0TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_0TypePacketReceivedFlag = 1;
             continue;
          end
          
@@ -130,10 +138,12 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
-         % set cycle number
-         g_decArgo_cycleNum = tabTech(1);
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
-
+         % set float cycle number
+         floatCycleNumber = tabTech(1);
+         if (a_firstDeepCycleDone == 0)
+            g_decArgo_cycleNumShift = floatCycleNumber - 1;
+         end
+         
          % compute the offset between float days and julian days
          startDateInfo = [tabTech(2:4); tabTech(6)];
          if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
@@ -147,13 +157,6 @@ for idMes = 1:size(a_tabData, 1)
                end
             end
             g_decArgo_julD2FloatDayOffset = cycleStartDateDay - tabTech(5);
-            
-            % if the cycle start time is present, it is a deep cycle
-            o_deepCycle = 1;
-         else
-            % if the cycle start time is not present, the transmission has been
-            % done during the prelude or a second Iridium session or in EOL mode
-            o_deepCycle = 0;
          end
          
          % compute float time
@@ -178,12 +181,7 @@ for idMes = 1:size(a_tabData, 1)
          tabTech = [packType tabTech(1:76)' ones(1, 4)*-1 floatTime gpsLocLon gpsLocLat sbdFileDate];
          
          o_tabTech = [o_tabTech; tabTech];
-         
-         % output NetCDF files
-         if (g_decArgo_generateNcTech ~= 0)
-            store_tech1_data_for_nc_201_202_203(o_tabTech, o_deepCycle);
-         end
-         
+                  
          %          fprintf('Packet type : %d\n', packType);
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,23 +206,39 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
+         g_decArgo_4TypePacketReceivedFlag = 1;
+         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(1);
+         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(2);
+         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(3);
          if (a_procLevel == 0)
-            g_decArgo_4TypePacketReceivedFlag = 1;
-            g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(1);
-            g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(2);
-            g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(3);
             continue;
          end
+         
+         % message and measurement counts are set to 0 for a surface cycle
+         if ((length(unique(tabTech(1:8))) == 1) && (unique(tabTech(1:8)) == 0))
+            o_deepCycle = 0;
+         else
+            o_deepCycle = 1;
+         end
+         
+         % set cycle number
+         if (~isempty(floatCycleNumber))
+            if ((a_firstDeepCycleDone == 0) && (o_deepCycle == 0))
+               g_decArgo_cycleNum = 0;
+            else
+               g_decArgo_cycleNum = floatCycleNumber - g_decArgo_cycleNumShift;
+            end
+         else
+            fprintf('ERROR: Float #%d Cycle #%d: Msg tech#2 has been received before Msg tech#1\n', ...
+               g_decArgo_floatNum, ...
+               g_decArgo_cycleNum);
+         end
+         fprintf('cyle #%d\n', g_decArgo_cycleNum);
          
          tabTech = [packType tabTech(1:83)' sbdFileDate];
          
          o_tabTech = [o_tabTech; tabTech];
-         
-         % output NetCDF files
-         if (g_decArgo_generateNcTech ~= 0)
-            store_tech2_data_for_nc_201_203(o_tabTech, o_deepCycle, a_decoderId);
-         end
-         
+                  
          %          fprintf('Packet type : %d\n', packType);
          %          fprintf('- nb packets CTDO desc. : %d\n', tabTech(2));
          %          fprintf('- nb packets CTDO drift : %d\n', tabTech(3));
@@ -382,7 +396,7 @@ for idMes = 1:size(a_tabData, 1)
             tabPres = [tabPres; ones(8, 1)*g_decArgo_presCountsDef];
             tabTemp = [tabTemp; ones(8, 1)*g_decArgo_tempCountsDef];
             tabPsal = [tabPsal; ones(8, 1)*g_decArgo_salCountsDef];
-
+            
             o_dataCTD = [o_dataCTD; ...
                packType-7 tabDate' ones(1, length(tabDate))*-1 tabPres' tabTemp' tabPsal'];
             
@@ -456,8 +470,8 @@ for idMes = 1:size(a_tabData, 1)
       case 5
          % parameter packet
          
+         g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_5TypePacketReceivedFlag = 1;
             continue;
          end
          
@@ -495,6 +509,18 @@ for idMes = 1:size(a_tabData, 1)
    end
 end
 
+% output NetCDF files
+if (a_procLevel ~= 0)
+   if (g_decArgo_generateNcTech ~= 0)
+      if (~isempty(o_tabTech))
+         idFTech1 = find(o_tabTech(:, 1) == 0);
+         store_tech1_data_for_nc_201_202_203(o_tabTech(idFTech1, :), o_deepCycle);
+         idFTech2 = find(o_tabTech(:, 1) == 4);
+         store_tech2_data_for_nc_201_203(o_tabTech(idFTech2, :), o_deepCycle, a_decoderId);
+      end
+   end
+end
+         
 % if the DO sensor failed during the profile some packets have CTD only and
 % others CTDO (Ex: 6901760 descending profile #1)
 % we should merge data so that only o_dataCTDO output array should be empty
@@ -518,7 +544,7 @@ if (~isempty(o_dataCTD) && ~isempty(o_dataCTDO))
    idDef = find(tempDoxy == 65535);
    tempDoxy(idDef) = g_decArgo_tempDoxyCountsDef;
    o_dataCTDO(:, 51:57) = tempDoxy;
-
+   
    o_dataCTD = [];
 end
 

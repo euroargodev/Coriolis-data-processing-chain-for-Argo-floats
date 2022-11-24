@@ -69,6 +69,85 @@ metaData = loadjson(jsonInputFileName);
 % update the meta-data contents
 metaData = update_meta_data(metaData, a_decoderId);
 
+% collect AUX meta-data information
+% for SENSOR
+sensorAux = [];
+metaDataAux = [];
+metaDataAux.DATA_CENTRE = metaData.DATA_CENTRE;
+metaDataAux.PLATFORM_NUMBER = metaData.PLATFORM_NUMBER;
+metaDataAux.FLOAT_SERIAL_NO = metaData.FLOAT_SERIAL_NO;
+fieldSensorList = [ ...
+   {'SENSOR'} ...
+   {'SENSOR_MAKER'} ...
+   {'SENSOR_MODEL'} ...
+   {'SENSOR_SERIAL_NO'} ...
+   ];
+if (~isempty(metaData.(fieldSensorList{1})))
+   tabSensor = metaData.(fieldSensorList{1});
+   idAux = [];
+   fieldNames = fieldnames(tabSensor);
+   for idF = 1:length(fieldNames)
+      sensorName = tabSensor.(fieldNames{idF});
+      if (strncmp(sensorName, 'AUX_', length('AUX_')))
+         idAux = [idAux idF];
+         sensorAux{end+1} = sensorName;
+      end
+   end
+   if (~isempty(idAux))
+      for idFS = 1:length(fieldSensorList)
+         item = fieldSensorList{idFS};
+         if (~isempty(metaData.(item)))
+            tabData = metaData.(item);
+            tabDataAux = [];
+            for id = 1:length(idAux)
+               tabDataAux.([item '_' num2str(idAux(id))]) = tabData.([item '_' num2str(idAux(id))]);
+               tabData = rmfield(tabData, [item '_' num2str(idAux(id))]);
+            end
+            metaData.(item) = tabData;
+            metaDataAux.(item) = tabDataAux;
+         end
+      end
+   end
+end
+
+% for PARAMETER
+fieldParamList = [ ...
+   {'PARAMETER_SENSOR'} ...
+   {'PARAMETER'} ...
+   {'PARAMETER_UNITS'} ...
+   {'PARAMETER_ACCURACY'} ...
+   {'PARAMETER_RESOLUTION'} ...
+   {'PREDEPLOYMENT_CALIB_EQUATION'} ...
+   {'PREDEPLOYMENT_CALIB_COEFFICIENT'} ...
+   {'PREDEPLOYMENT_CALIB_COMMENT'} ...
+   ];
+if (~isempty(metaData.(fieldParamList{1})))
+   tabParam = metaData.(fieldParamList{1});
+   idAux = [];
+   fieldNames = fieldnames(tabParam);
+   for idF = 1:length(fieldNames)
+      sensorName = tabParam.(fieldNames{idF});
+      if (any(strcmp(sensorName, sensorAux)))
+         idAux = [idAux idF];
+      end
+   end
+   if (~isempty(idAux))
+      for idFS = 1:length(fieldParamList)
+         item = fieldParamList{idFS};
+         if (~isempty(metaData.(item)))
+            tabData = metaData.(item);
+            tabDataAux = [];
+            for id = 1:length(idAux)
+               tabDataAux.([item '_' num2str(idAux(id))]) = tabData.([item '_' num2str(idAux(id))]);
+               tabData = rmfield(tabData, [item '_' num2str(idAux(id))]);
+            end
+            metaData.(item) = tabData;
+            metaDataAux.(item) = tabDataAux;
+         end
+      end
+   end
+end
+
 % collect dimensions in input meta-data
 nbSensor = 0;
 if (~isempty(metaData.SENSOR))
@@ -410,7 +489,165 @@ switch (a_decoderId)
       end
       
       nbConfigParam = length(missionConfigName);
+
+   case {121}
       
+      % CTS5 floats
+      
+      % select Argo and Auxiliary configuration information
+      staticConfigName = a_structConfig.STATIC_NC.NAMES;
+      staticConfigValue = a_structConfig.STATIC_NC.VALUES;
+      
+      inputStaticConfigName = [];
+      inputStaticConfigValue = [];
+      inputAuxStaticConfigName = [];
+      inputAuxStaticConfigValue = [];
+      inputAuxMetaName = [];
+      inputAuxMetaValue = [];
+      for idC = 1:length(staticConfigName)
+         if (strncmp(staticConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            inputAuxStaticConfigName = [inputAuxStaticConfigName; staticConfigName(idC)];
+            inputAuxStaticConfigValue = [inputAuxStaticConfigValue; staticConfigValue(idC)];
+         elseif (strncmp(staticConfigName{idC}, 'META_AUX_', length('META_AUX_')))
+            inputAuxMetaName = [inputAuxMetaName; staticConfigName(idC)];
+            inputAuxMetaValue = [inputAuxMetaValue; staticConfigValue(idC)];
+         elseif (strncmp(staticConfigName{idC}, 'META_', length('META_')))
+            % not used
+         else
+            inputStaticConfigName = [inputStaticConfigName; staticConfigName(idC)];
+            inputStaticConfigValue = [inputStaticConfigValue; staticConfigValue(idC)];
+         end
+      end
+      
+      %       dynamicConfigName = a_structConfig.DYNAMIC_NC.NAMES;
+      %       dynamicConfigValue = a_structConfig.DYNAMIC_NC.VALUES;
+      %
+      %       inputDynamicConfigName = [];
+      %       inputDynamicConfigValue = [];
+      %       inputAuxDynamicConfigName = [];
+      %       inputAuxDynamicConfigValue = [];
+      %       for idC = 1:length(dynamicConfigName)
+      %          if (strncmp(dynamicConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+      %             inputAuxDynamicConfigName = [inputAuxDynamicConfigName; dynamicConfigName(idC)];
+      %             inputAuxDynamicConfigValue = [inputAuxDynamicConfigValue; dynamicConfigValue(idC, :)];
+      %          elseif (strncmp(dynamicConfigName{idC}, 'META_AUX_', length('META_AUX_')))
+      %             inputAuxMetaName = [inputAuxMetaName; dynamicConfigName(idC)];
+      %             inputAuxMetaValue = [inputAuxMetaValue; dynamicConfigValue(idC, :)];
+      %          elseif (strncmp(dynamicConfigName{idC}, 'META_', length('META_')))
+      %             % not used
+      %          else
+      %             inputDynamicConfigName = [inputDynamicConfigName; dynamicConfigName(idC)];
+      %             inputDynamicConfigValue = [inputDynamicConfigValue; dynamicConfigValue(idC, :)];
+      %          end
+      %       end
+      
+      % we create the dynamic configurations including AUX parameters (they will
+      % be selected later)
+      inputDynamicConfigName = a_structConfig.DYNAMIC_NC.NAMES;
+      inputDynamicConfigValue = a_structConfig.DYNAMIC_NC.VALUES;
+      
+      % retrieve mandatory configuration names for this decoder
+      [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
+      
+      % concat the input configuration information      
+      configName = [inputStaticConfigName; inputDynamicConfigName];
+      
+      mandatoryList = [];
+      for idL = 1:length(mandatoryConfigName)
+         for idC = 1:length(configName)
+            if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
+               mandatoryList = [mandatoryList idC];
+               if (idL < length(mandatoryConfigName))
+                  break;
+               end
+            end
+         end
+      end
+      
+      if (~isempty(inputStaticConfigValue))
+         staticConfigValue = nan(size(inputStaticConfigValue, 1), size(inputDynamicConfigValue, 2));
+         inputStaticConfigValue = regexprep(inputStaticConfigValue, 'True', '1');
+         inputStaticConfigValue = regexprep(inputStaticConfigValue, 'False', '0');
+         staticConfigValue(:, 1) = str2num(char(inputStaticConfigValue));
+         
+         configValue = cat(1, staticConfigValue, inputDynamicConfigValue);
+      else
+         configValue = inputDynamicConfigValue;
+      end
+      
+      % create the launch configuration
+      launchConfigName = configName;
+      launchConfigValue = configValue(:, 1);
+
+      % clean AUX parameters from output Argo launch configuration
+      launchAuxConfigName = [];
+      launchAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(launchConfigName)
+         if (strncmp(launchConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            launchAuxConfigName = [launchAuxConfigName; launchConfigName(idC)];
+            launchAuxConfigValue = [launchAuxConfigValue; launchConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      launchConfigName(idDel) = [];
+      launchConfigValue(idDel, :) = [];
+      
+      nbLaunchConfigParam = length(launchConfigName);
+      
+      % create the mission configuration
+      missionConfigName = configName;
+      missionConfigValue = configValue;
+      
+      if (size(configValue, 2) > 1)
+         idDel = [];
+         for idL = 1:size(missionConfigValue, 1)
+            if (sum(isnan(missionConfigValue(idL, 2:end))) == size(missionConfigValue, 2)-1)
+               idDel = [idDel; idL];
+            elseif ((length(unique(missionConfigValue(idL, 2:end))) == 1) && ...
+                  (unique(missionConfigValue(idL, 2:end)) == missionConfigValue(idL, 1)))
+               idDel = [idDel; idL];
+            end
+         end
+         idDel = setdiff(idDel, mandatoryList);
+         missionConfigName(idDel) = [];
+         missionConfigValue(idDel, :) = [];
+         % don't keep launch mission
+         missionConfigValue(:, 1) = [];
+         configMissionNumber = a_structConfig.DYNAMIC_NC.NUMBER(2:end);
+      else
+         missionConfigName = configName(mandatoryList);
+         missionConfigValue = configValue(mandatoryList, 1);
+         configMissionNumber = 1;
+      end
+      
+      % clean AUX parameters from output Argo configuration
+      missionAuxConfigName = [];
+      missionAuxConfigValue = [];
+      idDel = [];
+      for idC = 1:length(missionConfigName)
+         if (strncmp(missionConfigName{idC}, 'CONFIG_AUX_', length('CONFIG_AUX_')))
+            missionAuxConfigName = [missionAuxConfigName; missionConfigName(idC)];
+            missionAuxConfigValue = [missionAuxConfigValue; missionConfigValue(idC, :)];
+            idDel = [idDel; idC];
+         end
+      end
+      missionConfigName(idDel) = [];
+      missionConfigValue(idDel, :) = [];
+
+      % create/update NetCDF META_AUX file
+      if (isfield(metaDataAux, 'SENSOR') || ~isempty(inputAuxStaticConfigName) || ...
+            ~isempty(missionAuxConfigName) || ~isempty(inputAuxMetaName))
+         create_nc_meta_aux_file( ...
+            inputAuxMetaName, inputAuxMetaValue, ...
+            inputAuxStaticConfigName, inputAuxStaticConfigValue, ...
+            launchAuxConfigName, launchAuxConfigValue, ...
+            missionAuxConfigName, missionAuxConfigValue, configMissionNumber, ...
+            metaDataAux);
+      end
+      
+      nbConfigParam = length(missionConfigName);
+
    case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211}
       
       % Arvor deep 4000
@@ -773,7 +1010,6 @@ if (VERBOSE_MODE == 2)
    fprintf('N_SENSOR = %d\n', nbSensor);
    fprintf('N_CONFIG_PARAM = %d\n', nbConfigParam);
    fprintf('N_LAUNCH_CONFIG_PARAM = %d\n', nbLaunchConfigParam);
-   fprintf('N_MISSIONS = %d\n', nbMission);
    fprintf('N_POSITIONING_SYSTEM = %d\n', nbPositioningSystem);
    fprintf('N_TRANS_SYSTEM = %d\n', length(nbTransSystem));
 end

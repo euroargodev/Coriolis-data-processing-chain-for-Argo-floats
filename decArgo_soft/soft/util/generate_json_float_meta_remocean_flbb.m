@@ -39,7 +39,6 @@ fprintf('Generating json meta-data files for floats of the list: %s\n', floatLis
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 % inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\FLBB\';

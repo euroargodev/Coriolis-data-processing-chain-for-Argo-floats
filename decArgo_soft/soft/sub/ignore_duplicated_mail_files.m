@@ -64,17 +64,26 @@ if (g_decArgo_virtualBuff)
             for idD = 1:length(idF)
                [mailContents] = read_mail(tabFileName{idF(idD)}, g_decArgo_archiveDirectory);
                msgSize(idD) = mailContents.messageSize;
-               cepRadius(idD) = mailContents.cepRadius;
+               if (~isempty(mailContents.cepRadius))
+                  cepRadius(idD) = mailContents.cepRadius;
+               else
+                  cepRadius(idD) = intmax;
+               end
             end
-            idToDel = [];
-            if (length(find(msgSize > 0)) > 1)
-               idF2 = find(msgSize > 0);
+            idF2 = find(msgSize > 0);
+            if (length(idF2) > 1)
                [~, idMin] = min(cepRadius(idF2));
-               idToDel = setdiff(idF2, idF2(idMin));
+               idToKeep = idF(idF2(idMin));
+            elseif (length(idF2) == 1)
+               idToKeep = idF(idF2);
+            else
+               [~, idMin] = min(cepRadius);
+               idToKeep = idF(idMin);
             end
+            idToDel = setdiff(idF, idToKeep);
             for idD = 1:length(idToDel)
                % move the mail file to the archive directory
-               mailFileName = tabFileName{idF(idToDel(idD))};
+               mailFileName = tabFileName{idToDel(idD)};
                fprintf('DEC_INFO: Ignoring duplicated mail file: %s\n', mailFileName);
                remove_from_list_ir_sbd(mailFileName, 'spool', 0);
             end
@@ -110,17 +119,26 @@ else
             for idD = 1:length(idF)
                [mailContents] = read_mail(tabFileName{idF(idD)}, g_decArgo_spoolDirectory);
                msgSize(idD) = mailContents.messageSize;
-               cepRadius(idD) = mailContents.cepRadius;
+               if (~isempty(mailContents.cepRadius))
+                  cepRadius(idD) = mailContents.cepRadius;
+               else
+                  cepRadius(idD) = intmax;
+               end
             end
-            idToDel = [];
-            if (length(find(msgSize > 0)) > 1)
-               idF2 = find(msgSize > 0);
+            idF2 = find(msgSize > 0);
+            if (length(idF2) > 1)
                [~, idMin] = min(cepRadius(idF2));
-               idToDel = setdiff(idF2, idF2(idMin));
+               idToKeep = idF(idF2(idMin));
+            elseif (length(idF2) == 1)
+               idToKeep = idF(idF2);
+            else
+               [~, idMin] = min(cepRadius);
+               idToKeep = idF(idMin);
             end
+            idToDel = setdiff(idF, idToKeep);
             for idD = 1:length(idToDel)
                % move the mail file to the archive directory
-               mailFileName = tabFileName{idF(idToDel(idD))};
+               mailFileName = tabFileName{idToDel(idD)};
                fprintf('DEC_INFO: Ignoring duplicated mail file: %s\n', mailFileName);
                fileNameIn = [a_spoolDir '/' mailFileName];
                fileNamOut = [a_archiveDir '/' mailFileName];

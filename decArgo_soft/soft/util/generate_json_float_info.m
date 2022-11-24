@@ -22,11 +22,11 @@
 function generate_json_float_info()
 
 % common float information file
-floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NOVA.txt';
+% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NOVA.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
+floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
 % floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_REM_sbd.txt';
-floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp.txt';
+% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APMT.txt';
 
 % directory of individual json float information files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_float_info_files_' datestr(now, 'yyyymmddTHHMMSS')];

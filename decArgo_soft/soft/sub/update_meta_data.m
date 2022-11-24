@@ -294,7 +294,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
       
-   case {106, 301, 202, 207, 208, 107, 109, 201, 203, 206}
+   case {106, 301, 202, 207, 208, 107, 109, 201, 203, 206, 121}
       paramList = [ ...
          {'TEMP_DOXY'} ...
          {'C1PHASE_DOXY'} ...
@@ -425,7 +425,7 @@ global g_decArgo_floatNum;
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 109}
+   case {105, 106, 107, 109, 121}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -503,7 +503,7 @@ global g_decArgo_floatNum;
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107}
+   case {105, 106, 107, 121}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -598,11 +598,14 @@ global g_decArgo_floatNum;
 
 paramList = [];
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 301, 302, 303}
-      paramList = [ ...
-         {'FLUORESCENCE_CHLA'} ...
-         {'CHLA'} ...
-         ];
+   case {105, 106, 107, 108, 109, 301, 302, 303, 121}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'FLUORESCENCE_CHLA'} ...
+            {'CHLA'} ...
+            ];
+      end
    case {1015}
       paramList = [ ...
          {'FLUORESCENCE_CHLA'} ...
@@ -1682,7 +1685,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
       
-   case {107, 109, 201, 203, 206}
+   case {107, 109, 201, 203, 206, 121}
       % CASE_202_205_304
       switch (a_paramName)
          
@@ -2562,7 +2565,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 109}
+   case {105, 106, 107, 109, 121}
       switch (a_paramName)
          
          case {'UV_INTENSITY_NITRATE'}
@@ -2737,7 +2740,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107}
+   case {105, 106, 107, 121}
       switch (a_paramName)
          
          case {'BETA_BACKSCATTERING700'}
@@ -2963,7 +2966,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {105, 106, 107, 108, 109}
+   case {105, 106, 107, 108, 109, 121}
       switch (a_paramName)
          
          case {'FLUORESCENCE_CHLA'}

@@ -42,6 +42,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% shift to apply to transmitted cycle number (see 6901248)
+global g_decArgo_cycleNumShift;
+
 % default values
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
@@ -62,53 +65,6 @@ global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 % decoder configuration values
 global g_decArgo_generateNcTech;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
-
-% if it is the first deep cycle or if the first deep cycle already occured, we
-% add 1 to cycle numbers
-if (a_procLevel ~= 0)
-   if (a_firstDeepCycleDone == 0)
-      
-      % we try to find if it is the first deep cycle
-      idTechPacket = find(a_tabData(:, 1) == 0);
-      for idMes = 1:length(idTechPacket)
-         
-         % message data frame
-         msgData = a_tabData(idTechPacket(idMes), 2:end);
-         
-         % first item bit number
-         firstBit = 1;
-         % item bit lengths
-         tabNbBits = [ ...
-            8 16 ...
-            16 8 ...
-            16 16 16 8 8 8 8 ...
-            repmat(8, 1, 6) ...
-            16 16 8 8 8 ...
-            repmat(8, 1, 6) ...
-            16 16 8 ...
-            repmat(8, 1, 8) ...
-            8 16 16 ...
-            repmat(8, 1, 11) ...
-            8 8 8 16 ...
-            8 16 8 8 8 ...
-            8 8 ...
-            8 8 16 8 8 8 16 8 8 ...
-            repmat(8, 1, 11) ...
-            ];
-         % get item bits
-         tabTech = get_bits(firstBit, tabNbBits, msgData);
-         
-         % subsurface information are set to 0 for a surface cycle
-         if ~((length(unique(tabTech(3:42))) == 1) && (unique(tabTech(3:42)) == 0))
-            a_firstDeepCycleDone = 1;
-            break;
-         end
-      end
-   end
-end
 
 % decode packet data
 for idMes = 1:size(a_tabData, 1)
@@ -150,16 +106,13 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
+         g_decArgo_0TypePacketReceivedFlag = 1;
+         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(32);
+         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(33);
+         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(34);
          if (a_procLevel == 0)
-            g_decArgo_0TypePacketReceivedFlag = 1;
-            g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(32);
-            g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(33);
-            g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(34);
             continue;
          end
-         
-         % add one to cycle numbers (except for the prelude phase)
-         tabTech(2) = tabTech(2) + a_firstDeepCycleDone;
          
          % some pressures are given in bars
          tabTech(10) = tabTech(10)*10;
@@ -171,22 +124,24 @@ for idMes = 1:size(a_tabData, 1)
          tabTech(28) = tabTech(28)*10;
          tabTech(55) = tabTech(55)*10;
          tabTech(60) = tabTech(60)*10;
-
-         % set cycle number
-         g_decArgo_cycleNum = tabTech(2);
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
-
-         % subsurface information are set to 0 for a surface cycle
-         if (g_decArgo_secondIridiumSession == 0)
-            if ((length(unique(tabTech(3:42))) == 1) && (unique(tabTech(3:42)) == 0))
-               o_deepCycle = 0;
-            else
-               o_deepCycle = 1;
-            end
-         else
+         
+         % message and measurement counts are set to 0 for a surface cycle
+         if ((length(unique(tabTech(32:39))) == 1) && (unique(tabTech(32:39)) == 0))
             o_deepCycle = 0;
+         else
+            o_deepCycle = 1;
          end
          
+         % set cycle number
+         floatCycleNumber = tabTech(2);
+         if ((a_firstDeepCycleDone == 0) && (o_deepCycle == 0))
+            g_decArgo_cycleNumShift = floatCycleNumber;
+            g_decArgo_cycleNum = 0;
+         else
+            g_decArgo_cycleNum = floatCycleNumber - g_decArgo_cycleNumShift + 1;
+         end
+         fprintf('cyle #%d\n', g_decArgo_cycleNum);
+                  
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(43:48)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          
@@ -208,18 +163,18 @@ for idMes = 1:size(a_tabData, 1)
          
          o_tabTech = [o_tabTech; ...
             packType tabTech(1:73)' floatTime gpsLocLon gpsLocLat sbdFileDate];
-
+         
          % output NetCDF files
          if (g_decArgo_generateNcTech ~= 0)
             store_tech_data_for_nc_204_to_208(o_tabTech, o_deepCycle);
          end
-                  
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {1, 2, 3}
          % CTD packets
          
          o_deepCycle = 1;
-
+         
          if (a_procLevel == 0)
             if (packType == 1)
                g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
@@ -257,7 +212,7 @@ for idMes = 1:size(a_tabData, 1)
             if (idBin > 1)
                measDate = g_decArgo_dateDef;
             else
-%                fprintf('Relative day: %f\n', ctdValues(1)/24);
+               %                fprintf('Relative day: %f\n', ctdValues(1)/24);
                measDate = ctdValues(1)/24 + ...
                   ctdValues(2)/1440 + ctdValues(3)/86400;
             end
@@ -287,8 +242,8 @@ for idMes = 1:size(a_tabData, 1)
       case 4
          % parameter packet
          
+         g_decArgo_4TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_4TypePacketReceivedFlag = 1;
             continue;
          end
          
@@ -307,7 +262,7 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabParam = get_bits(firstBit, tabNbBits, msgData);
          tabParam(8) = tabParam(8) + 1;
-
+         
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(1:6)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          

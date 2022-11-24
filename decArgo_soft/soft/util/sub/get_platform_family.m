@@ -41,6 +41,10 @@ switch (a_decoderId)
       % PROVOR REMOCEAN
       o_platformFamily = 'FLOAT';
       
+   case {121}
+      % PROVOR CTS5
+      o_platformFamily = 'FLOAT';
+      
    case {201, 202, 203}
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';

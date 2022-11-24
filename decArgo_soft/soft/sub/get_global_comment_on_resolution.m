@@ -40,6 +40,10 @@ switch (a_decoderId)
       % PROVOR REMOCEAN & ARVOR CM
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
+   case {121}
+      % PROVOR APMT
+      o_comment = 'PRES variable resolutions depend on measurement codes';
+      
    case {201, 202, 203}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500

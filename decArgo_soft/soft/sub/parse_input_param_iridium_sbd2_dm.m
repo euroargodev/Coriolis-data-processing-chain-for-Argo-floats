@@ -88,7 +88,7 @@ end
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
    floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatImei))
-   fprintf('ERROR: no information on float #%d => exit\n', g_decArgo_dirInputRsyncLog);
+   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
    return;
 end

@@ -114,12 +114,12 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
+         g_decArgo_1TypePacketReceived = 1;
+         g_decArgo_nbOf2To4TypePacketExpected = tabTech(25);
+         g_decArgo_nbOf10To29TypePacketExpected = tabTech(22);
+         g_decArgo_nbOf30To49TypePacketExpected = tabTech(20);
+         g_decArgo_nbOf50To55TypePacketExpected = tabTech(24);
          if (a_procLevel == 0)
-            g_decArgo_1TypePacketReceived = 1;
-            g_decArgo_nbOf2To4TypePacketExpected = tabTech(25);
-            g_decArgo_nbOf10To29TypePacketExpected = tabTech(22);
-            g_decArgo_nbOf30To49TypePacketExpected = tabTech(20);
-            g_decArgo_nbOf50To55TypePacketExpected = tabTech(24);
             continue;
          end
          
@@ -140,22 +140,22 @@ for idMes = 1:size(a_tabData, 1)
          tabTech(38:39) = tabTech(38:39)*1e-7 - 214.7483648;
          tabTech(48) = tabTech(48) + 2000;
          tabTech(50) = tabTech(50)*2;
-
+         
          o_tabTech = [o_tabTech; ...
             tabTech(30) tabTech' sbdFileDate];
-      
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {2, 3, 4}
          % hydraulic packet
-                 
+         
+         g_decArgo_nbOf2To4TypePacketReceived = g_decArgo_nbOf2To4TypePacketReceived + 1;
          if (a_procLevel == 0)
-            g_decArgo_nbOf2To4TypePacketReceived = g_decArgo_nbOf2To4TypePacketReceived + 1;
             continue;
          end
          
          % compute the number of pressure points in the hydraulic packet
          nbPresPoints = floor((a_tabData(idMes, 2) - 1)/7); % 7 bytes for each
-                  
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -180,19 +180,19 @@ for idMes = 1:size(a_tabData, 1)
             o_dataHydrau = [o_dataHydrau; ...
                packType tabHydrau(1) tabHydrau((idH-1)*4+2:(idH-1)*4+5)' sbdFileDate];
          end
-      
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {5}
          % acknowledgment packet
-                  
+         
+         g_decArgo_5TypePacketReceived = 1;
          if (a_procLevel == 0)
-            g_decArgo_5TypePacketReceived = 1;
             continue;
          end
          
          % determine if it is a deep cycle
          o_deepCycle = 0;
-
+         
          % compute the number of commands in the acknowledgment packet
          nbCmd = floor(a_tabData(idMes, 2)/5); % 5 bytes for each
          
@@ -215,7 +215,7 @@ for idMes = 1:size(a_tabData, 1)
             o_dataAck = [o_dataAck; ...
                tabAck((idC-1)*4+1:(idC-1)*4+4)' sbdFileDate];
          end
-      
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, ...
             30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, ...
@@ -223,18 +223,18 @@ for idMes = 1:size(a_tabData, 1)
          % ascent data packet
          % descent data packet
          % drift data packet
-                  
+         
+         if ((packType >= 10) && (packType <= 29))
+            % ascent data packet
+            g_decArgo_nbOf10To29TypePacketReceived = g_decArgo_nbOf10To29TypePacketReceived + 1;
+         elseif ((packType >= 30) && (packType <= 49))
+            % descent data packet
+            g_decArgo_nbOf30To49TypePacketReceived = g_decArgo_nbOf30To49TypePacketReceived + 1;
+         elseif ((packType >= 50) && (packType <= 53))
+            % drift data packet
+            g_decArgo_nbOf50To55TypePacketReceived = g_decArgo_nbOf50To55TypePacketReceived + 1;
+         end
          if (a_procLevel == 0)
-            if ((packType >= 10) && (packType <= 29))
-               % ascent data packet
-               g_decArgo_nbOf10To29TypePacketReceived = g_decArgo_nbOf10To29TypePacketReceived + 1;
-            elseif ((packType >= 30) && (packType <= 49))
-               % descent data packet
-               g_decArgo_nbOf30To49TypePacketReceived = g_decArgo_nbOf30To49TypePacketReceived + 1;
-            elseif ((packType >= 50) && (packType <= 53))
-               % drift data packet
-               g_decArgo_nbOf50To55TypePacketReceived = g_decArgo_nbOf50To55TypePacketReceived + 1;
-            end
             continue;
          end
          
@@ -243,7 +243,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % compute the number Of CTD samples in the data packet
          nbMeas = floor((a_tabData(idMes, 2) - 2)/10); % 10 bytes for each
-                  
+         
          % first item bit number
          firstBit = 1;
          % item bit lengths
@@ -267,7 +267,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % store cycle number
          tabCycleNum = [tabCycleNum tabData(1)];
-
+         
          % decode the retrieved data
          tabDate = ones(NB_MEAS_MAX_DOVA, 1)*g_decArgo_dateDef;
          tabPres = ones(NB_MEAS_MAX_DOVA, 1)*g_decArgo_presCountsDef;
@@ -275,7 +275,7 @@ for idMes = 1:size(a_tabData, 1)
          tabPsal = ones(NB_MEAS_MAX_DOVA, 1)*g_decArgo_salCountsDef;
          tabTempDoxy = ones(NB_MEAS_MAX_DOVA, 1)*g_decArgo_tempDoxyCountsDef;
          tabPhaseDelayDoxy = ones(NB_MEAS_MAX_DOVA, 1)*g_decArgo_phaseDelayDoxyCountsDef;
-
+         
          for idM = 1:nbMeas
             if (idM > 1)
                measDate = g_decArgo_dateDef;
@@ -293,7 +293,7 @@ for idMes = 1:size(a_tabData, 1)
          
          o_dataCTDO = [o_dataCTDO; ...
             packType tabData(1) nbMeas tabDate' tabPres' tabTemp' tabPsal' tabTempDoxy' tabPhaseDelayDoxy' sbdFileDate];
-
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d\n', ...
             g_decArgo_floatNum, ...
@@ -355,5 +355,5 @@ if (a_procLevel > 0)
       end
    end
 end
-         
+
 return;

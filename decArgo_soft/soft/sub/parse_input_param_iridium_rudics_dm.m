@@ -88,7 +88,7 @@ end
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
    floatRefDay, floatEndDate, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatLoginName))
-   fprintf('ERROR: no information on float #%d => exit\n', g_decArgo_dirInputRsyncLog);
+   fprintf('ERROR: no information on float #%d => exit\n', floatWmo);
    o_inputError = 1;
    return;
 end
@@ -109,7 +109,7 @@ if (checkRsyncLog == 1)
    [ryncLogList] = get_rsync_log_dir_file_names_ir_rudics(g_decArgo_dirInputRsyncLog);
    
    for idFile = 1:length(ryncLogList)
-      [floatLoginNameList, floatSbdFiles, rsyncLogName] = parse_rsync_log_ir_rudics(ryncLogList{idFile});
+      [floatLoginNameList, floatSbdFiles, rsyncLogName] = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile});
       idF = find(strcmp(floatLoginName, floatLoginNameList) == 1);
       tabFloatSbdFiles = [tabFloatSbdFiles floatSbdFiles(idF)];
    end

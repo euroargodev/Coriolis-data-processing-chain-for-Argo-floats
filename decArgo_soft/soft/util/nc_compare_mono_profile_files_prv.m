@@ -26,6 +26,7 @@ DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_fi
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decApx_rt\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\nc_new\';
+DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST - ori\nc_output_decArgo_courant_dun coup\';
 
 % top directory of new NetCDF mono-profile files
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\IN\NC_CONVERTION_TO_3.1\NC_files_nke_old_versions_to_convert_to_3.1_fromArchive201510\';
@@ -33,6 +34,7 @@ DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NC_CONVERTION_TO_3.1\nke_o
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decApx\';
 DIR_INPUT_NEW_NC_FILES = 'E:\archive_201510\201510-ArgoData\DATA\coriolis\';
 DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\nc_ori\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST - ori\nc_output_decArgo_courant_buffersréelsduncoup\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';

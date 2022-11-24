@@ -3,12 +3,14 @@
 %
 % SYNTAX :
 %  create_nc_tech_file(a_decoderId, ...
-%    a_tabNcTechIndex, a_tabNcTechVal, a_tabNcTechLabelInfo, a_metaDataFromJson)
+%    a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, ...
+%    a_tabNcTechLabelInfo, a_metaDataFromJson)
 %
 % INPUT PARAMETERS :
 %   a_decoderId          : float decoder Id
 %   a_tabNcTechIndex     : index information on technical data
-%   a_tabNcTechVal       : values of thecnical data
+%   a_tabNcTechVal       : values of technical data
+%   a_tabTechNMeas       : values of technical parameter data
 %   a_tabNcTechLabelInfo : additional information for technical labels
 %   a_metaDataFromJson   : additional information retrieved from JSON meta-data
 %                          file
@@ -24,7 +26,8 @@
 %   03/31/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function create_nc_tech_file(a_decoderId, ...
-   a_tabNcTechIndex, a_tabNcTechVal, a_tabNcTechLabelInfo, a_metaDataFromJson)
+   a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, ...
+   a_tabNcTechLabelInfo, a_metaDataFromJson)
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
@@ -105,8 +108,8 @@ if (g_decArgo_floatTransType == 1)
       end
    end
       
-   create_nc_tech_file_3_1( ...
-      a_tabNcTechIndex, a_tabNcTechVal, a_tabNcTechLabelInfo, a_metaDataFromJson);
+   create_nc_tech_file_3_1(a_decoderId, ...
+      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabNcTechLabelInfo, a_metaDataFromJson);
    
 elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
@@ -119,8 +122,8 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
       return;
    end
    
-   create_nc_tech_file_3_1( ...
-      a_tabNcTechIndex, a_tabNcTechVal, a_tabNcTechLabelInfo, a_metaDataFromJson);
+   create_nc_tech_file_3_1(a_decoderId, ...
+      a_tabNcTechIndex, a_tabNcTechVal, a_tabTechNMeas, a_tabNcTechLabelInfo, a_metaDataFromJson);
    
 end
 

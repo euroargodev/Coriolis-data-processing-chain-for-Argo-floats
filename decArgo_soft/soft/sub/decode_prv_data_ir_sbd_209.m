@@ -42,6 +42,9 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% shift to apply to transmitted cycle number (see 6901248)
+global g_decArgo_cycleNumShift;
+
 % default values
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
@@ -65,51 +68,6 @@ global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 % decoder configuration values
 global g_decArgo_generateNcTech;
 
-
-% if it is the first deep cycle or if the first deep cycle already occured, we
-% add 1 to cycle numbers
-if (a_procLevel ~= 0)
-   if (a_firstDeepCycleDone == 0)
-      
-      % we try to find if it is the first deep cycle
-      idTechPacket = find(a_tabData(:, 1) == 0);
-      for idMes = 1:length(idTechPacket)
-         
-         % message data frame
-         msgData = a_tabData(idTechPacket(idMes), 2:end);
-         
-         % first item bit number
-         firstBit = 1;
-         % item bit lengths
-         tabNbBits = [ ...
-            16 16 ...
-            16 8 ...
-            16 16 16 8 8 8 8 ...
-            repmat(8, 1, 6) ...
-            16 16 8 8 8 ...
-            repmat(8, 1, 6) ...
-            16 16 8 ...
-            repmat(8, 1, 8) ...
-            8 16 16 ...
-            repmat(8, 1, 11) ...
-            8 8 8 16 ...
-            8 16 8 8 8 ...
-            8 8 ...
-            8 8 16 8 8 8 16 8 8 ...
-            6 1 1 ...
-            repmat(8, 1, 9) ...
-            ];
-         % get item bits
-         tabTech = get_bits(firstBit, tabNbBits, msgData);
-         
-         % subsurface information are set to 0 for a surface cycle
-         if ~((length(unique(tabTech(32:39))) == 1) && (unique(tabTech(32:39)) == 0))
-            a_firstDeepCycleDone = 1;
-            break;
-         end
-      end
-   end
-end
 
 % decode packet data
 optodeType = [];
@@ -154,17 +112,14 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech = get_bits(firstBit, tabNbBits, msgData);
          
+         g_decArgo_0TypePacketReceivedFlag = 1;
+         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(32);
+         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(33);
+         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(34);
          if (a_procLevel == 0)
-            g_decArgo_0TypePacketReceivedFlag = 1;
-            g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = tabTech(32);
-            g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = tabTech(33);
-            g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = tabTech(34);
             continue;
          end
-         
-         % add one to cycle numbers (except for the prelude phase)
-         tabTech(2) = tabTech(2) + a_firstDeepCycleDone;
-         
+                  
          % some pressures are given in bars
          tabTech(10) = tabTech(10)*10;
          tabTech(11) = tabTech(11)*10;
@@ -175,20 +130,23 @@ for idMes = 1:size(a_tabData, 1)
          tabTech(28) = tabTech(28)*10;
          tabTech(55) = tabTech(55)*10;
          tabTech(60) = tabTech(60)*10;
-
-         % set cycle number
-         g_decArgo_cycleNum = tabTech(2);
-         fprintf('cyle #%d\n', g_decArgo_cycleNum);
          
-         % all subsurface information (tabTech(3:42)) are not set to 0 for a
-         % surface cycle (see 6901470 #164 and #165)
-         % => only message and measurement counts (tabTech(32:39)) are checked
-         % to choose between a deep or a surface cycle
+         % message and measurement counts are set to 0 for a surface cycle
          if ((length(unique(tabTech(32:39))) == 1) && (unique(tabTech(32:39)) == 0))
             o_deepCycle = 0;
          else
             o_deepCycle = 1;
          end
+         
+         % set cycle number
+         floatCycleNumber = tabTech(2);
+         if ((a_firstDeepCycleDone == 0) && (o_deepCycle == 0))
+            g_decArgo_cycleNumShift = floatCycleNumber;
+            g_decArgo_cycleNum = 0;
+         else
+            g_decArgo_cycleNum = floatCycleNumber - g_decArgo_cycleNumShift + 1;
+         end
+         fprintf('cyle #%d\n', g_decArgo_cycleNum);
          
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech(43:48)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
@@ -211,26 +169,26 @@ for idMes = 1:size(a_tabData, 1)
          
          o_tabTech = [o_tabTech; ...
             packType tabTech(1:76)' floatTime gpsLocLon gpsLocLat sbdFileDate];
-
+         
          % output NetCDF files
          if (g_decArgo_generateNcTech ~= 0)
             store_tech_data_for_nc_209(o_tabTech, o_deepCycle);
          end
-                  
+         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16}
          % CTDO packets
          
          o_deepCycle = 1;
-
+         
+         if ((packType == 1) || (packType == 8) || (packType == 11) || (packType == 14))
+            g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
+         elseif ((packType == 2) || (packType == 9) || (packType == 12) || (packType == 15))
+            g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
+         elseif ((packType == 3) || (packType == 10) || (packType == 13) || (packType == 16))
+            g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
+         end
          if (a_procLevel == 0)
-            if ((packType == 1) || (packType == 8) || (packType == 11) || (packType == 14))
-               g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
-            elseif ((packType == 2) || (packType == 9) || (packType == 12) || (packType == 15))
-               g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
-            elseif ((packType == 3) || (packType == 10) || (packType == 13) || (packType == 16))
-               g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
-            end
             continue;
          end
          
@@ -258,7 +216,7 @@ for idMes = 1:size(a_tabData, 1)
                   g_decArgo_floatNum, optodeType, packType);
             end
          end
-                  
+         
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -385,7 +343,7 @@ for idMes = 1:size(a_tabData, 1)
                   packType tabDate' ones(1, length(tabDate))*-1 ...
                   tabPres' tabTemp' tabPsal' ...
                   tabC1Phase' tabC2Phase' tabTempDoxyAa' optodeType];
-
+               
             case 4
                % CTD + SBE 63
                
@@ -452,7 +410,7 @@ for idMes = 1:size(a_tabData, 1)
                   packType tabDate' ones(1, length(tabDate))*-1 ...
                   tabPres' tabTemp' tabPsal' ...
                   tabPhaseDelay' tabTempDoxySbe' optodeType];
-
+               
             case 5
                % CTD + Aanderaa 4330 + SBE 63
                
@@ -546,7 +504,7 @@ for idMes = 1:size(a_tabData, 1)
                   tabPres' tabTemp' tabPsal' ...
                   tabC1Phase' tabC2Phase' tabTempDoxyAa' ...
                   tabPhaseDelay' tabTempDoxySbe' optodeType];
-
+               
             otherwise
                fprintf('WARNING: Float #%d: Nothing done yet for optode type #%d\n', ...
                   g_decArgo_floatNum, ...
@@ -557,8 +515,8 @@ for idMes = 1:size(a_tabData, 1)
       case 5
          % parameter packet
          
+         g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_5TypePacketReceivedFlag = 1;
             continue;
          end
          
@@ -577,7 +535,7 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabParam = get_bits(firstBit, tabNbBits, msgData);
          tabParam(8) = tabParam(8) + 1;
-
+         
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(1:6)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          
@@ -586,8 +544,8 @@ for idMes = 1:size(a_tabData, 1)
          tabParam(53) = -tabParam(53);
          
          o_floatParam = [o_floatParam; ...
-            packType tabParam' floatTime sbdFileDate];    
-
+            packType tabParam' floatTime sbdFileDate];
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d\n', ...
             g_decArgo_floatNum, ...

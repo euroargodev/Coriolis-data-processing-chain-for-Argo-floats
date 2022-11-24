@@ -38,8 +38,12 @@ switch (a_decoderId)
       o_platformType = 'ARVOR';
       
    case {105, 106, 107, 108, 109, 301}
-      % PROVOR REMOCEAN
+      % PROVOR REMOCEAN (CTS4)
       o_platformType = 'PROVOR_III';
+      
+   case {121}
+      % PROVOR APMT (CTS5)
+      o_platformType = 'PROVOR_IV';
       
    case {201, 202, 203}
       % DEEP ARVOR

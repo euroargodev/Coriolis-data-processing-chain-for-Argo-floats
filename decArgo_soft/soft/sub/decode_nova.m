@@ -27,6 +27,7 @@ global g_decArgo_outputNcParamId;
 
 % output NetCDF technical parameter labels
 global g_decArgo_outputNcParamLabel;
+global g_decArgo_outputNcParamDescription;
 
 % output NetCDF technical parameter names additional information
 global g_decArgo_outputNcParamLabelInfo;
@@ -37,6 +38,9 @@ global g_decArgo_outputNcConfParamId;
 
 % output NetCDF configuration parameter labels
 global g_decArgo_outputNcConfParamLabel;
+
+% output NetCDF configuration parameter descriptions
+global g_decArgo_outputNcConfParamDescription;
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -139,23 +143,23 @@ for idFloat = 1:nbFloats
    if (isempty(g_decArgo_outputCsvFileId))
       
       % get NetCDF technical parameter list
-      [g_decArgo_outputNcParamId, g_decArgo_outputNcParamLabel] = ...
+      [g_decArgo_outputNcParamId, g_decArgo_outputNcParamLabel, g_decArgo_outputNcParamDescription] = ...
          get_nc_tech_parameters_json(g_decArgo_dirInputJsonTechLabelFile, floatDecId);
       
       g_decArgo_outputNcParamLabelInfo = [];
       g_decArgo_outputNcParamLabelInfoCounter = 2;
       
       % get NetCDF configuration parameter list
-      [g_decArgo_outputNcConfParamId, g_decArgo_outputNcConfParamLabel] = ...
+      [g_decArgo_outputNcConfParamId, g_decArgo_outputNcConfParamLabel, g_decArgo_outputNcConfParamDescription] = ...
          get_nc_config_parameters_json(g_decArgo_dirInputJsonConfLabelFile, floatDecId);
    end
    
    % create list of cycles to decode
    [floatCycleList, floatExcludedCycleList] = ...
-      get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate);
+      get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
    
    % decode float cycles
-   
+   tabTechNMeas = [];
    if (g_decArgo_floatTransType == 3)
       
       % Iridium SBD floats
@@ -229,7 +233,7 @@ for idFloat = 1:nbFloats
       % NetCDF TECHNICAL file
       if (g_decArgo_generateNcTech ~= 0)
          create_nc_tech_file(floatDecId, ...
-            tabNcTechIndex, tabNcTechVal, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas, g_decArgo_outputNcParamLabelInfo, additionalMetaData);
       end
       
       % NetCDF META-DATA file

@@ -86,6 +86,12 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_201_203( ..
 o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
 % global measurement codes
 global g_MC_CycleStart;
 global g_MC_DST;

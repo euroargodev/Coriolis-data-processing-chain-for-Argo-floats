@@ -66,7 +66,7 @@ if (~isempty(g_decArgo_gpsData))
       measStruct.longitude = gpsLocLon(idLaunch);
       measStruct.posAccuracy = gpsLocAccuracy(idLaunch);
       measStruct.posQc = num2str(gpsLocQc(idLaunch));
-      
+            
       o_tabTrajNMeas.surfOnly = 1;
       o_tabTrajNMeas.tabMeas = measStruct;
    end

@@ -260,6 +260,9 @@ for idFile = 1:length(reportMonoProfFile)
    if (fileName(1) == 'B')
       continue;
    end
+   if (any(strfind(fileName, '_aux')))
+      continue;
+   end
    monoProfPath = filePath;
    monoProfList{end+1} = [fileName fileExt];
 end

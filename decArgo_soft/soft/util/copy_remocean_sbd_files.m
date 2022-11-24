@@ -83,7 +83,7 @@ for idFloat = 1:nbFloats
    end
    
    % create the output directory of this float
-   floatOutputDirName = [outputDirName '/' logName];
+   floatOutputDirName = [outputDirName '/' logName '_' floatNumStr];
    if ~(exist(floatOutputDirName, 'dir') == 7)
       mkdir(floatOutputDirName);
    end

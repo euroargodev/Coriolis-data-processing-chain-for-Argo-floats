@@ -42,15 +42,12 @@ fprintf('Generating json meta-data files for floats of the list: %s\n', floatLis
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 configDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\';
-configDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\ConfigAtLaunch\';
 
 % directory of SUNA calibration files
 sunaCalibDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\meta_remocean_www\suna_calibration_file\';
-sunaCalibDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\suna_calibration_file\';
 
 % directory of individual json float meta-data files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];

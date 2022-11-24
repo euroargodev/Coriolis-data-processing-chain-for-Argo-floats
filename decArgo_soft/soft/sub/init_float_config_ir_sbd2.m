@@ -268,8 +268,12 @@ if (~isempty(metaData.CONFIG_PARAMETER_NAME) && ~isempty(metaData.CONFIG_PARAMET
    end
 end
 % all static configuration parameters are not present for all the floats
+configValues1bis = cell(size(configNames1));
+configValues1bis(configValues1Ids) = configValues1;
 idDel = setdiff(1:length(configNames1), configValues1Ids);
 configNames1(idDel) = [];
+configValues1bis(idDel) = [];
+configValues1 = configValues1bis;
 
 % for PM parameters, duplicate the information of (PM3 to PM7) in (PM03 to PM07)
 for id = 1:5

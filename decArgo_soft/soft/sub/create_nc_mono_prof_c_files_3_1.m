@@ -74,6 +74,21 @@ if (isempty(a_tabProfiles))
    return;
 end
 
+% select and process Auxiliary profiles
+sensorNumList = [a_tabProfiles.sensorNumber];
+idProfAux = find(sensorNumList > 100);
+if (~isempty(idProfAux))
+   create_nc_mono_prof_aux_files( ...
+      a_decoderId, a_tabProfiles(idProfAux), a_metaDataFromJson);
+end
+
+a_tabProfiles(idProfAux) = [];
+
+% no data to save
+if (isempty(a_tabProfiles))
+   return;
+end
+
 % assign time resolution for each float transmission type
 profJulDLocRes = double(1/5184000); % 1 second
 [profJulDRes, profJulDComment] = get_prof_juld_resolution(g_decArgo_floatTransType, a_decoderId);

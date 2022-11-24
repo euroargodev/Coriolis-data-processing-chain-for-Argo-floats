@@ -65,25 +65,26 @@
 %                             HISTORY_PARAMETER information) only for HISTORY
 %                             steps where HISTORY_SOFTWARE is in a pre-defined
 %                             list (g_cocq_historySoftwareToReport).
+%   10/17/2016 - RNU - V 3.2: Also manage QC flags of adjusted parameters.
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_qc(varargin)
 
 % top directory of input NetCDF files containing the Qc values
-DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\dbqc\';
+DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\dbqc\';
 
 % top directory of input NetCDF files to be updated (executive DAC, thus top
 % directory of the DAC name directories)
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\edac\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\edac\';
 
 % top directory of output NetCDF updated files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20160708\out\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\test_20161017\out\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 
 % program version
 global g_cocq_ncCopyMonoProfileQcVersion;
-g_cocq_ncCopyMonoProfileQcVersion = '3.1';
+g_cocq_ncCopyMonoProfileQcVersion = '3.2';
 
 % list of HISTORY_SOFTWARE that should be reported from the QC file to the
 % output file
@@ -983,7 +984,12 @@ for idType = 1:2
                % in both cases the output file should be updated
                updateFile = 1;
             else
-               paramInfo = get_netcdf_param_attributes(paramName);
+               if (~isempty(strfind(paramName, '_ADJUSTED')))
+                  paramName2 = regexprep(paramName, '_ADJUSTED', '');
+                  paramInfo = get_netcdf_param_attributes(paramName2);
+               else
+                  paramInfo = get_netcdf_param_attributes(paramName);
+               end
                if (((paramInfo.paramType == 'c') && (idType == 1)) || ...
                      ((paramInfo.paramType ~= 'c') && (idType == 2)))
                   updateFile = 1;

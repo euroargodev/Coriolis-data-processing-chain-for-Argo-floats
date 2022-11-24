@@ -27,9 +27,10 @@ DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_param_adj_error\coriolis\';
 
 % default list of floats to convert
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_020110.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_arn_ir.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_4.54.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_apmt_all.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -80,36 +81,36 @@ for idFloat = 1:nbFloats
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
-   ncFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
+   ncFileDirRef = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
    
-   if (exist(ncFileDir, 'dir') == 7)
+   if (exist(ncFileDirRef, 'dir') == 7)
       
       % convert multi-profile c file
       profFileName = sprintf('%d_prof.nc', floatNum);
-      profFilePathName = [ncFileDir profFileName];
+      profFilePathName = [ncFileDirRef profFileName];
       
       if (exist(profFilePathName, 'file') == 2)
          
          outputFileName = [profFileName(1:end-3) '.csv'];
-         outputFilePathName = [ncFileDir outputFileName];
+         outputFilePathName = [ncFileDirRef outputFileName];
          cFileFlag = 1;
          nc_prof_adj_2_csv_file(profFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
       end
       
       % convert multi-profile b file
       profFileName = sprintf('%d_Bprof.nc', floatNum);
-      profFilePathName = [ncFileDir profFileName];
+      profFilePathName = [ncFileDirRef profFileName];
       
       if (exist(profFilePathName, 'file') == 2)
          
          outputFileName = [profFileName(1:end-3) '.csv'];
-         outputFilePathName = [ncFileDir outputFileName];
+         outputFilePathName = [ncFileDirRef outputFileName];
          cFileFlag = 0;
          nc_prof_adj_2_csv_file(profFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
       end
       
       % convert mono-profile files
-      ncFileDir = [ncFileDir '/profiles/'];
+      ncFileDir = [ncFileDirRef '/profiles/'];
       
       if (exist(ncFileDir, 'dir') == 7)
          
@@ -131,8 +132,26 @@ for idFloat = 1:nbFloats
          fprintf('WARNING: Directory not found: %s\n', ncFileDir);
       end
       
+      % convert mono-profile aux files
+      ncAuxFileDir = [ncFileDirRef '/auxiliary/profiles/'];
+      
+      if (exist(ncAuxFileDir, 'dir') == 7)
+         
+         ncFiles = dir([ncAuxFileDir '*_aux.nc']);
+         for idFile = 1:length(ncFiles)
+            
+            ncFileName = ncFiles(idFile).name;
+            ncFilePathName = [ncAuxFileDir '/' ncFileName];
+            
+            outputFileName = [ncFileName(1:end-3) '.csv'];
+            outputFilePathName = [ncAuxFileDir outputFileName];
+            cFileFlag = -1;
+            nc_prof_adj_2_csv_file(ncFilePathName, outputFilePathName, floatNum, COMPARISON_MODE, WRITE_QC_FLAG, cFileFlag);
+         end
+      end
+      
    else
-      fprintf('WARNING: Directory not found: %s\n', ncFileDir);
+      fprintf('WARNING: Directory not found: %s\n', ncFileDirRef);
    end
 end
 
@@ -289,8 +308,10 @@ for idVar = 1:length(varList)
       varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
       fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, varList{idVar}, strtrim(varValue));
    else
-      fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         varList{idVar}, inputFileName);
+      if (a_cfileFlag ~= -1)
+         fprintf('WARNING: Variable %s is missing in file %s\n', ...
+            varList{idVar}, inputFileName);
+      end
    end
 end
 
@@ -314,9 +335,9 @@ for idVar = 1:length(varList)
          fprintf(fidOut, '; %s', strtrim(varValue(:, idP)'));
       end
       fprintf(fidOut, '\n');
-%    else
-%       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-%          varList{idVar}, inputFileName);
+      %    else
+      %       fprintf('WARNING: Variable %s is missing in file %s\n', ...
+      %          varList{idVar}, inputFileName);
    end
 end
 
@@ -454,7 +475,7 @@ paramList2 = [ ...
    ];
 sufixList = [{''} {'_STD'} {'_MED'}];
 paramList = [];
-if (a_cfileFlag == 0)
+if (a_cfileFlag <= 0)
    for idP = 1:length(paramList2)
       if (var_is_present_dec_argo(fCdf, paramList2{idP}))
          paramList = [paramList {paramList2{idP}}];
@@ -468,7 +489,7 @@ for id3 = 1:size(stationParameters, 3)
          paramList = [paramList {paramName}];
          paramInfo = get_netcdf_param_attributes(paramName);
          if (paramInfo.adjAllowed == 1)
-            if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                paramList = [paramList {[paramName '_ADJUSTED']}];
             end
          end
@@ -519,6 +540,7 @@ if (a_writeQcFlag == 0)
       else
          if ~(((a_cfileFlag == 0) && ...
                (strcmp(paramList{idParam}, 'PRES') || ...
+               strcmp(paramList{idParam}, 'PRES2') || ...
                strcmp(paramList{idParam}(end-3:end), '_STD') || ...
                strcmp(paramList{idParam}(end-3:end), '_MED'))) || ...
                (~isempty(strfind(paramList{idParam}, '_ADJUSTED'))))
@@ -533,7 +555,7 @@ if (a_writeQcFlag == 0)
    for idP = 1:nProf
       fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
       
-      fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME; %s\n', ...
+      fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME;"%s"\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          strtrim(verticalSamplingScheme(:, idP)'));
       fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
@@ -605,7 +627,9 @@ if (a_writeQcFlag == 0)
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (~isempty(paramInfo))
                   if (paramInfo.adjAllowed == 1)
@@ -623,7 +647,7 @@ if (a_writeQcFlag == 0)
                            end
                         end
                      elseif (idS == 1)
-                        if ~(strcmp(parameterName, 'PRES') && (a_cfileFlag == 0))
+                        if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                            fprintf('ERROR: Variable %s is missing in file %s\n', ...
                               paramName, inputFileName);
                         end
@@ -634,7 +658,7 @@ if (a_writeQcFlag == 0)
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   
@@ -696,10 +720,12 @@ if (a_writeQcFlag == 0)
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (paramInfo.adjAllowed == 1)
-                  if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+                  if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                      fprintf(fidOut, '; ');
                   end
                end
@@ -707,7 +733,7 @@ if (a_writeQcFlag == 0)
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   
@@ -772,7 +798,9 @@ if (a_writeQcFlag == 0)
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (paramInfo.adjAllowed == 1)
                   paramName = [paramName '_ADJUSTED'];
@@ -791,7 +819,7 @@ if (a_writeQcFlag == 0)
                         end
                      end
                   elseif (idS == 1)
-                     if ~(strcmp(parameterName, 'PRES') && (a_cfileFlag == 0))
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                         fprintf('ERROR: Variable %s is missing in file %s\n', ...
                            paramName, inputFileName);
                      end
@@ -801,7 +829,7 @@ if (a_writeQcFlag == 0)
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   
@@ -871,6 +899,7 @@ else
          
          if (((a_cfileFlag == 0) && ...
                (strcmp(paramList{idParam}, 'PRES') || ...
+               strcmp(paramList{idParam}, 'PRES2') || ...
                strcmp(paramList{idParam}(end-3:end), '_STD') || ...
                strcmp(paramList{idParam}(end-3:end), '_MED'))))
             paramDataQc = [paramDataQc {''}];
@@ -895,6 +924,7 @@ else
       else
          if ~(((a_cfileFlag == 0) && ...
                (strcmp(paramList{idParam}, 'PRES') || ...
+               strcmp(paramList{idParam}, 'PRES2') || ...
                strcmp(paramList{idParam}(end-3:end), '_STD') || ...
                strcmp(paramList{idParam}(end-3:end), '_MED'))) || ...
                (~isempty(strfind(paramList{idParam}, '_ADJUSTED'))))
@@ -909,7 +939,7 @@ else
    for idP = 1:nProf
       fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
       
-      fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME; %s\n', ...
+      fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME;"%s"\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
          strtrim(verticalSamplingScheme(:, idP)'));
       fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
@@ -973,7 +1003,7 @@ else
                         sprintf('%s_%d', paramName, id1));
                   end
                end
-               if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+               if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                   fprintf(fidOut, '; QC');
                end
             elseif (idS == 1)
@@ -984,11 +1014,13 @@ else
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (~isempty(paramInfo))
                   if (paramInfo.adjAllowed == 1)
-                     if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                         paramName = [paramName '_ADJUSTED'];
                         idF = find(strcmp(paramList, paramName) == 1, 1);
                         if (~isempty(idF))
@@ -1002,11 +1034,11 @@ else
                                     sprintf('%s_%d', paramName, id1));
                               end
                            end
-                           if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+                           if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                               fprintf(fidOut, '; QC');
                            end
                         else
-                           if ~(strcmp(parameterName, 'PRES') && (a_cfileFlag == 0))
+                           if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                               fprintf('ERROR: Variable %s is missing in file %s\n', ...
                                  paramName, inputFileName);
                            end
@@ -1018,7 +1050,7 @@ else
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   
@@ -1084,11 +1116,13 @@ else
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (~isempty(paramInfo))
                   if (paramInfo.adjAllowed == 1)
-                     if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                         fprintf(fidOut, '; ; ');
                      end
                   end
@@ -1097,7 +1131,7 @@ else
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   
@@ -1173,11 +1207,13 @@ else
             % PARAM_ADJUSTED
             if (~strcmp(paramName, 'PRES_STD') && ...
                   ~strcmp(paramName, 'MOLAR_DOXY_MED') && ...
-                  ~strcmp(paramName, 'MOLAR_DOXY_STD'))
+                  ~strcmp(paramName, 'MOLAR_DOXY_STD') && ...
+                  ~strcmp(paramName, 'MTIME_MED') && ...
+                  ~strcmp(paramName, 'MTIME_STD'))
                paramInfo = get_netcdf_param_attributes(paramName);
                if (~isempty(paramInfo))
                   if (paramInfo.adjAllowed == 1)
-                     if ~(strcmp(paramName, 'PRES') && (a_cfileFlag == 0))
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                         paramName = [paramName '_ADJUSTED'];
                         idF = find(strcmp(paramList, paramName) == 1, 1);
                         if (~isempty(idF))
@@ -1204,7 +1240,7 @@ else
                               format = [format '; ' '%d'];
                            end
                         elseif (idS == 1)
-                           if ~(strcmp(parameterName, 'PRES') && (a_cfileFlag == 0))
+                           if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
                               fprintf('ERROR: Variable %s is missing in file %s\n', ...
                                  paramName, inputFileName);
                            end
@@ -1216,7 +1252,7 @@ else
          end
          
          if (a_cfileFlag == 0)
-            if (strcmp(parameterName, 'PRES'))
+            if (strcmp(parameterName, 'PRES') || strcmp(parameterName, 'PRES2'))
                for idP2 = 1:length(paramList2)
                   paramName = paramList2{idP2};
                   

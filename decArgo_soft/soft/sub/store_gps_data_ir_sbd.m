@@ -2,10 +2,11 @@
 % Store GPS data in a cell array.
 %
 % SYNTAX :
-% store_gps_data_ir_sbd(a_tabTech, a_decoderId)
+% store_gps_data_ir_sbd(a_tabTech, a_cycleNum, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabTech   : float technical data
+%   a_cycleNum  : decoder cycle number
 %   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -18,7 +19,7 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function store_gps_data_ir_sbd(a_tabTech, a_decoderId)
+function store_gps_data_ir_sbd(a_tabTech, a_cycleNum, a_decoderId)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -65,19 +66,19 @@ if (~isempty(a_tabTech))
          
          case {201, 202, 203} % Arvor-deep 4000, Arvor-deep 3500
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
-            cycleNumberFromTech = a_tabTech(idPos(idP), 2);
+            cycleNumber = a_cycleNum;
             
          case {205, 204, 206, 207, 208, 209}
             % Arvor Iridium 5.41 & 5.42 & 5.4
             % Provor-DO Iridium 5.71 & 5.7 & 5.72
             % Arvor-2DO Iridium 5.73
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
-            cycleNumberFromTech = a_tabTech(idPos(idP), 3);
+            cycleNumber = a_cycleNum;
             
          case {210, 211}
             % Arvor-ARN Iridium
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
-            cycleNumberFromTech = a_tabTech(idPos(idP), 2);
+            cycleNumber = a_tabTech(idPos(idP), 2);
             
          otherwise
             fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...
@@ -88,7 +89,7 @@ if (~isempty(a_tabTech))
       
       % GPS data (consider only 'valid' GPS locations)
       if (gpsValidFlagFromTech == 1)
-         gpsLocCycleNum = [gpsLocCycleNum; cycleNumberFromTech];
+         gpsLocCycleNum = [gpsLocCycleNum; cycleNumber];
          gpsLocProfNum = [gpsLocProfNum; -1];
          gpsLocPhase = [gpsLocPhase; -1];
          gpsLocDate = [gpsLocDate; a_tabTech(idPos(idP), end-3)];
@@ -106,7 +107,7 @@ if (~isempty(a_tabTech))
                   
          % retrieve the last good GPS location of the previous cycle
          % (cycleNumber-1)
-         idF = find(gpsLocCycleNum == cycleNumberFromTech-1);
+         idF = find(gpsLocCycleNum == cycleNumber-1);
          if (~isempty(idF))
             prevLocDate = gpsLocDate(idF);
             prevLocLon = gpsLocLon(idF);
@@ -121,7 +122,7 @@ if (~isempty(a_tabTech))
             end
          end
          
-         idF = find(gpsLocCycleNum == cycleNumberFromTech);
+         idF = find(gpsLocCycleNum == cycleNumber);
          locDate = gpsLocDate(idF);
          locLon = gpsLocLon(idF);
          locLat = gpsLocLat(idF);

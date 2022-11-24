@@ -61,6 +61,12 @@
 %   10/05/2016 - RNU - V 1.8: when considering "in air" single measurements
 %                             (MC=g_MC_InAirSingleMeas), consider also "in air"
 %                             series of measurements (MC=g_MC_InAirSeriesOfMeas).
+%   12/06/2016 - RNU - V 1.9: Test #57: new specific test defined for DOXY 
+%                             (if TEMP_QC=4 or PRES_QC=4, then DOXY_QC=4; if
+%                              PSAL_QC=4, then DOXY_QC=3).
+%   02/13/2017 - RNU - V 2.0: code update to manage CTS5 float data:
+%                             - PRES2, TEMP2 and PSAL2 are present when a SUNA 
+%                               sensor is used
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -96,7 +102,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '1.8';
+g_decArgo_addRtqcToTrajVersion = '2.0';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -363,8 +369,8 @@ for idParam = 1:nParam
       end
    end
 end
-ncTrajParamNameList = unique(ncTrajParamNameList);
-ncTrajParamAdjNameList = unique(ncTrajParamAdjNameList);
+ncTrajParamNameList = unique(ncTrajParamNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
+ncTrajParamAdjNameList = unique(ncTrajParamAdjNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
 
 % retrieve the data
 ncTrajParamNameQcList = [];
@@ -464,6 +470,7 @@ if (bTrajFileFlag == 1)
    end
    ncBTrajParamNameList = unique(ncBTrajParamNameList);
    ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES') == 1)) = [];
+   ncBTrajParamNameList(find(strcmp(ncBTrajParamNameList, 'PRES2') == 1)) = [];
    ncBTrajParamAdjNameList = unique(ncBTrajParamAdjNameList);
    
    % retrieve the data
@@ -925,10 +932,13 @@ if (testFlagList(6) == 1)
          % list of parameters to test
          paramTestList = [ ...
             {'PRES'} ...
+            {'PRES2'} ...
             {'TEMP'} ...
+            {'TEMP2'} ...
             {'TEMP_DOXY'} ...
             {'TEMP_DOXY2'} ...
             {'PSAL'} ...
+            {'PSAL2'} ...
             {'DOXY'} ...
             {'DOXY2'} ...
             {'CHLA'} ...
@@ -948,10 +958,13 @@ if (testFlagList(6) == 1)
          % list of parameters to test
          paramTestList = [ ...
             {'PRES_ADJUSTED'} ...
+            {'PRES2_ADJUSTED'} ...
             {'TEMP_ADJUSTED'} ...
+            {'TEMP2_ADJUSTED'} ...
             {'TEMP_DOXY_ADJUSTED'} ...
             {'TEMP_DOXY2_ADJUSTED'} ...
             {'PSAL_ADJUSTED'} ...
+            {'PSAL2_ADJUSTED'} ...
             {'DOXY_ADJUSTED'} ...
             {'DOXY2_ADJUSTED'} ...
             {'CHLA_ADJUSTED'} ...
@@ -961,8 +974,8 @@ if (testFlagList(6) == 1)
             ];
       end
       
-      paramTestMin = [{'-5'} {'-2.5'} {'-2.5'}  {'-2.5'} {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'}];
-      paramTestMax = [{''}   {'40'}   {'40'}    {'40'}   {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}];
+      paramTestMin = [{'-5'} {'-5'} {'-2.5'} {'-2.5'} {'-2.5'} {'-2.5'} {'2'}  {'2'}  {'-5'}  {'-5'}  {'-0.1'} {'-0.1'} {'-0.000025'} {'-0.000005'}];
+      paramTestMax = [{''}   {''}   {'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'} {'600'} {'600'} {'50'}   {'50'}   {'0.1'}       {'0.1'}];
       
       for id = 1:length(paramTestList)
          
@@ -1077,9 +1090,11 @@ if (testFlagList(7) == 1)
                   % list of parameters to test
                   paramTestList = [ ...
                      {'TEMP'} ...
+                     {'TEMP2'} ...
                      {'TEMP_DOXY'} ...
                      {'TEMP_DOXY2'} ...
                      {'PSAL'} ...
+                     {'PSAL2'} ...
                      ];
                else
                   % adjusted data processing
@@ -1093,16 +1108,18 @@ if (testFlagList(7) == 1)
                   % list of parameters to test
                   paramTestList = [ ...
                      {'TEMP_ADJUSTED'} ...
+                     {'TEMP2_ADJUSTED'} ...
                      {'TEMP_DOXY_ADJUSTED'} ...
                      {'TEMP_DOXY2_ADJUSTED'} ...
                      {'PSAL_ADJUSTED'} ...
+                     {'PSAL2_ADJUSTED'} ...
                      ];
                end
                
                if (location_in_region(meanLonOfCy, meanLatOfCy, RED_SEA_REGION))
                   
-                  paramTestMin = [{'21.7'} {'21.7'} {'21.7'} {'2'}];
-                  paramTestMax = [{'40'}   {'40'}   {'40'}   {'41'}];
+                  paramTestMin = [{'21.7'} {'21.7'} {'21.7'} {'21.7'} {'2'}  {'2'}];
+                  paramTestMax = [{'40'}   {'40'}   {'40'}   {'40'}   {'41'} {'41'}];
                   
                   for id = 1:length(paramTestList)
                      
@@ -1134,8 +1151,8 @@ if (testFlagList(7) == 1)
                            
                if (location_in_region(meanLonOfCy, meanLatOfCy, MEDITERRANEAN_SEA_REGION))
                   
-                  paramTestMin = [{'10'} {'10'} {'10'} {'2'}];
-                  paramTestMax = [{'40'} {'40'} {'40'} {'40'}];
+                  paramTestMin = [{'10'} {'10'} {'10'} {'10'} {'2'}  {'2'}];
+                  paramTestMax = [{'40'} {'40'} {'40'} {'40'} {'40'} {'40'}];
                   
                   for id = 1:length(paramTestList)
                      
@@ -1346,6 +1363,7 @@ if (testFlagList(22) == 1)
    % list of parameters concerned by this test
    test22ParameterList = [ ...
       {'TEMP'} ...
+      {'TEMP2'} ...
       {'TEMP_DOXY'} ...
       {'TEMP_DOXY2'} ...
       ];   
@@ -1405,6 +1423,10 @@ end
 % TEST 57: DOXY specific test
 %
 if (testFlagList(57) == 1)
+   
+   % Fist specific test:
+   % if (PARAMETER_SENSOR = OPTODE_DOXY) and (SENSOR_MODEL = SBE63_OPTODE) and
+   % (MC = 1100 or any relative measurement) then PPOX_DOXY_QC = '4'
    
    % list of parameters concerned by this test
    test57ParameterList = [ ...
@@ -1484,6 +1506,110 @@ if (testFlagList(57) == 1)
          end
       end
    end
+   
+   % second spécific test:
+   % if TEMP_QC=4 or PRES_QC=4, then DOXY_QC=4; if PSAL_QC=4, then DOXY_QC=3
+   
+   % list of parameters concerned by this test
+   test57ParameterList = [ ...
+      {'DOXY'} ...
+      {'DOXY2'} ...
+      ];
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      if (idD == 1)
+         % non adjusted data processing
+         
+         % set the name list
+         ncTrajParamXNameList = ncTrajParamNameList;
+         ncTrajParamXDataList = ncTrajParamDataList;
+         ncTrajParamXDataQcList = ncTrajParamDataQcList;
+         ncTrajParamXFillValueList = ncTrajParamFillValueList;
+         
+         % retrieve PRES, TEMP and PSAL data from the workspace
+         idpres = find(strcmp('PRES', ncTrajParamXNameList) == 1, 1);
+         idTemp = find(strcmp('TEMP', ncTrajParamXNameList) == 1, 1);
+         idPsal = find(strcmp('PSAL', ncTrajParamXNameList) == 1, 1);
+      else
+         % adjusted data processing
+         
+         % set the name list
+         ncTrajParamXNameList = ncTrajParamAdjNameList;
+         ncTrajParamXDataList = ncTrajParamAdjDataList;
+         ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+         ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+         
+         % retrieve PRES, TEMP and PSAL adjusted data from the workspace
+         idpres = find(strcmp('PRES_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+         idTemp = find(strcmp('TEMP_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+         idPsal = find(strcmp('PSAL_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+      end
+      
+      if (~isempty(idpres) && ~isempty(idTemp) && ~isempty(idPsal))
+         
+         presData = eval(ncTrajParamXDataList{idpres});
+         presDataQc = eval(ncTrajParamXDataQcList{idpres});
+         presDataDataFillValue = ncTrajParamXFillValueList{idpres};
+         
+         tempData = eval(ncTrajParamXDataList{idTemp});
+         tempDataQc = eval(ncTrajParamXDataQcList{idTemp});
+         tempDataFillValue = ncTrajParamXFillValueList{idTemp};
+         
+         psalData = eval(ncTrajParamXDataList{idPsal});
+         psalDataQc = eval(ncTrajParamXDataQcList{idPsal});
+         psalDataFillValue = ncTrajParamXFillValueList{idPsal};
+         
+         if (~isempty(presData) && ~isempty(tempData) && ~isempty(psalData))
+            
+            for idP = 1:length(test57ParameterList)
+               paramName = test57ParameterList{idP};
+               if (idD == 2)
+                  paramName = [paramName '_ADJUSTED'];
+               end
+               idParam = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+               if (~isempty(idParam))
+                  
+                  paramData = eval(ncTrajParamXDataList{idParam});
+                  paramDataQc = eval(ncTrajParamXDataQcList{idParam});
+                  paramFillValue = ncTrajParamXFillValueList{idParam};
+                  
+                  if (~isempty(paramData))
+                     
+                     % initialize Qc flags
+                     idNoDefParam = find(paramData ~= paramFillValue);
+                     paramDataQc(idNoDefParam) = set_qc(paramDataQc(idNoDefParam), g_decArgo_qcStrGood);
+                     eval([ncTrajParamXDataQcList{idParam} ' = paramDataQc;']);
+                     
+                     testDoneList(57) = 1;
+                     
+                     % apply the test
+                     idNoDef = find((presData ~= presDataDataFillValue) & ...
+                        (tempData ~= tempDataFillValue) & ...
+                        (paramData ~= paramFillValue));
+                     idToFlag = find((presDataQc(idNoDef) == g_decArgo_qcStrBad) | (tempDataQc(idNoDef) == g_decArgo_qcStrBad));
+                     if (~isempty(idToFlag))
+                        paramDataQc(idNoDef(idToFlag)) = set_qc(paramDataQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                        eval([ncTrajParamXDataQcList{idParam} ' = paramDataQc;']);
+                        
+                        testFailedList(57) = 1;
+                     end
+                     
+                     idNoDef = find((psalData ~= psalDataFillValue) & ...
+                        (paramData ~= paramFillValue));
+                     idToFlag = find((psalDataQc(idNoDef) == g_decArgo_qcStrBad));
+                     if (~isempty(idToFlag))
+                        paramDataQc(idNoDef(idToFlag)) = set_qc(paramDataQc(idNoDef(idToFlag)), g_decArgo_qcStrCorrectable);
+                        eval([ncTrajParamXDataQcList{idParam} ' = paramDataQc;']);
+                        
+                        testFailedList(57) = 1;
+                     end
+                  end
+               end
+            end
+         end
+      end
+   end   
 end
 
 if (a_update_file_flag == 0)

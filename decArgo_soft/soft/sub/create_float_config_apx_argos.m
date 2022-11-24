@@ -261,7 +261,14 @@ if ((isfield(jsonMetaData, 'CONFIG_PARAMETER_NAME')) && ...
    configValues = nan(size(configNames));
    for id = 1:size(configNames, 1)
       if (~isempty(cellConfigValues{id}))
-         configValues(id) = str2num(cellConfigValues{id});
+         [value, status] = str2num(cellConfigValues{id});
+         if (status == 1)
+            configValues(id) = value;
+         else
+            fprintf('ERROR: Float #%d: The configuration value ''%s'' cannot be converted to numerical value\n', ...
+               g_decArgo_floatNum, cellConfigValues{id});
+            return;
+         end
       end
    end
 end

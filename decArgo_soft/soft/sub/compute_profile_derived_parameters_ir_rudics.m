@@ -155,7 +155,7 @@ if (~isempty(profInfo))
          end
       end
       a_tabProfiles(profInfo(idSensor6(idP), 1)) = compute_profile_derived_parameters_for_SUNA( ...
-         profSuna, profCtd);
+         profSuna, profCtd, a_decoderId);
    end
 end
 
@@ -210,19 +210,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_109( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_109_121( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profOcr.data(:, end+1) = downIrr380;
-      if (isempty(a_profOcr.dataQc))
-         a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profOcr.dataQc))
+            a_profOcr.dataQc = ones(size(a_profOcr.data))*g_decArgo_qcDef;
+         else
+            a_profOcr.dataQc(:, end+1) = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+         derivedParamId = size(a_profOcr.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profOcr.data(:, derivedParamId) = downIrr380;
       downIrr380Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profOcr.dataQc(:, end+1) = downIrr380Qc;
-      
-      a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+      a_profOcr.dataQc(:, derivedParamId) = downIrr380Qc;
    end
 end
 
@@ -239,19 +251,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_109( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_109_121( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profOcr.data(:, end+1) = downIrr412;
-      if (isempty(a_profOcr.dataQc))
-         a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profOcr.dataQc))
+            a_profOcr.dataQc = ones(size(a_profOcr.data))*g_decArgo_qcDef;
+         else
+            a_profOcr.dataQc(:, end+1) = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+         derivedParamId = size(a_profOcr.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profOcr.data(:, derivedParamId) = downIrr412;
       downIrr412Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr412Qc(find(downIrr412 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profOcr.dataQc(:, end+1) = downIrr412Qc;
-      
-      a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+      a_profOcr.dataQc(:, derivedParamId) = downIrr412Qc;
    end
 end
 
@@ -268,19 +292,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_109( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_109_121( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profOcr.data(:, end+1) = downIrr490;
-      if (isempty(a_profOcr.dataQc))
-         a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profOcr.dataQc))
+            a_profOcr.dataQc = ones(size(a_profOcr.data))*g_decArgo_qcDef;
+         else
+            a_profOcr.dataQc(:, end+1) = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+         derivedParamId = size(a_profOcr.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profOcr.data(:, derivedParamId) = downIrr490;
       downIrr490Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profOcr.dataQc(:, end+1) = downIrr490Qc;
-      
-      a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+      a_profOcr.dataQc(:, derivedParamId) = downIrr490Qc;
    end
 end
 
@@ -297,19 +333,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_109( ...
+      downPar = compute_DOWNWELLING_PAR_105_to_109_121( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profOcr.data(:, end+1) = downPar;
-      if (isempty(a_profOcr.dataQc))
-         a_profOcr.dataQc = ones(size(a_profOcr.data, 1), size(a_profOcr.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profOcr.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profOcr.dataQc))
+            a_profOcr.dataQc = ones(size(a_profOcr.data))*g_decArgo_qcDef;
+         else
+            a_profOcr.dataQc(:, end+1) = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+         derivedParamId = size(a_profOcr.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profOcr.data(:, derivedParamId) = downPar;
       downParQc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
       downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profOcr.dataQc(:, end+1) = downParQc;
-      
-      a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+      a_profOcr.dataQc(:, derivedParamId) = downParQc;
    end
 end
 
@@ -368,19 +416,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_109( ...
+      chla = compute_CHLA_105_to_109_121( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profEco3.data(:, end+1) = chla;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profEco3.dataQc))
+            a_profEco3.dataQc = ones(size(a_profEco3.data))*g_decArgo_qcDef;
+         else
+            a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+         derivedParamId = size(a_profEco3.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profEco3.data(:, derivedParamId) = chla;
       chlaQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = chlaQc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+      a_profEco3.dataQc(:, derivedParamId) = chlaQc;
    end
 end
 
@@ -399,11 +459,20 @@ if (isempty(a_profCtd))
       idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
       if (~isempty(idF))
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-         a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
-         if (~isempty(a_profEco3.dataQc))
-            a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+         
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
+            a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
+            if (isempty(a_profEco3.dataQc))
+               a_profEco3.dataQc = ones(size(a_profEco3.data))*g_decArgo_qcDef;
+            else
+               a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+            end
+            a_profEco3.paramList = [a_profEco3.paramList derivedParam];
          end
-         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
       end
    end
    
@@ -439,21 +508,29 @@ else
             ctdMeasData, ...
             a_profEco3);
          
-         if (~isempty(bbp700))
-            a_profEco3.data(:, end+1) = bbp700;
-            if (isempty(a_profEco3.dataQc))
-               a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
-            end
-            bbp700Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-            a_profEco3.dataQc(:, end+1) = bbp700Qc;
-         else
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
-            if (~isempty(a_profEco3.dataQc))
+            if (isempty(a_profEco3.dataQc))
+               a_profEco3.dataQc = ones(size(a_profEco3.data))*g_decArgo_qcDef;
+            else
                a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
             end
+            a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+            derivedParamId = size(a_profEco3.data, 2);
+         else
+            derivedParamId = idFDerivedParam;
          end
-         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+         
+         if (~isempty(bbp700))
+            a_profEco3.data(:, derivedParamId) = bbp700;
+            bbp700Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_profEco3.dataQc(:, derivedParamId) = bbp700Qc;
+         end
       end
    end
    
@@ -480,21 +557,29 @@ else
             ctdMeasData, ...
             a_profEco3);
          
-         if (~isempty(bbp532))
-            a_profEco3.data(:, end+1) = bbp532;
-            if (isempty(a_profEco3.dataQc))
-               a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
-            end
-            bbp532Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-            bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-            a_profEco3.dataQc(:, end+1) = bbp532Qc;
-         else
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
             a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
-            if (~isempty(a_profEco3.dataQc))
+            if (isempty(a_profEco3.dataQc))
+               a_profEco3.dataQc = ones(size(a_profEco3.data))*g_decArgo_qcDef;
+            else
                a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
             end
+            a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+            derivedParamId = size(a_profEco3.data, 2);
+         else
+            derivedParamId = idFDerivedParam;
          end
-         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+         
+         if (~isempty(bbp532))
+            a_profEco3.data(:, derivedParamId) = bbp532;
+            bbp532Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+            bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_profEco3.dataQc(:, derivedParamId) = bbp532Qc;
+         end
       end
    end
 end
@@ -512,19 +597,31 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107( ...
+      cdom = compute_CDOM_105_to_107_121( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
-      a_profEco3.data(:, end+1) = cdom;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), size(a_profEco3.data, 2)-1)*g_decArgo_qcDef;
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp([a_profEco3.paramList.name], derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profEco3.dataQc))
+            a_profEco3.dataQc = ones(size(a_profEco3.data))*g_decArgo_qcDef;
+         else
+            a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+         derivedParamId = size(a_profEco3.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
       end
+      
+      a_profEco3.data(:, derivedParamId) = cdom;
       cdomQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
       cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = cdomQc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+      a_profEco3.dataQc(:, derivedParamId) = cdomQc;
    end
 end
 
@@ -599,7 +696,7 @@ if (~isempty(ctdDataNoDef))
       idNoNan = find(~(isnan(ctdIntData(:, 2)) | isnan(ctdIntData(:, 3))));
       
       if (a_lambda == 700)
-         o_BBP(idNoNan) = compute_BBP700_105_to_109( ...
+         o_BBP(idNoNan) = compute_BBP700_105_to_109_121( ...
             a_BETA_BACKSCATTERING(idNoNan), ...
             a_BETA_BACKSCATTERING_fillValue, ...
             a_BBP_fillValue, ...
@@ -702,7 +799,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_109( ...
+      chla = compute_CHLA_105_to_109_121( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -731,7 +828,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      bbp700 = compute_BBP700_105_to_109_V1( ...
+      bbp700 = compute_BBP700_105_to_109_121_V1( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -789,7 +886,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107( ...
+      cdom = compute_CDOM_105_to_107_121( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -800,7 +897,7 @@ for idP = 1:length(paramToDeriveList)
       cdomQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
       cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, end+1) = cdomQc;
-
+      
       a_profEco3.paramList = [a_profEco3.paramList derivedParam];
    end
 end
@@ -815,11 +912,12 @@ return;
 % Compute derived parameters for the SUNA sensor.
 %
 % SYNTAX :
-%  [o_profSuna] = compute_profile_derived_parameters_for_SUNA(a_profSuna, a_profCtd)
+%  [o_profSuna] = compute_profile_derived_parameters_for_SUNA(a_profSuna, a_profCtd, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_profSuna : input SUNA profile structure
-%   a_profCtd  : input CTD profile structure
+%   a_profSuna  : input SUNA profile structure
+%   a_profCtd   : input CTD profile structure
+%   a_decoderId : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_profSuna : output SUNA profile structure
@@ -832,7 +930,7 @@ return;
 % RELEASES :
 %   06/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_profSuna] = compute_profile_derived_parameters_for_SUNA(a_profSuna, a_profCtd)
+function [o_profSuna] = compute_profile_derived_parameters_for_SUNA(a_profSuna, a_profCtd, a_decoderId)
 
 % output parameters initialization
 o_profSuna = [];
@@ -878,7 +976,7 @@ if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
          
-         nitrate = compute_profile_NITRATE_105_to_109( ...
+         nitrate = compute_profile_NITRATE_from_MOLAR_NITRATE_105_to_109_121( ...
             a_profSuna.data(:, idF), ...
             paramToDerive.fillValue, derivedParam.fillValue, ...
             a_profSuna.data(:, 1), ctdMeasData, ...
@@ -886,15 +984,39 @@ if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramTemp.fillValue, ...
             paramPsal.fillValue);
          
-         a_profSuna.data(:, end+1) = nitrate;
-         if (isempty(a_profSuna.dataQc))
-            a_profSuna.dataQc = ones(size(a_profSuna.data, 1), size(a_profSuna.data, 2)-1)*g_decArgo_qcDef;
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp([a_profSuna.paramList.name], derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
+            a_profSuna.data(:, end+1) = ones(size(a_profSuna.data, 1), 1)*derivedParam.fillValue;
+            a_profSuna.paramList = [a_profSuna.paramList derivedParam];
+            if (isempty(a_profSuna.dataQc))
+               a_profSuna.dataQc = ones(size(a_profSuna.data, 1), length(a_profSuna.paramList))*g_decArgo_qcDef;
+            else
+               a_profSuna.dataQc(:, end+1) = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
+            end
+            derivedParamId = size(a_profSuna.data, 2);
+            derivedParamQcId = size(a_profSuna.dataQc, 2);
+         else
+            if (isempty(a_profSuna.paramNumberWithSubLevels))
+               derivedParamId = idFDerivedParam;
+               derivedParamQcId = size(a_profSuna.dataQc, 2);
+            else
+               idF = find(a_profSuna.paramNumberWithSubLevels < idFDerivedParam);
+               if (isempty(idF))
+                  derivedParamId = idFDerivedParam;
+               else
+                  derivedParamId = idFDerivedParam + sum(a_profSuna.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+               derivedParamQcId = size(a_profSuna.dataQc, 2);
+            end
          end
+         
+         a_profSuna.data(:, derivedParamId) = nitrate;
          nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
          nitrateQc(find(nitrate ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-         a_profSuna.dataQc(:, end+1) = nitrateQc;
-         
-         a_profSuna.paramList = [a_profSuna.paramList derivedParam];
+         a_profSuna.dataQc(:, derivedParamQcId) = nitrateQc;
       end
    end
 end
@@ -918,7 +1040,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
          
-         nitrate = compute_profile_NITRATE_BIS_105_to_109( ...
+         nitrate = compute_profile_NITRATE_from_spectrum_105_to_109_121( ...
             a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
             a_profSuna.data(:, idF2), ...
             paramToDerive1.fillValue, ...
@@ -928,7 +1050,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramPres.fillValue, ...
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
-            a_profSuna);
+            a_profSuna, a_decoderId);
          
          a_profSuna.data(:, end+1) = nitrate;
          if (isempty(a_profSuna.dataQc))
@@ -1040,21 +1162,38 @@ else
             ctdMeasData, ...
             a_profOptode, a_decoderId);
          
-         if (~isempty(doxy))
-            a_profOptode.data(:, end+1) = doxy;
-            if (isempty(a_profOptode.dataQc))
-               a_profOptode.dataQc = ones(size(a_profOptode.data, 1), size(a_profOptode.data, 2)-1)*g_decArgo_qcDef;
-            end
-            doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
-            doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-            a_profOptode.dataQc(:, end+1) = doxyQc;
-         else
+         % for CTS5 floats the derived parameter could be already in the list of
+         % parameters => we should first look for it
+         
+         idFDerivedParam = find(strcmp([a_profOptode.paramList.name], derivedParamList{idP}), 1);
+         if (isempty(idFDerivedParam))
             a_profOptode.data(:, end+1) = ones(size(a_profOptode.data, 1), 1)*derivedParam.fillValue;
-            if (~isempty(a_profOptode.dataQc))
+            if (isempty(a_profOptode.dataQc))
+               a_profOptode.dataQc = ones(size(a_profOptode.data))*g_decArgo_qcDef;
+            else
                a_profOptode.dataQc(:, end+1) = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
             end
+            a_profOptode.paramList = [a_profOptode.paramList derivedParam];
+            derivedParamId = size(a_profOptode.data, 2);
+         else
+            if (isempty(a_profOptode.paramNumberWithSubLevels))
+               derivedParamId = idFDerivedParam;
+            else
+               idF = find(a_profOptode.paramNumberWithSubLevels < idFDerivedParam);
+               if (isempty(idF))
+                  derivedParamId = idFDerivedParam;
+               else
+                  derivedParamId = idFDerivedParam + sum(a_profOptode.paramNumberOfSubLevels(idF)) - length(idF);
+               end
+            end
          end
-         a_profOptode.paramList = [a_profOptode.paramList derivedParam];
+         
+         if (~isempty(doxy))
+            a_profOptode.data(:, derivedParamId) = doxy;
+            doxyQc = ones(size(a_profOptode.data, 1), 1)*g_decArgo_qcDef;
+            doxyQc(find(doxy ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_profOptode.dataQc(:, derivedParamId) = doxyQc;
+         end
       end
    end
 end
@@ -1150,11 +1289,11 @@ if (~isempty(ctdDataNoDef))
                paramPsal.fillValue, ...
                a_DOXY_fillValue, ...
                a_profOptode);
-
-         case {107, 109}
+            
+         case {107, 109, 121}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoNan) = compute_DOXY_107_109( ...
+            o_DOXY(idNoNan) = compute_DOXY_107_109_121( ...
                a_C1PHASE_DOXY(idNoNan), ...
                a_C2PHASE_DOXY(idNoNan), ...
                a_TEMP_DOXY(idNoNan), ...
@@ -1169,7 +1308,7 @@ if (~isempty(ctdDataNoDef))
                paramPsal.fillValue, ...
                a_DOXY_fillValue, ...
                a_profOptode);
-
+            
          otherwise
             fprintf('WARNING: Float #%d Cycle #%d Profile #%d: DOXY processing not implemented yet for decoderId #%d => DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
                g_decArgo_floatNum, ...
@@ -1614,7 +1753,7 @@ end
 %          case {107, 109}
 %
 %             % compute DOXY values using the Stern-Volmer equation
-%             o_DOXY(idNoNan) = compute_DOXY_107_109( ...
+%             o_DOXY(idNoNan) = compute_DOXY_107_109_121( ...
 %                a_C1PHASE_DOXY(idNoNan), ...
 %                a_C2PHASE_DOXY(idNoNan), ...
 %                a_C1PHASE_DOXY_fillValue, ...

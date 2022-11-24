@@ -199,7 +199,7 @@ else
       mkdir(g_decArgo_bufferDirectory);
    end
 end
-if (g_decArgo_delayedModeFlag)
+if (g_decArgo_delayedModeFlag || a_floatDmFlag)
    g_decArgo_archiveDmDirectory = [floatIriDirName 'archive_dm/'];
    if ~(exist(g_decArgo_archiveDmDirectory, 'dir') == 7)
       mkdir(g_decArgo_archiveDmDirectory);

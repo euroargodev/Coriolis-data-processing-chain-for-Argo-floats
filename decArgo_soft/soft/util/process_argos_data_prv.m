@@ -30,14 +30,15 @@ function process_argos_data_prv(varargin)
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\tmp_process_prv\IN\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\IN\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\ARN\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp\ori\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\tmp_process_prv\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos_out\';
 DIR_OUTPUT = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\OUT\';
-DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\ARN\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMP3\ori_out\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

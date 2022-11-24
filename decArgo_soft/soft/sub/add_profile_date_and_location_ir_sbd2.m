@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Add the profile data and location of a profile.
+% Add the profile date and location of a profile.
 %
 % SYNTAX :
 %  [o_profStruct] = add_profile_date_and_location_ir_sbd2( ...

@@ -502,7 +502,7 @@ if (g_decArgo_realtimeFlag)
          tabNcTechIndex, tabNcTechVal] = ...
          decode_sbd_files( ...
          tabFileNames, tabFileDates, tabFileSizes, ...
-         a_decoderId, a_launchDate, 0);
+         a_decoderId, a_launchDate, []);
       
       if (~isempty(tabProfiles))
          o_tabProfiles = [o_tabProfiles tabProfiles];
@@ -1012,8 +1012,8 @@ switch (a_decoderId)
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    case {2001} % Nova 1.0
-      
-      if (a_completedBuffer == 0)
+            
+      if (isempty(a_completedBuffer) || (a_completedBuffer == 0))
          
          % initialize information arrays
          g_decArgo_1TypePacketReceived = 0;
@@ -1030,8 +1030,12 @@ switch (a_decoderId)
          % roughly check the received data
          decode_nva_data_ir_sbd_2001(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
          
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd_nva(1, a_decoderId);
+         if (isempty(a_completedBuffer))
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd_nva(1, a_decoderId);
+         else
+            is_buffer_completed_ir_sbd_nva(0, a_decoderId);
+         end
       end
       
       % decode the collected data
@@ -1213,7 +1217,7 @@ switch (a_decoderId)
       
    case {2002} % Dova 2.0
       
-      if (a_completedBuffer == 0)
+      if (isempty(a_completedBuffer) || (a_completedBuffer == 0))
          
          % initialize information arrays
          g_decArgo_1TypePacketReceived = 0;
@@ -1230,14 +1234,30 @@ switch (a_decoderId)
          % roughly check the received data
          decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
          
-         % print what is missing in the buffer
-         is_buffer_completed_ir_sbd_nva(1, a_decoderId);
+         if (isempty(a_completedBuffer))
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd_nva(1, a_decoderId);
+         else
+            is_buffer_completed_ir_sbd_nva(0, a_decoderId);
+         end
       end
       
       % decode the collected data
       g_decArgo_cycleNum = -1;
       [tabTech, dataCTDO, dataHydrau, dataAck, deepCycle] = ...
          decode_nva_data_ir_sbd_2002(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
+      
+      if (~isempty(a_completedBuffer))
+         
+         if (a_completedBuffer == 0)
+            % print what is missing in the buffer
+            is_buffer_completed_ir_sbd_nva(1, a_decoderId);
+         end
+      else
+         
+         % decode from buffer list mode
+         is_buffer_completed_ir_sbd_nva(0, a_decoderId);
+      end      
       
       if (g_decArgo_ackPacket == 0)
          fprintf('Cyle #%d\n', g_decArgo_cycleNum);

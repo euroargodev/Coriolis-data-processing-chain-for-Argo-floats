@@ -744,16 +744,22 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
                   end
                   argosPathFileName = dir([argosDirName sprintf('%d_*_%03d.txt', floatArgosId, cycleNumber)]);
                   argosPathFileName = [argosDirName argosPathFileName(1).name];
-                  while (~isempty(argosDate) && ((argosDate(end)-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+                  stop = 0;
+                  while (~stop && ~isempty(argosDate) && ((argosDate(end)-mean(tabLastMsgDateBis))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
                      
                      % a ghost message is detected, move it to a dedicated file
                      [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
-                     argosPathFileName = subFileNameList{1};
-                     
-                     argosDate(end) = [];
-                     lastArgosMsgDate = argosDate(end);
-                     fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
-                        floatNum, subFileNameList{2});
+                     if (~isempty(subFileNameList))
+                        argosPathFileName = subFileNameList{1};
+                        
+                        argosDate(end) = [];
+                        lastArgosMsgDate = argosDate(end);
+                        fprintf('DEC_INFO: Float #%d: Ghost detected in LMT: stored in %s\n', ...
+                           floatNum, subFileNameList{2});
+                     else
+                        % this is not a real ghost message
+                        stop = 1;
+                     end
                   end
                end
                

@@ -101,11 +101,11 @@ for idMes = 1:size(a_tabData, 1)
       case 0
          % technical packet #1
          
+         g_decArgo_0TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_0TypePacketReceivedFlag = 1;
             continue;
          end
-
+         
          % message data frame
          msgData = a_tabData(idMes, 2:end);
          
@@ -132,7 +132,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % store Iridium session number
          tabIrSessionNum = [tabIrSessionNum tabTech1(2)];
-
+         
          % compute the offset between float days and julian days
          startDateInfo = [tabTech1(5:7); tabTech1(9)];
          if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
@@ -150,10 +150,10 @@ for idMes = 1:size(a_tabData, 1)
          
          % pressure sensor offset
          tabTech1(47) = twos_complement_dec_argo(tabTech1(47), 8);
-
+         
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabTech1(41:46)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
-
+         
          % compute GPS location
          
          if (a_decoderId == 210)
@@ -162,10 +162,16 @@ for idMes = 1:size(a_tabData, 1)
             % in this firmware version (5900A00), the latitude and longitude
             % orientation bytes are never updated (always set to 0)
             % we use the Iridium location to set the sign of the lat/lon
-            idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == sbdFileDate, 1);
+            idF = find(([g_decArgo_iridiumMailData.timeOfSessionJuld] >= min(a_tabDataDates)) & ...
+               ([g_decArgo_iridiumMailData.timeOfSessionJuld] <= max(a_tabDataDates)));
             if (isempty(idF))
                fprintf('ERROR: Float #%d: Unable to retrieve associated Iridium file => GPS location orientation can be erroneous\n', ...
                   g_decArgo_floatNum);
+            else
+               % we use the more reliable Iridium location (for the 3901872 #12
+               % it is not the first one ...)
+               [minCepRadius, idMin] = min([g_decArgo_iridiumMailData(idF).cepRadius]);
+               idF = idF(idMin);
             end
             
             if (tabTech1(56) == 0)
@@ -237,29 +243,29 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
          
+         g_decArgo_4TypePacketReceivedFlag = 1;
+         g_decArgo_nbOf1Or8TypePacketExpected = tabTech2(3);
+         g_decArgo_nbOf2Or9TypePacketExpected = tabTech2(4);
+         g_decArgo_nbOf3Or10TypePacketExpected = tabTech2(5);
+         g_decArgo_nbOf13Or11TypePacketExpected = tabTech2(6);
+         g_decArgo_nbOf14Or12TypePacketExpected = tabTech2(7);
          if (a_procLevel == 0)
-            g_decArgo_4TypePacketReceivedFlag = 1;
-            g_decArgo_nbOf1Or8TypePacketExpected = tabTech2(3);
-            g_decArgo_nbOf2Or9TypePacketExpected = tabTech2(4);
-            g_decArgo_nbOf3Or10TypePacketExpected = tabTech2(5);
-            g_decArgo_nbOf13Or11TypePacketExpected = tabTech2(6);
-            g_decArgo_nbOf14Or12TypePacketExpected = tabTech2(7);
             continue;
          end
-                  
+         
          % store cycle number
          tabCycleNum = [tabCycleNum tabTech2(1)];
-
+         
          % store Iridium session number
          tabIrSessionNum = [tabIrSessionNum tabTech2(2)];
-
+         
          o_tabTech2 = [o_tabTech2; ...
             packType tabTech2(1:58)' sbdFileDate];
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {1, 2, 3, 13, 14}
          % CTD packets
-                  
+         
          if (a_procLevel == 0)
             if (packType == 1)
                g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
@@ -291,7 +297,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % store cycle number
          tabCycleNum = [tabCycleNum ctdValues(1)];
-
+         
          % there are 15 PTS measurements per packet
          
          % store raw data values
@@ -326,12 +332,12 @@ for idMes = 1:size(a_tabData, 1)
          o_dataCTD = [o_dataCTD; ...
             packType tabDate' ones(1, length(tabDate))*-1 tabPres' tabTemp' tabPsal'];
          
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case 5
          % parameter packet
          
+         g_decArgo_5TypePacketReceivedFlag = 1;
          if (a_procLevel == 0)
-            g_decArgo_5TypePacketReceivedFlag = 1;
             continue;
          end
          
@@ -348,12 +354,12 @@ for idMes = 1:size(a_tabData, 1)
             ];
          % get item bits
          tabParam = get_bits(firstBit, tabNbBits, msgData);
-
+         
          % store cycle number
          tabCycleNum = [tabCycleNum tabParam(1)];
-
+         
          % store Iridium session number
-         tabIrSessionNum = [tabIrSessionNum tabParam(2)];         
+         tabIrSessionNum = [tabIrSessionNum tabParam(2)];
          
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
@@ -411,7 +417,7 @@ for idMes = 1:size(a_tabData, 1)
                end
             end
          end
-
+         
       otherwise
          fprintf('WARNING: Float #%d: Nothing done yet for packet type #%d\n', ...
             g_decArgo_floatNum, ...
