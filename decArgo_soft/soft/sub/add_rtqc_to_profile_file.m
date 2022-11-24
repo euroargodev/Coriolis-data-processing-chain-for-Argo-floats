@@ -130,6 +130,8 @@
 %   11/06/2018 - RNU - V 3.7: TEST #6 (Global range test) and TEST #9
 %                             (Spike test) updated for PH_IN_SITU_TOTAL
 %                             parameter
+%   20/11/2018 - RNU - V 3.8: Spike test for CHLA disapeared in V 3.7 due to a
+%                             typo => corrected
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -161,7 +163,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.7';
+g_decArgo_addRtqcToProfileVersion = '3.8';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -2389,7 +2391,9 @@ if ((testFlagList(9) == 1) || (testFlagList(11) == 1))
                                     end
                                  end
                                  
-                              elseif (strcmp(paramTestList{idP}, 'CHLA2') || ...
+                              elseif (strcmp(paramTestList{idP}, 'CHLA') || ...
+                                    strcmp(paramTestList{idP}, 'CHLA_ADJUSTED') || ...
+                                    strcmp(paramTestList{idP}, 'CHLA2') || ...
                                     strcmp(paramTestList{idP}, 'CHLA2_ADJUSTED'))
                                  
                                  % spike test for CHLA
