@@ -40,7 +40,7 @@ o_interpLocLat = [];
 
 % interpolate between the locations
 if (((abs(a_firstLocLon) > 90) && (abs(a_secondLocLon) > 90)) && ...
-      ((a_firstLocLon > 0) && (a_secondLocLon < 0)) || ((a_secondLocLon > 0) && (a_firstLocLon < 0)))
+      (((a_firstLocLon > 0) && (a_secondLocLon < 0)) || ((a_secondLocLon > 0) && (a_firstLocLon < 0))))
    % the float crossed the date line
    if (a_secondLocLon < 0)
       a_secondLocLon = a_secondLocLon + 360;
