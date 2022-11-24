@@ -530,8 +530,20 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % contains 3 ascending profile data packets (for cycle #86) that have been
       % already received. We must ignore it to avoid generating a fake second
       % buffer for this cycle
-      if (g_decArgo_floatNum == 3901598)
-         if (strcmp(tabAllFileNames{idSpoolFile}, 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt'))
+      
+      % 3901854: co_20200108T121507Z_300234063901300_001599_000000_6467.txt
+      % contains 3 ascending profile data packets (for cycle #233) that have been
+      % already received. We must ignore it to avoid generating a fake second
+      % buffer for this cycle
+
+      if (ismember(g_decArgo_floatNum, [3901598, 3901854]))
+         if (g_decArgo_floatNum == 3901598)
+            fileNameTodel = 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt';
+         end
+         if (g_decArgo_floatNum == 3901854)
+            fileNameTodel = 'co_20200108T121507Z_300234063901300_001599_000000_6467.txt';
+         end
+         if (strcmp(tabAllFileNames{idSpoolFile}, fileNameTodel))
             if (g_decArgo_virtualBuff)
                remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
             else
@@ -592,6 +604,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % 2- some expected data are missing for cycle #120, as there is a
    % second Iridium session we must artificially separate first session (which
    % ends with MOMSN = 2584) and second Iridium session
+   % 3- some expected data are missing for cycle #129, as there is a
+   % second Iridium session we must artificially separate first session (which
+   % ends with MOMSN = 3043) and second Iridium session
 
    if (ismember(g_decArgo_floatNum, [3901850, 6902798, 6902799]))
       if (g_decArgo_floatNum == 3901850)
@@ -610,6 +625,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
          filePattern = '_300234064633980_002149_';
          if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
             filePattern = '_300234064633980_002584_';
+            if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
+               filePattern = '_300234064633980_003043_';
+            end
          end
       end
       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
@@ -628,12 +646,12 @@ for idSpoolFile = 1:length(tabAllFileNames)
          end
       end
    end
-
+   
    idNew = setdiff(1:length(tabFileNames), idOld);
    tabNewFileNames = tabFileNames(idNew);
    tabNewFileDates = tabFileDates(idNew);
    tabNewFileSizes = tabFileSizes(idNew);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % process the 'old' files
    if (VERBOSE_MODE_BUFF == 1)
