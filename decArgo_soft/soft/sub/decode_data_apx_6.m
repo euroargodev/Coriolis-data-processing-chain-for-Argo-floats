@@ -1161,10 +1161,6 @@ if (nbLev > 0)
    o_profData.dataRed = [profPresRed profTempRed profSalRed profBPhaseDoxyRed profTempDoxyRed profDoxyRed];
 end
 
-% if (g_decArgo_cycleNum == 63)
-%    a=1
-% end
-
 % decode auxiliary engineering data
 if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) || ...
       ((firstAuxByte ~= -1) && (length(profData) >= firstAuxByte)))

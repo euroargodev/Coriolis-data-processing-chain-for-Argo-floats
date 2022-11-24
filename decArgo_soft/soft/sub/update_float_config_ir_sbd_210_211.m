@@ -145,7 +145,7 @@ end
 
 % update PX00
 if (g_decArgo_cycleNum > 0)
-   
+
    % set the profile direction
    confName = 'CONFIG_MC08_';
    idPosMc08 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
@@ -153,6 +153,7 @@ if (g_decArgo_cycleNum > 0)
    confName = 'CONFIG_MC10_';
    idPosMc10 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
    ascSampPeriod = newConfig(idPosMc10);
+   direction = 0;
    if ((ascSampPeriod ~= 0) && (descSampPeriod == 0))
       direction = 1;
    elseif ((ascSampPeriod == 0) && (descSampPeriod ~= 0))

@@ -86,7 +86,7 @@ if (a_addLaunchData == 1)
       a_floatSurfData.launchDate, ...
       a_floatSurfData.launchLon, ...
       a_floatSurfData.launchLat, ...
-      ' ', ' ', '0');
+      ' ', ' ', '0', 0);
    
    trajNMeasStruct.surfOnly = 1;
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -116,7 +116,8 @@ for idpos = 1:length(cycleSurfData.argosLocDate)
       cycleSurfData.argosLocLat(idpos), ...
       cycleSurfData.argosLocAcc(idpos), ...
       cycleSurfData.argosLocSat(idpos), ...
-      cycleSurfData.argosLocQc(idpos));
+      cycleSurfData.argosLocQc(idpos), ...
+      1);
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
 end
 
@@ -353,10 +354,12 @@ if (~isempty(a_trajData))
 end
 
 % add configuration mission number
-configMissionNumber = get_config_mission_number_argos( ...
-   a_cycleNum, a_timeData, a_decoderId);
-if (~isempty(configMissionNumber))
-   trajNCycleStruct.configMissionNumber = configMissionNumber;
+if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+   configMissionNumber = get_config_mission_number_argos( ...
+      a_cycleNum, a_timeData, a_decoderId);
+   if (~isempty(configMissionNumber))
+      trajNCycleStruct.configMissionNumber = configMissionNumber;
+   end
 end
 
 % output data

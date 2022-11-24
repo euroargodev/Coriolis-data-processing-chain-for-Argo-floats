@@ -70,9 +70,6 @@ global g_decArgo_ackPacket;
 % decoder configuration values
 global g_decArgo_generateNcTech;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 % max number of CTD samples in one NOVA sensor data packet
 global g_decArgo_maxCTDSampleInNovaDataPacket;
 NB_MEAS_MAX_NOVA = g_decArgo_maxCTDSampleInNovaDataPacket;

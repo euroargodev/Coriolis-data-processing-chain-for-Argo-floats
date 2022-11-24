@@ -52,6 +52,7 @@ global g_MC_AET_Float;
 global g_MC_TST;
 global g_MC_TST_Float;
 global g_MC_FMT;
+global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 
@@ -77,7 +78,7 @@ if (a_addLaunchData == 1)
       a_floatSurfData.launchDate, ...
       a_floatSurfData.launchLon, ...
       a_floatSurfData.launchLat, ...
-      ' ', ' ', '0');
+      ' ', ' ', '0', 0);
    
    trajNMeasStruct.surfOnly = 1;
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
@@ -115,6 +116,24 @@ for idC = 1:length(cycleNumList)
    end
    trajNCycleStruct = o_tabTrajNCycle(idTrajNCyStruct);
    
+   % determine DATA_MODE for the current cycle
+   cycleDataMode = 'R';
+   if (any([a_presOffsetData.cycleNumAdjPres] == cycleNum) || ...
+         ~isempty(cycleTimeStruct.clockOffset))
+      cycleDataMode = 'A';
+   end
+   trajNCycleStruct.dataMode = cycleDataMode;
+   
+   if (cycleDataMode == 'R')
+      % this cycle is not adjusted
+      idGpsLoc = find([trajNMeasStruct.tabMeas.measCode] == g_MC_Surface);
+      for idLoc = 1:length(idGpsLoc)
+         trajNMeasStruct.tabMeas(idGpsLoc(idLoc)).juldAdj = '';
+         trajNMeasStruct.tabMeas(idGpsLoc(idLoc)).juldAdjStatus = '';
+         trajNMeasStruct.tabMeas(idGpsLoc(idLoc)).juldAdjQc = '';
+      end
+   end
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % store time information
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +141,6 @@ for idC = 1:length(cycleNumList)
    % clock offset
    if (~isempty(cycleTimeStruct.clockOffset))
       trajNCycleStruct.clockOffset = cycleTimeStruct.clockOffset;
-      trajNCycleStruct.dataMode = 'A';
    end
    
    % Descent Start Time
@@ -308,7 +326,7 @@ for idC = 1:length(cycleNumList)
    if (cycleTimeStruct.firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          cycleTimeStruct.firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], ~isempty(cycleTimeStruct.clockOffset));
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          
       trajNCycleStruct.juldFirstMessage = cycleTimeStruct.firstMsgTime;
@@ -319,7 +337,7 @@ for idC = 1:length(cycleNumList)
    if (cycleTimeStruct.lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          cycleTimeStruct.lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], ~isempty(cycleTimeStruct.clockOffset));
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = cycleTimeStruct.lastMsgTime;

@@ -96,10 +96,15 @@ if (a_doProfile.presCutOffProf ~= g_decArgo_presDef)
             if (~isempty(ctdIntData))
                
                idNoNan = find(~isnan(ctdIntData(:, 2)));
+               optodeInAirMeasFlag = get_static_config_value('CONFIG_PX_1_1_0_0_7', 0);
                
                switch (a_decoderId)
                   
                   case {106, 301}
+                     
+                     if ((a_decoderId == 106) && (isempty(optodeInAirMeasFlag) || (optodeInAirMeasFlag == 0)))
+                        return;
+                     end
                      
                      idC1PhaseDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'C1PHASE_DOXY') == 1, 1);
                      idC2PhaseDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'C2PHASE_DOXY') == 1, 1);
@@ -131,7 +136,11 @@ if (a_doProfile.presCutOffProf ~= g_decArgo_presDef)
 
                      end
                      
-                  case {107, 109}
+                  case {107, 109, 110}
+                     
+                     if (isempty(optodeInAirMeasFlag) || (optodeInAirMeasFlag == 0))
+                        return;
+                     end
                      
                      idC1PhaseDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'C1PHASE_DOXY') == 1, 1);
                      idC2PhaseDoxy = find(strcmp({unpumpedProfile.paramList.name}, 'C2PHASE_DOXY') == 1, 1);
@@ -144,7 +153,7 @@ if (a_doProfile.presCutOffProf ~= g_decArgo_presDef)
 
                         % compute PPOX_DOXY values using the Stern-Volmer equation
                         unpumpedProfile.data(idNoNan, idDoxy) = ...
-                           compute_PPOX_DOXY_107_109( ...
+                           compute_PPOX_DOXY_107_109_110( ...
                            unpumpedProfile.data(idNoNan, idC1PhaseDoxy), ...
                            unpumpedProfile.data(idNoNan, idC2PhaseDoxy), ...
                            unpumpedProfile.data(idNoNan, idTempDoxy), ...

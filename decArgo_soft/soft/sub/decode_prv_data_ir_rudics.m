@@ -270,6 +270,20 @@ o_dataSUNAStdMedPresMean = [];
 o_dataSUNAStdMedConcNitraStd = [];
 o_dataSUNAStdMedConcNitraMed = [];
 
+dataSUNAAPFDate = [];
+dataSUNAAPFDateTrans = [];
+dataSUNAAPFCTDPres = [];
+dataSUNAAPFCTDTemp = [];
+dataSUNAAPFCTDSal = [];
+dataSUNAAPFIntTemp = [];
+dataSUNAAPFSpecTemp = [];
+dataSUNAAPFIntRelHumidity = [];
+dataSUNAAPFDarkSpecMean = [];
+dataSUNAAPFDarkSpecStd = [];
+dataSUNAAPFSensorNitra = [];
+dataSUNAAPFAbsFitRes = [];
+dataSUNAAPFOutSpec = [];
+
 o_dataSUNAAPFDate = [];
 o_dataSUNAAPFDateTrans = [];
 o_dataSUNAAPFCTDPres = [];
@@ -283,6 +297,20 @@ o_dataSUNAAPFDarkSpecStd = [];
 o_dataSUNAAPFSensorNitra = [];
 o_dataSUNAAPFAbsFitRes = [];
 o_dataSUNAAPFOutSpec = [];
+
+o_dataSUNAAPF2Date = [];
+o_dataSUNAAPF2DateTrans = [];
+o_dataSUNAAPF2CTDPres = [];
+o_dataSUNAAPF2CTDTemp = [];
+o_dataSUNAAPF2CTDSal = [];
+o_dataSUNAAPF2IntTemp = [];
+o_dataSUNAAPF2SpecTemp = [];
+o_dataSUNAAPF2IntRelHumidity = [];
+o_dataSUNAAPF2DarkSpecMean = [];
+o_dataSUNAAPF2DarkSpecStd = [];
+o_dataSUNAAPF2SensorNitra = [];
+o_dataSUNAAPF2AbsFitRes = [];
+o_dataSUNAAPF2OutSpec = [];
 
 o_sensorTechCTDNbPackDesc = [];
 o_sensorTechCTDNbPackDrift = [];
@@ -1362,7 +1390,7 @@ if (~isempty(a_tabSensors))
                   o_cyProfPhaseList = [o_cyProfPhaseList; ...
                      packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
                   
-               case {24}
+               case {24, 25}
                   % SUNA (APF)
                   
                   % first item bit number
@@ -1390,24 +1418,54 @@ if (~isempty(a_tabSensors))
                      continue;
                   end
                   
-                  o_dataSUNAAPFDate = [o_dataSUNAAPFDate; cycleNum profNum phaseNum epoch2000_2_julian(values(4))];
-                  o_dataSUNAAPFDateTrans = [o_dataSUNAAPFDateTrans; cycleNum profNum phaseNum 1];
-                  o_dataSUNAAPFCTDPres = [o_dataSUNAAPFCTDPres; cycleNum profNum phaseNum double(typecast(uint32(values(5)), 'single'))];
-                  o_dataSUNAAPFCTDTemp = [o_dataSUNAAPFCTDTemp; cycleNum profNum phaseNum double(typecast(uint32(values(6)), 'single'))];
-                  o_dataSUNAAPFCTDSal = [o_dataSUNAAPFCTDSal; cycleNum profNum phaseNum double(typecast(uint32(values(7)), 'single'))];
-                  o_dataSUNAAPFIntTemp = [o_dataSUNAAPFIntTemp; cycleNum profNum phaseNum double(typecast(uint32(values(8)), 'single'))];
-                  o_dataSUNAAPFSpecTemp = [o_dataSUNAAPFSpecTemp; cycleNum profNum phaseNum double(typecast(uint32(values(9)), 'single'))];
-                  o_dataSUNAAPFIntRelHumidity = [o_dataSUNAAPFIntRelHumidity; cycleNum profNum phaseNum double(typecast(uint32(values(10)), 'single'))];
-                  o_dataSUNAAPFDarkSpecMean = [o_dataSUNAAPFDarkSpecMean; cycleNum profNum phaseNum double(typecast(uint32(values(11)), 'single'))];
-                  o_dataSUNAAPFDarkSpecStd = [o_dataSUNAAPFDarkSpecStd; cycleNum profNum phaseNum double(typecast(uint32(values(12)), 'single'))];
-                  o_dataSUNAAPFSensorNitra = [o_dataSUNAAPFSensorNitra; cycleNum profNum phaseNum double(typecast(uint32(values(13)), 'single'))];
-                  o_dataSUNAAPFAbsFitRes = [o_dataSUNAAPFAbsFitRes; cycleNum profNum phaseNum double(typecast(uint32(values(14)), 'single'))];
+                  dataSUNAAPFDate = [cycleNum profNum phaseNum epoch2000_2_julian(values(4))];
+                  dataSUNAAPFDateTrans = [cycleNum profNum phaseNum 1];
+                  dataSUNAAPFCTDPres = [cycleNum profNum phaseNum double(typecast(uint32(values(5)), 'single'))];
+                  dataSUNAAPFCTDTemp = [cycleNum profNum phaseNum double(typecast(uint32(values(6)), 'single'))];
+                  dataSUNAAPFCTDSal = [cycleNum profNum phaseNum double(typecast(uint32(values(7)), 'single'))];
+                  dataSUNAAPFIntTemp = [cycleNum profNum phaseNum double(typecast(uint32(values(8)), 'single'))];
+                  dataSUNAAPFSpecTemp = [cycleNum profNum phaseNum double(typecast(uint32(values(9)), 'single'))];
+                  dataSUNAAPFIntRelHumidity = [cycleNum profNum phaseNum double(typecast(uint32(values(10)), 'single'))];
+                  dataSUNAAPFDarkSpecMean = [cycleNum profNum phaseNum double(typecast(uint32(values(11)), 'single'))];
+                  dataSUNAAPFDarkSpecStd = [cycleNum profNum phaseNum double(typecast(uint32(values(12)), 'single'))];
+                  dataSUNAAPFSensorNitra = [cycleNum profNum phaseNum double(typecast(uint32(values(13)), 'single'))];
+                  dataSUNAAPFAbsFitRes = [cycleNum profNum phaseNum double(typecast(uint32(values(14)), 'single'))];
                   
                   measOutSpec = [];
                   for idBin = 1:45
                      measOutSpec = [measOutSpec values((idBin-1)+15)];
                   end
-                  o_dataSUNAAPFOutSpec = [o_dataSUNAAPFOutSpec; cycleNum profNum phaseNum measOutSpec];
+                  dataSUNAAPFOutSpec = [cycleNum profNum phaseNum measOutSpec];
+                  
+                  if (sensorDataType == 24)
+                     o_dataSUNAAPFDate = [o_dataSUNAAPFDate; dataSUNAAPFDate];
+                     o_dataSUNAAPFDateTrans = [o_dataSUNAAPFDateTrans; dataSUNAAPFDateTrans];
+                     o_dataSUNAAPFCTDPres = [o_dataSUNAAPFCTDPres; dataSUNAAPFCTDPres];
+                     o_dataSUNAAPFCTDTemp = [o_dataSUNAAPFCTDTemp; dataSUNAAPFCTDTemp];
+                     o_dataSUNAAPFCTDSal = [o_dataSUNAAPFCTDSal; dataSUNAAPFCTDSal];
+                     o_dataSUNAAPFIntTemp = [o_dataSUNAAPFIntTemp; dataSUNAAPFIntTemp];
+                     o_dataSUNAAPFSpecTemp = [o_dataSUNAAPFSpecTemp; dataSUNAAPFSpecTemp];
+                     o_dataSUNAAPFIntRelHumidity = [o_dataSUNAAPFIntRelHumidity; dataSUNAAPFIntRelHumidity];
+                     o_dataSUNAAPFDarkSpecMean = [o_dataSUNAAPFDarkSpecMean; dataSUNAAPFDarkSpecMean];
+                     o_dataSUNAAPFDarkSpecStd = [o_dataSUNAAPFDarkSpecStd; dataSUNAAPFDarkSpecStd];
+                     o_dataSUNAAPFSensorNitra = [o_dataSUNAAPFSensorNitra; dataSUNAAPFSensorNitra];
+                     o_dataSUNAAPFAbsFitRes = [o_dataSUNAAPFAbsFitRes; dataSUNAAPFAbsFitRes];
+                     o_dataSUNAAPFOutSpec = [o_dataSUNAAPFOutSpec; dataSUNAAPFOutSpec];
+                  else
+                     o_dataSUNAAPF2Date = [o_dataSUNAAPF2Date; dataSUNAAPFDate];
+                     o_dataSUNAAPF2DateTrans = [o_dataSUNAAPF2DateTrans; dataSUNAAPFDateTrans];
+                     o_dataSUNAAPF2CTDPres = [o_dataSUNAAPF2CTDPres; dataSUNAAPFCTDPres];
+                     o_dataSUNAAPF2CTDTemp = [o_dataSUNAAPF2CTDTemp; dataSUNAAPFCTDTemp];
+                     o_dataSUNAAPF2CTDSal = [o_dataSUNAAPF2CTDSal; dataSUNAAPFCTDSal];
+                     o_dataSUNAAPF2IntTemp = [o_dataSUNAAPF2IntTemp; dataSUNAAPFIntTemp];
+                     o_dataSUNAAPF2SpecTemp = [o_dataSUNAAPF2SpecTemp; dataSUNAAPFSpecTemp];
+                     o_dataSUNAAPF2IntRelHumidity = [o_dataSUNAAPF2IntRelHumidity; dataSUNAAPFIntRelHumidity];
+                     o_dataSUNAAPF2DarkSpecMean = [o_dataSUNAAPF2DarkSpecMean; dataSUNAAPFDarkSpecMean];
+                     o_dataSUNAAPF2DarkSpecStd = [o_dataSUNAAPF2DarkSpecStd; dataSUNAAPFDarkSpecStd];
+                     o_dataSUNAAPF2SensorNitra = [o_dataSUNAAPF2SensorNitra; dataSUNAAPFSensorNitra];
+                     o_dataSUNAAPF2AbsFitRes = [o_dataSUNAAPF2AbsFitRes; dataSUNAAPFAbsFitRes];
+                     o_dataSUNAAPF2OutSpec = [o_dataSUNAAPF2OutSpec; dataSUNAAPFOutSpec];
+                  end
                   
                   o_cyProfPhaseList = [o_cyProfPhaseList; ...
                      packType sensorDataType cycleNum profNum phaseNum sbdFileDate];
@@ -2263,10 +2321,28 @@ o_dataSUNAAPF{11} = o_dataSUNAAPFSensorNitra;
 o_dataSUNAAPF{12} = o_dataSUNAAPFAbsFitRes;
 o_dataSUNAAPF{13} = o_dataSUNAAPFOutSpec;
 
+o_dataSUNAAPF2 = [];
+if (~isempty(o_dataSUNAAPF2Date))
+   o_dataSUNAAPF2{1} = o_dataSUNAAPF2Date;
+   o_dataSUNAAPF2{2} = o_dataSUNAAPF2DateTrans;
+   o_dataSUNAAPF2{3} = o_dataSUNAAPF2CTDPres;
+   o_dataSUNAAPF2{4} = o_dataSUNAAPF2CTDTemp;
+   o_dataSUNAAPF2{5} = o_dataSUNAAPF2CTDSal;
+   o_dataSUNAAPF2{6} = o_dataSUNAAPF2IntTemp;
+   o_dataSUNAAPF2{7} = o_dataSUNAAPF2SpecTemp;
+   o_dataSUNAAPF2{8} = o_dataSUNAAPF2IntRelHumidity;
+   o_dataSUNAAPF2{9} = o_dataSUNAAPF2DarkSpecMean;
+   o_dataSUNAAPF2{10} = o_dataSUNAAPF2DarkSpecStd;
+   o_dataSUNAAPF2{11} = o_dataSUNAAPF2SensorNitra;
+   o_dataSUNAAPF2{12} = o_dataSUNAAPF2AbsFitRes;
+   o_dataSUNAAPF2{13} = o_dataSUNAAPF2OutSpec;
+end
+
 o_dataSUNA{1} = o_dataSUNAMean;
 o_dataSUNA{2} = o_dataSUNARaw;
 o_dataSUNA{3} = o_dataSUNAStdMed;
 o_dataSUNA{4} = o_dataSUNAAPF;
+o_dataSUNA{5} = o_dataSUNAAPF2;
 
 o_sensorTechCTD{1} = o_sensorTechCTDNbPackDesc;
 o_sensorTechCTD{2} = o_sensorTechCTDNbPackDrift;

@@ -860,10 +860,6 @@ for idL = 1:size(a_sensorData, 1)
    end
 end
 
-% if (g_decArgo_cycleNum == 6)
-%    a=1
-% end
-
 % adjust the amount of received data according to profile length
 if (profileLength ~= -1)
    nbMsg = compute_number_of_apx_argos_msg(profileLength, a_decoderId);

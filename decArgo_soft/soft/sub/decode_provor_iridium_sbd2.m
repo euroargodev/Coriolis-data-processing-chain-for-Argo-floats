@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
 %    o_structConfig] = ...
 %    decode_provor_iridium_sbd2( ...
 %    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -27,6 +27,7 @@
 %   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
 %   o_tabNcTechIndex : decoded technical index information
 %   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
 %   o_structConfig   : NetCDF float configuration
 %
 % EXAMPLES :
@@ -39,7 +40,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
    o_structConfig] = ...
    decode_provor_iridium_sbd2( ...
    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -51,6 +52,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -253,6 +255,9 @@ if (~a_floatDmFlag)
       
       if (~g_decArgo_realtimeFlag)
          
+%          fprintf('\n\nATTENTION: LIMITATION DES DONNEES\n\n\n');
+%          a_cycleFileNameList = a_cycleFileNameList(1:500);
+
          % move the mail files associated with the a_cycleList cycles into the
          % spool directory
          nbFiles = 0;
@@ -427,7 +432,7 @@ if (~a_floatDmFlag)
             % process the buffer files
             [tabProfiles, ...
                tabTrajNMeas, tabTrajNCycle, ...
-               tabNcTechIndex, tabNcTechVal] = ...
+               tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                decode_sbd_files( ...
                tabFileNames, tabFileDates, tabFileSizes, ...
                a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
@@ -446,6 +451,9 @@ if (~a_floatDmFlag)
             end
             if (~isempty(tabNcTechVal))
                o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+            end
+            if (~isempty(tabTechNMeas))
+               o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
             end
             
             % move the processed files into the archive directory (and delete
@@ -563,7 +571,7 @@ if (~a_floatDmFlag)
          if (~isempty(tabOldFileNames))
             [tabProfiles, ...
                tabTrajNMeas, tabTrajNCycle, ...
-               tabNcTechIndex, tabNcTechVal] = ...
+               tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                decode_sbd_files( ...
                tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
                a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
@@ -582,6 +590,9 @@ if (~a_floatDmFlag)
             end
             if (~isempty(tabNcTechVal))
                o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+            end
+            if (~isempty(tabTechNMeas))
+               o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
             end
             
             % move the processed 'old' files into the archive directory (and delete the
@@ -728,7 +739,7 @@ if (~a_floatDmFlag)
                
                [tabProfiles, ...
                   tabTrajNMeas, tabTrajNCycle, ...
-                  tabNcTechIndex, tabNcTechVal] = ...
+                  tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
                   decode_sbd_files( ...
                   tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
                   a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
@@ -747,6 +758,9 @@ if (~a_floatDmFlag)
                end
                if (~isempty(tabNcTechVal))
                   o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+               end
+               if (~isempty(tabTechNMeas))
+                  o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
                end
                
                % move the processed 'new' files into the archive directory (and delete
@@ -886,7 +900,7 @@ else
          
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
-            tabNcTechIndex, tabNcTechVal] = ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
             decode_sbd_files( ...
             sbdFileNameList(idFile), sbdFileDate(idFile), ones(1, length(idFile))*140, ...
             a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag);
@@ -905,6 +919,9 @@ else
          end
          if (~isempty(tabNcTechVal))
             o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+         end
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
          end
       end
    end
@@ -932,9 +949,10 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_structConfig] = create_output_float_config_ir_sbd2(decArgoConfParamNames, ncConfParamNames, a_decoderId);
    
    % add configuration number and output cycle number
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = add_configuration_number_ir_rudics_sbd2( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
-   
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+      add_configuration_number_ir_rudics_sbd2( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
+
    % set QC parameters to '3' when the sensor state is ko
    [o_tabProfiles, o_tabTrajNMeas] = update_qc_from_sensor_state_ir_rudics_sbd2( ...
       o_tabProfiles, o_tabTrajNMeas);
@@ -971,15 +989,15 @@ return;
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal] = ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
 %    decode_sbd_files( ...
 %    a_mailFileNameList, a_mailFileDateList, a_sbdFileSizeList, ...
 %    a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag)
 %
 % INPUT PARAMETERS :
-%   a_mailFileNameList  : list of SBD file names
-%   a_mailFileNameList  : list of SBD file dates
-%   a_mailFileNameList  : list of SBD file sizes
+%   a_mailFileNameList : list of SBD file names
+%   a_mailFileNameList : list of SBD file dates
+%   a_mailFileNameList : list of SBD file sizes
 %   a_decoderId        : float decoder Id
 %   a_launchDate       : launch date
 %   a_refDay           : reference day (day of the first descent)
@@ -987,11 +1005,12 @@ return;
 %   a_floatDmFlag      : float DM flag
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles        : decoded profiles
-%   o_tabTrajNMeas       : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle      : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex     : decoded technical index information
-%   o_tabNcTechVal       : decoded technical data
+%   o_tabProfiles    : decoded profiles
+%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex : decoded technical index information
+%   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
 %
 % EXAMPLES :
 %
@@ -1003,7 +1022,7 @@ return;
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal] = ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
    decode_sbd_files( ...
    a_mailFileNameList, a_mailFileDateList, a_sbdFileSizeList, ...
    a_decoderId, a_launchDate, a_refDay, a_floatSoftVersion, a_floatDmFlag)
@@ -1014,6 +1033,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -1272,7 +1292,7 @@ switch (a_decoderId)
             sensorTechCTD);
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_ir_rudics_sbd2( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
             cyProfPhaseList, tabTrajIndex, tabTrajData);
          
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
@@ -1294,7 +1314,8 @@ switch (a_decoderId)
             o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
             o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
          end
-         
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+               
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
             
@@ -1462,7 +1483,7 @@ switch (a_decoderId)
             sensorTechCTD);
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_ir_rudics_sbd2( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_ir_rudics_sbd2( ...
             cyProfPhaseList, tabTrajIndex, tabTrajData);
          
          o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
@@ -1485,6 +1506,7 @@ switch (a_decoderId)
             o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
             o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
          end
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];

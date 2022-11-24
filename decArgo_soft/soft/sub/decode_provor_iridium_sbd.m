@@ -4,7 +4,7 @@
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal, ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
 %    o_structConfig] = ...
 %    decode_provor_iridium_sbd( ...
 %    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -25,6 +25,7 @@
 %   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
 %   o_tabNcTechIndex : decoded technical index information
 %   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
 %   o_structConfig   : NetCDF float configuration
 %
 % EXAMPLES :
@@ -37,7 +38,7 @@
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal, ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas, ...
    o_structConfig] = ...
    decode_provor_iridium_sbd( ...
    a_floatNum, a_cycleFileNameList, a_decoderId, a_floatImei, ...
@@ -49,6 +50,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 o_structConfig = [];
 
 % current float WMO number
@@ -83,27 +85,6 @@ global g_decArgo_bufferDirectory;
 global g_decArgo_archiveDirectory;
 global g_decArgo_archiveSbdDirectory;
 global g_decArgo_historyDirectory;
-
-% arrays to store rough information on received data
-global g_decArgo_0TypePacketReceivedFlag;
-global g_decArgo_4TypePacketReceivedFlag;
-global g_decArgo_5TypePacketReceivedFlag;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
-global g_decArgo_nbOf1Or8TypePacketExpected;
-global g_decArgo_nbOf1Or8TypePacketReceived;
-global g_decArgo_nbOf2Or9TypePacketExpected;
-global g_decArgo_nbOf2Or9TypePacketReceived;
-global g_decArgo_nbOf3Or10TypePacketExpected;
-global g_decArgo_nbOf3Or10TypePacketReceived;
-global g_decArgo_nbOf13Or11TypePacketExpected;
-global g_decArgo_nbOf13Or11TypePacketReceived;
-global g_decArgo_nbOf14Or12TypePacketExpected;
-global g_decArgo_nbOf14Or12TypePacketReceived;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
@@ -149,6 +130,14 @@ g_decArgo_firstDeepCycleDone = 0;
 % number of the previous decoded cycle
 global g_decArgo_cycleNumPrev;
 g_decArgo_cycleNumPrev = -1;
+
+% last float reset date
+global g_decArgo_floatLastResetDate;
+g_decArgo_floatLastResetDate = -1;
+
+% offset in cycle number (in case of reset of the float)
+global g_decArgo_cycleNumOffset;
+g_decArgo_cycleNumOffset = 0;
 
 % shift to apply to transmitted cycle number (see 6901248)
 global g_decArgo_cycleNumShift;
@@ -421,7 +410,7 @@ if (g_decArgo_realtimeFlag)
       % process the buffer files
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal] = ...
+         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
          decode_sbd_files( ...
          tabFileNames, tabFileDates, tabFileSizes, ...
          a_decoderId, a_launchDate, []);
@@ -440,6 +429,9 @@ if (g_decArgo_realtimeFlag)
       end
       if (~isempty(tabNcTechVal))
          o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+      end
+      if (~isempty(tabTechNMeas))
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
       end
       
       % move the processed files into the archive directory (and delete
@@ -557,7 +549,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    if (~isempty(tabOldFileNames))
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
-         tabNcTechIndex, tabNcTechVal] = ...
+         tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
          decode_sbd_files( ...
          tabOldFileNames, tabOldFileDates, tabOldFileSizes, ...
          a_decoderId, a_launchDate, 0);
@@ -577,6 +569,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
       if (~isempty(tabNcTechVal))
          o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
       end
+      if (~isempty(tabTechNMeas))
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+      end
       
       % move the processed 'old' files into the archive directory (and delete the
       % associated SBD files)
@@ -589,28 +584,6 @@ for idSpoolFile = 1:length(tabAllFileNames)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % check if the 'new' files can be processed
-   
-   % initialize information arrays
-   g_decArgo_0TypePacketReceivedFlag = 0;
-   g_decArgo_4TypePacketReceivedFlag = 0;
-   g_decArgo_5TypePacketReceivedFlag = 0;
-   g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
-   g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
-   g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
-   g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
-   g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
-   g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
-   g_decArgo_nbOf1Or8TypePacketExpected = -1;
-   g_decArgo_nbOf1Or8TypePacketReceived = 0;
-   g_decArgo_nbOf2Or9TypePacketExpected = -1;
-   g_decArgo_nbOf2Or9TypePacketReceived = 0;
-   g_decArgo_nbOf3Or10TypePacketExpected = -1;
-   g_decArgo_nbOf3Or10TypePacketReceived = 0;
-   g_decArgo_nbOf13Or11TypePacketExpected = -1;
-   g_decArgo_nbOf13Or11TypePacketReceived = 0;
-   g_decArgo_nbOf14Or12TypePacketExpected = -1;
-   g_decArgo_nbOf14Or12TypePacketReceived = 0;
-   
    
    % store the SBD data
    sbdDataDate = [];
@@ -670,87 +643,35 @@ for idSpoolFile = 1:length(tabAllFileNames)
             % decode the collected data
             decode_prv_data_ir_sbd_201_203(sbdDataData, sbdDataDate, 0, a_decoderId);
             
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
-            
          case {202} % Arvor-deep 3500
             
             % decode the collected data
             decode_prv_data_ir_sbd_202(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
             
          case {204} % Arvor Iridium 5.4
             
             % decode the collected data
             decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 0);
             
-            % type 5 packets are not concerned by this decoder
-            g_decArgo_5TypePacketReceivedFlag = 1;
-            
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
-            
          case {205} % Arvor Iridium 5.41 & 5.42
 
             % decode the collected data
             decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            
-            % type 5 packets are not concerned by this decoder
-            g_decArgo_5TypePacketReceivedFlag = 1;
-            
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
-            
+                        
          case {206, 207, 208} % Provor-DO Iridium 5.71 & 5.7 & 5.72
             
             % decode the collected data
             decode_prv_data_ir_sbd_206_207_208(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
-            
-            % type 5 packets are not concerned by this decoder
-            g_decArgo_5TypePacketReceivedFlag = 1;
-            
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
             
          case {209} % Arvor-2DO Iridium 5.73
             
             % decode the collected data
             decode_prv_data_ir_sbd_209(sbdDataData, sbdDataDate, 0, g_decArgo_firstDeepCycleDone);
             
-            % type 4 packets are not concerned by this decoder
-            g_decArgo_4TypePacketReceivedFlag = 1;
-            
-            g_decArgo_nbOf1Or8TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10TypePacketExpected = 0;
-            g_decArgo_nbOf13Or11TypePacketExpected = 0;
-            g_decArgo_nbOf14Or12TypePacketExpected = 0;
-            
          case {210, 211} % Arvor-ARN Iridium
             
             % decode the collected data
             decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 0, a_decoderId);
-            
-            g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
-            g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
-            g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
             
          otherwise
             fprintf('WARNING: Float #%d: Nothing implemented yet for decoderId #%d\n', ...
@@ -786,7 +707,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
                % - in RT to process all received data for the current rsync run
                % (if additionnal data will be received next rsync run, it will
                % be procecced together with the preceeding ones)
-               fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents (all received data), %d SBD files ', ...
+               fprintf('BUFF_INFO: Float #%d: Last step => processing buffer contents (all received data), %d SBD files\n', ...
                   g_decArgo_floatNum, ...
                   length(tabNewFileNames));
             end
@@ -794,7 +715,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
          
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
-            tabNcTechIndex, tabNcTechVal] = ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
             decode_sbd_files( ...
             tabNewFileNames, tabNewFileDates, tabNewFileSizes, ...
             a_decoderId, a_launchDate, okToProcess);
@@ -813,6 +734,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
          end
          if (~isempty(tabNcTechVal))
             o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+         end
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
          end
          
          % move the processed 'new' files into the archive directory (and delete
@@ -837,8 +761,9 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles] = fill_empty_profile_locations_ir_sbd(g_decArgo_gpsData, o_tabProfiles);
    
    % update the output cycle number in the structures
-   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_ir_sbd( ...
-      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
+   [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+      update_output_cycle_number_ir_sbd( ...
+      o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
    
    % clean FMT, LMT and GPS locations and set TET
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_sbd( ...
@@ -872,7 +797,7 @@ return;
 % SYNTAX :
 %  [o_tabProfiles, ...
 %    o_tabTrajNMeas, o_tabTrajNCycle, ...
-%    o_tabNcTechIndex, o_tabNcTechVal] = ...
+%    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
 %    decode_sbd_files( ...
 %    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
 %    a_decoderId, a_launchDate, a_completedBuffer)
@@ -886,11 +811,12 @@ return;
 %   a_completedBuffer  : completed buffer flag (1 if the buffer is complete)
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles        : decoded profiles
-%   o_tabTrajNMeas       : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle      : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex     : decoded technical index information
-%   o_tabNcTechVal       : decoded technical data
+%   o_tabProfiles    : decoded profiles
+%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
+%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
+%   o_tabNcTechIndex : decoded technical index information
+%   o_tabNcTechVal   : decoded technical data
+%   o_tabTechNMeas   : decoded technical PARAM data
 %
 % EXAMPLES :
 %
@@ -902,7 +828,7 @@ return;
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
    o_tabTrajNMeas, o_tabTrajNCycle, ...
-   o_tabNcTechIndex, o_tabNcTechVal] = ...
+   o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
    decode_sbd_files( ...
    a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, ...
    a_decoderId, a_launchDate, a_completedBuffer)
@@ -913,6 +839,7 @@ o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
+o_tabTechNMeas = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -932,36 +859,12 @@ global g_decArgo_outputNcParamValue;
 % RT processing flag
 global g_decArgo_realtimeFlag;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 % report information structure
 global g_decArgo_reportStruct;
 
 % SBD sub-directories
 global g_decArgo_bufferDirectory;
 global g_decArgo_archiveSbdDirectory;
-
-% arrays to store rough information on received data
-global g_decArgo_0TypePacketReceivedFlag;
-global g_decArgo_4TypePacketReceivedFlag;
-global g_decArgo_5TypePacketReceivedFlag;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
-global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
-global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
-global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
-global g_decArgo_nbOf1Or8TypePacketExpected;
-global g_decArgo_nbOf1Or8TypePacketReceived;
-global g_decArgo_nbOf2Or9TypePacketExpected;
-global g_decArgo_nbOf2Or9TypePacketReceived;
-global g_decArgo_nbOf3Or10TypePacketExpected;
-global g_decArgo_nbOf3Or10TypePacketReceived;
-global g_decArgo_nbOf13Or11TypePacketExpected;
-global g_decArgo_nbOf13Or11TypePacketReceived;
-global g_decArgo_nbOf14Or12TypePacketExpected;
-global g_decArgo_nbOf14Or12TypePacketReceived;
 
 % array to store GPS data
 global g_decArgo_gpsData;
@@ -1047,31 +950,6 @@ for idFile = 1:length(a_sbdFileNameList)
    end
 end
 
-% decode from buffer list mode
-if (isempty(a_completedBuffer))
-
-   % initialize information arrays
-   g_decArgo_0TypePacketReceivedFlag = 0;
-   g_decArgo_4TypePacketReceivedFlag = 0;
-   g_decArgo_5TypePacketReceivedFlag = 0;
-   g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
-   g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
-   g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
-   g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
-   g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
-   g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
-   g_decArgo_nbOf1Or8TypePacketExpected = -1;
-   g_decArgo_nbOf1Or8TypePacketReceived = 0;
-   g_decArgo_nbOf2Or9TypePacketExpected = -1;
-   g_decArgo_nbOf2Or9TypePacketReceived = 0;
-   g_decArgo_nbOf3Or10TypePacketExpected = -1;
-   g_decArgo_nbOf3Or10TypePacketReceived = 0;
-   g_decArgo_nbOf13Or11TypePacketExpected = -1;
-   g_decArgo_nbOf13Or11TypePacketReceived = 0;
-   g_decArgo_nbOf14Or12TypePacketExpected = -1;
-   g_decArgo_nbOf14Or12TypePacketReceived = 0;
-end
-
 % decode the data
 
 switch (a_decoderId)
@@ -1084,27 +962,15 @@ switch (a_decoderId)
       [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_201_203(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone, a_decoderId);
       
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      completedBuffer = a_completedBuffer;
+      if (isempty(completedBuffer))
          % decode from buffer list mode
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+      end         
          
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
-         is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if (deepCycle == 1)
@@ -1293,7 +1159,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_201_203( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_201_203( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -1322,9 +1188,10 @@ switch (a_decoderId)
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
-         
+                  
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
          
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
@@ -1339,27 +1206,15 @@ switch (a_decoderId)
       [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
          decode_prv_data_ir_sbd_202(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      completedBuffer = a_completedBuffer;
+      if (isempty(completedBuffer))
          % decode from buffer list mode
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+      end         
          
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
-         is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if ((deepCycle == 0) && ...
@@ -1557,7 +1412,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_202( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_202( ...
             g_decArgo_cycleNum, deepCycle, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -1589,7 +1444,8 @@ switch (a_decoderId)
          
          o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
          o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
-         
+         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+
          g_decArgo_outputNcParamIndex = [];
          g_decArgo_outputNcParamValue = [];
          
@@ -1604,30 +1460,14 @@ switch (a_decoderId)
          decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      if (isempty(completedBuffer))
          % decode from buffer list mode
-         
-         % type 5 packets are not concerned by this decoder
-         g_decArgo_5TypePacketReceivedFlag = 1;
-         
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      end         
+         
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if (completedBuffer == 0)
@@ -1859,30 +1699,14 @@ switch (a_decoderId)
          decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      if (isempty(completedBuffer))
          % decode from buffer list mode
-         
-         % type 5 packets are not concerned by this decoder
-         g_decArgo_5TypePacketReceivedFlag = 1;
-         
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      end         
+         
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if (completedBuffer == 0)
@@ -2115,30 +1939,14 @@ switch (a_decoderId)
          decode_prv_data_ir_sbd_206_207_208(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      if (isempty(completedBuffer))
          % decode from buffer list mode
-         
-         % type 5 packets are not concerned by this decoder
-         g_decArgo_5TypePacketReceivedFlag = 1;
-         
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      end         
+         
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if (completedBuffer == 0)
@@ -2434,30 +2242,14 @@ switch (a_decoderId)
          decode_prv_data_ir_sbd_209(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      if (isempty(completedBuffer))
          % decode from buffer list mode
-         
-         % type 4 packets are not concerned by this decoder
-         g_decArgo_4TypePacketReceivedFlag = 1;
-         
-         g_decArgo_nbOf1Or8TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10TypePacketExpected = 0;
-         g_decArgo_nbOf13Or11TypePacketExpected = 0;
-         g_decArgo_nbOf14Or12TypePacketExpected = 0;
-         
          completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
-         if (g_decArgo_secondIridiumSession == 0)
-            deepCycle = 1;
-         else
-            deepCycle = 0;
-         end
+      end
+      
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
       if (completedBuffer == 0)
@@ -2791,23 +2583,18 @@ switch (a_decoderId)
    case {210, 211} % Arvor-ARN Iridium
       
       % decode the collected data
-      [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum] = ...
+      [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum, deepCycle] = ...
          decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 1, a_decoderId);
       
-      if (~isempty(a_completedBuffer))
-         
-         if (a_completedBuffer == 0)
-            % print what is missing in the buffer
-            is_buffer_completed_ir_sbd(1, a_decoderId);
-         end
-      else
+      completedBuffer = a_completedBuffer;
+      if (isempty(completedBuffer))
          % decode from buffer list mode
-         
-         g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
-         g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
-         g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
-         
-         is_buffer_completed_ir_sbd(0, a_decoderId);
+         completedBuffer = is_buffer_completed_ir_sbd(0, a_decoderId);
+      end
+      
+      if (completedBuffer == 0)
+         % print what is missing in the buffer
+         is_buffer_completed_ir_sbd(1, a_decoderId);
       end
                         
       if (g_decArgo_realtimeFlag == 1)
@@ -2816,7 +2603,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((g_decArgo_cycleNum > 0) && (irSessionNum == 1))
+      if ((g_decArgo_cycleNum > 0) && (deepCycle == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2826,7 +2613,7 @@ switch (a_decoderId)
       end
       
       % assign the configuration received during the prelude to this cycle
-      if ((g_decArgo_cycleNum == 0) && (irSessionNum == 1))
+      if (g_decArgo_cycleNum == 0)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2871,9 +2658,8 @@ switch (a_decoderId)
          firstGroundingDate, firstGroundingPres, ...
          secondGroundingDate, secondGroundingPres, ...
          eolStartDate, ...
-         firstEmergencyAscentDate, firstEmergencyAscentPres, ...
-         deepCycle] = ...
-         compute_prv_dates_210_211(tabTech1, tabTech2, irSessionNum);
+         firstEmergencyAscentDate, firstEmergencyAscentPres] = ...
+         compute_prv_dates_210_211(tabTech1, tabTech2, deepCycle);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
@@ -2977,7 +2763,7 @@ switch (a_decoderId)
          % TRAJ NetCDF file
          
          % process trajectory data for TRAJ NetCDF file
-         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_210_211( ...
+         [tabTrajNMeas, tabTrajNCycle, tabTechNMeas] = process_trajectory_data_210_211( ...
             g_decArgo_cycleNum, deepCycle, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
@@ -3005,7 +2791,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store NetCDF technical data
-         if (irSessionNum == 1)
+         if (deepCycle == 1)
             
             % store NetCDF technical data
             store_tech1_data_for_nc_210_211(tabTech1, deepCycle);
@@ -3022,6 +2808,7 @@ switch (a_decoderId)
             
             o_tabNcTechIndex = [o_tabNcTechIndex; g_decArgo_outputNcParamIndex];
             o_tabNcTechVal = [o_tabNcTechVal g_decArgo_outputNcParamValue];
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
             
             g_decArgo_outputNcParamIndex = [];
             g_decArgo_outputNcParamValue = [];

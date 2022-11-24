@@ -182,7 +182,7 @@ if (a_deepCycle == 1)
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -197,7 +197,7 @@ if (a_deepCycle == 1)
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
+         num2str(gpsCyLocQc(idpos)), 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -213,7 +213,7 @@ if (a_deepCycle == 1)
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;
@@ -661,7 +661,7 @@ else
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -676,7 +676,7 @@ else
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
+         num2str(gpsCyLocQc(idpos)), 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -692,7 +692,7 @@ else
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;
@@ -709,9 +709,11 @@ else
 end
 
 % add configuration mission number
-configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
-if (~isempty(configMissionNumber))
-   trajNCycleStruct.configMissionNumber = configMissionNumber;
+if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+   configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
+   if (~isempty(configMissionNumber))
+      trajNCycleStruct.configMissionNumber = configMissionNumber;
+   end
 end
 
 % output data

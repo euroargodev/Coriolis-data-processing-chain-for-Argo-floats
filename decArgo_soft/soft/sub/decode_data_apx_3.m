@@ -903,10 +903,6 @@ end
 if ((profileLengthDecoded >= 0) && (profileCcNstLengthDecoded >= 0))
    o_timeData.configParam.profileLength = profileLengthDecoded + profileCcNstLengthDecoded;
 end
-     
-% if (g_decArgo_cycleNum == 36)
-%    a=1
-% end
 
 % profile data
 profPres = [];

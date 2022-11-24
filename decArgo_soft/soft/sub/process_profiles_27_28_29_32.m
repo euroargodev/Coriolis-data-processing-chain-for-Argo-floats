@@ -209,7 +209,7 @@ for idProf = 1:3
       if (~isempty(configMissionNumber))
          profStruct.configMissionNumber = configMissionNumber;
       end
-
+      
       % add profile date and location information
       [profStruct] = add_profile_date_and_location_argos( ...
          profStruct, a_floatSurfData, a_cycleNum, a_decoderId);

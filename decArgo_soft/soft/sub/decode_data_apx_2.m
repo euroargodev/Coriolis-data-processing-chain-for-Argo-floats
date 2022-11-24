@@ -873,10 +873,6 @@ for idL = 1:size(a_sensorData, 1)
    end
 end
 
-% if (g_decArgo_cycleNum == 22)
-%    a=1
-% end
-
 % adjust the amount of received data according to profile length
 if (profileLength ~= -1)
    nbMsg = compute_number_of_apx_argos_msg(profileLength, a_decoderId);
@@ -1037,10 +1033,6 @@ if (nbLev > 0)
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed];
 end
-
-% if (g_decArgo_cycleNum == 22)
-%    a=1
-% end
 
 % decode auxiliary engineering data
 if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) || ...

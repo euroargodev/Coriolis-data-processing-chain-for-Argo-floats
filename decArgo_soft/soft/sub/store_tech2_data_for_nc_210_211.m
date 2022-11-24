@@ -33,6 +33,10 @@ global g_decArgo_outputNcParamIndex;
 global g_decArgo_outputNcParamValue;
 
 
+if (isempty(a_tabTech2))
+   return;
+end
+
 % retrieve technical message #2 data
 idF1 = find(a_tabTech2(:, 1) == 4);
 if (length(idF1) > 1)

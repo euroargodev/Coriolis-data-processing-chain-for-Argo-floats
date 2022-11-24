@@ -2,7 +2,7 @@
 % Print raw ECO3 sensor data in output CSV file.
 %
 % SYNTAX :
-%  print_data_in_csv_file_ECO3_raw_105_to_107( ...
+%  print_data_in_csv_file_ECO3_raw_105_to_107_110( ...
 %    a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataECO3Raw)
 %
@@ -22,7 +22,7 @@
 % RELEASES :
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_data_in_csv_file_ECO3_raw_105_to_107( ...
+function print_data_in_csv_file_ECO3_raw_105_to_107_110( ...
    a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataECO3Raw)
 
@@ -74,11 +74,11 @@ data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
 data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
 data(:, 6) = sensor_2_value_for_cdom_ir_rudics(data(:, 6));
 paramCHLA = get_netcdf_param_attributes('CHLA');
-data(:, 7) = compute_CHLA_105_to_109_121(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+data(:, 7) = compute_CHLA_105_to_110_121(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 % paramBBP700 = get_netcdf_param_attributes('BBP700');
-% data(:, 8) = compute_BBP700_105_to_109_121(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+% data(:, 8) = compute_BBP700_105_to_110_121(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
 paramCDOM = get_netcdf_param_attributes('CDOM');
-data(:, 8) = compute_CDOM_105_to_107_121(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
+data(:, 8) = compute_CDOM_105_to_107_110_121(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
 
 for idL = 1:size(data, 1)
    if (data(idL, 1) ~= g_decArgo_dateDef)

@@ -59,7 +59,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
 
-   case {105, 106, 107, 109}
+   case {105, 106, 107, 109, 110}
 
       % remocean floats
       o_paramList = [ ...

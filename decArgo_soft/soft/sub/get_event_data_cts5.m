@@ -64,7 +64,10 @@ fprintf('Processing %d system files\n', size(eventFiles, 1));
 
 % decode needed events data
 nbEventFiles = size(eventFiles, 1);
+
+% fprintf('\n\nATTENTION: LIMITATION DES DONNEES\n\n\n');
 % nbEventFiles = 20;
+
 for idFile = 1:nbEventFiles
    
    filePathName = [eventFiles{idFile, 4} eventFiles{idFile, 1}];

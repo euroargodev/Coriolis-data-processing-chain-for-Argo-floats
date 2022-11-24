@@ -103,6 +103,8 @@ configNames1 = [configNames1 ...
       {'CONFIG_PX_3_2_0_3_2'} ...
       {'CONFIG_PX_1_2_0_0_0'} ...
       {'CONFIG_PX_1_1_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_7'} ...
+      {'CONFIG_PX_1_1_0_0_8'} ...
       {'CONFIG_PX_1_6_0_0_0'} ...
       {'CONFIG_PX_1_6_0_0_5'} ...
       ];
@@ -463,7 +465,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
             end
             
-         case {107, 109}
+         case {107, 109, 110}
             if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                calibData = g_decArgo_calibInfo.OPTODE;
                tabDoxyCoef = [];
@@ -500,6 +502,7 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                tabOpticalWavelengthUv = [];
                tabENitrate = [];
                tabESwaNitrate = [];
+               tabEBisulfide = [];
                tabUvIntensityRefNitrate = [];
                for id = 1:256
                   fieldName = ['OPTICAL_WAVELENGTH_UV_' num2str(id)];
@@ -523,6 +526,15 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
                      return;
                   end
+                  if (a_decoderId == 110)
+                     fieldName = ['E_BISULFIDE_' num2str(id)];
+                     if (isfield(calibData, fieldName))
+                        tabEBisulfide = [tabEBisulfide calibData.(fieldName)];
+                     else
+                        fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                        return;
+                     end
+                  end
                   fieldName = ['UV_INTENSITY_REF_NITRATE_' num2str(id)];
                   if (isfield(calibData, fieldName))
                      tabUvIntensityRefNitrate = [tabUvIntensityRefNitrate calibData.(fieldName)];
@@ -534,6 +546,9 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = tabOpticalWavelengthUv;
                g_decArgo_calibInfo.SUNA.TabENitrate = tabENitrate;
                g_decArgo_calibInfo.SUNA.TabESwaNitrate = tabESwaNitrate;
+               if (~isempty(tabEBisulfide))
+                  g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
+               end
                g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);

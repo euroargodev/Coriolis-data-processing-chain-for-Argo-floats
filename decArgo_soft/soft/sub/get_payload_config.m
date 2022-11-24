@@ -269,7 +269,11 @@ for idAcq = 1:length(dataAcq)
    % stop pressure to define the depth zone
    configName = [configNamePrefix 'P02_' sprintf('%s%02d_%d_%d', phaseAcronym, acqData.PHASE, acqData.PHASE_NUM, depthZoneNum)];
    configNames{end+1} = configName;
-   configValues(end+1) = acqData.stop/100;
+   if (isfield(acqData, 'stop'))
+      configValues(end+1) = acqData.stop/100;
+   else
+      configValues(end+1) = nan;
+   end
    
    % sampling period for the depth zone
    configName = [configNamePrefix 'P03_' sprintf('%s%02d_%d_%d', phaseAcronym, acqData.PHASE, acqData.PHASE_NUM, depthZoneNum)];

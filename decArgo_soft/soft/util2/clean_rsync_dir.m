@@ -11,7 +11,7 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -20,7 +20,7 @@
 function clean_rsync_dir(varargin)
 
 % rsync data directory to clean
-RSYNC_INPUT_OUTPUT_DIR = 'E:\HDD\rsync_20141112/rsync';
+RSYNC_INPUT_OUTPUT_DIR = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\rsync_data_ir_rudics_20170315';
 
 if ~(exist(RSYNC_INPUT_OUTPUT_DIR, 'dir') == 7)
    fprintf('ERROR: Input directory is missing: %s\n', RSYNC_INPUT_OUTPUT_DIR);
@@ -37,10 +37,12 @@ for idElt1 = 1:length(firstLevElts)
    if (exist(elt1PathName, 'file') == 2)
       
       % if it is a file, delete it
-      fprintf('delete: %s\n', elt1PathName);
+      %       fprintf('delete: %s\n', elt1PathName);
       delete(elt1PathName);
    elseif (exist(elt1PathName, 'dir') == 7)
       if ~(strcmp(elt1Name, '.') || strcmp(elt1Name, '..'))
+         
+         fprintf('Processing directory: %s\n', elt1Name);
          
          % process the 1 level sub-directories
          secondLevElts = dir(elt1PathName);
@@ -54,14 +56,14 @@ for idElt1 = 1:length(firstLevElts)
                % preserve only *.b64.sbd or *.bin.sbd files
                if ~((strcmp(elt2PathName(end-7:end), '.b64.sbd') == 1) || ...
                      (strcmp(elt2PathName(end-7:end), '.bin.sbd') == 1))
-                  fprintf('delete: %s\n', elt2PathName);
+                  %                   fprintf('delete: %s\n', elt2PathName);
                   delete(elt2PathName);
                end
             elseif (exist(elt2PathName, 'dir') == 7)
                if ~(strcmp(elt2Name, '.') || strcmp(elt2Name, '..'))
                   
                   % delete all sub-directories if level > 2
-                  fprintf('delete: %s\n', elt2PathName);
+                  %                   fprintf('delete: %s\n', elt2PathName);
                   rmdir(elt2PathName, 's');
                end
             end
@@ -80,7 +82,7 @@ for idElt1 = 1:length(firstLevElts)
    if (exist(elt1PathName, 'dir') == 7)
       secondLevElts = dir(elt1PathName);
       if (length(secondLevElts) == 2)
-         fprintf('delete: %s\n', elt1PathName);
+         %          fprintf('delete: %s\n', elt1PathName);
          rmdir(elt1PathName);
       end
    end

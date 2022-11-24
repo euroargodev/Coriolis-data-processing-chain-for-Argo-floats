@@ -91,12 +91,25 @@ if (~isempty(g_decArgo_iridiumMailData))
       % structure to store N_CYCLE data
       trajNCycleStruct = get_traj_n_cycle_init_struct(cycleNum, -1);
       trajNCycleStruct.outputCycleNumber = cycleNum;
-      trajNCycleStruct.grounded = ' ';
+      trajNCycleStruct.grounded = 'U';
       
+      % add configuration mission number
+      % we don't know what is the configuration number of this cycle
+      % => we keep the previous one
+      cyNum = cycleNum - 1;
+      while (cyNum >= 0)
+         configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
+         if (~isempty(configMissionNumber))
+            trajNCycleStruct.configMissionNumber = configMissionNumber;
+            break;
+         end
+         cyNum = cyNum - 1;
+      end
+
       % First Message Time
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 0);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -105,7 +118,7 @@ if (~isempty(g_decArgo_iridiumMailData))
       % Last Message Time
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 0);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;

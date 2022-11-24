@@ -225,7 +225,7 @@ switch (a_decoderId)
             
       end      
       
-   case {105, 106, 107, 108, 109, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 301, 302, 303}
       % PROVOR REMOCEAN & ARVOR CM
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

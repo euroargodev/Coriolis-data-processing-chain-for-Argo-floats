@@ -420,7 +420,7 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
-   case {105, 106, 107, 108, 109, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 301, 302, 303}
       
       % Remocean floats
       
@@ -568,7 +568,9 @@ switch (a_decoderId)
          staticConfigValue = nan(size(inputStaticConfigValue, 1), size(inputDynamicConfigValue, 2));
          inputStaticConfigValue = regexprep(inputStaticConfigValue, 'True', '1');
          inputStaticConfigValue = regexprep(inputStaticConfigValue, 'False', '0');
-         staticConfigValue(:, 1) = str2num(char(inputStaticConfigValue));
+         inputStaticConfigValue = regexprep(inputStaticConfigValue, 'yes', '1');
+         inputStaticConfigValue = regexprep(inputStaticConfigValue, 'no', '0');
+         staticConfigValue(:, 1) = cellfun(@str2num, inputStaticConfigValue);
          
          configValue = cat(1, staticConfigValue, inputDynamicConfigValue);
       else

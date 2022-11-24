@@ -793,10 +793,6 @@ typeOrderList = [2 3 4 6 7 5 1];
 % 3, 4, 6, 7, 5: usual order i.e. tech first, data after and EOL at the end
 % 1: last the apmt configuration because it concerns the next cycle and pattern
 
-% if (g_decArgo_cycleNumFloat == 21)
-%    a=1
-% end
-
 % process the files
 fprintf('DEC_INFO: decoding files:\n');
 apmtCtd = [];

@@ -36,7 +36,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {105, 106, 107, 108, 109, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 301, 302, 303}
       % PROVOR REMOCEAN & ARVOR CM
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       

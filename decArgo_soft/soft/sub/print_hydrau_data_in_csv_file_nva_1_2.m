@@ -76,7 +76,7 @@ for idH = 1:size(a_dataHydrau, 1)
    else
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Hydrau; %s; %s; %s; Pump; %d; %d; %d\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, ...
-         format_time_dec_argo(data(4)), julian_2_gregorian_dec_argo(data(end-1)), julian_2_gregorian_dec_argo(data(end)), data(3), data(5), data(6));
+         format_time_dec_argo(data(4)), julian_2_gregorian_dec_argo(data(end-1)), julian_2_gregorian_dec_argo(data(end)), data(3), data(5)*100, data(6));
    end
 end
 

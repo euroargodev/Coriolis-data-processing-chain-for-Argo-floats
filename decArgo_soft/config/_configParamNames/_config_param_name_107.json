@@ -929,13 +929,29 @@
    },
    "CONF_PARAM_117" :
    {
+      "CONF_PARAM_DEC_ID" : "111007",
+      "CONF_PARAM_MSG_ID" : "-1",
+      "CONF_PARAM_MSG_LABEL" : "Not in float user manual",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
+   },
+   "CONF_PARAM_118" :
+   {
+      "CONF_PARAM_DEC_ID" : "111008",
+      "CONF_PARAM_MSG_ID" : "-1",
+      "CONF_PARAM_MSG_LABEL" : "Not in float user manual",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
+   },
+   "CONF_PARAM_119" :
+   {
       "CONF_PARAM_DEC_ID" : "116000",
       "CONF_PARAM_MSG_ID" : "-1",
       "CONF_PARAM_MSG_LABEL" : "Not in float user manual",
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_118" :
+   "CONF_PARAM_120" :
    {
       "CONF_PARAM_DEC_ID" : "116005",
       "CONF_PARAM_MSG_ID" : "-1",

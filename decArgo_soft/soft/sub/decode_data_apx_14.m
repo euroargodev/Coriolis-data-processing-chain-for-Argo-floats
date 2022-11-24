@@ -1182,11 +1182,7 @@ if (nbLev > 0)
          profNtuRefRed(profileLength2+1:end) = [];
          profNtuSigRed(profileLength2+1:end) = [];
       end
-      
-      %       if (g_decArgo_cycleNum == 31)
-      %          a=1
-      %       end
-      
+            
       % try to identify auxiliary engeneering data start byte
       % according to the depth table if the last pressure is < 6 dbar, the last
       % transmitted message has been received
@@ -1290,10 +1286,6 @@ if (nbLev > 0)
       profBPhaseDoxyRed profTempDoxyRed profDoxyRed ...
       profBlueRefRed profFSigRed profNtuRefRed profNtuSigRed];
 end
-
-% if (g_decArgo_cycleNum == 63)
-%    a=1
-% end
 
 % decode auxiliary engineering data
 if (((profileLength >= 0) && (length(profData) > profileLength*NB_PARAM_BYTE)) || ...

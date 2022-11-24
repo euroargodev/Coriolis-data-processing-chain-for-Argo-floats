@@ -45,14 +45,14 @@ if (~isempty(a_evAct))
    evDur = [];
    for idP = 1:size(a_evAct, 1)
       data = a_evAct(idP, 2:end);
-      for idPoint = 1:13
+      for idPoint = 1:15
          if ~((data(idPoint) == g_decArgo_dateDef) && ...
-               (data(idPoint+13) == g_decArgo_presCountsDef) && ...
-               (data(idPoint+13*2) == g_decArgo_durationDef))
+               (data(idPoint+15) == g_decArgo_presCountsDef) && ...
+               (data(idPoint+15*2) == g_decArgo_durationDef))
             
             evDate = [evDate; data(idPoint) + g_decArgo_julD2FloatDayOffset];
-            evPres = [evPres; data(idPoint+13)];
-            evDur = [evDur; data(idPoint+13*2)];
+            evPres = [evPres; data(idPoint+15)];
+            evDur = [evDur; data(idPoint+15*2)];
          else
             break;
          end
@@ -85,14 +85,14 @@ if (~isempty(a_pumpAct))
    pumpDur = [];
    for idP = 1:size(a_pumpAct, 1)
       data = a_pumpAct(idP, 2:end);
-      for idPoint = 1:13
+      for idPoint = 1:15
          if ~((data(idPoint) == g_decArgo_dateDef) && ...
-               (data(idPoint+13) == g_decArgo_presCountsDef) && ...
-               (data(idPoint+13*2) == g_decArgo_durationDef))
+               (data(idPoint+15) == g_decArgo_presCountsDef) && ...
+               (data(idPoint+15*2) == g_decArgo_durationDef))
             
             pumpDate = [pumpDate; data(idPoint) + g_decArgo_julD2FloatDayOffset];
-            pumpPres = [pumpPres; data(idPoint+13)];
-            pumpDur = [pumpDur; data(idPoint+13*2)];
+            pumpPres = [pumpPres; data(idPoint+15)];
+            pumpDur = [pumpDur; data(idPoint+15*2)];
          else
             break;
          end

@@ -96,6 +96,9 @@ switch (a_dataTypeNumber)
    case 24
       o_dataTypeName = 'SUNA APF frame';
       
+   case 25
+      o_dataTypeName = 'SUNA APF2 frame';
+      
    case 37
       o_dataTypeName = 'CYCLOPS mean';
       

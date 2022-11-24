@@ -455,6 +455,7 @@ if (nbMeasParam > 0)
             
             measParam = measParamList(idParam);
             measParamName = measParam.name;
+            measParamNcType = measParam.paramNcType;
             
             if (isempty(find(strcmp(measParamName, paramNameDone) == 1, 1)))
                
@@ -475,16 +476,13 @@ if (nbMeasParam > 0)
                % create parameter variable and attributes
                if (~var_is_present_dec_argo(fCdf, measParamName))
                   
-                  varType = 'NC_FLOAT';
-                  if ((strncmp(measParamName, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-                        (strncmp(measParamName, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-                     varType = 'NC_DOUBLE';
+                  if (strcmp(measParamNcType, 'NC_DOUBLE'))
                      doubleTypeInFile = 1;
                   end
                   if (paramWithSubLevels == 0)
-                     measParamVarId = netcdf.defVar(fCdf, measParamName, varType, nMeasurementDimId);
+                     measParamVarId = netcdf.defVar(fCdf, measParamName, measParamNcType, nMeasurementDimId);
                   else
-                     measParamVarId = netcdf.defVar(fCdf, measParamName, varType, fliplr([nMeasurementDimId nValuesDimId]));
+                     measParamVarId = netcdf.defVar(fCdf, measParamName, measParamNcType, fliplr([nMeasurementDimId nValuesDimId]));
                   end
                   
                   if (~isempty(measParam.longName))
@@ -561,9 +559,9 @@ if (nbMeasParam > 0)
                   if (~var_is_present_dec_argo(fCdf, measParamAdjName))
                      
                      if (paramWithSubLevels == 0)
-                        measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, varType, nMeasurementDimId);
+                        measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, measParamNcType, nMeasurementDimId);
                      else
-                        measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, varType, fliplr([nMeasurementDimId nValuesDimId]));
+                        measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, measParamNcType, fliplr([nMeasurementDimId nValuesDimId]));
                      end
                      
                      if (~isempty(measParam.longName))
@@ -634,9 +632,9 @@ if (nbMeasParam > 0)
                   if (~var_is_present_dec_argo(fCdf, measParamAdjErrName))
                      
                      if (paramWithSubLevels == 0)
-                        measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, varType, nMeasurementDimId);
+                        measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, measParamNcType, nMeasurementDimId);
                      else
-                        measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, varType, fliplr([nMeasurementDimId nValuesDimId]));
+                        measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, measParamNcType, fliplr([nMeasurementDimId nValuesDimId]));
                      end
                      
                      netcdf.putAtt(fCdf, measParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);

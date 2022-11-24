@@ -72,9 +72,6 @@ global g_decArgo_ackPacket;
 % decoder configuration values
 global g_decArgo_generateNcTech;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 % max number of CTDO samples in one DOVA sensor data packet
 global g_decArgo_maxCTDOSampleInDovaDataPacket;
 NB_MEAS_MAX_DOVA = g_decArgo_maxCTDOSampleInDovaDataPacket;

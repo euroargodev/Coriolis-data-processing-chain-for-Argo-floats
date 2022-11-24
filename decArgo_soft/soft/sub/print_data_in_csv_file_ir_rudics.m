@@ -72,6 +72,7 @@ a_dataSUNAMean = a_dataSUNA{1};
 a_dataSUNARaw = a_dataSUNA{2};
 a_dataSUNAStdMed = a_dataSUNA{3};
 a_dataSUNAAPF = a_dataSUNA{4};
+a_dataSUNAAPF2 = a_dataSUNA{5};
 
 % packet type 0
 dataCyProfPhaseList = a_cyProfPhaseList(a_cyProfPhaseIndexList, :);
@@ -142,8 +143,8 @@ for idCy = 1:length(cyleList)
                   case 9
                      % ECO3 (mean & stDev & median)
                      switch (a_decoderId)
-                        case {105, 106, 107}
-                           print_data_in_csv_file_ECO3_mean_stdMed_105_to_107( ...
+                        case {105, 106, 107, 110}
+                           print_data_in_csv_file_ECO3_mean_stdMed_105_to_107_110( ...
                               cycleNum, profNum, phaseNum, ...
                               a_dataECO3Mean, a_dataECO3StdMed);
                         case {108, 109}
@@ -160,8 +161,8 @@ for idCy = 1:length(cyleList)
                   case 11
                      % ECO3 (raw)
                      switch (a_decoderId)
-                        case {105, 106, 107}
-                           print_data_in_csv_file_ECO3_raw_105_to_107( ...
+                        case {105, 106, 107, 110}
+                           print_data_in_csv_file_ECO3_raw_105_to_107_110( ...
                               cycleNum, profNum, phaseNum, ...
                               a_dataECO3Raw);
                         case {108, 109}
@@ -233,11 +234,18 @@ for idCy = 1:length(cyleList)
                            a_dataSUNARaw);
                      end
                      
-                  case 24
+                  case {24, 25}
                      % SUNA (APF)
+                     if (dataType == 24)
+                        info = 'SUNA APF';
+                        dataSUNAAPF = a_dataSUNAAPF;
+                     else
+                        info = 'SUNA APF2';
+                        dataSUNAAPF = a_dataSUNAAPF2;
+                     end
                      print_data_in_csv_file_ir_rudics_SUNA_APF( ...
                         cycleNum, profNum, phaseNum, ...
-                        a_dataSUNAAPF);
+                        dataSUNAAPF, info);
                      
                   otherwise
                      fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for printing data of sensor data type #%d\n', ...

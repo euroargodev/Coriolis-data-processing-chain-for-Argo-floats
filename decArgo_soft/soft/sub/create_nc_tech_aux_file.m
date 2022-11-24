@@ -73,10 +73,10 @@ a_tabNcTechIndex(find(idToDel == 1), :) = [];
 a_tabNcTechVal(find(idToDel == 1)) = [];
 
 % no data to save
-if (isempty(a_tabNcTechIndex))
+if (isempty(a_tabNcTechIndex) && isempty(a_tabTechNMeas))
    return;
 end
-
+   
 % retrieve auxiliary technical labels and descrptions for these float version
 techAuxParamLabelList = [];
 techAuxParamDescriptionList = [];
@@ -92,12 +92,14 @@ end
 measParamNameAll = [];
 for idNM = 1:length(a_tabTechNMeas)
    nMeas = a_tabTechNMeas(idNM);
-   measParamList = [nMeas.tabMeas.paramList];
-   if (~isempty(measParamList))
-      measParamNameList = {measParamList.name};
-      measParamTypeList = [measParamList.paramType];
-      idTech = find(measParamTypeList == 't');
-      measParamNameAll = [measParamNameAll measParamNameList(idTech)];
+   if (~isempty(nMeas.tabMeas))
+      measParamList = [nMeas.tabMeas.paramList];
+      if (~isempty(measParamList))
+         measParamNameList = {measParamList.name};
+         measParamTypeList = [measParamList.paramType];
+         idTech = find(measParamTypeList == 't');
+         measParamNameAll = [measParamNameAll measParamNameList(idTech)];
+      end
    end
 end
 measUniqueParamName = unique(measParamNameAll, 'stable');
@@ -341,6 +343,7 @@ if (~isempty(a_tabTechNMeas))
          for idParam = 1:length(measParamList)
             measParam = measParamList(idParam);
             measParamName = measParam.name;
+            measParamNcType = measParam.paramNcType;
             
             if (isempty(find(strcmp(measParamName, paramNameDone) == 1, 1)))
                
@@ -349,7 +352,7 @@ if (~isempty(a_tabTechNMeas))
                % create parameter variable and attributes
                if (~var_is_present_dec_argo(fCdf, measParamName))
                   
-                  measParamVarId = netcdf.defVar(fCdf, measParamName, 'NC_INT', nTechMeasurementDimId);
+                  measParamVarId = netcdf.defVar(fCdf, measParamName, measParamNcType, nTechMeasurementDimId);
                   
                   if (~isempty(measParam.longName))
                      netcdf.putAtt(fCdf, measParamVarId, 'long_name', measParam.longName);

@@ -34,22 +34,26 @@ global g_decArgo_patternNumFloat;
 for idP = 1:length(a_tabProfiles)
    prof = a_tabProfiles(idP);
    
+   % specific processing for SUNA split profile
+   if (prof.sensorNumber == 6)
+      if (any(ismember('PRES', {prof.paramList.name}) & ...
+            ismember('PSAL', {prof.paramList.name}) & ...
+            ismember('TEMP', {prof.paramList.name})))
+         
+         vssText = 'Secondary sampling: discrete [CTD measurements concurrent with SUNA measurements, just slightly offset in time]';
+         a_tabProfiles(idP).vertSamplingScheme = vssText;
+         continue;
+      end
+   end  
+   
    [configNames, configValues] = get_float_config_ir_rudics_sbd2(prof.cycleNumber, prof.profileNumber);
    %    voir = cat(2, configNames, num2cell(configValues))
    if (~isempty(configNames))
       
-      vssTextDescent = '';
-      vssTextSecondary = '';
-      vssTextPrimary = '';
-      vssTextNearSurface = '';
-      if (prof.primarySamplingProfileFlag == 0)
-         vssTextDescent = 'Secondary sampling:';
-         vssTextSecondary = 'Secondary sampling:';
-      else
-         vssTextDescent = 'Primary sampling:';
-         vssTextPrimary = 'Primary sampling:';
-         vssTextNearSurface = 'Near-surface sampling:';
-      end
+      vssTextDescent = 'Secondary sampling:';
+      vssTextSecondary = 'Secondary sampling:';
+      vssTextPrimary = 'Primary sampling:';
+      vssTextNearSurface = 'Near-surface sampling:';
       
       if (prof.direction == 'A')
          
@@ -129,7 +133,7 @@ for idP = 1:length(a_tabProfiles)
                      nbSecondaryFlag, discreteSecondaryFlag, averagedSecondaryFlag);
                else
                   
-                  % primary & near surafce sampling
+                  % primary & near surface sampling
                   if (prof.presCutOffProf ~= g_decArgo_presDef)
                      
                      if (prof.presCutOffProf < dzStopPres)
@@ -143,7 +147,7 @@ for idP = 1:length(a_tabProfiles)
 
                      elseif (prof.presCutOffProf > dzStartPres)
                         
-                        % near surafce sampling
+                        % near surface sampling
                         [text2, ...
                            nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
                            create_text(dzStartPres, dzStopPres, dzSampPeriod, ...
@@ -159,7 +163,7 @@ for idP = 1:length(a_tabProfiles)
                            dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
                            nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
                         
-                        % near surafce sampling
+                        % near surface sampling
                         [text2, ...
                            nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
                            create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...
@@ -183,7 +187,7 @@ for idP = 1:length(a_tabProfiles)
                   
                else
                   
-                  % primary & near surafce sampling
+                  % primary & near surface sampling
                   if (prof.presCutOffProf ~= g_decArgo_presDef)
                      
                      if (prof.presCutOffProf < dzStopPres)
@@ -197,7 +201,7 @@ for idP = 1:length(a_tabProfiles)
 
                      elseif (prof.presCutOffProf > dzStartPres)
                         
-                        % near surafce sampling
+                        % near surface sampling
                         [text2, ...
                            nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
                            create_text(profPres, dzStopPres, dzSampPeriod, ...
@@ -213,7 +217,7 @@ for idP = 1:length(a_tabProfiles)
                            dzNbSubSamp, dzSubSampType, dzSubSampRate, ...
                            nbPrimaryFlag, discretePrimaryFlag, averagedPrimaryFlag);
                         
-                        % near surafce sampling
+                        % near surface sampling
                         [text2, ...
                            nbNearSurfaceFlag, discreteNearSurfaceFlag, averagedNearSurfaceFlag] = ...
                            create_text(prof.presCutOffProf, dzStopPres, dzSampPeriod, ...

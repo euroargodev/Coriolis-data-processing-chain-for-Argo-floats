@@ -142,9 +142,6 @@ try
                   if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
                      
                      g_couf_floatNum = floatWmo;
-                     %                      if (floatWmo == 6901478)
-                     %                         a=1
-                     %                      end
                      fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
                      
                      % meta file (float versions 5.31 and 5.32 should not be

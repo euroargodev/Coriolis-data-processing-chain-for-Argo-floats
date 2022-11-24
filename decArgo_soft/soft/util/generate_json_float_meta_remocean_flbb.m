@@ -26,6 +26,7 @@ function generate_json_float_meta_remocean_flbb
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150519.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+floatMetaFileName = 'C:\Users\jprannou\Desktop\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -33,17 +34,18 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_ir_sbd_rem_all.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20160512.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 % inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\FLBB\';
 inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\ArvorCM\';
 inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\ConfigAtLaunch\FLBB\';
+inputDirName = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\ConfigAtLaunch\FLBB\';
 
 % directory of individual json float meta-data files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -165,6 +167,10 @@ for idFloat = 1:length(floatList)
    idForWmo = find(wmoList == floatList(idFloat));
    for idBSN = 1:length(metaBddStructNames)
       metaBddStructField = char(metaBddStructNames(idBSN));
+      if (strcmp(metaBddStructField, 'NEW_DARK_FOR_FLUOROMETER_CHLA') || ...
+            strcmp(metaBddStructField, 'NEW_DARK_FOR_SCATTEROMETER_BBP'))
+         continue;
+      end
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
@@ -180,21 +186,7 @@ for idFloat = 1:length(floatList)
          end
       end
    end
-   
-   % PTT / IMEI specific processing
-   if (~isempty(metaStruct.IMEI))
-      metaStruct.PTT = metaStruct.IMEI;
-   end
-   
-   %    idF = find(strcmp(metaData(idForWmo, 5), 'PTT') == 1, 1);
-   %    if (~isempty(idF))
-   %       if (strcmp(metaStruct.TRANS_SYSTEM, 'IRIDIUM'))
-   %          if (isempty(metaStruct.PTT))
-   %             metaStruct.PTT = metaStruct.IMEI;
-   %          end
-   %       end
-   %    end
-   
+      
    % multi dim data
    itemList = [ ...
       {'TRANS_SYSTEM'} ...
@@ -267,6 +259,25 @@ for idFloat = 1:length(floatList)
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
    
+   % add DARK_O coefficients for FLBB sensor
+   if (isfield(metaStruct.CALIBRATION_COEFFICIENT, 'FLBB'))
+      idForWmo = find(wmoList == floatList(idFloat));
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CHLA'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountChloroA_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.FLBB.DarkCountChloroA_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_SCATTEROMETER_BBP'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % dim level 1 for DarkCountBackscatter700_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.FLBB.DarkCountBackscatter700_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end
+   end   
+   
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
@@ -329,6 +340,8 @@ for idFloat = 1:length(floatList)
       {'VECTOR_BOARD_SHOW_MODE_STATE'} ...
       {'SENSOR_BOARD_SHOW_MODE_STATE'} ...
       {'OPTODE_VERTICAL_PRES_OFFSET'} ...
+      {'OPTODE_IN_AIR_MEASUREMENT'} ...
+      {'OPTODE_TIME_PRESSURE_OFFSET'} ...
       {'FLBB_VERTICAL_PRES_OFFSET'} ...
       {'FLBB_BETA_ANGLE'} ...
       {'FLBB_CHLA_FLUO_EXCIT_WAVELENGTH'} ...
@@ -343,6 +356,8 @@ for idFloat = 1:length(floatList)
       {'CONFIG_PX_0_0_0_0_0'} ...
       {'CONFIG_PX_0_0_0_0_1'} ...
       {'CONFIG_PX_1_1_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_7'} ...
+      {'CONFIG_PX_1_1_0_0_8'} ...
       {'CONFIG_PX_1_7_0_0_0'} ...
       {'CONFIG_PX_1_7_0_0_2'} ...
       {'CONFIG_PX_2_7_0_0_0'} ...
@@ -698,6 +713,8 @@ o_metaStruct = struct( ...
    'CALIB_RT_COMMENT', 'CALIB_RT_COMMENT', ...
    'CALIB_RT_DATE', 'CALIB_RT_DATE', ...
    'SENSOR_MOUNTED_ON_FLOAT', '', ...
-   'CALIBRATION_COEFFICIENT', '');
+   'CALIBRATION_COEFFICIENT', '', ...
+   'NEW_DARK_FOR_FLUOROMETER_CHLA', 'NEW_DARK_FOR_FLUOROMETER_CHLA', ...
+   'NEW_DARK_FOR_SCATTEROMETER_BBP', 'NEW_DARK_FOR_SCATTEROMETER_BBP');
 
 return;

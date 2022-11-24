@@ -58,7 +58,7 @@ if (~isempty(g_decArgo_0TypeReceivedData) && ...
    cycleProf = unique(cycleProf, 'rows');
    
    % collect the possible sensor numbers
-   lut = [0 0 0 1 1 1 -1 -1 -1 3 3 3 2 2 2 4 4 4 5 5 5 6 6 6 6];
+   lut = [0 0 0 1 1 1 -1 -1 -1 3 3 3 2 2 2 4 4 4 5 5 5 6 6 6 6 6];
    zeroTypeReceivedData = g_decArgo_0TypeReceivedData;
    zeroTypeReceivedData(:, 1) = lut(zeroTypeReceivedData(:, 1)+1);
    sensorNum = unique([zeroTypeReceivedData(:, 1); g_decArgo_250TypeReceivedData(:, 1)]);

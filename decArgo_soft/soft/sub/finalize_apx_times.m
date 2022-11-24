@@ -77,10 +77,6 @@ end
 % compute clock offset for each cycle and adjust times
 for idCy = 1:length(o_timeData.cycleNum)
 
-   %    if (o_timeData.cycleNum(idCy) == 61)
-   %       a=1
-   %    end
-
    % store clock offset for the current cycle
    refDate = o_timeData.cycleTime(idCy).firstMsgTime;
    refDateAdj = adjust_apx_time( ...

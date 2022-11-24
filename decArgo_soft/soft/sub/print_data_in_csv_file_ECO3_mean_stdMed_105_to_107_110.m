@@ -2,7 +2,7 @@
 % Print mean & stDev & Med ECO3 sensor data in output CSV file.
 %
 % SYNTAX :
-%  print_data_in_csv_file_ECO3_mean_stdMed_105_to_107( ...
+%  print_data_in_csv_file_ECO3_mean_stdMed_105_to_107_110( ...
 %    a_cycleNum, a_profNum, a_phaseNum, ...
 %    a_dataECO3Mean, a_dataECO3StdMed)
 %
@@ -23,7 +23,7 @@
 % RELEASES :
 %   02/11/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function print_data_in_csv_file_ECO3_mean_stdMed_105_to_107( ...
+function print_data_in_csv_file_ECO3_mean_stdMed_105_to_107_110( ...
    a_cycleNum, a_profNum, a_phaseNum, ...
    a_dataECO3Mean, a_dataECO3StdMed)
 
@@ -100,11 +100,11 @@ if (isempty(idDataStdMed))
    dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
    dataMean(:, 6) = sensor_2_value_for_cdom_ir_rudics(dataMean(:, 6));
    paramCHLA = get_netcdf_param_attributes('CHLA');
-   dataMean(:, 7) = compute_CHLA_105_to_109_121(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+   dataMean(:, 7) = compute_CHLA_105_to_110_121(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
    %    paramBBP700 = get_netcdf_param_attributes('BBP700');
-   %    dataMean(:, 8) = compute_BBP700_105_to_109_121(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+   %    dataMean(:, 8) = compute_BBP700_105_to_110_121(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
    paramCDOM = get_netcdf_param_attributes('CDOM');
-   dataMean(:, 8) = compute_CDOM_105_to_107_121(dataMean(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
+   dataMean(:, 8) = compute_CDOM_105_to_107_110_121(dataMean(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
    
    for idL = 1:size(dataMean, 1)
       if (dataMean(idL, 1) ~= g_decArgo_dateDef)
@@ -209,9 +209,9 @@ else
       data(:, 11) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 11));
       data(:, 12) = sensor_2_value_for_cdom_ir_rudics(data(:, 12));
       paramCHLA = get_netcdf_param_attributes('CHLA');
-      data(:, 13) = compute_CHLA_105_to_109_121(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+      data(:, 13) = compute_CHLA_105_to_110_121(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
       paramCDOM = get_netcdf_param_attributes('CDOM');
-      data(:, 14) = compute_CDOM_105_to_107_121(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
+      data(:, 14) = compute_CDOM_105_to_107_110_121(data(:, 6), g_decArgo_cdomDef, paramCDOM.fillValue);
 
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

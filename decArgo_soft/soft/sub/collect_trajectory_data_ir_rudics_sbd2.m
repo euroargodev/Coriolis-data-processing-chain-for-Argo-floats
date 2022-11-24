@@ -215,6 +215,11 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
       profList = unique(a_floatPresPumpOrEv(:, 2));
       phaseList = unique(a_floatPresPumpOrEv(:, 3));
       
+      paramPres = get_netcdf_param_attributes('PRES');
+      paramPres.resolution = single(10);
+      paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
+      paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
+      
       for idCy = 1:length(cyleList)
          cycleNum = cyleList(idCy);
          for idProf = 1:length(profList)
@@ -247,6 +252,7 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                         for id = 1:length(idPack)
                            idP = idPack(id);
                            
+                           floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
                            floatPresActPres = a_floatPresActPres(idP, 4);
                            floatPresTime = a_floatPresTime(idP, 4);
                            
@@ -278,18 +284,22 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                               datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
                                  profNum, phaseNum);
                               
-                              paramPres = get_netcdf_param_attributes('PRES');
-                              paramPres.resolution = single(10);
                               datedMeasStruct.paramList = paramPres;
-                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
-                              
-                              datedMeasStruct.dates = refDate + floatPresTime/1440;
                               datedMeasStruct.data = floatPresActPres*10;
+                              if (floatPresPumpOrEv == 1)
+                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
+                                 datedMeasStruct.data = [datedMeasStruct.data 1];
+                              else
+                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
+                                 datedMeasStruct.data = [datedMeasStruct.data 1];
+                              end
+                              
+                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
+                              datedMeasStruct.dates = refDate + floatPresTime/1440;
                               
                               o_tabTrajIndex = [o_tabTrajIndex;
                                  252  cycleNum profNum phaseNum];
                               o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
-                              
                            end
                         end
                      end
@@ -314,6 +324,7 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                         for id = 1:length(idPack)
                            idP = idPack(id);
                            
+                           floatPresPumpOrEv = a_floatPresPumpOrEv(idP, 4);
                            floatPresActPres = a_floatPresActPres(idP, 4);
                            floatPresTime = a_floatPresTime(idP, 4);
                            
@@ -332,19 +343,23 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                               
                               datedMeasStruct = get_dated_meas_init_struct(cycleNum, ...
                                  profNum, phaseNum);
-                              
-                              paramPres = get_netcdf_param_attributes('PRES');
-                              paramPres.resolution = single(10);
+                                                            
                               datedMeasStruct.paramList = paramPres;
-                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
-                              
-                              datedMeasStruct.dates = refDate + floatPresTime/1440;
                               datedMeasStruct.data = floatPresActPres*10;
+                              if (floatPresPumpOrEv == 1)
+                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramPumpFlag];
+                                 datedMeasStruct.data = [datedMeasStruct.data 1];
+                              else
+                                 datedMeasStruct.paramList = [datedMeasStruct.paramList paramValveFlag];
+                                 datedMeasStruct.data = [datedMeasStruct.data 1];
+                              end
+                              
+                              datedMeasStruct.dateList = get_netcdf_param_attributes('JULD');
+                              datedMeasStruct.dates = refDate + floatPresTime/1440;
                               
                               o_tabTrajIndex = [o_tabTrajIndex;
                                  252  cycleNum profNum phaseNum];
                               o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
-                              
                            end
                         end
                      end

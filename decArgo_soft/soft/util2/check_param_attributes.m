@@ -84,11 +84,6 @@ if (ok == 1)
    for idL = headerLine+1:size(raw)
       if (isnumeric(raw{idL, 1}) && ~isnan(raw{idL, 1}))
          paramName{end+1} = raw{idL, parameterName};
-         
-         %          if (strcmp(raw{idL, parameterName}, 'C2PHASE_DOXY'))
-         %             a=1
-         %          end
-         
          paramLongName{end+1} = raw{idL, longName};
          if (strcmp(raw{idL, standardName}, '-'))
             paramStandardName{end+1} = '';
@@ -141,11 +136,7 @@ for idP = 1:length(paramName)
             (~isempty(paramValidMax{idP}) && isempty(paramStruct.validMax)) || ...
             (~isempty(paramValidMax{idP}) && ~isempty(paramStruct.validMax) && (paramValidMax{idP} ~= paramStruct.validMax)) || ...
             (paramCbi{idP} ~= paramStruct.paramType))
-         
-         %          if (strcmp(paramStruct.name, 'C2PHASE_DOXY'))
-         %             a=1
-         %          end
-         
+                  
          fprintf('Parameter: %s\n', paramName{idP});
          if (~strcmp(paramLongName{idP}, paramStruct.longName))
             fprintf('long_name code  : %s\n', paramStruct.longName);

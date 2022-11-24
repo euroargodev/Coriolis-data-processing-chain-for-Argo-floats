@@ -37,7 +37,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformType = 'ARVOR';
       
-   case {105, 106, 107, 108, 109, 301}
+   case {105, 106, 107, 108, 109, 110, 301}
       % PROVOR REMOCEAN (CTS4)
       o_platformType = 'PROVOR_III';
       

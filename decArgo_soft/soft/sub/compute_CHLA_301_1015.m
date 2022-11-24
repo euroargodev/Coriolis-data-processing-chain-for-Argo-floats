@@ -52,6 +52,9 @@ elseif ((isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA')) && ...
       (isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA')))
    scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
    darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
+   if (isfield(g_decArgo_calibInfo.FLBB, 'darkCountChloroA_O'))
+      darkCountChloroA = double(g_decArgo_calibInfo.FLBB.darkCountChloroA_O);
+   end
 else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent FLBB sensor calibration information\n', ...
       g_decArgo_floatNum, ...

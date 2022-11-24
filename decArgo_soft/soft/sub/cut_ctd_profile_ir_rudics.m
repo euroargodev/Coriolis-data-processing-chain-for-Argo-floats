@@ -29,21 +29,30 @@ for idProf = 1:length(a_tabProfiles)
    
    profile = a_tabProfiles(idProf);
    
-   if (profile.primarySamplingProfileFlag == -1)
-      if (profile.direction == 'A')
-         [cutProfiles] = cut_profile(profile);
-         tabProfiles = [tabProfiles cutProfiles];
-      else
-         if (profile.sensorNumber == 0)
-            % CTD profile
-            profile.primarySamplingProfileFlag = 1;
-         elseif (profile.sensorNumber == 1)
-            % DOXY profile
-            profile.primarySamplingProfileFlag = 0;
+   if (profile.sensorNumber < 1000)
+
+      % nominal case
+      if (profile.primarySamplingProfileFlag == -1)
+         if (profile.direction == 'A')
+            [cutProfiles] = cut_profile(profile);
+            tabProfiles = [tabProfiles cutProfiles];
+         else
+            if (profile.sensorNumber == 0)
+               % CTD profile
+               profile.primarySamplingProfileFlag = 1;
+            elseif (profile.sensorNumber == 1)
+               % DOXY profile
+               profile.primarySamplingProfileFlag = 0;
+            end
+            tabProfiles = [tabProfiles profile];
          end
+      else
          tabProfiles = [tabProfiles profile];
       end
    else
+      
+      % for 'raw' (cyclic buffer) data do not cut CTD or OPTODE profiles
+      profile.primarySamplingProfileFlag = 0;
       tabProfiles = [tabProfiles profile];
    end
 end

@@ -99,6 +99,7 @@ a_dataSUNAMean = a_dataSUNA{1};
 a_dataSUNARaw = a_dataSUNA{2};
 a_dataSUNAStdMed = a_dataSUNA{3};
 a_dataSUNAAPF = a_dataSUNA{4};
+a_dataSUNAAPF2 = a_dataSUNA{5};
 
 if (isempty(a_cyProfPhaseList))
    return;
@@ -114,7 +115,8 @@ for idDataType = 1:length(dataTypeList)
    dataType = dataTypeList(idDataType);
    
    % the stDev & median data are associated with mean data
-   if (ismember(dataType, [1 4 10 13 16 19 22]))
+   % SUNA APF2 (dataType == 25) is processed with SUNA APF (dataType == 24)
+   if (ismember(dataType, [1 4 10 13 16 19 22 25]))
       continue;
    end
    
@@ -151,8 +153,8 @@ for idDataType = 1:length(dataTypeList)
       case 9
          % ECO3 (mean & stDev & median)
          switch (a_decoderId)
-            case {105, 106, 107}
-               [prof, drift] = process_profile_ECO3_mean_stdMed_105_to_107( ...
+            case {105, 106, 107, 110}
+               [prof, drift] = process_profile_ECO3_mean_stdMed_105_to_107_110( ...
                   a_dataECO3Mean, a_dataECO3StdMed, ...
                   a_descentToParkStartDate, a_ascentEndDate, ...
                   a_gpsData, a_sensorTechECO3);
@@ -171,8 +173,8 @@ for idDataType = 1:length(dataTypeList)
       case 11
          % ECO3 (raw)
          switch (a_decoderId)
-            case {105, 106, 107}
-               [prof, drift] = process_profile_ECO3_raw_105_to_107( ...
+            case {105, 106, 107, 110}
+               [prof, drift] = process_profile_ECO3_raw_105_to_107_110( ...
                   a_dataECO3Raw, ...
                   a_descentToParkStartDate, a_ascentEndDate, ...
                   a_gpsData, a_sensorTechECO3);
@@ -266,10 +268,12 @@ for idDataType = 1:length(dataTypeList)
          
       case 24
          % SUNA (APF)
-         [prof, drift] = process_profile_ir_rudics_SUNA_APF( ...
-            a_dataSUNAAPF, ...
-            a_descentToParkStartDate, a_ascentEndDate, ...
-            a_gpsData, a_sensorTechSUNA);
+         if (a_decoderId ~= 110)
+            [prof, drift] = process_profile_ir_rudics_SUNA_APF_105_to_109_121( ...
+               a_dataSUNAAPF, ...
+               a_descentToParkStartDate, a_ascentEndDate, ...
+               a_gpsData, a_sensorTechSUNA);
+         end
          
       otherwise
          fprintf('WARNING: Float #%d Cycle #%d: Nothing done yet for processing profiles with data type #%d\n', ...
@@ -285,6 +289,37 @@ for idDataType = 1:length(dataTypeList)
    
    if (~isempty(drift))
       o_tabDrift = [o_tabDrift drift];
+   end
+end
+
+% process SUNA APF and SUNA APF2 together for decId == 110
+if (a_decoderId == 110)
+   if (ismember(24, dataTypeList) && ismember(25, dataTypeList))
+      if (~isempty(a_dataSUNAAPF) && ~isempty(a_dataSUNAAPF2))
+         
+         [prof, drift] = process_profile_ir_rudics_SUNA_APF_110( ...
+            a_dataSUNAAPF, a_dataSUNAAPF2, ...
+            a_descentToParkStartDate, a_ascentEndDate, ...
+            a_gpsData, a_sensorTechSUNA);
+         
+         if (~isempty(prof))
+            o_tabProfiles = [o_tabProfiles prof];
+         end
+         
+         if (~isempty(drift))
+            o_tabDrift = [o_tabDrift drift];
+         end
+      elseif ((isempty(a_dataSUNAAPF) && ~isempty(a_dataSUNAAPF2)) || ...
+            (~isempty(a_dataSUNAAPF) && isempty(a_dataSUNAAPF2)))
+         fprintf('ERROR: Float #%d Cycle #%d: SUNA APF and SUNA APF2 have not been received together\n', ...
+            g_decArgo_floatNum, ...
+            g_decArgo_cycleNum);
+      end
+   elseif ((ismember(24, dataTypeList) && ismember(25, dataTypeList)) || ...
+         (ismember(24, dataTypeList) && ismember(25, dataTypeList)))
+      fprintf('ERROR: Float #%d Cycle #%d: SUNA APF and SUNA APF2 have not been received together\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
    end
 end
 

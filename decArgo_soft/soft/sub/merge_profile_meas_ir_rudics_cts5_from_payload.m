@@ -34,7 +34,8 @@ profInfo = [
    [a_tabProfiles.sensorNumber]', ...
    [a_tabProfiles.cycleNumber]', ...
    [a_tabProfiles.profileNumber]', ...
-   [a_tabProfiles.phaseNumber]'];
+   [a_tabProfiles.phaseNumber]', ...
+   cellfun(@length, {a_tabProfiles.paramList})']; % needed for SUNA split profiles
 
 tabProfiles = [];
 if (~isempty(profInfo))
@@ -43,29 +44,34 @@ if (~isempty(profInfo))
    uCycleNum = unique(profInfo(:, 3));
    uProfileNum = unique(profInfo(:, 4));
    uPhaseNum = unique(profInfo(:, 5));
+   uParamNb = sort(unique(profInfo(:, 6)), 'descend');
    for idS = 1:length(uSensorNum)
       for idC = 1:length(uCycleNum)
          for idP = 1:length(uProfileNum)
             for idH = 1:length(uPhaseNum)
-               sensorNum = uSensorNum(idS);
-               cycleNum = uCycleNum(idC);
-               profileNum = uProfileNum(idP);
-               phaseNum = uPhaseNum(idH);
-               
-               idF = find((profInfo(:, 2) == sensorNum) & ...
-                  (profInfo(:, 3) == cycleNum) & ...
-                  (profInfo(:, 4) == profileNum) & ...
-                  (profInfo(:, 5) == phaseNum));
-               if (~isempty(idF))
-                  if (length(idF) > 1)
-                     % merge the profiles
-                     [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
-                     if (~isempty(mergedProfile))
-                        tabProfiles = [tabProfiles mergedProfile];
+               for idPN = 1:length(uParamNb)
+                  sensorNum = uSensorNum(idS);
+                  cycleNum = uCycleNum(idC);
+                  profileNum = uProfileNum(idP);
+                  phaseNum = uPhaseNum(idH);
+                  paramNb = uParamNb(idPN);
+                  
+                  idF = find((profInfo(:, 2) == sensorNum) & ...
+                     (profInfo(:, 3) == cycleNum) & ...
+                     (profInfo(:, 4) == profileNum) & ...
+                     (profInfo(:, 5) == phaseNum) & ...
+                     (profInfo(:, 6) == paramNb));
+                  if (~isempty(idF))
+                     if (length(idF) > 1)
+                        % merge the profiles
+                        [mergedProfile] = merge_profiles(a_tabProfiles(profInfo(idF, 1)));
+                        if (~isempty(mergedProfile))
+                           tabProfiles = [tabProfiles mergedProfile];
+                        end
+                     else
+                        a_tabProfiles(profInfo(idF, 1)).merged = 1;
+                        tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
                      end
-                  else
-                     a_tabProfiles(profInfo(idF, 1)).merged = 1;
-                     tabProfiles = [tabProfiles a_tabProfiles(profInfo(idF, 1))];
                   end
                end
             end

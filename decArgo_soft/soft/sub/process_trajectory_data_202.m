@@ -2,7 +2,7 @@
 % Process trajectory data.
 %
 % SYNTAX :
-%  [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_202( ...
+%  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_202( ...
 %    a_cycleNum, a_deepCycle, ...
 %    a_gpsData, a_iridiumMailData, ...
 %    a_cycleStartDate, ...
@@ -56,6 +56,7 @@
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
 %   o_tabTrajNCycle : N_CYCLE trajectory data
+%   o_tabTechNMeas  : N_MEASUREMENT technical data
 %
 % EXAMPLES :
 %
@@ -65,7 +66,7 @@
 % RELEASES :
 %   12/03/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_202( ...
+function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_202( ...
    a_cycleNum, a_deepCycle, ...
    a_gpsData, a_iridiumMailData, ...
    a_cycleStartDate, ...
@@ -85,6 +86,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_202( ...
 % output parameters initialization
 o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
+o_tabTechNMeas = [];
 
 % global measurement codes
 global g_MC_CycleStart;
@@ -204,7 +206,7 @@ if (a_deepCycle == 1)
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -219,7 +221,7 @@ if (a_deepCycle == 1)
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
+         num2str(gpsCyLocQc(idpos)), 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -235,7 +237,7 @@ if (a_deepCycle == 1)
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;
@@ -542,6 +544,8 @@ if (a_deepCycle == 1)
    
    tabDate = [];
    tabPres = [];
+   tabDur = [];
+   tabType = [];
    if (~isempty(a_cycleStartDate))
       if (~isempty(a_evAct))
          
@@ -555,6 +559,8 @@ if (a_deepCycle == 1)
                   
                   tabDate = [tabDate; data(idPoint+1) + g_decArgo_julD2FloatDayOffset];
                   tabPres = [tabPres; data(idPoint+1+15)];
+                  tabDur = [tabDur; data(idPoint+1+15*2)];
+                  tabType = [tabType; data(1)];
                else
                   break;
                end
@@ -572,6 +578,8 @@ if (a_deepCycle == 1)
                   
                   tabDate = [tabDate; data(idPoint+1) + g_decArgo_julD2FloatDayOffset];
                   tabPres = [tabPres; data(idPoint+1+15)];
+                  tabDur = [tabDur; data(idPoint+1+15*2)];
+                  tabType = [tabType; data(1)];
                else
                   break;
                end
@@ -583,6 +591,8 @@ if (a_deepCycle == 1)
          % sort the actions in chronological order
          [tabDate, idSorted] = sort(tabDate);
          tabPres = tabPres(idSorted);
+         tabDur = tabDur(idSorted);
+         tabType = tabType(idSorted);
          
          tabRefDates = [ ...
             a_cycleStartDate a_descentToParkEndDate; ...
@@ -597,6 +607,9 @@ if (a_deepCycle == 1)
             g_MC_SpyAtProf;...
             g_MC_SpyInAscProf];
          
+         % structure to store N_MEASUREMENT technical data
+         o_tabTechNMeas = get_traj_n_meas_init_struct(a_cycleNum, -1);
+         
          for idS = 1:length(tabMc)
             idF = find((tabDate >= tabRefDates(idS, 1)) & (tabDate < tabRefDates(idS, 2)));
             for idP = 1:length(idF)
@@ -608,7 +621,21 @@ if (a_deepCycle == 1)
                measStruct.paramData = tabPres(idF(idP));
                
                trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               
+               measStruct = create_one_meas_float_time(tabMc(idS), tabDate(idF(idP)), g_JULD_STATUS_2, floatClockDrift);
+               if (tabType(idF(idP)) == 6)
+                  param = get_netcdf_param_attributes('VALVE_ACTION_DURATION');
+               else
+                  param = get_netcdf_param_attributes('PUMP_ACTION_DURATION');
+               end
+               measStruct.paramList = param;
+               measStruct.paramData = tabDur(idF(idP));
+               
+               o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
             end
+         end
+         if (isempty(o_tabTechNMeas.tabMeas))
+            o_tabTechNMeas = [];
          end
       end
    end
@@ -822,7 +849,7 @@ else
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldFirstMessage = firstMsgTime;
@@ -837,7 +864,7 @@ else
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
+         num2str(gpsCyLocQc(idpos)), 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
    
@@ -853,7 +880,7 @@ else
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       trajNCycleStruct.juldLastMessage = lastMsgTime;
@@ -869,9 +896,11 @@ else
    trajNCycleStruct.surfOnly = 1;
 end
 
-configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
-if (~isempty(configMissionNumber))
-   trajNCycleStruct.configMissionNumber = configMissionNumber;
+if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+   configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
+   if (~isempty(configMissionNumber))
+      trajNCycleStruct.configMissionNumber = configMissionNumber;
+   end
 end
 
 % output data

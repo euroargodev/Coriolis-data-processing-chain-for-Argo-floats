@@ -213,8 +213,7 @@ for idProf = 1:length(tabProfiles)
             profileData = prof.data;
             for idParam = 1:length(parameterList)
                if (((parameterList(idParam).paramType ~= 'c') || ...
-                     strcmp(parameterList(idParam).name, 'PRES') || ...
-                     strcmp(parameterList(idParam).name, 'PRES2')) && ...
+                     strcmp(parameterList(idParam).name, 'PRES')) && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                      ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                   
@@ -380,8 +379,7 @@ for idProf = 1:length(tabProfiles)
                            parameterList = prof.paramList;
                            for idParam = 1:length(parameterList)
                               if ((parameterList(idParam).paramType ~= 'c') || ...
-                                    strcmp(parameterList(idParam).name, 'PRES') || ...
-                                    strcmp(parameterList(idParam).name, 'PRES2'))
+                                    strcmp(parameterList(idParam).name, 'PRES'))
                                  profParam = parameterList(idParam);
                                  profParamName = profParam.name;
                                  paramInfo = get_netcdf_param_attributes(profParamName);
@@ -776,7 +774,7 @@ for idProf = 1:length(tabProfiles)
          % global quality of PARAM profile
          for idParam = 1:length(profUniqueParamName)
             profParamName = profUniqueParamName{idParam};
-            if (~strcmp(profParamName, 'PRES') && ~strcmp(profParamName, 'PRES2'))
+            if (~strcmp(profParamName, 'PRES'))
                ncParamName = sprintf('PROFILE_%s_QC', profParamName);
                
                profileParamQcVarId = netcdf.defVar(fCdf, ncParamName, 'NC_CHAR', nProfDimId);
@@ -809,11 +807,11 @@ for idProf = 1:length(tabProfiles)
                for idParam = 1:length(parameterList)
                   
                   if ((parameterList(idParam).paramType ~= 'c') || ...
-                        strcmp(parameterList(idParam).name, 'PRES') || ...
-                        strcmp(parameterList(idParam).name, 'PRES2'))
+                        strcmp(parameterList(idParam).name, 'PRES'))
                      
                      profParam = parameterList(idParam);
                      profParamName = profParam.name;
+                     profParamNcType = profParam.paramNcType;
                      
                      % find if this parameter has sublevels
                      paramWithSubLevels = 0;
@@ -830,16 +828,13 @@ for idProf = 1:length(tabProfiles)
                      % parameter variable and attributes
                      if (~var_is_present_dec_argo(fCdf, profParamName))
                         
-                        varType = 'NC_FLOAT';
-                        if ((strncmp(profParamName, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-                              (strncmp(profParamName, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-                           varType = 'NC_DOUBLE';
+                        if (strcmp(profParamNcType, 'NC_DOUBLE'))
                            doubleTypeInFile = 1;
                         end
                         if (paramWithSubLevels == 0)
-                           profParamVarId = netcdf.defVar(fCdf, profParamName, varType, fliplr([nProfDimId nLevelsDimId]));
+                           profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                         else
-                           profParamVarId = netcdf.defVar(fCdf, profParamName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                           profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                         end
                         
                         if (~isempty(profParam.longName))
@@ -898,9 +893,9 @@ for idProf = 1:length(tabProfiles)
                         if (~var_is_present_dec_argo(fCdf, profParamAdjName))
                            
                            if (paramWithSubLevels == 0)
-                              profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, varType, fliplr([nProfDimId nLevelsDimId]));
+                              profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                            else
-                              profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                              profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                            end
                            
                            if (~isempty(profParam.longName))
@@ -951,9 +946,9 @@ for idProf = 1:length(tabProfiles)
                         if (~var_is_present_dec_argo(fCdf, profParamAdjErrName))
                            
                            if (paramWithSubLevels == 0)
-                              profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, varType, fliplr([nProfDimId nLevelsDimId]));
+                              profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                            else
-                              profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                              profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                            end
                            
                            netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
@@ -1110,8 +1105,7 @@ for idProf = 1:length(tabProfiles)
                for idParam = 1:length(parameterList)
                   
                   if (((parameterList(idParam).paramType ~= 'c') || ...
-                        strcmp(parameterList(idParam).name, 'PRES') || ...
-                        strcmp(parameterList(idParam).name, 'PRES2')) && ...
+                        strcmp(parameterList(idParam).name, 'PRES')) && ...
                         ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                         ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                      
@@ -1275,8 +1269,7 @@ for idProf = 1:length(tabProfiles)
                for idParam = 1:length(parameterList)
                   
                   if ((parameterList(idParam).paramType ~= 'c') || ...
-                        strcmp(parameterList(idParam).name, 'PRES') || ...
-                        strcmp(parameterList(idParam).name, 'PRES2'))
+                        strcmp(parameterList(idParam).name, 'PRES'))
                      
                      profParam = parameterList(idParam);
                      
@@ -1286,7 +1279,7 @@ for idProf = 1:length(tabProfiles)
                      
                      % parameter QC variable and attributes
                      profParamQcVarId = '';
-                     if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
+                     if ~(strcmp(profParam.name, 'PRES') || ...
                            strcmp(profParam.name(end-3:end), '_STD') || ...
                            strcmp(profParam.name(end-3:end), '_MED'))
                         profParamQcName = sprintf('%s_QC', profParam.name);
@@ -1331,7 +1324,7 @@ for idProf = 1:length(tabProfiles)
                                     idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                                     paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                                     
-                                    if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
+                                    if ~(strcmp(profParam.name, 'PRES') || ...
                                           strcmp(profParam.name(end-3:end), '_STD') || ...
                                           strcmp(profParam.name(end-3:end), '_MED'))
                                        profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
@@ -1428,7 +1421,7 @@ for idProf = 1:length(tabProfiles)
                                     idNoDef = find(paramDataQc ~= g_decArgo_qcDef);
                                     paramDataQcStr(idNoDef) = num2str(paramDataQc(idNoDef));
                                     
-                                    if ~(strcmp(profParam.name, 'PRES') || strcmp(profParam.name, 'PRES2') || ...
+                                    if ~(strcmp(profParam.name, 'PRES') || ...
                                           strcmp(profParam.name(end-3:end), '_STD') || ...
                                           strcmp(profParam.name(end-3:end), '_MED'))
                                        profQualityFlag = compute_profile_quality_flag(paramDataQcStr);
@@ -1546,7 +1539,7 @@ for idProf = 1:length(tabProfiles)
                            paramTypeList = [parameterList.paramType];
                            if (isempty(idPosParam) || ...
                                  ~((paramTypeList(idPosParam) ~= 'c') || ...
-                                 strcmp(param, 'PRES') || strcmp(param, 'PRES2')))
+                                 strcmp(param, 'PRES')))
                               idDel = [idDel idParam];
                            end
                         end
@@ -1691,36 +1684,6 @@ for idProf = 1:length(tabProfiles)
                calibInfo{end+1} = profCalibInfo;
             end
             
-            % add specific comment for PRES2 parameter
-            if (~isempty(find(strcmp({prof.paramList.name}, 'PRES2') == 1, 1)))
-               
-               comment = '';
-               date = '';
-               if (adjustedProfilesList(idP) == 1)
-                  comment = 'Not applicable';
-                  if (isempty(ncCreationDate))
-                     date = currentDate;
-                  else
-                     date = ncCreationDate;
-                  end
-               end
-               tabParam = {'PRES2'};
-               tabEquation = {{comment}};
-               tabCoefficient = {{comment}};
-               tabComment = {{'Adjusted values are provided in the core profile file'}};
-               tabDate = {{date}};
-               
-               % store calibration information for this profile
-               profCalibInfo = [];
-               profCalibInfo.profId = idP;
-               profCalibInfo.param = tabParam;
-               profCalibInfo.equation = tabEquation;
-               profCalibInfo.coefficient = tabCoefficient;
-               profCalibInfo.comment = tabComment;
-               profCalibInfo.date = tabDate;
-               calibInfo{end+1} = profCalibInfo;
-            end
-            
             % NO SINCE THE OTHER PARAMETERS ARE in 'R' MODE (NOT DUPLICATED)
             %             % add a SCIENTIFIC_CALIB_COMMENT for duplicated data
             %             calibList = [calibInfo{:}];
@@ -1838,8 +1801,7 @@ for idProf = 1:length(tabProfiles)
                for idParam = 1:length(parameterList)
                   
                   if (((parameterList(idParam).paramType ~= 'c') || ...
-                        strcmp(parameterList(idParam).name, 'PRES') || ...
-                        strcmp(parameterList(idParam).name, 'PRES2')) && ...
+                        strcmp(parameterList(idParam).name, 'PRES')) && ...
                         ~strcmp(parameterList(idParam).name(end-3:end), '_STD') && ...
                         ~strcmp(parameterList(idParam).name(end-3:end), '_MED'))
                      

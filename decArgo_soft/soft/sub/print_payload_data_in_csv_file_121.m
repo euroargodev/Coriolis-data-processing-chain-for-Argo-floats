@@ -48,7 +48,8 @@ idF = find(strcmp(a_payloadData(idLev1Begin, 2), 'ENVIRONMENT'));
 if (~isempty(idF))
    idLev1BeginSort = idLev1Begin(idF);
 end
-idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')));
+idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')) & ...
+   ~strcmp(a_payloadData(idLev1Begin, 2), 'SENSOR_ACT')); % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
 if (~isempty(idF))
    idF = idLev1Begin(idF);
    [~, idSort] = sort(a_payloadData(idF, 2));

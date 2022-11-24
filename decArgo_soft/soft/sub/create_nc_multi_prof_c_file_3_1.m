@@ -448,12 +448,13 @@ if (nbProfParam > 0)
          if (parameterList(idParam).paramType == 'c')
             
             profParam = parameterList(idParam);
+            profParamName = profParam.name;
+            profParamNcType = profParam.paramNcType;
             
             % parameter variable and attributes
-            profParamName = profParam.name;
             if (~var_is_present_dec_argo(fCdf, profParamName))
                
-               profParamVarId = netcdf.defVar(fCdf, profParamName, 'NC_FLOAT', fliplr([nProfDimId nLevelsDimId]));
+               profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                
                if (~isempty(profParam.longName))
                   netcdf.putAtt(fCdf, profParamVarId, 'long_name', profParam.longName);
@@ -503,7 +504,7 @@ if (nbProfParam > 0)
                profParamAdjName = sprintf('%s_ADJUSTED', profParam.name);
                if (~var_is_present_dec_argo(fCdf, profParamAdjName))
                   
-                  profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, 'NC_FLOAT', fliplr([nProfDimId nLevelsDimId]));
+                  profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                   
                   if (~isempty(profParam.longName))
                      netcdf.putAtt(fCdf, profParamAdjVarId, 'long_name', profParam.longName);
@@ -552,7 +553,7 @@ if (nbProfParam > 0)
                profParamAdjErrName = sprintf('%s_ADJUSTED_ERROR', profParam.name);
                if (~var_is_present_dec_argo(fCdf, profParamAdjErrName))
                   
-                  profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, 'NC_FLOAT', fliplr([nProfDimId nLevelsDimId]));
+                  profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                   
                   netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
                   if (~isempty(profParam.fillValue))

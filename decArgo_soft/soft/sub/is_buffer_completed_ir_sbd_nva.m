@@ -29,9 +29,6 @@ o_completed = 0;
 % current float WMO number
 global g_decArgo_floatNum;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 % arrays to store rough information on received data
 global g_decArgo_1TypePacketReceived;
 global g_decArgo_5TypePacketReceived;

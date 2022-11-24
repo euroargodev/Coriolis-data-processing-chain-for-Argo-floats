@@ -21,6 +21,8 @@ function generate_json_float_meta_cts5
 
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
+floatMetaFileName = 'C:\Users\jprannou\Desktop\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -147,6 +149,11 @@ for idFloat = 1:length(floatList)
    idForWmo = find(wmoList == floatList(idFloat));
    for idBSN = 1:length(metaBddStructNames)
       metaBddStructField = char(metaBddStructNames(idBSN));
+      if (strcmp(metaBddStructField, 'NEW_DARK_FOR_FLUOROMETER_CHLA') || ...
+            strcmp(metaBddStructField, 'NEW_DARK_FOR_FLUOROMETER_CDOM') || ...
+            strcmp(metaBddStructField, 'NEW_DARK_FOR_SCATTEROMETER_BBP'))
+         continue;
+      end
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
@@ -265,6 +272,32 @@ for idFloat = 1:length(floatList)
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
    
+   % add DARK_O coefficients for ECO3 sensor
+   if (isfield(metaStruct.CALIBRATION_COEFFICIENT, 'ECO3'))
+      idForWmo = find(wmoList == floatList(idFloat));
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CHLA'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountChloroA_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountChloroA_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CDOM'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountCDOM_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountCDOM_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end      
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_SCATTEROMETER_BBP'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % dim level 1 for DarkCountBackscatter700_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountBackscatter700_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end
+   end
+   
    % retrieve DAC_FORMAT_ID
    dacFormatId = metaStruct.DAC_FORMAT_ID;
    if (isempty(dacFormatId))
@@ -309,9 +342,9 @@ for idFloat = 1:length(floatList)
          
          sunaCalibFileName = [sunaCalibDirName '/' files(1).name];
          [creationDate, TEMP_CAL_NITRATE, ...
-            OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, ...
-            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName);
-         
+            OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, E_BISULFIDE, ...
+            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId);
+
          if (~isempty(creationDate))
             
             sunaCalibData = [];
@@ -386,6 +419,8 @@ for idFloat = 1:length(floatList)
       {'OCR_DOWN_IRR_WAVELENGTH'} ...
       {'OCR_VERTICAL_PRES_OFFSET'} ...
       {'OPTODE_VERTICAL_PRES_OFFSET'} ...
+      {'OPTODE_IN_AIR_MEASUREMENT'} ...
+      {'OPTODE_TIME_PRESSURE_OFFSET'} ...
       {'SUNA_VERTICAL_PRES_OFFSET'} ...
       {'SUNA_WITH_SCOOP'} ...
       ];
@@ -409,6 +444,8 @@ for idFloat = 1:length(floatList)
       {'CONFIG_PX_3_2_0_<I>_2'} ...
       {'CONFIG_PX_1_2_0_0_0'} ...
       {'CONFIG_PX_1_1_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_7'} ...
+      {'CONFIG_PX_1_1_0_0_8'} ...
       {'CONFIG_PX_1_6_0_0_0'} ...
       {'CONFIG_PX_1_6_0_0_5'} ...
       ];
@@ -774,6 +811,9 @@ o_metaStruct = struct( ...
    'CALIB_RT_DATE', 'CALIB_RT_DATE', ...
    'SENSOR_MOUNTED_ON_FLOAT', '', ...
    'CALIBRATION_COEFFICIENT', '', ...
-   'FIRST_CYCLE_TO_PROCESS', 'FIRST_CYCLE_TO_PROCESS');
+   'FIRST_CYCLE_TO_PROCESS', 'FIRST_CYCLE_TO_PROCESS', ...
+   'NEW_DARK_FOR_FLUOROMETER_CHLA', 'NEW_DARK_FOR_FLUOROMETER_CHLA', ...
+   'NEW_DARK_FOR_FLUOROMETER_CDOM', 'NEW_DARK_FOR_FLUOROMETER_CDOM', ...
+   'NEW_DARK_FOR_SCATTEROMETER_BBP', 'NEW_DARK_FOR_SCATTEROMETER_BBP');
 
 return;

@@ -84,7 +84,7 @@ switch (a_floatTransType)
       
       switch (a_decoderId)
          
-         case {105, 106, 107, 109}
+         case {105, 106, 107, 109, 110, 301, 302, 303}
             % CTS4 floats
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';

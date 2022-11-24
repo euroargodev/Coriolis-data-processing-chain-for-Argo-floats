@@ -213,6 +213,7 @@ a_dataSUNAMean = a_dataSUNA{1};
 a_dataSUNARaw = a_dataSUNA{2};
 a_dataSUNAStdMed = a_dataSUNA{3};
 a_dataSUNAAPF = a_dataSUNA{4};
+a_dataSUNAAPF2 = a_dataSUNA{5};
 
 a_dataSUNAMeanDate = a_dataSUNAMean{1};
 a_dataSUNAMeanDateTrans = a_dataSUNAMean{2};
@@ -243,6 +244,22 @@ a_dataSUNAAPFDarkSpecStd = a_dataSUNAAPF{10};
 a_dataSUNAAPFSensorNitra = a_dataSUNAAPF{11};
 a_dataSUNAAPFAbsFitRes = a_dataSUNAAPF{12};
 a_dataSUNAAPFOutSpec = a_dataSUNAAPF{13};
+
+if (~isempty(a_dataSUNAAPF2))
+   a_dataSUNAAPF2Date = a_dataSUNAAPF2{1};
+   a_dataSUNAAPF2DateTrans = a_dataSUNAAPF2{2};
+   a_dataSUNAAPF2CTDPres = a_dataSUNAAPF2{3};
+   a_dataSUNAAPF2CTDTemp = a_dataSUNAAPF2{4};
+   a_dataSUNAAPF2CTDSal = a_dataSUNAAPF2{5};
+   a_dataSUNAAPF2IntTemp = a_dataSUNAAPF2{6};
+   a_dataSUNAAPF2SpecTemp = a_dataSUNAAPF2{7};
+   a_dataSUNAAPF2IntRelHumidity = a_dataSUNAAPF2{8};
+   a_dataSUNAAPF2DarkSpecMean = a_dataSUNAAPF2{9};
+   a_dataSUNAAPF2DarkSpecStd = a_dataSUNAAPF2{10};
+   a_dataSUNAAPF2SensorNitra = a_dataSUNAAPF2{11};
+   a_dataSUNAAPF2AbsFitRes = a_dataSUNAAPF2{12};
+   a_dataSUNAAPF2OutSpec = a_dataSUNAAPF2{13};
+end
 
 % add the drift measurement dates
 if (~isempty(a_dataCTDMeanDate))
@@ -425,6 +442,16 @@ if (~isempty(a_dataSUNAAPFDate))
       [a_dataSUNAAPFDate(idDrift(idL), 4:end)] = compute_dates_ir_rudics(6, ...
          a_dataSUNAAPFDate(idDrift(idL), 1), a_dataSUNAAPFDate(idDrift(idL), 2), ...
          a_dataSUNAAPFDate(idDrift(idL), 4:end), a_dataSUNAAPFCTDPres(idDrift(idL), 4:end));
+   end
+end
+if (~isempty(a_dataSUNAAPF2))
+   if (~isempty(a_dataSUNAAPF2Date))
+      idDrift = find(a_dataSUNAAPF2Date(:, 3) == g_decArgo_phaseParkDrift);
+      for idL = 1:length(idDrift)
+         [a_dataSUNAAPF2Date(idDrift(idL), 4:end)] = compute_dates_ir_rudics(6, ...
+            a_dataSUNAAPF2Date(idDrift(idL), 1), a_dataSUNAAPF2Date(idDrift(idL), 2), ...
+            a_dataSUNAAPF2Date(idDrift(idL), 4:end), a_dataSUNAAPF2CTDPres(idDrift(idL), 4:end));
+      end
    end
 end
 
@@ -616,9 +643,27 @@ o_dataSUNAAPF{11} = a_dataSUNAAPFSensorNitra;
 o_dataSUNAAPF{12} = a_dataSUNAAPFAbsFitRes;
 o_dataSUNAAPF{13} = a_dataSUNAAPFOutSpec;
 
+o_dataSUNAAPF2 = [];
+if (~isempty(a_dataSUNAAPF2))
+   o_dataSUNAAPF2{1} = a_dataSUNAAPF2Date;
+   o_dataSUNAAPF2{2} = a_dataSUNAAPF2DateTrans;
+   o_dataSUNAAPF2{3} = a_dataSUNAAPF2CTDPres;
+   o_dataSUNAAPF2{4} = a_dataSUNAAPF2CTDTemp;
+   o_dataSUNAAPF2{5} = a_dataSUNAAPF2CTDSal;
+   o_dataSUNAAPF2{6} = a_dataSUNAAPF2IntTemp;
+   o_dataSUNAAPF2{7} = a_dataSUNAAPF2SpecTemp;
+   o_dataSUNAAPF2{8} = a_dataSUNAAPF2IntRelHumidity;
+   o_dataSUNAAPF2{9} = a_dataSUNAAPF2DarkSpecMean;
+   o_dataSUNAAPF2{10} = a_dataSUNAAPF2DarkSpecStd;
+   o_dataSUNAAPF2{11} = a_dataSUNAAPF2SensorNitra;
+   o_dataSUNAAPF2{12} = a_dataSUNAAPF2AbsFitRes;
+   o_dataSUNAAPF2{13} = a_dataSUNAAPF2OutSpec;
+end
+
 o_dataSUNA{1} = o_dataSUNAMean;
 o_dataSUNA{2} = o_dataSUNARaw;
 o_dataSUNA{3} = o_dataSUNAStdMed;
 o_dataSUNA{4} = o_dataSUNAAPF;
+o_dataSUNA{5} = o_dataSUNAAPF2;
 
 return;

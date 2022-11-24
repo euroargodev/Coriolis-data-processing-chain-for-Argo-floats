@@ -97,13 +97,13 @@ if (isempty(idDataStdMed))
 
    dataMean(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 3));
    paramDOWN_IRRADIANCE380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
-   dataMean(:, 8) = compute_DOWN_IRRADIANCE380_105_to_109_121_121(dataMean(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
+   dataMean(:, 8) = compute_DOWN_IRRADIANCE380_105_to_110_121(dataMean(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
    paramDOWN_IRRADIANCE412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
-   dataMean(:, 9) = compute_DOWN_IRRADIANCE412_105_to_109_121(dataMean(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
+   dataMean(:, 9) = compute_DOWN_IRRADIANCE412_105_to_110_121(dataMean(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
    paramDOWN_IRRADIANCE490 = get_netcdf_param_attributes('DOWN_IRRADIANCE490');
-   dataMean(:, 10) = compute_DOWN_IRRADIANCE490_105_to_109_121_121(dataMean(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
+   dataMean(:, 10) = compute_DOWN_IRRADIANCE490_105_to_110_121(dataMean(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
    paramDOWNWELLING_PAR = get_netcdf_param_attributes('DOWNWELLING_PAR');
-   dataMean(:, 11) = compute_DOWNWELLING_PAR_105_to_109_121(dataMean(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
+   dataMean(:, 11) = compute_DOWNWELLING_PAR_105_to_110_121(dataMean(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
    
    for idL = 1:size(dataMean, 1)
       if (dataMean(idL, 1) ~= g_decArgo_dateDef)
@@ -208,13 +208,13 @@ else
       data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3));
 
       paramDOWN_IRRADIANCE380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
-      data(:, 16) = compute_DOWN_IRRADIANCE380_105_to_109_121_121(data(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
+      data(:, 16) = compute_DOWN_IRRADIANCE380_105_to_110_121(data(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
       paramDOWN_IRRADIANCE412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
-      data(:, 17) = compute_DOWN_IRRADIANCE412_105_to_109_121(data(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
+      data(:, 17) = compute_DOWN_IRRADIANCE412_105_to_110_121(data(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
       paramDOWN_IRRADIANCE490 = get_netcdf_param_attributes('DOWN_IRRADIANCE490');
-      data(:, 18) = compute_DOWN_IRRADIANCE490_105_to_109_121_121(data(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
+      data(:, 18) = compute_DOWN_IRRADIANCE490_105_to_110_121(data(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
       paramDOWNWELLING_PAR = get_netcdf_param_attributes('DOWNWELLING_PAR');
-      data(:, 19) = compute_DOWNWELLING_PAR_105_to_109_121(data(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
+      data(:, 19) = compute_DOWNWELLING_PAR_105_to_110_121(data(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
 
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

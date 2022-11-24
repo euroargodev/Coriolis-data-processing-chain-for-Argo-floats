@@ -71,6 +71,8 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 100000;-1;;CONFIG_VectorBoardShowModeOn_LOGICAL;Is the vector board show mode ON? (Yes/No).
 100001;-1;;CONFIG_SensorBoardShowModeOn_LOGICAL;Is the sensor board show mode ON? (Yes/No).
 111000;-1;;CONFIG_OptodeVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+111007;-1;;CONFIG_OptodeMeasurementsInAir_LOGICAL;Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0
+111008;-1;;CONFIG_OptodeTimePressureOffset_seconds;Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer
 117000;-1;;CONFIG_FlbbVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
 117002;-1;;CONFIG_FlbbBetaAngle_angularDeg;Angle of Beta measurements  (in degrees) 
 127000;-1;;CONFIG_FlbbChlaFluorescenceExcitationWavelength_nm;Wavelength of Flbb for excitation of Chla fluorescence measurements (in nanometer)

@@ -2,7 +2,7 @@
 % Compute BBP700 from BETA_BACKSCATTERING700 provided by the ECO3 sensor.
 %
 % SYNTAX :
-%  [o_BBP] = compute_BBP700_105_to_109_121(a_BETA_BACKSCATTERING, ...
+%  [o_BBP] = compute_BBP700_105_to_110_121(a_BETA_BACKSCATTERING, ...
 %    a_BETA_BACKSCATTERING_fill_value, a_BBP_fill_value, a_ctdData, ...
 %    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
 %
@@ -26,7 +26,7 @@
 % RELEASES :
 %   07/08/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_BBP] = compute_BBP700_105_to_109_121(a_BETA_BACKSCATTERING, ...
+function [o_BBP] = compute_BBP700_105_to_110_121(a_BETA_BACKSCATTERING, ...
    a_BETA_BACKSCATTERING_fill_value, a_BBP_fill_value, a_ctdData, ...
    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
 
@@ -59,6 +59,9 @@ elseif ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700')) && ...
       (isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter')))
    scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter700);
    darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700);
+   if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700_O'))
+      darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700_O);
+   end
    khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
 else
    fprintf('WARNING: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...

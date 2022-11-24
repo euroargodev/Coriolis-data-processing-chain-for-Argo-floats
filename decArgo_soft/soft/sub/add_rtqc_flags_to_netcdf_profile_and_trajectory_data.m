@@ -44,6 +44,7 @@ global g_decArgo_rtqcTest21;
 global g_decArgo_rtqcTest22;
 global g_decArgo_rtqcTest23;
 global g_decArgo_rtqcTest57;
+global g_decArgo_rtqcTest62;
 global g_decArgo_rtqcTest63;
 global g_decArgo_rtqcEtopoFile;
 global g_decArgo_rtqcGreyList;
@@ -88,6 +89,7 @@ testToPerformList = [ ...
    {'TEST022_NS_MIXED_AIR_WATER'} {g_decArgo_rtqcTest22} ...
    {'TEST023_DEEP_FLOAT'} {g_decArgo_rtqcTest23} ...
    {'TEST057_DOXY'} {g_decArgo_rtqcTest57} ...
+   {'TEST062_BBP'} {g_decArgo_rtqcTest62} ...
    {'TEST063_CHLA'} {g_decArgo_rtqcTest63} ...
    ];
 
@@ -100,6 +102,8 @@ testMetaData = [ ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
    {'TEST023_DEEP_FLOAT_FLAG'} {''} ...
    {'TEST057_METADA_DATA_FILE'} {''} ...
+   {'TEST062_DARK_BBP700_O'} {''} ...
+   {'TEST062_DARK_BBP352_O'} {''} ...
    {'TEST063_DARK_CHLA'} {''} ...
    {'TEST063_SCALE_CHLA'} {''} ...
    ];
@@ -163,6 +167,42 @@ if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
       idVal = find(strcmp('TEST057_METADA_DATA_FILE', testMetaData) == 1);
       if (~isempty(idVal))
          testMetaData{idVal+1} = ncMetaFilePathName;
+      end
+   end
+end
+
+if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
+   
+   % retrieve DARK_BBP700_O and DARK_BBP352_O from json meta data file
+   
+   % calibration coefficients
+   darkCountBackscatter700_O = [];
+   darkCountBackscatter532_O = [];
+   if (~isempty(g_decArgo_calibInfo))
+      if (isfield(g_decArgo_calibInfo, 'ECO3'))
+         if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700_O'))
+            darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700_O);
+         end
+         if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532_O'))
+            darkCountBackscatter532_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532_O);
+         end
+      elseif (isfield(g_decArgo_calibInfo, 'FLBB'))
+         if (isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700_O'))
+            darkCountBackscatter700_O = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700_O);
+         end
+      end
+   end
+   
+   if (~isempty(darkCountBackscatter700_O))
+      idVal = find(strcmp('TEST062_DARK_BBP700_O', testMetaData) == 1);
+      if (~isempty(idVal))
+         testMetaData{idVal+1} = darkCountBackscatter700_O;
+      end
+   end
+   if (~isempty(darkCountBackscatter532_O))
+      idVal = find(strcmp('TEST062_DARK_BBP532_O', testMetaData) == 1);
+      if (~isempty(idVal))
+         testMetaData{idVal+1} = darkCountBackscatter532_O;
       end
    end
 end

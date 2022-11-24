@@ -2,7 +2,7 @@
 % Create profile of mean & stDev & Med ECO3 sensor data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_105_to_107( ...
+%  [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_105_to_107_110( ...
 %    a_dataECO3Mean, a_dataECO3StdMed, ...
 %    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
 %
@@ -26,7 +26,7 @@
 % RELEASES :
 %   02/22/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_105_to_107( ...
+function [o_tabProfiles, o_tabDrift] = process_profile_ECO3_mean_stdMed_105_to_107_110( ...
    a_dataECO3Mean, a_dataECO3StdMed, ...
    a_descentToParkStartDate, a_ascentEndDate, a_gpsData, a_sensorTechECO3)
 
@@ -53,6 +53,7 @@ global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseAscProf;
 
 % treatment types
+global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
@@ -321,6 +322,11 @@ for idCy = 1:length(cycleNumList)
                   o_tabProfiles = [o_tabProfiles profStruct];
                   
                else
+                  
+                  % drift data is always 'raw' (even if transmitted through
+                  % 'mean' float packets) (NKE personal communication)
+                  profStruct.treatType = g_decArgo_treatRaw;
+
                   o_tabDrift = [o_tabDrift profStruct];
                end
             end

@@ -102,7 +102,7 @@ else
 end
 
 % retrieve configuration information
-sunaVerticalOffset = get_static_config_value('CONFIG_PX_1_6_0_0_0');
+sunaVerticalOffset = get_static_config_value('CONFIG_PX_1_6_0_0_0', 1);
 if (isempty(sunaVerticalOffset))
    sunaVerticalOffset = 0;
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA vertical offset is missing => NITRATE data computed with a 0 dbar vertical offset in ''%c'' profile of SUNA sensor\n', ...
@@ -112,8 +112,8 @@ if (isempty(sunaVerticalOffset))
       a_profSuna.direction);
 end
 
-floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3');
-floatPixelEnd = get_static_config_value('CONFIG_PX_1_6_0_0_4');
+floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
+floatPixelEnd = get_static_config_value('CONFIG_PX_1_6_0_0_4', 1);
 if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing => NITRATE data set to fill value in ''%c'' profile of SUNA sensor\n', ...
       g_decArgo_floatNum, ...
@@ -241,9 +241,9 @@ if (~isempty(idNoDef))
    % then X3 = MOLAR_NITRATE
    
    tabMolarNitrate = ones(size(tabUvIntensityDarkNitrate, 1), 1)*double(a_NITRATE_fill_value);
+   a = [tabOpticalWavelengthUv' tabENitrate'];
    for idL = 1:length(tabMolarNitrate)
       b = absorbanceCorNitrate(idL, :)';
-      a = [tabOpticalWavelengthUv' tabENitrate'];
       mdl = fitlm(a, b);
       tabMolarNitrate(idL) = mdl.Coefficients.Estimate(end);
    end

@@ -150,7 +150,8 @@ a_dataCROVERRawPres = a_dataCROVERRaw{3};
 
 a_dataSUNAMean = a_dataSUNA{1};
 a_dataSUNARaw = a_dataSUNA{2};
-a_dataSUNAAPF = a_dataSUNA{2};
+a_dataSUNAAPF = a_dataSUNA{4};
+a_dataSUNAAPF2 = a_dataSUNA{5};
 
 a_dataSUNAMeanDate = a_dataSUNAMean{1};
 a_dataSUNAMeanDateTrans = a_dataSUNAMean{2};
@@ -163,6 +164,12 @@ a_dataSUNARawPres = a_dataSUNARaw{3};
 a_dataSUNAAPFDate = a_dataSUNAAPF{1};
 a_dataSUNAAPFDateTrans = a_dataSUNAAPF{2};
 a_dataSUNAAPFCTDPres = a_dataSUNAAPF{3};
+
+if (~isempty(a_dataSUNAAPF2))
+   a_dataSUNAAPF2Date = a_dataSUNAAPF2{1};
+   a_dataSUNAAPF2DateTrans = a_dataSUNAAPF2{2};
+   a_dataSUNAAPF2CTDPres = a_dataSUNAAPF2{3};
+end
 
 a_gpsLocCycleNum = a_gpsData{1};
 a_gpsLocProfNum = a_gpsData{2};
@@ -359,6 +366,20 @@ if (~isempty(a_dataSUNAAPFDate))
       tabDataDate = [tabDataDate; a_dataSUNAAPFDate(:, idC)];
       tabDataDateTrans = [tabDataDateTrans; a_dataSUNAAPFDateTrans(:, idC)];
       tabDataPres = [tabDataPres; a_dataSUNAAPFCTDPres(:, idC)];
+   end
+end
+
+if (~isempty(a_dataSUNAAPF2))
+   if (~isempty(a_dataSUNAAPF2Date))
+      for idC = 4:size(a_dataSUNAAPF2Date, 2)
+         tabDataCycle = [tabDataCycle; a_dataSUNAAPF2Date(:, 1)];
+         tabDataProf = [tabDataProf; a_dataSUNAAPF2Date(:, 2)];
+         tabDataPhase = [tabDataPhase; a_dataSUNAAPF2Date(:, 3)];
+         tabDataType = [tabDataType; ones(size(a_dataSUNAAPF2Date, 1), 1)*25];
+         tabDataDate = [tabDataDate; a_dataSUNAAPF2Date(:, idC)];
+         tabDataDateTrans = [tabDataDateTrans; a_dataSUNAAPF2DateTrans(:, idC)];
+         tabDataPres = [tabDataPres; a_dataSUNAAPF2CTDPres(:, idC)];
+      end
    end
 end
 

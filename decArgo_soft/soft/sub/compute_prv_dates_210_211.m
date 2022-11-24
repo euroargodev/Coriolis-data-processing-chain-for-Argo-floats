@@ -16,14 +16,13 @@
 %    o_firstGroundingDate, o_firstGroundingPres, ...
 %    o_secondGroundingDate, o_secondGroundingPres, ...
 %    o_eolStartDate, ...
-%    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
-%    o_deepCycle] = ...
-%    compute_prv_dates_210_211(a_tabTech1, a_tabTech2, a_irSessionNum)
+%    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres] = ...
+%    compute_prv_dates_210_211(a_tabTech1, a_tabTech2, a_deepCycle)
 %
 % INPUT PARAMETERS :
-%   a_tabTech1     : decoded data of technical msg #1
-%   a_tabTech2     : decoded data of technical msg #2
-%   a_irSessionNum : number of the Iridium session (1 or 2)
+%   a_tabTech1  : decoded data of technical msg #1
+%   a_tabTech2  : decoded data of technical msg #2
+%   a_deepCycle : deep cycle flag
 %
 % OUTPUT PARAMETERS :
 %   o_cycleStartDate           : cycle start date
@@ -45,7 +44,6 @@
 %   o_eolStartDate             : EOL phase start date
 %   o_firstEmergencyAscentDate : first emergency ascent ascent date
 %   o_firstEmergencyAscentPres : first grounding pressure
-%   o_deepCycle                : deep cycle flag
 %
 % EXAMPLES :
 %
@@ -69,9 +67,8 @@ function [o_cycleStartDate, ...
    o_firstGroundingDate, o_firstGroundingPres, ...
    o_secondGroundingDate, o_secondGroundingPres, ...
    o_eolStartDate, ...
-   o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
-   o_deepCycle] = ...
-   compute_prv_dates_210_211(a_tabTech1, a_tabTech2, a_irSessionNum)
+   o_firstEmergencyAscentDate, o_firstEmergencyAscentPres] = ...
+   compute_prv_dates_210_211(a_tabTech1, a_tabTech2, a_deepCycle)
 
 % output parameters initialization
 o_cycleStartDate = [];
@@ -93,7 +90,6 @@ o_secondGroundingPres = [];
 o_eolStartDate = [];
 o_firstEmergencyAscentDate = [];
 o_firstEmergencyAscentPres = [];
-o_deepCycle = 0;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -118,7 +114,10 @@ ID_OFFSET = 1;
 cycleStartDateDay = g_decArgo_dateDef;
 
 % technical message #1
-idF1 = find(a_tabTech1(:, 1) == 0);
+idF1 = [];
+if (~isempty(a_tabTech1))
+   idF1 = find(a_tabTech1(:, 1) == 0);
+end
 if (length(idF1) > 1)
    fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message #1 in the buffer)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -129,14 +128,13 @@ elseif (length(idF1) == 1)
    
    o_gpsDate = a_tabTech1(id, end-3);
          
-   if (a_irSessionNum == 1)
+   if (a_deepCycle == 1)
       
       startDateInfo = [a_tabTech1(id, (5:7)+ID_OFFSET) a_tabTech1(id, 9+ID_OFFSET)];
       if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
          cycleStartDateDay = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, (5:7)+ID_OFFSET)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
          cycleStartHour = a_tabTech1(id, 9+ID_OFFSET);
          o_cycleStartDate = cycleStartDateDay + cycleStartHour/1440;
-         o_deepCycle = 1;
       end
       
       if (~isempty(o_cycleStartDate))
@@ -253,7 +251,10 @@ elseif (length(idF1) == 1)
 end
    
 % technical message #2
-idF2 = find(a_tabTech2(:, 1) == 4);
+idF2 = [];
+if (~isempty(a_tabTech2))
+   idF2 = find(a_tabTech2(:, 1) == 4);
+end
 if (length(idF2) > 1)
    fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message #2 in the buffer)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -262,18 +263,22 @@ elseif (length(idF2) == 1)
    
    id = idF2(1);
    
-   if (a_irSessionNum == 1)
+   if (a_deepCycle == 1)
       
       if (a_tabTech2(id, 21+ID_OFFSET) > 0)
-         firstGroundingTime = a_tabTech2(id, 23+ID_OFFSET) + a_tabTech2(id, 24+ID_OFFSET)/1440;
-         o_firstGroundingDate = firstGroundingTime + g_decArgo_julD2FloatDayOffset;
          o_firstGroundingPres = a_tabTech2(id, 22+ID_OFFSET);
+         if (~isempty(o_cycleStartDate))
+            o_firstGroundingDate = fix(o_cycleStartDate) + ...
+               a_tabTech2(id, 23+ID_OFFSET) + a_tabTech2(id, 24+ID_OFFSET)/1440;
+         end         
       end
       
       if (a_tabTech2(id, 21+ID_OFFSET) > 1)
-         secondGroundingTime = a_tabTech2(id, 28+ID_OFFSET) + a_tabTech2(id, 29+ID_OFFSET)/1440;
-         o_secondGroundingDate = secondGroundingTime + g_decArgo_julD2FloatDayOffset;
          o_secondGroundingPres = a_tabTech2(id, 27+ID_OFFSET);
+         if (~isempty(o_cycleStartDate))
+            o_secondGroundingDate = fix(o_cycleStartDate) + ...
+               a_tabTech2(id, 28+ID_OFFSET) + a_tabTech2(id, 29+ID_OFFSET)/1440;
+         end         
       end
       
       if ((a_tabTech2(id, 32+ID_OFFSET) > 0) && (cycleStartDateDay ~= g_decArgo_dateDef))

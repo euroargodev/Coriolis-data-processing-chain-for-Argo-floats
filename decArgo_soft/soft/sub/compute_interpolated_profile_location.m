@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Compute a profile location using existing good locations of the surafce
+% Compute a profile location using existing good locations of the surface
 % trajectory.
 %
 % SYNTAX :

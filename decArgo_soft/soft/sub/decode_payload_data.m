@@ -96,6 +96,7 @@ data = a_data;
 payloadData = [];
 start = 0;
 level = 1;
+textData = '';
 while(~isempty(data))
    if (start == 0) && (char(data(1)) ~= ptn1)
       data(1) = [];
@@ -412,13 +413,7 @@ nbVal = length(a_sensorData)/4;
 tabNbBits = repmat(32, 1, nbVal);
 rawData = get_bits(1, tabNbBits, double(a_sensorData));
 rawData = typecast(uint32(swapbytes(uint32(rawData))), 'single')';
-% if (any(rawData == inf('single')))
-%    a=1
-% end
 rawData(find(rawData == inf('single'))) = nan;
-
-% fprintf('%g\n', rawData);
-% fprintf('\n');
 
 o_sensorData = reshape(rawData, a_nbCol, length(rawData)/a_nbCol)';
 
@@ -451,6 +446,19 @@ function [o_payloadData, o_emptyPayloadData] = finalize_payload_data(a_payloadDa
 o_payloadData = [];
 o_emptyPayloadData = 1;
 
+ignoredItems = [ ...
+   {'ENVIRONMENT'} ... % nominal
+   {'LOG'} ... % nominal
+   {'SENSOR_ACT'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'CYCLEPARK'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'PREDESCENT'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'DESCENT'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'PARK'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'DEEPPROFILE'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'SHORTPARK'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'ASCENT'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   {'SURFACE'} ... % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
+   ];
 
 % add <SENSOR> TAGs around sensor data
 payloadData = a_payloadData;
@@ -458,8 +466,7 @@ idLev1Begin = find(([payloadData{:, 1}] == 1) & ...
    ([payloadData{:, 3}] == 'B'));
 for idLev1B = length(idLev1Begin):-1:1
    idLev1Start = idLev1Begin(idLev1B);
-   if (~strcmp(payloadData{idLev1Start, 2}, 'ENVIRONMENT') && ...
-         ~strcmp(payloadData{idLev1Start, 2}, 'LOG'))
+   if (~ismember(payloadData{idLev1Start, 2}, ignoredItems))
       o_emptyPayloadData = 0;
       idLev1End = find(strcmp(payloadData(:, 2), payloadData{idLev1Start, 2}) & ...
          ([payloadData{:, 3}] == 'E')');

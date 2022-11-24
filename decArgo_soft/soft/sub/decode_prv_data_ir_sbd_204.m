@@ -66,6 +66,9 @@ global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
 global g_decArgo_generateNcTech;
 
 
+% initialize information arrays
+init_counts;
+
 % decode packet data
 for idMes = 1:size(a_tabData, 1)
    % packet type
@@ -175,14 +178,14 @@ for idMes = 1:size(a_tabData, 1)
          
          o_deepCycle = 1;
          
+         if (packType == 1)
+            g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
+         elseif (packType == 2)
+            g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
+         elseif (packType == 3)
+            g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
+         end
          if (a_procLevel == 0)
-            if (packType == 1)
-               g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = g_decArgo_nbOf1Or8Or11Or14TypePacketReceived + 1;
-            elseif (packType == 2)
-               g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = g_decArgo_nbOf2Or9Or12Or15TypePacketReceived + 1;
-            elseif (packType == 3)
-               g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = g_decArgo_nbOf3Or10Or13Or16TypePacketReceived + 1;
-            end
             continue;
          end
          
@@ -278,5 +281,79 @@ for idMes = 1:size(a_tabData, 1)
             packType);
    end
 end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Initialize global flags and counters used to decide if a buffer is completed
+% or not.
+%
+% SYNTAX :
+%  init_counts
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/03/2017 - RNU - creation
+% ------------------------------------------------------------------------------
+function init_counts
+
+% arrays to store rough information on received data
+global g_decArgo_0TypePacketReceivedFlag;
+global g_decArgo_4TypePacketReceivedFlag;
+global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
+global g_decArgo_nbOf1Or8TypePacketExpected;
+global g_decArgo_nbOf1Or8TypePacketReceived;
+global g_decArgo_nbOf2Or9TypePacketExpected;
+global g_decArgo_nbOf2Or9TypePacketReceived;
+global g_decArgo_nbOf3Or10TypePacketExpected;
+global g_decArgo_nbOf3Or10TypePacketReceived;
+global g_decArgo_nbOf13Or11TypePacketExpected;
+global g_decArgo_nbOf13Or11TypePacketReceived;
+global g_decArgo_nbOf14Or12TypePacketExpected;
+global g_decArgo_nbOf14Or12TypePacketReceived;
+
+% initialize information arrays
+g_decArgo_0TypePacketReceivedFlag = 0;
+g_decArgo_4TypePacketReceivedFlag = 0;
+g_decArgo_5TypePacketReceivedFlag = 0;
+g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
+g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
+g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
+g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
+g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
+g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
+g_decArgo_nbOf1Or8TypePacketExpected = -1;
+g_decArgo_nbOf1Or8TypePacketReceived = 0;
+g_decArgo_nbOf2Or9TypePacketExpected = -1;
+g_decArgo_nbOf2Or9TypePacketReceived = 0;
+g_decArgo_nbOf3Or10TypePacketExpected = -1;
+g_decArgo_nbOf3Or10TypePacketReceived = 0;
+g_decArgo_nbOf13Or11TypePacketExpected = -1;
+g_decArgo_nbOf13Or11TypePacketReceived = 0;
+g_decArgo_nbOf14Or12TypePacketExpected = -1;
+g_decArgo_nbOf14Or12TypePacketReceived = 0;
+
+% items not concerned by this decoder
+g_decArgo_5TypePacketReceivedFlag = 1;
+
+g_decArgo_nbOf1Or8TypePacketExpected = 0;
+g_decArgo_nbOf2Or9TypePacketExpected = 0;
+g_decArgo_nbOf3Or10TypePacketExpected = 0;
+g_decArgo_nbOf13Or11TypePacketExpected = 0;
+g_decArgo_nbOf14Or12TypePacketExpected = 0;
 
 return;

@@ -115,8 +115,8 @@ for idCy = 1:length(cyleList)
                   if (~isempty(dataIndexList))
                      
                      switch (a_decoderId)
-                        case {105, 106, 107}
-                           print_sensor_tech_data_in_csv_file_ECO3_105_to_107( ...
+                        case {105, 106, 107, 110}
+                           print_sensor_tech_data_in_csv_file_ECO3_105_to_107_110( ...
                               cycleNum, profNum, dataIndexList, ...
                               a_sensorTechECO3);
                         case {108, 109}

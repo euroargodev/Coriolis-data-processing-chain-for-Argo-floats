@@ -98,6 +98,9 @@
 %                               size(profNmeasXIndex, 1) cannot be predicted
 %                             - PRES2, TEMP2 and PSAL2 are present when a SUNA 
 %                               sensor is used
+%   03/22/2017 - RNU - V 3.1: - add RTQC test #62 for BBP
+%                             - management of erroneous Remocean SUNA data
+%                              (N_VALUES differ between Prof and Traj files)
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -129,7 +132,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '3.0';
+g_decArgo_addRtqcToProfileVersion = '3.1';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -230,6 +233,7 @@ expectedTestList = [ ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
    {'TEST023_DEEP_FLOAT'} ...
    {'TEST057_DOXY'} ...
+   {'TEST062_BBP'} ...
    {'TEST063_CHLA'} ...
    ];
 
@@ -3615,6 +3619,93 @@ if (testFlagList(57) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 62: BBP specific test
+%
+if (testFlagList(62) == 1)
+   
+   % list of parameters concerned by this test
+   test62ParameterList = [ ...
+      {'BBP700'} ...
+      {'BBP532'} ...
+      ];
+   
+   % retrieve DARK_BBP700_O and DARK_BBP352_O from json meta data file
+   darkCountBackscatter700_O = [];
+   darkCountBackscatter532_O = [];
+   darkCountBackscatter700Id = find(strcmp('TEST062_DARK_BBP700_O', a_testMetaData) == 1);
+   if (~isempty(darkCountBackscatter700Id))
+      darkCountBackscatter700_O = a_testMetaData{darkCountBackscatter700Id+1};
+   end
+   darkCountBackscatter532Id = find(strcmp('TEST062_DARK_BBP532_O', a_testMetaData) == 1);
+   if (~isempty(darkCountBackscatter532Id))
+      darkCountBackscatter532_O = a_testMetaData{darkCountBackscatter532Id+1};
+   end
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      if (idD == 1)
+         % non adjusted data processing
+         
+         % set the name list
+         ncParamXNameList = ncParamNameList;
+         ncParamXDataList = ncParamDataList;
+         ncParamXDataQcList = ncParamDataQcList;
+         ncParamXFillValueList = ncParamFillValueList;
+      else
+         % adjusted data processing
+         
+         % set the name list
+         ncParamXNameList = ncParamAdjNameList;
+         ncParamXDataList = ncParamAdjDataList;
+         ncParamXDataQcList = ncParamAdjDataQcList;
+         ncParamXFillValueList = ncParamAdjFillValueList;
+      end
+      
+      for idP = 1:length(test62ParameterList)
+         paramName = test62ParameterList{idP};
+         if (idD == 2)
+            paramName = [paramName '_ADJUSTED'];
+         end
+         idParam = find(strcmp(paramName, ncParamXNameList) == 1, 1);
+         if (~isempty(idParam))
+            
+            paramData = eval(ncParamXDataList{idParam});
+            paramDataQc = eval(ncParamXDataQcList{idParam});
+            paramFillValue = ncParamXFillValueList{idParam};
+            
+            if (~isempty(idParam))
+               
+               for idProf = 1:length(juld)
+                  profParam = paramData(idProf, :);
+                  
+                  % initialize Qc flags
+                  idNoDefParam = find(profParam ~= paramFillValue);
+                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
+                  eval([ncParamXDataQcList{idParam} ' = paramDataQc;']);
+                  
+                  testDoneList(62, idProf) = 1;
+                  testDoneListForTraj{62, idProf} = [testDoneListForTraj{62, idProf} idNoDefParam];
+                  
+                  % apply the test
+                  if (idP == 1)
+                     if (isempty(darkCountBackscatter700_O))
+                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrProbablyGood);
+                        eval([ncParamXDataQcList{idParam} ' = paramDataQc;']);
+                     end
+                  elseif (idP == 2)
+                     if (isempty(darkCountBackscatter532_O))
+                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrProbablyGood);
+                        eval([ncParamXDataQcList{idParam} ' = paramDataQc;']);
+                     end
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 63: CHLA specific test
 %
 chlaAdjInfoList = repmat({''}, length(juld), 1);
@@ -4147,11 +4238,15 @@ if (~isempty(g_rtqc_trajData))
       
       % collect profile data
       dataProf = [];
+      dimNValuesProf = [];
       for idProf = 1:length(juld)
          dataBis = [];
          for idP = 1:length(ncProfTrajXNameList)
             idParam = find(strcmp(ncProfTrajXNameList{idP}, ncProfParamXNameList) == 1, 1);
             data = eval(ncProfParamXDataList{idParam});
+            if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+               dimNValuesProf = [dimNValuesProf size(data, 3)];
+            end
             if (ndims(data) == 3)
                dataBis = [dataBis permute(data(idProf, :, :), [2 3 1])];
             else
@@ -4160,6 +4255,7 @@ if (~isempty(g_rtqc_trajData))
          end
          dataProf{idProf} = dataBis;
       end
+      dimNValuesProf = unique(dimNValuesProf);
       
       % collect traj data
       dataTraj = [];
@@ -4167,6 +4263,18 @@ if (~isempty(g_rtqc_trajData))
       for idP = 1:length(ncProfTrajXNameList)
          idParam = find(strcmp(ncProfTrajXNameList{idP}, ncTrajParamXNameList) == 1, 1);
          data = g_rtqc_trajData.(ncTrajParamXDataList{idParam});
+         if (strcmp(ncProfTrajXNameList{idP}, 'UV_INTENSITY_NITRATE'))
+            dimNValuesTraj = size(data, 2);
+            if (dimNValuesTraj > dimNValuesProf)
+               % anomaly in Remocean floats (Ex:6901440 #10)
+               % N_VALUES = 45 for some profiles instead of 42
+               % => N_VALUES = 45 in traj file => we do not consider additional
+               % data
+               data = data(:, 1:dimNValuesProf);
+               fprintf('RTQC_WARNING: Float #%d: N_VALUES = %d in PROF file and N_VALUES = %d in TRAJ file => additional TRAJ data are ignored in the comparison\n', ...
+                  a_floatNum, dimNValuesProf, dimNValuesTraj);
+            end
+         end
          dataFillValue = ncParamXFillValueList{idParam};
          dataTraj = [dataTraj data];
          dataTrajFillValue = [dataTrajFillValue repmat(dataFillValue, 1, size(data, 2))];
@@ -4361,11 +4469,11 @@ end
 
 % update test done/failed lists according to C and B file tests
 testDoneListCFile = testDoneList;
-testDoneListCFile([57 63], :) = 0;
+testDoneListCFile([57 62 63], :) = 0;
 testDoneListBFile = testDoneList;
 testDoneListBFile([8 14], :) = 0;
 testFailedListCFile = testFailedList;
-testFailedListCFile([57 63], :) = 0;
+testFailedListCFile([57 62 63], :) = 0;
 testFailedListBFile = testFailedList;
 testFailedListBFile([8 14], :) = 0;
 

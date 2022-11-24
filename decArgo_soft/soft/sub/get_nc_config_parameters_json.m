@@ -47,7 +47,7 @@ for idField = 1:length(confDataFieldNames)
    switch (a_decoderId)
       case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
-      case {105, 106, 107, 108, 109, 121}
+      case {105, 106, 107, 108, 109, 110, 121}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
       case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;

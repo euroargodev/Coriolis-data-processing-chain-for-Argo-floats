@@ -26,9 +26,6 @@ global g_decArgo_floatNum;
 % float configuration
 global g_decArgo_floatConfig;
 
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 
 % if it is a surface cycle the cycle could be already in the configuration
 % (second Iridium session or EOL)
@@ -80,7 +77,7 @@ idUsedConf = find(g_decArgo_floatConfig.USE.CYCLE == a_cyNum);
 
 if (~isempty(idUsedConf))
    
-   if (g_decArgo_secondIridiumSession == 0)
+   if (a_cyNum > 0)
       fprintf('WARNING: Float #%d: config already exists for cycle #%d => updating the current one\n', ...
          g_decArgo_floatNum, a_cyNum);
    end

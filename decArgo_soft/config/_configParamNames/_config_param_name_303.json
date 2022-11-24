@@ -673,13 +673,29 @@
    },
    "CONF_PARAM_85" :
    {
+      "CONF_PARAM_DEC_ID" : "111007",
+      "CONF_PARAM_MSG_ID" : "-1",
+      "CONF_PARAM_MSG_LABEL" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
+   },
+   "CONF_PARAM_86" :
+   {
+      "CONF_PARAM_DEC_ID" : "111008",
+      "CONF_PARAM_MSG_ID" : "-1",
+      "CONF_PARAM_MSG_LABEL" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
+   },
+   "CONF_PARAM_87" :
+   {
       "CONF_PARAM_DEC_ID" : "114000",
       "CONF_PARAM_MSG_ID" : "-1",
       "CONF_PARAM_MSG_LABEL" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure",
       "CONF_PARAM_NAME" : "CONFIG_FlntuVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_86" :
+   "CONF_PARAM_88" :
    {
       "CONF_PARAM_DEC_ID" : "124000",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -687,7 +703,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FlntuChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Flntu for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_87" :
+   "CONF_PARAM_89" :
    {
       "CONF_PARAM_DEC_ID" : "124001",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -695,7 +711,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FlntuChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Flntu for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_88" :
+   "CONF_PARAM_90" :
    {
       "CONF_PARAM_DEC_ID" : "124002",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -703,7 +719,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FlntuChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Flntu for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_89" :
+   "CONF_PARAM_91" :
    {
       "CONF_PARAM_DEC_ID" : "124003",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -711,7 +727,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FlntuChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Flntu for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_90" :
+   "CONF_PARAM_92" :
    {
       "CONF_PARAM_DEC_ID" : "124204",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -719,7 +735,7 @@
       "CONF_PARAM_NAME" : "CONFIG_FlntuTurbidityWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Flntu  for Turbidity  measurements (in nanometer)"
    },
-   "CONF_PARAM_91" :
+   "CONF_PARAM_93" :
    {
       "CONF_PARAM_DEC_ID" : "118000",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -727,7 +743,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CycVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_92" :
+   "CONF_PARAM_94" :
    {
       "CONF_PARAM_DEC_ID" : "128000",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -735,7 +751,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CycChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Cyc for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_93" :
+   "CONF_PARAM_95" :
    {
       "CONF_PARAM_DEC_ID" : "128001",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -743,7 +759,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CycChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Cyc for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_94" :
+   "CONF_PARAM_96" :
    {
       "CONF_PARAM_DEC_ID" : "128002",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -751,7 +767,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CycChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Cyc for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_95" :
+   "CONF_PARAM_97" :
    {
       "CONF_PARAM_DEC_ID" : "128003",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -759,7 +775,7 @@
       "CONF_PARAM_NAME" : "CONFIG_CycChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Cyc for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_96" :
+   "CONF_PARAM_98" :
    {
       "CONF_PARAM_DEC_ID" : "119000",
       "CONF_PARAM_MSG_ID" : "-1",
@@ -767,7 +783,7 @@
       "CONF_PARAM_NAME" : "CONFIG_StmVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_97" :
+   "CONF_PARAM_99" :
    {
       "CONF_PARAM_DEC_ID" : "129204",
       "CONF_PARAM_MSG_ID" : "-1",

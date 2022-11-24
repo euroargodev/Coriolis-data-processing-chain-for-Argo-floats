@@ -115,5 +115,7 @@ CONF_PARAM_DEC_ID;CONF_PARAM_MSG_ID;CONF_PARAM_MSG_LABEL;CONF_PARAM_NAME;CONF_PA
 132032;-1;Not in float user manual;CONFIG_OcrDownIrrWavelength3_nm;Wavelength of Ocr DownIrr #3 measurements (in nanometer).
 112000;-1;Not in float user manual;CONFIG_OcrVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
 111000;-1;Not in float user manual;CONFIG_OptodeVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+111007;-1;Not in float user manual;CONFIG_OptodeMeasurementsInAir_LOGICAL;Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0
+111008;-1;Not in float user manual;CONFIG_OptodeTimePressureOffset_seconds;Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer
 116000;-1;Not in float user manual;CONFIG_SunaVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
 116005;-1;Not in float user manual;CONFIG_SunaWithScoop_LOGICAL;Suna with scoop which redirects flow through Suna optics

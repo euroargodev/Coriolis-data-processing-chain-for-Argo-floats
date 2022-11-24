@@ -5,7 +5,8 @@
 %
 % SYNTAX :
 %  [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
-%    add_configuration_number_ir_rudics_cts5(a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
+%    add_configuration_number_ir_rudics_cts5( ...
+%    a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 %
 % INPUT PARAMETERS :
 %   a_tabProfiles   : input profile structures
@@ -28,7 +29,8 @@
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
-   add_configuration_number_ir_rudics_cts5(a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
+   add_configuration_number_ir_rudics_cts5( ...
+   a_tabProfiles, a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -98,27 +100,33 @@ for idNCy = 1:length(a_tabTrajNCycle)
    idConf = find((g_decArgo_floatConfig.USE.CYCLE == a_tabTrajNCycle(idNCy).cycleNumber) & ...
       (g_decArgo_floatConfig.USE.PROFILE == a_tabTrajNCycle(idNCy).profileNumber));
    if (~isempty(idConf))
-      a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
       a_tabTrajNCycle(idNCy).outputCycleNumber = g_decArgo_floatConfig.USE.CYCLE_OUT(idConf);
+      if (a_tabTrajNCycle(idNCy).outputCycleNumber > 0) % we don't assign any configuration to cycle #0 data
+         a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
+      end
    elseif ((a_tabTrajNCycle(idNCy).cycleNumber == min(g_decArgo_floatConfig.USE.CYCLE)) && ...
          (a_tabTrajNCycle(idNCy).profileNumber == 0))
       % prelude cycle
-      a_tabTrajNCycle(idNCy).configMissionNumber = 1;
       a_tabTrajNCycle(idNCy).outputCycleNumber = 0;
+      %       a_tabTrajNCycle(idNCy).configMissionNumber = 1; % we don't assign any configuration to cycle #0 data
    elseif (a_tabTrajNCycle(idNCy).profileNumber == 0)
       % EOL
       idConf = find((g_decArgo_floatConfig.USE.CYCLE == a_tabTrajNCycle(idNCy).cycleNumber-1) & ...
          (g_decArgo_floatConfig.USE.PROFILE == 1));
       if (~isempty(idConf))
-         a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
          a_tabTrajNCycle(idNCy).outputCycleNumber = g_decArgo_floatConfig.USE.CYCLE_OUT(idConf);
+         if (a_tabTrajNCycle(idNCy).outputCycleNumber > 0) % we don't assign any configuration to cycle #0 data
+            a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
+         end
       else
          % reset
          idConf = find((g_decArgo_floatConfig.USE.CYCLE == a_tabTrajNCycle(idNCy).cycleNumber-1) & ...
             (g_decArgo_floatConfig.USE.PROFILE == 0));
          if (~isempty(idConf))
-            a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
             a_tabTrajNCycle(idNCy).outputCycleNumber = g_decArgo_floatConfig.USE.CYCLE_OUT(idConf);
+            if (a_tabTrajNCycle(idNCy).outputCycleNumber > 0) % we don't assign any configuration to cycle #0 data
+               a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
+            end
          end
       end
    end

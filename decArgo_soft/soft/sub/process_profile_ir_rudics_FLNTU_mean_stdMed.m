@@ -52,6 +52,7 @@ global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseAscProf;
 
 % treatment types
+global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
@@ -298,6 +299,11 @@ for idCy = 1:length(cycleNumList)
                   o_tabProfiles = [o_tabProfiles profStruct];
                   
                else
+                  
+                  % drift data is always 'raw' (even if transmitted through
+                  % 'mean' float packets) (NKE personal communication)
+                  profStruct.treatType = g_decArgo_treatRaw;
+
                   o_tabDrift = [o_tabDrift profStruct];
                end
             end

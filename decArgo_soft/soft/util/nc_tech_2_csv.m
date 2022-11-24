@@ -36,6 +36,9 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % default values initialization
 init_default_values;
 
+% measurement codes initialization
+init_measurement_codes;
+
 % to compare different set of files do not print current dates
 COMPARISON_MODE = 0;
 
@@ -475,18 +478,20 @@ if (~isempty(idVal))
    cycleNumber = techData{idVal+1};
 end
 
-for idCycle = min(cycleNumber):max(cycleNumber)
-   
-   idForCy = find(cycleNumber == idCycle);
-   if (~isempty(idForCy))
-      for  idT = 1:length(idForCy)
-         fprintf(fidOut, ' %d; %d; %s; %s\n', a_floatNum, idCycle, strtrim(techParamName(idForCy(idT), :)), strtrim(techParamValue(idForCy(idT), :)));
+if (~isempty(cycleNumber))
+   for idCycle = min(cycleNumber):max(cycleNumber)
+      
+      idForCy = find(cycleNumber == idCycle);
+      if (~isempty(idForCy))
+         for  idT = 1:length(idForCy)
+            fprintf(fidOut, ' %d; %d; %s; %s\n', a_floatNum, idCycle, strtrim(techParamName(idForCy(idT), :)), strtrim(techParamValue(idForCy(idT), :)));
+         end
+      else
+         fprintf(fidOut, ' %d; %d; NONE\n', a_floatNum, idCycle);
       end
-   else
-      fprintf(fidOut, ' %d; %d; NONE\n', a_floatNum, idCycle);
+      
+      fprintf(fidOut, ' %d; ------------------------------; --------------------------------------------------------------------------------\n', a_floatNum);
    end
-   
-   fprintf(fidOut, ' %d; ------------------------------; --------------------------------------------------------------------------------\n', a_floatNum);
 end
 
 if (nTechMeas > 0)

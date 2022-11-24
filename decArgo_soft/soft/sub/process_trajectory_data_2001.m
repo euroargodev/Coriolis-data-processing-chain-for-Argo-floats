@@ -2,7 +2,7 @@
 % Process trajectory data.
 %
 % SYNTAX :
-%  [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_2001( ...
+%  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_2001( ...
 %    a_cycleNum, a_deepCycle, ...
 %    a_gpsData, a_iridiumMailData, ...
 %    a_tabTech, ...
@@ -28,6 +28,7 @@
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
 %   o_tabTrajNCycle : N_CYCLE trajectory data
+%   o_tabTechNMeas  : N_MEASUREMENT technical data
 %
 % EXAMPLES :
 %
@@ -37,7 +38,7 @@
 % RELEASES :
 %   04/28/2016 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_2001( ...
+function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_2001( ...
    a_cycleNum, a_deepCycle, ...
    a_gpsData, a_iridiumMailData, ...
    a_tabTech, ...
@@ -48,6 +49,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_2001( ...
 % output parameters initialization
 o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
+o_tabTechNMeas = [];
 
 % global measurement codes
 global g_MC_Launch;
@@ -184,7 +186,7 @@ if (a_deepCycle == 1)
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       if (isempty(cycleTimeStruct.clockDrift))
          measStruct.juldAdj = '';
          measStruct.juldAdjStatus = '';
@@ -204,8 +206,7 @@ if (a_deepCycle == 1)
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
-      
+         num2str(gpsCyLocQc(idpos)), 1);
       if (~isempty(cycleTimeStruct.clockDrift))
          measStruct.juld = measStruct.juld + (cycleTimeStruct.gpsTime-cycleTimeStruct.gpsTimeAdj);
          measStruct.juldStatus = g_JULD_STATUS_2;
@@ -232,7 +233,7 @@ if (a_deepCycle == 1)
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       if (isempty(cycleTimeStruct.clockDrift))
          measStruct.juldAdj = '';
          measStruct.juldAdjStatus = '';
@@ -419,14 +420,7 @@ if (a_deepCycle == 1)
    
    trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
    trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
-   
-   % Transmission End Time
-   measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, cycleTimeStruct.clockDrift);
-   trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-   
-   trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
-   trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
-   
+      
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % PROFILE DATED BINS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -534,6 +528,8 @@ if (a_deepCycle == 1)
    tabDate = [];
    tabDateAdj = [];
    tabPres = [];
+   tabDur = [];
+   tabType = [];
    if (~isempty(a_dataHydrau) && (cycleTimeStruct.cycleStartTime ~= g_decArgo_dateDef))
       
       for idH = 1:size(a_dataHydrau, 1)
@@ -548,6 +544,15 @@ if (a_deepCycle == 1)
             tabDateAdj = [tabDateAdj; g_decArgo_dateDef];
          end
          tabPres = [tabPres; data(3)*10];
+         if (data(5) == hex2dec('ffff'))
+            % valve action
+            tabDur = [tabDur; data(6)/10];
+            tabType = [tabType; 0];
+         else
+            % pump action
+            tabDur = [tabDur; data(5)*10];
+            tabType = [tabType; 1];
+         end
       end
       
       if (~isempty(tabDate))
@@ -555,6 +560,8 @@ if (a_deepCycle == 1)
          [tabDate, idSorted] = sort(tabDate);
          tabDateAdj = tabDateAdj(idSorted);
          tabPres = tabPres(idSorted);
+         tabDur = tabDur(idSorted);
+         tabType = tabType(idSorted);
          
          if ~((length(unique(tabPres)) == 1) && (unique(tabPres) == 0) && (cycleTimeStruct.descentToParkEndTimeAdj == g_decArgo_dateDef))
             
@@ -573,6 +580,9 @@ if (a_deepCycle == 1)
                g_MC_SpyAtProf;...
                g_MC_SpyInAscProf];
             
+            % structure to store N_MEASUREMENT technical data
+            o_tabTechNMeas = get_traj_n_meas_init_struct(a_cycleNum, -1);
+            
             for idS = 1:length(tabMc)
                if ((tabRefDates(idS, 1) ~= g_decArgo_dateDef) && (tabRefDates(idS, 2) ~= g_decArgo_dateDef))
                   idF = find((tabDate >= tabRefDates(idS, 1)) & (tabDate < tabRefDates(idS, 2)));
@@ -589,10 +599,33 @@ if (a_deepCycle == 1)
                      measStruct.paramData = tabPres(idF(idP));
                      
                      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                     
+                     [measStruct, nCycleTime] = create_one_meas_float_time_bis( ...
+                        tabMc(idS), ...
+                        tabDate(idF(idP)), ...
+                        tabDateAdj(idF(idP)), ...
+                        g_JULD_STATUS_2);
+                     if (tabType(idF(idP)) == 0)
+                        param = get_netcdf_param_attributes('VALVE_ACTION_DURATION');
+                        param.resolution = single(0.1);
+                     else
+                        param = get_netcdf_param_attributes('PUMP_ACTION_DURATION');
+                        param.resolution = single(10);
+                     end
+                     measStruct.paramList = param;
+                     measStruct.paramData = tabDur(idF(idP));
+                     
+                     o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
                   end
                end
             end
+            if (isempty(o_tabTechNMeas.tabMeas))
+               o_tabTechNMeas = [];
+            end
          else
+            
+            % structure to store N_MEASUREMENT technical data
+            o_tabTechNMeas = get_traj_n_meas_init_struct(a_cycleNum, -1);
             
             % the float didn't succeed to dive (ex: 6903181)
             for idP = 1:length(tabDate)
@@ -608,6 +641,23 @@ if (a_deepCycle == 1)
                measStruct.paramData = tabPres(idP);
                
                trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               
+               [measStruct, nCycleTime] = create_one_meas_float_time_bis( ...
+                  g_MC_SpyInDescToPark, ...
+                  tabDate(idP), ...
+                  tabDateAdj(idP), ...
+                  g_JULD_STATUS_2);
+               if (tabType(idP) == 0)
+                  param = get_netcdf_param_attributes('VALVE_ACTION_DURATION');
+                  param.resolution = single(0.1);
+               else
+                  param = get_netcdf_param_attributes('PUMP_ACTION_DURATION');
+                  param.resolution = single(10);
+               end
+               measStruct.paramList = param;
+               measStruct.paramData = tabDur(idP);
+               
+               o_tabTechNMeas.tabMeas = [o_tabTechNMeas.tabMeas; measStruct];
             end
          end
       end
@@ -749,7 +799,7 @@ else
    if (firstMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_FMT, ...
          firstMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       if (isempty(cycleTimeStruct.clockDrift))
          measStruct.juldAdj = '';
          measStruct.juldAdjStatus = '';
@@ -769,8 +819,7 @@ else
          gpsCyLocLat(idpos), ...
          'G', ...
          ' ', ...
-         num2str(gpsCyLocQc(idpos)));
-      
+         num2str(gpsCyLocQc(idpos)), 1);
       if (~isempty(cycleTimeStruct.clockDrift))
          measStruct.juld = measStruct.juld + (cycleTimeStruct.gpsTime-cycleTimeStruct.gpsTimeAdj);
          measStruct.juldStatus = g_JULD_STATUS_2;
@@ -797,7 +846,7 @@ else
    if (lastMsgTime ~= g_decArgo_dateDef)
       measStruct = create_one_meas_surface(g_MC_LMT, ...
          lastMsgTime, ...
-         g_decArgo_argosLonDef, [], [], [], []);
+         g_decArgo_argosLonDef, [], [], [], [], 1);
       if (isempty(cycleTimeStruct.clockDrift))
          measStruct.juldAdj = '';
          measStruct.juldAdjStatus = '';
@@ -826,10 +875,31 @@ else
    %    end
 end
 
+% Transmission End Time
+measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, cycleTimeStruct.clockDrift);
+trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+
+trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+   
 % add configuration mission number
-configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
-if (~isempty(configMissionNumber))
-   trajNCycleStruct.configMissionNumber = configMissionNumber;
+if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+   configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
+   if (~isempty(configMissionNumber))
+      trajNCycleStruct.configMissionNumber = configMissionNumber;
+   else
+      % we don't know what is the configuration number of this cycle
+      % => we keep the previous one
+      cyNum = a_cycleNum - 1;
+      while (cyNum >= 0)
+         configMissionNumber = get_config_mission_number_ir_sbd(cyNum);
+         if (~isempty(configMissionNumber))
+            trajNCycleStruct.configMissionNumber = configMissionNumber;
+            break;
+         end
+         cyNum = cyNum - 1;
+      end
+   end
 end
 
 % output data

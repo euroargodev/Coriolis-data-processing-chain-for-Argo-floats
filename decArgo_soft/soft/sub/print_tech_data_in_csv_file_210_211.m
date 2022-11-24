@@ -47,7 +47,10 @@ ID_OFFSET = 1;
 cycleStartDateDay = g_decArgo_dateDef;
 
 % technical message #1
-idF1 = find(a_tabTech1(:, 1) == 0);
+idF1 = [];
+if (~isempty(a_tabTech1))
+   idF1 = find(a_tabTech1(:, 1) == 0);
+end
 if (length(idF1) > 1)
    fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message #1 in the buffer)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -255,7 +258,10 @@ elseif (length(idF1) == 1)
 end
 
 % technical message #2
-idF2 = find(a_tabTech2(:, 1) == 4);
+idF2 = [];
+if (~isempty(a_tabTech2))
+   idF2 = find(a_tabTech2(:, 1) == 4);
+end
 if (length(idF2) > 1)
    fprintf('ERROR: Float #%d cycle #%d: BUFFER anomaly (%d tech message #2 in the buffer)\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
@@ -332,8 +338,10 @@ elseif (length(idF2) == 1)
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; First grounding minute; %d; => %s\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), a_tabTech2(id, 24+ID_OFFSET), format_time_dec_argo(a_tabTech2(id, 24+ID_OFFSET)/60));
          firstGroundingTime = a_tabTech2(id, 23+ID_OFFSET) + a_tabTech2(id, 24+ID_OFFSET)/1440;
-         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; => first grounding date; %s\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(firstGroundingTime + g_decArgo_julD2FloatDayOffset));
+         if (cycleStartDateDay ~= g_decArgo_dateDef)
+            fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; => first grounding date; %s\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(firstGroundingTime + cycleStartDateDay));
+         end
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; First grounding phase; %d\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), a_tabTech2(id, 25+ID_OFFSET));
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; Nb EV actions to set first grounding; %d\n', ...
@@ -347,8 +355,10 @@ elseif (length(idF2) == 1)
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; Second grounding minute; %d; => %s\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), a_tabTech2(id, 29+ID_OFFSET), format_time_dec_argo(a_tabTech2(id, 29+ID_OFFSET)/60));
          secondGroundingTime = a_tabTech2(id, 28+ID_OFFSET) + a_tabTech2(id, 29+ID_OFFSET)/1440;
-         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; => second grounding date; %s\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(secondGroundingTime + g_decArgo_julD2FloatDayOffset));
+         if (cycleStartDateDay ~= g_decArgo_dateDef)
+            fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; => second grounding date; %s\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), julian_2_gregorian_dec_argo(secondGroundingTime + cycleStartDateDay));
+         end
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; Second grounding phase; %d\n', ...
             g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech2(id, 2+ID_OFFSET), a_tabTech2(id, 30+ID_OFFSET));
          fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2_%d; Nb EV actions to set second grounding; %d\n', ...

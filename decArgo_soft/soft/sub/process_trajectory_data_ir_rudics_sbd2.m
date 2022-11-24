@@ -2,7 +2,8 @@
 % Process trajectory data.
 %
 % SYNTAX :
-%  [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_ir_rudics_sbd2( ...
+%  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+%    process_trajectory_data_ir_rudics_sbd2( ...
 %    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
 %
 % INPUT PARAMETERS :
@@ -14,6 +15,7 @@
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
 %   o_tabTrajNCycle : N_CYCLE trajectory data
+%   o_tabTechNMeas  : technical N_MEASUREMENT data
 %
 % EXAMPLES :
 %
@@ -23,16 +25,19 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_ir_rudics_sbd2( ...
+function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
+   process_trajectory_data_ir_rudics_sbd2( ...
    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
 o_tabTrajNCycle = [];
+o_tabTechNMeas = [];
 
 if (~isempty(a_tabTrajIndex))
    % process data for N_MEASUREMENT arrays
-   [o_tabTrajNMeas, o_tabTrajNMeasRpp] = process_n_meas_for_trajectory_data( ...
+   [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
+      process_n_meas_for_trajectory_data( ...
       a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData);
    
    % process data for N_CYCLE arrays
@@ -46,7 +51,8 @@ return;
 % Process N_MEASUREMENT trajectory data.
 %
 % SYNTAX :
-%  [o_tabTrajNMeas, o_tabTrajNMeasRpp] = process_n_meas_for_trajectory_data( ...
+%  [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
+%    process_n_meas_for_trajectory_data( ...
 %    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
 %
 % INPUT PARAMETERS :
@@ -58,6 +64,7 @@ return;
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas    : trajectory N_MEASUREMENT data
 %   o_tabTrajNMeasRpp : trajectory N_MEASUREMENT data associated to RPP
+%   o_tabTechNMeas    : technical N_MEASUREMENT data
 %
 % EXAMPLES :
 %
@@ -67,12 +74,14 @@ return;
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabTrajNMeas, o_tabTrajNMeasRpp] = process_n_meas_for_trajectory_data( ...
+function [o_tabTrajNMeas, o_tabTrajNMeasRpp, o_tabTechNMeas] = ...
+   process_n_meas_for_trajectory_data( ...
    a_cyProfPhaseList, a_tabTrajIndex, a_tabTrajData)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
 o_tabTrajNMeasRpp = [];
+o_tabTechNMeas = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -153,6 +162,7 @@ for idCyc = 1:length(cycleNumList)
       % structure to store N_MEASUREMENT data
       trajNMeasStruct = get_traj_n_meas_init_struct(cycleNum, profNum);
       trajNMeasStructRpp = get_traj_n_meas_init_struct(cycleNum, profNum);
+      techNMeasStruct = get_traj_n_meas_init_struct(cycleNum, profNum);
       
       measData = [];
                         
@@ -184,7 +194,7 @@ for idCyc = 1:length(cycleNumList)
          [firstMsgTime, idMin] = min(packTimes);
          measStruct = create_one_meas_surface(g_MC_FMT, ...
             firstMsgTime, ...
-            g_decArgo_argosLonDef, [], [], [], []);
+            g_decArgo_argosLonDef, [], [], [], [], 1);
          measStruct.cyclePhase = a_cyProfPhaseList(idPack(idMin), 5);
          measData = [measData; measStruct];
          
@@ -210,7 +220,8 @@ for idCyc = 1:length(cycleNumList)
                      a_tabTrajData{id}.gpsLat, ...
                      a_tabTrajData{id}.gpsAccuracy, ...
                      '', ...
-                     a_tabTrajData{id}.gpsQc);
+                     a_tabTrajData{id}.gpsQc, ...
+                     1);
                   measStruct.cyclePhase = a_tabTrajIndex(id, 4);
                   measData = [measData; measStruct];
                end
@@ -221,7 +232,7 @@ for idCyc = 1:length(cycleNumList)
          [lastMsgTime, idMax] = max(packTimes);
          measStruct = create_one_meas_surface(g_MC_LMT, ...
             lastMsgTime, ...
-            g_decArgo_argosLonDef, [], [], [], []);
+            g_decArgo_argosLonDef, [], [], [], [], 1);
          measStruct.cyclePhase = a_cyProfPhaseList(idPack(idMax), 5);
          measData = [measData; measStruct];
 
@@ -302,10 +313,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyInDescToPark, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyInDescToPark, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -354,7 +373,13 @@ for idCyc = 1:length(cycleNumList)
                (a_tabTrajIndex(:, 4) == g_decArgo_phaseDsc2Prk));
             
             if (~isempty(idPackData))
-               measStruct = create_one_meas_float_time(g_MC_DescProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               dateFillValue = a_tabTrajData{idPackData}.dateList.fillValue;
+               if (a_tabTrajData{idPackData}.dates ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_DescProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_DescProfDeepestBin;
+               end
                measStruct.paramList = a_tabTrajData{idPackData}.paramList;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{idPackData}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{idPackData}.paramNumberOfSubLevels;
@@ -393,10 +418,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyAtPark, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtPark, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -604,10 +637,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyInDescToProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyInDescToProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -641,10 +682,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyAtProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -702,7 +751,13 @@ for idCyc = 1:length(cycleNumList)
                (a_tabTrajIndex(:, 4) == g_decArgo_phaseAscProf));
             
             if (~isempty(idPackData))
-               measStruct = create_one_meas_float_time(g_MC_AscProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               dateFillValue = a_tabTrajData{idPackData}.dateList.fillValue;
+               if (a_tabTrajData{idPackData}.dates ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_AscProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_AscProfDeepestBin;
+               end
                measStruct.paramList = a_tabTrajData{idPackData}.paramList;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{idPackData}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{idPackData}.paramNumberOfSubLevels;
@@ -728,10 +783,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyInAscProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyInAscProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -879,7 +942,7 @@ for idCyc = 1:length(cycleNumList)
                   % first message time
                   measStruct = create_one_meas_surface(g_MC_FMT, ...
                      min(packTimes), ...
-                     g_decArgo_argosLonDef, [], [], [], []);
+                     g_decArgo_argosLonDef, [], [], [], [], 1);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
                   
@@ -905,7 +968,8 @@ for idCyc = 1:length(cycleNumList)
                            a_tabTrajData{id}.gpsLat, ...
                            a_tabTrajData{id}.gpsAccuracy, ...
                            '', ...
-                           a_tabTrajData{id}.gpsQc);
+                           a_tabTrajData{id}.gpsQc, ...
+                           1);
                         measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                         measData = [measData; measStruct];
                      end
@@ -914,7 +978,7 @@ for idCyc = 1:length(cycleNumList)
                   % last message time
                   measStruct = create_one_meas_surface(g_MC_LMT, ...
                      max(packTimes), ...
-                     g_decArgo_argosLonDef, [], [], [], []);
+                     g_decArgo_argosLonDef, [], [], [], [], 1);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
                   
@@ -977,7 +1041,13 @@ for idCyc = 1:length(cycleNumList)
                (a_tabTrajIndex(:, 4) == g_decArgo_phaseDsc2Prk));
             
             if (~isempty(idPackData))
-               measStruct = create_one_meas_float_time(g_MC_DescProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               dateFillValue = a_tabTrajData{idPackData}.dateList.fillValue;
+               if (a_tabTrajData{idPackData}.dates ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_DescProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_DescProfDeepestBin;
+               end
                measStruct.paramList = a_tabTrajData{idPackData}.paramList;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{idPackData}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{idPackData}.paramNumberOfSubLevels;
@@ -1000,10 +1070,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyAtPark, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtPark, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -1179,10 +1257,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyInDescToProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyInDescToProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -1200,10 +1286,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyAtProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -1226,7 +1320,13 @@ for idCyc = 1:length(cycleNumList)
                (a_tabTrajIndex(:, 4) == g_decArgo_phaseAscProf));
             
             if (~isempty(idPackData))
-               measStruct = create_one_meas_float_time(g_MC_AscProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               dateFillValue = a_tabTrajData{idPackData}.dateList.fillValue;
+               if (a_tabTrajData{idPackData}.dates ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_AscProfDeepestBin, a_tabTrajData{idPackData}.dates, g_JULD_STATUS_2, 0);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_AscProfDeepestBin;
+               end
                measStruct.paramList = a_tabTrajData{idPackData}.paramList;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{idPackData}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{idPackData}.paramNumberOfSubLevels;
@@ -1250,10 +1350,18 @@ for idCyc = 1:length(cycleNumList)
                
                for idM = 1:length(dates)
                   measStruct = create_one_meas_float_time(g_MC_SpyInAscProf, dates(idM), g_JULD_STATUS_2, 0);
-                  measStruct.paramList = a_tabTrajData{id}.paramList;
-                  measStruct.paramData = data(idM, :);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyInAscProf, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
                end
             end
             
@@ -1340,14 +1448,14 @@ for idCyc = 1:length(cycleNumList)
                   % first message time
                   measStruct = create_one_meas_surface(g_MC_FMT, ...
                      min(packTimes), ...
-                     g_decArgo_argosLonDef, [], [], [], []);
+                     g_decArgo_argosLonDef, [], [], [], [], 1);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
                   
                   % last message time
                   measStruct = create_one_meas_surface(g_MC_LMT, ...
                      max(packTimes), ...
-                     g_decArgo_argosLonDef, [], [], [], []);
+                     g_decArgo_argosLonDef, [], [], [], [], 1);
                   measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                   measData = [measData; measStruct];
                   
@@ -1382,7 +1490,7 @@ for idCyc = 1:length(cycleNumList)
          % first message time
          measStruct = create_one_meas_surface(g_MC_FMT, ...
             min(packTimes), ...
-            g_decArgo_argosLonDef, [], [], [], []);
+            g_decArgo_argosLonDef, [], [], [], [], 1);
          measStruct.cyclePhase = g_decArgo_phaseEndOfLife;
          measData = [measData; measStruct];
          
@@ -1405,7 +1513,8 @@ for idCyc = 1:length(cycleNumList)
                      a_tabTrajData{id}.gpsLat, ...
                      a_tabTrajData{id}.gpsAccuracy, ...
                      '', ...
-                     a_tabTrajData{id}.gpsQc);
+                     a_tabTrajData{id}.gpsQc, ...
+                     1);
                   measStruct.cyclePhase = g_decArgo_phaseEndOfLife;
                   measData = [measData; measStruct];
                end
@@ -1415,7 +1524,7 @@ for idCyc = 1:length(cycleNumList)
          % last message time
          measStruct = create_one_meas_surface(g_MC_LMT, ...
             max(packTimes), ...
-            g_decArgo_argosLonDef, [], [], [], []);
+            g_decArgo_argosLonDef, [], [], [], [], 1);
          measStruct.cyclePhase = g_decArgo_phaseEndOfLife;
          measData = [measData; measStruct];
          
@@ -1432,6 +1541,9 @@ for idCyc = 1:length(cycleNumList)
       o_tabTrajNMeas = [o_tabTrajNMeas trajNMeasStruct];
       if (~isempty(trajNMeasStructRpp.tabMeas))
          o_tabTrajNMeasRpp = [o_tabTrajNMeasRpp trajNMeasStructRpp];
+      end
+      if (~isempty(techNMeasStruct.tabMeas))
+         o_tabTechNMeas = [o_tabTechNMeas techNMeasStruct];
       end
    end
 end

@@ -105,7 +105,8 @@ if (~isempty(a_payloadData))
    
    % SENSOR_XX tags
    idLev1BeginSensor = [];
-   idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')));
+   idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')) & ...
+      ~strcmp(a_payloadData(idLev1Begin, 2), 'SENSOR_ACT')); % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
    if (~isempty(idF))
       idLev1BeginSensor = idLev1Begin(idF);
    end

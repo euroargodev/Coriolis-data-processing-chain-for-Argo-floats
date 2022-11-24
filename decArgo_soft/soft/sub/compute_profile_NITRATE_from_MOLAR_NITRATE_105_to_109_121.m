@@ -40,7 +40,7 @@ global g_tempoJPR_nitrateFromFloat;
 
 
 % retrieve configuration information
-sunaVerticalOffset = get_static_config_value('CONFIG_PX_1_6_0_0_0');
+sunaVerticalOffset = get_static_config_value('CONFIG_PX_1_6_0_0_0', 1);
 if (isempty(sunaVerticalOffset))
    sunaVerticalOffset = 0;
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA vertical offset is missing => NITRATE data computed with a 0 dbar vertical offset in ''%c'' profile of SUNA sensor\n', ...

@@ -66,19 +66,16 @@ if (~isempty(a_tabTech))
          
          case {201, 202, 203} % Arvor-deep 4000, Arvor-deep 3500
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
-            cycleNumber = a_cycleNum;
             
          case {205, 204, 206, 207, 208, 209}
             % Arvor Iridium 5.41 & 5.42 & 5.4
             % Provor-DO Iridium 5.71 & 5.7 & 5.72
             % Arvor-2DO Iridium 5.73
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
-            cycleNumber = a_cycleNum;
             
          case {210, 211}
             % Arvor-ARN Iridium
             gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
-            cycleNumber = a_tabTech(idPos(idP), 2);
             
          otherwise
             fprintf('ERROR: Float #%d: Nothing implemented yet to retrieve tech info for decoderId #%d\n', ...
@@ -89,7 +86,7 @@ if (~isempty(a_tabTech))
       
       % GPS data (consider only 'valid' GPS locations)
       if (gpsValidFlagFromTech == 1)
-         gpsLocCycleNum = [gpsLocCycleNum; cycleNumber];
+         gpsLocCycleNum = [gpsLocCycleNum; a_cycleNum];
          gpsLocProfNum = [gpsLocProfNum; -1];
          gpsLocPhase = [gpsLocPhase; -1];
          gpsLocDate = [gpsLocDate; a_tabTech(idPos(idP), end-3)];
@@ -106,8 +103,8 @@ if (~isempty(a_tabTech))
          lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
                   
          % retrieve the last good GPS location of the previous cycle
-         % (cycleNumber-1)
-         idF = find(gpsLocCycleNum == cycleNumber-1);
+         % (a_cycleNum-1)
+         idF = find(gpsLocCycleNum == a_cycleNum-1);
          if (~isempty(idF))
             prevLocDate = gpsLocDate(idF);
             prevLocLon = gpsLocLon(idF);
@@ -122,7 +119,7 @@ if (~isempty(a_tabTech))
             end
          end
          
-         idF = find(gpsLocCycleNum == cycleNumber);
+         idF = find(gpsLocCycleNum == a_cycleNum);
          locDate = gpsLocDate(idF);
          locLon = gpsLocLon(idF);
          locLat = gpsLocLat(idF);

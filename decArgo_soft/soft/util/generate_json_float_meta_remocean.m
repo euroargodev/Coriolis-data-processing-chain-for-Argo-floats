@@ -28,6 +28,8 @@ floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_P
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\test_6901764.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DBexport_H2S_from_VB_20170228.txt';
+floatMetaFileName = 'C:\Users\jprannou\Desktop\MAJ_REM_20170306\DBexport_BioArgo_from_VB_20170307.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -37,17 +39,21 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\rem_with_suna.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20160512.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20170307.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 configDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\';
+configDirName = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\ConfigAtLaunch\';
 
 % directory of SUNA calibration files
 sunaCalibDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\meta_remocean_www\suna_calibration_file\';
+sunaCalibDirName = 'C:\Users\jprannou\_DATA\IN\collectes_20170315\decArgo_config_floats\Remocean_from_vb_20170322\meta_remocean_www\suna_calibration_file\';
 
 % directory of individual json float meta-data files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -135,7 +141,7 @@ refFloatList = load(floatListFileName);
 
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [6901032 6901440];
-floatList = [6901764];
+% floatList = [6901764];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))
@@ -158,6 +164,11 @@ for idFloat = 1:length(floatList)
    idForWmo = find(wmoList == floatList(idFloat));
    for idBSN = 1:length(metaBddStructNames)
       metaBddStructField = char(metaBddStructNames(idBSN));
+      if (strcmp(metaBddStructField, 'NEW_DARK_FOR_FLUOROMETER_CHLA') || ...
+            strcmp(metaBddStructField, 'NEW_DARK_FOR_FLUOROMETER_CDOM') || ...
+            strcmp(metaBddStructField, 'NEW_DARK_FOR_SCATTEROMETER_BBP'))
+         continue;
+      end
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
          idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
@@ -173,21 +184,7 @@ for idFloat = 1:length(floatList)
          end
       end
    end
-   
-   % PTT / IMEI specific processing
-   if (~isempty(metaStruct.IMEI))
-      metaStruct.PTT = metaStruct.IMEI;
-   end
-   
-   %    idF = find(strcmp(metaData(idForWmo, 5), 'PTT') == 1, 1);
-   %    if (~isempty(idF))
-   %       if (strcmp(metaStruct.TRANS_SYSTEM, 'IRIDIUM'))
-   %          if (isempty(metaStruct.PTT))
-   %             metaStruct.PTT = metaStruct.IMEI;
-   %          end
-   %       end
-   %    end
-   
+      
    % multi dim data
    itemList = [ ...
       {'TRANS_SYSTEM'} ...
@@ -272,6 +269,36 @@ for idFloat = 1:length(floatList)
       dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
+
+   % add DARK_O coefficients for ECO3 sensor
+   if (isfield(metaStruct.CALIBRATION_COEFFICIENT, 'ECO3'))
+      idForWmo = find(wmoList == floatList(idFloat));
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CHLA'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountChloroA_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountChloroA_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CDOM'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountCDOM_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountCDOM_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+      end      
+      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_SCATTEROMETER_BBP'));
+      if (~isempty(idF))
+         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % dim level 1 for DarkCountBackscatter700_O
+         if (~isempty(idF2))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountBackscatter700_O = metaData{idForWmo(idF(idF2)), 4};
+         end
+         idF3 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 2); % dim level 2 for DarkCountBackscatter532_O
+         if (~isempty(idF3))
+            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountBackscatter532_O = metaData{idForWmo(idF(idF3)), 4};
+         end
+      end
+   end
    
    % retrieve DAC_FORMAT_ID
    dacFormatId = getfield(metaStruct, 'DAC_FORMAT_ID');
@@ -312,9 +339,10 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
-      case {'5.92', '6.01', '6.11'}
+      case {'5.92', '6.01', '5.93'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
-            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1));
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
          calibDataDb = [];
          for id = 1:length(idF)
             calibName = metaData{idForWmo(idF(id)), 5};
@@ -322,8 +350,10 @@ for idFloat = 1:length(floatList)
                fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
             elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
                fieldName = ['PhaseCoef' calibName(end)];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1)
+               fieldName = ['TempCoef' calibName(end)];
             end
-            calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
          end
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
@@ -342,8 +372,8 @@ for idFloat = 1:length(floatList)
          
          sunaCalibFileName = [sunaCalibDirName '/' files(1).name];
          [creationDate, TEMP_CAL_NITRATE, ...
-            OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, ...
-            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName);
+            OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, E_BISULFIDE, ...
+            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId);
          
          if (~isempty(creationDate))
             
@@ -357,6 +387,9 @@ for idFloat = 1:length(floatList)
             end
             for id = 1:length(E_SWA_NITRATE)
                sunaCalibData.(['E_SWA_NITRATE_' num2str(id)]) = E_SWA_NITRATE{id};
+            end
+            for id = 1:length(E_BISULFIDE)
+               sunaCalibData.(['E_BISULFIDE_' num2str(id)]) = E_BISULFIDE{id};
             end
             for id = 1:length(UV_INTENSITY_REF_NITRATE)
                sunaCalibData.(['UV_INTENSITY_REF_NITRATE_' num2str(id)]) = UV_INTENSITY_REF_NITRATE{id};
@@ -433,6 +466,8 @@ for idFloat = 1:length(floatList)
       {'OCR_DOWN_IRR_WAVELENGTH'} ...
       {'OCR_VERTICAL_PRES_OFFSET'} ...
       {'OPTODE_VERTICAL_PRES_OFFSET'} ...
+      {'OPTODE_IN_AIR_MEASUREMENT'} ...
+      {'OPTODE_TIME_PRESSURE_OFFSET'} ...
       {'SUNA_VERTICAL_PRES_OFFSET'} ...
       {'SUNA_WITH_SCOOP'} ...
       ];
@@ -461,6 +496,8 @@ for idFloat = 1:length(floatList)
       {'CONFIG_PX_3_2_0_<I>_2'} ...
       {'CONFIG_PX_1_2_0_0_0'} ...
       {'CONFIG_PX_1_1_0_0_0'} ...
+      {'CONFIG_PX_1_1_0_0_7'} ...
+      {'CONFIG_PX_1_1_0_0_8'} ...
       {'CONFIG_PX_1_6_0_0_0'} ...
       {'CONFIG_PX_1_6_0_0_5'} ...
       ];
@@ -470,6 +507,13 @@ for idFloat = 1:length(floatList)
          dbConfigParamName{idConfParam}, configParamCode{idConfParam}, ...
          metaData, idForWmo, dimLevlist);
       if (~isempty(dbConfigParamNames))
+         for id = 1:length(dbConfigParamValues)
+            if ((strcmpi(dbConfigParamValues{id}, 'yes')) || (strcmpi(dbConfigParamValues{id}, 'y')))
+               dbConfigParamValues{id} = '1';
+            elseif ((strcmpi(dbConfigParamValues{id}, 'no')) || (strcmpi(dbConfigParamValues{id}, 'n')))
+               dbConfigParamValues{id} = '0';
+            end
+         end
          configParamNames = [configParamNames dbConfigParamNames'];
          configParamValues = [configParamValues dbConfigParamValues'];
       end
@@ -825,6 +869,9 @@ o_metaStruct = struct( ...
    'CALIB_RT_COMMENT', 'CALIB_RT_COMMENT', ...
    'CALIB_RT_DATE', 'CALIB_RT_DATE', ...
    'SENSOR_MOUNTED_ON_FLOAT', '', ...
-   'CALIBRATION_COEFFICIENT', '');
+   'CALIBRATION_COEFFICIENT', '', ...
+   'NEW_DARK_FOR_FLUOROMETER_CHLA', 'NEW_DARK_FOR_FLUOROMETER_CHLA', ...
+   'NEW_DARK_FOR_FLUOROMETER_CDOM', 'NEW_DARK_FOR_FLUOROMETER_CDOM', ...
+   'NEW_DARK_FOR_SCATTEROMETER_BBP', 'NEW_DARK_FOR_SCATTEROMETER_BBP');
 
 return;

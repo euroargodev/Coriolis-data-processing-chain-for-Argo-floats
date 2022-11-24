@@ -66,18 +66,20 @@ tabTrajAuxNMeas = [];
 idDel = [];
 for idNM = 1:length(a_tabTrajNMeas)
    nMeas = a_tabTrajNMeas(idNM);
-   sensorNumList = [nMeas.tabMeas.sensorNumber];
-   idDataAux = find(sensorNumList > 100);
-   if (~isempty(idDataAux))
-      nMeasAux = nMeas;
-      nMeasAux.tabMeas = nMeas.tabMeas(idDataAux);
-      tabTrajAuxNMeas = [tabTrajAuxNMeas nMeasAux];
-      
-      nMeas.tabMeas(idDataAux) = [];
-      if (isempty(nMeas.tabMeas))
-         idDel = [idDel idNM];
-      else
-         a_tabTrajNMeas(idNM) = nMeas;
+   if (~isempty(nMeas.tabMeas))
+      sensorNumList = [nMeas.tabMeas.sensorNumber];
+      idDataAux = find(sensorNumList > 100);
+      if (~isempty(idDataAux))
+         nMeasAux = nMeas;
+         nMeasAux.tabMeas = nMeas.tabMeas(idDataAux);
+         tabTrajAuxNMeas = [tabTrajAuxNMeas nMeasAux];
+         
+         nMeas.tabMeas(idDataAux) = [];
+         if (isempty(nMeas.tabMeas))
+            idDel = [idDel idNM];
+         else
+            a_tabTrajNMeas(idNM) = nMeas;
+         end
       end
    end
 end
@@ -98,12 +100,14 @@ end
 measParamNameAll = [];
 for idNM = 1:length(a_tabTrajNMeas)
    nMeas = a_tabTrajNMeas(idNM);
-   measParamList = [nMeas.tabMeas.paramList];
-   if (~isempty(measParamList))
-      measParamNameList = {measParamList.name};
-      measParamTypeList = [measParamList.paramType];
-      idCore = find(measParamTypeList == 'c');
-      measParamNameAll = [measParamNameAll measParamNameList(idCore)];
+   if (~isempty(nMeas.tabMeas))
+      measParamList = [nMeas.tabMeas.paramList];
+      if (~isempty(measParamList))
+         measParamNameList = {measParamList.name};
+         measParamTypeList = [measParamList.paramType];
+         idCore = find(measParamTypeList == 'c');
+         measParamNameAll = [measParamNameAll measParamNameList(idCore)];
+      end
    end
 end
 measUniqueParamName = unique(measParamNameAll, 'stable');
@@ -487,7 +491,7 @@ netcdf.putAtt(fCdf, satelliteNameVarId, 'long_name', 'Satellite name from positi
 netcdf.putAtt(fCdf, satelliteNameVarId, '_FillValue', ' ');
 
 % parameter variables
-paramNameDone = [];
+paramNameInFile = [];
 for idNM = 1:length(a_tabTrajNMeas)
    nMeas = a_tabTrajNMeas(idNM);
    for idM = 1:length(nMeas.tabMeas)
@@ -497,71 +501,71 @@ for idNM = 1:length(a_tabTrajNMeas)
          if (measParamList(idParam).paramType == 'c')
             measParam = measParamList(idParam);
             measParamName = measParam.name;
+            measParamNcType = measParam.paramNcType;
             
-            if (isempty(find(strcmp(measParamName, paramNameDone) == 1, 1)))
+            if (~any(strcmp(measParamName, paramNameInFile)))
                
-               paramNameDone = [paramNameDone; {measParamName}];
+               paramNameInFile{end+1} = measParamName;
                
                % create parameter variable and attributes
-               if (~var_is_present_dec_argo(fCdf, measParamName))
-                  
-                  measParamVarId = netcdf.defVar(fCdf, measParamName, 'NC_FLOAT', nMeasurementDimId);
-                  
-                  if (~isempty(measParam.longName))
-                     netcdf.putAtt(fCdf, measParamVarId, 'long_name', measParam.longName);
+               measParamVarId = netcdf.defVar(fCdf, measParamName, measParamNcType, nMeasurementDimId);
+               
+               if (~isempty(measParam.longName))
+                  netcdf.putAtt(fCdf, measParamVarId, 'long_name', measParam.longName);
+               end
+               if (~isempty(measParam.standardName))
+                  netcdf.putAtt(fCdf, measParamVarId, 'standard_name', measParam.standardName);
+               end
+               if (~isempty(measParam.fillValue))
+                  netcdf.putAtt(fCdf, measParamVarId, '_FillValue', measParam.fillValue);
+               end
+               if (~isempty(measParam.units))
+                  netcdf.putAtt(fCdf, measParamVarId, 'units', measParam.units);
+               end
+               if (~isempty(measParam.validMin))
+                  netcdf.putAtt(fCdf, measParamVarId, 'valid_min', measParam.validMin);
+               end
+               if (~isempty(measParam.validMax))
+                  netcdf.putAtt(fCdf, measParamVarId, 'valid_max', measParam.validMax);
+               end
+               
+               [cFormat, fortranFormat] = get_param_output_format(measParamName, a_decoderId);
+               if (isempty(cFormat))
+                  if (~isempty(measParam.cFormat))
+                     netcdf.putAtt(fCdf, measParamVarId, 'C_format', measParam.cFormat);
                   end
-                  if (~isempty(measParam.standardName))
-                     netcdf.putAtt(fCdf, measParamVarId, 'standard_name', measParam.standardName);
+               else
+                  netcdf.putAtt(fCdf, measParamVarId, 'C_format', cFormat);
+               end
+               if (isempty(fortranFormat))
+                  if (~isempty(measParam.fortranFormat))
+                     netcdf.putAtt(fCdf, measParamVarId, 'FORTRAN_format', measParam.fortranFormat);
                   end
-                  if (~isempty(measParam.fillValue))
-                     netcdf.putAtt(fCdf, measParamVarId, '_FillValue', measParam.fillValue);
+               else
+                  netcdf.putAtt(fCdf, measParamVarId, 'FORTRAN_format', fortranFormat);
+               end
+               
+               [resNominal, resComment] = get_param_comment_on_resolution(measParamName, a_decoderId);
+               if (isempty(resNominal))
+                  if (~isempty(measParam.resolution))
+                     netcdf.putAtt(fCdf, measParamVarId, 'resolution', measParam.resolution);
                   end
-                  if (~isempty(measParam.units))
-                     netcdf.putAtt(fCdf, measParamVarId, 'units', measParam.units);
-                  end
-                  if (~isempty(measParam.validMin))
-                     netcdf.putAtt(fCdf, measParamVarId, 'valid_min', measParam.validMin);
-                  end
-                  if (~isempty(measParam.validMax))
-                     netcdf.putAtt(fCdf, measParamVarId, 'valid_max', measParam.validMax);
-                  end
-                  
-                  [cFormat, fortranFormat] = get_param_output_format(measParamName, a_decoderId);
-                  if (isempty(cFormat))
-                     if (~isempty(measParam.cFormat))
-                        netcdf.putAtt(fCdf, measParamVarId, 'C_format', measParam.cFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamVarId, 'C_format', cFormat);
-                  end
-                  if (isempty(fortranFormat))
-                     if (~isempty(measParam.fortranFormat))
-                        netcdf.putAtt(fCdf, measParamVarId, 'FORTRAN_format', measParam.fortranFormat);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamVarId, 'FORTRAN_format', fortranFormat);
-                  end
-                  
-                  [resNominal, resComment] = get_param_comment_on_resolution(measParamName, a_decoderId);
-                  if (isempty(resNominal))
-                     if (~isempty(measParam.resolution))
-                        netcdf.putAtt(fCdf, measParamVarId, 'resolution', measParam.resolution);
-                     end
-                  else
-                     netcdf.putAtt(fCdf, measParamVarId, 'resolution', resNominal);
-                  end
-                  if (~isempty(resComment))
-                     netcdf.putAtt(fCdf, measParamVarId, 'comment_on_resolution', resComment);
-                  end
-                  
-                  if (~isempty(measParam.axis))
-                     netcdf.putAtt(fCdf, measParamVarId, 'axis', measParam.axis);
-                  end
+               else
+                  netcdf.putAtt(fCdf, measParamVarId, 'resolution', resNominal);
+               end
+               if (~isempty(resComment))
+                  netcdf.putAtt(fCdf, measParamVarId, 'comment_on_resolution', resComment);
+               end
+               
+               if (~isempty(measParam.axis))
+                  netcdf.putAtt(fCdf, measParamVarId, 'axis', measParam.axis);
                end
                
                % parameter QC variable and attributes
-               measParamQcName = sprintf('%s_QC', measParamName);
-               if (~var_is_present_dec_argo(fCdf, measParamQcName))
+               measParamQcName = [measParamName '_QC'];
+               if (~any(strcmp(measParamQcName, paramNameInFile)))
+                  
+                  paramNameInFile{end+1} = measParamQcName;
                   
                   measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
                   
@@ -572,10 +576,12 @@ for idNM = 1:length(a_tabTrajNMeas)
                
                if (measParam.adjAllowed == 1)
                   % parameter adjusted variable and attributes
-                  measParamAdjName = sprintf('%s_ADJUSTED', measParamName);
-                  if (~var_is_present_dec_argo(fCdf, measParamAdjName))
+                  measParamAdjName = [measParamName '_ADJUSTED'];
+                  if (~any(strcmp(measParamAdjName, paramNameInFile)))
                      
-                     measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, 'NC_FLOAT', nMeasurementDimId);
+                     paramNameInFile{end+1} = measParamAdjName;
+                     
+                     measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, measParamNcType, nMeasurementDimId);
                      
                      if (~isempty(measParam.longName))
                         netcdf.putAtt(fCdf, measParamAdjVarId, 'long_name', measParam.longName);
@@ -630,8 +636,10 @@ for idNM = 1:length(a_tabTrajNMeas)
                   end
                   
                   % parameter adjusted QC variable and attributes
-                  measParamAdjQcName = sprintf('%s_ADJUSTED_QC', measParamName);
-                  if (~var_is_present_dec_argo(fCdf, measParamAdjQcName))
+                  measParamAdjQcName = [measParamName '_ADJUSTED_QC'];
+                  if (~any(strcmp(measParamAdjQcName, paramNameInFile)))
+                     
+                     paramNameInFile{end+1} = measParamAdjQcName;
                      
                      measParamAdjQcVarId = netcdf.defVar(fCdf, measParamAdjQcName, 'NC_CHAR', nMeasurementDimId);
                      
@@ -641,10 +649,12 @@ for idNM = 1:length(a_tabTrajNMeas)
                   end
                   
                   % parameter adjusted error variable and attributes
-                  measParamAdjErrName = sprintf('%s_ADJUSTED_ERROR', measParamName);
-                  if (~var_is_present_dec_argo(fCdf, measParamAdjErrName))
+                  measParamAdjErrName = [measParamName '_ADJUSTED_ERROR'];
+                  if (~any(strcmp(measParamAdjErrName, paramNameInFile)))
                      
-                     measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, 'NC_FLOAT', nMeasurementDimId);
+                     paramNameInFile{end+1} = measParamAdjErrName;
+                                          
+                     measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, measParamNcType, nMeasurementDimId);
                      
                      netcdf.putAtt(fCdf, measParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
                      if (~isempty(measParam.fillValue))
@@ -693,12 +703,15 @@ end
 for idParam = 1:length(measAddParamName)
    
    measParamName = measAddParamName{idParam};
-   
-   % create parameter variable and attributes
-   if (~var_is_present_dec_argo(fCdf, measParamName))
+   measParam = get_netcdf_param_attributes(measParamName);
+   measParamNcType = measParam.paramNcType;
       
-      measParamVarId = netcdf.defVar(fCdf, measParamName, 'NC_FLOAT', nMeasurementDimId);
-      measParam = get_netcdf_param_attributes(measParamName);
+   % create parameter variable and attributes
+   if (~any(strcmp(measParamName, paramNameInFile)))
+      
+      paramNameInFile{end+1} = measParamName;
+      
+      measParamVarId = netcdf.defVar(fCdf, measParamName, measParamNcType, nMeasurementDimId);
       
       if (~isempty(measParam.longName))
          netcdf.putAtt(fCdf, measParamVarId, 'long_name', measParam.longName);
@@ -753,8 +766,10 @@ for idParam = 1:length(measAddParamName)
    end
    
    % parameter QC variable and attributes
-   measParamQcName = sprintf('%s_QC', measParamName);
-   if (~var_is_present_dec_argo(fCdf, measParamQcName))
+   measParamQcName = [measParamName '_QC'];
+   if (~any(strcmp(measParamQcName, paramNameInFile)))
+      
+      paramNameInFile{end+1} = measParamQcName;
       
       measParamQcVarId = netcdf.defVar(fCdf, measParamQcName, 'NC_CHAR', nMeasurementDimId);
       
@@ -765,10 +780,12 @@ for idParam = 1:length(measAddParamName)
    
    if (measParam.adjAllowed == 1)
       % parameter adjusted variable and attributes
-      measParamAdjName = sprintf('%s_ADJUSTED', measParamName);
-      if (~var_is_present_dec_argo(fCdf, measParamAdjName))
+      measParamAdjName = [measParamName '_ADJUSTED'];
+      if (~any(strcmp(measParamAdjName, paramNameInFile)))
          
-         measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, 'NC_FLOAT', nMeasurementDimId);
+         paramNameInFile{end+1} = measParamAdjName;
+         
+         measParamAdjVarId = netcdf.defVar(fCdf, measParamAdjName, measParamNcType, nMeasurementDimId);
          
          if (~isempty(measParam.longName))
             netcdf.putAtt(fCdf, measParamAdjVarId, 'long_name', measParam.longName);
@@ -823,8 +840,10 @@ for idParam = 1:length(measAddParamName)
       end
       
       % parameter adjusted QC variable and attributes
-      measParamAdjQcName = sprintf('%s_ADJUSTED_QC', measParamName);
-      if (~var_is_present_dec_argo(fCdf, measParamAdjQcName))
+      measParamAdjQcName = [measParamName '_ADJUSTED_QC'];
+      if (~any(strcmp(measParamAdjQcName, paramNameInFile)))
+         
+         paramNameInFile{end+1} = measParamAdjQcName;
          
          measParamAdjQcVarId = netcdf.defVar(fCdf, measParamAdjQcName, 'NC_CHAR', nMeasurementDimId);
          
@@ -834,10 +853,12 @@ for idParam = 1:length(measAddParamName)
       end
       
       % parameter adjusted error variable and attributes
-      measParamAdjErrName = sprintf('%s_ADJUSTED_ERROR', measParamName);
-      if (~var_is_present_dec_argo(fCdf, measParamAdjErrName))
+      measParamAdjErrName = [measParamName '_ADJUSTED_ERROR'];
+      if (~any(strcmp(measParamAdjErrName, paramNameInFile)))
          
-         measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, 'NC_FLOAT', nMeasurementDimId);
+         paramNameInFile{end+1} = measParamAdjErrName;
+         
+         measParamAdjErrVarId = netcdf.defVar(fCdf, measParamAdjErrName, measParamNcType, nMeasurementDimId);
          
          netcdf.putAtt(fCdf, measParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);
          if (~isempty(measParam.fillValue))
@@ -1378,6 +1399,10 @@ measPos = 0;
 for idNM = 1:length(a_tabTrajNMeas)
    nMeas = a_tabTrajNMeas(idNM);
    
+   if (isempty(nMeas.tabMeas))
+      continue;
+   end
+   
    % find the cycle data mode
    adjustedCycle = 0;
    if (~isempty(a_tabTrajNCycle))
@@ -1390,7 +1415,7 @@ for idNM = 1:length(a_tabTrajNMeas)
       end
    end
    
-   data = repmat({''}, nbVars, 1);
+   data = repmat({[]}, nbVars, 1);
    for idVar= 0:nbVars-1
       fillValue = netcdf.getAtt(fCdf, idVar, '_FillValue');
       data{idVar+1} = repmat(fillValue, 1, length(nMeas.tabMeas));
@@ -1399,41 +1424,41 @@ for idNM = 1:length(a_tabTrajNMeas)
    for idM = 1:length(nMeas.tabMeas)
       meas = nMeas.tabMeas(idM);
       
-      data{netcdf.inqVarID(fCdf, 'CYCLE_NUMBER')+1}(idM) = nMeas.outputCycleNumber;
-      data{netcdf.inqVarID(fCdf, 'MEASUREMENT_CODE')+1}(idM) = meas.measCode;
+      data{cycleNumberVarId+1}(idM) = nMeas.outputCycleNumber;
+      data{measurementCodeVarId+1}(idM) = meas.measCode;
       
       if (~isempty(meas.juld))
-         data{netcdf.inqVarID(fCdf, 'JULD')+1}(idM) = meas.juld;
+         data{juldVarId+1}(idM) = meas.juld;
       end
       if (~isempty(meas.juldStatus))
-         data{netcdf.inqVarID(fCdf, 'JULD_STATUS')+1}(idM) = meas.juldStatus;
+         data{juldStatusVarId+1}(idM) = meas.juldStatus;
       end
       if (~isempty(meas.juldQc))
-         data{netcdf.inqVarID(fCdf, 'JULD_QC')+1}(idM) = meas.juldQc;
+         data{juldQcVarId+1}(idM) = meas.juldQc;
       end
       if (~isempty(meas.juldAdj))
-         data{netcdf.inqVarID(fCdf, 'JULD_ADJUSTED')+1}(idM) = meas.juldAdj;
+         data{juldAdjustedVarId+1}(idM) = meas.juldAdj;
       end
       if (~isempty(meas.juldAdjStatus))
-         data{netcdf.inqVarID(fCdf, 'JULD_ADJUSTED_STATUS')+1}(idM) = meas.juldAdjStatus;
+         data{juldAdjustedStatusVarId+1}(idM) = meas.juldAdjStatus;
       end
       if (~isempty(meas.juldAdjQc))
-         data{netcdf.inqVarID(fCdf, 'JULD_ADJUSTED_QC')+1}(idM) = meas.juldAdjQc;
+         data{juldAdjustedQcVarId+1}(idM) = meas.juldAdjQc;
       end
       if (~isempty(meas.latitude))
-         data{netcdf.inqVarID(fCdf, 'LATITUDE')+1}(idM) = meas.latitude;
+         data{latitudeVarId+1}(idM) = meas.latitude;
       end
       if (~isempty(meas.longitude))
-         data{netcdf.inqVarID(fCdf, 'LONGITUDE')+1}(idM) = meas.longitude;
+         data{longitudeVarId+1}(idM) = meas.longitude;
       end
       if (~isempty(meas.posAccuracy))
-         data{netcdf.inqVarID(fCdf, 'POSITION_ACCURACY')+1}(idM) = meas.posAccuracy;
+         data{positionAccuracyVarId+1}(idM) = meas.posAccuracy;
       end
       if (~isempty(meas.posQc))
-         data{netcdf.inqVarID(fCdf, 'POSITION_QC')+1}(idM) = meas.posQc;
+         data{positionQcVarId+1}(idM) = meas.posQc;
       end
       if (~isempty(meas.satelliteName))
-         data{netcdf.inqVarID(fCdf, 'SATELLITE_NAME')+1}(idM) = meas.satelliteName;
+         data{satelliteNameVarId+1}(idM) = meas.satelliteName;
       end
       
       % parameters
@@ -1447,16 +1472,16 @@ for idNM = 1:length(a_tabTrajNMeas)
             measParamName = measParam.name;
             measParamVarId = netcdf.inqVarID(fCdf, measParamName);
             
-            measParamQcName = sprintf('%s_QC', measParamName);
+            measParamQcName = [measParamName '_QC'];
             measParamQcVarId = netcdf.inqVarID(fCdf, measParamQcName);
             
             if (measParam.adjAllowed == 1)
                % parameter adjusted variable and attributes
-               measParamAdjName = sprintf('%s_ADJUSTED', measParam.name);
+               measParamAdjName = [measParamName '_ADJUSTED'];
                measParamAdjVarId = netcdf.inqVarID(fCdf, measParamAdjName);
                
                % parameter adjusted QC variable and attributes
-               measParamAdjQcName = sprintf('%s_ADJUSTED_QC', measParam.name);
+               measParamAdjQcName = [measParamName '_ADJUSTED_QC'];
                measParamAdjQcVarId = netcdf.inqVarID(fCdf, measParamAdjQcName);
             end
             
@@ -1482,13 +1507,12 @@ for idNM = 1:length(a_tabTrajNMeas)
             end
             data{measParamQcVarId+1}(idM) = paramDataQcStr;
             
-            % RT PRES adjustment of Apex float
             if (adjustedCycle == 1)
                
                % process RT adjustment of this parameter
-               paramAdjData = paramData;
+               paramAdjData = paramData; % only duplicate parameter values
                if (strcmp(measParamName, 'PRES') && ~isempty(meas.presOffset))
-                  [paramAdjData] = compute_adjusted_pres(paramData, meas.presOffset);
+                  [paramAdjData] = compute_adjusted_pres(paramData, meas.presOffset); % RT PRES adjustment of Apex float
                end
                
                % store the data

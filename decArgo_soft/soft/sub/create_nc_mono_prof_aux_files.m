@@ -625,6 +625,7 @@ for idProf = 1:length(a_tabProfiles)
                
                profParam = parameterList(idParam);
                profParamName = profParam.name;
+               profParamNcType = profParam.paramNcType;
                
                % find if this parameter has sublevels
                paramWithSubLevels = 0;
@@ -641,16 +642,13 @@ for idProf = 1:length(a_tabProfiles)
                % parameter variable and attributes
                if (~var_is_present_dec_argo(fCdf, profParamName))
                   
-                  varType = 'NC_FLOAT';
-                  if ((strncmp(profParamName, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-                        (strncmp(profParamName, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-                     varType = 'NC_DOUBLE';
+                  if (strcmp(profParamNcType, 'NC_DOUBLE'))
                      doubleTypeInFile = 1;
                   end
                   if (paramWithSubLevels == 0)
-                     profParamVarId = netcdf.defVar(fCdf, profParamName, varType, fliplr([nProfDimId nLevelsDimId]));
+                     profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                   else
-                     profParamVarId = netcdf.defVar(fCdf, profParamName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                     profParamVarId = netcdf.defVar(fCdf, profParamName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                   end
                   
                   if (~isempty(profParam.longName))
@@ -707,9 +705,9 @@ for idProf = 1:length(a_tabProfiles)
                   if (~var_is_present_dec_argo(fCdf, profParamAdjName))
                      
                      if (paramWithSubLevels == 0)
-                        profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, varType, fliplr([nProfDimId nLevelsDimId]));
+                        profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                      else
-                        profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                        profParamAdjVarId = netcdf.defVar(fCdf, profParamAdjName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                      end
                      
                      if (~isempty(profParam.longName))
@@ -760,9 +758,9 @@ for idProf = 1:length(a_tabProfiles)
                   if (~var_is_present_dec_argo(fCdf, profParamAdjErrName))
                      
                      if (paramWithSubLevels == 0)
-                        profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, varType, fliplr([nProfDimId nLevelsDimId]));
+                        profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId]));
                      else
-                        profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, varType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
+                        profParamAdjErrVarId = netcdf.defVar(fCdf, profParamAdjErrName, profParamNcType, fliplr([nProfDimId nLevelsDimId nValuesDimId]));
                      end
                      
                      netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', g_decArgo_longNameOfParamAdjErr);

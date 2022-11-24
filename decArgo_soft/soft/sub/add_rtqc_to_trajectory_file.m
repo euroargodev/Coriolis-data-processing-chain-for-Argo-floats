@@ -67,6 +67,13 @@
 %   02/13/2017 - RNU - V 2.0: code update to manage CTS5 float data:
 %                             - PRES2, TEMP2 and PSAL2 are present when a SUNA 
 %                               sensor is used
+%   03/14/2017 - RNU - V 2.1: - code update to fix issues detected by the TRAJ
+%                             checker: QC values are updated in 'c' and 'b'
+%                             files according to the parameter values in each
+%                             files (some QC values need to be set to ' ' when
+%                             parameter values are set to FillValue in the
+%                             appropriate file).
+%                             - add RTQC test #62 for BBP
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -102,7 +109,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.0';
+g_decArgo_addRtqcToTrajVersion = '2.1';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -176,6 +183,7 @@ expectedTestList = [ ...
    {'TEST020_QUESTIONABLE_ARGOS_POSITION'} ...
    {'TEST021_NS_UNPUMPED_SALINITY'} ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
+   {'TEST062_BBP'} ...
    {'TEST057_DOXY'} ...
    ];
 
@@ -1420,6 +1428,85 @@ if (testFlagList(22) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 62: BBP specific test
+%
+if (testFlagList(62) == 1)
+   
+   % list of parameters concerned by this test
+   test62ParameterList = [ ...
+      {'BBP700'} ...
+      {'BBP532'} ...
+      ];
+
+   % retrieve DARK_BBP700_O and DARK_BBP352_O from json meta data file
+   darkCountBackscatter700_O = [];
+   darkCountBackscatter532_O = [];
+   darkCountBackscatter700Id = find(strcmp('TEST062_DARK_BBP700_O', a_testMetaData) == 1);
+   if (~isempty(darkCountBackscatter700Id))
+      darkCountBackscatter700_O = a_testMetaData{darkCountBackscatter700Id+1};
+   end
+   darkCountBackscatter532Id = find(strcmp('TEST062_DARK_BBP532_O', a_testMetaData) == 1);
+   if (~isempty(darkCountBackscatter532Id))
+      darkCountBackscatter532_O = a_testMetaData{darkCountBackscatter532Id+1};
+   end
+   
+   % one loop for <PARAM> and one loop for <PARAM>_ADJUSTED
+   for idD = 1:2
+      for idP = 1:length(test62ParameterList)
+         paramName = test62ParameterList{idP};
+         if (idD == 2)
+            paramName = [paramName '_ADJUSTED'];
+         end
+         
+         if (idD == 1)
+            % non adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamNameList;
+            ncTrajParamXDataList = ncTrajParamDataList;
+            ncTrajParamXDataQcList = ncTrajParamDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamFillValueList;
+         else
+            % adjusted data processing
+            
+            % set the name list
+            ncTrajParamXNameList = ncTrajParamAdjNameList;
+            ncTrajParamXDataList = ncTrajParamAdjDataList;
+            ncTrajParamXDataQcList = ncTrajParamAdjDataQcList;
+            ncTrajParamXFillValueList = ncTrajParamAdjFillValueList;
+         end
+         
+         idParam = find(strcmp(paramName, ncTrajParamXNameList) == 1, 1);
+         if (~isempty(idParam))
+            
+            data = eval(ncTrajParamXDataList{idParam});
+            dataQc = eval(ncTrajParamXDataQcList{idParam});
+            paramFillValue = ncTrajParamXFillValueList{idParam};
+            idMeas = find(data ~= paramFillValue);
+            
+            % apply the test
+            dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrCorrectable);
+            eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
+            
+            % apply the test
+            if (idP == 1)
+               if (isempty(darkCountBackscatter700_O))
+                  dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrProbablyGood);
+                  eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
+               end
+            elseif (idP == 2)
+               if (isempty(darkCountBackscatter532_O))
+                  dataQc(idMeas) = set_qc(dataQc(idMeas), g_decArgo_qcStrProbablyGood);
+                  eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
+               end
+            end
+            testDoneList(62) = 1;
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 57: DOXY specific test
 %
 if (testFlagList(57) == 1)
@@ -1623,11 +1710,11 @@ end
 
 % update test done/failed lists according to C and B file tests
 testDoneListCFile = testDoneList;
-testDoneListCFile([57 63], :) = 0;
+testDoneListCFile([57 62 63], :) = 0;
 testDoneListBFile = testDoneList;
 testDoneListBFile([8 14], :) = 0;
 testFailedListCFile = testFailedList;
-testFailedListCFile([57 63], :) = 0;
+testFailedListCFile([57 62 63], :) = 0;
 testFailedListBFile = testFailedList;
 testFailedListBFile([8 14], :) = 0;
 
@@ -1746,6 +1833,12 @@ o_ok = 0;
 % program version
 global g_decArgo_addRtqcToTrajVersion;
 
+% QC flag values
+global g_decArgo_qcStrDef;           % ' '
+
+% global time status
+global g_JULD_STATUS_fill_value;
+
 
 % modify the N_HISTORY dimension of the C traj file
 [ok] = update_n_history_dim_in_traj_file(a_cTrajFileName, 2);
@@ -1788,6 +1881,27 @@ for idFile = 1:2
       {'HISTORY_INSTITUTION'} ...
       ];
    
+   % retrieve parameter data to decide wich QC value should be set
+   for idParamQc = 1:2:length(a_dataQc)
+      paramQcName = a_dataQc{idParamQc};
+      paramName = paramQcName(1:end-3);
+      if (strncmp(paramName, 'JULD', length('JULD')))
+         wantedVars = [wantedVars ...
+            {paramName} ...
+            {[paramName '_STATUS']} ...
+            ];
+      elseif (strcmp(paramName, 'POSITION'))
+         wantedVars = [wantedVars ...
+            {'LATITUDE'} ...
+            {'LONGITUDE'} ...
+            ];
+      else
+         wantedVars = [wantedVars ...
+            {paramName} ...
+            ];
+      end
+   end
+   
    [ncTrajData] = get_data_from_nc_file(fileName, wantedVars);
    
    % retrieve the N_MEASUREMENT dimension
@@ -1804,6 +1918,8 @@ for idFile = 1:2
    % update <PARAM>_QC values
    for idParamQc = 1:2:length(a_dataQc)
       paramQcName = a_dataQc{idParamQc};
+      paramName = paramQcName(1:end-3);
+      
       if (var_is_present_dec_argo(fCdf, paramQcName))
          
          dataQc = a_dataQc{idParamQc+1};
@@ -1813,6 +1929,51 @@ for idFile = 1:2
             nbColToAdd = nMeasurement - size(dataQc, 2);
             dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbColToAdd));
          end
+         
+         if (strncmp(paramName, 'JULD', length('JULD')))
+            
+            paramInfo = get_netcdf_param_attributes('JULD');
+            paramJuld = get_data_from_name(paramName, ncTrajData);
+            paramJuldStatus = get_data_from_name([paramName '_STATUS'], ncTrajData);
+            
+            idF = find((paramJuld == paramInfo.fillValue) & (paramJuldStatus == g_JULD_STATUS_fill_value));
+            dataQc(idF) = g_decArgo_qcStrDef;
+            
+         elseif (strcmp(paramName, 'POSITION'))
+            
+            paramLatInfo = get_netcdf_param_attributes('LATITUDE');
+            paramLonInfo = get_netcdf_param_attributes('LONGITUDE');
+            paramLat = get_data_from_name('LATITUDE', ncTrajData);
+            paramLon = get_data_from_name('LONGITUDE', ncTrajData);
+            
+            idF = find((paramLat == paramLatInfo.fillValue) & (paramLon == paramLonInfo.fillValue));
+            dataQc(idF) = g_decArgo_qcStrDef;
+            
+         else
+            
+            paramName2 = paramName;
+            idF = strfind(paramName2, '_ADJUSTED');
+            if (~isempty(idF))
+               paramName2 = paramName2(1:idF-1);
+            end
+            paramInfo = get_netcdf_param_attributes(paramName2);
+            paramData = get_data_from_name(paramName, ncTrajData);
+            
+            if (~strcmp(paramName2, 'UV_INTENSITY_NITRATE'))
+               idF = find(paramData == paramInfo.fillValue);
+               dataQc(idF) = g_decArgo_qcStrDef;
+            else
+               idF = [];
+               for idLev = 1:size(paramData, 2)
+                  if (~any(paramData(:, idLev) ~= paramInfo.fillValue))
+                     idF = [idF idLev];
+                  end
+               end
+               dataQc(idF) = g_decArgo_qcStrDef;
+            end
+            
+         end
+         
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
       end
    end

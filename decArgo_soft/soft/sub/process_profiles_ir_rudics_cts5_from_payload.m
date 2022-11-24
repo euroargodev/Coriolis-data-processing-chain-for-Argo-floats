@@ -96,8 +96,8 @@ end
 findPixelNumbers = 0;
 if (ismember(6, g_decArgo_sensorList))
    findPixelNumbers = 1;
-   floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3');
-   floatPixelEnd = get_static_config_value('CONFIG_PX_1_6_0_0_4');
+   floatPixelBegin = get_static_config_value('CONFIG_PX_1_6_0_0_3', 1);
+   floatPixelEnd = get_static_config_value('CONFIG_PX_1_6_0_0_4', 1);
    if (~isempty(floatPixelBegin) && ~isempty(floatPixelEnd))
       if((floatPixelBegin ~= -1) && (floatPixelEnd ~= -1))
          findPixelNumbers = 0;
@@ -113,7 +113,8 @@ idLev1Begin = find(([a_payloadData{:, 1}] == 1) & ...
 
 % SENSOR_XX tags
 idLev1BeginSensor = [];
-idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')));
+idF = find(strncmp(a_payloadData(idLev1Begin, 2), 'SENSOR_', length('SENSOR_')) & ...
+   ~strcmp(a_payloadData(idLev1Begin, 2), 'SENSOR_ACT')); % to manage float anomaly (ex: 2ee3_020_01_payload.bin)
 if (~isempty(idF))
    idLev1BeginSensor = idLev1Begin(idF);
 end
@@ -462,7 +463,7 @@ for idP = 1:length(payloadProfiles)
          else
             if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                payloadProfile.paramNameDecArgo = {{'JULD'} ...
-                  {'PRES2'} {'TEMP'} {'PSAL'} ...
+                  {'PRES2'} {'TEMP2'} {'PSAL2'} ...
                   {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                   {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                   {'MOLAR_NITRATE'} ...
@@ -473,7 +474,7 @@ for idP = 1:length(payloadProfiles)
                   size(payloadProfile.data, 2) - length(payloadProfile.paramNameDecArgo) + 1;
             else
                payloadProfile.paramNameDecArgo = {{'JULD'} ...
-                  {'PRES2'} {'TEMP'} {'PSAL'} ...
+                  {'PRES2'} {'TEMP2'} {'PSAL2'} ...
                   {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                   {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                   {'FIT_ERROR_NITRATE'} {'UV_INTENSITY_NITRATE'}};
@@ -648,52 +649,58 @@ for idP = 1:length(payloadProfiles)
    
    profStructAll = [profStructAll profStruct]; % use to determine the phase of raw data
    
-   switch (profStruct.phaseNumber)
-      
-      case {g_decArgo_phaseBuoyRed, g_decArgo_phaseSatTrans}
-         if (~ismember(idP, rawDataId))
-            o_tabSurf = [o_tabSurf profStruct];
-         else
-            profStruct.sensorNumber = profStruct.sensorNumber + 1000;
-            o_tabSurfRaw = [o_tabSurfRaw profStruct];
-         end
-      
-      case g_decArgo_phaseParkDrift
-         if (~ismember(idP, rawDataId))
-            o_tabDrift = [o_tabDrift profStruct];
-         else
-            profStruct.sensorNumber = profStruct.sensorNumber + 1000;
-            o_tabDriftRaw = [o_tabDriftRaw profStruct];
-         end
-      
-      case {g_decArgo_phaseDsc2Prk, g_decArgo_phaseAscProf}
+   % move PTS of the SUNA profile to a new profile
+   profStruct = split_profile_suna(profStruct);
+   
+   for idProf = 1:length(profStruct)
 
-         % profile direction
-         if (profStruct.phaseNumber == g_decArgo_phaseDsc2Prk)
-            profStruct.direction = 'D';
-         end
+      switch (profStruct(idProf).phaseNumber)
          
-         % positioning system
-         profStruct.posSystem = 'GPS';
-         
-         % profile date and location information
-         [profStruct] = add_profile_date_and_location_ir_rudics_cts5( ...
-            profStruct, a_timedata, a_gpsData);
-         
-         if (~ismember(idP, rawDataId))
-            o_tabProfiles = [o_tabProfiles profStruct];
-         else
-            profStruct.sensorNumber = profStruct.sensorNumber + 1000;
-            o_tabProfilesRaw = [o_tabProfilesRaw profStruct];
-         end
-      
-      otherwise
-         fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Don''t know how to process data for sensor #%d and phase #%d\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat, ...
-            profStruct.sensorNumber, profStruct.phaseNumber);
+         case {g_decArgo_phaseBuoyRed, g_decArgo_phaseSatTrans}
+            if (~ismember(idP, rawDataId))
+               o_tabSurf = [o_tabSurf profStruct(idProf)];
+            else
+               profStruct(idProf).sensorNumber = profStruct(idProf).sensorNumber + 1000;
+               o_tabSurfRaw = [o_tabSurfRaw profStruct(idProf)];
+            end
+            
+         case g_decArgo_phaseParkDrift
+            if (~ismember(idP, rawDataId))
+               o_tabDrift = [o_tabDrift profStruct(idProf)];
+            else
+               profStruct(idProf).sensorNumber = profStruct(idProf).sensorNumber + 1000;
+               o_tabDriftRaw = [o_tabDriftRaw profStruct(idProf)];
+            end
+            
+         case {g_decArgo_phaseDsc2Prk, g_decArgo_phaseAscProf}
+            
+            % profile direction
+            if (profStruct(idProf).phaseNumber == g_decArgo_phaseDsc2Prk)
+               profStruct(idProf).direction = 'D';
+            end
+            
+            % positioning system
+            profStruct(idProf).posSystem = 'GPS';
+            
+            % profile date and location information
+            [profStruct(idProf)] = add_profile_date_and_location_ir_rudics_cts5( ...
+               profStruct(idProf), a_timedata, a_gpsData);
+            
+            if (~ismember(idP, rawDataId))
+               o_tabProfiles = [o_tabProfiles profStruct(idProf)];
+            else
+               profStruct(idProf).sensorNumber = profStruct(idProf).sensorNumber + 1000;
+               o_tabProfilesRaw = [o_tabProfilesRaw profStruct(idProf)];
+            end
+            
+         otherwise
+            fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Don''t know how to process data for sensor #%d and phase #%d\n', ...
+               g_decArgo_floatNum, ...
+               g_decArgo_cycleNum, ...
+               g_decArgo_cycleNumFloat, ...
+               g_decArgo_patternNumFloat, ...
+               profStruct(idProf).sensorNumber, profStruct(idProf).phaseNumber);
+      end
    end
 end
 
@@ -853,6 +860,68 @@ for idL = 1:size(a_timeInformation, 1)
    elseif (~isempty(timeAET) && ...
          any(payloadProfileDates >= timeAET))
       o_phaseNum = g_decArgo_phaseSatTrans;
+   end
+end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Split the SUNA profile in 2, one with SUNA measurements and one with CTD
+% measurements.
+%
+% SYNTAX :
+%  [o_tabProfiles] = split_profile_suna(a_tabProfiles)
+%
+% INPUT PARAMETERS :
+%   a_tabProfiles : input profile structures
+%
+% OUTPUT PARAMETERS :
+%   o_tabProfiles : output profile structures
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/09/2017 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_tabProfiles] = split_profile_suna(a_tabProfiles)
+
+% output parameters initialization
+o_tabProfiles = a_tabProfiles;
+
+
+% process SUNA profiles only
+if (a_tabProfiles.sensorNumber == 6)
+   idFPres2 = find(strcmp('PRES2', {a_tabProfiles.paramList.name}));
+   idFTemp2 = find(strcmp('TEMP2', {a_tabProfiles.paramList.name}));
+   idFPsal2 = find(strcmp('PSAL2', {a_tabProfiles.paramList.name}));
+   if (~isempty(idFPres2) && ~isempty(idFTemp2) && ~isempty(idFPsal2))
+      
+      % a profile with SUNA data excluding PRES2, TEMP2 and PSAL2
+      profile1 = a_tabProfiles;
+      profile1.paramList([idFPres2 idFTemp2 idFPsal2]) = [];
+      profile1.paramNumberWithSubLevels = profile1.paramNumberWithSubLevels - 3;
+      profile1.data(:, [idFPres2 idFTemp2 idFPsal2]) = [];
+      
+      % a profile with only PRES2, TEMP2 and PSAL2
+      profile2 = a_tabProfiles;
+      profile2.paramList = a_tabProfiles.paramList([idFPres2 idFTemp2 idFPsal2]);
+      profile2.paramList(1).name = 'PRES';
+      profile2.paramList(2).name = 'TEMP';
+      profile2.paramList(3).name = 'PSAL';
+      profile2.paramNumberWithSubLevels = [];
+      profile2.paramNumberOfSubLevels = [];
+      profile2.data = a_tabProfiles.data(:, [idFPres2 idFTemp2 idFPsal2]);
+      paramJuld = get_netcdf_param_attributes('JULD');
+      profile2.dates = ones(size(profile2.data, 1), 1)*paramJuld.fillValue;
+      profile2.datesAdj = ones(size(profile2.data, 1), 1)*paramJuld.fillValue;
+      profile2.minMeasDate = [];
+      profile2.maxMeasDate = [];
+      
+      % output parameters initialization
+      o_tabProfiles = [profile1 profile2];
    end
 end
 

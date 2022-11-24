@@ -37,6 +37,7 @@ global g_NTP_NAME_PARAM2;
 % g_NTP_NAME_PARAM1 = 'CHLA';
 % g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
 g_NTP_NAME_PARAM1 = 'TEMP';
+% g_NTP_NAME_PARAM1 = 'FLUORESCENCE_CDOM';
 % g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_BLUE_REF';
 % g_NTP_NAME_PARAM1 = 'IFREMER_TEMPORARY_NTU_REF';
@@ -46,6 +47,7 @@ g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM2 = 'BBP700';
 % g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
 g_NTP_NAME_PARAM2 = 'PSAL';
+% g_NTP_NAME_PARAM2 = 'CDOM';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_F_SIG';
 % g_NTP_NAME_PARAM2 = 'IFREMER_TEMPORARY_NTU_SIG';
 % g_NTP_NAME_PARAM2 = 'NITRATE';
@@ -685,21 +687,21 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                profParam2Qc = profData{2*idVal};
                
                pres2 = [];
-               if (~exist('profNum', 'var'))
-                  profNum = '';
-                  for idProf = 1:inputNProf
-                     for idParam = 1:inputNParam
-                        param = deblank(stationParameters(:, idParam, idProf)');
-                        if (strcmp(param, g_NTP_NAME_PARAM2))
-                           profNum = idProf;
-                           break;
-                        end
-                     end
-                     if (~isempty(profNum))
+               %                if (~exist('profNum', 'var'))
+               profNum = '';
+               for idProf = 1:inputNProf
+                  for idParam = 1:inputNParam
+                     param = deblank(stationParameters(:, idParam, idProf)');
+                     if (strcmp(param, g_NTP_NAME_PARAM2))
+                        profNum = idProf;
                         break;
                      end
                   end
+                  if (~isempty(profNum))
+                     break;
+                  end
                end
+               %                end
                
                if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
                   tabCycles2 = [tabCycles2; cycleNumberProf(profNum)];

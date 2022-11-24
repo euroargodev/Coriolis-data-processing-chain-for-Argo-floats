@@ -286,6 +286,7 @@ end
 for idProf = 1:length(a_tabProfiles)
    
    profile = a_tabProfiles(idProf);
+   
    if (profile.direction == 'A')
       measCode = g_MC_AscProf;
    else
@@ -394,7 +395,6 @@ if (~isempty(profInfo))
                datedMeasStruct.paramNumberWithSubLevels = profile.paramNumberWithSubLevels;
                datedMeasStruct.paramNumberOfSubLevels = profile.paramNumberOfSubLevels;
                datedMeasStruct.dateList = profile.dateList;
-               
                datedMeasStruct.dates = profile.dates(profInfo(idProfMax, 5));
                datedMeasStruct.datesAdj = profile.datesAdj(profInfo(idProfMax, 5));
                datedMeasStruct.data = profile.data(profInfo(idProfMax, 5), :);

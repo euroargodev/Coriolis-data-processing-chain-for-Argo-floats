@@ -78,7 +78,6 @@ if (a_cycleNum == 0)
    %    [~, o_timeData.configParam.deepProfileDescentPeriod] = find_struct(a_timeInfo, 'label', 'deepProfileDescentPeriod', 'value');
    
    % elseif (a_cycleNum < 7) || (a_cycleNum == 12)
-   %    a=1
 
 else
    [~, downTimeEnd] = find_struct(a_timeInfo, 'label', 'downTimeEnd', 'value');
@@ -142,19 +141,17 @@ if (a_cycleNum > 0)
       % we prefer the improved method because the TWR one needs additional
       % configuration information (trans rep rate) that can be erroneously
       % reported
-      cycleTimeStruct.transStartTime = cycleTimeStruct.transStartTime2;
+      cycleTimeStruct.transStartTimeAdj = cycleTimeStruct.transStartTime2;
    else
-      cycleTimeStruct.transStartTime = cycleTimeStruct.transStartTime1;
+      cycleTimeStruct.transStartTimeAdj = cycleTimeStruct.transStartTime1;
    end
-   cycleTimeStruct.transStartTimeAdj = cycleTimeStruct.transStartTime;
-   if (cycleTimeStruct.transStartTime ~= g_decArgo_dateDef)
+   if (cycleTimeStruct.transStartTimeAdj ~= g_decArgo_dateDef)
       cycleTimeStruct.transStartTimeStatus = g_JULD_STATUS_1;
    end
    
    % compute AET = TST - 10 minutes
-   if (cycleTimeStruct.transStartTime ~= g_decArgo_dateDef)
-      cycleTimeStruct.ascentEndTime = cycleTimeStruct.transStartTime - 10/1440;
-      cycleTimeStruct.ascentEndTimeAdj = cycleTimeStruct.ascentEndTime;
+   if (cycleTimeStruct.transStartTimeAdj ~= g_decArgo_dateDef)
+      cycleTimeStruct.ascentEndTimeAdj = cycleTimeStruct.transStartTimeAdj - 10/1440;
       cycleTimeStruct.ascentEndTimeStatus = cycleTimeStruct.transStartTimeStatus;
    end
 end

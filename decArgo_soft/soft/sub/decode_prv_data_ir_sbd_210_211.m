@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-%    o_floatParam, o_irSessionNum] = ...
+%    o_floatParam, o_irSessionNum, o_deepCycle] = ...
 %    decode_prv_data_ir_sbd_210_211(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -21,6 +21,7 @@
 %   o_pumpAct      : pump decoded data from hydraulic packet
 %   o_floatParam   : decoded parameter data
 %   o_irSessionNum : number of the Iridium session (1 or 2)
+%   o_deepCycle    : deep cycle flag (1 if it is a deep cycle 0 otherwise)
 %
 % EXAMPLES :
 %
@@ -31,7 +32,7 @@
 %   07/04/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTech1, o_tabTech2, o_dataCTD, o_evAct, o_pumpAct, ...
-   o_floatParam, o_irSessionNum] = ...
+   o_floatParam, o_irSessionNum, o_deepCycle] = ...
    decode_prv_data_ir_sbd_210_211(a_tabData, a_tabDataDates, a_procLevel, a_decoderId)
 
 % output parameters initialization
@@ -42,6 +43,7 @@ o_evAct = [];
 o_pumpAct = [];
 o_floatParam = [];
 o_irSessionNum = 0;
+o_deepCycle = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -49,13 +51,18 @@ global g_decArgo_floatNum;
 % current cycle number
 global g_decArgo_cycleNum;
 
+% offset in cycle number (in case of reset of the float)
+global g_decArgo_cycleNumOffset;
+
+% last float reset date
+global g_decArgo_floatLastResetDate;
+
 % default values
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 global g_decArgo_presCountsDef;
 global g_decArgo_tempCountsDef;
 global g_decArgo_salCountsDef;
-global g_decArgo_durationDef;
 
 % arrays to store rough information on received data
 global g_decArgo_0TypePacketReceivedFlag;
@@ -72,22 +79,70 @@ global g_decArgo_nbOf13Or11TypePacketReceived;
 global g_decArgo_nbOf14Or12TypePacketExpected;
 global g_decArgo_nbOf14Or12TypePacketReceived;
 
-% decoder configuration values
-global g_decArgo_generateNcTech;
-
-% flag to detect a second Iridium session
-global g_decArgo_secondIridiumSession;
-
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
 
+% float configuration
+global g_decArgo_floatConfig;
+
+
+% clean multiple transmission
+% some messages could be transmitted more than once (Ex: 3901868 #13)
+if ((size(a_tabData, 1) ~= size(unique(a_tabData, 'rows'), 1)))
+   if (a_procLevel == 1)
+      fprintf('\n');
+   end
+   [uTabData, ia, ic] = unique(a_tabData, 'rows', 'stable');
+   for idMes = 1:size(uTabData, 1)
+      idEq = [];
+      for idM = 1:size(a_tabData, 1)
+         if (sum(uTabData(idMes, :) == a_tabData(idM, :)) == size(a_tabData, 2))
+            idEq = [idEq idM];
+         end
+      end
+      if (length(idEq) > 1)
+         % packet type
+         packType = a_tabData(idEq(1), 1);
+         if (packType == 0)
+            packetName = 'the technical packet #1';
+         elseif (packType == 4)
+            packetName = 'the technical packet #2';
+         elseif (packType == 5)
+            packetName = 'the parameter packet';
+         elseif (packType == 6)
+            packetName = 'one EV/pump action packet';
+         else
+            packetName = 'one data packet';
+         end
+         
+         if (a_procLevel == 1)
+            if (length(idEq) == 2)
+               fprintf('INFO: Float #%d: %s received twice => only one is decoded\n', ...
+                  g_decArgo_floatNum, ...
+                  packetName);
+            else
+               fprintf('INFO: Float #%d: %s received %d times => only one is decoded\n', ...
+                  g_decArgo_floatNum, ...
+                  packetName, ...
+                  length(idEq));
+            end
+         end
+      end
+   end
+   idDel = setdiff(1:size(a_tabData, 1), ia);
+   a_tabData = uTabData;
+   a_tabDataDates(idDel) = [];
+end
+
+% initialize information arrays
+init_counts;
 
 % decode packet data
 tabCycleNum = [];
-tabIrSessionNum = [];
+floatLastResetTime = [];
 for idMes = 1:size(a_tabData, 1)
    % packet type
    packType = a_tabData(idMes, 1);
@@ -130,19 +185,23 @@ for idMes = 1:size(a_tabData, 1)
          % store cycle number
          tabCycleNum = [tabCycleNum tabTech1(1)];
          
-         % store Iridium session number
-         tabIrSessionNum = [tabIrSessionNum tabTech1(2)];
-         
          % compute the offset between float days and julian days
          startDateInfo = [tabTech1(5:7); tabTech1(9)];
          if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
             cycleStartDateDay = datenum(sprintf('%02d%02d%02d', tabTech1(5:7)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
             if (~isempty(g_decArgo_julD2FloatDayOffset))
                if (g_decArgo_julD2FloatDayOffset ~= cycleStartDateDay - tabTech1(8))
-                  fprintf('ERROR: Float #%d: Shift in float day (previous offset = %d, new offset = %d)\n', ...
-                     g_decArgo_floatNum, ...
-                     g_decArgo_julD2FloatDayOffset, ...
-                     cycleStartDateDay);
+                  if (g_decArgo_cycleNumOffset == 0)
+                     fprintf('\nERROR: Float #%d: Shift in float day (previous offset = %d, new offset = %d)\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_julD2FloatDayOffset, ...
+                        cycleStartDateDay);
+                  else
+                     fprintf('\nINFO: Float #%d: Shift in float day (previous offset = %d, new offset = %d)\n', ...
+                        g_decArgo_floatNum, ...
+                        g_decArgo_julD2FloatDayOffset, ...
+                        cycleStartDateDay);
+                  end
                end
             end
             g_decArgo_julD2FloatDayOffset = cycleStartDateDay - tabTech1(8);
@@ -243,6 +302,12 @@ for idMes = 1:size(a_tabData, 1)
          % get item bits
          tabTech2 = get_bits(firstBit, tabNbBits, msgData);
          
+         if ((g_decArgo_floatNum == 3901863) && ...
+               ~isempty(g_decArgo_cycleNum) && ...
+               ismember(g_decArgo_cycleNum, [20 21]) && ismember(tabTech2(1), [10 11]))
+            tabTech2(3) = 1;
+         end
+         
          g_decArgo_4TypePacketReceivedFlag = 1;
          g_decArgo_nbOf1Or8TypePacketExpected = tabTech2(3);
          g_decArgo_nbOf2Or9TypePacketExpected = tabTech2(4);
@@ -253,12 +318,19 @@ for idMes = 1:size(a_tabData, 1)
             continue;
          end
          
+         % store last reset date
+         floatLastResetTime = datenum(sprintf('%02d%02d%02d', tabTech2(46:51)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
+         
          % store cycle number
          tabCycleNum = [tabCycleNum tabTech2(1)];
-         
-         % store Iridium session number
-         tabIrSessionNum = [tabIrSessionNum tabTech2(2)];
-         
+                  
+         % message and measurement counts are set to 0 for a surface cycle
+         if ((length(unique(tabTech2(3:14))) == 1) && (unique(tabTech2(3:14)) == 0))
+            o_deepCycle = 0;
+         else
+            o_deepCycle = 1;
+         end
+
          o_tabTech2 = [o_tabTech2; ...
             packType tabTech2(1:58)' sbdFileDate];
          
@@ -266,18 +338,20 @@ for idMes = 1:size(a_tabData, 1)
       case {1, 2, 3, 13, 14}
          % CTD packets
          
+         o_deepCycle = 1;
+         
+         if (packType == 1)
+            g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
+         elseif (packType == 2)
+            g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
+         elseif (packType == 3)
+            g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
+         elseif (packType == 13)
+            g_decArgo_nbOf13Or11TypePacketReceived = g_decArgo_nbOf13Or11TypePacketReceived + 1;
+         elseif (packType == 14)
+            g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
+         end
          if (a_procLevel == 0)
-            if (packType == 1)
-               g_decArgo_nbOf1Or8TypePacketReceived = g_decArgo_nbOf1Or8TypePacketReceived + 1;
-            elseif (packType == 2)
-               g_decArgo_nbOf2Or9TypePacketReceived = g_decArgo_nbOf2Or9TypePacketReceived + 1;
-            elseif (packType == 3)
-               g_decArgo_nbOf3Or10TypePacketReceived = g_decArgo_nbOf3Or10TypePacketReceived + 1;
-            elseif (packType == 13)
-               g_decArgo_nbOf13Or11TypePacketReceived = g_decArgo_nbOf13Or11TypePacketReceived + 1;
-            elseif (packType == 14)
-               g_decArgo_nbOf14Or12TypePacketReceived = g_decArgo_nbOf14Or12TypePacketReceived + 1;
-            end
             continue;
          end
          
@@ -357,10 +431,7 @@ for idMes = 1:size(a_tabData, 1)
          
          % store cycle number
          tabCycleNum = [tabCycleNum tabParam(1)];
-         
-         % store Iridium session number
-         tabIrSessionNum = [tabIrSessionNum tabParam(2)];
-         
+                  
          % compute float time
          floatTime = datenum(sprintf('%02d%02d%02d%02d%02d%02d', tabParam(3:8)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
          
@@ -427,11 +498,27 @@ end
 
 if (a_procLevel > 0)
    
+   % manage float reset during mission at sea
+   if (~isempty(floatLastResetTime))
+      if (g_decArgo_floatLastResetDate < 0)
+         % initialization
+         g_decArgo_floatLastResetDate = floatLastResetTime;
+      else
+         if (floatLastResetTime ~= g_decArgo_floatLastResetDate)
+            fprintf('\nINFO: Float #%d: A reset has been performed at sea on %s\n', ...
+               g_decArgo_floatNum, julian_2_gregorian_dec_argo(floatLastResetTime));
+            
+            g_decArgo_floatLastResetDate = floatLastResetTime;
+            g_decArgo_cycleNumOffset = g_decArgo_cycleNum + 1;
+         end
+      end
+   end
+   
    % set cycle number number
    if (~isempty(tabCycleNum))
       if (length(unique(tabCycleNum)) == 1)
          
-         g_decArgo_cycleNum = unique(tabCycleNum);
+         g_decArgo_cycleNum = unique(tabCycleNum) + g_decArgo_cycleNumOffset;
          fprintf('cyle #%d\n', g_decArgo_cycleNum);
       else
          fprintf('ERROR: Float #%d: Multiple cycle numbers have been received\n', ...
@@ -442,17 +529,96 @@ if (a_procLevel > 0)
          g_decArgo_floatNum);
    end
    
-   % set Iridium session number
-   if (~isempty(tabIrSessionNum))
-      if (length(unique(tabIrSessionNum)) == 1)
-         
-         o_irSessionNum = unique(tabIrSessionNum) + 1 ;
-         g_decArgo_secondIridiumSession = unique(tabIrSessionNum);
-      else
-         fprintf('ERROR: Float #%d: Multiple Iridium session numbers have been received\n', ...
-            g_decArgo_floatNum);
+   % anomaly-managment: when the float is switched to EOL mode the first
+   % last deep cycle data are transmitted again in the first EOL
+   % transmission (Ex: 6902722 cycle #22 or 6902769 #23)
+   
+   % => in EOL mode we try to find if a configuration exists for the
+   % current cycle: if yes => the current deep cycle data have already
+   % been received => ignore it by setting o_deepCycle to 0
+   
+   if (~isempty(o_tabTech1) && ~isempty(o_tabTech2))
+      if ((o_tabTech1(1, 1+66) == 1) && (o_deepCycle == 1))
+         if (any(g_decArgo_floatConfig.USE.CYCLE == g_decArgo_cycleNum))
+            o_dataCTD = [];
+            o_evAct = [];
+            o_pumpAct = [];
+            o_deepCycle = 0;
+            fprintf('INFO: Float #%d Cycle #%d: Deep data received twice in EOL mode => deep data of second transmission ignored\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum);
+         end
       end
    end
 end
+
+return;
+
+% ------------------------------------------------------------------------------
+% Initialize global flags and counters used to decide if a buffer is completed
+% or not.
+%
+% SYNTAX :
+%  init_counts
+%
+% INPUT PARAMETERS :
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/03/2017 - RNU - creation
+% ------------------------------------------------------------------------------
+function init_counts
+
+% arrays to store rough information on received data
+global g_decArgo_0TypePacketReceivedFlag;
+global g_decArgo_4TypePacketReceivedFlag;
+global g_decArgo_5TypePacketReceivedFlag;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketExpected;
+global g_decArgo_nbOf1Or8Or11Or14TypePacketReceived;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketExpected;
+global g_decArgo_nbOf2Or9Or12Or15TypePacketReceived;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketExpected;
+global g_decArgo_nbOf3Or10Or13Or16TypePacketReceived;
+global g_decArgo_nbOf1Or8TypePacketExpected;
+global g_decArgo_nbOf1Or8TypePacketReceived;
+global g_decArgo_nbOf2Or9TypePacketExpected;
+global g_decArgo_nbOf2Or9TypePacketReceived;
+global g_decArgo_nbOf3Or10TypePacketExpected;
+global g_decArgo_nbOf3Or10TypePacketReceived;
+global g_decArgo_nbOf13Or11TypePacketExpected;
+global g_decArgo_nbOf13Or11TypePacketReceived;
+global g_decArgo_nbOf14Or12TypePacketExpected;
+global g_decArgo_nbOf14Or12TypePacketReceived;
+
+% initialize information arrays
+g_decArgo_0TypePacketReceivedFlag = 0;
+g_decArgo_4TypePacketReceivedFlag = 0;
+g_decArgo_5TypePacketReceivedFlag = 0;
+g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = -1;
+g_decArgo_nbOf1Or8Or11Or14TypePacketReceived = 0;
+g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = -1;
+g_decArgo_nbOf2Or9Or12Or15TypePacketReceived = 0;
+g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = -1;
+g_decArgo_nbOf3Or10Or13Or16TypePacketReceived = 0;
+g_decArgo_nbOf1Or8TypePacketExpected = -1;
+g_decArgo_nbOf1Or8TypePacketReceived = 0;
+g_decArgo_nbOf2Or9TypePacketExpected = -1;
+g_decArgo_nbOf2Or9TypePacketReceived = 0;
+g_decArgo_nbOf3Or10TypePacketExpected = -1;
+g_decArgo_nbOf3Or10TypePacketReceived = 0;
+g_decArgo_nbOf13Or11TypePacketExpected = -1;
+g_decArgo_nbOf13Or11TypePacketReceived = 0;
+g_decArgo_nbOf14Or12TypePacketExpected = -1;
+g_decArgo_nbOf14Or12TypePacketReceived = 0;
+
+% items not concerned by this decoder
+g_decArgo_nbOf1Or8Or11Or14TypePacketExpected = 0;
+g_decArgo_nbOf2Or9Or12Or15TypePacketExpected = 0;
+g_decArgo_nbOf3Or10Or13Or16TypePacketExpected = 0;
 
 return;
