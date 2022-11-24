@@ -151,8 +151,12 @@ if (~isempty(idF))
    rtOffsetData.PARAM = rtOffsetParam;
    rtOffsetData.SLOPE = rtOffsetSlope;
    rtOffsetData.VALUE = rtOffsetValue;
-   rtOffsetData.ADJUSTED_ERROR = rtOffsetAdjError;
-   rtOffsetData.ADJUSTED_ERROR_METHOD = rtOffsetAdjErrorMethod;
+   if (~isempty(rtOffsetAdjError))
+      rtOffsetData.ADJUSTED_ERROR = rtOffsetAdjError;
+   end
+   if (~isempty(rtOffsetAdjErrorMethod))
+      rtOffsetData.ADJUSTED_ERROR_METHOD = rtOffsetAdjErrorMethod;
+   end
    rtOffsetData.DATE = rtOffsetDate;
    
    o_rtOffsetStruct = rtOffsetData;
